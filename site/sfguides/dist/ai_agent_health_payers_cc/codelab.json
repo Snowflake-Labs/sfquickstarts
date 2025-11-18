@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "ai_agent_health_payers_cc",
+  "duration": 61,
+  "title": "Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification",
+  "summary": "Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification",
+  "source": "ai_agent_health_payers_cc/ai_agent_health_payers_cc.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "data-science-\u0026-ai",
+    "gettingstarted",
+    "snowparkpython",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "ai_agent_health_payers_cc"
+}

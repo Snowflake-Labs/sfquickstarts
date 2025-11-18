@@ -1,0 +1,470 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Braze Cloud Data Ingestion</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="braze_cdi"
+                  title="Braze Cloud Data Ingestion"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Braze Cloud Data Ingestion (CDI) is the easiest way to take data from Snowflake and ingest into the Braze platform.</p>
+<p>Braze CDI allows you to set up a direct connection from your data storage solution to Braze to sync relevant user or catalog data, and delete users. When synced to Braze, this data can be leveraged for use cases such as personalization or segmentation. Cloud Data Ingestion&#39;s flexible integration supports complex data structures including nested JSON and arrays of objects.</p>
+<p><strong>Braze Cloud Data Ingestion capabilities</strong>:</p>
+<ul>
+<li>Create a simple integration directly from Snowflake to Braze in just a few minutes.</li>
+<li>Securely sync user data, including attributes, events, and purchases from Snowflake to Braze.</li>
+<li>Close the data loop with Braze by combining Cloud Data Ingestion with Snowflake Data Sharing.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL and JSON</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to create the necessary objects + schema in Snowflake for Braze CDI</li>
+<li>how to create a Snowflake Stream</li>
+<li>how to orchestrate a data pipeline with a Snowflake Task</li>
+<li>how to use the Braze CDI UI to create a connection to Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Account</li>
+<li>A <a href="https://www.braze.com/get-started" target="_blank">Braze</a> Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake data pipeline for Braze CDI</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Setup" duration="4">
+        <h2 is-upgraded>Create the Braze User, Role, and Warehouse</h2>
+<p>For this step, you can alternatively use the <a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/braze-cdi-pipeline/braze_cdi_customer.ipynb" target="_blank">Braze+Snowflake Pipeline Notebook</a>. Otherwise follow the guide using Snowflake worksheets.</p>
+<p>Here, we&#39;ll create the dedicated role and user. The user will be created as a service user as this user is not a human logging into Snowflake, but rather used as a part of the Braze platform to read data from Snowflake. This means that we will be explicitly be deactivating password authentication for login via the Snowflake UI.</p>
+<p>Braze will generate the necessary key-pair authentication during the actual Braze CDI installation steps in the Braze UI. In this step, we&#39;re just creating the user, role, and the virtual warehouse.</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+create or replace role braze_cdi_role;
+create or replace user svc_braze_cdi type = service default_role = braze_cdi_role;
+
+grant role braze_cdi_role to role accountadmin;
+grant role braze_cdi_role to user svc_braze_cdi;
+
+create or replace warehouse braze_cdi_wh with warehouse_size=&#39;xsmall&#39;; -- XS for this demo, but even in production - this warehouse shouldn&#39;t be larger than a M/L for large scale. Start with Small and then bump as needed to meet any sync time/SLA requirement
+
+grant usage on warehouse braze_cdi_wh to role braze_cdi_role;
+</code></pre>
+<h2 is-upgraded>Create the Braze Schema</h2>
+<p>This creates a dedicated Braze database + schema for use with CDI. It allows CDI to read updates in the necessary Braze format.</p>
+<p>In this example notebook, we&#39;ll only be focused on <strong>user attribute</strong> updates and <strong>deletes</strong> by creating the users_attributes_sync table. That table will then have two views: the <code>users_attributes_sync_vw</code> and the <code>users_deletes_vw</code>.</p>
+<p>The <code>users_attributes_sync_vw</code> view will have the following fields:</p>
+<ul>
+<li>external_id - which is the <a href="https://www.braze.com/docs/developer_guide/platform_integration_guides/web/analytics/setting_user_ids/#suggested-user-id-naming-convention" target="_blank">External ID</a> that you feed to Braze</li>
+<li>payload - which is JSON-as-text</li>
+<li>updated_at - the UTC timestamp of when the sync record was created in this table. This allows Braze to keep track of only ingesting net-new events</li>
+</ul>
+<p>The <code>users_deletes_vw</code> view will have the following fields</p>
+<ul>
+<li>external_id - which is the <a href="https://www.braze.com/docs/developer_guide/platform_integration_guides/web/analytics/setting_user_ids/#suggested-user-id-naming-convention" target="_blank">External ID</a> that you feed to Braze</li>
+<li>updated_at - the UTC timestamp of when the sync record was created in this table. This allows Braze to keep track of only ingesting net-new events</li>
+</ul>
+<p>There is no payload for the deletes view.</p>
+<p>Alternatively, you can use the email_address or phone_number as your primary customer identifier; however, for most uses of this process, it&#39;s highly suggested that you keep a primary external_id / customer_id that is separate from that. Fields for email and phone can be found in the Braze <a href="https://www.braze.com/docs/user_guide/data_and_analytics/cloud_ingestion/integrations/#step-1-set-up-tables-or-views" target="_blank">documentation</a>.</p>
+<pre><code language="language-sql" class="language-sql">create or replace database braze_cloud_production;
+grant ownership on database braze_cloud_production to role braze_cdi_role;
+use role braze_cdi_role;
+
+create or replace schema braze_cloud_production.ingestion;
+use schema braze_cloud_production.ingestion;
+
+create or replace table users_attributes_sync (
+    external_id varchar,
+    payload varchar,
+    updated_at timestamp_ntz not null default sysdate()
+);
+
+create or replace view users_attributes_sync_vw 
+as
+    select *
+    from users_attributes_sync
+    where payload is not null
+;
+
+create or replace view users_deletes_vw
+as
+    select external_id, updated_at
+    from users_attributes_sync
+    where payload is null
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup and Simulate Snowflake Data Pipeline" duration="10">
+        <h2 is-upgraded>Generate simple sample data</h2>
+<p>We&#39;re not going to get too fancy with this sample data to make sure tracking the changes are as easy to understand as possible in the next sections. We&#39;ll just generate a few records of &#34;customer&#34; data with a few attributes on each customer.</p>
+<p>In a real-world scenario, this &#34;customer&#34; table would be a table with all of your customers.</p>
+<pre><code language="language-sql" class="language-sql">create or replace schema braze_cloud_production.demo_data;
+use schema braze_cloud_production.demo_data;
+
+create or replace table customer
+(
+    customer_id number(11,0), --this will be used for the external_id
+    first_name varchar,
+    last_name varchar,
+    title varchar,
+    state varchar,
+    employer varchar,
+    days_since_last_purchase number
+);
+
+insert into customer select 1, &#39;jim&#39;, &#39;smith&#39;, &#39;developer&#39;, &#39;CA&#39;, &#39;Glooble&#39;, 320;
+insert into customer select 2, &#39;luke&#39;, &#39;skywalker&#39;, &#39;jedi&#39;, &#39;TN&#39;, &#39;Rebels&#39;, 1;
+insert into customer select 3, &#39;george p.&#39;, &#39;burdell&#39;, &#39;engineer&#39;, &#39;GA&#39;, &#39;CNN&#39;, 72;
+
+select *
+from customer;
+</code></pre>
+<h2 is-upgraded>Tracking changes with a Snowflake Stream</h2>
+<p>A <a href="https://docs.snowflake.com/en/user-guide/streams-intro" target="_blank">Snowflake Stream</a> is an easy way to track changes on a table in Snowflake. The below code simulates inserting a new customer, updates a customer, and deleting a customer.</p>
+<pre><code language="language-sql" class="language-sql">create or replace stream customer_stream
+on table customer;
+
+-- new customer
+insert into customer select 4, &#39;alice&#39;, &#39;gates&#39;, &#39;chef&#39;, &#39;NY&#39;, &#39;self-employed&#39;, 0;
+
+-- updated customer
+update customer
+set title = &#39;senior engineer&#39;
+where customer_id = 3;
+
+-- deleted customer
+delete
+from customer
+where customer_id = 2;
+
+select *
+from customer_stream;
+</code></pre>
+<h2 is-upgraded>Load the changes to the Braze schema</h2>
+<p>These are the core steps that is done continously at a time period of your choosing. We&#39;ll show an example of automating this at the end.</p>
+<h3 is-upgraded>Create a temporary table</h3>
+<p>First, we&#39;ll want to capture these changes as a new temp table to operate on them, but it&#39;s also an easy way to advance the offset in the stream.</p>
+<pre><code language="language-sql" class="language-sql">create or replace temp table cust_stream_tmp
+as
+select *
+from customer_stream;
+</code></pre>
+<p>Then, you can check the stream to ensure that the stream is now back to being <strong>empty</strong> (as it waits for new inserts, updates, or deletes).</p>
+<pre><code language="language-sql" class="language-sql">select *
+from customer_stream;
+</code></pre>
+<h3 is-upgraded>Transform into the Braze payload</h3>
+<p>Each attribute that has changed on each customer will need to be translated to a json representation of the same record when data is sync&#39;d to Braze. Therefore, a record like:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>customer_id</p>
+</td><td colspan="1" rowspan="1"><p>first_name</p>
+</td><td colspan="1" rowspan="1"><p>last_name</p>
+</td><td colspan="1" rowspan="1"><p>title</p>
+</td><td colspan="1" rowspan="1"><p>state</p>
+</td><td colspan="1" rowspan="1"><p>employer</p>
+</td><td colspan="1" rowspan="1"><p>days_since_last_purchase</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>george p.</p>
+</td><td colspan="1" rowspan="1"><p>burdell</p>
+</td><td colspan="1" rowspan="1"><p>engineer</p>
+</td><td colspan="1" rowspan="1"><p>GA</p>
+</td><td colspan="1" rowspan="1"><p>CNN</p>
+</td><td colspan="1" rowspan="1"><p>72</p>
+</td></tr>
+</table>
+<p>Would equate to the following json payload for Braze:</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;first_name&#34; : &#34;george p.&#34;,
+    &#34;last_name&#34; : &#34;burdell&#34;,
+    &#34;title&#34; : &#34;engineer&#34;,
+    &#34;state&#34; : &#34;GA&#34;,
+    &#34;employer&#34; : &#34;CNN&#34;,
+    &#34;days_since_last_purchase&#34; : 72
+}
+</code></pre>
+<p>While this is what the <em>entire</em> record would look like in Braze, we need to efficiently submit the payload for only the <strong>changed</strong> attributes. For George, only his title changed from &#34;engineer&#34; to &#34;senior engineer&#34;. Therefore, we need a payload that matches that changed attribute:</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;title&#34; : &#34;senior engineer&#34;
+}
+</code></pre>
+<p>Because &#34;updates&#34; are handled as both an <em>insert</em> and <em>delete</em> in a stream, the SQL to do this can seem a little opaque. In the code below, you&#39;ll see that comments separate each section specifying which records are new, which records are updated, and which records have been deleted - all combined with UNION ALL.</p>
+<pre><code language="language-sql" class="language-sql">INSERT into braze_cloud_production.ingestion.users_attributes_sync
+
+-- get new customers in the CUSTOMER table
+select cs.customer_id::varchar as external_id, to_json(object_agg(cs.col, cs.val::variant))::varchar as payload, sysdate() updated_at
+from cust_stream_tmp
+    UNPIVOT(val FOR col IN (first_name, last_name, title, state, employer)) cs
+where cs.metadata$action = &#39;INSERT&#39;
+and cs.metadata$isupdate = FALSE
+group by cs.customer_id
+
+-- add updates to existing customers
+UNION ALL
+select cs.customer_id::varchar as external_id, to_json(object_agg(cs.col, cs.val::variant))::varchar as payload, sysdate() updated_at 
+from cust_stream_tmp
+    UNPIVOT(val FOR col IN (first_name, last_name, title, state, employer)) cs
+left join 
+    (select * from cust_stream_tmp
+    UNPIVOT(val FOR col IN (first_name, last_name, title, state, employer)) where metadata$action = &#39;DELETE&#39;) cs2
+    on cs.metadata$row_id = cs2.metadata$row_id and cs.val = cs2.val
+where cs.metadata$action = &#39;INSERT&#39;
+and cs2.val is null
+and cs.metadata$isupdate = TRUE
+group by cs.customer_id
+
+-- add deletes to deleted customers
+UNION ALL
+select customer_id::varchar as external_id, null as payload, sysdate() updated_at
+from cust_stream_tmp
+where metadata$action = &#39;DELETE&#39;
+and metadata$isupdate = FALSE;
+
+select *
+from braze_cloud_production.ingestion.users_attributes_sync;
+</code></pre>
+<p>Now - we can see the views for both the inserts/updates:</p>
+<pre><code language="language-sql" class="language-sql">select *
+from braze_cloud_production.ingestion.users_attributes_sync_vw;
+</code></pre>
+<p>As well as the deletes:</p>
+<pre><code language="language-sql" class="language-sql">select *
+from braze_cloud_production.ingestion.users_deletes_vw;
+</code></pre>
+<p>A Snowflake stream is going to be one of the easiest and most efficient ways to track changes to a single table. The above method keeps <a href="https://www.braze.com/docs/user_guide/data_and_analytics/cloud_ingestion/overview/#only-write-new-or-updated-attributes-to-minimize-consumption" target="_blank">best practices</a> in mind to save on both Snowflake and Braze costs.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Automation &#43; CDI Installation" duration="5">
+        <p>Now that we&#39;ve successfully simulated how this process works, it&#39;s time to think about automating this process to run consistently for Braze CDI.</p>
+<p>Every step through creating the stream was a one-time setup piece. We&#39;ll need to automate the transformation piece to run periodically.</p>
+<p>To automate this, we&#39;ll put the recurring steps in a stored procedure, and then schedule them with a <a href="https://docs.snowflake.com/en/user-guide/tasks-intro" target="_blank">Snowflake Task</a>. There are other options, like creating a new notebook with just the necessary sells and scheduling the notebook to run, but overall I recommend tasks for data pipelines. Alternatively, you may choose to use your own orchestration outside of Snowflake as well!</p>
+<p>In the stored procedure, there will only be a few steps:</p>
+<ol type="1">
+<li>Create the temp table (and advance the stream offset)</li>
+<li>Create the SQL for the transformation</li>
+<li>Run the SQL</li>
+</ol>
+<p>The stored procedure will take in 2 parameters: the stream name and the fields/attributes to be analyzed for changes. It will then output the records that are inserted into the <code>ingestion.users_attributes_sync</code> table.</p>
+<p>The task will then wrap the procedure and take care of the actual insert operation.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE PROCEDURE braze_cdi_cust_proc(stream_name STRING, fields STRING)
+  RETURNS table(external_id varchar, payload varchar, updated_at timestamp_ntz)
+  LANGUAGE PYTHON
+  RUNTIME_VERSION = &#39;3.9&#39;
+  PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+  HANDLER = &#39;run&#39;
+AS
+$$
+def run(session, temp_table, fields):
+
+  temp_table_sql = f&#34;&#34;&#34;
+    create or replace temp table temp_table as select * from {stream_name}
+  &#34;&#34;&#34;
+  session.sql(temp_table_sql)
+
+  transform_sql = f&#34;&#34;&#34;
+  SELECT cs.customer_id::varchar as external_id, to_json(object_agg(cs.col, cs.val::variant)) as payload, sysdate() updated_at
+    FROM temp_table
+        UNPIVOT(val FOR col IN ({fields})) cs
+    where cs.metadata$action = &#39;INSERT&#39;
+    and cs.metadata$isupdate = FALSE
+    group by cs.customer_id
+
+    -- add updates to existing customers
+    UNION ALL
+    SELECT cs.customer_id::varchar as external_id, to_json(object_agg(cs.col, cs.val::variant)) as payload, sysdate() updated_at 
+    FROM temp_table
+        UNPIVOT(val FOR col IN ({fields})) cs
+    left join 
+        (select * from temp_table
+        UNPIVOT(val FOR col IN ({fields})) where metadata$action = &#39;DELETE&#39; and metadata$isupdate = TRUE) cs2
+        on cs.metadata$row_id = cs2.metadata$row_id and cs.val = cs2.val
+    where cs.metadata$action = &#39;INSERT&#39;
+    and cs2.val is null
+    and cs.metadata$isupdate = TRUE
+    group by cs.customer_id
+    
+    -- add deletes to deleted customers
+    UNION ALL
+    select cs.customer_id::varchar as external_id, null as payload, sysdate() updated_at
+    FROM temp_table
+    where cs.metadata$action = &#39;DELETE&#39;
+    and cs.metadata$isupdate = FALSE
+  &#34;&#34;&#34;
+  return session.sql(transform_sql)
+
+$$;
+
+create task braze_cdi_cust_task
+  warehouse = braze_cdi_wh
+  schedule = &#39;60 MINUTE&#39;
+  as
+    insert into braze_cloud_production_dd.ingestion.users_attributes_sync
+    select *
+    from table(braze_cdi_cust_proc(&#39;customer_stream&#39;,&#39;first_name, last_name, title, state, employer&#39;));
+</code></pre>
+<p>After creating a task, you&#39;ll need to <code>RESUME</code> the task to kick it off. It then runs on the schedule until suspended. So that you don&#39;t actually run this code accidentally in the notebook, it will be included here for reference:</p>
+<pre><code language="language-sql" class="language-sql">alter task braze_cdi_cust_task resume;
+</code></pre>
+<p>As deciding on the schedule, a best practice here would be to run the task similar to how the customer table is updated. If the customer table is updated every hour, then run the task every hour (and subsequently, CDI every hour).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Braze Setup" duration="10">
+        <p>For this quickstart, we&#39;ll walk through setting up the <code>users attributes</code> sync for Braze CDI. We created the Snowflake pipeline to also handle <code>user deletes</code>, but that will not be documented step by step here.</p>
+<h2 is-upgraded>CDI Setup</h2>
+<p>Start by logging into your Braze account and finding <strong>Data Settings</strong> -&gt; <strong>Cloud Data Ingestion</strong> on the left nav.</p>
+<p class="image-container"><img alt="CDI Step 1" src="img/50631e374b8a6aa8.png"></p>
+<p>Click the <strong>Create New Data Sync</strong> button to bring up the installation overlay.</p>
+<p class="image-container"><img alt="CDI Step 2" src="img/ba8b344b9145a1a7.png"></p>
+<p>As you&#39;re most likely setting this connection up for the first time, you&#39;ll need to use the <strong>Create new credentials</strong> radio button.</p>
+<p class="image-container"><img alt="CDI Step 3" src="img/5cf2a4e005328d3.png"></p>
+<p>The fields necessary are as follows:</p>
+<ul>
+<li><code>Snowflake Account Locator</code>: Your <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-2-account-locator-in-a-region" target="_blank">account locator</a>, which is your region-specific URL for your account. The locator will take on a different convention depending on the cloud + region that your Snowflake account is deployed in. Use the table in the Snowflake <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-2-account-locator-in-a-region" target="_blank">documentation</a> to help. e.g. AWS US-East-1 will look something like <code>ABC1234.us-east-1</code>.</li>
+<li><code>Username</code>: svc_braze_cdi</li>
+<li><code>Role</code>: braze_cdi_role</li>
+<li><code>Warehouse</code>: braze_cdi_wh</li>
+<li><code>Database</code>: braze_cloud_production</li>
+<li><code>Schema</code>: ingestion</li>
+<li><code>Table</code>: <strong>users_attributes_sync_vw</strong></li>
+</ul>
+<p><strong>Remember to use the view for the &#34;table&#34; here, not the raw table. This specific process will on handle inserts and updates. A delete process will be a separate setup.</strong></p>
+<p>After clicking &#34;Next Step&#34;, you&#39;ll see the page where you set up the sync details.</p>
+<p class="image-container"><img alt="CDI Step 4" src="img/93ba8c1e3b79d2fd.png"></p>
+<p>Give the &#34;integration name&#34; any business-friendly name of your choosing. The others are as follows:</p>
+<ul>
+<li><code>Data Type</code>: User Attributes</li>
+<li><code>Update existing users only</code>: For this quickstart, leave unchecked. This really is only checked if this process is a &#34;supplemental&#34; process to updating users in Braze, and not the primary workflow.</li>
+<li><code>Recurring Sync</code>: ON</li>
+<li><code>Frequency</code>: Hourly (for this quickstart)</li>
+<li><code>Minutes past the hour</code>: 0 (for this quickstart)</li>
+</ul>
+<p>&#34;Frequency&#34; and &#34;Minutes past the hour&#34; could be changed to other settings; however, we&#39;ll keep it simple for this setup. In general, it&#39;s recommended that frequency matches the pipeline that you&#39;ve setup that you&#39;ve used in Snowflake.</p>
+<p>After clicking &#34;Next Step&#34;, you&#39;ll now set up the notification alerts.</p>
+<p class="image-container"><img alt="CDI Step 5" src="img/703fbdc902a90aae.png"></p>
+<p>Configure this page to your liking. If you set the notifications for errors only, it&#39;s recommended that a distribution list is used that&#39;s connected to any on-call data engineering support.</p>
+<p>After clicking &#34;Next Step&#34;, you&#39;ll come to the authentication screen.</p>
+<p class="image-container"><img alt="CDI Step 6" src="img/39813346d887071.png"></p>
+<p>Braze automatically creates the key-pair authentication for the service user that you created in Snowflake during the previous step.</p>
+<p>Here, you&#39;ll copy the command that Braze gives you and paste it into a Snowflake worksheet (using the ACCOUNTADMIN role).</p>
+<pre><code language="language-sql" class="language-sql">ALTER USER svc_braze_cdi SET RSA_PUBLIC_KEY=&#39;MII... &lt;this is here for reference only&gt;&#39;;
+</code></pre>
+<h3 is-upgraded>(Optional) Network Setup</h3>
+<p>Beyond updating authentication for the service user, you also might need to allow the IPs from Braze CDI as well. If there are network rules/policies in place, here&#39;s how you can allow the service user access:</p>
+<pre><code language="language-sql" class="language-sql">create or replace network rule braze_cdi_rule
+  type = IPV4
+  value_list = (&#39;23.21.118.191&#39;,&#39;52.58.142.242&#39;,&#39;13.210.1.145&#39;,&#39;34.206.23.173&#39;,&#39;52.29.193.121&#39;,&#39;13.211.70.159&#39;,&#39;50.16.249.9&#39;,&#39;35.158.29.228&#39;,&#39;13.238.45.54&#39;,&#39;52.4.160.214&#39;,&#39;18.157.135.97&#39;,&#39;52.65.73.167&#39;,&#39;54.87.8.34&#39;,&#39;3.123.166.46&#39;,&#39;54.153.242.239&#39;,&#39;54.156.35.251&#39;,&#39;3.64.27.36&#39;,&#39;54.206.45.213&#39;,&#39;52.54.89.238&#39;,&#39;3.65.88.25&#39;,&#39;18.205.178.15&#39;,&#39;3.68.144.188&#39;,&#39;3.70.107.88&#39;)
+  mode = INGRESS
+  comment =&#39;ingress ip range specified in https://www.braze.com/docs/user_guide/data_and_analytics/cloud_ingestion/integrations&#39;;
+
+create or replace network policy braze_cdi_policy
+  allowed_network_rule_list = (&#39;braze_cdi_rule&#39;);
+
+alter user svc_braze_cdi set network_policy = braze_cdi_policy;
+</code></pre>
+<h3 is-upgraded>Testing the Connection</h3>
+<p>After you&#39;re done with the above, go back to the Braze UI and hit the <strong>Test Connection</strong> button. This will create a connection to Snowflake and show a preview of the data being ingested (for this quickstart, it&#39;s just 2 rows!)</p>
+<h3 is-upgraded>(Optional) Delete User Process</h3>
+<p>You can repeat these steps for user deletes as well. Click <strong>Create new data sync</strong> and reuse your existing credentials. Then, use the <code>users_deletes_vw</code> as your table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Starting CDI" duration="10">
+        <p>After testing the connection, you should see now that your connection is in <em>Draft</em> mode.</p>
+<p class="image-container"><img alt="CDI Step 7" src="img/293aa73be8b47f70.png"></p>
+<p>Click the &#34;play&#34; button on the right side will activate this connection and start the sync.</p>
+<p>After the sync has run at least once, the sync history will populate to show that the sync has been run.</p>
+<p class="image-container"><img alt="CDI Step 8" src="img/406fca1cad720ce1.png"></p>
+<p>After running this sync once, for this quickstart, I highly suggest pausing the sync so that this process can be reconfigured for production. Feel free to use the objects created here in this quickstart, but be sure to set up your own stream and task on production tables!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <h2 is-upgraded>What You Learned</h2>
+<p>With this notebook, you&#39;ve learned how to do the following steps in Snowflake for use in Braze CDI:</p>
+<ol type="1">
+<li>Setup the necessary Snowflake objects</li>
+<li>Generate sample customer records</li>
+<li>Simulate inserting, updating, and deleting sample records</li>
+<li>Automate the Snowflake process</li>
+</ol>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.braze.com/docs/user_guide/data_and_analytics/cloud_ingestion" target="_blank">Braze CDI Documentation</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/braze-cdi-pipeline/braze_cdi_customer.ipynb" target="_blank">Snowflake Pipeline Notebook</a></li>
+<li><a href="https://www.snowflake.com/en/solutions/departments/marketing/" target="_blank">Snowflake for Marketing</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

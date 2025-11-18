@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "snowplow-web-analytics",
+  "duration": 73,
+  "title": "Snowplow Digital Analytics with Snowflake",
+  "summary": "Set up real-time event tracking and analytics using Snowplow and Snowflake",
+  "source": "snowplow-web-analytics/snowplow-web-analytics.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering"
+  ],
+  "tags": [
+    "behavioraltracking",
+    "dataengineering",
+    "gettingstarted",
+    "real-timeanalytics",
+    "snowflake",
+    "snowplow",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowplow-web-analytics"
+}

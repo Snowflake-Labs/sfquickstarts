@@ -1,0 +1,369 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="ai_agent_health_payers_cc"
+                  title="Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p class="image-container"><img alt="banner" src="img/d1cb6eb76a488817.png"></p>
+<p>In this quickstart, you will learn how to easily build an AI agent entirely in Snowflake. We will walk through a scenario in the healthcare industry to illustrate this.</p>
+<p>Contact Center is a critical business function for a Payer/Health Plan. There is heightened focus particularly with the growing market demand for customer centric experiences in Healthcare. Improving the operational efficiency of contact centers and reducing agent burnout are also key priorities for all enterprises.</p>
+<h3 is-upgraded>Business Scenario</h3>
+<p>You are the Business Leader for a Payer/Health Plan&#39;s Contact Center operations. There are 4 primary caller personas reaching your Contact Center - Member, Provider, Employer and Broker.</p>
+<p>You have a dual imperative to deliver improved caller experience and at the same time reduce the overall Contact Center operations cost.</p>
+<p>Based on a detailed study, you have identified key challenges faced by Contact Center Agents that are leading to operational inefficiency and lower caller satisfaction.</p>
+<h3 is-upgraded>Key problems that Contact Centers face</h3>
+<ul>
+<li><strong>Lack of timely information:</strong> Limited ability to gain quicker insights from key information sources makes it harder to have a more personalized interaction with the caller:<ul>
+<li>Prior call interactions with the specific caller</li>
+<li>Knowledge base/documentation assets such as help docs, benefit documents, contact documents, etc</li>
+</ul>
+</li>
+<li><strong>Lack of contextualized information:</strong> The Enterprise Data team has a curated Member 360 Data Product Table which holds rich information on each member. However, there is no usage of this rich information during member call interactions since the Contact Center Agents are more proficient in natural language interactions and not technologically savvy.</li>
+<li><strong>Lack of predictive insights:</strong> Agents are not equipped with any form of predictive intelligence (e.g. potential call reason) that can help in faster resolution of issues.</li>
+<li><strong>Lack of guided workflows:</strong> Agents are expecting advanced features such as recommended &#34;next best action&#34; and AI generated drafts to get their tasks done more efficiently.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> to develop agentic workflows using any open-source model such as Whisper</li>
+<li>How to leverage <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a> for a hybrid (vector and keyword) search engine on text data</li>
+<li>How to use <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst?_fsi=6CVthwI0" target="_blank">Cortex Analyst</a> to help you create applications capable of reliably answering business questions based on your structured data in Snowflake</li>
+<li>How to use <a href="https://docs.snowflake.com/en/user-guide/ml-functions/classification" target="_blank">ML Functions</a> to build a classification model in a low-code way</li>
+<li>How to use <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM functions</a> (Cortex Complete) for access to industry-leading large language models (LLMs)</li>
+<li>How to use <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a> to orchestrate across both structured and unstructured data sources to deliver insights</li>
+<li>How to build a chatbot application using <a href="https://docs.streamlit.io/" target="_blank">Streamlit</a> in Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account to access the <a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main" target="_blank">GIT REPO</a></li>
+<li>A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs) and build a Caller Intent ML Classification Model and execute predictions: <ul>
+<li>Audio-to-text transcription using <code>whisper</code></li>
+<li>PDF processing and text chunking using Snowflake LLM functions</li>
+</ul>
+</li>
+<li>A Cortex Agent to orchestrate across both structured and unstructured data sources to deliver insights</li>
+<li>A chatbot application using Streamlit</li>
+</ul>
+<p><strong>Architecture Diagram:</strong></p>
+<p class="image-container"><img src="img/80dde2e8caf17cbb.png"></p>
+<p>The created &#34;Data Agent&#34; ties these features together to provide a single app for end users to use natural language to ask questions and get answers in natural language regardless of whether the underlying data is structured or unstructured.</p>
+<p class="image-container"><img src="img/cc5b65dee53dcdee.png"></p>
+<p><strong>Note:</strong> We also include an older Streamlit app to show how to build an &#34;agentic&#34; workflow without Cortex Agent as well.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data and Snowflake Setup" duration="15">
+        <p><strong>You can access the full code in </strong><a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main" target="_blank"><strong>this GIT REPO</strong></a><strong>.</strong></p>
+<h3 is-upgraded>Data Overview</h3>
+<p>There are 3 types of data we&#39;re dealing with in this solution:</p>
+<ul>
+<li><strong>Audio files:</strong> Previously recorded calls between a Contact Center Agent and Member</li>
+<li><strong>PDF files:</strong> Knowledge documents currently referred to manually by Contact Center Agents to help answer member inquiries.</li>
+<li><strong>Structured data:</strong> Member 360 and Caller Intent training data</li>
+</ul>
+<h3 is-upgraded>Setup</h3>
+<p>To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click &#34;+ Create&#34; to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</p>
+<p>Paste and run the following <a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql" target="_blank">setup.sql</a> in the SQL worksheet to create Snowflake objects.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE SYSADMIN;
+
+CREATE OR REPLACE WAREHOUSE PAYERS_CC_WH; --by default, this creates an XS Standard Warehouse
+CREATE OR REPLACE DATABASE PAYERS_CC_DB;
+CREATE OR REPLACE SCHEMA PAYERS_CC_SCHEMA;
+
+USE WAREHOUSE PAYERS_CC_WH;
+USE DATABASE PAYERS_CC_DB;
+USE SCHEMA PAYERS_CC_SCHEMA;
+
+----------------------------------
+----------------------------------
+/* NOTEBOOK AND STREAMLIT SETUP */
+----------------------------------
+----------------------------------
+USE ROLE ACCOUNTADMIN;
+
+DROP COMPUTE POOL IF EXISTS PAYERS_GPU_POOL;
+
+CREATE COMPUTE POOL PAYERS_GPU_POOL
+        MIN_NODES = 1
+        MAX_NODES = 5
+        INSTANCE_FAMILY = GPU_NV_S;
+
+CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule
+          TYPE = HOST_PORT
+          MODE = EGRESS
+          VALUE_LIST = (&#39;0.0.0.0:443&#39;,&#39;0.0.0.0:80&#39;);
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_allow_all_integration
+        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule)
+        ENABLED = TRUE;
+
+CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule
+          TYPE = HOST_PORT
+          MODE = EGRESS
+          VALUE_LIST = (&#39;pypi.org&#39;, &#39;pypi.python.org&#39;, &#39;pythonhosted.org&#39;,  &#39;files.pythonhosted.org&#39;);
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_pipy_access_integration
+        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule)
+        ENABLED = TRUE;
+
+GRANT OWNERSHIP ON COMPUTE POOL PAYERS_GPU_POOL TO ROLE SYSADMIN;
+GRANT OWNERSHIP ON INTEGRATION payers_pipy_access_integration TO ROLE SYSADMIN;
+GRANT OWNERSHIP ON INTEGRATION payers_allow_all_integration TO ROLE SYSADMIN;
+
+USE ROLE SYSADMIN;
+
+-- Create email integration for streamlit app
+CREATE OR REPLACE NOTIFICATION INTEGRATION payers_cc_email_int
+TYPE=EMAIL
+ENABLED=TRUE;
+
+----------------------------------
+----------------------------------
+/*          DATA SETUP          */
+----------------------------------
+----------------------------------
+
+CREATE OR REPLACE FILE FORMAT PAYERS_CC_DB.PAYERS_CC_SCHEMA.CSVFORMAT 
+    SKIP_HEADER = 1
+    TYPE = &#39;CSV&#39;
+    FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39;;
+
+CREATE OR REPLACE STAGE NOTEBOOK DIRECTORY=(ENABLE=true); --to store notebook assets
+CREATE OR REPLACE STAGE CHATBOT_APP DIRECTORY=(ENABLE=true); --to store streamlit assets
+CREATE OR REPLACE STAGE RAW_DATA 
+DIRECTORY = (ENABLE = TRUE) 
+ENCRYPTION=(TYPE=&#39;SNOWFLAKE_SSE&#39;); --to store data assets
+</code></pre>
+<p><strong>Upload files</strong> to the stages within the <code>PAYER_CC_SCHEMA</code><img src="img/9c92b1a2460e274d.png"><img src="img/68c8c4fcbd2f14af.png"><img src="img/32290ab334d09827.png"></p>
+<p>Click ‘+ Files&#39; in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. <strong>Make sure your the files in your stages match the following</strong>:</p>
+<ul>
+<li><strong>Data Files:</strong> Upload data files to the <code>RAW_DATA</code> stage from <a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks/data" target="_blank">data</a>. MAKE SURE TO KEEP THE SAME FOLDER STRUCTURE. <img src="img/28f08172a250edb1.png"><img src="img/d2453c1ba8359012.png"><img src="img/d4448d94de5316c.png"><img src="img/3a1578e862682c91.png"></li>
+<li><strong>Notebook Files:</strong> Upload notebook files to the <code>NOTEBOOK</code> stage from <a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks" target="_blank">notebook</a>. <img src="img/e1de6c4d64dbc84f.png"></li>
+<li><strong>Streamlit Files:</strong> Upload all Streamlit and chatbot-related files to the <code>CHATBOT_APP</code> stage from <a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/scripts/streamlit" target="_blank">streamlit</a>. Remember to upload <a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/streamlit/environment.yml" target="_blank">the streamlit-specific environment.yml</a> file as well. You can also upload the older Streamlit app (<code>payer_assistant_old.py</code>), which does not use Cortex Agents. <img src="img/fa6e2aa6a0217434.png"></li>
+</ul>
+<p>Paste and run the following <a href="https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql" target="_blank">setup.sql</a> in the SQL worksheet to create the Notebooks and Streamlit app from the staged files.</p>
+<pre><code language="language-sql" class="language-sql">TRUNCATE TABLE IF EXISTS CALL_CENTER_MEMBER_DENORMALIZED;
+
+CREATE OR REPLACE TABLE CALL_CENTER_MEMBER_DENORMALIZED (
+    MEMBER_ID NUMBER(38,0),
+    NAME VARCHAR(16777216),
+    DOB DATE,
+    GENDER VARCHAR(16777216),
+    ADDRESS VARCHAR(16777216),
+    MEMBER_PHONE VARCHAR(16777216),
+    PLAN_ID VARCHAR(16777216),
+    PLAN_NAME VARCHAR(16777216),
+    CVG_START_DATE DATE,
+    CVG_END_DATE DATE,
+    PCP VARCHAR(16777216),
+    PCP_PHONE VARCHAR(16777216),
+    PLAN_TYPE VARCHAR(16777216),
+    PREMIUM NUMBER(38,0),
+    SMOKER_IND BOOLEAN,
+    LIFESTYLE_INFO VARCHAR(16777216),
+    CHRONIC_CONDITION VARCHAR(16777216),
+    GRIEVANCE_ID VARCHAR(16777216),
+    GRIEVANCE_DATE DATE,
+    GRIEVANCE_TYPE VARCHAR(16777216),
+    GRIEVANCE_STATUS VARCHAR(16777216),
+    GRIEVANCE_RESOLUTION_DATE DATE,
+    CLAIM_ID VARCHAR(16777216),
+    CLAIM_SERVICE_FROM_DATE DATE,
+    CLAIM_PROVIDER VARCHAR(16777216),
+    CLAIM_SERVICE VARCHAR(16777216),
+    CLAIM_BILL_AMT NUMBER(38,0),
+    CLAIM_ALLOW_AMT NUMBER(38,0),
+    CLAIM_COPAY_AMT NUMBER(38,0),
+    CLAIM_COINSURANCE_AMT NUMBER(38,0),
+    CLAIM_DEDUCTIBLE_AMT NUMBER(38,0),
+    CLAIM_PAID_AMT NUMBER(38,0),
+    CLAIM_STATUS VARCHAR(16777216),
+    CLAIM_PAID_DATE DATE,
+    CLAIM_SERVICE_TO_DATE DATE,
+    CLAIM_SUBMISSION_DATE DATE
+);
+
+COPY INTO CALL_CENTER_MEMBER_DENORMALIZED
+FROM @RAW_DATA/DATA_PRODUCT/CALL_CENTER_MEMBER_DENORMALIZED.csv
+FILE_FORMAT = PAYERS_CC_DB.PAYERS_CC_SCHEMA.CSVFORMAT
+ON_ERROR=CONTINUE
+FORCE = TRUE;
+
+-- Load caller intent training data
+TRUNCATE TABLE IF EXISTS CALLER_INTENT_TRAIN_DATASET;
+
+CREATE OR REPLACE TABLE CALLER_INTENT_TRAIN_DATASET (
+    MEMBER_ID VARCHAR(16777216),
+    RECENT_ENROLLMENT_EVENT_IND BOOLEAN,
+    PCP_CHANGE_IND BOOLEAN,
+    ACTIVE_CM_PROGRAM_IND BOOLEAN,
+    CHRONIC_CONDITION_IND BOOLEAN,
+    ACTIVE_GRIEVANCE_IND BOOLEAN,
+    ACTIVE_CLAIM_IND BOOLEAN,
+    POTENTIAL_CALLER_INTENT_CATEGORY VARCHAR(16777216)
+);
+
+COPY INTO CALLER_INTENT_TRAIN_DATASET
+FROM @RAW_DATA/CALLER_INTENT/CALLER_INTENT_TRAIN_DATASET.csv
+FILE_FORMAT = PAYERS_CC_DB.PAYERS_CC_SCHEMA.CSVFORMAT
+ON_ERROR=CONTINUE
+FORCE = TRUE;
+
+-- Load caller intent prediction data
+TRUNCATE TABLE IF EXISTS CALLER_INTENT_PREDICT_DATASET;
+
+CREATE OR REPLACE TABLE CALLER_INTENT_PREDICT_DATASET (
+    MEMBER_ID VARCHAR(16777216),
+    RECENT_ENROLLMENT_EVENT_IND BOOLEAN,
+    PCP_CHANGE_IND BOOLEAN,
+    ACTIVE_CM_PROGRAM_IND BOOLEAN,
+    CHRONIC_CONDITION_IND BOOLEAN,
+    ACTIVE_GRIEVANCE_IND BOOLEAN,
+    ACTIVE_CLAIM_IND BOOLEAN
+);
+
+COPY INTO CALLER_INTENT_PREDICT_DATASET
+FROM @RAW_DATA/CALLER_INTENT/CALLER_INTENT_PREDICT_DATASET.csv
+FILE_FORMAT = PAYERS_CC_DB.PAYERS_CC_SCHEMA.CSVFORMAT
+ON_ERROR=CONTINUE
+FORCE = TRUE;
+
+-- Make sure staged files can be seen by directory
+ALTER STAGE RAW_DATA REFRESH;
+
+-- Main setup notebook
+CREATE OR REPLACE NOTEBOOK PAYERS_CC_MAIN_SETUP
+FROM &#39;@PAYERS_CC_DB.PAYERS_CC_SCHEMA.NOTEBOOK&#39;
+MAIN_FILE = &#39;payer_setup.ipynb&#39;
+QUERY_WAREHOUSE = &#39;PAYERS_CC_WH&#39;
+COMPUTE_POOL=&#39;PAYERS_GPU_POOL&#39;
+RUNTIME_NAME=&#39;SYSTEM$GPU_RUNTIME&#39;;
+
+ALTER NOTEBOOK PAYERS_CC_MAIN_SETUP ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK PAYERS_CC_MAIN_SETUP set external_access_integrations = (
+&#34;PAYERS_PIPY_ACCESS_INTEGRATION&#34;, 
+&#34;PAYERS_ALLOW_ALL_INTEGRATION&#34;);
+
+CREATE OR REPLACE STREAMLIT PAYERS_CC_CHATBOT
+ROOT_LOCATION = &#39;@PAYERS_CC_DB.PAYERS_CC_SCHEMA.CHATBOT_APP&#39;
+MAIN_FILE = &#39;payer_assistant.py&#39;
+QUERY_WAREHOUSE = &#39;PAYERS_CC_WH&#39;
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;payer_call_center_assistant_v2&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;streamlit&#34;}}&#39;;
+
+CREATE OR REPLACE STREAMLIT PAYERS_CC_CHATBOT_OLD
+ROOT_LOCATION = &#39;@PAYERS_CC_DB.PAYERS_CC_SCHEMA.CHATBOT_APP&#39;
+MAIN_FILE = &#39;payer_assistant_old.py&#39;
+QUERY_WAREHOUSE = &#39;PAYERS_CC_WH&#39;
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;payer_call_center_assistant_v2&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;streamlit&#34;}}&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Access Setup Notebook" duration="20">
+        <p>The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.</p>
+<p>To access it, navigate to Snowsight, select the <code>SYSADMIN</code> role, and click the Project, click the Notebooks tab. Open <code>PAYERS_CC_MAIN_SETUP</code> and run each of the cells.</p>
+<p class="image-container"><img src="img/e4c902329440689a.png"></p>
+<p>Within this notebook, you&#39;ll prepare all the unstructured data needed before you can run the Streamlit App. Once this data is processed, the chatbot will have a rich knowledge base to start from that&#39;s all stored within the Cortex Search and Cortex Analyst services.</p>
+<p>You will also predict the intent of a caller using historical data.This will allow Contact Center Agents to be better prepared when faced with an incoming call.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Streamlit Application" duration="20">
+        <p>The Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the <code>SYSADMIN</code> role, and under Projects, click the Streamlit tab. Open <code>PAYERS_CC_CHATBOT</code> and explore.</p>
+<p>This app simulates a few different scenarios where Contact Center Agents have to assist with incoming calls. You will find sample questions and other configs in the sidebar.</p>
+<p class="image-container"><img src="img/53f09390690ca084.png"></p>
+<p>You can also open <code>PAYERS_CC_CHATBOT_OLD</code> to access the version that does not include Cortex Agents to show you what a more manual &#34;agentic&#34; flow would look like.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI-powered Assistant for a Contact Center.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use Snowflake Notebooks for unstructured data processing</li>
+<li>How to build a Caller Intent ML Classification Model and execute predictions with low-code using Snowflake&#39;s ML Functions</li>
+<li>How to leverage Cortex Search for a hybrid (vector and keyword) search engine on text data</li>
+<li>How to use Cortex LLM functions (Cortex Complete) for access to industry-leading large language models (LLMs)</li>
+<li>How to use Cortex Agents to orchestrate between structured and unstructured data sources</li>
+<li>How to prototype a UI using Streamlit</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Docs: Snowflake Notebooks on Container Runtime</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex.html" target="_blank">Docs: Snowflake Cortex</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ml-functions/classification" target="_blank">Docs: Snowflake ML Classification</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Docs: Streamlit</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0" target="_blank">Quickstart: Getting Started with Cortex Agents</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_agents_api_and_react/index.html?index=..%2F..index#0" target="_blank">Quickstart: Getting Started with Snowflake Cortex Agents API and React</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

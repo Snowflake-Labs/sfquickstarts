@@ -1,0 +1,266 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Deploying Models from AzureML and Sagemaker to Snowpark ML</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="deploying_models_from_azureml_and_sagemaker_to_snowparkml"
+                  title="Deploying Models from AzureML and Sagemaker to Snowpark ML"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>In this quickstart we will walk you through how to access models deployed with Snowflake&#39;s major CSP partners and deploy them to Snowflake.</p>
+<p>In summary this is what you will do:</p>
+<ul>
+<li>Learn how to deploy models to the Snowpark ML registry from a Sagemaker and/or AzureML registry.</li>
+<li>Understand the nuance of deploying models from these platforms to Snowpark ML.</li>
+</ul>
+<h2 is-upgraded>What is Snowpark ML</h2>
+<p>Snowpark ML is the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake, including components for model development and operations. With Snowpark ML, you can use familiar Python frameworks for preprocessing, feature engineering, and training. You can deploy and manage models entirely in Snowflake without any data movement, silos, or governance tradeoffs.</p>
+<p>A part of Snowpark ML Operations (MLOps), the Snowpark Model Registry allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The Snowpark Model Registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using Snowpark ML. Models can have multiple versions, and you can designate a version as the default.</p>
+<p>More details on Snowpark ML can be found in Snowflake&#39;s <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">documentation</a></p>
+<h2 is-upgraded>What is Amazon Sagemaker?</h2>
+<p>Amazon SageMaker is a fully managed machine learning (ML) service. With SageMaker, data scientists and developers can quickly and confidently build, train, and deploy ML models into a production-ready hosted environment. It provides a UI experience for running ML workflows that makes SageMaker ML tools available across multiple integrated development environments (IDEs).</p>
+<h2 is-upgraded>What is AzureML?</h2>
+<p>Azure Machine Learning empowers data scientists and developers to build, deploy, and manage high-quality models faster and with confidence. It accelerates time to value with industry-leading machine learning operations (MLOps), open-source interoperability, and integrated tools. This trusted AI learning platform is designed for responsible AI applications in machine learning.</p>
+<h2 is-upgraded>Pre-requisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account.</li>
+<li><a href="https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/" target="_blank">AWS Account</a>.</li>
+<li>The AWS account should be a sandbox account with open network policies or you you should <a href="https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html" target="_blank">create a VPC</a> in the same region as the Snowflake account with access to Sagemaker.</li>
+<li>Similarly users will want to have an <a href="https://azure.microsoft.com/en-us/free" target="_blank">Azure Account</a> with an AzureML with open network policies or a VNET n the same region as the Snowflake account with access to AzureML.</li>
+<li>A model registered in either Sagemaker or AzureML.</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>In this quickstart you will work through two examples of how to deploy models to Snowpark ML Registries from cloud CSPs. The workflow provided is relevant to #3 in the architectures below.</p>
+<h3 is-upgraded>Azure + Snowpark ML</h3>
+<p class="image-container"><img src="img/d05e893a551d9a65.png"></p>
+<h3 is-upgraded>AWS + Snowpark ML</h3>
+<p class="image-container"><img src="img/4910de69118112da.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Case / Workload" duration="5">
+        <p>Customers who use Snowflake with AzureML or AWS Sagemaker will have models trained and registered in either cloud ML tool and may prefer to deploy those models to Snowflake for batch inference. Often it&#39;s the case that all (or most) of the inference data is in Snowflake and customers prefer the ease of use, performance and security of having the model deployed in Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Solution and Workbooks" duration="10">
+        <p>*Please review the &#34;Important Notes&#34; section below before preparing your code to run.</p>
+<h2 is-upgraded>Sagemaker</h2>
+<p>For models registered in the AWS Sagemaker model registry you can use the code below  to access the model from the Sagemaker registry and push it to the Snowflake registry.</p>
+<pre><code language="language-python" class="language-python"># import packages
+import boto3
+from sagemaker import get_execution_role
+import sagemaker
+from joblib import load
+
+# create clients for S3 and sagemaker
+s3 = boto3.client(&#34;s3&#34;)
+sm_boto3 = boto3.client(&#34;sagemaker&#34;)
+sess = sagemaker.Session()
+
+
+# using model arn from model registry describe model details
+sm_client = boto3.Session().client(&#39;sagemaker&#39;)
+sm_client.describe_model_package(ModelPackageName=&#39;&lt;model arn&gt;&#39;)
+
+# download model from S3 using information from above
+s3_client = boto3.client(&#39;s3&#39;)
+s3_client.download_file(&#39;&lt;bucket from ModelDataUrl&gt;&#39;, &#39;model file path from ModelDataURL&#39;, &#39;&lt;new model name in local sagemaker env&gt;.tar.gz&#39;)
+
+# unzip and load model
+!tar -xf &#39;&lt;new model name in local sagemaker env&gt;.tar.gz&#39; -C .
+sm_model = load(&#34;model.joblib&#34;)
+sm_model
+
+# connect to Snowflake with Snowpark
+import pandas as pd
+from snowflake.snowpark.session import Session
+from snowflake.snowpark.functions import *
+from snowflake.snowpark.types import *
+from snowflake.ml.registry import registry
+
+connection_parameters = {
+    &#34;account&#34;: &#34;&lt;locator&gt;&#34;, # e.g. xy12345.us-east-2.aws 
+    &#34;user&#34;: &#34;&lt;username&gt;&#34;, 
+    &#34;password&#34;: &#34;&lt;password&gt;&#34;,
+    &#34;role&#34;: &#34;&lt;role&gt;&#34;,
+    &#34;warehouse&#34;: &#34;&lt;virtual warehouse&gt;&#34;,
+    &#34;database&#34;: &#34;&lt;database&gt;&#34;,
+    &#34;schema&#34;: &#34;&lt;schema&gt;&#34;
+    }
+session = Session.builder.configs(connection_parameters).create()
+
+# connect to Snowpark registry and log model
+reg = registry.Registry(session=session)
+reg.log_model(sm_model, model_name=&#39;&lt;name of model in Snowflake&gt;&#39;, version_name=&#39;v1&#39;, sample_input_data=&lt;sample dataframe&gt;)
+
+# verify model deployment and view functions associated with the model
+mv = reg.get_model(&#39;&lt;name of model in Snowflake&gt;&#39;).version(&#39;v1&#39;)
+mv.show_functions()
+</code></pre>
+<h2 is-upgraded>Azure ML</h2>
+<p>For models registered in the AzureML model registry you can use the code below to access the model from the AzureML registry and push it to the Snowflake registry.</p>
+<pre><code language="language-python" class="language-python">from azureml.core import Workspace, Dataset
+import numpy as np
+
+# Connect to the Workspace
+ws = Workspace.from_config()
+
+# Access model using model name
+from azureml.core import Model
+model_path = Model.get_model_path(model_name = &#39;&lt;model name&gt;&#39;, version = 1, _workspace= ws)
+model_path
+
+# Load model
+from joblib import load
+aml_model = load(model_path + &#34;/model.pkl&#34;)
+aml_model
+
+# Look at model environment
+with open(model_path +  &#39;/./python_env.yaml&#39;) as f:
+    print(f.read())
+
+# Look at model requirements
+with open(model_path +  &#39;/./requirements.txt&#39;) as f:
+    print(f.read())
+
+# connect to Snowflake with Snowpark
+import pandas as pd
+from snowflake.snowpark.session import Session
+from snowflake.snowpark.functions import *
+from snowflake.snowpark.types import *
+from snowflake.ml.registry import registry
+
+connection_parameters = {
+    &#34;account&#34;: &#34;&lt;locator&gt;&#34;, # e.g. xy12345.us-east-2.aws 
+    &#34;user&#34;: &#34;&lt;username&gt;&#34;, 
+    &#34;password&#34;: &#34;&lt;password&gt;&#34;,
+    &#34;role&#34;: &#34;&lt;role&gt;&#34;,
+    &#34;warehouse&#34;: &#34;&lt;virtual warehouse&gt;&#34;,
+    &#34;database&#34;: &#34;&lt;database&gt;&#34;,
+    &#34;schema&#34;: &#34;&lt;schema&gt;&#34;
+    }
+session = Session.builder.configs(connection_parameters).create()
+
+# connect to Snowpark registry and log model
+reg = registry.Registry(session=session)
+reg.log_model(aml_model, model_name=&#39;&lt;name of model in Snowflake&gt;&#39;, version_name=&#39;v1&#39;, sample_input_data=&lt;sample dataframe&gt;)
+
+# verify model deployment and view functions associated with the model
+mv = reg.get_model(&#39;&lt;name of model in Snowflake&gt;&#39;).version(&#39;v1&#39;)
+mv.show_functions()
+
+</code></pre>
+<p>Both of these notebooks can also be found <a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml" target="_blank">here</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Important Notes" duration="10">
+        <p>For both AzureML and Sagemaker deployment patterns users will need to make sure that they have properly installed all of the necessary libraries in their Python environments. For the required Snowflake packages this can usually be done with the instructions <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index#installing-snowpark-ml" target="_blank">here</a></p>
+<p>Additionally, when using log_model() to push the model into the Snowflake registry users may need to use specific dependencies and versions. This can be done with an additional argument in the function. Please see the documentation <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/reference/latest/api/registry/snowflake.ml.registry.Registry#snowflake.ml.registry.Registry" target="_blank">here</a></p>
+<p>An example will look like this:</p>
+<pre><code language="language-python" class="language-python">reg = registry.Registry(session=session)
+reg.log_model(sm_model, model_name=&#39;&lt;name of model in Snowflake&gt;&#39;, version_name=&#39;v1&#39;, sample_input_data=&lt;sample dataframe&gt;)
+
+reg.log_model(sm_model, model_name=&#39;&lt;name of model in Snowflake&gt;&#39;, version_name=&#39;v1&#39;, sample_input_data=&lt;sample dataframe&gt;,conda_dependencies=[&#34;mlflow&lt;=2.4.0&#34;, &#34;scikit-learn&#34;, &#34;scipy&#34;])
+</code></pre>
+<p>Users will want to make sure that their model is supported by libraries that are included in the Snowflake <a href="https://repo.anaconda.com/pkgs/snowflake/" target="_blank">conda channel</a>.</p>
+<p>If the model is not supported then users will need to consider installing the libraries as 3rd party packages or using <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services to deploy their model as an application</a>.</p>
+<p>With Sagemaker there is no way easy programmatic way to access the dependencies associated with a registered model. Customers are advised to be aware of the libraries used to build/train models so they can better understand what is required to deploy models to Snowflake. If customers are unaware of those dependencies they can reference the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/docker-containers-prebuilt.html" target="_blank">Sagemaker prebuilt docker containers here to review the source code and requirements</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Benefits of Deploying to Snowpark ML Registries" duration="5">
+        <p>Customers prefer deploying models to Snowpark for several reasons. These reasons include: Bringing the model to the inference data. If all (or most) of your inference data is in Snowflake then having the model with the data makes for a more efficient and secure experience. Data doesn&#39;t have to leave the Snowflake plane and results are returned more quickly Security and Flexibility. With the model deployed in the SnowparkML Registry admins can leverage Snowflake&#39;s RBAC to easily control access and organizations have the flexibility to allow privileged users the ability to generate predictions with their Snowpark model. Enhanced prediction functionality. With SnowparkML models registered now come pre built with robust inference functionality like predict(), predict_proba() and decision_functiuon() so that more can be done with models deployed to SnowparkML</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="5">
+        <h2 is-upgraded>What we covered</h2>
+<p>Working through the provided notebooks you likely used one of two examples that allowed you to deploy models to Snowpark ML Registries from cloud CSPs, that you can now access from Snowflake to generate inference from a model that is deployed in the same environment as your data!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to access models and dependencies from CSP ML platforms.</li>
+<li>How to deploy those models to Snwopark ML.</li>
+</ul>
+<h2 is-upgraded>Things to Consider</h2>
+<p>There are several things to be aware of when deploying model to SnowparkML registries, they are:</p>
+<ol type="1">
+<li>Models deployed to SnowparkML should be batch or micro-batch inference use cases. True real-time inference use cases are not supported by SnowparkML deployments.</li>
+<li>Model monitoring and tracking is not currently supported by SnowparkML so users will have to manually create reports in order to track model deployments.</li>
+<li>As previously mentioned the Snowpark Warehouse comes with a robust set of libraries however if users are using additional libraries they will have to install those libraries as 3rd party packages prior to deployment.</li>
+</ol>
+<h2 is-upgraded>Related resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">Snowpark ML</a></li>
+<li><a href="https://docs.aws.amazon.com/sagemaker/" target="_blank">Sagemaker Documentation</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/machine-learning/?view=azureml-api-2" target="_blank">Azure ML</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html?index=..%2F..index#0" target="_blank">Introduction to ML with Snowpark ML</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

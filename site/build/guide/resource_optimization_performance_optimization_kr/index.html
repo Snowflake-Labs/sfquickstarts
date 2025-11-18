@@ -1,0 +1,441 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>리소스 최적화: 성능</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="resource_optimization_performance_optimization_kr"
+                  title="리소스 최적화: 성능"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="개요" duration="0">
+        <p>이 <a href="https://www.snowflake.com/blog/understanding-snowflakes-resource-optimization-capabilities/" target="_blank">블로그 포스트</a>는 여러분이 Snowflake의 리소스 최적화 기능을 더 잘 이해할 수 있도록 합니다.</p>
+<h2 is-upgraded>성능</h2>
+<p>이 가이드에 제공된 쿼리는 다양한 요인으로 인한 낮은 성능이 과도한 소비를 초래할 수도 있는 영역을 확인하는 것과 관계된 쿼리 설정과 실행에 도움을 주기 위한 것입니다.</p>
+<h2 is-upgraded>학습할 내용</h2>
+<ul>
+<li>성능을 개선할 수 있는 영역 확인 방법</li>
+<li>낮은 성능이 과도한 소비를 초래하는 워크로드 분석 방법</li>
+<li>스케일 업 또는 스케일 아웃으로 이점을 누릴 수 있는 웨어하우스 식별 방법</li>
+</ul>
+<h2 is-upgraded>필요한 것</h2>
+<ul>
+<li><a href="https://www.snowflake.com/" target="_blank">Snowflake</a> 계정</li>
+<li><a href="https://docs.snowflake.com/ko/sql-reference/account-usage.html#enabling-account-usage-for-other-roles" target="_blank">계정 사용량 데이터 공유</a>를 보기 위한 액세스</li>
+</ul>
+<h2 is-upgraded>관련 자료</h2>
+<ul>
+<li>리소스 최적화: 설정 및 구성</li>
+<li>리소스 최적화: 사용량 모니터링</li>
+<li>리소스 최적화: 청구 메트릭</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="쿼리 계층" duration="0">
+        <p>리소스 최적화 Snowflake 빠른 시작 내에 있는 각 쿼리 이름의 오른쪽에는 ‘(T*)&#39;로 계층 지정이 있습니다.  다음 계층 설명은 이러한 지정을 더 잘 이해하는 데 도움이 됩니다.</p>
+<h2 is-upgraded>계층 1 쿼리</h2>
+<p>본질적으로 계층 1 쿼리는 Snowflake의 리소스 최적화에 매우 중요합니다. 또한 각 고객이 규모, 업계, 위치 등에 관계없이 자신의 소비 모니터링에 대해 도움을 받기 위해 사용해야 합니다.</p>
+<h2 is-upgraded>계층 2 쿼리</h2>
+<p>계층 2 쿼리는 리소스 최적화에 대한 추가적인 깊이를 제공하는 동시에 프로세스에서 중요한 역할을 수행합니다. 또한 모든 고객과 고객의 워크로드에 필수적이지는 않을지라도 과도한 소비가 확인되었을 수 있는 모든 추가 영역에 대한 추가적인 설명을 제공할 수 있습니다.</p>
+<h2 is-upgraded>계층 3 쿼리</h2>
+<p>마지막으로 계층 3 쿼리는 Snowflake 소비를 최적화하는 데 있어서 모든 부분을 확인하고자 하는 고객이 사용할 수 있도록 설계되었습니다.  이러한 쿼리는 이 프로세스에서 여전히 매우 유용하지만 계층 1 및 2의 쿼리만큼 중요하지는 않습니다.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Ingest with Snowpipe and &#34;Copy&#34; (T1)" duration="0">
+        <h5 is-upgraded>계층 1</h5>
+<h3 is-upgraded>설명:</h3>
+<p>이 쿼리는 Snowflake에서 각 테이블을 위해 모든 로드의 집계된 일별 요약을 반환합니다. 이는 평균 파일 크기, 총열, 총볼륨 및 수집 메서드(복사 또는 Snowpipe)를 나타냅니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>이러한 개괄적 정보를 통해 파일 크기가 이상적인 수집에 너무 작거나 큰지를 결정할 수 있습니다. 볼륨을 크레딧 소비와 매핑할 수 있다면 어떤 테이블이 로드된 TB당 더 많은 크레딧을 소비하는지 결정할 수 있습니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT 
+  TO_DATE(LAST_LOAD_TIME) as LOAD_DATE
+  ,STATUS
+  ,TABLE_CATALOG_NAME as DATABASE_NAME
+  ,TABLE_SCHEMA_NAME as SCHEMA_NAME
+  ,TABLE_NAME
+  ,CASE WHEN PIPE_NAME IS NULL THEN &#39;COPY&#39; ELSE &#39;SNOWPIPE&#39; END AS INGEST_METHOD
+  ,SUM(ROW_COUNT) as ROW_COUNT
+  ,SUM(ROW_PARSED) as ROWS_PARSED
+  ,AVG(FILE_SIZE) as AVG_FILE_SIZE_BYTES
+  ,SUM(FILE_SIZE) as TOTAL_FILE_SIZE_BYTES
+  ,SUM(FILE_SIZE)/POWER(1024,1) as TOTAL_FILE_SIZE_KB
+  ,SUM(FILE_SIZE)/POWER(1024,2) as TOTAL_FILE_SIZE_MB
+  ,SUM(FILE_SIZE)/POWER(1024,3) as TOTAL_FILE_SIZE_GB
+  ,SUM(FILE_SIZE)/POWER(1024,4) as TOTAL_FILE_SIZE_TB
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;COPY_HISTORY&#34;
+GROUP BY 1,2,3,4,5,6
+ORDER BY 3,4,5,1,2
+;
+</code></pre>
+<h3 is-upgraded>스크린샷</h3>
+<p class="image-container"><img alt="alt-tlext-here" src="img/a240390ca369b7df.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Scale Up vs. Out (Size vs. Multi-cluster) (T2)" duration="0">
+        <h5 is-upgraded>계층 2</h5>
+<h3 is-upgraded>설명:</h3>
+<p>MCW 설정 또는 더 큰 사이즈로 스케일 업하여 이점을 누릴 수 있는 웨어하우스 및 시간을 목록으로 나열하는 별도의 쿼리 2개입니다</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>웨어하우스에서 경합을 초래하는 웨어하우스, 시간 또는 사용자 재구성을 결정하기 위해 이 목록을 사용합니다</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">--LIST OF WAREHOUSES AND DAYS WHERE MCW COULD HAVE HELPED
+SELECT TO_DATE(START_TIME) as DATE
+,WAREHOUSE_NAME
+,SUM(AVG_RUNNING) AS SUM_RUNNING
+,SUM(AVG_QUEUED_LOAD) AS SUM_QUEUED
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;WAREHOUSE_LOAD_HISTORY&#34;
+WHERE TO_DATE(START_TIME) &gt;= DATEADD(month,-1,CURRENT_TIMESTAMP())
+GROUP BY 1,2
+HAVING SUM(AVG_QUEUED_LOAD) &gt;0
+;
+
+--LIST OF WAREHOUSES AND QUERIES WHERE A LARGER WAREHOUSE WOULD HAVE HELPED WITH REMOTE SPILLING
+SELECT QUERY_ID
+,USER_NAME
+,WAREHOUSE_NAME
+,WAREHOUSE_SIZE
+,BYTES_SCANNED
+,BYTES_SPILLED_TO_REMOTE_STORAGE
+,BYTES_SPILLED_TO_REMOTE_STORAGE / BYTES_SCANNED AS SPILLING_READ_RATIO
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE BYTES_SPILLED_TO_REMOTE_STORAGE &gt; BYTES_SCANNED * 5  -- Each byte read was spilled 5x on average
+ORDER BY SPILLING_READ_RATIO DESC
+;
+</code></pre>
+<h3 is-upgraded>스크린샷</h3>
+<p class="image-container"><img alt="alt-tlext-here" src="img/f5c5090c7ff0f651.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouse Cache Usage (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>웨어하우스 캐시에서 스캔한 데이터의 비율을 나타내는 웨어하우스에 의해 분석된 모든 쿼리에 걸쳐 집계합니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>쿼리/보고에서 사용되었으며 낮은 비율을 가진 웨어하우스를 찾습니다. 이는 웨어하우스가 너무 빨리 일시 중단됨을 나타냅니다</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">SELECT WAREHOUSE_NAME
+,COUNT(*) AS QUERY_COUNT
+,SUM(BYTES_SCANNED) AS BYTES_SCANNED
+,SUM(BYTES_SCANNED*PERCENTAGE_SCANNED_FROM_CACHE) AS BYTES_SCANNED_FROM_CACHE
+,SUM(BYTES_SCANNED*PERCENTAGE_SCANNED_FROM_CACHE) / SUM(BYTES_SCANNED) AS PERCENT_SCANNED_FROM_CACHE
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE START_TIME &gt;= dateadd(month,-1,current_timestamp())
+AND BYTES_SCANNED &gt; 0
+GROUP BY 1
+ORDER BY 5
+;
+</code></pre>
+<h3 is-upgraded>스크린샷</h3>
+<p class="image-container"><img alt="alt-tlext-here" src="img/9ea37343adf8b828.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Heavy Scanners (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>많은 양의 데이터를 스캔하는 쿼리를 실행하는 순서가 지정된 사용자 목록입니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>이는 사용자를 학습시키거나 클러스터링을 활성화할 수 있는 잠재적 기회입니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select 
+  User_name
+, warehouse_name
+, avg(case when partitions_total &gt; 0 then partitions_scanned / partitions_total else 0 end) avg_pct_scanned
+from   snowflake.account_usage.query_history
+where  start_time::date &gt; dateadd(&#39;days&#39;, -45, current_date)
+group by 1, 2
+order by 3 desc
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Full Table Scans by User (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>이러한 쿼리는 거의 모든 테이블 검색을 통해 대부분 쿼리를 실행하는 사용자 목록과 쿼리 자체의 목록입니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>이는 사용자를 학습시키거나 클러스터링을 활성화할 수 있는 잠재적 기회입니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">--who are the users with the most (near) full table scans
+SELECT USER_NAME
+,COUNT(*) as COUNT_OF_QUERIES
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE START_TIME &gt;= dateadd(month,-1,current_timestamp())
+AND PARTITIONS_SCANNED &gt; (PARTITIONS_TOTAL*0.95)
+AND QUERY_TYPE NOT LIKE &#39;CREATE%&#39;
+group by 1
+order by 2 desc;
+
+-- This gives all queries in the last month with nearly a full table scan :) &gt; 95%, ordered by the worst offending
+SELECT * 
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE START_TIME &gt;= dateadd(month,-1,current_timestamp())
+AND PARTITIONS_SCANNED &gt; (PARTITIONS_TOTAL*0.95)
+AND QUERY_TYPE NOT LIKE &#39;CREATE%&#39;
+ORDER BY PARTITIONS_SCANNED DESC
+LIMIT 50  -- Configurable threshold that defines &#34;TOP N=50&#34;
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Top 10 Spillers Remote (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>원격 저장소로 분산되는 바이트 양에 따라 문제를 초래하는 상위 쿼리 10개를 식별합니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>이러한 쿼리는 더 많은 로컬 저장소와 메모리를 보유하고 있는 더 큰 웨어하우스에서 실행될 가능성이 매우 높습니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">select query_id, substr(query_text, 1, 50) partial_query_text, user_name, warehouse_name, warehouse_size, 
+       BYTES_SPILLED_TO_REMOTE_STORAGE, start_time, end_time, total_elapsed_time/1000 total_elapsed_time
+from   snowflake.account_usage.query_history
+where  BYTES_SPILLED_TO_REMOTE_STORAGE &gt; 0
+and start_time::date &gt; dateadd(&#39;days&#39;, -45, current_date)
+order  by BYTES_SPILLED_TO_REMOTE_STORAGE desc
+limit 10
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="AutoClustering History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>지난 한 해 동안 주별로 그룹화된 Auto-Clustering에 의해 소비된 일별 평균 크레딧입니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>한 해에 걸친 일별 평균에서 변칙을 찾습니다. 소비 급증 또는 변화를 조사할 기회입니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;AUTOMATIC_CLUSTERING_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Materialized Views History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>지난 한 해 동안 주별로 그룹화된 Materialized Views에 의해 소비된 일별 평균 크레딧입니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>한 해에 걸친 일별 평균에서 변칙을 찾습니다. 소비 급증 또는 변화를 조사할 기회입니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;MATERIALIZED_VIEW_REFRESH_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Search Optimization History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>지난 한 해 동안 주별로 그룹화된 Search Optimization에 의해 소비된 일별 평균 크레딧입니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>한 해에 걸친 일별 평균에서 변칙을 찾습니다. 소비 급증 또는 변화를 조사할 기회입니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;SEARCH_OPTIMIZATION_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowpipe History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>지난 한 해 동안 주별로 그룹화된 Snowpipe에 의해 소비된 일별 평균 크레딧입니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>한 해에 걸친 일별 평균에서 변칙을 찾습니다. 소비 급증 또는 변화를 조사할 기회입니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;PIPE_USAGE_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Replication History &amp; 7-Day Average (T3)" duration="0">
+        <h5 is-upgraded>계층 3</h5>
+<h3 is-upgraded>설명:</h3>
+<p>지난 한 해 동안 주별로 그룹화된 Replication에 의해 소비된 일별 평균 크레딧입니다.</p>
+<h3 is-upgraded>결과 해석 방법:</h3>
+<p>한 해에 걸친 일별 평균에서 변칙을 찾습니다. 소비 급증 또는 변화를 조사할 기회입니다.</p>
+<h3 is-upgraded>주요 스키마:</h3>
+<p>Account_Usage</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">WITH CREDITS_BY_DAY AS (
+SELECT TO_DATE(START_TIME) as DATE
+,SUM(CREDITS_USED) as CREDITS_USED
+
+
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;REPLICATION_USAGE_HISTORY&#34;
+
+WHERE START_TIME &gt;= dateadd(year,-1,current_timestamp()) 
+GROUP BY 1
+ORDER BY 2 DESC 
+  )
+  
+SELECT DATE_TRUNC(&#39;week&#39;,DATE)
+,AVG(CREDITS_USED) as AVG_DAILY_CREDITS
+FROM CREDITS_BY_DAY
+GROUP BY 1
+ORDER BY 1
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

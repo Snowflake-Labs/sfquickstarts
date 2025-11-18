@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran",
+  "duration": 60,
+  "title": "Analyzing SAP Accounts Payables with NTT DATA's Snowflake Native App and Fivetran",
+  "summary": "This is the Fivetran NTT SAP AP Guide",
+  "source": "analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran/analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran"
+}

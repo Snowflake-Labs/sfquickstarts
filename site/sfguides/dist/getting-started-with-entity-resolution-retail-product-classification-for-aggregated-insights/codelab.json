@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "getting-started-with-entity-resolution-retail-product-classification-for-aggregated-insights",
+  "duration": 0,
+  "title": "Getting Started with Entity Resolution: Retail Product Classification for Aggregated Insights",
+  "summary": "This application provides a centralized, AI-driven approach to match products across retailer and e-commerce catalogs to aggregate data, with the potential to enable competitve price tracking, enhanced supply chain management and much, much more.",
+  "source": "entity_resolution_for_product_matching/entity_resolution_for_product_matching.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "cortex"
+  ],
+  "tags": [
+    "dataengineering",
+    "genai",
+    "snowflakecortex",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-entity-resolution-retail-product-classification-for-aggregated-insights"
+}

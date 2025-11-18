@@ -1,0 +1,229 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Warehouse Utilization App in Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="warehouse-utilization"
+                  title="Build Warehouse Utilization App in Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Learn how to create an interactive visualization tool that helps you analyze (and optimize) your Snowflake warehouse usage patterns. Using Snowflake Notebooks with Streamlit, you&#39;ll build a heatmap dashboard that reveals peak usage hours and potential cost optimization opportunities.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to query warehouse utilization data from Snowflake</li>
+<li>Creating interactive widgets with Streamlit</li>
+<li>Building heatmap visualizations using Altair</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An interactive dashboard featuring a heatmap visualization of warehouse usage patterns across different hours of the day, thereby helping to identify peak usage times and opportunities for optimization.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic familiarity with SQL and Python</li>
+<li>Understanding of Snowflake <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">warehouses</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Warehouse_Utilization_with_Streamlit/Warehouse_Utilization_with_Streamlit.ipynb" target="_blank">Warehouse_Utilization_with_Streamlit.ipynb</a> to download the Notebook from GitHub.</p>
+<p>Notebooks comes pre-installed with common Python libraries for data science and machine learning, including numpy, pandas, matplotlib, and more! For this particular use case, there&#39;s no further library to add to the working environment. If you need additional packages, use the Packages dropdown on the top right to add them to your notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Retrieve Warehouse Data" duration="8">
+        <h2 is-upgraded>Write the Query</h2>
+<p>First, we&#39;ll query the warehouse utilization data available from <code>SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_LOAD_HISTORY</code>:</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    DATE(start_time) AS usage_date,
+    HOUR(start_time) AS hour_of_day,
+    warehouse_name,
+    avg_running,
+    avg_queued_load,
+    start_time,
+    end_time
+FROM snowflake.account_usage.warehouse_load_history
+WHERE start_time &gt;= DATEADD(month, -1, CURRENT_TIMESTAMP())
+ORDER BY warehouse_name, start_time;
+</code></pre>
+<p>Note: The above SQL cell is named <code>sql_warehouse_data</code>.</p>
+<h2 is-upgraded>Converting to DataFrame</h2>
+<p>Convert the above SQL results to a Pandas DataFrame:</p>
+<pre><code language="language-python" class="language-python">sql_warehouse_data.to_pandas()
+</code></pre>
+<p>The retrieved data looks like the following:</p>
+<p>Note: The above Python cell is named <code>py_dataframe</code>.</p>
+<p class="image-container"><img alt="image" src="img/741738f53bbbeed0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an Interactive Interface" duration="8">
+        <h2 is-upgraded>Build the Slider Widget</h2>
+<p>Let&#39;s create an interactive slider using Streamlit. This would allow users to select the number of days to analyze, which would filter the DataFrame.</p>
+<p>Finally, we&#39;ll calculate the total warehouse load (<code>TOTAL_LOAD</code>) and format the hour display (<code>HOUR_DISPLAY</code>) for each record.</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+import streamlit as st
+
+# Get data
+df = py_dataframe.copy()
+
+# Create date filter slider
+days = st.slider(&#39;Select number of days to analyze&#39;, 
+                 min_value=10, 
+                 max_value=90, 
+                 value=30, 
+                 step=10)
+
+# Filter data based on selected days and create a copy
+latest_date = pd.to_datetime(df[&#39;USAGE_DATE&#39;]).max()
+cutoff_date = latest_date - pd.Timedelta(days=days)
+filtered_df = df[pd.to_datetime(df[&#39;USAGE_DATE&#39;]) &gt; cutoff_date].copy()
+
+# Prepare data and create heatmap
+filtered_df[&#39;TOTAL_LOAD&#39;] = filtered_df[&#39;AVG_RUNNING&#39;] + filtered_df[&#39;AVG_QUEUED_LOAD&#39;]
+filtered_df[&#39;HOUR_DISPLAY&#39;] = filtered_df[&#39;HOUR_OF_DAY&#39;].apply(lambda x: f&#34;{x:02d}:00&#34;)
+
+st.warning(f&#34;You&#39;ve selected {days} days to analyze!&#34;)
+filtered_df
+</code></pre>
+<p>The interactive interface that we&#39;ve created using Streamlit is shown below along with the filtered DataFrame:</p>
+<p class="image-container"><img alt="image" src="img/cbfadd28ec5c3406.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize Usage Patterns" duration="8">
+        <h2 is-upgraded>Create the Heatmap</h2>
+<p>Finally, we&#39;re creating a heatmap using Altair.</p>
+<p>The heatmap shows the warehouse usage pattern across different hours of the day. Color intensity represents the total load and interactive tooltips showing detailed metrics for each cell.</p>
+<pre><code language="language-python" class="language-python">import altair as alt
+import streamlit as st
+
+chart = alt.Chart(filtered_df).mark_rect(
+    stroke=&#39;black&#39;,
+    strokeWidth=1
+).encode(
+    x=alt.X(&#39;HOUR_DISPLAY:O&#39;, 
+            title=&#39;Hour of Day&#39;,
+            axis=alt.Axis(
+                labels=True,
+                tickMinStep=1,
+                labelOverlap=False
+            )),
+    y=alt.Y(&#39;WAREHOUSE_NAME:N&#39;, 
+            title=&#39;Warehouse Name&#39;,
+            axis=alt.Axis(
+                labels=True,
+                labelLimit=200,
+                tickMinStep=1,
+                labelOverlap=False,
+                labelPadding=10
+            )),
+    color=alt.Color(&#39;TOTAL_LOAD:Q&#39;, title=&#39;Total Load&#39;),
+    tooltip=[&#39;WAREHOUSE_NAME&#39;, &#39;HOUR_DISPLAY&#39;, &#39;TOTAL_LOAD&#39;, 
+            &#39;AVG_RUNNING&#39;, &#39;AVG_QUEUED_LOAD&#39;]
+).properties(
+    title=f&#39;Warehouse Usage Patterns ({days} Days)&#39;
+).configure_view(
+    stroke=None,
+    continuousHeight=400
+).configure_axis(
+    labelFontSize=10
+)
+
+# Display the chart
+st.altair_chart(chart, use_container_width=True)
+</code></pre>
+<p>Here&#39;s the heatmap displaying the warehouse usage patterns:</p>
+<p class="image-container"><img alt="image" src="img/645565a708eeaf36.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an interactive warehouse utilization app that helps to identify usage patterns and optimization opportunities. This tool will help you make data-driven decisions about warehouse sizing and scheduling.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Queried warehouse utilization data from Snowflake</li>
+<li>Built an interactive interface with Streamlit</li>
+<li>Created an informative heatmap visualizations</li>
+<li>Analyzed warehouse usage patterns</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage" target="_blank">Account Usage Views</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">Overview of Warehouses</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage/warehouse_load_history" target="_blank">Warehouse Load History</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-use-with-snowflake" target="_blank">Using Notebooks with Snowflake</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+</ul>
+<p>Happy coding!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

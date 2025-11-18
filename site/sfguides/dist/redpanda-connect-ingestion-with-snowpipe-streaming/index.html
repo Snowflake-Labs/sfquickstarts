@@ -1,0 +1,333 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Ingesting data with Snowpipe Streaming using Redpanda Connect</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="redpanda-connect-ingestion-with-snowpipe-streaming"
+                  title="Ingesting data with Snowpipe Streaming using Redpanda Connect"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Snowflake&#39;s Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency. It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake without requiring files with a more attractive cost/latency profile.</p>
+<p>Here are some of the use cases that can benefit from Snowpipe streaming:</p>
+<ul>
+<li>IoT time-series data ingestion</li>
+<li>CDC streams from OLTP systems</li>
+<li>Log ingestion from SIEM systems</li>
+<li>Ingestion into ML feature stores</li>
+</ul>
+<p>Redpanda Connect leverages Snowpipe streaming to make loading data from dozens of different inputs simple and efficent. This guide will show how to use any Apache Kafka® compatible message broker like Redpanda to ingest data into Snowflake in a few lines of YAML. This same approach works for the dozens of <a href="https://docs.redpanda.com/redpanda-connect/components/inputs/about/#categories" target="_blank">input sources</a> supported by Redpanda Connect, such as <a href="https://docs.redpanda.com/redpanda-connect/components/inputs/mqtt/" target="_blank">a MQTT server</a>, <a href="https://docs.redpanda.com/redpanda-connect/components/inputs/gcp_pubsub/" target="_blank">Google PubSub</a>, or <a href="https://docs.redpanda.com/redpanda-connect/components/inputs/postgres_cdc/" target="_blank">Postgres CDC</a>.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Produce data into a topic using Redpanda Cloud</li>
+<li>How to use Redpanda Connect to stream data into Snowflake</li>
+<li>Using Snowflake to query realtime data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://trial.snowflake.com/" target="_blank">Snowflake account</a>.</li>
+<li>A <a href="https://cloud.redpanda.com/sign-up" target="_blank">Redpanda Cloud account</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Create a Redpanda Cloud Serverless cluster.</li>
+<li>Generate data into a Redpanda topic using Redpanda Connect.</li>
+<li>Realtime ingestion pipeline into Snowflake using Redpanda Connect.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Snowflake Account for streaming" duration="8">
+        <h3 is-upgraded>1. Creating user, role, and database</h3>
+<p>First login to your Snowflake account as a power user with ACCOUNTADMIN role. Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.</p>
+<pre><code>-- Set default value for multiple variables
+-- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
+-- You should change them after the workshop
+SET PWD = &#39;Test1234567&#39;;
+SET USER = &#39;STREAMING_USER&#39;;
+SET DB = &#39;STREAMING_DB&#39;;
+SET ROLE = &#39;REDPANDA_CONNECT&#39;;
+SET WH = &#39;STREAMING_WH&#39;;
+
+USE ROLE ACCOUNTADMIN;
+
+-- CREATE USERS
+CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT=&#39;STREAMING USER FOR REDPANDA CONNECT&#39;;
+
+-- CREATE ROLES
+CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
+
+-- CREATE DATABASE AND WAREHOUSE
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
+USE IDENTIFIER($DB);
+CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = &#39;SMALL&#39;;
+
+-- GRANTS
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
+GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
+GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
+
+-- SET DEFAULTS
+ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
+ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
+
+
+-- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
+-- IT WILL BE SOMETHING LIKE &lt;organization_name&gt;-&lt;account_name&gt;
+-- e.g. ykmxgak-wyb52636
+
+WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,&#39;.snowflakecomputing.com&#39;,&#39;&#39;) AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = &#39;SNOWFLAKE_DEPLOYMENT_REGIONLESS&#39;;
+
+</code></pre>
+<p>Please write down the Account Identifier, we will need it later. <img src="img/f5a3bbf6be8a8907.png"></p>
+<p>Next we need to configure the public key for the streaming user to access Snowflake programmatically.</p>
+<h3 is-upgraded>2. Create a key-pair to be used for authenticating with Snowflake</h3>
+<p>Create a <a href="https://docs.snowflake.com/user-guide/key-pair-auth" target="_blank">key pair</a> in your local terminal by executing the following commands. You will be prompted to give an encryption password, remember this phrase, you will need it later.</p>
+<pre><code language="language-commandline" class="language-commandline">cd $HOME
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/9438f54490370fb0.png"></p>
+<p>Next we will create a public key by running following commands. You will be prompted to type in the phrase you used in the above step.</p>
+<pre><code>openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+</code></pre>
+<p>see below example screenshot:</p>
+<p class="image-container"><img src="img/eef4943a09c70a1d.png"></p>
+<p>First, in the Snowflake worksheet, replace &lt; pubKey &gt; with the content of the file <code>rsa_key.pub</code> without the public key delimiters in the following SQL command and execute.</p>
+<pre><code language="language-commandline" class="language-commandline">use role accountadmin;
+alter user streaming_user set rsa_public_key=&#39;&lt; pubKey &gt;&#39;;
+</code></pre>
+<p>See below example screenshot:</p>
+<p class="image-container"><img src="img/1ae43c73d273fd04.png"></p>
+<h3 is-upgraded>2. Create a schema using <code>streaming_user</code></h3>
+<p>Now logout of Snowflake, sign back in as the default user <code>streaming_user</code> we just created with the associated password (default: Test1234567). Run the following SQL commands in a worksheet to create a schema (e.g. <code>STREAMING_SCHEMA</code>) in the default database (e.g. <code>STREAMING_DB</code>):</p>
+<pre><code language="language-commandline" class="language-commandline">SET DB = &#39;STREAMING_DB&#39;;
+SET SCHEMA = &#39;STREAMING_SCHEMA&#39;;
+
+USE IDENTIFIER($DB);
+CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Redpanda" duration="8">
+        <h2 is-upgraded>Create a Redpanda Serverless Cluster</h2>
+<p>Create a serverless cluster in Redpanda Cloud by navigating to <a href="https://cloud.redpanda.com/clusters/create" target="_blank">https://cloud.redpanda.com/clusters/create</a> while signed into a Redpanda Cloud account.</p>
+<p class="image-container"><img src="img/3bfde6e84705bcd0.png"></p>
+<h2 is-upgraded>Create a topic in Redpanda Console</h2>
+<p>Once the cluster is created, we can navigate to the topics tab of the console. We can then create a topic called <code>demo_topic</code> by clicking on the &#34;Create topic&#34; button, and accepting the default topic configuration.</p>
+<p class="image-container"><img src="img/a97a3f5f89d45ae8.png"></p>
+<h2 is-upgraded>Create a user and ACLs in Redpanda Console</h2>
+<p>Now that we have a cluster and a topic setup, we need to create a user that Redpanda Connect will use to access the cluster. Navigate to the Security page, click the &#34;Create user&#34; button and create a user named <code>MyRedpandaUser</code>. Make sure to copy the autogenerated password before clicking &#34;Create&#34;.</p>
+<p class="image-container"><img src="img/6977f2ca754a4e76.png"></p>
+<p>Next you&#39;ll need to create ACLs for the user to give it access to our cluster and <code>demo_topic</code>. You can edit ACLs for the user we just created by going to the &#34;ACLs&#34; tab and clicking on the user <code>MyRedpandaUser</code>. We&#39;ll give our Redpanda Connect user the minimal permissions needed to interact with our <code>demo_topic</code> we created. We&#39;ll allow read/write access to the <code>demo_topic</code>, and grant full permissions on any consumer group with the prefix <code>redpanda_connect_</code>. Your ACLs modal should look like the following before clicking &#34;OK&#34;.</p>
+<p class="image-container"><img src="img/8e9d82eb5b4e27a9.png"></p>
+<h2 is-upgraded>Add password as secret in Redpanda Connect</h2>
+<p>Before we start creating pipelines with Redpanda Connect, we&#39;re going to add the password for our <code>MyRedpandaUser</code> as a secret, so it can be used in pipelines without hardcoding the value inside the configuration file. First navigate to the Secrets Store page, then click on the &#34;Create secret&#34; button. Using the password for <code>MyRedpandaUser</code> created in the previous step, add that as a secret by clicking on the &#34;Create secret&#34; button.</p>
+<p class="image-container"><img src="img/a06b986a942a4870.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generating load into Redpanda" duration="8">
+        <p>Now that Redpanda is all setup, we can now create our first Redpanda Connect pipeline.</p>
+<p>Redpanda Connect pipelines consist of an input, a series of processors, and an output - all defined in a simple configuration file. Redpanda Connect is a full stream processor and it&#39;s possible to do various sorts of fan-in, fan-out or other patterns. For this first pipeline, we&#39;re going to generate some JSON data into our topic using Redpanda Connect&#39;s <a href="https://docs.redpanda.com/redpanda-cloud/develop/connect/components/inputs/generate/" target="_blank"><code>generate</code></a> input, and send that data to Redpanda using the <a href="https://docs.redpanda.com/redpanda-cloud/develop/connect/components/outputs/kafka_franz/" target="_blank"><code>kafka_franz</code></a> output.</p>
+<p>To create our pipeline, we&#39;ll navigate to the Connect page, click on the &#34;Pipeline&#34; tab and click &#34;Create pipeline&#34;.</p>
+<p>On the pipeline creation page we&#39;ll name the pipeline &#34;LoadGenerator&#34; and give it a description of &#34;Produce JSON data into <code>demo_topic</code>&#34;. Then we&#39;ll use the following YAML configuration as our pipeline definition.</p>
+<pre><code language="language-yaml" class="language-yaml">input:
+  # Generate a batch of 100 JSON records every second
+  generate:
+    mapping: |
+      root = {
+        &#34;id&#34;: snowflake_id(),
+        &#34;name&#34;: fake(&#34;name&#34;),
+        &#34;email&#34;: fake(&#34;email&#34;)
+      }
+    interval: 10ms
+    count: 0
+    batch_size: 100
+pipeline:
+  # No transformations or enrichment is needed for this.
+  processors: []
+output:
+  # We&#39;re going to output data to our Redpanda broker
+  # using the `kafka_franz` output.
+  kafka_franz:
+    # This context variable will be replaced at runtime with the
+    # broker address.
+    seed_brokers: [&#34;${REDPANDA_BROKERS}&#34;]
+    topic: &#34;demo_topic&#34;
+    tls: {enabled: true}
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: MyRedpandaUser
+        # Inject our secret we created in the previous step.
+        password: &#34;${secrets.PASSWORD}&#34;
+    max_in_flight: 4
+</code></pre>
+<p>Here is what the screen should look like before launching your pipeline and kicking off the load generation into <code>demo_topic</code>.</p>
+<p class="image-container"><img src="img/1dd2d2172c37991b.png"></p>
+<p>Once the pipeline is created and running, we can navigate back to the Topics page and click on our <code>demo_topic</code> to see the records being produced and flowing through the broker.</p>
+<p class="image-container"><img src="img/83b796848af43e8b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stream data into Snowflake using Redpanda Connect" duration="0">
+        <p>Now that we have data in Redpanda, we can stream it into Snowflake using Redpanda Connect&#39;s <a href="https://docs.redpanda.com/redpanda-connect/components/outputs/snowflake_streaming/" target="_blank">Snowpipe Steaming</a> output. This output expects JSON like data as input, and will map each field in the top level object to a column in Snowflake. The connector is also able to manage the schema in the output table, autocreating tables, and altering the schema when new columns appear in the pipeline.</p>
+<h2 is-upgraded>Create a secret for the private key</h2>
+<p>Before we create the new pipeline, we&#39;ll need to add the private key we created in step 2 as a secret for Redpanda Connect. Head to the Secrets store page and click on the &#34;Create secret&#34; button, this time creating a secret called <code>SNOWFLAKE_KEY</code> with the entire contents of <code>rsa_key.p8</code>, replacing the newlines with escaped newlines. The following <code>awk</code> command can output the RSA key in the correct format to paste as a secret:</p>
+<pre><code language="language-commandline" class="language-commandline">awk &#39;{printf &#34;%s\\n&#34;, $0}&#39; rsa_key.p8
+</code></pre>
+<p class="image-container"><img src="img/44fafea3eb7f46a4.png"></p>
+<p>Now we will create one more secret for the passphrase of the RSA key. Click again on the &#34;Create secret&#34; button to make a <code>SNOWFLAKE_KEY_PASS</code> secret with the password for the RSA key.</p>
+<p class="image-container"><img src="img/7abbd247a58c83e3.png"></p>
+<h2 is-upgraded>Create the pipeline</h2>
+<p>With our secrets in place, we can now proceed to create our pipeline. Navigate to the &#34;Pipelines&#34; tab, click &#34;Create pipeline&#34;, then give the pipeline a name &#34;SinkToSnowflake&#34; with a description of &#34;Send batches of records to Snowflake from <code>demo_topic</code>&#34;. For the configuration file, copy and paste the YAML below, and don&#39;t forget to replace the account identifier with the value you queried for in step 1</p>
+<pre><code language="language-yaml" class="language-yaml">input:
+  # Read data from our `demo_topic`
+  kafka_franz:
+    seed_brokers: [&#34;${REDPANDA_BROKERS}&#34;]
+    topics: [&#34;demo_topic&#34;]
+    consumer_group: &#34;redpanda_connect_to_snowflake&#34;
+    tls: {enabled: true}
+    sasl:
+      - mechanism: SCRAM-SHA-256
+        username: MyRedpandaUser
+        password: &#34;${secrets.PASSWORD}&#34;
+pipeline:
+  # No transforms are needed
+  processors: []
+output:
+  # Write data to snowflake in batches to get bigger files
+  snowflake_streaming:
+    # Make sure to replace this with your account identifier
+    # from step #2
+    account: &#34;ACCOUNT-IDENTIFIER-FROM-STEP-2&#34;
+    user: STREAMING_USER
+    role: REDPANDA_CONNECT
+    database: STREAMING_DB
+    schema: STREAMING_SCHEMA
+    table: STREAMING_TABLE
+    # Inject our private key and password
+    private_key: &#34;${secrets.SNOWFLAKE_KEY}&#34;
+    private_key_pass: &#34;${secrets.SNOWFLAKE_KEY_PASS}&#34;
+    # Automatically create tables and add new columns
+    schema_evolution:
+      enabled: true
+    max_in_flight: 1
+    batching:
+      byte_size: 50_000_000 # Collect 50MB of JSON data before flushing
+      period: 120s # or after 120 seconds, which ever comes first
+</code></pre>
+<p>This should look like the following once you are done, and at this point you can create the pipeline.</p>
+<p class="image-container"><img src="img/cdc03f8847c9a2a8.png"></p>
+<p>Now that the pipeline is running, we can query the data being streamed in to Snowflake. Switch back to the Snowflake worksheet and run the following SQL statements to see the auto created table, and its schema:</p>
+<pre><code>SELECT * FROM STREAMING_DB.STREAMING_SCHEMA.STREAMING_DATA LIMIT 50;
+</code></pre>
+<p>You&#39;ll see results that look something like the below screenshot.</p>
+<p class="image-container"><img src="img/c8a25cfdce323ccf.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>When you are done with the demo, to tear down the Redpanda Cluster, simply go to the Cluster settings page and click &#34;Delete cluster&#34;.</p>
+<p>For Snowflake cleanup, execute the following SQL commands.</p>
+<pre><code>USE ROLE ACCOUNTADMIN;
+
+DROP DATABASE STREAMING_DB;
+DROP WAREHOUSE STREAMING_WH;
+DROP ROLE REDPANDA_CONNECT;
+
+-- Drop the streaming user
+DROP USER IF EXISTS STREAMING_USER;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>In this lab, we built a demo to show how to ingest data using Snowpipe streaming and Redpanda with low latency. We demonstrated this using Redpanda Connect&#39;s Snowflake output, and showed how in a few lines of YAML you can create a production ready ingestion pipeline.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to produce data into a topic using Redpanda Cloud</li>
+<li>How to use Redpanda Connect to stream data into Snowflake</li>
+<li>How to using Snowflake to query realtime data</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/" target="_blank">Getting started with Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview" target="_blank">Snowpipe Streaming</a></li>
+<li><a href="https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c" target="_blank">Snowpipe Demystified</a></li>
+<li><a href="https://www.redpanda.com/redpanda-cloud/serverless" target="_blank">Redpanda Serverless</a></li>
+<li><a href="https://docs.redpanda.com/redpanda-connect/home/" target="_blank">Redpanda Connect Documentation</a></li>
+<li><a href="https://docs.redpanda.com/redpanda-connect/components/outputs/snowflake_streaming/" target="_blank">Redpanda Connect Snowflake Connector</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

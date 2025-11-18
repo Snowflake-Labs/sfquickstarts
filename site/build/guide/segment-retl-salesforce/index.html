@@ -1,0 +1,131 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="segment-retl-salesforce"
+                  title="Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>The nature of iterative development cycles is that you find yourself at some point with multiple systems that need to be integrated. Maybe you built your customer database in Snowflake and your frontend applications are integrated with it, but now that your organization has grown, you&#39;re investing in a CRM like Salesforce. You could eliminate the database and try to sync everything directly to Salesforce, but that&#39;s probably a huge lift. You can&#39;t just leave the systems separate, because having two sources of truth is not a good idea; you&#39;ll introduce endless bugs and mismatches that affect your organization&#39;s reputation and effectiveness. If your data warehouse could sync with your Salesforce, though... you&#39;d be able to run both without the worry about divergent databases! In this recipe we&#39;ll explore how to set up this synchronization so that your systems don&#39;t diverge, and you don&#39;t have extra work to keep them that way.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A &#34;Customers&#34; table in your Snowflake DB.  Here&#39;s our example: <img alt="Customers Table" src="img/d218466cbdd6215a.png"></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to configure Reverse ETL to keep disparate systems (in this case, Salesforce) in sync with your Snowflake DB</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.segment.com" target="_blank">Segment</a> Workspace with Reverse ETL enabled</li>
+<li>A <a href="https://www.salesforce.com" target="_blank">Salesforce</a> instance</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>For our scenario, our sales team has recently adopted Salesforce and would like to easily import Business and Reseller customers into their new CRM. We are going to use Segment&#39;s Reverse ETL to accomplish this.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up the Reverse ETL model" duration="10">
+        <p>First we add our Snowflake instance as a Source in Segment (Click the Add Source button and follow the instructions with your Connection information): <img alt="Adding a Segment Source" src="img/3d95eecc1c442f2a.png"></p>
+<p>After adding our Snowflake instance as a source, the next step is to add our Model: <img alt="Adding a Reverse ETL Model in Segment" src="img/5612df9af46c324b.png"></p>
+<p>Click the Add Model to bring up the SQL Editor. We are going to write our SQL Query to get all customers who are &#34;customer_type&#34; of &#34;reseller&#34; or &#34;business.&#34; (For the sake of this example, we will also only limit to 5 customers.) <img alt="Writing our query" src="img/ecbc9452a0a21922.png"></p>
+<p>After we are satisfied with the SQL query, hit &#34;Next&#34; and give the model a name and set the schedule for how often you want this model to run. <img alt="Scheduling model runs" src="img/fef49691c560a07b.png"></p>
+<p>After saving the model, we will see a summary on the Model Overview screen: <img alt="Model Overview Screen" src="img/9cf1a92f2567b9e7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add a Destination for our Model" duration="10">
+        <p>On the left side panel, click on Destinations.  You&#39;ll get the following: <img alt="Destinations Screen" src="img/a04b09124ff1f5d5.png"></p>
+<p>Click on the &#34;Add Destination&#34; button to view the Destinations Catalog: <img alt="Destinations Catalog" src="img/fd211506ae7cda4d.png"></p>
+<p>Click on Salesforce (Actions), and you&#39;ll be presented several dialogs in order to add and configure Salesforce. After successfully adding Salesforce as a destination, we are going to add a Mapping from our Model to our Destination. Click the &#34;Add Mapping&#34; button to start.</p>
+<p>Our sales team has requested that these customers from our model be added as contacts so that they can record when our team interacts with each of them. First, we will use the dropdown to select our &#34;Business and Reseller Customers&#34; model and then select the Contact object to map to. Click Next and we will be taken to the Add Mapping page: <img alt="Add Mapping Page" src="img/547e8f749fdf5f4d.png"></p>
+<p>The first thing we will do is select what operation we want to perform for each row.  Since our model can change based on what information our customers provide us, we will select the &#34;Added or updated rows&#34;, this will sync any new records or updated records.</p>
+<p>Next we will scroll down to the mappings section and map columns from our model to fields in Salesforce: <img alt="Mapping columns in Salesforce" src="img/be123c3a2856db6d.png"></p>
+<ul>
+<li>For &#34;Operation&#34;, select &#34;Update or create a record if one doesn&#39;t exist.&#34;</li>
+<li>For &#34;Record Matchers&#34;, use &#34;Email&#34; and map it to our Email column from our model (properties.EMAIL).</li>
+<li>For the reminder of the fields, simply map the column from our model to the corresponding field in Salesforce&#39;s Contact object.</li>
+</ul>
+<p>Once you are done, click the &#34;Save Mapping&#34; button, and you will be returned to the Destinations page, click the toggle button to enable your Mapping to sync. <img alt="Activating the Mapping sync" src="img/ab9674870be9395.png"></p>
+<p>Your Mapping is now saved, and will run automatically the next time your model is updated. You can manually start an extract of your model by selecting your model on the &#34;Sources&#34; page, and when you reach the Model Overview page, clicking &#34;Start Manual Extract&#34;.</p>
+<p>Once the model is working and syncing, you can come back to the Model Overview page any time to see the status of your Model. In the screenshot below you might notice that our model is syncing to both Salesforce and Mixpanel; you can add as many additional destinations as you like by simply repeating Step 2 for each desired destination. <img alt="Model sync status" src="img/80e5357cb3959106.png"></p>
+<p>Here is the result in our Contacts in Salesforce with matching Extraction / Last Modified time: <img alt="Salesforce results" src="img/3b0e3e71bc340794.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Wrapping up" duration="1">
+        <p>It&#39;s easy to set up a sync of your customer data from Snowflake to Salesforce using Segment&#39;s Reverse ETL.  And it&#39;s even easier to use Segment to add additional tools to this sync process. How much maintenance time could you save?</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>setting up a Model with Segment Reverse ETL</li>
+<li>setting up Salesforce as a destination</li>
+<li>mapping the fields between our database and Salesforce</li>
+<li>telling Segment to sync the model to the destination</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

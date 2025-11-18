@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "braze_cdi",
+  "duration": 41,
+  "title": "Braze Cloud Data Ingestion",
+  "summary": "Braze Cloud Data Ingestion",
+  "source": "braze_cdi/braze_cdi.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "marketing",
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "braze",
+    "gettingstarted",
+    "marketing",
+    "martech",
+    "personalization",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "braze_cdi"
+}

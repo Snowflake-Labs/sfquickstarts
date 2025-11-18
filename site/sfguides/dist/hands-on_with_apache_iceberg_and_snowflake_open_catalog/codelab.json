@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "hands-on_with_apache_iceberg_and_snowflake_open_catalog",
+  "duration": 75,
+  "title": "Build a Lakehouse with Apache Iceberg and Snowflake Open Catalog",
+  "summary": "Learn how to create managed Apache Iceberg tables in Snowflake and sync them with Snowflake Open Catalog to enable cross-engine analytics with this hands-on tutorial.",
+  "source": "vhol_iceberg_snowflake_open_catalog/vhol_iceberg_snowflake_open_catalog.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "notebooks",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "apacheiceberg",
+    "cross-engineanalytics",
+    "datalakehouse",
+    "snowflakeopencatalog",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "hands-on_with_apache_iceberg_and_snowflake_open_catalog"
+}

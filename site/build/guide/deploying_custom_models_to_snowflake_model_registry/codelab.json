@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "deploying_custom_models_to_snowflake_model_registry",
+  "duration": 50,
+  "title": "Deploying Custom Models To Snowflake Model Registry",
+  "summary": "Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.",
+  "source": "deploying_custom_models_to_snowflake_model_registry/deploying_custom_models_to_snowflake_model_registry.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "modelregistry",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "deploying_custom_models_to_snowflake_model_registry"
+}

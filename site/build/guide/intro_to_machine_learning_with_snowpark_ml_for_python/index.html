@@ -1,0 +1,281 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with ML Development in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="intro_to_machine_learning_with_snowpark_ml_for_python"
+                  title="Getting Started with ML Development in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Through this quickstart guide, you will get an introduction to <a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake for Machine Learning</a>. You will set up your Snowflake and Python environments and build an ML development workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.</p>
+<h2 is-upgraded>What is Snowflake ML?</h2>
+<p>Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.</p>
+<p>Capabilities for model development and inference include:</p>
+<ul>
+<li><strong>Snowflake Notebooks on Container Runtime</strong> for a familiar notebook interface that runs on scalable compute optimized for efficient data loading and distributed model training and hyperparameter tuning over multiple CPUs or GPUs.</li>
+<li><strong>Snowflake ML APIs</strong> for distributed feature engineering, distributed training, and distributed hyperparameter optimization</li>
+<li><strong>Snowflake Feature Store</strong> for continuous, automated refreshes on batch or streaming data</li>
+<li><strong>ML Jobs</strong> to easily deploy and orchestrate ML pipelines over Snowflake data from any IDE of choice</li>
+<li><strong>Snowflake Model Registry</strong> to manage models and their metadata, with model serving for inference with CPUs or GPUs</li>
+<li><strong>ML Lineage</strong> to trace end-to-end feature and model lineage</li>
+<li><strong>ML Explainability</strong> to better understand the features the model considers most impactful when generating predictions</li>
+<li><strong>ML Observability</strong> to monitor performance metrics for models running inference in Snowflake</li>
+</ul>
+<p class="image-container"><img alt="snowflake_ml_overview" src="img/ea1eb27134daa258.png"></p>
+<p>To get started with Snowflake ML, developers can use the Python APIs from the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml" target="_blank">Snowflake ML library</a>, directly from Snowflake Notebooks.</p>
+<p><strong>Snowflake ML provides the following advantages:</strong></p>
+<ul>
+<li>Transform your data and train your models using open-source Python ML frameworks such as scikit-learn and xgboost</li>
+<li>Streamline model management and batch inference with built-in versioning support and role-based access control catering to both Python and SQL users</li>
+<li>Keep your ML pipeline running within Snowflake&#39;s security and governance perimeters</li>
+<li>Take advantage of the performance and scalability of Snowflake&#39;s scalable computing platform.</li>
+</ul>
+<p>Learn more about model development with <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml" target="_blank">Snowflake ML APIs</a> and deployment with the <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops" target="_blank">Snowflake Model Registry</a>.</p>
+<h2 is-upgraded>What you will learn</h2>
+<p>This quickstart will focus on building a custom ML workflow using the following features:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a>, which comes pre-integrated with Snowflake ML capabilities.</li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowflake-ml/modeling#distributed-preprocessing" target="_blank">Snowflake ML APIs</a> for distributed feature engineering and model training.</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops" target="_blank">Snowflake Model Registry</a>, which provides scalable and secure model management of ML models - whether you trained them in Snowflake or another ML platform. Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake&#39;s scale and security features. It also includes an <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-explainability" target="_blank">explainability function</a> based on <a href="https://towardsdatascience.com/the-shapley-value-for-ml-models-f1100bff78d1" target="_blank">Shapley values</a>.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed <aside class="special"><p>Download the <a href="https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python" target="_blank">git repo</a></p>
+</aside>
+</li>
+<li>A Snowflake Account. Sign up for a 30-day <a href="https://signup.snowflake.com/" target="_blank">free trial</a> account, if required.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A set of Snowflake Notebook on Container Runtime:<ul>
+<li>to load and clean data</li>
+<li>to perform features transformations on the data</li>
+<li>to train an XGBoost ML model</li>
+<li>to log models and execute batch inference in Snowflake</li>
+<li>to apply a built-in explainability function to understand model performance</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Snowflake Notebooks" duration="2">
+        <p>To get started using Snowflake Notebooks, first login to Snowsight and run the following <a href="https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql" target="_blank">setup.sql</a> in a SQL worksheet. Sign up for a 30-day <a href="https://signup.snowflake.com/" target="_blank">free trial</a> account, if required. This will connect to the git repo where all the Snowflake Notebooks are stored and create them for you in your Snowflake environment.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+SET USERNAME = (SELECT CURRENT_USER());
+SELECT $USERNAME;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE ML_MODEL_HOL_USER;
+GRANT ROLE ML_MODEL_HOL_USER to USER identifier($USERNAME);
+
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE ROLE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT MANAGE GRANTS ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE APPLICATION PACKAGE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE APPLICATION ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT IMPORT SHARE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+
+USE ROLE ML_MODEL_HOL_USER;
+
+CREATE OR REPLACE WAREHOUSE ML_HOL_WH; --by default, this creates an XS Standard Warehouse
+CREATE OR REPLACE DATABASE ML_HOL_DB;
+CREATE OR REPLACE SCHEMA ML_HOL_SCHEMA;
+CREATE OR REPLACE STAGE ML_HOL_ASSETS; --to store model assets
+
+-- create csv format
+CREATE FILE FORMAT IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT 
+    SKIP_HEADER = 1 
+    TYPE = &#39;CSV&#39;;
+
+-- create external stage with the csv format to stage the diamonds dataset
+CREATE STAGE IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.DIAMONDS_ASSETS 
+    FILE_FORMAT = ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT 
+    URL = &#39;s3://sfquickstarts/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv&#39;;
+
+-- create network rule to allow all external access from Notebook
+CREATE OR REPLACE NETWORK RULE allow_all_rule
+  TYPE = &#39;HOST_PORT&#39;
+  MODE= &#39;EGRESS&#39;
+  VALUE_LIST = (&#39;0.0.0.0:443&#39;,&#39;0.0.0.0:80&#39;);
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION allow_all_integration
+  ALLOWED_NETWORK_RULES = (allow_all_rule)
+  ENABLED = true;
+
+GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE ML_MODEL_HOL_USER;
+
+-- create an API integration with Github
+CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_ML_HOL
+   api_provider = git_https_api
+   api_allowed_prefixes = (&#39;https://github.com/&#39;)
+   enabled = true
+   comment=&#39;Git integration with Snowflake Demo Github Repository.&#39;;
+
+-- create the integration with the Github demo repository
+CREATE OR REPLACE GIT REPOSITORY GITHUB_INTEGRATION_ML_HOL
+   ORIGIN = &#39;https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python.git&#39;
+   API_INTEGRATION = &#39;GITHUB_INTEGRATION_ML_HOL&#39; 
+   COMMENT = &#39;Github Repository&#39;;
+
+-- fetch most recent files from Github repository
+ALTER GIT REPOSITORY GITHUB_INTEGRATION_ML_HOL FETCH;
+
+-- copy notebooks into Snowflake &amp; configure runtime settings
+CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST
+FROM &#39;@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main&#39; 
+MAIN_FILE = &#39;notebooks/0_start_here.ipynb&#39; 
+QUERY_WAREHOUSE = ML_HOL_WH
+RUNTIME_NAME = &#39;SYSTEM$BASIC_RUNTIME&#39; 
+COMPUTE_POOL = &#39;SYSTEM_COMPUTE_POOL_CPU&#39;
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST SET EXTERNAL_ACCESS_INTEGRATIONS = (&#39;allow_all_integration&#39;);
+
+CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM
+FROM &#39;@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main&#39; 
+MAIN_FILE = &#39;notebooks/1_sf_nb_snowflake_ml_feature_transformations.ipynb&#39; 
+QUERY_WAREHOUSE = ML_HOL_WH
+RUNTIME_NAME = &#39;SYSTEM$BASIC_RUNTIME&#39; 
+COMPUTE_POOL = &#39;SYSTEM_COMPUTE_POOL_CPU&#39;
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM SET EXTERNAL_ACCESS_INTEGRATIONS = (&#39;allow_all_integration&#39;);
+
+CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING
+FROM &#39;@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main&#39; 
+MAIN_FILE = &#39;notebooks/2_sf_nb_snowflake_ml_model_training_inference.ipynb&#39; 
+QUERY_WAREHOUSE = ML_HOL_WH
+RUNTIME_NAME = &#39;SYSTEM$BASIC_RUNTIME&#39; 
+COMPUTE_POOL = &#39;SYSTEM_COMPUTE_POOL_CPU&#39;
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING SET EXTERNAL_ACCESS_INTEGRATIONS = (&#39;allow_all_integration&#39;);
+
+-- create Streamlit
+CREATE OR REPLACE STREAMLIT ML_HOL_STREAMLIT_APP
+FROM &#39;@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main/scripts/streamlit/&#39;
+MAIN_FILE = &#39;diamonds_pred_app.py&#39;
+QUERY_WAREHOUSE = &#39;ML_HOL_WH&#39;
+TITLE = &#39;ML_HOL_STREAMLIT_APP&#39;
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;e2e_ml_snowparkpython&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;streamlit&#34;}}&#39;;
+
+ALTER STREAMLIT ML_HOL_STREAMLIT_APP ADD LIVE VERSION FROM LAST;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up the data in Snowflake" duration="7">
+        <p><strong>Change role to </strong><code>ML_MODEL_HOL_USER</code></p>
+<p>Navigate to <code>Notebooks</code> &gt; <code>ML_HOL_DATA_INGEST</code>.</p>
+<p>Within this notebook, we will clean and ingest the <code>diamonds</code> dataset into a Snowflake table from an external stage. The <code>diamonds</code> dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake&#39;s native data science transformers throughout this quickstart.</p>
+<p>The overall goal of this ML project is to predict the price of diamonds given different qualitative and quantitative attributes.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ML Feature Transformations" duration="10">
+        <p><strong>Change role to </strong><code>ML_MODEL_HOL_USER</code></p>
+<p>Navigate to <code>Notebooks</code> &gt; <code>ML_HOL_FEATURE_TRANSFORM</code>.</p>
+<p>In this notebook, we will walk through a few transformations on the <code>diamonds</code> dataset that are included in the Snowflake ML APIs. We will also build a preprocessing pipeline to be used in the notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ML Model Training and Inference" duration="15">
+        <p><strong>Change role to </strong><code>ML_MODEL_HOL_USER</code></p>
+<p>Navigate to <code>Notebooks</code> &gt; <code>ML_HOL_MODELING</code>.</p>
+<p>In this notebook, we will illustrate how to train an XGBoost model with the <code>diamonds</code>. We also show how to execute batch inference and model explainability through the Snowflake Model Registry.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Optional: Streamlit App" duration="7">
+        <p><strong>Change role to </strong><code>ML_MODEL_HOL_USER</code></p>
+<p>Navigate to <code>Streamlit</code> &gt; <code>ML_HOL_STREAMLIT_APP</code>.</p>
+<p>This Streamlit app will execute predictions based on chosen feature values in the sidebar. Make sure not to delete the model before running this app.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code.</p>
+<p>For more information, check out the resources below:</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML Webpage</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">Snowflake ML API Docs</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/#0" target="_blank">Quickstart: Build an End-to-End ML Workflow in Snowflake </a></li>
+<li>Check out other Snowflake ML quickstarts <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart" target="_blank">here</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

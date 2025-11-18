@@ -1,0 +1,223 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Collibra Data Governance with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="collibra"
+                  title="Collibra Data Governance with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This is a guide on how to catalog Snowflake data into Collibra, link the data to business and logical context, create and enforce policies. Also we will show how a user can search and find data in Collibra, request access and go directly to the data in Snowflake with access policies automatically enforced.</p>
+<p>Collibra can enable controlled and secure data access across Snowflake databases from your analytic, machine learning and ETL services. Collibra and Snowflake enforces data access policies at run-time, so each user will only see the data they are authorized to view. Collibra integrates to Snowflake using a JDBC driver or API, providing the ability to automatically ingest technical metadata and lineage, as well as perform profiling and classification.</p>
+<p>Collibra overall functionality in integration with Snowflake can be summarized with the following diagram:</p>
+<p class="image-container"><img alt="Catalog" src="img/e3c7118c1aee1731.jpg"></p>
+<p>Collibra is a Data Intelligence platform that allows users to search, and find or create trusted data Enterprise wide. Collibra allows users to automatically catalog technical metadata and link it to the business and logical and data privacy context required. It also allows for Data Quality discovery and metrics. Collibra has automation in the collaboration of users, the certification of data assets and in general of data intelligence processes.</p>
+<p class="image-container"><img alt="Catalog" src="img/4e6e356d8bb30faa.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to Snowflake database</li>
+<li>Access to a Collibra instance. Please reach out to your Collibra sales representative or at: https://www.collibra.com/us/en/contact-us</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to catalog Snowflake data in Collibra</li>
+<li>how to connect the metadata into a data domain and business and logical data attributes</li>
+<li>how to enforce data privacy policies on the Snowflake data</li>
+<li>how to search for data in Collibra</li>
+<li>how to request access of Snowflake data in Collibra and view data with policies enforced</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake instance</li>
+<li>A Collibra instance</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Metadata of Snowflake, A Policy for this data, diagram that connects the data to its business context.</li>
+<li><strong>authors</strong>:<ul>
+<li>Vasiliki Nikolopoulou, Principal, Integrations Architect, Collibra</li>
+<li>Tomer Steinberg, Sales Engineer Majors Benelux</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Catalog Snowflake into Collibra" duration="2">
+        <p>In this step we will import into Collibra the techincal metadata from a Snowflake database. We will use Collibra Edge, which is an Integration Hub residing within the customer firewall for safety. This integration hub retrieves the Snowflake metadata using native JDBC drivers.</p>
+<p>Go to Collibra and click on Catalog to start the ingestion:</p>
+<p class="image-container"><img alt="Catalog" src="img/2a0db5775ca24977.jpg"></p>
+<p>Click on the plus sign (green square box with white plus sign,top right on the screen) to choose the database:</p>
+<p class="image-container"><img alt="edge1" src="img/9a20150e5b073205.jpg"></p>
+<p>Choose register through Edge and choose the Snowflake option (first option)</p>
+<p class="image-container"><img alt="edge2" src="img/621f569605fb1d24.jpg"></p>
+<p>Go to the Snowflake Community and look for the D_CUSTOMER database:</p>
+<p class="image-container"><img alt="edge3" src="img/de15a5e1a1e16165.jpg"></p>
+<p>Collibra, in addition to technical metadata it can also import technical lineage directly from Snowflake into Collibra using either SQL or API calls.</p>
+<p>Technical lineage in Collibra looks for Snowflake data includes the SQL transformations. Here is an example of technical lineage of Snowflake data in Collibra:</p>
+<p class="image-container"><img alt="filteredcountry" src="img/5a18e9dab9b145a.jpg"></p>
+<p>Users can see the actual SQL transformations if needed:</p>
+<p class="image-container"><img alt="filteredcountry" src="img/687e7326ece912d7.jpg"></p>
+<p>Collibra also allows users to see profiling information and sampling (anonymized) if needed. Here is an example of profiling information:</p>
+<p class="image-container"><img alt="filteredcountry" src="img/f89a52412c893260.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Privacy and Policy Enforcement" duration="2">
+        <p>In this stage, we will specifically define the Data Privacy policies and rules that will be automatically enforced in Snowflake directly from within Collibra.</p>
+<p>Please click on the Collibra Protect option after clicking the nine dots all the way to the top right of the Collibra User Interface:</p>
+<p class="image-container"><img alt="Protect" src="img/308df8fc71ae857b.jpg"></p>
+<p>This will take you to the Collibra Protect environment, then click on the Data Access Rules. And then click on Create a Data Access Rule button:</p>
+<p class="image-container"><img alt="protectrule" src="img/994b8598d2c178e6.jpg"></p>
+<p>A form opens where you can create the new rule.</p>
+<p>Type the name of the rule, its description. This is a rule about Marketing people. All people within Marketing will have access to this customer dataset, however we will enforce the hiding or masking of the Last Name column and we will only allow users to see customers from the country Belgium. We will choose the user group BE_MKT_ANALYST, in which will belong all marketing analysts in Belgium. You can fill in as follows:</p>
+<p class="image-container"><img alt="rulecreation" src="img/a1507fbfe0211c65.jpg"></p>
+<p>At this point you can click on &#34;Generate Preview&#34; to see which columns will be viewed and which will be filtered and masked:</p>
+<p class="image-container"><img alt="rulecreation1" src="img/a1507fbfe0211c65.jpg"></p>
+<p class="image-container"><img alt="rulecreation2" src="img/fe9afd5c53cf65c5.jpg"></p>
+<p>Click on Save Rule for the rule to be save. At this point the creation of this rule is sent to Collibra and the synchronization via API to the Snowflake environment is in Pending state. The synchronization happens automatically every 60 minutes.</p>
+<p class="image-container"><img alt="creationrule3" src="img/8c2dd75fdbd9938d.jpg"></p>
+<p>If you need to expedite the synchronization of the new rules, you can trigger them via a POST command as follows from an API posting software:</p>
+<p class="image-container"><img alt="post" src="img/81640276fef051a1.jpg"></p>
+<p>This synchronization is triggered and within less than a minute we see that the rule is no longer in pending state but it is in effect:</p>
+<p class="image-container"><img alt="rulecreation4" src="img/ae658919cb4d16eb.jpg"></p>
+<p>We can simply check this if we login to Snowflake and go to D_CUSTOMER database, choose the PUBLIC schema and open the CUSTOMER table. Go to Preview and choose the BE_MKT_WH and also choose the role BE_MKT_ANALYST. Then you should be able to see the columns except for Last Name which is masked while all the rows are filtered for country Belgium.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Consumption and Access" duration="2">
+        <p>In this chapter we will look into how a user can search and find trusted data to use and request access to the data while at the same time policies will be automatically enforced.</p>
+<p>David, the marketing analyst from Sweden is looking for customer data that is trusted and contain email and first name and birthdate at the minimum.</p>
+<p>In Collibra Data Marketplace the user is searching for customer data:</p>
+<p class="image-container"><img alt="datamarketplace" src="img/e33e395c4e771a7d.jpg"></p>
+<p>Filters the search by pressing the Data Sets tab and the Certified option in the filters to the left.</p>
+<p class="image-container"><img alt="datamarketplace-filter" src="img/85fa8745e97392c9.jpg"></p>
+<p>The second dataset is the one that seems proper since in the description it states that it contains names, birthdates and emails.</p>
+<p class="image-container"><img alt="datamarketplaceviewasset" src="img/332868620feec860.jpg"></p>
+<p>Clicking on the columns we confirm this is the right set:</p>
+<p class="image-container"><img alt="datamarketplaceviewcolumns" src="img/d02438b22b96ec79.jpg"></p>
+<p>Clicking on the Go to Asset Details we can discover more about this dataset. It belongs to the Customer Domain, we see the name of the Data Owner, the rating:</p>
+<p class="image-container"><img alt="details" src="img/d58d78604257f4ae.jpg"></p>
+<p>If the user clicks on the &#34;Diagram&#34; to the left it is possible to see the full lineage of the dataset, that includes the logical, the business, the data quality and data privacy context.</p>
+<p>What we can see in this diagram, is the connection of the dataset to the columns and tables and systems it draws its data from. Then the connection of these technical metadata to the logical definitions and consequently to the business context. Also linked to the logical definitions we can see the data privacy rules.</p>
+<p class="image-container"><img alt="diagrampolicies" src="img/960005b77b5c32e2.jpg"></p>
+<p>Also you can click at the Data Protection tab all the way to the bottom left, and this will show the policies and restrictions associated with this dataset.</p>
+<p class="image-container"><img alt="policyview" src="img/db551a8f6b4bc047.jpg"></p>
+<p>As you can see Collibra allows you to see the lineage of  a dataset in relation to its technical contents and in extension to its business and data privacy context. For example we can see that the columns that represent Last Name and Country each has a policy.</p>
+<p>The user can add the dataset into the Data Basket by pressing the &#34;Add to Data Basket&#34; button:</p>
+<p class="image-container"><img alt="basketbutton" src="img/5e97b1547b732d35.jpg"></p>
+<p class="image-container"><img alt="basketmessage" src="img/c79ef0dd4747ff5d.jpg"></p>
+<p>This brings the dataset to the user&#39;s personal Data Basket:</p>
+<p class="image-container"><img alt="databasket" src="img/99be9cad11bbd0f4.jpg"></p>
+<p>By clicking at the Data Basket icon we go to the area where we can start requesting the dataset(s).</p>
+<p>The user can then choose the dataset and click on the &#34;Checkout Data Basket&#34; in order to start requesting access to the dataset.</p>
+<p class="image-container"><img alt="requestaccess" src="img/fe970b326bdd62f9.jpg"></p>
+<p>By clicking Submit at the end of this form, a workflow starts which sends a notification to the dataset Data Owner, requesting access to the dataset:</p>
+<p class="image-container"><img alt="tasktoapprove" src="img/dcb5cd543ac6e212.jpg"></p>
+<p>The Data Owner will see the request and will evaluate if this user can get access to the dataset.</p>
+<p>The Data Owner will then go to the dataset asset to check about policies and groups associated with this dataset. This will take us to the Collibra Protect rule that the Data Owner can check in detail:</p>
+<p class="image-container"><img alt="protectrule1" src="img/6f58dba80c118060.jpg"></p>
+<p>In this case we see that this rule is about granting access to the dataset Customer master data to all people who work in the Marketing department, while there is default masking policy for the Last Name and the only customer rows shown are filtered by country, in this case Sweden.</p>
+<p>Therefore the Data Owner understands that the user should be granted the SE_MKT_ANALYST role in Snowflake in order to get access to this dataset.</p>
+<p>The Data Owner sends an approval notice to the requester, asking the requester to first accept the terms and conditions of accessing this dataset:</p>
+<p class="image-container"><img alt="approve" src="img/608edc76ffaadd6.jpg"></p>
+<p>The requester will then receive the task to accept the terms and conditions in order for access to be granted. The user checks the &#34;All of the above&#34; radio button and clicks on the Accept Notice button to proceed.</p>
+<p>At this point the Data Owner receives notification that the requester accepted the conditions and goes to Snowflake to grant to the requester the role &#34;SE_MKT_ANALYST&#34;.</p>
+<p>Go to Snowflake in the area Users and Roles and Search for the user to which we are going to grant access. Then click on the three dots to the right of the user and choose the Grant Role option in order to grant the Role to the User.</p>
+<p class="image-container"><img alt="snowflake-user" src="img/7575372c2e05c0b9.jpg"></p>
+<p>At this point look for the Role in Collibra which gives access with enforced policies to a user, in this case the SE_MKT_ANALYST.</p>
+<p class="image-container"><img alt="grant" src="img/a22795c049100225.jpg"></p>
+<p>Now the user David will be able to login to Snowflake and access the table D_CUSTOMER with his role SE_MKT_ANALYST, and see the data with the enforced policies. First look for &#34;Data&#34;, then choose D_CUSTOMER, then choose the schema &#34;Public&#34; then choose the warehouse SE_MKT_WH, then Preview Data. As you can see the Last name is hidden:</p>
+<p class="image-container"><img alt="lastnamehidden" src="img/db2dae3a47a2f256.jpg"></p>
+<p>And also the country is filtered to include customers from Sweden only:</p>
+<p class="image-container"><img alt="filteredcountry" src="img/c41994900f77a733.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>In this lab we learned how to catalog Snowflake data, how to link this data to its business context, how to enforce privacy policies on it and how to search and access it.</p>
+<p>Collibra provides value for Snowflake users because it provides a unified environment to:</p>
+<ul>
+<li>see all technical metadata with its lineage</li>
+<li>with a full business context</li>
+<li>in a  friendly user interface with: <ul>
+<li>powerful search, with filters</li>
+<li>collaboration features (ratings, comments, messages),</li>
+<li>automation (workflows, tasks, issue management)</li>
+</ul>
+</li>
+<li>automatic policy creation and enforcement</li>
+<li>data quality assessment and metrics</li>
+</ul>
+<p>The value that Collibra brings to Snowflake implementations in brief:</p>
+<p class="image-container"><img alt="value" src="img/761a79a3d18cce8.jpg"></p>
+<p>Collibra is an ideal environment for all Snowflake users, business or technical, to view, search, understand, trust and collaborate with data.</p>
+<p>You can learn more about Collibra at <a href="https://www.collibra.com" target="_blank">Collibra website</a>.</p>
+<p>You can learn more about the Snowflake partnership with Collibra at <a href="https://www.collibra.com/us/en/partners/technology-partners/snowflake" target="_blank">Collibra-Snowflake Partnership</a></p>
+<p><a href="https://www.collibra.com/wp-content/uploads/Optimize-Snowflake-Data-Platform-Productivity-with-Collibra-Factsheet.pdf" target="_blank">Collibra and Snowflake Factsheet</a></p>
+<p><a href="https://youtu.be/teJMQJLaIaQ" target="_blank">Collibra and Snowflake video</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

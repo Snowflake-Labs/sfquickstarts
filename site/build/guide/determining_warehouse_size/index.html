@@ -1,0 +1,360 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Determine Appropriate Warehouse Sizes</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="determining_warehouse_size"
+                  title="Determine Appropriate Warehouse Sizes"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>At Snowflake, compute resources (or warehouses) can be configured based on your needs. This guide will introduce you to warehouses and show how to determine the appropriate warehouse size for your query. Using the correct warehouse size can help you get the best experience from your Snowflake account.</p>
+<aside class="special"><p><strong>Note</strong> - Completing this guide in its entirety consumes approximately 3 credits.</p>
+</aside>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Use of the <a href="https://signup.snowflake.com/?referrer=quickstart-warehouse-sizing" target="_blank">Snowflake free 30-day trial environment</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>What is a Warehouse</li>
+<li>How to determine the best warehouse size to use for a query</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="What is a Warehouse" duration="1">
+        <p>A warehouse is a cluster of compute resources in Snowflake. A warehouse provides the required resources, such as CPU, memory, and temporary storage, to perform the following operations in a Snowflake session:</p>
+<ul>
+<li>Executing SQL <a href="https://docs.snowflake.com/en/sql-reference/sql/select.html" target="_blank">SELECT</a> statements that require compute resources (e.g. retrieving rows from tables and views).</li>
+<li>Performing DML operations, such as: <ul>
+<li>Updating rows in tables (<a href="https://docs.snowflake.com/en/sql-reference/sql/delete.html" target="_blank">DELETE</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/insert.html" target="_blank">INSERT</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/update.html" target="_blank">UPDATE</a>).</li>
+<li>Loading data into tables (<a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html" target="_blank">COPY INTO &lt;table&gt;</a>).</li>
+<li>Unloading data from tables (<a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html" target="_blank">COPY INTO &lt;location&gt;</a>).</li>
+</ul>
+</li>
+</ul>
+<aside class="special"><p>To perform these operations, a warehouse must be running and in use for the session. While a warehouse is running, it consumes Snowflake credits.</p>
+</aside>
+<h2 is-upgraded>Warehouse Sizes</h2>
+<p>Size specifies the set of compute resources available in a warehouse, which can be adjusted at any time. Usage is billed per second based on the number of credits consumed, with a 60 second minimum each time the warehouse starts.</p>
+<p class="image-container"><img alt="Warehouse Sizes" src="img/b223a00adb23fc53.jpg"></p>
+<p>To learn more about warehouses, visit the Snowflake <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview.html" target="_blank">documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Evaluating warehouse sizes" duration="1">
+        <p>In the following sections, you will run the same query on different sized warehouses to determine which is the best size for the query.</p>
+<p>You will disable the query result cache and suspend the warehouse after each test so that performance of the next query is not artificially enhanced.</p>
+<aside class="special"><p><strong>Tip</strong> - When executing queries outside of this guide environment, you do not need to disable the query result cache or restart warehouses prior to each query.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparing your environment" duration="2">
+        <p>Login to your Snowflake trial account. If you do not already have an account, you can sign up for a free 30-day trial at <a href="https://signup.snowflake.com/?referrer=quickstart-warehouse-sizing" target="_blank">signup.snowflake.com</a>.</p>
+<p>Once in your account:</p>
+<ol type="1">
+<li>Navigate to the Worksheets tab.</li>
+</ol>
+<p class="image-container"><img alt="Worksheets" src="img/a076de747927c38b.jpg"></p>
+<ol type="1" start="2">
+<li>Create a new worksheet.</li>
+<li>Set the context for your worksheet.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE WAREHOUSE IF NOT EXISTS SAMPLE_WH;
+USE SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run a sample query with an extra small warehouse" duration="7">
+        <ol type="1">
+<li>Change the size of your warehouse to XSmall.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = XSmall;
+</code></pre>
+<ol type="1" start="2">
+<li>Suspend and resume the warehouse to make sure its Data Cache is empty, disable the query result cache and set a query tag.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE SAMPLE_WH SUSPEND;
+ALTER WAREHOUSE SAMPLE_WH RESUME;
+ALTER SESSION SET USE_CACHED_RESULT = FALSE;
+ALTER SESSION SET QUERY_TAG = &#39;SAMPLE_WH_Sizing&#39;;
+</code></pre>
+<aside class="special"><p><strong>Tip</strong> - Run specific queries within a worksheet by selecting the queries you want to run and pressing Cmd/Ctrl + Enter.</p>
+</aside>
+<ol type="1" start="3">
+<li>Run the following query to list detailed catalog sales data along with a running sum of sales price within the order. This will be your test query and will be used throughout the guide. The query will take several minutes to run.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT cs_bill_customer_sk, cs_order_number, i_product_name, cs_sales_price,
+  SUM(cs_sales_price)
+OVER (PARTITION BY cs_order_number
+  ORDER BY i_product_name
+  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) run_sum
+FROM catalog_sales, date_dim, item
+WHERE cs_sold_date_sk = d_date_sk
+  AND cs_item_sk = i_item_sk
+  AND d_year IN (2000)
+  AND d_moy IN (1,2,3,4,5,6)
+LIMIT 100;
+</code></pre>
+<ol type="1" start="4">
+<li>View the Query Profile. This will open in a new tab.</li>
+</ol>
+<p class="image-container"><img alt="Query Profile" src="img/45ed0312a995b5eb.jpg"></p>
+<ol type="1" start="5">
+<li>In the &#34;Most Expensive Nodes&#34; section of the query profile, click on the operator <code>WindowFunction [1]</code> . Take note of the performance metrics for this operator on the XSmall warehouse. You should see significant spilling to local storage and possibly spilling to remote storage.<ul>
+<li>The spill to local storage indicates the warehouse did not have enough memory.</li>
+<li>If it spills to remote storage, the warehouse did not have enough SSD storage to store the spill from memory on its local SSD drive.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="XSmall Query Profile" src="img/9da6a2a9fc524baf.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run a sample query with a small warehouse" duration="4">
+        <ol type="1">
+<li>Return to your worksheet.</li>
+<li>Suspend your warehouse, change its size to small and resume it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE SAMPLE_WH SUSPEND;
+ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = Small;
+ALTER WAREHOUSE SAMPLE_WH RESUME;
+</code></pre>
+<aside class="warning"><p>If running <code>ALTER WAREHOUSE SAMPLE_WH SUSPEND;</code> generates the error <code>Invalid state. Warehouse 'SAMPLE_WH' cannot be suspended.</code> , it means your warehouse has been automatically suspended due to inactivity. There is no need to suspend the warehouse again. Continue to the next query to set the warehouse size.</p>
+</aside>
+<ol type="1" start="3">
+<li>Re-run the test query.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT cs_bill_customer_sk, cs_order_number, i_product_name, cs_sales_price,
+  SUM(cs_sales_price)
+OVER (PARTITION BY cs_order_number
+  ORDER BY i_product_name
+  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) run_sum
+FROM catalog_sales, date_dim, item
+WHERE cs_sold_date_sk = d_date_sk
+  AND cs_item_sk = i_item_sk
+  AND d_year IN (2000)
+  AND d_moy IN (1,2,3,4,5,6)
+LIMIT 100;
+</code></pre>
+<ol type="1" start="4">
+<li>View the query profile and click the operator <code>WindowFunction [1]</code>.</li>
+<li>Take note of the performance metrics for this operator. You should see lower amounts spilling to local storage and remote disk, as well as faster execution.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run a sample query with a medium warehouse" duration="3">
+        <ol type="1">
+<li>Return to your worksheet.</li>
+<li>Suspend your warehouse, change its size to medium and resume it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE SAMPLE_WH SUSPEND;
+ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = Medium;
+ALTER WAREHOUSE SAMPLE_WH RESUME;
+</code></pre>
+<ol type="1" start="3">
+<li>Re-run the test query.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT cs_bill_customer_sk, cs_order_number, i_product_name, cs_sales_price,
+  SUM(cs_sales_price)
+OVER (PARTITION BY cs_order_number
+  ORDER BY i_product_name
+  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) run_sum
+FROM catalog_sales, date_dim, item
+WHERE cs_sold_date_sk = d_date_sk
+  AND cs_item_sk = i_item_sk
+  AND d_year IN (2000)
+  AND d_moy IN (1,2,3,4,5,6)
+LIMIT 100;
+</code></pre>
+<ol type="1" start="4">
+<li>View the query profile and click the operator <code>WindowFunction [1]</code>.</li>
+<li>Take note of the performance metrics for this operator. You should see lower amounts spilling to local storage and remote disk, as well as faster execution.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run a sample query with a large warehouse" duration="2">
+        <ol type="1">
+<li>Return to your worksheet.</li>
+<li>Suspend your warehouse, change its size to large, and resume it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE SAMPLE_WH SUSPEND;
+ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = Large;
+ALTER WAREHOUSE SAMPLE_WH RESUME;
+</code></pre>
+<ol type="1" start="3">
+<li>Re-run the test query.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT cs_bill_customer_sk, cs_order_number, i_product_name, cs_sales_price,
+  SUM(cs_sales_price)
+OVER (PARTITION BY cs_order_number
+  ORDER BY i_product_name
+  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) run_sum
+FROM catalog_sales, date_dim, item
+WHERE cs_sold_date_sk = d_date_sk
+  AND cs_item_sk = i_item_sk
+  AND d_year IN (2000)
+  AND d_moy IN (1,2,3,4,5,6)
+LIMIT 100;
+</code></pre>
+<ol type="1" start="4">
+<li>View the query profile and click the operator <code>WindowFunction [1]</code>.</li>
+<li>Take note of the performance metrics for this operator. You will see that there is no spilling to local or remote storage.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run a sample query with an extra large warehouse" duration="2">
+        <ol type="1">
+<li>Return to your worksheet.</li>
+<li>Suspend your warehouse, change its size to extra large, and resume it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE SAMPLE_WH SUSPEND;
+ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = XLarge;
+ALTER WAREHOUSE SAMPLE_WH RESUME;
+</code></pre>
+<ol type="1" start="3">
+<li>Re-run the test query.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT cs_bill_customer_sk, cs_order_number, i_product_name, cs_sales_price,
+  SUM(cs_sales_price)
+OVER (PARTITION BY cs_order_number
+  ORDER BY i_product_name
+  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) run_sum
+FROM catalog_sales, date_dim, item
+WHERE cs_sold_date_sk = d_date_sk
+  AND cs_item_sk = i_item_sk
+  AND d_year IN (2000)
+  AND d_moy IN (1,2,3,4,5,6)
+LIMIT 100;
+</code></pre>
+<ol type="1" start="4">
+<li>View the query profile and click the operator <code>WindowFunction [1]</code>.</li>
+<li>Take note of the performance metrics for this operator.</li>
+<li>Navigate back to worksheets. Suspend your warehouse and change its size back to XSmall.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER WAREHOUSE SAMPLE_WH SUSPEND;
+ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = XSmall;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Summarize results" duration="2">
+        <ol type="1">
+<li>Run a query showing the query history results for these performance tests.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT query_id,query_text, warehouse_size,(execution_time / 1000) Time_in_seconds, partitions_total, partitions_scanned,
+        bytes_spilled_to_local_storage, bytes_spilled_to_remote_storage,
+        query_load_percent
+FROM &#34;SNOWFLAKE&#34;.&#34;ACCOUNT_USAGE&#34;.&#34;QUERY_HISTORY&#34;
+WHERE query_tag = &#39;SAMPLE_WH_Sizing&#39;
+  AND WAREHOUSE_SIZE IS NOT NULL
+  AND QUERY_TYPE LIKE &#39;SELECT&#39;
+ORDER BY start_time DESC;
+</code></pre>
+<ol type="1" start="2">
+<li>Determine the right warehouse size for the query. <br><br> The ideal size to use for the test query is a Large Warehouse due to its optimal balance of time and cost. Factors to consider are:<ul>
+<li><strong>Query Execution Time</strong>: As the warehouse size increased, the query execution time decreased.</li>
+<li><strong>Credits Consumed</strong>: Credit consumption is a factor of warehouse size and execution time.</li>
+<li><strong>Bytes in Local Storage</strong>: Did query execution spill over to local/remote storage?</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Results" src="img/806ff27804ab08fd.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean up" duration="1">
+        <ol type="1">
+<li>Reset the query tag.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER SESSION UNSET QUERY_TAG;
+</code></pre>
+<ol type="1" start="2">
+<li>Enable the cache.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ALTER SESSION UNSET USE_CACHED_RESULT;
+</code></pre>
+<google-codelab-survey survey-id="determining_warehouse_size-1">
+<h4>Did you find this content helpful?</h4>
+<paper-radio-group>
+<paper-radio-button>Yes</paper-radio-button>
+<paper-radio-button>No</paper-radio-button>
+</paper-radio-group>
+</google-codelab-survey>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

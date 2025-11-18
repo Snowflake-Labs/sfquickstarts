@@ -1,0 +1,550 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Collect and Activate Customer Data Using Tealium and Snowpipe Streaming</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tealium-snowflake-integration"
+                  title="Collect and Activate Customer Data Using Tealium and Snowpipe Streaming"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img alt="banner" src="img/8dac54b91c14d88f.png"></p>
+<h2 is-upgraded>Introduction</h2>
+<p>This quickstart guide will review the configuration of the Snowflake Data Source and Snowflake Streaming connectors within Tealium. Tealium&#39;s Customer Data Hub acts as a high quality data source and a real-time activation engine for Snowflake. Use Tealium to capture and send low latency customer interaction data to Snowflake for further analysis or to inform AI initiatives, and automate real-time data activation using Snowflake data across Tealium&#39;s 1300+ integration marketplace.</p>
+<h3 is-upgraded>Send Data to Snowflake</h3>
+<ul>
+<li>Create a staging table in Snowflake to land the data</li>
+<li>In Tealium, configure the Snowflake Streaming connector</li>
+<li>Process the data from the staging table to the appropriate tables in Snowflake</li>
+</ul>
+<h3 is-upgraded>Activate Data from Snowflake</h3>
+<ul>
+<li>Identify or create a table or view of data in Snowflake that you want to activate in Tealium</li>
+<li>In Tealium configure the data source by establishing a connection to Snowflake, creating a query to capture only the data needed, map the event and visitor data to appropriate Tealium data attributes</li>
+<li>Once the connection is established, data is ingested in near real-time (as fast as 2 seconds) and is activated based on business rules</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Tealium Customer Data Hub (EventStream and/or AudienceStream) account</li>
+<li><a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a><ul>
+<li>Appropriate privileges (covered individually in next steps)</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to configure a Snowflake Streaming connector within Tealium</li>
+<li>How to setup a Snowflake Data Source within Tealium</li>
+<li>How to prepare your Snowflake account for integration</li>
+</ul>
+<h2 is-upgraded>What you will build</h2>
+<ul>
+<li>Snowflake Streaming connector in Tealium to stream data into Snowflake</li>
+<li>Snowflake Data Source in Tealium to capture data from Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Streaming Connector" duration="6">
+        <h2 is-upgraded>How It Works</h2>
+<p>The Snowflake Streaming connector leverages the powerful Snowflake Snowpipe Streaming feature to enable near real-time importing of event and visitor data directly into Snowflake staging tables, enabling immediate availability for processing and analytics with data latency under 10 seconds. Send either the entire dataset or specific attributes to the staging table, ensuring customizable data integration tailored to business needs.</p>
+<p>Using Snowpipe Streaming creates a streamlined pathway to enhance data accessibility and analytical capabilities within Snowflake while decreasing latency and costs. By removing third party integrations and using the Snowpipe Streaming serverless compute model, the Snowflake Streaming connector provides a cost effective, secure connection.</p>
+<p>The Snowflake Streaming connector enables you to unlock a number of use cases, including:</p>
+<ul>
+<li><strong>Identity</strong>: Populate and activate identity graphs using cleansed, normalized, real-time identity data.</li>
+<li><strong>Insights</strong>: Improve and activate differentiated intelligence with rich, high quality, integrated data.</li>
+<li><strong>AI</strong>: Inform and activate AI initiatives with a real-time data layer.</li>
+<li><strong>Consent</strong>: Ensure insights and activation always respect customer privacy and preferences.</li>
+</ul>
+<h3 is-upgraded>Staging Tables</h3>
+<p>The staging table in Snowflake that is intended to receive data from Tealium must contain specific columns depending on the selected connector action.</p>
+<p>When using either <strong>Send Entire Event Data</strong> or <strong>Send Entire Visitor Data</strong> actions, the staging table must have a <strong>VARIANT</strong> column to receive the dataset and a column to receive the timestamp. The timestamp column must support the the timestamp data format that is sent.</p>
+<p>When using either <strong>Send Custom Event Data</strong> or <strong>Send Custom Visitor Data</strong>, the staging table must have a column for each data type. Each data attribute must be assigned to a column. Ensure that each attribute is an accepted Snowflake data type and that the column is formatted properly to receive this data type. To map a timestamp, a separate timestamp column must be added.</p>
+<p>For more information, see <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#supported-java-data-types" target="_blank">Snowflake: Supported Java data types</a>.</p>
+<h3 is-upgraded>Data Types</h3>
+<p>The following table summarizes the data types supported by the Snowflake Streaming connector.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Snowflake Data Type</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Supported</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Numeric data types</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>String and binary data types</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Logical data types</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Date and time data types</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Arrays</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Object</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Variant</p>
+</td><td colspan="1" rowspan="1"><p>Yes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Vector</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Geography</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Geometry</p>
+</td><td colspan="1" rowspan="1"><p>No</p>
+</td></tr>
+</table>
+<h3 is-upgraded>Table and column configurations</h3>
+<p>The connector does not support the following table or column configurations</p>
+<ul>
+<li>Columns with collations</li>
+<li><strong>TRANSIENT</strong> or <strong>TEMPORARY</strong> tables</li>
+<li>Tables with <strong>AUTOINCREMENT</strong> or <strong>IDENTITY</strong> column settings</li>
+<li>A default column value that is not <strong>NULL</strong></li>
+</ul>
+<h3 is-upgraded>IP Addresses to Allow</h3>
+<p>Snowflake has strict rules about which systems it accepts requests from. You will need to add the <a href="https://docs.tealium.com/server-side/administration/ip-allow-list/" target="_blank">Tealium IP addresses</a> to your Snowflake allow list.</p>
+<p><strong><em>NOTE:</em></strong> You must add the <strong>us-west-1</strong> along with the server-side profile region to your allowlist. If you do not add these addresses to your allowlist, you will see errors when you try to fetch column data.</p>
+<h2 is-upgraded>Best Practices</h2>
+<p>We recommend the following Snowflake table configurations for the Snowflake Streaming connector.</p>
+<ul>
+<li>1 event feed per table</li>
+<li>1 audience per table</li>
+</ul>
+<p><strong><em>NOTE:</em></strong> Concurrent writing of tables by more than one feed or audience may result in performance errors.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring a Snowflake Streaming Connector" duration="12">
+        <p>Within the Tealium Customer Data Hub, navigate to either the EventStream or AudienceStream Connector Marketplace and add a new connector. For more information and instructions on how to add a connector, see <a href="https://docs.tealium.com/server-side/connectors/about/" target="_blank">About Connectors</a>.</p>
+<p>After adding the connector, configure the following settings:</p>
+<ul>
+<li><strong>Username</strong><ul>
+<li>The Snowflake account username</li>
+<li>Must either have <strong>OWNERSHIP</strong> or <strong>INSERT</strong> privileges to the Snowflake table that is receiving the data.</li>
+</ul>
+</li>
+<li><strong>Role</strong><ul>
+<li>Access control role to use for the session</li>
+</ul>
+</li>
+<li><strong>URL</strong><ul>
+<li>The Snowflake account URL in the following format: <strong>&lt;account_identifier&gt;.snowflakecomputing.com</strong></li>
+</ul>
+</li>
+<li><strong>Private Key</strong><ul>
+<li>The customer-generated private key. Supports both encrypted and unencrypted versions. For instructions on generating the Snowflake private key, see <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key" target="_blank">Snowflake &gt; Key-pair authentication and key-pair rotation</a></li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="Authentication Configuration" src="img/49cad95b592b4cc4.png"></p>
+<h3 is-upgraded>Key-pair Generation</h3>
+<p>To complete the connector authentication, use the following steps to alter the username with the public key details in Snowflake.</p>
+<ol type="1">
+<li>Generate a public key in Snowflake. For information, see <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-a-public-key" target="_blank">Generate a Public Key</a></li>
+<li>Assign the public key to the <strong>username</strong> that is being used with the connector by using an <strong>ALTER USER</strong> command in Snowflake. <em>Note</em> Only owners with <strong>ACCOUNTADMIN</strong> privileges can alter a user.</li>
+<li>Run the query to update the user with the new public key</li>
+</ol>
+<h3 is-upgraded>Key-pair Generation Example</h3>
+<p>Within your preferred Command Line Interface (CLI), generate the RSA 2048 key through openssl.</p>
+<pre><code>## Generate your private key
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+
+## Generate your public key
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+
+</code></pre>
+<p>Store your private and public key (public is located in <strong>rsa_key.pub</strong>, private is located in <strong>rsa_key.p8</strong>). The private key will be used in the Snowflake Streaming connector configuration and the public key will be assigned to the username in Snowflake. To make changes to the USER, you must have ACCOUNTADMIN privileges. Make sure that all line breaks have been removed from the public key. In Snowflake, run the following command to alter the user, making sure to put the appropriate values in for <strong>username</strong> and <strong>public_key</strong>.</p>
+<pre><code>alter user &lt;username&gt; set rsa_public.key=&lt;public_key&gt;;
+</code></pre>
+<h2 is-upgraded>Actions</h2>
+<p>The Snowflake Streaming connector within Tealium has two different actions for the event and visitor data sets: <em>Send Entire Dataset</em> or <em>Send Custom Data</em>.</p>
+<p>All connector actions require the following parameters:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Parameter</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Description</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Database Name</p>
+</td><td colspan="1" rowspan="1"><p>The Snowflake database that contains the required table</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Schema Name</p>
+</td><td colspan="1" rowspan="1"><p>The name of the schema used in the table</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Table Name</p>
+</td><td colspan="1" rowspan="1"><p>The name of the staging table you want to land the data into</p>
+</td></tr>
+</table>
+<p class="image-container"><img alt="Connector Configuration" src="img/b416fac97281f7c4.png"></p>
+<p>After inputing the above values, a drop-down menu with the available columns will become available to map your data. When sending the entire dataset, you will need to assign which column the data will be recorded under. This column must be a <strong>VARIANT</strong> type column in Snowflake. A new row will be created in the staging table for each event with the dataset available under the selected column as an object.</p>
+<p>In addition to selecting where to record the datasets, the timestamp column needs to be identified. Because staging tables cannot increment, Tealium generates a timestamp for when the data is sent to Snowflake and inputs that value into this timestamp column. If the default Tealium timestamp is not desirable, the optional <strong>Timestamp Attribute</strong> format selection can be configured to the appropriate format. For more information on supported timestamp types: see <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#supported-java-data-types" target="_blank">Snowflake: Supported Java data types</a>.</p>
+<p>If the Snowflake Streaming connector is being setup within Tealium&#39;s AudienceStream, an additional configuration feature called <strong>Include Current Visit Data</strong> is included. When enabled, the dataset will include both the visitor data and current visit data.</p>
+<h3 is-upgraded>Custom Data</h3>
+<p>Tealium provides the ability to select custom data attributes to send into Snowflake, providing greater control over your transferred data. When these actions are chosen, the configuration changes slightly to include the mapping of data attributes to columns in the Snowflake staging table. As previously mentioned, the staging table will require separate columns to be created for each data attribute, including a timestamp column. Once a data attribute is mapped, another attribute cannot be mapped to that column.</p>
+<h3 is-upgraded>User and Staging Table Creation Example</h3>
+<p>The following code snippet will create a new role that will be used to create and gain access to write to the staging table. It is recommended that a separate User is created with limited access to only the staging table for the Tealium connector. The staging table created has two columns, one to map the timestamp and the other to land the data object.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE SECURITYADMIN;
+CREATE USER SVC_TEALIUM DEFAULT_ROLE = TEALIUM_RL;
+CREATE ROLE TEALIUM_RL;
+GRANT ROLE TEALIUM_RL TO USER SVC_TEALIUM;
+GRANT ROLE TEALIUM_RL TO ROLE SYSADMIN;
+
+-- Public Key Assignment
+-- *Note: Create RSA key-pair first
+ALTER USER SVC_TEALIUM SET RSA_PUBLIC_KEY=&#39;&lt;publickey&gt;&#39;;
+
+-- Database, Schema, and Table Creation
+USE ROLE SYSADMIN;
+CREATE DATABASE TEALIUM;
+GRANT OWNERSHIP ON DATABASE TEALIUM TO ROLE TEALIUM_RL;
+
+USE ROLE TEALIUM_RL;
+CREATE SCHEMA EVENT_STREAM;
+CREATE SCHEMA AUDIENCE_STREAM;
+
+-- Create raw event tables
+CREATE TABLE EVENT_STREAM.RAW_EVENT
+(
+	EVENT_JSON VARIANT,
+	LOAD_TS TIMESTAMP_TZ
+);
+
+CREATE TABLE AUDIENCE_STREAM.AUDIENCE_EVENT
+(
+	VISITOR_JSON VARIANT,
+	LOAD_TS TIMESTAMP_TZ
+);
+
+-- Repeat for any structured table for specific events as needed
+</code></pre>
+<h2 is-upgraded>Save the Configuration</h2>
+<p>After the connector is configured and before data can be sent, the changes must be saved to your Tealium instance. In the upper right-hand corner of your Tealium page, click on the orange <strong>Save/Publish</strong> button.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Data Source" duration="7">
+        <h2 is-upgraded>How It Works</h2>
+<p>Use the Snowflake data source to import bulk data from a Snowflake table or view at near real-time speeds. After you import your data, transform and map it to Tealium attributes and build better audiences for targeted activation.</p>
+<p>To get started, create one Snowflake data source per Snowflake table or view and customize the query mode and SQL <strong>WHERE</strong> clause for your data set. Then map your database columns to Tealium attributes. Each imported row from a Snowflake source is processed as an event in Tealium.</p>
+<h2 is-upgraded>Rate Limits</h2>
+<p>Imports from Snowflake are typically limited to 50 events per second per account, but may vary. Standard attribute size limits still apply. For more information, see <a href="https://docs.tealium.com/server-side/attributes/about/#size-limits" target="_blank">About attributes &gt; Size limits</a></p>
+<p>The Snowflake data source fetches data at a maximum of 1,000 rows at a time.</p>
+<h2 is-upgraded>Snowflake Tables</h2>
+<p>Each Snowflake data source supports importing data from one Snowflake table or view. To import data from multiple Snowflake tables, create a view in Snowflake and select the view in the data source configuration. For more information about views in <a href="https://docs.snowflake.com/en/user-guide/views-introduction" target="_blank">Snowflake, see Snowflake: Overview of Views</a>.</p>
+<h2 is-upgraded>Data Types</h2>
+<p>The Snowflake data source supports all Snowflake data types. To ensure data is imported correctly, map the Snowflake data types according to the following guidelines:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Snowflake</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Tealium</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Numeric data types</p>
+</td><td colspan="1" rowspan="1"><p>Number attributes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>String and binary data types</p>
+</td><td colspan="1" rowspan="1"><p>String attributes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Logical data types</p>
+</td><td colspan="1" rowspan="1"><p>Boolean attributes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Date and time data types</p>
+</td><td colspan="1" rowspan="1"><p>Date attributes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Arrays</p>
+</td><td colspan="1" rowspan="1"><p>Array of strings, array of numbers, array of Booelans</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Object, variant, geography, geometry, and vector data types</p>
+</td><td colspan="1" rowspan="1"><p>String attributes</p>
+</td></tr>
+</table>
+<p>For more information about Snowflake data types, see <a href="https://docs.snowflake.com/en/sql-reference/intro-summary-data-types" target="_blank">Snowflake: Summary of Data Types</a>.</p>
+<h2 is-upgraded>Events</h2>
+<p>In the default Tealium <a href="https://docs.tealium.com/server-side/getting-started/order-of-operations/" target="_blank">data collection order of operations</a>, events from a Snowflake data source are processed before the <strong>Event received</strong> step and do not change the order of operations.</p>
+<p>Snowflake data source events are sent to EventStream and AudienceStream in the same way as events from other data sources with the following important exceptions:</p>
+<ul>
+<li><strong>Browser-specific attributes</strong>: Browser-specific attributes, such as user agent, are not populated.</li>
+<li><strong>Enrichments</strong>: Enrichments on preloaded attributes in AudienceStream are not run, except for the First visit attribute.</li>
+<li><strong>Functions</strong>: Data transformation functions are not run.</li>
+<li><strong>Single-page visits</strong>: Incoming events are exempt from the single-page visit/visitors criteria. Single-page visits and visitors from other data sources are not persisted in AudienceStream. For more information, see <a href="https://support.tealiumiq.com/en/support/solutions/articles/36000363388-how-are-single-page-visits-processed-in-audiencestream-" target="_blank">How are single-page visits processed in AudienceStream?</a> (requires Tealium login).</li>
+<li><strong>Visit length</strong>: A visit started by a Snowflake data source event lasts for 60 seconds.</li>
+<li><strong>Visitor ID mapping</strong>: If you map an AudienceStream visitor ID attribute in your Snowflake data source configuration, the visitor ID is set directly to the value of the column you choose and no additional enrichment is needed.</li>
+</ul>
+<h2 is-upgraded>Configuration</h2>
+<h3 is-upgraded>Query Modes</h3>
+<p>The Snowflake data source supports three query modes to let you control how data is imported from your Snowflake table or view:</p>
+<ul>
+<li><strong>Timestamp + Incrementing</strong>: (<em>Recommended</em>) Tealium imports new or modified rows based on a timestamp column and an auto-increment column. In this mode, rows with a newer timestamp than the previous import and a larger auto-increment value than the last imported row are imported. This is the most reliable mode to ensure that all rows are imported as expected.</li>
+<li><strong>Timestamp</strong>: Tealium imports new or modified rows based on a timestamp column. In this mode, rows with a newer timestamp than the previous import are imported. Use this mode if your table has a timestamp column that gets set or updated on every update.</li>
+<li><strong>Incrementing</strong>: Tealium imports rows based on an auto-increment column. In this mode, rows with a larger auto-increment value than the last imported row are imported. This will not detect modifications or deletions of existing rows. Use this mode if you only have an auto-increment column and do not have a timestamp column.</li>
+</ul>
+<p>The Snowflake data source does not support bulk query modes.</p>
+<h3 is-upgraded>Query Mode Example</h3>
+<p>The following example shows how batch processing of rows and query modes work together. In the following table, <strong>modification_time</strong> is the timestamp column and <strong>customer_id</strong> is the incrementing column.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>customer_id</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>modification_time</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>customer_segment</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>01Apr 13:00</p>
+</td><td colspan="1" rowspan="1"><p>A</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>01Apr 13:00</p>
+</td><td colspan="1" rowspan="1"><p>B</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>...</p>
+</td><td colspan="1" rowspan="1"><p>...</p>
+</td><td colspan="1" rowspan="1"><p>...</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1000</p>
+</td><td colspan="1" rowspan="1"><p>01Apr 13:00</p>
+</td><td colspan="1" rowspan="1"><p>D</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1001</p>
+</td><td colspan="1" rowspan="1"><p>01Apr 13:00</p>
+</td><td colspan="1" rowspan="1"><p>E</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1002</p>
+</td><td colspan="1" rowspan="1"><p>02Apr 14:00</p>
+</td><td colspan="1" rowspan="1"><p>A</p>
+</td></tr>
+</table>
+<p>The Snowflake data source fetches data 1,000 rows at a time and marks the maximum value of the timestamp and/or incrementing column(s) from the batch of data.</p>
+<ul>
+<li>Using <strong>Timestamp + Incrementing</strong> mode: The data source fetches rows 1-1000. The next time the data source fetches the data, it will look for rows where either</li>
+</ul>
+<pre><code>modification_time is 01Apr 13:00 and the customer_id is greater than 1000
+</code></pre>
+<p>or</p>
+<pre><code>modification_time is greater than 01Apr 13:00
+</code></pre>
+<ul>
+<li>Using <strong>Timestamp</strong> mode (<strong>modification_time</strong> in the example): The data source will fetch rows 1-1000 and mark the maximum timestamp of <strong>01Apr 13:00</strong>. The next time the data source fetches the data, it will look for a timestamp greater than <strong>01Apr 13:00</strong>. In this case, row 1001 would be skipped because it has the same timestamp value but was fetched in different batch of data. Using <strong>Incrementing</strong> mode: The data source will fetch rows 1-1000 and mark the maximum auto-increment value of <strong>1000</strong>, but rows with new data and an updated timestamp column would not be processed. Only newly added rows that further increment the incrementing column (customer_id in the example) would be processed.</li>
+</ul>
+<h3 is-upgraded>SQL Query</h3>
+<p>In the Snowflake data source <strong>Query Configuration</strong>, select the columns you want to import into Tealium. To add additional conditions for processing, use the SQL <strong>WHERE</strong> clause. This option adds a <strong>WHERE</strong> statement to your query. <strong>WHERE</strong> statements support basic SQL syntax.</p>
+<p><strong><em>Note</em></strong>: The <strong>WHERE</strong> clause does not support subqueries from multiple tables. To import data from multiple Snowflake tables, create a view in Snowflake and select the view in the data source configuration. For more information, see <a href="https://docs.snowflake.com/en/user-guide/views-introduction" target="_blank">Snowflake: Overview of Views</a>.</p>
+<h3 is-upgraded>Column Mapping</h3>
+<p>The column mapping configuration determines the event attributes that correspond to each column in the Snowflake table.</p>
+<p>Column names are often different from the attribute names in the Customer Data Hub, so this mapping ensures that the data is imported properly. For example, a table might have a column named <strong>postalCode</strong>, but the matching event attribute is named <strong>customer_zip</strong>, so you need a mapping to associate them.</p>
+<p>For information about mapping Snowflake data types to Tealium data types, see the <a href="https://docs.tealium.com/early-access/snowflake-data-source/about/#data-types" target="_blank">Data Types</a> section.</p>
+<h3 is-upgraded>Visitor ID Mapping</h3>
+<p>To ensure your imported data is stitched with other sources, such as web, mobile, or HTTP API, ensure that every row in the Snowflake table has a column with a unique visitor ID. You can then map the visitor ID column and corresponding event attribute to a visitor ID attribute (a unique attribute type for visitor identification in AudienceStream). The value in the mapped event attribute is assigned to the <strong>tealium_visitor_id</strong> attribute and matched directly to any existing visitor profiles.</p>
+<p>For more information about Visitor ID Mapping in AudienceStream, see <a href="https://docs.tealium.com/server-side/data-sources/visitor-identification/" target="_blank">Visitor Identification using Tealium Data Sources</a>.</p>
+<h2 is-upgraded>IP Addresses to Allow</h2>
+<p>If your Snowflake account has strict rules about which systems it accepts requests from, add the <a href="https://docs.tealium.com/server-side/administration/ip-allow-list/" target="_blank">Tealium IP addresses</a> to your Snowflake allow list.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring a Snowflake Data Source" duration="16">
+        <p>Take the following steps to pull up the Snowflake data source and begin the configuration process:</p>
+<ol type="1">
+<li>In Tealium, go to <strong>Sources &gt; Data Sources</strong></li>
+<li>Click <strong>+Add Data Source</strong></li>
+<li>Under <strong>Categories</strong>, click <strong>Data Warehouse</strong> and select <strong>Snowflake</strong></li>
+<li>In the <strong>Name</strong> field, enter a unique name for the data source related to your use case</li>
+<li>Click <strong>Continue</strong></li>
+</ol>
+<h2 is-upgraded>Establish a Snowflake Connection</h2>
+<p>The Snowflake data source lets you create connections to Snowflake that you can reuse in other Snowflake data sources.</p>
+<h3 is-upgraded>Necessary Information</h3>
+<p>Ensure you have the following Snowflake account information before you get started:</p>
+<ul>
+<li>Account identifier <ul>
+<li>To determine the format of your account identifier, navigate to your Snowflake workspace and copy the unique account URL. For example, if your Snowflake account URL is <strong>xy12345.us-east-2.aws.snowflakecomputing.com/console#/internal/worksheet</strong> use the <strong>xy12345.us-east-2.aws.snowflakecomputing.com</strong> portion as your account identifier. For more information, see <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">Snowflake: Account identifiers</a>.</li>
+</ul>
+</li>
+<li>Connection warehouse</li>
+<li>Database name</li>
+<li>Database schema</li>
+<li>Connection role</li>
+<li>Snowflake username and password</li>
+</ul>
+<h3 is-upgraded>Configuration Steps</h3>
+<ol type="1">
+<li>In the <strong>Connection Configuration</strong> screen, confirm the name of the data source.</li>
+<li>Select an existing connection configuration from the drop-down list or create a new connection by clicking the + icon. To create a new connection, enter the following account details on the <strong>New Snowflake Connection Configuration</strong> screen:</li>
+</ol>
+<ul>
+<li><strong>Snowflake Connection Configuration Name</strong>: Provide a name for the reusable connection configuration.</li>
+<li><strong>Account Identifier</strong>: The Snowflake account identifier without the <strong>http://</strong> prefix in the following format: <ul>
+<li>Using a Snowflake account name: <strong>ACCOUNT_NAME.snowflakecomputing.com</strong></li>
+<li>Using a Snowflake account locator in region: <strong>ACCOUNT_LOCATOR.CLOUD_REGION_ID.CLOUD.snowflakecomputing.com</strong></li>
+</ul>
+</li>
+<li><strong>Connection Warehouse</strong>: The name of the Snowflake warehouse to use for this connection.</li>
+<li><strong>Database Name</strong>: The name of the Snowflake database to connect to.</li>
+<li><strong>Database Schema</strong>: The name of the Snowflake database schema to connect to.</li>
+<li><strong>Connection Role</strong>: The role assigned to the user in Snowflake. This role must have USAGE privileges. For more information, see <a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview#custom-roles" target="_blank">Snowflake: Custom roles</a> and <a href="https://docs.snowflake.com/en/user-guide/security-access-control-privileges" target="_blank">Snowflake: Access control privileges</a>.</li>
+<li><strong>Username</strong> and <strong>Password</strong>: The username and password used to connect to your Snowflake database, schema, warehouse, and table or view.</li>
+</ul>
+<ol type="1" start="3">
+<li>Click <strong>Save</strong>.</li>
+<li>In the <strong>Connection Configuration</strong> screen, enter your Snowflake account password and then click <strong>Establish Connection</strong>.</li>
+<li>After you successfully connect to Snowflake, select the data source table from the <strong>Table Selection</strong> drop-down list. To import data from multiple Snowflake tables, create a view in Snowflake and select it from the drop-down list. For more information, see <a href="https://docs.snowflake.com/en/user-guide/views-introduction" target="_blank">Snowflake: Overview of Views</a>.</li>
+<li>Toggle on <strong>Enable Processing</strong> if you want the Snowflake data source to begin processing immediately.</li>
+<li>Click <strong>Next</strong>.</li>
+</ol>
+<h2 is-upgraded>Select Query Setting</h2>
+<p>In the <strong>Query Settings</strong> screen, select the appropriate query mode for your Snowflake table or view.</p>
+<p>When you select <strong>Timestamp</strong> or <strong>Incrementing</strong>, you must list the name of one column to use to detect either new and modified rows or new rows only. If you select <strong>Timestamp + Incrementing</strong> you must list two columns, a timestamp column and a strictly incrementing column, to detect new and modified rows.</p>
+<p>For more information, see <a href="https://docs.tealium.com/early-access/snowflake-data-source/about/#query-settings" target="_blank">About Snowflake data source &gt; Query settings</a>.</p>
+<p>When you are done, click <strong>Next</strong>.</p>
+<h2 is-upgraded>Configure the SQL Query</h2>
+<ol type="1">
+<li>In the <strong>Query &gt; Select Columns</strong> section, select the table or view columns to import to Tealium. To change the Snowflake table or view, click <strong>Back</strong> to return to Step 1: Establish a Snowflake connection.</li>
+<li>(Optional) To add custom conditions or additional filters, include a SQL <strong>WHERE</strong> clause.</li>
+</ol>
+<ul>
+<li>The <strong>WHERE</strong> clause does not support subqueries from multiple tables. To import data from multiple Snowflake tables, create a view in Snowflake and select the view in the data source configuration. For more information, see <a href="https://docs.snowflake.com/en/user-guide/views-introduction" target="_blank">Snowflake: Overview of Views</a>.</li>
+</ul>
+<ol type="1" start="3">
+<li>Click <strong>Test Query</strong> to validate your SQL query and preview the results.</li>
+<li>Click <strong>Next</strong>.</li>
+</ol>
+<h3 is-upgraded>Example SQL for Querying a Data Table with Fake Data</h3>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    ID, 
+    TIMESTAMP, 
+    CUSTOMER_ID, 
+    CAST(DATE_OF_BIRTH AS VARCHAR) AS DATE_OF_BIRTH_STRING, 
+    ADDRESS_1, 
+    ADDRESS_2, 
+    CITY, 
+    STATE, 
+    COUNTRY, 
+    ZIP_CODE
+FROM 
+    customers
+WHERE 
+    ID &gt;= 4;
+</code></pre>
+<h2 is-upgraded>Map Columns</h2>
+<p>Use the column mapping table to map pre-configured column labels to event attributes or manually enter the column labels for mapping. Each row from Snowflake is processed as an event. Columns not mapped to an event attribute are ignored.</p>
+<p>For each column label, select the corresponding event attribute from the drop-down list.</p>
+<p>When you are done, click <strong>Continue</strong>.</p>
+<h2 is-upgraded>Map Visitor ID Attributes</h2>
+<p>To use your Snowflake data with AudienceStream, map your data to visitor ID attributes. Select the mapped event attribute that represents a visitor ID and map it to the corresponding visitor ID attribute.</p>
+<p><strong>Visitor ID Mapping in AudienceStream</strong> is enabled by default. Disabling visitor ID mapping may cause errors in visitor stitching. For more information, see <a href="https://docs.tealium.com/server-side/data-sources/visitor-identification/" target="_blank">Visitor Identification using Tealium Data Sources</a>.</p>
+<p>When you are done, click <strong>Next</strong>.</p>
+<h2 is-upgraded>Summary</h2>
+<p>In this final step, view the summary, make any needed corrections, and then save and publish your profile. To edit your configuration, click <strong>Back</strong> to return to the step where you want to make changes.</p>
+<ol type="1">
+<li>View the event attribute and visitor ID mappings.</li>
+<li>Click <strong>Create</strong> to create the data source and exit the configuration screen. The new data source is now listed in the <strong>Data Sources</strong> dashboard.</li>
+<li>Click <strong>Save/Publish</strong> to save and publish your changes.</li>
+</ol>
+<p>To check the status of import activity, navigate to the <strong>Data Sources</strong> dashboard and expand the data source.</p>
+<h2 is-upgraded>Edit a Snowflake Data Source</h2>
+<p>To change a Snowflake data source, navigate to the <strong>Data Sources</strong> dashboard and click the edit icon next to the configuration you want to change. From the <strong>Edit Connection</strong> screen, you can edit Snowflake connection, query, and mapping configurations.</p>
+<p class="image-container"><img alt="Data Source Ribbon" src="img/e23ece3c138087ef.png"></p>
+<h2 is-upgraded>Error Logs</h2>
+<p>To view the error logs, complete the following steps in Tealium:</p>
+<ol type="1">
+<li>From the <strong>Data Sources</strong> dashboard, expand the Snowflake data source you want to view.</li>
+<li>Under <strong>Errors</strong>, click <strong>Error Logs</strong> or click the edit icon and select the <strong>Error Logs</strong> tab.</li>
+<li>Select the error log you want to view and preview or export the log.</li>
+</ol>
+<p class="image-container"><img alt="Data Source Error Logs" src="img/14b220638f3788f6.png"></p>
+<h3 is-upgraded>Export Logs</h3>
+<p>You can export logs for the following time ranges:</p>
+<ul>
+<li>Last 30 minutes</li>
+<li>Last hour</li>
+<li>Last 4 hours</li>
+<li>Custom time range</li>
+</ul>
+<p>To reduce file sizes, exports are limited to a time range of 4 hours or shorter. Complete the following steps to export logs:</p>
+<ol type="1">
+<li>From the <strong>Error Logs</strong> tab, click <strong>Export Logs</strong></li>
+<li>Select a time range or select <strong>Customer</strong> to choose the start and end date and time</li>
+<li>Select the error type(s) to incldue in the log</li>
+<li>Click <strong>Request Export</strong></li>
+</ol>
+<p>There is a short delay while the logs are processed. You can view your exported logs from the past six days by navigating to <strong>Error Logs&gt;View Exported Logs</strong>. Logs are stored for 30 days.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to configure Tealium&#39;s Snowflake Streaming connector in EventStream and AudienceStream</li>
+<li>How to create a Snowflake Data Source in Tealium to ingest data</li>
+</ul>
+<h2 is-upgraded>Conclusion</h2>
+<p>In this guide, you learned how to successfully configure a Snowflake Data Source and Snowflake Streaming connectors within Tealium, enhancing your ability to leverage real-time customer data. These integrations enables you to efficiently capture, process, and activate low-latency data, optimizing your analysis and AI initiatives while leveraging Tealium&#39;s extensive integration marketplace.</p>
+<p>Reach out to your account representatives to learn more about unlocking the full potential of your data with Tealium and Snowflake!</p>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.tealium.com/server-side-connectors/snowflake-streaming-connector/" target="_blank">Snowflake Streaming Connector</a></li>
+<li><a href="https://docs.tealium.com/early-access/snowflake-data-source/about/" target="_blank">Snowflake Data Source</a></li>
+<li><a href="https://tealium.com/technology-partner/better-together-tealium-snowflake/" target="_blank">Tealium + Snowflake Better Together</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

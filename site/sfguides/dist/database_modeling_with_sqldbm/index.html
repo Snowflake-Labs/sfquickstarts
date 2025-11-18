@@ -1,0 +1,469 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Cloud-native Database Modeling with SqlDBM</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="database_modeling_with_sqldbm"
+                  title="Cloud-native Database Modeling with SqlDBM"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Relational database modeling enables instant visual review of a database landscape and the relationships between its entities - like a map for your data.</p>
+<p><a href="https://www.SqlDBM.com" target="_blank">SqlDBM</a> is an online database modeling tool that works with leading cloud platforms such as Snowflake and requires absolutely no coding to get started. In this Quickstart, you will see how you can model your entire Snowflake database in just a few clicks and begin taking advantage of all the time-saving features that SqlDBM delivers.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to quickly diagram an existing schema through reverse engineering</li>
+<li>Create and manipulate database objects using time-saving features like copying and cloning</li>
+<li>The relevance of primary and foreign key relationships and how to declare them</li>
+<li>Inheritance for parent/child objects</li>
+<li>Track change history using Revisions</li>
+<li>Forward engineering &amp; deployment of changes to Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Use During the Lab</h2>
+<ul>
+<li>An existing or trial <a href="https://trial.snowflake.com/" target="_blank">Snowflake account</a> with <code>ACCOUNTADMIN</code> access</li>
+<li>An existing or trial <a href="https://sqldbm.com/Home/" target="_blank">SqlDBM account</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A relational model of an entire database schema</li>
+<li>New tables with no coding involved</li>
+<li>Relate the tables through primary and foreign key constraints</li>
+<li>A data catalog with column-level descriptions</li>
+</ul>
+<p>A sample schema diagram like the one we will create: <img alt="diagram sample" src="img/541e1b29f9a05443.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Case Overview" duration="3">
+        <h2 is-upgraded>What is Database Modeling?</h2>
+<p>An entity-relationship (ER) diagram is the traditional way of visualizing the tables and their relationships in a relational database. Having a diagram makes it easier to find relevant tables and gives the user an instantaneous idea of how tables can be joined for analytics purposes.</p>
+<p>SqlDBM takes the ER diagram&#39;s visual, no-code approach and allows user to manipulate their database directly using the graphical perspective. Instead of writing DDL by hand, SqlDBM users can drag, drop, copy, and clone objects using an intuitive, browser-based graphical interface. Then, we take it a step further!</p>
+<p>With SqlDBM, changes made on a diagram can be forward-engineered into neat, Snowflake-specific DDL and deployed back to the database. What&#39;s more, the tool leverages this intuitive, code-free approach to enable collaboration, documentation, and version control.</p>
+<p>We&#39;ll go through all these features in detail as part of this Quickstart, so let&#39;s start by setting up our account.</p>
+<p class="image-container"><img alt="SqlDBM Architecture" src="img/dff3f5ba9cd39e99.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Configuration" duration="3">
+        <ul>
+<li>Log in to your Snowflake using an existing or trial account.<br><img alt="Snowflake Log In Screen" src="img/25919102cc7730a4.png"></li>
+<li>Familiarize yourself with the UI if logging in for the first time in the <a href="https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface" target="_blank">Snowflake UI Tour</a>.<br><img alt="Snowflake Worksheets" src="img/a9e4874ee1809003.png"></li>
+<li>Ensure you are using the ACCOUNTADMIN role or that your role has the following grants assigned to follow the Quickstart. If not, we will provide sample DDL where needed.</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Privilege</p>
+</td><td colspan="1" rowspan="1"><p>Required for</p>
+</td><td colspan="1" rowspan="1"><p>Alternative</p>
+</td></tr>
+</table>
+<p>USAGE on DATABASE &amp; SCHEMA| Access metadata for existing database and schema objects and bring them into a SqlDBM project | Use sample DDL provided REFERENCES on TABLE/VIEW | Reference the DDL for underlying tables and views | Use sample DDL provided USAGE on File Format, Sequence, Stored Procedure, User-Defined Function | Access the DDL for these objects | Not required for this tutorial</p>
+<p>ALL on schema | Deploying changes back into Snowflake | N/A</p>
+<p><em>If you wish to use an existing schema, skip this step.</em></p>
+<ul>
+<li>create a database in Snowflake for deploying the SqlDBM sample project at the end of this quickstart.</li>
+</ul>
+<p><code>create database ADVENTUREWORKSDW</code></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a New SqlDBM Project" duration="5">
+        <p>After logging in to <a href="https://www.SqlDBM.com" target="_blank">SqlDBM</a>, you will be taken to the Projects Dashboard. Otherwise, select &#34;Dashboard&#34; from the top-right dropdown.</p>
+<p class="image-container"><img alt="Dashboard" src="img/64d9e3f4ae47b93b.jpg"></p>
+<h2 is-upgraded>Option 1) Bring your existing Schema</h2>
+<p>Follow the steps to create a Snowflake project and bring your schema:</p>
+<ul>
+<li>Click the &#34;New Project&#34; button at the top to get started.</li>
+<li>Select &#34;Snowflake&#34; as the database type and click &#34;Bring your database.&#34;</li>
+</ul>
+<p class="image-container"><img alt="Creating a new project" src="img/3303901f012827f8.jpg"></p>
+<ul>
+<li>Click the &#34;Connect to DW&#34; to create a live connection to Snowflake.</li>
+<li>Alternatively, run the GET_DDL command by hand and copy and paste the output onto the text area on the screen or save it in a file and upload via the &#34;Drop your File&#34; button.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT GET_DDL(&#39;schema&#39;,&#39;&#34;DATABASE_NAME&#34;.&#34;SCHEMA_NAME&#34;&#39;, true);
+</code></pre>
+<ul>
+<li>Enter your Snowflake server instance and log in with a user and role with <code>USAGE</code> privileges on the schema you wish to import.</li>
+</ul>
+<p class="image-container"><img alt="Direct Connect " src="img/1068bb27a4f193b0.jpg"></p>
+<ul>
+<li>Select the Database and Schema you wish to import and press the &#34;Apply&#34; button below.</li>
+</ul>
+<h2 is-upgraded>Option 2) Use the example schema</h2>
+<p>Download our <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/database_modeling_with_sqldbm/assets/sample_schema.sql" target="_blank">example DDL</a></p>
+<ul>
+<li>you can paste the contents directly into the text area on the screen.</li>
+<li>or upload the file by pressing the &#34;Drop your file&#34; button</li>
+</ul>
+<h2 is-upgraded>Parse the script to create a project</h2>
+<ul>
+<li>Press the up arrow icon / &#34;Upload SQL Script&#34; button at the top to parse the DDL provided.</li>
+</ul>
+<p class="image-container"><img alt="Upload SQL script" src="img/2b9e4ba31f09ec26.jpg"></p>
+<ol type="1" start="7">
+<li>Review the objects that are being imported on the left panel. Optionally, you can exclude individual items from being imported by de-selecting the check-box next to them.</li>
+<li>Press the &#34;Import&#34; button to create a project with the selected objects.<ul>
+<li>Parsing and importing DDL into a project is called <strong>Reverse Engineering</strong> in SqlDBM and is not limited to new projects. This can be done at any point to retrieve changes to the database made outside of SqlDBM from the Reverse Engineering screen.</li>
+<li>Note, this will not re-initiate the entire project. Users will be able to choose which objects are added, updated, or deleted from a project depending on whether or not they currently exist.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Reverse Engineering " src="img/dadcd1a0cdd95504.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure project defaults" duration="5">
+        <p>Let&#39;s configure some initial time-saving defaults for our project and set the visual level of detail and look-and-feel for our diagrams.</p>
+<p class="image-container"><img alt="project settings" src="img/c411a09d3d2f8a66.jpg"></p>
+<ol type="1">
+<li>Save the first revision and name your project<ul>
+<li>Click the save button at the top right and name your project with something descriptive. [1]</li>
+</ul>
+</li>
+<li>Rename revision title<ul>
+<li>Let&#39;s rename &#34;Initial Revision&#34; to something that fits with your way of working. Name your revisions based on the Agile Sprint, current project phase, or even calendar month. Something to allow for a meaningful grouping of changes.</li>
+<li>Click on the text &#34;Initial Revision&#34; to modify it. [2]</li>
+</ul>
+</li>
+<li>Enable dark theme<ul>
+<li>Click on the blue SqlDBM logo at the top left to bring up the project menu. Click &#34;Dark Theme&#34; to enable it, if that&#39;s your thing. [3]</li>
+</ul>
+</li>
+<li>Set naming conventions for the project<ul>
+<li>Click on the blue SqlDBM logo at the top left to bring up the project menu and select &#34;Naming Conventions.&#34; [4]</li>
+<li>Any changes made here can be &#34;[applied] to all existing objects&#34; and validated going forward by ticking the &#34;Validate on project save&#34; using the buttons at the bottom of the menu.</li>
+<li>Case standards - set the standard naming style for the entire project (e.g., UPPER_CASE, Title_Case, PascalCase, etc.).</li>
+<li>Name mapping - here, we can set the default names for the objects in our project. Tick the check-box next to any object to override the default naming. Click the pencil icon to enter the expression editor. Here you can edit both the static part of the default naming and use the context variables available to make the name dynamic.</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="PK expression" src="img/530ef99728d88824.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Diagram look and feel" duration="3">
+        <p>Get familiar with the look-and-feel configuration for diagrams and learn to view them at varying levels of detail.</p>
+<p class="image-container"><img alt="diagram properties" src="img/ca5c9f11ee94166c.jpg"></p>
+<ol type="1">
+<li>Set diagram properties<ul>
+<li>In the Diagram Explorer screen, open a diagram and expand the various options on the right-screen properties menu.</li>
+<li>In the view mode options, configure the preferred look and feel of the diagram. Here you can select which object properties will be displayed and color-coded on the diagrams.</li>
+</ul>
+</li>
+<li>Set relational notation<ul>
+<li>Toggle between IDEF1X and Crow&#39;s Foot relationship notations in the &#34;Notation&#34; options. Note that relationship properties such as Identifying/Non-identifying (IDEF1X) and cardinality (Crow&#39;s Foot) will change accordingly. These properties are orientative and do not impact the generated DDL.</li>
+</ul>
+</li>
+<li>Change view modes (level of detail)<ul>
+<li>Once defined, database objects in SqlDBM diagrams can be viewed at varying levels of detail. This allows a single diagram to serve various business functions: from general planning to column-level auditing.</li>
+<li>You can get a feel for the different view modes by clicking on the &#34;View Mode&#34; selector on the top of the screen</li>
+</ul>
+</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p>View Mode</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Table</p>
+</td><td colspan="1" rowspan="1"><p>Simplified view showing tables as boxes, providing a bird&#39;s-eye view.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>PK/AK</p>
+</td><td colspan="1" rowspan="1"><p>Shows only the primary and alternate key columns.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Keys</p>
+</td><td colspan="1" rowspan="1"><p>Shows the primary, alternate, and foreign key columns.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Columns</p>
+</td><td colspan="1" rowspan="1"><p>Default view. All columns and properties are displayed.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Descriptions</p>
+</td><td colspan="1" rowspan="1"><p>Simplified view showing tables as boxes with descriptions.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Logical</p>
+</td><td colspan="1" rowspan="1"><p>Detailed, like the &#34;Columns&#34; view, but hides physical names and database-specific properties.</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Editing objects" duration="6">
+        <p>Let&#39;s organize our project by creating some subject areas. These serve as folders for keeping your diagrams organized. Then we&#39;ll learn to create and edit its properties, as well as add/copy fields.</p>
+<p class="image-container"><img alt="create a subject area and add tables" src="img/998db5ec07fc6b3.gif"></p>
+<h2 is-upgraded>Create a Subject Area</h2>
+<p>Subject areas serve as folders for keeping diagrams organized by categories such as department or project. Right-click on &#34;Subject Areas&#34; in the Diagrams screen and select &#34;Add a Subject Area.&#34;</p>
+<h2 is-upgraded>Add a table to a diagram</h2>
+<p>Click on the &#34;Diagram Explorer&#34; button on the left-hand menu. Add a table to a diagram from the object catalog by searching for a part of its name, then click the &#34;Add to Diagram&#34; button next to it.</p>
+<p>Type &#34;product&#34; into the search box to filter the list of tables and bring &#34;DimProduct&#34; onto the diagram.</p>
+<p class="image-container"><img alt="name table, add pk, copy columns" src="img/fca6e1839318b581.gif"></p>
+<h2 is-upgraded>Create a new table</h2>
+<p>Right-click anywhere on the canvas and select &#34;Add Table.&#34; Double-click on the new table to edit it. Give the table a name and add some columns with corresponding data types.</p>
+<p>Table name: DimProductPrototype</p>
+<h2 is-upgraded>Copy columns from an existing table</h2>
+<p>Select a column (or shift-click to select multiple) from an existing table and drag them to another table to move them. Perform the drag operation holding the Ctrl key (Command on Mac) to copy.</p>
+<p>Highlight and drag several columns from DimProduct to DimProductPrototype</p>
+<h2 is-upgraded>Add a primary key (PK) to a table</h2>
+<p>Double click on a table to enter edit mode. Create a new column at the topmost section to designate it as a primary key (replacing &#34;&lt;pk column name&gt;&#34;).</p>
+<p>Alternatively, drag any existing column to the top of the table to designate it as a PK.</p>
+<p>create a PK column for DimProductPrototype called ProductPrototypeKey of type Integer.</p>
+<h2 is-upgraded>Add a foreign key (FK) to a table</h2>
+<p>Click on a table that has a PK defined. Drag the bottom-right connector to another table to add it as an FK.</p>
+<p class="image-container"><img alt="add primary and foreign keys" src="img/b8347b3d5f28486d.png"></p>
+<h2 is-upgraded>Create a child or parent table</h2>
+<p>Select a table in the diagram. Use the top-left or bottom-right connectors to create a parent or child table, respectively.</p>
+<p>Parent tables PKs will cascade to the child tables.</p>
+<h2 is-upgraded>Create a template</h2>
+<p>Templates save time by allowing you to define and reuse columns at your convenience.</p>
+<p class="image-container"><img alt="template" src="img/9c7521fd7e482b48.png"></p>
+<p>Find &#34;Templates&#34; in the &#34;Database Explorer&#34; screen (third option from the top in the left-hand menu) and click to &#34;Create New.&#34;</p>
+<p>Click on the newly created template to select it and set the Template Properties on the right-hand menu.</p>
+<ul>
+<li>Template name: give the template a descriptive name, like &#34;MetadataColumns,&#34; for example.</li>
+<li>Apply to new tables: tick this option if you want this template to apply automatically to all newly created tables.</li>
+<li>Columns: add the columns that you would like to be part of the template. Let&#39;s add EtlId as date and EtlName as varchar in this example. Be sure to provide a description.</li>
+<li>Description: provide a general description for the template</li>
+<li>Related tables: metadata showing which tables are currently associated with the existing template</li>
+</ul>
+<h2 is-upgraded>Assign a template to a table</h2>
+<p>Let&#39;s assign the metadata columns from the template we just created to a table. Select a table to bring up its properties in the right-hand menu. Expand the &#34;Options&#34; menu and scroll down to the &#34;Templates&#34; text area.</p>
+<p>Begin typing the template name and select it from the auto-suggestion. Hit &#34;Add&#34; to associate it with the table.</p>
+<p>Keep in mind that while the association exists, changes to the template will be reflected in the associated tables. To break the association, click the &#34;X&#34; next to the template name in the table options; you will be given a choice to keep or delete the template columns in the process.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with primary and foreign keys" duration="2">
+        <p>Although we covered the technical aspect of creating and assigning PK and FK constraints, their importance in a relational database deserves its own section. But first, a refresher:</p>
+<ul>
+<li>A primary key constraint uniquely identifies each record in a table.</li>
+<li>Primary keys must contain UNIQUE values and can not contain NULL values.</li>
+<li>A foreign key is a field (or collection of fields) in one table that refers to the PRIMARY KEY in another table.</li>
+<li>The table with the foreign key is called the child table, and the table with the primary key is called the referenced or parent table.</li>
+</ul>
+<p>Although Snowflake does not enforce PK and FK constraints (only NOT NULL) - meaning, Snowflake will not throw an error when duplicate records are inserted, thereby violating a PK - maintaining these as part of a schema helps users understand the tables and their relationships.</p>
+<p>Being able to quickly and visually identify PK/FK constraints helps make sense of the data and facilitates joins and logical operations where uniqueness needs to be taken into account. SqlDBM uses PK/FK constraints to link and draws table relationships on a diagram, as do many BI tools when suggesting joins.</p>
+<p>Observe the below tables, which have no constraints defined. Without probing the data, there is no way to determine the uniqueness of individual records or if common columns (i.e., Hotel_ID) hold the same data or use different formats.</p>
+<p class="image-container"><img alt="no constraints" src="img/187962172c51c8a0.png"></p>
+<p>Now observe the same tables with corresponding PK/FK constraints declared. Instantly we know that a BOOKING_ID holds unique information about a booking in the bookings table and that the same is true of Hotel_ID in the hotels table.</p>
+<p>We also know that we can join hotels to bookings using the Hotel_ID.</p>
+<p class="image-container"><img alt="constraints defined " src="img/9504e38928579610.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Snowflake table properties" duration="0">
+        <h2 is-upgraded>Column-level properties</h2>
+<p>Select a table from your diagram and highlight the column to bring up its properties in the right-hand menu.</p>
+<ul>
+<li>The available properties vary depending on the column data type. Set general properties like &#34;Default Value&#34; or data-type-specific settings like sequences accordingly.</li>
+</ul>
+<p class="image-container"><img alt="column properties" src="img/682a76eb98f3af1.png"></p>
+<h2 is-upgraded>Table-level properties</h2>
+<p>Select a table on the diagram (or from the list on Database/Diagram Explorer) to bring up its properties in the right-hand menu.</p>
+<p>Review and set the following options as needed:</p>
+<p class="image-container"><img alt="table properties" src="img/2834d58498bfa4d0.png"></p>
+<ol type="1">
+<li>Clusters and Keys - use the available options in this menu to view, modify, and create primary, alternate, and clustering keys.</li>
+<li>Options - Specify transient and data retention properties as well as setting file format<ul>
+<li>Transient: mark this flag to designate a table as transient (no Fail-safe)</li>
+<li>Data Retention Time (Days): specify 0 or 1 day for Snowflake time travel function</li>
+<li>File Format: select a file format for use with loading and unloading data</li>
+</ul>
+</li>
+<li>Copy Options - specify the copy options for loading and unloading operations such as on-error and purge</li>
+<li>Post Script - Specify manual post-script commands to be injected into the create statement (such as grants).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add functional information and comments" duration="5">
+        <p>Add some functional details to your project to give it some context and make it easier for team members to navigate.</p>
+<h2 is-upgraded>Notes on diagram</h2>
+<p>Add descriptive notes anywhere on the diagram using the &#34;Add Note&#34; (Ctrl+Insert) feature.</p>
+<p class="image-container"><img alt="notes" src="img/523a0e646a99ae59.png"></p>
+<h2 is-upgraded>Data dictionary</h2>
+<p>SqlDBM&#39;s <strong>Data Dictionary</strong> allows users to review and edit object-level comments in one centralized and searchable screen. The descriptions provided here are intended to help the team go beyond object definitions and provide meaningful details about the data contained in the tables.</p>
+<p>The descriptions provided here will become part of the object DDL. They can be deployed back to the database (see Forward Engineering topic ahead) - they are not meant to serve merely as project metadata.</p>
+<ol type="1">
+<li>Access the Data Dictionary screen by selecting the book icon on the left-hand menu.</li>
+<li>Use the search box to perform a wildcard lookup for objects, columns, and descriptions matching a given term.</li>
+<li>Enter object-level or column-level descriptions in the description fields. By design, other DDL details such as object names, datatypes, and properties can not be changed on this screen. This allows users from any level of technical experience to contribute to a project without the possibility of changing any structural details.</li>
+<li>Template descriptions - located at the bottom of the screen - can also be maintained here. Note that the description is displayed in related tables but can only be edited in the template itself.</li>
+<li>The Import/Export to Excel buttons are located at the top-right of the screen. This allows users to contribute to a project by maintaining descriptions in a familiar Excel format without modifying the object structure.<ul>
+<li>Click the &#34;Export to Excel&#34; button to generate and download the data dictionary in Excel format.</li>
+<li>The Excel follows a similar format as the Data Dictionary screen: only the descriptions are editable (highlighted in orange). Modifying any other field (not highlighted in orange) will not affect the project but will fail to update the related description.</li>
+<li>Once you have added some descriptions to the file, save it, and press the &#34;Upload&#34; button to incorporate the changes into the project.</li>
+<li>Search for all or part of a description entered in the previous step to navigate directly to it.</li>
+<li>Save the project to complete the process</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="documentation" src="img/a19160702a678bc6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Change tracking" duration="3">
+        <p>Every save in SqlDBM generates a versioned <em>revision</em>, which allows for change tracking and version control. SqlDBM projects store an infinite revision history, and any two revisions can be compared to track changes. The latest revision is indicated next to the project name at the top of the screen (v12 in the example below).</p>
+<p class="image-container"><img alt="documentation" src="img/9afb3fbeefef398f.png"></p>
+<h2 is-upgraded>Review the latest changes</h2>
+<p>The following section will cover deployment. To review the changes made as part of this exercise, we will use the <strong>Compare Revisions</strong> feature of SqlDBM.</p>
+<ol type="1">
+<li>Click on the &#34;Compare Revisions&#34; icon on the left-hand menu.</li>
+<li>The latest two revisions are selected by default. Select any two revisions to see the cumulative changes between them. Changes are highlighted based on the following color scheme:</li>
+</ol>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Color</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Green</p>
+</td><td colspan="1" rowspan="1"><p>New object / addition</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Yellow</p>
+</td><td colspan="1" rowspan="1"><p>Modification</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Red</p>
+</td><td colspan="1" rowspan="1"><p>Deletion</p>
+</td></tr>
+</table>
+<ol type="1" start="3">
+<li>Click on any object on the top half of the screen to see the details of the change.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deployment" duration="5">
+        <p>The time has come to deploy all of the changes made during this exercise to a Snowflake environment.</p>
+<p>In SqlDBM, DDL is generated through a function known as <strong>Forward Engineering</strong>. There are two options: create SQL and alter SQL. The first (create) generates a create statement for selected objects as of the latest revision. The second (alter) creates an alter script from a previous revision.</p>
+<p class="image-container"><img alt="forward engineer" src="img/84c7c8fb6e865a6d.png"></p>
+<ol type="1">
+<li>Access the Forward Engineering screen by clicking on the scroll icon on the left-hand menu.</li>
+</ol>
+<h2 is-upgraded>Review Errors and Warnings</h2>
+<p>While SqlDBM allows users to model and brainstorm at any level of detail (or lack thereof) with no impediment, it also offers non-intrusive &#34;Errors and Warnings&#34; alerts. While these notifications are available on the diagram and in Database Documentation, they are most relevant on the Forward Engineering screen.</p>
+<ul>
+<li>Click on the colored dot next to a table name to review any possible problems which may cause deployment errors (e.g., columns without a datatype or duplicate tables or column names).</li>
+</ul>
+<p class="image-container"><img alt="Errors and Warnings" src="img/246d543e05bb2a97.png"></p>
+<h2 is-upgraded>Generate CREATE script</h2>
+<p>This option will generate a &#34;create&#34; script for deploying new objects (or overwriting existing ones depending on the generation options).</p>
+<ol type="1" start="2">
+<li>Mark the check-box for the objects that you wish to create or use the search to find the desired ones. Ensure that the &#34;Create&#34; option is selected for &#34;Schema&#34; if this is your first time deploying the project.</li>
+<li>Set the <em>Generation Options</em> in the right-hand panel according to what you wish to deploy. Here you can mark options such as create, drop (or both, which results in <code>CREATE OR REPLACE</code>) for individual object types and set general properties like Safe Scripts or quote options (i.e., double or empty).</li>
+<li>Hit the <em>Generate SQL</em> button in the middle of the screen or the <em>triangle</em> icon up top to generate the script.</li>
+</ol>
+<h2 is-upgraded>Generate ALTER script</h2>
+<p>An Alter script will generate only the changes between the latest revision and a previous one. Create, drop, or alter statements will be generated automatically, based on which changes occurred between the selected revisions. As such, only the Safe Scripts and quoting options are applicable.</p>
+<ul>
+<li>Press the Generate Alter SQL button or the triangle+A icon as described in step [4].</li>
+<li>Select the revision you wish to alter from. Typically, you would choose to alter from the last revision deployed to the database. If this is your first deployment, choose &#34;Revision 1&#34;.</li>
+</ul>
+<p class="image-container"><img alt="Alter Script" src="img/26bceac271001b0.png"></p>
+<h2 is-upgraded>Deploy changes</h2>
+<p>Whether you are looking to perform a fresh deployment using a Create Script, or just the latest changes from an Alter Script, the final step is to review the changes before deployment.</p>
+<p class="image-container"><img alt="Review Script" src="img/6f1ade999eca247.png"></p>
+<ul>
+<li>Make sure to thoroughly review the generated script before deploying it to a database. While SqlDBm guarantees precise and well-formatted code, you should always review the final output to make sure you have selected the right objects and set the <em>Generation Options</em> accordingly.</li>
+<li>Pay special attention to the objects with <em>Errors and Warnings</em> indicators and correct the issue where possible, as these are the most likely to cause deployment issues.</li>
+<li>Once you&#39;ve verified your code, take the script back into Snowflake and paste it into a worksheet.</li>
+</ul>
+<p class="image-container"><img alt="deploy" src="img/335c4f2a1a65e4eb.png"></p>
+<ul>
+<li>Make sure to set the active database and schema unless specified as part of the script.</li>
+</ul>
+<p class="image-container"><img alt="Snowflake Settings" src="img/c9a51dce745ace07.png"></p>
+<ul>
+<li>Run the script, and enjoy a job well done.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="4">
+        <p>Visually guided database modeling can help an enterprise data team make sense of, and accelerate database development. In this Quickstart, we followed a simple development workflow: from creating and instantiating a new Snowflake project and schema, to making changes, all the way to deployment. However, the benefits of a centralized modeling tool extend well beyond the role of a developer.</p>
+<p>Whether it&#39;s a project manager using <strong>Compare Revisions</strong> to track changes, a business user familiarizing themselves with a previously-unknown datamart through a relational diagram, or a new team-member becoming appraised of an organization through <strong>Database Documentation</strong> - doing this in a single tool and a coordinated fashion makes everyone&#39;s job easier and ensures consistency throughout.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Creating a project</li>
+<li>Reverse engineering from a Snowflake database</li>
+<li>Configuring project defaults and the look and feel</li>
+<li>GUI-based no-code editing</li>
+<li>Setting Snowflake object properties</li>
+<li>Change tracking</li>
+<li>Deployment</li>
+</ul>
+<h2 is-upgraded>Additional resources</h2>
+<ul>
+<li>If you have questions about any of the topics described in this Quickstart or additional functionality, please request a guided demo through our website: <a href="https://www.SqlDBM.com" target="_blank">SqlDBM</a>.</li>
+<li>Full documentation of all our features can be found in our <a href="https://intercom.help/SqlDBMhelpcenter/en" target="_blank">Help Center</a>.</li>
+<li>To learn more about database modeling best practices, find out about upcoming features, and stay connected to our growing data community, be sure to follow us on <a href="https://www.linkedin.com/company/sqldbm" target="_blank">LinkedIn</a>.</li>
+<li>Training videos, webinars, and new feature demos on our <a href="https://www.youtube.com/channel/UCxzY9EOGgPPhHCXj6h3ufsA" target="_blank">Youtube channel</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "finetuning_llm_using_snowflake_cortex_ai",
+  "duration": 21,
+  "title": "Serverless LLM Fine-tuning using Snowflake Cortex AI",
+  "summary": "This guide provides the instructions for fine-tuning large language models using Snowflake Cortex AI.",
+  "source": "getting_started_with_llm_finetuning_using_cortex_ai/getting_started_with_llm_finetuning_using_cortex_ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "cortex"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "finetuning_llm_using_snowflake_cortex_ai"
+}

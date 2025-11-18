@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_feast_snowflake",
+  "duration": 60,
+  "title": "Getting Started with Snowpark for Python and Feast",
+  "summary": "This is a guide to assist users to setup Feast feature store with Snowflake for both online and offline feature stores.",
+  "source": "getting_started_with_feast_snowflake/getting_started_with_feast_snowflake.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_feast_snowflake"
+}

@@ -1,0 +1,649 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Two Way Data Collaboration</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_collaboration_two_way"
+                  title="Two Way Data Collaboration"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This guide will take you through Snowflake&#39;s Collaboration features, and highlight how easy it is to share data between two organisations.</p>
+<p>It also highlights Snowflakes ability to perform feature engineering, host an ML model, score data from shared data, and share the enriched (scored) data back to the original provider. Hence, it is a 2-way sharing relationship, where both accounts are providers and consumers.</p>
+<p>We will also build on these concepts, and introduce how we can utilise Streams and Tasks to automate this entire process.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed <strong>Download the git repo here: https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration</strong></li>
+<li><a href="https://www.anaconda.com/" target="_blank">Anaconda</a> installed</li>
+<li><a href="https://www.python.org/downloads/" target="_blank">Python 3.10</a> installed <ul>
+<li>Note that you will be creating a Python environment with 3.10 in the <strong>Consumer Account - Create Model</strong> step</li>
+</ul>
+</li>
+<li>Snowflake accounts with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>Snowflake accounts with the Snowflake Marketplace T&amp;C&#39;s accepted. This will allow you to create Listings.</li>
+<li>A Snowflake account login with a role that has the ability to create Listings, Databases, Schemas, Tables, Stages, User-Defined Functions, and Stored Procedures. If not, you will need to register for free trials or use a different role.</li>
+<li>The <a href="https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel" target="_blank">Snowpark ML</a> package installed</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to become a Provider in Snowflake Marketplace (Private Listings)</li>
+<li>How to consume a shared private asset in the Snowflake Marketplace</li>
+<li>How to deploy a ML model in Snowflake</li>
+<li>How to share seamlessly between two Snowflake Accounts</li>
+<li>How to automate the process using Streams and Tasks</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Two <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Accounts in the same cloud and region</li>
+<li>Complete the prerequisites above</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Ingestion of Credit Card Customer Profile Data</li>
+<li>Sharing raw data seamlessly via a Private Listing</li>
+<li>Consuming shared data via a Private Listing</li>
+<li>Perform feature engineering</li>
+<li>Scoring shared data using a ML model</li>
+<li>Sharing back scored data to the original Provider account</li>
+<li>Automating the above data pipeline using Streams and Tasks</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Business Use Case and Context" duration="5">
+        <p>In this hands-on-lab, we are playing the role of SnowBank. The Credit Risk team has noticed a rise in credit card default rates which affects the bottom line of the business. It has enlisted the help of an external organisation (Zamboni) to score the credit card default risk of their existing customers, based on a series of attributes in categories such as spending, balance, delinquency, payment and risk. The data needs to be shared between the two parties.</p>
+<p>Both companies have chosen to use Snowflake. The advantages of doing this are:</p>
+<ul>
+<li>Direct access and no delay data sharing between the Provider and Consumer accounts</li>
+<li>Govern access to your data offering and monitor usage</li>
+<li>Enable targeted discovery with one or many organizations</li>
+<li>Rely on a multitude of built-in data security features</li>
+<li>Reduce extract, transform, load (ETL), and data pipeline maintenance costs</li>
+</ul>
+<p>Below is a schematic of the data share <img alt="Diagram" src="img/90b05018759d449f.png"></p>
+<h2 is-upgraded>Example Use Cases</h2>
+<p>From a business point of view, this architecture exists to satisfy several use cases. Examples include:</p>
+<ul>
+<li>This SnowBank and Zamoboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this example, Zamoboni required access to SnowBank&#39;s data to risk score their data. A specific example of this could be a Lenders Mortgage Insurance company that has a service contract with a bank. They could execute a default risk model over the customer attributes that the bank has.</li>
+<li>Superannuation and Life Insurance Companies. A more specific example above is claims processing for life insurance. Often times, Superannuation companies have the necessary attributes required by the insurance companies for claims processing.</li>
+<li>White label Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the white label partner for risk scoring is analogous to this use case.</li>
+</ul>
+<h2 is-upgraded>Dataset Details</h2>
+<p>The dataset contains aggregated profile features for each customer at each statement date. Features are anonymized and normalized, and fall into the following general categories:</p>
+<p>D_* = Delinquency variables S_* = Spend variables P_* = Payment variables B_* = Balance variables R_* = Risk variables</p>
+<h2 is-upgraded>Dataset Citation</h2>
+<p>Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dane. (2022). American Express - Default Prediction. Kaggle. https://kaggle.com/competitions/amex-default-prediction</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up" duration="10">
+        <p>Navigate to the <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Trial Landing Page</a>. Follow the prompts to create a Snowflake Account.</p>
+<p>Repeat the process above. Be sure to select the same cloud and region as the first account your created. Although it is possible to share across clouds and regions, this guide will not cover this scenario.</p>
+<p>Check your emails and follow the prompts to activate both the accounts. One will be the Provider (SnowBank) and one will be the Consumer (Zamboni).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provider Account (SnowBank) - Set Up" duration="20">
+        <p>In this part of the lab we&#39;ll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading, and finally load our credit card default prediction data into our tables.</p>
+<p>In our business scenario, this step represents SnowBank loading data from their source systems in to Snowflake, and creating datasets that will be shared with an external partner (Zamboni) which has been tasked with creating a machine learning model to predict defaults on new data. The cc_default_training_data dataset would be sent for the partner to train and test the model, and the cc_default_unscored_data would be new data sent to the partner to be scored and returned. We will create a third stage for illustrative purposes that will simulate newly arriving data, and how the process is automated. We will come back to this in a later step.</p>
+<h2 is-upgraded>Initial Set Up</h2>
+<p>We first need to accept the terms and conditions to use Anaconda and Snowflake Marketplace. Navigate to Admin &gt; Billings and Terms and enable both Anaconda and Snowflake Marketplace. Screenshot is below <img alt="Diagram" src="img/8cf34fa0a57246c1.png"></p>
+<p>Next, open up a worksheet and run all following steps as the ACCOUNTADMIN role</p>
+<pre><code language="language-SQL" class="language-SQL">  -- Change role to accountadmin
+  USE ROLE ACCOUNTADMIN;
+</code></pre>
+<p>First we can create a <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">Virtual Warehouse</a> that can be used to load the initial dataset. We&#39;ll create this warehouse with a size of XS which is right sized for that use case in this lab.</p>
+<pre><code language="language-SQL" class="language-SQL">-- Create a virtual warehouse for data exploration
+CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
+  WAREHOUSE_SIZE = &#39;X-SMALL&#39; 
+  WAREHOUSE_TYPE = &#39;STANDARD&#39; 
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE 
+  MIN_CLUSTER_COUNT = 1 
+  MAX_CLUSTER_COUNT = 1;
+</code></pre>
+<h2 is-upgraded>Load Data</h2>
+<p>Next we will create a database and schema that will house the tables that store our data to be shared with Zamboni.</p>
+<pre><code language="language-SQL" class="language-SQL">-- Create the application database and schema
+CREATE OR REPLACE DATABASE DATA_SHARING_DEMO;
+CREATE OR REPLACE SCHEMA DATA_SHARING_DEMO;
+USE SCHEMA DATA_SHARING_DEMO.DATA_SHARING_DEMO;
+</code></pre>
+<p>Our data is in Parquet format, so we will create a file format object</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE FILE FORMAT parquet_format
+TYPE = PARQUET;
+</code></pre>
+<p>Next we set up our <a href="https://docs.snowflake.com/en/user-guide/data-load-s3-create-stage#external-stages" target="_blank">External Stage</a> to our data. In our business scenario, we would have a secure <a href="https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration" target="_blank">Storage Integration</a> to the external stage rather than a public s3 bucket.</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE STAGE quickstart_cc_default_training_data
+    URL = &#39;s3://sfquickstarts/two_way_data_share/train/&#39;
+    FILE_FORMAT = parquet_format;
+
+CREATE OR REPLACE STAGE quickstart_cc_default_unscored_data
+    URL = &#39;s3://sfquickstarts/two_way_data_share/unscored/&#39;
+    FILE_FORMAT = parquet_format;
+
+CREATE OR REPLACE STAGE quickstart_cc_default_new_data
+  URL = &#39;s3://sfquickstarts/two_way_data_share/new_data/&#39;
+  FILE_FORMAT = parquet_format;
+</code></pre>
+<p>This DDL will create the structure for the table which is the main source of data for our lab.</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE TABLE cc_default_training_data
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION=&gt;&#39;@quickstart_cc_default_training_data&#39;,
+          FILE_FORMAT=&gt;&#39;parquet_format&#39;
+        )
+      ));
+
+-- Create below to be the template of the above (without the target column)
+CREATE OR REPLACE TABLE cc_default_unscored_data LIKE cc_default_training_data;
+ALTER TABLE cc_default_unscored_data DROP COLUMN &#34;target&#34;;
+
+-- Create below to be the template of the above
+CREATE OR REPLACE TABLE cc_default_new_data LIKE cc_default_unscored_data;
+</code></pre>
+<p>Before we load data, we need to enable change tracking in one of the tables. We will come back to this in a later step, but we need to enable it noe before we load any data.</p>
+<pre><code language="language-SQL" class="language-SQL">ALTER TABLE DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA SET CHANGE_TRACKING = TRUE;
+</code></pre>
+<p>Now we will load the data in the tables. We can scale up the warehouse temporarily so we do not have to wait as long</p>
+<pre><code language="language-SQL" class="language-SQL">ALTER WAREHOUSE query_wh SET warehouse_size=MEDIUM;
+</code></pre>
+<p>The code below loads the data in to the tables.</p>
+<pre><code language="language-SQL" class="language-SQL">COPY INTO cc_default_training_data 
+  FROM @quickstart_cc_default_training_data 
+  FILE_FORMAT = (FORMAT_NAME= &#39;parquet_format&#39;) 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+
+COPY INTO cc_default_unscored_data 
+  FROM @quickstart_cc_default_unscored_data 
+  FILE_FORMAT = (FORMAT_NAME= &#39;parquet_format&#39;) 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+
+COPY INTO cc_default_new_data 
+  FROM @quickstart_cc_default_new_data 
+  FILE_FORMAT = (FORMAT_NAME= &#39;parquet_format&#39;) 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+</code></pre>
+<p>We can now scale down the warehouse since we have finished loading data for the lab</p>
+<pre><code language="language-SQL" class="language-SQL">ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
+</code></pre>
+<p>You should have loaded over 5 million and 7 million rows in a few minutes. To check, query the data in the worksheet</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT COUNT(*) 
+  FROM CC_DEFAULT_TRAINING_DATA;
+
+SELECT COUNT(*) 
+  FROM CC_DEFAULT_UNSCORED_DATA;
+</code></pre>
+<p>We have loaded all the data in SnowBank. We can now switch over to our second account (Zamboni)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Account (Zamboni) - Set Up" duration="5">
+        <p>In this step, we set up the consumer account. Log in to the second trial account that was set up, and accept the Anaconda and Snowflake Marketplace Terms as we did in the last step. <img alt="Diagram" src="img/8cf34fa0a57246c1.png"></p>
+<p>Next we will create a database and schema that will house the tables that store our scored data to be shared back with SnowBank. Open up a worksheet and run the following.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+
+-- Create the application database and schema
+CREATE OR REPLACE DATABASE SCORED_MODEL;
+CREATE OR REPLACE SCHEMA SCORED_MODEL;
+USE SCHEMA SCORED_MODEL.SCORED_MODEL;
+</code></pre>
+<p>We need to get the account details to share with SnowBank, so they can set up a Private Listing with us, as we do not want anyone outside of our partnership to have access to / discover the data. For this, we need to note the account identifier. Instructions on how to do this can be found <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">here</a>. Once you have noted this, return to the Provider account.</p>
+<p>A screenshot on how to find your account identifier from the Snowsight UI is shown below <img alt="Diagram" src="img/ace7229630d48814.png"></p>
+<p>After you have noted / copied these details, switch back to the SnowBank account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provider Account (SnowBank) - Create Private Listing" duration="10">
+        <p>In the SnowBank account, open up Snowsight and navigate to Data &gt; Provider Studio on the left hand menu. then click the blue &#34;Listing&#34; button in the top right. Screenshot is below: <img alt="Diagram" src="img/87cef8137e4add6b.png"></p>
+<p>In the modal, enter the name of the Private Listing that we wish to share with our external partner (Zamboni). We have named it cc_default_training_data. They will securely access this data from their own Snowflake account, and share back the scored results. We have selected &#34;Only Specified Consumers&#34; in our discovery settings, so that our data can only be seen with the partners we explicitly want to share with. Screenshot is below: <img alt="Diagram" src="img/5887921d2c3fb811.png"></p>
+<p>In the next modal, click the &#34;+ Select&#34; option. Select the CC_DEFAULT_TRAINING_DATA in the DATA_SHARING_DEMO database and schema. Add it to the listing by clicking &#34;Done&#34;. Change the Secure Share Identifier to DATA_SHARING_DEMO and update the description of the listing. Lastly, we add the consumer account. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier we noted from the previous section. A screenshot is below: <img alt="Diagram" src="img/22629d9104ca75e5.png"></p>
+<p>Click Publish, and now your listing is live and ready for the consumer. No movement of data, no SFTP. The data is live and ready to query. Next we switch over to the Zamboni account to accept the share.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Account (Zamboni) - Accept Share and Create Warehouses" duration="10">
+        <p>In this section, we assume the role of the consumer of the data (Zamboni). Our data science team will take the data shared with us securely, score it for credit card default risk, and share the results back with SnowBank (the original data provider).</p>
+<p>The first step is to accept the share. Log in to the Zamboni and ensure you have assumed the ACCOUNTADMIN Role. Navigate to Data &gt; Private Sharing and you should see the cc_default_training_data waiting for the ACCOUNTADMIN to accept. Screenshot below <img alt="Diagram" src="img/510054fa30a7a07f.png"></p>
+<p>Click Get, and in the next modal, click Get. <img alt="Diagram" src="img/416d3615d44c1e29.png"></p>
+<p>You should now see CC_DEFAULT_TRAINING_DATA as one of the Databases in your catalog, with the DATA_SHARING_DEMO schema and the CC_DEFAULT_TRAINING_DATA. We did not need to load any data, it is shared live from the Provider. Screenshot below <img alt="Diagram" src="img/c3d402f0d2ed20f3.png"></p>
+<p>Next we will create some warehouses to query the shared data and to train our model in subsequent steps. We will create a <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/python-snowpark-training-ml" target="_blank">Snowpark Optimised Warehouse</a> for our training jobs. Open up a worksheet and run the following commands.</p>
+<pre><code language="language-SQL" class="language-SQL">  -- Change role to accountadmin
+USE ROLE ACCOUNTADMIN;
+
+  -- Create a virtual warehouse for data exploration
+CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
+  WAREHOUSE_SIZE = &#39;X-SMALL&#39; 
+  WAREHOUSE_TYPE = &#39;STANDARD&#39; 
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE 
+  MIN_CLUSTER_COUNT = 1 
+  MAX_CLUSTER_COUNT = 1;
+
+  -- Create a virtual warehouse for training
+CREATE OR REPLACE WAREHOUSE training_wh with 
+  WAREHOUSE_SIZE = &#39;MEDIUM&#39; 
+  WAREHOUSE_TYPE = &#39;snowpark-optimized&#39; 
+  MAX_CONCURRENCY_LEVEL = 1
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE;
+</code></pre>
+<p>We will train our model in the next step. We stay in this account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Account (Zamboni) - Create Model" duration="45">
+        <p>For this section, make sure you download the corresponding <a href="https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration" target="_blank">git repo</a> so you have the files referenced in this section.</p>
+<h2 is-upgraded>Set Up Snowpark for Python and Snowpark ML</h2>
+<p>The first step is to set up the python environment to develop our model. To do this:</p>
+<ul>
+<li>Download and install the miniconda installer from <a href="https://conda.io/miniconda.html" target="_blank">https://conda.io/miniconda.html</a>. (OR, you may use any other Python environment with Python 3.10, for example, <a href="https://virtualenv.pypa.io/en/latest/" target="_blank">virtualenv</a>).</li>
+<li>Open a new terminal window in the downloaded directory with the conda_env.yml file and execute the following commands in the same terminal window:<ol type="1">
+<li>Create the conda environment.</li>
+</ol>
+<pre><code>conda env create -f conda_env.yml
+</code></pre>
+<ol type="1" start="2">
+<li>Activate the conda environment.</li>
+</ol>
+<pre><code>conda activate two-way-share-hol
+</code></pre>
+<ol type="1" start="3">
+<li>Start notebook server:</li>
+</ol>
+<pre><code>$ jupyter notebook
+</code></pre>
+Open the jupyter notebook Credit Card Default Notebook</li>
+<li>Update connection.json with your Snowflake account details and credentials. Here&#39;s a sample based on the object names we created in the last step:</li>
+</ul>
+<pre><code>{
+  &#34;account&#34;   : &#34;&lt;your_account_identifier_goes_here&gt;&#34;,
+  &#34;user&#34;      : &#34;&lt;your_username_goes_here&gt;&#34;,
+  &#34;password&#34;  : &#34;&lt;your_password_goes_here&gt;&#34;,
+  &#34;role&#34;      : &#34;ACCOUNTADMIN&#34;,
+  &#34;warehouse&#34; : &#34;QUERY_WH&#34;,
+  &#34;database&#34;  : &#34;SCORED_MODEL&#34;,
+  &#34;schema&#34;    : &#34;SCORED_MODEL&#34;
+}
+</code></pre>
+<aside class="warning"><p><strong>Note:</strong> For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.</p>
+</aside>
+<p>If you are having some trouble with the steps above, this could be due to having different architectures, such as an M1 chip. In that case, follow the instructions <a href="https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel" target="_blank">here</a> and be sure to conda install jupyter notebooks and pyarrow.</p>
+<h2 is-upgraded>Train Model</h2>
+<p>Open up the notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk.</p>
+<p>Stay in the Zamboni account for the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Account (Zamboni) - Productionise the ML Pipeline" duration="15">
+        <p>Now we have trained the ML model, we will create some Stored Procedures which holds the feature engineering and scoring logic. In a subsequent step, we will encompass these in Streams and Tasks to automate this pipeline.</p>
+<p>Open up a SQL Worksheet in Snowsight. First we can check that the UDF was deployed from the Jupyter Notebook by running the following:</p>
+<pre><code language="language-SQL" class="language-SQL">SHOW USER FUNCTIONS;
+</code></pre>
+<p>You should see BATCH_PREDICT_CC_DEFAULT Vectorized UDF we deployed in the previous steps.</p>
+<p>Next we will create some stored procedures which hold our feature engineering logic. We will do this so we can later execute these Stored Procedures from a Task for automation.</p>
+<p>Run the following code in a worksheet to create the Stored Procedure.</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE PROCEDURE cc_profile_processing(rawTable VARCHAR, targetTable VARCHAR)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.8&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;, &#39;snowflake-ml-python&#39;)
+HANDLER = &#39;feature_transform&#39;
+EXECUTE AS CALLER
+AS
+$$
+import snowflake.snowpark as snp
+import snowflake.snowpark.window as W
+import snowflake.snowpark.functions as F
+import snowflake.snowpark.types as T
+
+def feature_transform(session, raw_table, target_table):
+    input_df = session.table(raw_table)
+    feature_cols = input_df.columns
+    feature_cols.remove(&#39;&#34;customer_ID&#34;&#39;)
+
+    for col_name in feature_cols:
+        input_df = input_df.withColumn(col_name, F.col(col_name).cast(T.FloatType()))
+    
+    # Feature engineer raw input
+    #Average
+    features_avg = [&#39;B_1&#39;, &#39;B_2&#39;, &#39;B_3&#39;, &#39;B_4&#39;, &#39;B_5&#39;, &#39;B_6&#39;, &#39;B_8&#39;, &#39;B_9&#39;, &#39;B_10&#39;, &#39;B_11&#39;, &#39;B_12&#39;, &#39;B_13&#39;, &#39;B_14&#39;, &#39;B_15&#39;, &#39;B_16&#39;, &#39;B_17&#39;, &#39;B_18&#39;, &#39;B_19&#39;, &#39;B_20&#39;, &#39;B_21&#39;, &#39;B_22&#39;, &#39;B_23&#39;, &#39;B_24&#39;, &#39;B_25&#39;, &#39;B_28&#39;, &#39;B_29&#39;, &#39;B_30&#39;, &#39;B_32&#39;, &#39;B_33&#39;, &#39;B_37&#39;, &#39;B_38&#39;, &#39;B_39&#39;, &#39;B_40&#39;, &#39;B_41&#39;, &#39;B_42&#39;, &#39;D_39&#39;, &#39;D_41&#39;, &#39;D_42&#39;, &#39;D_43&#39;, &#39;D_44&#39;, &#39;D_45&#39;, &#39;D_46&#39;, &#39;D_47&#39;, &#39;D_48&#39;, &#39;D_50&#39;, &#39;D_51&#39;, &#39;D_53&#39;, &#39;D_54&#39;, &#39;D_55&#39;, &#39;D_58&#39;, &#39;D_59&#39;, &#39;D_60&#39;, &#39;D_61&#39;, &#39;D_62&#39;, &#39;D_65&#39;, &#39;D_66&#39;, &#39;D_69&#39;, &#39;D_70&#39;, &#39;D_71&#39;, &#39;D_72&#39;, &#39;D_73&#39;, &#39;D_74&#39;, &#39;D_75&#39;, &#39;D_76&#39;, &#39;D_77&#39;, &#39;D_78&#39;, &#39;D_80&#39;, &#39;D_82&#39;, &#39;D_84&#39;, &#39;D_86&#39;, &#39;D_91&#39;, &#39;D_92&#39;, &#39;D_94&#39;, &#39;D_96&#39;, &#39;D_103&#39;, &#39;D_104&#39;, &#39;D_108&#39;, &#39;D_112&#39;, &#39;D_113&#39;, &#39;D_114&#39;, &#39;D_115&#39;, &#39;D_117&#39;, &#39;D_118&#39;, &#39;D_119&#39;, &#39;D_120&#39;, &#39;D_121&#39;, &#39;D_122&#39;, &#39;D_123&#39;, &#39;D_124&#39;, &#39;D_125&#39;, &#39;D_126&#39;, &#39;D_128&#39;, &#39;D_129&#39;, &#39;D_131&#39;, &#39;D_132&#39;, &#39;D_133&#39;, &#39;D_134&#39;, &#39;D_135&#39;, &#39;D_136&#39;, &#39;D_140&#39;, &#39;D_141&#39;, &#39;D_142&#39;, &#39;D_144&#39;, &#39;D_145&#39;, &#39;P_2&#39;, &#39;P_3&#39;, &#39;P_4&#39;, &#39;R_1&#39;, &#39;R_2&#39;, &#39;R_3&#39;, &#39;R_7&#39;, &#39;R_8&#39;, &#39;R_9&#39;, &#39;R_10&#39;, &#39;R_11&#39;, &#39;R_14&#39;, &#39;R_15&#39;, &#39;R_16&#39;, &#39;R_17&#39;, &#39;R_20&#39;, &#39;R_21&#39;, &#39;R_22&#39;, &#39;R_24&#39;, &#39;R_26&#39;, &#39;R_27&#39;, &#39;S_3&#39;, &#39;S_5&#39;, &#39;S_6&#39;, &#39;S_7&#39;, &#39;S_9&#39;, &#39;S_11&#39;, &#39;S_12&#39;, &#39;S_13&#39;, &#39;S_15&#39;, &#39;S_16&#39;, &#39;S_18&#39;, &#39;S_22&#39;, &#39;S_23&#39;, &#39;S_25&#39;, &#39;S_26&#39;]
+    feat = [F.col(c) for c in features_avg]
+    exprs = {x: &#34;avg&#34; for x in features_avg}
+    df_avg = (input_df
+          .groupBy(&#39;&#34;customer_ID&#34;&#39;)
+          .agg(exprs)
+          .rename({F.col(f&#34;AVG({f})&#34;): f&#34;{f}_avg&#34; for f in features_avg})
+         )
+    
+    # Minimum
+    features_min = [&#39;B_2&#39;, &#39;B_4&#39;, &#39;B_5&#39;, &#39;B_9&#39;, &#39;B_13&#39;, &#39;B_14&#39;, &#39;B_15&#39;, &#39;B_16&#39;, &#39;B_17&#39;, &#39;B_19&#39;, &#39;B_20&#39;, &#39;B_28&#39;, &#39;B_29&#39;, &#39;B_33&#39;, &#39;B_36&#39;, &#39;B_42&#39;, &#39;D_39&#39;, &#39;D_41&#39;, &#39;D_42&#39;, &#39;D_45&#39;, &#39;D_46&#39;, &#39;D_48&#39;, &#39;D_50&#39;, &#39;D_51&#39;, &#39;D_53&#39;, &#39;D_55&#39;, &#39;D_56&#39;, &#39;D_58&#39;, &#39;D_59&#39;, &#39;D_60&#39;, &#39;D_62&#39;, &#39;D_70&#39;, &#39;D_71&#39;, &#39;D_74&#39;, &#39;D_75&#39;, &#39;D_78&#39;, &#39;D_83&#39;, &#39;D_102&#39;, &#39;D_112&#39;, &#39;D_113&#39;, &#39;D_115&#39;, &#39;D_118&#39;, &#39;D_119&#39;, &#39;D_121&#39;, &#39;D_122&#39;, &#39;D_128&#39;, &#39;D_132&#39;, &#39;D_140&#39;, &#39;D_141&#39;, &#39;D_144&#39;, &#39;D_145&#39;, &#39;P_2&#39;, &#39;P_3&#39;, &#39;R_1&#39;, &#39;R_27&#39;, &#39;S_3&#39;, &#39;S_5&#39;, &#39;S_7&#39;, &#39;S_9&#39;, &#39;S_11&#39;, &#39;S_12&#39;, &#39;S_23&#39;, &#39;S_25&#39;]
+    exprs_min = {x: &#34;min&#34; for x in features_min}
+    df_min = (input_df
+          .groupBy(&#39;&#34;customer_ID&#34;&#39;)
+          .agg(exprs_min)
+          .rename({F.col(f&#34;MIN({f})&#34;): f&#34;{f}_min&#34; for f in features_min})
+         )
+    
+    # Maximum
+    features_max = [&#39;B_1&#39;, &#39;B_2&#39;, &#39;B_3&#39;, &#39;B_4&#39;, &#39;B_5&#39;, &#39;B_6&#39;, &#39;B_7&#39;, &#39;B_8&#39;, &#39;B_9&#39;, &#39;B_10&#39;, &#39;B_12&#39;, &#39;B_13&#39;, &#39;B_14&#39;, &#39;B_15&#39;, &#39;B_16&#39;, &#39;B_17&#39;, &#39;B_18&#39;, &#39;B_19&#39;, &#39;B_21&#39;, &#39;B_23&#39;, &#39;B_24&#39;, &#39;B_25&#39;, &#39;B_29&#39;, &#39;B_30&#39;, &#39;B_33&#39;, &#39;B_37&#39;, &#39;B_38&#39;, &#39;B_39&#39;, &#39;B_40&#39;, &#39;B_42&#39;, &#39;D_39&#39;, &#39;D_41&#39;, &#39;D_42&#39;, &#39;D_43&#39;, &#39;D_44&#39;, &#39;D_45&#39;, &#39;D_46&#39;, &#39;D_47&#39;, &#39;D_48&#39;, &#39;D_49&#39;, &#39;D_50&#39;, &#39;D_52&#39;, &#39;D_55&#39;, &#39;D_56&#39;, &#39;D_58&#39;, &#39;D_59&#39;, &#39;D_60&#39;, &#39;D_61&#39;, &#39;D_63&#39;, &#39;D_64&#39;, &#39;D_65&#39;, &#39;D_70&#39;, &#39;D_71&#39;, &#39;D_72&#39;, &#39;D_73&#39;, &#39;D_74&#39;, &#39;D_76&#39;, &#39;D_77&#39;, &#39;D_78&#39;, &#39;D_80&#39;, &#39;D_82&#39;, &#39;D_84&#39;, &#39;D_91&#39;, &#39;D_102&#39;, &#39;D_105&#39;, &#39;D_107&#39;, &#39;D_110&#39;, &#39;D_111&#39;, &#39;D_112&#39;, &#39;D_115&#39;, &#39;D_116&#39;, &#39;D_117&#39;, &#39;D_118&#39;, &#39;D_119&#39;, &#39;D_121&#39;, &#39;D_122&#39;, &#39;D_123&#39;, &#39;D_124&#39;, &#39;D_125&#39;, &#39;D_126&#39;, &#39;D_128&#39;, &#39;D_131&#39;, &#39;D_132&#39;, &#39;D_133&#39;, &#39;D_134&#39;, &#39;D_135&#39;, &#39;D_136&#39;, &#39;D_138&#39;, &#39;D_140&#39;, &#39;D_141&#39;, &#39;D_142&#39;, &#39;D_144&#39;, &#39;D_145&#39;, &#39;P_2&#39;, &#39;P_3&#39;, &#39;P_4&#39;, &#39;R_1&#39;, &#39;R_3&#39;, &#39;R_5&#39;, &#39;R_6&#39;, &#39;R_7&#39;, &#39;R_8&#39;, &#39;R_10&#39;, &#39;R_11&#39;, &#39;R_14&#39;, &#39;R_17&#39;, &#39;R_20&#39;, &#39;R_26&#39;, &#39;R_27&#39;, &#39;S_3&#39;, &#39;S_5&#39;, &#39;S_7&#39;, &#39;S_8&#39;, &#39;S_11&#39;, &#39;S_12&#39;, &#39;S_13&#39;, &#39;S_15&#39;, &#39;S_16&#39;, &#39;S_22&#39;, &#39;S_23&#39;, &#39;S_24&#39;, &#39;S_25&#39;, &#39;S_26&#39;, &#39;S_27&#39;]
+    exprs_max = {x: &#34;max&#34; for x in features_max}
+    df_max = (input_df
+          .groupBy(&#39;&#34;customer_ID&#34;&#39;)
+          .agg(exprs_max)
+          .rename({F.col(f&#34;MAX({f})&#34;): f&#34;{f}_max&#34; for f in features_max})
+         )
+    
+    # Last
+    features_last = [&#39;B_1&#39;, &#39;B_2&#39;, &#39;B_3&#39;, &#39;B_4&#39;, &#39;B_5&#39;, &#39;B_6&#39;, &#39;B_7&#39;, &#39;B_8&#39;, &#39;B_9&#39;, &#39;B_10&#39;, &#39;B_11&#39;, &#39;B_12&#39;, &#39;B_13&#39;, &#39;B_14&#39;, &#39;B_15&#39;, &#39;B_16&#39;, &#39;B_17&#39;, &#39;B_18&#39;, &#39;B_19&#39;, &#39;B_20&#39;, &#39;B_21&#39;, &#39;B_22&#39;, &#39;B_23&#39;, &#39;B_24&#39;, &#39;B_25&#39;, &#39;B_26&#39;, &#39;B_28&#39;, &#39;B_29&#39;, &#39;B_30&#39;, &#39;B_32&#39;, &#39;B_33&#39;, &#39;B_36&#39;, &#39;B_37&#39;, &#39;B_38&#39;, &#39;B_39&#39;, &#39;B_40&#39;, &#39;B_41&#39;, &#39;B_42&#39;, &#39;D_39&#39;, &#39;D_41&#39;, &#39;D_42&#39;, &#39;D_43&#39;, &#39;D_44&#39;, &#39;D_45&#39;, &#39;D_46&#39;, &#39;D_47&#39;, &#39;D_48&#39;, &#39;D_49&#39;, &#39;D_50&#39;, &#39;D_51&#39;, &#39;D_52&#39;, &#39;D_53&#39;, &#39;D_54&#39;, &#39;D_55&#39;, &#39;D_56&#39;, &#39;D_58&#39;, &#39;D_59&#39;, &#39;D_60&#39;, &#39;D_61&#39;, &#39;D_62&#39;, &#39;D_63&#39;, &#39;D_64&#39;, &#39;D_65&#39;, &#39;D_69&#39;, &#39;D_70&#39;, &#39;D_71&#39;, &#39;D_72&#39;, &#39;D_73&#39;, &#39;D_75&#39;, &#39;D_76&#39;, &#39;D_77&#39;, &#39;D_78&#39;, &#39;D_79&#39;, &#39;D_80&#39;, &#39;D_81&#39;, &#39;D_82&#39;, &#39;D_83&#39;, &#39;D_86&#39;, &#39;D_91&#39;, &#39;D_96&#39;, &#39;D_105&#39;, &#39;D_106&#39;, &#39;D_112&#39;, &#39;D_114&#39;, &#39;D_119&#39;, &#39;D_120&#39;, &#39;D_121&#39;, &#39;D_122&#39;, &#39;D_124&#39;, &#39;D_125&#39;, &#39;D_126&#39;, &#39;D_127&#39;, &#39;D_130&#39;, &#39;D_131&#39;, &#39;D_132&#39;, &#39;D_133&#39;, &#39;D_134&#39;, &#39;D_138&#39;, &#39;D_140&#39;, &#39;D_141&#39;, &#39;D_142&#39;, &#39;D_145&#39;, &#39;P_2&#39;, &#39;P_3&#39;, &#39;P_4&#39;, &#39;R_1&#39;, &#39;R_2&#39;, &#39;R_3&#39;, &#39;R_4&#39;, &#39;R_5&#39;, &#39;R_6&#39;, &#39;R_7&#39;, &#39;R_8&#39;, &#39;R_9&#39;, &#39;R_10&#39;, &#39;R_11&#39;, &#39;R_12&#39;, &#39;R_13&#39;, &#39;R_14&#39;, &#39;R_15&#39;, &#39;R_19&#39;, &#39;R_20&#39;, &#39;R_26&#39;, &#39;R_27&#39;, &#39;S_3&#39;, &#39;S_5&#39;, &#39;S_6&#39;, &#39;S_7&#39;, &#39;S_8&#39;, &#39;S_9&#39;, &#39;S_11&#39;, &#39;S_12&#39;, &#39;S_13&#39;, &#39;S_16&#39;, &#39;S_19&#39;, &#39;S_20&#39;, &#39;S_22&#39;, &#39;S_23&#39;, &#39;S_24&#39;, &#39;S_25&#39;, &#39;S_26&#39;, &#39;S_27&#39;, &#39;&#34;customer_ID&#34;&#39;]
+    w = snp.Window.partition_by(&#39;&#34;customer_ID&#34;&#39;).order_by(F.col(&#39;S_2&#39;).desc())
+    df_last = input_df.withColumn(&#34;rn&#34;, F.row_number().over(w)).filter(&#34;rn = 1&#34;).select(features_last)
+    
+    # Join
+    feature_df = df_min.natural_join(df_avg)
+    feature_df = feature_df.natural_join(df_max)
+    feature_df = feature_df.natural_join(df_last)
+
+    feature_df.write.save_as_table(target_table, mode=&#34;overwrite&#34;)
+    
+    return &#34;Success&#34;
+$$;
+</code></pre>
+<p>Next we will create a Stored Procedure that encompasses the UDF we created.</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE PROCEDURE cc_batch_processing(rawTable VARCHAR, targetTable VARCHAR)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.8&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+HANDLER = &#39;cc_batch_processing&#39;
+AS
+$$
+from snowflake.snowpark.functions import call_udf
+import snowflake.snowpark.functions as F
+
+def cc_batch_processing(session, raw_table, target_table):
+
+    batch_df = session.table(raw_table)
+    feature_cols = batch_df.columns
+    feature_cols.remove(&#39;&#34;customer_ID&#34;&#39;)
+    
+    scored_data = batch_df.select(&#39;&#34;customer_ID&#34;&#39;, call_udf(&#34;batch_predict_cc_default&#34;, [F.col(c) for c in feature_cols]).alias(&#39;Prediction&#39;))
+    
+    scored_data.write.save_as_table(target_table, mode=&#34;append&#34;)
+
+    return &#34;Success&#34;
+$$;
+</code></pre>
+<p>Check we have created the Stored Procedures by running the following</p>
+<pre><code language="language-SQL" class="language-SQL">SHOW PROCEDURES;
+</code></pre>
+<p>You should see two Stored Procedures; CC_BATCH_PROCESSING and CC_PROFILE_PROCESSING.</p>
+<p>Let&#39;s now switch over to the SnowBank account and share a new dataset to be scored.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provider Account (SnowBank) - Share New Data" duration="10">
+        <p>In this section, we will go back to assuming the role of the bank. We will switch back to our original provider account and create another listing of unscored data to share to our partner to score for default risk. This time however, we will create a <a href="https://docs.snowflake.com/en/user-guide/data-sharing-provider#label-data-sharing-streams" target="_blank">stream on the shared table</a> so the new data can be shared live (without etl). In order to set up a stream, the provider of data (SnowBank in this example) needs to have enables Change Tracking on the table. We have already done this in our set-up step.</p>
+<p>Next, lets add this data to the listing. Navigate to Data &gt; Private Sharing in Snowsight. Then select &#34;Shared By Your Account&#34; in the top menu, and select &#34;DATA_SHARING_DEMO&#34;.</p>
+<p>Scroll to the Data section and select &#34;Edit&#34;. Screenshot below <img alt="Diagram" src="img/3501c8a4f98cd712.png"></p>
+<p>From this screen, select the &#34;CC_DEFAULT_UNSCORED_DATA&#34; and click &#34;Done&#34;, then in the following screen, click &#34;Save&#34;.</p>
+<p>Your listing has now been updated, and the Consumer Account will be able to see the new table.</p>
+<p>Switch over to the Zamboni account for the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Account (Zamboni) - Automate Scoring Pipeline" duration="10">
+        <p>Switch over to the Consumer Account, and you should see the newly shared table in the databases tab. If not, click the ellipsis and click &#34;Refresh&#34;. Screenshot below. <img alt="Diagram" src="img/1415ce34358d307d.png"></p>
+<p>Let manually execute our pipeline for demonstrative purposes, and then later in this step we will use Streams and Tasks to score and share any newly arriving data.</p>
+<p>In a worksheet, run the following code:</p>
+<pre><code language="language-SQL" class="language-SQL">CALL cc_profile_processing(&#39;CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA&#39;, &#39;TRANSFORMED_TABLE&#39;);
+</code></pre>
+<pre><code language="language-SQL" class="language-SQL">CALL cc_batch_processing(&#39;TRANSFORMED_TABLE&#39;, &#39;SCORED_TABLE&#39;);
+</code></pre>
+<p>By running those two Stored Procedures sequentially, we chould now have feature engineered and scored the newly shared data! We can run the following and see the results</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT * FROM SCORED_MODEL.SCORED_MODEL.SCORED_TABLE LIMIT 100;
+</code></pre>
+<p>Next we will create a pipeline from Streams and Tasks to automate the feature engineering of the newly shared data, score it, and make it available to the Bank.</p>
+<p>First we will create a Stream on the newly shared table with the following code, and check it was created successfully. Open a worksheet and run the following:</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE STREAM CC_DEFAULT_DATA_STREAM ON TABLE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA;
+
+SHOW STREAMS;
+</code></pre>
+<p>Next, lets set up a task to transform this data, using the Stored Procedures and UDFs we created in step 9.</p>
+<p>The first task is Change Data Capture (CDC) which checks the stream for new arriving data, and moves it in to an intermediate table for feature engineering.</p>
+<pre><code language="language-SQL" class="language-SQL">-- Create intermediate table
+CREATE OR REPLACE TABLE SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA LIKE CC_DEFAULT_TRAINING_DATA.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA;
+</code></pre>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE TASK CDC
+    WAREHOUSE = &#39;QUERY_WH&#39;
+    SCHEDULE = &#39;USING CRON 0 0 1 1 * UTC&#39;
+    -- We will not need the schedule once triggered tasks is GA
+    WHEN system$stream_has_data(&#39;CC_DEFAULT_DATA_STREAM&#39;)
+AS
+INSERT INTO SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA
+SELECT * exclude (metadata$row_id, metadata$action, metadata$isupdate) FROM CC_DEFAULT_DATA_STREAM
+WHERE METADATA$ACTION = &#39;INSERT&#39;;
+</code></pre>
+<p>Then we create a second task dependant on the first that performs the feature engineering.</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE TASK FEATURE_ENG
+    WAREHOUSE = &#39;QUERY_WH&#39;
+AFTER CDC
+AS
+    CALL cc_profile_processing(&#39;NEW_CC_DEFAULT_DATA&#39;, &#39;TRANSFORMED_TABLE&#39;);
+</code></pre>
+<p>Then we make a task dependant on the above which scores the model.</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE TASK score_data 
+    WAREHOUSE = &#39;QUERY_WH&#39;
+AFTER FEATURE_ENG
+AS 
+CALL cc_batch_processing(&#39;TRANSFORMED_TABLE&#39;, &#39;SCORED_TABLE&#39;);
+</code></pre>
+<p>Finally, we add a task that runs when the data is successfully processed and clears the intermediate table</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE TASK clean_int_table 
+    WAREHOUSE = &#39;QUERY_WH&#39;
+AFTER SCORE_DATA
+AS 
+TRUNCATE TABLE IF EXISTS SCORED_MODEL.SCORED_MODEL.NEW_CC_DEFAULT_DATA;
+</code></pre>
+<p>Check the tasks are created by running the following</p>
+<pre><code language="language-SQL" class="language-SQL">SHOW TASKS;
+</code></pre>
+<p>We should see the four tasks we just created.</p>
+<p>We now need to switch these tasks on from a suspended state. Since they are dependant on each other, we need to do these in reverse order. Run the following commands</p>
+<pre><code language="language-SQL" class="language-SQL">ALTER TASK CLEAN_INT_TABLE RESUME;
+ALTER TASK SCORE_DATA RESUME;
+ALTER TASK FEATURE_ENG RESUME;
+ALTER TASK CDC RESUME;
+</code></pre>
+<p>Now lets share our scored table back to the Bank. This process is the same as step 6 in reverse. Navigate to Data &gt; Provider Studio on the left hand menu. then click the Listings button in the top right. Screenshot is below: <img alt="Diagram" src="img/87cef8137e4add6b.png"></p>
+<p>In the modal, enter the name of the Private Listing that we wish to share with our external partner. We have named it SCORED_DATA. Screenshot is below: <img alt="Diagram" src="img/55518f859d79c116.png"></p>
+<p>In the next modal, click the &#34;+ Select&#34; option. In this next modal, select the SCORED_TABLE in the SCORED_MODEL database and schema. Add it to the listing. Change the Secure Share Identifier to SCORED_MODEL and update the description of the listing. Lastly, we add the consumer accounts. Since we selected Private Listing, the accounts we specify in this option are the only accounts that will be able to discover and utilise this share. Add the consumer account identifier for SnowBank. You will have to switch over to that account and get the detials as we did in step 5. A screenshot is below: <img alt="Diagram" src="img/ace7229630d48814.png"></p>
+<p>Switch over to the SnowBank account for the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provider Account (SnowBank) - Accept Share and Use Scored Data" duration="5">
+        <p>Open up the SnowBank account, and accept the share from Zamboni of the newly scored data. This is the same process in reverse of Step 7.</p>
+<p>Navigate to Data &gt; Private Sharing and you should see the scored_data waiting for the ACCOUNTADMIN to accept. Screenshot below <img alt="Diagram" src="img/44e397094a1a0e3f.png"></p>
+<p>Click Get, and in the next modal, click Get. <img alt="Diagram" src="img/ce55ae61c511608c.png"></p>
+<p>You should now see SCORED_DATA as one of the Databases in your catalog, with the SCORED_MODEL schema and the SCORED_TABLE. We did not need to load any data, it is shared live from the Zamboni.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provider Account (SnowBank) -  Add New Data" duration="10">
+        <p>In this section, we will add some new data to demonsrate how the automated pipeline would operate between the two accounts.</p>
+<p>Specifically, we will add the credit card default information of 2 customers (new_customer_1 and new_customer_2) to the CC_DEFAULT_UNSCORED_DATA in the SnowBank account. This will then trigger the Stream in the Zamboni account via the live share. Thereafter, the feature engineering task will run, and the scoring model will run sequentially via tasks, and the new data will be appended to the SCORED_TABLE in the Zamboni Account. Since that table is shared live with SnowBank, we will see the new scored results. This entire pipeline is automated using Snowflake Features.</p>
+<p>The first step is to add new data to the CC_DEFAULT_UNSCORED_DATA table in the SnowBank account. Run the following SQL to add the new data to the table</p>
+<pre><code language="language-SQL" class="language-SQL">INSERT INTO DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_UNSCORED_DATA
+SELECT * FROM DATA_SHARING_DEMO.DATA_SHARING_DEMO.CC_DEFAULT_NEW_DATA;
+</code></pre>
+<p>In a fully automated scenario where the CDC task runs on a schedule, this is all we would need to do. The second account would recognise the newly incoming data and run the pipeline.</p>
+<p>We have not run ours on a schedule so we can step through what is happening. However the principle is the same. Let&#39;s switch over to the Zamboni account and see it in action.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Account (Zamboni) -  Manually Inspect Automated Pipeline" duration="15">
+        <p>In production, this step would most likely be an automated ingestion pipeline form a source system. However for this example we have set the schedule to once a year to avoid unnecessary credit consumption</p>
+<p>First, lets check if our stream has picked up the changes in our shared table</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT system$stream_has_data(&#39;CC_DEFAULT_DATA_STREAM&#39;);
+</code></pre>
+<p>We should see TRUE. Lets run the following command to see exactly what has changed</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT * exclude (metadata$row_id, metadata$action, metadata$isupdate) FROM CC_DEFAULT_DATA_STREAM;
+</code></pre>
+<p>Since the task CDC has system$stream_has_data(‘CC_DEFAULT_DATA_STREAM&#39;) as its predicate, this would kick off when checked. Since we do not want to wait a year for this, lets execute it immediately by running the following command.</p>
+<pre><code language="language-SQL" class="language-SQL">EXECUTE TASK CDC;
+</code></pre>
+<p>We can see the progress of the task by running the following</p>
+<pre><code language="language-SQL" class="language-SQL">select *
+  from table(information_schema.task_history())
+  order by scheduled_time;
+</code></pre>
+<p>To recap, the updated data has now updated the stream. This will then execute the first task to update the temporary table as an input for the feature engineering. A second dependant task executes after this to perform the feature engineering. This table is overwritten each time to avoid duplicates. Thereafter, the next task is triggered which would invoke our model and score the data. This new scored data would be appended to the shared table, and automatically shared back to the original provider.</p>
+<p>Lets switch back to SnowBank and see if we can see the newly scored data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Account (SnowBank) - Inspect Newly Scored Data" duration="5">
+        <p>Open up a SQL worksheet in SnowBank and test the new data is there by running the following query in a worksheet.</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT
+  *
+FROM
+  SCORED_DATA.SCORED_MODEL.SCORED_TABLE
+WHERE &#34;customer_ID&#34; = &#39;new_customer_1&#39;;
+</code></pre>
+<pre><code language="language-SQL" class="language-SQL">SELECT
+  *
+FROM
+  SCORED_DATA.SCORED_MODEL.SCORED_TABLE
+WHERE &#34;customer_ID&#34; = &#39;new_customer_2&#39;;
+</code></pre>
+<p>We should see from the results that the newly scored data is in our Snowflake Account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="10">
+        <p>Open up the Zamboni Account and <a href="https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing" target="_blank">unpublish the Listing</a>. You can do this by navigating to Data &gt; Provider Studio &gt; Listings, and select the listing. A screenshot is below <img alt="Diagram" src="img/da0453b1296e53c5.png"></p>
+<p>Next select the &#34;Live&#34; button in the top right and select &#34;Unpublish&#34;. After that, select the bin icon and delete the listing. A screenshot is below <img alt="Diagram" src="img/43a3087509ff999.png"></p>
+<pre><code language="language-SQL" class="language-SQL">DROP SHARE SCORED_MODEL;
+</code></pre>
+<pre><code language="language-SQL" class="language-SQL">DROP DATABASE SCORED_MODEL;
+DROP DATABASE CC_DEFAULT_TRAINING_DATA;
+DROP WAREHOUSE TRAINING_WH;
+DROP WAREHOUSE QUERY_WH;
+</code></pre>
+<p>Next we repeat the steps for SnowBank.</p>
+<p>Open up the account and navigate to Data &gt; Provider Studio &gt; Listings, and select the listing &#34;cc_default_training_data&#34;. A screenshot is below <img alt="Diagram" src="img/63e25259cf43d5bb.png"></p>
+<p>Next select the &#34;Live&#34; button in the top right and select &#34;Unpublish&#34;. The following modal should appear. Click &#34;Unpublish&#34; <img alt="Diagram" src="img/fc839b8bc3b994f4.png"></p>
+<p>Next, click the trash can icon and delete the listing. Screenshot is below <img alt="Diagram" src="img/5f728d2e424fe4c9.png"></p>
+<pre><code language="language-SQL" class="language-SQL">DROP SHARE DATA_SHARING_DEMO;
+</code></pre>
+<pre><code language="language-SQL" class="language-SQL">DROP DATABASE DATA_SHARING_DEMO;
+DROP DATABASE SCORED_DATA;
+DROP WAREHOUSE QUERY_WH;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations! You have successfully created an end-to-end automated ML pipeline between two Snowflake accounts leveraging Snowflake&#39;s Collaboration features.</p>
+<p>From a business point of view, this architecture could satisfy several use cases. Examples include:</p>
+<ul>
+<li>This SnowBank and Zamboni example. In the Financial Services Industry, there are often external partners that require a secure and governed way to share data. In this example, Zamboni required access to SnowBank&#39;s data to risk score their data. A specific example of this could be a <a href="https://insurancecouncil.com.au/articles/lenders-mortgage-insurance/" target="_blank">Lenders Mortgage Insurance</a> company that has a Group Contract with a bank. They could execute a default risk model over the customer attributes that the bank has, without the data leaving the security and governance controls of Snowflake.</li>
+<li>Superannuation and Life Insurance Companies. Another example of sharing data securely and running ML models is claims processing for life insurance. Often times, Superannuation companies have Group Insurance contracts with life insurers for their customers. By utilising an architectural pattern similar to this quickstart, this insurance company can offer a <a href="https://www.snowflake.com/trending/insurance-analytics/" target="_blank">streamlined customer claims process</a>. With fewer touchpoints and faster payouts, insurers can reduce operational costs and efficiency while increasing customer experience.</li>
+<li>White label Insurance. Some insurance companies have offerings to white label insurance to other businesses. The architectural pattern of sharing customer attributes from the whitelabel partner for risk scoring is analogous to this use case.</li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<p>From this quickstart, we can see how we can create an end-to-end automated ML pipeline between two Snowflake accounts seamlessly. We were able to:</p>
+<ul>
+<li>Share live data between 2 accounts</li>
+<li>Train and Deploy an ML Model</li>
+<li>Use Streams and Tasks to automate the pipeline</li>
+</ul>
+<p>The next Quickstart in this series extends on this idea by leveraging our Native Apps framework.</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li>Source code on GitHub is found <a href="https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration/tree/main" target="_blank">here</a></li>
+<li>More information on Snowflake&#39;s Collaboration features <a href="https://www.snowflake.com/en/data-cloud/workloads/collaboration/" target="_blank">here</a></li>
+<li>Snowflake Documentation on data sharing and collaboration <a href="https://docs.snowflake.com/guides-overview-sharing" target="_blank">here</a></li>
+<li>More information on Snowpark / Machine Learning in Snowflake can be found <a href="https://www.snowflake.com/en/data-cloud/workloads/ai-ml/" target="_blank">here</a></li>
+<li>Developer Guide on End-to-End Machine Learning in Snowflake <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">here</a></li>
+<li>More information on Native Apps can be found <a href="https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/" target="_blank">here</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

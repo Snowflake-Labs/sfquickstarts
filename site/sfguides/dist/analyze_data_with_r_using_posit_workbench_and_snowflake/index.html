@@ -1,0 +1,491 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Analyze Data with R using Posit Workbench and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="analyze_data_with_r_using_posit_workbench_and_snowflake"
+                  title="Analyze Data with R using Posit Workbench and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This guide will walk you through using R to analyze data in Snowflake using the Posit Workbench Native App. You&#39;ll learn how to launch the Posit Workbench Native App and use the available RStudio Pro IDE. You&#39;ll also learn how to use the <code>{dbplyr}</code> package to translate R code into SQL, allowing you to run data operations directly in Snowflake&#39;s high-performance computing environment.</p>
+<p>We&#39;ll focus on a healthcare example by analyzing heart failure data. We&#39;ll then guide you through launching an R session, accessing the data, and performing data cleaning, transformation, and visualization. Finally, you&#39;ll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—-completing an end-to-end R analysis <em>entirely within Snowflake</em>.</p>
+<p class="image-container"><img src="img/bb9360dfbb07d979.png"></p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Familiarity with R</li>
+<li>The ability to launch Posit Workbench from <a href="https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/" target="_blank">Snowflake Native Applications</a>. This can be provided by an administrator with the <code>accountadmin</code> role.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an R session within the RStudio Pro IDE that comes with the Posit Workbench Native App.</li>
+<li>How to connect to your Snowflake data from R to create tables, visualizations, and more.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An RStudio Pro IDE environment to use within Snowflake.</li>
+<li>A Quarto document that contains plots and tables built with R, using data stored in Snowflake.</li>
+<li>An interactive Shiny application built with R, using data stored in Snowflake.</li>
+</ul>
+<p>Along the way, you will use R to analyze which variables are associated with survival among patients with heart failure. You can follow along with this quickstart guide, or look at the materials provided in the accompanying repository: <a href="https://github.com/posit-dev/snowflake-posit-quickstart-r" target="_blank">https://github.com/posit-dev/snowflake-posit-quickstart-r</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="3">
+        <p>Before we begin there are a few components we need to prepare. We need to:</p>
+<ul>
+<li>Add the heart failure data to Snowflake</li>
+<li>Launch the Posit Workbench Native App</li>
+<li>Create an RStudio Pro IDE session</li>
+<li>Install R Packages</li>
+</ul>
+<h2 is-upgraded>Add the heart failure data to Snowflake</h2>
+<p>For this analysis, we&#39;ll use the <a href="https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records" target="_blank">Heart Failure Clinical Records</a> dataset. The data is available for download as a CSV from the <a href="https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records" target="_blank">UCI Machine Learning Repository</a>.</p>
+<p>We&#39;ll walk through how to download the data from UCI and then upload it to Snowflake from a CSV.</p>
+<p><strong><em>INTERACTIVITY NOTE:</em></strong> If you have the necessary permissions in Snowflake, you can also import the data from this S3 bucket: s3://heart-failure-records/heart_failure.csv.</p>
+<h3 is-upgraded>Step 1: Download the data as a CSV</h3>
+<p>Download the data from UCI <a href="https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records" target="_blank">here</a>, and then unzip the downloaded file.</p>
+<h3 is-upgraded>Step 2: Add data in Snowsight</h3>
+<p>Log into <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight" target="_blank">Snowsight</a>, then click <code>Create</code> &gt; <code>Add Data</code>. You can find the <code>Create</code> button in the upper-left corner.</p>
+<p class="image-container"><img src="img/4d764a070533c59.png"></p>
+<h3 is-upgraded>Step 3: Load data</h3>
+<p>Choose the <code>Load Data into a Table</code> option, then select your downloaded heart failure CSV. Specify an existing database or create a new one for the heart failure data (we called ours <code>HEART_FAILURE</code>). Then, select <code>+ Create a new table</code> and name it <code>HEART_FAILURE</code>.</p>
+<p>Once your find the database, you can load it into your Snowflake account by clicking the Get button on the right-hand side.</p>
+<p class="image-container"><img src="img/fc2886acced6a21a.png"></p>
+<h3 is-upgraded>Step 4: Confirm data</h3>
+<p>You should now be able to see the heart failure data in Snowsight. Navigate to <code>Data</code> &gt; <code>Databases</code>, then select the database to which you added the data (e.g., <code>HEART_FAILURE</code>). Expand the database, schema, and tables until you see the <code>HEART_FAILURE</code> table.</p>
+<p class="image-container"><img src="img/ac10b87534d1cc6a.png"></p>
+<h2 is-upgraded>Launch Posit Workbench</h2>
+<p>We can now start exploring the data using Posit Workbench. You can find Posit Workbench as a Snowflake Native Application and use it to connect to your database.</p>
+<h3 is-upgraded>Step 1: Navigate to Apps</h3>
+<p>In your Snowflake account, Go to <code>Data Products</code> &gt; <code>Apps</code> to open the Native Apps collection. If Posit Workbench is not already installed, click <code>Get</code>. Please note that the Native App must be <a href="https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html" target="_blank">installed and configured </a>by an administrator.</p>
+<p class="image-container"><img src="img/1aeecc891be834f3.png"></p>
+<h3 is-upgraded>Step 2: Open the Posit Workbench Native App</h3>
+<p>Once Posit Workbench is installed, click on the app under <code>Installed Apps</code> to launch the app. If you do not see the Posit Workbench app listed, ask your Snowflake account administrator for access to the app.</p>
+<p class="image-container"><img src="img/195ed1d562949278.png"></p>
+<p>After clicking on the app, you will see a page with configuration instructions and a blue <code>Launch app</code> button.</p>
+<p class="image-container"><img src="img/507f36ef764d0f74.png"></p>
+<p>Click on <code>Launch app</code>. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.</p>
+<h2 is-upgraded>Create an RStudio Pro Session</h2>
+<p>Posit Workbench provides several IDEs, such as RStudio Pro, JupyterLab, and VS Code. For this analysis we will use an RStudio Pro IDE.</p>
+<h3 is-upgraded>Step 1: New Session</h3>
+<p>Within Posit Workbench, click <code>New Session</code> to launch a new session to spin up your coding environment.</p>
+<p class="image-container"><img src="img/98b5604e9d54a861.png"></p>
+<h3 is-upgraded>Step 2: Select an IDE</h3>
+<p>When prompted, select the RStudio Pro IDE.</p>
+<p class="image-container"><img src="img/11531a43909db2b9.png"></p>
+<h3 is-upgraded>Step 3: Log into your Snowflake account</h3>
+<p>Next, connect to your Snowflake account from within Posit Workbench. Under <code>Credentials</code>, click the button with the Snowflake icon to sign in to Snowflake. Follow the sign in prompts.</p>
+<p class="image-container"><img src="img/fb4a063ca4a88cda.png"></p>
+<p>When you&#39;re successfully signed into Snowflake, the Snowflake button will turn blue and there will be a checkmark in the upper-left corner.</p>
+<p class="image-container"><img src="img/b778001fe8b8532e.png"></p>
+<h3 is-upgraded>Step 4: Launch the RStudio Pro IDE</h3>
+<p>Click <code>Start Session</code> to launch the RStudio Pro IDE.</p>
+<p>Once everything is ready, you will be able to work with your Snowflake data in the familiar RStudio Pro IDE. Since the IDE is provided by the Posit Workbench Native App, your entire analysis will occur securely within Snowflake.</p>
+<p class="image-container"><img src="img/5c46555d9345d783.png"></p>
+<h3 is-upgraded>Step 5: Access the Quickstart Materials</h3>
+<p>This Quickstart will step you through the analysis contained in <a href="https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd" target="_blank">https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd</a>. To follow along, open the file in your RStudio Pro IDE. There are two ways to do this:</p>
+<ol type="1">
+<li><strong>Simple copy-and-paste</strong> Go to File &gt; New File &gt; Quarto Document and then copy the contents of <a href="https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd" target="_blank">quarto.qmd</a> into your new file.</li>
+<li><strong>Starting a new project linked to the GitHub repo.</strong> To do this:<ol type="1">
+<li>Go to File &gt; New Project in the RStudio IDE menu bar.</li>
+</ol>
+<img src="img/8927cdf78970748f.png"><ol type="1" start="2">
+<li>Select Version Control in the New Project Wizard</li>
+</ol>
+<img src="img/5244732457ff1614.png"><ol type="1" start="3">
+<li>Select Git</li>
+</ol>
+<img src="img/d21296e625e02ac5.png"><ol type="1" start="4">
+<li>Paste the <a href="https://github.com/posit-dev/snowflake-posit-quickstart-r/" target="_blank">URL</a> of the GitHub repo and click Create Project</li>
+</ol>
+<img src="img/808dfa81e7f29742.png">RStudio will clone a local copy of the materials on GitHub. You can use the Files pane in the bottom right-hand corner of the IDE to navigate to <code>quarto.qmd</code>. Click on the file to open it.</li>
+</ol>
+<p>Note: SSH authentication is not available in Snowpark Container Services, so when creating projects from Git, you may need to authenticate Git operations over HTTPS, using a username and password or a personal access token.</p>
+<h2 is-upgraded>Install R Packages</h2>
+<p>Now that we&#39;re in a familiar R environment, we need to prepare the packages we will use. For this analysis, we will use the <a href="https://www.tidyverse.org/" target="_blank">Tidyverse</a> suite of packages, as well as a few others.</p>
+<pre><code language="language-r" class="language-r">install.packages(c(&#34;tidyverse&#34;, &#34;DBI&#34;, &#34;dbplyr&#34;, &#34;gt&#34;, &#34;gtExtras&#34;, &#34;odbc&#34;))
+</code></pre>
+<p>After we install the packages, we load them.</p>
+<pre><code language="language-r" class="language-r">library(tidyverse)
+library(DBI)
+library(dbplyr)
+library(gt)
+library(gtExtras)
+library(odbc)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Access Snowflake data from R" duration="5">
+        <p>We will run our code in the R environment created by the RStudio Pro IDE, but the code will use data stored in our database on Snowflake.</p>
+<p>To access this data, we will use the <code>{DBI}</code> and <code>{odbc}</code> R packages to connect to the database. We will then use <code>{dplyr}</code> and <code>{dbplyr}</code> to query the data with R, without having to write raw SQL. Let&#39;s take a look at how this works.</p>
+<h2 is-upgraded>Connect with <code>{DBI}</code></h2>
+<p><code>{DBI}</code> is an R package that allows us to connect to databases with <code>DBI::dbConnect()</code>.</p>
+<p>To connect to our Snowflake database, we will use a driver provided by the <code>{odbc}</code> package. We will need to provide a <code>warehouse</code> for compute, and a <code>database</code> to connect to. We can also provide a <code>schema</code> here to make connecting to specific tables and views easier.</p>
+<pre><code language="language-r" class="language-r"># Connect to the database
+conn &lt;-
+  DBI::dbConnect(
+    odbc::snowflake(),
+    warehouse = &#34;DEFAULT_WH&#34;,
+    database = &#34;HEART_FAILURE&#34;,
+    schema = &#34;PUBLIC&#34;
+  )
+</code></pre>
+<p>We will save our connection as an object, named <code>conn</code>, which will make it easy to use.</p>
+<p>Once we build a connection, we can see the databases, schemas, and tables available to us in the RStudio IDE Connections pane. Click on the database icon to the right of a database to see its schemas. Click on the schema icon to the right of a schema to see its tables. Click on the table icon to the right of a table to see a preview of the table.</p>
+<p class="image-container"><img src="img/47e77d11f6d33d64.png"></p>
+<h2 is-upgraded>Create <code>tbl</code>s that correspond to tables in the database</h2>
+<p>Once we build a connection, we can use <code>dplyr::tbl()</code> to create <code>tbl</code>s. A tbl is an R object that represents a table or view accessed through a connection.</p>
+<pre><code language="language-r" class="language-r">heart_failure &lt;- tbl(conn, &#34;HEART_FAILURE&#34;)
+</code></pre>
+<p>If we did not provide the <code>schema</code> argument into <code>DBI::dbConnect()</code> earlier, we would need to specify the view with <code>tbl(conn, in_schema("PUBLIC", "HEART_FAILURE"))</code>.</p>
+<h2 is-upgraded>Rely on <code>{dbplyr}</code> to translate R to SQL</h2>
+<p>We can now use <code>heart_failure</code> as if it was a tibble in R. For example, we can filter rows and select columns from our data.</p>
+<pre><code language="language-r" class="language-r">heart_failure_young &lt;-
+  heart_failure |&gt; 
+  filter(age &lt; 50) |&gt;
+  select(age, sex, smoking, death_event)
+</code></pre>
+<p>When we use <code>tbl</code>s, <code>{dbplyr}</code> translates our R code into SQL queries. Think of any object made downstream from a tbl like a view: it contains SQL that represents a table built from the tbl. If we want to see the SQL code that <code>{dbplyr}</code> generates, we can run <code>dbplyr::show_query()</code>.</p>
+<pre><code language="language-r" class="language-r">heart_failure_young |&gt;
+  show_query()
+</code></pre>
+<pre><code>SELECT
+  &#34;AGE&#34; AS &#34;age&#34;,
+  &#34;SEX&#34; AS &#34;sex&#34;,
+  &#34;SMOKING&#34; AS &#34;smoking&#34;,
+  &#34;DEATH_EVENT&#34; AS &#34;death_event&#34;
+FROM &#34;HEART_FAILURE&#34;
+WHERE (&#34;AGE&#34; &lt; 50.0)
+</code></pre>
+<p>To save compute, R waits to execute a query until we request the data that it represents.</p>
+<p>To save memory, R stores the data as a temporary file in the database (instead of in R&#39;s global environment). When we inspect the data, R only returns the first few rows of this file to display.</p>
+<pre><code language="language-r" class="language-r">heart_failure_young
+</code></pre>
+<pre><code># Source:   SQL [?? x 4]
+# Database: Snowflake 8.39.2[@Snowflake/HEART_FAILURE]
+     age   sex smoking death_event
+   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;
+ 1    45     1       0           1
+ 2    49     0       0           0
+ 3    45     1       0           1
+ 4    48     0       0           1
+ 5    49     1       1           1
+ 6    45     1       0           1
+ 7    45     1       0           1
+ 8    45     0       0           0
+ 9    42     0       0           1
+10    41     1       1           0
+# ℹ more rows
+# ℹ Use `print(n = ...)` to see more rows
+</code></pre>
+<h2 is-upgraded><code>collect()</code></h2>
+<p>We can trigger R to execute a query and to return the <em>entire</em> result as a tibble with <code>dbplyr::collect()</code>. Keep in mind, that if your result is large, you may not want to collect it into R.</p>
+<pre><code language="language-r" class="language-r">heart_failure_young_df &lt;-
+  heart_failure_young |&gt; 
+  collect()
+  
+heart_failure_young_df
+</code></pre>
+<pre><code># A tibble: 47 × 4
+     age   sex smoking death_event
+   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;
+ 1    45     1       0           1
+ 2    49     0       0           0
+ 3    45     1       0           1
+ 4    48     0       0           1
+ 5    49     1       1           1
+ 6    45     1       0           1
+ 7    45     1       0           1
+ 8    45     0       0           0
+ 9    42     0       0           1
+10    41     1       1           0
+# ℹ 37 more rows
+# ℹ Use `print(n = ...)` to see more rows
+</code></pre>
+<h2 is-upgraded>In summary</h2>
+<p>This system:</p>
+<ol type="1">
+<li>Keeps our data in the database, saving memory in the R session</li>
+<li>Pushes computations to the database, saving compute in the R session</li>
+<li>Evaluates queries lazily, saving compute in the database</li>
+</ol>
+<p>We don&#39;t need to manage the process, it happens automatically behind the scenes.</p>
+<p><code>{dbplyr}</code> can translate the most common tidyverse and base R functions to SQL. However, you may sometimes use a function that <code>{dbplyr}</code> does not recognize or for which there is no SQL analogue. On these occasions, you will need to <code>collect()</code> your data into R, where you can process it as a real tibble.</p>
+<p>Learn more about <code>{dbplyr}</code> at <a href="https://dbplyr.tidyverse.org/" target="_blank">dbplyr.tidyverse.org</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write to a Snowflake database" duration="1">
+        <p>You can also use <code>{DBI}</code> to create a new table in a database or append to an existing table.</p>
+<p>To add a new table, use <code>DBI::dbWriteTable()</code>. Note that <code>value</code> needs to be a data.frame or tibble, which is why we passed <code>heart_failure_young_df</code>, the result of calling <code>collect()</code> on <code>heart_failure_young</code>.</p>
+<pre><code language="language-r" class="language-r">dbWriteTable(conn, name = &#34;HEART_FAILURE_YOUNG&#34;, value = heart_failure_young_df)
+</code></pre>
+<p>To append to an existing table, specify <code>append = TRUE</code>. If appending, the <code>name</code> argument should refer to an existing table.</p>
+<p>Now that we understand how R will interact with the database, we can use R to perform our analysis.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare data with 
+{dplyr}" duration="5">
+        <p>We want to understand which variables in <code>HEART_FAILURE</code> are associated with survival of patients with heart failure.</p>
+<p>First we convert the column names to lowercase, so we won&#39;t need to worry about capitalization.</p>
+<pre><code language="language-r" class="language-r"># Standardize column names
+heart_failure &lt;- 
+  heart_failure |&gt; 
+  rename_with(str_to_lower)
+</code></pre>
+<p>When we are running these commands on a database connection, <code>{dbplyr}</code> is translating the code into SQL for us under the hood. We don&#39;t need to write raw SQL commands, and the compute is happening directly on the database. You can pipe <code>|></code> the code into <code>show_query()</code> if you want to see the generated SQL query.</p>
+<h2 is-upgraded>Filter ages</h2>
+<p>For now, we&#39;ll focus on just patients younger than 50. We also reduce the data to just the columns we&#39;re interested in.</p>
+<pre><code language="language-r" class="language-r">heart_failure &lt;-
+  heart_failure |&gt; 
+  filter(age &lt; 50) |&gt; 
+  select(age, diabetes, serum_sodium, serum_creatinine, sex, death_event)
+</code></pre>
+<p>Our table now looks like this.</p>
+<pre><code># Source:   SQL [?? x 6]
+# Database: Snowflake 8.39.2[@Snowflake/HEART_FAILURE]
+     age diabetes serum_sodium serum_creatinine   sex death_event
+   &lt;dbl&gt;    &lt;dbl&gt;        &lt;dbl&gt;            &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+ 1    45        0          137             1.1      1           1
+ 2    49        0          138             1        0           0
+ 3    45        0          127             0.8      1           1
+ 4    48        1          121             1.9      0           1
+ 5    49        0          136             1.1      1           1
+ 6    45        1          139             1        1           1
+ 7    45        0          145             1        1           1
+ 8    45        0          137             1.18     0           0
+ 9    42        1          136             1.3      0           1
+10    41        0          140             0.8      1           0
+# ℹ more rows
+# ℹ Use `print(n = ...)` to see more rows
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize Data with 
+{ggplot2}" duration="5">
+        <p>The heart failure data provides important insights that can help us:</p>
+<ul>
+<li>Identify factors associated with increased risk of mortality after heart failure</li>
+<li>Predict future survival outcomes based on historical clinical data</li>
+<li>Benchmark patient outcomes based on clinical indicators like serum sodium levels</li>
+</ul>
+<p>Visualizing clinical variables across different patient groups can help identify patterns.</p>
+<h2 is-upgraded>Visualize serum sodium levels</h2>
+<p>We can use <code>{ggplot2}</code> to visually compare sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (<code>0</code>) or died (<code>1</code>) during the follow-up period.</p>
+<pre><code language="language-r" class="language-r">heart_failure |&gt; 
+  mutate(
+    death_event = as.character(death_event), 
+    diabetes = as.character(diabetes)
+  ) |&gt; 
+  ggplot(aes(x = death_event, y = serum_sodium, fill = diabetes)) +
+  geom_boxplot() +
+  labs(
+    title = &#34;Serum Sodium Levels by Diabetes Status and Survival Outcome&#34;,
+    x = &#34;Survival Outcome (0 = Survived, 1 = Died)&#34;,
+    y = &#34;Serum Sodium (mEq/L)&#34;,
+    fill = &#34;Diabetes&#34;
+  ) +
+  theme(legend.position = &#34;bottom&#34;)
+</code></pre>
+<p class="image-container"><img src="img/367260bfad7e94ab.png"></p>
+<p><strong><em>INTERACTIVITY NOTE:</em></strong>  The code above allows for easy visualization of other variables. You can adjust the <code>aes()</code> function or filter the data to explore different clinical indicators and patient characteristics.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Make publication-ready tables with 
+{gt}" duration="5">
+        <p>We can continue exploring the heart failure dataset with visualizations or create a table that concisely displays multiple pieces of information at once. For example, we can use <code>{dplyr}</code> verbs to calculate the median values for various clinical metrics across different patient groups.</p>
+<pre><code language="language-r" class="language-r">heart_failure |&gt; 
+  summarize(
+    across(
+      c(&#34;age&#34;, &#34;serum_creatinine&#34;, &#34;serum_sodium&#34;), 
+      \(x) median(x, na.rm = TRUE), 
+      .names = &#34;median_{.col}&#34;
+    )
+  )
+</code></pre>
+<pre><code># Source:   SQL [1 x 3]
+# Database: Snowflake 8.39.2[@Snowflake/HEART_FAILURE]
+  median_age median_serum_creatinine median_serum_sodium
+       &lt;dbl&gt;                   &lt;dbl&gt;               &lt;dbl&gt;
+1         45                       1                 137
+</code></pre>
+<p>With <code>{dplyr}</code>&#39;s <code>group_by()</code> command, we can compute separate metrics for each combination of <code>death_event</code> and <code>diabetes</code>.</p>
+<pre><code language="language-r" class="language-r">comparison &lt;- 
+  heart_failure |&gt; 
+  group_by(death_event, diabetes) |&gt; 
+  summarize(
+    across(
+      c(&#34;age&#34;, &#34;serum_creatinine&#34;, &#34;serum_sodium&#34;), 
+      \(x) median(x, na.rm = TRUE), 
+      .names = &#34;median_{.col}&#34;
+    ),
+    .groups = &#34;drop&#34;
+  )
+  
+comparison
+</code></pre>
+<pre><code># Source:   SQL [4 x 5]
+# Database: Snowflake 8.39.2[@Snowflake/HEART_FAILURE]
+  death_event diabetes median_age median_serum_creatinine median_serum_sodium
+        &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;                   &lt;dbl&gt;               &lt;dbl&gt;
+1           0        0       42                      1                    139
+2           1        1       45.5                    1.45                 133
+3           1        0       45                      1.1                  136
+4           0        1       45                      0.9                  137
+</code></pre>
+<p>This is a useful way to examine the information for ourselves. However, if we wish to share the information with others, we might prefer to present the table in a more polished format. We can do this with commands from R&#39;s <a href="https://gt.rstudio.com/" target="_blank"><code>{gt}</code> package</a>.</p>
+<p>The following code creates a table displaying the information in <code>comparison</code>.</p>
+<pre><code language="language-r" class="language-r">comparison |&gt; 
+  mutate(
+    death_event = case_when(
+      death_event == 1 ~ &#34;Died&#34;,
+      death_event == 0 ~ &#34;Survived&#34;
+    ),
+    diabetes = case_when(
+      diabetes == 1 ~ &#34;Yes&#34;,
+      diabetes == 0 ~ &#34;No&#34;
+    )
+  ) |&gt; 
+  arrange(desc(death_event), desc(diabetes)) |&gt; 
+  gt(rowname_col = &#34;death_event&#34;) |&gt; 
+  cols_label(
+    diabetes = &#34;Diabetes Status&#34;,
+    median_age = &#34;Median Age&#34;,
+    median_serum_creatinine = &#34;Median Serum Creatinine (mg/dL)&#34;,
+    median_serum_sodium = &#34;Median Serum Sodium (mEq/L)&#34;
+  ) |&gt; 
+  tab_header(
+    title = &#34;Clinical Metrics by Survival Outcome and Diabetes Status&#34;
+  ) |&gt; 
+  data_color(
+    columns = c(median_serum_creatinine, median_serum_sodium),
+    palette = &#34;Blues&#34;
+  ) 
+</code></pre>
+<p class="image-container"><img src="img/6e7614b3f22d48b1.png"></p>
+<p>Now that we&#39;ve accumulated some insights, let&#39;s think about how we might present the results of our analysis to our colleagues.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Reports and Dashboards with Quarto" duration="2">
+        <p>We&#39;ve conveniently written our analysis in a Quarto (<code>.qmd</code>) document, <a href="https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd" target="_blank">quarto.qmd</a>. <a href="https://quarto.org/" target="_blank">Quarto</a> is an open-source publishing system that makes it easy to create <a href="https://quarto.org/docs/guide/" target="_blank">data products</a> such as <a href="https://quarto.org/docs/output-formats/html-basics.html" target="_blank">documents</a>, <a href="https://quarto.org/docs/presentations/" target="_blank">presentations</a>, <a href="https://quarto.org/docs/dashboards/" target="_blank">dashboards</a>, <a href="https://quarto.org/docs/websites/" target="_blank">websites</a>, and <a href="https://quarto.org/docs/books/" target="_blank">books</a>.</p>
+<p>By placing our work in a Quarto document, we have interwoven all of our code, results, output, and prose text into a single literate programming document. This way everything can travel together in a reproducible data product.</p>
+<p>A Quarto document can be thought of as a regular markdown document, but with the ability to run code chunks.</p>
+<p>You can run any of the code chunks by clicking the play button above the chunk in the RStudio Pro IDE.</p>
+<p class="image-container"><img src="img/73b3e48aee4a8d4e.png"></p>
+<p>You can render the entire document into a polished report to share, with the <code>Render</code> button.</p>
+<p class="image-container"><img src="img/bf3d3b1ffbfc53fc.png"></p>
+<p>This will run all the code in the document from top to bottom in a new R session, and generate an HTML file, by default, for you to view and share.</p>
+<h2 is-upgraded>Learn More about Quarto</h2>
+<p>You can learn more about Quarto here: <a href="https://quarto.org/" target="_blank">https://quarto.org/</a>, and the documentation for all the various Quarto outputs here: <a href="https://quarto.org/docs/guide/" target="_blank">https://quarto.org/docs/guide/</a>. Quarto works with R, Python, and Javascript Observable code out-of-the box, and is a great tool to communicate your data science analyses.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Shiny Application" duration="2">
+        <p>One way to share our work and allow others to explore the heart failure dataset is to create an interactive <a href="https://shiny.posit.co/" target="_blank">Shiny</a> app.</p>
+<p>We&#39;ve prepared an example Shiny app in the directory: <a href="https://github.com/posit-dev/snowflake-posit-quickstart-r" target="_blank">https://github.com/posit-dev/snowflake-posit-quickstart-r</a>. Our app allows the user to explore different clinical metrics in one place.</p>
+<p class="image-container"><img src="img/65a121792960528b.png"></p>
+<p>To run the app, open <code>app.R</code> and then click the Run App button at the top of the script in the RStudio Pro IDE.</p>
+<p class="image-container"><img src="img/b589ba23359e5f22.png"></p>
+<p>Change the metric in the sidebar to control which metric is plotted.</p>
+<h2 is-upgraded>Learn More About Shiny</h2>
+<p>You can learn more about Shiny at: <a href="https://shiny.posit.co/" target="_blank">https://shiny.posit.co/</a>. This example uses Shiny for R, but <a href="https://shiny.posit.co/py/" target="_blank">Shiny for Python</a> is also available!</p>
+<p>If you&#39;re new to Shiny, you can try it online with <a href="https://shinylive.io/r/" target="_blank">shinylive</a>. It too, comes in a <a href="https://shinylive.io/py" target="_blank">Python</a> version.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <p>R is beloved by data scientists for its intuitive, concise syntax. You can now combine this syntax with the power and peace of mind of Snowflake. The Posit Workbench Native Application provides an IDE for R <em>within Snowflake</em>. You can then use R&#39;s existing database packages—<code>{DBI}</code>, <code>{odbc}</code>, <code>{dbplyr}</code>—to access your Snowflake databases.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create an R session within the RStudio Pro IDE that comes with the Posit Workbench Native App.</li>
+<li>How to connect to your Snowflake data from R to create tables, visualizations, and more.</li>
+<li>Build an RStudio Pro IDE environment to use within Snowflake.</li>
+<li>Build a Quarto document that contains plots and tables built with R, using data stored in Snowflake.</li>
+<li>Build an interactive Shiny Application built with R, using data stored in Snowflake.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://github.com/posit-dev/snowflake-posit-quickstart-r" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://posit.co/products/enterprise/workbench/" target="_blank">More about Posit Workbench</a></li>
+<li><a href="https://dbplyr.tidyverse.org/" target="_blank">{tidyverse} package for data science in R</a></li>
+<li><a href="https://dbplyr.tidyverse.org/" target="_blank">{dbplyr} package for database connections</a></li>
+<li><a href="https://gt.rstudio.com/" target="_blank">{gt} package for tables</a></li>
+<li><a href="https://quarto.org/" target="_blank">Quarto for reproducible documents, reports, and data products</a></li>
+<li><a href="https://shiny.posit.co/" target="_blank">Shiny for interactive dashboards and applications</a></li>
+<li><a href="https://shinylive.io/" target="_blank">Shinylive for serverless Shiny applications</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

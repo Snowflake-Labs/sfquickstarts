@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "build_visual_ai_model_to_detect_manufacturing_defects_with_landingai_and_snowflake",
+  "duration": 108,
+  "title": "Use Visual AI Models to Detect Defects with LandingLens on Snowflake",
+  "summary": "This guide shows how to use LandingLens and Snowflake to create a computer vision model that detects defects in a manufacturing dataset.",
+  "source": "build_visual_ai_model_to_detect_manufacturing_defects_with_landingai_and_snowflake/build_visual_ai_model_to_detect_manufacturing_defects_with_landingai_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "data-applications",
+    "healthcare",
+    "data-science-\u0026-ai",
+    "app-development"
+  ],
+  "tags": [
+    "dataapplications",
+    "datascience",
+    "gettingstarted",
+    "landingai",
+    "lvm",
+    "web"
+  ],
+  "url": "build_visual_ai_model_to_detect_manufacturing_defects_with_landingai_and_snowflake"
+}

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "application-control-framework",
+  "duration": 103,
+  "title": "Getting Started with the Application Control Framework (ACF)",
+  "summary": "A guide to building a Native App with consumer controls and limits.",
+  "source": "application-control-framework/application-control-framework.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "app-development",
+    "streamlit"
+  ],
+  "tags": [
+    "gettingstarted",
+    "nativeapps",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "application-control-framework"
+}

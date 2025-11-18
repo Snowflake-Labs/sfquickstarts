@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_streaming_integration",
+  "duration": 92,
+  "title": "Streaming Data Integration with Snowflake",
+  "summary": "Streaming Data Integration with Snowflake",
+  "source": "data_engineering_streaming_integration/data_engineering_streaming_integration.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "snowpipe",
+    "streaming",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/devlabs/issues",
+  "url": "data_engineering_streaming_integration"
+}

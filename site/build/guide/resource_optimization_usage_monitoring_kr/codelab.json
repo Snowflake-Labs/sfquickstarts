@@ -1,0 +1,37 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "resource_optimization_usage_monitoring_kr",
+  "duration": 0,
+  "title": "Resource Optimization: Usage Monitoring",
+  "authors": "Matt Meredith",
+  "summary": "이 가이드는 고객이 과도한 소비를 초래할 수도 있는 사용량을 모니터링하는 것과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.",
+  "source": "resource_optimization_usage_monitoring_kr/resource_optimization_usage_monitoring_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "consumption",
+    "costoptimization",
+    "kr",
+    "resourceoptimization",
+    "usagemonitoring",
+    "web",
+    "리소스최적화",
+    "모니터링",
+    "비용최적화",
+    "사용량",
+    "사용량메트릭",
+    "소비",
+    "스노우플레이크"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "resource_optimization_usage_monitoring_kr"
+}

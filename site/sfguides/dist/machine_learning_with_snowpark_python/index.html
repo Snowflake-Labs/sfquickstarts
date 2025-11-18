@@ -1,0 +1,377 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Machine Learning with Snowpark Python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="machine_learning_with_snowpark_python"
+                  title="Machine Learning with Snowpark Python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="7">
+        <p><strong>Note: if this is your first time experimenting with Snowpark Python, we recommend completing the </strong><a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0" target="_blank"><strong>Getting Started with Snowpark for Python</strong></a><strong> Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.</strong></p>
+<p><em>This quickstart was initially built as a Hands-on-Lab at Snowflake Summit 2022</em></p>
+<p>Python is the language of choice for Data Science and Machine Learning workloads. Snowflake has long supported Python via the Python Connector, allowing data scientists to interact with data stored in Snowflake from their preferred Python environment. This did, however, require data scientists to write verbose SQL queries. To provide a more friendly, expressive, and extensible interface to Snowflake, we built <strong>Snowpark Python</strong>, a native Python experience with a pandas and PySpark-like API for data manipulation. This includes a client-side API to allow users to write Python code in a Spark-like API without the need to write verbose SQL. Python UDF and Stored Procedure support also provides more general additional capabilities for compute pushdown.</p>
+<p>Snowpark includes client-side APIs and server-side runtimes that extends Snowflake to popular programming languages including Scala, Java, and Python. Ultimately, this offering provides a richer set of tools for Snowflake users (e.g. Python&#39;s extensibility and expressiveness) while still leveraging all of Snowflake&#39;s core features, and the underlying power of SQL, and provides a clear path to production for machine learning products and workflows.</p>
+<p>A key component of Snowpark for Python is that you can &#34;Bring Your Own IDE&#34;- anywhere that you can run a Python kernel, you can run client-side Snowpark Python. You can use it in your code development the exact same way as any other Python library or module. In this quickstart, we will be using Jupyter Notebooks, but you could easily replace Jupyter with any IDE of your choosing.</p>
+<p>Throughout this quickstart, we will specifically explore the power of the Snowpark Python Dataframe API, as well as server-side Python runtime capabilities, and how Snowpark Python can enable and accelerate end-to-end Machine Learning workflows, from initial data and feature engineering all the way to production model deployment. We will also demonstrate how Snowpark-optimized warehouse instance types can be used to accelerate ML workflows specifically. We will even explore orchestrating model training and deployment pipelines using Apache Airflow.</p>
+<p>The source code for this quickstart is available on <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main" target="_blank">GitHub</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Completion of the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0" target="_blank">Getting Started with Snowpark for Python</a> Quickstart</li>
+<li>Working knowledge of Python</li>
+<li>Familiarity with Snowflake</li>
+<li>Familiarity with Docker, Apache AirFlow, Streamlit a +</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to setup an Extract, Load and Transform (ELT) pipeline in Python for both bulk ingestion of ~100m time series records using the  Snowpark Python Client API as well as an incremental load process.</li>
+<li>How to perform exploratory data analysis , model development, experimentation and feature engineering  using the Snowpark Python Client API and the Pytorch Tabnet framework.</li>
+<li>How to create a reproducible, monitored, explainable and automated pipeline for machine learning training and inference at very large scale.</li>
+<li>How to implement end-to-end machine learning workflows in Snowflake with Python (no SQL needed) which can be orchestrated with dbt, Airflow, or any other python-capable orchestration framework.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account with Anaconda Integration enabled by ORGADMIN - if you do not already have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a></li>
+<li>An <a href="https://studiolab.sagemaker.aws/" target="_blank">Amazon SageMaker Studio Lab</a> Account OR a local Jupyter Notebook runtime with Miniconda</li>
+<li><strong><em>Optionally </em></strong><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a></li>
+</ul>
+<p><strong><em>Note: If you are planning to run this Quickstart locally, you may have additional requirements, e.g. Docker, Miniconda. Take a look at the source code </em></strong><a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/tree/main" target="_blank"><strong><em>README</em></strong></a><strong><em> for more information on additional local environment requirements.</em></strong></p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An orchestrated end-to-end Machine Learning pipeline to perform monthly forecasts using Snowflake, Snowpark Python, PyTorch, and Apache Airflow. <img src="img/c2f4fc83f6b7163e.jpg"> This pipeline will: <ul>
+<li>Incrementally ingest new data monthly from Amazon S3 into Snowflake</li>
+<li>Generate feature data from the new raw data and generate forecast data for relevant features for the prediction period</li>
+<li>Train hundreds of PyTorch TabNet models in parallel and generate new forecasts from the updated models, all inside of Snowflake</li>
+<li>Calculate and store model evaluation metrics</li>
+<li>Flatten output across hundreds of models in Snowflake to be consumed by end users via BI dashboards, for example</li>
+</ul>
+</li>
+<li>A simple front-end web UI via the easy-to-use Python library <code>Streamlit</code>, allowing users to consume the results of your pipeline <img src="img/181b7ca7c84c37fb.jpeg"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use-Case: Predicting Bike Share Trips" duration="1">
+        <p>In this example we use the <a href="https://ride.citibikenyc.com/system-data" target="_blank">Citibike dataset</a>. Citibike is a bicycle sharing system in New York City. Everyday users choose from 20,000 bicycles at over 1000 stations around New York City.</p>
+<p>To ensure customer satisfaction Citibike needs to predict how many bicycles will be needed at each station. Maintenance teams from Citibike will check each station and repair or replace bicycles. Additionally, the team will relocate bicycles between stations based on predicted demand. The operations team needs an application to show how many bicycles will be needed at a given station on a given day.</p>
+<p>Importantly, at the end of each section of this Quickstart, we are going to export modular Python code for use in our end-to-end deployment and orchestration. This demonstrates your ability to use the IDE of your choice (in this case, Jupyter notebooks), to iterate, explore, and experiment, while still creating production-ready, deployable Python code.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p><strong>Persona</strong>: DBA/Platform Administrator</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Establish the Snowpark Python session and produce a reusable function for use throughout the remainder of the lab</li>
+<li>Include steps for creating user roles, warehouses, etc. if you do not already have these configured for your Snowflake demo account</li>
+<li>Create the CITIBIKEML_&lt;USER&gt; database</li>
+</ul>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li>Granular Role Based Access Control (<a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview.html" target="_blank">RBAC</a>) Model</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/intro-key-concepts.html" target="_blank">Separated compute and storage</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/warehouses.html" target="_blank">Virtual Warehouses</a></li>
+</ul>
+<p>Check out the code repository README, and ensure you&#39;ve followed the setup instructions for your environment of choie (AWS SageMaker Studio Lab or local Jupyter)</p>
+<p>Then, open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/00_Setup.ipynb" target="_blank"><code>00-Setup</code></a> Jupyter notebook and execute the cells. Make sure to fill in the <code>state_dict</code> at the top of this Notebook with your Snowflake account information. Run through the notebook, executing each cell along the way.</p>
+<p><strong><em>If you are using a brand new Snowflake account</em></strong>, with just a single ACCOUNTADMIN user, you&#39;ll need to run some additional steps to create additional users, initial databases, schemas, compute warehouses, etc. that we will use throughout this quickstart:</p>
+<pre><code language="language-python" class="language-python">session.use_role(&#39;securityadmin&#39;)
+
+initial_password=&#39;snow2022&#39;
+new_usernames=[&#39;john1&#39;, &#39;john2&#39;]
+project_role=&#39;PUBLIC&#39;
+
+for username in new_usernames:
+    session.sql(&#34;CREATE USER IF NOT EXISTS &#34;+username+\
+                &#34; PASSWORD = &#39;&#34;+initial_password+\
+                &#34;&#39; LOGIN_NAME = &#39;&#34;+username+\
+                &#34;&#39; DEFAULT_ROLE = &#39;&#34;+project_role+\
+                &#34;&#39; MUST_CHANGE_PASSWORD = TRUE&#34;)\
+            .collect()
+    session.sql(&#34;GRANT ROLE &#34;+project_role+&#34; TO USER &#34;+username).collect()
+
+session.use_role(&#39;sysadmin&#39;)
+session.sql(&#34;GRANT CREATE DATABASE ON ACCOUNT TO ROLE &#34;+project_role).collect()
+
+session.use_role(state_dict[&#39;connection_parameters&#39;][&#39;role&#39;])
+
+session.use_role(&#39;accountadmin&#39;)
+project_role=&#39;PUBLIC&#39;
+
+for wh in state_dict[&#39;compute_parameters&#39;].values():
+    session.sql(&#34;CREATE WAREHOUSE IF NOT EXISTS &#34;+wh+\
+            &#34; WITH WAREHOUSE_SIZE = &#39;&#34;+wh.split(&#39;_&#39;)[0]+\
+            &#34;&#39; WAREHOUSE_TYPE = &#39;STANDARD&#39; AUTO_SUSPEND = 300 AUTO_RESUME = TRUE initially_suspended = true;&#34;)\
+        .collect()
+    session.sql(&#34;GRANT USAGE ON WAREHOUSE &#34;+wh+&#34; TO ROLE &#34;+project_role).collect() 
+    
+session.use_role(state_dict[&#39;connection_parameters&#39;][&#39;role&#39;])
+
+session.use_role(&#39;accountadmin&#39;)
+session.sql(&#34;GRANT IMPORT SHARE ON ACCOUNT TO &#34;+project_role).collect()
+session.use_role(state_dict[&#39;connection_parameters&#39;][&#39;role&#39;])
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Engineering" duration="10">
+        <p><strong>Persona</strong>: Data Engineeer</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Extract the Citbike data from S3 to a Snowflake stage</li>
+<li>Load the raw data to Snowflake tables</li>
+<li>Create tables with transformed data for use by Data Scientists</li>
+<li>Export the relevant DE code as Python modules and function for use in MLOps orchestration later</li>
+</ul>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li>Snowpark Python Client Dataframe API for ELT</li>
+<li>Snowflake Ingest Capabilities &amp; Performance (loading ~94M records in roughly 30s)</li>
+</ul>
+<p>In this section of the demo, we will utilize Snowpark&#39;s Python client-side Dataframe API to build an ELT pipeline. We will extract the data from the source system (s3), load it into snowflake and add transformations to clean the data before analysis.</p>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/01_Data_Engineering.ipynb" target="_blank"><code>01_Data_Engineering</code></a> notebook and execute the cells. This notebook will:</p>
+<p>Now that we&#39;ve done our initial engineering and loaded a sample of data, let&#39;s create some bulk ELT processes using the exported modules from the Data Engineering notebook.</p>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/01_Ingest.ipynb" target="_blank"><code>01_Ingest</code></a> notebook and walk through the cells to see how to incrementally and bulk load data from S3 into Snowflake tables.</p>
+<p>Run the last few cells of the notebook to bulk-load ~94M records into your Snowflake table in only about 30 seconds.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Marketplace" duration="5">
+        <p><strong>Persona</strong>: Data Engineer</p>
+<p><strong>What You&#39;ll Do</strong>: Use the Snowflake Marketplace to subscribe to weather data from Weather Source.</p>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li><a href="https://www.snowflake.com/data-marketplace/" target="_blank">Snowflake Marketplace</a></li>
+</ul>
+<p>Weather Source is a leading provider of global weather and climate data and the OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries.</p>
+<p>Weather Source powers a majority of Fortune companies who use their data to quantify the impact of weather and climate on various KPIs including footfall traffic, product sales and demand, supply chain and logistics, advertising and more.</p>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/02_Data_Marketplace.ipynb" target="_blank">02_Data_Marketplace</a> notebook and follow the instructions to add the Snowpark Hands-on-Lab Weather Source dataset to your Snowflake account.</p>
+<ol type="1">
+<li>Go the Snowflake UI, and select <code>Marketplace</code></li>
+<li>Search for <code>snowpark</code> and click on the Snowpark for Python - Hands-on Lab - Weather Data tile <img src="img/cd8fddaf3e2a595c.png"></li>
+<li>Click <code>Get Data</code> and add the dataset to your Snowflake account <img src="img/82036276b6857a70.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Science Exploration and Modeling" duration="20">
+        <p><strong>Persona</strong>: Data Scientist</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Query daily trip data in Snowflake using Snowpark Python and visualize time-series data</li>
+<li>Train a preliminary PyTorch TabNet model to predict daily trip counts</li>
+<li>Augment your model feature trips data with Holiday reference data, along with weather data available in the <a href="https://www.snowflake.com/data-marketplace/?_sft_dataset-category=weather" target="_blank">Snowflake Marketplace</a></li>
+<li>Consolidate final feature data into feature engineering functions and write them to a Python module for use by the ML engineering team to operationalize your model.</li>
+</ul>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li>Snowpark Python Client Dataframe API for query &amp; data transformation push-down</li>
+<li>Snowflake Marketplace for data enrichment</li>
+</ul>
+<p>Now that the data engineers have cleaned and loaded the data to the <code>trips</code> table, we can begin our model development. For this, we will leverage Snowpark to do the feature preparation and exploratory analysis. This dataset is initially ~100 million rows and is likely too large to fit into memory on our local machine or even a reasonable sized single VM in the cloud. The Snowpark Python client-side Dataframe API allows us to push-down most of the computation for preparation and feature engineering to Snowpark. For security and goverance reasons we can read data into memory for model training and inference but no intermediate data products can be stored outside of Snowflake.</p>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/02_Data_Science.ipynb" target="_blank"><code>02_Data_Science</code></a> notebook, and step through executing the cells.</p>
+<p>After performing your feature engineering, you will write the feature engineering functions to a Python module for use by the ML engineering team in operationalizing this end-to-end workflow.</p>
+<p>Finally, train your TabNet regression model using the final feature set and evaluate its performance, along with feature importance.</p>
+<p><strong>OPTIONAL</strong>: If you also want to train an ARIMA baseline model to compare against, you can open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/02_Data_Science-ARIMA-Baseline.ipynb" target="_blank">02_Data_Science-ARIMA-Baseline</a> notebook and run the cells to train a baseline ARIMA forecast model.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ML Engineering Development for ML Ops Pipelines" duration="10">
+        <p><strong>Persona</strong>: ML Engineer</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Materialize the additional holiday and weather data as tables</li>
+<li>Incorporate forecast weather data for future predictions</li>
+<li>Create a vectorized feature generation pipeline that allows us to train models for every station in parallel using Snowpark and Snowflake window functions</li>
+<li>Create a Python UDF that performs training and inference (since this is a time-series prediction) and write the predictions to a table</li>
+<li>Evaluate the parallel models in Snowflake using a stored procedure</li>
+<li>Write the relevant functions to Python modules for orchestration</li>
+</ul>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li>Snowpark for feature engineering</li>
+<li>Snowpark Python UDFs to model training and inference</li>
+<li>Model evaluation using Snowpark Python Stored Procedures</li>
+</ul>
+<p>Your data scientists have done some exploratory analysis, feature engineering, and trained a model. Now, the ML engineer needs to develop code to deploy the model into production via an ML Ops pipeline. Open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/03_ML_Engineering.ipynb" target="_blank"><code>03_ML_Engineering</code></a> notebook and step through, executing the cells.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Operationalizing ML Code for MLOps" duration="10">
+        <p><strong>Persona</strong>: ML Engineer</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Take the functions created by the Data Scientist and ML Engineer and wrap them in such a way that they can be easily automated using the company&#39;s orchestration tools (Airflow)</li>
+<li>Deploy the model training and inference as a permanent <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-tabular-functions.html" target="_blank">Python Snowpark User-Defined Table Function (UDTF)</a></li>
+<li>Scale your model training and inference to be performed for hundreds of models simultaneously using Snowpark-optimized warehouse instance types</li>
+<li>Use <a href="https://docs.snowflake.com/en/sql-reference/sql/create-clone.html" target="_blank">Zero-Copy Cloning</a> in Snowflake to produce point-in-time snapshots of the data in order to reproduce results on-demand in the future, withtout creating physical copies of any data</li>
+<li>Use <a href="https://docs.snowflake.com/en/user-guide/object-tagging.html" target="_blank">object tagging</a> to tag training/inference datasets with a <code>model_id</code> for lineage</li>
+<li>Test out the pipeline that will eventually orchestrated</li>
+<li>Consolidate the monthly training/inference operation into a single deployable pipeline</li>
+</ul>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li>Object Tagging for model/data lineage</li>
+<li>Snowpark Python UD(T)F Deployment</li>
+<li>Snowpark-optimized warehouse instance types</li>
+<li>Zero-Copy Cloning for point-in-time snapshots of model training data</li>
+</ul>
+<p>The ML Engineer must now create a pipeline to automate deployment of your station-trip models, batch the predictions, and expose them in such a way that a business user can consume them via a front-end application (which will be developed in Streamlit). Most importantly, <strong><em>no data should leave Snowflake!</em></strong> Open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/04_ML_Ops.ipynb" target="_blank"><code>04_ML_Ops</code></a> notebook, and walk through the code cells.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Orchestration with Apache Airflow" duration="20">
+        <p><strong>Persona</strong>: ML Engineer</p>
+<p><strong>What You&#39;ll Do</strong>: Now that we have created Python code that is meant to support operational deployments of our model training and inference tasks, we need to wrap these functions as Airflow tasks for easy orchestration. <strong>Note:</strong> this section requires <code>Docker Desktop</code> to run.</p>
+<p class="image-container"><img src="img/999c41b578d7949d.png"></p>
+<p>The core components of the orchestrated DAG are:</p>
+<ul>
+<li>Incrementally load &#34;new&#34; data from S3 into Snowflake</li>
+<li>Generate training feature data, as well as forecast data</li>
+<li>Bulk train models for all tations and run forecasting operation</li>
+<li>Run an eval job to collect metrics for all models</li>
+<li>Flatten result tables for easy consumption</li>
+</ul>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li>Orchestration using Partner Tools</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/05_Airflow_Pipeline.ipynb" target="_blank"><code>05_Airflow_Pipeline</code></a> notebook. We normally define Airflow tasks using the <code>@task()</code> decorator, but for this project, while python 3.8 is a requirement, the tasks are run using the <code>@task.virtualenv()</code> decorator:</p>
+<pre><code language="language-python" class="language-python">@task()
+def generate_forecast_table_task(state_dict:dict, 
+                                 holiday_state_dict:dict, 
+                                 weather_state_dict:dict)-&gt; dict: 
+    from dags.snowpark_connection import snowpark_connect
+    from dags.mlops_pipeline import create_forecast_table
+
+    print(&#39;Generating forecast features.&#39;)
+    session, _ = snowpark_connect()
+
+    _ = create_forecast_table(session, 
+                              trips_table_name=state_dict[&#39;trips_table_name&#39;],
+                              holiday_table_name=state_dict[&#39;holiday_table_name&#39;], 
+                              weather_table_name=state_dict[&#39;weather_table_name&#39;], 
+                              forecast_table_name=state_dict[&#39;forecast_table_name&#39;],
+                              steps=state_dict[&#39;forecast_steps&#39;])
+
+    _ = session.sql(&#34;ALTER TABLE &#34;+state_dict[&#39;forecast_table_name&#39;]+\
+                    &#34; SET TAG model_id_tag = &#39;&#34;+state_dict[&#39;model_id&#39;]+&#34;&#39;&#34;).collect()
+
+    session.close()
+    return state_dict
+</code></pre>
+<p>We use the <a href="https://docs.astronomer.io/astro/cli/get-started" target="_blank">Astronomer CLI</a> and Docker to spin up a local Airflow instance. You can find the installation instructions <a href="https://docs.astronomer.io/astro/cli/get-started#step-1-install-the-astro-cli" target="_blank">here</a>.</p>
+<p><strong><em>Note:</em></strong></p>
+<p><em> This will require a docker process running on the local machine, e.g. dockerd, Docker Desktop, Colima etc.</em></p>
+<ul>
+<li>First step is to install <a href="https://docs.astronomer.io/astro/cli/get-started#step-1-install-the-astro-cli" target="_blank">astrocloud CLI</a>.</li>
+<li>Next clone the this repo locally if you have not done so already.</li>
+<li>If you have been working with SageMaker, you will need to copy the final <code>state.json</code> file you created while working through the Notebooks locally. Place this file in the <code>include</code> directory and overwrite the existing file.</li>
+<li>Start up the <em>astrocloud</em> instance by running <code>astro dev start</code> in the repo directory.</li>
+<li>After a few mins you will have an Airflow instance running at http://localhost:8080.</li>
+</ul>
+<p><strong><em>Note:</em></strong></p>
+<p><em> The </em></p>
+<p><em><code>Dockerfile</code></em></p>
+<p><em> file for this project has been modified to make things run quicker, see </em><a href="Dockerfile" target="_blank"><em>the Dockerfile</em></a><em> for details.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Integration with Streamlit for Model Consumption" duration="15">
+        <p><strong>Persona</strong>: Application Developer / Data Scientist</p>
+<p><strong>What You&#39;ll Do</strong>: Build a Streamlit app that allows users to consume the results of our model predictions in a simple, front-end web application. Users can also trigger the Airflow pipeline to ingest data, train our model, and perform infeerence.</p>
+<p><strong>Snowflake Features</strong>:</p>
+<ul>
+<li>Snowpark Python</li>
+<li><a href="https://streamlit.io/" target="_blank">Streamlit</a>, recently <a href="https://www.snowflake.com/blog/snowflake-to-acquire-streamlit/" target="_blank">acquired by Snowflake</a></li>
+</ul>
+<p>Streamlit is an open-source app framework for ML and Data Science teams that allows non-application developers to turn data scripts into shareable web apps in very little time, all using pure Python, without any front-end experience required.</p>
+<p>In the <a href="https://github.com/Snowflake-Labs/sfguide-citibike-ml-snowpark-python/blob/main/06_Streamlit_App.ipynb" target="_blank"><code>06_Streamlit_App</code></a> notebook, run the cell that contains all the code for building and launching your Streamlit app.</p>
+<p>Navigate to your Streamlit app on port <code>6006</code>:</p>
+<p class="image-container"><img src="img/181b7ca7c84c37fb.jpeg"></p>
+<p>For more information on Streamlit + Snowflake, please visit <a href="https://www.snowflake.com/blog/snowflake-to-acquire-streamlit/" target="_blank">the Snowflake blog.</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>In this quickstart we demonstrated how Snowpark Python enables rapid, end-to-end machine learning workload development, deployment, and orchestration.</p>
+<p>For the <strong>Data Engineer</strong>, Snowpark Python simplifies ELT pipeline development using common Dataframe API syntax, that also exposes the expressiveness and extensiveness of Python. Norming on Python as the language of choice also allows rapid iteration between Data Scientists and Data Engineers, eliminating any expensive code translation lift that can introduce additional time and cost to machine learning workflow development.</p>
+<p>For the <strong>Data Scientist</strong>, Snowpark Python provides a familiar API for querying, acquiring, transforming, and exploring data that resides in Snowflake, while also providing the compute benefits of push-down query execution at little to zero additional time and cost. Snowpark abstracts compute away from the data scientist&#39;s IDE of choice, be that a Notebook environment, or more typical IDE. The server-side Snowpark Python runtime enables data scientists to immediately deploy training and inference code to Snowflake with a single line of code. And, all of this is done without having to write a single line of verbose SQL.</p>
+<p>For the <strong>ML Engineer</strong>, Snowpark Python simplifies the hand-off of experimental/analysis code from the data scientist into production-level workflows. By simply extending the experimental code into more robust Python modules, the ML engineer can turn an ML project from experiment to product in little to no time. He or she can then orchestrate a fully operational ML pipeline using the business&#39;s orchestration tool of choice, such as Airflow in this example.</p>
+<p>While mature organizations may have different individuals and roles assigned to each of these personas, repsonsible for some number of the tasks demonstrated in this Quickstart, it is common for a single Data Scientist to end up being responsible for this entire set of components. Snowpark Python provides a familiar construct for data scientists to take on additional responsibility around moving models and capabilities into produciton-ready pipelines.</p>
+<p>Importantly, we showed how working in Snowpark Python allows you to &#34;Bring Your Own IDE&#34; with limited-to-zero dependencies outside of a Python kernel runtime environment, keeping things developer-friendly and allowing teams to work in their preferred dev environments.</p>
+<p>For more information on Snowpark Python, and Machine Learning in Snowflake, check out the following resources:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html" target="_blank">Snowpark Python API Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

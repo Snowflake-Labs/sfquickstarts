@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "native-app-chairlift",
+  "duration": 40,
+  "title": "Build a Snowflake Native App to Analyze Chairlift Sensor Data",
+  "summary": "This Snowflake Native App demonstrates how a chairlift manufacturer can build a native app to provide chairlift customers with analytics on purchased chairlifts by using sensor data collected from the chairlifts owned by the customer.",
+  "source": "native-app-chairlift/native-app-chairlift.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "apps",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "native-app-chairlift"
+}

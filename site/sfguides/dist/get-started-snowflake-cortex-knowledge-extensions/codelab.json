@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "get-started-snowflake-cortex-knowledge-extensions",
+  "duration": 25,
+  "title": "Getting Started with Cortex Knowledge Extensions on Snowflake Marketplace",
+  "summary": "How to build a chatbot using Snowflake Cortex Knowledge Extensions",
+  "source": "get-started-snowflake-cortex-knowledge-extensions/get-started-snowflake-cortex-knowledge-extensions.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "get-started-snowflake-cortex-knowledge-extensions"
+}

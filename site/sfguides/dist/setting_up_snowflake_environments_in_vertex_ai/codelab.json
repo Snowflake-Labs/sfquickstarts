@@ -1,0 +1,38 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "setting_up_snowflake_environments_in_vertex_ai",
+  "duration": 50,
+  "title": "Setting up Snowflake Environments in Vertex AI",
+  "summary": "This is a quickstart for Setting up Snowflake Environments in Vertex AI",
+  "source": "setting_up_snowflake_environments_in_vertex_ai/setting_up_snowflake_environments_in_vertex_ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-engineering",
+    "google",
+    "ai",
+    "vertex-ai",
+    "gcp"
+  ],
+  "tags": [
+    "ai",
+    "dataengineering",
+    "datascience",
+    "gcp",
+    "gettingstarted",
+    "google",
+    "ml",
+    "vertex",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "setting_up_snowflake_environments_in_vertex_ai"
+}

@@ -1,0 +1,500 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake Semantic View</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowflake-semantic-view"
+                  title="Getting Started with Snowflake Semantic View"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="45">
+        <p>AI-powered Business Intelligence (BI) and conversational analytics hold immense promise for data-driven decision-making. However, directly applying these technologies to complex enterprise schemas often leads to inaccurate or inconsistent results, commonly referred to as &#34;hallucinations.&#34; This challenge arises because AI and BI systems may struggle to interpret raw data without a clear understanding of the organizational context and definitions.</p>
+<p>Snowflake addresses these challenges by introducing Semantic Views, a new schema-level object that stores all semantic model information natively within the database. Semantic views capture and store semantic model information directly within the database, including business-relevant concepts such as metrics (<em>e.g.,</em> total sales), dimensions (<em>e.g.,</em> product category), and facts.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to setup a database and schema in Snowflake</li>
+<li>How to create views from existing sample data</li>
+<li>The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics</li>
+<li>How to query a semantic view</li>
+<li>How semantic views enhance AI-powered analytics and consistency across BI tools</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build a foundational understanding and practical setup of a Snowflake semantic view, complete with data views and a defined semantic model, enabling simplified and consistent data querying for BI and AI applications using TPC-DS sample data.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic knowledge of SQL and Python</li>
+<li>Familiarity with data analysis concepts</li>
+<li>Access to <code>ACCOUNTADMIN</code> role is required for creating semantic views)</li>
+<li>Access to the <code>SNOWFLAKE_SAMPLE_DATA</code> database</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understand Semantic Views" duration="5">
+        <h2 is-upgraded>What is a Semantic View?</h2>
+<p>A semantic view acts as a translator between your raw data and how humans or AI interpret it. It defines key business concepts like &#34;metrics&#34; (<em>e.g.,</em> total sales) and &#34;dimensions&#34; (<em>e.g.,</em> customer location) by referencing your underlying tables and their relationships.</p>
+<h2 is-upgraded>Why Semantic Views Matter</h2>
+<p>Semantic views are crucial for several reasons:</p>
+<ul>
+<li><strong>Ensures AI and BI consistency</strong>: By embedding organizational context and definitions directly into the data layer, semantic views ensure that both AI and BI systems interpret information uniformly, leading to trustworthy answers.</li>
+<li><strong>Enables AI-powered analytics</strong>: They make data &#34;AI-ready,&#34; unlocking advanced use cases such as conversational analytics and significantly reducing the risk of AI hallucinations.</li>
+<li><strong>Maintains consistency across BI Tools</strong>: Semantic models are shifted from individual BI tool layers to the core data platform, guaranteeing that all tools utilize the same semantic concepts.</li>
+<li><strong>Unlocks rich analytical capabilities</strong>: Semantic views power diverse user interfaces, including AI-powered analytics, traditional BI clients, Streamlit applications, and custom applications.</li>
+</ul>
+<h2 is-upgraded>Basic Elements of a Semantic View Definition</h2>
+<p>Every semantic view definition requires essential elements:</p>
+<ul>
+<li><strong>Physical model objects</strong>: These refer to your existing tables, views, or (in future releases) SQL queries that contain the raw data.</li>
+<li><strong>Relationships</strong>: These define how your physical objects connect to each other (<em>e.g.,</em> a CUSTOMER table linked to an ORDERS table).</li>
+<li><strong>Dimensions</strong>: These are business-friendly attributes used to group or filter your data (<em>e.g.,</em> customer&#39;s birth year, product category).</li>
+<li><strong>Metrics</strong>: These are business-friendly calculations or aggregations, often representing Key Performance Indicators (KPIs) (<em>e.g.,</em> total sales price, total sales quantity).</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <h2 is-upgraded>Download the Notebook</h2>
+<p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Snowflake_Semantic_View/getting-started-with-snowflake-semantic-view.ipynb" target="_blank">getting-started-with-snowflake-semantic-view.ipynb</a> to download the Notebook from GitHub.</p>
+<p>Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as <code>numpy</code>, <code>pandas</code>, <code>matplotlib</code>, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.</p>
+<h2 is-upgraded>Setup your Database and Schema</h2>
+<p>First, we&#39;ll create a new database named <code>SAMPLE_DATA</code> and a schema named <code>TPCDS_SF10TCL</code> to organize our data. We will then set the context to use this new schema.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a new test database named SAMPLE_DATA
+CREATE DATABASE SAMPLE_DATA;
+
+-- Use the newly created database
+USE DATABASE SAMPLE_DATA;
+
+-- Create a new schema named TPCDS_SF10TCL within SAMPLE_DATA
+CREATE SCHEMA TPCDS_SF10TCL;
+
+-- Set the context to use the new schema
+USE SCHEMA TPCDS_SF10TCL;
+</code></pre>
+<h2 is-upgraded>Create Views from Sample Data</h2>
+<p>Next, we&#39;ll create views for the tables we want to analyze. These views will be based on the <code>SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL</code> dataset, allowing us to work with a subset of the data without modifying the original tables.</p>
+<pre><code language="language-sql" class="language-sql">-- Create or replace views for the tables from SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL
+
+CREATE OR REPLACE VIEW CUSTOMER AS
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CUSTOMER;
+
+CREATE OR REPLACE VIEW CUSTOMER_DEMOGRAPHICS AS
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CUSTOMER_DEMOGRAPHICS;
+
+CREATE OR REPLACE VIEW DATE_DIM AS
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.DATE_DIM;
+
+CREATE OR REPLACE VIEW ITEM AS
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.ITEM;
+
+CREATE OR REPLACE VIEW STORE AS
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.STORE;
+
+CREATE OR REPLACE VIEW STORE_SALES AS
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.STORE_SALES;
+</code></pre>
+<h2 is-upgraded>Verify your Environment Setup</h2>
+<p>Before proceeding, let&#39;s ensure our warehouse, database, and schema are correctly set, and then list the views we just created.</p>
+<pre><code language="language-sql" class="language-sql">-- Select the warehouse, database, and schema
+USE WAREHOUSE COMPUTE_WH;
+USE DATABASE SAMPLE_DATA;
+USE SCHEMA TPCDS_SF10TCL;
+
+-- Show all views in the current schema to verify creation
+SHOW VIEWS;
+</code></pre>
+<p class="image-container"><img alt="image" src="img/37c4583be53e2972.png"></p>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>Ensure you have the <code>ACCOUNTADMIN</code> role to create semantic views</li>
+<li>Verify that all views are created successfully before proceeding to the next step</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Semantic View" duration="15">
+        <h2 is-upgraded>Define the Semantic View</h2>
+<p>We&#39;ll start by switching to the <code>ACCOUNTADMIN</code> role:</p>
+<pre><code language="language-sql" class="language-sql">-- Switch to ACCOUNTADMIN role to create the semantic view
+USE ROLE ACCOUNTADMIN;
+</code></pre>
+<p>Now, we&#39;ll define our <code>TPCDS_SEMANTIC_VIEW_SM</code> semantic view. This view will establish relationships between our tables, define facts (measures), and dimensions (attributes), making it easier to query and analyze our data without complex joins.</p>
+<pre><code language="language-sql" class="language-sql">-- Create or replace the semantic view named TPCDS_SEMANTIC_VIEW_SM
+CREATE OR REPLACE SEMANTIC VIEW TPCDS_SEMANTIC_VIEW_SM
+	tables (
+		CUSTOMER primary key (C_CUSTOMER_SK),
+		DATE as DATE_DIM primary key (D_DATE_SK),
+		DEMO as CUSTOMER_DEMOGRAPHICS primary key (CD_DEMO_SK),
+		ITEM primary key (I_ITEM_SK),
+		STORE primary key (S_STORE_SK),
+		STORESALES as STORE_SALES
+        primary key (SS_SOLD_DATE_SK,SS_CDEMO_SK,SS_ITEM_SK,SS_STORE_SK,SS_CUSTOMER_SK)
+	)
+	relationships (
+		SALESTOCUSTOMER as STORESALES(SS_CUSTOMER_SK) references CUSTOMER(C_CUSTOMER_SK),
+		SALESTODATE as STORESALES(SS_SOLD_DATE_SK) references DATE(D_DATE_SK),
+		SALESTODEMO as STORESALES(SS_CDEMO_SK) references DEMO(CD_DEMO_SK),
+		SALESTOITEM as STORESALES(SS_ITEM_SK) references ITEM(I_ITEM_SK),
+		SALETOSTORE as STORESALES(SS_STORE_SK) references STORE(S_STORE_SK)
+	)
+	facts (
+		ITEM.COST as i_wholesale_cost,
+		ITEM.PRICE as i_current_price,
+		STORE.TAX_RATE as S_TAX_PRECENTAGE,
+        STORESALES.SALES_QUANTITY as SS_QUANTITY
+	)
+	dimensions (
+		CUSTOMER.BIRTHYEAR as C_BIRTH_YEAR,
+		CUSTOMER.COUNTRY as C_BIRTH_COUNTRY,
+		CUSTOMER.C_CUSTOMER_SK as c_customer_sk,
+		DATE.DATE as D_DATE,
+		DATE.D_DATE_SK as d_date_sk,
+		DATE.MONTH as D_MOY,
+		DATE.WEEK as D_WEEK_SEQ,
+		DATE.YEAR as D_YEAR,
+		DEMO.CD_DEMO_SK as cd_demo_sk,
+		DEMO.CREDIT_RATING as CD_CREDIT_RATING,
+		DEMO.MARITAL_STATUS as CD_MARITAL_STATUS,
+		ITEM.BRAND as I_BRAND,
+		ITEM.CATEGORY as I_CATEGORY,
+		ITEM.CLASS as I_CLASS,
+		ITEM.I_ITEM_SK as i_item_sk,
+		STORE.MARKET as S_MARKET_ID,
+		STORE.SQUAREFOOTAGE as S_FLOOR_SPACE,
+		STORE.STATE as S_STATE,
+		STORE.STORECOUNTRY as S_COUNTRY,
+		STORE.S_STORE_SK as s_store_sk,
+		STORESALES.SS_CDEMO_SK as ss_cdemo_sk,
+		STORESALES.SS_CUSTOMER_SK as ss_customer_sk,
+		STORESALES.SS_ITEM_SK as ss_item_sk,
+		STORESALES.SS_SOLD_DATE_SK as ss_sold_date_sk,
+		STORESALES.SS_STORE_SK as ss_store_sk
+	)
+	metrics (
+		STORESALES.TOTALCOST as SUM(item.cost),
+		STORESALES.TOTALSALESPRICE as SUM(SS_SALES_PRICE),
+		STORESALES.TOTALSALESQUANTITY as SUM(SS_QUANTITY)
+            WITH SYNONYMS = ( &#39;total sales quantity&#39;, &#39;total sales amount&#39;)
+	)
+
+;
+</code></pre>
+<h2 is-upgraded>Verify the Semantic View Creation</h2>
+<p>Let&#39;s confirm that our semantic view has been successfully created by listing all semantic views in the current database.</p>
+<pre><code language="language-sql" class="language-sql">-- Lists semantic views in the database that is currently in use
+SHOW SEMANTIC VIEWS;
+</code></pre>
+<p class="image-container"><img alt="image" src="img/b6f42384cbb9450f.png"></p>
+<h2 is-upgraded>Describe the Semantic View</h2>
+<p>To understand the structure and components of our newly created semantic view, we can use the <code>DESC SEMANTIC VIEW</code> command. This will provide details about its tables, relationships, facts, and dimensions.</p>
+<pre><code language="language-sql" class="language-sql">-- Describes the semantic view named TPCDS_SEMANTIC_VIEW_SM, and as a special bonus uses our new flow operator to filter and project only the metric and dimension names
+
+DESC SEMANTIC VIEW TPCDS_SEMANTIC_VIEW_SM
+    -&gt;&gt; SELECT &#34;object_kind&#34;,&#34;property_value&#34; as &#34;parent_object&#34;,&#34;object_name&#34; FROM $1
+        WHERE &#34;object_kind&#34; IN (&#39;METRIC&#39;,&#39;DIMENSION&#39;) AND &#34;property&#34; IN (&#39;TABLE&#39;)
+;
+</code></pre>
+<p class="image-container"><img alt="image" src="img/9f13877913ecc6cf.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="&#34;Talk To&#34; the Semantic View with Cortex Analyst" duration="5">
+        <h2 is-upgraded>Natural Language Querying</h2>
+<p>Snowflake&#39;s Cortex Analyst allows you to interact with your semantic views using natural language. This powerful feature transforms how users can explore data without needing to know SQL syntax.</p>
+<h2 is-upgraded>Access Cortex Analyst</h2>
+<p>You can access Cortex Analyst through the Snowflake interface.</p>
+<p>Let&#39;s dynamically generate a link to Cortex Analyst so that you can access the semantic view.</p>
+<p>First, we&#39;ll create a SQL cell named <code>sql_step7</code>:</p>
+<pre><code language="language-sql" class="language-sql">SELECT &#39;https://app.snowflake.com/&#39; || CURRENT_ORGANIZATION_NAME() || &#39;/&#39; || CURRENT_ACCOUNT_NAME() || &#39;/#/studio/analyst/databases/SAMPLE_DATA/schemas/TPCDS_SF10TCL/semanticView/TPCDS_SEMANTIC_VIEW_SM/edit&#39; AS RESULT;
+</code></pre>
+<p>Next, we&#39;ll call it from the following Python code cell that we called <code>py_link</code>:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+
+link = sql_step7.to_pandas()[&#39;RESULT&#39;].iloc[0]
+
+st.link_button(&#34;Go to Cortex Analyst&#34;, link)
+</code></pre>
+<p class="image-container"><img alt="image" src="img/bfe7c4640302521e.gif"></p>
+<h2 is-upgraded>Example Natural Language Query</h2>
+<p>Once in Cortex Analyst, you can ask questions like:</p>
+<p><em>Show me the top selling brands in by total sales quantity in the state ‘TX&#39; in the ‘Books&#39; category in the year 2003</em></p>
+<p>Cortex Analyst will automatically translate this natural language question into the appropriate Semantic SQL query and return the results.</p>
+<p class="image-container"><img alt="image" src="img/70f6856787833e77.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Semantic Views" duration="10">
+        <h2 is-upgraded>Basic Query Structure</h2>
+<p>To query a semantic view, you&#39;ll use this special query structure:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM SEMANTIC_VIEW (view_name
+    METRICS metric1, metric2, ...
+    DIMENSIONS dimension1, dimension2, ...
+);
+</code></pre>
+<p>Let&#39;s break down each part:</p>
+<ul>
+<li><code>SELECT * FROM SEMANTIC_VIEW (view_name ...)</code>: This initiates your query, indicating that you want to retrieve data from a semantic view</li>
+<li><code>METRICS metric1, metric2, ...</code>: Within the parentheses, specify the metrics (calculated values or totals) you wish to retrieve</li>
+<li><code>DIMENSIONS dimension1, dimension2, ...</code>: Next, specify the dimensions (categories or attributes) you want to group or filter your data by</li>
+</ul>
+<h2 is-upgraded>Add Filters and Sorting</h2>
+<p>You can enhance your queries with standard SQL clauses:</p>
+<ul>
+<li><strong>Filtering</strong>: Use <code>WHERE</code> clauses to filter your results</li>
+<li><strong>Sorting</strong>: Use <code>ORDER BY</code> to sort your results</li>
+<li><strong>Limiting</strong>: Use <code>LIMIT</code> to restrict the number of results</li>
+</ul>
+<h2 is-upgraded>Example Query: Top Selling Brands</h2>
+<p>Now that our semantic view is defined, we can easily query it to retrieve aggregated data. The following query demonstrates how to find the top-selling brands in a specific state and category for a given year and month:</p>
+<pre><code language="language-sql" class="language-sql">-- Query the semantic view to find top selling brands
+SELECT * FROM SEMANTIC_VIEW
+(
+ TPCDS_SEMANTIC_VIEW_SM
+    DIMENSIONS
+            Item.Brand,
+            Item.Category,
+            Date.Year,
+            Date.Month,
+            Store.State
+    METRICS
+        StoreSales.TotalSalesQuantity
+)
+WHERE Year = &#39;2002&#39; AND Month = &#39;12&#39; AND State =&#39;TX&#39; AND Category = &#39;Books&#39;
+ORDER BY TotalSalesQuantity DESC LIMIT 10;
+</code></pre>
+<p class="image-container"><img alt="image" src="img/3457b82ae3843adb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build an Interactive Data App" duration="10">
+        <p>In this step, we&#39;ll build 2 simple interactive data apps:</p>
+<ol type="1">
+<li>Interactive data visualization app</li>
+<li>Simple interactive dashboard</li>
+</ol>
+<h2 is-upgraded>Query data</h2>
+<p>Firstly, we&#39;ll modify the SQL query to show data for month 12.</p>
+<pre><code language="language-sql" class="language-sql">-- Query the semantic view for month 12
+SELECT * FROM SEMANTIC_VIEW
+( 
+ TPCDS_SEMANTIC_VIEW_SM
+    DIMENSIONS 
+            Item.Brand,
+            Item.Category,            
+            Date.Year,
+            Date.Month,
+            Store.State
+    METRICS 
+        StoreSales.TotalSalesQuantity
+    WHERE
+        Date.Year = &#39;2002&#39; AND Date.Month = &#39;12&#39; AND Item.Category = &#39;Books&#39;
+) 
+ORDER BY TotalSalesQuantity DESC;
+</code></pre>
+<p>Next, in a Python cell named <code>df</code>, we&#39;ll convert the SQL table to a Pandas DataFrame:</p>
+<pre><code language="language-python" class="language-python">cell1.to_pandas()
+</code></pre>
+<p class="image-container"><img alt="image" src="img/62642c0ee4ca0d38.png"></p>
+<h2 is-upgraded>App 1: Interactive data visualization app</h2>
+<p>Here the user can interactively explore the sales data:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+import pandas as pd
+
+st.title(&#34;📊 Sales Data Interactive Visualization&#34;)
+
+# Create selectbox for grouping option
+group_by = st.selectbox(
+    &#34;Select grouping option:&#34;,
+    options=[&#39;BRAND&#39;, &#39;STATE&#39;],
+    index=0
+)
+
+# Group the data based on selection
+if group_by == &#39;BRAND&#39;:
+    grouped_data = df.groupby(&#39;BRAND&#39;)[&#39;TOTALSALESQUANTITY&#39;].sum().reset_index()
+    grouped_data = grouped_data.set_index(&#39;BRAND&#39;)
+    chart_title = &#34;Total Sales Quantity by Brand&#34;
+else:  # group_by == &#39;STATE&#39;
+    grouped_data = df.groupby(&#39;STATE&#39;)[&#39;TOTALSALESQUANTITY&#39;].sum().reset_index()
+    grouped_data = grouped_data.set_index(&#39;STATE&#39;)
+    chart_title = &#34;Total Sales Quantity by State&#34;
+
+# Display the chart
+st.subheader(chart_title)
+st.bar_chart(grouped_data[&#39;TOTALSALESQUANTITY&#39;])
+
+# Optional: Display the data table
+if st.checkbox(&#34;Show data table&#34;):
+    st.subheader(&#34;Grouped Data&#34;)
+    st.dataframe(grouped_data)
+</code></pre>
+<p class="image-container"><img alt="image" src="img/448370783814ab60.gif"></p>
+<h2 is-upgraded>App 2: Simple interactive dashboard</h2>
+<p>Here&#39;s a simple dashboard we&#39;re we&#39;ve included a row of metrics:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+import pandas as pd
+
+st.title(&#34;📊 Sales Data Dashboard&#34;)
+
+# Create selectbox for grouping option
+group_by = st.selectbox(
+    &#34;Select grouping option:&#34;,
+    options=[&#39;BRAND&#39;, &#39;STATE&#39;],
+    index=0
+)
+
+# Group the data based on selection
+if group_by == &#39;BRAND&#39;:
+    grouped_data = df.groupby(&#39;BRAND&#39;)[&#39;TOTALSALESQUANTITY&#39;].sum().reset_index()
+    grouped_data = grouped_data.set_index(&#39;BRAND&#39;)
+    chart_title = &#34;Total Sales Quantity by Brand&#34;
+else:  # group_by == &#39;STATE&#39;
+    grouped_data = df.groupby(&#39;STATE&#39;)[&#39;TOTALSALESQUANTITY&#39;].sum().reset_index()
+    grouped_data = grouped_data.set_index(&#39;STATE&#39;)
+    chart_title = &#34;Total Sales Quantity by State&#34;
+
+# Calculate KPIs based on current grouping
+total_sales = df[&#39;TOTALSALESQUANTITY&#39;].sum()
+avg_sales = df[&#39;TOTALSALESQUANTITY&#39;].mean()
+top_performer = grouped_data[&#39;TOTALSALESQUANTITY&#39;].max()
+top_performer_name = grouped_data[&#39;TOTALSALESQUANTITY&#39;].idxmax()
+
+# Display KPI metrics in 3 columns
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric(
+        label=&#34;Total Sales Quantity&#34;, 
+        value=f&#34;{total_sales:,.0f}&#34;,
+        delta=None
+    )
+
+with col2:
+    if group_by == &#39;BRAND&#39;:
+        st.metric(
+            label=&#34;Average Sales per Brand&#34;, 
+            value=f&#34;{avg_sales:,.0f}&#34;,
+            delta=f&#34;{((avg_sales/total_sales)*100):.3f}% of total&#34;
+        )
+    else:
+        st.metric(
+            label=&#34;Average Sales per State&#34;, 
+            value=f&#34;{avg_sales:,.0f}&#34;,
+            delta=f&#34;{len(df[&#39;STATE&#39;].unique())} state(s)&#34;
+        )
+
+with col3:
+    st.metric(
+        label=f&#34;Top {group_by.title()}&#34;, 
+        value=f&#34;{top_performer:,.0f}&#34;,
+        delta=f&#34;{top_performer_name}&#34;
+    )
+
+# Display the chart
+st.subheader(chart_title)
+st.bar_chart(grouped_data[&#39;TOTALSALESQUANTITY&#39;])
+
+# Optional: Display the data table
+if st.checkbox(&#34;Show data table&#34;):
+    st.subheader(&#34;Grouped Data&#34;)
+    st.dataframe(grouped_data)
+</code></pre>
+<p class="image-container"><img alt="image" src="img/73492aa6242a72b8.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully created your first Snowflake semantic view. By implementing this semantic layer directly within Snowflake, you&#39;ve established a foundation for consistent, AI-ready analytics that bridges the gap between raw data and meaningful business insights.</p>
+<p>The semantic view you built not only simplifies complex data relationships but also enables natural language querying through Cortex Analyst, democratizing data access across your organization. As you continue to develop your semantic models, remember that this approach scales to support enterprise-wide analytics initiatives, ensuring that all stakeholders — from data analysts to business users — can trust and understand the data that they&#39;re working with.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create and configure Snowflake semantic views using the TPC-DS sample data</li>
+<li>The importance of semantic views for AI-powered analytics and BI consistency</li>
+<li>How to define relationships, dimensions, and metrics in a semantic view</li>
+<li>How to query semantic views</li>
+<li>How to leverage Cortex Analyst for natural language data exploration</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/user-guide/views-semantic/sql" target="_blank">Using SQL commands to create and manage semantic views</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/views-semantic/ui" target="_blank">Using the Cortex Analyst Semantic View Generator</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/sample-data-tpcds" target="_blank">Sample Data: TPC-DS</a></li>
+<li><a href="https://www.tpc.org/tpcds/" target="_blank">TPC-DS Benchmark Overview</a> - Understanding the sample dataset used in this guide</li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/views-semantic/overview" target="_blank">Overview of semantic views</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-semantic-view" target="_blank">CREATE SEMANTIC VIEW</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/drop-semantic-view" target="_blank">DROP SEMANTIC VIEW</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/show-semantic-views" target="_blank">SHOW SEMANTIC VIEWS</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/desc-semantic-view" target="_blank">DESCRIBE SEMANTIC VIEW</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

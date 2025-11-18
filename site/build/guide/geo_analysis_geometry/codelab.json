@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "geo_analysis_geometry",
+  "duration": 80,
+  "title": "Geospatial Analysis using Geometry and Geography Data Type",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "geo_analysis_geometry/geo_analysis_geometry.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "geospatial",
+    "gettingstarted",
+    "pythonudfs",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "geo_analysis_geometry"
+}

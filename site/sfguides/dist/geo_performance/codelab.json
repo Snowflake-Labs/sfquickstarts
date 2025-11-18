@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "geo_performance",
+  "duration": 95,
+  "title": "Performance Optimization Techniques for Geospatial queries",
+  "summary": "Performance optimization techniques for Geo",
+  "source": "geo_performance/geo_performance.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "geospatial",
+    "h3",
+    "performance",
+    "searchoptimization",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "geo_performance"
+}

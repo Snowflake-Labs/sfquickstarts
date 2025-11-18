@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "from-clicks-to-cortex-build-ai-ready-data-pipelines-with-coalesce-on-snowflake-in-a-snap",
+  "duration": 93,
+  "title": "From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap",
+  "summary": "Learn how to leverage Coalesce Marketplace to extend any of your data projects effortlessly.",
+  "source": "from-clicks-to-cortex-build-ai-ready-data-pipelines-on-snowflake-in-a-snap/from-clicks-to-cortex-build-ai-ready-data-pipelines-on-snowflake-in-a-snap.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "coalesce",
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "from-clicks-to-cortex-build-ai-ready-data-pipelines-with-coalesce-on-snowflake-in-a-snap"
+}

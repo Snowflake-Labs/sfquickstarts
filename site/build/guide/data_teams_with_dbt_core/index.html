@@ -1,0 +1,850 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Accelerating Data Teams with dbt Core &amp; Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_teams_with_dbt_core"
+                  title="Accelerating Data Teams with dbt Core &amp; Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Modern Businesses need modern data strategy built on platforms that could support agility, growth and operational efficiency. Snowflake is Data Cloud, a future proof solution that can simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance.</p>
+<p><a href="https://www.getdbt.com/" target="_blank">dbt</a> is a modern data engineering framework maintained by <a href="https://www.getdbt.com/dbt-labs/about-us/" target="_blank">dbt Labs</a> that is becoming very popular in modern data architectures, leveraging cloud data platforms like Snowflake. <a href="https://docs.getdbt.com/dbt-cli/cli-overview" target="_blank">dbt CLI</a> is the open-source version of dbtCloud that is providing similar functionality, but as a SaaS. In this virtual hands-on lab, you will follow a step-by-step guide to Snowflake and dbt to see some of the benefits this tandem brings.</p>
+<p>Let&#39;s get started.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>To participate in the virtual hands-on lab, attendees need the following:</p>
+<ul>
+<li>A <a href="https://trial.snowflake.com/" target="_blank">Snowflake account</a> with <code>ACCOUNTADMIN</code> access</li>
+<li>Familiarity with Snowflake and Snowflake objects</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need During the Lab</h2>
+<ul>
+<li><a href="https://docs.getdbt.com/dbt-cli/installation" target="_blank">dbt CLI</a> installed</li>
+<li>Text editor of your choice</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to leverage data in Snowflake&#39;s Data Marketplace</li>
+<li>How to build scalable pipelines using dbt &amp; Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A set of data analytics pipelines for Financial Services data leveraging dbt and Snowflake</li>
+<li>Implement data quality tests</li>
+<li>Promote code between the environments</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Configuration" duration="5">
+        <ol type="1">
+<li>Login to your Snowflake trial account.<br><img alt="Snowflake Log In Screen" src="img/65dcd59b3b8b1a.png"></li>
+<li>UI Tour (SE will walk through this live). For post-workshop participants, click <a href="https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface" target="_blank">here</a> for a quick tour of the UI.<br><img alt="Snowflake Worksheets" src="img/84b31301b206662f.png"></li>
+<li>Let&#39;s now create a database and a service accounts for dbt.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------
+-- dbt credentials
+-------------------------------------------
+USE ROLE securityadmin;
+-- dbt roles
+CREATE OR REPLACE ROLE dbt_dev_role;
+CREATE OR REPLACE ROLE dbt_prod_role;
+------------------------------------------- Please replace with your dbt user password
+CREATE OR REPLACE USER dbt_user PASSWORD = &#34;&lt;mysecretpassword&gt;&#34;;
+
+GRANT ROLE dbt_dev_role,dbt_prod_role TO USER dbt_user;
+GRANT ROLE dbt_dev_role,dbt_prod_role TO ROLE sysadmin;
+
+-------------------------------------------
+-- dbt objects
+-------------------------------------------
+USE ROLE sysadmin;
+
+CREATE OR REPLACE WAREHOUSE dbt_dev_wh  WITH WAREHOUSE_SIZE = &#39;XSMALL&#39; AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
+CREATE OR REPLACE WAREHOUSE dbt_dev_heavy_wh  WITH WAREHOUSE_SIZE = &#39;LARGE&#39; AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
+CREATE OR REPLACE WAREHOUSE dbt_prod_wh WITH WAREHOUSE_SIZE = &#39;XSMALL&#39; AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
+CREATE OR REPLACE WAREHOUSE dbt_prod_heavy_wh  WITH WAREHOUSE_SIZE = &#39;LARGE&#39; AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 INITIALLY_SUSPENDED = TRUE;
+
+GRANT ALL ON WAREHOUSE dbt_dev_wh  TO ROLE dbt_dev_role;
+GRANT ALL ON WAREHOUSE dbt_dev_heavy_wh  TO ROLE dbt_dev_role;
+GRANT ALL ON WAREHOUSE dbt_prod_wh TO ROLE dbt_prod_role;
+GRANT ALL ON WAREHOUSE dbt_prod_heavy_wh  TO ROLE dbt_prod_role;
+
+CREATE OR REPLACE DATABASE dbt_hol_dev; 
+CREATE OR REPLACE DATABASE dbt_hol_prod; 
+GRANT ALL ON DATABASE dbt_hol_dev  TO ROLE dbt_dev_role;
+GRANT ALL ON DATABASE dbt_hol_prod TO ROLE dbt_prod_role;
+GRANT ALL ON ALL SCHEMAS IN DATABASE dbt_hol_dev   TO ROLE dbt_dev_role;
+GRANT ALL ON ALL SCHEMAS IN DATABASE dbt_hol_prod  TO ROLE dbt_prod_role;
+</code></pre>
+<p>As result of these steps, we should have:</p>
+<ul>
+<li>two empty databases: PROD, DEV</li>
+<li>two pair of virtual warehouses: two for prod, two for dev workloads</li>
+<li>a pair of roles and one user</li>
+</ul>
+<p>Please note, this set up is simplified for the purpose of the lab. There are many ways environments, roles, credentials could be modeled to fit your final requirements.</p>
+<p>We would suggest having a look at these articles for inspiration: <a href="https://blog.getdbt.com/how-we-configure-snowflake/" target="_blank">How we configure Snowflake by the dbt Labs Team</a>, <a href="https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure" target="_blank">Model Structure by GitLab team</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="dbt Configuration" duration="5">
+        <h2 is-upgraded>Initialize dbt project</h2>
+<p>Create a new dbt project in any local folder by running the following commands:</p>
+<pre><code language="language-Shell" class="language-Shell">$ dbt init dbt_hol
+$ cd dbt_hol
+</code></pre>
+<h2 is-upgraded>Configure dbt/Snowflake profiles</h2>
+<p>1.. Open  <code>~/.dbt/profiles.yml</code> in text editor and add the following section</p>
+<pre><code language="language-yml" class="language-yml">dbt_hol:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      ######## Please replace with your Snowflake account name
+      account: &lt;your_snowflake_trial_account&gt;
+      
+      user: dbt_user
+      ######## Please replace with your Snowflake dbt user password
+      password: &lt;mysecretpassword&gt;
+      
+      role: dbt_dev_role
+      database: dbt_hol_dev
+      warehouse: dbt_dev_wh
+      schema: public
+      threads: 200
+    prod:
+      type: snowflake
+      ######## Please replace with your Snowflake account name
+      account: &lt;your_snowflake_trial_account&gt;
+      
+      user: dbt_user
+      ######## Please replace with your Snowflake dbt user password
+      password: &lt;mysecretpassword&gt;
+      
+      role: dbt_prod_role
+      database: dbt_hol_prod
+      warehouse: dbt_prod_wh
+      schema: public
+      threads: 200
+</code></pre>
+<p>2..  Open <code>dbt_project.yml</code> (in dbt_hol folder) and update the following sections:</p>
+<p class="image-container"><img alt="dbt_project.yml" src="img/2c57d667e74a5f31.png"></p>
+<h2 is-upgraded>Validate the configuration</h2>
+<p>Run the following command (in dbt_hol folder):</p>
+<pre><code language="language-Shell" class="language-Shell">$ dbt debug
+</code></pre>
+<p>The expected output should look like this, confirming that dbt was able to access the database: <img alt="dbt debug output" src="img/a3479c56735a85c3.png"></p>
+<h2 is-upgraded>Test run</h2>
+<p>Finally, let&#39;s run the sample models that comes with dbt templates by default to validate everything is set up correctly. For this, please run the following command (in dbt_hol folder):</p>
+<pre><code language="language-Shell" class="language-Shell">$ dbt run
+</code></pre>
+<p>The expected output should look like this, confirming dbt was able to connect and successfully run sample models: <img alt="dbt run output" src="img/266d9d95eed4784e.png"><br> Please note, this operation is completely rerunable and does not provide any harm to our next steps in the lab.</p>
+<p>You can use Snowflake worksheets to validate that the sample view and the table are now available in DEV database: <img alt="Snowflake UI" src="img/1343c7411ccacbec.png"></p>
+<p>Congratulations! You just run your first dbt models on Snowflake!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture and Use Case Overview" duration="2">
+        <p>In this lab, we are going to analyze historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas that is available in Snowflake Marketplace, plus few manual uploads.</p>
+<p>We are going to set up the environments from scratch, build scalable pipelines in dbt, establish data tests, and Snowflake and promote code to production.  Finally we will use Snowsight to build a simple dashboard to visualize the results.</p>
+<p class="image-container"><img alt="Architecture " src="img/6b57880433ea4b69.png"></p>
+<p>Just to give you a sneak peek, this is where we are going to be in just 30 minutes.</p>
+<p>Stay tuned!</p>
+<p class="image-container"><img alt="dbt target view " src="img/ad66b20c4ff99f57.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect to Data Sources" duration="5">
+        <p>Let&#39;s go to the Snowflake Marketplace and find what we need. The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab). Click on Preview App at the top of the UI</p>
+<p class="image-container"><img alt="Preview App" src="img/994f41b1b2825492.png"></p>
+<p>Click Sign in to continue. You will need to use the same user and password that you used to login to your Snowflake account the first time.</p>
+<p class="image-container"><img alt="Preview App" src="img/74156d415612bbc0.png"></p>
+<p>You&#39;re now in the new UI - Snowsight. It&#39;s pretty cool - with charting and dashboards and context-sensitivity - but today we&#39;re just focused on getting to the Data Marketplace. Click on Data...</p>
+<p class="image-container"><img alt="Preview App" src="img/c8c54c6d6fa3db14.png"></p>
+<p>...and then Marketplace...</p>
+<p class="image-container"><img alt="Preview App" src="img/bd8b922cd967cfce.png"></p>
+<p>..and now you&#39;re in! Hundreds of providers have made datasets available for you to enrich your data. Today we&#39;re going to grab a Knoema Economy Atlas Data. Click the Ready to Query checkbox and then find the Knoema Economy Atlas Data tile. Once you find it, click on it.</p>
+<p><img alt="Preview App" src="img/b6ac2bad8c59eafa.png"><br> Here you&#39;ll find a description of the data, example queries, and other useful information. Let&#39;s get this data into our Snowflake account. You&#39;ll be amazed at how fast and easy this is. Click the &#34;Get Data&#34; button</p>
+<p class="image-container"><img alt="Preview App" src="img/6492c916ef747e3a.png"></p>
+<p>In the pop-up, leave the database name as proposed by default (important!), check the &#34;I accept...&#34; box and then add PUBLIC role to the additional roles</p>
+<p class="image-container"><img alt="Preview App" src="img/d91dfa79826fafa6.png"></p>
+<p>What is happening here? Knoema has granted access to this data from their Snowflake account to yours. You&#39;re creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts! When you query you&#39;ll really be querying the data that lives in the Knoema account. If they change the data you&#39;ll automatically see those changes. No need to define schemas, move data, or create a data pipeline either. Isn&#39;t that slick?</p>
+<p class="image-container"><img alt="Preview App" src="img/96668ade80d7f510.png"></p>
+<p>Now let&#39;s go back to worksheets and after refreshing the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you&#39;ll see views under the ECONOMY schema. We&#39;ll use one of these next. Please note, Knoema recently changed the database name from KNOEMA_ECONOMY_DATA_ATLAS to ECONOMY_DATA_ATLAS. All code snippets are now reflecting the new name, but please don&#39;t be confused if old name appear in some screenshots. The content is exactly the same!</p>
+<p class="image-container"><img alt="Preview App" src="img/d43a8b011ff7414d.png"></p>
+<p>As you would see, this Economy Atlas comes with more than 300 datasets. In order to improve navigation, provider kindly supplied a table called DATASETS. Let&#39;s find the ones related to the stock history and currency exchange rates that we are going to use in the next step.</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT * 
+  FROM &#34;ECONOMY_DATA_ATLAS&#34;.&#34;ECONOMY&#34;.&#34;DATASETS&#34;
+ WHERE &#34;DatasetName&#34; ILIKE &#39;US Stock%&#39;
+    OR &#34;DatasetName&#34; ILIKE &#39;Exchange%Rates%&#39;;
+</code></pre>
+<p class="image-container"><img alt="Preview App" src="img/769a65263379661.png"></p>
+<p>Finally, let&#39;s try to query one of the datasets:</p>
+<pre><code>SELECT * 
+  FROM ECONOMY_DATA_ATLAS.ECONOMY.USINDSSP2020
+ WHERE &#34;Date&#34; = current_date();
+</code></pre>
+<p class="image-container"><img alt="Preview App" src="img/1a58b776c3485a5b.png"></p>
+<p>Congratulations! You successfully tapped into live data feed of Trade and FX rates data with NO ETL involved. As we promised. Isn&#39;t it cool? Now let&#39;s start building our pipelines.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building dbt Data Pipelines" duration="15">
+        <p>In this section, we are going to start building our dbt pipelines:</p>
+<ul>
+<li>Stock trading history</li>
+<li>Currency exchange rates</li>
+<li>Trading books</li>
+<li>Profit &amp; Loss calculation</li>
+</ul>
+<h2 is-upgraded>Configuration</h2>
+<p>We are going to start by adding few more things to our dbt project configuration in order to improve maintainability. 1.. <strong>Model folders/layers</strong>. From our dbt project folder location, let&#39;s run few command line commands to create separate folders for models, representing different logical levels in the pipeline:</p>
+<pre><code language="language-cmd" class="language-cmd">mkdir models/l10_staging
+mkdir models/l20_transform
+mkdir models/l30_mart
+mkdir models/tests
+</code></pre>
+<p>Then let&#39;s open our dbt_project.yml and modify the section below to reflect the model structure.</p>
+<pre><code language="language-yml" class="language-yml">models:
+  dbt_hol:
+      # Applies to all files under models/example/
+      example:
+          materialized: view
+          +enabled: false
+      l10_staging:
+          schema: l10_staging
+          materialized: view
+      l20_transform:
+          schema: l20_transform
+          materialized: view
+      l30_mart:
+          schema: l30_mart
+          materialized: view
+</code></pre>
+<p class="image-container"><img alt="Preview App" src="img/7b22d8677ecd489c.png"></p>
+<p>As you can see, this is allowing you to set multiple parameters on the layer level (like materialization in this example). Also, you would notice that we added <strong><em>+enabled: false</em></strong> to the <strong><em>examples</em></strong> section as we won&#39;t need to run those sample models in the final state.</p>
+<p>2.. <strong>Custom schema naming macros.</strong> By default, dbt is <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas" target="_blank">generating a schema name</a> by appending it to the target schema environment name(dev, prod). In this lab we are going to show you a quick way to override this macro, making our schema names to look exactly the same between dev and prod databases. For this, let&#39;s create a file <strong>macros\call_me_anything_you_want.sql</strong> with the following content:</p>
+<pre><code language="language-YAML" class="language-YAML">{% macro generate_schema_name(custom_schema_name, node) -%}
+    {%- set default_schema = target.schema -%}
+    {%- if custom_schema_name is none -%}
+        &#123;&#123; default_schema }}
+    {%- else -%}
+        &#123;&#123; custom_schema_name | trim }}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro set_query_tag() -%}
+  {% set new_query_tag = model.name %} {# always use model name #}
+  {% if new_query_tag %}
+    {% set original_query_tag = get_current_query_tag() %}
+    &#123;&#123; log(&#34;Setting query_tag to &#39;&#34; ~ new_query_tag ~ &#34;&#39;. Will reset to &#39;&#34; ~ original_query_tag ~ &#34;&#39; after materialization.&#34;) }}
+    {% do run_query(&#34;alter session set query_tag = &#39;{}&#39;&#34;.format(new_query_tag)) %}
+    &#123;&#123; return(original_query_tag)}}
+  {% endif %}
+  &#123;&#123; return(none)}}
+{% endmacro %}
+</code></pre>
+<p class="image-container"><img alt="Preview App" src="img/27197d84a034bea0.png"></p>
+<p>3.. <strong>Query Tag</strong>. As you might notice, in the screenshot above there is another macro overridden in the file: <strong>set_query_tag()</strong>. This one provides the ability to add additional level of transparency by automatically setting Snowflake query_tag to the name of the model it associated with.</p>
+<p>So if you go in Snowflake UI and click ‘History&#39; icon on top, you are going to see all SQL queries run on Snowflake account(successful, failed, running etc) and clearly see what dbt model this particular query is related to:</p>
+<p class="image-container"><img alt="Query Tag" src="img/532447e1b332123e.png"></p>
+<p>4.. <strong>dbt plugins</strong>. Last one, we promise! Alongside functionality coming out of the box with dbt core, dbt also provide capability to plug-in additional packages. Those could be published in the <a href="https://hub.getdbt.com" target="_blank">dbt Hub</a> or straight out of GitHub repository. In our lab, we are going to demonstrate how to use some automation that the <a href="https://hub.getdbt.com/dbt-labs/dbt_utils/latest/" target="_blank">dbt_utils</a> package provides. Let&#39;s install it. For that, let&#39;s create a file called <strong><em>packages.yml</em></strong> in the root of your dbt project folder and add the following lines:</p>
+<pre><code language="language-yml" class="language-yml">packages:
+  - package: dbt-labs/dbt_utils
+    version: 0.8.2
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/6e698a0fe22cc1f6.png"></p>
+<p>Once this done, let&#39;s open a command line and run</p>
+<pre><code language="language-cmd" class="language-cmd">dbt deps
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/570a9d60042492d.png"></p>
+<p>Now that we are fully armed. Let&#39;s start building data pipelines!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="dbt pipelines - Stock trading history" duration="10">
+        <p>1.. We are going to start building our pipelines starts by declaring <a href="https://docs.getdbt.com/docs/building-a-dbt-project/using-sources" target="_blank">dbt sources</a>. For this let&#39;s create a <strong>models/l10_staging/sources.yml</strong> file and add the following configuration:</p>
+<pre><code language="language-yml" class="language-yml">version: 2
+
+sources:
+  - name: economy_data_atlas
+    database: economy_data_atlas
+    schema: economy
+    tables:
+      - name: exratescc2018
+      - name: usindssp2020
+</code></pre>
+<p>As you probably remember, these two objects were mentioned in Knoema Dataset Catalog table: daily exchange rates and daily US trading history accordingly.</p>
+<p>2.. <strong>Base views</strong> is the concept of models that act as a first-level transformation. While not mandatory, these could act as a level of abstraction, separating ultimate source structure from the entry point of dbt pipeline. Providing your project more options to react to an upstream structure change. You can read more about arguments on benefits provided by the base view concept <a href="https://discourse.getdbt.com/t/how-we-structure-our-dbt-projects/355" target="_blank">here</a>. We are going to create a fairly simple pass-through pair of base views:</p>
+<ul>
+<li><strong>models/l10_staging/base_knoema_fx_rates.sql</strong></li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT &#34;Currency&#34;        currency
+     , &#34;Currency Unit&#34;   currency_unit
+     , &#34;Frequency&#34;       frequency
+     , &#34;Date&#34;            date
+     , &#34;Value&#34;           value
+     , &#39;Knoema.FX Rates&#39; data_source_name
+     , src.*
+  FROM &#123;&#123;source(&#39;economy_data_atlas&#39;,&#39;exratescc2018&#39;)}}  src 
+</code></pre>
+<ul>
+<li><strong>models/l10_staging/base_knoema_stock_history.sql</strong></li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT &#34;Company&#34;                    Company
+     , &#34;Company Name&#34;               Company_Name
+     , &#34;Company Ticker&#34;             Company_Ticker
+     , &#34;Stock Exchange&#34;             Stock_Exchange
+     , &#34;Stock Exchange Name&#34;        Stock_Exchange_Name
+     , &#34;Indicator&#34;                  Indicator
+     , &#34;Indicator Name&#34;             Indicator_Name
+     , &#34;Units&#34;                      Units
+     , &#34;Scale&#34;                      Scale
+     , &#34;Frequency&#34;                  Frequency
+     , &#34;Date&#34;                       Date
+     , &#34;Value&#34;                      Value
+     , &#39;Knoema.Stock History&#39; data_source_name
+  FROM &#123;&#123;source(&#39;economy_data_atlas&#39;,&#39;usindssp2020&#39;)}}  src 
+</code></pre>
+<p>As you can see we used the opportunity to change case-sensitive &amp; quoted name of the attributes to case insensitive to improve readability. Also as I am sure you noticed, this looks like SQL with the exception of macro <strong>&#123;&#123;source()}}</strong> that is used in &#34;FROM&#34; part of the query instead of fully qualified path (database.schema.table). This is one of the key concepts that is allowing dbt during compilation to replace this with target-specific name. As result, you as a developer, can promote <strong>same</strong> pipeline code to DEV, PROD and any other environments without any changes.</p>
+<p>Let&#39;s run it. Please notice how versatile <strong>dbt run</strong> parameters are. In this example we are going to run all models that are located in <strong>models/l10_staging</strong>. More details are in <a href="(https://docs.getdbt.com/reference/node-selection/syntax)" target="_blank">documentation</a>.</p>
+<pre><code language="language-cmd" class="language-cmd">dbt run --model l10_staging 
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/1284836c5de2e263.png"></p>
+<p>Now we can go and query this dataset to take a feel of what the data profile looks like.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+  FROM dbt_hol_dev.l10_staging.base_knoema_stock_history 
+ WHERE Company_Ticker =&#39;AAPL&#39; 
+   AND date =&#39;2021-03-01&#39;
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/911926533ca1ef07.png"></p>
+<p>In this dataset, different measures like Close, Open, High and Low price are represented as different rows. For our case this looks is a bit suboptimal - to simplify the use we would rather see that data transposed into columns, towards something like this:</p>
+<p class="image-container"><img alt="Query Tag" src="img/ef62131a4054ac11.png"></p>
+<p>To achieve that, let&#39;s create few more models:</p>
+<ul>
+<li><strong>models/l20_transform/tfm_knoema_stock_history.sql</strong></li>
+</ul>
+<p>In this model, we use Snowflake&#39;s <a href="https://docs.snowflake.com/en/sql-reference/constructs/pivot.html" target="_blank">PIVOT</a> function to transpose the dataset from rows to columns</p>
+<pre><code language="language-SQL" class="language-SQL">WITH cst AS
+(
+SELECT company_ticker, company_name, stock_exchange_name, indicator_name, date, value , data_source_name
+  FROM &#123;&#123;ref(&#39;base_knoema_stock_history&#39;)}} src
+ WHERE indicator_name IN (&#39;Close&#39;, &#39;Open&#39;,&#39;High&#39;,&#39;Low&#39;, &#39;Volume&#39;, &#39;Change %&#39;) 
+)
+SELECT * 
+  FROM cst
+  PIVOT(SUM(Value) for indicator_name IN (&#39;Close&#39;, &#39;Open&#39;,&#39;High&#39;,&#39;Low&#39;, &#39;Volume&#39;, &#39;Change %&#39;)) 
+  AS p(company_ticker, company_name, stock_exchange_name, date, data_source_name, close ,open ,high,low,volume,change)  
+</code></pre>
+<ul>
+<li><strong>models/l20_transform/tfm_knoema_stock_history_alt.sql</strong></li>
+</ul>
+<p>While this model is more for illustration purposes on how similar could be achieved by leveraging <strong>dbt_utils.pivot</strong></p>
+<pre><code language="language-SQL" class="language-SQL">SELECT
+  company_ticker, company_name, stock_exchange_name, date, data_source_name,
+  &#123;&#123; dbt_utils.pivot(
+      column = &#39;indicator_name&#39;,
+      values = dbt_utils.get_column_values(ref(&#39;base_knoema_stock_history&#39;), &#39;indicator_name&#39;),
+      then_value = &#39;value&#39;
+  ) }}
+FROM &#123;&#123; ref(&#39;base_knoema_stock_history&#39;) }}
+GROUP BY company_ticker, company_name, stock_exchange_name, date, data_source_name
+</code></pre>
+<ul>
+<li><strong>models/l20_transform/tfm_stock_history.sql</strong></li>
+</ul>
+<p>Finally we are going to create another model that abstracts source-specific transformations into a business view. In case there were multiple feeds providing datasets of the same class (stock history in this case), this view would be able to consolidate (UNION ALL) data from all of them. Thus becoming a one-stop-shop for all stock_history data.</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT src.*
+  FROM &#123;&#123;ref(&#39;tfm_knoema_stock_history&#39;)}} src
+</code></pre>
+<p>3.. <strong>Deploy</strong>. The hard work is done. Let&#39;s go and deploy these. In this case we will automatically deploy tfm_stock_history and all of its ancestors.</p>
+<pre><code language="language-cmd" class="language-cmd">dbt run --model +tfm_stock_history
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/c2242af47169a86d.png"></p>
+<p>Let&#39;s we go to Snowflake UI to check the results</p>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+  FROM dbt_hol_dev.l20_transform.tfm_stock_history
+ WHERE company_ticker = &#39;AAPL&#39;
+   AND date = &#39;2021-03-01&#39;
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/455c131825dda997.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="dbt pipelines - Currency exchange rates" duration="0">
+        <p>Let&#39;s start by creating new models:</p>
+<ul>
+<li><strong>models/l20_transform/tfm_fx_rates.sql</strong></li>
+</ul>
+<p>Here we are doing something new. dbt offers various <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations" target="_blank">materialization options</a> and in our <strong>dbt_project.yml</strong> we identified <strong>view</strong> as default option. In this model we are going to explicitly override the materialization, turning it into a <strong>table</strong>. When we deploy this model, dbt would automatically generate a new table (CTAS) replacing old content. As an example, we also add a tag that could help identifying subsets of models for processing.</p>
+<pre><code language="language-SQL" class="language-SQL">&#123;&#123; 
+config(
+	  materialized=&#39;table&#39;
+	  , tags=[&#34;Reference Data&#34;]
+	  ) 
+}}
+SELECT src.* 
+  FROM &#123;&#123;ref(&#39;base_knoema_fx_rates&#39;)}} src
+ WHERE &#34;Indicator Name&#34; = &#39;Close&#39; 
+   AND &#34;Frequency&#34;      = &#39;D&#39; 
+   AND &#34;Date&#34;           &gt; &#39;2016-01-01&#39;
+</code></pre>
+<ul>
+<li><strong>models/l20_transform/tfm_stock_history_major_currency.sql</strong></li>
+</ul>
+<p>This model will start bringing FX and Trade history sets together.</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT tsh.*
+     , fx_gbp.value * open          AS gbp_open      
+     , fx_gbp.value * high			AS gbp_high		
+     , fx_gbp.value * low           AS gbp_low      
+     , fx_gbp.value * close         AS gbp_close    
+     , fx_eur.value * open          AS eur_open      
+     , fx_eur.value * high			AS eur_high		
+     , fx_eur.value * low           AS eur_low      
+     , fx_eur.value * close         AS eur_close    
+  FROM &#123;&#123;ref(&#39;tfm_stock_history&#39;)}} tsh
+     , &#123;&#123;ref(&#39;tfm_fx_rates&#39;)}}      fx_gbp
+     , &#123;&#123;ref(&#39;tfm_fx_rates&#39;)}}      fx_eur
+ WHERE fx_gbp.currency              = &#39;USD/GBP&#39;     
+   AND fx_eur.currency              = &#39;USD/EUR&#39;     
+   AND tsh.date                     = fx_gbp.date
+   AND tsh.date                     = fx_eur.date
+</code></pre>
+<p>Now, let&#39;s deploy newly built models:</p>
+<pre><code language="language-cmd" class="language-cmd">dbt run --model +tfm_stock_history_major_currency
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/568cdb2ad1e31a4d.png"></p>
+<p>As we now have more models in play, it is a good moment to talk about <a href="https://docs.getdbt.com/docs/building-a-dbt-project/documentation" target="_blank">dbt documentation</a>. By a run of new following commands dbt will analyze all models in our project and generate a static webpage with a data dictionary/documentation. This is a fantastic way of sharing information with your engineering &amp; user community as it has all important information about columns, tags, free-form model description, tests as well as the source code that is always in line with the code. So regardless how big project grows, it is super easy to understand whats happening. And as cherry-on-pie there is also a possibility to see the full lineage of models in the visual DAG:</p>
+<pre><code language="language-cmd" class="language-cmd">dbt docs generate
+dbt docs serve
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/1f9f5c03e3d6d630.png"></p>
+<p class="image-container"><img alt="Query Tag" src="img/7a4552488abc1864.png"></p>
+<p>Let&#39;s we go to Snowflake UI to check the results</p>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+  FROM dbt_hol_dev.l20_transform.tfm_stock_history_major_currency
+ WHERE company_ticker = &#39;AAPL&#39;
+   AND date = &#39;2021-03-01&#39;
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/28783a700819858e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="dbt pipelines - Trading books" duration="10">
+        <p>Following our use case story, we are going to manually upload two small datasets using <a href="https://docs.getdbt.com/docs/building-a-dbt-project/seeds" target="_blank">dbt seed</a> representing trading books of two desks. As you would notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP.</p>
+<p>For this let&#39;s create two csv files with the following content:</p>
+<ul>
+<li><strong>seeds/manual_book1.csv</strong></li>
+</ul>
+<pre><code language="language-csv" class="language-csv">Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
+B2020SW1,2021-03-03,Jeff A.,AAPL,BUY,-17420,GBP,200,87.1,NASDAQ
+B2020SW1,2021-03-03,Jeff A.,AAPL,BUY,-320050,GBP,3700,86.5,NASDAQ
+B2020SW1,2021-01-26,Jeff A.,AAPL,SELL,52500,GBP,-500,105,NASDAQ
+B2020SW1,2021-01-22,Jeff A.,AAPL,BUY,-100940,GBP,980,103,NASDAQ
+B2020SW1,2021-01-22,Nick Z.,AAPL,SELL,5150,GBP,-50,103,NASDAQ
+B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-9800,GBP,100,98,NASDAQ
+B2020SW1,2019-08-31,Nick Z.,AAPL,BUY,-1000,GBP,50,103,NASDAQ
+</code></pre>
+<ul>
+<li><strong>seeds/manual_book2.csv</strong></li>
+</ul>
+<pre><code language="language-csv" class="language-csv">Book,Date,Trader,Instrument,Action,Cost,Currency,Volume,Cost_Per_Share,Stock_exchange_name
+B-EM1,2021-03-03,Tina M.,AAPL,BUY,-17420,EUR,200,87.1,NASDAQ
+B-EM1,2021-03-03,Tina M.,AAPL,BUY,-320050,EUR,3700,86.5,NASDAQ
+B-EM1,2021-01-22,Tina M.,AAPL,BUY,-100940,EUR,980,103,NASDAQ
+B-EM1,2021-01-22,Tina M.,AAPL,BUY,-100940,EUR,980,103,NASDAQ
+B-EM1,2019-08-31,Tina M.,AAPL,BUY,-9800,EUR,100,98,NASDAQ
+</code></pre>
+<p>Once created, let&#39;s run the following command to load the data into Snowflake. It is important to mention that whilst this approach is absolutely feasible to bring low hundred-thousands of rows it is suboptimal to integrate larger data and you should be using COPY/Snowpipe or other data integration options recommended for Snowflake.</p>
+<pre><code language="language-cmd" class="language-cmd">dbt seed
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/809fa504b8fd1be8.png"></p>
+<p>To simplify usage, let&#39;s create a model that would combine data from all desks. In this example we are going to see how <strong>dbt_utils.union_relations</strong> macro helps to automate code automation:</p>
+<ul>
+<li><strong>models/l20_transform/tfm_book.sql</strong></li>
+</ul>
+<pre><code language="language-SQL" class="language-SQL">&#123;&#123; dbt_utils.union_relations(
+    relations=[ref(&#39;manual_book1&#39;), ref(&#39;manual_book2&#39;)]
+) }}
+</code></pre>
+<p>Once we deploy this model, let&#39;s have a look what it is compiled into. For this, please open <strong>target/run/dbt_hol/models/l20_transform/tfm_book.sql</strong>. As you can see dbt automatically scanned stuctures of the involved objects, aligned all possible attributes by name and type and combined all datasets via UNION ALL. Comparing this to the size of code we entered in the model itself, you can imagine the amount of time saved by such automation.</p>
+<pre><code language="language-cmd" class="language-cmd">dbt run -m tfm_book
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/888f90b29a7a3d84.png"></p>
+<p>Okay. Next challenge. We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis we need to have rows for the days shares were HOLD. For this let&#39;s introduce some more models:</p>
+<ul>
+<li><strong>models/l20_transform/tfm_daily_position.sql</strong></li>
+</ul>
+<pre><code language="language-SQL" class="language-SQL">WITH cst_market_days AS
+(
+    SELECT DISTINCT date
+    FROM &#123;&#123;ref(&#39;tfm_stock_history_major_currency&#39;)}} hist
+    WHERE hist.date &gt;= ( SELECT min(date) AS min_dt FROM &#123;&#123;ref(&#39;tfm_book&#39;)}}  )
+)
+SELECT
+    cst_market_days.date,
+    trader,
+    stock_exchange_name,
+    instrument,
+    book,
+    currency,
+    sum(volume) AS total_shares
+FROM cst_market_days
+   , &#123;&#123;ref(&#39;tfm_book&#39;)}} book
+WHERE book.date &lt;= cst_market_days.date
+GROUP BY 1, 2, 3, 4, 5, 6 
+</code></pre>
+<ul>
+<li><strong>models/l20_transform/tfm_daily_position_with_trades.sql</strong></li>
+</ul>
+<pre><code language="language-SQL" class="language-SQL">SELECT book
+     , date
+     , trader
+     , instrument
+     , action
+     , cost
+     , currency
+     , volume
+     , cost_per_share
+     , stock_exchange_name
+     , SUM(t.volume) OVER(partition BY t.instrument, t.stock_exchange_name, trader ORDER BY t.date rows UNBOUNDED PRECEDING ) total_shares
+  FROM &#123;&#123;ref(&#39;tfm_book&#39;)}}  t
+UNION ALL   
+SELECT book
+     , date
+     , trader
+     , instrument
+     , &#39;HOLD&#39; as action
+     , 0 AS cost
+     , currency
+     , 0      as volume
+     , 0      as cost_per_share
+     , stock_exchange_name
+     , total_shares
+FROM &#123;&#123;ref(&#39;tfm_daily_position&#39;)}} 
+WHERE (date,trader,instrument,book,stock_exchange_name) 
+      NOT IN 
+      (SELECT date,trader,instrument,book,stock_exchange_name
+         FROM &#123;&#123;ref(&#39;tfm_book&#39;)}}
+      )
+</code></pre>
+<pre><code language="language-cmd" class="language-cmd">dbt run -m tfm_book+
+</code></pre>
+<p>Now let&#39;s go back to Snowflake worksheets and run a query to see the results:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+  FROM dbt_hol_dev.l20_transform.tfm_daily_position_with_trades
+ WHERE trader = &#39;Jeff A.&#39;
+ ORDER BY date
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/a4f56318782786bb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="dbt pipelines - PnL calculation" duration="10">
+        <p>This section should bring the last models to complete the story. Now we have trading history of our desks and stock price history. Let&#39;s create a model to show how Market Value and PnL were changing over time. For this we are going to start by creating a model:</p>
+<ul>
+<li><strong>models/l20_transform/tfm_trading_pnl.sql</strong></li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT t.instrument, t.stock_exchange_name, 
+       t.date, trader, t.volume,cost, cost_per_share,currency,
+       SUM(cost) OVER(partition BY t.instrument, t.stock_exchange_name, trader ORDER BY t.date rows UNBOUNDED PRECEDING ) cash_cumulative,
+       CASE WHEN t.currency = &#39;GBP&#39; THEN gbp_close
+            WHEN t.currency = &#39;EUR&#39; THEN eur_close
+            ELSE close
+       END                                                        AS close_price_matching_ccy,     
+       total_shares  * close_price_matching_ccy                   AS market_value, 
+       total_shares  * close_price_matching_ccy + cash_cumulative AS PnL
+   FROM       &#123;&#123;ref(&#39;tfm_daily_position_with_trades&#39;)}}    t
+   INNER JOIN &#123;&#123;ref(&#39;tfm_stock_history_major_currency&#39;)}}  s 
+      ON t.instrument = s.company_ticker 
+     AND s.date = t.date 
+     AND t.stock_exchange_name = s.stock_exchange_name
+</code></pre>
+<ul>
+<li><strong>models/l30_mart/fct_trading_pnl.sql</strong></li>
+</ul>
+<p>This model will be the one we created in the mart area, prepared to be used by many. With that in mind, it will be good idea to materialize this model as a table with incremental load mode. You can see that this materialization mode has a special macro that comes into action for the incremental runs (and ignored during initial run and full_refresh option).</p>
+<pre><code language="language-sql" class="language-sql">&#123;&#123; 
+config(
+	  materialized=&#39;incremental&#39;
+	  , tags=[&#34;Fact Data&#34;]
+	  ) 
+}}
+SELECT src.*
+  FROM &#123;&#123;ref(&#39;tfm_trading_pnl&#39;)}} src
+
+{% if is_incremental() %}
+  -- this filter will only be applied on an incremental run
+ WHERE (trader, instrument, date, stock_exchange_name) NOT IN (select trader, instrument, date, stock_exchange_name from &#123;&#123; this }})
+
+{% endif %}
+</code></pre>
+<p>Finally, for illustration purposes we are going to create a couple of views that could be extended further, representing different lens of interpreting PnL data between treasury, risk and finance departments.</p>
+<ul>
+<li><strong>models/l30_mart/fct_trading_pnl_finance_view.sql</strong></li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+-- this is a placeholder for illustration purposes
+  FROM &#123;&#123;ref(&#39;fct_trading_pnl&#39;)}} src
+</code></pre>
+<ul>
+<li><strong>models/l30_mart/fct_trading_pnl_risk_view.sql</strong></li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+-- this is a placeholder for illustration purposes
+  FROM &#123;&#123;ref(&#39;fct_trading_pnl&#39;)}} src
+</code></pre>
+<ul>
+<li><strong>models/l30_mart/fct_trading_pnl_treasury_view.sql</strong></li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+-- this is a placeholder for illustration purposes
+  FROM &#123;&#123;ref(&#39;fct_trading_pnl&#39;)}} src
+</code></pre>
+<p>Let&#39;s deploy all of these models and run a query to check the final results:</p>
+<pre><code language="language-cmd" class="language-cmd">dbt run 
+dbt docs serve
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/7b350183195d6078.png"></p>
+<p>The final lineage tree: <img alt="Query Tag" src="img/c7cd9662fd7e5cae.png"></p>
+<pre><code language="language-sql" class="language-sql">SELECT * 
+  FROM dbt_hol_dev.l30_mart.fct_trading_pnl
+ WHERE trader = &#39;Jeff A.&#39;
+ ORDER by date
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/a9cf5f501219e2c8.png"></p>
+<p>Now, let&#39;s create a simple data visualization for this dataset. For that, let&#39;s click on the Preview App button once again:</p>
+<p class="image-container"><img alt="Query Tag" src="img/994f41b1b2825492.png"></p>
+<p>Then <strong>Worksheets -&gt; + Worksheet</strong></p>
+<p class="image-container"><img alt="Query Tag" src="img/a0057fc6fb7aee54.png"></p>
+<p>Then let&#39;s copy-paste the same query we run in classic Snowflake UI worksheets. Hit the run button and switch from a table view to chart:</p>
+<p class="image-container"><img alt="Query Tag" src="img/7a15cbbf93fd81a8.png"></p>
+<p>By default it shows a breakdown by Volume. Let&#39;s click on the measure and switch it into <strong>PNL</strong>. Then let&#39;s add another measure to our chart for displaying Market value and PnL side by side.</p>
+<p class="image-container"><img alt="Query Tag" src="img/f6d08f470cd4faa5.png"></p>
+<p class="image-container"><img alt="Query Tag" src="img/2737ea842afddcf.png"></p>
+<p>And this is it! Now you have a worksheet that you can slice&#39;n&#39;dice, share with your colleagues or embed in the SnowSight dashboard as one of the tiles. As you can see, Snowsight offers a great capability to quickly visualize the insight and always there for you as a part of the Snowflake platform. For more details on SnowSight, please refer to the <a href="https://docs.snowflake.com/en/user-guide/ui-web.html" target="_blank">Snowflake documentation</a>.</p>
+<p class="image-container"><img alt="Query Tag" src="img/fc10009b360dccf7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing, Deployment, Materializations" duration="5">
+        <h2 is-upgraded>Establishing Testing</h2>
+<p>To build trust in your data solution, it is hard to underestimate the importance of testing. While there are many ways to organize automated testing, thankfully dbt tool comes with the great <a href="https://docs.getdbt.com/docs/building-a-dbt-project/tests" target="_blank">data tests framework</a>. Let&#39;s build an example.</p>
+<p>First, let&#39;s add the test configuration file and add the content below. dbt comes with a set of pre-defined data tests, such as uniqueness, not_null, check constraints, ref integrity etc. We are going to set up tests on the few models, however it is highly recommended to establish reasonable test coverage across the board.</p>
+<ul>
+<li><strong>models/tests/data_quality_tests.yml</strong></li>
+</ul>
+<pre><code language="language-yml" class="language-yml">version: 2
+
+models:
+  - name: tfm_fx_rates
+    columns:
+      - name: currency||date
+        tests:
+          - unique
+          - not_null
+
+  - name: tfm_book
+    columns:
+      - name: instrument
+        tests:
+          - not_null
+          - relationships:
+              to: ref(&#39;tfm_stock_history&#39;)
+              field: company_ticker
+
+  - name: tfm_stock_history
+    columns:
+      - name: company_ticker||date
+        tests:
+          - not_null
+          - unique
+</code></pre>
+<p>Next, let&#39;s run these tests:</p>
+<pre><code language="language-cmd" class="language-cmd">dbt test
+</code></pre>
+<p>Boom! One of the tests failed! Let&#39;s try to understand why. dbt command line is kindly provided a link to the file with the SQL check that failed. Let&#39;s open it and copy-paste the content to Snowflake worksheet:<br><img alt="Query Tag" src="img/c95678b7abb4853c.png"></p>
+<p class="image-container"><img alt="Query Tag" src="img/e60e114d8c76f02b.png"></p>
+<p>Let&#39;s quickly check the full row width for one of the records failed by extending this check towards something like this:</p>
+<pre><code language="language-sql" class="language-sql">WITH cst AS
+(
+    select
+        company_ticker||date conctat
+
+    from dbt_hol_dev.l20_transform.tfm_stock_history
+    where company_ticker||date is not null
+    group by company_ticker||date
+    having count(*) &gt; 1 
+    limit 1
+)
+SELECT * FROM dbt_hol_dev.l20_transform.tfm_stock_history
+ WHERE company_ticker||date IN (SELECT conctat FROM cst) 
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/b0204ecd6acb4cb5.png"></p>
+<p>Aha! There are shares which are traded on more than one stock exchanges. So we need to include <strong>stock_exchange_name</strong> attribute to your unique test key. Let&#39;s go back to <strong>models/tests/data_quality_tests.yml</strong> and update the test configuration for <strong>tfm_stock_history</strong> model :</p>
+<pre><code language="language-yml" class="language-yml">  - name: tfm_stock_history
+    columns:
+      - name: company_ticker||date||stock_exchange_name
+        tests:
+          - not_null
+          - unique
+</code></pre>
+<p>And run the test again</p>
+<pre><code language="language-cmd" class="language-cmd">dbt test
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/3f43a54c2a692eb9.png"></p>
+<p>Finishing testing note, it is also worth mentioning that alongside such tests, dbt framework also supports custom tests that are massively expanding scenarios(like regression testing) could be covered by data tests. And just to expand it even further, in dbt hub there is a package <a href="https://hub.getdbt.com/calogica/dbt_expectations/latest/" target="_blank">dbt_expectations</a> that implements a lot of additional tests, inspired by popular<a href="http://greatexpectations.io/" target="_blank">http://greatexpectations.io/</a> framework.</p>
+<h2 is-upgraded>Deployment</h2>
+<p>Okay, seems like we have everything in place: pipelines been developed and tested. The next step would be to promote this code up the chain through our SDLC environments(which in this lab is simplified to just DEV &amp; PROD).</p>
+<p>In real life, the project code we are working should be in source version control system like git and by now pushed into one of the feature branches and merged into dev/trunk branch. From there, typically users raise pull requests to master/release version and then perform a deployment in production environment. Thanks to the fact dbt pipelines are very readable it is possible to implement good code review practices as well as set up automatic testing with various stages as a part of CICD automation.</p>
+<p>Working with git and branches is not in scope of this lab so we will just run the following command to deploy the very same codebase to PROD environment.</p>
+<pre><code language="language-cmd" class="language-cmd">dbt seed --target=prod
+dbt run  --target=prod
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/26e0bc77b9c52be4.png"></p>
+<p>We can check the UI that now we have data in <strong>dbt_hol_prod</strong> database: <img alt="Query Tag" src="img/24ce48d614a6e853.png"></p>
+<h2 is-upgraded>Materialization &amp; Scaling</h2>
+<p>dbt provides the ability to easily change the <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations" target="_blank">materialization option</a>, taking away all the burden related to generating new version of DDL &amp; DML. What does it means for modern data engineering? You no longer need to spend precious time performing upfront performance optimization and rather focus on building models, bringing more insights to your business. And when it comes to understand the usage patterns, models that are heavy and/or accessed frequently could be selectively materialized.</p>
+<p>During the lab you&#39;ve probably seen how easily Snowflake could deal with many models materialized as views, provided the input data volume of stock history is &gt;200Mn records alone. We also explicitly configured one model to be materialized as ‘table&#39;(CTAS) and another one as ‘incremental&#39;(MERGE). Once you move into persisted methods of materialization you will be using Snowflake virtual warehouses as compute power to perform the materialization.</p>
+<p>Let&#39;s have a look on a couple of ways to manage compute size Snowflake will dedicate to a specific model(s).</p>
+<p>1.. Let&#39;s open <strong>dbt_projects.yml</strong> and add the additional line</p>
+<pre><code language="language-yml" class="language-yml">models:
+  dbt_hol:
+      # Applies to all files under models/example/
+      example:
+          materialized: view
+          +enabled: false
+      l10_staging:
+          schema: l10_staging
+          materialized: view
+      l20_transform:
+          schema: l20_transform
+          materialized: view
+          +snowflake_warehouse: dbt_dev_heavy_wh
+      l30_mart:
+          schema: l30_mart
+          materialized: view
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/50936edec5575c96.png"></p>
+<p>2.. Let&#39;s modify the content of <strong>models/l30_mart/fct_trading_pnl.sql</strong> changing config section to include pre and post run hooks:</p>
+<pre><code language="language-sql" class="language-sql">&#123;&#123; 
+config(
+	  materialized=&#39;incremental&#39;
+	  , tags=[&#34;Fact Data&#34;]
+	  , pre_hook =&#34;ALTER WAREHOUSE dbt_dev_wh SET WAREHOUSE_SIZE =&#39;XXLARGE&#39;&#34; 
+      , post_hook=&#34;ALTER WAREHOUSE dbt_dev_wh SET WAREHOUSE_SIZE =&#39;XSMALL&#39;&#34;
+	  ) 
+}}
+SELECT src.*
+  FROM &#123;&#123;ref(&#39;tfm_trading_pnl&#39;)}} src
+
+{% if is_incremental() %}
+  -- this filter will only be applied on an incremental run
+ WHERE (trader, instrument, date, stock_exchange_name) NOT IN (select trader, instrument, date, stock_exchange_name from &#123;&#123; this }})
+
+{% endif %}
+</code></pre>
+<p class="image-container"><img alt="Query Tag" src="img/5690e4db508be59b.png"></p>
+<p>Now let&#39;s run the project again:</p>
+<pre><code language="language-cmd" class="language-cmd">dbt run
+</code></pre>
+<p>Once finished, lets&#39; go into Snowflake UI and look at the Query History page. As you can see, dbt automatically switched into a separate warehouse <strong>dbt_dev_heavy_wh</strong> (of a larger size) once it started working on the models in <strong>l20_transform</strong> folder. Once it reached the <strong>l30_mart/fct_trading_pnl</strong> model, the pipeline increased the size of the <strong>dbt_dev_wh</strong> to 2XL, processed the model faster, and then decreased the size of compute back to XS to keep it economical.</p>
+<p class="image-container"><img alt="Query Tag" src="img/5acc897da073ae05.png"></p>
+<p>These are just a couple of examples how you could leverage elasticity and workload isolation of Snowflake compute by switching between or resizing virtual warehouses as a simple DDL command, embedded in your pipelines.</p>
+<p>With that, let&#39;s move to our final section for this lab!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="2">
+        <p>Congratulations on completing this lab using dbt and Snowflake for building data pipelines to drive analytics! You&#39;ve mastered the dbt and Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.</p>
+<p>We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of dbt and Snowflake not covered in this lab.</p>
+<h2 is-upgraded>Additional Resources:</h2>
+<ul>
+<li>Read the <a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">Definitive Guide to Maximizing Your Free Trial</a> document</li>
+<li>Attend a <a href="https://www.snowflake.com/about/events/" target="_blank">Snowflake virtual or in-person event</a> to learn more about our capabilities and customers</li>
+<li><a href="https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake" target="_blank">Join the Snowflake community</a></li>
+<li><a href="https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University" target="_blank">Sign up for Snowflake University</a></li>
+<li><a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">Contact our Sales Team</a> to learn more</li>
+<li><a href="https://community.getdbt.com/" target="_blank">Join dbt community slack</a> where thousands of dbt on Snowflake users discussing their best practices</li>
+</ul>
+<h2 is-upgraded>What we&#39;ve covered:</h2>
+<ul>
+<li>How to set up dbt &amp; Snowflake</li>
+<li>How to leverage data in Snowflake&#39;s Data Marketplace</li>
+<li>How to run a dbt project and develop pipelines</li>
+<li>How to create data tests</li>
+<li>How to leverage Snowflake elasticity and scalability to support dbt calculations at scale</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

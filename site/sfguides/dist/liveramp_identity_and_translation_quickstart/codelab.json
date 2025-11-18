@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "liveramp_identity_and_translation_quickstart",
+  "duration": 17,
+  "title": "Identity Resolution and Transcoding with LiveRamp and Snowflake",
+  "summary": "Identity Resolution and Transcoding with LiveRamp and Snowflake",
+  "source": "liveramp_identity_and_translation_quickstart/liveramp_identity_and_translation_quickstart.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "marketing",
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "marketing",
+    "martech",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "liveramp_identity_and_translation_quickstart"
+}

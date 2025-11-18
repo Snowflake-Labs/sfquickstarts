@@ -1,0 +1,422 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with OCR and RAG with Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_ocr_and_rag_with_snowflake_notebooks"
+                  title="Getting Started with OCR and RAG with Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll learn how to build an end-to-end application that extracts text from images and makes it searchable using Large Language Models (LLMs). The application combines Optical Character Recognition (OCR), vector embeddings, and Retrieval Augmented Generation (RAG) to create an intelligent document assistant.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Setting up OCR processing in Snowflake using Tesseract</li>
+<li>Creating and managing vector embeddings for semantic search</li>
+<li>Building a RAG-based question answering system</li>
+<li>Developing an interactive Streamlit interface</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A full-stack application that enables users to:</p>
+<ul>
+<li>Upload images containing text</li>
+<li>Process images through OCR to extract text</li>
+<li>Search through extracted text using semantic similarity</li>
+<li>Ask questions about the documents&#39; content and get AI-powered responses</li>
+<li>View source images alongside answers</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account in a <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability" target="_blank">supported region for Cortex functions</a></li>
+<li>Account must have these features enabled: <ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="10">
+        <h2 is-upgraded>Create Database and Schema</h2>
+<ol type="1">
+<li>Open a new worksheet in Snowflake</li>
+<li>Create the database and schema:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS ocr_rag;
+CREATE SCHEMA IF NOT EXISTS ocr_rag;
+</code></pre>
+<h2 is-upgraded>Create Image Storage Stage</h2>
+<ol type="1">
+<li>Create a stage to store your images:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE STAGE IF NOT EXISTS ocr_rag.images_to_ocr
+  ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;)
+  DIRECTORY = (ENABLE = true);
+</code></pre>
+<h2 is-upgraded>Upload Images</h2>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks/tree/main/sample_images" target="_blank">Download Sample Images</a></p>
+<ol type="1">
+<li>Navigate to Data &gt; Databases &gt; OCR_RAG &gt; IMAGES_TO_OCR &gt; Stages</li>
+<li>Click &#34;Upload Files&#34; button in top right</li>
+<li>Select your image files</li>
+<li>Verify upload success:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">ls @images_to_ocr;
+</code></pre>
+<p>You should see your uploaded files listed with their sizes.</p>
+<aside class="special"><p> TIP: For best OCR results, ensure your images are:</p>
+<ul>
+<li>Clear and well-lit</li>
+<li>Text is oriented correctly</li>
+<li>Minimum 300 DPI resolution</li>
+<li>In common formats (PNG, JPEG, TIFF)</li>
+</ul>
+</aside>
+<h2 is-upgraded>Dataset citation</h2>
+<p>Sample Images taken from RVL-CDIP Dataset</p>
+<p>A. W. Harley, A. Ufkes, K. G. Derpanis, &#34;Evaluation of Deep Convolutional Nets for Document Image Classification and Retrieval,&#34; in ICDAR, 2015</p>
+<p>Bibtex format:</p>
+<p>@inproceedings{harley2015icdar, title = {Evaluation of Deep Convolutional Nets for Document Image Classification and Retrieval}, author = {Adam W Harley and Alex Ufkes and Konstantinos G Derpanis}, booktitle = {International Conference on Document Analysis and Recognition ({ICDAR})}}, year = {2015} }</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open Snowflake Notebooks" duration="0">
+        <ol type="1">
+<li>Click on <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks/blob/main/getting_started_with_ocr_and_rag_with_snowflake_notebooks.ipynb" target="_blank">Getting Started Notebook</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</li>
+<li>In your Snowflake account:</li>
+</ol>
+<ul>
+<li>On the left hand navigation menu, click on Projects » Notebooks</li>
+<li>On the top right, click on Notebook down arrow and select <strong>Import .ipynb</strong> file from the dropdown menu</li>
+<li>Select the file you downloaded in step 1 above</li>
+</ul>
+<ol type="1" start="3">
+<li>In the Create Notebook popup</li>
+</ol>
+<ul>
+<li>For Notebook location, select <strong>ocr_rag</strong> for your database and <strong>ocr_rag</strong> as your schema</li>
+<li>Select your <strong>Warehouse</strong></li>
+<li>Click on Create button</li>
+</ul>
+<ol type="1" start="4">
+<li>On the top right Click Packages</li>
+</ol>
+<ul>
+<li>Install <strong>tesserocr</strong>, <strong>pillow</strong>, and <strong>snowflake</strong></li>
+</ul>
+<p>Here we add our imports that we will use for our project Key Components:</p>
+<ul>
+<li><code>Tesseract</code>: A powerful OCR engine that converts images to text</li>
+<li><code>PIL [Pillow] (Python Imaging Library)</code>: Handles image processing tasks</li>
+</ul>
+<pre><code language="language-python" class="language-python"># Import python packages
+import streamlit as st
+import tesserocr
+import io
+import pandas as pd
+from PIL import Image
+
+# Import Snowpark packages
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.types import StringType, StructField, StructType, IntegerType
+from snowflake.snowpark.files import SnowflakeFile
+from snowflake.core import CreateMode
+from snowflake.core.table import Table, TableColumn
+from snowflake.core.schema import Schema
+from snowflake.core import Root
+
+# Setup session
+session = get_active_session()
+session.use_schema(&#34;ocr_rag&#34;)
+root = Root(session)
+database = root.databases[session.get_current_database()]
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Table Structure" duration="5">
+        <p>In the Notebook we will create the table that will store processed documents:</p>
+<pre><code language="language-python" class="language-python">docs_chunks_table = Table(
+    name=&#34;docs_chunks_table&#34;,
+    columns=[TableColumn(name=&#34;relative_path&#34;, datatype=&#34;string&#34;),
+            TableColumn(name=&#34;file_url&#34;, datatype=&#34;string&#34;),
+            TableColumn(name=&#34;scoped_file_url&#34;, datatype=&#34;string&#34;),
+            TableColumn(name=&#34;chunk&#34;, datatype=&#34;string&#34;),
+            TableColumn(name=&#34;chunk_vec&#34;, datatype=&#34;vector(float,768)&#34;)]
+)
+database.schemas[&#34;ocr_rag&#34;].tables.create(docs_chunks_table, mode=CreateMode.or_replace)
+);
+</code></pre>
+<p>This table stores:</p>
+<ul>
+<li><code>relative_path</code>: Path to source image in stage</li>
+<li><code>file_url</code>: Full URL to access image</li>
+<li><code>scoped_file_url</code>: Temporary URL for secure access</li>
+<li><code>chunk</code>: Extracted text segment</li>
+<li><code>chunk_vec</code>: Vector embedding for semantic search</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement OCR Processing" duration="15">
+        <h2 is-upgraded>Create OCR Function</h2>
+<p>In the Notebook we will create a User-Defined Table Function (UDTF) for OCR:</p>
+<pre><code language="language-python" class="language-python">session.sql(&#34;DROP FUNCTION IF EXISTS IMAGE_TEXT(VARCHAR)&#34;).collect()
+
+class ImageText:
+    def process(self, file_url: str):
+        with SnowflakeFile.open(file_url, &#39;rb&#39;) as f:
+            buffer = io.BytesIO(f.readall())
+        image = Image.open(buffer)
+        text = tesserocr.image_to_text(image)
+        yield (text,)
+
+output_schema = StructType([StructField(&#34;full_text&#34;, StringType())])
+
+session.udtf.register(
+    ImageText,
+    name=&#34;IMAGE_TEXT&#34;,
+    is_permanent=True,
+    stage_location=&#34;@ocr_rag.images_to_ocr&#34;,
+    schema=&#34;ocr_rag&#34;,
+    output_schema=output_schema,
+    packages=[&#34;tesserocr&#34;, &#34;pillow&#34;,&#34;snowflake-snowpark-python&#34;],
+    replace=True
+)
+</code></pre>
+<p>This function:</p>
+<ol type="1">
+<li>Reads image binary data from stage</li>
+<li>Converts to PIL Image object</li>
+<li>Processes with Tesseract OCR</li>
+<li>Returns extracted text</li>
+</ol>
+<h2 is-upgraded>Process Images</h2>
+<p>In the Notebook we will run OCR on staged images:</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+    relative_path, 
+    file_url, 
+    build_scoped_file_url(@ocr_rag.images_to_ocr, relative_path) AS scoped_file_url,
+    ocr_result.full_text
+FROM 
+    directory(@ocr_rag.images_to_ocr),
+    TABLE(IMAGE_TEXT(build_scoped_file_url(@ocr_rag.images_to_ocr, relative_path))) AS ocr_result;
+</code></pre>
+<aside class="special"><p> TROUBLESHOOTING: If OCR results are poor, check:</p>
+<ul>
+<li>Image quality and resolution</li>
+<li>Text orientation</li>
+<li>Image format compatibility</li>
+<li>Tesseract installation</li>
+</ul>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Process Text and Create Embeddings" duration="10">
+        <p>In the Notebook we will insert processed text and create embeddings:</p>
+<pre><code language="language-sql" class="language-sql">INSERT INTO docs_chunks_table (relative_path, file_url, scoped_file_url, chunk, chunk_vec)
+SELECT 
+    relative_path, 
+    file_url,
+    scoped_file_url,
+    chunk.value,
+    SNOWFLAKE.CORTEX.EMBED_TEXT_768(&#39;e5-base-v2&#39;, chunk.value) AS chunk_vec
+FROM
+    &#123;&#123;run_through_files_to_ocr}},
+    LATERAL FLATTEN(SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER(full_text,&#39;none&#39;, 4000, 400)) chunk;
+</code></pre>
+<p>This query:</p>
+<ol type="1">
+<li>Takes OCR output text</li>
+<li>Splits into 4000-character chunks (400 character overlap)</li>
+<li>Creates vector embeddings using e5-base-v2 model</li>
+<li>Stores results in docs_chunks_table</li>
+</ol>
+<p>Verify data insertion:</p>
+<pre><code language="language-sql" class="language-sql">SELECT COUNT(*) FROM docs_chunks_table;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Question-Answering Interface" duration="15">
+        <h2 is-upgraded>Create Streamlit App</h2>
+<p>This section in the Notebook creates a Streamlit application that enables users to ask questions about their OCR-processed documents. The application uses semantic search to find relevant text and generates answers using Snowflake Cortex LLMs.</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+from snowflake.snowpark.context import get_active_session
+from snowflake.core import Root
+import pandas as pd
+
+num_chunks = 3 
+model = &#34;mistral-7b&#34;
+
+def create_prompt(myquestion):
+    cmd = &#34;&#34;&#34;
+     with results as
+     (SELECT RELATIVE_PATH,
+       VECTOR_COSINE_SIMILARITY(docs_chunks_schema.docs_chunks_table.chunk_vec,
+                SNOWFLAKE.CORTEX.EMBED_TEXT_768(&#39;e5-base-v2&#39;, ?)) as similarity,
+       chunk
+     from docs_chunks_schema.docs_chunks_table
+     order by similarity desc
+     limit ?)
+     select chunk, relative_path from results 
+     &#34;&#34;&#34;
+    df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
+
+    context_lenght = len(df_context) -1
+    prompt_context = &#34;&#34;
+    for i in range (0, context_lenght):
+        prompt_context += df_context._get_value(i, &#39;CHUNK&#39;)
+    prompt_context = prompt_context.replace(&#34;&#39;&#34;, &#34;&#34;)
+    relative_path =  df_context._get_value(0,&#39;RELATIVE_PATH&#39;)
+    prompt = f&#34;&#34;&#34;
+      &#39;You are an expert assistance extracting information from context provided. 
+       Answer the question based on the context. Be concise and do not hallucinate. 
+       If you don´t have the information just say so.
+      Context: {prompt_context}
+      Question:  
+       {myquestion} 
+       Answer: &#39;
+       &#34;&#34;&#34;
+    cmd2 = f&#34;select GET_PRESIGNED_URL(@ocr_rag.images_to_ocr, &#39;{relative_path}&#39;, 360) as URL_LINK from directory(@ocr_rag.images_to_ocr)&#34;
+    df_url_link = session.sql(cmd2).to_pandas()
+    url_link = df_url_link._get_value(0,&#39;URL_LINK&#39;)
+
+    return prompt, url_link, relative_path
+
+def complete(myquestion, model_name):
+    prompt, url_link, relative_path = create_prompt(myquestion)
+    cmd = &#34;&#34;&#34;
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+           &#34;&#34;&#34;
+    df_response = session.sql(cmd, params=[model_name, prompt]).collect()
+    return df_response, url_link, relative_path
+
+def display_response(question, model):
+    response, url_link, relative_path = complete(question, model)
+    res_text = response[0].RESPONSE
+    st.markdown(res_text)
+    display_url = f&#34;Link to [{relative_path}]({url_link}) that may be useful&#34;
+    st.markdown(display_url)
+
+st.title(&#34;Asking Questions to Your Scanned Documents with Snowflake Cortex:&#34;)
+docs_available = session.sql(&#34;ls @ocr_rag.images_to_ocr&#34;).collect()
+question = st.text_input(&#34;Enter question&#34;, placeholder=&#34;What are my documents about?&#34;, label_visibility=&#34;collapsed&#34;)
+if question:
+    display_response(question, model)
+</code></pre>
+<h2 is-upgraded>Code Walkthrough</h2>
+<p>The application:</p>
+<ol type="1">
+<li>Uses vector similarity to find relevant text chunks</li>
+<li>Creates a prompt with context and question</li>
+<li>Calls Cortex LLM to generate answer</li>
+<li>Displays answer and source image link</li>
+</ol>
+<p>Key parameters:</p>
+<ul>
+<li><code>num_chunks</code>: Number of context chunks (default: 3)</li>
+<li><code>model</code>: LLM model (default: mistral-7b)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an end-to-end OCR and RAG application in Snowflake that transforms images into searchable, queryable content. Using Snowflake Notebooks and Cortex capabilities, you&#39;ve implemented a solution that processes images through OCR, creates vector embeddings for semantic search, and provides AI-powered answers using Large Language Models - all while keeping your data secure within Snowflake&#39;s environment. Finally, you created a Streamlit application that allows users to interactively query their document content using natural language.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to implement OCR processing in Snowflake using Tesseract and Snowpark Python</li>
+<li>How to use open-source Python libraries from curated Snowflake Anaconda channel</li>
+<li>How to create and manage vector embeddings for semantic search capabilities</li>
+<li>How to build RAG applications using Snowflake Cortex Search and LLM functions</li>
+<li>How to create automated document processing pipelines using Snowflake Tasks</li>
+<li>How to develop interactive Streamlit applications within Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake Guide</a></li>
+</ul>
+<p>Blogs &amp; Articles:</p>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/#0" target="_blank">Introduction to RAG Applications</a></li>
+<li><a href="https://www.snowflake.com/engineering-blog/cortex-search-and-retrieval-enterprise-ai/" target="_blank">Cortex Search Best Practices</a></li>
+</ul>
+<p>Sample Code &amp; Guides:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview" target="_blank">Snowflake Machine Learning</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

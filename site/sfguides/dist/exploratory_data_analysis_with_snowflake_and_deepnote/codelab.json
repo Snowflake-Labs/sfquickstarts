@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "exploratory_data_analysis_with_snowflake_and_deepnote",
+  "duration": 18,
+  "title": "Exploratory Data Analysis with Snowflake and Deepnote",
+  "summary": "Deepnote’s SQL + Python notebook, along with their suite of low-code tools, allow for rapid data exploration of the Snowflake warehouse.",
+  "source": "exploratory_data_analysis_with_snowflake_and_deepnote/exploratory_data_analysis_with_snowflake_and_deepnote.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "exploratory_data_analysis_with_snowflake_and_deepnote"
+}

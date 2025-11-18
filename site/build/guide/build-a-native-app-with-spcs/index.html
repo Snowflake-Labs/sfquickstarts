@@ -1,0 +1,320 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Snowflake Native App with Snowpark Container Services</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build-a-native-app-with-spcs"
+                  title="Build a Snowflake Native App with Snowpark Container Services"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace.  In this example you will learn how to incorporate Snowpark Container Services into a Snowflake Native App allowing you to deploy a variety of new capabilities to a consumers Snowflake account.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with ACCOUNTADMIN access</li>
+<li>Familiarity with Snowflake Snowsight Interface</li>
+<li>Basic Knowledge of Docker and Container Concepts</li>
+<li>Ability to install and run software on your computer</li>
+<li>Basic experience using git</li>
+</ul>
+<aside class="special"><p>Snowpark Container Services is currently in a Public Preview and is available across a <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions" target="_blank">range of Snowflake AWS accounts</a>. For this lab ensure that you have an account in one of the supported regions.</p>
+</aside>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an app using the Snowflake Native App framework</li>
+<li>How to build and push container images to a Snowflake account</li>
+<li>How to integrate those images into a Snowflake Native App and allow consumers to create Services</li>
+<li>How to test the Snowflake Native App Provider and Consumer experience within a single Snowflake account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+<li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>In this quickstart we&#39;ll create a Snowflake Native App that uses Snowpark Container Services to deploy the following into a Snowflake account:</p>
+<ul>
+<li>Vue-based JavaScript frontend</li>
+<li>Flask-based Python middle tier</li>
+<li>nginx as a router</li>
+</ul>
+<p>Once deployed, the application can be access via a <a href="https://docs.snowflake.com/en/sql-reference/sql/show-endpoints" target="_blank">Service Endpoint</a> which then queries the TPC-H 100 data set and returns the top sales clerks. The frontend provides date pickers to restrict the range of the sales data and a slider to determine how many top clerks to display. The data is presented in a table sorted by highest seller to lowest.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Application Code" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In preparation for building our Snowflake Native App we need to download the code artifacts for the Native App along with the files to create our Container images from Github.</p>
+<h2 is-upgraded>Step 2.1 - Clone or Download Github Repo</h2>
+<p>The code for the Native App and Container Images are on Github. Start by cloning or downloading the repository into a separate folder.</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/sfguide-build-a-native-app-with-spcs
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Native App Provider Setup" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>To simulate a Native App provider experience we will create a role called ‘naspcs_role&#39; and grant it the necessary privileges required to create an <a href="https://docs.snowflake.com/en/developer-guide/native-apps/creating-app-package" target="_blank">Application Package</a> as well as create a database that will store both our app code and Snowpark Container Service Images.</p>
+<h2 is-upgraded>Step 3.1 - Create NASPCS role and Grant Privileges</h2>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+create role if not exists naspcs_role;
+grant role naspcs_role to role accountadmin;
+grant create integration on account to role naspcs_role;
+grant create compute pool on account to role naspcs_role;
+grant create warehouse on account to role naspcs_role;
+grant create database on account to role naspcs_role;
+grant create application package on account to role naspcs_role;
+grant create application on account to role naspcs_role with grant option;
+grant bind service endpoint on account to role naspcs_role;
+</code></pre>
+<h2 is-upgraded>Step 3.2 - Create SCPS_APP Database to Store Application Files and Container Images</h2>
+<pre><code language="language-sql" class="language-sql">use role naspcs_role;
+create database if not exists spcs_app;
+create schema if not exists spcs_app.napp;
+create stage if not exists spcs_app.napp.app_stage;
+create image repository if not exists spcs_app.napp.img_repo;
+create warehouse if not exists wh_nap with warehouse_size=&#39;xsmall&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Consumer Privilege Setup" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>To simulate the app consumer experience we will create a role called ‘nac&#39; and grant it the necessary privileges required to create Applications as well as set up a database to house the data we&#39;ll be querying with our Snowflake Native App.</p>
+<h2 is-upgraded>Step 4.1 - Create NAC role and Grant Privileges</h2>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+create role if not exists nac;
+grant role nac to role accountadmin;
+create warehouse if not exists wh_nac with warehouse_size=&#39;xsmall&#39;;
+grant usage on warehouse wh_nac to role nac with grant option;
+grant imported privileges on database snowflake_sample_data to role nac;
+grant create database on account to role nac;
+grant bind service endpoint on account to role nac with grant option;
+grant create compute pool on account to role nac;
+grant create application on account to role nac;
+</code></pre>
+<h2 is-upgraded>Step 4.2 - Create Consumer Test Data Database</h2>
+<pre><code language="language-sql" class="language-sql">use role nac;
+create database if not exists nac_test;
+create schema if not exists nac_test.data;
+use schema nac_test.data;
+create view if not exists orders as select * from snowflake_sample_data.tpch_sf10.orders;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build and Upload Container Images" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>Now that we have a place in our Snowflake account to house our application code and images we need to build the images and push them to our Image Repository.  We&#39;ll then upload our app files that detail how to install, setup and configure the Snowflake Native App.</p>
+<h2 is-upgraded>Step 5.1 - Get Image Repository URL</h2>
+<p>The code for this Quickstart has shipped with a shell script called ‘configuration.sh&#39; that you will use to tell our build process where to upload our Images.  The first step is to find our Image Repository URL which can be accomplished by running the following queries in your Snowflake account.</p>
+<pre><code language="language-sql" class="language-sql">use role naspcs_role;
+show image repositories in schema spcs_app.napp;
+</code></pre>
+<h2 is-upgraded>Step 5.2 - Build and Push Images</h2>
+<p>There are two options to Build and Push Images to your Snowflake account.  If you have the ability to run a Makefile you can use Step 5.2.1, otherwise you can use Step 5.2.2 to run the individual Docker commands required to build and push each Image.</p>
+<h3 is-upgraded>Step 5.2.1 - Makefile Apprach</h3>
+<p>Copy the ‘repository_url&#39; value after you run the above commands.  After this switch to Terminal/Command Prompt and navigate to where you cloned or downloaded and unzipped the Github Repository in step 2.2.  When you are at the folder run the following command:</p>
+<pre><code language="language-shell" class="language-shell">./configure.sh
+</code></pre>
+<p>You will be prompted to paste the ‘repository_url&#39; into the command prompt and press enter to complete this configuration step.</p>
+<p>Ensure that Docker is running and in a Terminal/Command Prompt run the following command in the root of the Github repo you cloned or downloaded.</p>
+<pre><code language="language-shell" class="language-shell">make all
+</code></pre>
+<p>This should begin the process of running the required Docker BUILD and PUSH commands to upload the images to your Snowflake account.</p>
+<h3 is-upgraded>Step 5.2.2 - Individual Docker Commands</h3>
+<p>If the Makefile approach doesn&#39;t work you can run the following commands to build and push each image.  Make sure Docker is running and execute the following commands using a Terminal/Command prompt starting at the root of the Github repo you cloned or downloaded. In each step replace the <strong>&lt;SNOWFLAKE_REPO&gt;</strong> value with the ‘repository_url&#39; value you acquired in Step 5.1.</p>
+<pre><code language="language-shell" class="language-shell"># login to Image Repository
+    docker login &lt;SNOWFLAKE_REPO&gt;
+
+# Build and Push backend
+    cd backend
+    docker build --platform linux/amd64 -t eap_backend .
+    cd ..
+    docker tag eap_backend &lt;SNOWFLAKE_REPO&gt;/eap_backend
+    docker push &lt;SNOWFLAKE_REPO&gt;/eap_backend
+
+# Build and Push frontend 
+    cd frontend  
+    docker build --platform linux/amd64 -t eap_frontend . 
+    cd ..
+    docker tag eap_frontend &lt;SNOWFLAKE_REPO&gt;/eap_frontend
+    docker push &lt;SNOWFLAKE_REPO&gt;/eap_frontend
+
+# Build and Push router
+    cd router 
+    docker build --platform linux/amd64 -t eap_router . 
+    cd ..
+    docker tag eap_router &lt;SNOWFLAKE_REPO&gt;/eap_router
+    docker push &lt;SNOWFLAKE_REPO&gt;/eap_router
+</code></pre>
+<h2 is-upgraded>Step 5.3 - Upload Native App Code</h2>
+<p>After the Image upload process completes the code we&#39;ll use to build our App package needs to be uploaded to the <strong>SPCS_APP.NAPP.APP_STAGE</strong> stage.  This can be accomplished by navigating to this stage using Snowsight - click on the ‘Database&#39; icon on the left side navigation bar and then on the <strong>SPCS_APP database &gt; NAPP schema &gt; APP_STAGE stage</strong>.  You will need to do the following:</p>
+<ol type="1">
+<li>Click on ‘Select Warehouse&#39; and choose ‘WH_NAP&#39; for the Warehouse</li>
+<li>Click on the ‘+ Files&#39; button in the top right corner</li>
+<li>Browse to the location where you cloned or downloaded the Github repo and into the ‘/app/src&#39; folder</li>
+<li>Select all 4 files (setup.sql, fullstack.yaml, manifest.yml, readme.md)</li>
+<li>Click the ‘Upload&#39; button</li>
+</ol>
+<p>When this is done succesfully your SPCS_APP.NAPP.APP_STAGE should look like the following in Snowsight:</p>
+<p class="image-container"><img alt="APP_STAGE" src="img/a72b94ebca2c0dce.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Application Package" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>With all of our Snowflake Native App assets uploaded to our Snowflake account we can now create our Application Package using our Provider role.  Since we&#39;re doing this in a single Snowflake account we will also grant the Consumer role privileges to install it.</p>
+<h2 is-upgraded>Step 6.1 - Create Application Package and Grant Consumer Role Privileges</h2>
+<pre><code language="language-sql" class="language-sql">use role naspcs_role;
+create application package spcs_app_pkg;
+alter application package spcs_app_pkg add version v1 using @spcs_app.napp.app_stage;
+grant install, develop on application package spcs_app_pkg to role nac;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install &amp; Run Application" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>We can now use the Consumer role to install our Snowflake Native App - but to get it fully deployed we will also need to create a Compute Pool for our Snowpark Containers to run on as well as start the Service.</p>
+<h2 is-upgraded>Step 7.1 - Install App as the Consumer</h2>
+<pre><code language="language-sql" class="language-sql">use role nac;
+create application spcs_app_instance from application package spcs_app_pkg using version v1;
+</code></pre>
+<h2 is-upgraded>Step 7.2 - Create Compute Pool and Grant Privileges</h2>
+<pre><code language="language-sql" class="language-sql">use database nac_test;
+use role nac;
+create  compute pool pool_nac for application spcs_app_instance
+    min_nodes = 1 max_nodes = 1
+    instance_family = cpu_x64_s
+    auto_resume = true;
+
+grant usage on compute pool pool_nac to application spcs_app_instance;
+grant usage on warehouse wh_nac to application spcs_app_instance;
+grant bind service endpoint on account to application spcs_app_instance;
+CALL spcs_app_instance.v1.register_single_callback(
+  &#39;ORDERS_TABLE&#39; , &#39;ADD&#39;, SYSTEM$REFERENCE(&#39;VIEW&#39;, &#39;NAC_TEST.DATA.ORDERS&#39;, &#39;PERSISTENT&#39;, &#39;SELECT&#39;));
+</code></pre>
+<h2 is-upgraded>Step 7.3 - Start App Service</h2>
+<p>With the Compute Pool created and the App configured we can now run the START_APP Stored Procedure installed with the Native App to create the Service using the POOL_NAC Compute Pool and the WH_NAC Virtual Warehouse to execute queries against the Snowflake account.</p>
+<pre><code language="language-sql" class="language-sql">call spcs_app_instance.app_public.start_app(&#39;POOL_NAC&#39;, &#39;WH_NAC&#39;);
+
+--After running the above command you can run the following command to determine when the Service Endpoint is ready 
+--Copy the endpoint, paste into a browser, and authenticate to the Snowflake account using the same credentials you&#39;ve been using to log into Snowflake
+call spcs_app_instance.app_public.app_url();
+</code></pre>
+<p>When up and running you should see a screen like this at your service endpoint. <img alt="CLERKS" src="img/2942ab851c6a17f6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>To clean up your environment you can run the following series of commands.</p>
+<h2 is-upgraded>Step 8.1 - Clean Up</h2>
+<pre><code language="language-sql" class="language-sql">--clean up consumer objects
+use role nac;
+drop application spcs_app_instance;
+drop compute pool pool_nac;
+drop database nac_test;
+
+--clean up provider objects
+use role naspcs_role;
+drop application package spcs_app_pkg;
+drop database spcs_app;
+drop warehouse wh_nap;
+
+--clean up prep objects
+use role accountadmin;
+drop warehouse wh_nac;
+drop role naspcs_role;
+drop role nac;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations!  You&#39;ve now deployed a Snowflake Native App that includes Snowpark Container Service hosting a customer Frontend and Backend for a web application.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<p>In this Quickstart we covered the following:</p>
+<ul>
+<li>How to create a app using the Snowflake Native App framework</li>
+<li>How to build and push container images to a Snowflake account</li>
+<li>How to integrate those images into a Snowflake Native App and allow consumers to create Services</li>
+<li>How to test the Snowflake Native App Provider and Consumer experience within a single Snowflake account</li>
+</ul>
+<p>This Quickstart can provide a template for you to accomplish the basic steps of building a Snowflake Native App that includes a Snowpark Container Service to deploy &amp; monetize whatever unique code to your Snowflake consumers accounts.</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N" target="_blank">Snowflake Native Apps</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">Snowflake Native Apps Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N" target="_blank">Snowpark Container Services</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

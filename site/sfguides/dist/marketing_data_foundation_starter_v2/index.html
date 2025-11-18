@@ -1,0 +1,286 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Marketing Data Foundation Starter V2 Guide</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="marketing_data_foundation_starter_v2"
+                  title="Marketing Data Foundation Starter V2 Guide"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p>Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing. This starter solution tackles this challenge by offering an integrated application that unifies data sets from different Connectors and Marketing Data providers.</p>
+<p>In this example, we are adding support for</p>
+<ul>
+<li>Fivetran / Facebook Ads</li>
+<li>Omnata / LinkedIn Ads</li>
+</ul>
+<p>This solution was inspired by how Snowflake runs its own end-to-end Marketing workflows entirely on top of the Snowflake AI Data Cloud for Marketing.</p>
+<h2 is-upgraded>Problem Space</h2>
+<p>In the fast-evolving marketing landscape, the emphasis on data-driven strategies has become more pronounced than ever. A significant trend is the increase in Martech investments, with 63% of Chief Marketing Officers (CMOs) planning to increase their spending within the next 12 months. Such investments are crucial for enhancing customer engagement, refining marketing strategies, and driving sales through advanced data analysis. The high ROI that businesses achieve from data-driven personalization also highlights its importance. Reports indicate that enterprises see returns of 5 to 8 times on their marketing budgets, which demonstrates the value of personalized marketing in boosting conversion rates, enhancing customer loyalty, and increasing revenue.</p>
+<p>Additionally, the industry is shifting towards first-party data ownership, a move propelled by the deprecation of third-party cookies. This shift is essential for maintaining direct customer relationships and adapting to changing privacy norms. The promise of generative AI and the understanding that an effective AI strategy requires a robust data strategy have spurred efforts to centralize marketing data within Snowflake. Organizations aim to organize data into standard schemas that Large Language Models (LLMs) can understand, employing these models in innovative ways to personalize content and predict customer behavior. Two types of first-party data are pivotal in these efforts: Customer 360 Data and Campaign Intelligence. The former strives to provide a holistic view of the customer by integrating and managing comprehensive data. In contrast, Campaign Intelligence focuses on data related to marketing campaigns, aiming to optimize performance and strategy. These elements are fundamental to successful data-driven marketing, underscoring the need for sophisticated data management and analytics capabilities.</p>
+<h2 is-upgraded>Solution Space</h2>
+<h3 is-upgraded>Context</h3>
+<p>As described in the diagram below, this solution aims to support the two Marketing Execution use cases: Planning &amp; Activation, and Measurement.</p>
+<p class="image-container"><img alt="usecase" src="img/d60b77a64debdaa7.png"></p>
+<p>More specifically, this solution covers Data Ingestion, Semantic Unification, and base Analytics for the Campaign Intelligence data.</p>
+<p class="image-container"><img alt="usecase" src="img/46bc1f85a0666df9.png"></p>
+<h2 is-upgraded>Solution Details</h2>
+<p>The solution consists of the following components:</p>
+<ul>
+<li>Native Application: The code needed to build and deploy this solution as a Native App. You will deploy this app in your own Snowflake account.</li>
+</ul>
+<h2 is-upgraded>The App Architecture</h2>
+<p>This solution consists of a native application that provides a framework to easily unify marketing data sources and then leverage LLM functions to explore that data and get valuable business intelligence information from the data that was ingested.</p>
+<p class="image-container"><img alt="Architecture" src="img/11db73ccaf9e9e3a.png"></p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Marketing Data Foundation Solution Native application</li>
+</ul>
+<p class="image-container"><img alt="MDF" src="img/11180a492e96257.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>The working mechanics of a native application.</li>
+<li>How to build and push a native app related to Marketing Campaign Intelligence data.</li>
+<li>How to use open source AI model for handle your marketing data.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation" target="_blank">Snow CLI</a> Installed</li>
+<li><a href="https://www.python.org/downloads/" target="_blank">Python</a> Installed</li>
+<li>Install <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation" target="_blank">Snow CLI</a></li>
+</ul>
+<p>⚠️ <strong>This application requires Streamlit Custom Components</strong> Request this to be enabled in your account and in the application package.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="2">
+        <h2 is-upgraded>Clone GitHub repository</h2>
+<p>Clone the git repo to your local</p>
+<pre>git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-solution
+</pre>
+<h2 is-upgraded>Create a connection</h2>
+<pre>snow connection add
+</pre>
+<p>Refer to the screenshot below for more info.</p>
+<pre><code language="language-shell" class="language-shell">Name for this connection: marketing_demo_conn
+Snowflake account name: ******
+Snowflake username: &lt;YOUR USERNAME&gt;
+Snowflake password [optional]:
+Role for the connection [optional]: ACCOUNTADMIN
+Warehouse for the connection [optional]: COMPUTE_WH
+Database for the connection [optional]: snowflake
+Schema for the connection [optional]: account_usage
+Connection host [optional]:
+Connection port [optional]:
+Snowflake region [optional]: us-west-1
+Authentication method [optional]:
+Path to private key file [optional]:
+Wrote new connection marketing_demo_conn to /Users/******/Library/Application Support/snowflake/config.toml
+</code></pre>
+<p>To review the new created connection use:</p>
+<pre>snow connection list
+</pre>
+<p>Refer to the screenshot below:</p>
+<pre><code language="language-shell" class="language-shell">+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| connection_name     | parameters                                                                                                                                                                             |
+|---------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| marketing_demo_conn | {&#39;account&#39;: &#39;******&#39;, &#39;user&#39;: &#39;******&#39;, &#39;password&#39;: &#39;****&#39;, &#39;region&#39;: &#39;us-west-1&#39;, &#39;database&#39;: &#39;snowflake&#39;, &#39;schema&#39;: &#39;account_usage&#39;, &#39;warehouse&#39;: &#39;COMPUTE_WH&#39;, &#39;role&#39;:      |
+|                     | &#39;ACCOUNTADMIN&#39;}                                                                                                                                                                        |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy the Native application" duration="5">
+        <p>We prepared a deployment Jupyter notebook that executes all the steps required to configure this solution in your account.</p>
+<p>First, lets export the connection name to the default connection</p>
+<pre>export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_conn
+</pre>
+<h2 is-upgraded>Execute the deployment notebook</h2>
+<p>Once the Snowflake connection is set as default, you can proceed to execute the Jupyter notebook that deploys the application in your Snowflake account.</p>
+<p>For this you can execute it using VSCode or Jupyter in your command line. We recommend you use VSCode.</p>
+<h3 is-upgraded>To use VSCode:</h3>
+<p>You will need to create a Python virtual environment to install dependencies and be able to successfully execute the deployment notebook.</p>
+<p>If you already install Python, then proceed with the virtual environment creation. Follow this <a href="https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#create-and-use-virtual-environments" target="_blank">guide</a> to get more information about how to create a Python virtual environment.</p>
+<p>Install the python dependencies in your virtual environment:</p>
+<pre><code language="language-shell" class="language-shell">pip install -r requirements.txt
+
+</code></pre>
+<p>Open the project with VSCode and select the <strong><em>deployment.ipynb</em></strong> file from the File explorer.</p>
+<p>Then, select the virtual environment you created as the execution kernel for this notebook.</p>
+<p class="image-container"><img src="img/1e834024633052f0.png"></p>
+<p>Then you can click on the <strong><em>Run All</em></strong> button to execute all the code cells described in this notebook, or you can execute each cell manually.</p>
+<p>After the execution of this notebook you will see some new assets created in your Snowflake account.</p>
+<p class="image-container"><img src="img/5720d37f26e8ec07.png"></p>
+<p>The application and the application package should be listed in your databases list.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open the Native App" duration="2">
+        <h2 is-upgraded>Open the new native application</h2>
+<p>In the <strong><em>Data Products/ Apps</em></strong> section, you will see the recently created Marketing Data Foundation native application:</p>
+<p class="image-container"><img src="img/4b3e8f99de7375ca.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="How to use the application" duration="0">
+        <p>After you deploy this native app in your account, navigate to the Data Products / Apps section in Snowsight and open the<br><strong>Marketing Data Foundation</strong> application.</p>
+<p class="image-container"><img alt="NativeApp" src="img/592f5460716dff16.png"></p>
+<h2 is-upgraded>1. Select the Data provider</h2>
+<p>To execute the solution open the Data Models &amp; Mappings section in the application&#39;s sidebar menu:</p>
+<p class="image-container"><img alt="Step1" src="img/e021fa2642214115.png"></p>
+<p>You will see the list of supported Data source providers. For this version only Facebook and LinkedIn are supported.</p>
+<p class="image-container"><img alt="Step1.1" src="img/11180a492e96257.png"></p>
+<p>Select any of those options to continue with the solution. Sample data are provided for both options so it is not a requirement to have Fivetran or Omnata installed and configured.</p>
+<p>The provided sample data emulates the structure of the raw data generated by both connectors.</p>
+<p>For this solution, only the combinations of Fivetran/Facebook and Linked/Omnata are supported.</p>
+<h2 is-upgraded>2. Configure the connection</h2>
+<p>After you select any of the Data providers options you will continue to the Connection configuration.</p>
+<p>These steps will provide instructions on how to bring the data to Snowflake or connect it with data already in Snowflake.</p>
+<p class="image-container"><img alt="Data" src="img/50a5d1e6d4328bd4.png"></p>
+<p>Since we are going to use the sample data, you can continue to the <strong><em>Link data already in Snowflake</em></strong> option.</p>
+<p>Depending on the platform selected in the previous step, please select either of these options</p>
+<p>Facebook:</p>
+<ul>
+<li>DATABASE: <code>FIVETRAN_CONNECTOR_DEMO</code> SCHEMA: <code>FACEBOOK_RAW</code></li>
+</ul>
+<p>LinkedIn:</p>
+<ul>
+<li>DATABASE: <code>OMNATA_CONNECTOR_DEMO</code> SCHEMA: <code>LINKEDIN_RAW</code></li>
+</ul>
+<p>When you click on the connect option, the application will verify you have access to the sample data  and will show you the list of tables in the selected schema.</p>
+<p class="image-container"><img alt="ConnectTables" src="img/44a5881701b5addb.png"></p>
+<h2 is-upgraded>3. Explore and Apply Mappings</h2>
+<p>This application applies a set of predefined mappings to generate a unified marketing data model that can be used for business intelligence over the data that was ingested.</p>
+<p>You can explore or apply the mappings using the options provided in this screen:</p>
+<p class="image-container"><img alt="Mappings" src="img/e466f6179d680860.png"></p>
+<p>The mappings are shown using a custom component that highlights the columns used from the source data and the target column in the unified data model:</p>
+<p class="image-container"><img alt="Mappings" src="img/68dec5144f8b297e.png"></p>
+<h2 is-upgraded>4. Visualizations</h2>
+<p>After you apply the mappings the application will generate several schemas inside the application&#39;s database. The unified data model will be used to generate some basic visualizations that provide insights about the ingested data:</p>
+<p class="image-container"><img alt="DataExplorer" src="img/a81fec2a7ecc6288.png"></p>
+<p>The unified data model is stored in the Database <code>Marketing Data Foundation</code> and the Schema <code>AGGREGATED_REPORTS</code>.</p>
+<h2 is-upgraded>5. AI Functions</h2>
+<p>The application also provides AI Functions that can be explored:</p>
+<h3 is-upgraded>Data Quality</h3>
+<p>Provides access to a set of predefined Snowflake Notebooks with some sample Customer 360 cases.</p>
+<p class="image-container"><img src="img/73e7ca6b2c213722.png"></p>
+<h3 is-upgraded>AI Assistant Bot</h3>
+<p>Under the AI Assistant option you will find a Chatbot that allows you to ask questions related to either Data Engineering using your ingested data as input.</p>
+<p class="image-container"><img src="img/6abd9fe6b2ca5994.png"></p>
+<p class="image-container"><img src="img/f225707623868334.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Restart the Solution" duration="0">
+        <p>If you connect both Data providers and want to start the solution again, you can execute this clean-up script in an SQL Worksheet to delete the Unified Data Model tables and clean up the connected sources.</p>
+<p>Replace  with the actual value of your application.</p>
+<pre><code language="language-SQL" class="language-SQL">DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.AGGREGATED_REPORTS.ACCOUNT_REPORT_MODEL;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.AGGREGATED_REPORTS.AD_GROUP_REPORT_MODEL;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.AGGREGATED_REPORTS.CAMPAIGN_PERFORMANCE;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.AGGREGATED_REPORTS.CAMPAIGN_REPORT_MODEL;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.AGGREGATED_REPORTS.PLATFORM_REPORT_MODEL;
+
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.FACEBOOK_DIM_ACCOUNT;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.FACEBOOK_DIM_AD_GROUP;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.FACEBOOK_DIM_CAMPAIGN;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.FACEBOOK_METRICS;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.LINKEDIN_DIM_ACCOUNT;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.LINKEDIN_DIM_AD_GROUP;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.LINKEDIN_DIM_CAMPAIGN;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.STANDARDIZE_MODEL.LINKEDIN_METRICS;
+
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.CAMPAIGN_INTELLIGENCE_COMBINED.DIM_ACCOUNT;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.CAMPAIGN_INTELLIGENCE_COMBINED.DIM_AD_GROUP;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.CAMPAIGN_INTELLIGENCE_COMBINED.DIM_CAMPAIGN;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.CAMPAIGN_INTELLIGENCE_COMBINED.METRICS;
+TRUNCATE TABLE MARKETING_DATA_FOUNDATION_&lt;USERNAME&gt;.USER_SETTINGS.EXISTING_SOURCES;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.</p>
+<p>You will see your application listed in your account: <img src="img/592f5460716dff16.png"></p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to host and build a basic native app for Marketing Campaign Intelligence data.</li>
+<li>Generate a set of views that aggregate data from Marketing providers like LinkedIn and Facebook.</li>
+<li>Generate quick summaries and Charts using that data to create an integrated dashboard using Streamlit.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>Want to learn more about the tools and technologies used by your app? Check out the following resources:</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-solution" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/" target="_blank">Snowpark Guide for Data Engineers</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

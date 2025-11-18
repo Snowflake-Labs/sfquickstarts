@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "transform_your_data_with_coalesce",
+  "duration": 18,
+  "title": "Accelerate Transformations with Coalesce and Snowflake",
+  "authors": "Alex Engelmann",
+  "summary": "Accelerate Transformations with Coalesce and Snowflake",
+  "source": "transform_your_data_with_coalesce/transform_your_data_with_coalesce.md",
+  "theme": "",
+  "status": [
+    "final"
+  ],
+  "category": [
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "transform_your_data_with_coalesce"
+}

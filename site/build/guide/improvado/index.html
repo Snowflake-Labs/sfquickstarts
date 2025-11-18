@@ -1,0 +1,208 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Improvado Composable &#34;Agentic&#34; Data Platform with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="improvado"
+                  title="Improvado Composable &#34;Agentic&#34; Data Platform with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Introduction" duration="2">
+        <p>This guide will show you how to connect your Snowflake AI Data Cloud to Improvado platform, manage user &amp; data access, and understand how AI Agent uses your Snowflake data for analytics &amp; marketing data governance.</p>
+<h2 is-upgraded>Improvado Platform Overview</h2>
+<p>Improvado is an AI-powered composable marketing analytics &amp; intelligence platform that provides secure and efficient data integration with Snowflake.</p>
+<p>Improvado platform is comprised of two main components: <strong>Data Platform</strong> and <strong>AI Agent</strong>.</p>
+<p>Improvado&#39;s core product focuses on providing robust Extract, Load, Transform (ELT) capabilities. It supports over 500 data sources for seamless data extraction and load.</p>
+<p>On top of the core platform, the AI Agent enhances the value of your data by providing advanced analytics and governance capabilities. Our AI Agent offers several advanced features:</p>
+<ul>
+<li><strong>Campaign Intelligence</strong>: Offers deep insights and analytics on campaign performance to help marketers optimize their strategies and outcomes.</li>
+<li><strong>Automated Data Analysis</strong>: The AI Agent enables automatic analysis of your Snowflake data, ensuring that all data points are accurately processed and interpreted.</li>
+<li><strong>Snowflake Metadata</strong>: By generating comprehensive metadata, the AI Agent provides valuable context to your data, enhancing its usability for analytics and reporting.</li>
+<li><strong>Marketing Data Governance</strong>: Leverages advanced data profiling to ensure high data quality and compliance with marketing data governance workflows.</li>
+<li><strong>Action Pulse</strong>: Provides actionable insights on your marketing data, helping you make informed decisions and improve performance.</li>
+<li><strong>Data Activation</strong>: Transforms and routes data back into operational tools for activation, enabling data-driven actions across your marketing stack.</li>
+</ul>
+<p>This layered approach ensures that Improvado not only integrates and processes data effectively but also enriches it with insights and governance for better decision-making.</p>
+<p>The following diagram illustrates the overview of Improvado platform capabilities:</p>
+<p class="image-container"><img alt="Overview" src="img/551bfe71303b573.png"></p>
+<p>Additionally, Improvado offers a custom Marketing Data Governance solution to ensure compliance with marketing guidelines, maintaining high data quality and consistency.</p>
+<p class="image-container"><img alt="Cerebro" src="img/dea9cf22fed4190b.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>Access to an Improvado instance. Please reach out to our Sales and <a href="https://improvado.io/register/talk-to-an-expert" target="_blank">Book a demo</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<ul class="checklist">
+<li>How to connect Snowflake to Improvado</li>
+<li>How to ensure privacy of your data within Improvado platform</li>
+<li>How AI Agent uses metadata to provide accurate &amp; useful insights</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Snowflake to Improvado" duration="4">
+        <p>In this step, we&#39;ll learn how to connect your Snowflake schema to Improvado. Improvado integrates with Snowflake using a native Python Connector, ensuring efficient data transfers and fast updates.</p>
+<h2 is-upgraded>Connecting a Data source</h2>
+<p>Connecting a Data source in Improvado enables you to extract data and then load it into your analytics and reporting frameworks. Improvado offers 500+ integrations with Marketing, eCommerce, CRM, Flat Data, SEO &amp; SEM, and many other providers.</p>
+<p class="image-container"><img alt="DataSources" src="img/301baf67b124a91b.png"></p>
+<p>Follow these simple steps to connect a data source: Go to the Data sources page and select a necessary Data source to extract your data Enter required credentials or authorize using OAuth (depending on Data source API capabilities) Then, you&#39;ll be redirected to the Connection Details page, where you can set up data extraction.</p>
+<h2 is-upgraded>Step 1. Database permissions</h2>
+<p>Now you&#39;ll need to grant the following permissions to your Snowflake database schema:</p>
+<ul>
+<li><code>CREATE</code></li>
+<li><code>ALTER TABLE</code></li>
+<li><code>DELETE</code></li>
+<li><code>INSERT</code></li>
+</ul>
+<h2 is-upgraded>Step 2. Select a destination</h2>
+<p>Log in to the Improvado platform and navigate to the Destinations page from the left-hand side menu. This page is a catalog of all the available destinations for data loading.</p>
+<p class="image-container"><img alt="Catalog" src="img/d1bda6c6c8eca2c.png"></p>
+<p>Click on the <strong>Snowflake</strong> tile.</p>
+<h2 is-upgraded>Step 3. Complete configuration</h2>
+<p>On the Snowflake connection page, fill in the following fields:</p>
+<ol type="1">
+<li>Enter a name for your Destination connection in the <strong>Title</strong>.</li>
+<li>Enter the <strong>Account</strong>.</li>
+<li>Enter the <strong>User Name</strong>.</li>
+<li>Enter the <strong>Password</strong>.</li>
+<li>Enter the <strong>Database Name</strong>.</li>
+<li>Enter the <strong>Warehouse</strong>.</li>
+<li>Specify the <strong>Schema</strong> of your database.</li>
+<li>Enter the <strong>Role</strong>. <ul>
+<li>The <code>SYSADMIN</code> role should be granted to the specified user. Make sure you&#39;re using a non-public role because it doesn&#39;t have enough permissions for the load process.</li>
+</ul>
+</li>
+<li>Select the necessary <strong>Use static IP</strong> option from the dropdown.</li>
+</ol>
+<h2 is-upgraded>AI Agent and your Snowflake data</h2>
+<p>After successfully connecting your Snowflake database, Improvado AI Agent will automatically analyze data in your Snowflake storage and generate metadata for accurate analytics reports and consistent Marketing Data Governance workflows.</p>
+<h2 is-upgraded>How to access your data using Snowsight</h2>
+<ol type="1">
+<li>Sign in to your <a href="https://app.snowflake.com/" target="_blank">Snowflake</a> account.</li>
+</ol>
+<p class="image-container"><img alt="snowsight_signin" src="img/98f5126976dd838c.png"></p>
+<ol type="1" start="2">
+<li>Go to the Databases tab to see a full list of databases in your Snowflake instance.</li>
+</ol>
+<p class="image-container"><img alt="snowsight_databases" src="img/a24f79f05540ea16.png"></p>
+<ol type="1" start="3">
+<li>Select the necessary schema to where you&#39;ve setup Data Load to see a list of its tables.</li>
+</ol>
+<p class="image-container"><img alt="snowsight_tables" src="img/d71512daeb588da6.png"></p>
+<ol type="1" start="4">
+<li>To query your data, you&#39;ll need to create a new SQL Worksheet. First, go to the Projects &gt; Worksheets page. Click the Plus button and select SQL Worksheet from the dropdown.</li>
+</ol>
+<p class="image-container"><img alt="snowsight_worksheets" src="img/a5c75b940adbd04d.png"></p>
+<ol type="1" start="5">
+<li>Here you can select the necessary table that you want to query using SQL and see its structure.</li>
+</ol>
+<p class="image-container"><img alt="snowsight_sql1" src="img/ac7ca5731f0ff77d.png"></p>
+<ol type="1" start="6">
+<li>Check the data loaded to this table in the Results view or create a Chart to help you visualize it.</li>
+</ol>
+<p class="image-container"><img alt="snowsight_sql2" src="img/1f8bc89dcf7affaa.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Privacy" duration="2">
+        <p>In this step, we will learn about Data Privacy policies and rules within Improvado &amp; Snowflake.</p>
+<p>Improvado AI Agent is compatible with any Row Access Policies you&#39;ve set up in Snowflake. Improvado enforces data governance policies such as access controls and quality standards right from the metadata level. This ensures that your data governance workflows are consistent and reliable.</p>
+<p>You can check Improvado&#39;s <a href="https://improvado.io/company-legal/privacy-policy" target="_blank">Privacy Policy</a> for more details.</p>
+<h2 is-upgraded>User access management in Improvado</h2>
+<p>We also provide tools to manage user access within the Improvado platform.</p>
+<p>Workspaces allow for access management and control within a single Improvado instance. This is especially helpful if you want to separate data by specific Products or Client accounts, ensuring a structured and simplified experience.</p>
+<p class="image-container"><img alt="Workspaces" src="img/935bf7d47340a8ac.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Access and Consumption" duration="2">
+        <p>The AI Agent automatically scans and collects metadata for each table, column and row values in your Snowflake storage. This step is crucial as it enables the AI Agent to understand the structure and relationships within your database.</p>
+<p>Improvado&#39;s integration with Snowflake ensures that your analytics, machine learning, and ETL services are all connected within a unified platform. This integration simplifies the data management process and enhances the overall efficiency of your data workflows.</p>
+<p>By leveraging these capabilities, Improvado facilitates efficient data access and consumption, providing you with the tools necessary to extract valuable insights and maintain robust data governance practices.</p>
+<h2 is-upgraded>Billing dashboard</h2>
+<p>Improvado Billing Dashboard offers an in-depth analysis of your data usage, providing crucial segmented insights into extracted rows over your usage period. It also includes interactive features, enhancing your ability to examine and understand the data in a more dynamic and effective manner.</p>
+<p class="image-container"><img alt="Billing dashboard" src="img/8884d4bec6be0b59.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>In this guide, we learned how to connect your Snowflake data to Improvado for analytics &amp; governance.</p>
+<p>Improvado provides significant value to Snowflake users and allows you to:</p>
+<ul>
+<li>Better organize your Data Warehouse</li>
+<li>Enable Data Governance for your marketing data</li>
+<li>Manage your PII within Snowflake</li>
+<li>Get an insight into your Snowflake data</li>
+<li>Scale to the needs of your enterprise</li>
+</ul>
+<p class="image-container"><img alt="Value" src="img/6a10e7741afcbf92.png"></p>
+<h2 is-upgraded>Learn more</h2>
+<ul>
+<li>You can learn more about Improvado on <a href="https://improvado.io" target="_blank">official website</a></li>
+<li>Read about Snowflake partnership with Improvado at <a href="https://improvado.io/blog" target="_blank">Improvado-Snowflake Partnership</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

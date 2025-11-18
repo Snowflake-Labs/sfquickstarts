@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "segment-retl-salesforce",
+  "duration": 22,
+  "title": "Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce",
+  "summary": "Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce",
+  "source": "segment-retl-salesforce/segment-retl-salesforce.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "marketing"
+  ],
+  "tags": [
+    "gettingstarted",
+    "reverseetl",
+    "salesforce",
+    "segment",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "segment-retl-salesforce"
+}

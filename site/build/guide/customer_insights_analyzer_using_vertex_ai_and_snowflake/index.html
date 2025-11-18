@@ -1,0 +1,596 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Google, Snowflake and Streamlit for Generative AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="customer_insights_analyzer_using_vertex_ai_and_snowflake"
+                  title="Getting Started with Google, Snowflake and Streamlit for Generative AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>In this quickstart you will build a Streamlit application that leverages Snowpark External Access in Snowflake with Vertex AI and Generative AI to analyze customer reviews.</p>
+<p>In summary this is what you will do:</p>
+<ul>
+<li>Set up environments in both Snowflake and Google Cloud Platform</li>
+<li>Create a function that leverages Snowpark External Access to make a call to GCP Vertex AI Generative AI models.</li>
+<li>Create a Streamlit app that leverages the above function to generate responses using data from Snowflake and prompts.</li>
+</ul>
+<h2 is-upgraded>What is Generative AI?</h2>
+<p>Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.</p>
+<h2 is-upgraded>Using Generative AI with Google Cloud</h2>
+<p>Generative AI on Vertex AI  gives you access to many large generative AI models so you can evaluate, tune, and deploy them for use in your AI-powered applications. <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/overview" target="_blank">This page</a> gives you an overview of the generative AI workflow on Vertex AI, the features and models that are available, and directs you to resources for getting started.</p>
+<p>The below diagram shows how to use Google Cloud fot Generative AI.</p>
+<p class="image-container"><img src="img/4d465e65f8e3c473.png"></p>
+<h2 is-upgraded>What is Snowflake?</h2>
+<p>Snowflake is a cloud-based data warehousing solution that allows businesses to store and analyze large volumes of data efficiently. It separates storage and compute functionalities, enabling users to scale resources independently and pay only for what they use. Snowflake supports a wide range of data workloads, including data warehousing, data lakes, and data engineering, and offers robust data sharing capabilities across different cloud platforms.</p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.</p>
+<h2 is-upgraded>Pre-requisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account with Access to <a href="https://streamlit.io/" target="_blank">Streamlit</a> in your Snowflake account.</li>
+<li><a href="https://cloud.google.com/" target="_blank">Google Cloud Account</a> with Vertex AI.</li>
+<li>Familiarity with the Python programming language.</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>We will build an efficient architecture all within Snowflake that will access product urls and images in Snowflake and pass that data to a a Google Cloud to generate a response. The architecture will look like this</p>
+<p class="image-container"><img src="img/f0114b1de41b0688.png"></p>
+<h2 is-upgraded>Use Case</h2>
+<p>This use case will leverage sample customer reviews to allow users to analyze them leveraging Generative AI. This quickstart was inspired by the demo built by the venerable Alex Ross. Details on the use case covered in this blog <a href="https://cloudydata.substack.com/p/snowflake-and-vertex-ai-foundational" target="_blank">here</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Google Environment" duration="10">
+        <p>For this quickstart you will need a Google Cloud account with a Vertex AI service enabled. Users can create a trial Google Cloud account <a href="cloud.google.com" target="_blank">here</a>. There will be a cost to run this lab, but if there is it will be nominal.</p>
+<p>Once you have your Google Cloud account you will need to create a project then enable the Vertex AI service. Once in the Vertex AI service you can select the model garden tab the left menu bar to view the models available in Vertex AI. For this lab we will be using the Palm Bison model for text generation.</p>
+<p class="image-container"><img src="img/616d15797a5731e6.png"></p>
+<p>Once you have the Vertex AI service enabled in your Google Cloud Project head to &#34;APIs and Services&#34;, click &#34;Create Credentials&#34; select &#34;OAuth Client ID&#34; then provide any name you would like and generate the client id. Note the Client ID and Client Secret.</p>
+<p class="image-container"><img src="img/130ab4b73547a1cc.png"></p>
+<p>Now, go to https://developers.google.com/oauthplayground/ scroll down to the left menu bar, select &#34;Vertex AI API...&#34; and select both options. Click on the settings gear menu in the top right, select &#34;Use your own OAuth credentials&#34; and enter the Client ID and Secret from the previous step. Close the settings. Click &#34;Authorize APIs&#34;.</p>
+<p class="image-container"><img src="img/60d18eb969ceddce.png"></p>
+<p>Click &#34;Exchange authorization code for tokens&#34; and note the &#34;Refresh Token&#34;.</p>
+<p class="image-container"><img src="img/d182161c222f5fd8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment" duration="10">
+        <p>Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with customer reviews. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.</p>
+<p>Important to note that in this quickstart we will be using the requests package to make the external call to <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text" target="_blank">Vertex Rest API</a>. In the Summer of ‘24 the Snowflake environment will support the <a href="https://cloud.google.com/vertex-ai/docs/python-sdk/use-vertex-ai-python-sdk" target="_blank">Vertex AI SDK</a> in the <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages" target="_blank">Snowflake Anaconda Channel</a>.</p>
+<pre><code language="language-sql" class="language-sql">--create database and warehouse
+use role accountadmin;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+CREATE DATABASE DEMOS;
+CREATE SCHEMA VERTEX;
+USE WAREHOUSE HOL_WH
+
+--create stage
+USE DATABASE DEMOS;
+USE SCHEMA VERTEX;
+CREATE OR REPLACE STAGE CUSTOMER_REVIEWS_STAGE
+URL=&#39;s3://hol-qs-bucket/&#39;
+FILE_FORMAT = (TYPE = &#39;csv&#39;);
+
+--create loan_one table
+CREATE OR REPLACE TABLE REVIEWS
+  (ID STRING,
+   RATING STRING,
+   REVIEW STRING,
+   CUSTOMER_NAME STRING,
+   REVIEW_DATE DATE);
+
+COPY INTO REVIEWS FROM @CUSTOMER_REVIEWS_STAGE/Customer_Reviews.csv
+FILE_FORMAT = (TYPE = &#39;CSV&#39; FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39; ESCAPE_UNENCLOSED_FIELD = &#39;\\&#39; SKIP_HEADER = 1) ON_ERROR = &#39;CONTINUE&#39;;
+
+select top 10 * from REVIEWS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowpark External Access to call Vertex AI" duration="10">
+        <p>Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access Vertex models via a stored procedure and function that leverage a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to Vertex AI (or any other external service).</p>
+<p>You will have to replace several values that you previously noted as well as your Google deployment region and Google Project ID.</p>
+<pre><code language="language-sql" class="language-sql">--Snowflake External Access + Vertex GenAI API Demo
+--This demo shows how to use External Access in Snowflake to call the Vertex GenAI Palm2 LLM: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text
+--Author Alex Ross, Senior Sales Engineer, Snowflake
+--Last Modified 16th April 2024
+
+--Create demo database/schema
+USE ROLE ACCOUNTADMIN;
+USE DATABASE DEMOS;
+USE SCHEMA VERTEX;
+
+--Create Security Integration For GCP OAuth
+--Visit https://console.cloud.google.com/apis/credentials to generate OAuth 2.0 Client IDs
+CREATE OR REPLACE SECURITY INTEGRATION vertex_access_integration
+  TYPE = API_AUTHENTICATION
+  AUTH_TYPE = OAUTH2
+  OAUTH_CLIENT_ID = &#39;&lt;CLIENT ID&gt;&#39;
+  OAUTH_CLIENT_SECRET = &#39;&lt;CLIENT SECRET&gt;&#39;
+  OAUTH_TOKEN_ENDPOINT = &#39;https://oauth2.googleapis.com/token&#39;
+  OAUTH_AUTHORIZATION_ENDPOINT = &#39;https://accounts.google.com/o/oauth2/auth&#39;
+  OAUTH_ALLOWED_SCOPES = (&#39;https://www.googleapis.com/auth/cloud-platform&#39;, &#39;https://&lt;GOOGLE REGION&gt;-aiplatform.googleapis.com&#39;)
+  ENABLED = TRUE;
+GRANT ALL ON INTEGRATION vertex_access_integration to ROLE PUBLIC;
+
+--Create Secret to hold GCP OAuth refresh token
+--Visit https://developers.google.com/oauthplayground/ to generate OAuth refresh token using client ID and secret 
+CREATE OR REPLACE SECRET vertex_oauth_token
+TYPE = OAUTH2
+API_AUTHENTICATION = vertex_access_integration
+OAUTH_REFRESH_TOKEN =&#39;&lt;REFRESH TOKEN&gt;&#39;;
+GRANT USAGE ON SECRET vertex_oauth_token to role PUBLIC;
+GRANT READ ON SECRET vertex_oauth_token to role PUBLIC;
+
+--Create Network Rule to allow connectivity with Google API endpoints
+CREATE OR REPLACE NETWORK RULE gcp_apis_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = (&#39;&lt;GOOGLE REGION&gt;-aiplatform.googleapis.com&#39;,&#39;oauth2.googleapis.com&#39;,&#39;accounts.google.com&#39;,&#39;www.googleapis.com:443&#39;);
+  
+--Create The External Access Integration
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION GCP_APIS_ACCESS_INTEGRATION
+  ALLOWED_NETWORK_RULES = (gcp_apis_network_rule)
+  ALLOWED_AUTHENTICATION_SECRETS = (vertex_oauth_token)
+  ENABLED = true;
+GRANT ALL ON INTEGRATION GCP_APIS_ACCESS_INTEGRATION TO ROLE PUBLIC;
+
+--Create SP to handle Rest API call to Vertex GenAI endpoint
+--Returns a string response based on prompt and parameters provided to the SP 
+CREATE OR REPLACE PROCEDURE GET_VERTEX_TEXT_GENERATION(&#34;PROMPT&#34; VARCHAR(16777216), &#34;TEMPERATURE&#34; FLOAT, &#34;MAX_OUTPUT_TOKENS&#34; NUMBER(38,0), &#34;TOP_P&#34; FLOAT, &#34;TOP_K&#34; FLOAT)
+RETURNS VARCHAR(16777216)
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.8&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;,&#39;requests&#39;)
+HANDLER = &#39;get_text_generation&#39;
+EXTERNAL_ACCESS_INTEGRATIONS = (GCP_APIS_ACCESS_INTEGRATION)
+SECRETS = (&#39;cred&#39;=VERTEX_OAUTH_TOKEN)
+EXECUTE AS OWNER
+AS &#39;
+import _snowflake
+import requests
+import json
+
+def get_text_generation(session, prompt, temperature, max_output_tokens, top_p, top_k):
+    PROJECT_ID=&#39;&#39;&lt;GOOGLE PROJECT ID&gt;&#39;&#39;
+    LOCATION=&#39;&#39;&lt;GOOGLE REGION&gt;&gt;&#39;&#39;
+    token = _snowflake.get_oauth_access_token(&#39;&#39;cred&#39;&#39;)
+    url = f&#39;&#39;https://{LOCATION}-aiplatform.googleapis.com/v1/projects/{PROJECT_ID}/locations/{LOCATION}/publishers/google/models/text-bison:predict&#39;&#39;
+    d = {&#39;&#39;instances&#39;&#39;:[{&#39;&#39;prompt&#39;&#39;: prompt}],
+         &#39;&#39;parameters&#39;&#39;:{&#39;&#39;temperature&#39;&#39;: temperature,
+                &#39;&#39;maxOutputTokens&#39;&#39;: max_output_tokens,
+                &#39;&#39;topK&#39;&#39;: top_k,
+                &#39;&#39;topP&#39;&#39;: top_p
+            }
+        }
+    h = {
+            &#39;&#39;Authorization&#39;&#39;: &#39;&#39;Bearer &#39;&#39; + token,
+            &#39;&#39;Content-Type&#39;&#39;: &#39;&#39;application/json; charset=utf-8&#39;&#39;
+        }
+
+    try:
+        response = requests.post(url, data=json.dumps(d), headers=h)
+        data = response.json()
+        return data[&#39;&#39;predictions&#39;&#39;][0][&#39;&#39;content&#39;&#39;]
+    except:
+        return requests.post(url, data=json.dumps(d), headers=h).json()
+ 
+&#39;;
+
+call get_vertex_text_generation(&#39;why is snowflake the best data platform?&#39;,0.2,256,0.95,2); --Test SP is working as expected
+
+--Create a UDF to handle Rest API call to Vertex GenAI endpoint
+--This UDF is designed to be used to analyse a customer review
+--Returns a variant/json response based on prompt and parameters provided to the UDF 
+CREATE OR REPLACE FUNCTION GET_VERTEX_REVIEW_SENTIMENT_UDF(&#34;PROMPT&#34; VARCHAR(16777216), &#34;TEMPERATURE&#34; FLOAT, &#34;MAX_OUTPUT_TOKENS&#34; NUMBER(38,0), &#34;TOP_P&#34; FLOAT, &#34;TOP_K&#34; FLOAT)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.8&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;,&#39;requests&#39;)
+HANDLER = &#39;GET_VERTEX_REVIEW_SENTIMENT&#39;
+EXTERNAL_ACCESS_INTEGRATIONS = (GCP_APIS_ACCESS_INTEGRATION)
+SECRETS = (&#39;cred&#39;=VERTEX_OAUTH_TOKEN)
+AS &#39;
+import _snowflake
+import requests
+import json
+
+def GET_PREPROMPT():
+    preprompt = &#39;&#39;For the given review, return a JSON object that has the fields sentiment, explanation, summary, and product. Acceptable values for sentiment are Positive or Negative. The explanation field contains text that explains the sentiment. The summary field contains a single sentence summarizing the review in under 10 words. The product field contains the name or type of product purchased if it has been included in the review. DO NOT INCLUDE BACKTICKS IN THE RESPONSE. Review: &#39;&#39;
+    return preprompt
+
+def GET_VERTEX_REVIEW_SENTIMENT(prompt, temperature, max_output_tokens, top_p, top_k):
+    PROJECT_ID=&#39;&#39;&lt;GOOGLE PROJECT ID&gt;&#39;&#39;
+    LOCATION=&#39;&#39;&lt;GOOGLE REGION&gt;&#39;&#39;
+    token = _snowflake.get_oauth_access_token(&#39;&#39;cred&#39;&#39;)
+    url = f&#39;&#39;https://{LOCATION}-aiplatform.googleapis.com/v1/projects/{PROJECT_ID}/locations/{LOCATION}/publishers/google/models/text-bison:predict&#39;&#39;
+    d = {&#39;&#39;instances&#39;&#39;:[{&#39;&#39;prompt&#39;&#39;: GET_PREPROMPT() + prompt}],
+         &#39;&#39;parameters&#39;&#39;:{&#39;&#39;temperature&#39;&#39;: temperature,
+                &#39;&#39;maxOutputTokens&#39;&#39;: max_output_tokens,
+                &#39;&#39;topK&#39;&#39;: top_k,
+                &#39;&#39;topP&#39;&#39;: top_p
+            }
+        }
+    h = {
+            &#39;&#39;Authorization&#39;&#39;: &#39;&#39;Bearer &#39;&#39; + token,
+            &#39;&#39;Content-Type&#39;&#39;: &#39;&#39;application/json; charset=utf-8&#39;&#39;
+        }
+
+    try:
+        response = requests.post(url, data=json.dumps(d), headers=h)
+        data = response.json()
+        return json.loads(data[&#39;&#39;predictions&#39;&#39;][0][&#39;&#39;content&#39;&#39;])
+    except:
+        return requests.post(url, data=json.dumps(d), headers=h).json()
+&#39;;
+GRANT USAGE ON FUNCTION GET_VERTEX_REVIEW_SENTIMENT_UDF(VARCHAR(16777216), FLOAT, NUMBER(38,0), FLOAT, FLOAT) TO ROLE PUBLIC;
+
+select GET_VERTEX_REVIEW_SENTIMENT_UDF(&#39;This is a shoe I will wear with black dress pants or jeans when I need comfort and a little style, but I am not impressed. This is a very flimsy shoe with little support at all. Unlike any other shoes I&#39;&#39;ve purchased in the past. It looks nice, but it&#39;&#39;s not comfortable.&#39;,0.2,256,0.95,2) as RESPONSE; --Test UDF
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Streamlit App - With data in Snowflake" duration="10">
+        <p>Now that we have our VertexAI Function and Stored Procedure let&#39;s build a Streamlit app to analyze customer reviews.</p>
+<p>Go back to the main account view by clicking ‘&lt;- Worksheets&#39; and then select ‘Streamlit&#39;.</p>
+<p>Make sure that you&#39;re still using the ‘ACCOUNTADMIN&#39; role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RDEMOS.VERTEX database and schema where the reviews table is located. You can name the app whatever you would like, something like &#34;Customer Review Analyzer&#34; is appropriate.</p>
+<p class="image-container"><img src="img/8552abceeadba0a8.png"></p>
+<p>Once the app is created paste the below code into the app code and click ‘Run&#39; in order to create the Streamlit App!</p>
+<pre><code language="language-python" class="language-python">#SiS Customer Review Analyser App using Snowflake External Access &amp; Vertex AI
+#Please run ensure you have successfully run Vertex_Demo.sql and created the GET_VERTEX_REVIEW_SENTIMENT_UDF Function
+#Author Alex Ross, Senior Sales Engineer, Snowflake
+#Last Modified 18th April 2024
+
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+import pandas as pd
+import json
+from snowflake.snowpark.functions import col, lit, sum as sum_, max as max_, count as count_
+
+def reset_session() -&gt; None:
+    st.session_state[&#34;temperature&#34;] = 0.0
+    st.session_state[&#34;token_limit&#34;] = 256
+    st.session_state[&#34;top_k&#34;] = 40
+    st.session_state[&#34;top_p&#34;] = 0.8
+    st.session_state[&#34;debug_mode&#34;] = False
+    st.session_state[&#34;prompt&#34;] = []
+    st.session_state[&#34;response&#34;] = []
+
+def create_session_state():
+    if &#34;temperature&#34; not in st.session_state:
+        st.session_state[&#34;temperature&#34;] = 0.0
+    if &#34;token_limit&#34; not in st.session_state:
+        st.session_state[&#34;token_limit&#34;] = 256
+    if &#34;top_k&#34; not in st.session_state:
+        st.session_state[&#34;top_k&#34;] = 40
+    if &#34;top_p&#34; not in st.session_state:
+        st.session_state[&#34;top_p&#34;] = 0.8
+    if &#34;debug_mode&#34; not in st.session_state:
+        st.session_state[&#34;debug_mode&#34;] = False
+    if &#34;prompt&#34; not in st.session_state:
+        st.session_state[&#34;prompt&#34;] = []
+    if &#34;response&#34; not in st.session_state:
+        st.session_state[&#34;response&#34;] = []
+
+def dataframe_with_selections(df):
+    df_with_selections = df.copy()
+    df_with_selections.insert(0, &#34;Select&#34;, False)
+
+    # Get dataframe row-selections from user with st.data_editor
+    edited_df = st.data_editor(
+        df_with_selections,
+        hide_index=True,
+        column_config={&#34;Select&#34;: st.column_config.CheckboxColumn(required=True)},
+        disabled=df.columns,
+    )
+
+    # Filter the dataframe using the temporary column, then drop the column
+    selected_rows = edited_df[edited_df.Select]
+    return selected_rows.drop(&#39;Select&#39;, axis=1)
+
+def write_customer_review(selection, index):
+    st.title(&#34;:snowflake: :green[Customer Review]&#34;)   
+    st.write(&#34;**Customer**: &#34; + selection[&#34;CUSTOMER_NAME&#34;][index])
+    st.write(&#39;**Review**: &#39; + selection[&#34;REVIEW&#34;][index])
+    st.write(&#39;**Review Date**: &#39; + str(selection[&#34;REVIEW_DATE&#34;][index]))
+    st.write(&#39;**Rating**: &#39; + str(selection[&#34;RATING&#34;][index]))
+
+def write_vertex_response(json_resp):
+    col1, col2 = st.columns([2,20])
+    with col1:
+        st.image(&#39;https://lh3.googleusercontent.com/e5M3Bi_o8iVajobAcS0LLDDJ2RN4LzchraKjfEKWvXaTkBw2WU50kuTnF6xHzMOifL6DMe16SCUqNt5w2gB9ZA=w80-h80&#39;, width=60)
+    with col2:
+        st.title(&#34;:blue[Vertex AI] Response&#34;)
+    st.write(&#34;**Summary**: &#34; + json_resp[&#34;summary&#34;])
+    st.write(&#34;**Product**: &#34; + json_resp[&#34;product&#34;])
+    st.write(&#34;**Sentiment**: &#34; + json_resp[&#34;sentiment&#34;])
+    st.write(&#34;**Explanation**: &#34; + json_resp[&#34;explanation&#34;])
+
+st.set_page_config(
+    page_title=&#34;Customer Review Analyser&#34;,
+    page_icon=&#34;:snowflake:&#34;,
+    layout=&#34;wide&#34;,
+    initial_sidebar_state=&#34;collapsed&#34;,
+    menu_items={
+        &#34;About&#34;: &#34;# This app is a sample customer review analyser using Snowflake External Access &amp; the Vertex PaLM Text Generator API&#34;
+    },
+)
+
+with st.sidebar:
+    st.image(&#39;https://raw.githubusercontent.com/GoogleCloudPlatform/generative-ai/main/language/sample-apps/chat-streamlit/image/sidebar_image.jpg&#39;, width=None)
+    st.write(&#34;Model Settings:&#34;)
+
+    # define the temeperature for the model
+    temperature_value = st.slider(&#34;Temperature :&#34;, 0.0, 1.0, 0.2)
+    st.session_state[&#34;temperature&#34;] = temperature_value
+
+    # define the temeperature for the model
+    token_limit_value = st.slider(&#34;Token limit :&#34;, 1, 1024, 256)
+    st.session_state[&#34;token_limit&#34;] = token_limit_value
+
+    # define the temeperature for the model
+    top_k_value = st.slider(&#34;Top-K  :&#34;, 1, 40, 40)
+    st.session_state[&#34;top_k&#34;] = top_k_value
+
+    # define the temeperature for the model
+    top_p_value = st.slider(&#34;Top-P :&#34;, 0.0, 1.0, 0.8)
+    st.session_state[&#34;top_p&#34;] = top_p_value
+
+    if st.button(&#34;Reset Session&#34;):
+        reset_session()
+
+# creating session states
+create_session_state()
+
+st.title(&#34;:shopping_trolley: Customer Review Analyser 	:bar_chart:&#34;)
+st.subheader(&#34;:snowflake: Powered by Snowflake &amp; Vertex AI&#34;)
+session = get_active_session()
+
+df_reviews = session.table(&#34;DEMOS.VERTEX.REVIEWS&#34;)
+
+col1, col2 = st.columns(2)
+with col1:
+    chart_data = df_reviews.group_by(&#34;REVIEW_DATE&#34;).agg((count_(&#34;*&#34;)).alias(&#34;REVIEW_COUNT&#34;))
+    st.line_chart(chart_data, x = chart_data.columns[0], y = chart_data.columns[1], color=&#34;#29B5E8&#34;)
+with col2:
+    chart_data = df_reviews.group_by(&#34;RATING&#34;).agg((count_(&#34;*&#34;)).alias(&#34;REVIEW_COUNT&#34;))
+    st.bar_chart(chart_data, x = chart_data.columns[0], y = chart_data.columns[1], color = &#34;#71D3DC&#34;)
+
+rating_min, rating_max = st.select_slider(&#39;Filter Ratings To Display:&#39;,options=[1,2,3,4,5],value=(1, 5))
+
+if rating_min or rating_max:
+    st.write(&#34;**Reviews Matching Rating Filter**&#34;)
+    reviews = df_reviews.filter(f&#34;RATING &gt;= {rating_min} AND RATING &lt;={rating_max}&#34;).to_pandas()  
+    selection = dataframe_with_selections(reviews)
+
+    st.write(&#34;Current Vertex AI Settings: &#34;)
+    # if st.session_state[&#39;temperature&#39;] or st.session_state[&#39;debug_mode&#39;] or :
+    st.write(
+        &#34;Temperature: &#34;,
+        st.session_state[&#34;temperature&#34;],
+        &#34; \t \t Token limit: &#34;,
+        st.session_state[&#34;token_limit&#34;],
+        &#34; \t \t Top-K: &#34;,
+        st.session_state[&#34;top_k&#34;],
+        &#34; \t \t Top-P: &#34;,
+        st.session_state[&#34;top_p&#34;],
+        &#34; \t \t Debug Model: &#34;,
+        st.session_state[&#34;debug_mode&#34;],
+    )
+    
+    if st.button(&#34;Submit To Vertex GenAI&#34;):
+        if selection.empty:
+            st.write(&#34;Please select at least one review to submit to Vertex AI&#34;)
+        for index in selection.index:
+            session = get_active_session()
+            col1, col2 = st.columns(2)
+            with col1:
+                write_customer_review(selection, index)
+            with col2:        
+                with st.spinner(&#34;PaLM is working to generate, wait.....&#34;):
+                    review = selection[&#34;REVIEW&#34;][index].replace(&#34;&#39;&#34;, &#34;\\&#39;&#34;)
+                    response = session.sql(f&#34;SELECT DEMOS.VERTEX.GET_VERTEX_REVIEW_SENTIMENT_UDF(\
+                        &#39;{review}&#39;,\
+                        &#39;{st.session_state[&#39;temperature&#39;]}&#39;,\
+                        &#39;{st.session_state[&#39;token_limit&#39;]}&#39;,\
+                        &#39;{st.session_state[&#39;top_p&#39;]}&#39;,\
+                        &#39;{st.session_state[&#39;top_k&#39;]}&#39;) AS RESPONSE&#34;)
+                    json_resp = json.loads(response.to_pandas()[&#34;RESPONSE&#34;][0])
+                    write_vertex_response(json_resp)
+            st.markdown(&#34;&#34;&#34;---&#34;&#34;&#34;)
+        
+</code></pre>
+<p>The Streamlit app provides a visual representation of the data stored in the REVIEWS table in Snowflake and enables a user to filter on the review rating. From here the user can select multiple reviews they would like to process via Vertex AI to obtain the sentiment, explanation, product name, and summary of the review.</p>
+<p class="image-container"><img src="img/77cc0a8a6304e5c7.png"></p>
+<p>In addition to this app users can build a second app that leverages the Stored Procedure that we created using the Streamlit Python code below.</p>
+<pre><code language="language-python" class="language-python">#SiS version of Google sample app using Snowflake External Access
+#Original code: https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/sample-apps/chat-streamlit
+#Please run ensure you have successfully run Vertex_Demo.sql and created the GET_VERTEX_TEXT_GENERATION Stored Procedure
+#Author Alex Ross, Senior Sales Engineer, Snowflake
+#Last Modified 18th April 2024
+
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+
+def reset_session() -&gt; None:
+    st.session_state[&#34;temperature&#34;] = 0.0
+    st.session_state[&#34;token_limit&#34;] = 256
+    st.session_state[&#34;top_k&#34;] = 40
+    st.session_state[&#34;top_p&#34;] = 0.8
+    st.session_state[&#34;debug_mode&#34;] = False
+    st.session_state[&#34;prompt&#34;] = []
+    st.session_state[&#34;response&#34;] = []
+
+def hard_reset_session() -&gt; None:
+    st.session_state = {states: [] for states in st.session_state}
+
+def create_session_state():
+    if &#34;temperature&#34; not in st.session_state:
+        st.session_state[&#34;temperature&#34;] = 0.0
+    if &#34;token_limit&#34; not in st.session_state:
+        st.session_state[&#34;token_limit&#34;] = 256
+    if &#34;top_k&#34; not in st.session_state:
+        st.session_state[&#34;top_k&#34;] = 40
+    if &#34;top_p&#34; not in st.session_state:
+        st.session_state[&#34;top_p&#34;] = 0.8
+    if &#34;debug_mode&#34; not in st.session_state:
+        st.session_state[&#34;debug_mode&#34;] = False
+    if &#34;prompt&#34; not in st.session_state:
+        st.session_state[&#34;prompt&#34;] = []
+    if &#34;response&#34; not in st.session_state:
+        st.session_state[&#34;response&#34;] = []
+
+st.set_page_config(
+    page_title=&#34;Vertex PaLM Text Generation API&#34;,
+    page_icon=&#34;:robot:&#34;,
+    layout=&#34;centered&#34;,
+    initial_sidebar_state=&#34;expanded&#34;,
+    menu_items={
+        &#34;About&#34;: &#34;# This app shows you how to use Vertex PaLM Text Generator API&#34;
+    },
+)
+
+# creating session states
+create_session_state()
+
+st.image(&#39;https://raw.githubusercontent.com/GoogleCloudPlatform/generative-ai/main/language/sample-apps/chat-streamlit/image/palm.jpg&#39;, width=None)
+st.title(&#34;:red[PaLM 2] :blue[Vertex AI] Text Generation&#34;)
+
+with st.sidebar:
+    st.image(&#39;https://raw.githubusercontent.com/GoogleCloudPlatform/generative-ai/main/language/sample-apps/chat-streamlit/image/sidebar_image.jpg&#39;, width=None)
+    st.write(&#34;Model Settings:&#34;)
+
+    # define the temeperature for the model
+    temperature_value = st.slider(&#34;Temperature :&#34;, 0.0, 1.0, 0.2)
+    st.session_state[&#34;temperature&#34;] = temperature_value
+
+    # define the temeperature for the model
+    token_limit_value = st.slider(&#34;Token limit :&#34;, 1, 1024, 256)
+    st.session_state[&#34;token_limit&#34;] = token_limit_value
+
+    # define the temeperature for the model
+    top_k_value = st.slider(&#34;Top-K  :&#34;, 1, 40, 40)
+    st.session_state[&#34;top_k&#34;] = top_k_value
+
+    # define the temeperature for the model
+    top_p_value = st.slider(&#34;Top-P :&#34;, 0.0, 1.0, 0.8)
+    st.session_state[&#34;top_p&#34;] = top_p_value
+
+    if st.button(&#34;Reset Session&#34;):
+        reset_session()
+
+
+with st.container():
+    st.write(&#34;Current Generator Settings: &#34;)
+    # if st.session_state[&#39;temperature&#39;] or st.session_state[&#39;debug_mode&#39;] or :
+    st.write(
+        &#34;Temperature: &#34;,
+        st.session_state[&#34;temperature&#34;],
+        &#34; \t \t Token limit: &#34;,
+        st.session_state[&#34;token_limit&#34;],
+        &#34; \t \t Top-K: &#34;,
+        st.session_state[&#34;top_k&#34;],
+        &#34; \t \t Top-P: &#34;,
+        st.session_state[&#34;top_p&#34;],
+        &#34; \t \t Debug Model: &#34;,
+        st.session_state[&#34;debug_mode&#34;],
+    )
+
+    prompt = st.text_area(&#34;Add your prompt: &#34;, height=100)
+    if prompt:
+        st.session_state[&#34;prompt&#34;].append(prompt)
+        session = get_active_session()
+        with st.spinner(&#34;PaLM is working to generate, wait.....&#34;):
+            response = session.call(&#34;DEMOS.VERTEX.get_vertex_text_generation&#34;,
+                prompt,
+                st.session_state[&#34;temperature&#34;],
+                st.session_state[&#34;token_limit&#34;],
+                st.session_state[&#34;top_p&#34;],
+                st.session_state[&#34;top_k&#34;],
+            )
+            st.session_state[&#34;response&#34;].append(response)
+            st.markdown(response)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion  And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built your first Streamlit App with Vertex AI LLMs. After setting up our Google Cloud and Snowflake environments we built two primary things: a set of a UDF and stored procedures that utilize Snowpark External Access to make a call to a Vertex AI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and Vertex AI.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up a Snowflake and Google Cloud environment to integrate the two platforms.</li>
+<li>How to build a Snowpark External Access integration to call Vertex AI.</li>
+<li>How to build a Streamlit app that calls Vertex AI leveraging tabular and image data from Snowflake.</li>
+<li>How to build your first Generative AI App with Vertex AI and Snowflake!</li>
+</ul>
+<h2 is-upgraded>Related resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=fALb8SosA_U" target="_blank">RBAC with External Services</a></li>
+<li><a href="https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md" target="_blank">Prompting</a></li>
+<li><a href="https://streamlit.io/" target="_blank">Streamlit</a></li>
+<li><a href="https://cloudydata.substack.com/p/snowflake-and-vertex-ai-foundational" target="_blank">Blog on this use case</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

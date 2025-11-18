@@ -1,0 +1,204 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Deploying Custom Models To Snowflake Model Registry</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="deploying_custom_models_to_snowflake_model_registry"
+                  title="Deploying Custom Models To Snowflake Model Registry"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Through this quickstart guide, you will learn how to add a custom model to the Snowflake Model Registry. You will set up your Snowflake and Python environments, train a model using the PyCaret library, deploy that model to the Model Registry and run the inference within your Snowflake environment.</p>
+<h2 is-upgraded>What Is Snowpark?</h2>
+<p>Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.</p>
+<p><strong>Client Side Libraries</strong> - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.</p>
+<p><strong>Elastic Compute Runtimes</strong> - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.</p>
+<p>Learn more about <a href="http://www.snowflake.com/snowpark" target="_blank">Snowpark</a>.</p>
+<h2 is-upgraded>What Is Snowpark ML?</h2>
+<p><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview" target="_blank">Snowflake ML</a> is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use <a href="https://docs.snowflake.com/en/guides-overview-ml-functions" target="_blank">ML Functions</a> to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.</p>
+<p class="image-container"><img alt="snowpark_ml_overview" src="img/cdfcb92c6d412c69.png"></p>
+<p>This qucikstart will focus on the Snowflake Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.</p>
+<h2 is-upgraded>What Is Snowflake Model Registry?</h2>
+<p>The <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry" target="_blank">Snowflake Model Registry</a> allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The model registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using classes in the Snowpark ML library. Models can have multiple versions, and you can designate a version as the default.</p>
+<p>The Snowflake Model Registry has built-in types support for the most common model types, including scikit-learn, xgboost, LightGBM, PyTorch, TensorFlow, Hugging Face pipelines, and MLFlow pyfunc models. Other types of models via the snowflake.ml.model.CustomModel class</p>
+<p>This quickstart will focus on</p>
+<ul>
+<li>how to create models using the snowflake.ml.model.CustomModel class, log them to the Snowflake Model Registry, and use them.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to train a PyCaret model</li>
+<li>how to create a CustomModel class for a PyCaret model</li>
+<li>how to log a CustoModel to Snowflake Model Registry</li>
+<li>how to run inference in Snowflake using a custom model.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed <aside class="special"><p>Download the <a href="https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry" target="_blank">git repo</a></p>
+</aside>
+</li>
+<li><a href="https://www.anaconda.com/" target="_blank">Anaconda</a> installed</li>
+<li><a href="https://www.python.org/downloads/" target="_blank">Python 3.10</a> installed <ul>
+<li>Note that you will be creating a Python environment with 3.10 in the <strong>Setup the Python Environment</strong> step</li>
+</ul>
+</li>
+<li>A Snowflake account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A set on notebooks that trains a PyCaret model, creates a CustomModel for it and log and use it in Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup The Environment" duration="10">
+        <h2 is-upgraded>Clone The Git Repository</h2>
+<p>The very first step is to clone the <a href="https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry" target="_blank">GitHub repository</a>. This repository contains all the code you will need to successfully complete this QuickStart Guide.</p>
+<p>Using HTTPS:</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry.git
+</code></pre>
+<p>OR, using SSH:</p>
+<pre><code language="language-shell" class="language-shell">git clone git@github.com:Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry.git
+</code></pre>
+<h2 is-upgraded>Setup Snowflake</h2>
+<p>Run the following SQL commands in a SQL worksheet to create the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html" target="_blank">warehouse</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database.html" target="_blank">database</a> and <a href="https://docs.snowflake.com/en/sql-reference/sql/create-schema.html" target="_blank">schema</a>.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+CREATE OR REPLACE WAREHOUSE MRCM_HOL_WH; --by default, this creates an XS Standard Warehouse
+CREATE OR REPLACE DATABASE MRCM_HOL_DB; -- will be used to store the custom model
+CREATE OR REPLACE SCHEMA MRCM_HOL_SCHEMA;  -- will be used to store the custom model
+</code></pre>
+<p>These can also be found in the <a href="https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/setup.sql" target="_blank">setup.sql</a> file.</p>
+<h2 is-upgraded>Setup The Python Environment</h2>
+<h3 is-upgraded>Install The Snowpark For Python And Snowpark ML Libraries</h3>
+<ul>
+<li>Download and install the miniconda installer from <a href="https://conda.io/miniconda.html" target="_blank">https://conda.io/miniconda.html</a>. (OR, you may use any other Python environment with Python 3.10, for example, <a href="https://virtualenv.pypa.io/en/latest/" target="_blank">virtualenv</a>).</li>
+<li>Open a new terminal window and execute the following commands in the same terminal window:<ol type="1">
+<li>Make sure you are in the <strong>sfguide-deploying-custom-models-snowflake-model-registry</strong> directory</li>
+<li>Create the conda environment.</li>
+</ol>
+<pre><code>conda env create -f conda_env.yml
+</code></pre>
+<ol type="1" start="3">
+<li>Activate the conda environment.</li>
+</ol>
+<pre><code>conda activate custom-model-hol
+</code></pre>
+<ol type="1" start="4">
+<li><code>Optionally</code> start notebook server:</li>
+</ol>
+<pre><code>$ jupyter notebook &amp;&gt; /tmp/notebook.log &amp;
+</code></pre>
+</li>
+<li>Update <a href="connection.json" target="_blank">connection.json</a> with your Snowflake account details and credentials. Here&#39;s a sample based on the object names we created in the last step:</li>
+</ul>
+<pre><code>{
+  &#34;account&#34;   : &#34;&lt;your_account_identifier_goes_here&gt;&#34;,
+  &#34;user&#34;      : &#34;&lt;your_username_goes_here&gt;&#34;,
+  &#34;password&#34;  : &#34;&lt;your_password_goes_here&gt;&#34;,
+  &#34;role&#34;      : &#34;ACCOUNTADMIN&#34;,
+  &#34;warehouse&#34; : &#34;MRCM_HOL_WH&#34;,
+  &#34;database&#34;  : &#34;MRCM_HOL_DB&#34;,
+  &#34;schema&#34;    : &#34;MRCM_HOL_SCHEMA&#34;
+}
+</code></pre>
+<aside class="warning"><p><strong>Note:</strong> For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Train A PyCaret Model" duration="20">
+        <p>During this step we will train a PyCaret model and save it to local disc.</p>
+<ul>
+<li>Open the following jupyter notebook and run each of the cells: <a href="https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/1_train_pycaret_model.ipynb" target="_blank">1_train_pycaret_model.ipynb</a></li>
+</ul>
+<aside class="warning"><p><strong>Note:</strong> PyCaret can not currently run directly, i.e you can not use it with import, in a Snowflkae Notebook so make sure you use an external notbook enviroment such as Visual Studio Code or Jupyter.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create And Deploy A Custom Model" duration="20">
+        <p>During this step we will create a CustomModel class that we will use with our trained PyCaret model, created in previous notebook, log it into the Snowflake Model Registry and do inference using the logged model on a Snowpark DataFrame.</p>
+<ul>
+<li>Open the following jupyter notebook and run each of the cells: <a href="https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/2_create_and_deploy_custom_model.ipynb" target="_blank">2_create_and_deploy_custom_model.ipynb</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the CustomModel class to log a model trained with a Machine Learning library that is not supported by default, but exists in the Snowflake Anaconda channel.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to train a PyCaret model</li>
+<li>How to to create a Custom Modle for the trained PyCaret model</li>
+<li>How to to store the Custom Model in Snowflake Model Registry</li>
+<li>How to use the Custom Model with data in Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/custom-models" target="_blank">Storing Custom Models in the Snowflake Model Registry</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/index" target="_blank">Snowpark ML API Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

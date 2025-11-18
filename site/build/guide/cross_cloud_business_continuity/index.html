@@ -1,0 +1,467 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Cross Cloud Business Continuity With Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="cross_cloud_business_continuity"
+                  title="Cross Cloud Business Continuity With Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p>&#34;By failing to prepare, you are preparing to fail&#34; - Benjamin Franklin</p>
+<p>A sound business continuity/disaster recovery plan is an important milestone for organizations looking to build resilient data platforms. Data-driven insights grow revenue, provide services, support customers and aid with critical decision making. Businesses face many forms of disruptions like fire, floods, cyberattacks, ransomware etc. These disruptions can spiral into various undesirable outcomes - from operational systems coming to a standstill leading to financial losses to something worse, like reputational damage.</p>
+<p>Technology is the center-piece of all businesses and mission-critical data can never be unavailable. As businesses move critical applications to the public cloud, continuous global operations rely even more on cloud dependability.</p>
+<p>Snowflake&#39;s <strong>Replication and Failover/Failback</strong> feature enables account metadata, including everything from user identity and role-based access controls to governance policies, warehouses and resource monitors, to be automatically synchronized across clouds and regions for continuous availability. Multiple databases, shares and account metadata can be replicated as a unit, ensuring point-in-time consistency with the primary region.</p>
+<p>Snowflake&#39;s <strong>Client Redirect</strong> feature facilitates seamless failover from primary to secondary so that apps and users can continue functioning without disruption. In the past, to recover, the connection string in every client application had to be manually changed to connect to the new primary site (the former secondary site) in a different region or cloud. With Client Redirect, administrators can use a single server-side command to redirect client applications to the new primary site, without disrupting business teams.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><h3 is-upgraded>Create 2 Snowflake trial accounts in the same Organization - in AWS, Azure cloud regions - and enable replication for each account.</h3>
+Create an AWS trial account <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">here</a><ul>
+<li>choose <strong>Business Critical</strong> edition, <strong>AWS</strong> as cloud provider, any <strong>US</strong> region</li>
+<li>activate account with username <code>snowgrid</code> - this user has ACCOUNTADMIN</li>
+<li>create a SQL Worksheet named <strong><em>Prerequisites</em></strong></li>
+</ul>
+Create an Azure trial account from the AWS account<pre><code language="language-sql" class="language-sql">USE ROLE ORGADMIN;
+
+CREATE ACCOUNT snowflake_azure_target
+  admin_name = snowgrid
+  admin_password = &#39;FILL_IN_PASSWORD&#39;
+  email = &#39;FILL_IN_EMAIL&#39;
+  edition = business_critical
+  region = azure_eastus2;
+</code></pre>
+Enable replication for AWS and Azure accounts as ORGADMIN (doc <a href="https://docs.snowflake.com/en/user-guide/account-replication-config#prerequisite-enable-replication-for-accounts-in-the-organization" target="_blank">here</a>)<pre><code language="language-sql" class="language-sql">-- FILL_IN the organization_name, AWS account_name and Azure account_name in the commands to enable replication
+SHOW ORGANIZATION ACCOUNTS;
+
+SELECT SYSTEM$GLOBAL_ACCOUNT_SET_PARAMETER(&#39;FILL_ORG_NAME.FILL_AWS_ACCOUNT_NAME&#39;, &#39;ENABLE_ACCOUNT_DATABASE_REPLICATION&#39;, &#39;true&#39;); 
+
+SELECT SYSTEM$GLOBAL_ACCOUNT_SET_PARAMETER(&#39;FILL_ORG_NAME.FILL_AZURE_ACCOUNT_NAME&#39;, &#39;ENABLE_ACCOUNT_DATABASE_REPLICATION&#39;, &#39;true&#39;); 
+</code></pre>
+Verify that accounts are enabled for replication<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+SHOW REPLICATION ACCOUNTS;
+</code></pre>
+</li>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html#installing-snowsql" target="_blank">Install SnowSQL</a> (CLI Client): used to load data into a Snowflake internal stage</h3>
+</li>
+<li><h3 is-upgraded>Check that SNOWFLAKE_SAMPLE_DATA shared database is visible, otherwise create it:</h3>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE DATABASE IF NOT EXISTS SNOWFLAKE_SAMPLE_DATA FROM SHARE SFC_SAMPLES.SAMPLE_DATA;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE PUBLIC;
+</code></pre>
+</li>
+<li><h3 is-upgraded>Python Streamlit Dashboard - install the following modules/connectors:</h3>
+<ul>
+<li>Install Python (3.8 or higher): <code>python --version</code></li>
+<li><a href="https://docs.snowflake.com/developer-guide/python-connector/python-connector-install#installing-the-python-connector" target="_blank">Install Snowflake Python connector</a></li>
+<li><a href="https://docs.streamlit.io/library/get-started/installation#install-streamlit-on-macoslinux" target="_blank">Install Streamlit</a>, then a few components <pre><code language="language-bash" class="language-bash">pip install streamlit-echarts
+pip install pandas
+streamlit hello  #(as a test)
+</code></pre>
+</li>
+</ul>
+</li>
+<li><h3 is-upgraded>(<code>Optional</code>) Sigma BI Dashboard</h3>
+<ul>
+<li><a href="https://www.sigmacomputing.com/free-trial/" target="_blank">Sigma Free Trial</a> or launch the Sigma tile in Snowflake Partner Connect from your Snowsight UI</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this quickstart you will learn</p>
+<ul>
+<li>How to use out of the box features available in Snowflake to build resiliency against region failures.</li>
+<li>Group based replication and failover of account objects, databases, shares.</li>
+<li>Pipeline replication (public preview): dynamic tables, stages, pipes, load history.</li>
+<li>Client redirect after a failover leveraged by Streamlit and Sigma dashboards.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Python (minimum 3.8) installed on local machine for a Streamlit app.</li>
+<li>(Optional) Sigma trial account to stimulate a BI dashboard failover.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Source account resources to mimic a production grade Snowflake account.</li>
+<li>Replicate/Failover selective resources to a secondary account in a transactionally consistent fashion.</li>
+<li>Build apps powered by primary snowflake account.</li>
+<li>Failover from primary to secondary account.</li>
+<li>Observe your apps now seamlessly powered by the secondary account.</li>
+<li>Observe ELT pipeline from external and internal stage seamlessly failover with idempotent resumption.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Primary Account Setup (AWS)" duration="20">
+        <p>Download ZIP or Clone <a href="https://github.com/Snowflake-Labs/sfguide_failover_scripts" target="_blank">sfguide_failover_scripts</a> Github repo to your local machine</p>
+<p class="image-container"><img alt="Code Button" src="img/f09e4285efc1d92.png"></p>
+<p>To match provided scripts, copy <code>data</code> and <code>scripts</code> directories to <code>/tmp</code></p>
+<pre><code language="language-bash" class="language-bash">cd sfguide_failover_scripts-main
+cp -r data /tmp
+cp -r scripts /tmp
+</code></pre>
+<h2 is-upgraded>Run SQL scripts 100-600 in sequential order on the AWS Primary account</h2>
+<p><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface" target="_blank">Create Snowsight Worksheets from SQL File</a> - use one worksheet per SQL script</p>
+<p class="image-container"><img alt="Create Worksheet" src="img/aa66412f65a8b359.png"></p>
+<ol type="1">
+<li><code>100_create_replication_objects.sql</code>: create roles, databases, warehouses, resource monitors</li>
+<li><code>200_create_users_source.sql</code>: create users with basic password authentication</li>
+<li><code>300_grant_privileges.sql</code>: grant object and account level privileges</li>
+<li><code>400_load_data.sql</code>: create and load tables, views, functions, stored procedures, shares</li>
+<li><code>500_add_governance_policies.sql</code>: assign tags, masking and row access policies</li>
+<li><code>600_update_primary_task.sql</code>: setup task to update primary tables every few mins</li>
+</ol>
+<h2 is-upgraded>Ingest Payroll Data</h2>
+<p>Load data file <code>data/hr_data_sample.csv</code> into table <code>PAYROLL.NOAM_NORTHEAST.EMPLOYEE_DETAIL</code> with the Snowsight UI interface.</p>
+<p class="image-container"><img alt="load_payroll_1" src="img/732f1191467a5766.png"></p>
+<p>Browse to find the <code>data/hr_data_sample.csv</code> file and set the CSV format correctly</p>
+<p class="image-container"><img alt="load_payroll_2" src="img/bf2af7dfb4048b2b.png"></p>
+<p>You should have successfully loaded <code>100 records</code></p>
+<p class="image-container"><img alt="load_payroll_3" src="img/635e523a7e727804.png"></p>
+<h2 is-upgraded>Create ELT Pipeline using the <a href="https://www.tpc.org/tpcdi/" target="_blank">TPC-DI</a> benchmark schema</h2>
+<p>This modified TPC-DI benchmark flow simulates the process of extracting data from operational (OLTP) systems in a variety of data formats, loading into a set of staging tables, then transforming into a unified model for analytical reporting and insights.</p>
+<p>We will observe how Snowflake&#39;s pipeline replication features (in Public Preview) support seamless failover and idempotent restart of the pipeline on the new primary.</p>
+<ol type="1" start="7">
+<li><code>700_setup_tpcdi_pipeline.sql</code>: create external stage, internal stage w/directory table, create staging tables and batch load plan, use dynamic table DAG to build a declarative pipeline from staging to warehouse.<em>Stop after creating the internal stage here, run Step 8, then continue</em><img alt="switch-to-step8" src="img/9084bcf905bfd639.png"></li>
+<li>Use SnowSQL CLI to load batches from <code>data/tpcdi-scale5</code> and <code>data/tpcdi-scale10</code> to <strong>internal stage</strong>Run in a Terminal window (after installing SnowSQL): this script assumes file locations are <code>/tmp/data</code> and <code>/tmp/scripts</code>, modify appropriately.</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">% snowsql -a ORGNAME-ACCOUNTNAME -u snowgrid -f /tmp/scripts/snowsql/tpcdi_load.sql -o output_format=csv -o output_file=output_file.csv
+</code></pre>
+<ol type="1" start="9">
+<li><code>800_execute_pipeline.sql</code>: call batch load procedure that simulates an ingest pipelineONLY Load Batch 1 (for Scale 5, Scale 10, Scale 100)</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Review Source Account" duration="5">
+        <p>Our scripts in the previous step have created a production like snowflake environment for us. Here&#39;s a list of objects you just created when you ran those scripts:</p>
+<ul>
+<li>Users &amp; Roles</li>
+<li>RBAC Hierarchy</li>
+<li>Databases</li>
+<li>Compute Warehouses</li>
+<li>Direct data shares</li>
+<li>Dynamic data masking policies</li>
+<li>Row access policy</li>
+<li>Object tags</li>
+<li>External stage</li>
+<li>Internal stage w/Directory Table</li>
+<li>Dynamic Tables</li>
+<li>Tasks</li>
+</ul>
+<p>Phew! That&#39;s quite a list here&#39;s what all of this looks like in a picture:</p>
+<p class="image-container"><img alt="snowflake_source_account" src="img/eb092bc43e4753b6.png"></p>
+<h2 is-upgraded>Let&#39;s review our source account</h2>
+<h3 is-upgraded>Observe your RBAC</h3>
+<p>Below is what the roles hierarchy should look like in your source account. Do note that the roles hierarchy is only available via the new UI - Snowsight. Log on to Snowsight and assume the &#34;securityadmin&#34; role and then navigate to home -&gt; admin -&gt; users &amp; roles -&gt; roles.</p>
+<p class="image-container"><img alt="snowsight_screenshot" src="img/1a9d6acc185e095e.png"></p>
+<h3 is-upgraded>Verify Row Access Policy</h3>
+<p>Our row access policy is applied to the global_sales.online_retail.customer table with the following rules:</p>
+<ul>
+<li>sales_analyst role should be able to see data for market segments ‘automobile&#39; and ‘machinery&#39;.</li>
+<li>sales_admin role should be able to see data for market segments ‘automobile&#39;, ‘machinery&#39;, ‘building&#39; and ‘household&#39;.</li>
+<li>product_manager role should be able to see data for ALL market segments.</li>
+<li>All other roles should not be able to see data for ANY market segment.</li>
+</ul>
+<p>Try running this query with role <code>syadmin</code>, <code>sales_analyst</code>, <code>sales_admin</code>, <code>product_manager</code> and notice how data is returned based on the row access policy.</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+use warehouse sales_wh;
+select * from global_sales.online_retail.customer limit 100;
+</code></pre>
+<p>When we replicate our data and our account objects, row level security is applied to the target account as well. This ensures that your access rules around data are retained even on the DR instance.</p>
+<h3 is-upgraded>Verify dynamic data masking policy</h3>
+<p>Run the query below with two different roles - hr_analyst and hr_admin, observe all fields in the return results. What values does hr_analyst see for email, iban, cc and salary columns? What values does the hr_admin see?</p>
+<pre><code language="language-sql" class="language-sql">use role hr_analyst;
+use warehouse hr_wh;
+select * from payroll.noam_northeast.employee_detail limit 100;
+</code></pre>
+<h3 is-upgraded>Verify data shares</h3>
+<p>We&#39;ve created a few data shares with different variations, we&#39;ll observe what permissions each of these shares have and whether these are replicated as is to our secondary account.</p>
+<p>Below code snippet displays permissions on three data shares - GLOBAL_SALES_SHARE, INVENTORY_SHARE and CROSS_DATABASE_SHARE</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+show grants to share global_sales_share;
+show grants to share inventory_share;
+show grants to share cross_database_share;
+</code></pre>
+<h3 is-upgraded>Verify location, type and owner of governance policies</h3>
+<p>We have built 6 masking policies, 4 object tags and 2 row access policies that we use to protect our data. Observe their details like which schema are these policies kept in, who owns them etc.</p>
+<pre><code language="language-sql" class="language-sql">use role governance_admin;
+show masking policies;
+show row access policies;
+show tags;
+</code></pre>
+<p>The output of the three commands should look something like this:</p>
+<p><strong>Masking Policies:</strong><img alt="masking_policy" src="img/341e5599a605027c.png"></p>
+<p><strong>Row Access Policy:</strong><img alt="row_access_policy" src="img/e443a2241b77633e.png"></p>
+<p><strong>Object Tags:</strong><img alt="object_tags" src="img/60fe8f2c935bc491.png"></p>
+<h3 is-upgraded>View Data Pipeline built from TPC-DI spec</h3>
+<ul>
+<li><code>TPCDI_STG.BASE</code> - Snowflake Stages, Staging Tables, Dynamic Tables</li>
+<li><code>TPCDI_WH.BASE</code> - Dynamic Tables: <ul>
+<li>DIM_FINANCIALS (raw)</li>
+<li>DIM_FINANCIAL_ROLL_YEAR_EPS_DETAILS (transform)</li>
+<li>DIM_FINANCIAL_ROLL_YEAR_EPS (aggregation)</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="dynamic-table-graph" src="img/8155b6ed6a6d7dc5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure AWS and Azure accounts for Business Continuity" duration="10">
+        <p>Now that our Primary AWS account has been populated with users, database objects, governance policies, account metadata and data tranformation pipelines - we are ready to configure our Azure account as a Secondary target.</p>
+<p>Snowflake BCDR is simple to setup, maintain and test. The key capabilities are <a href="https://docs.snowflake.com/en/user-guide/replication-intro#replication-and-failover-failback" target="_blank"><strong>Replication with Failover</strong></a> and <a href="https://docs.snowflake.com/en/user-guide/client-redirect" target="_blank"><strong>Client Redirect</strong></a>, available only with Business Critical edition (or higher).</p>
+<p>We will create these two first-class Snowflake objects that deliver business continuity:</p>
+<ul>
+<li><strong>Connection:</strong> a connection object provides a <em>secure connection URL</em> for any Snowflake client to connect to an account and to be redirected to another account.</li>
+<li><strong>Failover Group:</strong>  a defined collection of objects in a source account that are replicated as a unit to one or more target accounts and can failover. A secondary failover group in a target account provides read-only access for the replicated objects. When a secondary failover group is promoted to become the primary failover group, read-write access is available.</li>
+</ul>
+<h2 is-upgraded>Run in a SQL worksheet named <em>BCDR Configuration</em> on the <code>Primary(AWS)</code></h2>
+<p>SUBSTITUTE <code>organization_name</code> and <code>target account_name</code> in these commands to create connection and failover group objects:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+SHOW REPLICATION ACCOUNTS;
+
+-- record organization_name, target_account_name (Azure) here
+
+CREATE CONNECTION IF NOT EXISTS prodsnowgrid;
+ALTER CONNECTION prodsnowgrid 
+    ENABLE FAILOVER TO ACCOUNTS &lt;organization_name.target_account_name&gt;;
+
+SHOW CONNECTIONS;
+
+-- record connection-url here
+
+-- no databases with stages should be included yet
+CREATE FAILOVER GROUP sales_payroll_financials
+    OBJECT_TYPES = users, roles, warehouses, resource monitors, databases, shares, account parameters, network policies
+    ALLOWED_DATABASES = common, crm, cross_database, global_sales, inventory, loyalty, payroll, products, externals, references, sales, salesforce, snowflake_ha_monitor, stores, suppliers, support, web_logs
+    ALLOWED_SHARES = global_sales_share,sales_history_share, cross_database_share, crm_share, inventory_share
+    ALLOWED_ACCOUNTS = XLWGQVZ.SNOWFLAKE_AZURE_TARGET;
+
+-- enable replication of stages, storage integrations, pipes, load history
+ALTER FAILOVER GROUP sales_payroll_financials SET ENABLE_ETL_REPLICATION = TRUE;
+
+-- now add integrations, along with all existing types
+ALTER FAILOVER GROUP sales_payroll_financials SET
+    OBJECT_TYPES = users, roles, warehouses, resource monitors, databases, shares, account parameters, network policies, integrations
+    ALLOWED_INTEGRATION_TYPES = STORAGE INTEGRATIONS;
+
+-- now add databases with pipeline objects
+ALTER FAILOVER GROUP sales_payroll_financials ADD tpcdi_ods, tpcdi_stg, tpcdi_wh TO ALLOWED_DATABASES;
+
+-- check that all object types, databases and shares are there
+SHOW FAILOVER GROUPS;
+SHOW SHARES IN FAILOVER GROUP sales_payroll_financials;
+SHOW DATABASES IN FAILOVER GROUP sales_payroll_financials;
+
+</code></pre>
+<h2 is-upgraded>Run in a SQL worksheet named <em>BCDR Configuration</em> on the <code>Secondary(Azure)</code></h2>
+<p>Here you&#39;ll create a secondary connection and a secondary failover group.</p>
+<ul>
+<li>A secondary connection is linked to the primary connection and must have the same connection name.</li>
+<li>A secondary failover group is also linked to the corresponding primary failover group and must have the same failover group name.</li>
+</ul>
+<p>SUBSTITUTE <code>organization_name</code> and <code>source account_name</code> to create replica connection and failover group on <code>Secondary (Azure)</code></p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+SHOW CONNECTIONS;
+
+CREATE CONNECTION prodsnowgrid
+    AS REPLICA OF &lt;orgname.source_account_name.prodsnowgrid&gt;;
+
+SHOW REPLICATION ACCOUNTS;
+
+CREATE FAILOVER GROUP sales_payroll_financials
+    AS REPLICA OF &lt;orgname.source_account_name.sales_payroll_financials&gt;;
+
+</code></pre>
+<p>Note down the <code>CONNECTION_URL</code>: observe that it is account and region agnostic (<em>orgname-connection_name.snowflakecomputing.com</em>)</p>
+<p>Client applications will use the <code>CONNECTION_URL</code> that can be redirected to either account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Demonstrate Application Failover using Streamlit, Sigma, Snowsight" duration="10">
+        <p>Welcome App Developers!</p>
+<p>We have options for you today to build quick and simple, Snowflake-powered apps that will continue to be operational through a region failure.</p>
+<p>You can choose to build one or all of these.</p>
+<ol type="1">
+<li>Build a Sigma dashboard: step by step instructions are available in the video below.</li>
+<li>Build a python-based Streamlit app to visualize sales payroll data. If prerequisite libraries and connectors have been installed, you can use the code provided below and connect to the Snowflake connection object.</li>
+<li>Connect with SnowSQL CLI to run a few simple queries to showcase how client failover and pipeline replication and idempotent replay works.</li>
+</ol>
+<h2 is-upgraded>Sigma BI Dashboard</h2>
+<p>In this step, we&#39;ll build a sigma dashboard that will rely on data available on our primary account. Once we replicate this data to our secondary account and failover, we&#39;ll see the sigma dashboard seamlessly point to the failover region and powered by our secondary account.</p>
+<p>In the video, you will see we connect Sigma to Snowflake by creating a connection. When filling up the connection details ensure that account name is same as the value recorded for &#34;connection_url&#34; at the end of step 4.</p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/vfmmDcQ1uB0?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h3 is-upgraded>Query used to build the global sales dashboard</h3>
+<p>Here&#39;s the code snippet used for charting the global revenue figures.</p>
+<pre><code language="language-bash" class="language-bash">select n_name nation
+    , sum(o_totalprice) revenue
+from global_sales.online_retail.orders 
+inner join global_sales.online_retail.customer on c_custkey = o_custkey
+inner join global_sales.online_retail.nation on c_nationkey = n_nationkey
+where o_orderdate between dateadd(day,-2,current_date) and current_date()
+group by 1
+order by 2 desc
+</code></pre>
+<h3 is-upgraded>Final Dashboard</h3>
+<p>Once you&#39;re done building the dashboard, the end result should look something like this <img alt="sigma_dashboard" src="img/b3c5b1b7e9a55c95.png"></p>
+<h2 is-upgraded>Python Streamlit App</h2>
+<p>Python code for the Streamlit app is located at <code>scripts/streamlit_app/streamlit_failover_app.py</code></p>
+<p>Edit the python file to fill in <code>user</code>, <code>password</code>, <code>account</code>:</p>
+<ul>
+<li>run <strong>SHOW CONNECTIONS</strong></li>
+<li>set the account = <code><organization_name>-<connection_name></code><ul>
+<li>same as <code>connection_url</code> taking out <em>.snowflakecomputing.com</em></li>
+</ul>
+</li>
+</ul>
+<pre><code language="language-bash" class="language-bash"># navigate to project directory where streamlit and libraries were installed
+% cd streamlit
+% streamlit run /tmp/scripts/streamlit_app/streamlit_failover_app.py
+
+# may fail with a specific version of pyarrow required!
+% pip install pyarrow={version required in error}
+
+</code></pre>
+<h3 is-upgraded>Here is what the Streamlit App should look like!</h3>
+<p class="image-container"><img alt="streamlit_dash" src="img/2f15a24ccdd5f857.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Replication To Target" duration="5">
+        <p>All that work behind us, we set up our account resources like users, roles, RBAC hierarchy, databases (not to mention, the crucial data it contains), compute warehouses, governance policies with RLS and CLS features, direct shares and then some beautiful customer facing apps - Phew!</p>
+<p>Now we have to do this all over again just to have a DR instance - how much more work will this be?? Oh right, negligible. With Snowflake a single command will bring all that setup from our source account to our target account in a matter of minutes if not seconds (depending upon the size/number of objects).</p>
+<p>But wait a minute, our source account and target account are on <em>different</em> public cloud providers - won&#39;t that factor into the setup or cause some kind of <em>extra work</em>? Nope, not with Snowflake - we&#39;re cloud agnostic and we hide all that complexity from you.</p>
+<h3 is-upgraded>Replicate to Secondary</h3>
+<p>Run the command below on your <strong>target/secondary account</strong> to begin replication</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+ALTER FAILOVER GROUP sales_payroll_financials REFRESH;
+
+SELECT * FROM TABLE(snowflake.information_schema.replication_group_refresh_progress(&#39;SALES_PAYROLL_FINANCIALS&#39;));
+
+SELECT start_time, end_time, replication_group_name, credits_used, bytes_transferred
+  FROM TABLE(snowflake.information_schema.replication_group_usage_history(date_range_start=&gt;dateadd(&#39;day&#39;, -7, current_date())));
+
+SELECT * FROM snowflake.account_usage.REPLICATION_GROUP_REFRESH_HISTORY;
+</code></pre>
+<h3 is-upgraded>Did the replication fail?</h3>
+<p>Why do you think the first attempt to replication fail? Notice that there&#39;s an externals db that contains an external table which is not supported for replication and is the reason why replication failed.</p>
+<p>Let&#39;s fix this by removing the externals db from our failover group. Run the below command on the <strong>primary account</strong>.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+ALTER FAILOVER GROUP sales_payroll_financials REMOVE externals from ALLOWED_DATABASES;
+</code></pre>
+<p>Now lets re-reun our replication, it should succeed this time. Run the below command on the <strong>secondary account</strong>.</p>
+<pre><code language="language-bash" class="language-bash">USE ROLE accountadmin;
+ALTER FAILOVER GROUP sales_payroll_financials REFRESH;
+</code></pre>
+<p>This command would take about a minute to run , but wait where&#39;s it getting the compute from? is it using any of our WHs that we&#39;ve provisioned? Nope, we got you covered - this is serverless compute that Snowflake provides and autoscales depending upon the amound of work that needs to get done. There will be a separate lineitem under &#34;Replication&#34; for this on your bill.</p>
+<p>After this command has run - you should all of the databases and other objects that we included in the failover group definition available in your secondary account.</p>
+<h3 is-upgraded>Verify Replication</h3>
+<p>In order to ensure that replication worked, go back to step 3 and run all commands under &#34;Lets review our source account&#34; on <em>your target account</em> and ensure that you see the exact same results as you did on your source account. This will confirm that our replication worked as expected.</p>
+<h3 is-upgraded>Replicate on a schedule</h3>
+<p>With the initial replication successfully completed, we want to now replicate on a schedule so that any additional changes on the primary account are regularly made available to the secondary. Let&#39;s assume a strict RPO and replicate every 3 minutes. It is important to note that if there are no changes to primary, nothing will be replicated to secondary and there will be no replication cost incurred. Run the command below (on the <strong>primary account</strong>) to replicate our group evey three minutes.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+ALTER FAILOVER GROUP sales_payroll_financials SET REPLICATION_SCHEDULE = &#39;3 MINUTES&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Failover To Target" duration="15">
+        <p>Moment of truth! With our data and account objects safely replicated to the secondary account. Let&#39;s assume disaster has struck! Our primary account is experiencing outage and business and tech teams (The awesome failover HoL participants) have invested time and money in ensuring that they are prepared for this very event.</p>
+<p>So what do we do? Again, something very simple - fire two commands.</p>
+<ul>
+<li>The first command will failover our connection - making the secondary account the new primary account for account redirect. Meaning the url in the connection_url property of our connection object will start to point to the new primary account.</li>
+<li>The second command will do the same for our failover group, it has made the other account primary for objects covered in the failover group. This means that databases within this FG have now become read-write and the same databases in our new secondary (old primary) account have become read-only.</li>
+</ul>
+<p>Run the two commands below on the <code>Secondary Account</code></p>
+<pre><code language="language-bash" class="language-bash">USE ROLE accountadmin;
+
+ALTER CONNECTION prodsnowgrid PRIMARY;
+ALTER FAILOVER GROUP sales_payroll_financials PRIMARY;
+</code></pre>
+<h3 is-upgraded>Let&#39;s Revisit Our Apps</h3>
+<p>With your connection_url now pointing to a new primary account, refresh your BI Dashboards and/or Streamlit Apps and notice which accounts are they powered by? But let&#39;s not blindly believe the visualizations! Login to the new primary account and ensure the queries are executing on primary account.</p>
+<h3 is-upgraded>Restart the TPC-DI Pipeline</h3>
+<p>Check status of Dynamic Tables (Snowsight Activity tab):</p>
+<ul>
+<li>use script <code>850_refresh_pipeline.sql</code> to force refresh of terminal DTs in the graph</li>
+</ul>
+<p>Load script <code>800_execute_pipeline.sql</code> into a SQL Worksheet on the new Primary (Azure)</p>
+<ul>
+<li>Rerun batch1 loads: notice that <code>Load History</code> shows these files are skipped</li>
+<li>Run batch2, batch3: watch TPCDI_STG.BASE staging tables, TPCDI_WH.BASE dynamic tables show increases in row count</li>
+<li>Note: the ability to run these loads implies <strong>internal stage contents</strong>, <strong>external stage definition</strong>, <strong>storage integration</strong> have all been replicated</li>
+<li>Wait 3-4 minutes for replication schedule to kick in</li>
+</ul>
+<h3 is-upgraded>Failback to original Primary (AWS)</h3>
+<ul>
+<li>Check your Sigma/Streamlit app again to check connection to AWS again</li>
+<li>Repeat the batch pipeline execution steps</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

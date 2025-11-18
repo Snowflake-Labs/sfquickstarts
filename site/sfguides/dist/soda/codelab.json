@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "soda",
+  "duration": 21,
+  "title": "Data Quality Testing with Soda",
+  "summary": "Follow this guide to set up and run a Soda scan for data quality in Snowflake.",
+  "source": "soda/soda.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "dataquality",
+    "datascience",
+    "datatesting",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "soda"
+}

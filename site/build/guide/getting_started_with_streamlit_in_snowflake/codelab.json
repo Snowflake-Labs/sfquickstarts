@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_streamlit_in_snowflake",
+  "duration": 9,
+  "title": "Quickstart Guide: Cybersyn Streamlit in Snowflake - Financial Demo",
+  "summary": "How to run custom Streamlit app in Snowflake",
+  "source": "getting_started_with_streamlit_in_snowflake/getting_started_with_streamlit_in_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "streamlit"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_streamlit_in_snowflake"
+}

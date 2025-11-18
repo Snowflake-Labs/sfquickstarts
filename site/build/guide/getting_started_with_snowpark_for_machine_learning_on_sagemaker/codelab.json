@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_snowpark_for_machine_learning_on_sagemaker",
+  "duration": 55,
+  "title": "Getting Started with Snowpark for Machine Learning on SageMaker",
+  "summary": "This is a qucikstart for using Snowpark for ML on SageMaker",
+  "source": "getting_started_with_snowpark_for_machine_learning_on_sagemaker/getting_started_with_snowpark_for_machine_learning_on_sagemaker.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpark_for_machine_learning_on_sagemaker"
+}

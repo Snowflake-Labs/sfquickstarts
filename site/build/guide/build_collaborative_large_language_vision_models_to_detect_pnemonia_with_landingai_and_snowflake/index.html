@@ -1,0 +1,210 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Visual AI Models with LandingLens on Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_collaborative_large_language_vision_models_to_detect_pnemonia_with_landingai_and_snowflake"
+                  title="Visual AI Models with LandingLens on Snowflake"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this quickstart, we&#39;ll use LandingLens — a Native App available in the Snowflake Marketplace — to create a computer vision model that detects pneumonia in X-ray images. After completing this quickstart, users can use the concepts and procedures from this quickstart to build Object Detection, Segmentation, and Classifications models in LandingLens.</p>
+<h2 is-upgraded>What Is LandingLens?</h2>
+<p>LandingLens is a cloud-based Visual AI platform. LandingLens empowers users to create and train Visual AI models even if you don&#39;t have a background in AI, machine learning, or computer vision. LandingLens guides you through the process of uploading images, labeling them, training models, comparing model performance, and deploying models.</p>
+<p>To users who are familiar with machine learning, LandingLens offers advanced tools to customize the model training process. LandingLens supports advanced deployment options including cloud deployment as well as <a href="https://support.landing.ai/landinglens/docs/docker-deploy" target="_blank">Docker</a> and <a href="https://support.landing.ai/landinglens/docs/landingedge-overview" target="_blank">LandingEdge</a>, LandingAI&#39;s edge-deployment solution.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to install LandingLens from the Snowflake Marketplace</li>
+<li>How to load sample data from a Snowflake stage</li>
+<li>How to build a Classification computer vision model in LandingLens</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account</li>
+<li>Snowflake privileges on your user to <a href="https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges" target="_blank">Install a Native Application</a></li>
+<li>A warehouse to <em>install</em> LandingLens (the warehouse can be any size and can have auto-suspend enabled)</li>
+<li>A warehouse to <em>run</em> LandingLens</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A computer vision Classification model to detect pneumonia</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install the LandingLens Native App in Your Account" duration="30">
+        <h2 is-upgraded>Request the LandingLens App</h2>
+<p>Access to the LandingLens app is available by request. To request the app, follow the instructions below:</p>
+<ol type="1">
+<li>Open the <a href="https://app.snowflake.com/marketplace/providers/GZTYZF0O17X/LandingAI" target="_blank">LandingAI</a> provider page in the Snowflake Marketplace.</li>
+<li>Locate and click the <strong>LandingLens - Visual AI Platform</strong> listing.</li>
+<li>Click <strong>Request</strong>.<img alt="Request LandingLens" style="width: 800.00px" src="img/bf89419277b7ae5.png"></li>
+<li>Fill out and submit the request form.</li>
+<li>The LandingAI team will review the request and contact you with more information.</li>
+</ol>
+<h2 is-upgraded>Install the LandingLens App</h2>
+<p>After you&#39;ve requested the app and been granted access it, follow the instructions below to install it in Snowflake:</p>
+<ol type="1">
+<li>Open the <a href="https://app.snowflake.com/marketplace/providers/GZTYZF0O17X/LandingAI" target="_blank">LandingAI</a> provider page in the Snowflake Marketplace.</li>
+<li>Locate and click the <strong>LandingLens - Visual AI Platform</strong> listing.</li>
+<li>Click <strong>Get</strong>.<img alt="Get LandingLens" style="width: 800.00px" src="img/1a57b2a2969a0fa2.png"></li>
+<li>Select the <strong>Warehouse</strong> to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).</li>
+<li>If you want to change the name of the application, click <strong>Options</strong> and enter a name in <strong>Application Name</strong>.</li>
+<li>Click <strong>Get</strong>.<img alt="Get LandingLens" style="width: 800.00px" src="img/963ef9107f3fe668.png"></li>
+<li>Go to <strong>Snowsight</strong> &gt; <strong>Data Products</strong> &gt; <strong>Apps</strong>. Double-click the LandingLens app listing. (Although the app is listed in the Installed Apps section, it is not installed yet.) <img alt="Installed Apps" style="width: 800.00px" src="img/7876da20405438c1.png"></li>
+<li>A new page opens. It has a series of steps that guide you through the installation process.</li>
+<li>In <strong>Step 1</strong>, click <strong>Grant</strong>. These permissions allow LandingLens to create compute pools and perform other tasks in your account. <img alt="Grant account privileges" style="width: 800.00px" src="img/7e5d183c711f00cc.png"></li>
+<li>In <strong>Step 2</strong>, click <strong>Review</strong>. Review the allowed endpoints on the pop-up and click <strong>Connect</strong>. This allows LandingLens to access the World Wide Web (WWW).</li>
+<li>Scroll to the top of the page and click <strong>Activate</strong>. <img alt="Activate" style="width: 800.00px" src="img/6a5fff9e2c5f2b3d.png"></li>
+<li>LandingLens opens in your Apps. Click <strong>Launch App</strong>. <img alt="Launch the app installer" style="width: 800.00px" src="img/95151b5702ea1c6e.png"></li>
+<li>The installer opens in the <strong>APP_WIZARD</strong> tab.</li>
+<li>Click <strong>Install/Upgrade/Resume</strong>. The installer installs all the required services for the LandingLens app. This process takes about 20 to 30 minutes. Do NOT close the tab during the installation process, because it will stop the process. <img alt="Launch the app installer" style="width: 800.00px" src="img/43be4b237fbbd33f.png"></li>
+<li>Once the installation process is complete, all services have the status DONE or READY (green checkmark) and the URL to access LandingLens displays. Copy and paste the URL.<br><img alt="Copy the URL for the LandingLens app" style="width: 800.00px" src="img/81163cafb1f564de.png"></li>
+<li>Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. you can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.   <img alt="LAI Lens app" style="width: 800.00px" src="img/c777d57e97a0f09d.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get Sample Images" duration="15">
+        <p>Now that you&#39;ve installed the LandingLens app, you are ready to get the sample images. LandingAI provides a set of sample images as an &#34;app&#34; that can be downloaded from the Snowflake Marketplace. You will use these images to train a computer vision model in LandingLens that detects pneumonia.</p>
+<p>To get the sample images, follow these instructions:</p>
+<ol type="1">
+<li>Open the <a href="https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia" target="_blank">Sample Dataset for LandingLens: LifeSciences Pneumonia listing</a> in the Snowflake Marketplace and click <strong>Get</strong>. <img alt="Sample dataset listing in the Snowflake Marketplace" style="width: 800.00px" src="img/44295e2384565c4f.png"></li>
+<li>Go to <strong>Snowsight</strong> &gt; <strong>Data Products</strong> &gt; <strong>Apps</strong>. Click the <strong>Sample Dataset for LandingLens: LifeSciences Pneumonia</strong> app listing. <img alt="Open the app" style="width: 800.00px" src="img/c576ef97537bae78.png"></li>
+<li>Click the <strong>Shield</strong> icon in the top right corner of this app page.</li>
+<li>Click <strong>Review</strong> and allow the CREATE DATABASE privilege, which grants the app to create a database to load the sample data. <img alt="Grant privileges" style="width: 800.00px" src="img/7cf5b0a7fe0a9926.png"></li>
+<li>Open the <strong>LLENS_DATA_APP</strong> tab.</li>
+<li>Click <strong>Create Sample Dataset</strong> to load the dataset into your Snowflake account. <img alt="Create the database" style="width: 800.00px" src="img/ace4a5ddf60da71.png"></li>
+<li>Make a note of the location of the images; you will use these later.<ul>
+<li><strong>Database</strong>: llens_sample_ds_lifesciences</li>
+<li><strong>Schema</strong>: pneumonia</li>
+<li><strong>Stage</strong>: dataset</li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build a Pneumonia Detection Project" duration="20">
+        <p>Now that you&#39;ve loaded the sample dataset into your Snowflake account, you&#39;re ready to create a computer vision model using those images in LandingLens.</p>
+<h2 is-upgraded>Load the Images into LandingLens</h2>
+<ol type="1">
+<li>Open LandingLens in Snowflake (use the URL generated when you installed the app).</li>
+<li>Click <strong>Start First Project</strong> and name your project.</li>
+<li>Click <strong>Classification</strong>.</li>
+<li>Click <strong>Sync Snowflake Data</strong>. <img alt="Sync images from Snowflake" style="width: 800.00px" src="img/ed61cf27d7d9da9.png"></li>
+<li>Enter the location that you saved the sample dataset to earlier. The location should be: <ul>
+<li><strong>Database</strong>: llens_sample_ds_lifesciences</li>
+<li><strong>Schema</strong>: pneumonia</li>
+<li><strong>Stage</strong>: dataset</li>
+</ul>
+</li>
+<li>You will get a message saying that you don&#39;t have access to that location. To fix this, copy the SQL commands at the bottom of the pop-up and run them in a Snowflake worksheet in a different browser tab.</li>
+<li>Turn on <strong>Classify images based on folder names</strong>.</li>
+<li>Click the directory path (<strong>⌄ /</strong>) in the <strong>Specify the path to an existing folder</strong> field.</li>
+<li>Select the <strong>data</strong> directory.</li>
+<li>Click <strong>Sync</strong>. <img alt="Select the snowflake stage to load images from" style="width: 800.00px" src="img/db4132717897b51.png"></li>
+<li>All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) The project now has 100 images; 50 images have the class &#34;normal&#34;, and 50 have the class &#34;pneumonia&#34;. <img alt="Select the snowflake stage to load images from" style="width: 800.00px" src="img/cacb879d43e7c8c1.png"></li>
+</ol>
+<h2 is-upgraded>Train a Classification Model</h2>
+<p>Now that all of the images are in the LandingLens project and have classes assigned to them, train a computer vision model. When you train a model, you give the labeled images to a deep learning algorithm. This allows the algorithm to &#34;learn&#34; what to look for in images.</p>
+<p>To train a model, click <strong>Train</strong>.</p>
+<p class="image-container"><img alt="Train the model" style="width: 800.00px" src="img/fbee49adbfb8d343.png"></p>
+<p>The right side panel opens and shows the model training progress. This process can take a few minutes.</p>
+<p class="image-container"><img alt="Model training progress" style="width: 800.00px" src="img/2cac8d337b48bed4.png"></p>
+<p>Once training finishes, you will see the model&#39;s predictions and performance information. You can click the model tile in the side panel to see more detailed information. In most real-world use cases, you might need to upload and label more images to improve performance. In this example, the model should be performing well, so we will go to the next step, which is deploying the model.</p>
+<p class="image-container"><img alt="Model performance" style="width: 800.00px" src="img/41557117d3d149c7.png"></p>
+<h2 is-upgraded>Deploy the Model to an Endpoint</h2>
+<p>After you are happy with the results of your trained model, you are ready to use it. To use a model, you <strong>deploy</strong> it, which means you put the model in a virtual location so that you can then upload images to it. When you upload images, the model runs <strong>inference</strong>, which means that it detects what it was trained to look for.</p>
+<p>In this example, we&#39;re going to show how to use Cloud Deployment. You can also deploy models using <a href="https://support.landing.ai/docs/landingedge-overview" target="_blank">LandingEdge</a> and <a href="https://support.landing.ai/docs/docker-deploy" target="_blank">Docker</a>.</p>
+<p>To deploy the model with Cloud Deployment, follow these instructions:</p>
+<ol type="1">
+<li>Open the <strong>Models</strong> tab.</li>
+<li>Click <strong>Deploy</strong> in the model&#39;s row.<img alt="Deploy the model" style="width: 800.00px" src="img/7522e8820bc12006.png"></li>
+<li>Name the endpoint and click <strong>Deploy</strong>.<img alt="Name the endpoint" style="width: 400.00px" src="img/73ddf2de03197e31.png"></li>
+<li>LandingLens deploys the model to the endpoint and opens the <strong>Deploy</strong> page. You can now use this endpoint to run inference. <img alt="View the deployment" style="width: 800.00px" src="img/bced862d7c2047c7.png"></li>
+</ol>
+<h2 is-upgraded>Run Inference</h2>
+<p>After deploying a model with Cloud Deployment, a custom Python script displays at the bottom of the Deploy page. Copy this script, replace the placeholers with your information, and use the <a href="https://landing-ai.github.io/landingai-python/inferences/snowflake-native-app/" target="_blank">LandingLens Python library</a> to integrate the model with your applications with very few lines of code.</p>
+<p class="image-container"><img alt="Copy the Python script" style="width: 800.00px" src="img/5b90b7ec4f05d270.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="2">
+        <p>Congratulations on creating a pneumonia detection computer vision model in LandingLens! You can now apply the concepts you&#39;ve learned to building custom computer vision models in LandingLens.</p>
+<p>In this quickstart you learned:</p>
+<ul>
+<li>How to install the LandingLens Native App from the Snowflake Marketplace</li>
+<li>How to load images from Snowlfake stages into LandingLens projects</li>
+<li>How to train and deploy a computer vision project in LandingLens</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li>To learn about more about LandingLens, check out the <a href="https://support.landing.ai/docs/snowflake" target="_blank">LandingLens docs</a></li>
+<li>To connect with other LandingLens users, join the <a href="https://community.landing.ai/home" target="_blank">LandingAI Community</a></li>
+<li>To learn more about LandingAI, check out <a href="https://landing.ai/" target="_blank">landing.ai/</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

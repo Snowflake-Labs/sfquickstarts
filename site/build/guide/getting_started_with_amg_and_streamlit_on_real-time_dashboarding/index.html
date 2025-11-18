@@ -1,0 +1,346 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_amg_and_streamlit_on_real-time_dashboarding"
+                  title="Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Monitoring your real-time assets in Snowflake is crucial as it allows you to spot anomalies fast and handle the incoming issues proactively to minimize the blast radius.</p>
+<p>Here are some of the use cases that can benefit from tracking your live data streams:</p>
+<ul>
+<li>Real-time traffic control</li>
+<li>Fraud detection in banking industry</li>
+<li>Oil pipeline safety monitoring</li>
+<li>Smart factory management</li>
+</ul>
+<p>In this workshop, we will visualize real-time commercial flight data over the San Francisco Bay Area from the <a href="https://opensky-network.org" target="_blank">Opensky Network</a> with <a href="https://aws.amazon.com/grafana/" target="_blank">Amazon Managed Service for Grafana</a> and <a href="https://streamlit.io/" target="_blank">Streamlit</a>. The architecture diagram below illustrates the deployment, with the non-greyed out area being the focus of our workshop. The grey out area is covered in the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/" target="_blank">Snowpipe Streaming quickstarts</a>.</p>
+<p>The data in Snowflake table is visualized in real-time with <a href="https://aws.amazon.com/grafana/" target="_blank">AMG (Amazon Managed Service for Grafana)</a> and <a href="https://streamlit.io" target="_blank">Streamlit</a> Note that Streamlit is containerized and managed by <a href="https://aws.amazon.com/ecs/" target="_blank">Amazon Elastic Container Service (ALB)</a>. An <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/" target="_blank">Application Load Balancer</a> is used to front-end the container.</p>
+<p class="image-container"><img alt="Architecture diagram for the Demo" src="img/5291d5095f955acf.png"></p>
+<p class="image-container"><img alt="Data visualization" src="img/bc685d6756700e6d.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects</li>
+<li>Familiarity with <a href="https://en.wikipedia.org/wiki/Grafana" target="_blank">Grafana</a>, <a href="https://en.wikipedia.org/wiki/Docker_(software)" target="_blank">Docker</a>, <a href="https://streamlit.io/" target="_blank">Streamlit</a>, AWS Services (e.g. ECS, VPC, etc) and the AWS Management Console</li>
+<li>Basic knowledge of Python programming</li>
+<li>Please <code>DO NOT</code> use Snowflake account in production for this workshop. Always use trial or test account for the demo purposes.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need Before the Lab</h2>
+<p>To participate in the virtual hands-on lab, attendees need the following resources.</p>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Enterprise Account on preferred AWS region</a> with <code>ACCOUNTADMIN</code> access</li>
+<li>Optional - Finished the quickstarts for <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0" target="_blank">Snowpipe Streaming and Amazon MSK</a> and has ingested and kept live data in Snowflake.</li>
+<li>An <a href="https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/" target="_blank">AWS Account</a> with <code>Administrator Access</code></li>
+<li>Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. Please refer to this <a href="https://docs.aws.amazon.com/whitepapers/latest/amazon-msk-migration-guide/amazon-managed-streaming-for-apache-kafka-amazon-msk.html" target="_blank">AWS document</a> for the MSK networking topology) <ul>
+<li>In the AWS account, <a href="https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html" target="_blank">create a VPC</a>, preferably in the same region as the Snowflake account</li>
+<li>In the VPC, <a href="https://docs.aws.amazon.com/vpc/latest/userguide/working-with-subnets.html" target="_blank">create subnets</a> and attach an <a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html" target="_blank">internet gateway</a> to allow egress traffic to the internet by using a routing table and security group for outbound traffic. Note that the subnets can be public or private. Normally public subnets are sufficient for this lab.</li>
+<li>If you have decided to create your own VPC/subnets, for your convenience, click <a href="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MSK-Snowflake-VPC&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Snowpipe_Streaming_MSK/MyFullVPC-2pub-2priv.json" target="_blank">here</a> to deploy a VPC with a pair of public and private subnets, internet gateway and NAT gateway for you. Note that you must have network administrator permissions to deploy these resources.</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Using <a href="https://aws.amazon.com/grafana/" target="_blank">AMG (Amazon Managed Servie for Grafana)</a> to monitor real-time data</li>
+<li>Using <a href="https://streamlit.io/" target="_blank">Streamlit</a> to build a dashboard to track real-time data</li>
+<li>Using <a href="https://aws.amazon.com/ecs/" target="_blank">Amazon Elastic Container Service (ALB)</a> to host a Streamlit container</li>
+<li>Using <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/" target="_blank">Application Load Balancer</a> as the web proxy for the container.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Create an ECS cluster and <a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/" target="_blank">Application load balancer</a> to frontend the Streamlit container</li>
+<li>Deploy an <a href="https://docs.aws.amazon.com/grafana/latest/userguide/AMG-create-workspace.html" target="_blank">AMG workspace</a></li>
+<li>Import/build a Grafana dashboard to track live flight data</li>
+<li>Containerize a Streamlit app in ECS</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Ingestion, Option 1" duration="1">
+        <p>If you have completed the quickstarts for <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0" target="_blank">Snowpipe Streaming and Amazon MSK</a> and haven&#39;t cleaned up the database, there is no further actions required, just skip ahead to the section for <code>Monitor with Amazon Managed Service for Grafana (AMG)</code> on the left pane.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Ingestion, Option 2" duration="10">
+        <p>At this point, you can either choose to complete <code>Option 1</code> above first then skip ahead to the section for <code>Monitor with Amazon Managed Service for Grafana (AMG)</code> on the left pane, or you can start by processing some sample data described in steps below before using AMG or Streamlit.</p>
+<h3 is-upgraded>1. Create user, role, database, schema, and warehouse in Snowflake</h3>
+<p>First login to your Snowflake account as a power user with ACCOUNTADMIN role. Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.</p>
+<pre><code language="language-commandline" class="language-commandline">-- Set default value for multiple variables
+-- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
+-- You should change them after the workshop
+SET PWD = &#39;Test1234567&#39;;
+SET USER = &#39;STREAMING_USER&#39;;
+SET DB = &#39;MSK_STREAMING_DB&#39;;
+SET SCHEMA = &#39;MSK_STREAMING_SCHEMA&#39;;
+SET WH = &#39;MSK_STREAMING_WH&#39;;
+SET ROLE = &#39;MSK_STREAMING_RL&#39;;
+
+USE ROLE ACCOUNTADMIN;
+
+-- CREATE USERS
+CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT=&#39;STREAMING USER&#39;;
+
+-- CREATE ROLES
+CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
+
+-- CREATE DATABASE AND WAREHOUSE
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
+USE IDENTIFIER($DB);
+CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = &#39;SMALL&#39;;
+
+-- GRANTS
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
+GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
+GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO ROLE ACCOUNTADMIN;
+
+-- SET DEFAULTS
+ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
+ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
+
+-- SET TIME ZONE TO UTC
+ALTER ACCOUNT SET TIMEZONE = &#39;UTC&#39;;
+
+-- CREATE SCHEMA
+USE DATABASE IDENTIFIER($DB);
+USE ROLE IDENTIFIER($ROLE);
+CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
+
+</code></pre>
+<h3 is-upgraded>2. Copy Sample Data into Snowflake</h3>
+<p>Run the following command to load sample flight data into Snowflake.</p>
+<pre><code language="language-commandline" class="language-commandline">USE DATABASE MSK_STREAMING_DB;
+USE SCHEMA MSK_STREAMING_SCHEMA;
+USE WAREHOUSE MSK_STREAMING_WH;
+
+CREATE OR REPLACE STAGE FLIGHTS
+URL=&#39;s3://jsnow-vhol-assets/amg/sample-flight-data/&#39;
+FILE_FORMAT = (TYPE = &#39;parquet&#39;);
+
+CREATE OR REPLACE TABLE FLIGHTS_TBL
+  (RECORDID NUMBER AUTOINCREMENT,
+   V VARIANT)
+  CHANGE_TRACKING = TRUE;
+
+COPY INTO FLIGHTS_TBL (V) FROM
+  (SELECT $1 FROM @FLIGHTS/)
+  FILE_FORMAT=(TYPE = &#39;parquet&#39;);
+
+SELECT * FROM FLIGHTS_TBL LIMIT 10;
+
+</code></pre>
+<p>Now you should see raw data in variant type is copied into the <code>FLIGHTS_TBL</code> table.</p>
+<p>Next, we will create a view and run DDL to convert the raw data into a multi-column table.</p>
+<pre><code language="language-commandline" class="language-commandline">CREATE OR REPLACE VIEW FLIGHTS_O_VW
+AS
+SELECT
+    V:utc::TIMESTAMP_NTZ ts_utc_o,
+    CONVERT_TIMEZONE(&#39;UTC&#39;,&#39;America/Los_Angeles&#39;,TS_UTC_O::TIMESTAMP_NTZ) AS ts_pt,
+    V:alt::INTEGER alt,
+    V:id::TEXT id,
+    V:icao::TEXT icao,
+    V:dest::TEXT dest,
+    V:orig::TEXT orig,
+    V:lat::FLOAT lat,
+    V:lon::FLOAT lon,
+    ST_GEOHASH(TO_GEOGRAPHY(ST_MAKEPOINT(LON, LAT)),12) GEOHASH,
+    YEAR(TS_UTC_O)::INTEGER yr,
+    MONTH(TS_UTC_O)::INTEGER mo,
+    DAY(TS_UTC_O)::INTEGER dd,
+    HOUR(TS_UTC_O)::INTEGER hr
+  FROM FLIGHTS_TBL;
+
+SELECT * FROM FLIGHTS_O_VW LIMIT 10;
+
+</code></pre>
+<p>You should see the view <code>FLIGHTS_O_VW</code> with multiple columns for timestamps, altitude, longitude, latitude, destination airport, etc.</p>
+<p class="image-container"><img src="img/e3ec9d14e766ed36.png"></p>
+<h3 is-upgraded>3. Adjust the timestamps to current</h3>
+<p>Because the sample data is from a time in the past, we now need to adjust the old timestamps to current to simulate the real-time pattern. Run the following commands to adjust the timestamps.</p>
+<pre><code language="language-commandline" class="language-commandline">-- ADJUST TIME STAMPS
+CREATE OR REPLACE VIEW FLIGHTS_VW AS
+SELECT *, DATEADD(SECOND, (SELECT DATE_PART(EPOCH_SECOND, CURRENT_TIMESTAMP())
+ - DATE_PART(EPOCH_SECOND, MAX(TS_UTC_O)) FROM FLIGHTS_O_VW), TS_UTC_O) AS TS_UTC FROM FLIGHTS_O_VW;
+
+SELECT TS_UTC_O, TS_UTC FROM FLIGHTS_VW ORDER BY TS_PT DESC;
+
+</code></pre>
+<p>Now you should see the timestamps(<code>TS_UTC_O</code>) are adjusted to the current time(<code>TS_UTC</code>).</p>
+<h3 is-upgraded>4. Create a task to adjust the timestamps continuously</h3>
+<p>We need to run a task in the background every minute to simulate the incoming stream of new data by running the following commands:</p>
+<pre><code language="language-commandline" class="language-commandline">-- CREATE A TASK TO UPDATE TIMESTAMP EVERY MINUTE
+CREATE OR REPLACE TASK TASK1
+ WAREHOUSE = MSK_STREAMING_WH
+ SCHEDULE = &#39;1 MINUTE&#39;
+AS
+CREATE OR REPLACE VIEW FLIGHTS_VW AS
+SELECT *, DATEADD(SECOND, (SELECT DATE_PART(EPOCH_SECOND, CURRENT_TIMESTAMP()) - DATE_PART(EPOCH_SECOND, MAX(TS_UTC_O)) FROM FLIGHTS_O_VW), TS_UTC_O) AS TS_UTC FROM FLIGHTS_O_VW;
+
+USE ROLE ACCOUNTADMIN;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE MSK_STREAMING_RL;
+USE ROLE MSK_STREAMING_RL;
+ALTER TASK TASK1 RESUME;
+SHOW TASKS;
+
+</code></pre>
+<p>The task is scheduled to run evey minute.</p>
+<p class="image-container"><img src="img/2efbf7722f171d1a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitor with Amazon Managed Service for Grafana (AMG)" duration="15">
+        <p>Before we start, for simplicity reason, we will set the timezone in Snowflake to <a href="https://en.wikipedia.org/wiki/Coordinated_Universal_Time" target="_blank">UTC</a>. Run the following command as the Administrator to change the default timezone to UTC:</p>
+<pre><code language="language-commandline" class="language-commandline">USE ROLE ACCOUNTADMIN;
+ALTER ACCOUNT SET TIMEZONE = &#39;UTC&#39;;
+
+</code></pre>
+<h3 is-upgraded>1. Create an AMG workspace</h3>
+<p>First, click <a href="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=AMG&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_AMG_Streamlit_Streaming/amg.json" target="_blank">here</a> to launch an AMG workspace. Note the default AWS region is <code>us-west-2 (Oregon)</code>, feel free to select a region you prefer to deploy the environment.</p>
+<p>Click <code>Next</code> at the <code>Create stack</code> page. Set the Stack name or modify the default value to customize it to your identity.</p>
+<p>See below sample screen capture for reference.</p>
+<p class="image-container"><img src="img/8f88b80fc9817efd.png"></p>
+<p>Leave everything as default in the <code>Configure stack options</code> page and click <code>Next</code>. In the <code>Review</code> page, check <code>I acknowledge that AWS CloudFormation might create IAM resources</code> in the <code>Capabilities</code> section, click <code>Submit</code>.</p>
+<p>In about 10 minutes, the Cloudformation template provisions an AMG workspace.</p>
+<h3 is-upgraded>2. Upgrade to Grafana Enterprise</h3>
+<p>Go to the AWS <a href="https://console.aws.amazon.com/grafana/home?#/workspaces" target="_blank">AMG workspace console</a> in the same region where you deployed the Cloudformation template. The <a href="https://grafana.com/grafana/plugins/grafana-snowflake-datasource/" target="_blank">Snowflake Plugin for Grafana</a> is only available in [Grafana Enterprise](https://grafana.com/products/enterprise/. We will need to upgrade our current workspace to the enterprise version. Click the name of the workspace, then click <code>Upgrade to Grafana Enterprise</code>.</p>
+<p class="image-container"><img src="img/27d838e99461ea0e.png"></p>
+<p>In the next page, check <code>30-day free trial</code>, review the terms and conditions before clicking <code>Subscribe</code>.</p>
+<p class="image-container"><img src="img/d1fb9a866194fe57.png"></p>
+<p>In a few minutes, the upgrade is complete. You now have 30 days to try out the Grafana Enterprise edition with Snowflake plugin for free.</p>
+<h3 is-upgraded>3. Assign an Administrator for Grafana UI</h3>
+<p>Go back to the AWS <a href="https://console.aws.amazon.com/grafana/home?#/workspaces" target="_blank">AMG workspace console</a>. Click the name of the workspace, we need to assign new user(s) for this workspace, including the Administrator of the Grafana UI. If you already have previously set up <code>AWS IAM Identity Center (Successor to AWS SSO)</code>, you will be prompted to assign new user or group. Click <code>Assign new user or group</code> located under the <code>Authentication</code> tab.</p>
+<p class="image-container"><img src="img/915e59282cda8169.png"></p>
+<p>If you have not set up IAM Identity Center, you will be prompted to enable it. Click <code>Enable</code> then click <code>Assign new user or group</code>. Note that you will probably need to add a new user in IAM Identity Center, please refer to this <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/addusers.html" target="_blank">doc</a> to complete this step. You will need to add at least one user who will also be the Administrator of Grafana UI.</p>
+<p class="image-container"><img src="img/9efb6a38f14f5d0a.png"></p>
+<p>Coming back to the page for assigning new user, check the user who you wish to assign to the workspace and click <code>Assign users and groups</code>.</p>
+<p class="image-container"><img src="img/7970466ab02ee227.png"></p>
+<p>Now we need to promote this user&#39;s role from Viewer to Administrator. Check the user and select <code>Make admin</code> in the <code>Action</code> drop-down menu.</p>
+<p class="image-container"><img src="img/be79db391ec58c22.png"></p>
+<h3 is-upgraded>4. Work with Grafana UI</h3>
+<p>Go back to the AWS <a href="https://console.aws.amazon.com/grafana/home?#/workspaces" target="_blank">AMG workspace console</a>. Click the Grafana URL.</p>
+<p class="image-container"><img src="img/9f3e9d0a202858c3.png"></p>
+<p>You should see the Grafana sign-in page. Click the <code>Sign in with AWS IAM Identity Center</code> button.</p>
+<p class="image-container"><img src="img/51f3220373d18d0e.png"></p>
+<p>At this point, you will be prompted to enter username and password for authentication. Depending on how your IAM Identity Center is setup, you may also have to perform a MFA (Multi-Factor Authentication).</p>
+<p>Once logged in, click the hamburger menu located in the top-left corner of the page, select <code>Data sources</code> from the Administration drop-down menu.</p>
+<p class="image-container"><img src="img/43df2585d6969d4c.png"></p>
+<p>In the search box, type in Snowflake, and the Snowflake plugin appears. Select it.</p>
+<p class="image-container"><img src="img/beed91ad71bf173.png"></p>
+<p>Type in the name for your source, e.g., <code>Snowflake</code> and the connection info such as your Snowflake account locator, its AWS region, username <code>streaming_user</code> and password <code>Test1234567</code>. For Environment, type in the role <code>msk_streaming_rl</code>, warehouse <code>msk_streaming_wh</code>, database <code>msk_streaming_db</code> and schema <code>msk_streaming_schema</code> you used in the quickstarts for <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0" target="_blank">Snowpipe Streaming and Amazon MSK</a>.  Leave the remaining options as default and click ‘Save &amp; test&#39;. You will see the ‘Data source is working&#39; sign when it is done. If you are not sure about the Snowflake account locator, please run the following query in Snowflake to get it:</p>
+<pre><code language="language-commandline" class="language-commandline">WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,&#39;.snowflakecomputing.com&#39;,&#39;&#39;) AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = &#39;SNOWFLAKE_DEPLOYMENT&#39;;
+
+</code></pre>
+<p class="image-container"><img src="img/b50e654ba12b08a2.png"></p>
+<p>Now download a <a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_AMG_Streamlit_Streaming/flights-msk-streaming-AMG.json" target="_blank">dashboard template</a> and save it in your local computer.</p>
+<p>In the UI, click the hamburger menu, click <code>Dashboards</code>, then select <code>Import</code> from the <code>New</code> drop-down menu. Drag and drop the downloaded template, select <code>Snowflake</code> as the data source, click <code>Import</code> to complete the import.</p>
+<p class="image-container"><img src="img/1f7141f0b6b6d22e.png"></p>
+<p class="image-container"><img src="img/7acb622f2033674a.png"></p>
+<p>Now you should be able to see the sample dashboard that tracks the real-time flight data.</p>
+<p class="image-container"><img src="img/75750e21521c7bd7.png"></p>
+<p>To learn more about Grafana&#39;s features, feel free to visit their <a href="https://grafana.com/docs/" target="_blank">documentation portal</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitor with Streamlit" duration="10">
+        <p>For developers with Python skills, they might want to quickly develop a custom monitoring dashboard of their own. Streamlit will be a great tool for this use case as it is open-source and can use all the supported Python graphic libraries to build sleek dashboards.</p>
+<p>Here we are going to containerize a Streamlit Python app that retrieves real-time flight data from Snowflake and visualize them in a similar fashion as Grafana. The container is orchestrated by Amazon ECS and front-ended by an <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html" target="_blank">Application Load Balancer (ALB)</a>.</p>
+<p>First click <a href="https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=EcsStreamlit&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_AMG_Streamlit_Streaming/ecs-alb.json" target="_blank">here</a> to deploy the environment with Cloudformation. Click <code>Next</code>.</p>
+<p>In the next page, pick a stack name and ECS cluster name of your choice, pick the VPC and Subnets where you want to deploy the ECS cluster. For Snowflake parameters, use the default values (already filled in), the Snowflake password should be <code>Test1234567</code> from the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0" target="_blank">Snowpipe Streaming and Amazon MSK</a> workshop if you have not changed it. For <code>SnowflakeAccount</code>, run the following command in your Snowflake cluster to get the <code>Account Identifier</code>:</p>
+<pre><code>WITH HOSTLIST AS 
+(SELECT * FROM TABLE(FLATTEN(INPUT =&gt; PARSE_JSON(SYSTEM$allowlist()))))
+SELECT REPLACE(VALUE:host,&#39;.snowflakecomputing.com&#39;,&#39;&#39;) AS ACCOUNT_IDENTIFIER
+FROM HOSTLIST
+WHERE VALUE:type = &#39;SNOWFLAKE_DEPLOYMENT_REGIONLESS&#39;;
+</code></pre>
+<p>Leave everything else as default and click <code>Next</code>.</p>
+<p class="image-container"><img src="img/be65d8d4026f3b95.png"></p>
+<p>At the <code>Review</code> page, check the <code>Capabilities</code> and click <code>Submit</code>. In less than 10 minutes, the environment should deploy successfully, navigate to the <code>Output</code> tab, and click the URL for the ALB.</p>
+<p class="image-container"><img src="img/1c1cafdde78965b7.png"></p>
+<p>Now you should be able to see the sample dashboard built with Streamlit.</p>
+<p class="image-container"><img src="img/1667fdf88b6c9ee5.png"></p>
+<p>Here is the <a href="https://github.com/sfc-gh-jsun/sfquickstarts/blob/master/site/sfguides/src/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/assets/opensky.py" target="_blank">source code</a> for Streamlit.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusions" duration="5">
+        <p>In this lab, we showed a demo on how to use AMG and Streamlit to visualize and monitor live flight data, we also provided a sample Grafana dashboard and Streamlit code for you to get started quickly.</p>
+<p>Related Resources</p>
+<ul>
+<li><a href="https://streamlit.io/" target="_blank">Streamlit</a></li>
+<li><a href="https://aws.amazon.com/grafana/" target="_blank">Amazon Managed Service for Grafana</a></li>
+<li><a href="https://quickstarts.snowflake.com/" target="_blank">Getting started with Snowflake</a></li>
+<li><a href="https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347" target="_blank">Snowflake on AWS Marketplace</a></li>
+<li><a href="https://www.snowflake.com/Workloads/data-sharing/" target="_blank">Snowflake for Data Sharing</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/marketplace/" target="_blank">Snowflake Marketplace</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

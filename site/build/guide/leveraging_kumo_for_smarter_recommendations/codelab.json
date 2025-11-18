@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "leveraging_kumo_for_smarter_recommendations",
+  "duration": 55,
+  "title": "Product Recommendations for High LTV Customers using Kumo in Snowflake Native Apps",
+  "summary": "This guide will provide step-by-step details for generating product recommendations and performing customer LTV calculation using Kumo in a Snowflake Native App",
+  "source": "leveraging_kumo_for_smarter_recommendations/leveraging_kumo_for_smarter_recommendations.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "retail"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "leveraging_kumo_for_smarter_recommendations"
+}

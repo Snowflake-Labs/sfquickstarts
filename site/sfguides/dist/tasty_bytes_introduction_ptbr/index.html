@@ -1,0 +1,266 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Introdução à Tasty Bytes</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_introduction_ptbr"
+                  title="Introdução à Tasty Bytes"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Introdução à Tasty Bytes" duration="1">
+        <p class="image-container"><img src="img/82e3f493a86ab504.png"></p>
+<h2 is-upgraded>Visão geral</h2>
+<p>Neste quickstart &#34;Introdução à Tasty Bytes&#34;, você vai conhecer a marca fictícia de food trucks Tasty Bytes, criada pela equipe frostbyte da Snowflake.</p>
+<p>Após saber mais sobre a organização Tasty Bytes, vamos realizar o processo de configuração do modelo de dados funcional da Tasty Bytes, bem como de funções e armazenamentos específicos das cargas de trabalho e de todo o controle de acesso baseado em funções (role-based access control, RBAC) necessário.</p>
+<p>Ao finalizar este guia, você terá implementado os elementos básicos necessários para executar os quickstarts da seção <a href="/guide/tasty_bytes_introduction_ptbr/index.html#3" target="_blank">Powered by Tasty Bytes - quickstarts</a>.</p>
+<h2 is-upgraded>Quem é a Tasty Bytes?</h2>
+<p class="image-container"><img src="img/a51f501137dea3c5.png"></p>
+<h2 is-upgraded>Pré-requisitos</h2>
+<ul>
+<li>Um <a href="https://docs.snowflake.com/pt/user-guide/setup#browser-requirements" target="_blank">navegador</a> compatível com Snowflake.</li>
+<li>Conta Snowflake Enterprise ou Business Critical. <ul>
+<li>Caso não possua uma conta Snowflake, <a href="https://signup.snowflake.com/?lang=pt-br" target="_blank"><strong>inscreva-se para receber uma conta de avaliação gratuita de 30 dias</strong></a>. No ato da inscrição, escolha a opção <strong>Enterprise</strong>. É possível escolher qualquer <a href="https://docs.snowflake.com/pt/user-guide/intro-regions" target="_blank">nuvem/região do Snowflake</a>.</li>
+<li>Após a inscrição, você receberá um email com um link de ativação e a URL da sua conta Snowflake.</li>
+<li><img style="width: 300.00px" src="img/1e925e111069cf28.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Você vai aprender</h2>
+<ul>
+<li>Criar uma planilha do Snowflake.</li>
+<li>Executar todas as consultas de uma planilha do Snowflake de forma síncrona.</li>
+<li>Explorar bancos de dados, esquemas, tabelas, funções e armazenamentos via SQL em uma planilha do Snowflake.</li>
+</ul>
+<h2 is-upgraded>O que será desenvolvido</h2>
+<ul>
+<li>Elementos básicos para a Tasty Bytes que permitam executar os Powered by Tasty Bytes - quickstarts. <ul>
+<li>Um banco de dados Snowflake.</li>
+<li>Esquemas brutos, harmonizados e analíticos completos com tabelas e exibições.</li>
+<li>Funções e armazenamentos Snowflake específicos das cargas de trabalho.</li>
+<li>Controle de acesso baseado em funções (RBAC)</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuração da Tasty Bytes" duration="6">
+        <h2 is-upgraded>Visão geral</h2>
+<p>Neste quickstart, você usará a interface da web do Snowflake, conhecida como Snowsight. Caso seja sua primeira vez usando o Snowsight, recomendamos consultar a <a href="https://docs.snowflake.com/pt/user-guide/ui-snowsight" target="_blank">documentação do Snowsight</a> para obter orientações gerais.</p>
+<h2 is-upgraded>Etapa 1 - Acessar o Snowflake via URL</h2>
+<ul>
+<li>Abra o navegador e insira a URL da sua conta Snowflake. Caso ainda não tenha uma conta Snowflake, volte à seção anterior para se inscrever em uma conta de avaliação gratuita.</li>
+</ul>
+<h2 is-upgraded>Etapa 2 - Fazer login no Snowflake</h2>
+<ul>
+<li>Acesse sua conta Snowflake. <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Etapa 3 - Acessar as planilhas</h2>
+<ul>
+<li>Clique na guia Worksheets na barra de navegação à esquerda. <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Etapa 4 - Criar uma planilha</h2>
+<ul>
+<li>Dentro da guia Worksheets, clique no botão &#34;+&#34; no canto superior direito do Snowsight e escolha &#34;SQL Worksheet&#34;. <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Etapa 5 - Renomear uma planilha</h2>
+<ul>
+<li>Renomeie a planilha clicando no carimbo de data/hora gerado automaticamente e digite &#34;Tasty Bytes, configuração&#34;. <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Etapa 6 - Acessar o Setup SQL armazenado no GitHub</h2>
+<ul>
+<li>Clique no botão abaixo para acessar o arquivo Tasty Bytes Setup SQL hospedado no GitHub.</li>
+</ul>
+<p><a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_introduction.sql" target="_blank"><paper-button class="colored" raised>tb_introduction.sql</paper-button></a></p>
+<h2 is-upgraded>Etapa 7 - Copiar o Setup SQL do GitHub</h2>
+<ul>
+<li>No GitHub, navegue para a direita e clique em &#34;Copy raw contents&#34;. Todas as informações SQL necessárias serão copiadas para sua área de transferência. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Etapa 8 - Colar o Setup SQL do GitHub para a sua planilha do Snowflake</h2>
+<ul>
+<li>Volte para o Snowsight e sua planilha recém-criada e cole (<em>CMD + V no Mac ou CTRL + V no Windows</em>) o conteúdo copiado do GitHub.</li>
+</ul>
+<h2 is-upgraded>Etapa 9 - Executar de modo síncrono todo o Setup SQL</h2>
+<ul>
+<li>Clique dentro da nova planilha Tasty Bytes - Setup, selecione tudo (<em>CMD + A no Mac ou CTRL + A no Windows</em>) e clique em &#34;► Run&#34;. <ul>
+<li><img src="img/451b2deff6f2950a.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Etapa 10 - Concluir a configuração</h2>
+<ul>
+<li>Após clicar em &#34;► Run&#34;, as consultas começarão a ser executadas. As consultas vão ser executadas uma após a outra, com a conclusão da planilha em cerca de 5 minutos. Após a conclusão, você verá a seguinte mensagem: <code>frostbyte_tasty_bytes setup is now complete</code>. <ul>
+<li><img src="img/896d65f32bfae4ba.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Etapa 11 - Clicar em Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploração dos elementos básicos da Tasty Bytes" duration="2">
+        <h2 is-upgraded>Visão geral</h2>
+<p>Após configurar a Tasty Bytes com sucesso, podemos agora explorar o banco de dados, as funções e os armazenamentos que criamos.</p>
+<aside class="warning"><p><strong>Observação:</strong> dentro da planilha <em>Tasty Bytes - Setup</em> criada na seção anterior, vá até a parte inferior, copie, cole e execute o SQL incluído em cada etapa abaixo.</p>
+</aside>
+<h2 is-upgraded>Etapa 1 - Explorar o banco de dados Tasty Bytes</h2>
+<p>Essa consulta apresentará o banco de dados que criamos com o comando <a href="https://docs.snowflake.com/pt/sql-reference/sql/show-databases.html" target="_blank">SHOW DATABASES</a>.</p>
+<pre><code>SHOW DATABASES LIKE &#39;frostbyte_tasty_bytes&#39;;
+</code></pre>
+<p><img src="img/91a8de41aada1ac6.png">.</p>
+<h2 is-upgraded>Etapa 2 - Explorar os esquemas dentro do banco de dados Tasty Bytes</h2>
+<p>Essa consulta apresentará os esquemas dentro do banco de dados que criamos com o comando <a href="https://docs.snowflake.com/pt/sql-reference/sql/show-schemas" target="_blank">SHOW SCHEMAS</a>.</p>
+<pre><code>SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
+</code></pre>
+<p><img src="img/75491dcf311d5611.png">.</p>
+<h2 is-upgraded>Etapa 3 - Explorar as tabelas do esquema RAW_POS no banco de dados Tasty Bytes</h2>
+<p>Esta consulta apresentará as tabelas no esquema <code>raw_pos</code> com o comando <a href="https://docs.snowflake.com/pt/sql-reference/sql/show-tables" target="_blank">SHOW TABLES</a></p>
+<pre><code>SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
+</code></pre>
+<p><img src="img/11a6d9991e20d84f.png">.</p>
+<h2 is-upgraded>Etapa 4 - Explorar as funções Tasty Bytes</h2>
+<p>Essa consulta apresentará as funções que criamos com o comando <a href="https://docs.snowflake.com/pt/sql-reference/sql/show-roles" target="_blank">SHOW ROLES</a>.</p>
+<pre><code>SHOW ROLES LIKE &#39;tasty%&#39;;
+</code></pre>
+<p><img src="img/ea9571b6ae65de6e.png">.</p>
+<h2 is-upgraded>Etapa 5 - Explorar os armazenamentos Tasty Bytes</h2>
+<p>Esta consulta apresentará os armazenamentos que criamos com o comando <a href="https://docs.snowflake.com/pt/sql-reference/sql/show-warehouses" target="_blank">SHOW WAREHOUSES</a>.</p>
+<pre><code>SHOW WAREHOUSES LIKE &#39;tasty%&#39;;
+</code></pre>
+<p><img src="img/670a3584a18724d2.png">.</p>
+<h2 is-upgraded>Etapa 6 - Combinar todos os elementos</h2>
+<p>As próximas três consultas vão: 1. Assumir a função <code>tasty_data_engineer</code> com o comando <a href="https://docs.snowflake.com/pt/sql-reference/sql/use-role.html" target="_blank">USE ROLE</a>. 2. Usar o armazenamento <code>tasty_de_wh</code> com o comando <a href="https://docs.snowflake.com/pt/sql-reference/sql/use-warehouse.html" target="_blank">USE WAREHOUSE</a>. 3. Consultar nossa tabela <code>raw_pos.menu</code> para saber quais itens do menu são vendidos em nossos food trucks com a marca Plant Palace.</p>
+<pre><code>USE ROLE tasty_data_engineer; 
+USE WAREHOUSE tasty_de_wh;
+
+SELECT 
+    m.menu_type_id, 
+    m.menu_type, 
+    m.truck_brand_name, 
+    m.menu_item_name 
+FROM frostbyte_tasty_bytes.raw_pos.menu m 
+WHERE m.truck_brand_name = &#39;Plant Palace&#39;; 
+</code></pre>
+<p class="image-container"><img src="img/2aba27e059c43d58.png">  </p>
+<p>Incrível! Em poucos minutos temos um ambiente de demonstração Tasty Bytes completo com dados, funções e armazenamentos configurados na nossa conta Snowflake. Agora, vamos ver todos os outros Tasty Bytes Quickstarts que podemos usar.</p>
+<h2 is-upgraded>Etapa 7 - Clicar em Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Powered by Tasty Bytes - quickstarts" duration="1">
+        <h2 is-upgraded>Visão geral</h2>
+<p>Parabéns! Você acaba de concluir a configuração dos elementos básicos para a Tasty Bytes!</p>
+<p>O índice abaixo vai listar todos os Tasty Bytes Quickstarts que podem utilizar os elementos básicos que você acaba de criar.</p>
+<p class="image-container"><img src="img/a84d9cfd645f2656.png"></p>
+<h2 is-upgraded>Do zero ao Snowflake</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/" target="_blank">Governança financeira</a></h3>
+<ul>
+<li>Saiba mais sobre os armazenamentos virtuais Snowflake e suas opções de configuração, monitores de recursos e parâmetros de tempo limite no nível de conta e armazenamento.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_transformation_ptbr/" target="_blank">Transformação</a></h3>
+<ul>
+<li>Saiba mais sobre o Snowflake Zero Copy Cloning, cache de conjunto de resultados, manipulação de tabelas, Time-Travel e funcionalidades de troca, descarte e cancelamento de descarte de tabelas.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ptbr/" target="_blank">Dados semiestruturados</a></h3>
+<ul>
+<li>Saiba mais sobre o formato VARIANT de dados do Snowflake, processamento de dados semiestruturados com uso de notação de pontos e nivelamento lateral, bem como criação de exibições e criação de gráficos com o Snowsight.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/" target="_blank">Governança de dados</a></h3>
+<ul>
+<li>Saiba mais sobre as funções definidas pelo sistema Snowflake, crie e aplique permissões a uma função personalizada e implemente Dynamic Data Masking baseado em tags e políticas de acesso a linhas.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="/guide/tasty_bytes_zero_to_snowflake_collaboration_ptbr/" target="_blank">Colaboração</a></h3>
+<ul>
+<li>Saiba mais sobre o Snowflake Marketplace com dados ativos gratuitos, disponibilizados instantaneamente pelo Weather Source para conduzir análises baseadas em dados, harmonizando fontes primárias e terciárias.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/" target="_blank">Geoespacial</a></h3>
+<ul>
+<li>Saiba mais sobre o suporte geoespacial do Snowflake, começando pela aquisição gratuita de dados ativos e disponíveis instantaneamente do SafeGraph, depois passando para a criação de pontos geográficos (ST_POINT), cálculos de distância (ST_DISTANCE), coleta de coordenadas (ST_COLLECT), criação de um polígono de delimitação mínimo (ST_ENVELOPE), cálculo de área (ST_AREA) e determinação de pontos centrais (ST_CENTROID).</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Guias detalhados das cargas de trabalho (<em>em breve</em>)</h2>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

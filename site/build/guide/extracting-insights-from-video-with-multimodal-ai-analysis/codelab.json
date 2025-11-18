@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "extracting-insights-from-video-with-multimodal-ai-analysis",
+  "duration": 91,
+  "title": "Extracting Insights from Video with Multimodal AI Analysis",
+  "summary": "Extract images, transcribe audio, and analyze key moments from videos using Cortex AI and Snowpark Container Services—all within Snowflake.",
+  "source": "extracting-insights-from-video-with-multimodal-ai-analysis/extracting-insights-from-video-with-multimodal-ai-analysis.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "ai",
+    "cortex",
+    "datascience",
+    "gettingstarted",
+    "llm",
+    "snowparkcontainerservices",
+    "spcs",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "extracting-insights-from-video-with-multimodal-ai-analysis"
+}

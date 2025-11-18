@@ -1,0 +1,211 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Simplify and Accelerate Data Access Provisioning with Immuta and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake"
+                  title="Simplify and Accelerate Data Access Provisioning with Immuta and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this guide, you&#39;ll learn how to securely provision data access using <strong>Immuta</strong> and <strong>Snowflake</strong> by stepping into the roles of a <strong>Data Consumer</strong>, <strong>Data Product Owner</strong>, and <strong>Data Governor</strong>.</p>
+<p>The scenario centers on a <strong>healthcare</strong> dataset containing <strong>patient and provider encounters</strong> across a network of facilities. You&#39;ll use an HLS dataset to simulate a federated enterprise environment and experience how Immuta helps organizations streamline access while maintaining compliance and accelerating time to data.</p>
+<p>By the end of the guide, you&#39;ll have published a secure data product, enforced dynamic policies, and accessed governed data.</p>
+<h2 is-upgraded>Introduction to Immuta</h2>
+<p>AI and other technologies have created a surge in data demand, with 10–100x more consumers needing access. While data is now easier for non-technical users to reach, the governance processes haven&#39;t scaled. As a result, IT and data teams are overwhelmed, and users are frustrated by delays. <img alt="funnel" src="img/a8afedeb341e225e.png"></p>
+<p>Despite the push to make data more accessible, most organizations still rely on a complex, manual process involving multiple teams. From request to access, it often takes over two months—slowing down insights and frustrating users. This model no longer scales with modern data demands. <img alt="people" src="img/f219ff1e56cad2a9.png"></p>
+<p>Immuta simplifies and secures the data access process with a single platform that combines a governed data marketplace with automated policy enforcement. Data consumers get fast, compliant access, while stewards, governors, and product owners work within clear, auditable workflows <img alt="dg" src="img/c2f057569a64a3f7.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>None; all access and accounts will be provided as part of the workshop setup</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How Immuta&#39;s native integration with Snowflake enables secure, scalable data access</li>
+<li>How to automatically identify and tag your data so you can classify sensitive information and apply scalable policies that support compliance</li>
+<li>How to build dynamic, attribute-based access controls so access adapts automatically</li>
+<li>How to publish trusted, compliant data products to the Immuta Marketplace so users can discover and request the data they need without creating bottlenecks</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to Immuta&#39;s Workshop Okta SSO (provided)</li>
+<li>Access to the shared Snowflake worksheet (provided)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A plain-language masking policy in Immuta that protects PII using Snowflake&#39;s native controls</li>
+<li>A governed data product published to the Immuta Marketplace, available for access by other workshop participants <img alt="build" src="img/14005fe56f8213f7.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sign-in" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>You&#39;ve been provisioned with an <strong>Okta profile</strong> that will allow you to seamlessly sign in to the following environments for the workshop:</p>
+<ul>
+<li><strong>Immuta Governance</strong></li>
+<li><strong>Immuta Marketplace</strong></li>
+<li><strong>Snowflake Workshop Account</strong></li>
+</ul>
+<p>In Snowflake, you&#39;re provisioned as a data owner over a single schema within a domain-scoped database. Throughout this workshop, you&#39;ll create fine-grained access controls to govern this data and publish a secure data product that others can request through the Immuta Marketplace.</p>
+<p><strong>Note:</strong> Be sure to use the shared Snowflake worksheet provided for the hands-on exercises.</p>
+<h2 is-upgraded>What you&#39;ll do</h2>
+<ul>
+<li>Sign in to Okta</li>
+<li>Launch each application: <ul>
+<li>Immuta Governance</li>
+<li>Immuta Marketplace</li>
+<li>Snowflake Workshop Account</li>
+</ul>
+</li>
+<li>Review the data currently available to your user</li>
+</ul>
+<h2 is-upgraded>Follow Along in Okta</h2>
+<p class="image-container"><img alt="login" src="img/630350de927d1317.png"></p>
+<p class="image-container"><img alt="profile" src="img/198eddb542f27146.png"></p>
+<h2 is-upgraded>Follow Along in Snowflake</h2>
+<p class="image-container"><img alt="duplicate" src="img/3e42c5c954efb102.png"></p>
+<p class="image-container"><img alt="checkdata" src="img/69d0c0b90e0af27f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Consumer Experience" duration="15">
+        <h2 is-upgraded>Overview</h2>
+<p class="image-container"><img alt="marketplace" src="img/85960ae36ac0c964.png"></p>
+<h2 is-upgraded>What you&#39;ll do</h2>
+<ul>
+<li>You are <strong>Connie the consumer</strong> who is an analyst that has been tasked to review and provide insights on facility performance based on patient encounters.</li>
+<li>You need to find a data product that will fit your analytical needs and get access quickly to provide insights within a short deadline.</li>
+<li>We&#39;ll start by looking at the <strong>Immuta Data Marketplace</strong> to see what data products are available that may fit your business needs.</li>
+</ul>
+<h2 is-upgraded>Follow Along in Immuta Marketplace: Request Access to a Data Product</h2>
+<p class="image-container"><img alt="selectproduct" src="img/381235d7d882cadf.png"></p>
+<p class="image-container"><img alt="request" src="img/b9f2305cb81bfb34.png"></p>
+<p class="image-container"><img alt="form" src="img/64dcb28d7bc48de2.png"></p>
+<h2 is-upgraded>Follow Along in Snowflake</h2>
+<p class="image-container"><img alt="businessquery" src="img/4ba817f390e0561a.png"></p>
+<p class="image-container"><img alt="selectmask" src="img/bc35ba659b78e0b0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Governor Experience" duration="15">
+        <h2 is-upgraded>Overview</h2>
+<p>Domains in Immuta enable decentralized, federated governance by giving business units control over their own policies while still enforcing organization-wide rules through a global policy layer. Each domain contains its own data sources, governance rules, and designated stewards who manage access and ensure compliance. In this lab, you&#39;ll operate as a domain steward, managing access and policies within your domain, while global compliance is enforced through shared metadata across the platform, ensuring consistency in a distributed model.</p>
+<p class="image-container"><img alt="domains" src="img/f2d5fabb6b533ec7.png"></p>
+<p>Subscription policies determine who can see a dataset, while data policies govern how sensitive information is masked or filtered based on context, ensuring secure, compliant access. Immuta policies offer fine-grained control over data access at every level: table, column, row, and even individual cells.</p>
+<p class="image-container"><img alt="subpolicy" src="img/5a44c06cfe412119.png"></p>
+<h2 is-upgraded>What you&#39;ll do</h2>
+<ul>
+<li>You are <strong>Greg the Domain Governor</strong> who is responsible for ensuring that all the data within his domain is secured based on global compliance standards and inter domain requirements.</li>
+<li>You need to build a policy that will include global masking requirements based on data metadata (tags) that are being automatically applied by Immuta.  This masking policy must also include a domain requirement to mask ‘location&#39; data.</li>
+<li>We&#39;ll start by looking at the Patient table within the Immuta Governance application so we can confirm automated data discovery tags were applied.</li>
+<li>Then you&#39;ll create a domain specific data policy within the Immuta Governance application using the metadata tags available to secure location information.</li>
+</ul>
+<h2 is-upgraded>Follow Along in Immuta Governance: Review Metadata</h2>
+<p class="image-container"><img alt="finddomain" src="img/882f8ab839af4fe2.png"></p>
+<p class="image-container"><img alt="datasource" src="img/794d3f96b5b61302.png"></p>
+<p class="image-container"><img alt="dictionary" src="img/ca25bab00312a885.png"></p>
+<h2 is-upgraded>Follow Along in Immuta Governance: Create a Data Policy</h2>
+<p class="image-container"><img alt="buildmask" src="img/7474258bfbff3f5a.png"></p>
+<h2 is-upgraded>Follow Along in Snowflake</h2>
+<p class="image-container"><img alt="domainmask" src="img/59d808a2d551237b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Product Owner Experience" duration="15">
+        <h2 is-upgraded>Overview</h2>
+<p class="image-container"><img alt="provision" src="img/aa0967a5a9475c4c.png"></p>
+<h2 is-upgraded>What you&#39;ll do</h2>
+<ul>
+<li>You are Pratyoosh the Domain Data Product Owner who wants to publish secure products that drive business value. Pratyoosh wants to understand who and how often these data products are being used.</li>
+<li>You need to publish a data product to the Marketplace so that consumers can gain access immediately.  This product must include Greg&#39;s data policies prior to being made available in the marketplace.</li>
+<li>Let&#39;s start by defining the data product in the product owner interface and create the access workflow for consumption.</li>
+</ul>
+<h2 is-upgraded>Follow Along in Immuta Marketplace: Publish a Data Product</h2>
+<p class="image-container"><img alt="publish" src="img/a970f9821877ad98.png"></p>
+<p class="image-container"><img alt="publishwf1" src="img/913d6819f8848728.png"></p>
+<p class="image-container"><img alt="publishwf2" src="img/77f3d16c5edf394a.png"></p>
+<p class="image-container"><img alt="publishwf3" src="img/8279239d0c2e7987.png"></p>
+<p class="image-container"><img alt="publishwf4" src="img/d22cd75696e81429.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>In this lab, you stepped into the roles of Data Governor, Data Product Owner, and Data Consumer to experience how Immuta and Snowflake work together to simplify and scale secure data access. You discovered how metadata-driven policies, automated workflows, and the Immuta Marketplace reduce friction, accelerate time-to-data, and support compliance without sacrificing control.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How Immuta&#39;s native integration with Snowflake enables secure, scalable data access</li>
+<li>How to automatically identify and tag data to classify sensitive information and apply scalable policies that support compliance</li>
+<li>How to build dynamic, attribute-based access controls that adapt automatically to users and context</li>
+<li>How to publish trusted, compliant data products to the Immuta Marketplace, enabling users to discover and request data without bottlenecks</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.immuta.com/data-marketplace-product-tour/" target="_blank">Tour the Immuta Data Marketplace</a></li>
+<li><a href="https://www.immuta.com/guides/demo-library/immuta-data-marketplace-solution-demo/" target="_blank">Watch a Demo</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

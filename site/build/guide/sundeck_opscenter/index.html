@@ -1,0 +1,316 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Sundeck OpsCenter</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="sundeck_opscenter"
+                  title="Getting Started with Sundeck OpsCenter"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img alt="OpsCenter Screenshot" src="img/8834f134d456dc86.png"></p>
+<p>OpsCenter from Sundeck is a free Snowflake Native App which provides a suite of tools to better understand, manage, and alert on Snowflake activity and spend.  Key features of OpsCenter include:</p>
+<ul>
+<li><strong>Workload Analytics</strong> - Understand and manage Snowflake workload with detailed query reporting and alerts.</li>
+<li><strong>Custom Query Labeling</strong> - Use <strong>Labels</strong> to collect specific types of queries together, to extend the built-in Workload Analytics reporting for better understanding.</li>
+<li><strong>Query Monitoring</strong> - Use <strong>Probes</strong> to monitor Snowflake queries based on certain parameters (runtime, cost), and send alerts or cancel queries if they exceed preset thresholds</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to Snowflake&#39;s Native Apps feature (may require Snowflake Support to enable for your account)</li>
+<li><code>ACCOUNTADMIN</code> privileges to perform the initial setup</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to find, install, and set up the Sundeck OpsCenter Native App</li>
+<li>How to use the built-in reporting in OpsCenter to understand and manage Snowflake spend and workload</li>
+<li>How to create custom Labels to match query patterns and enhance understanding</li>
+<li>How to use the Query Monitoring feature to alert or cancel queries based on certain parameters</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A customized solution to understand and better manage your Snowflake environment</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Get the Native App" duration="3">
+        <aside class="special"><p>Note that your Snowflake Account may need to be enabled for Native Apps.  If you do not see the &#34;Apps&#34; tab in Snowsight, please contact Snowflake Support to enable Native Apps for your account.</p>
+</aside>
+<h2 is-upgraded>Find the Sundeck Native App Listing</h2>
+<p>First, log in to Snowsight in your browser, as a user with <code>ACCOUNTADMIN</code> privileges.</p>
+<p>Next, we&#39;ll locate the listing for the Sundeck OpsCenter Native App, by:</p>
+<ul>
+<li>Navigating to the &#34;Apps&#34; tab in the Snowsight UI:</li>
+</ul>
+<p class="image-container"><img alt="Apps Tab" src="img/72d87047db5be07d.png"></p>
+<ul>
+<li>Selecting &#34;From a Listing&#34; as the source, and searching for &#34;Sundeck&#34;:</li>
+</ul>
+<p class="image-container"><img alt="Set Apps Source" src="img/d2d990b8aa3af141.png"></p>
+<ul>
+<li>Searching for &#34;Sundeck&#34;:</li>
+</ul>
+<p class="image-container"><img alt="Search Apps" src="img/851d1419df2b59ce.png"></p>
+<p>The search will return a result for &#34;OpsCenter&#34; from Sundeck.  Click the &#34;Get&#34; button on the listing.</p>
+<p class="image-container"><img alt="App Found" src="img/10db11c332825dfe.png"></p>
+<h2 is-upgraded>Native App Listing</h2>
+<p>You&#39;ll be taken to the OpsCenter Native App listing page.  Here, you can learn more about the App and its features:</p>
+<p class="image-container"><img alt="App Found" src="img/b9a3ce60edb9866e.png"></p>
+<p>To install the App, click the &#34;Get&#34; button.</p>
+<h2 is-upgraded>Confirm the Installation</h2>
+<p>Once you click &#34;Get&#34; on the listing page, you will be prompted to confirm the installation.  Note that the confirmation dialog has an &#34;Options&#34; section, which will allow you to specify the name of the App, as well as the Warehouse which will be used for installation tasks:</p>
+<p class="image-container"><img alt="Confirm Get Native App" src="img/454f882f958a1f86.png"></p>
+<p>Modify any optional settings, and click &#34;Get&#34; to begin the installation.</p>
+<aside class="special"><p>Note that the installation may take from 1 - 3 minutes.  Please don&#39;t navigate away from the page until the installation is complete.</p>
+</aside>
+<p>Once installation is complete, you will see a confirmation dialog, which will offer to take you directly into OpsCenter:</p>
+<p class="image-container"><img alt="Confirm Get Native App" src="img/fd544dbef17b1755.png"></p>
+<p>Click &#34;Configure&#34; to complete the local setup of OpsCenter.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Complete Setup" duration="2">
+        <p>Once the Native App is launched, you will be taken to the OpsCenter Home page.  Initially, a list of &#34;Getting Started&#34; tasks will be displayed.  These will disappear once you have completed the setup steps.</p>
+<p class="image-container"><img alt="Home Page" src="img/594466701e589809.png"></p>
+<h2 is-upgraded>Grant Permissions</h2>
+<p>To complete setup, we&#39;ll grant a handful of permissions to the OpsCenter application by running the provided SQL script in the &#34;Grant Snowflake Privileges&#34; section.  Just click the &#34;copy to clipboard&#34; button in the upper-right corner of the SQL code block:</p>
+<p class="image-container"><img alt="Home Page" src="img/f809ec9e4cae0e42.png"></p>
+<p>Then paste the script into a new Snowsight Worksheet.  Be sure that you are using the ACCOUNTADMIN role, and click &#34;Run&#34;:</p>
+<p class="image-container"><img alt="Home Page" src="img/8e99153c0cc7ff04.png"></p>
+<p>Once the grants have been applied, you can return to the OpsCenter Home page, and click the &#34;Refresh Status&#34; button to confirm that the grants have been applied successfully:</p>
+<p class="image-container"><img alt="Home Page" src="img/f43679ec882bf646.png"></p>
+<p>Continue to the next step to start using OpsCenter!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="View Warehouse Utilization" duration="4">
+        <p>Let&#39;s start by exploring one of the built-in reports in OpsCenter.  Click on the &#34;Warehouses&#34; link in the left-hand navigation menu:</p>
+<p class="image-container"><img alt="Home Page" src="img/234e9609f446595e.png"></p>
+<h2 is-upgraded>Warehouse Activity Overview</h2>
+<p>This will bring up the main Warehouse Utilization report:</p>
+<p class="image-container"><img alt="Home Page" src="img/8834f134d456dc86.png"></p>
+<p>This report shows a view of combined activity for all warehouses, indicating daily total cost as well as estimated utilization (percentage of the time the warehouse was used to full capacity).</p>
+<p>The time period covered by the chart, as well as the resolution (days, weeks, months) of each bar can be adjusted by using the date filter controls at the top of the page.  In addition, the warehouses included in the chart data can be filtered as well:</p>
+<p class="image-container"><img alt="Home Page" src="img/ea545b90962d0806.png"></p>
+<p>Below the cost and utilization chart are two additional analyses of warehouse activity:</p>
+<ul>
+<li><strong>Duration of Warehouse Session</strong>: This shows a distribution of the number of Warehouse Sessions by duration.  A Warehouse Session is defined as the time between when a warehouse is started and stopped.</li>
+<li><strong>Time before Warehouse Start</strong>: This shows a distribution of the number of warehouse sessions, by how long a particular warehouse was stopped before it was started.</li>
+</ul>
+<p>The combination of these metrics can be quite useful for understanding the ratio of quiesced to active time for all warehouses (or particular warehouses as selected in the Filters), and can help inform correct warehouse sizing and auto-suspend settings.</p>
+<h2 is-upgraded>Utilization Heatmap</h2>
+<p>In addition, an alternate Heatmap view of warehouse utilization is available, and can be accessed by selecting &#34;Warehouse Heatmap&#34; from the &#34;Select Report&#34; dropdown at the top of the page:</p>
+<p class="image-container"><img alt="Home Page" src="img/7feec5d840977e35.png"></p>
+<p>The Heatmap view shows warehouse utilization over time, broken out by day of the week.  Darker shading indicates heavier warehouse utilization, and lighter indicates a higher fraction of idle time.  This information can give immediate insight into whether your warehouses are sized appropriately, and may indicate where sizing needs to be adjusted throughout the week for maximum cost efficiency.</p>
+<p class="image-container"><img alt="Home Page" src="img/ba42f6ebee77ffe5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="View Query Activity" duration="4">
+        <p>Next, let&#39;s look at the query analysis reports.  Click on the &#34;Queries&#34; link in the left-hand navigation menu:</p>
+<p class="image-container"><img alt="Home Page" src="img/f8e7a5fa0cc09a00.png"></p>
+<p>This will load the Query Activity Report by default, as well as a set of available filters for date range, warehouse, and OpsCenter labels (more on these later).  Note that any filter criteria set at the top of the page will apply to other report types available on this Query Activity page.  Filters can be accessed by clicking on the &#34;Filters&#34; dropdown:</p>
+<p class="image-container"><img alt="Home Page" src="img/4162b7a799232123.png"></p>
+<p>We&#39;ll cover advanced aspects of filtering (&#34;Include All&#34;, &#34;Include Any&#34;, &#34;Exclude Any&#34;) in a later section.</p>
+<p>Let&#39;s quickly step through each of the available reports.</p>
+<h2 is-upgraded>Query Activity Report</h2>
+<p class="image-container"><img alt="Home Page" src="img/9c3d85b449f33e16.png"></p>
+<p>This report provides views of query cost (left graph) and query counts (right graph), along a selected dimension (User, Warehouse, Role, Query Type, and Execution Status).  Each value of the selected dimension is displayed as a different color in the stacked bar chart, and can be included or excluded from the chart by clicking on its value in the legend.</p>
+<h2 is-upgraded>Top Spenders Report</h2>
+<p>This report can be accessed by selecting it from the &#34;Select Report&#34; dropdown at the top of the page:</p>
+<p class="image-container"><img alt="Home Page" src="img/7dbaeef630be5a21.png"></p>
+<p>This will load the Top Spenders report:</p>
+<p class="image-container"><img alt="Home Page" src="img/ca87d1e69e9b001b.png"></p>
+<p>Here we can see the top users by total query cost, as well as the total number of queries for each of these users.  Query cost is an estimate (based on query runtime, warehouse size used by the query, and an estimation of resource utilization based on concurrency), and is intended for relative comparison purposes only.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up Probes" duration="4">
+        <h2 is-upgraded>Probes Overview</h2>
+<p>OpsCenter Probes allow you to configure once-per-minute queries against recent and currently-running query history (using Snowflake&#39;s <code>QUERY_HISTORY( )</code> table function), and take action based on defined conditions.</p>
+<p>There are 2 elements to an OpsCenter Probe:</p>
+<ul>
+<li><strong>What to Check For</strong>: This is the Probe Condition, which is a valid WHERE clause that can be applied to a query of the <code>INFORMATION_SCHEMA.QUERY_HISTORY()</code> table function.</li>
+<li><strong>What to Do</strong>: If the Probe Condition evaluates to <code>TRUE</code>, the Probe can send an alert (email), cancel the query, or both.</li>
+</ul>
+<aside class="special"><p>Note that to sending email notificatons requires enabling additional OpsCenter features.  Please see section 8 of this Guide (Enable Notifications) for more information.</p>
+</aside>
+<h2 is-upgraded>Create a Probe</h2>
+<p>Next, let&#39;s set up a Probe to monitor queries based on certain parameters.  We&#39;ll start by building a new Probe to check for queries which run longer than 5 minutes, and cancel them if they are found.</p>
+<p>Click on the &#34;Probes&#34; link in the left-hand navigation menu:</p>
+<p class="image-container"><img alt="Home Page" src="img/1c09cb28e52ed3ca.png"></p>
+<p>To create a new Probe, we&#39;ll click &#34;New&#34;:</p>
+<p class="image-container"><img alt="Home Page" src="img/cc904f04fab9d788.png"></p>
+<p>We simply choose a name for our new Probe, and then specify the conditions under which we want to be alerted.  Note that the Condition is any valid <code>WHERE</code> clause that can be applied to the <a href="https://docs.snowflake.com/en/sql-reference/functions/query_history" target="_blank"><code>INFORMATION_SCHEMA.QUERY_HISTORY()</code></a> table function.</p>
+<p>In this case, we want to monitor by runtime, so let&#39;s use the <code>EXECUTION_TIME</code> column to start.  Note this column contains execution times in milliseconds, so in order to find queries with durations longer than 5 minutes, we need to use 300,000 (5 * 60 * 1000) milliseconds.  We do this by entering <code>EXECUTION_TIME > 300000</code> in the &#34;Condition&#34; field.</p>
+<p>We also need to add one more check in our condition, to ensure that our Probe does not cancel the OpsCenter app itself (which runs as a query in Snowflake).  We&#39;ll do this for now by excluding any Streamlit queries, using this clause <code>AND NOT (query_text ilike 'execute streamlit%')</code>.</p>
+<aside class="special"><p>Note that when provided as a Probe Condition, the WHERE clause does not include the keyword <code>WHERE</code>.</p>
+</aside>
+<p>Finally, we need to select what we want to happen when queries are found that meet our condition.  In this case, we will select &#34;cancel&#34;.</p>
+<p class="image-container"><img alt="Home Page" src="img/69bc45dbfb74bc71.png"></p>
+<p>Cick &#34;Create&#34; to create the Probe.  After a few seconds, you&#39;ll be taken back to the list of Probes, and you&#39;ll see your new Probe listed:</p>
+<p class="image-container"><img alt="Home Page" src="img/2c23eff02eaf48d1.png"></p>
+<p>From here, you can create further Probes, or modify/delete existing Probes.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Labels" duration="4">
+        <h2 is-upgraded>Labels Overview</h2>
+<p>OpsCenter Labels allow you to tag historical queries based on conditions you specify, and then filter Query Activity reports based on these Labels.  This allows you to better understand your workload, and to drill down into specific types of queries.</p>
+<p>A Label consists of:</p>
+<ul>
+<li><strong>Label Name</strong>: A unique name for the Label.  This name will appear in filter dropdowns in the Query Activity reports.</li>
+<li><strong>Label Type</strong>: OpsCenter labels can be either &#34;Ungrouped&#34; or &#34;Grouped&#34; labels.  Any number of Ungrouped labels can be applied to a single query, but only a single label within a given Group can be applied to one query.  You can think of &#34;Grouped&#34; labels as providing &#34;binning&#34; of queries, whereas &#34;Ungrouped&#34; labels act more like tags.</li>
+<li><strong>Label Condition</strong>: This is valid WHERE clause which can be applied to Snowflake&#39;s <code>SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY</code> table.  In addition, <a href="https://docs.sundeck.io/reference/conditions/qtag/" target="_blank">QTag functions</a> can be used in Label Conditions to provide more advanced matching.</li>
+</ul>
+<h2 is-upgraded>Creating Labels</h2>
+<p>Let&#39;s first navigate to the Labels page by clicking on the &#34;Labels&#34; link in the left-hand navigation menu:</p>
+<p class="image-container"><img alt="Home Page" src="img/3289ba9a67ac6753.png"></p>
+<p>You&#39;ll see that initially, there are no Labels configured in the system.  Let&#39;s create one!</p>
+<p>There are two buttons below the labels listing:  &#34;New&#34;, which creates a new Ungrouped label, and &#34;New (in group)&#34; which creates a new Grouped label.  We&#39;ll start with the simplest case, an Ungrouped label.  Click &#34;New&#34;:</p>
+<p class="image-container"><img alt="Home Page" src="img/d3d0a20032e1d753.png"></p>
+<p>All we need to provide is the label name, and the label condition.  In this example, let&#39;s create a label which matches all queries which Snowflake had to spill to disk during processing.  We&#39;ll call the label &#34;Spilled&#34;, and provide the condition <code>BYTES_SPILLED_TO_LOCAL_STORAGE > 0 OR BYTES_SPILLED_TO_REMOTE_STORAGE</code> (where clause on QUERY_HISTORY):</p>
+<p class="image-container"><img alt="Home Page" src="img/743ac3aded12710e.png"></p>
+<p>Click &#34;Create&#34; to save the label definition. You&#39;ll be taken back to the Labels listing page, and you&#39;ll see your new label listed:</p>
+<p class="image-container"><img alt="Home Page" src="img/8e24801f820b9c9b.png"></p>
+<h2 is-upgraded>Using Labels in Reports</h2>
+<p>Once you have created one or more OpsCenter Labels, they can be used in the advanced Filter Conditions on the Query Activity reports:</p>
+<p class="image-container"><img alt="Home Page" src="img/8256e91aa0902046.png"></p>
+<p>The dropdowns are fairly straightforward; each can contain muliple selections.  Multiple selections in &#34;Include All&#34; are <code>AND</code>ed together, meaning only queries which match all selected labels will be shown.  Multiple selections in &#34;Include Any&#34; are <code>OR</code>ed together, such that queries matching any of the selections are shown.  Selections in &#34;Exclude Any&#34; will be excluded from the results.</p>
+<aside class="special"><p>Note that it is possible to select a combination of Label filter conditions which are mutually exclusive, and result in no queries being displayed on the report.  If you end up with a blank report after modifying filter conditions, go back and clear one or more of the Label filters and try again.</p>
+</aside>
+<h2 is-upgraded>Grouped Labels</h2>
+<p>Grouped Labels are similar to Ungrouped Labels, but with one key difference:  Only one Label within a given group can be applied to a single query.  This allows you to &#34;bin&#34; queries across the labels in a group, then filter on that group to see a breakout of the data across all labels in the group.</p>
+<p>For example, you could create a Grouped Label called &#34;Long Running Queries&#34;, and then create a number of Labels within that group, each with a different runtime threshold.  This would allow you to filter on &#34;Long Running Queries&#34; and see all queries which ran longer than a certain threshold, with a breakout by duration &#34;bins&#34;.</p>
+<p>To create Grouped labels, click on the &#34;New (in group)&#34; button, and you will notice that there are two additional fields to fill in (&#34;Group Name&#34; and &#34;Rank&#34;):</p>
+<p class="image-container"><img alt="Home Page" src="img/5b590b7f72819eac.png"></p>
+<p>Since Group labels are effectively &#34;binning&#34; all queries into one of the labels within the group, the label conditions need to be tested in a specific order to provide deterministic results.  To establish the order, set the Rank value relative to the other labels within the same group.  Lower Rank numbers will be evaluated first.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable Notifications (Optional)" duration="4">
+        <p>To enable OpsCenter Probes to send notifications by email, we&#39;ll create a free Sundeck account.</p>
+<p>From the OpsCenter Home Page, scroll down to the &#34;Enable Notifications&#34; section:</p>
+<p class="image-container"><img alt="Home Page" src="img/421859be7c508d7d.png"></p>
+<h2 is-upgraded>Step 1: Right-click the link to create a free Sundeck account</h2>
+<p>Next, we&#39;ll create a free Sundeck account, by right_clicking the link in Step 1 &#34;Create a Free Sundeck Account&#34;.</p>
+<p class="image-container"><img alt="Home Page" src="img/ec12d1e065efc424.png"></p>
+<p>This will open the Sundeck Signup page in a new window.  We&#39;ll just need a couple of pieces of information to create the account:</p>
+<ul>
+<li>Google login, or an email address and password</li>
+<li>Your Snowflake Account locator and Region</li>
+</ul>
+<p>First, let&#39;s sign in.  In this example, we&#39;ll use email and password:</p>
+<p class="image-container"><img alt="Home Page" src="img/59ffb2f3c39c04b0.png"></p>
+<p>This will send a verification email to the email address provided.  We&#39;ll need to open that email to retrieve the 6-digit verification code, and paste that when requested.</p>
+<p>Once signed in, we&#39;ll be presented with a single page to enter the remaining information:</p>
+<p class="image-container"><img alt="Home Page" src="img/a6aee9662f2243d6.png"></p>
+<p>That&#39;s it!  We now have a new Sundeck account!</p>
+<h2 is-upgraded>Step 2: Create a Sundeck Token</h2>
+<p>To create a token for use in OpsCenter, navigate to the &#34;Account Settings&#34; menu by clicking your username in the upper-right corner of the Sundeck Web UI:</p>
+<p class="image-container"><img alt="Home Page" src="img/802b6ec784656eb8.png"></p>
+<p>Then scroll down to the bottom of the page to the &#34;Tokens&#34; section, and click &#34;Create Token&#34;to create a new token.  In the New Token dialog that appears, give this new token a name (such as &#34;OpsCenter&#34;), then click &#34;Generate Token&#34;:</p>
+<p class="image-container"><img alt="Home Page" src="img/a119e03d4dd3f2cc.png"></p>
+<p>The token will be displayed, along with a &#34;Copy to clipboard&#34; button.  Copy the token to the clipboard.</p>
+<p class="image-container"><img alt="Home Page" src="img/63339ddd1197afbc.png"></p>
+<h2 is-upgraded>Step 3: Provide the new token to OpsCenter</h2>
+<p>Return to OpsCenter, and paste the token into the Sundeck Token field, and click the &#34;Enable Notifications&#34; button:</p>
+<p class="image-container"><img alt="Home Page" src="img/bd94fe693b6aa447.png"></p>
+<p>Snowflake will ask you to confirm that it&#39;s OK to create an API integration.  Click &#34;Allow&#34;.</p>
+<p class="image-container"><img alt="Home Page" src="img/22776d2873d3db1e.png"></p>
+<p>You&#39;ve now connected OpsCenter to Sundeck.  Continue to the next step to learn about the advanced OpsCenter features you&#39;ve just enabled!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Advanced Features (Optional)" duration="1">
+        <p>If you have chosen to connect OpsCenter to a free Sundeck account, you can now take advantage of a number of advanced features within OpsCenter, such as Notifications and advanced query pattern matching in Labels and Probes.</p>
+<h2 is-upgraded>Notifications</h2>
+<p>OpsCenter Probes can send emails via the Sundeck SaaS platform.</p>
+<p>These extended alerting and messaging features are provided to your Snowflake account (and OpsCenter) via Snowflake <a href="https://docs.snowflake.com/en/sql-reference/external-functions-introduction" target="_blank">External Functions</a>, which when called from within Snowflake will send messages through Sundeck.</p>
+<h2 is-upgraded>Advanced Query Pattern Matching</h2>
+<p>Once connected to Sundeck, you will be able to use the QLike( ) function within Label and Probe condition expressions.  QLike provides very powerful query generalization and matching capabilities.</p>
+<p>You can learn more about <a href="https://docs.sundeck.io/concepts/qlike/" target="_blank">QLike concepts</a> and see <a href="https://docs.sundeck.io/advanced/qlike-recipes/" target="_blank">QLike examples</a> in the <a href="https://docs.sundeck.io/" target="_blank">Sundeck documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Now that you&#39;ve installed and configured the Sundeck OpsCenter Native App, you can use the built-in reports to better understand your Snowflake usage and spend, and drill down further into usage by building your own Labels.  You can also set up Probes to regularly check for certain conditions, and alert (or cancel) queries if they exceed certain cost or time limits.</p>
+<p>These tools run entirely within your Snowflake account, and do not require any external services or infrastructure.  If you want to act on queries in real time <em>before</em> they are submitted to Snowflake, we recommend you check out <a href="https://sundeck.io" target="_blank">Sundeck&#39;s SaaS offering</a>!</p>
+<h2 is-upgraded>What We Have Covered</h2>
+<ul>
+<li>Installing and configuring the Sundeck OpsCenter Native App</li>
+<li>Viewing and drilling into Warehouse Utilization, Queries, and Cost metrics</li>
+<li>Creating custom Labels to enhance understanding of workload</li>
+<li>Setting up Query Probes to monitor, alert, and cancel queries based on certain parameters</li>
+<li>Optionally connecting your Sundeck account to OpsCenter to enable additional features</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

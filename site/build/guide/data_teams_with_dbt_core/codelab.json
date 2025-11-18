@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "data_teams_with_dbt_core",
+  "duration": 74,
+  "title": "Accelerating Data Teams with dbt Core \u0026 Snowflake",
+  "authors": "Dmytro Yaroshenko",
+  "summary": "Build your data pipeline with dbt Core \u0026 Snowflake",
+  "source": "data_teams_with_dbt_core/data_teams_with_dbt_core.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "marketing",
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datasharing",
+    "dbt",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_teams_with_dbt_core"
+}

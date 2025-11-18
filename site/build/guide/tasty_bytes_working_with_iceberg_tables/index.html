@@ -1,0 +1,526 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Working with Iceberg Tables</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_working_with_iceberg_tables"
+                  title="Tasty Bytes - Working with Iceberg Tables"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img alt="banner" src="img/84d65d173aa87ebe.png"></p>
+<p>Welcome to the Powered by Tasty Bytes - Working with Iceberg Tables Quickstart.</p>
+<p>Within this Quickstart we will walk through how we can use Iceberg Tables in combination with External tables to manage data sitting in an external storage.</p>
+<h2 is-upgraded>Background</h2>
+<p>The Tasty Bytes team recognizes the critical importance of analyzing restaurant reviews for understanding customer satisfaction, enhancing service quality, and upholding a positive reputation. By leveraging insights from reviews, they aim to pinpoint strengths, weaknesses, and areas for improvement, thereby driving business success and gain customer loyalty.</p>
+<p>The Data Engineering team has been tasked to make this data available to the Data Science team. To achieve these objectives, the team is establishing an environment where development teams can access and process data from their data lake concurrently, using a variety of tools. They prioritize several key factors:</p>
+<ul>
+<li>ACID compliance</li>
+<li>Single source of truth</li>
+<li>Faster adoption</li>
+<li>Performance &amp; Scalability</li>
+<li>Easy to maintain</li>
+</ul>
+<p class="image-container"><img alt="banner" src="img/94a4627e4b6f5332.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account.</li>
+<li>AWS account with permission to create and manage IAM policies and roles.</li>
+<li>An S3 bucket, in the same region as your Snowflake account.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an External Table</li>
+<li>How to create a Snowflake-managed Iceberg Table</li>
+<li>Manage an Iceberg Table</li>
+</ul>
+<h2 is-upgraded>Architecture</h2>
+<p>We will build an External Table that queries data stored in external storage. The External Table will create certain file-level metadata, version identifiers and related properties. The external tables are configured to auto-refresh. We also will build Iceberg table with Snowflake as the catalog. We will load it with data from the external table to show how you interact with data from Iceberg tables.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="15">
+        <p>Create a database, schema and warehouse in your Snowflake account</p>
+<pre><code language="language-sql" class="language-sql">--Database
+CREATE OR REPLACE DATABASE TASTY_BYTES_DB;
+
+--Schema
+CREATE OR REPLACE SCHEMA RAW;
+
+--Warehouse
+CREATE OR REPLACE WAREHOUSE iceberg_quickstart_wh with
+WAREHOUSE_SIZE = MEDIUM
+AUTO_SUSPEND = 60;
+</code></pre>
+<h2 is-upgraded>Load data to S3</h2>
+<ul>
+<li>Download the zip file from <a href="https://drive.google.com/drive/folders/1w5qm8qECpOOxDqrSR7y_gHhzWZfCgFuI?usp=sharing" target="_blank">here</a></li>
+<li>If you are using a Mac, <strong>&#39;.DS_Store&#39;</strong> files are auto generated into the folder you unzip. You need to delete these files before you upload to S3 <ul>
+<li>Navigate to the folder <strong>truck_reviews</strong>.</li>
+<li>Open up terminal from this folder.</li>
+<li>Type <code>find . -name '.DS_Store' -type f -delete</code> in the terminal.</li>
+<li>Press enter.</li>
+</ul>
+</li>
+<li>Open S3.</li>
+<li><strong>IMPORTANT: Iceberg tables currently need you to create your S3 bucket in the same region as your snowflake account. Make sure your snowflake account&#39;s region and S3 bucket&#39;s region align.</strong><ul>
+<li>You can know your snowflake account&#39;s region by running the below command.</li>
+</ul>
+<pre><code>SELECT current_region();
+</code></pre>
+</li>
+<li>Open the bucket you intend to use and upload the <strong>truck_reviews</strong> folder.</li>
+</ul>
+<h2 is-upgraded>Create IAM Policy</h2>
+<ul>
+<li>Log into the AWS Management Console.</li>
+<li>From the home dashboard, choose Identity &amp; Access Management (IAM)</li>
+<li>Choose Account settings from the left-hand navigation pane.</li>
+<li>Choose Policies from the left-hand navigation pane.</li>
+<li>Click Create Policy.</li>
+<li>Click the JSON tab.</li>
+<li>Paste the following JSON. This will provide snowflake with <strong>READ WRITE ACCESS</strong> to the bucket you created. <ul>
+<li><strong>Replace &lt; bucket &gt; in the below JSON with the bucket name you created.</strong></li>
+</ul>
+</li>
+</ul>
+<pre><code>{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:PutObject&#34;,
+                &#34;s3:GetObject&#34;,
+                &#34;s3:GetObjectVersion&#34;,
+                &#34;s3:DeleteObject&#34;,
+                &#34;s3:DeleteObjectVersion&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;bucket&gt;/*&#34;
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:ListBucket&#34;,
+                &#34;s3:GetBucketLocation&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;bucket&gt;&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringLike&#34;: {
+                    &#34;s3:prefix&#34;: [
+                        &#34;*&#34;
+                    ]
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+<ul>
+<li>Click the Next button</li>
+<li>Name the policy and click Create Policy</li>
+</ul>
+<h2 is-upgraded>Create IAM Roles</h2>
+<ul>
+<li>Log into the AWS Management Console.</li>
+<li>From the home dashboard, choose Identity &amp; Access Management (IAM)</li>
+<li>Choose Account settings from the left-hand navigation pane.</li>
+<li>Choose Roles from the left-hand navigation pane.</li>
+<li>Click the Create role button.</li>
+<li>Select AWS account as the trusted entity type.</li>
+<li>Select Another AWS Account</li>
+<li>In the Account ID field, enter your own AWS account ID temporarily. Later, you will modify the trusted relationship and grant access to Snowflake.</li>
+<li>Select the Require external ID option. Enter a dummy ID such as 0000.</li>
+<li>Click the Next button.</li>
+<li>Locate the policy from the previous step and select it.</li>
+<li>Click the Next button.</li>
+<li>Enter a name and description for the <strong>storage integration</strong>  role, and click the Create role button. <ul>
+<li>Role Name: <strong>iceberg_demo_stg_int_role&lt; first letter of your first name &gt;&lt; last name &gt;</strong></li>
+<li>Example: <strong>iceberg_demo_stg_int_role_jdoe</strong></li>
+</ul>
+</li>
+<li>Save the Role ARN, you can altenatively come back to this when we use it in the future steps.</li>
+<li>Create another role for the <strong>external volume</strong> with the same policy we used earlier. <ul>
+<li>Role Name: <strong>iceberg_demo_ext_vol_role&lt; first letter of your first name &gt;&lt; last name &gt;</strong></li>
+<li>Example: <strong>iceberg_demo_ext_vol_role_jdoe</strong></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Create a Storage Integration</h2>
+<p>A storage integration is a Snowflake object that stores a generated identity and access management (IAM) entity for your external cloud storage, along with an optional set of allowed or blocked storage locations (Amazon S3, Google Cloud Storage, or Microsoft Azure). Cloud provider administrators in your organization grant permissions on the storage locations to the generated entity. This option allows users to avoid supplying credentials when creating stages or when loading or unloading data.</p>
+<p>Run the below command on your snowflake worksheet.</p>
+<ul>
+<li>Make sure you replace <strong>&lt; bucket &gt;</strong> with the bucket name you created earlier.</li>
+<li>Make sure you replace <strong>&lt; iam_role &gt;</strong> with the ROLE ARN of the <strong>storage integration</strong> role you created earlier <ul>
+<li>Example ROLE ARN: <strong>arn:aws:iam::001234567890:role/myrole</strong></li>
+</ul>
+</li>
+</ul>
+<pre><code>USE ROLE ACCOUNTADMIN;
+CREATE OR REPLACE STORAGE INTEGRATION int_tastybytes_truckreviews
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = &#39;S3&#39;
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = &#39;&lt; iam_role &gt;&#39;
+  STORAGE_ALLOWED_LOCATIONS = (&#39;s3://&lt; bucket &gt;/truck_reviews/&#39;);
+</code></pre>
+<h2 is-upgraded>Create External Volume</h2>
+<p>Run the below command on your snowflake worksheet.</p>
+<ul>
+<li>Make sure you replace <strong>&lt; bucket &gt;</strong> with the bucket name you created earlier.</li>
+<li>Make sure you replace <strong>&lt; iam_role &gt;</strong> with the ROLE ARN of the <strong>external volume</strong> role you created earlier <ul>
+<li>Example ROLE ARN: <strong>arn:aws:iam::001234567890:role/myrole</strong></li>
+</ul>
+</li>
+</ul>
+<pre><code>USE ROLE ACCOUNTADMIN;
+CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
+    STORAGE_LOCATIONS =
+        (
+            (
+                NAME = &#39;my-s3-bucket&#39;
+                STORAGE_PROVIDER = &#39;S3&#39;
+                STORAGE_BASE_URL = &#39;s3://&lt; bucket &gt;/&#39;
+                STORAGE_AWS_ROLE_ARN = &#39;&lt; iam_role &gt;&#39;
+            )
+        );
+</code></pre>
+<h2 is-upgraded>Step 6 - Retrieve the AWS IAM User for your Snowflake Account</h2>
+<h3 is-upgraded>Storage Integration</h3>
+<p>A storage integration is a Snowflake object that stores a generated identity and access management (IAM) user for your S3 cloud storage, along with an optional set of allowed or blocked storage locations (i.e. buckets). Cloud provider administrators in your organization grant permissions on the storage locations to the generated user. This option allows users to avoid supplying credentials when creating stages or loading data.</p>
+<ul>
+<li>Execute the DESCRIBE INTEGRATION command to retrieve the ARN for the AWS IAM user that was automatically created for your Snowflake Account.</li>
+</ul>
+<pre><code>DESC INTEGRATION int_tastybytes_truckreviews;
+</code></pre>
+<ul>
+<li>The STORAGE_AWS_IAM_USER_ARN is the snowflake user arn that has been auto generated.</li>
+<li>The STORAGE_AWS_EXTERNAL_ID is the External ID you need to provide in AWS Role you created earlier.</li>
+<li>Go back to the AWS management console.</li>
+<li>Go back to IAM and open the <strong>storage integration</strong> role you created.</li>
+<li>Click on the Trust relationships tab.</li>
+<li>Click the Edit trust relationship button.</li>
+<li>Modify the policy document with the DESC STORAGE INTEGRATION results. <ul>
+<li>Update the <strong>&lt; STORAGE_AWS_IAM_USER_ARN &gt;</strong> and <strong>&lt; STORAGE_AWS_EXTERNAL_ID &gt;</strong> and click on Update Trust Policy.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Policy document for IAM role</strong></p>
+<pre><code>  {
+  &#34;Version&#34;: &#34;2012-10-17&#34;,
+  &#34;Statement&#34;: [
+    {
+      &#34;Sid&#34;: &#34;&#34;,
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        &#34;AWS&#34;: &#34;&lt;STORAGE_AWS_IAM_USER_ARN&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+      &#34;Condition&#34;: {
+        &#34;StringEquals&#34;: {
+          &#34;sts:ExternalId&#34;: &#34;&lt;STORAGE_AWS_EXTERNAL_ID&gt;&#34;
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<h3 is-upgraded>External Volume</h3>
+<ul>
+<li>Execute the DESCRIBE EXTERNAL VOLUME command to retrieve the ARN for the AWS IAM user that was automatically created for your Snowflake Account. Tip: run both commands together.</li>
+</ul>
+<pre><code>DESC EXTERNAL VOLUME vol_tastybytes_truckreviews;
+SELECT 
+    PARSE_JSON(&#34;property_value&#34;):STORAGE_AWS_IAM_USER_ARN AS STORAGE_AWS_IAM_USER_ARN,
+    PARSE_JSON(&#34;property_value&#34;):STORAGE_AWS_EXTERNAL_ID AS STORAGE_AWS_EXTERNAL_ID
+FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE &#34;property&#34; = &#39;STORAGE_LOCATION_1&#39;;
+</code></pre>
+<ul>
+<li>The STORAGE_AWS_IAM_USER_ARN is the snowflake user arn that has been auto generated.</li>
+<li>The STORAGE_AWS_EXTERNAL_ID is the External ID you need to provide in AWS Role you created earlier.</li>
+<li>Go back to IAM and open the <strong>external volume</strong> role you created.</li>
+<li>Click on the Trust relationships tab.</li>
+<li>Click the Edit trust relationship button.</li>
+<li>Modify the policy document with the DESC EXTERNAL VOLUME results. <ul>
+<li>Update the <strong>&lt; STORAGE_AWS_IAM_USER_ARN &gt;</strong> and <strong>&lt; STORAGE_AWS_EXTERNAL_ID &gt;</strong> and click on Update Trust Policy.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Load Tasty Bytes Order Data into Snowflake</h2>
+<p>We will use Tasty Bytes order data to enrich Iceberg tables within Snowflake.</p>
+<pre><code>CREATE OR REPLACE TABLE tasty_bytes_db.raw.order_header
+(
+    order_id NUMBER(38,0),
+    truck_id NUMBER(38,0),
+    location_id FLOAT,
+    customer_id NUMBER(38,0),
+    discount_id VARCHAR(16777216),
+    shift_id NUMBER(38,0),
+    shift_start_time TIME(9),
+    shift_end_time TIME(9),
+    order_channel VARCHAR(16777216),
+    order_ts TIMESTAMP_NTZ(9),
+    served_ts VARCHAR(16777216),
+    order_currency VARCHAR(3),
+    order_amount NUMBER(38,4),
+    order_tax_amount VARCHAR(16777216),
+    order_discount_amount VARCHAR(16777216),
+    order_total NUMBER(38,4)
+);
+
+CREATE OR REPLACE FILE FORMAT tasty_bytes_db.raw.csv_ff 
+type = &#39;csv&#39;;
+
+CREATE OR REPLACE STAGE tasty_bytes_db.raw.s3load
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39;
+url = &#39;s3://sfquickstarts/frostbyte_tastybytes/&#39;
+file_format = tasty_bytes_db.raw.csv_ff;
+
+COPY INTO tasty_bytes_db.raw.order_header
+FROM @tasty_bytes_db.raw.s3load/raw_pos/order_header/;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an External Table" duration="5">
+        <p>An external table is a Snowflake feature that allows you to query data stored in an external stage as if the data were inside a table in Snowflake. The external stage is not part of Snowflake, so Snowflake does not store or manage the stage. External tables let you store (within Snowflake) certain file-level metadata, including filenames, version identifiers, and related properties.</p>
+<h2 is-upgraded>External Stage</h2>
+<p>The review files in our external storage are in csv format and have <strong>|</strong> as the delimiter. So let&#39;s create a file format for this configuration.</p>
+<pre><code>CREATE OR REPLACE FILE FORMAT tasty_bytes_db.raw.ff_csv
+    TYPE = &#39;csv&#39;
+    SKIP_HEADER = 1   
+    FIELD_DELIMITER = &#39;|&#39;;
+</code></pre>
+<p>Next let&#39;s create a stage named stg_truck_reviews in the RAW schema we created earlier for this demo. The cloud storage URL includes the path files. The stage references a storage integration named my_storage_int.</p>
+<p><strong>Replace the &lt;bucket_name&gt; in the below code with the bucket you are using for this quickstart</strong></p>
+<pre><code>CREATE OR REPLACE STAGE tasty_bytes_db.raw.stg_truck_reviews
+    STORAGE_INTEGRATION = int_tastybytes_truckreviews
+    URL = &#39;s3://&lt;bucket_name&gt;/truck_reviews/&#39;
+    FILE_FORMAT = raw.ff_csv;
+</code></pre>
+<h3 is-upgraded>Query the Stage</h3>
+<pre><code>SELECT TOP 100 METADATA$FILENAME,
+       SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 4) as source_name,
+       CONCAT(SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 2),&#39;/&#39; ,SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 3)) as quarter,
+       $1 as order_id,
+       $2 as truck_id,
+       $3 as language,
+       $4 as source,
+       $5 as review,
+       $6 as primary_city,
+       $7 as customer_id,
+       $8 as year,
+       $9 as month,
+       $10 as truck_brand,
+FROM @tasty_bytes_db.raw.stg_truck_reviews/;
+</code></pre>
+<p>You should see a similar output as below.</p>
+<p class="image-container"><img alt="query_stage" src="img/79daea66cd1b9744.png"></p>
+<h2 is-upgraded>External Table</h2>
+<p>Let&#39;s now create an external table in the RAW schema. When queried, an external table reads data from a set of one or more files in a specified external stage and outputs the data in a single VARIANT column.</p>
+<p>Here we are parsing the semi-structured data returned in the Variant column.</p>
+<pre><code>CREATE OR REPLACE EXTERNAL TABLE tasty_bytes_db.raw.ext_survey_data
+(
+    source varchar as SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 4),
+    quarter varchar as CONCAT(SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 2),&#39;/&#39; ,SPLIT_PART(METADATA$FILENAME, &#39;/&#39;, 3)),
+    order_id variant as IFNULL((value:c1),-1),
+    truck_id bigint as (IFNULL(value:c2::int,-1)),
+    language varchar as (value:c3::varchar),
+    review varchar as (value:c5::varchar),
+    primary_city varchar as (value:c6::varchar),
+    review_year int as (value:c8::int),
+    review_month int as (value:c9::int)
+)
+PARTITION BY (quarter, source)
+LOCATION = @tasty_bytes_db.raw.stg_truck_reviews/
+AUTO_REFRESH = TRUE
+FILE_FORMAT = tasty_bytes_db.raw.ff_csv
+PATTERN =&#39;.*truck_reviews.*[.]csv&#39;
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;voc&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:0, &#34;source&#34;:&#34;sql&#34;, &#34;vignette&#34;:&#34;iceberg&#34;}}&#39;;
+</code></pre>
+<p>Let&#39;s take a look at the data in the external table</p>
+<pre><code>SELECT * FROM tasty_bytes_db.raw.ext_survey_data LIMIT 100;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure External Table to Auto-Refresh" duration="1">
+        <p>Execute the SHOW EXTERNAL TABLES command. Tip: run the commands below together to get the <strong>notication_channel</strong> column.</p>
+<pre><code>SHOW EXTERNAL TABLES;
+SELECT &#34;notification_channel&#34;
+FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
+</code></pre>
+<p>Copy the ARN of the SQS queue for the external table in the <strong>notification_channel</strong> column and follow the below steps.</p>
+<ul>
+<li>Log into the AWS Management Console.</li>
+<li>Open your S3 bucket created in setup</li>
+<li>Click the properties tab</li>
+<li>Scroll to Event notifications and click Create event notification</li>
+<li>Configure an event notification for your S3 bucket using the instructions provided in the Amazon S3 documentation. Complete the fields as follows:<ul>
+<li><strong>Name</strong>: Name of the event notification (e.g. Auto-ingest Snowflake).</li>
+<li><strong>Events</strong>: Select All object create events and All object removal events.</li>
+<li><strong>Destination</strong>: Select SQS Queue.</li>
+<li><strong>SQS</strong>: Select Add SQS queue ARN.</li>
+<li><strong>SQS queue ARN</strong>: Paste the SQS queue name from the SHOW EXTERNAL TABLES output.</li>
+</ul>
+</li>
+</ul>
+<p>Click save changes and the external stage with auto-refresh is now configured!</p>
+<p>When new or updated data files are added to the S3 bucket, the event notification informs Snowflake to scan them into the external table metadata.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Iceberg Table" duration="5">
+        <p>An Iceberg table uses the Apache Iceberg open table format specification, which provides an abstraction layer on data files stored in open formats and supports features such as:</p>
+<ul>
+<li>ACID (atomicity, consistency, isolation, durability) transactions</li>
+<li>Schema evolution</li>
+<li>Hidden partitioning</li>
+<li>Table snapshots</li>
+</ul>
+<p>Iceberg tables for Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage that you manage. They are ideal for existing data lakes that you do not store in Snowflake.</p>
+<p class="image-container"><img alt="iceberg types" src="img/ed54fb6792ea11e1.png"></p>
+<p>In this quickstart we will see how to create a Iceberg table using Snowflake as the catalog. An Iceberg table that uses Snowflake as the Iceberg catalog provides full Snowflake platform support with read and write access. The table data and metadata are stored in external cloud storage, which Snowflake accesses using an external volume. Snowflake handles all life-cycle maintenance, such as compaction, for the table.</p>
+<p><strong>Note</strong>: BASE_LOCATION determines the location of the Iceberg Table. running this command will create a new folder named <code>iceberg_table</code> in your bucket. The data and metadata files for the Iceberg table will be created in the directory.</p>
+<pre><code>CREATE OR REPLACE ICEBERG TABLE tasty_bytes_db.raw.icb_truck_reviews
+        (
+        source_name VARCHAR,
+        quarter VARCHAR,
+        order_id BIGINT,
+        truck_id INT,
+        review VARCHAR,
+        language VARCHAR
+        )
+        CATALOG = &#39;SNOWFLAKE&#39;
+        EXTERNAL_VOLUME = &#39;vol_tastybytes_truckreviews&#39;
+        BASE_LOCATION = &#39;iceberg_table/&#39;;
+</code></pre>
+<p>Snowflake creates data and metadata files and manages them. The table state is maintained in the metadata files. When changes are made to the data, new metadata files are created replacing the older metadata.</p>
+<p class="image-container"><img alt="iceberg_files" src="img/e94dba973a5131a9.png"></p>
+<h3 is-upgraded>Metadata Files</h3>
+<ul>
+<li>Metadata File: Stores table schema, partition info, and snapshot details.</li>
+<li>Manifest List File: Indexes manifest files, tracks added/deleted data files, and includes partition boundaries.</li>
+<li>Manifest File: Lists data files (Parquet/ORC/AVRO) and may include column-level metrics for optimization.</li>
+</ul>
+<p class="image-container"><img alt="iceberg_metadata" src="img/3b951d33a3c9b0ef.png"></p>
+<h3 is-upgraded>Data Files</h3>
+<p>Data files refer to the physical files that store the actual data. These files typically contain data in formats such as Parquet or ORC. Iceberg tables organize data into multiple data files, each containing a subset of the table&#39;s data. These files are managed and optimized by the Iceberg table format to support efficient data storage, retrieval, and processing.</p>
+<h2 is-upgraded>Querying Iceberg Tables</h2>
+<p>Now let&#39;s load some data into the Iceberg table. This query copies the data from the external table into our new iceberg table (in the <code>iceberg_table</code> directory of S3).</p>
+<p><strong>Note:</strong> You may load data directly into the S3 directory where your Iceberg table resides. We are loading data from the External Table here to show how you can interact with data inside Iceberg Tables.</p>
+<pre><code>INSERT INTO tasty_bytes_db.raw.icb_truck_reviews
+(
+source_name, quarter, order_id, truck_id, review, language
+)
+SELECT source as source_name,
+    quarter,
+    order_id,
+    truck_id,
+    review,
+    language
+FROM tasty_bytes_db.raw.ext_survey_data;
+</code></pre>
+<p>Let&#39;s query the data. You can query the table just as you would standard tables in Snowflake.</p>
+<pre><code>SELECT TOP 100 * FROM tasty_bytes_db.raw.icb_truck_reviews;
+</code></pre>
+<p>You can also do joins and enrich the Iceberg data with data residing in Snowflake. Let&#39;s get some more information on reviews that have associated orders using the <code>order_header</code> table.</p>
+<pre><code>SELECT
+    tr.order_id,
+    tr.truck_id,
+    tr.review,
+    oh.location_id,
+    oh.order_ts,
+    oh.order_total
+FROM tasty_bytes_db.raw.order_header oh
+JOIN tasty_bytes_db.raw.icb_truck_reviews tr
+    ON tr.order_id = oh.order_id;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="0">
+        <p>Run the following command to remove all Snowflake objects created in this quickstart. Do not forget the AWS roles, policy, and bucket!</p>
+<pre><code>DROP DATABASE IF EXISTS tasty_bytes_db;
+DROP WAREHOUSE IF EXISTS iceberg_quickstart_wh;
+DROP INTEGRATION IF EXISTS int_tastybytes_truckreviews;
+DROP EXTERNAL VOLUME IF EXISTS vol_tastybytes_truckreviews;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>In this quickstart, we explored the use of Iceberg tables in Snowflake to manage and analyze restaurant review data efficiently. We began by setting up the necessary infrastructure in Snowflake, AWS, and S3, including creating databases, warehouses, IAM policies, roles, and storage integrations.</p>
+<p>We then proceeded to surface data from S3 into Snowflake using external stages and tables, allowing us to query and analyze the data as if it were stored natively within Snowflake. We configured auto-refresh for the external tables to ensure they stay up-to-date with changes in the S3 bucket.</p>
+<p>Next, we created Iceberg tables in Snowflake, leveraging the powerful features of the Iceberg format such as ACID transactions, schema evolution, and hidden partitioning. These tables allow us to efficiently manage and analyze large volumes of data stored in external cloud storage while benefiting from Snowflake&#39;s query capabilities.</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" target="_blank">Snowflake Documentation for Iceberg Tables</a></li>
+<li><a href="https://iceberg.apache.org/" target="_blank">Apache Iceberg Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,474 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Custom API in Python and Flask</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_a_custom_api_in_python"
+                  title="Build a Custom API in Python and Flask"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Many builders want to share some of the data stored in Snowflake over an http API. Modern mobile and web applications often want to retrieve that data through http APIs. This tutorial will go through how to build, deploy, and host a custom API Powered by Snowflake.</p>
+<p>This API consists of reporting endpoints from data stored in Snowflake. After completing this guide, you will have built a custom API built with <a href="https://flask.palletsprojects.com/" target="_blank">Python Flask</a>.</p>
+<p>The dataset is the <a href="https://docs.snowflake.com/en/user-guide/sample-data-tpch" target="_blank">TPC-H</a> data set included in your Snowflake account.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, warehouse, compute pool, repository, network network rule, external access integration, and service in Snowflake</li>
+<li>Privileges necessary to access the tables in the <code>SNOWFLAKE_SAMPLE_DATA.TPCH_SF10</code> database and schema</li>
+<li>Access to run SQL in the Snowflake console or SnowSQL</li>
+<li>Basic experience using git, GitHub, and Codespaces</li>
+<li>Intermediate knowledge of Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to configure and build a custom API Powered by Snowflake</li>
+<li>How to build, publish, and deploy a container with the API in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://snowflake.com" target="_blank">Snowflake</a> Account in an AWS commercial region</li>
+<li><a href="https://github.com/" target="_blank">GitHub</a> Account with credits for Codespaces</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>API Powered by Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Development Environment" duration="3">
+        <p>The code used in this guide is hosted in github. You will need a new Codespace from the GitHub <a href="https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask" target="_blank">repository</a>.</p>
+<p>To create a new codespace, browse to the GitHub <a href="https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask" target="_blank">repository</a> in a browser.</p>
+<p>You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green &#34;&lt;&gt; Code&#34; button and &#34;create codespace on main&#34; button.</p>
+<p>You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project.</p>
+<p>Let&#39;s take a quick look at the code in this repository.</p>
+<h2 is-upgraded>Endpoints</h2>
+<p>The API creates two sets of endpoints, one for using the Snowflake connector:</p>
+<ol type="1">
+<li><code>https://host/connector/customers/top10</code></li>
+</ol>
+<ul>
+<li>Which takes the following optional query parameters: <ol type="1">
+<li><code>start_range</code> - the start date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-01-01</code>.</li>
+<li><code>end_range</code> - the end date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-03-31</code>.</li>
+</ol>
+</li>
+</ul>
+<ol type="1" start="2">
+<li><code>https://host/connector/clerk/CLERK_ID/yearly_sales/YEAR</code></li>
+</ol>
+<ul>
+<li>Which takes 2 required path parameters: <ol type="1">
+<li><code>CLERK_ID</code> - the clerk ID. Use just the numbers, such as <code>000000001</code>.</li>
+<li><code>YEAR</code> - the year to use, such as <code>1995</code>.</li>
+</ol>
+</li>
+</ul>
+<p>And the same ones using Snowpark:</p>
+<ol type="1">
+<li><code>https://host/snowpark/customers/top10</code></li>
+</ol>
+<ul>
+<li>Which takes the following optional query parameters: <ol type="1">
+<li><code>start_range</code> - the start date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-01-01</code>.</li>
+<li><code>end_range</code> - the end date of the range in <code>YYYY-MM-DD</code> format. Defaults to <code>1995-03-31</code>.</li>
+</ol>
+</li>
+</ul>
+<ol type="1" start="2">
+<li><code>https://host/snowpark/clerk/CLERK_ID/yearly_sales/YEAR</code></li>
+</ol>
+<ul>
+<li>Which takes 2 required path parameters: <ol type="1">
+<li><code>CLERK_ID</code> - the clerk ID. Use just the numbers, such as <code>000000001</code>.</li>
+<li><code>YEAR</code> - the year to use, such as <code>1995</code>.</li>
+</ol>
+</li>
+</ul>
+<h2 is-upgraded>Code</h2>
+<p>The <code>src/</code> directory has all the source code for the API. The <code>connector.py</code> file contains all the entrypoints for the API endpoints using the Snowflake Connector for Python. The <code>customers_top10()</code> function is one of the API endpoints we needed for this API which finds the top 10 customers by sales in a date range. Review the code and the SQL needed to retrieve the data from Snowflake and serialize it to JSON for the response. This endpoint also takes 2 optional query string parameters start_range and end_range.</p>
+<pre><code language="language-python" class="language-python">@connector.route(&#39;/customers/top10&#39;)
+def customers_top10():
+    # Validate arguments
+    sdt_str = request.args.get(&#39;start_range&#39;) or &#39;1995-01-01&#39;
+    edt_str = request.args.get(&#39;end_range&#39;) or &#39;1995-03-31&#39;
+    try:
+        sdt = datetime.datetime.strptime(sdt_str, dateformat)
+        edt = datetime.datetime.strptime(edt_str, dateformat)
+    except:
+        abort(400, &#34;Invalid start and/or end dates.&#34;)
+    sql_string = &#39;&#39;&#39;
+        SELECT
+            o_custkey
+          , SUM(o_totalprice) AS sum_totalprice
+        FROM snowflake_sample_data.tpch_sf10.orders
+        WHERE o_orderdate &gt;= &#39;{sdt}&#39;
+          AND o_orderdate &lt;= &#39;{edt}&#39;
+        GROUP BY o_custkey
+        ORDER BY sum_totalprice DESC
+        LIMIT 10
+    &#39;&#39;&#39;
+    sql = sql_string.format(sdt=sdt, edt=edt)
+    try:
+        res = conn.cursor(DictCursor).execute(sql)
+        return make_response(jsonify(res.fetchall()))
+    except:
+        abort(500, &#34;Error reading from Snowflake. Check the logs for details.&#34;)
+</code></pre>
+<p>You can also review the other endpoints in <a href="https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask/blob/main/src/connector.py" target="_blank">connector.py</a> to see how simple it is to host multiple endpoints.</p>
+<p>If you would also like to see how to build endpoints using the Snowflake Snowpark API, review <a href="https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask/blob/main/src/snowpark.py" target="_blank">snowpark.py</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Snowflake CLI" duration="4">
+        <p>All of the commands in this step will be run in the terminal in Codespaces.</p>
+<p>First, we need to install Snowflake CLI, with the following command in the terminal:</p>
+<pre><code language="language-bash" class="language-bash">pip install snowflake-cli
+</code></pre>
+<p>Next, we will create a connection for SnowCLI to our Snowflake account. When you run the following command in a terminal, you will be prompted for various details. You only need to supply a connection name (use <code>my_snowflake</code>), the account name (of the form <code><ORGNAME>-<ACCTNAME></code>, the part before <code>snowflakecomputing.com</code>), the user name, and the password. The other prompts are optional:</p>
+<pre><code language="language-bash" class="language-bash">snow connection add
+</code></pre>
+<p>To make this connection the default connection that SnowCLI uses, run the following in the terminal:</p>
+<pre><code language="language-bash" class="language-bash">snow connection set-default my_snowflake
+</code></pre>
+<p>Test that the connection is properly set up by running the following in a terminal:</p>
+<pre><code language="language-bash" class="language-bash">snow connection test
+</code></pre>
+<p>Let&#39;s create a database for this lab using Snowflake CLI. Run the following command in a terminal:</p>
+<pre><code language="language-bash" class="language-bash">snow object create database name=api --if-not-exists
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating A Notebook" duration="4">
+        <p>It is useful to use a Notebook to follow the steps for this lab. It allows multiple commands to be put in a single cell and executed, and it allows seeing the output of previous steps.</p>
+<p>You can create a new Notebook in Snowflake and copy commands from this guide into new cells and execute them. Alternatively, the repo for this lab comes with a Notebook file you can use to create a Notebook in Snowflake with all of the commands in it.</p>
+<h2 is-upgraded>Importing the Notebook file</h2>
+<p>The lab repository comes with a Notebook with the commands in it already. It actually has the full Quickstart in it (the text/instructions and commands) - they are the same.</p>
+<p>To create a Notebook with this lab and commands in it, first download the <code>DataAPI.ipynb</code> file from the lab repository, <a href="https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask/blob/main/DataAPI.ipynb" target="_blank">here</a>. If you are using Codespaces, you can right-click on the file in the file explorer and choose &#34;Download&#34;.</p>
+<p>Next, in the Snowflake console, choose the &#34;Projects&#34; sidebar and select &#34;Notebooks&#34;. Choose the down arrow next to the &#34;+ Notebook&#34; button and select &#34;Import .ipynb file&#34;. You will be prompted to choose the file from your machine - choose the <code>DataAPI.ipynb</code> file that you saved. Next, you will be shown a form to collect information about your Notebook. You can choose any name you would like (e.g., <code>Data API</code>). Choose the <code>API</code> database and the <code>PUBLIC</code> schema. Choose &#34;Run on warehouse&#34;. Leave all of the other inputs with their defaults.</p>
+<p>When the Notebook is created, click the &#34;Start&#34; button on the top.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up A Database and Warehouse" duration="1">
+        <p>The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE DATABASE IF NOT EXISTS API;
+CREATE WAREHOUSE IF NOT EXISTS DATA_API_WH WITH WAREHOUSE_SIZE=&#39;xsmall&#39;;
+</code></pre>
+<h2 is-upgraded>Create the Application Role in Snowflake</h2>
+<p>The application will run as a new role with minimal priviledges. The following commands create the role and grant it access to the data needed for the application. Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+CREATE ROLE IF NOT EXISTS DATA_API_ROLE;
+
+GRANT ALL ON DATABASE API TO ROLE DATA_API_ROLE;
+GRANT ALL ON SCHEMA API.PUBLIC TO ROLE DATA_API_ROLE;
+GRANT USAGE ON WAREHOUSE DATA_API_WH TO ROLE DATA_API_ROLE;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE DATA_API_ROLE;
+
+GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating The Image Registry" duration="1">
+        <p>To create the image registry, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+USE DATABASE API;
+CREATE OR REPLACE IMAGE REPOSITORY API;
+
+GRANT READ ON IMAGE REPOSITORY API TO ROLE DATA_API_ROLE;
+
+SHOW IMAGE REPOSITORIES;
+</code></pre>
+<p>Note the <code>repository_url</code> in the response as that will be needed in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building The Application Container" duration="10">
+        <p>The commands in this step are to be run in a terminal in Codespaces.</p>
+<p>To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the terminal provided by Codespaces:</p>
+<pre><code language="language-bash" class="language-bash">docker build -t dataapi .
+</code></pre>
+<p>Next, we need to tag the Docker image. To do so, replace the <code><repository_url></code> with the <code>repository_url</code> value returned by the <code>SHOW IMAGE REPOSITORIES</code> command you ran above.</p>
+<pre><code language="language-bash" class="language-bash">docker tag dataapi &lt;repository_url&gt;/dataapi
+</code></pre>
+<p>Lastly, we need to push the image to Snowflake. Before we do that, we need to log into the Image Registry for Docker. To do so, run:</p>
+<pre><code language="language-bash" class="language-bash">snow spcs image-registry login
+</code></pre>
+<p>And finally we can push it to the image repository.</p>
+<pre><code language="language-bash" class="language-bash">docker push &lt;repository_url&gt;/dataapi
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating The Compute Pool" duration="1">
+        <p>To create the compute pool to run the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE COMPUTE POOL API
+  MIN_NODES = 1
+  MAX_NODES = 5
+  INSTANCE_FAMILY = CPU_X64_XS;
+
+GRANT USAGE ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
+GRANT MONITOR ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
+</code></pre>
+<p>You can see the status of the <code>API</code> compute pool by running:</p>
+<pre><code language="language-sql" class="language-sql">SHOW COMPUTE POOLS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating The Application Service" duration="1">
+        <p>To create the service to host the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE DATA_API_ROLE;
+
+USE ROLE DATA_API_ROLE;
+CREATE SERVICE API.PUBLIC.API
+ IN COMPUTE POOL API
+ FROM SPECIFICATION  
+$$
+spec:
+  container:
+  - name: api
+    image: /api/public/api/dataapi:latest
+    resources:                          
+      requests:
+        cpu: 0.5
+        memory: 128M
+      limits:
+        cpu: 1
+        memory: 256M
+  endpoint:
+  - name: api
+    port: 8001
+    public: true
+serviceRoles:
+- name: api_sr
+  endpoints:
+  - api
+$$
+QUERY_WAREHOUSE = DATA_API_WH;
+</code></pre>
+<p>It will take a few minutes for your service to initialize, you can check status with these commands:</p>
+<pre><code language="language-sql" class="language-sql">SHOW SERVICES IN COMPUTE POOL API;
+</code></pre>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$GET_SERVICE_STATUS(&#39;api.public.api&#39;);
+</code></pre>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$GET_SERVICE_LOGS(&#39;api.public.api&#39;, 0, &#39;api&#39;);
+</code></pre>
+<p>After your service has started, you can get the endpoints with the following command. Note that provisioning endpoints can take a moment. While it does you will get a note like <code>Endpoints provisioning in progress...</code>:</p>
+<pre><code language="language-sql" class="language-sql">SHOW ENDPOINTS IN SERVICE API.PUBLIC.API;
+</code></pre>
+<p>Make note of the <code>ingress_url</code> as that will be need to test the application. This service will start the API, running at <code>https://<INGRESS_URL></code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing The API" duration="6">
+        <p>To verify the API is online, go to the <code>https://<INGRESS_URL></code> in your browser. You will be asked to authenticate to Snowflake and be given the root content:</p>
+<pre><code language="language-json" class="language-json">{&#34;result&#34;:&#34;Nothing to see here&#34;}
+</code></pre>
+<h2 is-upgraded>Endpoints</h2>
+<p>This API was implemented using both the Snowflake Python Connector and the Snowflake Snowpark for Python package. They both implement the same API routes. The ones implemented with the Snowflke Python Connector are under the <code>/connector/</code> route. The ones implemented with Snowpark Python are under the <code>/snowpark/</code> route.</p>
+<h3 is-upgraded>Top 10 Customers</h3>
+<p>To retrieve the top 10 customers in the date range of <code>1995-02-01</code> to <code>1995-02-14</code> using the Snowflake Connector for Python, use:</p>
+<pre><code>https://&lt;INGRESS_URL&gt;/connector/customers/top10?start_range=1995-02-01&amp;end_range=1995-02-14
+</code></pre>
+<p>To retrieve the top 10 customers in the date range of <code>1995-02-01</code> to <code>1995-02-14</code> using the Snowflake Snowpark API, use:</p>
+<pre><code>https://&lt;INGRESS_URL&gt;/snowpark/customers/top10?start_range=1995-02-01&amp;end_range=1995-02-14
+</code></pre>
+<p>If you call the endpoint without specifying the <code>start_range</code> then <code>1995-01-01</code> will be used. If you call the endpoint without specifying the <code>end_range</code> then <code>1995-03-31</code> will be used.</p>
+<h3 is-upgraded>Monthly sales for a given year for a sales clerk</h3>
+<p>To retrieve the monthly sales for clerk <code>000000002</code> for the year <code>1995</code> using the Snowflake Connector for Python, run:</p>
+<pre><code>https://&lt;INGRESS_URL&gt;/connector/clerk/000000002/yearly_sales/1995
+</code></pre>
+<p>To retrieve the monthly sales for clerk <code>000000002</code> for the year <code>1995</code> using the Snowflake Snowpark API, run:</p>
+<pre><code>https://&lt;INGRESS_URL&gt;/snowpark/clerk/000000002/yearly_sales/1995
+</code></pre>
+<h2 is-upgraded>Testing using a webpage</h2>
+<p>This project comes with a simple webpage that allows you to test the API. To get to it, open <code>https://<INGRESS_URL>/test</code> in a web browser.</p>
+<p>At the top you can choose if you want to exercise the Snowflake Connector for Python or the Snowflake Snowpark API endpoints.</p>
+<p>There are 2 forms below that. The first one allows you to enter parameters to test the &#34;Top 10 Customers&#34; endpoint. The second one allows you to enter parameters to test the &#34;Monthly Clerk Sales&#34; endpoint.</p>
+<p>When you hit the <code>Submit</code> button, the API endpoint is called and the data is returned to the web page.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Programmatic Access" duration="5">
+        <p>In many situations we want to access this data API from another process outside of Snowflake programmatically. To do this, we will need a way to programmatically authenticate to Snowflake to allow access to the SPCS endpoint. There are a number of ways to do this today, but we will focus on using Programmatic Access Tokens (PAT), one of the simpler ways.</p>
+<p>Regardless of the authenictation method, the best practice is to create a user specifically for accessing this API endpoint, as well as a role for that user.</p>
+<p>To do this, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE ROLE IF NOT EXISTS APIROLE;
+GRANT ROLE APIROLE TO ROLE ACCOUNTADMIN;
+GRANT USAGE ON DATABASE API TO ROLE APIROLE;
+GRANT USAGE ON SCHEMA API.PUBLIC TO ROLE APIROLE;
+CREATE USER IF NOT EXISTS APIUSER PASSWORD=&#39;User123&#39; DEFAULT_ROLE = apirole DEFAULT_SECONDARY_ROLES = (&#39;ALL&#39;) MUST_CHANGE_PASSWORD = FALSE;
+GRANT ROLE APIROLE TO USER APIUSER;
+CREATE NETWORK POLICY IF NOT EXISTS api_np ALLOWED_IP_LIST = (&#39;0.0.0.0/0&#39;);
+ALTER USER apiuser SET NETWORK_POLICY = api_np;
+</code></pre>
+<p>Next, we can grant the service role to access the endpoint to the APIROLE we just created:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+GRANT SERVICE ROLE api.public.api!api_sr TO ROLE apirole;
+</code></pre>
+<h2 is-upgraded>Generating a PAT token via SQL</h2>
+<p>Lastly, we need to create a Programmatic Access Token for the <code>APIUSER</code>. In order to use PAT, the user must have a network policy applied, so we create an &#34;allow-all&#34; network policy for this user. In practice you would limit to the IP/hostname origins for your clients.You can do this via SQL as follows:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+ALTER USER IF EXISTS apiuser ADD PROGRAMMATIC ACCESS TOKEN api_token;
+</code></pre>
+<p>Copy this PAT token and save it to a file. Save it to a file named <code>apiuser-token-secret.txt</code> in the <code>test/</code> directory of the cloned/downloaded repo.</p>
+<h2 is-upgraded>Generating a PAT token via Snowsight</h2>
+<p>Alternatively, you can use Snowsight to create the PAT token. Click on the &#34;Admin&#34; option on the sidebar, then the &#34;Users &amp; Roles&#34; option in the sidebar. Next, click on the APIUSER user, and scroll down to the &#34;Programmatic access tokens&#34; section. Click the &#34;Generate new token&#34; button, give the token a name (such as <code>api_token</code>), choose the role <code>APIROLE</code> from the pull-down, leave the rest of the defaults, and click &#34;Generate&#34;. Click the &#34;Download token&#34; button and save the file to the <code>test/</code> directory (you can leave the default filename).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing Programmatically" duration="5">
+        <p>Next we can test accessing our API programmatically using the PAT token. We cannot use the PAT token directly to access the SPCS endpoint. We must exchange the long-lived PAT token for a shorter-lived access token via the <code>/oauth/token</code> Snowflake endpoint. We can then use that shorter-lived token to access the SPCS endpoint.</p>
+<p>We have 2 applications that demonstrate how to do this.</p>
+<h2 is-upgraded>Accessing the endpoint via command-line program</h2>
+<p>Change to the <code>test/</code> directory. In there is a program named <code>test.py</code>. You can see the usage instructions by running:</p>
+<pre><code language="language-bash" class="language-bash">python test.py --help
+</code></pre>
+<p>You must supply the following:</p>
+<ul>
+<li><code>ACCOUNT_URL</code> - this is the URL for your Snowflake account. It should be of the form <code><ORGNAME>-<ACCTNAME>.snowflakecomputing.com</code>. You can find this in the Snowflake console by clicking the circle with initials in the lower left and choosing the &#34;Connect a tool to Snowflake&#34; menu option. Copy the field named &#34;Account/Server URL&#34;.</li>
+<li><code>ROLE</code> - the role to use when accessing the endpoint. For this example, it should be <code>APIROLE</code>.</li>
+<li><code>ENDPOINT</code> - this is the full URL you are trying to access. E.g., <code>https://<INGRESS_URL>/connector/customers/top10</code></li>
+</ul>
+<p>There are 3 ways to specify the PAT to use:</p>
+<ol type="1">
+<li>Use the <code>--pat</code> option and supply the full PAT token. E.g., <code>--pat <PAT></code>.</li>
+<li>Use the <code>--patfile</code> option and supply the filename to the PAT token file. E.g., <code>--patfile /path/to/patfile</code></li>
+<li>If you saved your PAT token to this directory, and it ends with <code>-token-secret.txt</code> the application will discover it and use it.</li>
+</ol>
+<p>For example, your call might look something like:</p>
+<pre><code language="language-bash" class="language-bash">python test.py --account_url &#39;MYORG-MYACCT.snowflakecomputing.com&#39; --role APIROLE --endpoint &#39;https://mzbqa5c-myorg-myacct.snowflakecomputing.app/connector/customers/top10&#39;
+</code></pre>
+<h2 is-upgraded>Accessing the endpoint via Streamlit</h2>
+<p>The repository also contains a Streamlit to access the endpoint.</p>
+<p>To use Streamlit we must first install the Streamlit library:</p>
+<pre><code language="language-bash" class="language-bash">pip install streamlit
+</code></pre>
+<p>Next, change to the <code>test/</code> directory, and run:</p>
+<pre><code language="language-bash" class="language-bash">python -m streamlit run test_streamlit.py
+</code></pre>
+<p>Enter the account URL, role, and URL in the supplied boxes.</p>
+<p>The Streamlit will attempt to detect the PAT in the local directory in a file ending with <code>-token-secret.txt</code>. If one is found, it will use that as the PAT. If not, it will show another box to enter the PAT in (the actual PAT value, not the filename).</p>
+<p>Enter the necessary items and click &#34;Fetch it!&#34;. You will get a status update that it is &#34;Trading PAT for Token...&#34; and then &#34;Getting data...&#34; and then it will display the result from SPCS.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stopping The API" duration="1">
+        <p>To stop the API, you can suspend the service. Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE DATA_API_ROLE;
+ALTER SERVICE API.PUBLIC.API SUSPEND;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="2">
+        <p>To fully remove everything you did today you only need to drop some objects in your Snowflake account. Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+
+DROP DATABASE IF EXISTS API;
+DROP ROLE IF EXISTS DATA_API_ROLE;
+DROP COMPUTE POOL IF EXISTS API;
+DROP WAREHOUSE IF EXISTS DATA_API_WH;
+DROP USER IF EXISTS APIUSER;
+DROP ROLE IF EXISTS APIROLE;
+DROP NETWORK POLICY api_np;
+</code></pre>
+<p>You can now turn off your Codespaces environment.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>You&#39;ve successfully built a custom API in Python Powered by Snowflake.</p>
+<p>When you go to put a data API into production you should protect the API with some level of authentication and authorization.</p>
+<p>Another consideration is enabling a frontend website to access the endpoint, the test site worked in this example because it&#39;s hosted on the same domain as the api. If you need to access the api from another website, you will need to do additional configuration.</p>
+<p>To get more comfortable with this solution, implement new endpoints pointing to the sample dataset provided or other datasets.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to configure and build a custom API Powered by Snowflake</li>
+<li>How to run and test the API on your machine</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>Code for this project is available at <a href="https://github.com/sfc-gh-bhess/lab_data_api_python" target="_blank">https://github.com/sfc-gh-bhess/lab_data_api_python</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

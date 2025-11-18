@@ -1,0 +1,666 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A No Code Approach to Machine Learning with Snowflake and Dataiku</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku"
+                  title="A No Code Approach to Machine Learning with Snowflake and Dataiku"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This Snowflake Quickstart covers the basics of training machine learning models, interpreting them, and deploying them to make predictions.</p>
+<p>With Dataiku&#39;s Visual Snowpark ML plugin - you won&#39;t need to write a single line of code. That&#39;s right!</p>
+<ul>
+<li>Domain experts - you don&#39;t need to fuss around with learning programming to inject ML into your team.</li>
+<li>Data Scientists - we&#39;re all trying to roll our own abstracted ML training and deployment platform - and we think you&#39;ll like this one.</li>
+</ul>
+<h2 is-upgraded>Use Case</h2>
+<p>Consumer lending is difficult. What factors about an individual and their loan application could indicate whether they&#39;re likely to pay back the loan? How can our bank optimize the loans approved and rejected based on our risk tolerance? We&#39;ll use machine learning to help with this decision making process. Our model will learn patterns between historical loan applications and default, then we can use it to make predictions for a fresh batch of applications.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>The exercises in this lab will walk you through the steps to:</p>
+<ul>
+<li>Use Snowflake&#39;s &#34;Partner Connect&#34; to create a Dataiku cloud trial</li>
+<li>Create a Snowpark-optimized warehouse (for ML workloads)</li>
+<li>Upload a base project in Dataiku with our data sources in Snowflake</li>
+<li>Look at our loan data, understand trends through correlation matrices</li>
+<li>Train, interpret, and deploy Machine Learning models in Dataiku - powered by Snowpark ML</li>
+<li>Use our trained model to make new predictions</li>
+<li><code>(Optional)</code> Set up an MLOps process to retrain the model, check for accuracy, and make new predictions on a weekly basis</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Snowflake free 30-day trial environment</li>
+<li>Dataiku free 14-day trial environment (via Snowflake Partner Connect)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your Snowflake Lab Environment" duration="3">
+        <p>If you haven&#39;t already, <a href="https://trial.snowflake.com/" target="_blank">register for a Snowflake free 30-day trial</a> The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.</p>
+<aside class="warning"><p><strong>Note</strong>: Please ensure that you use the <strong>same email address</strong> for both your Snowflake and Dataiku sign up</p>
+</aside>
+<ul>
+<li><strong>Region</strong>  - Although not a requirement we&#39;d suggest you select the region that is physically closest to you for this lab</li>
+<li><strong>Cloud Provider</strong>  -  Although not a requirement we&#39;d suggest you select <code>AWS</code> for this lab</li>
+<li><strong>Snowflake edition</strong>  -  We suggest you select select the <code>Enterprise edition</code> so you can leverage some advanced capabilities that are not available in the Standard Edition.</li>
+</ul>
+<p>After activation, you will create a <code>username</code>and <code>password</code>. Write down these credentials. <strong>Bookmark this URL for easy, future access</strong>.</p>
+<aside class="warning"><p><strong>About the screen captures, sample code, and environment: <br></strong> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Your Dataiku Lab Environment (Via Snowflake Partner Connect)" duration="6">
+        <h2 is-upgraded>Log Into the Snowflake User Interface (UI)</h2>
+<p>Open a browser window and enter the URL of your Snowflake 30-day trial environment. You should see the login screen below. Enter your unique credentials to log in.</p>
+<p class="image-container"><img alt="img" src="img/c3a25cdab05cbff0.png"></p>
+<p>You may see &#34;welcome&#34; and &#34;helper&#34; boxes in the UI when you log in for the first time. Close them by clicking on Skip for now in the bottom right corner in the screenshot below.</p>
+<p class="image-container"><img alt="img" src="img/745f16a3c8c6515c.png"></p>
+<h2 is-upgraded>Create Dataiku trial via Partner Connect</h2>
+<p>At the top right of the page, confirm that your current role is <code>ACCOUNTADMIN</code>, by clicking on your profile on the top right.</p>
+<ol type="1">
+<li>Click on <code>Data Products</code> on the left-hand menu</li>
+<li>Click on <code>Partner Connect</code></li>
+<li>Search for Dataiku</li>
+<li>Click on the <code>Dataiku</code> tile</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/4cd0834bc02dfd9d.png"></p>
+<aside class="warning"><p> Depending on which screen you are on you may not see the full menu as above but hovering over the Data Products (Cloud) icon will show the options</p>
+</aside>
+<p>This will automatically create the connection parameters required for Dataiku to connect to Snowflake. Snowflake will create a dedicated database, warehouse, system user, system password and system role, with the intention of those being used by the Dataiku account.</p>
+<p>For this lab we&#39;d like to use the <strong>PC_DATAIKU_USER</strong> to connect from Dataiku to Snowflake, and use the <strong>PC_DATAIKU_WH</strong> when performing activities within Dataiku that are pushed down into Snowflake.</p>
+<p>This is to show that a Data Science team working on Dataiku and by extension on Snowflake can work completely independently from the Data Engineering team that works on loading data into Snowflake using different roles and warehouses.</p>
+<p class="image-container"><img alt="img" src="img/1c77a69c80a0d632.png"><br><br></p>
+<ol type="1">
+<li>Click <code>Connect</code></li>
+<li>You will get a pop-ip which tells you your partner account has been created. Click on <code>Activate</code></li>
+</ol>
+<aside class="warning"><p><strong>Informational Note: <br></strong> If you are using a different Snowflake account than the one created at the start, you may get a screen asking for your email details. Click on ‘Go to Preferences&#39; and populate with your email details</p>
+</aside>
+<p>This will launch a new page that will redirect you to a launch page from Dataiku.</p>
+<p>Here, you will have two options:</p>
+<ol type="1">
+<li>Login with an existing Dataiku username</li>
+<li>Sign up for a new Dataiku account</li>
+</ol>
+<ul>
+<li>We assume that you&#39;re new to Dataiku, so ensure the <code>"Sign Up" box is selected</code>, and sign up with either GitHub, Google or your email address and your new password.</li>
+</ul>
+<p><strong>Make sure you use the same email address that you used for your Snowflake trial</strong>.</p>
+<ul>
+<li><code>Click sign up</code>.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/808ae2ed1963aff6.png"><br><br></p>
+<p>When using your email address, ensure your password fits the following criteria:</p>
+<ol type="1">
+<li>At least 8 characters in length</li>
+<li>Should contain: Lower case letters (a-z) Upper case letters (A-Z) Numbers (i.e. 0-9)</li>
+</ol>
+<p>You should have received an email from Dataiku to the email you have signed up with. Activate your Dataiku account via the email sent.</p>
+<h2 is-upgraded>Review Dataiku Setup</h2>
+<p>Upon clicking on the activation link, please briefly review the Terms of Service of Dataiku Cloud. In order to do so, please scroll down to the bottom of the page.</p>
+<ul>
+<li>Click on <code>I AGREE</code> and then click on <code>NEXT</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/7e88eb3dcafe1fb.png"><br><br></p>
+<ul>
+<li>Complete your sign up some information about yourself and then click on <code>Start</code>.</li>
+<li>You will be redirected to the Dataiku Cloud Launchpad site. Click <code>GOT IT!</code> to continue.</li>
+</ul>
+<p><img alt="img" src="img/67799a139b4479c5.png"><br><br> This is the Cloud administration console where you can perform tasks such as inviting other users to collaborate, add plugin extensions, install industry solutions to accelerate projects as well as access community and academy resources to help your learning journey.</p>
+<aside class="warning"><p><strong>NOTE:</strong> It may take several minutes for your instance to Dataiku to start up the first time, during this time you will not be able to add the extension as described below. You can always come back to this task later if time doesn&#39;t allow now</p>
+</aside>
+<h2 is-upgraded>Add the Visual SnowparkML Plugin</h2>
+<p>It&#39;s beyond the scope of this course to cover plugins in depth but for this lab we would like to enable a few the Visual SnowparkML plugin so lets do that now.</p>
+<ol type="1">
+<li>Click on <code>Plugins</code> on the left menu</li>
+<li>Select <code>+ ADD A PLUGIN</code></li>
+<li>Find <code>Visual SnowparkML</code></li>
+<li>Check <code>Install on my Dataiku instance</code>, and click <code>INSTALL</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/f6e6c0c6d2581.png"></p>
+<p class="image-container"><img alt="img" src="img/e42232dafacdd8e0.png"></p>
+<ol type="1">
+<li>Click on <code>Code Envs</code> on the left menu</li>
+<li>Select <code>ADD A CODE ENVIRONMENT</code></li>
+<li>Select  <code>NEW PYTHON ENV</code></li>
+<li>Name your code env <code>py_39_snowpark</code> <strong>NOTE: The name must match exactly</strong></li>
+<li>Click <code>CREATE</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/35982ca6522f081b.png"></p>
+<p class="image-container"><img alt="img" src="img/aa255a81b6171888.png"></p>
+<p class="image-container"><img alt="img" src="img/3b3e9bf7ab302f68.png"></p>
+<ol type="1" start="6">
+<li>Select `Pandas 1.3 (Python 3.7 and above) from Core Packages menu</li>
+<li>Add the following packages</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">scikit-learn==1.3.2
+mlflow==2.9.2
+statsmodels==0.12.2
+protobuf==3.16.0
+xgboost==1.7.3
+lightgbm==3.3.5
+matplotlib==3.7.1
+scipy==1.10.1
+snowflake-snowpark-python==1.14.0
+snowflake-snowpark-python[pandas]==1.14.0
+snowflake-connector-python[pandas]==3.7.0
+MarkupSafe==2.0.1
+cloudpickle==2.0.0
+flask==1.0.4
+Jinja2==2.11.3
+snowflake-ml-python==1.5.0
+</code></pre>
+<ol type="1" start="8">
+<li>Select <code>rebuild env</code> from the menu on the left</li>
+<li>Click <code>Save and update</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/b792234d948c91d1.png"></p>
+<p>You&#39;ve now successfully set up your Dataiku trial account via Snowflake&#39;s Partner Connect. We are now ready to continue with the lab. For this, move back to your Snowflake browser.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Snowpark Optimized Warehouse in Snowflake" duration="5">
+        <h2 is-upgraded>Return to the Snowflake UI</h2>
+<p>We will now create an optimized warehouse</p>
+<ol type="1">
+<li>Click <code>Admin</code> from the bottom of the left hand menu</li>
+<li>Then <code>Warehouses</code></li>
+<li>Then click <code>+ Warehouse</code> in the top right corner</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/46a043e43d6e7249.png"></p>
+<p>Once in the <code>New Warehouse</code> creation screen perform the following steps:</p>
+<ol type="1">
+<li>Create a new warehouse called <code>SNOWPARK_WAREHOUSE</code></li>
+<li>For the type select <code>Snowpark-optimized</code></li>
+<li>Select <code>Medium</code> as the size</li>
+<li>Lastly click <code>Create Warehouse</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/420c9eccae3f46ba.png"><br><br><br><br></p>
+<ul>
+<li>Select your new Snowflake Warehouse by <code>clicking on it once</code>.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/d41968025820af4d.png"></p>
+<p>We need to permission the Dataiku Role that was created by Partner Connect in the earlier chapter for this new warehouse.</p>
+<ul>
+<li>Scroll down to Privileges, and click <code>+ Privilege</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/e470e718da277748.png"></p>
+<ol type="1">
+<li>For the Role select the role <code>PC_DATAIKU_ROLE</code></li>
+<li>Under Pivileges grant the <code>USAGE</code> privilege</li>
+<li>Click on <code>Grant Privileges</code></li>
+</ol>
+<p><img alt="img" src="img/339d1ff4ae397ddc.png"><br><br> You should now see your new privileges have been applied</p>
+<p class="image-container"><img alt="img" src="img/6064dc45ec605508.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import a Baseline Dataiku Project" duration="5">
+        <p>Return to the Dataiku trial launchpad in your browser</p>
+<ol type="1">
+<li>Ensure you are on the <code>Overview</code> page</li>
+<li>Click on <code>OPEN INSTANCE</code> to get started.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/bb1f758c99cb2e05.png"></p>
+<p>Congratulations you are now using the Dataiku platform! For the remainder of this lab we will be working from this environment which is called the design node, its the pre-production environment where teams collaborate to build data products.</p>
+<p>Now lets import our first project.</p>
+<ul>
+<li>Download the project zip file to your computer - <strong>Don&#39;t unzip it!</strong></li>
+</ul>
+<p><a href="https://dataiku-partnerships.s3.eu-west-1.amazonaws.com/LOANDEFAULTSSNOWPARKML.zip" target="_blank"><paper-button class="colored" raised>Starter Project</paper-button></a></p>
+<p>Once you have download the starter project we can create our first project</p>
+<ol type="1">
+<li>Click <code>+ NEW PROJECT</code></li>
+<li>Then <code>Import project</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/4f264271c017ce8c.png"></p>
+<ul>
+<li>Choose the .zip file you just downloaded, then click <code>IMPORT</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/84e3d8df5b88364.png"><br><br><br><br></p>
+<p>You should see a project with 4 dataset - two local CSVs which we&#39;ve then imported into Snowflake</p>
+<p class="image-container"><img alt="img" src="img/27b74599e639b6d.png"></p>
+<p>Now that we have all our setup done, lets start working with our data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Analyze trends in the data" duration="5">
+        <p>Before we begin analyzing the data in our new project lets take a minute to understand some of the concepts and terminology of a project in Dataiku.</p>
+<p>Here is the project we are going to build along with some annotations to help you understand some key concepts in Dataiku.</p>
+<p class="image-container"><img alt="img" src="img/19de0248687ffd0e.png"></p>
+<ul>
+<li>A <strong>dataset</strong> is represented by a blue square with a symbol that depicts the dataset type or connection. The initial datasets (also known as input datasets) are found on the left of the Flow. In this project, the input dataset will be the one we created in the first part of the lab.</li>
+<li>A <strong>recipe</strong> in Dataiku DSS (represented by a circle icon with a symbol that depicts its function) can be either visual or code-based, and it contains the processing logic for transforming datasets. In addition to the core Visual and Code recipes Dataiku can be expanded with the use of plugins which are either from the freely available Dataiku library or developed by users. We will use the Visual SnowparkML plugin today</li>
+<li><strong>Machine learning processes</strong> are represented by green icons.</li>
+<li>The <strong>Actions Menu</strong> is shown on the right pane and is context sensitive.</li>
+<li>Whatever screen you are currently in you can always return to the main <strong>Flow</strong> by clicking the <strong>Flow</strong> symbol from the top menu (also clicking the project name will take you back to the main Project page).</li>
+</ul>
+<aside class="special"><p> You can refer back to this completed project screenshot if you want to check your progress through the lab.</p>
+</aside>
+<ul>
+<li><code>Double click</code> into the <code>LOAN_REQUESTS_KNOWN_SF</code> dataset. This is our dataset of historical loan applications, a number of attributes about them, and whether the loan was paid back or defaulted (the DEFAULTED column - 1.0 = default, 0.0 = paid back).</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/4f2c47e3f254fb8d.png"><br><br><br><br></p>
+<ol type="1">
+<li>Click the <code>Statistics</code> tab on the top</li>
+<li>Next click <code>+ Create first worksheet</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/9f27a5b204ed776.png"><br><br><br><br></p>
+<ul>
+<li>Then select <code>Automatically suggest analyses</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/bf9abf4447bacd0c.png"><br><br><br><br></p>
+<ul>
+<li>Choose a few of the suggestions, be sure to include the Correlation Matrix in your selections then click <code>CREATE SELECTED CARDS</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/86b63d4aa3d2bf2f.png"><br><br></p>
+<p><strong>Question:</strong> What trends do you notice in the data?</p>
+<p>Look at the correlation matrix, and the DEFAULTED row. Notice that INTEREST_RATE has the highest correlation with DEFAULTED. We should definitely include this feature in our models!</p>
+<p class="image-container"><img alt="img" src="img/c718d94be3f8ebd6.png"></p>
+<p><strong>Positive</strong> correlation means as INTEREST_RATE rises, so does DEFAULTED (higher interest rate -&gt; higher probability of default). Notice MONTHLY_INCOME has a <strong>negative</strong> correlation to DEBT_TO_INCOME_RATIO. This means that as monthly income goes up, applicants&#39; debt to income ratio generally goes down.</p>
+<p>See if you can identify a few other features we should include in our models.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Train Machine Learning Models" duration="10">
+        <h2 is-upgraded>Create a new Visual SnowparkML recipe</h2>
+<p>Now we will tran an ML model using our plugin. Return to the flow either by clicking on the flow icon or by using the keyboard shortcut <code>(g+f)</code></p>
+<ol type="1">
+<li>From the Flow click once on the <code>LOAN_REQUESTS_KNOWN_SF</code> dataset.</li>
+<li>From the <code>Actions menu</code> on the right scroll down and select the <code>Visual Snowpark ML plugin</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/6096522e30d7f422.png"><br><br><br><br></p>
+<ul>
+<li>Click Train ML Models on Snowpark</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/ef9b0c4103a69689.png"><br><br></p>
+<p>We now need to set our three <code>Outputs</code></p>
+<ul>
+<li>Click on <code>Set</code> under the  <code>Generated Train Dataset</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/75fc92f46388354f.png"><br><br></p>
+<ol type="1">
+<li>Set the name to <code>train</code></li>
+<li>Select <code>PC_DATAIKU_DB</code> to store into</li>
+<li>Click <code>CREATE DATASET</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/87ac406d2e445186.png"></p>
+<p>We will now repeat this process for the other two outputs</p>
+<ul>
+<li>Click on <code>Set</code> under the  <code>Generated Test Dataset</code></li>
+</ul>
+<ol type="1">
+<li>Set the name to <code>test</code></li>
+<li>Select <code>PC_DATAIKU_DB</code> to store into</li>
+<li>Click <code>CREATE DATASET</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/dbe14e412808b39a.png"></p>
+<ul>
+<li>Click on <code>Set</code> under the  <code>Models Folder</code></li>
+</ul>
+<ol type="1">
+<li>Set the name to <code>models</code></li>
+<li>Select <code>dataiku-managed-storage</code> to store into</li>
+<li>Click <code>CREATE FOLDER</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/c9e2e04c25d18ec3.png"></p>
+<ul>
+<li>Your three outputs should now look like the image below. Finally click on <code>CREATE</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/9a497e1c9950ebe1.png"></p>
+<h2 is-upgraded>Define model training settings</h2>
+<p>Lets fill out the parameters for our training session.</p>
+<ol type="1">
+<li>Give your model a name</li>
+<li>Choose <code>DEFAULTED</code> as the target column</li>
+<li>Select <code>Two-class classification</code> as the prediction type</li>
+<li>Choose <code>ROC AUC</code> as our model metric. This is a common machine learning metric for classification problems.</li>
+</ol>
+<p>Leave the Train ratio and random seed as is. This will split our input dataset into 80% of records for training, leaving 20% for an unbiased evaluation of the model</p>
+<p class="image-container"><img alt="img" src="img/8feb241dc4367d3.png"></p>
+<ul>
+<li>Choose the following features to include in our model. Make sure to make a selection for Encoding / Rescaling and Impute Missing Values With - <strong>don&#39;t leave them empty</strong>.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/74007b5be2a68f88.png"></p>
+<p class="image-container"><img alt="img" src="img/39bb29822d5f5726.png"><br><br><br><br></p>
+<ul>
+<li>Choose the following algorithms to start. We&#39;ll go through the basics of these algorithms after we kick off our model training.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/94d15684989e2d11.png"></p>
+<ol type="1">
+<li>Leave the Search space limit as 4</li>
+<li>Write SNOWPARK_WAREHOUSE to use the Snowpark-optimized warehouse we created earlier.</li>
+<li>Check the &#34;Deploy to Snowflake ML Model Registry&#34; box. This will deploy our best trained model to Snowflake&#39;s Model Registry - where we can use it to make predictions later on.</li>
+</ol>
+<ul>
+<li>Finally Click the <code>RUN</code> button in the bottom left hand corner to start training our models.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/8be4f6a602b9f1d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Machine Learning - Basic Theory (Optional)" duration="5">
+        <p>While we&#39;re waiting for our models to train, let&#39;s learn a bit about machine learning. This is an oversimplification of some complicated topics. If you&#39;re interested there are links at the end of the course for the Dataiku Academy and many other free resources online.</p>
+<h2 is-upgraded>Machine Learning, Classification, and Regression</h2>
+<p><strong>Machine learning</strong> - the use and development of computer systems that are able to learn and adapt without following explicit instructions, by using algorithms and statistical models to analyze and draw inferences from patterns in data.</p>
+<p><strong>Oversimplified definition of machine learning</strong> - Fancy pattern matching based on the data you feed into it</p>
+<p>The two most common types of machine learning solutions are supervised and unsupervised learning. <br><strong>Supervised learning</strong> Goal: predict a target variable</p>
+<ul>
+<li>category = classification</li>
+<li>numerical value = regression</li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>Predict the sales price of an apartment (regression)</li>
+<li>Forecast the winner of an election (classification) <br><br></li>
+</ul>
+<p><strong>Unsupervised learning</strong> Goal: identify patterns</p>
+<ul>
+<li>Group similar individuals  = <strong>clustering</strong></li>
+<li>Find anomalies = <strong>anomaly detection</strong></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>Segment consumers according to their behavior (clustering)</li>
+<li>Find anomalous opioid shipments from a DEA database (anomaly detection) <br><br> Our problem - predicting loan defaults, is a <strong>supervised, classification problem</strong>.</li>
+</ul>
+<p>We need a structured dataset to train a model, in particular:</p>
+<ul>
+<li>Rows measuring <strong>individual observations</strong> (one transaction per row)</li>
+<li><strong>Target column</strong> with real labels of what we want to predict</li>
+<li><strong>Other columns</strong> (features) that the model can use to predict the target (through fancy pattern matching)</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/5938c630d429abaf.png"><br></p>
+<h2 is-upgraded>Train / Test split</h2>
+<p>Once we have a structured dataset with observations, a target, and features, we split it into train and test sets</p>
+<p>We could split it:</p>
+<ul>
+<li>Randomly</li>
+<li>Based on time</li>
+<li>Other criteria</li>
+</ul>
+<p>A random split of 80% train / 20% test is common</p>
+<p class="image-container"><img alt="img" src="img/af8ba872f1a03ef4.png"><br></p>
+<p>We train models on the train set, then evaluate them on the test set. This way, we can simulate how the model will perform on data that it hasn&#39;t seen before.</p>
+<h2 is-upgraded>Feature Handling</h2>
+<p>Two keys to choosing features to include in our model:</p>
+<ul>
+<li>Only include variables that you know you&#39;ll have at the time you need to make predictions (e.g. at time of sale for future credit card transactions)</li>
+<li>Use your domain knowledge - if you think a variable could be a driver of the target, include it in your model!</li>
+</ul>
+<p>Most machine learning models require variables to be a specific format to be able to find patterns in the data.</p>
+<p>We can generally break up our variables into two categories:</p>
+<ul>
+<li><strong>Numeric</strong> - e.g. AMOUNT_REQUESTED, DEBT_TO_INCOME_RATIO</li>
+<li><strong>Categorical</strong> - e.g. LOAN_PURPOSE, STATE</li>
+</ul>
+<p>Here are some ways to transform these types of features:</p>
+<p><strong>Numeric</strong> - e.g. AMOUNT_REQUESTED, DEBT_TO_INCOME_RATIO <br></p>
+<p>Things you typically want to consider:</p>
+<ul>
+<li><strong>Impute</strong> a number for rows missing values. Average, median are common</li>
+<li><strong>Rescale</strong> the variable. Standard rescaling is common (this transforms a value to its Z-score)</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/67c18306a4132e04.png"><br><br><br></p>
+<p><strong>Categorical</strong> - e.g. LOAN_PURPOSE, STATE <br></p>
+<p>Things you typically want to consider:</p>
+<ul>
+<li><strong>Encode</strong> values with a number. Dummy encoding, ordinal encoding are common</li>
+<li><strong>Impute</strong> a value for rows missing values. You can treat a missing value as its own category, or impute with the most common value. <img alt="img" src="img/23da231726b3b879.png"></li>
+</ul>
+<h2 is-upgraded>Machine Learning Algorithms</h2>
+<p>Let&#39;s go through a few common machine learning algorithms.</p>
+<p><strong>Linear Regression</strong></p>
+<p>For linear regression (predicting a number), we find the line of best fit, plotting our feature variables and our target</p>
+<p><code>y = b0 + b1 * x</code></p>
+<p>If we were training a model to predict exam scores based on # hours of study, we would solve for this equation</p>
+<p><code>exam_score = b0 + b1 * (num_hours_study)</code></p>
+<p class="image-container"><img alt="img" src="img/bb44c414c60d912.png"><br></p>
+<p>We use math (specifically a technique called Ordinary Least Squares[1]) to find the b0 and b1 of our best fit line</p>
+<p><code>exam_score = b0 + b1 * (num_hours_study)</code></p>
+<p><code>exam_score = 32 + 8 * (num_hours_study)</code></p>
+<p class="image-container"><img alt="img" src="img/edd7a9395cbcb2a6.png"><br></p>
+<p><strong>Logistic Regression</strong></p>
+<p>Logistic regression is similar to linear regression - except built for a classification problem (e.g. loan default prediction).</p>
+<p><code>log(p/1-p) = b0 + b1 * (num_hours_study)</code></p>
+<p><code>log(p/1-p) = 32 + 8 * (num_hours_study)</code></p>
+<p><code>p = probability of exam success</code></p>
+<p class="image-container"><img alt="img" src="img/4948d3115a2543e1.png"></p>
+<p><strong>Decision Trees</strong></p>
+<p>Imagine our exam pass/fail model with more variables.</p>
+<p>Decision trees will smartly create if / then statements, sending each row along a branch until it makes a prediction of your target variable</p>
+<p class="image-container"><img alt="img" src="img/aa4f3d618a5e458b.png"><br><br></p>
+<p><strong>Random Forest</strong></p>
+<p>A Random Forest model trains many decision trees, introduces randomness into each one, so they behave differently, then averages their predictions for a final prediction</p>
+<p class="image-container"><img alt="img" src="img/ec4b26f4169a282d.png"><br><br></p>
+<p><strong>Overfitting</strong></p>
+<p>We want our ML model to be able to understand true patterns in the data - uncover the signal, and ignore the noise (random, unexplained variation in the data)</p>
+<p>Overfitting is an undesirable machine learning behavior that occurs when the machine learning model gives accurate predictions for training data but not for new data</p>
+<p class="image-container"><img alt="img" src="img/246a98d5092f4902.png"><br><img alt="img" src="img/4fd38c83c9295972.png"><br></p>
+<p><strong>How to control for overfitting</strong></p>
+<p>Logistic Regression</p>
+<ul>
+<li>Increasing C shrinks your equation coefficients</li>
+<li>Increase C to control more for overfitting</li>
+</ul>
+<p>Example</p>
+<p><code>C = 0.01:  log(p/1-p) = 32 + 8 * (num_hours_study) + 6 * (num_hours_sleep)</code></p>
+<p><code>C = 0.1:  log(p/1-p) = 32 + 5 * (num_hours_study) + 4 * (num_hours_sleep) </code></p>
+<p><code>C = 1:  log(p/1-p) = 32 + 3 * (num_hours_study) + 2 * (num_hours_sleep) </code></p>
+<p><code>C = 10:  log(p/1-p) = 32 + 2 * (num_hours_study) + 0 * (num_hours_sleep) </code></p>
+<p><code>C = 100:  log(p/1-p) = 32 + 1 * (num_hours_study) + 0 * (num_hours_sleep)</code><br><br></p>
+<p>Random Forest <br></p>
+<ul>
+<li><strong>Maximum depth of tree</strong>  how far down can each decision tree go?</li>
+<li>Decrease this to control more for overfitting</li>
+</ul>
+<p>For more in-depth tutorials and self-paced machine learning courses see the links to Dataiku&#39;s freely available Academy in the last chapter of this course</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Evaluation" duration="7">
+        <p>Once we&#39;ve trained our models, we&#39;ll want to take a deeper dive deep into how they&#39;re performing, what features they&#39;re considering, and whether they may be biased. Dataiku has a number of tools for evaluating models.</p>
+<ul>
+<li><code>Double click</code> on your model (Green diamond) from the flow</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/9f07aa9934b1f366.png"></p>
+<ul>
+<li>You&#39;ll see your best trained model here. <code>Click</code> into it.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/39b819470b37ab2c.png"><br><br><br></p>
+<ol type="1">
+<li>Select <code>Feature Importance</code> from the menu on the left side</li>
+<li>Then click <code>COMPUTE NOW</code></li>
+</ol>
+<p><img alt="img" src="img/5cf951b7cba068f5.png"><br><br><br><br> Here we can see that the top 3 features impacting the model are applicants&#39; FICO scores, the interest rate of the loan, and the amount requested. This makes sense! <br><br></p>
+<p class="image-container"><img alt="img" src="img/2f0f5e30dfa5ab8e.png"><br><br><br><br></p>
+<p>Scroll down on this page - you&#39;ll see the directional effect of each feature on default predictions. You can see that the higher FICO scores generally mean lower probability of default.</p>
+<p class="image-container"><img alt="img" src="img/26d1949d4bbe598a.png"><br><br><br><br></p>
+<ul>
+<li>Click on the <code>Confusion matrix</code> tab from the menu on the left.</li>
+</ul>
+<p>Here we can see how the model would have performed on the hold-out test set of loan applicants. Notice that my model is very good at catching defaulters (83 Predicted 1.0 out of 84 Actually 1.0), at the expense of mistakenly rejecting 124 applicants that would have paid back their loan.</p>
+<p>Try moving the threshold bar back and forth. It will cause the model to be more or less sensitive. Based on your business problem, you may want a higher or lower threshold.</p>
+<p class="image-container"><img alt="img" src="img/99b003ba9b5acc5e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Make Predictions (Scoring)" duration="8">
+        <p>Using a machine learning model to make predictions is called <code>scoring</code> or <code>inference</code></p>
+<h2 is-upgraded>Score the unknown loan applications using the trained model</h2>
+<ol type="1">
+<li>Go to the project Flow, click once on the <code>LOAN_REQUESTS_UNKNOWN_SF</code> dataset</li>
+<li>Then click on the <code>Visual Snowpark ML</code> plugin from the right hand Actions menu.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/d6cb574944308fb1.png"><br><br><br><br></p>
+<ul>
+<li>Click <code>Score New Records using Snowpark</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/87695fa5402f78ea.png"><br><br><br><br></p>
+<p>We need to add our model as an input and set an output dataset for the results of the scoring.</p>
+<ol type="1">
+<li>In the <code>Inputs</code> under the <code>Saved Model</code> option click on <code>SET</code> to add your saved model</li>
+<li>In the <code>Outputs</code> section under <code>Scored Dataset Option</code> click on <code>SET</code> and give your output dataset a name</li>
+<li>For <code>Store into</code> use the `PC_DATAIKU_DB** connection</li>
+<li>Click on <code>CREATE DATASET</code></li>
+</ol>
+<p class="image-container"><img alt="img" src="img/7708cea79251fcc7.png"><br><br></p>
+<ul>
+<li>Your screen should now look like this. Go ahead and <code>click on CREATE</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/14309d725facdc3a.png"><br><br><br><br></p>
+<ul>
+<li>Make sure the warehouse you created earlier <code>SNOWPARK_WAREHOUSE</code> is selected then click on <code>RUN</code></li>
+</ul>
+<p><img alt="img" src="img/2dfe075fc56d0e3b.png"><br><br><br><br> When it finishes, your flow should look like this</p>
+<p class="image-container"><img alt="img" src="img/a479b3e42c85e707.png"></p>
+<ul>
+<li><code>Double click</code> into the output scored dataset - scroll to the right, and you should see predictions of whether someone is likely to pay back their loan or not!</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/3d19cb26df654ee5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="MLOps (optional)" duration="8">
+        <p>Let&#39;s say we want to automatically run new loan applications through our model every week on Sunday night.</p>
+<p>Assume that <code>LOAN_REQUESTS_UNKNOWN</code> is a live dataset of new loan applications that is updated throughout the week.</p>
+<p>We want to rerun all the recipes leading up to unknown_loans_scored, where our model makes predictions.</p>
+<h2 is-upgraded>Build a weekly scoring scenario</h2>
+<ul>
+<li>Click into the Scenarios tab</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/418a3ada49b26c5c.png"></p>
+<ul>
+<li>Click <code>+ CREATE YOUR FIRST SCENARIO</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/f61da4d4ddd6b1f1.png"></p>
+<ul>
+<li>Name your scenario something like <code>"Weekly Loan Application Scoring"</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/1fedc255e2e8d916.png"><br><br><br><br></p>
+<ul>
+<li>Add a time-based trigger</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/86a9900c81848423.png"><br><br><br><br></p>
+<ul>
+<li>Set the trigger to run <code>every week on Sunday at 9pm</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/e905a3893e3df2eb.png"><br><br><br><br></p>
+<ul>
+<li>In the <code>Steps</code> tab, click <code>Add Step</code>, then <code>Build / Train</code></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/aeae7e94ddbae395.png"><br><br><br><br></p>
+<ul>
+<li>Add a dataset to build</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/99fc8dcdc3431313.png"><br><br><br><br></p>
+<ul>
+<li>Then choose the <code>unknown_loans_scored</code> dataset</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/1757fe711e42cae3.png"><br><br><br><br></p>
+<ul>
+<li>Check the <code>Force-build</code> button to recursively build all datasets leading up to <code>unknown_loans_scored</code>, then click the <code>run</code> button to test it out.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/869dd1d0e2c3e7c4.png"><br><br><br><br></p>
+<p>You&#39;ll be able to see scenario run details in the &#34;Last runs&#34; tab</p>
+<p class="image-container"><img alt="img" src="img/1559841f1098bd5d.png"></p>
+<h2 is-upgraded>Build a monthly model retraining scenario (optional)</h2>
+<p>It&#39;s good practice to retrain machine learning models on a regular basis with more up-to-date data. The world changes around us; the patterns of loan applicant attributes affecting default probability are likely to change too.</p>
+<p>If you have time you can assume that LOAN_REQUESTS_KNOWN is a live dataset of historical loan applications that is updated with new loan payback and default data on an ongoing basis.</p>
+<p>You can automatically retrain your model every month with scenarios, and put in a AUC check to make sure that the model is performing and build the scored dataset</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Resources" duration="1">
+        <p>Congratulations on completing this introductory lab exercise! Congratulations! You&#39;ve mastered the Snowflake basics and you&#39;ve taken your first steps toward a no-code approach to training machine learning models with Dataiku.</p>
+<p>You have seen how Dataiku&#39;s deep integrations with Snowflake can allow teams with different skill sets get the most out of their data at every stage of the machine learning lifecycle.</p>
+<p>We encourage you to continue with your free trial and continue to refine your models and by using some of the more advanced capabilities not covered in this lab.</p>
+<h2 is-upgraded>What You Learned:</h2>
+<ul>
+<li>Use Snowflake&#39;s &#34;Partner Connect&#34; to create a Dataiku cloud trial</li>
+<li>Create a Snowpark-optimized warehouse (for ML workloads)</li>
+<li>Upload a base project in Dataiku with our data sources in Snowflake</li>
+<li>Look at our loan data, understand trends through correlation matrices</li>
+<li>Train, interpret, and deploy Machine Learning models in Dataiku - powered by Snowpark ML</li>
+<li>Use our trained model to make new predictions</li>
+<li><code>(Optional)</code> Set up an MLOps process to retrain the model, check for accuracy, and make new predictions on a weekly basis</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li>Join the <a href="https://community.snowflake.com/s/" target="_blank">Snowflake Community</a></li>
+<li>Join the <a href="https://community.dataiku.com/" target="_blank">Dataiku Community</a></li>
+<li>Sign up for <a href="http://https://community.snowflake.com/s/snowflake-university" target="_blank">Snowflake University</a></li>
+<li>Join the <a href="https://academy.dataiku.com/" target="_blank">Dataiku Academy</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

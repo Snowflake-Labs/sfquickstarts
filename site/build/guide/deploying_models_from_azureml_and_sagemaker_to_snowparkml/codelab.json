@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "deploying_models_from_azureml_and_sagemaker_to_snowparkml",
+  "duration": 45,
+  "title": "Deploying Models from AzureML and Sagemaker to Snowpark ML",
+  "summary": "Learning how to easily access models from AzureML and Amazon Sagemaker then deploy them to Snowpark ML registries",
+  "source": "deploying_models_from_azureml_and_sagemaker_to_snowparkml/deploying_models_from_azureml_and_sagemaker_to_snowparkml.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "snowpark",
+    "azure",
+    "aws",
+    "streamlit",
+    "genai",
+    "ai",
+    "ml",
+    "azureml"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "deploying_models_from_azureml_and_sagemaker_to_snowparkml"
+}

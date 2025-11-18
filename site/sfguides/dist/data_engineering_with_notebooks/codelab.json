@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_with_notebooks",
+  "duration": 90,
+  "title": "Getting Started with Data Engineering using Snowflake Notebooks",
+  "authors": "Jeremiah Hansen",
+  "summary": "This guide will provide step-by-step details for building data engineering pipelines with Snowflake Notebooks",
+  "source": "data_engineering_with_notebooks/data_engineering_with_notebooks.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "data-engineering",
+    "notebooks"
+  ],
+  "tags": [
+    "dataengineering",
+    "notebooks",
+    "python",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_with_notebooks"
+}

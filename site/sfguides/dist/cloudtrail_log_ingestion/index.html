@@ -1,0 +1,377 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AWS Cloudtrail Ingestion</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="cloudtrail_log_ingestion"
+                  title="AWS Cloudtrail Ingestion"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>AWS CloudTrail is an AWS service that helps you enable operational and risk auditing, governance, and compliance of your AWS account. Actions taken by a user, role, or an AWS service are recorded as events in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface, and AWS SDKs and APIs. By ingesting and analyzing these logs in Snowflake, practitioners are able to gain analytical insights and work toward securing their environments at scale.</p>
+<p>This quickstart is a guide to ingesting and processing AWS CloudTrail events into Snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for analytics, threat detection and posture management. More information about AWS CloudTrail can be found in the <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html" target="_blank">AWS Cloudtrail User Guide</a></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>AWS user with permission to create and manage IAM policies and roles</li>
+<li>Snowflake user with permission to create tables, stages and storage integrations as well as setup Snowpipe.</li>
+<li>An S3 Logging Bucket, preferably in the same region as your Snowflake target account.</li>
+</ul>
+<h2 is-upgraded>Architecture</h2>
+<p class="image-container"><img alt="A diagram depicting the journey of Cloudtrail events to a Snowflake database. The diagram is split between sections, AWS Cloud and Snowflake Cloud. The diagram begins on the AWS Cloud side where an arrow links the AWS Cloudtrail service to an S3 External stage, then to an SQS Queue with the description “Event Notification”. An arrow leads from the SQS queue to the Snowflake Cloud section of the diagram to an icon named Snowpipe. After Snowpipe the arrow leads back to S3 External stage with a description of “triggers”. Finally the path terminates on the Snowflake Cloud side at an icon named “Snowflake DB” with a description of “copy into”." src="img/fb71e42eabdfee65.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable CloudTrail" duration="5">
+        <p>For simplicity purposes, this quickstart will walk through configuring CloudTrail from a single account using default settings.</p>
+<p>If you have already configured CloudTrail or if you require an organization based or custom configuration please see the official documentation <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-create-and-update-a-trail.html" target="_blank">here</a> and skip to the next step.</p>
+<ol type="1">
+<li>Open the <a href="https://console.aws.amazon.com/cloudtrail/" target="_blank">CloudTrail console</a></li>
+<li>On the dashboard page find and press <code>Create trail</code></li>
+<li>Configure Cloudtrail with the following settings</li>
+</ol>
+<ul>
+<li><strong>Trail name:</strong> Choose a name for your trail. For example (Snowflake-Cloudtrail-Ingestion)</li>
+<li><strong>Storage location:</strong>  We recommend creating a new S3 bucket. Take note of the name you choose</li>
+<li><strong>Log file SSE-KMS encryption</strong> For the purposes of this lab we recommend you uncheck this box to use S3 managed encryption for easier ingest. If you choose to enable KMS encryption this will require additional IAM policies and configuration on the Snowflake side. More information on how to do this can be found <a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config-storage-integration.html" target="_blank">here</a></li>
+<li><strong>Log file validation</strong> For this lab we recommend you uncheck this box.</li>
+</ul>
+<ol type="1">
+<li>Press next and leave the default settings</li>
+<li>Press next, review the details and press the create button</li>
+</ol>
+<p class="image-container"><img alt="Confirmation screen showing configuration as described in the above steps" src="img/2dfb49f079cef240.png"></p>
+<p>Note: Cloudtrail logging may take some time to start creating records.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a storage integration in Snowflake" duration="3">
+        <p><em>Replace &lt;RoleName&gt; with the desired name of the role you&#39;d like Snowflake to use ( this role will be created in the next step).  Replace &lt;BUCKET_NAME&gt;/path/to/logs/ with the path to your CloudTrail logs as set in the previous step</em></p>
+<pre><code language="language-sql" class="language-sql">create STORAGE INTEGRATION s3_int_cloudtrail_logs
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = S3
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::&lt;AWS_ACCOUNT_NUMBER&gt;:role/&lt;RoleName&gt;&#39;
+  STORAGE_ALLOWED_LOCATIONS = (&#39;s3://&lt;BUCKET_NAME&gt;/&lt;PREFIX&gt;/&#39;);
+
+DESC INTEGRATION s3_int_cloudtrail_logs;
+</code></pre>
+<p>Take note of <strong>STORAGE_AWS_IAM_USER_ARN</strong> and <strong>STORAGE_AWS_EXTERNAL_ID</strong></p>
+<p class="image-container"><img alt="A screenshot showing the result of describing an integration. STORAGE_AWS_IAM_USER_ARN property is in the format of an aws ARN set to arn:aws:iam::123456789012:user/abc10000-a and the STORAGE_AWS_EXTERNAL_ID is in the format of ABC12345_SFCRole=1 ABCDEFGHIJKLMNOPORSTUVWXYZab= " src="img/1320242e65c2a1b1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create role and policy in AWS" duration="5">
+        <p><em>The following assumes a user with the ability to create and manage IAM logged into the AWS console or using the CLI.  A full explanation can be found in </em><a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config.html" target="_blank"><em>this documentation</em></a></p>
+<p>Open up Cloudshell in the AWS console by pressing the <img alt="aws cloudshell icon" src="img/f258742e8a725628.png"> icon on the right side of the top navigation bar or run the following commands in your terminal once configured to use the AWS CLI.</p>
+<p>Export the following variables, replacing the values with your own</p>
+<pre><code language="language-bash" class="language-bash">export BUCKET_NAME=&#39;&lt;BUCKET_NAME&gt;&#39;
+export PREFIX=&#39;&lt;PREFIX&gt;&#39; # no leading or trailing slashes
+export ROLE_NAME=&#39;&lt;ROLE_NAME&gt;&#39;
+export STORAGE_AWS_IAM_USER_ARN=&#39;&lt;STORAGE_AWS_IAM_USER_ARN&gt;&#39;
+export STORAGE_AWS_EXTERNAL_ID=&#39;&lt;STORAGE_AWS_EXTERNAL_ID&gt;&#39;
+</code></pre>
+<p>Create a role for Snowflake to assume</p>
+<pre><code language="language-bash" class="language-bash">aws iam create-role \
+    --role-name &#34;${ROLE_NAME}&#34; \
+    --assume-role-policy-document \
+&#39;{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+                &#34;AWS&#34;: &#34;&#39;${STORAGE_AWS_IAM_USER_ARN}&#39;&#34;
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+                    &#34;sts:ExternalId&#34;: &#34;&#39;${STORAGE_AWS_EXTERNAL_ID}&#39;&#34;
+                }
+            }
+        }
+    ]
+}&#39;
+</code></pre>
+<p>Create an inline-policy to allow Snowflake to retrieve and remove files from S3</p>
+<pre><code language="language-bash" class="language-bash">aws iam put-role-policy \
+    --role-name &#34;${ROLE_NAME}&#34; \
+    --policy-name &#34;${ROLE_NAME}-inlinepolicy&#34; \
+    --policy-document \
+&#39;{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+              &#34;s3:GetObject&#34;,
+              &#34;s3:GetObjectVersion&#34;,
+              &#34;s3:DeleteObject&#34;,
+              &#34;s3:DeleteObjectVersion&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&#39;${BUCKET_NAME}&#39;/&#39;${PREFIX}&#39;/*&#34;
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:ListBucket&#34;,
+                &#34;s3:GetBucketLocation&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&#39;${BUCKET_NAME}&#39;&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringLike&#34;: {
+                    &#34;s3:prefix&#34;: [
+                        &#34;&#39;${PREFIX}&#39;/*&#34;
+                    ]
+                }
+            }
+        }
+    ]
+}&#39;
+</code></pre>
+<p>You will now be able to see your role, policy and trust relationship in the console</p>
+<p class="image-container"><img alt="Screenshot of Snowflake source displayed in AWS IAM" src="img/c2a37dee6eabe74c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Snowflake to receive data" duration="6">
+        <p>This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 1 minute of inactivity. For production workloads a larger warehouse will likely be required.</p>
+<pre><code language="language-sql" class="language-sql">create warehouse security_quickstart with 
+  WAREHOUSE_SIZE = MEDIUM 
+  AUTO_SUSPEND = 60;
+</code></pre>
+<p>Create External Stage using the storage integration and test that Snowflake can test files. Make sure you include the trailing slash if using a prefix.</p>
+<pre><code language="language-sql" class="language-sql">create stage cloudtrail_logs_staging
+  url = &#39;s3://&lt;BUCKET_NAME&gt;/&lt;PREFIX&gt;/&#39;
+  storage_integration = s3_int_cloudtrail_logs
+;
+
+list @cloudtrail_logs_staging;
+</code></pre>
+<p class="image-container"><img alt="Screenshot of listing files in external stage" src="img/51c983989f51cb01.png"></p>
+<p>Create a table to store the raw logs</p>
+<pre><code language="language-sql" class="language-sql">create table public.cloudtrail_raw(
+  record VARIANT
+);
+</code></pre>
+<p>Test importing logs from External Stage</p>
+<pre><code language="language-sql" class="language-sql">copy into cloudtrail_raw FROM @cloudtrail_logs_staging FILE_FORMAT = (type = json);
+</code></pre>
+<p class="image-container"><img alt="Screenshot showing result of above copy into command, for all files the status column shows &amp;ldquo;LOADED&amp;rdquo;" src="img/3ee1412438b22603.png"></p>
+<p>Verify the logs were loaded properly</p>
+<pre><code language="language-sql" class="language-sql">select * from public.cloudtrail_raw limit 5;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowpipe for continuous loading" duration="5">
+        <p>The following instructions depend on a Snowflake account running on AWS. Accounts running on other cloud providers may invoke snowpipe from a rest endpoint. <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html</a></p>
+<p>Configure the Snowflake snowpipe</p>
+<pre><code language="language-sql" class="language-sql">create pipe public.cloudtrail_pipe auto_ingest=true as
+copy into cloudtrail_raw 
+FROM @cloudtrail_logs_staging  FILE_FORMAT = (type = json);
+</code></pre>
+<p>Show pipe to retrieve SQS queue ARN in the <code>notification_channel</code> column</p>
+<pre><code language="language-sql" class="language-sql">show pipes;
+</code></pre>
+<p class="image-container"><img alt="Screenshot showing output of show pipes command" src="img/bb6c0e3e732459c7.png"></p>
+<p>Setup S3 bucket with following <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications.html" target="_blank">AWS instructions</a>.</p>
+<p>Target Bucket -&gt; Properties -&gt; Event notifications -&gt; Create event notification</p>
+<p class="image-container"><img alt="Screenshot of empty event notifications dashboard in AWS" src="img/8e6e768f8a56b85d.png"></p>
+<p>Fill out below items</p>
+<ul>
+<li>Name: Name of the event notification (e.g. Auto-ingest Snowflake).</li>
+<li>Prefix(Optional) :  if you receive notifications only when files are added to a specific folder (for example, logs/).</li>
+<li>Events: Select &#34;All object create events&#34;.</li>
+<li>Destination: Select &#34;SQS Queue&#34; from the dropdown list.</li>
+<li>SQS: Select &#34;Add SQS queue ARN&#34; from the dropdown list.</li>
+<li>SQS queue ARN: Paste the SQS queue name from the SHOW PIPES output.</li>
+</ul>
+<p class="image-container"><img alt="Screenshot of create event notification form in AWS console" src="img/61c8325e760d3a62.png"></p>
+<p class="image-container"><img alt="Screenshot of destination configuration in create event notification form in AWS console" src="img/246ad6a5224abf66.png"></p>
+<p>Event notification has been created <img alt="Screenshot of event notifications dashboard with created notification in AWS" src="img/9f7b7df7dd73457.png"></p>
+<p>Refresh Snowpipe to start the pipe and retrieve unloaded files</p>
+<pre><code language="language-sql" class="language-sql">alter pipe cloudtrail_pipe refresh;
+</code></pre>
+<p>You can view recent pipe usage history using the following command</p>
+<pre><code language="language-sql" class="language-sql">  select *
+  from table(snowflake.information_schema.pipe_usage_history(
+    date_range_start=&gt;dateadd(&#39;hour&#39;,-1,current_timestamp()),
+    date_range_end=&gt;current_timestamp(),
+    pipe_name=&gt;&#39;public.cloudtrail_pipe&#39;
+  ));
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a view to better query data" duration="3">
+        <p>To better make queries we will be creating a view using Snowflake&#39;s native JSON processing capabilities.</p>
+<pre><code language="language-sql" class="language-sql">create view cloudtrail as
+select 
+    VALUE:eventTime::TIMESTAMP as eventTime, 
+    VALUE:eventVersion::string as eventVersion,
+    VALUE:userIdentity::variant as userIdentity,
+    VALUE:eventSource::string as eventSource,
+    VALUE:eventName::string as eventName,
+    VALUE:awsRegion::string as awsRegion,
+    VALUE:sourceIPAddress::string as sourceIPAddress,
+    VALUE:userAgent::string as userAgent,
+    VALUE:errorCode::string as errorCode,
+    VALUE:errorMessage::string as errorMessage,
+    VALUE:requestParameters::variant as requestParameters,
+    VALUE:responseElements::variant as responseElements,
+    VALUE:additionalEventData::variant as additionalEventData,
+    VALUE:requestID::string as requestID,
+    VALUE:eventID::string as eventID,
+    VALUE:eventType::string as eventType,
+    VALUE:apiVersion::string as apiVersion,
+    VALUE:managementEvent::variant as managementEvent,
+    VALUE:resources::variant as resources,
+    VALUE:recipientAccountId::string as recipientAccountId,
+    VALUE:serviceEventDetails::variant as serviceEventDetails,
+    VALUE:sharedEventID::string as sharedEventID,
+    VALUE:eventCategory::string as eventCategory,
+    VALUE:vpcEndpointId::string as vpcEndpointId,
+    VALUE:addendum::string as addendum,
+    VALUE:sessionCredentialFromConsole::string as sessionCredentialFromConsole,
+    VALUE:edgeDeviceDetails::string as edgeDeviceDetails,
+    VALUE:tlsDetails::variant as tlsDetails,
+    VALUE:insightDetails::variant as insightDetails
+  from public.cloudtrail_raw , LATERAL FLATTEN(input =&gt; record:Records);
+</code></pre>
+<p>Note: Cloudtrail groups individual events in JSON arrays. This view uses a native <code>LATERAL FLATTEN</code> function to parse them into individual rows. Users should consider using a materialized view to improve query performance. More information about materialized views and their tradeoffs can be found <a href="https://docs.snowflake.com/en/user-guide/views-materialized.html" target="_blank">here</a></p>
+<p>Preview the data</p>
+<pre><code language="language-sql" class="language-sql">select * from cloudtrail limit 10;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query the data" duration="2">
+        <p>Create a workbook to query the new view. If desired, use the following to help get you started:</p>
+<pre><code language="language-sql" class="language-sql">-- Console Login events Without MFA
+select * from cloudtrail where eventName = &#39;ConsoleLogin&#39;
+and responseElements:ConsoleLogin = &#39;Success&#39; 
+and additionalEventData:MFAUsed = &#39;No&#39;
+and additionalEventData:SamlProviderArn is null;
+
+-- Unauthorized API calls
+select * from cloudtrail where errorCode in (&#39;AccessDenied&#39;, &#39;UnauthorizedOperation&#39;)
+and sourceIPAddress != &#39;delivery.logs.amazonaws.com&#39;
+and eventName != &#39;HeadBucket&#39;;
+
+-- Updated S3 Bucket Policies
+select * from cloudtrail where eventName in (
+&#39;PutBucketAcl&#39;,
+&#39;PutBucketPolicy&#39;,
+&#39;PutBucketCors&#39;,
+&#39;PutBucketLifecycle&#39;,
+&#39;PutBucketReplication&#39;,
+&#39;DeleteBucketPolicy&#39;,
+&#39;DeleteBucketCors&#39;,
+&#39;DeleteBucketLifestyle&#39;,
+&#39;DeleteBucketReplication&#39;
+);
+
+-- Audit Root account activity
+select * from cloudtrail 
+where userIdentity:type = &#39;Root&#39; 
+and eventType != &#39;AwsServiceEvent&#39;
+and userIdentity:invokedBy is null;
+
+-- Updated Security Group Rules
+select * from cloudtrail where eventName in (
+&#39;AuthorizeSecurityGroupEgress&#39;,
+&#39;AuthorizeSecurityGroupIngress&#39;,
+&#39;CreateSecurityGroup&#39;,
+&#39;DeleteSecurityGroup&#39;,
+&#39;RevokeSecurityGroupEgress&#39;,
+&#39;RevokeSecurityGroupIngress&#39;
+);
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; next steps" duration="0">
+        <p>Having completed this quickstart you have successfully:</p>
+<ul>
+<li>Configured AWS Cloudtrail</li>
+<li>Created and configured an external stage using S3</li>
+<li>Ingested Cloudtrail into Snowflake</li>
+<li>Created and configured a pipeline to automatically load data</li>
+<li>Created a scheduled task and function to automatically process data</li>
+<li>Explored sample queries to get insights out of your Cloudtrail logs</li>
+</ul>
+<h2 is-upgraded>Additional References</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config.html" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-s3-config.html</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

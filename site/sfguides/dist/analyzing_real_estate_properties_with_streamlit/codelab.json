@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "analyzing_real_estate_properties_with_streamlit",
+  "duration": 36,
+  "title": "Analyzing real estate properties using Streamlit",
+  "authors": "Vinícius Oviedo",
+  "summary": "Analyzing real estate properties with Streamlit",
+  "source": "analyzing_real_estate_properties_with_streamlit/analyzing_real_estate_properties_with_streamlit.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "app-development",
+    "streamlit"
+  ],
+  "tags": [
+    "datascience\u0026ml",
+    "solutionexamples",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "analyzing_real_estate_properties_with_streamlit"
+}

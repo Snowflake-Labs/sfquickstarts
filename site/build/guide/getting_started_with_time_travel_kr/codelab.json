@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_time_travel_kr",
+  "duration": 34,
+  "title": "Time Travel 시작하기",
+  "summary": "Time Travel을 사용하여 이전 데이터베이스 상태를 쿼리하고 데이터를 복구합니다.",
+  "source": "getting_started_with_time_travel_kr/getting_started_with_time_travel_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "kr",
+    "sql",
+    "web",
+    "데이터엔지니어링",
+    "스노우플레이크시작하기"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_time_travel_kr"
+}

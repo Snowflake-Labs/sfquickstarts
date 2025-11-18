@@ -1,0 +1,520 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Matillion Data Productivity Cloud</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="load-integrate-data-matillion-data-productivity-cloud"
+                  title="Getting Started with Matillion Data Productivity Cloud"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This Quickstart will show you how to load and integrate enterprise data into Snowflake quickly and efficiently using the Matillion Data Productivity Cloud.</p>
+<p>It&#39;s a typical data integration scenario: there are multiple, related data sources, and you need to generate some joined-up insights. You will build ETL pipelines that extract, load, transform and integrate the data, and you&#39;ll get a feeling for the typical development lifecycle with Matillion.</p>
+<p>Matillion is the data pipeline platform that brings push-down ELT and AI to Snowflake, helping you to accelerate data pipelines for analytics and AI projects at scale.</p>
+<p class="image-container"><img alt="Matillion Data Productivity Cloud" src="img/42c36f9529deb55f.png"></p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>Matillion Data Productivity Cloud pipelines that extract, load, transform and integrate data</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to use the Matillion Data Productivity Cloud Pipeline Designer</li>
+<li>How to build and use Orchestration pipelines for data extraction, and for command-and-control operations such as looping and synchronization</li>
+<li>How to build and use Transformation pipelines for data transformation and integration, including handling semi-structured data</li>
+<li>How to use the Matillion Copilot to help build ETL pipelines</li>
+<li>How to use git with Matillion in feature branching mode</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A web browser</li>
+<li>An email address</li>
+<li>Access to a <a href="https://hub.matillion.com/" target="_blank">Matillion account</a> (or free trial, set up in the next step of this lab)</li>
+<li>Access to a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake account</a> (or free trial, automatically created when you sign up for a free Matillion trial)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create your Matillion and Snowflake accounts" duration="5">
+        <p>If you already have a Matillion and Snowflake account, just <a href="https://hub.matillion.com/" target="_blank">log in to the Matillion Data Productivity Cloud</a> and go straight to the next step in this Quickstart.</p>
+<p>Otherwise ...</p>
+<h2 is-upgraded>Use Snowflake Partner Connect</h2>
+<p>If you already have a Snowflake account, look for Matillion Data Productivity Cloud in <a href="https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect#connecting-with-a-snowflake-partner" target="_blank">Snowflake Partner Connect</a> and follow the instructions on screen to create a Matillion free trial. Once you are logged into your Matillion Data Productivity Cloud account, skip to the next step in this Quickstart.</p>
+<p>If you don&#39;t already have a Snowflake account, or you prefer to start your own Matillion free trial, read on ...</p>
+<h2 is-upgraded>Start a Matillion free trial</h2>
+<p>Go to the Matillion start page at <a href="https://hub.matillion.com/" target="_blank">hub.matillion.com</a></p>
+<ul>
+<li>Switch to the <strong>Sign Up</strong> tab</li>
+<li>Authenticate with Google or Microsoft, or enter your business email address and pick a complicated password</li>
+</ul>
+<p>If you used an email address, you&#39;ll receive an email with a link to verify your address. Follow the link to continue.</p>
+<p>Next you will be transferred to the Matillion setup screens.</p>
+<p>In the setup screens:</p>
+<ul>
+<li>Provide some basic information about your goals, and let Matillion know how to address you</li>
+<li>Select a cloud region</li>
+</ul>
+<h2 is-upgraded>Set up your Snowflake account</h2>
+<p>The last setup screen invites you to choose a target platform.</p>
+<ul>
+<li>If you <strong>already</strong> have a Snowflake account: <ul>
+<li>Pick &#34;Connect to Snowflake&#34;</li>
+<li>Log in to your Snowflake account in the dialog that follows</li>
+<li>Go to the next step in this Quickstart</li>
+</ul>
+</li>
+<li>If you <strong>don&#39;t</strong> already have a Snowflake account, select &#34;Use a Matillion trial warehouse&#34; and Matillion will set up a free Snowflake trial on your behalf.</li>
+</ul>
+<p class="image-container"><img alt="Use a Trial Warehouse" src="img/aeae4fb80bcfe1fd.png"></p>
+<p>It will take a couple of minutes for Matillion to create a free, empty, trial Snowflake account and connect everything together. Once that&#39;s done you&#39;ll end up in the Matillion Data Productivity Cloud&#39;s main ETL <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/designer-overview/" target="_blank">pipeline designer interface</a>.</p>
+<p>For reference here&#39;s a video that takes you through all the steps above.</p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/G2Rc7K_8pZw?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Development branch" duration="1">
+        <p>Matillion development is tightly integrated with git, so when you are <a href="https://hub.matillion.com/" target="_blank">logged in to the Matillion Data Productivity Cloud</a> and developing ETL pipelines, you&#39;re always working in the context of a git branch. This Quickstart will demonstrate the <strong>feature branching</strong> strategy.</p>
+<p>Start at the management page of your Data Productivity Cloud <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/projects/" target="_blank">Project</a>, and press &#34;Add New Branch&#34;.</p>
+<p class="image-container"><img alt="Add New Branch" src="img/cd33b0c850717c45.png"></p>
+<p>Name the new branch <code>development</code> and have it branch from <code>main</code>.</p>
+<p class="image-container"><img alt="Create a Development Branch" src="img/f5e6ee451b73567f.png"></p>
+<p>Towards the end of this Quickstart you&#39;ll learn how to merge this feature branch back into main.</p>
+<p>Meanwhile, click on the new branch name to enter the <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/designer-ui-basics/" target="_blank">Pipeline Designer</a> interface in the development branch.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Static Metadata" duration="5">
+        <p>The first data to be loaded into Snowflake is a few fixed records of reference information, which will be used later. This kind of setup is sometimes known as &#34;seed&#34; data.</p>
+<p>Matillion uses <strong>Transformation</strong> pipelines for everything that involves running SQL on Snowflake. In the pipeline designer interface, create a new Transformation pipeline.</p>
+<p class="image-container"><img alt="Create a New Transformation Pipeline" src="img/f1e6deca45fb2d43.png"></p>
+<p>In the dialog that follows, name the new pipeline <code>Create SHEET_NAMES</code> and press the Add button.</p>
+<p>Now you can start to add components to the blank canvas. For seed data you need a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/fixed-flow/" target="_blank">Fixed Flow</a> component. There are two ways to do this, both highlighted in the screenshot below:</p>
+<ul>
+<li>Open the <code>Components</code> panel on the left, find the <strong>Fixed Flow</strong>, and drag it onto the canvas</li>
+<li>Press the <code>+</code> sign in the middle of the canvas, which opens a similar Components dialog. This method has the advantage of automatically connecting the components together when you have more than one</li>
+</ul>
+<p class="image-container"><img alt="Add a Fixed Flow Component" src="img/a5420430eca4c98c.png"></p>
+<h2 is-upgraded>Add a Fixed Flow component</h2>
+<p>Whenever a component on the canvas is selected, a panel opens showing its properties.</p>
+<p>Set the <strong>name</strong> of the Fixed Flow component to <code>Generate worksheet names</code> using the pencil icon at the top of the properties panel. You can do this with any component in a pipeline, and it helps maintainers understand what&#39;s going on.</p>
+<p class="image-container"><img alt="Renaming a Component" src="img/d106a698d9d747ba.gif"></p>
+<p>Complete the properties of the new Fixed Flow by setting:</p>
+<p><strong>Columns</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><em>Name</em></p>
+</td><td colspan="1" rowspan="1"><p><em>Datatype</em></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>WORKSHEET_NAME</p>
+</td><td colspan="1" rowspan="1"><p>VARCHAR</p>
+</td></tr>
+</table>
+<p><strong>Values</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><em>WORKSHEET_NAME</em></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ITEMS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ORDERS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ORDER_ITEMS</p>
+</td></tr>
+</table>
+<aside class="warning"><p>Be careful with the exact names here, making sure they are in uppercase exactly as shown. Copy-and-paste is best.</p>
+</aside>
+<p>After you have completed the properties, the border of the component should change to green as Matillion validates it successfully.</p>
+<p>Open the <strong>Sample data</strong> panel at the bottom of the screen, and press the <code>Sample data</code> button to view the data. Check that three rows appear.</p>
+<aside class="special"><p>You can use the Sample data panel with almost all transformation components. It&#39;s a great way to keep in touch with the data while you are developing a transformation pipeline</p>
+</aside>
+<p class="image-container"><img alt="Data Sample Fixed Flow" src="img/4c4d03c6980fde3a.png"></p>
+<h2 is-upgraded>Add a Rewrite Table component</h2>
+<p>Now it&#39;s time to save those fixed three rows of data to a real Snowflake table. Follow the same steps to add another component: a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/rewrite-table/" target="_blank">Rewrite Table</a> this time.</p>
+<p>If you used the <code>+</code> icon to add the new component, the two will be connected together already. If you dragged it in from the panel on the left, you&#39;ll have to manually link them together by dragging an arrow from the little circle nub on the Fixed Flow to the Rewrite Table. You can reposition components on the canvas at any time by dragging them with your mouse.</p>
+<p>Complete the properties of the new Rewrite Table with these values:</p>
+<p><strong>Name</strong> - <code>Create SHEET_NAMES</code></p>
+<p><strong>Target Table</strong> - <code>GW_SHEET_NAMES</code></p>
+<p>Your transformation pipeline should look something like this:</p>
+<p class="image-container"><img alt="Run Create Seed Data" src="img/b133f64c9d33c35.png"></p>
+<h2 is-upgraded>Run the pipeline</h2>
+<p>Press the <code>Run</code> button at the top of the canvas, to manually run the pipeline. It will create a new Snowflake table named <code>GW_SHEET_NAMES</code> containing those three rows. The Task History panel will open, and you should see the table name and the rowcount among the details. You can close the Task History panel afterwards.</p>
+<p>Now you have some reference data in Snowflake, it&#39;s time for the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Sales data from Excel" duration="6">
+        <p>In this step you will start to work with some real data.</p>
+<p>In the Matillion pipeline designer interface, create a new pipeline - the same as you did in the previous step but an <strong>Orchestration</strong> pipeline this time. In addition to extracting and loading data, this pipeline will also control the overall flow of data for this Quickstart, so give it a generic name: <code>GreenWave Technologies Demo</code>.</p>
+<p>Now you can start to add components to the canvas.</p>
+<aside class="special"><p>Every Orchestration pipeline must have a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/start/" target="_blank">Start</a> component. One is added automatically whenever you create a new Orchestration pipeline.</p>
+</aside>
+<h2 is-upgraded>Add the Create SHEET_NAMES pipeline</h2>
+<p>Matillion Orchestration pipelines fulfill a command-and-control role. In this Quickstart the first thing is to make sure the static metadata is always available.</p>
+<ul>
+<li>Expand the Pipelines panel on the left of the screen</li>
+<li>Drag the Transformation pipeline <code>Create SHEET_NAMES</code> you created in the previous step onto the canvas</li>
+<li>Link it after the Start component</li>
+</ul>
+<p>The three rows of static metadata are actually the names of worksheets in an Excel spreadsheet. This Quickstart will use data from all of them, so this pipeline needs a way to iterate through them.</p>
+<h2 is-upgraded>Add a Variable</h2>
+<p>Iteration loops require a variable to loop over. Open the variables panel on the left, and add a new Pipeline variable of type <strong>Text</strong>.</p>
+<ul>
+<li>Name it <code>worksheet_name</code></li>
+<li>Make it <code>Private</code> to this pipeline</li>
+<li>Set the Behavior to <code>Copied</code>, which means that any loops using it will be able to run in parallel. This is known as concurrent iteration.</li>
+<li>Add a default value of <code>ITEMS</code></li>
+</ul>
+<aside class="special"><p>It&#39;s good practice to give every variable a default value. Choose a default that helps components validate cleanly.</p>
+</aside>
+<p>Your variable should look like this:</p>
+<p class="image-container"><img alt="Pipeline Variable Setup" src="img/db5a6fdcf341962a.png"></p>
+<h2 is-upgraded>Add a Table Iterator</h2>
+<p>There are many different ways to loop in Matillion. The component which loops through the rows in a table is the <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/table-iterator/" target="_blank">Table Iterator</a>.</p>
+<p>Use the components panel on the left (or the <code>+</code> after the transformation pipeline component) to find and add a Table Iterator.</p>
+<ul>
+<li>Set the Target Table to <code>GW_SHEET_NAMES</code>. It should be present in the dropdown provided you ran the transformation pipeline earlier to create the table</li>
+<li>Set the Concurrency mode to <code>Concurrent</code></li>
+<li>In the Column Mapping, add a row that maps the <code>WORKSHEET_NAME</code> column to the <code>worksheet_name</code> variable</li>
+</ul>
+<p>Now the iterator will loop through the (three) rows in the reference table in parallel, setting the variable from the chosen column in each case.</p>
+<p>Link the Table Iterator so it rus after the transformation pipeline component. You&#39;ll notice that <strong>three</strong> output connector nubs are available: green, grey and red, and you can link using any of them. At runtime the <strong>green</strong> path at the top is only followed if the component finished successfully, and that&#39;s the one you&#39;ll use in most cases. <strong>Grey</strong> is for unconditional, where you don&#39;t care if it was successful or not. <strong>Red</strong> is the failure branch, which is how to implement error handling.</p>
+<p>Your pipeline should look like this:</p>
+<p class="image-container"><img alt="Iterator Setup" src="img/80c9469b15406ac2.png"></p>
+<h2 is-upgraded>Add an Excel Query</h2>
+<p>Now add a new <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/excel-query/" target="_blank">Excel Query</a> component, without linking it to anything yet. Place it slightly below the iterator on the canvas.</p>
+<p>With the iterator selected, drag its <strong>blue</strong> connector nub onto the Excel Query component. The two components should nest together, as shown in the &#34;before&#34; and &#34;after&#34; screenshot below.</p>
+<p class="image-container"><img alt="Connected Iterator" src="img/94556b712b0d7cff.png"></p>
+<p>Select the Excel Query and set its properties:</p>
+<ul>
+<li>Storage Type: Amazon S3 Storage</li>
+<li>Storage URL: <code>devrel.matillion.com/solutions/GreenWave/store_lite.xlsx</code> (don&#39;t worry if you see an error message about listing buckets)</li>
+<li>Basic Advanced Mode: Advanced</li>
+<li>Contains Header Row: Yes</li>
+<li>SQL Query: <code>SELECT * FROM ${worksheet_name}</code></li>
+<li>Target Table: <code>GW_${worksheet_name}</code></li>
+</ul>
+<aside class="special"><p>Notice how the variable is used in the settings. During the extract phase, it defines the source worksheet name. During the load phase it defines part of the Snowflake table name.</p>
+</aside>
+<p>The pipeline should validate cleanly now.</p>
+<p><strong>Run</strong> the pipeline now, and it will create three new Snowflake tables: <code>GW_ITEMS</code>, <code>GW_ORDERS</code> and <code>GW_ORDER_ITEMS</code>, with structure and data taken from the spreadsheet.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Customer data from JSON" duration="5">
+        <p>In this step, you will add a new, semi-structured data source to your <code>GreenWave Technologies Demo</code> Orchestration pipeline.</p>
+<p>Find and drag two new components onto the canvas:</p>
+<ul>
+<li>A <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/create-table/" target="_blank">Create Table</a>, linked to the <code>Start</code>, and followed by:</li>
+<li>An <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/s3-load/" target="_blank">S3 Load</a> component</li>
+</ul>
+<aside class="special"><p><strong>Azure</strong> or <strong>GCP</strong> users: Instead of an S3 Load, use a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/data-transfer/" target="_blank">Data Transfer</a> component first to copy the source file into your own cloud storage. The source file is publicly available at <code>https://s3.eu-west-1.amazonaws.com/devrel.matillion.com/solutions/GreenWave/customer_accounts.json</code> .. you don&#39;t need an AWS account to access it.</p>
+<p>Afterwards add either an <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/azure-blob-storage-load/" target="_blank">Azure Blob</a> or a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/google-cloud-storage-load/" target="_blank">Google Cloud</a> Storage Load component instead of S3.</p>
+</aside>
+<p>Adjust the positioning of the components so they end up looking something like this:</p>
+<p class="image-container"><img alt="DDL and Load Customer JSON" src="img/53e73f0d82d98bf1.png"></p>
+<p>Notice how there are <strong>two</strong> components linked from the <code>Start</code> component. That means two threads will execute in parallel whenever the pipeline runs. Also remember the Excel queries will themselves run inside a concurrent loop. And of course, all this is running against Snowflake which introduces its <em>own</em> parallelism. All this multi threading means the pipeline will finish faster!</p>
+<h2 is-upgraded>DDL for semi-structured data</h2>
+<p>Adjust the properties of the Create Table component like this:</p>
+<ul>
+<li>Name: <code>Replace GW_CUSTOMER_ACCOUNTS</code></li>
+<li>Create/Replace: <code>Replace</code></li>
+<li>New Table Name: <code>GW_CUSTOMER_ACCOUNTS</code></li>
+<li>Columns: Add just one, named <code>DATA_VALUE</code> and of type <code>VARIANT</code></li>
+</ul>
+<p>It should validate cleanly now, and have a green border. Run just this component, to create the table, by clicking the small &#34;Run only component&#34; icon that appears when you select it.</p>
+<p class="image-container"><img alt="Run Only Component" src="img/7de72f7b49d2b626.png"></p>
+<h2 is-upgraded>Loading semi-structured data</h2>
+<p>Now the <code>GW_CUSTOMER_ACCOUNTS</code> table exists, you can load data into it. Adjust the properties of the S3 Load component like this:</p>
+<ul>
+<li>Name: <code>Load Customer 360 Data</code></li>
+<li>S3 Object Prefix: <code>devrel.matillion.com</code> (don&#39;t worry if you see a &#34;Something went wrong&#34; message)</li>
+<li>Pattern: <code>solutions/GreenWave/customer_accounts.json</code></li>
+<li>Target Table: <code>GW_CUSTOMER_ACCOUNTS</code></li>
+<li>Load Columns: <code>DATA_VALUE</code></li>
+<li>File Type: <code>JSON</code></li>
+</ul>
+<aside class="special"><p><strong>Azure</strong> or <strong>GCP</strong> users: adjust the cloud storage location settings to wherever you made the Data Transfer copy the file</p>
+</aside>
+<p>The component should validate cleanly, so once again run just this component, to load the table.</p>
+<p>Expand the Task History to view the Task Details, and check that the row count is 1. All the customer records are in one big semi-structured JSON object. In the next step you&#39;ll see how to flatten and relationalize it.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Flatten and relationalize semi-structured data" duration="4">
+        <p>In the pipeline designer interface, create another new Transformation pipeline, named <code>Calculate Profit and Revenue</code> this time.</p>
+<p>Find the <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/table-input/" target="_blank">Table Input</a> in the components panel, and drag it onto the canvas. To help finding it, press the <strong>Read</strong> components button to narrow the search.</p>
+<ul>
+<li>Set the Target Table to <code>GW_CUSTOMER_ACCOUNTS</code>, from the dropdown list. Update the component name to the same value</li>
+<li>In the Column Names property, move <code>DATA_VALUE</code> across to the <strong>Selected Column Names</strong> list</li>
+</ul>
+<p>Give it a moment to validate, and for the border to turn green. Use the <strong>Sample data</strong> panel at the bottom to view the single row of data.</p>
+<p class="image-container"><img alt="View Semi-Structured Data" src="img/7ad67216db2f08cc.png"></p>
+<p>Matillion has several components that work with semi-structured data. The right one for this task is an <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/extract-nested-data/" target="_blank">Extract Nested Data</a>. Drag it onto the canvas after the Table Input so they link together.</p>
+<p>In the new component:</p>
+<ul>
+<li>Set <strong>Include Input Columns</strong> to <code>No</code></li>
+<li>In the <strong>Columns</strong> property, press <code>Autofill</code>, then expand the structure and select only <code>customer_rid</code> and <code>account_name</code></li>
+</ul>
+<p class="image-container"><img alt="Extract Nested Structure" src="img/87a79f888593a579.png"></p>
+<p>Run a data sample against this component and check that the data has been flattened and relationalized. You should see 10,000 records, each with a <code>customer_rid</code> identifier and an <code>account_name</code> string.</p>
+<aside class="special"><p>This transformation work is happening entirely <strong>inside</strong> Snowflake, which means it&#39;s very fast, efficient and cost-effective. If you&#39;re curious, open the SQL tab next to the component properties to see how it works.</p>
+</aside>
+<p>To prepare for the next step, rename the Extract Nested Data component to <code>ACC</code> - short for &#34;accounts&#34;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Integration" duration="7">
+        <p>At this stage four tables have been extracted and loaded: <code>GW_ORDERS</code>, <code>GW_ITEMS</code> and <code>GW_ORDER_ITEMS</code> from Excel, and the newly flattened <code>GW_CUSTOMER_ACCOUNTS</code> from the JSON file. They are related like this:</p>
+<p class="image-container"><img alt="Greenwave ERD" src="img/53086b4587db0444.png"></p>
+<aside class="special"><p>Notice that, in reality, the data was originally siloed and relatively inaccessible. Not only physically separated, but in the case of the customer data, in a difficult-to-read semi-structured format too.</p>
+</aside>
+<p>Continuing with the <code>Calculate Profit and Revenue</code> transformation pipeline. The flattened customer accounts table is already in place, so:</p>
+<ul>
+<li>Add <strong>three</strong> more Table Input components: one for <code>GW_ORDERS</code>, one for <code>GW_ITEMS</code> and one for <code>GW_ORDER_ITEMS</code></li>
+<li>Choose <strong>all</strong> the columns in every case</li>
+<li>For readability it&#39;s best to align them vertically on the canvas</li>
+</ul>
+<p>Some minor datatype fixes are needed before integrating, so add a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/convert-type/" target="_blank">Convert Type</a> component linked after <code>GW_ORDERS</code>, naming it <code>ORDER</code> and with the following conversions:</p>
+<p class="image-container"><img alt="Order Datatype Conversions" src="img/c3767efe9f092096.png"></p>
+<p>Repeat for <code>GW_ORDER_ITEMS</code>, naming it <code>ORDER_ITEM</code> with these conversions:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><em>Column</em></p>
+</td><td colspan="1" rowspan="1"><p><em>Type</em></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ITEM_RID</p>
+</td><td colspan="1" rowspan="1"><p>NUMBER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ORDER_RID</p>
+</td><td colspan="1" rowspan="1"><p>NUMBER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>RID</p>
+</td><td colspan="1" rowspan="1"><p>NUMBER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>QUANTITY</p>
+</td><td colspan="1" rowspan="1"><p>NUMBER</p>
+</td></tr>
+</table>
+<p>... and for <code>GW_ITEMS</code>, naming it <code>ITEM_REF</code> with these conversions:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><em>Column</em></p>
+</td><td colspan="1" rowspan="1"><p><em>Type</em></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>RID</p>
+</td><td colspan="1" rowspan="1"><p>NUMBER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>COST</p>
+</td><td colspan="1" rowspan="1"><p>NUMBER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>PRICE</p>
+</td><td colspan="1" rowspan="1"><p>NUMBER</p>
+</td></tr>
+</table>
+<p>Now for the data integration, find and drag on a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/join/" target="_blank">Join</a> component. Link all <strong>four</strong> inputs to it, and configure it as follows:</p>
+<aside class="warning"><p>It&#39;s important to complete the properties top downwards, as some of them cascade onto others further down the list</p>
+</aside>
+<ul>
+<li>Name it <code>Integrate</code></li>
+<li>Main Table: choose <code>ORDER_ITEM</code> from the dropdown. This is the table with the lowest granularity</li>
+<li>Main Table Alias: <code>OI</code></li>
+<li>Joins: add the other three tables like this:</li>
+</ul>
+<p class="image-container"><img alt="Greenwave Joins" src="img/7eb8f8c1fab201b7.png"></p>
+<ul>
+<li>Join Expressions: following the entity relationship diagram above<ul>
+<li><strong>OI_Inner_O</strong>: <code>"OI"."ORDER_RID" = "O"."RID"</code></li>
+<li><strong>OI_Inner_I</strong>: <code>"OI"."ITEM_RID" = "I"."RID"</code></li>
+<li><strong>OI_Inner_A</strong>: <code>"O"."CUSTOMER_RID" = "A"."customer_rid"</code></li>
+</ul>
+</li>
+<li>Column Mappings:</li>
+</ul>
+<table>
+<tr><td colspan="1" rowspan="1"><p><em>Source Column</em></p>
+</td><td colspan="1" rowspan="1"><p><em>Target Column</em></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>O.ORDER_DATE</p>
+</td><td colspan="1" rowspan="1"><p>ORDER_DATE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>OI.QUANTITY</p>
+</td><td colspan="1" rowspan="1"><p>QUANTITY</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>I.NAME</p>
+</td><td colspan="1" rowspan="1"><p>ITEM_NAME</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>I.PRICE</p>
+</td><td colspan="1" rowspan="1"><p>PRICE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>I.COST</p>
+</td><td colspan="1" rowspan="1"><p>COST</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>A.account_name</p>
+</td><td colspan="1" rowspan="1"><p>ACCOUNT_NAME</p>
+</td></tr>
+</table>
+<p>Once this is configured and validates successfully, open the <strong>Sample data</strong> panel and check the results. You should find the same number of records (999) as there were in <code>GW_ORDER_ITEMS</code>, with these columns:</p>
+<p class="image-container"><img alt="Integrate Data Sample" src="img/26f9080e246ee55f.png"></p>
+<p>Now all the data is in place to start adding the derived columns including profit and revenue.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Calculate Profit and Revenue" duration="2">
+        <p>Matillion has several ways to add derived fields, and the most commonly used is the <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/calculator/" target="_blank">Calculator</a> component.</p>
+<p>Continuing with the <code>Calculate Profit and Revenue</code> transformation pipeline, add a Calculator after the Join integration you just completed.</p>
+<p class="image-container"><img alt="Add Calculator Component" src="img/f5bdb81b7a894007.png"></p>
+<p>One Calculator component can add multiple derived fields. Leave <strong>Include Input Columns</strong> set to <code>Yes</code> and follow <strong>Calculations</strong> to enter the settings. Add three calculations, giving each one a name and a SQL expression:</p>
+<ul>
+<li>PROFIT - <code>(("PRICE" - "COST") * "QUANTITY")</code></li>
+<li>REVENUE - <code>("PRICE" * "QUANTITY")</code></li>
+<li>ORDER_MONTH - <code>TRUNCATE("ORDER_DATE", 'mm')</code></li>
+</ul>
+<p>It should end up looking like this:</p>
+<p class="image-container"><img alt="Calculator Component" src="img/9855b148166fffb2.gif"></p>
+<p>Use the <strong>Sample data</strong> panel to check that the three new columns have been added to every row. You might need to use the scrollbar to view the new columns after all the existing ones.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Aggregating with Copilot assistance" duration="2">
+        <p>The profit and revenue data is still at order item level, but the reporting need is at a higher granularity. So it must be aggregated as a final step before presentation.</p>
+<p>You can use the Matillion Designer Copilot to help with this, telling it to aggregate to the desired granularity, and which fields need to be summed.</p>
+<ul>
+<li>Highlight the Calculator component</li>
+<li>Expand the Copilot panel</li>
+<li>Type the following into the &#34;Enter a prompt here&#34; box: <code>Aggregate the sum of PROFIT and REVENUE by ITEM_NAME, ACCOUNT_NAME and ORDER_MONTH</code></li>
+<li>Press the Send Prompt icon</li>
+</ul>
+<p class="image-container"><img alt="Run Copilot" src="img/66e1f78d1011a523.png"></p>
+<p>The Copilot should add an <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/aggregate/" target="_blank">Aggregate</a> component attached to the Calculator, with the specified groupings and aggregations. Sample the data from this Aggregate component to verify that the number of rows is smaller, and the profit and revenue are being summed.</p>
+<aside class="special"><p>The Matillion Designer Copilot uses generative AI, so the results are not always identical and deterministic. If you don&#39;t immediately get the configuration you need, just delete the component it created, adjust the prompt, and retry</p>
+</aside>
+<p>All the row sampling you&#39;ve seen so far has been on the fly, with nothing actually saved to the database. In order to distribute this data for easy visualization, the last step is to save it into a new table. This needs a write component, so in the components panel look for a <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/rewrite-table/" target="_blank">Rewrite Table</a> and drop it into place connected after the aggregation. It will do a Create Table As Select at runtime.</p>
+<ul>
+<li>Set the <strong>Target Table</strong> to <code>GW_PROFIT_BY_ACCOUNT</code> and rename the component to <code>Rewrite GW_PROFIT_BY_ACCOUNT</code></li>
+</ul>
+<p class="image-container"><img alt="Rewrite GW_PROFIT_BY_ACCOUNT" src="img/9cf52701a25dc96f.png"></p>
+<p>The data transformation and integration is complete! The last piece of development work is to make sure it runs at the right time.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Orchestrating the ETL pipelines" duration="1">
+        <p>To get the transformation and integration to run at the right time, first go right back to the <code>GreenWave Technologies Demo</code> orchestration pipeline.</p>
+<p>Remember the data loading was happening in multiple threads? We need a way to synchronize these, and wait for <strong>all</strong> the data loading to finish before moving on to data transformation and integration. This is done with an <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/and/" target="_blank">And</a> component. Locate it in the components panel, drag it into place to the right of everything else, and link it to the success branch of the two load components like this:</p>
+<p class="image-container"><img alt="And Component Wait for Loads" src="img/97fc3bad4657e62d.png"></p>
+<p>To help future maintainers understand what&#39;s happening, update its name to <code>Wait for loads</code>.</p>
+<p>Now open the Pipelines panel, and drag <code>Calculate Profit and Revenue</code> into place on the canvas after the <code>And</code>. Link it using the unconditional connector.</p>
+<p class="image-container"><img alt="Add Transformation Pipeline" src="img/518d9cae06dc602e.gif"></p>
+<p>This means the transformation pipeline will always run at the right time: after all the data loading has finished, and only if it was all successful.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Merge the Development branch" duration="2">
+        <p>All this pipeline work has been happening in the <code>development</code> git branch. Now it&#39;s completed, it&#39;s time to merge this feature branch back into main.</p>
+<p>Using the git menu, first <strong>pull remote changes</strong> into this feature branch. If there are any conflicts from development work that&#39;s been going on in parallel, now is the time to know about them in case any adjustments are needed. No conflicts are expected in this case.</p>
+<p class="image-container"><img alt="Pull Remote Changes" src="img/5ce348d93ef2cdbd.png"></p>
+<p>Next, using the same menu:</p>
+<ul>
+<li><strong>Commit</strong> the feature branch, with a helpful commit message</li>
+<li><strong>Push local changes</strong> to the remote.</li>
+</ul>
+<p>Use the &#34;back&#34; icon top left of screen to quit the pipeline designer canvas, returning to your project menu. This time, follow the <strong>main</strong> branch name to enter the <a href="https://docs.matillion.com/data-productivity-cloud/designer/docs/designer-ui-basics/" target="_blank">Pipeline Designer</a> interface in the main branch.</p>
+<p class="image-container"><img alt="Back To Main" src="img/55da04427966397f.png"></p>
+<p>You should see no pipelines listed at the moment, because all the work has been done in the feature branch. Use the git menu again:</p>
+<ul>
+<li><strong>Pull remote changes</strong></li>
+<li><strong>Merge</strong> from the development branch into main. There should be no conflicts.</li>
+</ul>
+<p>Now all the pipelines are in the main branch. You can delete the feature branch, and return right back to the start of the development cycle, ready to work on something new.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations on completing this lab!</p>
+<p>You&#39;ve successfully used the Matillion Data Productivity Cloud to extract data, load it into Snowflake, and then transform and integrate it using SQL generated by Matillion&#39;s code-optional pipeline designer.</p>
+<h2 is-upgraded>Conclusion</h2>
+<p>You have experienced how Matillion&#39;s close integration with Snowflake benefits teams with diverse skill sets. The Matillion/Snowflake combination enables everyone to quickly and efficiently gain insights from their data, even when it originates from different silos.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use the Matillion Data Productivity Cloud Pipeline Designer</li>
+<li>Building Orchestration pipelines for data extraction, and for command-and-control operations</li>
+<li>Creating Transformation pipelines for data transformation and integration, including flattening semi-structured data</li>
+<li>Making use of the Matillion Copilot to assist in building ETL pipelines</li>
+<li>Git feature branching with Matillion</li>
+</ul>
+<h2 is-upgraded>Next Steps and Related Resources</h2>
+<p>Continue to use your free trial of Matillion and Snowflake: load and process your own sample or real data, investigating some of the more advanced platform features that are not covered in this lab.</p>
+<ul>
+<li>Read the definitive Snowflake guide to <a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">maximizing your free trial</a></li>
+<li>Visit the <a href="https://www.matillion.com/" target="_blank">Matillion</a> <a href="https://www.matillion.com/tour" target="_blank">product tour</a> and interactive demo experience</li>
+<li>Learn how to <a href="https://www.matillion.com/ai" target="_blank">bring the power of AI to data engineering</a></li>
+<li>Take a training course from the <a href="https://academy.matillion.com/trainings" target="_blank">Matillion Academy</a></li>
+</ul>
+<p>A full video demonstration of this lab is also available: </p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/FGaf-6TcGYU?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

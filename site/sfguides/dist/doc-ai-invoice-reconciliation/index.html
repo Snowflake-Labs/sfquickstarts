@@ -1,0 +1,264 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Document AI Invoice Reconciliation</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="doc-ai-invoice-reconciliation"
+                  title="Document AI Invoice Reconciliation"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This QuickStart is designed to help you build out an automated invoice reconciliation pipeline in Snowflake using Document AI, which is designed for seamless and reusable document processing. The pipeline enables users to load their invoice files into a Snowflake stage and leverages streams, tasks, and Document AI&#39;s Table Extraction feature for efficient data extraction, validation, and downstream integration.</p>
+<p class="image-container"><img alt="DataFlow" src="img/a2c3df3784a92ab9.png"></p>
+<p>The pipeline uses a Document AI table extraction model to automatically extract data from invoice documents uploaded to a Snowflake internal stage, and then an initial reconciliation is performed to compare the bronze extracted data against the bronze layer main database tables.</p>
+<p>If the data matches, then the invoice is considered ‘auto-reconciled&#39; and its data is passed to the gold layer table to become the official reconciled result for the invoices.</p>
+<p>If there are discrepancies, the results of the reconciliation are then passed to a Streamlit application in Snowflake for viewing and manual review of the discrepancies in invoice values. After manual review and reconciliation approval, the invoice values are passed to the final gold layer table.</p>
+<h2 is-upgraded>What is Document AI?</h2>
+<p>Document AI is a Snowflake machine learning feature that uses a large language model (LLM) to extract data from documents. With Document AI, you can prepare pipelines for continuous processing of new documents of a specific type, such as invoice or finance statement documents.</p>
+<p>Document AI uses a model that provides both zero-shot extraction and fine-tuning. Zero-shot means that the foundation model is trained on a large volume of various documents, so the model broadly understands the type of document being processed. In this way, it can locate and extract information specific to this document type, even if the model has never seen the document before.</p>
+<p>Additionally, you can create your own customized, fine-tuned Document AI model to improve your results by training the model on the documents specific to your use case.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL and Python</li>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a>. If you do not have a Snowflake account, you can register for a free trial account.</li>
+<li>A Snowflake account login with a role that has the ability to create role, database, schema, tables, stages and assign permissions. If not, you will need to register for a free trial or use a different role.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to integrate Snowflake with a Document AI model for data extraction.</li>
+<li>How to set up and automate an invoice Document AI pipeline using Document AI&#39;s table extraction model.</li>
+<li>How to perform automated invoice reconciliation against a main database.</li>
+<li>How to monitor results and perform manual reconciliation using Streamlit UI in Snowflake.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Files from <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank">GitHub</a></li>
+<li>A Snowflake instance</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A robust invoice reconciliation pipeline leveraging Snowflake&#39;s advanced features and DOC AI capabilities. By the end of this guide, you will have a fully functional system that:</li>
+<li>Automatically ingests and extracts values from invoices.</li>
+<li>Performs reconciliation between invoice and main database values.</li>
+<li>Identifies discrepancies that may exist between invoice and main database.</li>
+<li>Enables manual review of discrepancies for quick resolution and validation.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment" duration="10">
+        <p>The <code>docai_invoice_qs_setup.sql</code> script is designed to set up the necessary environment for the Document AI pipeline. When executed in your Snowflake account, it will:</p>
+<ul>
+<li>Create a new role called <strong>DOC_AI_QS_ROLE</strong> and assign it the appropriate permissions for DocAI + building an automated pipeline.</li>
+<li>Create a new database named <strong>DOC_AI_QS_DB</strong>.</li>
+<li>Establish a schema called <strong>DOC_AI_SCHEMA</strong> within this database.</li>
+<li>Set up a warehouse named <strong>DOC_AI_QS_WH</strong> for processing tasks.</li>
+<li>Define an internal stage <strong>DOC_AI_STAGE</strong> for document storage and management.</li>
+<li>Create tables, a stream, and a task essential for the bronze layer of the pipeline&#39;s operation.</li>
+</ul>
+<h2 is-upgraded>Setup Instructions</h2>
+<p>To set up your environment, copy the code from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank"><code>docai_invoice_qs_setup.sql</code></a> script available in the GitHub repository and execute it in your Snowflake account.</p>
+<p>This will configure the necessary infrastructure to support invoice ingestion and extraction, the first part of our Document AI pipeline.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Document AI Model" duration="20">
+        <p>Download sample documents from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank">GitHub repository</a>. These AI-generated sample invoices will be used to demonstrate processing multiple Document AI models in a single pipeline.</p>
+<h2 is-upgraded>Create Document AI Model</h2>
+<ol type="1">
+<li><strong>Go to Snowsight:</strong> Navigate to <strong>AI &amp; ML → Document AI</strong>.</li>
+<li><strong>Create First Model:</strong> Click the <code>+ Build</code> button and fill in:<ul>
+<li><strong>Build Name: </strong><code>DOC_AI_QS_INVOICES</code></li>
+<li><strong>Location: </strong><code>DOC_AI_QS_DB</code></li>
+<li><strong>Schema: </strong><code>DOC_AI_SCHEMA</code></li>
+</ul>
+</li>
+<li><strong>Define Values to Extract:</strong><ul>
+<li>Upload one of the documents from the folder <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank">extraction documents</a>.</li>
+<li>Click on a document and select the <strong>Document Processing Type</strong> (labels/columns to extract).</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Doc_AI_initial" src="img/7edcb22938b711d2.png"></p>
+<ul>
+<li>For this quickstart we will select the <strong>Table Model</strong> for the LLM model to extract invoice table data.</li>
+</ul>
+<p class="image-container"><img alt="Table_select" src="img/74dadcf930306d03.png"></p>
+<ul>
+<li>Use the following values and prompts for this QuickStart:</li>
+</ul>
+<p class="image-container"><img alt="Order_info" src="img/ee15061245c1bf17.png"><img alt="Total_info" src="img/2449dfdd45619fc2.png"></p>
+<ul>
+<li>Click <strong>Accept All and Close</strong> after reviewing the single document. One invoice will suffice for this quickstart.</li>
+<li>Finally, publish the model in the <strong>Document AI Model</strong> screen. <img alt="Publish_Version" src="img/2bdd5ea9835acbd5.png"><br><img alt="Publish_Dialog" src="img/516bd371049d773f.png"></li>
+</ul>
+<p>For this quickstart, we don&#39;t need to train our Document AI model before publishing, as it has been designed to handle these types of invoices out of the box.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Invoice Reconciliation Pipeline" duration="15">
+        <p>The <code>docai_invoice_qs_reconcile.sql</code> script is designed to set up the infrastructure for the invoice reconciliation layers, as well as kick it off by supplying invoice data to our bronze database. When executed in your Snowflake account, it will:</p>
+<ul>
+<li>Create two stored procedures <strong>SP_RUN_ITEM_RECONCILIATION()</strong> and <strong>SP_RUN_TOTALS_RECONCILIATION()</strong> that contain our invoice reconciliation logic.</li>
+<li>Create two streams <strong>BRONZE_DB_STREAM</strong> and <strong>BRONZE_DOCAI_STREAM</strong> to record changes in our bronze database or our bronze docai extraction table.</li>
+<li>Create a task <strong>RECONCILE</strong> that will call our two stored procedures when either of our bronze streams indicate data has changed in the bronze tables they are monitoring.</li>
+<li>Create tables for our reconciliation layer and for our final gold layer results</li>
+<li>Insert some rows of invoice data into our bronze database tables, with some rows intentionally modified to have information differences from what the actual invoices contain.</li>
+</ul>
+<h2 is-upgraded>Setup Instructions</h2>
+<p>To set up your environment, copy the code from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank"><code>docai_invoice_qs_reconcile.sql</code></a> script available in the GitHub repository and execute it in your Snowflake account.</p>
+<p>This will configure the necessary infrastructure to support invoice reconciliation, the final part of our Document AI pipeline.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit Application" duration="0">
+        <h2 is-upgraded>Deploying the Streamlit App</h2>
+<p>The final step is to create a Streamlit app to provide manual review of documents that were unable to be auto-reconciled.</p>
+<ol type="1">
+<li><strong>Open Snowsight</strong>: Navigate to <strong>Projects → Streamlit</strong> on the left panel.</li>
+<li><strong>Create a New App</strong>: Click the <code>+ Streamlit App</code> blue button in the top right corner.</li>
+<li><strong>Configure the App</strong>:<ul>
+<li>Name your app.</li>
+<li>Select the <strong>Database</strong>, <strong>Schema</strong>, and <strong>Warehouse</strong> created earlier in this QuickStart.</li>
+<li>Click <strong>Create</strong>.</li>
+</ul>
+</li>
+<li><strong>Replace Default Code</strong>:<ul>
+<li>Remove the default Python code.</li>
+<li>Copy and paste the code from the <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank">docai_invoice_qs_app.py</a> file.</li>
+</ul>
+</li>
+<li><strong>Add Required Packages</strong>:<ul>
+<li>In the <strong>Packages</strong> dropdown, select: <ul>
+<li><code>pypdfium2</code></li>
+</ul>
+</li>
+</ul>
+<img alt="Packages" src="img/719a6563d02b2687.png"></li>
+<li><strong>Run the App</strong>: Click <strong>Run</strong>.</li>
+</ol>
+<h2 is-upgraded>Streamlit App Features</h2>
+<p>The Streamlit app provides full manual review capabilities for the invoice reconciliation process. It shows:</p>
+<ul>
+<li><strong>Live reconciliation metrics</strong> - includes quantities of reconciled documents and dollar amounts reconciled</li>
+<li><strong>Document upload widget</strong> - allows for easy invoice uploading to the stage right from the streamlit app.</li>
+<li><ol type="1">
+<li><strong>Invoices Awaiting Review</strong> - select any invoices that had discrepancies between the bronze database table (intentionally added) and the bronze Document AI data extraction.</li>
+</ol>
+</li>
+<li><ol type="1" start="2">
+<li><strong>Review and Correct Invoice Data</strong> - displays the summary of discrepancies for the selected invoice, as well as an editable side-by-side comparison of values, in addition to a drop down bar that can display the image of the invoice in question.</li>
+</ol>
+</li>
+<li><ol type="1" start="3">
+<li><strong>Submit Review and Corrections</strong> - select the &#34;Accept DocAI Extracted Values for Reconciliation&#34; to automatically reconcile using the Document AI extracted values as correct, or manually edit the document in section 2 and then leave some notes before pressing the &#34;Accept Manual Edits above for Reconciliation.&#34; Either button will then process the reconciliation and send the final results to the gold layer table while maintaining a record in the reconciliation table.</li>
+</ol>
+</li>
+</ul>
+<h2 is-upgraded>Putting the Invoice Reconciliation in Action</h2>
+<ol type="1">
+<li><strong>Load Sample Invoices</strong>: <ul>
+<li>Upload all sample documents from <a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank">extraction documents</a> to your <code>DOC_AI_STAGE</code> stage. This can be done using the databases gui path:</li>
+</ul>
+</li>
+</ol>
+<p class="image-container"><img alt="Stage" src="img/dcbd7dda52dd6a8c.png"></p>
+<p>Or by using the upload document widget in the streamlit app!</p>
+<ol type="1" start="2">
+<li><strong>Wait a few minutes for your automated tasks to execute, then review the results</strong>: <ul>
+<li>Open the Streamlit UI.</li>
+<li>Observe the auto-reconciled metrics</li>
+<li>Review the invoices with discrepancies and provide manual final reconciliation</li>
+</ul>
+</li>
+</ol>
+<p>This step completes the quickstart, allowing you to see the invoice reconciliation process in action!</p>
+<p class="image-container"><img alt="Streamlit" src="img/f0d8466f0afcf073.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="0">
+        <p>If you&#39;d like, you can clean up the objects you created after completing this QuickStart. Run the cleanup script available at:<br><a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank"><code>docai_invoice_qs_cleanup.sql</code></a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <h2 is-upgraded>Conclusion</h2>
+<p>This QuickStart provides an introduction to automating a Document AI invoice reconciliation pipeline that extracts table values from invoice documents and reconciles them against an invoice database. In real-world scenarios, invoice reconciliation logic can be customized, batch processing can be optimized, and validation rules can be enhanced to improve accuracy. This pipeline serves as a foundation for scalable, AI-powered document processing solutions.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to automate invoice processing and reconciliation using Snowflake Document AI and its table extraction model.</li>
+<li>How to extract, reconcile, and review document data efficiently.</li>
+<li>How to use Streamlit for metric dashboarding and manual review of invoice reconciliation workflows.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview" target="_blank">Snowflake Document AI Overview</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation" target="_blank">Repo for Code and Example Documents (GitHub)</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Unified Customer 360 Database using Amperity and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build-unified-customer-360-using-amperity"
+                  title="Build a Unified Customer 360 Database using Amperity and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Every company gets data from their customers from a constantly growing and evolving collection of sources. Ecommerce, loyalty, point-of-sale, web visits, marketing response data, etc. That data is complex and stored in many different formats, which creates a massive burden for data engineering teams.</p>
+<p>Amperity is the world&#39;s first dedicated platform for turning that raw data into the best possible unified data model, commonly referred to as a Customer 360, and making that data available anywhere your teams need it.</p>
+<p>Gone are the days of developing, maintaining and managing hundreds of custom data modeling jobs, collections of tools, workflows, dev environments, etc.</p>
+<p>The Amperity platform plugs into your Snowflake via secure data sharing and data engineers can turn raw data into unified data with low-code and zero copies thanks to Snowflake Iceberg Tables.</p>
+<p class="image-container"><img alt="CTSU" src="img/ab9bd506d7fbd7b8.png"></p>
+<p>In this quickstart we will walk through the basic steps to turn raw data into a world class Customer 360 collection of tables in hours instead of months.</p>
+<p class="image-container"><img alt="Medallion architecture" src="img/24e3c07dbe45e00f.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a Snowflake account with the ability to set up secure data sharing. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/" target="_blank">free trial account</a>.</li>
+<li>Access to an Amperity account</li>
+<li>Basic experience with Snowflake</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to connect Amperity to your Snowflake account</li>
+<li>How to tag your raw data with semantic tags</li>
+<li>How to configure AI identity resolution</li>
+<li>How to generate an enriched Customer 360</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A collection of unified tables with standardized data and the best quality identity</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect" duration="3">
+        <p>Your Amperity account connects to Snowflake via secure data sharing powered by an Amperity platform feature called Bridge. This allows for a zero copy architecture and lets you use data in your Snowflake with the easy UI and data management platform you get from Amperity.</p>
+<h2 is-upgraded>Create Bridge in Amperity</h2>
+<ol type="1">
+<li>Log into your Amperity account</li>
+<li>Navigate to your Sources tab</li>
+<li>Scroll down or click to find &#34;Inbound Shares&#34; and click &#34;Add Bridge&#34;</li>
+</ol>
+<p class="image-container"><img alt="Add bridge" src="img/f73daf03d9e9cdf5.png"></p>
+<ol type="1" start="4">
+<li>Select Snowflake</li>
+<li>Enter the name for your bridge and, optionally, a description. Populate your account name, organization and region of your Snowflake environment.</li>
+</ol>
+<p class="image-container"><img alt="Bridge connection" src="img/1518364e392d5a57.png"></p>
+<ol type="1" start="6">
+<li>Click Save.</li>
+</ol>
+<h2 is-upgraded>Create the Share in Snowflake</h2>
+<ol type="1">
+<li>Log into Snowflake.</li>
+<li>Using the <a href="https://docs.snowflake.com/en/user-guide/data-sharing-provider#creating-a-share" target="_blank">Snowflake documentation</a>, create a Secure Data Share of the tables you wish to use in Amperity.</li>
+</ol>
+<h2 is-upgraded>Validate the Share in Amperity</h2>
+<ol type="1">
+<li>Return to your Amperity UI.</li>
+<li>Enter your Secure Share Identifier and click &#34;Test connection&#34; to validate the connection is successful. Click &#34;Select tables&#34;.</li>
+<li>You should see the tables in the Snowflake database that you shared. Select which ones you will want to run through your Amperity platform to use in your unified data model. <ul>
+<li>Recommended: Any profile or identity data, data with PII, transactions, opt and preferences, loyalty data</li>
+</ul>
+</li>
+<li>Click &#34;Save &amp; Sync&#34;</li>
+</ol>
+<p>You are ready to go. Time to set up your tags.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tag" duration="5">
+        <p>Amperity does have a schema or require you to do a bunch of data modeling to create your Customer 360.</p>
+<p>Instead you apply tags to the raw data which informs the Amperity algorithms. Stitch uses these tags to create standardized tables as well as run identity resolution to generate your ID graph.</p>
+<p>For each table you want to include, you will be verifying and adding tags to each field.</p>
+<p>Amperity has a constantly growing library of tags for common data models:</p>
+<ul>
+<li>Profiles</li>
+<li>Product Catalogs</li>
+<li>Itemized Transactions</li>
+<li>Compliance Requests</li>
+<li>Loyalty Profiles and Events</li>
+<li>Email Events and Engagement</li>
+<li>Opt and Preferences</li>
+<li>Fiscal Calendars</li>
+</ul>
+<p>For each type of data, identify the tables that contain data relevant to the models you want to see in your Customer 360.</p>
+<h2 is-upgraded>Tag Your Tables</h2>
+<p>Log into Amperity and navigate to the Sources tab. For each table, do the following:</p>
+<ol type="1">
+<li>Click &#34;Add Custom Domain Table&#34;. Name it and click &#34;Save.</li>
+<li>Select your table on the right hand list of domain tables.</li>
+<li>From the 3-dot menu next to the table name, click &#34;Copy Table SQL&#34; and paste it into the query window. <ul>
+<li>Alternatively you can just write a &#34;select * from&#34; query in the SQL window.</li>
+<li>You also are free to add any filters, joins or other logic.</li>
+</ul>
+</li>
+<li>Click &#34;Next&#34;</li>
+<li>The tagging UI will look at the first 10,000 populated rows of the data and attempt to guess the semantic tags relevant to the data. Review any existing tags and validate that it matches your understanding of what data is in the field.</li>
+<li>Review fields that did not receive a predicted semantic tag and add any missing tags with the dropdown.</li>
+<li>Make sure to add a pk tag to the primary key field.</li>
+<li>If this table contains Profile semantics.</li>
+<li>Click &#34;Activate&#34;</li>
+</ol>
+<p class="image-container"><img alt="Add CDT" src="img/17bbfb5342ab35b6.png"></p>
+<p>Now you should be ready to kick off Stitch and let it do the heavy lifting!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Stitch" duration="2">
+        <p>Amperity&#39;s Stitch is the world&#39;s first AI identity resolution algorithm. Historically data teams have been stuck using simple, rules-based algorithms that are complex to configure and result in inaccurate identity.</p>
+<p>Amperity uses up to 45 different machine learning algorithms on your Snowflake data to produce the most transparent and accurate identity graph available.</p>
+<p>Stitch also does several other things:</p>
+<ol type="1">
+<li>Creates a standardized, unified table for each semantic tag domain used. <ol type="1">
+<li>For example, Profile semantics create a library of identity tables. Itemized Transaction semantics create a library of transaction and lifecycle attribute tables, opt and preference semantics create a unified customer contactibility table.</li>
+</ol>
+</li>
+<li>Standardizes the PII in the Profile semantic tagged tables to optimize the matching results.</li>
+<li>Runs up to 45 machine learning algorithms to produce a library of identity tables.</li>
+<li>Generates a stable Amperity ID for each person in your data.</li>
+<li>Propagates that new unified ID to all of the tables you have tagged so that every table now has a single join key.</li>
+</ol>
+<h2 is-upgraded>Configure Stitch</h2>
+<p>Configuring Stitch is as simple as selecting which tables you want to generate identity data for.</p>
+<ol type="1">
+<li>Log into Amperity, navigate to the Stitch tab</li>
+<li>Click &#34;Stitch Settings&#34; in the upper right.</li>
+<li>Check the box on all tables you want to run through ID resolution</li>
+</ol>
+<p class="image-container"><img alt="Stitch settings" src="img/80e2c2186c5991ec.png"></p>
+<ol type="1" start="4">
+<li>Click &#34;Save&#34;</li>
+<li>Click &#34;Run&#34; in the upper right.</li>
+</ol>
+<p>That&#39;s it!</p>
+<p>Stitch will access your raw data via Snowflake secure data sharing and generate a large library of unified tables, ready for use.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use" duration="5">
+        <p>Now that you have run Stitch, your Amperity tenant will have a whole new list of domain tables. Most of these are named with the prefix &#34;Unified&#34; and correspond to the library of tags that were used.</p>
+<p>You are now ready to start using your data.</p>
+<p>Here are a list of things you could go do:</p>
+<ul>
+<li>Share your new Iceberg tables into any of your Snowflake accounts to provide zero copy access to your new tenant data <ul>
+<li>Analytics data</li>
+<li>Compliance data</li>
+<li>Identity keyring</li>
+</ul>
+</li>
+<li><a href="https://docs.amperity.com/datagrid/api_profile.html" target="_blank">Build custom real-time APIs for site personalization or marketing personalization at the point of send.</a></li>
+<li><a href="https://docs.amperity.com/datagrid/add_ampiq.html" target="_blank">Configure the Segments and Campaigns interface to provide marketers direct access to build audiences and deploy them</a></li>
+<li><a href="https://docs.amperity.com/datagrid/destination_salesforce_marketing_cloud.html" target="_blank">Connect Amperity to your activation systems and use Amperity to keep your activation applications full of robust data</a></li>
+<li><a href="https://docs.amperity.com/datagrid/destination_the_trade_desk.html" target="_blank">Connect Amperity to your paid media channels and use Amperity as an onboarder to replace expensive third party contracts</a></li>
+</ul>
+<h2 is-upgraded>Recommended: Make your Customer 360</h2>
+<p>Stitch outputs a large library of standardized tables. Commonly the next goal is to take that data and model it into a Customer 360.</p>
+<p>A Customer 360 is a collection of tables that are cleaned up, merged, and represent the best possible profile view of each customer, as well as all of their behaviors and interactions with your brand.</p>
+<p>Amperity has been building Customer 360 models for the world&#39;s biggest brands for a decade and has a constantly growing library of out-of-the-box models that cover a wide variety of use cases and have time tested, proven models. You shouldn&#39;t have to design or start from scratch.</p>
+<p>To generate these models do the following:</p>
+<ol type="1">
+<li>Log into Amperity, navigate to the Customer 360 tab.</li>
+<li>Click &#34;Create Database&#34;</li>
+<li>Give your Database a name and choose &#34;Customer 360&#34; from the template dropdown.</li>
+</ol>
+<p class="image-container"><img alt="Create database" src="img/1e0266186c8bdbb7.png"></p>
+<ol type="1" start="4">
+<li>Click create.</li>
+</ol>
+<p>This will use the available data to generate as many of the out-of-the-box models as possible.</p>
+<p>You can then begin to explore these models or go into the new database and begin adding your own fields or customizing the out-of-the-box rules.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Now that you have built your customer 360, you are ready to start connecting it to your marketing tools or share it back to Snowflake for your data teams to start building workflows on it.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to connect Amperity to your Snowflake account</li>
+<li>How to tag your raw data with semantic tags</li>
+<li>How to configure AI identity resolution</li>
+<li>How to generate an enriched Customer 360</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.amperity.com/" target="_blank">Amperity Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

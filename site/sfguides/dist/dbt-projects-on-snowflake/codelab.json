@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "dbt-projects-on-snowflake",
+  "duration": 27,
+  "title": "Exploring dbt Projects on Snowflake",
+  "summary": "This Quickstart will show you how to get started using dbt Projects on Snowflake",
+  "source": "dbt-projects-on-snowflake/dbt-projects-on-snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "tasty-bytes"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "dbt-projects-on-snowflake"
+}

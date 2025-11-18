@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_hybrid_tables",
+  "duration": 38,
+  "title": "Getting Started with Hybrid Tables",
+  "summary": "Follow this tutorial to learn the basics of hybrid tables",
+  "source": "getting_started_with_hybrid_tables/getting_started_with_hybrid_tables.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "hybridtables",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_hybrid_tables"
+}

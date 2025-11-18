@@ -1,0 +1,232 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Financial Services Asset Management</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="financial-services-asset-management-snowflake"
+                  title="Financial Services Asset Management"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p><strong>Summary</strong></p>
+<ul>
+<li>What would a Single Version of the Truth (SVOT) for Asset Managers on Snowflake look like?</li>
+</ul>
+<p><strong>Follow along with the video</strong></p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/HkrRXMHDd-E?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p><strong>Github</strong></p>
+<ul>
+<li>The code is <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management" target="_blank">open-sourced on github</a>.</li>
+</ul>
+<p><strong>Problem Statement:</strong></p>
+<ul>
+<li>Asset managers (big banks, insurance companies, and hedge funds) have spent hundreds of millions of dollars on systems to quickly and accurately give a SVOT in real-time. These systems are critical especially in times of market stress like the Great Financial Crisis or any unexpected market change.</li>
+</ul>
+<p><strong>Why Snowflake</strong></p>
+<ul>
+<li>SnowSight allows you to create and share dashboards for executives, portfolio managers, risk managers, and traders.</li>
+<li>Significantly high performance and less cost of maintaining one SVOT</li>
+<li>Near-Unlimited Compute and Concurrency enable quick data-driven decisions</li>
+</ul>
+<p><strong>What we will see</strong></p>
+<ul>
+<li>Use Data Marketplace to instantly get free stock price history from the Zepl data share</li>
+<li>Query trade, cash, positions, and PnL (Profit and Loss) on Snowflake</li>
+<li>Use Window Functions to automate cash, position, and PnL reporting</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake Account or <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Trial Account</a> with accountadmin privileges.</li>
+</ul>
+<h2 is-upgraded>You&#39;ll learn how to</h2>
+<ul>
+<li>Query free stock market history data instantly with zero learning curve and time</li>
+<li>Run a Python faker function to create 100 synthetic traders</li>
+<li>Size up compute to create 3 billion synthetic trades</li>
+<li>Insert those trades ordered by trader, symbol, and date so any queries on that data are signficantly faster</li>
+<li>Create a cluster key to future proof that trade table from any data that has been inserted without being sorted</li>
+<li>Create a window function to calcluate real time trades, cash, and Profit and Loss (PnL)</li>
+<li>Query 3 billion rows with only small compute and 3 second run-time</li>
+<li>See Snowflake&#39;s 3 caches</li>
+<li>Zero Copy Clone for DevOps and instant sandboxes</li>
+<li>Time Travel to see and roll back up to 90 days of data</li>
+<li>Drop and Undrop Tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Script &#34;10 Setup&#34;" duration="2">
+        <p>We setup</p>
+<ul>
+<li>Role Based Access Control RBAC</li>
+<li>Virtual Warehouses (compute)</li>
+<li>Database</li>
+<li>Objects</li>
+</ul>
+<p>Run the <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/setup/finserv%20demo%2010%20setup.sql" target="_blank"><paper-button class="colored" raised>finserv demo 10 setup</paper-button></a> script. Each script is <strong>idempotent</strong> meaning that you can rerun it without issues.</p>
+<p>YouTube video: <a href="https://youtu.be/HkrRXMHDd-E?t=2136" target="_blank">Running script 10</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Script &#34;20 Marketplace&#34;" duration="3">
+        <p>We:</p>
+<ul>
+<li>&#34;mount&#34; and verify the Knoema economy_data_atlas share</li>
+<li>ensure data quality, ie no duplicates and positive share prices</li>
+<li>Python Faker function (credit to <a href="https://medium.com/snowflake/flaker-2-0-fake-snowflake-data-the-easy-way-dc5e65225a13" target="_blank">James Weakley&#39;s Flaker 2.0 - Fake Snowflake data the easy way</a>)</li>
+</ul>
+<h2 is-upgraded>Knoema Economy Data Atlas</h2>
+<p>Run the <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/setup/finserv%20demo%2020%20Marketplace.sql" target="_blank"><paper-button class="colored" raised>finserv demo 20 Marketplace</paper-button></a> script.</p>
+<p>&#34;Mount&#34; the free <a href="https://app.snowflake.com/marketplace/listing/GZSTZ491VXQ/knoema-economy-data-atlas" target="_blank"><paper-button class="colored" raised>Knoema Economy Data Atlas</paper-button></a> share.  Click &#34;Get&#34; then name the database <strong>economy_data_atlas</strong> and grant access to the <strong>public</strong> role.</p>
+<pre><code language="language-markdown" class="language-markdown">## Verify Data Marketplace Share
+    select top 1 *
+    from economy_data_atlas.economy.usindssp2020;
+</code></pre>
+<p>YouTube video: <a href="https://youtu.be/HkrRXMHDd-E?t=2334" target="_blank">Running script 20 and mounting the share</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Script &#34;30 DDL&#34;" duration="6">
+        <p>We:</p>
+<ul>
+<li>Size up compute to create 3 billion synthetic trades</li>
+<li>Insert those trades ordered by trader, symbol, and date so any queries on that data are signficantly faster</li>
+<li>Create a cluster key to future proof that trade table from any data that has been inserted without being sorted</li>
+<li>Create a window function to calculate real time trades, cash, and Profit and Loss (PnL)</li>
+</ul>
+<p>Run the <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/setup/finserv%20demo%2030%20DDL.sql" target="_blank"><paper-button class="colored" raised>finserv demo 30 DDL</paper-button></a> script.</p>
+<p>YouTube video: <a href="https://youtu.be/HkrRXMHDd-E?t=2782" target="_blank">Running script 30</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Script &#34;40 Queries&#34;" duration="3">
+        <p>We:</p>
+<ul>
+<li>Query 3 billion rows with only small compute and 3 second run-time</li>
+<li>See Snowflake&#39;s 3 caches</li>
+<li>Zero Copy Clone for DevOps and instant sandboxes</li>
+<li>Time Travel to see and roll back up to 90 days of data</li>
+<li>Drop and Undrop Tables</li>
+</ul>
+<p>Run the <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/setup/finserv%20demo%2040%20queries.sql" target="_blank"><paper-button class="colored" raised>finserv demo 40 queries</paper-button></a> script.</p>
+<p>YouTube video: <a href="https://youtu.be/HkrRXMHDd-E?t=3297" target="_blank">Running script 40</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Script &#34;60 Filter SnowSight&#34;" duration="2">
+        <p>We setup</p>
+<ul>
+<li>Three Snowsight filters: Trader, TradeDate, and Snowsight</li>
+</ul>
+<p>These filters give us reusable drop-downs throughout our Snowsight dashboards.  We set them to refresh once a day.</p>
+<p>Build the <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/snowsight/finserv%20demo%2060%20filter%20SnowSight.sql" target="_blank"><paper-button class="colored" raised>finserv demo 60 filter Snowsight</paper-button></a> script.</p>
+<p>YouTube video: <a href="https://youtu.be/HkrRXMHDd-E?t=3405" target="_blank">Running script 60 building the three filters in Snowsight</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Script &#34;70 Snowsight&#34; Dashboard" duration="2">
+        <p>We setup</p>
+<ul>
+<li>a Snowsight dashboard with charts (line, bar, and scorecard)</li>
+</ul>
+<p>Build un the <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/snowsight/finserv%20demo%2070%20SnowSight.sql" target="_blank"><paper-button class="colored" raised>finserv demo 70 SnowSight</paper-button></a>.</p>
+<p>YouTube video: <a href="https://youtu.be/HkrRXMHDd-E?t=4006" target="_blank">Running script 70 to build the dashboard</a></p>
+<p class="image-container"><img alt="Snowsight Dashboard" src="img/2717a2b744d438e8.jpg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Script &#34;90 Optional Reset&#34;" duration="2">
+        <p>Optional Script to reset / remove all objects created during this demo</p>
+<p>Run the <a href="https://github.com/Snowflake-Labs/sfguide-financial-asset-management/blob/master/optional/finserv%20demo%2090%20reset.sql" target="_blank"><paper-button class="colored" raised>finserv demo 90 reset</paper-button></a> script.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <h2 is-upgraded>Recap</h2>
+<p>YouTube video: <a href="https://youtu.be/HkrRXMHDd-E?t=5547" target="_blank">A recap of what we covered</a></p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Query free stock market history data instantly with zero learning curve and time</li>
+<li>Run a Python faker function to create 100 synthetic traders</li>
+<li>Size up compute to create 3 billion synthetic trades</li>
+<li>Insert those trades ordered by trader, symbol, and date so any queries on that data are signficantly faster</li>
+<li>Create a cluster key to future proof that trade table from any data that has been inserted without being sorted</li>
+<li>Create a window function to calcluate real time trades, cash, and Profit and Loss (PnL)</li>
+<li>Query 3 billion rows with only small compute and 3 second run-time</li>
+<li>See Snowflake&#39;s 3 caches</li>
+<li>Zero Copy Clone for DevOps and instant sandboxes</li>
+<li>Time Travel to see and roll back up to 90 days of data</li>
+<li>Drop and Undrop Tables</li>
+</ul>
+<h2 is-upgraded>More resources</h2>
+<p><a href="https://developers.snowflake.com/demos/financial-asset-management/" target="_blank">Full Demo on Snowflake Demo Hub</a></p>
+<p><a href="https://www.sigmacomputing.com/resources/modernizing-risk-analytics-with-sigma-on-snowflake" target="_blank">Modernizing Risk Analytics with Sigma on Snowflake</a>.</p>
+<p><a href="https://www.youtube.com/@AllenWongTech" target="_blank">Allen Wong&#39;s Youtube Channel</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

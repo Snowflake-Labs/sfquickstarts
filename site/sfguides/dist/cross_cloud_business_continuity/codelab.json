@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "cross_cloud_business_continuity",
+  "duration": 80,
+  "title": "Cross Cloud Business Continuity With Snowflake",
+  "summary": "This guide demonstrates Snowflake replication, failover and client redirect features for business continuity",
+  "source": "cross_cloud_business_continuity/cross_cloud_business_continuity.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "business-continuity",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "replication",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "cross_cloud_business_continuity"
+}

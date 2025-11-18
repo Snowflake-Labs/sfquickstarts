@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-08-22T15:43:27-04:00",
+  "id": "finding-fraudulent-communities-with-neo4j",
+  "duration": 24,
+  "title": "Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics",
+  "summary": "How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake",
+  "source": "fraud_detection_with_neo4j/Louvain-Community-Detection.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "finding-fraudulent-communities-with-neo4j"
+}

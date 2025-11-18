@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_distributed_multi_node_multi_gpu_audio_transcription_with_snowflake_ml_container_runtime",
+  "duration": 40,
+  "title": "Distributed Multi-Node and Multi GPU Audio Transcription with Snowflake ML Container Runtime",
+  "summary": "This guide will provide step-by-step details for using multi-node multi-gpu audio transcription with snowflake ml container runtime",
+  "source": "getting_started_with_distributed_multi_node_multi_gpu_audio_transcription_with_snowflake_ml_container_runtime/getting_started_with_distributed_multi_node_multi_gpu_audio_transcription_with_snowflake_ml_container_runtime.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "mlcontainerruntime"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_distributed_multi_node_multi_gpu_audio_transcription_with_snowflake_ml_container_runtime"
+}

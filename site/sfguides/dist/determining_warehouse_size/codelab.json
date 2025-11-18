@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "determining_warehouse_size",
+  "duration": 26,
+  "title": "Determine Appropriate Warehouse Sizes",
+  "summary": "Determine the best warehouse size to use for your query",
+  "source": "determining_warehouse_size/determining_warehouse_size.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "determining_warehouse_size"
+}

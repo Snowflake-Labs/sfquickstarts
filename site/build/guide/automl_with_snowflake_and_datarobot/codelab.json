@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "automl_with_snowflake_and_datarobot",
+  "duration": 128,
+  "title": "Accelerating Machine Learning with Snowflake and DataRobot",
+  "summary": "This lab will walk you through how to use Snowflake and DataRobot to perform supervised machine learning.",
+  "source": "automated_machine_learning_with_snowflake_and_datarobot/automl_with_snowflake_and_datarobot.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "automl",
+    "databases",
+    "datarobot",
+    "fileformats",
+    "partnerconnect",
+    "stages",
+    "tables",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "automl_with_snowflake_and_datarobot"
+}

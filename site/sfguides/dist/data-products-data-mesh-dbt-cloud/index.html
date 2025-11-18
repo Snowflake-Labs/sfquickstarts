@@ -1,0 +1,792 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Data Products and a Data Mesh with dbt platform</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data-products-data-mesh-dbt-cloud"
+                  title="Build Data Products and a Data Mesh with dbt platform"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Welcome to the Build Data Products and Data Mesh with dbt platform Quickstart guide! Before you begin getting your hands into the technology, let&#39;s define what a data mesh is and describe what motivates the topic.</p>
+<h2 is-upgraded>What is a data mesh?</h2>
+<p>A data mesh is a decentralized data management architecture comprising domain-specific data. Instead of having a single centralized data platform, teams own the processes around their own data.</p>
+<p>In a data mesh framework, teams own not only their own data, but also the data pipelines and processes associated with transforming it. A central data engineering team maintains both key data sets and a suite of self-service tools to enable individual data ownership. Domain-specific data teams then exchange data via well-defined and versioned contracts.</p>
+<p>Data mesh architecture aims to solve the lingering issues in data systems by adopting the same approach to data systems that software engineering teams take to software systems. It does so by enacting the following four principles:</p>
+<ol type="1">
+<li>Decentralized domain-oriented data</li>
+<li>Data as a product</li>
+<li>Self-service data platform</li>
+<li>Federated computational governance</li>
+</ol>
+<p>In the end, an operational data mesh architecture may look something like this:</p>
+<p class="image-container"><img alt="Architecture for Data Mesh" src="img/552d976e5fd568e2.png"></p>
+<h2 is-upgraded>Why you might need a data mesh</h2>
+<p>The following two conditions are indicators that you may benefit from a data mesh architecture.</p>
+<h3 is-upgraded>Slowdowns and silos in the data monolith</h3>
+<p>The architectural choice to use a data monolith has numerous knock-on effects. Monolithic approaches break down a data processing pipeline into several stages-ingestion, processing, and serving.</p>
+<p>A single team often handles all of these stages. This approach can work at first but breaks down with scale. As more and more requests come in, the data engineering team finds itself unable to respond to them promptly. This leads to an ever-growing backlog of feature requests and bug fixes. This slows down the pace of innovation and also leads to the system becoming more brittle over time.</p>
+<p>In this approach, data engineering teams often can&#39;t gain the full context behind the underlying data in this model. Since they&#39;re responsible for maintaining data sets from multiple disparate teams, they often don&#39;t fully understand the business rationale behind the data.</p>
+<p>This can lead them to make uninformed – and, sometimes, harmful – decisions that impact business decision-making. For example, a data engineering team may format data in a way that the sales department doesn&#39;t expect. This can lead to broken reports or even lost data.</p>
+<h3 is-upgraded>Complex and brittle systems</h3>
+<p>Monolithic systems rarely have clear contracts or boundaries. This means that data formatting changes upstream can break an untold number of downstream consumers. The result? This can cause teams to avoid making necessary changes for fear of breaking everything. This leads to monolithic systems gradually becoming outdated, brittle, and hard to maintain.</p>
+<p>Finally, collaboration also becomes more difficult in a monolithic system. Since no one is familiar with the entire codebase, it takes more people and more time to complete data-related tasks. This affects time to market for new products and features – which impacts the company&#39;s bottom line.</p>
+<h2 is-upgraded>What is a data product?</h2>
+<p>A data product is a useful information asset, accessed by a clearly defined interface, with an expectation of timeliness and correctness by the consumer. Teams build and maintain data products using processes and technologies that they are responsible for, though they could be supported by other platform-oriented teams.</p>
+<p>The properties of a data product are:</p>
+<ul>
+<li><strong>Discoverable:</strong> it is easy to find</li>
+<li><strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li><strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li><strong>Self-describing:</strong> it comes with product information</li>
+<li><strong>Interoperable:</strong> it works with other products</li>
+<li><strong>Secure and governed:</strong> it has proper access controls</li>
+<li><strong>Useful:</strong> it has value</li>
+</ul>
+<h2 is-upgraded>What you will learn</h2>
+<p>Throughout this guide, imagine yourself building a data platform with Snowflake and dbt platform for your organization, starting with two teams:</p>
+<ol type="1">
+<li><strong>Central data team:</strong> a team of experienced data engineers who build foundational data marts in Snowflake organized in a star schema of fact and dimensional tables</li>
+<li><strong>Finance team:</strong> a team that includes data analysts in the finance department who want to own their data and data processes</li>
+</ol>
+<p>Each step of the guide will learn how to use features of both Snowflake and dbt platform to achieve building <strong>data products</strong>.</p>
+<h2 is-upgraded>What you will build</h2>
+<p>At the end of this guide, you will have achieved:</p>
+<ul>
+<li><strong>Federated governance</strong></li>
+<li>A small scale <strong>data mesh</strong></li>
+<li>And <strong>self-service data platforms</strong>, as an alternative to a monolithic data architecture</li>
+</ul>
+<h2 is-upgraded>What this guide doesn&#39;t cover</h2>
+<ul>
+<li><strong>Interfaces other than SQL:</strong> This guide focuses on building data products within Snowflake using batch-processing of data with SQL. The access interface is SQL, which is powerful due to its ubiquity in the data management industry, however is not all encompassing. Other kinds of data products interfaces include: REST APIs, FTPs, dashboards, and spreadsheet management tools. They are outside of the scope of this guide.</li>
+<li><strong>Organizational structure:</strong> Data mesh is a broad organizational strategy that covers not only technology and process, but also crucially the organization of people. You will not receive advice in this guide on how to organize people – instead this is already in-place at your organization through the various teams, business units, departments, subsidiaries, and so on – cobbled together through the passage of time.</li>
+<li><strong>Building a business case for data mesh:</strong> This guide also doesn&#39;t cover how to build a business case for data mesh. Adopting the principles in this guide are good general best practices for any data team. However, if you are looking to tackle larger organizational inefficiencies to meet business goals by rolling out a data mesh strategy, then you may likely need a business case in order to show the value and return on investment of your endeavors to your management and leadership, and attach it to strategic initiatives. To learn more about this step, you can refer to dbt Labs&#39; <a href="https://8698602.fs1.hubspotusercontent-na1.net/hubfs/8698602/Guide%20to%20data%20mesh%20eBook%20V2.pdf" target="_blank">Guide to Data Mesh e-book</a>.</li>
+</ul>
+<h2 is-upgraded>What you will need</h2>
+<h3 is-upgraded>Snowflake</h3>
+<p>Here are the requirements for this Quickstart Guide:</p>
+<ul>
+<li>Account admin access to a Snowflake Enterprise or Business Critical account</li>
+<li>Access to the TPCH dataset, specifically in the <code>SNOWFLAKE_SAMPLE_DATA</code> database and the <code>TPCH_SF1</code> schema.</li>
+</ul>
+<p>In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a Snowflake account.</p>
+<aside class="warning"><p><strong>You must use a Snowflake Enterprise account.</strong> Snowflake Standard Edition is not sufficient, due to usage of Snowflake Enterprise features.</p>
+</aside>
+<h3 is-upgraded>dbt platform</h3>
+<p>Here are the requirements for this Quickstart Guide:</p>
+<ul>
+<li>Account admin access to a dbt platform Enterprise account</li>
+<li>Set your development and deployment <a href="https://docs.getdbt.com/docs/dbt-cloud-environments" target="_blank">environments</a> to use dbt version 1.6 or later. You can also choose the &#34;Keep on latest version&#34; option to always use the latest version of dbt.</li>
+</ul>
+<p>In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a dbt platform account. Live webinar attendees should use this workshop signup page[https://cloud.getdbt.com/workshop] and the passcode provided by your instructor. For others, we recommend using Snowflake Partner Connect.</p>
+<aside class="warning"><p><strong>You should use a dbt platform Enterprise account.</strong> It is possible to complete most of the steps with other editions of dbt platform, but some steps require Enterprise.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Launch Snowflake and dbt platform for this Quickstart" duration="10">
+        <p>In this step, you will set up Snowflake and dbt platform accounts for use in the rest of the Quickstart guide.</p>
+<h2 is-upgraded>Sign up for a Snowflake Enterprise trial account</h2>
+<p>Navigate to <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">signup.snowflake.com</a> and follow the steps. A few things to note:</p>
+<ul>
+<li>Select an Enterprise account</li>
+<li>Select a cloud provider - Microsoft Azure, Amazon Web Services, or Google Cloud Platform.  Choose the one that makes the most sense for you.</li>
+<li>Additionally, select a region.  Select one of the US West regions as it&#39;s known to have partner connect available.</li>
+</ul>
+<p class="image-container"><img alt="Snowflake Cloud Provider" src="img/fadb9b1e44fb3673.png"><br></p>
+<p>An email to activate your account will be sent after following the steps in the sign up flow.  Click the button in the email &#34;Click to Activate&#34;</p>
+<p class="image-container"><img alt="Snowflake Activate Account" src="img/159debc2ec4c08a3.png"><br></p>
+<p>Next, specify a username and password for your account.</p>
+<p class="image-container"><img alt="Snowflake Activate Account" src="img/bdaf7fe0457d247f.png"><br></p>
+<p>When prompted to either explore a sample data set or load data into snowflake, select the &#34;Skip for Now&#34; button.</p>
+<p><strong>Your Snowflake account is ready!</strong></p>
+<h2 is-upgraded>Option A (for live webinar or workshop attendees): Register for a dbt platform Enterprise account</h2>
+<ol type="1">
+<li>Go to this workshop <a href="https://cloud.getdbt.com/workshop" target="_blank">signup page</a>.</li>
+<li>Enter your first and last name. Select &#34;Build Data Products at Scale with dbt platform (July 2025)&#34; as the workshop name unless otherwise specified by your live instructor.</li>
+<li>Use the passcode provided by your live instructor.</li>
+<li>Magic! Save down your password. You can now skip Option B below and move to section 3 of the quickstart guide.</li>
+</ol>
+<h2 is-upgraded>Option B (for all others): Launching dbt platform by Snowflake Partner Connect</h2>
+<ol type="1">
+<li>We recommend that you use <a href="https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html" target="_blank">Snowflake Partner Connect</a> to set up your dbt platform account and project. Using Partner Connect will allow you to create a complete dbt account with your <a href="https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake" target="_blank">Snowflake connection</a>, <a href="https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository" target="_blank">managed repository</a>, <a href="https://docs.getdbt.com/docs/guides/managing-environments" target="_blank">environments</a>, and credentials with just a few clicks.</li>
+<li>In the Snowflake UI, click on <code>Data Products</code> in the lefthand sidebar, then <code>Partner Connect</code> which is located within the <code>Data Products</code> section. <br><img alt="Open Partner Connect" src="img/d6787cfca6666440.png"><br>Check to make sure your role is set as the ACCOUNTADMIN role. If you&#39;re using the classic console, the Partner Connect button will be in the top bar just right of center.</li>
+<li>Find the dbt tile by typing <code>dbt</code> into the <code>Search Partner Connect</code> search bar. Click on the dbt tile.<img alt="Search Partner Connect" src="img/87964dee680d366d.png"></li>
+<li>You should now see a popup that says <code>Connect to dbt</code> that contains all of the associated objects created by Partner Connect. Click on the <code>Optional Grant</code> dropdown menu and add <code>Snowflake_Sample_Data</code> in the text box. This will grant your new dbt user role access to the database. Once that&#39;s entered, click <code>Connect</code>. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.<img alt="Connect Partner Connect" src="img/432788d90c9701dc.png"></li>
+<li>When you see the popup that says <code>Your partner account has been created</code>, click on <code>Activate</code>.<img alt="Activate Partner Connect" src="img/e7b295ca03175da4.png"></li>
+<li>You should be redirected to a dbt platform registration page. If your email is already associated with a dbt platform account, you&#39;ll see the screen below.  Fill out the Account Name and click &#34;Complete Registration&#34;.  That will then redirect you to the login screen.  Fill out the form and make sure to save the password somewhere for login in the future. <br><img alt="dbt platform Registration - Already Exists" src="img/ed6ba79500ba1c63.png"></li>
+</ol>
+<p>If this is your first time in dbt platform, you&#39;ll see the screen below.  Add your Account Name and a password for your user.</p>
+<p class="image-container"><img alt="dbt platform Registration - New User" src="img/4a9a07de0ee4a89e.png"></p>
+<ol type="1" start="7">
+<li>You should now be redirected to your dbt platform account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.<img alt="dbt platform Home Page" src="img/d5f55683b5698c27.png"></li>
+<li>To help you version control your dbt project we have connected it to a <a href="https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository" target="_blank">managed repository</a>, which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt platform will help guide you through the workflow. In the future, when you&#39;re developing your own project, feel free to use <a href="https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application" target="_blank">your own repository</a>. This will allow you to play with features like <a href="https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github" target="_blank">Slim CI</a> builds after this workshop.</li>
+<li>Now it is best to upgrade this dbt platform account to Enterprise. If you are participating in the <strong>Snowflake Summit Hands On Lab session</strong>, <a href="https://forms.gle/S7P9Rw1Udbfxf7TdA" target="_blank">please use this form</a> to submit your account information so your account can be upgraded for the duration of the Hands On Lab.  The required information can be found by navigating to Account Settings.  The Account ID should be in the top section &#34;Account Information&#34; - this is what we&#39;ll need to upgrade your account.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up Snowflake and dbt platform" duration="5">
+        <p>In this step, you will be setting up Snowflake and dbt platform for two teams: the central data team and the finance team, as shown in the diagram below. You will be using least privileged access principles in order to properly secure the data.</p>
+<p class="image-container"><img alt="Target Snowflake and dbt platform configuration" src="img/552d976e5fd568e2.png"></p>
+<h2 is-upgraded>About the two teams</h2>
+<p>The <strong>central data team</strong> is well-established in the organization and the average team member is capable of building data pipelines that powers business reporting across various domains: finance, marketing, sales, customer support, and so on. The team uses data management best practices like organizing data in dimensional models for maximum re-usability in various BI and AI/ML applications.</p>
+<p>The <strong>finance team</strong> is an operational team. Finance team members are accustomed to consuming dashboards and building spreadsheets, however more and more demands on data has led to the finance team owning and managing more data to rapidly respond to changing demands. And so, the team has upskilled team members and brought on an analytics engineer to use Snowflake and dbt platform, in order to create data pipelines building off of the foundation project for daily reporting use-cases.</p>
+<h2 is-upgraded>Provision Snowflake and dbt platform the setup</h2>
+<aside class="warning"><p>dbt platform Enterprise is required to create more than one project in an account. If you do not have a dbt platform Enterprise account and wish to try this, <a href="https://www.getdbt.com/contact" target="_blank">please contact dbt Labs</a>.</p>
+</aside>
+<p><a href="https://sf-dbt-mesh-setup.streamlit.app/" target="_blank">Use this app</a> to quickly provision the Snowflake and dbt platform setup for this Quickstart Guide. To do so, you&#39;ll need to first locate the account ID (Settings &gt; Account) and then create a Service Token with Account Admin priveleges:</p>
+<p class="image-container"><img alt="Create service token" src="img/a02eb1ca85bfc57a.png"></p>
+<p>Come back to this guide when you have successfully followed the steps in the app!</p>
+<p>The app creates the following resources for you:</p>
+<ul>
+<li>A <code>foundational_role</code> Snowflake role for creating and managing resources in the <code>foundational_db</code> database using the <code>foundational_wh</code> warehouse. It will also be able to administer data governance responsibilities, and grant appropriate permissions for masking and tagging.</li>
+<li>A <code>foundational_pii_reader_role</code> Snowflake role for users who can access PII data unmasked.</li>
+<li>A <code>finance_role</code> Snowflake role for creating and managing resources in the <code>finance_db</code> database using the <code>finance_wh</code> warehouse.</li>
+<li>A <code>Foundational Project</code> dbt platform Project for the central data team to build their transformations.</li>
+<li>A <code>Finance Project</code> dbt platform Project for the finance team to build their transformations on top of the Foundational Project.</li>
+</ul>
+<p>Before we jump into the next section, let&#39;s take a moment to setup our developer credentials (click <strong>Account Settings</strong> and then <strong>Credentials</strong>) for both the foundational and finance projects. Add in the Snowflake username and password you just created:</p>
+<p class="image-container"><img alt="Add developer credentials" src="img/aae7596f67a33709.png"></p>
+<h2 is-upgraded>Additional features to secure dbt platform and Snowflake</h2>
+<p>When setting up dbt platform for production, there are four recommended security options to configure. They are out-of-scope for this particular Quickstart Guide, but worth mentioning at this point:</p>
+<ul>
+<li><a href="https://docs.getdbt.com/docs/cloud/manage-access/set-up-snowflake-oauth" target="_blank"><strong>Snowflake OAuth:</strong></a> Require developers to connect their dbt platform Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt platform users will only be able to access the data that their Snowflake user has been granted.</li>
+<li><a href="https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair" target="_blank"><strong>Snowflake Key Pair authentication:</strong></a> For scheduled production workloads in dbt platform, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization&#39;s policy.</li>
+<li><a href="https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control" target="_blank"><strong>dbt platform Role Based Access Controls:</strong></a> Set up roles within dbt platform to govern what dbt platform permissions users can have. For example, you can set up a finance team role so they do not have write access to the central data team project resources.</li>
+<li><a href="https://docs.getdbt.com/docs/cloud/manage-access/sso-overview" target="_blank"><strong>dbt platform SSO:</strong></a> Require developers to use your organization&#39;s SSO platform to log into dbt platform, and exchange SAML information to auto-assign dbt platform roles based on the permissions set in your organization&#39;s Identity Provider.</li>
+</ul>
+<h2 is-upgraded>Wrapping up this step</h2>
+<p>With the Snowflake and dbt platform resources provisioned in this step, you have begun laying the first layer of an interoperable and secure data mesh. dbt platform adds a layer of addressability and discoverability to the data platform. In the next step, you will build your first data product.</p>
+<p>Here is where you are in the journey towards a data product:</p>
+<ul>
+<li>👉🔜 <strong>Discoverable:</strong> it is easy to find</li>
+<li>👉🔜 <strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li><strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li><strong>Self-describing:</strong> it comes with product information</li>
+<li>👉🔜 <strong>Interoperable:</strong> it works with other products</li>
+<li>👉🔜 <strong>Secure and governed:</strong> it has proper access controls</li>
+<li><strong>Useful:</strong> it has value</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build foundational project" duration="5">
+        <p>Now it&#39;s time for you to add dbt code in the foundational project using the dbt platform IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a <code>fct_orders</code> table representing all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.</p>
+<h2 is-upgraded>Setup the new project</h2>
+<p>Here are the steps:</p>
+<ol type="1">
+<li>Navigate back to the foundational project via the account / project dropdown in the top-right section of the navbar.</li>
+<li>Then, navigate to the <strong>dbt platform Studio (IDE)</strong> via the <strong>Studio</strong> dropdown in the navbar to verify your setup.</li>
+<li>If the repo you are working on is empty, click the <strong>Initialize dbt project</strong> button and commit the changes.</li>
+<li>Create a new branch.</li>
+<li>Delete the <code>models/example</code> folder.</li>
+<li>Navigate to the <code>dbt_project.yml</code> file and rename the project (line 5) from <code>my_new_project</code> to <code>foundational_project</code>.</li>
+<li>In your <code>dbt_project.yml</code> file, remove lines 39-42 (the <code>my_new_project</code> model reference).</li>
+<li>In the <strong>File Explorer</strong>, hover over the models directory and click the <strong>...</strong>, then select <strong>Create Folder</strong>.</li>
+<li>Create two new folders: <code>staging</code> and <code>marts</code>.  <strong>If you&#39;ve done this right, these directories will be inside the </strong><strong><code>models</code></strong><strong> directory.</strong></li>
+</ol>
+<h2 is-upgraded>Create the staging layer</h2>
+<p>Now that you&#39;ve set up the foundational project, let&#39;s start building the data assets. Set up the staging layer as follows:</p>
+<ol type="1">
+<li>Create a new YAML file <code>models/staging/sources.yml</code>.</li>
+<li>Declare the sources by copying the following into the file and clicking <strong>Save</strong>.</li>
+</ol>
+<pre><code language="language-yaml" class="language-yaml">sources:
+  - name: tpch
+    description: &#34;TPCH data source from Snowflake Sample Data&#34;
+    database: snowflake_sample_data
+    schema: tpch_sf1
+    tables:
+      - name: orders
+        description: &#34;One record per order&#34;
+      - name: customer
+        description: &#34;One record per customer&#34;
+      - name: lineitem
+        description: &#34;One record per line item within a single order (1 -&gt; n)&#34;
+</code></pre>
+<ol type="1" start="3">
+<li>Create a <code>models/staging/stg_customers.sql</code> file to select from the <code>customers</code> table in the <code>tpch</code> source.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">with source as (
+
+    select * from &#123;&#123; source(&#39;tpch&#39;, &#39;customer&#39;) }}
+
+),
+
+cleanup as (
+
+    select
+    
+        c_custkey as customer_key,
+        c_name as name,
+        c_address as address, 
+        c_nationkey as nation_key,
+        c_phone as phone_number,
+        c_acctbal as account_balance,
+        c_mktsegment as market_segment,
+        c_comment as comment
+
+    from source
+
+)
+
+select * from cleanup
+</code></pre>
+<ol type="1" start="4">
+<li>Create a <code>models/staging/stg_orders.sql</code> file to select from the <code>orders</code> table in the <code>tpch</code> source.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">with source as (
+
+    select * from &#123;&#123; source(&#39;tpch&#39;, &#39;orders&#39;) }}
+
+),
+
+renamed as (
+
+    select
+    
+        o_orderkey as order_key,
+        o_custkey as customer_key,
+        o_orderstatus as status_code,
+        o_totalprice as total_price,
+        o_orderdate as order_date,
+        o_clerk as clerk_name,
+        o_orderpriority as priority_code,
+        o_shippriority as ship_priority,
+        o_comment as comment
+
+    from source
+
+)
+
+select * from renamed
+</code></pre>
+<ol type="1" start="5">
+<li>Create a <code>models/staging/stg_line_items.sql</code> file to select from the <code>line_items</code> table in the <code>tpch</code> source.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">with source as (
+
+    select * from &#123;&#123; source(&#39;tpch&#39;, &#39;lineitem&#39;) }}
+
+),
+
+renamed as (
+
+    select
+    
+        l_orderkey as order_key,
+        l_partkey as part_key,
+        l_suppkey as supplier_key,
+        l_linenumber as line_number,
+        l_quantity as quantity,
+        l_extendedprice as gross_item_sales_amount,
+        l_discount as discount_percentage,
+        l_tax as tax_rate,
+        l_returnflag as return_flag,
+        l_linestatus as status_code,
+        l_shipdate as ship_date,
+        l_commitdate as commit_date,
+        l_receiptdate as receipt_date,
+        l_shipinstruct as ship_instructions,
+        l_shipmode as ship_mode,
+        l_comment as comment,
+
+        -- extended_price is actually the line item total,
+        -- so we back out the extended price per item
+        (gross_item_sales_amount/nullif(quantity, 0))::decimal(16,4) as base_price,
+        (base_price * (1 - discount_percentage))::decimal(16,4) as discounted_price,
+        (gross_item_sales_amount * (1 - discount_percentage))::decimal(16,4) as discounted_item_sales_amount,
+
+        -- We model discounts as negative amounts
+        (-1 * gross_item_sales_amount * discount_percentage)::decimal(16,4) as item_discount_amount,
+        ((gross_item_sales_amount + item_discount_amount) * tax_rate)::decimal(16,4) as item_tax_amount,
+        (
+            gross_item_sales_amount + 
+            item_discount_amount + 
+            item_tax_amount
+        )::decimal(16,4) as net_item_sales_amount
+
+    from source
+
+)
+
+select * from renamed
+</code></pre>
+<h2 is-upgraded>Create the marts layer</h2>
+<p>Now set up the marts layer by creating a file <code>models/marts/fct_orders.sql</code> to build a fact table with order details:</p>
+<pre><code language="language-sql" class="language-sql">&#123;&#123;
+    config(
+        materialized=&#39;table&#39;,
+    )
+}}
+
+with orders as (
+    
+    select * from &#123;&#123; ref(&#39;stg_orders&#39;) }}
+
+),
+
+line_items as (
+    
+    select * from &#123;&#123; ref(&#39;stg_line_items&#39;) }}
+
+),
+
+customers as (
+
+    select * from &#123;&#123; ref(&#39;stg_customers&#39;) }}
+),
+
+order_item_summary as (
+
+    select 
+        order_key,
+        sum(gross_item_sales_amount) as gross_item_sales_amount,
+        sum(item_discount_amount) as item_discount_amount,
+        sum(item_tax_amount) as item_tax_amount,
+        sum(net_item_sales_amount) as net_item_sales_amount
+    from line_items
+    group by 1
+
+),
+
+final as (
+
+    select 
+        orders.order_key, 
+        orders.order_date,
+        orders.customer_key,
+        orders.status_code,
+        orders.priority_code,
+        orders.ship_priority,
+        orders.clerk_name,
+        customers.name,
+        customers.market_segment,
+        order_item_summary.gross_item_sales_amount,
+        order_item_summary.item_discount_amount,
+        order_item_summary.item_tax_amount,
+        order_item_summary.net_item_sales_amount
+    from orders
+    inner join order_item_summary
+        on orders.order_key = order_item_summary.order_key
+    inner join customers
+        on orders.customer_key = customers.customer_key
+)
+
+select *
+from final
+order by order_date
+</code></pre>
+<h2 is-upgraded>Build the project</h2>
+<p>Navigate to the <strong>Command bar</strong> at the very bottom of the IDE and execute <code>dbt build</code>. This will both validate the work you&#39;ve done thus far and build out the requisite models into your sandbox within Snowflake.</p>
+<p>At this point, you may also see what you have built by looking at the <strong>Lineage tab</strong> in the dbt platform IDE, and as shown in the graphic below.</p>
+<p class="image-container"><img alt="dbt platform lineage" src="img/631f6664a0d2aabc.png"></p>
+<h2 is-upgraded>Committing your changes</h2>
+<p>To finish this step up, go to the <strong>Version control</strong> section in the IDE to:</p>
+<ol type="1">
+<li>Click the <strong>Commit and Sync</strong> button to commit your changes.</li>
+<li><strong>Merge</strong> your changes to the main or production branch.</li>
+</ol>
+<h2 is-upgraded>Additional features to build data products</h2>
+<ul>
+<li><a href="https://docs.getdbt.com/docs/cloud/cloud-cli-installation" target="_blank"><strong>dbt platform CLI:</strong></a> In this guide, we are using the dbt platform IDE available within the web browser. dbt platform enables data practitioners to also develop with a local dbt platform CLI using a locally-installed code editor of their choice.</li>
+<li><a href="https://docs.getdbt.com/docs/install-dbt-extension" target="_blank"><strong>dbt Visual Studio (VS) Code Extension:</strong></a> Additionally, the dbt extensions for VS Code and Cursor enhance local development. The dbt extension is powered by the dbt Fusion engine..</li>
+<li><a href="https://docs.getdbt.com/docs/cloud/dbt-cloud-ide/lint-format" target="_blank"><strong>dbt platform IDE linting and formatting:</strong></a> To keep data product code quality high and follow your team&#39;s coding standards, you can use the built-in linters and formatters in dbt platform.</li>
+</ul>
+<h2 is-upgraded>Wrapping up this step</h2>
+<p>You now have built the first useful tables in the foundational project, which any user or application can access using SQL. In the next step, you will secure the PII access to privileged users.</p>
+<p>Here is where you are in the journey towards a data product:</p>
+<ul>
+<li>🔜 <strong>Discoverable:</strong> it is easy to find</li>
+<li>🔜 <strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li><strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li><strong>Self-describing:</strong> it comes with product information</li>
+<li>👉✅ <strong>Interoperable:</strong> it works with other products</li>
+<li>🔜 <strong>Secure and governed:</strong> it has proper access controls</li>
+<li>👉✅ <strong>Useful:</strong> it has value</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Apply Snowflake masking to PII data" duration="5">
+        <p>Congratulations! You built a useful dataset. But, it&#39;s not secure. Organizational data privacy policies require Personally Identifiable Information (PII) to be restricted only to a few select people within the organization. Naturally, this restriction is best checked within Snowflake itself, as various applications within the organization access data, so restricting the data at the source helps protect your customers&#39; privacy.</p>
+<h2 is-upgraded>Setting up data masking tags and policies in Snowflake</h2>
+<p>Use Snowsight to execute the following commands to create <a href="https://docs.snowflake.com/en/user-guide/object-tagging#label-object-tags-ddl-privilege-summary" target="_blank">object tags</a> and a <a href="https://docs.snowflake.com/en/user-guide/security-column-ddm-intro" target="_blank">data masking policy</a>.</p>
+<pre><code language="language-sql" class="language-sql">use role foundational_role;
+use database foundational_db;
+
+-- Create a tag for PII data
+create tag if not exists foundational_db.prod.pii_data;
+
+-- Create a masking policy for string data
+create or replace masking policy foundational_db.prod.pii_mask_string as (val string) returns string -&gt;
+  case
+    when is_role_in_session(&#39;foundational_pii_reader_role&#39;) then val
+    else &#39;****&#39;
+  end;
+  
+-- Assign the masking policy to the tag
+alter tag foundational_db.prod.pii_data set masking policy foundational_db.prod.pii_mask_string;
+</code></pre>
+<h2 is-upgraded>Apply the Snowflake tags while building dbt models</h2>
+<p>Now it&#39;s time to jump into dbt platform to use a <a href="https://docs.getdbt.com/reference/resource-configs/pre-hook-post-hook" target="_blank">model post-hook</a> to apply the masking policy to the <code>name</code> column of the <code>fct_orders</code> dbt model immediately after the table is built.</p>
+<p>Open up the <code>fct_orders.sql</code> file and modify the config block at the top to include the <code>post_hook</code> argument:</p>
+<pre><code language="language-sql" class="language-sql">&#123;&#123;
+    config(
+        materialized=&#39;table&#39;,
+        post_hook=&#34;alter table &#123;&#123; this }} modify column name set tag foundational_db.prod.pii_data = &#39;name&#39;&#34;
+    )
+}}
+</code></pre>
+<h2 is-upgraded>Additional features to govern and secure</h2>
+<ul>
+<li><a href="https://dbt-tags.iflambda.com/latest/index.html" target="_blank"><strong>dbt-tags package:</strong></a> In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can use the dbt-tags package to manage these tags in configuration files within your dbt platform project and use a DataOps approach to apply the policies. This package was created by the dbt and Snowflake experts at Infinite Lambda.</li>
+</ul>
+<h2 is-upgraded>Wrapping up this step</h2>
+<p>You have now secured the PII produced in this data product so it is restricted to privileged users, governed by native Snowflake features. In the next step, you will add model contracts and enforce grants with dbt.</p>
+<p>Here is where you are in the journey towards a data product:</p>
+<ul>
+<li>🔜 <strong>Discoverable:</strong> it is easy to find</li>
+<li>🔜 <strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li><strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li><strong>Self-describing:</strong> it comes with product information</li>
+<li>✅ <strong>Interoperable:</strong> it works with other products</li>
+<li>👉✅ <strong>Secure and governed:</strong> it has proper access controls</li>
+<li>✅ <strong>Useful:</strong> it has value</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add model contracts and enforce Snowflake grants" duration="5">
+        <p>Now that you have set up with data masking, it&#39;s time to set up proper grants to the foundational project&#39;s <code>fct_orders</code> table, add a model contract, and make it accessible to other dbt projects.</p>
+<p>By using these configurations within your project, you&#39;ll be, in effect, creating a stable set of APIs that your downstream projects are able to reliably consume.</p>
+<h2 is-upgraded>Adding the model YAML metadata</h2>
+<p>To begin, add the file <code>models/marts/core.yml</code> and add the code below:</p>
+<pre><code language="language-yaml" class="language-yaml">models:
+  - name: fct_orders
+    description: &#34;This model contains order information from the transactional systems of the company.&#34;
+    
+    # Model access setting
+    access: public
+    
+    config:
+      # Model contract setting
+      contract:
+        enforced: true
+      
+      # Grant setting
+      grants:
+        select: [&#39;foundational_pii_reader_role&#39;, &#39;finance_role&#39;]
+    
+    columns:
+      - name: order_key
+        data_type: int
+        description: &#34;The unique identifier for each order&#34;
+        tests:
+          - unique
+          - not_null
+
+      - name: order_date
+        data_type: date
+        description: &#34;The date and time when the order was placed&#34;
+
+      - name: customer_key
+        data_type: int
+        description: &#34;The identifier for the customer who placed the order&#34;
+        tests:
+          - not_null
+
+      - name: status_code
+        data_type: varchar
+        description: &#34;A code representing the current status of the order&#34;
+
+      - name: priority_code
+        data_type: varchar
+        description: &#34;A code indicating the priority level of the order&#34;
+
+      - name: ship_priority
+        data_type: int
+        description: &#34;The priority level for shipping the order&#34;
+
+      - name: clerk_name
+        data_type: varchar
+        description: &#34;The name of the clerk responsible for processing the order&#34;
+
+      - name: name
+        data_type: varchar
+        description: &#34;The name associated with the order, such as the product name or order name&#34;
+
+      - name: market_segment
+        data_type: varchar
+        description: &#34;The segment of the market to which the order is targeted or classified&#34;
+
+      - name: gross_item_sales_amount
+        data_type: numeric(38, 3)
+        description: &#34;The total sales amount for items in the order before any discounts or taxes&#34;
+
+      - name: item_discount_amount
+        data_type: numeric(38, 3)
+        description: &#34;The total discount amount applied to items in the order&#34;
+
+      - name: item_tax_amount
+        data_type: numeric(38, 3)
+        description: &#34;The total tax amount applied to items in the order&#34;
+
+      - name: net_item_sales_amount
+        data_type: numeric(38, 3)
+        description: &#34;The total sales amount for items in the order after discounts and taxes have been applied&#34;
+</code></pre>
+<p>This YAML file does the following:</p>
+<ul>
+<li>It sets the <code>fct_orders</code> <a href="https://docs.getdbt.com/docs/collaborate/govern/model-access" target="_blank">model access level</a> to public, which means other projects in the dbt platform account are now able to reference it.</li>
+<li>It will add and enforce a <a href="https://docs.getdbt.com/docs/collaborate/govern/model-contracts" target="_blank">model contract</a>. This will enable dbt to do a couple things: 1) run a &#34;preflight&#34; check that ensures the model&#39;s query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model&#39;s table.</li>
+<li>The <a href="https://docs.getdbt.com/reference/resource-configs/grants" target="_blank">grants</a> config is used to set permissions or grants for a resource. When a model is run, dbt will run grant and/or revoke statements to ensure that the permissions on the database object match the grants you have configured on the resource.</li>
+</ul>
+<h2 is-upgraded>Committing your changes</h2>
+<p>To finish this step up, go to the <strong>Version control</strong> section in the IDE and:</p>
+<ol type="1">
+<li>Click the <strong>Commit and Sync</strong> button to commit your changes.</li>
+<li><strong>Merge</strong> your changes to the main or production branch.</li>
+</ol>
+<h2 is-upgraded>Additional features for model governance</h2>
+<ul>
+<li><a href="https://docs.getdbt.com/docs/collaborate/govern/model-versions" target="_blank"><strong>dbt model versions:</strong></a> How do you make a change to the structure of the <code>fct_orders</code> model once downstream users and applications use it and expect its structure to remain the same due to the model contract? That is where dbt model versions come in, to allow for multiple versions of a model to co-exist for a limited period of time, while downstream queries are migrated.</li>
+<li><a href="https://other-docs.snowflake.com/en/collaboration/provider-listings-creating-publishing" target="_blank"><strong>Snowflake Private Listings:</strong></a> With Marketplace features now native to Snowflake, you can use dbt platform to manage listings and deploy them alongside your code, keeping the listings governed in version control.</li>
+<li><a href="https://docs.getdbt.com/reference/resource-configs/persist_docs" target="_blank"><strong>Persisting docs to Snowflake:</strong></a> Enabling the <code>persist_docs</code> configuration will commit the dbt documentation directly to Snowflake as comments, for use by other applications.</li>
+</ul>
+<h2 is-upgraded>Wrapping up this step</h2>
+<p>In this step you added a straightforward YAML file, and now <code>fct_orders</code> is a tested data model with documentation, will have the proper grants applied when built, and is publicly available for other dbt platform projects to use. In the next step, you will build the foundational project in production.</p>
+<p>Here is where you are in the journey towards a data product:</p>
+<ul>
+<li>🔜 <strong>Discoverable:</strong> it is easy to find</li>
+<li>👉🔜 <strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li>👉✅ <strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li>👉✅ <strong>Self-describing:</strong> it comes with product information</li>
+<li>✅ <strong>Interoperable:</strong> it works with other products</li>
+<li>✅ <strong>Secure and governed:</strong> it has proper access controls</li>
+<li>✅ <strong>Useful:</strong> it has value</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and run a dbt platform job" duration="5">
+        <p>Before a downstream team can leverage assets from this foundational project, you will need to run a <a href="https://docs.getdbt.com/docs/deploy/deploy-jobs" target="_blank">deployment job</a> successfully.</p>
+<h2 is-upgraded>Setting up the job</h2>
+<p>To run your first deployment dbt platform job, you will need to create a new dbt platform job.</p>
+<ol type="1">
+<li>Click <strong>Orchestration</strong> and then <strong>Jobs</strong>.</li>
+<li>Click <strong>Create job</strong> and then <strong>Deploy job</strong>.</li>
+<li>Fill in details about the job, calling it <strong>Daily Job</strong>.</li>
+<li>Select the <strong>Generate docs on run</strong> option. This will enable dbt platform to pull in metadata from the warehouse to supplement the documentation found in the <strong>Catalog</strong> section.</li>
+</ol>
+<p class="image-container"><img alt="Select the &amp;lsquo;Generate docs on run&amp;rsquo; option when configuring your dbt platform job." src="img/fa30af130578098d.png"></p>
+<ol type="1" start="5">
+<li>You may optionally set a schedule for the the job to run on.</li>
+<li>Save the job</li>
+<li>Then, click <strong>Run now</strong> to trigger the job.</li>
+</ol>
+<p class="image-container"><img alt="Run your job." src="img/c2947ad89656a214.png"></p>
+<h2 is-upgraded>Additional job features for a data mesh</h2>
+<ul>
+<li><a href="https://docs.getdbt.com/docs/deploy/ci-jobs" target="_blank"><strong>Continuos integration (CI) jobs:</strong></a> How can you catch data quality and contract errors, before your production runs? That&#39;s where CI jobs can help – to check data quality on every Pull Request.</li>
+<li><a href="https://docs.getdbt.com/docs/deploy/deploy-jobs#trigger-on-job-completion--" target="_blank"><strong>Job chaining:</strong></a> The &#34;Trigger Job On Completion&#34; option in dbt platform Jobs allows for jobs not only to run on a schedule, but also one after another.</li>
+<li><a href="https://docs.getdbt.com/docs/deploy/run-visibility#model-timing" target="_blank"><strong>Model timing tab:</strong></a> The model timing tab within each dbt platform job run page helps identify the longest-running queries on Snowflake within the particular job, in order to optimize them and save on platform costs.</li>
+</ul>
+<h2 is-upgraded>Wrapping up this step</h2>
+<p>In this step, you ran a dbt platform job that deployed a production version of the data to Snowflake and registered the project metadata in dbt platform&#39;s metadata storage. This was necessary for the next step, which is to reference the Foundational data from within the Finance dbt platform project.</p>
+<p>Here is where you are in the journey towards a data product:</p>
+<ul>
+<li>🔜 <strong>Discoverable:</strong> it is easy to find</li>
+<li>👉🔜 <strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li>✅ <strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li>✅ <strong>Self-describing:</strong> it comes with product information</li>
+<li>✅ <strong>Interoperable:</strong> it works with other products</li>
+<li>✅ <strong>Secure and governed:</strong> it has proper access controls</li>
+<li>✅ <strong>Useful:</strong> it has value</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Adding the Finance project" duration="5">
+        <p>In this penultimate step, you will now set up dbt platform to build the finance team&#39;s data product by building off the foundational data product, the result of which is an architecture as shown in the diagram below.</p>
+<p class="image-container"><img alt="Target Snowflake and dbt platform configuration" src="img/d6bcf9165f351099.png"></p>
+<h2 is-upgraded>Setup the project</h2>
+<aside class="warning"><p>⚠️ This section requires a dbt platform Enterprise account.</p>
+<p>If you are participating in the <strong>Snowflake Summit Hands On Lab session</strong>, <a href="https://forms.gle/S7P9Rw1Udbfxf7TdA" target="_blank">please use this form</a> to submit your account information so your account can be upgraded for the duration of the Hands On Lab.</p>
+<p>Otherwise, you may request a dbt platform Enterprise account for evaluation purposes <a href="https://www.getdbt.com/contact" target="_blank">from the dbt Labs team</a>.</p>
+</aside>
+<ol type="1">
+<li>First, select the <strong>Finance Project</strong> from the dbt platform project selector.</li>
+<li>Now, open up the <strong>dbt platform IDE</strong> in the <strong>Studio</strong> toolbar.</li>
+<li>If you&#39;ve also started with a new git repo, click <strong>Initialize dbt project</strong> button under the <strong>Version control</strong> section and commit the changes.</li>
+<li>Delete the <code>models/example</code> folder</li>
+<li>Navigate to the <code>dbt_project.yml</code> file and rename the project (line 5) from <code>my_new_project</code> to <code>finance_project</code>.</li>
+<li>In your <code>dbt_project.yml</code> file, remove lines 39-42 (the <code>my_new_project</code> model reference).</li>
+<li>In the <strong>File Explorer</strong>, hover over the project directory, click the <strong>...</strong>, then select <strong>Create file</strong>.</li>
+<li>Name the file <code>dependencies.yml</code> and add the upstream platform project and click <strong>Save</strong>.</li>
+</ol>
+<pre><code language="language-yaml" class="language-yaml">projects:
+  - name: foundational_project
+</code></pre>
+<ol type="1" start="8">
+<li>You&#39;re now set to add a model that references the <code>fct_orders</code> model created in the separate project by your platform team. In your models directory, create a file <code>models/agg_segment_revenue.sql</code></li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select
+    market_segment,
+    sum(gross_item_sales_amount) as total_revenue
+from &#123;&#123; ref(&#39;foundational_project&#39;, &#39;fct_orders&#39;) }}
+group by 1
+</code></pre>
+<p>Notice the cross-project <code>ref</code> by using two arguments to the function: 1) name of the project, as defined within that upstream project and declared in <code>dependencies.yml</code>, and 2) the name of a public model in that project.</p>
+<ol type="1" start="9">
+<li><strong>Save</strong> your file and notice the lineage in the bottom pane.</li>
+<li><strong>Compile</strong> the code and notice that this model is now referencing the production version of the foundational project&#39;s <code>fct_orders</code> table.</li>
+</ol>
+<h2 is-upgraded>Committing your changes</h2>
+<p>To finish this step up, go to the <strong>Version control</strong> section in the IDE to:</p>
+<ol type="1" start="11">
+<li>Click the <strong>Commit and Sync</strong> button to commit your changes.</li>
+<li><strong>Merge</strong> your changes to the main or production branch.</li>
+</ol>
+<h2 is-upgraded>Setting up a finance job</h2>
+<p>Now run a production dbt platform Job of the finance project, as you did with the foundational project.</p>
+<ol type="1" start="13">
+<li>Click <strong>Orchestration</strong> and then <strong>Jobs</strong>.</li>
+<li>Click <strong>Create job</strong> and then <strong>Deploy job</strong>.</li>
+<li>Select the <strong>Generate docs on run</strong> option. This will enable dbt platform to pull in metadata from the warehouse to supplement the documentation found in the <strong>Catalog</strong> section.</li>
+<li>Then, click <strong>Run now</strong> to trigger the job.</li>
+</ol>
+<h2 is-upgraded>Wrapping up this step</h2>
+<p>With a few lines of code, the finance team now is building directly off of the central data team&#39;s work. They are synchronized which ensures data consistency, but autonomous to create their data product to power their own applications. The finance team can also feel confident that the data they are addressing will be reliable, due to the model contract that&#39;s in-place with the <code>fct_orders</code> model.</p>
+<p>Here is where you are in the journey towards a data product:</p>
+<ul>
+<li>🔜 <strong>Discoverable:</strong> it is easy to find</li>
+<li>👉✅ <strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li>👉✅ <strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li>✅ <strong>Self-describing:</strong> it comes with product information</li>
+<li>👉✅ <strong>Interoperable:</strong> it works with other products</li>
+<li>👉✅ <strong>Secure and governed:</strong> it has proper access controls</li>
+<li>👉✅ <strong>Useful:</strong> it has value</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using dbt Catalog to discover data products" duration="5">
+        <p>You have now completed building projects for this Quickstart Guide. Now it is time to try out <strong>dbt Catalog</strong> to discover and drill into the dbt assets available within your dbt platform account.</p>
+<h2 is-upgraded>Exploring dbt Catalog</h2>
+<ol type="1">
+<li>Head back to the foundational project.</li>
+<li>Click <strong>Catalog</strong> from the upper menu bar.</li>
+<li>Using the <strong>Search bar</strong> at the top left of the page, search for <strong>orders</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Discover search results" src="img/5d7f66f29543db40.png"></p>
+<ol type="1" start="3">
+<li>Click on <code>fct_orders</code> and scroll through the page, noting <strong>Lineage, Build Status,</strong> and <strong>Description</strong>.</li>
+<li>Click on the <strong>Columns</strong> tab, and then expand the <code>order_key</code> column to see the <strong>Column Level Lineage</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Discover search results" src="img/dedad58e2262c5af.png"></p>
+<ol type="1" start="5">
+<li>Lastly, click on the <strong>Project Recommendations</strong> tab on the left hand side of the page to see best practices directly in dbt Catalog.</li>
+</ol>
+<p class="image-container"><img alt="Discover project recommendations" src="img/72e5c6c06a2cebc3.png"></p>
+<h2 is-upgraded>Wrapping up this step</h2>
+<p>With dbt Catalog, data products built with dbt are automatically published and searchable, allowing for easy discovery and re-usability. Furthermore, you can use dbt Catalog to drill into data product details including documentation, build status, and lineage at the column-level, model-level, or project-level.</p>
+<p>You have now completed your data product journey!</p>
+<ul>
+<li>👉✅ <strong>Discoverable:</strong> it is easy to find</li>
+<li>✅ <strong>Addressable:</strong> it has a unique, labeled location for retrieval</li>
+<li>✅ <strong>Trustworthy and truthful:</strong> it is worthy of consumer trust</li>
+<li>✅ <strong>Self-describing:</strong> it comes with product information</li>
+<li>✅ <strong>Interoperable:</strong> it works with other products</li>
+<li>✅ <strong>Secure and governed:</strong> it has proper access controls</li>
+<li>✅ <strong>Useful:</strong> it has value</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>During this quickstart guide, you used native features of Snowflake and dbt platform that can be combined to create data products. By using dbt platform, you gained additional governance, automation, and interoperability mechanisms than from Snowflake alone. Overall, these two self-service platforms combined increase the likelihood of success of a data mesh project.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Creating Snowflake resources with a least privileged access principle</li>
+<li>Setting up dbt platform with two projects that relate to each other</li>
+<li>Added dbt models to build core datasets in Snowflake</li>
+<li>Added data masking with Snowflake, applied with dbt platform</li>
+<li>Created model contracts in dbt that govern the data used by other teams</li>
+<li>Executed the SQL code on Snowflake with dbt platform jobs</li>
+<li>Used dbt Catalog in order to explore data assets that were created by dbt</li>
+</ul>
+<h2 is-upgraded>Related resources</h2>
+<p>If you are interested in this solution for your organization, <a href="https://www.getdbt.com/contact" target="_blank">contact dbt Labs</a> to get started!</p>
+<p class="image-container"><img alt="Discover project recommendations" src="img/6a52851431d4aa07.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

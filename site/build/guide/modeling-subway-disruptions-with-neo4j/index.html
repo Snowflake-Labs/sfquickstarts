@@ -1,0 +1,420 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="modeling-subway-disruptions-with-neo4j"
+                  title="Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <h2 is-upgraded>What Is Neo4j Graph Analytics For Snowflake?</h2>
+<p>Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. <strong>Neo4j Graph Analytics for Snowflake</strong> brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake!</p>
+<h2 is-upgraded>Modeling Disruptions in the MTA Subway</h2>
+<p>3.6 million Americans ride the New York City subway each day. That&#39;s 1.3 million more people than who takes a flight each day in the United States. The New York City Subway is unique in the number of riders, stations, and the level of service it provides.</p>
+<p>Using Graph Analytics for Snowflake, we can easily model what would happen if a station was fully closed for repairs. Insights like this can apply not just to transport systems, but to supply chains, manufacturing processes and much more.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>The Native App <a href="https://app.snowflake.com/marketplace/listing/GZTDZH40CN" target="_blank">Neo4j Graph Analytics</a> for Snowflake</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts" target="_blank">Snowflake account</a> with appropriate access to databases and schemas.</li>
+<li>Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below: <img alt="image" src="img/bb765f4d97e101ba.png"></li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A notebook that models subway disruptions in the New York City subway</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to prepare and project your data for graph analytics</li>
+<li>How to pathfinding to model subway disruptions</li>
+<li>How to read and write directly from and to your snowflake tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Loading The Data" duration="5">
+        <p>Dataset overview : This dataset is a digital twin of the NYC Subway!</p>
+<p>Let&#39;s name our database <code>MTA</code>. Using the CSVs found <a href="https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/mta_subways/data" target="_blank">here</a>, We are going to add two new tables:</p>
+<ul>
+<li>One called <code>STATIONS</code> based on stations.csv</li>
+<li>One called <code>LINES</code> on lines.csv</li>
+</ul>
+<p>Follow the steps found <a href="https://docs.snowflake.com/en/user-guide/data-load-web-ui" target="_blank">here</a> to load in your data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up" duration="0">
+        <h2 is-upgraded>Import The Notebook</h2>
+<ul>
+<li>We&#39;ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!</li>
+<li>Download the .ipynb found <a href="https://github.com/neo4j-product-examples/snowflake-graph-analytics/tree/main/modeling-disruptions-subways" target="_blank">here</a>, and import the notebook into snowflake.</li>
+<li>Don&#39;t forget to install streamlit and python package before you run.</li>
+</ul>
+<h2 is-upgraded>Permissions</h2>
+<p>Before we run our algorithms, we need to set the proper permissions. But before we get started granting different roles, we need to ensure that you are using <code>accountadmin</code> to grant and create roles. Lets do that now:</p>
+<pre><code>USE ROLE accountadmin;
+</code></pre>
+<p>Next let&#39;s set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the <code>mta.public schema</code>. It creates a consumer role (gds_user_role) for users and administrators, grants the Neo4j Graph Analytics application access to read from and write to tables and views, and ensures that future tables are accessible.</p>
+<p>It also provides the application with access to the required compute pool and warehouse resources needed to run graph algorithms at scale.</p>
+<pre><code>-- Create a consumer role for users and admins of the GDS application
+CREATE ROLE IF NOT EXISTS gds_user_role;
+CREATE ROLE IF NOT EXISTS gds_admin_role;
+GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_user_role;
+GRANT APPLICATION ROLE neo4j_graph_analytics.app_admin TO ROLE gds_admin_role;
+
+CREATE DATABASE ROLE IF NOT EXISTS gds_db_role;
+GRANT DATABASE ROLE gds_db_role TO ROLE gds_user_role;
+GRANT DATABASE ROLE gds_db_role TO APPLICATION neo4j_graph_analytics;
+
+-- Grant access to consumer data
+GRANT USAGE ON DATABASE MTA TO ROLE gds_user_role;
+GRANT USAGE ON SCHEMA MTA.PUBLIC TO ROLE gds_user_role;
+
+-- Required to read tabular data into a graph
+GRANT SELECT ON ALL TABLES IN DATABASE MTA TO DATABASE ROLE gds_db_role;
+
+-- Ensure the consumer role has access to created tables/views
+GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT CREATE TABLE ON SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT CREATE VIEW ON SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON ALL VIEWS IN SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_db_role;
+
+-- Compute and warehouse access
+GRANT USAGE ON WAREHOUSE NEO4J_GRAPH_ANALYTICS_APP_WAREHOUSE TO APPLICATION neo4j_graph_analytics;
+</code></pre>
+<p>Then we need to switch the role we created:</p>
+<pre><code>USE ROLE gds_user_role;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Our Data" duration="5">
+        <p>We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:</p>
+<h2 is-upgraded>For The Table Representing Nodes:</h2>
+<p>The first column should be called <code>nodeId</code>, which represents the ids for the each node in our graph</p>
+<h2 is-upgraded>For The table Representing Relationships:</h2>
+<p>We need to have columns called <code>sourceNodeId</code> and <code>targetNodeId</code>. These will tell Graph Analytics the direction of the relationships, which in this case means:</p>
+<ul>
+<li>The starting station (sourceNodeId) and</li>
+<li>The ending station (targetNodeId)</li>
+</ul>
+<pre><code>CREATE OR REPLACE TABLE mta.public.nodes AS
+SELECT 
+  id AS nodeid
+FROM mta.public.stations;
+</code></pre>
+<pre><code>CREATE OR REPLACE TABLE mta.public.relationships AS
+SELECT 
+    sourcenodeid,
+    targetnodeid
+FROM mta.public.lines;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running Your Algorithms" duration="10">
+        <p>Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run dijksra to determine the shortest path between subway stations.</p>
+<p>You can find more information about writing this function in our <a href="https://neo4j.com/docs/snowflake-graph-analytics/current/getting-started/" target="_blank">documentation</a>.</p>
+<pre><code>CALL neo4j_graph_analytics.graph.dijkstra(&#39;CPU_X64_XS&#39;, {
+&#39;defaultTablePrefix&#39;: &#39;mta.public&#39;,
+  &#39;project&#39;: {
+    &#39;nodeTables&#39;: [&#39;nodes&#39;], 
+    &#39;relationshipTables&#39;: {
+      &#39;relationships&#39;: {
+        &#39;sourceTable&#39;: &#39;nodes&#39;,
+        &#39;targetTable&#39;: &#39;nodes&#39;
+      }
+    }
+  },
+  &#39;compute&#39;: { &#39;sourceNode&#39;: 68,
+                &#39;targetNode&#39;: 24, 
+                &#39;sourceNodeTable&#39;: &#39;nodes&#39;
+            },
+  &#39;write&#39;: [
+    {
+    &#39;sourceLabel&#39;: &#39;nodes&#39;,
+    &#39;targetLabel&#39;: &#39;nodes&#39;,
+    &#39;outputTable&#39;:  &#39;mta.public.paths&#39;
+    }
+  ]
+});
+</code></pre>
+<pre><code>select * from mta.public.paths
+</code></pre>
+<p>We can then use a simple SQL query to take our numeric nodeids and return the stations in order:</p>
+<pre><code>WITH flattened AS (
+  SELECT 
+    VALUE::NUMBER AS nodeid,
+    INDEX AS ordering
+  FROM mta.public.paths,
+       LATERAL FLATTEN(input =&gt; nodeids)
+),
+filtered AS (
+  SELECT s.*, f.ordering
+  FROM mta.public.stations s
+  JOIN flattened f ON s.id = f.nodeid
+)
+SELECT *
+FROM filtered
+ORDER BY ordering;
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>STATION_NAME</p>
+</td><td colspan="1" rowspan="1"><p>ID</p>
+</td><td colspan="1" rowspan="1"><p>ORDERING</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Bergen St - Bk</p>
+</td><td colspan="1" rowspan="1"><p>68</p>
+</td><td colspan="1" rowspan="1"><p>0</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Atlantic Av-Barclays Ctr - Bk</p>
+</td><td colspan="1" rowspan="1"><p>67</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Canal St - M</p>
+</td><td colspan="1" rowspan="1"><p>32</p>
+</td><td colspan="1" rowspan="1"><p>2</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>14 St-Union Sq - M</p>
+</td><td colspan="1" rowspan="1"><p>104</p>
+</td><td colspan="1" rowspan="1"><p>3</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>34 St-Herald Sq - M</p>
+</td><td colspan="1" rowspan="1"><p>230</p>
+</td><td colspan="1" rowspan="1"><p>4</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Times Sq-42 St - M</p>
+</td><td colspan="1" rowspan="1"><p>24</p>
+</td><td colspan="1" rowspan="1"><p>5</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Modeling a Disruption" duration="15">
+        <p>But what would happen if one of those stations were closed? How can we model what would be the new path? Luckily it will be pretty simple.</p>
+<p>First we need to filter out the station that is closed from our nodes and relationships tables. Let&#39;s say that Herald Square is closed:</p>
+<pre><code>CREATE OR REPLACE TABLE mta.public.nodes_f AS
+SELECT *
+FROM mta.public.nodes
+WHERE nodeid != 230;
+</code></pre>
+<pre><code>CREATE OR REPLACE TABLE mta.public.relationships_f AS
+SELECT *
+FROM mta.public.relationships
+WHERE sourcenodeid != 230 and targetnodeid != 230;
+</code></pre>
+<p>Then we use those new tables when we run our algorithm:</p>
+<pre><code>CALL neo4j_graph_analytics.graph.dijkstra(&#39;CPU_X64_XS&#39;, {
+&#39;defaultTablePrefix&#39;: &#39;mta.public&#39;,
+  &#39;project&#39;: {
+    &#39;nodeTables&#39;: [&#39;nodes_f&#39;], 
+    &#39;relationshipTables&#39;: {
+      &#39;relationships_f&#39;: {
+        &#39;sourceTable&#39;: &#39;nodes_f&#39;,
+        &#39;targetTable&#39;: &#39;nodes_f&#39;
+      }
+    }
+  },
+  &#39;compute&#39;: { &#39;sourceNode&#39;: 68,
+                &#39;targetNode&#39;: 24, 
+                &#39;sourceNodeTable&#39;: &#39;nodes_f&#39;
+            },
+  &#39;write&#39;: [
+    {
+    &#39;sourceLabel&#39;: &#39;nodes_f&#39;,
+    &#39;targetLabel&#39;: &#39;nodes_f&#39;,
+    &#39;outputTable&#39;:  &#39;mta.public.paths_f&#39;
+    }
+  ]
+});
+</code></pre>
+<p>And then we can pull back our results like so:</p>
+<pre><code>CREATE OR REPLACE VIEW mta.public.filtered_station_captions AS
+WITH flattened AS (
+  SELECT 
+    VALUE::NUMBER AS nodeid,
+    INDEX AS ordering
+  FROM mta.public.paths_f,
+       LATERAL FLATTEN(input =&gt; nodeids)
+),
+filtered AS (
+  SELECT 
+    s.id AS nodeid,
+    s.station_name AS caption, 
+    f.ordering,
+  FROM mta.public.stations s
+  JOIN flattened f ON s.id = f.nodeid
+)
+SELECT 
+    nodeid,
+    ordering,
+    caption
+FROM filtered
+ORDER BY ordering;
+
+select * from mta.public.filtered_station_captions
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>NODEID</p>
+</td><td colspan="1" rowspan="1"><p>ORDERING</p>
+</td><td colspan="1" rowspan="1"><p>CAPTION</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>68</p>
+</td><td colspan="1" rowspan="1"><p>0</p>
+</td><td colspan="1" rowspan="1"><p>Bergen St - Bk</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>67</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>Atlantic Av-Barclays Ctr - Bk</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>32</p>
+</td><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>Canal St - M</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>104</p>
+</td><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>14 St-Union Sq - M</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>103</p>
+</td><td colspan="1" rowspan="1"><p>4</p>
+</td><td colspan="1" rowspan="1"><p>Grand Central-42 St - M</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>186</p>
+</td><td colspan="1" rowspan="1"><p>5</p>
+</td><td colspan="1" rowspan="1"><p>5 Av - M</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>24</p>
+</td><td colspan="1" rowspan="1"><p>6</p>
+</td><td colspan="1" rowspan="1"><p>Times Sq-42 St - M</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize Your Graph (Experimental)" duration="0">
+        <p>At this point, you may want to visualize your graph to get a better understanding of how everything fits together. It would be nice to have our new station path represented visually. We already have everything we need for the nodes from our last step, but we also need to create a relationship table, which we do below:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW mta.public.relationships_view AS
+WITH ordered_nodes AS (
+  SELECT
+    nodeid AS sourcenodeid,
+    LEAD(nodeid) OVER (ORDER BY ordering) AS targetnodeid
+  FROM mta.public.filtered_station_captions
+)
+SELECT *
+FROM ordered_nodes
+WHERE targetnodeid IS NOT NULL;
+</code></pre>
+<p>We use our <code>filtered_station_captions</code> table as our nodes. Notice how we have a column named <code>caption</code> in that table with our station names? That naming is on purpose. Graph Analytics automatically picks up on that name and uses it to generate captions for each node.</p>
+<p>From here, our syntax will look very familiar to what we have had before when running algorithms.</p>
+<pre><code>CALL Neo4j_Graph_Analytics.experimental.visualize(
+{
+    &#39;nodeTables&#39;: [&#39;mta.public.filtered_station_captions&#39;],
+    &#39;relationshipTables&#39;: {
+      &#39;mta.public.relationships_view&#39;: {
+        &#39;sourceTable&#39;: &#39;mta.public.filtered_station_captions&#39;,
+        &#39;targetTable&#39;: &#39;mta.public.filtered_station_captions&#39;
+      }
+    }
+  },
+  {}
+);
+</code></pre>
+<p>We can access the output of the previous cell by referencing its cell name, in this case viz. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the viz output as a Pandas DataFrame, then accessing the first row of the &#34;VISUALIZE&#34; column.</p>
+<pre><code language="language-python" class="language-python">import streamlit.components.v1 as components
+
+components.html(
+    viz.to_pandas().loc[0][&#34;VISUALIZE&#34;],
+    height=600
+)
+</code></pre>
+<p class="image-container"><img alt="image" src="img/4d7bad67bd29b4ec.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusions And Resources" duration="2">
+        <p>In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>Using our NYC Subway dataset, you were able to:</p>
+<ol type="1">
+<li>Set up the <a href="https://app.snowflake.com/marketplace/listing/GZTDZH40CN/neo4j-neo4j-graph-analytics" target="_blank">Neo4j Graph Analytics</a> application within Snowflake.</li>
+<li>Prepare and project your data into a graph model (stations as nodes, lines as relationships).</li>
+<li>Ran dijkstra to find the shortest path between two stations and to model alternative routes if a station was closed</li>
+</ol>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://neo4j.com/docs/snowflake-graph-analytics/" target="_blank">Neo4j Graph Analytics Documentation</a></li>
+<li><a href="https://neo4j.com/docs/snowflake-graph-analytics/installation/" target="_blank">Installing Neo4j Graph Analytics on SPCS</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

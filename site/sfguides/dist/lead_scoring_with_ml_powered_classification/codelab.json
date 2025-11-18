@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "lead_scoring_with_ml_powered_classification",
+  "duration": 18,
+  "title": "Lead Scoring with ML-Powered Classification",
+  "summary": "Shows how marketers can predict the value of leads and new",
+  "source": "lead_scoring_with_ml_powered_classification/lead_scoring_with_ml_powered_classification.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "solution-examples",
+    "marketing"
+  ],
+  "tags": [
+    "adtech",
+    "gettingstarted",
+    "machinelearning",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "lead_scoring_with_ml_powered_classification"
+}

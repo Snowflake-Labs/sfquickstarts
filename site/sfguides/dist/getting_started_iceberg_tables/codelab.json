@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting_started_iceberg_tables",
+  "duration": 55,
+  "title": "Getting Started with Iceberg Tables",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "getting_started_iceberg_tables/getting_started_iceberg_tables.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "datalake",
+    "gettingstarted",
+    "iceberg",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_iceberg_tables"
+}

@@ -1,0 +1,21 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting-started-with-llamaparse-and-cortex-search",
+  "duration": 25,
+  "title": "Getting Started with LlamaParse and Cortex Search",
+  "summary": "Parse Documents with LlamaParse and Search with Cortex",
+  "source": "getting_started_with_llamaparse_and_cortex_search/getting-started-with-llamaparse-and-cortex-search.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": null,
+  "tags": [
+    "web"
+  ],
+  "url": "getting-started-with-llamaparse-and-cortex-search"
+}

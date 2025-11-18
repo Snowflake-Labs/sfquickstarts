@@ -1,0 +1,364 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Compare Google, Bing, Facebook, LinkedIn, and X Ads Campaigns with Snowflake &amp; Rivery</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="compare_google,_bing,_facebook,_linkedin,_and_x_ads_campaigns_with_snowflake_and_rivery"
+                  title="Compare Google, Bing, Facebook, LinkedIn, and X Ads Campaigns with Snowflake &amp; Rivery"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>A large portion of most B2B marketing teams&#39; budget goes toward digital Ads. This budget is often spread across multiple online advertising channels such as Google Ads, Bing Ads, YouTube Ads (aka paid search channels), Facebook Ads, LinkedIn Ads, and X Ads (aka paid social channels). This spread makes it hard to understand campaign performance across channels, before diving deeper into channel-specific optimizations. Optimizing your paid Ads strategy starts with finding the answers to questions like:</p>
+<ul>
+<li>Which channel performs the best for which campaign?</li>
+<li>What portion of my budget should be allocated towards which channel?</li>
+<li>How effective are different campaigns when run on paid search vs. paid social?</li>
+</ul>
+<p>Getting these answers can be done manually in spreadsheets using a non-scalable, time-consuming process or by investing in a complex data integration project that requires extracting data from different sources, loading it into a centralized target, modeling it, and visualizing it. A project that can easily occupy a data team for a full quarter. With Snowflake and Rivery, this can be accomplished in minutes.</p>
+<p>Using Rivery&#39;s no-code integrations to all of those sources and a template workflow to join and model the data across B2B paid Ads sources your data will be ready for analysis within Snowflake in no time. Moreover, you can then use Rivery&#39;s <a href="https://rivery.io/integration/" target="_blank">200+ data source integrations</a> and further enrich your Snowflake data models with data from your CRM and product usage to get a complete view and increase your real return on ad spend (ROAS).</p>
+<p>In this lab, Marketing Analysts, BI Developers, and Data Engineers will learn how easily they can build a complete paid Ads performance analytics solution with Rivery and Snowflake.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to an existing Snowflake account, or a <a href="https://signup.snowflake.com/" target="_blank">new Snowflake trial account</a>, with <code>SYSADMIN</code> role.</li>
+<li>OPTIONAL: User accounts to access Google Ads, Bing Ads, Facebook Ads, LinkedIn Ads, and X Ads. Since walking through this lab is quick and we assume you may not have these accounts handy while doing the lab, we provide you with sample data to run through the lab steps. You can always repeat the same steps with the real accounts of those sources.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this lab, you will learn how to set up a data pipeline that orchestrates the integration of data from Google Ads (including YouTube Ads), Bing Ads, Facebook Ads (including Instagram Ads), LinkedIn Ads, and X Ads in Snowflake so the data is ready for analysis. In this process, you will learn:</p>
+<ul>
+<li>How to use Snowflake Partner Connect to launch a Rivery account</li>
+<li>How to configure a Rivery kit with connections to the data sources</li>
+<li>How to schedule the kit data workflow template that includes: <ul>
+<li>Source (Ads sources) to target (Snowflake) data pipelines</li>
+<li>SQL queries data transformations to create a unified data model</li>
+</ul>
+</li>
+<li>How to set up a Snowflake Snowsight Dashboard to perform visual analytics using the Rivery prebuilt SaaS B2B paid Ads data model</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>You will build data pipelines in Rivery to extract advertising data from multiple channels into Snowflake.</li>
+<li>You will create a unified data model in Snowflake by transforming and merging data from all advertising sources.</li>
+<li>You will design an interactive dashboard in Snowsight to visualize metrics like impressions, clicks, and spend.</li>
+<li>You will develop cross-channel analytics to compare campaign performance and optimize budget allocation.</li>
+<li>You will establish a scalable analytics foundation that can be enriched with CRM and product usage data.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up a Rivery account" duration="2">
+        <p><strong>If you already have a Rivery account you can skip this step.</strong></p>
+<p>The easiest way to start a Rivery account with an established connection to your Snowflake account is to utilize <strong>Snowflake&#39;s Partner Connect</strong>. Within Snowsight this can be found under Data Products &gt; Partner Connect &gt; Search for Rivery.</p>
+<p class="image-container"><img alt="Set up a Rivery account" src="img/d919359b2bb68f95.png"></p>
+<p>Once you select Rivery, you&#39;ll be prompted with a &#34;Connect to Rivery&#34; screen that contains your Snowflake database, warehouse, system credentials, and system role. Hit <code>Connect and activate</code> to launch the Rivery console in your browser. Within Rivery, you will be prompted to enter a password to use with Rivery and to create your account. This will set up both your Rivery account and Snowflake Target connection within Rivery ensuring you are ready to skip to the next step.</p>
+<p><strong><em>If you&#39;ve utilized Snowflake&#39;s Partner Connect to create your Rivery account you can skip to Step 3.</em></strong></p>
+<aside class="special"><p>If you&#39;d like to set up a Rivery account separately, you can do so by navigating to Rivery&#39;s <a href="https://rivery.io/" target="_blank">website</a> and clicking <a href="https://rivery.io/free-trial/" target="_blank">‘Start for Free&#39;</a>. You can also use <a href="https://docs.rivery.io/docs/setting-up-a-rivery-account" target="_blank">this link</a> to find more information. You can now configure your Snowflake connection in Rivery. This will be needed later on as we point your paid Ads data (our Sources) into Snowflake (our Target). Navigate to your <a href="https://console.rivery.io/" target="_blank">Rivery account</a>. From here, you can go to Connections &gt; New Connection &gt; Snowflake, fill in the connection details, and test the connection. More information can be found <a href="https://docs.rivery.io/docs/snowflake-as-a-target" target="_blank">here</a>.</p>
+</aside>
+<p class="image-container"><img alt="Snowflake connection" src="img/a98e05afbaa841f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup the Target Database and Schemas" duration="5">
+        <p>Create a dedicated Snowflake database and schemas (for the marketing channels) to use for this Quickstart lab and make sure the Rivery Role which is auto created by Partner Connect has the permissions to use this database and Schemas (if you are not using Partner Connect, please adjust the below to use your own Role name). To do so, simply open a new SQL worksheet under the Snowflake console project menu and run the following SQL query in the Snowflake console (make sure you select <code>Run All</code>):</p>
+<pre><code language="language-sql" class="language-sql">begin;
+
+  /* switch to the sysadmin role which has privileges to create databases in an account. */
+    USE ROLE sysadmin;
+    
+  /* Create database and schemas for marketing data, this step is optional */  
+    CREATE DATABASE MARKETING_QUICKSTART;
+    USE DATABASE MARKETING_QUICKSTART;
+    
+    CREATE SCHEMA FACEBOOK_ADS;
+    CREATE SCHEMA GOOGLE_ADS;
+    CREATE SCHEMA BING_ADS;
+    CREATE SCHEMA LINKEDIN_ADS;
+    CREATE SCHEMA X_ADS;
+    CREATE SCHEMA DIGITAL_AD_ANALYTICS;
+   
+  /* grant the Rivery Role access to database */
+   grant CREATE SCHEMA, MONITOR, USAGE
+   on database MARKETING_QUICKSTART
+   to role PC_RIVERY_ROLE;
+
+  /* Grant access to all existing sachems on the database */
+   grant ALL on all SCHEMAS IN DATABASE MARKETING_QUICKSTART to ROLE PC_RIVERY_ROLE;
+
+commit; 
+</code></pre>
+<p class="image-container"><img alt="SQL Query" src="img/8c246b181a82563d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use the Rivery Paid Ads to Snowflake kit" duration="10">
+        <p>Navigate to the kits marketplace by hitting <code>Kits</code> from the left navigation menu.</p>
+<p class="image-container"><img alt="Kits" src="img/74b58d90b746bb0b.png"></p>
+<p>If you currently don&#39;t have accounts for Google Ads, Bing Ads, Facebook Ads, LinkedIn Ads, and X Ads to be used with this lab, search for the « B2B Paid Ads Campaigns Performance - with Sample Data » and open it by clicking on the <code>Preview</code> button. If you do have those accounts, preview the same kit which isn&#39;t the Quickstart Lab edition.</p>
+<p>Here you review the kit details including the required configuration steps and expected data model.</p>
+<p class="image-container"><img alt="Kit details" src="img/b3b79b9a6808a5db.png"></p>
+<p>Hit the <code>Use Kit</code> button on the top right and set your connections:</p>
+<p class="image-container"><img alt="Use Kit" src="img/b3b79b9a6808a5db.png"></p>
+<p>Assuming you are using the Quickstart lab kit, instead of seeing the connections for the different Ads sources you will only see one connection for a PostgreSQL database. This database holds the sample data to be used for this lab. Hit the <code>Add new +</code> button and enter the details of the sample database dedicated to this lab:</p>
+<pre><code language="language-text" class="language-text">Connection Name: Public Postgres Demo Instance
+Host: rds-pg-snowflake-lab-demo-us-east-2.cyaie4xhe0v4.us-east-2.rds.amazonaws.com
+Port: 5432 (default value)
+Database: demoSnowflakeLab
+Username: snowflake
+Password: Sn0wflakeQuickstart$
+Disconnect handling: Optimistic (default value)
+</code></pre>
+<p class="image-container"><img alt="Sample database" src="img/af850d714c6c85c8.png"></p>
+<p>More information on connecting to a PostgreSQL database can be found on the right side of the screen as well as <a href="https://docs.rivery.io/docs/create-a-connection" target="_blank">here</a>.</p>
+<aside class="special"><p>Rivery offers a few different methods to ensure a secured connection to databases including SSH, Reverse SSH, VPN, AWS PrivateLink, and Azure Private Link but for the since this database is used to store the sample data, we will skip those in this lab. If you would like to connect to your own databases later, you may want to use <a href="https://docs.rivery.io/docs/security" target="_blank">one of the methods</a> mentioned above per your organization&#39;s preferences.</p>
+</aside>
+<p>For Snowflake, choose your existing connection (created in step 2) using the drop-down list.</p>
+<p>Once you set your connections, hit the <code>Next</code> button and your kit will be on it&#39;s way (all the pipelines will be imported to your Rivery account).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set your variables and run the data workflow" duration="10">
+        <p>Once your kit is added successfully, hit the <code>View Rivers</code> button. You will see all the Rivers (pipelines) of the kit:</p>
+<h2 is-upgraded>Variables Setup</h2>
+<p>In this kit, there are variables that are used to make for dynamic Target configuration. <code>{DATABASE_MARKETING}</code> is used in all Target configurations and queries as the target database name. For Target schemas, there are 6 variables to configure, one for each Source, and one schema for the final fact table created. Go to the <code>Variables</code> menu on the left side navigation bar and create variables for all of the above by hitting the <code>Add Variable</code> button. When creating each variable, fill in the values as the Snowflake database and schema(s) where you would like the data to land. If you used the script specified in the prerequisites section, you should use the following values:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Variable Name</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Value</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>DATABASE_MARKETING</p>
+</td><td colspan="1" rowspan="1"><p>MARKETING_QUICKSTART</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SCHEMA_MARKETING</p>
+</td><td colspan="1" rowspan="1"><p>DIGITAL_AD_ANALYTICS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SCHEMA_FACEBOOK</p>
+</td><td colspan="1" rowspan="1"><p>FACEBOOK_ADS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SCHEMA_LINKEDIN</p>
+</td><td colspan="1" rowspan="1"><p>LINKEDIN_ADS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SCHEMA_X</p>
+</td><td colspan="1" rowspan="1"><p>X_ADS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SCHEMA_BING</p>
+</td><td colspan="1" rowspan="1"><p>BING_ADS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SCHEMA_GOOGLE</p>
+</td><td colspan="1" rowspan="1"><p>GOOGLE_ADS</p>
+</td></tr>
+</table>
+<p>Once completed, your Variables menu should look like this:</p>
+<p class="image-container"><img alt="Variables" src="img/25d1fcf8ceae454a.png"></p>
+<h2 is-upgraded>Run the data workflow</h2>
+<p>Open the <strong>Master Logic - Build All Channels Fact Table river</strong>. This is the main data pipeline that orchestrates the entire workflow. Hit the <code>Run</code> button to execute it.</p>
+<p class="image-container"><img alt="Master logic" src="img/fde5acc042803c15.png"></p>
+<p>Running this workflow triggers the ingestion data pipelines that pulling data from the different Ad channels into your Snowflake database. Once in ingestion is done and all the data is in your Snowflake database, the last step of the workflow is to execute an in-database SQL query to model the data and unify it into a single table.</p>
+<p>You can monitor the execution result and make sure your River run was successful under the <strong>Activities</strong> menu available from the right hand side menu.</p>
+<aside class="special"><p>When using your real data, you can also modify the list of channel to ingest by toggling on and off the specific channels ingestion step as well as modifying the final step SQL query to comment out the channels that are not relevant. Once executed successfully, you would also want to schedule the workflow under the Settings tab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up a Snowflake dashboard and analyze the data" duration="10">
+        <p>Once you successfully run the main river, your data should be available in Snowflake under the All_Channels_Fact_Table table located under the DIGITAL_AD_ANALYTICS schema within the MARKETING_QUICKSTART database.</p>
+<p>You can now create a Snowsight dashboard to compare the channels&#39; performance using data from this table.</p>
+<p>Click the <code>Dashboards</code> item in the left navbar. This will display the Dashboard UI. Click <code>+ Dashboard</code> in the upper right to begin the dashboard creation process. You can name it as you wish - for example: &#34;Marketing Paid Ads Analytics&#34;.</p>
+<p class="image-container"><img alt="Dashboards" src="img/dd8e6d4f07c34947.png"></p>
+<h2 is-upgraded>Filters Setup</h2>
+<p>Before you create tiles (visuals), let&#39;s create filters to be used across the dashboard tiles. Click on the <code>Filters</code> icon on the top left:</p>
+<p class="image-container"><img alt="Filters" src="img/a388cbe7edf0171e.png"></p>
+<h2 is-upgraded>Filter 1: Channel</h2>
+<p>Within the filters menu, click on the + Filter on the top right and fill in the filter details:</p>
+<ul>
+<li>Display Name: Channel</li>
+<li>SQL Keyword: :channel</li>
+<li>Description: filter by channel</li>
+</ul>
+<p>Set the Role and Warehouse of choice and hit the <code>Write Query</code> button. On the next screen, enter the following SQL query:</p>
+<pre><code language="language-sql" class="language-sql">select distinct CHANNEL from MARKETING_QUICKSTART.DIGITAL_AD_ANALYTICS.ALL_CHANNELS_FACT_TABLE
+</code></pre>
+<p class="image-container"><img alt="Write query" src="img/502f398a568444af.png"></p>
+<p>Run the query using the blue Play button on the top right and go back to the filter setting screen by hitting the <code>Done</code> label on the top left.</p>
+<p>Scroll down and make sure to toggle the option to allow &#34;Multiple values can be selected&#34; as well as &#34;Include an &#34;All&#34; option&#34;.</p>
+<p>Once done your filter should look like this:</p>
+<p class="image-container"><img alt="Filter 1" src="img/4ebf2b18988c8b74.png"></p>
+<h2 is-upgraded>Filter 2: Channel Type</h2>
+<p>Create another filter with the same settings except for:</p>
+<ul>
+<li>Display Name: Channel Type</li>
+<li>SQL Keyword: :channeltype</li>
+<li>Description: filter by channel type</li>
+</ul>
+<p>SQL Query:</p>
+<pre><code language="language-sql" class="language-sql">select distinct channel_type from MARKETING_QUICKSTART.DIGITAL_AD_ANALYTICS.ALL_CHANNELS_FACT_TABLE
+</code></pre>
+<p>The end result should show 4 filters (including the default <strong>datebucket</strong> and <strong>daterange</strong>):</p>
+<p class="image-container"><img alt="Filter 1" src="img/ad6501de9559c70d.png"></p>
+<h2 is-upgraded>Tiles Setup</h2>
+<p>Tiles represent dashboard objects, and each tile represents a separate execution of SQL and visualization in the dashboard. Below is the process that can be followed for all tiles in this lab:</p>
+<ol type="1">
+<li>On the top left, click on the <code>+</code> menu, <code>New Tile</code> and choose <code>From SQL Worksheet</code>.</li>
+<li>Copy and paste the SQL for each tile into the SQL section in the tile worksheet.</li>
+<li>Click the <code>Play</code> button and ensure you are receiving results. Always select the database and schemas or use a full path in SQL for database.schema.table/view. In addition, make sure the date range filter is set to &#34;All time&#34; instead of &#34;Last day&#34;.</li>
+<li>Set tile name and enable the chart display by clicking the Chart button (except where a table is to be rendered like Tile #5).</li>
+<li>To get the tiles to look like the ones in this lab, simply apply the metadata in the Chart Type section (except for Tile #4) on the right side of the UI to match the image in each tile section below.</li>
+</ol>
+<p>Once all the tiles are created, you may move them around on the dashboard to your liking.</p>
+<h2 is-upgraded>Tile 1: Impressions</h2>
+<pre><code language="language-sql" class="language-sql">select
+    CHANNEL,
+    sum(impressions) as Impressions
+from
+    MARKETING_QUICKSTART.DIGITAL_AD_ANALYTICS.ALL_CHANNELS_FACT_TABLE
+where
+    channel = :channel
+    and date = :daterange
+    and channel_type = :channeltype
+group by
+    (CHANNEL)
+
+</code></pre>
+<p class="image-container"><img alt="Impressions" src="img/79b19415f92bba1a.png"></p>
+<h2 is-upgraded>Tile 2: Clicks</h2>
+<pre><code language="language-sql" class="language-sql">select
+    CHANNEL,
+    sum(clicks) as Clicks
+from
+    MARKETING_QUICKSTART.DIGITAL_AD_ANALYTICS.ALL_CHANNELS_FACT_TABLE
+where
+    channel = :channel
+    and date = :daterange
+    and channel_type = :channeltype
+group by
+    (CHANNEL)
+</code></pre>
+<p class="image-container"><img alt="Clicks" src="img/9d000f33151e2f5f.png"></p>
+<h2 is-upgraded>Tile 3: Spend</h2>
+<pre><code language="language-sql" class="language-sql">select
+    CHANNEL,
+    Round(sum(spend)) as Spend
+from
+    MARKETING_QUICKSTART.DIGITAL_AD_ANALYTICS.ALL_CHANNELS_FACT_TABLE
+where
+    channel = :channel
+    and date = :daterange
+    and channel_type = :channeltype
+group by
+    (CHANNEL)
+</code></pre>
+<p class="image-container"><img alt="Spend" src="img/a47323e6ecde258b.png"></p>
+<h2 is-upgraded>Tile 4: Clicks by Channel over time</h2>
+<pre><code language="language-sql" class="language-sql">select
+    CHANNEL,
+    sum(clicks) as Clicks,
+    DATE 
+from
+    MARKETING_QUICKSTART.DIGITAL_AD_ANALYTICS.ALL_CHANNELS_FACT_TABLE
+where
+    channel = :channel
+    and date = :daterange
+    and channel_type = :channeltype
+group by
+    (CHANNEL, DATE)
+</code></pre>
+<p class="image-container"><img alt="Clicks by channel over time" src="img/88304404173e43f.png"></p>
+<h2 is-upgraded>Tile 5: Campaign Results</h2>
+<pre><code language="language-sql" class="language-sql">select
+    channel_type,
+    CHANNEL,
+    CAMPAIGN,
+    sum(impressions) as Impressions,
+    sum(clicks) as Clicks,
+    sum(spend) as Spend    
+from
+    MARKETING_QUICKSTART.DIGITAL_AD_ANALYTICS.ALL_CHANNELS_FACT_TABLE
+where
+    channel = :channel
+    and date = :daterange
+    and channel_type = :channeltype
+group by
+    (CHANNEL, CAMPAIGN, channel_type)
+    order by CHANNEL_TYPE asc
+</code></pre>
+<p class="image-container"><img alt="Campaign results" src="img/aaeec0bd2e86c0b1.png"></p>
+<h2 is-upgraded>Final Dashboard Layout</h2>
+<p>With all the tiles created, you can control your visual layout. Here is an example of a suggested layout. Now, you can start using the filters and easily compare campaign performance across channels:</p>
+<p class="image-container"><img alt="Final dashboard" src="img/2086866273ab158e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conculsion And Resources" duration="2">
+        <p>Congratulations! You&#39;ve now configured a complete data analytics solution for your paid Ads using Rivery and Snowflake data migration pipeline.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use Snowflake partner connect to launch a Rivery account</li>
+<li>How to connect to your different data sources using Rivery</li>
+<li>How to use a Rivery kit to set a complete data integration solution with source to target pipelines and data transformations to load data into Snowflake and model it</li>
+<li>How to visually analyze the modeled data using a Snowflake Snowsight dashboard to get valuable insights into your paid Ads performance across all Ads channels.</li>
+<li>How to setup an Ads data model foundation that can be further augmented with data from your CRM and other operational system for deeper insights using Rivery and Snowflake.</li>
+</ul>
+<p>Want to to learn more? Get up to speed on other <a href="https://rivery.io/partners-snowflake/" target="_blank">Rivery and Snowflake integrations</a> to simplify your data delivery.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

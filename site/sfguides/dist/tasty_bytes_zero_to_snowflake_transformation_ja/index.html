@@ -1,0 +1,397 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - ゼロからのSnowflake - 変換</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_zero_to_snowflake_transformation_ja"
+                  title="Tasty Bytes - ゼロからのSnowflake - 変換"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Snowflakeでの変換" duration="1">
+        <p class="image-container"><img src="img/f8bc76ba6d917730.png"></p>
+<h2 is-upgraded>概要</h2>
+<p>Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。今回は変換を中心的に取り上げます。</p>
+<p>このクイックスタートでは、Snowflakeのさまざまな機能をご紹介し、Tasty Bytesのビジネス要件を満たすゼロコピークローンやタイムトラベルなどの主要機能について詳しく説明します。</p>
+<h2 is-upgraded>前提条件</h2>
+<ul>
+<li>開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している<a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html" target="_blank"><strong>Tasty Bytesの紹介クイックスタート</strong></a>を完了しておくようにしてください。</li>
+</ul>
+<h2 is-upgraded>学習する内容</h2>
+<ul>
+<li>テーブルのクローンを作成する方法</li>
+<li>Snowflakeの結果セットキャッシュを使用する方法</li>
+<li>テーブルに列を追加する方法</li>
+<li>列のデータを更新する方法</li>
+<li>タイムトラベルを使用する方法</li>
+<li>テーブルをスワップ、ドロップ、アンドロップする方法</li>
+</ul>
+<h2 is-upgraded>構築するもの</h2>
+<ul>
+<li>重要なSnowflake変換機能の理解</li>
+<li>本番テーブルの開発テーブルクローン</li>
+<li>計算されたキッチンカーの使用年数を格納する、テーブルの新しい列</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ワークシートの作成とSQLのコピー" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。</p>
+<p>本セクションでは、Snowflakeへのログイン、新しいワークシートの作成、ワークシートの名前の変更、GitHubからのSQLのコピー、このクイックスタートで利用するSQLの貼り付けについて説明します。</p>
+<h2 is-upgraded>ステップ1 - URLでSnowflakeにアクセスする</h2>
+<ul>
+<li>ブラウザウィンドウを開き、SnowflakeアカウントのURLを入力します</li>
+</ul>
+<h2 is-upgraded>ステップ2 - Snowflakeにログインする</h2>
+<ul>
+<li>Snowflakeアカウントにログインします。 <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ3 - ワークシートに移動する</h2>
+<ul>
+<li>左側のナビゲーションバーにある「ワークシート」タブをクリックします。 <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ4 - ワークシートを作成する</h2>
+<ul>
+<li>ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。 <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ5 - ワークシートの名前を変更する</h2>
+<ul>
+<li>自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - 変換」と入力してワークシートの名前を変更します。 <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ6 - GitHubでQuickstart SQLにアクセスする</h2>
+<ul>
+<li>下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQLファイルに移動します。<a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_transformation.sql" target="_blank"><paper-button class="colored" raised>tb_zts_transformation</paper-button></a></li>
+</ul>
+<h2 is-upgraded>ステップ7 - GitHubからSetup SQLをコピーする</h2>
+<ul>
+<li>GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。 <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける</h2>
+<ul>
+<li>Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（<em>Macの場合はCMD + V、Windowsの場合はCTRL + V</em>）。</li>
+</ul>
+<h2 is-upgraded>ステップ9 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="開発用に本番テーブルのクローンを即座に作成する" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>Tasty Bytesのキッチンカーフリート分析の一環として、私たちの開発者は、計算されたキッチンカーの使用年数列をキッチンカーテーブルに追加するタスクを任されました。</p>
+<p>優れた開発者である私たちは、本番テーブルに対して開発を行ってはならないということを認識しています。そのため、まず本番環境を模した開発環境を作成する必要があります。</p>
+<h2 is-upgraded>ステップ1 - 本番のクローンを作成する</h2>
+<p>Snowflakeの独自のアーキテクチャのおかげで、<a href="https://docs.snowflake.com/ja/sql-reference/sql/create-clone" target="_blank">CLONE</a>機能を使用して本番<code>raw_pos.truck</code>のスナップショットを即時に作成し、それを<code>raw_pos.truck_dev</code>と名づけることができます。</p>
+<p>では、次の一連のクエリを実行し、<code>tasty_dev</code>ロールコンテキストを設定しテーブルクローンを作成しましょう。ここでは、クローン作成にウェアハウスコンテキストは必要ないため、ウェアハウスコンテキストの設定は必要ありません。</p>
+<pre><code>USE ROLE tasty_dev;
+
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
+    CLONE frostbyte_tasty_bytes.raw_pos.truck;
+</code></pre>
+<p class="image-container"><img src="img/5b99d036e2b7f1c5.png"></p>
+<aside class="special"><p><strong>ゼロコピークローン</strong>：データベース、スキーマまたはテーブルのコピーを作成します。クローンの作成時にソースオブジェクトに存在するデータのスナップショットが取得され、クローンオブジェクトで利用できるようになります。 クローンオブジェクトは書き込み可能であり、クローン元から独立しています。つまり、ソースオブジェクトまたはクローンオブジェクトのどちらかに加えられた変更は、もう一方のオブジェクトには反映されないということです。</p>
+</aside>
+<h2 is-upgraded>ステップ2 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflakeのクエリ結果セットキャッシュのテスト" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>ゼロコピークローンが即時に利用できるため、本番環境に影響を与える不安なく、クローンに対して開発を開始できます。ただし、何らかの変更を加える前に、まず簡単なクエリを実行し、Snowflakeの結果セットキャッシュをテストしてみましょう。</p>
+<h2 is-upgraded>ステップ1 - クローンテーブルをクエリする</h2>
+<p>次に、テーブルをクエリするにあたり、<code>tasty_dev_wh</code>ウェアハウスを使用する必要があります。</p>
+<p>次の2つのクエリを開始しましょう。2番目のステートメントでは、キッチンカー、その使用年数、メーカー、モデルを含む結果セットを生成し、<code>truck_id</code>列で<a href="https://docs.snowflake.com/ja/sql-reference/constructs/order-by" target="_blank">ORDER BY</a>を実行します。</p>
+<pre><code>USE WAREHOUSE tasty_dev_wh;
+
+SELECT
+    t.truck_id,
+    t.year,
+    t.make,
+    t.model
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
+ORDER BY t.truck_id;
+</code></pre>
+<p class="image-container"><img src="img/be7f1afb641310a7.png"></p>
+<h2 is-upgraded>ステップ2 - クエリを再実行する</h2>
+<p>Snowflakeの<a href="https://docs.snowflake.com/ja/user-guide/querying-persisted-results" target="_blank">結果セットキャッシュ</a>をテストするために実行するクエリは、先ほど実行したものと同じです。しかし、ここではさらに一歩進んで、このクエリが結果セットキャッシュから結果が届くとすぐに結果を返したことを示すクエリプロファイルにアクセスします。</p>
+<p>以下のクエリを実行した後、スクリーンショットの手順に従って<a href="https://docs.snowflake.com/ja/user-guide/ui-query-profile" target="_blank">クエリプロファイル</a>にアクセスします。クエリプロファイルを調べると、<code>QUERY RESULT REUSE</code>と書かれている単一のノードがあるのが分かります。</p>
+<pre><code>SELECT
+    t.truck_id,
+    t.year,
+    t.make,
+    t.model
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
+ORDER BY t.truck_id;
+</code></pre>
+<p class="image-container"><img src="img/c21de369a9e0f27e.png"><img src="img/fc1173575cf0a777.png"></p>
+<aside class="special"><p> ユーザーが既に実行されたクエリを繰り返し、クエリが最後に実行されてからテーブル内のデータが変更されていない場合、クエリの結果は同じになります。Snowflakeは、クエリを再実行する代わりに、以前に返された結果と同じ結果を返します。</p>
+<p>Snowflakeはクエリの実行をバイパスし、代わりにキャッシュから直接結果を取得するため、これによりクエリ時間を大幅に短縮できます。</p>
+</aside>
+<h2 is-upgraded>ステップ3 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="データの更新とキッチンカーの使用年数の計算" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>上記の出力に基づき、まず<code>make</code>列に表示されたFord_ recordsのタイプミスに対処する必要があります。その後、各キッチンカーの使用年数を算出する計算に取りかかることができます。</p>
+<h2 is-upgraded>ステップ1 - 列内の誤った値を更新する</h2>
+<p>このセクションを始めるにあたり、次のクエリを実行してタイプミスを修正していきましょう。ここでは、<a href="https://docs.snowflake.com/ja/sql-reference/sql/update" target="_blank">UPDATE</a>を使用して、<a href="https://docs.snowflake.com/ja/sql-reference/constructs/where" target="_blank">WHERE</a>でメーカーがFord_と一致する<code>truck_dev</code>の行を変更します。</p>
+<pre><code>UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev 
+SET make = &#39;Ford&#39; 
+WHERE make = &#39;Ford_&#39;;
+</code></pre>
+<p class="image-container"><img src="img/5a932a5c48ee2c34.png"></p>
+<h2 is-upgraded>ステップ2 - 使用年数計算を構築する</h2>
+<p>タイプミスを修正したので、フリート内のキッチンカーの使用年数を計算できるようになりました。次のクエリを実行してください。ここでは、<a href="https://docs.snowflake.com/ja/sql-reference/functions/year" target="_blank">YEAR</a>と<a href="https://docs.snowflake.com/ja/sql-reference/functions/current_date" target="_blank">CURRENT_DATE</a>をこの計算に利用していきます。</p>
+<pre><code>SELECT
+    t.truck_id,
+    t.year,
+    t.make,
+    t.model,
+    (YEAR(CURRENT_DATE()) - t.year) AS truck_age_year
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
+</code></pre>
+<p class="image-container"><img src="img/4a3ecdf97771687.png"></p>
+<h2 is-upgraded>ステップ3 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="列の追加と更新" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>キッチンカーの使用年数の計算がすべて終わりましたので、対応する新しい列をクローンテーブルに追加し、仕上げに列を更新して計算された値を反映させましょう。</p>
+<h2 is-upgraded>ステップ1 - 列をテーブルに追加する</h2>
+<p>まず、<a href="https://docs.snowflake.com/ja/sql-reference/sql/alter-table-column" target="_blank">ALTER TABLE...</a>を使用する次のクエリを実行してください。<a href="https://docs.snowflake.com/ja/sql-reference/sql/alter-table-column" target="_blank">ADD COLUMN</a>で、<a href="https://docs.snowflake.com/ja/sql-reference/data-types-numeric" target="_blank">データ型がNUMBER</a>の空の<code>truck_age</code>列を<code>truck_dev</code>テーブルに作成します。</p>
+<p>このクエリで、<code>Statement executed successfully</code>の結果が得られます。</p>
+<pre><code>ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
+    ADD COLUMN truck_age NUMBER(4);
+</code></pre>
+<h2 is-upgraded>ステップ2 - 計算値を列に追加する</h2>
+<p>列を追加したので、次のクエリを開始できるようになります。ここでは、前のセクションで構築したキッチンカーの使用年数計算を使用して新しい空の<code>truck_age</code>列を<a href="https://docs.snowflake.com/ja/sql-reference/sql/update" target="_blank">UPDATE</a>します。</p>
+<pre><code>UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
+    SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
+</code></pre>
+<p class="image-container"><img src="img/16741f97c6b07b7.png"></p>
+<h2 is-upgraded>ステップ 3 - 新しい列をクエリする</h2>
+<p>データの更新が成功したら、次にテーブルに対して簡単なクエリを実行し、<code>truck_age</code>列がどのように見えるか確認してみましょう。</p>
+<pre><code>SELECT
+    t.truck_id,
+    t.year,
+    t.truck_age
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
+</code></pre>
+<p class="image-container"><img src="img/de784695cb66e2a.png"></p>
+<p><strong>大変です！</strong> 私たちが優れた開発者であり、やみくもに本番環境でこれをしでかさなかったことに感謝しておきましょう。</p>
+<p><code>truck_age</code>の計算を間違えて、引き算ではなく割り算をしてしまったようです。  次のセクションでは、これを解決する必要があります。</p>
+<h2 is-upgraded>ステップ4 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="タイムトラベルを利用したデータ災害からの回復" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>私たちはミスをしましたが、Snowflakeにはトラブル解消に役立つ多くの機能が備わっています。このプロセスでは、クエリ履歴、SQL変数、タイムトラベルを活用して、<code>truck_dev</code>テーブルを、誤った更新ステートメントを実行する前の状態に戻します。</p>
+<aside class="special"><p> Snowflakeのタイムトラベル機能では、定義された期間内の任意の時点で履歴データ（変更または削除されたデータ）にアクセスできます。</p>
+</aside>
+<h2 is-upgraded>ステップ1 - クエリ履歴を活用する</h2>
+<p>リカバリプロセスを開始するにあたり、まず次のクエリを実行します。ここでは、Snowflake <a href="https://docs.snowflake.com/ja/sql-reference/functions/query_history" target="_blank">QUERY_HISTORY</a>関数を使用し、<code>truck_dev</code>テーブルで実行したすべての更新ステートメントのリストを取得します。</p>
+<pre><code>SELECT 
+    query_id,
+    query_text,
+    user_name,
+    query_type,
+    start_time
+FROM TABLE(frostbyte_tasty_bytes.information_schema.query_history())
+WHERE 1=1
+    AND query_type = &#39;UPDATE&#39;
+    AND query_text LIKE &#39;%frostbyte_tasty_bytes.raw_pos.truck_dev%&#39;
+ORDER BY start_time DESC;
+</code></pre>
+<p class="image-container"><img src="img/462cda7dc123e199.png"></p>
+<h2 is-upgraded>ステップ2 - SQL変数を設定する</h2>
+<p>予想通り、タイプミスの修正と間違った計算の更新、およびそれらに関連する一意のquery_idが表示されます。次のクエリを実行してください。ここでは、<code>query_id</code> SQL変数を作成します。次のステップではその変数を使ってタイムトラベルで変更を元に戻します。</p>
+<p>実行すると<code>Statement executed successfully</code>の結果が得られます。</p>
+<pre><code>SET query_id = 
+(
+    SELECT TOP 1 query_id
+    FROM TABLE(frostbyte_tasty_bytes.information_schema.query_history())
+    WHERE 1=1
+        AND query_type = &#39;UPDATE&#39;
+        AND query_text LIKE &#39;%SET truck_age = (YEAR(CURRENT_DATE()) / t.year);&#39;
+    ORDER BY start_time DESC
+);
+</code></pre>
+<h2 is-upgraded>ステップ3 - タイムトラベルを活用してテーブルを戻す</h2>
+<p>誤ったquery_idが変数として保存されているため、次のクエリを実行し、タイムトラベルを使用して<code>truck_dev</code>テーブルを誤ったquery_id文の<a href="https://docs.snowflake.com/ja/sql-reference/constructs/at-before" target="_blank">BEFORE</a>の状態に置き換えることができます。</p>
+<pre><code>CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
+    AS 
+SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev
+BEFORE(STATEMENT =&gt; $query_id); 
+
+</code></pre>
+<p class="image-container"><img src="img/feb25e368432f8f1.png"></p>
+<p>利用できるその他のタイムトラベルステートメントのオプションについては、以下のリストを参照してください。</p>
+<aside class="special"><p><strong>AT：</strong> ATキーワードは、指定されたパラメータに等しいタイムスタンプを持つステートメント、またはトランザクションによる変更がリクエストに含まれることを指定します。</p>
+<p><strong>BEFORE：</strong> BEFOREキーワードは、リクエストが指定されたパラメータの直前のポイントを参照するように指定します。</p>
+<p><strong>TIMESTAMP：</strong> タイムトラベルに使用する正確な日付と時刻を指定します。</p>
+<p><strong>OFFSET：</strong> タイムトラベルに使用する現在時刻との差を秒単位で指定します。</p>
+<p><strong>STATEMENT：</strong> タイムトラベルの参照ポイントとして使用するステートメントのクエリIDを指定します。</p>
+</aside>
+<h2 is-upgraded>ステップ4 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="開発を本番に昇格" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p><code>truck_dev</code>テーブルを誤った更新ステートメントの前の状態に戻すことができたので、次に列を正しく更新することができます。ここから、正しい計算を行ったテーブルを本番に昇格させ、割り当てられたタスクを完了させます。</p>
+<h2 is-upgraded>ステップ1 - 正しく計算された値を列に追加する</h2>
+<p>前と同じプロセスを使って、次のクエリを実行し、割り算ではなく引き算を使っていることを再確認してください。</p>
+<pre><code>UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
+SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
+</code></pre>
+<p class="image-container"><img src="img/b9eb9242cea655e6.png"></p>
+<h2 is-upgraded>ステップ2 - 開発テーブルを本番と入れ替える</h2>
+<p><code>truck_dev</code>のすべてが完了したところで、次の2つのクエリを開始してください。ここではまず、より権限のある<code>sysadmin</code>ロールを引き受けます。<code>sysadmin</code>として、2つ目のクエリは<a href="https://docs.snowflake.com/ja/sql-reference/sql/alter-table" target="_blank">ALTER TABLE... SWAP WITH</a>を使用して、<code>truck_dev</code>テーブルを<code>truck</code>に昇格させ、その逆も実行します。</p>
+<p>完了すると<code>Statement executed successfully.</code>の結果が得られます。</p>
+<pre><code>USE ROLE sysadmin;
+
+ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
+    SWAP WITH frostbyte_tasty_bytes.raw_pos.truck;
+</code></pre>
+<h2 is-upgraded>ステップ3 - 本番を検証する</h2>
+<p>プロセスが成功したことを確認するために、本番の<code>truck</code>テーブルを確認し、入れ替えが成功し、<code>truck_age</code>の結果が有効であることを検証しましょう。</p>
+<pre><code>SELECT
+    t.truck_id,
+    t.year,
+    t.truck_age
+FROM frostbyte_tasty_bytes.raw_pos.truck t
+WHERE t.make = &#39;Ford&#39;;
+
+</code></pre>
+<p class="image-container"><img src="img/c9cfc453a65358f5.png"></p>
+<h2 is-upgraded>ステップ4 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="テーブルのドロップとドロップ解除" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>私たちの開発者は任せられたタスクを完了したと明言することができるでしょう。<code>truck_age</code>列が整備され、正しく計算されるようになったため、<code>sysadmin</code>が残りのテーブルをクリーンアップし、その日の作業を終えることができます。</p>
+<h2 is-upgraded>ステップ1 - テーブルをドロップする</h2>
+<p>データベースからテーブルを削除するために、<a href="https://docs.snowflake.com/ja/sql-reference/sql/drop-table" target="_blank">DROP TABLE</a>を利用する次のクエリを実行してください。</p>
+<pre><code>DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
+</code></pre>
+<p class="image-container"><img src="img/b52965b1f575ffb0.png"></p>
+<p><strong>大変です！</strong> この結果セットを見ると、<code>sysadmin</code>でさえも間違いを犯すということが分かります。誤って、開発の<code>truck_dev</code>ではなく本番の<code>truck</code>をドロップしてしまいました。ありがたいことに、ここでもSnowflakeのタイムトラベルが活躍します。</p>
+<h2 is-upgraded>ステップ2 - テーブルをドロップ解除する</h2>
+<p>システムに影響が出る前に次のクエリを急いで実行し、<code>truck</code>テーブルを<a href="https://docs.snowflake.com/ja/sql-reference/sql/undrop-table" target="_blank">UNDROP</a>しましょう。</p>
+<pre><code>UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
+</code></pre>
+<p class="image-container"><img src="img/e41b5f53934abd4f.png"></p>
+<h2 is-upgraded>ステップ3 - 正しいテーブルをドロップする</h2>
+<p>さて、最後に、締めくくりとして<code>truck_dev</code>を正しくドロップするクエリを実行しましょう。</p>
+<pre><code>DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
+</code></pre>
+<p class="image-container"><img src="img/e7fb6b69180c3bb0.png"></p>
+<h2 is-upgraded>ステップ4 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめと次のステップ" duration="1">
+        <h2 is-upgraded>まとめ</h2>
+<p>すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - 変換クイックスタートが無事完了しました。</p>
+<p>これにより、次のことができるようになりました。</p>
+<ul>
+<li>テーブルのクローンを作成する</li>
+<li>Snowflakeの結果セットキャッシュを使用する</li>
+<li>テーブルに列を追加する</li>
+<li>列のデータを更新する</li>
+<li>タイムトラベルを利用してデータ災害から回復する</li>
+<li>テーブルの入れ替え、ドロップ、およびドロップ解除を行う</li>
+</ul>
+<p>このクイックスタートを再実行したい場合は、関連するワークシートの下部にあるリセットスクリプトを利用してください。</p>
+<h2 is-upgraded>次のステップ</h2>
+<p>引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html#3" target="_blank">Powered by Tasty Bytes - クイックスタート目次</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

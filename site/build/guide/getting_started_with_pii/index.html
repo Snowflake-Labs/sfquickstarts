@@ -1,0 +1,447 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_pii"
+                  title="Process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This is the code companion to the &#34;Journey to Processing PII in the Data Cloud&#34; session from <a href="https://www.snowflake.com/build/" target="_blank">Snowflake BUILD 2021</a>. That session was itself a companion to <a href="https://www.snowflake.com/blog/the-journey-to-processing-pii-in-the-data-cloud/" target="_blank">a blog post by the same name</a> which had a business concept focus. As promised in the BUILD session, this code walkthrough is meant to show you how the features Snowflake offers can help you achieve your governance, security, and compliance goals for protecting PII and other sensitive information while leveraging the power of the Data Cloud.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Basic SQL Knowledge</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account with at least Enterprise Edition features</li>
+<li>Access to the Snowflake out of the box sample data</li>
+<li>A second Enterprise Edition Snowflake Account if you wish to follow along with the policy enforcement through Data Sharing example</li>
+<li>At the time of this publication two of the features discussed were in preview mode, and you will need to have these activated in both your Snowflake Accounts if you wish to see those working live</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use Snowflake <a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview.html" target="_blank">RBAC and DAC</a></li>
+<li>How to use Snowflake <a href="https://docs.snowflake.com/en/user-guide/security-column.html" target="_blank">Column Level Security</a></li>
+<li>How to use Snowflake <a href="https://docs.snowflake.com/en/user-guide/security-row.html" target="_blank">Row Access Policy</a></li>
+<li>How policies apply across <a href="https://docs.snowflake.com/en/user-guide/data-sharing-intro.html" target="_blank">Data Sharing</a></li>
+<li>A few bonus facts about Snowflake&#39;s <a href="https://docs.snowflake.com/en/user-guide/json-basics-tutorial.html" target="_blank">JSON processing</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A table derived from sample data containing fake (but realistic) PII</li>
+<li>RBAC protections for that table</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-column-ddm.html" target="_blank">Dynamic Data Masking</a> policies to protect the PII table</li>
+<li>Row Access Policies to protect the PII table</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create your users and roles" duration="5">
+        <p>First we&#39;ll create a set of users and roles to use for the rest of the demo.</p>
+<aside class="warning"><p>You MUST change the passwords assigned to each user. DO NOT use the samples given here. If you wish, you can remove the <code>password='usesomethinggoodthiswontwork' must_change_password = true</code> part of these SQL statements and skip to the key pair instructions below.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">-- create users are roles for the demo
+use role useradmin;
+create role itc_admin;
+create role marketing;
+create role it;
+create role infosec;
+create role executive;
+
+create user &#34;roy@itcrowd&#34;
+    default_warehouse=demo_wh default_role=it        password=&#39;usesomethinggoodthiswontwork&#39; must_change_password = true;
+create user &#34;moss@itcrowd&#34;
+    default_warehouse=demo_wh default_role=infosec   password=&#39;usesomethinggoodthiswontwork&#39; must_change_password = true;
+create user &#34;jen@itcrowd&#34;
+    default_warehouse=demo_wh default_role=it        password=&#39;usesomethinggoodthiswontwork&#39; must_change_password = true;
+create user &#34;denholm@itcrowd&#34;
+    default_warehouse=demo_wh default_role=executive password=&#39;usesomethinggoodthiswontwork&#39; must_change_password = true;
+create user &#34;douglas@itcrowd&#34;
+    default_warehouse=demo_wh default_role=marketing password=&#39;usesomethinggoodthiswontwork&#39; must_change_password = true;
+create user &#34;richmond@itcrowd&#34;
+    default_warehouse=demo_wh default_role=itc_admin password=&#39;usesomethinggoodthiswontwork&#39; must_change_password = true;
+
+-- ONLY USING PASSWORDS AT ALL SINCE THIS IS A DEMO WITH DUMMY DATA!!
+</code></pre>
+<p>During the demo you will see these users authenticated using Key Pair Authentication using the SnowSQL CLI. You can <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html" target="_blank">follow the documentation to create those key pairs</a> and then associate the public keys to each user like so:</p>
+<pre><code language="language-sql" class="language-sql">-- OPTIONAL KEY PAIR STEP
+alter user &#34;roy@itcrowd&#34; set rsa_public_key=&#39;MIIB...&#39;;
+alter user &#34;moss@itcrowd&#34; set rsa_public_key=&#39;MIIB...&#39;;
+alter user &#34;jen@itcrowd&#34; set rsa_public_key=&#39;MIIB...&#39;;
+alter user &#34;denholm@itcrowd&#34; set rsa_public_key=&#39;MIIB...&#39;;
+alter user &#34;douglas@itcrowd&#34; set rsa_public_key=&#39;MIIB...&#39;;
+alter user &#34;richmond@itcrowd&#34; set rsa_public_key=&#39;MIIB...&#39;;
+</code></pre>
+<p>Take a few minutes to make sure you can authenticate as these users before moving on to the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Grants roles and create database" duration="3">
+        <p>Here we finish the set up by granting roles to the users we&#39;ve created, access to a warehouse to those roles, and creating a database which we then hand over ownership to the admin for this fictional organization.</p>
+<pre><code language="language-sql" class="language-sql">use role useradmin;
+grant role itc_admin to user &#34;richmond@itcrowd&#34;;
+grant role marketing to user &#34;douglas@itcrowd&#34;;
+grant role it to user &#34;roy@itcrowd&#34;;
+grant role it to user &#34;moss@itcrowd&#34;;
+grant role infosec to user &#34;moss@itcrowd&#34;;
+grant role it to user &#34;jen@itcrowd&#34;;
+grant role executive to user &#34;denholm@itcrowd&#34;;
+
+use role &lt;ROLE_THAT_OWNS_THE_WAREHOUSE&gt;;
+grant usage on warehouse &lt;WAREHOUSE_YOU_WILL_USE&gt; to role itc_admin;
+grant usage on warehouse &lt;WAREHOUSE_YOU_WILL_USE&gt; to role marketing;
+grant usage on warehouse &lt;WAREHOUSE_YOU_WILL_USE&gt; to role it;
+grant usage on warehouse &lt;WAREHOUSE_YOU_WILL_USE&gt; to role executive;
+grant usage on warehouse &lt;WAREHOUSE_YOU_WILL_USE&gt; to role infosec;
+
+-- create objects to use as the demo objects
+use role sysadmin;
+create database REYNHOLM_IND_DATA;
+grant ownership on database REYNHOLM_IND_DATA to role itc_admin;
+</code></pre>
+<p>NOTE: If for some reason you&#39;re unable to create the users at all, then in this step grant these roles to your user and when the demo switches between users you will do <code>use <ROLE>;</code> statements instead to switch to the correct role. The code blocks will indicate the roles as we go through.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create table with fake but realistic PII and grant rights to it" duration="3">
+        <p>Here we grab 200 rows of fake but realistic PII from the sample data in the TPCDS testing set to use for our walkthrough. Also note that the <code>C_BIRTH_COUNTRY</code> and <code>OPTIN</code> columns will be populated at random with one of three values.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as richmond@itcrowd or another user with itc_admin role
+use role itc_admin;
+create schema REYNHOLM_IND_DATA.BASEMENT WITH MANAGED ACCESS;
+create table CUSTOMERS as (
+    SELECT 
+        a.C_SALUTATION,
+        a.C_FIRST_NAME,
+        a.C_LAST_NAME,
+        CASE UNIFORM(1,3,RANDOM()) WHEN 1 THEN &#39;UK&#39; WHEN 2 THEN &#39;US&#39; ELSE &#39;FRANCE&#39; END AS C_BIRTH_COUNTRY,
+        a.C_EMAIL_ADDRESS,
+        b.CD_GENDER,
+        b.CD_CREDIT_RATING,
+        CASE UNIFORM(1,3,RANDOM()) WHEN 1 THEN &#39;YES&#39; WHEN 2 THEN &#39;NO&#39; ELSE NULL END AS OPTIN
+    FROM 
+        SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.CUSTOMER a,
+        SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.CUSTOMER_DEMOGRAPHICS b
+    WHERE
+        a.C_CUSTOMER_SK = b.CD_DEMO_SK and 
+        a.C_SALUTATION is not null and
+        a.C_FIRST_NAME is not null and
+        a.C_LAST_NAME is not null and
+        a.C_BIRTH_COUNTRY is not null and
+        a.C_EMAIL_ADDRESS is not null and 
+        b.CD_GENDER is not null and
+        b.CD_CREDIT_RATING is not null
+    LIMIT 200 )
+;
+
+-- grant rights to roles for the demo objects
+grant usage on database REYNHOLM_IND_DATA to role itc_admin;
+grant usage on database REYNHOLM_IND_DATA to role marketing;
+grant usage on database REYNHOLM_IND_DATA to role it;
+grant usage on database REYNHOLM_IND_DATA to role executive;
+grant usage on database REYNHOLM_IND_DATA to role infosec;
+grant usage on schema REYNHOLM_IND_DATA.BASEMENT to role itc_admin;
+grant usage on schema REYNHOLM_IND_DATA.BASEMENT to role marketing;
+grant usage on schema REYNHOLM_IND_DATA.BASEMENT to role it;
+grant usage on schema REYNHOLM_IND_DATA.BASEMENT to role executive;
+grant usage on schema REYNHOLM_IND_DATA.BASEMENT to role infosec;
+grant select on table REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS to role marketing;
+grant select on table REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS to role it;
+grant select on table REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS to role executive;
+
+-- show that the current role can currently see the data
+select * from REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS limit 50;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Put policy framework in place and explore Managed Access Schema" duration="5">
+        <p>Now we start putting controls in place on the data itself. To do this, we need to give the rights to create and apply policies. Since these rights can be granted on their own to encourage separation of duties, we will have the admin who owns the data objects grant policy control to the fictional infosec group.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as richmond@itcrowd or another user with itc_admin role
+
+-- lock down the objects with column and row level security
+grant CREATE ROW ACCESS POLICY on schema REYNHOLM_IND_DATA.BASEMENT to role infosec;
+create table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING (
+  role_name varchar,
+  national_letter varchar,
+  allowed varchar
+);
+grant ownership on table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING to role infosec;
+grant create masking policy on schema REYNHOLM_IND_DATA.BASEMENT to role infosec;
+</code></pre>
+<p>Since we protected the schema itself with managed access, we will need to grant rights to that table using elevated rights. In the demo, we first try to grant the <code>OWNERSHIP</code> right, but that is blocked. For completeness, this is the code to see that block happen.</p>
+<pre><code language="language-sql" class="language-sql">-- this is done with your user with elevated rights
+use role securityadmin;
+grant ownership on table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING to role infosec;
+-- NOPE, blocked by Managed Access Schema
+</code></pre>
+<p>Instead of granting <code>OWNERSHIP</code> rights, we will instead grant <code>SELECT</code> and <code>INSERT</code> which are all that is needed. Forcing inly the grants of the required rights is the main point of using these managed access schemas.</p>
+<pre><code language="language-sql" class="language-sql">grant select on table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING to role infosec;
+grant insert on table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING to role infosec;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build and apply row access policy" duration="5">
+        <p>The first control will apply is a row access policy to ensure only authorized people get any information at all. The most common form this policy takes is a policy that reads from a table where the rules are maintained - a mapping table.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as moss@itcrowd or another user with infosec role
+use role infosec;
+insert into REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING
+  values
+  (&#39;ACCOUTADMIN&#39;,&#39;&#39;,&#39;FALSE&#39;),
+  (&#39;ITC_ADMIN&#39;,&#39;&#39;,&#39;FALSE&#39;),
+  (&#39;MARKETING&#39;,&#39;UK&#39;,&#39;TRUE&#39;),
+  (&#39;IT&#39;,&#39;US&#39;,&#39;TRUE&#39;),
+  (&#39;INFOSEC&#39;,&#39;&#39;,&#39;FALSE&#39;),
+  (&#39;EXECUTIVE&#39;,&#39;FRANCE&#39;,&#39;TRUE&#39;);
+
+use role infosec;
+create or replace row access policy REYNHOLM_IND_DATA.BASEMENT.makes_no_sense as (C_BIRTH_COUNTRY varchar) returns boolean -&gt;
+  case
+      -- check for full read access
+      when exists ( 
+            select 1 from REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING
+              where role_name = current_role()
+                and C_BIRTH_COUNTRY like national_letter
+                and allowed = &#39;TRUE&#39;
+          ) then true
+      -- control for the share
+      when (
+          invoker_share() in (&#39;REYNHOLM_IND_DATA_SHARE&#39;)
+          and C_BIRTH_COUNTRY=&#39;UK&#39;
+          ) then true
+      -- always default deny
+      else false
+  end
+;
+
+-- granting apply rights won&#39;t work with managed access schema
+--grant apply on row access policy REYNHOLM_IND_DATA.BASEMENT.makes_no_sense to role itc_admin;
+</code></pre>
+<p>Now we grant the rights to apply this policy to the admin for the data set. It&#39;s normal for the security and governance folks to maintain the policy logic, while the people closer to the data apply the policies since they are aware of in which tables the data which needs protecting lives. Of course, this is even better when automated through governance and security solutions that takes the human element out entirely.</p>
+<pre><code language="language-sql" class="language-sql">use role securityadmin;
+grant apply on row access policy REYNHOLM_IND_DATA.BASEMENT.makes_no_sense to role itc_admin;
+</code></pre>
+<p>The admin now applies the policy to the table.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as richmond@itcrowd or another user with itc_admin role
+use role ITC_ADMIN;
+alter table REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS add row access policy REYNHOLM_IND_DATA.BASEMENT.makes_no_sense on (C_BIRTH_COUNTRY);
+--alter table REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS drop row access policy REYNHOLM_IND_DATA.BASEMENT.makes_no_sense;
+</code></pre>
+<p>Finally, we use a marketing persona to check if the policy has the desired effects.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as douglas@itcrowd or another user with marketing role
+use role marketing;
+select * from REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS limit 50;
+-- study the results returned to see the effects of the row access policy
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build and apply column level security to achieve dynamic data masking" duration="5">
+        <p>Now we will lock down things at the column level. In this step, we will use conditional masking which is a preview feature at the time of this writing. If this feature is not activated in your Snowflake account, you can use the alternate version of this policy which masks the column values completely.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as moss@itcrowd or another user with infosec role
+use role infosec;
+
+-- conditional masking version
+create masking policy REYNHOLM_IND_DATA.BASEMENT.hide_optouts as
+(col_value varchar, optin string) returns varchar -&gt;
+  case
+    when optin = &#39;YES&#39; then col_value
+    else &#39;***MASKED***&#39;
+  end;
+  
+-- full column masking version, always masks
+create masking policy REYNHOLM_IND_DATA.BASEMENT.hide_column_values as
+(col_value varchar) returns varchar -&gt;
+  case
+    when 1=1 then &#39;***MASKED***&#39;
+    else &#39;***MASKED***&#39;
+  end;
+</code></pre>
+<p>Grant the rights to apply the policy (replace this with the alternate policy if that&#39;s what you&#39;ve used).</p>
+<pre><code language="language-sql" class="language-sql">use role securityadmin;
+grant apply on masking policy REYNHOLM_IND_DATA.BASEMENT.hide_optouts to role itc_admin;
+</code></pre>
+<p>Apply the policy to the table.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as richmond@itcrowd or another user with itc_admin role
+use role ITC_ADMIN;
+alter table REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS modify column C_EMAIL_ADDRESS
+    set masking policy REYNHOLM_IND_DATA.BASEMENT.hide_optouts using (C_EMAIL_ADDRESS, OPTIN);
+</code></pre>
+<p>Check to see that this has the desired effects.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as douglas@itcrowd or another user with marketing role
+use role marketing;
+select * from REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS limit 50;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="See policy enforcement through a secure data share" duration="7">
+        <p>Now we will create a share from the Snowflake Account you&#39;ve been using up to this point to a second account and observe how the policies are enforced. When you created the row access policy, part of it made reference to the <code>REYNHOLM_IND_DATA_SHARE</code>. You will need that string now. So copy it and be ready to paste it.</p>
+<p>Go back to the home screen in the UI, expand Data, and click on Shared Data. There you will see a &#34;Share Data&#34; button in the upper right hand corner. Click that, and then select &#34;Share With Other Accounts&#34; from the menu. <img alt="BUILD_2021_PII_Journey&amp;ndash;Share_With_Other_Accounts" src="img/792e420d97856ceb.jpeg"></p>
+<p>Click &#34;Select Data&#34; to expand the selection dialog, and navigate to the <code>CUSTOMERS</code> table we&#39;ve been using to do all the other steps. <img alt="BUILD_2021_PII_Journey&amp;ndash;Share_Data" src="img/d210c5afadc97fd8.jpeg"></p>
+<p>A value will be populated into the the &#34;Secure Share Identifier,&#34; but we want to override that value. Paste in the <code>REYNHOLM_IND_DATA_SHARE</code> you copied from the row access policy. This ensures the policy and the share will match. You can put in whatever you see fit for a description, and then specify your second Snowflake Account in the last text box which will say &#34;Add accounts in your region by name or URL&#34; until you start typing into it. <img alt="BUILD_2021_PII_Journey&amp;ndash;Share_Data_Details" src="img/6e2d5123222ac32b.jpeg"></p>
+<p>Now switch to the second account where you have shared the data to - the consumer account. Go to the home screen in the UI, expand Data, and click on Shared Data. On the &#34;Shared With Me&#34; tab, search for the share you just created and click on it once you locate it. <img alt="BUILD_2021_PII_Journey&amp;ndash;Consumer_Shared_Data" src="img/24753ab3abe2af01.jpeg"></p>
+<p>A value will be populated into the the &#34;Database name,&#34; but we want to override that value. Paste in the <code>REYNHOLM_IND_DATA_SHARE</code> you copied from the row access policy. This ensures the policy and the share will match. Select any roles you wish from the menu for access, and then click &#34;Get Data&#34; to create the share. <img alt="BUILD_2021_PII_Journey&amp;ndash;Consumer_Get_Data" src="img/d47386261a416eb4.jpeg"></p>
+<p>Finally, we will select some data from this new share to see how the policy will effect it.</p>
+<pre><code language="language-sql" class="language-sql">use role ACCOUNTADMIN; -- or use the role you granted access in the Get Data screen
+select * from REYNHOLM_IND_DATA_SHARE.BASEMENT.CUSTOMERS;
+</code></pre>
+<p>At this point, go back to the first Snowflake Account where we built the table and shared it to the consuming account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tag the information" duration="5">
+        <p>Now we will use another preview feature (at the time of this writing), <a href="https://docs.snowflake.com/en/user-guide/object-tagging.html" target="_blank">Object Tagging</a>. This allows you to apply important metadata right at the level where the information is stored. Remember, you should now be working in the first Snowflake Account where you did all the steps prior to the sharing work in the last step.</p>
+<p>First we need to grant the rights to use the tagging feature to our users&#39; roles.</p>
+<pre><code language="language-sql" class="language-sql">-- tag the objects 
+use role securityadmin;
+grant create tag on schema REYNHOLM_IND_DATA.BASEMENT to role infosec;
+use role accountadmin;
+grant apply tag on account to role itc_admin;
+</code></pre>
+<p>The infosec role will create the tags which can be applied. Tags themselves are best managed centrally to avoid namespace explosion.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as moss@itcrowd or another user with infosec role
+use role infosec;
+create tag REYNHOLM_IND_DATA.BASEMENT.peter;
+create tag REYNHOLM_IND_DATA.BASEMENT.calendar;
+</code></pre>
+<p>Like the policies, the tag values will be applied to specific information by the admins who are closer to the actual data. Here we apply the tags and set their values for these objects.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as richmond@itcrowd or another user with itc_admin role
+use role itc_admin;
+alter table REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS set tag 
+    REYNHOLM_IND_DATA.BASEMENT.PETER = &#39;file&#39;, 
+    REYNHOLM_IND_DATA.BASEMENT.CALENDAR = &#39;geeks&#39;;
+
+select system$get_tag(&#39;REYNHOLM_IND_DATA.BASEMENT.calendar&#39;, &#39;REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS&#39;, &#39;table&#39;) as CALENDAR;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Classify the information" duration="3">
+        <p>Now we will use another preview feature (at the time of this writing), Classification. This will examine the information&#39;s contents and attempt to use out of the box intelligence to classify the information into categories.</p>
+<p>Run the classification function on the table we&#39;ve been using.</p>
+<pre><code language="language-sql" class="language-sql">-- start doing this as jen@itcrowd or another user with it role
+use role it;
+select extract_semantic_categories(&#39;REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS&#39;);
+</code></pre>
+<p>The JSON output can be complex for a human to read; so let&#39;s use the JSON parsing built into SNowflake to look at only a subset of the data.</p>
+<pre><code language="language-sql" class="language-sql">select VALUE from TABLE(FLATTEN(EXTRACT_SEMANTIC_CATEGORIES(&#39;REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS&#39;)::VARIANT:CD_GENDER)) AS f;
+</code></pre>
+<p>We can further parse that JSON to give us a simple tabular view of what the outcome of classification is.</p>
+<pre><code language="language-sql" class="language-sql">select 
+    f.value:&#34;privacy_category&#34;::varchar as privacy_category,  
+    f.value:&#34;semantic_category&#34;::varchar as semantic_category,
+    f.value:&#34;extra_info&#34;:&#34;probability&#34;::number(10,2) as probability
+from 
+    TABLE(
+        FLATTEN(EXTRACT_SEMANTIC_CATEGORIES(&#39;REYNHOLM_IND_DATA.BASEMENT.CUSTOMERS&#39;)::VARIANT)
+    ) AS f 
+where f.key=&#39;CD_GENDER&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean up and Conclusion" duration="3">
+        <p>To undo everything we&#39;ve done, start in the consumer account (the account where you did the &#34;Get Data&#34; to create the share) and drop the shared database. Then in the Snowflake Account where you did all the other steps, run this SQL.</p>
+<pre><code language="language-sql" class="language-sql">-- UNDO IT ALL
+use role accountadmin;
+drop share REYNHOLM_IND_DATA_SHARE;
+use role itc_admin;
+drop database REYNHOLM_IND_DATA;
+
+use role useradmin;
+drop user &#34;roy@itcrowd&#34;;
+drop user &#34;moss@itcrowd&#34;;
+drop user &#34;jen@itcrowd&#34;;
+drop user &#34;denholm@itcrowd&#34;;
+drop user &#34;douglas@itcrowd&#34;;
+drop user &#34;richmond@itcrowd&#34;;
+drop role itc_admin;
+drop role marketing;
+drop role it;
+drop role infosec;
+drop role executive;
+</code></pre>
+<p>If you missed the session this guide is based on, checkout the official <a href="https://www.snowflake.com/build/" target="_blank">Snowflake BUILD 2021 site</a> to watch the replay. And you can also read the <a href="https://www.snowflake.com/blog/the-journey-to-processing-pii-in-the-data-cloud/" target="_blank">blog post by the same name</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to use Snowflake <a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview.html" target="_blank">RBAC and DAC</a></li>
+<li>How to use Snowflake <a href="https://docs.snowflake.com/en/user-guide/security-column.html" target="_blank">Column Level Security</a></li>
+<li>How to use Snowflake <a href="https://docs.snowflake.com/en/user-guide/security-column-ddm.html" target="_blank">Dynamic Data Masking</a></li>
+<li>How to use Snowflake <a href="https://docs.snowflake.com/en/user-guide/security-row.html" target="_blank">Row Access Policy</a></li>
+<li>How policies apply across <a href="https://docs.snowflake.com/en/user-guide/data-sharing-intro.html" target="_blank">Data Sharing</a></li>
+<li>Preview features called Conditional Masking, Object Tagging, and Classification</li>
+<li>A few bonus facts about Snowflake&#39;s <a href="https://docs.snowflake.com/en/user-guide/json-basics-tutorial.html" target="_blank">JSON processing</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "setting-up-leads-notifications-in-slack",
+  "duration": 46,
+  "title": "Setting Up Leads Notifications in Slack",
+  "summary": "How to use webhooks for export Snowflake Marketplace lead information.",
+  "source": "setting-up-leads-notifications-in-slack/setting-up-leads-notifications-in-slack.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "setting-up-leads-notifications-in-slack"
+}

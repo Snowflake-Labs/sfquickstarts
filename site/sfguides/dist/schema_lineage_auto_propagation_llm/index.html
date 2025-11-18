@@ -1,0 +1,790 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A ETL-LLM Integration Guide: Automate and Ensure Consistent Schema Change Propagation using AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="schema_lineage_auto_propagation_llm"
+                  title="A ETL-LLM Integration Guide: Automate and Ensure Consistent Schema Change Propagation using AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Schema changes in upstream tables, like new fields from sources like Salesforce, must be carefully propagated to all downstream tables. Data Engineers manually tracking and updating each affected table is time-consuming and error-prone, often leading to broken pipelines and data inconsistencies. This guide leverages AI-powered automation to streamline schema propagation, ensuring accurate and consistent updates across data lineage, minimizing errors, and saving valuable time for data engineers.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL and Snowflake</li>
+<li>Basic knowledge of data lineage concepts</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A powerful solution for automated schema propagation that combines Snowflake&#39;s processing capabilities with the intelligence of LLMs, enabling end-to-end lineage management. By the end of this guide, you&#39;ll have a framework that detects schema changes in upstream tables and ensures their propagation downstream with AI precision.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>Streamlit in Snowflake</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an LLM-powered lineage manager that autonomously handles schema evolution across downstream tables</li>
+<li>Leveraging LLMs to automatically assess and adapt DDL changes, simplifying complex workflows</li>
+<li>Using Snowflake tasks for continuous schema monitoring</li>
+<li>Building an intuitive UI with Streamlit for managing schema propagation</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Architecture" duration="3">
+        <p>This solution leverages the intelligence of LLMs to dynamically analyze and respond to schema changes, creating a seamless flow of information across your data pipeline. The architecture of this application includes:</p>
+<ol type="1">
+<li><strong>Upstream and Downstream Tables in Snowflake</strong>: A series of tables that form a lineage, where updates in upstream tables must cascade downstream.</li>
+<li><strong>LLM-Powered Schema Analysis</strong>: The core engine uses LLMs to generate and apply appropriate DDL (Data Definition Language) modifications, ensuring the consistency of schema changes across all affected tables.</li>
+<li><strong>Schema Change Monitor</strong>: A Snowflake task that continuously tracks schema alterations in upstream tables and logs any detected changes.</li>
+<li><strong>Streamlit-based UI</strong>: Provides an accessible, intuitive interface to monitor and manage schema propagation, showcasing LLM-suggested DDL changes for review and approval.</li>
+<li><strong>Automated Propagation Workflow</strong>: Utilizes a directed graph traversal algorithm (DFS) to ensure the orderly propagation of changes across the entire data pipeline.</li>
+</ol>
+<h2 is-upgraded>Architecture Diagram</h2>
+<p class="image-container"><img src="img/d6e2ed6071fe73fe.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Initial (Dynamic) Tables" duration="5">
+        <p>This section includes the setup of the initial tables, which represent different levels in the data lineage (Bronze, Silver, Gold, etc.) using Dynamic Tables. We also create a baseline schema to detect future changes.</p>
+<p>The example below has this medallion structure:</p>
+<p>Bronze -&gt; Silver -&gt; Gold -&gt; Platinum -&gt; Gold2</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS cortex_llm_etl;
+CREATE SCHEMA IF NOT EXISTS schema_evolution;
+
+CREATE OR REPLACE TABLE bronze_salesforce_customers (
+    customer_id NUMBER(38,0),
+    customer_name VARCHAR(16777216),
+    customer_region VARCHAR(16777216),
+    created_date DATE    
+);
+
+INSERT INTO bronze_salesforce_customers (customer_id, customer_name, customer_region, created_date)
+VALUES
+    (101, &#39;Acme Corp&#39;, &#39;North&#39;, &#39;2022-01-01&#39;),
+    (102, &#39;Beta LLC&#39;, &#39;South&#39;, &#39;2021-06-15&#39;),
+    (103, &#39;Gamma Inc&#39;, &#39;East&#39;, &#39;2023-03-20&#39;),
+    (104, &#39;Delta Co&#39;, &#39;West&#39;, &#39;2022-09-10&#39;),
+    (105, &#39;Epsilon Ltd&#39;, &#39;North&#39;, &#39;2021-12-30&#39;);
+
+CREATE OR REPLACE DYNAMIC TABLE silver_customers
+WAREHOUSE = SETUP_WH
+LAG = &#39;1 day&#39;
+AS
+WITH base AS (
+    SELECT
+        customer_id,
+        customer_name,
+        customer_region,
+        created_date
+    FROM bronze_salesforce_customers
+)
+SELECT
+    customer_id,
+    customer_name,
+    UPPER(customer_region) AS region_standardized,  -- Standardize region to uppercase
+    DATEDIFF(&#39;day&#39;, created_date, CURRENT_DATE) AS account_age_days  -- Calculate account age in days
+FROM base
+WHERE created_date IS NOT NULL;
+
+CREATE OR REPLACE DYNAMIC TABLE gold_customer_analytics
+WAREHOUSE = SETUP_WH
+LAG = &#39;1 day&#39;
+AS
+WITH base AS (
+    SELECT
+        customer_id,
+        customer_name,
+        region_standardized,
+        account_age_days
+    FROM silver_customers
+)
+SELECT
+    customer_id,
+    customer_name,
+    region_standardized,
+    account_age_days,
+    
+    -- Derived field for customer lifetime category
+    CASE 
+        WHEN account_age_days &lt; 365 THEN &#39;New&#39;
+        WHEN account_age_days BETWEEN 365 AND 730 THEN &#39;Loyal&#39;
+        ELSE &#39;Long-Term&#39;
+    END AS customer_lifetime_category  -- New derived column for analytics
+FROM base;
+
+CREATE OR REPLACE DYNAMIC TABLE gold_customer_analytics_v2
+WAREHOUSE = SETUP_WH
+LAG = &#39;1 day&#39;
+AS
+WITH base AS (
+    SELECT
+        customer_id,
+        customer_name,
+        region_standardized,
+        account_age_days
+    FROM silver_customers
+)
+SELECT
+    customer_id,
+    customer_name,
+    region_standardized,
+    account_age_days,
+    
+    -- New field for customer engagement level based on account age
+    CASE 
+        WHEN account_age_days &lt; 180 THEN &#39;Newly Engaged&#39;
+        WHEN account_age_days BETWEEN 180 AND 540 THEN &#39;Moderately Engaged&#39;
+        ELSE &#39;Highly Engaged&#39;
+    END AS customer_engagement_level,
+    
+    -- Simple classification based on region for geographic grouping
+    CASE
+        WHEN region_standardized = &#39;NORTH&#39; OR region_standardized = &#39;SOUTH&#39; THEN &#39;Domestic&#39;
+        WHEN region_standardized = &#39;EAST&#39; OR region_standardized = &#39;WEST&#39; THEN &#39;International&#39;
+        ELSE &#39;Unknown&#39;
+    END AS geographic_category
+
+FROM base;
+
+CREATE OR REPLACE DYNAMIC TABLE platinum_customer_insights
+WAREHOUSE = SETUP_WH
+LAG = &#39;1 day&#39;
+AS
+WITH base AS (
+    SELECT
+        customer_id,
+        customer_name,
+        region_standardized,
+        account_age_days,
+        customer_lifetime_category
+    FROM gold_customer_analytics
+)
+SELECT
+    customer_id,
+    customer_name,
+    region_standardized,
+    account_age_days,
+    customer_lifetime_category,
+    
+    -- Derived field to indicate customer loyalty status
+    CASE 
+        WHEN customer_lifetime_category = &#39;Long-Term&#39; THEN &#39;High Loyalty&#39;
+        WHEN customer_lifetime_category = &#39;Loyal&#39; THEN &#39;Medium Loyalty&#39;
+        ELSE &#39;Low Loyalty&#39;
+    END AS customer_loyalty_status,
+    
+    -- Segmenting customers based on region for targeted marketing insights
+    CASE 
+        WHEN region_standardized = &#39;NORTH&#39; THEN &#39;Northern Market&#39;
+        WHEN region_standardized = &#39;SOUTH&#39; THEN &#39;Southern Market&#39;
+        WHEN region_standardized = &#39;EAST&#39; THEN &#39;Eastern Market&#39;
+        WHEN region_standardized = &#39;WEST&#39; THEN &#39;Western Market&#39;
+        ELSE &#39;Other Market&#39;
+    END AS market_segment,
+    
+    -- Assign a discount eligibility flag based on customer lifetime category and loyalty
+    CASE 
+        WHEN customer_lifetime_category = &#39;Long-Term&#39; OR customer_loyalty_status = &#39;High Loyalty&#39; THEN &#39;Eligible&#39;
+        ELSE &#39;Not Eligible&#39;
+    END AS discount_eligibility_flag,
+
+    -- Customer engagement level based on age and loyalty, for example purposes
+    CASE
+        WHEN account_age_days &gt; 730 AND customer_loyalty_status = &#39;High Loyalty&#39; THEN &#39;Highly Engaged&#39;
+        WHEN account_age_days BETWEEN 365 AND 730 THEN &#39;Moderately Engaged&#39;
+        ELSE &#39;Newly Engaged&#39;
+    END AS engagement_level
+
+FROM base;
+
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring Task" duration="4">
+        <p>In this part, you&#39;ll create a Snowflake task to continuously monitor schema changes in upstream tables. When a change is detected, the task logs it in a schema change log and updates the schema baseline for consistency.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE schema_baseline (  
+    table_name STRING,
+    column_name STRING,
+    data_type STRING
+);
+
+CREATE OR REPLACE TABLE schema_change_log (
+    change_detected_at TIMESTAMP,
+    table_name STRING,
+    column_name STRING,
+    data_type STRING,
+    change_type STRING
+);
+
+CREATE OR REPLACE TASK schema_change_monitor
+WAREHOUSE = SETUP_WH
+SCHEDULE = &#39;USING CRON * * * * * UTC&#39;  -- Runs every minute
+AS
+BEGIN
+    INSERT INTO schema_change_log (change_detected_at, table_name, column_name, data_type, change_type)
+    SELECT 
+        CURRENT_TIMESTAMP AS change_detected_at,
+        table_name,
+        column_name,
+        data_type,
+        &#39;ADDED&#39; AS change_type
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE table_schema = &#39;SCHEMA_EVOLUTION&#39;
+      AND table_catalog = &#39;CORTEX_LLM_ETL&#39;
+      AND column_name NOT IN (SELECT column_name FROM schema_baseline)
+      AND table_name != &#39;SCHEMA_CHANGE_LOG&#39;
+    ORDER BY TABLE_NAME;
+
+    INSERT INTO schema_baseline (table_name, column_name, data_type)
+    SELECT table_name, column_name, data_type
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE table_schema = &#39;SCHEMA_EVOLUTION&#39;
+      AND table_catalog = &#39;CORTEX_LLM_ETL&#39;
+      AND (table_name, column_name) NOT IN (SELECT table_name, column_name FROM schema_baseline)
+    ORDER BY TABLE_NAME;
+END;
+
+ALTER TASK schema_change_monitor RESUME;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upstream Schema Changes" duration="3">
+        <p>In this part, simulate a schema change in the upstream table by adding a new column. This change will automatically be detected and logged, triggering downstream updates.</p>
+<p>Currently, the unaltered upstream table looks like this: <img src="img/99a3ddd62fde6af.png"></p>
+<pre><code language="language-sql" class="language-sql">-- Alter table to add a new column
+ALTER TABLE bronze_salesforce_customers 
+ADD COLUMN customer_segment VARCHAR(16777216);
+
+-- Set initial values for existing records
+UPDATE bronze_salesforce_customers
+SET customer_segment = CASE 
+    WHEN customer_region = &#39;North&#39; THEN &#39;Premium&#39;
+    WHEN customer_region = &#39;South&#39; THEN &#39;Basic&#39;
+    WHEN customer_region = &#39;East&#39; THEN &#39;Standard&#39;
+    WHEN customer_region = &#39;West&#39; THEN &#39;Enterprise&#39;
+    ELSE &#39;Unknown&#39;
+END;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake in Streamlit Code" duration="10">
+        <p>With the groundwork laid, you&#39;re ready to integrate the Streamlit-based UI for hands-on control of schema propagation. This UI, backed by LLMs, allows you to manage schema changes in a user-friendly environment. Users will be able to visualize lineage, apply or preview LLM-suggested DDL changes, and monitor the entire propagation process.</p>
+<p>Below is the code you need to build this interface. Copy this entire code and Paste it onto your Streamlit in Snowflake App.</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+import pandas as pd
+import re
+from snowflake.snowpark.context import get_active_session
+import time
+from collections import defaultdict
+
+st.set_page_config(layout=&#34;wide&#34;)
+
+# Database configurations
+DATABASE = &#39;CORTEX_LLM_ETL&#39;
+SCHEMA = &#39;SCHEMA_EVOLUTION&#39;
+SCHEMA_BASELINE_TABLE = &#39;CORTEX_LLM_ETL.SCHEMA_EVOLUTION.SCHEMA_BASELINE&#39;
+SCHEMA_CHANGE_LOG = &#39;CORTEX_LLM_ETL.SCHEMA_EVOLUTION.SCHEMA_CHANGE_LOG&#39;
+TABLE_NAME = &#39;TABLE_NAME&#39;
+SOURCE_OBJECT_NAME = &#39;SOURCE_OBJECT_NAME&#39;
+DISTANCE = &#39;DISTANCE&#39;
+EXISTING_DDL = &#39;EXISTING_DDL&#39;
+CORTEX_RESPONSE = &#39;CORTEX_RESPONSE&#39;
+MODEL_NAME = &#39;llama3.1-70b&#39;
+TARGET_OBJECT_NAME = &#39;TARGET_OBJECT_NAME&#39;
+TARGET_OBJECT_DOMAIN = &#39;TARGET_OBJECT_DOMAIN&#39;
+CHANGE_DETECTED_AT = &#39;CHANGE_DETECTED_AT&#39;
+
+BRONZE_TABLE = &#39;BRONZE_SALESFORCE_CUSTOMERS&#39;
+
+# Initialize session
+session = get_active_session()
+st.title(&#34;LLM-based Schema Lineage Manager 🎈&#34;)
+st.write(&#34;Effortlessly propagate schema changes across your data lineage with AI&#34;)
+
+
+# Initialize all session state variables
+if &#34;current_index&#34; not in st.session_state:
+    st.session_state.current_index = 0
+if &#34;success_message_shown&#34; not in st.session_state:
+    st.session_state.success_message_shown = False
+if &#34;auto_propagate_done&#34; not in st.session_state:
+    st.session_state.auto_propagate_done = False
+if &#34;manual_propagate_active&#34; not in st.session_state:
+    st.session_state.manual_propagate_active = False
+if &#34;dfs_order&#34; not in st.session_state:
+    st.session_state.dfs_order = None
+if &#34;current_dfs_index&#34; not in st.session_state:
+    st.session_state.current_dfs_index = 0
+
+# Function to visualize lineage path
+def visualize_lineage_path(lineage_df):
+    # Sort by distance for correct path order
+    lineage_df = lineage_df.sort_values(by=DISTANCE)
+    
+    # Initialize paths dictionary to store each branch
+    paths = {}
+    
+    # Iterate through each row and group by source object name
+    for _, row in lineage_df.iterrows():
+        source_name = row[SOURCE_OBJECT_NAME]
+        target_name = row[TARGET_OBJECT_NAME]
+
+        # Check if source already exists as a key in paths dictionary
+        if source_name in paths:
+            # Append new target if this is a continuation of an existing path
+            paths[source_name].append(target_name)
+        else:
+            # Start a new path branch from this source
+            paths[source_name] = [target_name]
+    
+    # Generate the lineage paths in the form of strings
+    lineage_paths = []
+    for source, targets in paths.items():
+        path_string = f&#34;{source} --&gt; {&#39; --&gt; &#39;.join(targets)}&#34;
+        lineage_paths.append(path_string)
+    
+    # Join paths with a double newline to clearly separate each distinct path
+    return &#34;\n\n&#34;.join(lineage_paths)
+
+
+def fetch_schema_changes():
+    query = f&#34;SELECT * FROM {SCHEMA_CHANGE_LOG} ORDER BY {CHANGE_DETECTED_AT} DESC&#34;
+    return session.create_dataframe(session.sql(query).collect()).to_pandas()
+
+# Function to get lineage information for a selected table
+def return_lineage_query_for_changed_table(changed_table):
+    lineage_query = f&#34;&#34;&#34;
+    SELECT
+        {DISTANCE},
+        {SOURCE_OBJECT_NAME},
+        {TARGET_OBJECT_NAME},
+        {TARGET_OBJECT_DOMAIN}
+    FROM TABLE (SNOWFLAKE.CORE.GET_LINEAGE(&#39;{DATABASE}.{SCHEMA}.{changed_table}&#39;, &#39;TABLE&#39;, &#39;DOWNSTREAM&#39;, 10))
+    WHERE SOURCE_STATUS = &#39;ACTIVE&#39; AND TARGET_STATUS = &#39;ACTIVE&#39;;
+    &#34;&#34;&#34;
+    return lineage_query
+
+# Function to clean LLM response
+def clean_ddl_response(ddl_response):
+    return re.sub(r&#39;```&#39;, &#39;&#39;, ddl_response).strip()
+
+# Function to create LLM prompt with schema change log details
+def create_llm_prompt(existing_table_ddl, schema_change_log_df, upstream_table_name, target_table_name, mode=&#39;apply&#39;):
+    # Convert schema change log information into a readable string format    
+    schema_change_log_info = str(schema_change_log_df[0])
+
+    if mode == &#39;apply&#39;:
+        prompt = f&#34;&#34;&#34;
+            This is the existing DDL for the target table `{target_table_name}`:
+
+            {existing_table_ddl}
+
+            Based on the schema changes detected in the upstream table `{upstream_table_name}`, shown below:
+
+            {schema_change_log_info}
+
+            Make the necessary modifications to the DDL for `{target_table_name}` to incorporate these changes from `{upstream_table_name}`. 
+            Ensure that:
+            1. The structure and formatting of the original DDL is preserved, including any `WITH` clauses, transformations, or filters.
+            2. The newly added or modified columns are integrated into the DDL appropriately, reflecting only the specified changes.
+            3. Only the final SQL query is returned as plain text—do not include explanations, comments, or extraneous characters.
+
+            Return only the SQL query with the updated structure in plain text.
+        &#34;&#34;&#34;
+    else:  # &#39;preview&#39; mode for a SELECT preview query
+        prompt = f&#34;&#34;&#34;
+            This is the existing DDL for the target table `{target_table_name}`:
+
+            {existing_table_ddl}
+
+            Based on the schema changes detected in the upstream table `{upstream_table_name}`, shown below:
+
+            {schema_change_log_info}
+
+            Generate a `SELECT` query to preview the modified structure for `{target_table_name}`.
+            Ensure that:
+            1. The query mirrors the original DDL structure, incorporating any transformations or `WITH` clauses.
+            2. The new columns from `{upstream_table_name}` are included only as specified in the schema change log.
+            3. Only the final SQL query is returned as plain text—do not include explanations, comments, or extraneous characters.
+
+            Return only the SQL query for the preview in plain text.
+        &#34;&#34;&#34;
+
+    return prompt
+
+
+
+# Generate modified DDL for preview table
+def generate_preview_table_ddl(ddl_sql, preview_table_name=&#34;PREVIEW_LLM_TABLE&#34;):
+    modified_ddl = re.sub(r&#34;(create or replace dynamic table\s+)(\w+)&#34;, f&#34;\\1{preview_table_name}&#34;, ddl_sql, flags=re.IGNORECASE)
+    return modified_ddl
+
+# Function to apply changes automatically across all downstream tables
+def auto_propagate_changes(lineage_df, upstream_table_name):
+    for index, row in lineage_df.iterrows():
+        target_table_name = row[TARGET_OBJECT_NAME]
+        target_table_domain = row[TARGET_OBJECT_DOMAIN]
+        
+        # Fetch existing DDL for the current downstream table
+        existing_table_ddl_query = f&#34;SELECT GET_DDL(&#39;{target_table_domain}&#39;, &#39;{target_table_name}&#39;) AS {EXISTING_DDL}&#34;
+        existing_table_ddl_df = session.create_dataframe(session.sql(existing_table_ddl_query).collect()).to_pandas()
+        existing_table_ddl = existing_table_ddl_df[EXISTING_DDL].iloc[0]
+        
+        # Generate apply prompt
+        apply_prompt = create_llm_prompt(existing_table_ddl, schema_change_log_df, upstream_table_name, target_table_name, mode=&#39;apply&#39;)                       
+        
+        # Get the LLM-suggested DDL
+        apply_response = session.sql(f&#34;SELECT snowflake.cortex.complete(&#39;{MODEL_NAME}&#39;, $${apply_prompt}$$)&#34;).collect()
+        new_ddl_suggestion = clean_ddl_response(apply_response[0][0])
+
+        # Apply the DDL directly
+        try:
+            session.sql(new_ddl_suggestion).collect()
+            st.success(f&#34;Applied DDL for {target_table_name}&#34;)
+            time.sleep(2)  # Short pause to display success message
+        except Exception as e:
+            st.error(f&#34;Error applying DDL to {target_table_name}: {e}&#34;)
+            break  # Stop further propagation if an error occurs
+
+# Load and display schema change log data
+data = fetch_schema_changes()
+st.write(&#34;Schema Change Log:&#34;)
+data_container = st.empty()
+data_container.dataframe(data)
+
+schema_change_log_df = session.sql(f&#34;SELECT * FROM {SCHEMA_CHANGE_LOG}&#34;).collect()
+
+# Populate the selection list with unique table names
+schema_change_log = session.create_dataframe(session.sql(f&#34;SELECT * FROM {SCHEMA_CHANGE_LOG}&#34;).collect()).to_pandas()
+changed_table_list = list(schema_change_log[TABLE_NAME].unique())
+changed_table_list.insert(0, &#39;Select Table&#39;)
+selected_source_object = st.selectbox(&#39;Which changed table do you want to review?&#39;, changed_table_list)
+
+@st.cache_data
+def cache_lineage_df(selected_source_object):    
+    # Initialize lineage info
+    lineage_query = return_lineage_query_for_changed_table(selected_source_object)
+    lineage_df = session.sql(lineage_query).collect()
+
+    return lineage_df
+
+@st.cache_data
+def cache_lineage_path(lineage_df):    
+
+    lineage_pandas_df = session.create_dataframe(lineage_df).to_pandas()
+    lineage_path = visualize_lineage_path(lineage_pandas_df)
+    
+    return lineage_path 
+
+
+# Add these functions after your existing helper functions
+
+def build_adjacency_list(lineage_df):
+    &#34;&#34;&#34;
+    Build an adjacency list representation of the lineage graph from the lineage dataframe.
+    &#34;&#34;&#34;
+    adj_list = defaultdict(list)
+    for _, row in lineage_df.iterrows():
+        source = row[SOURCE_OBJECT_NAME]
+        target = row[TARGET_OBJECT_NAME]
+        adj_list[source].append({
+            &#39;table_name&#39;: target,
+            &#39;domain&#39;: row[TARGET_OBJECT_DOMAIN],
+            &#39;distance&#39;: row[DISTANCE]
+        })
+    return adj_list
+
+def get_dfs_order(adj_list, start_table):
+    &#34;&#34;&#34;
+    Get the DFS traversal order of tables
+    &#34;&#34;&#34;
+    visited = set()
+    traversal_order = []
+    
+    def dfs(table):
+        if table not in visited:
+            visited.add(table)
+            for target in adj_list[table]:
+                traversal_order.append({
+                    &#39;source&#39;: table,
+                    &#39;target&#39;: target[&#39;table_name&#39;],
+                    &#39;domain&#39;: target[&#39;domain&#39;]
+                })
+                dfs(target[&#39;table_name&#39;])
+    
+    dfs(start_table)
+    return traversal_order
+
+# Modified auto_propagate_changes function
+def auto_propagate_changes(lineage_df, upstream_table_name):
+    # Convert lineage_df to pandas if it&#39;s not already
+    lineage_pandas_df = session.create_dataframe(lineage_df).to_pandas() if not isinstance(lineage_df, pd.DataFrame) else lineage_df
+    
+    # Build adjacency list and get DFS order
+    adj_list = build_adjacency_list(lineage_pandas_df)
+    dfs_order = get_dfs_order(adj_list, upstream_table_name)
+    
+    # Process each table in DFS order
+    for item in dfs_order:
+        target_table_name = item[&#39;target&#39;]
+        target_table_domain = item[&#39;domain&#39;]
+        source_table = item[&#39;source&#39;]
+        
+        # Fetch existing DDL for the current downstream table
+        existing_table_ddl_query = f&#34;SELECT GET_DDL(&#39;{target_table_domain}&#39;, &#39;{target_table_name}&#39;) AS {EXISTING_DDL}&#34;
+        existing_table_ddl_df = session.create_dataframe(session.sql(existing_table_ddl_query).collect()).to_pandas()
+        existing_table_ddl = existing_table_ddl_df[EXISTING_DDL].iloc[0]
+        
+        # Generate apply prompt
+        apply_prompt = create_llm_prompt(existing_table_ddl, schema_change_log_df, source_table, target_table_name, mode=&#39;apply&#39;)
+        
+        # Get the LLM-suggested DDL
+        apply_response = session.sql(f&#34;SELECT snowflake.cortex.complete(&#39;{MODEL_NAME}&#39;, $${apply_prompt}$$)&#34;).collect()
+        new_ddl_suggestion = clean_ddl_response(apply_response[0][0])
+        
+        # Apply the DDL directly
+        try:
+            session.sql(new_ddl_suggestion).collect()
+            st.success(f&#34;Applied DDL for {target_table_name}&#34;)
+            time.sleep(2)  # Short pause to display success message
+        except Exception as e:
+            st.error(f&#34;Error applying DDL to {target_table_name}: {e}&#34;)
+            break  # Stop further propagation if an error occurs
+
+# Initialize additional session state variables
+if &#34;dfs_order&#34; not in st.session_state:
+    st.session_state.dfs_order = None
+if &#34;current_dfs_index&#34; not in st.session_state:
+    st.session_state.current_dfs_index = 0
+
+# Update the main UI section where the buttons are defined
+if selected_source_object != &#39;Select Table&#39;:
+    st.write(&#39;You selected:&#39;, selected_source_object, &#39;\n&#39;)
+
+    # Initialize lineage info
+    with st.write(&#34;_Processing Table&#39;s Lineage via Snowflake&#39;s Lineage Function..._&#34;)
+    lineage_df = cache_lineage_df(selected_source_object)
+
+    
+    lineage, auto_propagation = st.columns(2)    
+    
+    # Option to display lineage path
+    if lineage.button(&#34;Show Lineage Path&#34;):        
+        lineage_path = cache_lineage_path(lineage_df)
+        st.write(&#34;Impacted Downstream Tables:&#34;)
+        st.write(lineage_path)
+
+    # Button for automatic downstream propagation
+    if auto_propagation.button(&#34;Auto-Propagate Changes&#34;):
+        lineage_pandas_df = session.create_dataframe(lineage_df).to_pandas()
+        auto_propagate_changes(lineage_pandas_df, selected_source_object)
+        st.session_state.auto_propagate_done = True
+        st.write(&#34;All tables in the lineage have been processed.&#34;)
+
+    # Button to start manual propagation
+    if st.button(&#34;Manually Propagate Changes&#34;) or st.session_state.manual_propagate_active:
+        st.session_state.manual_propagate_active = True
+        
+        # Initialize DFS order if not already done
+        if st.session_state.dfs_order is None:
+            lineage_pandas_df = session.create_dataframe(lineage_df).to_pandas()
+            adj_list = build_adjacency_list(lineage_pandas_df)
+            st.session_state.dfs_order = get_dfs_order(adj_list, selected_source_object)
+            st.session_state.current_dfs_index = 0
+        
+        # Check if we still have tables to process
+        if st.session_state.current_dfs_index &lt; len(st.session_state.dfs_order):
+            current_item = st.session_state.dfs_order[st.session_state.current_dfs_index]
+            target_table_name = current_item[&#39;target&#39;]
+            target_table_domain = current_item[&#39;domain&#39;]
+            source_table = current_item[&#39;source&#39;]
+            
+            st.write(f&#34;Processing: {target_table_name}&#34;)
+
+            # Fetch existing DDL for the current downstream table
+            existing_table_ddl_query = f&#34;SELECT GET_DDL(&#39;{target_table_domain}&#39;, &#39;{target_table_name}&#39;) AS {EXISTING_DDL}&#34;
+            existing_table_ddl_df = session.sql(existing_table_ddl_query).collect()
+            existing_table_ddl = existing_table_ddl_df[0][EXISTING_DDL]
+
+            # Generate preview and apply prompts
+            preview_prompt = create_llm_prompt(existing_table_ddl, schema_change_log_df, source_table, target_table_name, mode=&#39;preview&#39;)
+            apply_prompt = create_llm_prompt(existing_table_ddl, schema_change_log_df, source_table, target_table_name, mode=&#39;apply&#39;)
+
+            # LLM suggestions for DDL updates
+            apply_response = session.sql(f&#34;SELECT snowflake.cortex.complete(&#39;{MODEL_NAME}&#39;, $${apply_prompt}$$)&#34;).collect()
+            new_ddl_suggestion = clean_ddl_response(apply_response[0][0])
+
+            # Show DDL comparison side by side
+            col1, col2 = st.columns(2)
+            with col1:
+                st.text_area(&#34;Existing DDL&#34;, value=existing_table_ddl, height=300, key=f&#34;existing_ddl_{target_table_name}&#34;)
+            with col2:
+                edited_sql = st.text_area(&#34;LLM Suggested New DDL&#34;, value=new_ddl_suggestion, height=300, key=f&#34;suggested_ddl_{target_table_name}&#34;)
+
+            preview_button, apply_button = st.columns(2)
+
+            # Preview button
+            if preview_button.button(&#34;Preview Changes&#34;, key=f&#34;preview_{st.session_state.current_dfs_index}&#34;):
+                preview_table_sql = generate_preview_table_ddl(edited_sql)
+                try:
+                    session.sql(preview_table_sql).collect()
+                    st.write(&#34;Preview Results:&#34;)
+                    st.write(session.sql(&#34;SELECT * FROM PREVIEW_LLM_TABLE&#34;).collect())
+                except Exception as e:
+                    st.error(f&#34;Error executing preview: {e}&#34;)
+                finally:
+                    session.sql(&#34;DROP TABLE IF EXISTS PREVIEW_LLM_TABLE&#34;).collect()
+
+            # Apply changes and proceed to the next table
+            if apply_button.button(&#34;Apply Changes&#34;, key=f&#34;apply_{st.session_state.current_dfs_index}&#34;):
+                try:
+                    session.sql(edited_sql).collect()
+                    st.success(f&#34;Applied DDL for {target_table_name}&#34;)
+                    st.session_state.success_message_shown = True
+                except Exception as e:
+                    st.error(f&#34;Error applying DDL: {e}&#34;)
+
+            # Automatically proceed to the next table after applying changes
+            if st.session_state.success_message_shown:
+                time.sleep(2)  # Short pause to show success message
+                st.session_state.success_message_shown = False
+                st.session_state.current_dfs_index += 1
+
+                # Rerun if there are more tables to process; else end propagation
+                if st.session_state.current_dfs_index &lt; len(st.session_state.dfs_order):
+                    st.rerun()
+                else:
+                    st.session_state.manual_propagate_active = False
+                    st.session_state.dfs_order = None  # Reset DFS order
+                    st.write(&#34;All tables in the lineage have been processed.&#34;)
+        else:
+            st.session_state.manual_propagate_active = False
+            st.session_state.dfs_order = None  # Reset DFS order
+            st.write(&#34;All tables in the lineage have been processed.&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit User Guide" duration="15">
+        <h2 is-upgraded>User Guide</h2>
+<ol type="1">
+<li><strong>Initialize the Application</strong>: Launch the Streamlit in Snowflake app in your Snowsight UI. Select <code>cortex_llm_etl</code> as the database and <code>schema_evolution</code> as your schema. Copy and past the streamlit code after clicking on <code>edit</code> button. <img src="img/1e83ba55df7fe6f.png"></li>
+<li><strong>Select a Table to Review</strong>: Use the dropdown to select the upstream table where schema changes have been detected. It will take some time for Snowflake&#39;s lineage to run based on the complexity of your medallion structure. <img src="img/2d0c69c04bb5fe9a.png"></li>
+<li><strong>View Lineage Path</strong>: Click &#34;Show Lineage Path&#34; to view all downstream tables affected by changes in the selected table. <img src="img/ac5f470bd7bf4df9.png"></li>
+<li><strong>Propagation Options</strong>:</li>
+</ol>
+<ul>
+<li>Auto-Propagate: Automatically applies all changes through the lineage using Depth First Search Technique (DFS).</li>
+<li>Manual Propagation: Allows for a step-by-step review and approval of changes for each downstream table. <img src="img/539a4947de26dc9b.png"></li>
+</ul>
+<ol type="1" start="5">
+<li><strong>Preview and Apply Changes</strong>: When in manual mode, click &#34;Preview Changes&#34; to view the LLM-suggested DDL updates. Once satisfied, click &#34;Apply Changes&#34; to finalize them. <img src="img/a2f79d9406a5b26d.png"><img src="img/8c02ae874f636b36.png"></li>
+<li><strong>Monitor Propagation</strong>: The system tracks each step, providing success or error messages to keep users informed.</li>
+</ol>
+<p>Note: The LLM dynamically suggests DDL modifications for consistency across lineage. It uses metadata to assess how each downstream table should adapt, factoring in dependencies and transformations.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Observe the Results" duration="5">
+        <p>To verify the propagated schema changes directly in Snowflake, you can query each downstream table:</p>
+<ol type="1">
+<li>Open your Snowflake worksheet.</li>
+<li>Run a simple <code>SELECT *</code> query on the downstream tables to view the updated structures and ensure consistency across the lineage.</li>
+<li>Optionally, review any new columns or data transformations to confirm that the changes align with the desired schema modifications.</li>
+</ol>
+<p class="image-container"><img src="img/8aedc47c3ff2e1c7.png"></p>
+<p>This verification step provides confidence that the lineage propagation was executed accurately.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <h2 is-upgraded>What You Learned</h2>
+<p>In this guide, you implemented a powerful LLM-driven solution to automatically propagate schema changes across a data lineage in Snowflake. By combining Snowflake&#39;s schema monitoring capabilities with Streamlit&#39;s interactive interface and LLM intelligence, you&#39;ve enabled efficient, automated schema consistency throughout your pipeline, ensuring data integrity with minimal manual intervention.</p>
+<p>Summary:</p>
+<ul>
+<li>How to set up and configure a Snowflake environment to monitor and track schema changes.</li>
+<li>Building Snowflake tasks and tables to log and manage schema evolution.</li>
+<li>Leveraging an LLM to dynamically suggest and apply DDL modifications across downstream tables.</li>
+<li>Using Streamlit to interactively manage schema propagation, with both automatic and manual options.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://www.snowflake.com/data-engineering/" target="_blank">Introduction to Snowflake Data Engineering</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/tasks-intro.html" target="_blank">Getting Started with Snowflake Tasks</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/get_lineage-snowflake-core" target="_blank">Snowflake&#39;s Get Lineage Function</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

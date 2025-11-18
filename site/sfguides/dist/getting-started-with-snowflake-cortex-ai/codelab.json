@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-snowflake-cortex-ai",
+  "duration": 45,
+  "title": "Getting Started With Snowflake Cortex AI",
+  "summary": "This guide provides the instructions for getting started with Snowflake Cortex AI.",
+  "source": "getting-started-with-snowflake-cortex-ai/getting-started-with-snowflake-cortex-ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "app-development",
+    "data-science",
+    "gen-ai",
+    "data-science-\u0026-ai",
+    "cortex"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "getting-started-with-snowflake-cortex-ai"
+}

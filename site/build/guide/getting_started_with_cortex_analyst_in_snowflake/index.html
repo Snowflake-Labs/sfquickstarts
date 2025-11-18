@@ -1,0 +1,380 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Analyst in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_cortex_analyst_in_snowflake"
+                  title="Getting Started with Cortex Analyst in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Through this quickstart guide, you will explore how to get started with <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a>, which is a fully managed service in Snowflake that provides a conversational interface to interact with structured data in Snowflake.</p>
+<h2 is-upgraded>What is Cortex Analyst?</h2>
+<p>Cortex Analyst is fully managed service in <a href="https://www.snowflake.com/en/data-cloud/cortex" target="_blank">Cortex AI</a> that provides a conversational interface to interact with structured data in Snowflake. It streamlines the development of intuitive, self-service analytics applications for business users, while providing industry-leading accuracy. To deliver high text-to-SQL accuracy, Cortex Analyst uses an agentic AI setup powered by state-of-the-art LLMs. Available as a convenient REST API, Cortex Analyst can seamlessly integrate into any application. This empowers developers to customize how and where business users interact with results, while still benefiting from Snowflake&#39;s integrated security and governance features, including role-based access controls (RBAC), to protect valuable data.</p>
+<p class="image-container"><img alt="cortex analyst gif" src="img/ce1884edb1e7415c.png"></p>
+<h2 is-upgraded>Why use Cortex Analyst?</h2>
+<p>Historically, business users have primarily relied on BI dashboards and reports to answer their data questions. However, these resources often lack the flexibility needed, leaving users dependent on overburdened data analysts for updates or answers, which can take days. Cortex Analyst disrupts this cycle by providing a natural language interface with high text-to-SQL accuracy. With Cortex Analyst organizations can streamline the development of intuitive, conversational applications that can enable business users to ask questions using natural language and receive more accurate answers in near real time</p>
+<p>This quickstart will focus on getting started with Cortex Analyst, teaching the mechanics of how to interact with the Cortex Analyst service and how to define the Semantic Model definitions that enhance the precision of results from this conversational interface over your Snowflake data.</p>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>How to construct and configure a Semantic Model for your data</li>
+<li>How to call the Cortex Analyst REST API to use your Semantic Model to enable natural-language question-asking on top of your structured data in Snowflake via Streamlit in Snowflake (SiS) application</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed <aside class="special"><p>Download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake" target="_blank">git repo</a></p>
+</aside>
+</li>
+<li>(Optional) <a href="https://www.python.org/downloads/" target="_blank">Python &gt;= 3.9, &lt;= 3.11 installed</a> to run the OSS Semantic Model Generator</li>
+<li>A <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a> in <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#label-analyst-regions" target="_blank">supported cloud regions</a>. And a login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Semantic Model over sample financial data</li>
+<li>A Streamlit in Snowflake (SiS) app with a conversational interface to Cortex Analyst</li>
+</ul>
+<p class="image-container"><img alt="streamlit app" src="img/5f31425772ea19ce.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake Environment" duration="2">
+        <aside class="special"><p>MAKE SURE YOU&#39;VE DOWNLOADED THE <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake" target="_blank">GIT REPO</a>.</p>
+</aside>
+<p>Run the following SQL commands in a SQL worksheet to create the database, schema, warehouse, and stage.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE sysadmin;
+
+CREATE OR REPLACE DATABASE cortex_analyst_demo;
+
+CREATE OR REPLACE SCHEMA revenue_timeseries;
+
+CREATE OR REPLACE WAREHOUSE cortex_analyst_wh
+    WAREHOUSE_SIZE = &#39;large&#39;
+    WAREHOUSE_TYPE = &#39;standard&#39;
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+COMMENT = &#39;warehouse for cortex analyst demo&#39;;
+
+CREATE STAGE raw_data DIRECTORY = (ENABLE = TRUE);
+</code></pre>
+<p>Run the following SQL commands in a SQL worksheet to create the the tables.</p>
+<pre><code language="language-sql" class="language-sql">USE cortex_analyst_demo.revenue_timeseries;
+USE warehouse cortex_analyst_wh;
+
+CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE (
+	DATE DATE,
+	REVENUE FLOAT,
+	COGS FLOAT,
+	FORECASTED_REVENUE FLOAT
+);
+
+CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_PRODUCT (
+	DATE DATE,
+	PRODUCT_LINE VARCHAR(16777216),
+	REVENUE FLOAT,
+	COGS FLOAT,
+	FORECASTED_REVENUE FLOAT
+);
+
+CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_REGION (
+	DATE DATE,
+	SALES_REGION VARCHAR(16777216),
+	REVENUE FLOAT,
+	COGS FLOAT,
+	FORECASTED_REVENUE FLOAT
+);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ingest Revenue Data and Semantic Model YAML" duration="10">
+        <aside class="special"><p>MAKE SURE YOU&#39;VE DOWNLOADED THE <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake" target="_blank">GIT REPO</a>.</p>
+</aside>
+<p>There are three data files and one YAML file included in the repo that you should have cloned:</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/data/daily_revenue_combined.csv" target="_blank">daily_revenue_combined.csv</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/data/daily_revenue_by_region_combined.csv" target="_blank">daily_revenue_by_region_combined.csv</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/data/daily_revenue_by_product_combined.csv" target="_blank">daily_revenue_by_product_combined.csv</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/revenue_timeseries.yaml" target="_blank">revenue_timeseries.yaml</a></li>
+</ul>
+<p>You will now upload these files to your Snowflake account and ingest the data files into the tables created in the previous step.</p>
+<p>To upload the data files:</p>
+<ul>
+<li>Navigate to the Worksheets tab in Snowsight, click the ‘+&#39; button in the top right corner and select <strong>Add Data</strong></li>
+<li>On the Add Data page, select <strong>Load files into a stage</strong></li>
+<li>Select the four files that you want to upload (listed above)</li>
+<li>Select <strong>CORTEX_ANALYST_DEMO</strong> as Database, <strong>REVENUE_TIMESERIES</strong> as Schema, and <strong>RAW_DATA</strong> as Stage</li>
+<li>Click Upload</li>
+</ul>
+<p>Let&#39;s go check that the files were successfully uploaded to the stage. In the Snowsight UI:</p>
+<ul>
+<li>Select <strong>Data » Databases</strong></li>
+<li>Select the CORTEX_ANALYST_DEMO database and REVENUE_TIMESERIES Schema that contain the stage</li>
+<li>Select Stages and select the RAW_DATA stage</li>
+<li>If prompted, select Enable Directory Table and the CORTEX_ANALYST_WH to refresh the directory table</li>
+</ul>
+<p>You should see the four files listed in the stage: <img alt="staged files" src="img/5c2abd341759ef5b.png"></p>
+<p>Now, let&#39;s load the raw CSV data into the tables. Go back to your Snowflake SQL worksheet and run the following <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/load_data.sql" target="_blank">load_data.sql</a> code to load data into the tables:</p>
+<pre><code language="language-sql" class="language-sql">COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE
+FROM @raw_data
+FILES = (&#39;daily_revenue_combined.csv&#39;)
+FILE_FORMAT = (
+    TYPE=CSV,
+    SKIP_HEADER=1,
+    FIELD_DELIMITER=&#39;,&#39;,
+    TRIM_SPACE=FALSE,
+    FIELD_OPTIONALLY_ENCLOSED_BY=NONE,
+    REPLACE_INVALID_CHARACTERS=TRUE,
+    DATE_FORMAT=AUTO,
+    TIME_FORMAT=AUTO,
+    TIMESTAMP_FORMAT=AUTO
+    EMPTY_FIELD_AS_NULL = FALSE
+    error_on_column_count_mismatch=false
+)
+ON_ERROR=CONTINUE
+FORCE = TRUE;
+
+COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_PRODUCT
+FROM @raw_data
+FILES = (&#39;daily_revenue_by_product_combined.csv&#39;)
+FILE_FORMAT = (
+    TYPE=CSV,
+    SKIP_HEADER=1,
+    FIELD_DELIMITER=&#39;,&#39;,
+    TRIM_SPACE=FALSE,
+    FIELD_OPTIONALLY_ENCLOSED_BY=NONE,
+    REPLACE_INVALID_CHARACTERS=TRUE,
+    DATE_FORMAT=AUTO,
+    TIME_FORMAT=AUTO,
+    TIMESTAMP_FORMAT=AUTO
+    EMPTY_FIELD_AS_NULL = FALSE
+    error_on_column_count_mismatch=false
+)
+ON_ERROR=CONTINUE
+FORCE = TRUE ;
+
+COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_REGION
+FROM @raw_data
+FILES = (&#39;daily_revenue_by_region_combined.csv&#39;)
+FILE_FORMAT = (
+    TYPE=CSV,
+    SKIP_HEADER=1,
+    FIELD_DELIMITER=&#39;,&#39;,
+    TRIM_SPACE=FALSE,
+    FIELD_OPTIONALLY_ENCLOSED_BY=NONE,
+    REPLACE_INVALID_CHARACTERS=TRUE,
+    DATE_FORMAT=AUTO,
+    TIME_FORMAT=AUTO,
+    TIMESTAMP_FORMAT=AUTO
+    EMPTY_FIELD_AS_NULL = FALSE
+    error_on_column_count_mismatch=false
+)
+ON_ERROR=CONTINUE
+FORCE = TRUE;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Streamlit Conversational App" duration="10">
+        <p>Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit in Snowflake application:</p>
+<ul>
+<li>Go to the Streamlit page in Snowsight, and click <code>+ Streamlit App</code>, and fill it in with the below details and click create: <img alt="create streamlit" src="img/a255838a8b879b97.png"></li>
+<li>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/cortex_analyst_sis_demo_app.py" target="_blank">cortex_analyst_sis_demo_app.py</a> file in your preferred local code editor</li>
+<li>Copy and paste the SiS app code into the Streamlit editor <img alt="edit streamlit" src="img/bb29dc89a93e0397.png"></li>
+<li>Click <code>Run</code> and begin asking questions!</li>
+</ul>
+<p>Take note of the <code>send_message</code> function that is defined in this Python code. This is the function that takes our chat input prompt, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified <code>revenue_timeseries.yaml</code> Semantic Model).</p>
+<pre><code language="language-python" class="language-python">def send_message(prompt: str) -&gt; Dict[str, Any]:
+    &#34;&#34;&#34;Calls the REST API and returns the response.&#34;&#34;&#34;
+    request_body = {
+        &#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: [{&#34;type&#34;: &#34;text&#34;, &#34;text&#34;: prompt}]}],
+        &#34;semantic_model_file&#34;: f&#34;@{DATABASE}.{SCHEMA}.{STAGE}/{FILE}&#34;,
+    }
+    resp = requests.post(
+        url=f&#34;https://{HOST}/api/v2/cortex/analyst/message&#34;,
+        json=request_body,
+        headers={
+            &#34;Authorization&#34;: f&#39;Snowflake Token=&#34;{st.session_state.CONN.rest.token}&#34;&#39;,
+            &#34;Content-Type&#34;: &#34;application/json&#34;,
+        },
+    )
+    request_id = resp.headers.get(&#34;X-Snowflake-Request-Id&#34;)
+    if resp.status_code &lt; 400:
+        return {**resp.json(), &#34;request_id&#34;: request_id}  # type: ignore[arg-type]
+    else:
+        raise Exception(
+            f&#34;Failed request (id: {request_id}) with status {resp.status_code}: {resp.text}&#34;
+        )
+</code></pre>
+<p>You can now begin asking natural language questions about the revenue data in the chat interface (e.g. &#34;What questions can I ask?&#34;)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Semantic Models" duration="5">
+        <p><em>[Optional reading]</em></p>
+<p>The semantic model file <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/revenue_timeseries.yaml" target="_blank"><code>revenue_timeseries.yaml</code></a> is the key that unlocks Cortex Analyst&#39;s power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let&#39;s talk a little about the details of this file:</p>
+<p>The <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec" target="_blank">Semantic Model</a> is composed of a number of different fields that help Cortex Analyst understand the specifics of your data:</p>
+<ul>
+<li>Logical Tables which are composed of Logical Columns</li>
+<li>Logical Columns which are one of <code>dimensions</code>, <code>time_dimensions</code>, or <code>measures</code></li>
+</ul>
+<p>Logical Tables are relatively straightforward- these are tables or views within a database. That&#39;s it! Pretty simple</p>
+<p>Logical Columns get a bit more complicated; a logical column can reference an underlying physical column in a table, or it can be a expression containing one or more physical columns. So, for example, in the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/revenue_timeseries.yaml" target="_blank"><code>revenue_timeseries.yaml</code></a>, we have a simple logical column <code>daily_revenue</code> that is a physical column. In the <code>daily_revenue</code> measure definition, you&#39;ll notice that we provide a description, as well as synonyms, data_type, and a default_aggregation, but no <code>expr</code> parameter. This is because <code>revenue</code> is simply a physical column in the <code>daily_revenue</code> table:</p>
+<pre><code language="language-yaml" class="language-yaml">measures:
+    - name: daily_revenue
+        expr: revenue
+        description: total revenue for the given day
+        synonyms: [&#34;sales&#34;, &#34;income&#34;]
+        default_aggregation: sum
+        data_type: number
+</code></pre>
+<p>In contrast, we define a different measure <code>daily_profit</code> which is not in fact a physical column, but rather an expression of the difference between the <code>revenue</code> and <code>cogs</code> physical columns:</p>
+<pre><code language="language-yaml" class="language-yaml">- name: daily_profit
+    description: profit is the difference between revenue and expenses.
+    expr: revenue - cogs
+    data_type: number
+</code></pre>
+<p>In the semantic model, <code>time_dimensions</code> specifically capture temporal features of the data, and <code>dimensions</code> are not quantitative fields (e.g. quantitative fields are <code>measures</code>, while categorical fields are <code>dimensions</code>).</p>
+<p>An example <code>time_dimension</code>:</p>
+<pre><code language="language-yaml" class="language-yaml">time_dimensions:
+    - name: date
+    expr: date
+    description: date with measures of revenue, COGS, and forecasted revenue for each product line
+    unique: false
+    data_type: date
+</code></pre>
+<p>An example <code>dimension</code>:</p>
+<pre><code language="language-yaml" class="language-yaml">dimensions:
+    - name: product_line
+    expr: product_line
+    description: product line associated with it&#39;s own slice of revenue
+    unique: false
+    data_type: varchar
+    sample_values:
+        - Electronics
+        - Clothing
+        - Home Appliances
+        - Toys
+        - Books
+</code></pre>
+<p>For more information about the semantic model, please refer to the <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec" target="_blank">documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Verified Query Repository" duration="5">
+        <p><em>[Optional reading]</em></p>
+<p>In addition to the previously discussed Semantic Model information, the <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/verified-query-repository" target="_blank">Cortex Analyst Verified Query Repository (VQR)</a> can help improve accuracy and trustworthiness of results by providing a collection of questions and corresponding SQL queries to answer them. Cortex Analyst will then use these verified queries when answering similar types of questions in the future.</p>
+<h2 is-upgraded>Adding Verified Queries</h2>
+<p>Verified queries ultimately are specified in the <code>verified_queries</code> section of the semantic model, e.g.:</p>
+<pre><code language="language-yaml" class="language-yaml">verified_queries:
+  - name: &#34;California profit&#34;
+    question: &#34;What was the profit from California last month?&#34;
+    verified_at: 1714497970
+    verified_by: Jane Doe
+    sql: &#34;
+SELECT sum(profit)
+FROM __sales_data
+WHERE state = &#39;CA&#39;
+    AND sale_timestamp &gt;= DATE_TRUNC(&#39;month&#39;, DATEADD(&#39;month&#39;, -1, CURRENT_DATE))
+    AND sale_timestamp &lt; DATE_TRUNC(&#39;month&#39;, CURRENT_DATE)
+&#34;
+</code></pre>
+<h2 is-upgraded>Optional</h2>
+<p>While verified queries can be added directly to the Semantic Model, Snowflake also provides an OSS Streamlit application to help add verified queries to your model.</p>
+<p class="image-container"><img alt="vqr app" src="img/a1e874e717e86783.png"></p>
+<p>To install and use this app:</p>
+<ol type="1">
+<li>Clone the <a href="https://github.com/Snowflake-Labs/semantic-model-generator" target="_blank">semantic-model-generator repository</a>. Follow the setup instructions in the <a href="https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/README.md" target="_blank">repo&#39;s README</a> to provide your credentials. Then follow the instructions in the <a href="https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/admin_apps/README.md" target="_blank">admin_app README</a> to install dependencies and start the app.</li>
+<li>Once the app is running, enter the database, schema, and stage location of your semantic model YAML file in the empty fields. The YAML appears in an interactive editor on the left side of the window.</li>
+<li>On the right side of the window, ask a question in the chat interface to generate a SQL query.</li>
+<li>Inspect the generated query and the results it produces. If it worked as you expected, select the <strong>Save as verified query</strong> button below the assistant answer to add the query to your semantic model.</li>
+<li>If generated query is incorrect, select the <strong>Edit</strong> button and modify the query, then run the modified query and see if it produces the intended results. Continue modifying and testing the query until it works the way you want it to. Finally, select <strong>Save as verified query</strong> to save the query to your semantic model.</li>
+<li>Select the <strong>Save</strong> button in the bottom left of the window to update the semantic model, then go back to step 2 if you want to add more queries.</li>
+<li>When you&#39;re satisfied with the queries you&#39;ve added, select the <strong>Upload</strong> button and enter a file name for your new YAML file, then select <strong>Submit Upload</strong>.</li>
+</ol>
+<p>Modify your SiS application code to point at the new Semantic Model YAML file location, and use Cortex Analyst as before!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how Cortex Analyst allows business users to ask natural-language questions over their structured data to perform analysis and receive trusted answers to business questions.</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>How to create a semantic model YAML file</li>
+<li>How to interact with the Cortex Analyst REST API via a Streamlit in Snowflake (SiS) chat interface</li>
+</ul>
+<p>For more information, check out the resources below:</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst docs</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/cortex-analyst" target="_blank">Cortex Analyst examples</a></li>
+<li><a href="https://github.com/Snowflake-Labs/semantic-model-generator" target="_blank">Semantic Model Generator</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Domo Marketing Attribution</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="domo_marketing_attribution_quickstart"
+                  title="Getting Started with Domo Marketing Attribution"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>In this quickstart, we&#39;ll walk through how to use Domo&#39;s Marketing app—available in the Snowflake Marketplace—to build powerful marketing attribution and media mix models that can transform your business. By the end of this guide, you&#39;ll be equipped to deploy and utilize the suite&#39;s capabilities to drive data-driven marketing decisions and optimize your campaign performance.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/f42d5d7ac9e41134.gif"></p>
+<h2 is-upgraded>What is Domo&#39;s Marketing App?</h2>
+<p>Domo&#39;s Marketing app is a comprehensive, cloud-based platform designed to empower marketing professionals with advanced data insights. Even if you don&#39;t have a technical background in data analytics, the Marketing app guides you through analyzing marketing performance, tracking key metrics, and optimizing marketing spend across all your channels.</p>
+<p>The app enables users to easily connect data sources, apply out-of-the-box attribution models (such as first touch, last touch, and weighted touch), and customize metrics to suit specific business needs. Whether you want to monitor marketing ROI, pipeline performance, or customer acquisition costs, Domo&#39;s Marketing app centralizes all your data into Snowflake, providing a unified view for smarter decision-making.</p>
+<p>For more advanced users, the platform offers powerful AI and automation tools. These allow marketers to create custom attribution models, automate workflows, and build sophisticated analytics without needing extensive technical expertise. Additionally, the Domo Marketing app offers flexible deployment options, enabling seamless integration with existing marketing tools and data environments.</p>
+<h2 is-upgraded>Prerequisites:</h2>
+<ul>
+<li>Basic understanding of Snowflake</li>
+<li>A Snowflake account. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/" target="_blank">free trial account</a>.</li>
+<li>A Domo account and a basic understanding of Domo</li>
+<li>Access to data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Learn:</h2>
+<ul>
+<li>How to deploy Domo&#39;s Marketing app from the Snowflake Marketplace</li>
+<li>How to intialize a dataset using Domo Connectors</li>
+<li>How to create a Magic ETL and create consumable data</li>
+<li>How to leverage Domo&#39;s Marketing app to gain better insights into your marketing efforts</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build:</h2>
+<ul>
+<li>A Marketing app to access and analyze marketing data, view marketing attribution, and conduct Media Mix Modeling.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install" duration="0">
+        <p>Request the Domo Marketing app:</p>
+<ul>
+<li>Open the Domo provider page in the <strong>Snowflake Marketplace</strong>.</li>
+<li>Locate and click the Domo Marketing app listing.</li>
+<li>Click <strong>Request</strong>.</li>
+<li>Fill out then submit the request form.</li>
+</ul>
+<p>The Domo team will review the request and contact you with more information.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Power-Up" duration="0">
+        <p>Over the next few sections, you&#39;ll supercharge your marketing data by leveraging SQL in Snowflake alongside Domo&#39;s Magic ETL. Connect key sources such as Adobe Analytics, Google Analytics, Marketo, NetSuite, Salesforce, Facebook, and Instagram. Use customizable join logic and preparatory steps tailored to your data environment to build a cohesive, centralized data foundation. These preparatory steps allow for advanced attribution models and media mix analysis, ensuring you have the insights needed to optimize your marketing strategy.</p>
+<p>Leverage the Domo Data Warehouse to access your data wherever it sits to transform &amp; visualize. <img style="width: 800.00px" src="img/e0803db19459808.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add a DataSet using a Connector" duration="0">
+        <p>When you add a DataSet, you are automatically assigned as the DataSet owner. For information about changing the owner of a DataSet, see Changing the Owner of a DataSet.</p>
+<p>You can access the interface for adding Connector DataSets via the Appstore, the Data Center, or the menu.</p>
+<p><strong>To add a DataSet using a Connector</strong></p>
+<ol type="1">
+<li>Choose one of the following:<ul>
+<li>(Conditional) If you want to connect to data via the <strong>APPSTORE</strong>, do the following:<ul>
+<li>Select <em>Appstore</em> in the toolbar at the top of the screen.</li>
+<li>Click the <em>Search</em> tab.</li>
+<li>Click the <em>Connector</em> checkbox under Capability.</li>
+<li>Use the search bar or page navigation to locate the Connector you want to connect to, then click it to open its details view.</li>
+<li>Click <em>Get the Data</em>.</li>
+<li>Alternatively, for some of the most popular Connectors, a <em>Get the Cards</em> button is available. This allows you to power up several prebuilt, live Cards based on your own data, without having to configure advanced options. This is a great way to &#34;preview&#34; the Connector to make sure it provides the data you want. If you choose this option, you are asked to select the desired account or input your account information if you haven&#39;t created an account for this Connector yet.</li>
+</ul>
+</li>
+<li>(Conditional) If you want to connect to data via the <strong>DATA CENTER</strong>, do the following:<ul>
+<li>Select <em>Data</em> in the toolbar at the top of the screen.</li>
+<li>In the Connect Data area at the top of the screen, select <em>Connectors</em>, <em>File</em>, or <em>Database</em>, depending on the connection type.</li>
+<li>You can use the following table to learn more about these Connector types:<table>
+<tr><td colspan="1" rowspan="1"><p>Connector Type</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Connectors</p>
+</td><td colspan="1" rowspan="1"><p>A Connector for a third-party app in which data is stored in the cloud. Most of Domo&#39;s Connectors fall into this category. Examples include Facebook, Salesforce, Adobe Analytics, and so on.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>File</p>
+</td><td colspan="1" rowspan="1"><p>A Connector used to pull files into Domo. Examples include Excel, Google Sheets, and Box.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Database</p>
+</td><td colspan="1" rowspan="1"><p>A Connector in which you write a query to pull data from a database into Domo. Examples include MySQL, Amazon Redshift, and MongoDB.</p>
+</td></tr>
+</table>
+</li>
+<li>The other two icons in this area denote other non-Connector methods for bringing data into Domo. Federated refers to federated DataSets, and API refers to Domo&#39;s development environment, where you can build your own custom Connectors. For more information on Federated DataSets, see Connecting to Data Using Workbench 5.</li>
+<li>Select the Connector type you want.</li>
+<li>Click the desired Connector tile.</li>
+</ul>
+<em>Note: Popular Connectors are marked with a Preferred tag. This is also used when there are several different Connectors to the same data, such as Facebook. The most commonly used option will display the Preferred tag.</em></li>
+<li>(Conditional) If you want to connect to data via the menu, do the following:<ul>
+<li>Select &gt; <em>Data</em>.</li>
+<li>Select <em>Connectors</em>, <em>File</em>, or <em>Database</em>. <em>For more information about these Connector types, see the above table.</em></li>
+<li>Click the desired Connector tile.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Specify the settings in each section. - Refer to the general information included in this topic and to the help in the specific data Connector. <em>For more information about configuring specific data Connectors, see Configuring Each Connector. As applicable, click Connect, Next, or Save and open the next section.</em></li>
+<li>When finished, click <em>Save</em>.<ul>
+<li>You are taken to the details view for the DataSet in the Data Center. For more information about this view, see Data Center Layout.</li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector Settings" duration="0">
+        <p>All Connector types in Domo have different options for setting up a DataSet.</p>
+<p>Most Connectors require you to enter login credentials, an API key, a server URL, or a combination of these to access the Connector. If you cannot connect after entering your credentials, you have most likely entered incorrect credentials.</p>
+<p>For information about finding credentials, see the documentation for your specific Connector. You can find this under <a href="https://domo-support.domo.com/s/topic/0TO5w000000ZaoQGAS" target="_blank">API Connectors</a>.</p>
+<p>After you connect, you are usually asked for information about the data you want to pull and the desired format. Most Connectors have two or more associated report types. In addition, many Connectors request a timeframe for the data to be retrieved. You may also be asked to submit a query for retrieving data. For example, when connecting to JIRA you can enter a JQL query to retrieve data for a specified search filter.</p>
+<p>For most Connectors, you are also asked to schedule data updates. You can use basic scheduling, in which you select a single, specific unit of time (such as &#34;Every hour&#34;) and enter the time of day when the update is to occur, if required. Or you can use advanced scheduling, in which you can select multiple update times.</p>
+<p>The information in this section is general and may or may not be required for a certain Connector. For specific requirements for Connectors, see <a href="https://domo-support.domo.com/s/topic/0TO5w000000ZaoQGAS" target="_blank">API Connectors</a>.</p>
+<h2 is-upgraded>Connector Credentials</h2>
+<p>If required, specify the credentials for connecting to the data provider. If available, you can select an account or create an account to use in connecting. For more information about accounts, see <a href="https://domo-support.domo.com/s/article/360042926054" target="_blank">Manage Connector Accounts</a>.</p>
+<p>Some Connectors, such as Google Drive, use OAuth to connect. This means that you only need to enter your credentials once for a given account. In the future, when you go to create a DataSet using this Connector account, your credentials are passed in automatically. Other Connectors do not use OAuth, so you must enter your credentials each time you create a DataSet using this Connector account.</p>
+<h2 is-upgraded>Connector Details</h2>
+<p>Most Connectors include a Details settings category. Here you usually specify options like the report to run, the timeframe for the data, a data query for pulling specific information from a database, and so on. If a query is required, the type of query you need to use depends on the Connector type and the source data in your system.</p>
+<p>Click <em>Load Preview</em> to verify that your data is accessible. If connection errors occur, verify the specified connection information.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector Scheduling" duration="0">
+        <p>In the <strong>Scheduling</strong> settings category, you can specify the update schedule, retry settings, and update method you want for this DataSet. You can use either basic or advanced scheduling for connectors.</p>
+<h2 is-upgraded>Basic scheduling</h2>
+<p>In the <strong>Basic Scheduling</strong> tab, you can create a basic update schedule in which you specify a predefined update interval for this DataSet (such as &#34;every Monday at 10:00 AM&#34;).</p>
+<p>By default, schedules are set from the current time. Update intervals include every hour, day, weekday, week, month, and manually. Schedule times are based on UTC and will also show what time that is for you based on your Company Time Zone setting. For hour, day, and week options, you can specify the interval (every # hours/days/weekdays) and the start period.</p>
+<p><em>Note: If you set a Connector schedule using the hourly method, the end time is not inclusive. For example, if the schedule is set to hourly with the active hours set to run 8 AM UTC to 7 AM UTC it will skip the 7 AM UTC run because the end hour is not treated as inclusive. If you select Manually for your update interval, you can instruct Domo to send you a notification when the data has not been updated for a given period of time. Time periods range from one hour to three months.</em></p>
+<p class="image-container"><img style="width: 800.00px" src="img/e3671e3e65ddffee.png"></p>
+<p><em>Note: If you need your DataSet to update faster than every 15 minutes, please reach out to your account team for evaluation.</em></p>
+<h3 is-upgraded>Update Method</h3>
+<p>When creating or editing a DataSet, you can specify whether to append or replace data when updates occur. The update options are found at the bottom of the Basic Scheduling and Advanced Scheduling tabs.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Option</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Replace</p>
+</td><td colspan="1" rowspan="1"><p>Replace the current version of the data with a new version of the data. Previous versions are preserved.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Append</p>
+</td><td colspan="1" rowspan="1"><p>Add data to the current version of the data, increasing the size of the DataSet.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Upsert</p>
+</td><td colspan="1" rowspan="1"><p>Update DataSets with restated data to ensure you have the most up-to-date information. Available for selected connectors only. For a list of available connectors, see <a href="https://domo-support.domo.com/s/article/360043430733" target="_blank">DataSet Update Methods</a>.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Partition</p>
+</td><td colspan="1" rowspan="1"><p>Select a rolling window of data to keep, making it easier to focus on relevant data. Available for selected connectors only. For a list of available connectors, see <a href="https://domo-support.domo.com/s/article/360043430733" target="_blank">DataSet Update Methods</a>.</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Advanced Scheduling</h2>
+<p>In the <strong>Advanced Scheduling</strong> tab, you have more control over when data is updated than you do when using basic scheduling. You can create schedules by month, day of the month, or day of the week. You can even specify which days of the week out of the month you want to update (for example, every second and fourth Sunday).</p>
+<p>You can indicate whether updates are done on a set interval (such as &#34;every 15 minutes,&#34; &#34;every 8 hours,&#34; etc.) or at a specified time. You can also set the start time (based on the current minute). If you want, you can set the update schedule to start immediately.</p>
+<p><em>Note: If you need your DataSet to update faster than every 15 minutes, please reach out to your account team for evaluation. Schedule times are based on UTC but can be seen in your timezone.</em></p>
+<p class="image-container"><img style="width: 800.00px" src="img/fe8f8122a8a96aaa.png"><img style="width: 800.00px" src="img/2a77327e55cf6943.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector Error handling" duration="0">
+        <p>Retry settings determine whether Domo should attempt to retry if updates fail for this DataSet and, if so, the frequency and maximum number of retries. These settings apply only to scheduled runs, not manual runs. You access the retry options dialog by selecting <em>Always retry when an update fails</em>.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/8d2b85de16fc3b40.png"></p>
+<p>The options in this dialog are as follows:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Option</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Always retry when an update fails</p>
+</td><td colspan="1" rowspan="1"><p>Domo retries to update the DataSet. After retrying the specified number of times, Domo sends a notification if the update attempt is unsuccessful.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Do not retry when update fails</p>
+</td><td colspan="1" rowspan="1"><p>Domo sends a notification if the update attempt is unsuccessful, and no retries are made.</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Magic ETL DataFlow" duration="0">
+        <p>Follow these steps to create a <em>Magic ETL</em> DataFlow:</p>
+<ol type="1">
+<li>Navigate to the Domo <em>Data Center</em>.</li>
+<li>In the ribbon at the top of the Data Center, select <em>Transform Data</em> &gt; <em>Magic ETL</em> to open the Magic ETL canvas.<img style="width: 600.00px" src="img/a4fb906eb7bba56.jpg"></li>
+<li>In the left panel, expand DataSets and drag an Input DataSet tile to the canvas.<img style="width: 600.00px" src="img/83fa5de49a023d8f.png"></li>
+<li>The tile editor expands below the canvas.<img style="width: 600.00px" src="img/24f96d2252ac27f3.jpg"></li>
+<li>In the tile editor, select Choose DataSet to choose the DataSet you want to transform.</li>
+<li>Drag other tiles to the canvas, depending on what transformations you want to make, and make sure they are all connected by dragging the nodes on the sides of each tile to the node on the next tile.</li>
+<li>Configure the Output DataSet tile:<ol type="1">
+<li>Connect a tile to the Output DataSet tile.</li>
+<li>Select the Output DataSet tile, then enter a name for the new output DataSet.</li>
+<li>(Optional) Schedule the DataFlow. By default, you must run the DataFlow manually. You can schedule it to run when a trigger activates. See <a href="https://domo-support.domo.com/s/article/000005216" target="_blank">Advanced DataFlow Triggering</a> to learn more.</li>
+<li>Enter a name and description for the DataFlow.</li>
+<li>Select Save to keep your changes, adding an optional version description before saving again.</li>
+<li>When you save a DataFlow, an entry for this version is added to the Versions tab in the Details view for the DataFlow. If you add a version description, it appears in the version entry. Learn about Viewing the Version History for a DataFlow.</li>
+</ol>
+</li>
+</ol>
+<h2 is-upgraded>Tips and Notes</h2>
+<ul>
+<li>You must configure each tile in the editor before you can configure the following tile. If a tile is not configured, the connector to the next tile appears as a dashed line.<br><img style="width: 400.00px" src="img/fae67c82485ec8b3.png"></li>
+<li>Use the search tool in the left panel to find the tile you need.<br><img style="width: 400.00px" src="img/85c08da3f11a8fde.png"></li>
+<li>The Mini Map displays in the corner of the screen and helps you see the layout and navigate around complex and detailed DataFlows. Click and drag the white square in the mini map to move to a certain view of the DataFlow on the canvas.<br><img style="width: 400.00px" src="img/3ee4a266942f2129.jpg"></li>
+<li>If you close the mini map, reopen it by selecting the map pointer icon.<br><img style="width: 200.00px" src="img/b6bce4be4a5844a9.png"></li>
+<li>You can get help on a specific tile in the canvas by clicking the tile, then clicking <img style="width: 20.00px" src="img/3f59f8da86d627cf.png">.</li>
+<li>You can select a number of tiles at once by clicking on the canvas then dragging the mouse pointer over them. When multiple tiles are selected, you can drag all of the selected tiles as a group to where you want them. You can also delete the selected tiles by selecting Delete in the left panel.</li>
+</ul>
+<p>Why are output DataSets not marked as Updated when the DataFlow completes successfully?</p>
+<p>This is usually because the data has not actually changed—no update has occurred. The DataSets show as updated if the data has changed during a successful DataFlow execution.</p>
+<h2 is-upgraded>Best Practices for Magic ETL DataFlows</h2>
+<p>We recommend the following for your DataFlow:</p>
+<ul>
+<li>Only include the DataSets that are necessary to create the output DataSet.</li>
+<li>Filter out rows that you don&#39;t need at the beginning of the DataFlow. Learn about Filter tiles.</li>
+<li>Reduce the number of columns to only those you need.</li>
+<li>Use descriptive names for each tile in your DataFlow.</li>
+<li>List the following in your DataFlow description: <ul>
+<li>The input DataSets being transformed and their owner&#39;s names.</li>
+<li>The output DataSet created.</li>
+</ul>
+</li>
+<li>Give your DataFlow the same name as the output DataSet. <ul>
+<li>This is because the outputs of a DataFlow become their own DataSet in the Data Center, and this allows you to more easily identify which DataFlows contribute to which output DataSets.</li>
+</ul>
+</li>
+<li>Be aware that some tiles take longer to execute than others, including: <ul>
+<li>Group By</li>
+<li>Rank &amp; Window</li>
+<li>Join Data</li>
+<li>Remove Duplicates</li>
+<li>Pivot</li>
+<li>Scripting tiles</li>
+<li>Data Science tiles</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect to Your Data" duration="0">
+        <ol type="1">
+<li>Select the <em>DataFlows</em> icon on the left<br><img style="width: 200.00px" src="img/a3043e4a5ba035e6.png"></li>
+<li>Locate the Mixed Media Model Dataflow<br><img style="width: 300.00px" src="img/c0f0c290ad06de29.png"></li>
+<li>Select the input dataset and click <em>Change Dataset</em> to replace the sample data with the data you have created through this quickstart.<br><img style="width: 500.00px" src="img/203af48efd758f1b.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Leveraging Attribution and Models" duration="0">
+        <p>With the Marketing App, you&#39;ll analyze historical attribution data and performance to uncover key trends across your marketing efforts. Using tailored machine learning models, you&#39;ll simulate various spend scenarios to predict their potential impact on future campaigns. This data-driven approach allows you to test different media mix strategies, optimize your budget allocation, and maximize ROI by identifying the most effective marketing channels and tactics for your business.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <h2 is-upgraded>Conclusion</h2>
+<p>With these tools, you&#39;re now equipped to optimize campaign performance, enhance marketing ROI, and refine your strategy with actionable insights.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>By following this guide, you&#39;ve learned how to deploy and utilize Domo&#39;s marketing app from the Snowflake Marketplace, connect your data sources, and leverage advanced attribution and media mix models to make smarter, data-driven marketing decisions.</p>
+<h2 is-upgraded>Resources</h2>
+<p>For further learning, explore the following resources:</p>
+<ul>
+<li><a href="https:%E2%80%8A//medium.%E2%80%8Acom/snowflake/introducing-domos-marketing-app-enriching-marketing-analytics-with-snowflake-integration-11d48e7b8ad4" target="_blank">Marketing App Blog post</a></li>
+<li><a href="https://domo-support.domo.com/s/knowledge-base?language=en_US" target="_blank">Domo Knowledge Base</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/marketplace/" target="_blank">Snowflake Marketplace</a></li>
+<li><a href="https://www.domo.com/domo-central/community" target="_blank">Domo Community</a></li>
+<li><a href="https://community-forums.domo.com/main" target="_blank">Domo Community Forum</a></li>
+<li><a href="https://www.domo.com/blog/how-to-join-the-community-forums-step-by-step/" target="_blank">How to Join the Domo Community</a></li>
+<li><a href="https://www.domo.com/login/customer-community" target="_blank">Domo Support</a></li>
+<li>Architecture<br><img style="width: 600.00px" src="img/4a3213cfa016e70e.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

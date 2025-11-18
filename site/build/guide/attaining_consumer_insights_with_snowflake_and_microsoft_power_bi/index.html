@@ -1,0 +1,697 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Attaining Consumer Insights with Snowflake and Microsoft Power BI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="attaining_consumer_insights_with_snowflake_and_microsoft_power_bi"
+                  title="Attaining Consumer Insights with Snowflake and Microsoft Power BI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>In this lab, you&#39;ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration:</p>
+<p>Access first party data seamlessly in Snowflake Leverage the Data Marketplace to query live POS data from 3rd party providers Set up self-serve analytics via Power BI</p>
+<h2 is-upgraded>Target Audience</h2>
+<p>Business Intelligence Architects and developers looking to get the most out of Snowflake and Power BI together.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<p>The exercises in this lab will walk you through the steps to:</p>
+<p>Create stages, databases, tables, user, role and warehouses Load data into a database within your Snowflake account Engineer and model data optimally for BI consumption Connect to your Snowflake account to Power BI and author reports Visualize the data and perform basic data analysis Perform optimization techniques to speed report/dashboard responsiveness</p>
+<h3 is-upgraded>Prerequisites:</h3>
+<ul>
+<li>Use of the <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial environment</a></li>
+<li>Access to an Azure Account with the ability to launch a Azure Cloud Shell, and create an Azure Storage Container</li>
+<li>Basic knowledge of Power BI and its intended use cases</li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Familiarity with CSV comma-delimited files</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Lab Environment" duration="0">
+        <h2 is-upgraded>Steps to Prepare Your Lab Environment</h2>
+<h3 is-upgraded>If not yet done, register for a Snowflake free 30-day trial at https://trial.snowflake.com</h3>
+<ul>
+<li>The Snowflake Enterprise Edition on Azure West US 2, East US 2 (Washington or Virginia) regions recommended. Or we suggest you select the region which is physically closest to you.</li>
+<li>After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy, future access. After activation, you will create a user name and password. Write down these credentials.</li>
+</ul>
+<h3 is-upgraded>If you do not already have an Azure account please create a new account using this link - <a href="https://azure.microsoft.com/en-us/free/" target="_blank">Create Your Azure Free Account</a>. Make sure you have the permissions to use an Azure Cloud Shell, create an Azure Storage Container and a Azure Shared Access Signature (SAS) Token. Once logged in to your account select an Azure region closest to your Snowflake account, Azure West US 2, East US 2 (Washington or Virginia) regions recommended for this lab.</h3>
+<h3 is-upgraded>If you don&#39;t already have Power BI Desktop on your lab workstation, please download and install the latest version using the following link: <a href="https://www.microsoft.com/en-us/download/details.aspx?id=58494" target="_blank">Power BI Desktop</a></h3>
+<h3 is-upgraded>If you don&#39;t already have DAX Studio on your lab workstation, please download and install the latest version using the following link: <a href="https://daxstudio.org/" target="_blank">DAX Studio - The ultimate client tool for working with DAX</a>.</h3>
+<h3 is-upgraded>Download and install the latest version of <a href="https://azure.microsoft.com/en-us/features/storage-explorer/" target="_blank">Azure Storage Explorer</a> (Optional).</h3>
+<aside class="special"><p>**Consider This: ** Resize your browser windows so you can view this lab guide and your web browser side-by-side to more easily follow the lab instructions. If possible, even better is to use a secondary display dedicated to the lab guide. It is also advisable to open a second browser window so you are able to view the Snowflake UI and Azure Portal side by side.</p>
+</aside>
+<h3 is-upgraded>Download the Snowflake and Azure script files to your local machine</h3>
+<ul>
+<li>Click here: <a href="https://raw.githubusercontent.com/sfc-gh-ccollier/sfquickstart-samples/main/samples/snowflake-powerbi-retail-vhol/scripts/lab-snowflake-powerbi-load-to-snowflake.sql" target="_blank">lab-snowflake-powerbi-load-to-snowflake.sql</a> and download the file. This file contains pre-written SQL commands and we will use this file later in the lab.</li>
+<li>Click here: <a href="https://raw.githubusercontent.com/sfc-gh-ccollier/sfquickstart-samples/main/samples/snowflake-powerbi-retail-vhol/scripts/lab-snowflake-powerbi-load-to-azure-blob.sh" target="_blank">lab-snowflake-powerbi-load-to-azure-blob.sh</a> and download the file. This file contains the shell script we will use to copy the lab data files from Github directly to an Azure Storage container and we will use this file later in the lab.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="The Snowflake User Interface" duration="8">
+        <aside class="warning"><p><strong>About the screen captures, sample code, and environment</strong> Screen captures in this lab depict examples and results that may vary slightly from what you see when you complete the exercises.</p>
+</aside>
+<h2 is-upgraded>Logging Into the Snowflake User Interface (UI)</h2>
+<p>Open a browser window and enter the URL of your Snowflake 30-day trial environment that was sent with your registration email.</p>
+<p>You should see the login screen below. Enter the username and password used for registration.</p>
+<p class="image-container"><img alt="login screen" src="img/e8533fb103bd156a.png"></p>
+<p><strong>Close any Welcome Boxes and Tutorials</strong></p>
+<p>You may see welcome and helper boxes appear when you log in for the first time. Also an &#34;Enjoy your free trial...&#34; ribbon at the top of the screen. Minimize and close these boxes.</p>
+<p class="image-container"><img alt="welcome messages" src="img/e8fee56a7f97ac5.png"></p>
+<h2 is-upgraded>Navigating the Snowflake UI</h2>
+<p>Let&#39;s get you acquainted with Snowflake! This section covers the basic components of the user interface. We will move left to right from the top of the UI.</p>
+<p>The navigation bar allows you to switch between the different areas of Snowflake:</p>
+<p class="image-container"><img alt="snowflake navbar" src="img/d2f3f3f39f0d2672.png"></p>
+<p>The <strong>Databases</strong> tab shows information about the databases you have created or have permission to access. You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that several databases already exist in your environment. However, we will not be using these in this lab.</p>
+<p class="image-container"><img alt="databases tab" src="img/7b2a006a8ba46a48.png"></p>
+<p>The <strong>Shares</strong> tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data. We will cover data sharing in Section 10.</p>
+<p class="image-container"><img alt="shares tab" src="img/75b27d35b63200.png"></p>
+<p>The <strong>Warehouses</strong> tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH (XL) already exists in your environment.</p>
+<p class="image-container"><img alt="warehouses tab" src="img/74b5ed376f674980.png"></p>
+<p>The <strong>Worksheets</strong> tab provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete. The default Worksheet 1 appears when this tab is accessed.</p>
+<p>The left pane contains the database objects browser which enables users to explore all databases, schemas, tables, and views accessible by the role selected for a worksheet. The bottom pane displays the results of queries and operations.</p>
+<p>The various sections of this page can be resized by adjusting their sliders. If during the lab you need more room in the worksheet, collapse the database objects browser in the left pane. Many of the screenshots in this guide will keep this section closed.</p>
+<p class="image-container"><img alt="worksheets tab" src="img/c53083dd1b031f50.png"></p>
+<p>At the top left of the default worksheet, to the right of the worksheet tab, click on the downward facing arrow and select Load Script. Browse to the lab_scripts.sql file you downloaded in the previous section and select Open. All of the SQL commands you need to run for the remainder of this lab will now appear on the new worksheet. Do not run any of the SQL commands yet. We will come back to them later in the lab and execute them one at a time.</p>
+<p class="image-container"><img alt="worksheets tab navigation" src="img/a061da4b0a8e428a.png"></p>
+<aside class="warning"><p><strong>Worksheets vs the UI</strong> Many of the configurations for this lab will be executed via the pre-written SQL within this worksheet to save time. These configurations could also be done via the UI in a less technical manner, but would take more time.</p>
+</aside>
+<p>The <strong>History</strong> tab allows you to view the details of all queries executed in the last 14 days from your Snowflake account. Click on a Query ID to drill into it for more information.</p>
+<p class="image-container"><img alt="history tab" src="img/6f4c2679251fe566.png"></p>
+<p>Clicking on your username in the top right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of <code>SYSADMIN</code> and will stay in this role for the majority of the lab.</p>
+<p class="image-container"><img alt="user preferences dropdown" src="img/a8b2bce3466133da.png"></p>
+<aside class="warning"><p><strong>SYSADMIN</strong> The <code>SYSADMIN</code> (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account. In a real-world environment, you would use different roles for the tasks in this lab, and assign roles to your users. We will cover more on Snowflake access control in Section 9 and you can find additional information in the <a href="https://docs.snowflake.com/user-guide/security-access-control-overview" target="_blank">Snowflake documentation</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Migrating Lab Data to Azure" duration="15">
+        <p>This module will walk you through the steps to:</p>
+<ul>
+<li>Create a blob storage account</li>
+<li>Create a container in the storage account</li>
+<li>Generate a SAS token to use as credentials when connecting to the storage account</li>
+<li>Load the lab data files into the storage account from github - via azure shell</li>
+<li>(optional) Connect Azure Storage Explorer to the storage account to browse files</li>
+</ul>
+<h2 is-upgraded>4.1 Create a blob storage account</h2>
+<p>From the Azure Portal, navigate to Storage accounts. There are multiple ways to get there, selecting from the Menu being one of those. Next we want to select &#34;+ Create&#34; to create a new storage account <img alt="data snippet" src="img/936bbb2eea19cc26.png"></p>
+<p>For this lab, we will choose the following options when creating the storage account:</p>
+<ul>
+<li>Resource Group: (Create new) snowflake_powerbi_lab_rg</li>
+<li>Storage account name: (must be unique) e.g. ab12345lab</li>
+<li>Region: (US) West US 2</li>
+<li>Performance: Standard</li>
+<li>Redundancy: Locally-redundant storage (LRS) (other tabs leave as default settings)</li>
+</ul>
+<p class="image-container"><img alt="data snippet" src="img/1906244412d94823.png"><img alt="data snippet" src="img/73611cce1becd020.png"></p>
+<p>Click &#34;Review + create&#34; to accept <img alt="data snippet" src="img/9b911d0b20547979.png"></p>
+<p>Click &#34;Create&#34; to complete the storage account creation.&#34;:?il8./ <img alt="data snippet" src="img/41aca23ae75366ca.png"><img alt="data snippet" src="img/179b4644222fe73c.png"></p>
+<p>Click &#34;Go to resource&#34; once the storage account creation completes.</p>
+<h2 is-upgraded>4.2 Create a blob container to house the lab files</h2>
+<p>Navigate to &#34;<strong>Containers</strong>&#34; within the storage account</p>
+<p class="image-container"><img alt="data snippet" src="img/d01be663a25f1b43.png"></p>
+<p>Select &#34;+ Container&#34; and create a new lab-data container:</p>
+<p class="image-container"><img alt="data snippet" src="img/b02a55d9c5b30b8a.png"></p>
+<h2 is-upgraded>4.3 Generate a SAS token for accessing the blob container</h2>
+<p>From the storage account containers page, click on the &#34;<strong>lab-data</strong>&#34; container</p>
+<p class="image-container"><img alt="data snippet" src="img/1e8abe00b679365c.png"></p>
+<p>Then select &#34;<strong>Shared access tokens</strong>&#34; <img alt="data snippet" src="img/b32c94751eb9f19b.png"></p>
+<p>Select <strong>Read; Add; Create; Write; Delete; List</strong> permissions for the SAS token <img alt="data snippet" src="img/6dbce77ebcb32fd0.png"><img alt="data snippet" src="img/8e33003888e740fd.png"></p>
+<p>Set the &#34;<strong>Expiry</strong>&#34; date to something in the future - e.g. 1 month or 1 year and click &#34;<strong>Generate SAS token and URL</strong>&#34;</p>
+<p class="image-container"><img alt="image53.png" src="img/e36bee6beaec8eff.png"></p>
+<p>Copy the values from &#34;<strong>Blob SAS token</strong>&#34; and &#34;<strong>Blob SAS URL</strong>&#34; and save them somewhere for use later in this lab</p>
+<p class="image-container"><img alt="image45.png" src="img/781b4e75a20d9a36.png"></p>
+<h2 is-upgraded>4.4 Load Azure Cloud Shell and run script to load files</h2>
+<p>Click the Azure Cloud Shell icon <img alt="shell icon" src="img/246799d53337c202.png">, or select from the drop-down menu: <img alt="shell icon" src="img/17c8b1b7c288e342.png"></p>
+<p>Choose &#34;<strong>Bash</strong>&#34; for the shell <img alt="Bash" src="img/6630de2f9859fb04.png"></p>
+<p>Click &#34;<strong>Create storage</strong>&#34; <img alt="Create Storage" src="img/fa3a29586b34025d.png"></p>
+<p>Click &#34;<strong>Upload/Download files</strong>&#34; and upload a copy of the &#34;lab-snowflake-powerbi-load-to-azure-blob.sh&#34; file (found in the github repo) <img alt="Upload" src="img/ca03318b02192f4.png"></p>
+<p>Type &#34;<strong>code lab-snowflake-powerbi-load-to-azure-blob.sh</strong>&#34; to open the file in Visual Studio Code, then replace the &lt;YOURACCOUNT&gt; with your blob container name from step 4.2 and replace  &lt;YOURSASTOKEN&gt; with the SAS token created in step 4.3.  Once the values are updated, save the file and close the editor.</p>
+<p class="image-container"><img alt="Upload" src="img/e43a222e9e2660ef.png"></p>
+<p>e.g.:</p>
+<p class="image-container"><img alt="Upload" src="img/6add27521832f238.png"></p>
+<p>To run the script, type &#34;<strong>bash lab-snowflake-powerbi-load-to-azure-blob.sh</strong>&#34; in the Azure Shell and hit Enter. The script will then start copying the lab data files from the Git Repo and into the Azure Storage account. The script will take approximately 1 to 1¼ hours to copy all of the files across, and it will do so without consuming any of your own internet bandwidth.</p>
+<p class="image-container"><img alt="Copy" src="img/7e8d56bc7e52ef95.png"></p>
+<h2 is-upgraded>4.5 (Optional) Add the blob storage account in Storage Explorer</h2>
+<p>Azure Storage Explorer is a free tool that lets you manage Azure cloud storage resources from your desktop. You can download and install Azure Storage Explorer from here: <a href="https://azure.microsoft.com/en-us/features/storage-explorer/" target="_blank">Azure Storage Explorer</a></p>
+<p>Right-click &#34;Storage Accounts&#34; and select &#34;Connect to Azure Storage...&#34;</p>
+<p class="image-container"><img alt="Storage Explorer" src="img/e7cfae2d7e1079cd.png"></p>
+<p>Select &#34;<strong>Blob container</strong>&#34;</p>
+<p class="image-container"><img alt="Blob Container" src="img/c5c59f8c9c9b2486.png"></p>
+<p>Select &#34;<strong>Shared access signature URL (SAS)</strong>&#34;</p>
+<p class="image-container"><img alt="SAS" src="img/774fef32946f86.png"></p>
+<p>Enter the &#34;<strong>Blob SAS URL</strong>&#34; that was generated in 4.3 above. The Display name should default to &#34;lab-data&#34; (unless you changed the container name). Click &#34;Next&#34; and then &#34;Connect&#34; on the next screen.</p>
+<p class="image-container"><img alt="SAS" src="img/b781d2ab0764cedb.png"></p>
+<p>You should now see the files that were loaded into the storage account in 4.4</p>
+<p class="image-container"><img alt="File List" src="img/e8b0c2d5bcaed68f.png"></p>
+<p class="image-container"><img alt="File List" src="img/27987c67313b7b23.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparing to Load Data &amp; Loading Data in Snowflake" duration="0">
+        <p><strong>Let&#39;s start by preparing to load the structured data on Customer Churn into Snowflake.</strong></p>
+<p><strong>This module will walk you through the steps to:</strong></p>
+<ul>
+<li>Create a virtual warehouse</li>
+<li>Create a role and user</li>
+<li>Granting of a role to a user and privileges to a role</li>
+<li>Create a database and tables</li>
+<li>Create external and internal stages</li>
+<li>Create a file format for the data</li>
+<li>Load data into a table and querying the table</li>
+</ul>
+<p><strong>Getting Data into Snowflake</strong></p>
+<p>There are many ways to get data into Snowflake from many locations including the COPY command, Snowpipe auto-ingestion, an external connector, or a third-party ETL/ELT product. More information on getting data into Snowflake, see https://docs.snowflake.com/guides-overview-loading-data</p>
+<p>We are using the COPY command and Azure Blob storage for this module in a manual process so you can see and learn from the steps involved. In the real-world, a customer would likely use an automated process or ETL product to make the data loading process fully automated and much easier.</p>
+<p>The dataset we are using for this lab was provided through partnership with Drop (https://www.joindrop.com/). The data consists of 1.7bn point of sales transactions and their related dimensional attributes for anonymized stores located in Canada and the United States.</p>
+<p>Below is a snippet from one of the Location CSV data files:</p>
+<p class="image-container"><img alt="Sample Data" src="img/2726c703e8c3e070.png"></p>
+<p>It is in comma-delimited format with no header line. This will come into play later in this module as we configure the Snowflake table which will store this data.</p>
+<h2 is-upgraded>5.1 Start using Worksheets and Create a Virtual Warehouse</h2>
+<p> At the top of the Snowflake UI, click the Worksheets tab. You should see the worksheet with all the SQL we loaded in a prior step. </p>
+<p class="image-container"><img alt="Worksheets" src="img/d61e3d28081ce0ed.png"></p>
+<p>Before we start using SQL in Worksheets we will turn on Code Highlight by clicking on the 3 dots on the top right hand corner of the worksheet, and then clicking on Turn on Code Highlight. This will make it easier to identify the SQL that will be executed.</p>
+<p class="image-container"><img alt="Worksheets" src="img/5dd9db43f3f07458.png"></p>
+<p>To execute a SQL command or commands, click or select multiple commands with your mouse. The SQL command(s) will be highlighted in BLUE. You can now either press COMMAND &amp; RETURN on a Mac or CONTROL &amp; ENTER on Windows; or you can click the RUN button towards the top left hand slide of the Worksheet.</p>
+<p class="image-container"><img alt="Run" src="img/4d0c4d86545e304.png"></p>
+<p><strong>Warning</strong></p>
+<p>In this lab, never check the &#34;All Queries&#34; box at the top of the worksheet. We want to run SQL queries one at a time in a specific order; not all at once.</p>
+<p>Next we will briefly switch roles to the ACCOUNTADMIN role primarily to allow us to create a specific role for this workshop. Execute the SQL command shown below.</p>
+<pre><code>USE ROLE ACCOUNTADMIN;
+</code></pre>
+<p>Let&#39;s create two Warehouses called ELT_WH and POWERBI_WH and grant all access to SYSADMIN. We create a Warehouse for each workload so there will never be contention between data loading operations, and BI operations. <strong>Note:</strong> that the Warehouses are configured to auto suspend and resume, this prevents the unnecessary use of credits if a Warehouse is not being used with the convenience that it will automatically resume when needed.</p>
+<pre><code>CREATE OR REPLACE WAREHOUSE ELT_WH
+  WITH WAREHOUSE_SIZE = &#39;X-SMALL&#39;
+  AUTO_SUSPEND = 120
+  AUTO_RESUME = true
+  INITIALLY_SUSPENDED = TRUE;
+
+GRANT ALL ON WAREHOUSE ELT_WH TO ROLE SYSADMIN;
+
+CREATE OR REPLACE WAREHOUSE POWERBI_WH
+  WITH WAREHOUSE_SIZE = &#39;MEDIUM&#39;
+  AUTO_SUSPEND = 120
+  AUTO_RESUME = true
+  INITIALLY_SUSPENDED = TRUE;
+
+GRANT ALL ON WAREHOUSE POWERBI_WH TO ROLE SYSADMIN;
+</code></pre>
+<p>Now we will create a role named POWERBI_ROLE that will be used to control access to objects in Snowflake. We will also GRANT all privileges on the POWERBI_WH Warehouse to this role. We will also grant the POWERBI_ROLE to the SYSADMIN role to allow SYSADMIN to have all the POWERBI_ROLE privileges.</p>
+<pre><code>CREATE OR REPLACE ROLE POWERBI_ROLE COMMENT=&#39;Power BI Role&#39;;
+GRANT ALL ON WAREHOUSE POWERBI_WH TO ROLE POWERBI_ROLE;
+GRANT ROLE POWERBI_ROLE TO ROLE SYSADMIN;
+</code></pre>
+<p>The next step is to create a user that will be used by Power BI desktop in today&#39;s lab to connect to the Snowflake account. Users&#39; could also use their own accounts, or Single Sign On could be configured so that Azure Active Directory accounts could be used. The user POWERBI will be created and assigned a default role, warehouse and database to establish the default context when connected to the Snowflake account.</p>
+<p>Note that the SQL statement has a password &#34;PBISF123&#34;, you can change the password to one that you prefer. Do note the password you use if you do change it as it will be required for the next portion of the lab when Power BIwill connect to Snowflake.</p>
+<p>We will also grant the POWERBI_ROLE to the POWERBI user.</p>
+<p>Finally we will switch to the SYSADMIN role for the next steps.</p>
+<pre><code>CREATE OR REPLACE USER POWERBI PASSWORD=&#39;PBISF123&#39; 
+    DEFAULT_ROLE=POWERBI_ROLE 
+    DEFAULT_WAREHOUSE=POWERBI_WH
+    DEFAULT_NAMESPACE=LAB_DW.PUBLIC
+    COMMENT=&#39;Power BI User&#39;;
+
+GRANT ROLE POWERBI_ROLE TO USER POWERBI;
+</code></pre>
+<h2 is-upgraded>5.2 Create a Database and Tables</h2>
+<p>First, as SYSADMIN, let&#39;s create a database called LAB_DB that will be used for loading the retail sales data. Then assign the usage on the database to the POWERBI_ROLE. We will also grant all privileges on the default schema, PUBLIC, in the database to the POWERBI_ROLE.</p>
+<pre><code>USE ROLE SYSADMIN;
+
+CREATE DATABASE IF NOT EXISTS LAB_DB;
+
+GRANT USAGE ON DATABASE LAB_DB TO ROLE POWERBI_ROLE;
+</code></pre>
+<p>Let&#39;s now switch context to the LAB_DB database and PUBLIC schema. As well as switch to use the ELT_WH warehouse. The context for executing SQL commands is shown in the top right hand corner of the worksheets.</p>
+<pre><code>USE LAB_DB.PUBLIC;
+USE WAREHOUSE ELT_WH;
+</code></pre>
+<p class="image-container"><img alt="Worksheets" src="img/ec10276f55e5ba22.png"></p>
+<p>Next we will create all of the tables into which we will load retail sales data from our Azure Blob Storage container. For all tables SELECT privileges will be granted to the POWERBI_ROLE as well.</p>
+<pre><code>CREATE OR REPLACE TABLE CATEGORY (
+	CATEGORY_ID NUMBER(38,0),
+	CATEGORY_NAME VARCHAR(50)
+);
+
+CREATE OR REPLACE TABLE CHANNELS (
+	CHANNEL_ID NUMBER(38,0),
+	CHANNEL_NAME VARCHAR(50)
+);
+
+CREATE OR REPLACE TABLE DEPARTMENT (
+	DEPARTMENT_ID NUMBER(38,0),
+	DEPARTMENT_NAME VARCHAR(50)
+);
+
+CREATE OR REPLACE TABLE ITEMS (
+	ITEM_ID NUMBER(38,0),
+	ITEM_NAME VARCHAR(250),
+	ITEM_PRICE FLOAT,
+	DEPARTMENT_ID NUMBER(38,0),
+	CATEGORY_ID NUMBER(38,0),
+	TMP_ITEM_ID NUMBER(38,0)
+);
+
+CREATE OR REPLACE TABLE SALES_ORDERS (
+	SALES_ORDER_ID NUMBER(38,0),
+	CHANNEL_CODE NUMBER(38,0),
+	CUSTOMER_ID NUMBER(38,0),
+	PAYMENT_ID NUMBER(38,0),
+	EMPLOYEE_ID NUMBER(38,0),
+	LOCATION_ID NUMBER(38,0),
+	SALES_DATE TIMESTAMP_NTZ(9),
+	TMP_ORDER_ID FLOAT,
+	TMP_ORDER_DOW NUMBER(38,0),
+	TMP_USER_ID NUMBER(38,0)
+);
+
+
+CREATE OR REPLACE TABLE ITEMS_IN_SALES_ORDERS (
+	SALES_ORDER_ID NUMBER(38,0),
+	ITEM_ID NUMBER(38,0),
+	ORDER_ID NUMBER(38,0),
+	PROMOTION_ID NUMBER(38,0),
+	QUANTITY FLOAT,
+	REORDERED NUMBER(38,0),
+	TMP_ORDER_ID FLOAT,
+	TMP_PRODUCT_ID NUMBER(38,0)
+);
+
+CREATE OR REPLACE TABLE LOCATIONS (
+	LOCATION_ID NUMBER(38,0),
+	NAME VARCHAR(100),
+	GEO2 VARCHAR(250),
+	GEO GEOGRAPHY,
+	LAT FLOAT,
+	LONG FLOAT,
+	COUNTRY VARCHAR(200),
+	REGION VARCHAR(100),
+	MUNICIPALITY VARCHAR(200),
+	LONGITUDE FLOAT,
+	LATITUDE FLOAT
+);
+
+CREATE OR REPLACE TABLE STATES (
+	STATE_CODE NUMBER(38,0),
+	STATE_NAME VARCHAR(250),
+	REGION VARCHAR(250),
+	STATE_GEO VARCHAR(16777216)
+);
+
+
+GRANT USAGE ON SCHEMA LAB_DB.PUBLIC TO ROLE POWERBI_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA LAB_DB.PUBLIC TO ROLE POWERBI_ROLE;
+</code></pre>
+<p><strong>Many Options to Run Commands.</strong> SQL commands can be executed through the UI (limited), via the Worksheets tab, using our SnowSQL command line tool, a SQL editor of your choice via ODBC/JDBC, or through our Python or Spark connectors.</p>
+<p>As mentioned earlier, in this lab we will run operations via pre-written SQL in the worksheet (as opposed to using the UI) to save time.</p>
+<h2 is-upgraded>5.3 Create a File Format, an External Stage and Internal Stage</h2>
+<p>We are working with structured, comma-delimited data that has already been staged (in Module 3.4) in an Azure Blob Storage container. Before we can use this data, we first need to create an External Stage that specifies the location of our external container. We also need to create a File Format for the comma-delimited data.</p>
+<p>NOTE - Ideally, to prevent data egress/transfer costs, you would want to select a staging location from the same region that your Snowflake environment is in.</p>
+<p>First we will create an External Stage to the Azure Blob Storage container you created in Module 3.4. We will be using a SAS token (Shared Access Signature) to provide secure access to the container.Replace the YOURACCOUNT and YOURSASTOKEN values with the values you generated in 3.3.5. (Best practice is to use a Storage Integration, instead of a SAS Token, when configuring access to Azure Blob Storage. See the Snowflake Docs for more info here: https://docs.snowflake.com/en/user-guide/data-load-azure-config.html)</p>
+<pre><code>CREATE OR REPLACE STAGE LAB_DATA_STAGE 
+url=&#39;azure://YOURACCOUNT.blob.core.windows.net/lab-data&#39;
+credentials=(azure_sas_token=&#39;YOURSASTOKEN&#39;);
+</code></pre>
+<p class="image-container"><img alt="Worksheets" src="img/4d49e79547c77966.png"></p>
+<p>Next we will create the File Format that will be used. The CSV data does not have a header and we also require the text &#34;NULL&#34; to be treate as a null value.</p>
+<pre><code>CREATE OR REPLACE FILE FORMAT CSVNOHEADER
+    TYPE = &#39;CSV&#39;
+    FIELD_DELIMITER = &#39;,&#39;
+    SKIP_HEADER = 0
+    NULL_IF = (&#39;NULL&#39;);
+</code></pre>
+<p>Now we will check that we can see the files in the External Stage by running a LIST command..</p>
+<pre><code>LIST @LAB_DATA_STAGE;
+</code></pre>
+<p>Finally let&#39;s load the Retail Sales data from the Azure Blob Storage container into Snowflake.</p>
+<p>Then we will load the data using the COPY command, checking results as we go.</p>
+<pre><code>COPY INTO CATEGORY FROM @LAB_DATA_STAGE/category/ 
+FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+</code></pre>
+<p>Let&#39;s look at the data by running a SELECT command.</p>
+<pre><code>SELECT * FROM CATEGORY LIMIT 100;
+</code></pre>
+<p>The results are displayed in the frame below the Worksheet.</p>
+<p class="image-container"><img alt="Results" src="img/4645ac4ec78aea27.png"></p>
+<p>We will load and check the rest of the small tables the same way:</p>
+<pre><code>COPY INTO CHANNELS FROM @LAB_DATA_STAGE/channels/ 
+FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+SELECT * FROM CHANNELS LIMIT 100;
+
+COPY INTO DEPARTMENT from @LAB_DATA_STAGE/department/ 
+FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+SELECT * FROM DEPARTMENT LIMIT 100;
+
+COPY INTO ITEMS from @LAB_DATA_STAGE/items/ 
+FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+SELECT * FROM ITEMS LIMIT 100;
+
+COPY INTO LOCATIONS from @LAB_DATA_STAGE/locations/ 
+FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+SELECT * FROM LOCATIONS LIMIT 100;
+
+COPY INTO STATES from @LAB_DATA_STAGE/states/ 
+FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+SELECT * FROM STATES LIMIT 100;
+</code></pre>
+<p>We also have two much larger tables to load. Each of the Sales Orders and Sales Orders Items tables have millions or billions of rows, spread across many source files. This time we will try a sample with out X-SMALL warehouse, see how long it takes, and scale the warehouse up larger if we think it will speed up our data load.</p>
+<pre><code>LIST @LAB_DATA_STAGE/items_in_sales_orders/;
+</code></pre>
+<p>As you can see, there are 200 compressed (GZIP) CSV files of around 100MB each containing the Sales Orders Items data:</p>
+<p class="image-container"><img alt="gzips" src="img/a316294e27abb0da.png"></p>
+<pre><code>COPY INTO ITEMS_IN_SALES_ORDERS from @LAB_DATA_STAGE/items_in_sales_orders/items_in_sales_orders_0_0_0.csv.gz FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+</code></pre>
+<p class="image-container"><img alt="gzips" src="img/6625475f71500019.png"></p>
+<p>That took ~20 seconds, and ~9 million rows were loaded. There are still another 199 files and it would take approx 10-15 minutes to load the rest using the existing X-SMALL (1-node) warehouse. Instead, we will scale up our warehouse to an X-LARGE (16 nodes) and load the rest of the data in. It should run much faster!</p>
+<pre><code>ALTER WAREHOUSE ELT_WH SET WAREHOUSE_SIZE = &#39;X-LARGE&#39;;
+
+COPY INTO ITEMS_IN_SALES_ORDERS from   @LAB_DATA_STAGE/items_in_sales_orders/ 
+FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+</code></pre>
+<p>Loading the rest of the data took ~45 seconds, which is much faster than 10-15 minutes. Lets also load the Sales Order table using this larger warehouse.</p>
+<pre><code>COPY INTO SALES_ORDERS from @lab_data_stage/sales_orders/ FILE_FORMAT = (FORMAT_NAME = CSVNOHEADER);
+</code></pre>
+<p>Now that we have loaded the two large tables, we can scale our warehouse back down to an X-SMALL as we no longer need the larger warehouse.</p>
+<pre><code>ALTER WAREHOUSE ELT_WH SET WAREHOUSE_SIZE = &#39;X-SMALL&#39;;
+</code></pre>
+<p>Let&#39;s also check how many rows are in each of these large tables:</p>
+<pre><code>SELECT COUNT(*) AS SALES_ORDERS_COUNT FROM SALES_ORDERS;
+</code></pre>
+<p class="image-container"><img alt="count" src="img/1c2dcb7792c5738d.png"></p>
+<p>As you can see, we just loaded around 200 million Sales Orders and 1.8 billion Sales Orders Items - and we did it in a couple of minutes.</p>
+<p><strong>Snowflake Compute vs Other Warehouses</strong> Many of the warehouse/compute capabilities we just covered, like being able to create, scale up and out, and auto-suspend/resume warehouses are things that are simple in Snowflake and can be done in seconds. Yet for on-premise data warehouses these capabilities are very difficult (or impossible) to do as they require significant physical hardware, over-provisioning of hardware for workload spikes, significant configuration work, and more challenges. Even other cloud data warehouses cannot scale up and out like Snowflake without significantly more configuration work and time.</p>
+<p><strong>Warning - Watch Your Spend!</strong> During or after this lab you should <em>NOT</em> do the following without good reason or you may burn through your $400 of free credits more quickly than desired:</p>
+<ul>
+<li>Disable auto-suspend. If auto-suspend is disabled, your warehouses will continue to run and consume credits even when not being utilized.</li>
+<li>Use a warehouse size that is excessive given the workload. The larger the warehouse, the more credits are consumed.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Modeling Data for Power BI Reports and Dashboards" duration="0">
+        <p>For this module, we perform data analysis on the data that was loaded in module 4, and get the data in shape to be accessed in Power BI reports.</p>
+<p>It is essential to model your data correctly to achieve the best performance from your Power BI Reports and Dashboards. There are many choices that data professionals can make with respect to data modeling for business intelligence (3NF, denormalized, snowflake schema, or star schema). However the best practice for modeling your data for Power Bi is a Star Schema. Additionally, we want to ensure that we are not loading any unneeded data into Power BI to reduce the amount of data that Power BI needs to scan and scan.</p>
+<h2 is-upgraded>6.1 Perform Data Profiling</h2>
+<p>After loading data in Module 4 you should now have 6 dimension tables (Category, Channels, Department, Items, Locations, and States) and 2 fact tables (Items in Sales Orders and Sales Orders). We see that in the Locations dimension table contains a column named GEO which has a Snowflake Geography data type. Since, at the time of this lab, Power BI does not support this data type, we need an easy way to remove it before loading into Power BI. We also notice two Latitude and two Longitude columns.</p>
+<p class="image-container"><img alt="count" src="img/644c6bf792372353.png"></p>
+<p>While scanning the department table, we notice that there is a duplicate subordinate key value for the Frozen Dinner nd Disposable Cups departments</p>
+<pre><code>SELECT * FROM DEPARTMENT where department_id = 39;
+</code></pre>
+<p>We should check to see if there are other departments that are also duplicated by running a query that will allow us to clearly identify any duplicated department_id values.</p>
+<pre><code>SELECT 
+  DEPARTMENT_ID
+  ,COUNT(*) AS REC_COUNT
+FROM PUBLIC.DEPARTMENT
+GROUP BY 1
+ORDER BY 2 DESC;
+</code></pre>
+<p>Analyzing the structure of the tables and their relationships, we notice that if we were to load them into Power BI as-is, the model would be presented to Power BI as a Snowflake schema. These are evident in the relationship between Items to the Category and Department tables and the Location to the States table.</p>
+<p class="image-container"><img alt="count" src="img/fb707d18595118af.png"></p>
+<pre><code>SELECT REGION FROM STATES;
+
+SELECT REGION FROM LOCATIONS;
+</code></pre>
+<p class="image-container"><img alt="count" src="img/14f3b563302fadec.png"></p>
+<p>Lastly we see that the Sales Orders and Items in Sales Orders tables can be consolidated into a single table. If you consider these two tables as you would a sales receipt this makes sense. For example, when you purchase items from your local grocery store, the cashier would probably never present you with two receipts (one for the order itself and the other for a detailed list of the items that you purchased). Everything would appear on a single, consolidated receipt.</p>
+<h2 is-upgraded>6.2 Create Views</h2>
+<p>Since Power BI sees Snowflake Tables and Views the same way, we will use a view to accomplish the task that we identified in through our data profiling exercise.</p>
+<p>For the Locations table we need to execute the following query which merges the Locations and States tables and removes the unnecessarily duplicated Lat and Lon columns:</p>
+<pre><code>CREATE OR REPLACE VIEW PUBLIC.LOCATION_V AS
+SELECT
+  L.LOCATION_ID,
+  L.COUNTRY,
+  L.REGION,
+  L.MUNICIPALITY,
+  S.STATE_NAME,
+  S.STATE_GEO,
+  L.LONGITUDE,
+  L.LATITUDE
+FROM LOCATIONS L
+    INNER JOIN STATES S ON L.REGION = S.REGION;
+</code></pre>
+<p>For the Items table we add the related Department Name and Category Name from their respective tables, and remove Department ID 39 since we know through our data profiling exercise that the data for this specific Department ID is corrupted.</p>
+<pre><code>CREATE OR REPLACE VIEW PUBLIC.ITEMS_V AS
+SELECT 
+  ITEM_ID,
+  ITEM_NAME,
+  ITEM_PRICE,
+  CATEGORY_NAME,
+  DEPARTMENT_NAME
+FROM ITEMS I
+    INNER JOIN DEPARTMENT D ON I.DEPARTMENT_ID = D.DEPARTMENT_ID
+    INNER JOIN CATEGORY C ON I.CATEGORY_ID = C.CATEGORY_ID
+WHERE I.DEPARTMENT_ID != 39;
+</code></pre>
+<p>Lastly, we consolidate the Sales Orders and Items In Sales Orders tables (removing any unneeded columns)</p>
+<pre><code>CREATE OR REPLACE VIEW PUBLIC.SALES_ORDERS_V AS
+SELECT
+  S.ITEM_ID,
+  S.QUANTITY,
+  SO.CHANNEL_CODE,
+  SO.LOCATION_ID,
+  SO.SALES_DATE,
+  S.ORDER_ID
+FROM ITEMS_IN_SALES_ORDERS S
+    INNER JOIN SALES_ORDERS SO ON S.ORDER_ID = SO.SALES_ORDER_ID;
+</code></pre>
+<h2 is-upgraded>6.3 Create Aggregations</h2>
+<p>In then next module we will discuss aggregations and their purpose for facilitating big data business intelligence workloads in Power BI, but for now let&#39;s create an additional view to summarize the quantity of items purchased from the SALES _ORDERS_V view that we created in the last step.</p>
+<pre><code>CREATE OR REPLACE VIEW PUBLIC.SALES_ORDERS_V_AGG AS
+SELECT
+  ITEM_ID,
+  CHANNEL_CODE AS CHANNEL_ID,
+  LOCATION_ID,
+  SUM(QUANTITY) TOTAL_QUANTITY
+FROM PUBLIC.SALES_ORDERS_V
+GROUP BY
+  ITEM_ID,
+  CHANNEL_CODE,
+  LOCATION_ID;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Developing, Optimizing, and Sharing Power BI Content" duration="0">
+        <p>To improve the performance of your Direct Query model we suggest that you build a composite model that includes Aggregations in Power BI. In this lesson we will walk you through these steps.</p>
+<h2 is-upgraded>7.1 Creating the Direct Query Model in Power BI</h2>
+<p>Open Power BI Desktop. Click Get data on the splash screen that appears.</p>
+<p class="image-container"><img alt="pbisplash" src="img/512f53bf8935b90c.png"></p>
+<p>Type snowflake in the textbox located directly below Get Data when the window opens.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/6f845901c176cb84.png"></p>
+<p>Select Snowflake and click the Connect button.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/3f79cfddae1986ef.png"></p>
+<p>The <strong>Snowflake</strong> connector page will appear. Enter your <strong>Server, Warehouse</strong> and click <strong>OK</strong>.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/33a6f16aeb40014b.png"></p>
+<p>You must authenticate to your Snowflake server. Select Snowflake in the left navigation	and enter your <strong>User name</strong> and <strong>Password</strong> and click <strong>OK</strong>.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/7b2f59c6bd4ea74a.png"></p>
+<p>The Navigator will open. Expand your database. If you are following along the database name will be LAB_DB. Then expand PUBLIC. Check the box next to the following items:</p>
+<ul>
+<li>ITEMS_V</li>
+<li>LOCATION_V</li>
+<li>SALES_ORDER</li>
+<li>CHANNELS</li>
+</ul>
+<p class="image-container"><img alt="pbigetdata" src="img/51b247878dc9054c.png"></p>
+<p>Click <strong>Load</strong></p>
+<p>On the <strong>Connection settings</strong> windows select the <strong>Direct Query</strong> radio button and click <strong>OK</strong>.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/670fcfabe8304ab3.png"></p>
+<p>The model will begin to load and the Fields list will appear populated with tables. Similar to the image below:</p>
+<p class="image-container"><img alt="pbigetdata" src="img/b01e87baedba1f69.png"></p>
+<p>1 Click on <strong>View</strong> in the ribbon and click the item labeled <strong>Performance Analyzer</strong>.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/4cc222b404ad467f.png"></p>
+<p>2 On the Performance Analyzer windows click Start Recording.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/e9b672731af490b1.png"></p>
+<p>Expand SALES_ORDER_V and check the box next to QUANTITY. That will take several seconds.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/d9a6f43d50af7105.png"></p>
+<p>Expand QUANTITY in the Performance Analyzer window. Note the times.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/37b36de0c9e90710.png"></p>
+<p><strong>Download</strong> the Power BI Desktop file named <strong>DirectQuery.pbit</strong> from here: <a href="https://github.com/sfc-gh-ccollier/sfquickstart-samples/tree/main/samples/snowflake-powerbi-retail-vhol/power_bi_files/templates" target="_blank">GitHub Repo</a></p>
+<p><strong>Open</strong> the Power BI Desktop file named <strong>DirectQuery.pbit</strong>. When prompted enter your <strong>Server, Warehouse and Database</strong>. Click <strong>OK</strong>.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/3cecff117522f66f.png"></p>
+<p>Once the report loads, repeat steps 1-2. Click on the page labeled <strong>Overview</strong> and note the timings.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/d4bb77631ad77607.png"></p>
+<p>This will be the baseline used in our model optimization steps.</p>
+<p class="image-container"><img alt="pbigetdata" src="img/d8e191e217721d33.png"></p>
+<p>**Please keep this file open, as it will be used in the next module. **</p>
+<h2 is-upgraded>7.2 Creating and Configuring the Composite Model in Power BI</h2>
+<p>In this module we will begin the optimization process by changing the storage model of several tables. This change will improve the performance of the report slightly. <strong>Modifying Table Storage Modes</strong></p>
+<ul>
+<li>Open the Power BI Desktop file named DirectQuery.pbit if it is not already opened.</li>
+<li>Repeat step 7.1.16 if needed.</li>
+<li>Click on the Model icon located in the left navigation section of the report.</li>
+</ul>
+<p class="image-container"><img alt="pbigetdata" src="img/8531419cdeefdd08.png"></p>
+<p>Select the CHANNELS table.</p>
+<p class="image-container"><img alt="channelstable" src="img/9983aa495423eef0.png"></p>
+<p>Locate the <strong>Properties</strong> section, which is to the right of the window.</p>
+<p class="image-container"><img alt="channelstable" src="img/91ed89e5e8a0487d.png"></p>
+<p>Expand the <strong>Advanced</strong> section.</p>
+<p class="image-container"><img alt="channelstable" src="img/b4f76c58431ef103.png"></p>
+<p>Click the <strong>Storage mode</strong> drop down and select <strong>Dual</strong> from the list of available choices.</p>
+<p class="image-container"><img alt="channelstable" src="img/7bc927750f3b8b80.png"></p>
+<p>Repeat the 3 steps above for the <strong>ITEMS_V</strong> and <strong>LOCATION_V</strong> tables. Click the <strong>Report</strong> icon located in the navigation section.</p>
+<p>Click the <strong>Refresh visuals</strong> button.</p>
+<p class="image-container"><img alt="channelstable" src="img/63f975e81ed2ab3e.png"></p>
+<p>Note the speed of the <strong>Select State</strong> and <strong>Select Category</strong> items. Much faster!</p>
+<p class="image-container"><img alt="channelstable" src="img/c4c730f0bdb23f47.png"></p>
+<p><strong>Please keep this file open, as it will be used in the next module.</strong></p>
+<h2 is-upgraded>7.3 Configuring Aggregation in Power BI</h2>
+<p>In the final section, we will be adding an additional table to the model that will complete the optimization of the report.</p>
+<ul>
+<li>If you closed the file from the previous module, open the <strong>Composite.pbit</strong> file and enter the required information when you are prompted. Refer to earlier steps for additional information.</li>
+<li>Click <strong>Home</strong> in the ribbon.</li>
+</ul>
+<p class="image-container"><img alt="channelstable" src="img/5dd0c6227d9cc0e0.png"></p>
+<p>Click the drop-down arrow below the <strong>Get data</strong> icon located in the <strong>Data</strong> section of the home ribbon.</p>
+<p class="image-container"><img alt="channelstable" src="img/3e6228d034515e3d.png"></p>
+<p>Select <strong>More</strong> from the list of available choices.</p>
+<p class="image-container"><img alt="channelstable" src="img/ccec716b28df0654.png"></p>
+<p>Type <strong>snowflake</strong> in the textbox located directly below <strong>Get Data</strong> when the window opens.</p>
+<p class="image-container"><img alt="channelstable" src="img/6f845901c176cb84.png"></p>
+<p>Select <strong>Snowflake</strong> and click the <strong>Connect</strong> button.</p>
+<p class="image-container"><img alt="channelstable" src="img/3f79cfddae1986ef.png"></p>
+<p>The <strong>Snowflake</strong> connector page will appear. Enter your <strong>Server, Warehouse</strong> and click <strong>OK</strong>.</p>
+<p class="image-container"><img alt="channelstable" src="img/33a6f16aeb40014b.png"></p>
+<p><strong>Note:</strong>  This screen may not appear. You must authenticate to your Snowflake server. Select Snowflake in the left navigation	and enter your User name and Password and click OK.</p>
+<p class="image-container"><img alt="channelstable" src="img/7b2f59c6bd4ea74a.png"></p>
+<p>The Navigator will open. Expand your database. If you are following along the database name will be <strong>LAB_DB</strong>. Then expand <strong>PUBLIC</strong>. Check he box next to <strong>SALES_ORDERS_V_AGG</strong> and click the Load button.</p>
+<p class="image-container"><img alt="channelstable" src="img/e0685ea6c1b0210e.png"></p>
+<p>Select the <strong>Import</strong> radio button on the Connection settings window that appears. <img alt="channelstable" src="img/c6863a98e5aa1fd5.png"></p>
+<p>Click on the <strong>Model</strong> icon located in the left navigation section. Ensure that <strong>Home</strong> is selected, locate the Relationships section, and click the Manage Relationships icon and the corresponding window will open. Click the <strong>New</strong> button.</p>
+<p class="image-container"><img alt="channelstable" src="img/623d28e030ae0373.png"></p>
+<p>The <strong>Create Relationship</strong> window will open. Select <strong>ITEMS_V</strong> in the upper drop-down list and <strong>SALES_ORDERS_V_AGG</strong> in the lower. Power BI should automatically select the <strong>ITEM_ID</strong> column for both tables. If not, select both. Your window should resemble the following:</p>
+<p class="image-container"><img alt="channelstable" src="img/c91565fc93709a8c.png"></p>
+<p>Click <strong>OK</strong>.</p>
+<p>Repeat the two steps above this time selecting <strong>CHANNELS</strong> and <strong>SALES_ORDERS_V_AGG</strong>. Power BI should automatically select <strong>CHANNEL_ID</strong> for both tables. If not, do so and click OK and click Close.</p>
+<p>Locate the <strong>SALES_ORDERS_V_AGG</strong> and click the <strong>ellipses</strong> that is in the top right corner.</p>
+<p class="image-container"><img alt="channelstable" src="img/4f1a7c506a911b52.png"></p>
+<p>Click it and select <strong>Manage aggregations</strong> from menu that appears.</p>
+<p class="image-container"><img alt="channelstable" src="img/e70d6477b18cd75f.png"></p>
+<p>Click the drop-down in the <strong>TOTAL_QUANTITY</strong> row and select <strong>Sum</strong> from the list of available choices. In the same row, move to the <strong>DETAIL TABLE</strong> column and select <strong>SALES_ORDERS_V</strong> from the drop-down. Finally, move to the <strong>DETAIL COLUMN</strong> column and select <strong>QUANTITY</strong> from the drop-down. Your window should resemble the following:</p>
+<p class="image-container"><img alt="channelstable" src="img/3b961670c096665.png"></p>
+<p>Click <strong>Apply all</strong>. Go back to the report view, enable the <strong>Performance Analyzer</strong>, start recording and refresh the visuals.</p>
+<p><strong>Note:</strong> Most visuals render in less than a second beside the <strong>Items Order by Location</strong>.</p>
+<p class="image-container"><img alt="channelstable" src="img/8ab15a438cfb7c99.png"></p>
+<p>Expand that item and inspect the results. There should be a <strong>Direct query</strong> item. This is an indication that the aggregation was not used.</p>
+<p class="image-container"><img alt="channelstable" src="img/72fcc4935ee601a2.png"></p>
+<p>To solve this, we need to identify why the DAX query is not using the Aggregation. To do this, we are going to use DAX Studio. Ensure that you have this installed on your machine.</p>
+<p>To launch <strong>DAX Studio</strong>, click <strong>External Tools</strong> in the ribbon and click <strong>DAX Studio</strong>.</p>
+<p class="image-container"><img alt="channelstable" src="img/3146c02304b1214.png"></p>
+<p>Once <strong>DAX Studio</strong> opens, click <strong>Home</strong> in the ribbon. Click <strong>All Queries</strong> located in the Traces section.</p>
+<p class="image-container"><img alt="channelstable" src="img/412b030ad35854ae.png"></p>
+<p>Click the <strong>All Queries</strong> tab located at the bottom of the windows.</p>
+<p class="image-container"><img alt="channelstable" src="img/5973b09cc9d7ccca.png"></p>
+<p>Go back to Power BI and ensure that the <strong>Performance Analyzer</strong> is recording. Hover over the <strong>Map</strong> visual (<strong>Items Order by Location</strong>). Click the <strong>Analyze this visual</strong> icon. It will be the first in the list of icon in the top right corner.</p>
+<p class="image-container"><img alt="channelstable" src="img/842a03ab28850e3.png"></p>
+<p>Back in <strong>DAX Studio</strong>, you will see a new row in the <strong>All Queries</strong> pane.</p>
+<p class="image-container"><img alt="channelstable" src="img/1927960eaeb3e0e5.png"></p>
+<p>Double-click the row and the full DAX Query will appear in the DAX window.</p>
+<p class="image-container"><img alt="channelstable" src="img/dbc464a3e5f9a886.png"></p>
+<p>Click the <strong>All Queries</strong> icon in the Traces section. This will turn off the trace.</p>
+<p>Click the <strong>Server Timing</strong> icon in the Traces section.</p>
+<p class="image-container"><img alt="channelstable" src="img/3716d875af59023c.png"></p>
+<p>Locate the <strong>Query</strong> section and click the <strong>Run</strong> button.</p>
+<p class="image-container"><img alt="channelstable" src="img/aa316387c1a46220.png"></p>
+<p>Click the <strong>Server Timings</strong> tab located at the bottom of the windows. You will see the results of the query execution. Click the row that contains  &lt;attemptFailed&gt; in the Query column.</p>
+<p class="image-container"><img alt="channelstable" src="img/bc176a8a4c7f57de.png"></p>
+<p>With that item select a new window will appear to the right. Click the drop-down arrow located to the left of <strong>Details</strong>. You may need to resize the window to view all the details.</p>
+<p class="image-container"><img alt="channelstable" src="img/fc4967df9d6cabcb.png"></p>
+<p>From these details, we can identify why the query didn&#39;t use the aggregation. According to the information provided, our model is missing a mapping to the <strong>LOCATION_V[LONGITUDE]</strong> column.</p>
+<p>There are a few options to fix this. Go to the Model view in Power BI and create a relationship between the <strong>LOCATION_V</strong> table and the <strong>SALES_ORDER_V_AGG</strong> table.</p>
+<p>Rerun the query and DAX studio with Server Timings on. Review, the finds when the execution completes. The results should resemble the following:</p>
+<p class="image-container"><img alt="channelstable" src="img/d8ff1bb5e8b69616.png"></p>
+<p>If you rerun the report in Power BI, every visual should run quickly. Just like that your report it optimized!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Summary &amp; Next Steps" duration="0">
+        <p>This lab was designed as a hands-on introduction to Snowflake and Power BI to simultaneously teach best practices on how to use them together in an effective manner.</p>
+<p>We encourage you to continue with your free Snowflake trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab.</p>
+<p>There are several ways Snowflake can help you with this:</p>
+<ul>
+<li>At the very top of the UI click on the &#34;Partner Connect&#34; icon to get access to trial/free ETL and BI tools to help you get more data into Snowflake and then analyze it</li>
+<li>Read the &#34;Definitive Guide to Maximizing Your Free Trial&#34; document at: <a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/</a></li>
+<li>Attend a Snowflake virtual or in-person event to learn more about our capabilities and how customers use us  <a href="https://www.snowflake.com/about/events/" target="_blank">https://www.snowflake.com/about/events/</a></li>
+<li>Contact Sales to learn more <a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">https://www.snowflake.com/free-trial-contact-sales/</a></li>
+</ul>
+<p>We also encourage you to continue to explore the capabilities of Power BI.</p>
+<h2 is-upgraded>Resetting Your Environment</h2>
+<h3 is-upgraded><strong>Resetting your Snowflake environment by running the SQL commands in the Worksheet:</strong></h3>
+<pre><code>USE ROLE SYSADMIN;
+DROP DATABASE IF EXISTS LAB_DB;
+USE ROLE ACCOUNTADMIN;
+DROP WAREHOUSE IF EXISTS ELT_WH;
+DROP WAREHOUSE IF EXISTS POWERBI_WH;
+</code></pre>
+<h3 is-upgraded><strong>Resetting Your Azure Environment:</strong></h3>
+<p>To avoid incurring charges for the Azure Blob Storage container that was deployed for the lab you will need to remove the services following these steps:<br> Delete the resource group that was created for the lab</p>
+<p>Go to the Azure Portal and select &#34;Resource Groups&#34; from the menu.</p>
+<p>Click on the resource group you created for this lab - e.g. &#34;snowflake_powerbi_lab_rg&#34;</p>
+<p>Click on &#34;Delete resource group&#34; and type the name in the confirmation box.</p>
+<p class="image-container"><img alt="channelstable" src="img/b63b5d9c01186a1e.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

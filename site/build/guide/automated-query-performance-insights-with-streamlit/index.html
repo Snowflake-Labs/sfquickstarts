@@ -1,0 +1,250 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Interactive Query Performance App in Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="automated-query-performance-insights-with-streamlit"
+                  title="Build Interactive Query Performance App in Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Learn how to create an interactive Streamlit application within Snowflake Notebooks that helps analyze query performance. This tool will enable you to identify long-running queries and generate insights for optimization, potentially saving both time and computational resources.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an interactive Streamlit app in Snowflake Notebooks</li>
+<li>Techniques for visualizing query performance data</li>
+<li>Methods to analyze query execution times</li>
+<li>Ways to implement interactive widgets for data exploration</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An interactive app that visualizes the query performance metrics.</p>
+<p>Here are features that we&#39;ll implement in the app:</p>
+<ul>
+<li>Histograms of query execution times</li>
+<li>Box plots for statistical distribution</li>
+<li>Interactive filters for timeframes</li>
+<li>Summary statistics for query performance</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic familiarity with SQL and Python</li>
+<li>Understanding of basic statistical concepts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="3">
+        <p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Query_Performance_Insights_using_Streamlit/Build_an_Interactive_Query_Performance_App_with_Streamlit.ipynb" target="_blank">Build_an_Interactive_Query_Performance_App_with_Streamlit.ipynb</a> to download the Notebook from GitHub.</p>
+<p>Snowflake Notebooks comes pre-installed with common Python libraries for data science and machine learning. The following libraries will be used in this tutorial:</p>
+<ul>
+<li>Snowflake Snowpark</li>
+<li>Pandas</li>
+<li>Streamlit</li>
+<li>Altair</li>
+<li>NumPy</li>
+</ul>
+<h2 is-upgraded>Warehouse Configuration</h2>
+<p>Select a warehouse that will be used for analysis. Here in this tutorial, I&#39;ll be using ‘CHANIN_XS&#39; (please replace with your own warehouse name).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Base Query" duration="5">
+        <h2 is-upgraded>Write the Performance Query</h2>
+<p>First, we&#39;ll create the SQL query to retrieve query performance data:</p>
+<pre><code language="language-sql" class="language-sql">SELECT query_id,
+  ROW_NUMBER() OVER(ORDER BY partitions_scanned DESC) AS query_id_int,
+  query_text,
+  total_elapsed_time/1000 AS query_execution_time_seconds,
+  partitions_scanned,
+  partitions_total,
+FROM snowflake.account_usage.query_history Q
+WHERE warehouse_name = &#39;CHANIN_XS&#39; 
+  AND TO_DATE(Q.start_time) &gt; DATEADD(day,-1,TO_DATE(CURRENT_TIMESTAMP()))
+  AND total_elapsed_time &gt; 0
+  AND error_code IS NULL
+  AND partitions_scanned IS NOT NULL
+ORDER BY total_elapsed_time desc
+LIMIT 50;
+</code></pre>
+<p class="image-container"><img alt="image" src="img/cfcf670763900de8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build the Streamlit Interface" duration="15">
+        <h2 is-upgraded>Create Interactive Widgets</h2>
+<p>Firstly, we&#39;ll import the necessary libraries and implement the user interface widgets:</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+import pandas as pd
+import streamlit as st
+import altair as alt
+import numpy as np
+
+st.title(&#39;Top n longest-running queries&#39;)
+
+# Input widgets
+col = st.columns(3)
+
+with col[0]:
+    timeframe_option = st.selectbox(&#39;Select a timeframe&#39;, (&#39;day&#39;, &#39;week&#39;, &#39;month&#39;))
+
+with col[1]:
+    limit_option = st.slider(&#39;Display n rows&#39;, 10, 200, 100)
+
+with col[2]:
+    bin_option = st.slider(&#39;Bin size&#39;, 1, 30, 10)
+</code></pre>
+<h2 is-upgraded>Data retrieval</h2>
+<p>Next, we&#39;ll load in the data via a SQL query into the app:</p>
+<pre><code language="language-python" class="language-python"># Data retrieval
+session = get_active_session()
+df = session.sql(
+    f&#34;&#34;&#34;
+    SELECT query_id,
+      ROW_NUMBER() OVER(ORDER BY partitions_scanned DESC) AS query_id_int,
+      query_text,
+      total_elapsed_time/1000 AS query_execution_time_seconds,
+      partitions_scanned,
+      partitions_total,
+    FROM snowflake.account_usage.query_history Q
+    WHERE warehouse_name = &#39;CHANIN_XS&#39; AND TO_DATE(Q.start_time) &gt; DATEADD({timeframe_option},-1,TO_DATE(CURRENT_TIMESTAMP()))
+      AND total_elapsed_time &gt; 0 --only get queries that actually used compute
+      AND error_code IS NULL
+      AND partitions_scanned IS NOT NULL
+    ORDER BY total_elapsed_time desc
+    LIMIT {limit_option};
+    &#34;&#34;&#34;
+    ).to_pandas()
+
+df = df[df[&#39;QUERY_TEXT&#39;].str.lower().str.startswith(tuple(commands.lower() for commands in sql_command_option))]
+</code></pre>
+<h2 is-upgraded>Display Data Visualization</h2>
+<p>Finally, we&#39;ll proceed to adding data visualization to the app:</p>
+<pre><code language="language-python" class="language-python">st.title(&#39;Histogram of Query Execution Times&#39;)
+
+# Create a DataFrame for the histogram data
+hist, bin_edges = np.histogram(df[&#39;QUERY_EXECUTION_TIME_SECONDS&#39;], bins=bin_option)
+
+histogram_df = pd.DataFrame({
+    &#39;bin_start&#39;: bin_edges[:-1],
+    &#39;bin_end&#39;: bin_edges[1:],
+    &#39;count&#39;: hist
+})
+histogram_df[&#39;bin_label&#39;] = histogram_df.apply(lambda row: f&#34;{row[&#39;bin_start&#39;]:.2f} - {row[&#39;bin_end&#39;]:.2f}&#34;, axis=1)
+
+# Create plots
+histogram_plot = alt.Chart(histogram_df).mark_bar().encode(
+    x=alt.X(&#39;bin_label:N&#39;, sort=histogram_df[&#39;bin_label&#39;].tolist(),
+            axis=alt.Axis(title=&#39;QUERY_EXECUTION_TIME_SECONDS&#39;, labelAngle=90)),
+    y=alt.Y(&#39;count:Q&#39;, axis=alt.Axis(title=&#39;Count&#39;)),
+    tooltip=[&#39;bin_label&#39;, &#39;count&#39;]
+)
+
+box_plot = alt.Chart(df).mark_boxplot(
+    extent=&#34;min-max&#34;,
+    color=&#39;yellow&#39;
+).encode(
+    alt.X(&#34;QUERY_EXECUTION_TIME_SECONDS:Q&#34;, scale=alt.Scale(zero=False))
+).properties(
+    height=200
+)
+
+st.altair_chart(histogram_plot, use_container_width=True)
+st.altair_chart(box_plot, use_container_width=True)
+
+
+# Data display
+with st.expander(&#39;Show data&#39;):
+    st.dataframe(df)
+with st.expander(&#39;Show summary statistics&#39;):
+    st.write(df[&#39;QUERY_EXECUTION_TIME_SECONDS&#39;].describe())
+</code></pre>
+<p>Putting all of these code snippets together, we can build out the interactive query performance insights app that looks like the following:</p>
+<p class="image-container"><img alt="image" src="img/4c34bac3ff405c41.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an interactive query performance analysis application using Streamlit within Snowflake Notebooks. This tool will help you identify optimization opportunities in your SQL queries through interactive data exploration.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Create interactive Streamlit widgets</li>
+<li>Visualize query performance data</li>
+<li>Implement real-time data filtering</li>
+<li>Generate statistical insights from the query history</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/performance-query-exploring" target="_blank">Exploring execution times</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+</ul>
+<p>Happy coding!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

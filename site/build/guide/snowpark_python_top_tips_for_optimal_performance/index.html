@@ -1,0 +1,610 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Snowpark Python: Top Tips for Optimal Performance</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowpark_python_top_tips_for_optimal_performance"
+                  title="Snowpark Python: Top Tips for Optimal Performance"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This Quickstart guide contains key tips for optimal performance when using Snowpark Python.  The guide is broken up into multiple labs, each covering a key concept that can improve performance and/or efficiency while running workloads in Snowpark.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Understanding of <a href="https://docs.snowflake.com/developer-guide/snowpark/reference/python/dataframe.html" target="_blank">Snowpark Python Dataframes</a></li>
+<li>Understanding of <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs" target="_blank">Python UDFs</a></li>
+<li>Understanding of <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs" target="_blank">Python UDTFs</a></li>
+<li>Understanding of <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/testing-locally" target="_blank">Snowpark Python Local Testing Framework</a></li>
+<li>Familarity with using Notebook IDEs and <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this quickstart, you will learn how to make optimized decisions when using Snowpark Python.  These choices will be compared with others to show performance improvements.  Each concept is broken up into a lab, listed below:</p>
+<ul>
+<li>Lab 1: Using Vectorized UDFs in Snowpark and scenarios that suit Vectorization</li>
+<li>Lab 2: Using Regular and Vectorised UDTFs to significantly boost performance of your Snowpark workloads</li>
+<li>Lab 3: Using Cachetools library to improve performance</li>
+<li>Lab 4: Using the local testing framework to test your DataFrame operations on your development machine or in a CI (continuous integration) pipeline before deploying code changes to your account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Packages enabled by ORGADMIN</a>. If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <h2 is-upgraded>Step 1: Cone Github Code</h2>
+<p>In your preferred local directory, clone the code repository by running the below command in Mac terminal or Windows Shell.</p>
+<pre><code>git clone https://github.com/sfc-gh-hayan/sfguide-snowpark-python-top-tips-for-optimal-performance.git
+</code></pre>
+<h2 is-upgraded>Step 2: Snowflake Environment Setup</h2>
+<p>Create a fresh database in your Snowflake account for the following labs.  Login to <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-quick-tour" target="_blank">Snowsight</a> and issue the following command:</p>
+<pre><code>CREATE DATABASE SNOWPARK_BEST_PRACTICES_LABS;
+</code></pre>
+<p>We&#39;ll also standardize the <a href="https://docs.snowflake.com/en/user-guide/warehouses" target="_blank">warehouse</a> we will use for the following labs.  Run the following command:</p>
+<pre><code>CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=SMALL INITIALLY_SUSPENDED=TRUE;
+</code></pre>
+<h2 is-upgraded>Step 3: Import notebooks for the lab1, lab2, lab3.</h2>
+<p>We will use Snowflake Notebook for first three labs and jupyter notebook in your local python environment for lab4. All those full notebooks are under notebook folder in your local repository. <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import" target="_blank">Import notebooks</a> for Labs 1,2 and 3 using Snowsight.</p>
+<p>While importing,for notebook location:</p>
+<ul>
+<li>Specify default warehouse as <code>COMPUTE_WH</code> as created above.</li>
+<li>Specify the default database as <code>SNOWPARK_BEST_PRACTICES_LABS</code> and default schema as <code>PUBLIC</code>. This is where notebooks will be stored, you can also specific any database and schema that your role has access to.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 1 (Vectorised UDFs) - Overview" duration="2">
+        <h2 is-upgraded>Lab Summary</h2>
+<p>The Snowpark API provides methods that help to create a <a href="https://docs.snowflake.com/en/sql-reference/udf-overview" target="_blank">User Defined Function</a> which allows developers to extend the functionality of Snowflake by writing custom functions in languages such as Java, Scala, and Python. These functions enable users to specify custom business logic for data transformations. When you create UDFs, the Snowpark library uploads this code to an internal stage. Following which, you can call these executables on the Snowflake server side where the data resides. As a result, the data doesn&#39;t need to be transferred to the client in order for the function (read UDF) to process the data.</p>
+<p>Naturally, you&#39;re wondering then, what is a <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs#label-snowpark-python-udf-vectorized" target="_blank">Vectorised UDF</a>?</p>
+<p>The Python UDF batch API or Vectorised UDFs enables defining Python functions that receive batches of input rows (aka chunked rows) as Pandas DataFrames and return batches of results as Pandas arrays or Series. This helps to significantly improve performance in comparison to UDFs that perform row by row execution.</p>
+<p>The goal of this lab is to compare the performance of a UDF Operation with and without using the Python UDF Batch API (or Vectorised UDFs).</p>
+<p>In this notebook, we will do the following:</p>
+<ul>
+<li>We will work with 4 datasets, namely Customers and Orders from the TPCH Datasets of different sizes (15M to 1.5B records) freely and instantly available in Snowflake through an inbound share.</li>
+<li>We will use 3 different Virtual Warehouse sizes, i.e., Small, Medium, and Large.</li>
+<li>We will execute 4 different use-cases, namely, Numerical Computation, String Manipulation, Regex Masking, and Timestamp Manipulation. Please note, these are hypothetical use-cases but are commonly found when working with data in Snowflake.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 1 (Vectorised UDFs) - Execution" duration="20">
+        <h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Your snowflake user needs to have access to database SNOWFLAKE_SAMPLE_DATA. For instructions to import SNOWFLAKE_SAMPLE_DATA, please click <a href="https://docs.snowflake.com/en/user-guide/sample-data-using" target="_blank">here</a>.</li>
+<li>By now, you should have finished setting up Snowflake Notebook you will run.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Do</h2>
+<p>This lab consists of the following major steps:</p>
+<ol type="1">
+<li>Importing libraries and connecting to Snowflake</li>
+<li>Creating the dataframes of test data from the TPCDS dataset</li>
+<li>Setting up the virtual warehouses prior to testing</li>
+<li>Running four test suites on typical UDF operations <ul>
+<li>Numeric Computation (~3 minutes)</li>
+<li>String Manipulation (~5 minutes)</li>
+<li>Batch Sizing (~5 minutes)</li>
+<li>Timestamp Manipulation (~60 minutes)</li>
+</ul>
+</li>
+<li>Analyzing the results, forming conclusions, and cleanup</li>
+</ol>
+<h2 is-upgraded>Run the lab</h2>
+<p>In Snowsight, open a notebook called lab1_vectorized_udfs_snow.ipynb and run each of the cells.</p>
+<h2 is-upgraded>Analysis</h2>
+<p>Below is analysis of the tests ran in the notebook.  Please compare these findings with the results in your notebook.</p>
+<h3 is-upgraded>Recap</h3>
+<p>Before we look into the results, let&#39;s recap what we have done so far:</p>
+<ul>
+<li>We took 4 different TPCH datasets of varying sizes.</li>
+<li>Used 3 different Virtual Warehouse sizes, i.e., Small, Medium, and Large.</li>
+<li>On 4 different hypothetical use-cases.</li>
+<li>Generated results that will allow us to compare the performance of a UDF Operation with and without using Vectorised UDFs.</li>
+</ul>
+<h3 is-upgraded>Numeric Computation Use Cases</h3>
+<p class="image-container"><img alt="Numeric Results Table" src="img/4a3b5474cc9c4212.png"></p>
+<ul>
+<li>For Numerical Computation, keeping the same dataset and warehouse size, Vectorised UDFs outperform Normal UDFs</li>
+<li>This is also seen when we change the size of the warehouse (to Large) to accommodate the change in dataset size (to Customer 1000)</li>
+<li>MemoryViews through the Buffer Protocol allows Python code to expose the internal data (array or buffer) of an object without intermediate copying. Without going into too much depth, this allows us to enable faster computations and reduced memory usage on large numerical datasets (including Boolean [0, 1]) efficiently. For more details, please see <a href="https://docs.python.org/3/library/stdtypes.html#memoryview" target="_blank">this part of the documentation</a> and <a href="https://www.geeksforgeeks.org/memoryview-in-python/" target="_blank">this article</a>.</li>
+<li>What is peculiar is the behavior when working with a Medium warehouse and Customer 100 dataset. Where it performs slightly less efficiently than a Small Warehouse. This could have several reasons, but what we noticed in the Query Profile was: <ul>
+<li>It takes the Medium warehouse up to 35% of the time to initialize as compared to ~10% of time for a Smaller warehouse.</li>
+<li>Another is the time it took to create the python sandbox environment, i.e. ~900ms on a Medium warehouse compared to &lt;400ms for a Smaller warehouse.</li>
+<li>The last one especially could compound across the UDFs that get created and to cause the slight difference in performance.</li>
+</ul>
+</li>
+<li>Of course, this previous point above doesn&#39;t carry across the other dataset and warehouse size.</li>
+<li>Another interesting point we see in the above chart is the difference in performance between Vectorised UDFs Medium and Large Clusters for the Customer 1000 dataset. The Medium cluster performs better than the Large cluster. This is the law of diminishing returns in play, where increasing WH size will eventually &#34;out-scale&#34; the data, in the sense that the number of vCPUs exceeds the number of batches, and so you no longer see any improvement in performance.</li>
+<li><em>Optional Work</em>: Leverage <code>GET_QUERY_OPERATOR_STATS()</code> table function for a more detailed and thorough analysis.</li>
+</ul>
+<h3 is-upgraded>Non-Numeric Computation Use Cases</h3>
+<p class="image-container"><img alt="NonNumeric Results Table" src="img/110918a868613c0b.png"></p>
+<p>As expected, it makes sense not to use Vectorised UDFs for Non-numeric operations</p>
+<ul>
+<li>But apart from the obvious, let&#39;s check out what the Query Profile looks like for the String Manipulation for Customer 100 Dataset when using a Small warehouse: <ul>
+<li>The Total (and by extention Average) UDF Handler Execution Time was about half for a Normal UDF when compared to the Vectorised UDF</li>
+<li>The Average UDF encoding/decoding time was less than 1/100th of a millisecond for a Normal UDF when compared to 5 ms for a Vectorised UDF</li>
+<li>We have to appreciate the difference of orders of magnitude here and especially when compounded, really makes the difference in performance between a Normal and Vectorised UDF</li>
+<li>The Python Sandbox environment creation time was 1/3rd for Normal UDFs when compared to Vectorised UDFs</li>
+<li>It is also important to note that the Bytes scanned and written were almost the same, and the partitions were the same as no partitioning had been done to this dataset.</li>
+</ul>
+</li>
+<li><em>Optional Work</em>: Leverage <code>GET_QUERY_OPERATOR_STATS()</code> table function for a more detailed and thorough analysis.</li>
+</ul>
+<h3 is-upgraded>Batch Sizes</h3>
+<p>Additionally, when using Vectorised UDFs, you may want to play around with Batch Sizes.</p>
+<ul>
+<li>This is done with the input argument to the decorator @udf like so:</li>
+</ul>
+<pre><code>@udf(max_batch_size=1000)
+def vect_udf_bc_100(inp: PandasSeries[float]) -&gt; PandasSeries[float]:
+    return (inp - df_customer_100_mean + df_customer_100_stddev) * 10000.0
+</code></pre>
+<p>It is important to note:</p>
+<ul>
+<li>Setting a batch size doesn&#39;t guarantee which records will be present in a particular batch</li>
+<li>It also doesn&#39;t guarantee that a batch size will be of the same size. For instance, if the argument <code>max_batch_size = 50000</code>, does not mean 50k records are sent per batch</li>
+<li>An increase in batch size doesn&#39;t guarantee improvement in performance</li>
+<li>A very very low batch size (e.g. ~50-200) does slow performance depending on the size of the dataset. While a moderately sized batch (e.g. ~2000) does improve performance. This is what I have seen in my tests</li>
+<li>Typically, Snowflake automatically picks a batch size for you which is performance efficient and should suffice in most cases</li>
+<li>There are some use cases where we&#39;ve seen customers set batch sizes using UDTF partition-by logic. This helps to guarantee contiguous batch sizes, although not exactly a common best-practice but can make sense in some use cases. More on how partition-by works in the next lab - &#34;Vectorised UDTFs&#34;.</li>
+</ul>
+<h2 is-upgraded>Conclusion</h2>
+<ul>
+<li>For Numerical Computations, you can expect between 30% and 40% improvement in performance using Vectorised UDFs <ul>
+<li>Don&#39;t forget the note on the law of diminishing returns.</li>
+</ul>
+</li>
+<li>For Non-Numeric Computations/Manipulations, you&#39;re more than likely to see a degradation in performance when comparing between the two UDF types we discussed, and we would recommend sticking with non-vectorised UDFs. <ul>
+<li>Native code looping - For numeric computation, vectorised UDFs through Pandas pass the logic to numpy arrays that loop over the data using machine-level code. This prevents back and forth of expensive Python code and hence improves performance of vectorised UDFs on numeric data. This doesn&#39;t happen for non-numeric data and essentially you are running code row by row but with the added overhead of Python.</li>
+<li>Memory footprint - Vectorised code uses more memory and if you&#39;re using heavyweight strings, it results in a massive memory footprint.</li>
+</ul>
+</li>
+<li>If you&#39;re working with Numerical Computations, I would also experiment with different Warehouse and Batch Sizes to get more performance as a result. But remember, higher sizes does not always mean or always guarantee higher performance. <ul>
+<li>Don&#39;t forget the note on contiguous batch sizes through Vectorised UDTFs.</li>
+</ul>
+</li>
+<li>Lastly, make sure to dive deep into Query Profiling either through the Snowsight UI or GET_QUERY_OPERATOR_STATS() table function to squeeze in that extra bit of performance</li>
+</ul>
+<h2 is-upgraded>Cleanup</h2>
+<aside class="special"><p> If you did not complete all test cases in the notebook, please ensure you cleaned up the environment by executing the final code block so that all other labs will function properly</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 2 (Vectorised UDTFs) - Overview" duration="2">
+        <h2 is-upgraded>Lab Summary</h2>
+<p>Snowpark Python <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs" target="_blank">User Defined Table Functions</a> are a feature within Snowflake&#39;s Snowpark environment that allow users to define custom table functions using Python. UDTFs are functions that can generate multiple rows of output (a table) based on the input parameters. They are particularly useful for tasks like exploding arrays or performing complex calculations that result in multiple rows of data.</p>
+<p>You might be wondering what is the difference between a UDF vs a UDTF:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>UDF</p>
+</td><td colspan="1" rowspan="1"><p>UDTF</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Single-row (or random batch) scalar operations</p>
+</td><td colspan="1" rowspan="1"><p>Stateful processing on user-partitioned data; partitions are independent</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Pandas-type functionality only useful for vectorized UDFs</p>
+</td><td colspan="1" rowspan="1"><p>Pandas-based processing may be used in endPartition method</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Memory footprint likely not an issue, may not benefit from Snowpark-optimized warehouses, except for when using large artifacts</p>
+</td><td colspan="1" rowspan="1"><p>Potentially large memory footprint depending on number and size of partitions</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Rows are independent</p>
+</td><td colspan="1" rowspan="1"><p>Rows are related/dependent</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>One-to-one</p>
+</td><td colspan="1" rowspan="1"><p>Many-to-one, one-to-many, many-to-many, one-to-one relationships all supported</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>UDF returns native Snowflake rowsets</p>
+</td><td colspan="1" rowspan="1"><p>UDTF returns tuples, DFs must be iterated over</p>
+</td></tr>
+</table>
+<p>So, what are Snowpark Python <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-tabular-vectorized" target="_blank">Vectorised UDTF</a> then?</p>
+<p>Vectorized processing is a method where operations are applied to multiple elements (vectors) simultaneously, rather than processing them one by one. In this context, vectorized processing allows for efficient handling of large datasets by performing operations on batches of data at once.</p>
+<p>The goal of this lab is to compare the performance of a UDTF vs Vectorised UDTF Operations.</p>
+<p>In this lab, we will do the following:</p>
+<ul>
+<li>We will work with Customers from the TPCH Datasets of different sizes (15M to 1.5B records) freely and instantly available in Snowflake through an inbound share.</li>
+<li>We will use 3 different Virtual Warehouse sizes, i.e., Small, Medium, and Large.</li>
+<li>We will execute on single use-case, namely, Numerical Computation.But we will experiment with regular UDTF, end-partition vectorised UDTF, and process method vectorised UDTF.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 2 (Vectorised UDTFs) - Execution" duration="20">
+        <h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Your snowflake user needs to be granted to a role have write access to database SNOWFLAKE_SAMPLE_DATA. For instructions to import SNOWFLAKE_SAMPLE_DATA, please click <a href="https://docs.snowflake.com/en/user-guide/sample-data-using" target="_blank">here</a>.</li>
+<li>By now, you should have finished setting up Snowflake Notebook you will run.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Do</h2>
+<p>This lab consists of the following major steps:</p>
+<ol type="1">
+<li>Importing libraries and connecting to Snowflake</li>
+<li>Creating the dataframes of test data from the TPCDS dataset</li>
+<li>Setting up the virtual warehouses prior to testing</li>
+<li>Running different test suites on different UDTF types <ul>
+<li>Batch processing</li>
+<li>Memory calcuations</li>
+<li>Redudntant calculations</li>
+<li>Vectorized operations</li>
+</ul>
+</li>
+<li>Analyzing the results, forming conclusions, and cleanup</li>
+</ol>
+<p>Some initial key pointers in the difference in vectorised UDTF performance between process method and end partition method is in the way the data is handled and processed:</p>
+<ul>
+<li><em>Batch Processing Overhead</em>: The process method produces an output row for each input row, even if the actual computation does not vary row by row. This introduces significant overhead, especially if there are many rows.</li>
+<li><em>Memory Management</em>: The process method has to repeatedly handle memory allocation and deallocation, leading to inefficiencies. In contrast, the end partition method processes the entire dataset at once, allowing for more efficient use of memory and computational resources.</li>
+<li><em>Redundant Calculations</em>: In the process method, the same mean and standard deviation are computed and accessed repeatedly for each row, which is inherently inefficient compared to computing these values once in the end partition method.</li>
+<li><em>Vectorized Operations</em>: The end partition method can leverage vectorized operations over the entire dataset, which is more optimized and faster in libraries such as NumPy and Pandas. The process method, despite being vectorized, doesn&#39;t fully leverage these optimizations when it processes data in a row-wise fashion.</li>
+</ul>
+<p>Hence, you see the end partition approach can be significantly faster for this particular use case. This is not universal but unique to the specific contents of this UDTF.</p>
+<ul>
+<li>Furthermore, we will experiment with regular UDTF for running concurrent tasks with Worker Processes. We will also add multiple warehouse sizes here. But most importantly, we will test with multiple joblib backends.</li>
+<li>Lastly, we will experiment with Snowpark Optimised Warehouses.</li>
+</ul>
+<h2 is-upgraded>Run the lab</h2>
+<p>In Snowsight, open a notebook called lab2_vectorized_udtfs_snow.ipynb and run each of the cells.</p>
+<h2 is-upgraded>Analysis</h2>
+<p>Below is analysis of the tests ran in the notebook.  Please compare these findings with the results in your notebook.</p>
+<h3 is-upgraded>Recap</h3>
+<p>Before we look into the results, let&#39;s recap what we have done so far:</p>
+<ul>
+<li>We took 2 TPCH datasets of varying sizes.</li>
+<li>Used 3 different Virtual Warehouse sizes, i.e., Small, Medium, and Large.</li>
+<li>Generated results that will allow us to compare the performance of different UDTF types with and without using Vectorization.</li>
+</ul>
+<h3 is-upgraded>Vectorized UDTF Type Use Cases</h3>
+<table>
+<tr><td colspan="1" rowspan="1"><p>UDTF Type</p>
+</td><td colspan="1" rowspan="1"><p>Warehouse Size</p>
+</td><td colspan="1" rowspan="1"><p>Dataset</p>
+</td><td colspan="1" rowspan="1"><p>Duration (s)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>Small</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>12.4</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>12</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>72</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular</p>
+</td><td colspan="1" rowspan="1"><p>Large</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>70</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks</p>
+</td><td colspan="1" rowspan="1"><p>Small</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>12.9</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>7.67</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>67</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks</p>
+</td><td colspan="1" rowspan="1"><p>Large</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>67</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks with loky</p>
+</td><td colspan="1" rowspan="1"><p>Small</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>12.7</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks with loky</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>7.73</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks with loky</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>68</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks with loky</p>
+</td><td colspan="1" rowspan="1"><p>Large</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>70</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks with loky</p>
+</td><td colspan="1" rowspan="1"><p>Snowpark Optimised Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>69</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Regular Concurrent Tasks with loky</p>
+</td><td colspan="1" rowspan="1"><p>Snowpark Optimised Large</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>68</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>End Partition Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Small</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>11.7</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>End Partition Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>8.61</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>End Partition Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>64</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>End Partition Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Large</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>64</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Process Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Small</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>154</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Process Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer100</p>
+</td><td colspan="1" rowspan="1"><p>155</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Process Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Medium</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>1726</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Process Vectorised</p>
+</td><td colspan="1" rowspan="1"><p>Large</p>
+</td><td colspan="1" rowspan="1"><p>Customer1000</p>
+</td><td colspan="1" rowspan="1"><p>1550</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Conclusion</h2>
+<p>The metrics we&#39;ve gathered provide comprehensive insights into the performance of our numerical computations using different approaches and warehouse configurations:</p>
+<ol type="1">
+<li>UDTF vs. Vectorized UDTF Performance Comparison <ul>
+<li>Regular UDTFs: <ul>
+<li>Regular UDTFs, both with and without multi-processing, showed consistent performance improvements with larger warehouse sizes. This trend was especially noticeable for larger datasets (Customer1000).</li>
+<li>The introduction of concurrent tasks and using the loky backend significantly reduced execution times for medium and large warehouses, showcasing the benefits of parallel processing. For instance, execution times dropped from 12 seconds (single-threaded) to 7.67 seconds (multi-threaded with loky) for the Customer100 dataset on a medium warehouse.</li>
+</ul>
+</li>
+<li>Vectorized UDTFs: <ul>
+<li>The end partition method for vectorized UDTFs consistently outperformed the regular UDTF approach, particularly for larger datasets. This method leverages vectorized operations efficiently, resulting in lower execution times. For example, the Customer1000 dataset&#39;s execution time reduced from 70 seconds (regular UDTF) to 64 seconds (vectorized end partition) on a large warehouse. Note, this is not universal and specific to the operations we are performing in this numerical processing use case. The opposite is also seen in other types of use cases, so you must carefully choose which UDT function to choose for which operation.</li>
+<li>Conversely, the process method in vectorized UDTFs performed poorly, with significantly higher execution times (e.g., 1550 seconds for Customer1000 on a large warehouse). This approach failed to leverage the full benefits of vectorized operations and faced substantial overhead due to processing each input row individually. Note, Vectorised process-by UDTFs operate over partitions and are more suited towards transformation use cases, another reason for why we are seeing these results.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Effect of Warehouse Size: <ul>
+<li>The execution times vary across different warehouse sizes. Generally, larger warehouses allocate more computational resources, leading to faster execution times. This trend is evident in our results, where the execution times decrease as you move from the small to the medium and large warehouses. However, interestingly in some cases, Medium warehouses outperform Larger ones, and this could be attributed to right-sizing of warehouses for a specific computational task and dataset size. This is more art than science.</li>
+</ul>
+</li>
+<li>Impact of Multi-processing: <ul>
+<li>Multi-processing introduces parallelism, allowing the computation to utilize multiple CPU cores concurrently. This can lead to significant speedups, especially for tasks that can be parallelized effectively. In our case, we observed improvements in execution times when using multi-processing compared to a single-threaded approach.</li>
+</ul>
+</li>
+<li>Back-end Selection: <ul>
+<li>We experimented with different back-ends for multi-processing, default and the loky backend. It&#39;s essential to choose the most suitable backend for your specific workload and environment. The choice of backend can affect factors such as resource utilization, scalability, and compatibility.</li>
+</ul>
+</li>
+<li>Snowpark Optimized Warehouses: <ul>
+<li>Snowpark Optimized Warehouses provided optimized performance and resource allocation demonstrated by further improvements in execution times compared to traditional warehouses, even more when using the loky backend for multi-processing.</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Cleanup</h2>
+<aside class="special"><p> If you did not complete all test cases in the notebook, please ensure you cleaned up the environment by executing the final code block so that all other labs will function properly</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 3 (Cachetools) - Overview" duration="3">
+        <h2 is-upgraded>Lab Summary</h2>
+<p>Cachetools provides different caching algorithms and data structures to store and manage data efficiently. It uses different algorithms like Least Recently Used Cache(LRU), Least Frequently Used(LFU), RR Cache,TTL Cache. Cachetools are particularly useful for optimizing performance by storing the results of functions and reusing those results</p>
+<p>In this lab, we will learn how to use the cachetools library in <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs" target="_blank">Snowpark Python UDFs</a> and how it can be used to speed up UDF execution times when the UDF reads data from a file during each execution. For simplicity we will demonstrate this scenario using a pickle file which has the dictionary object serialized.</p>
+<h2 is-upgraded>Background Information - Cachetools and pickle files</h2>
+<h3 is-upgraded>Cachetools</h3>
+<p><a href="https://pypi.org/project/cachetools/" target="_blank">Cachetools</a> is a Python library that provides a collection of caching algorithms. It offers simple and efficient caching methods, such as LRU (Least Recently Used) and FIFO (First In First Out), to store a limited number of items for a specified duration. The library is useful in applications where temporarily storing data in memory improves performance. It&#39;s easy to use and can be integrated into an application with just a few lines of code.</p>
+<p>The Cachetools library with Snowpark UDF can be used for:</p>
+<ul>
+<li>Loading pretrained ML models from the stage for model inference</li>
+<li>Reading data which is stored in pickle file</li>
+</ul>
+<h3 is-upgraded>Pickle File</h3>
+<p>A <a href="https://docs.python.org/3/library/pickle.html" target="_blank">pickle</a> file is a file format used to store Python objects as binary data. It is used in data engineering to store and retrieve data objects that can be used across different applications or scripts.For example, you might use pickle to store data objects such as pandas dataframes, numpy arrays, or even custom Python classes and functions. By using pickle, you can save these objects to disk and load them later without having to recreate the data from scratch.</p>
+<h2 is-upgraded>Scenario</h2>
+<p>There is a ficticious system that generates transactional data along with the day of the week information for each row. To access the names of the weekdays, we are required to use a Python pickle file that is shared by the upstream data teams. This file contains the names of the weekdays, which may change in different scenarios. To ensure compatibility and security, the upstream data teams only provide access to this information through the pickle file.</p>
+<p>To analyze this data in Snowflake Snowpark Python, we have created a Python User Defined Function (UDF) to efficiently retrieve the corresponding day name based on the day number which comes as an input. This UDF provides a convenient and reliable way to access the day names from the pickle file, allowing us to perform the necessary DataFrame transformations for our analysis.</p>
+<p>Lately as the number of transactions are growing we are seeing performance degradation of our select queries which is using the UDF to fetch the required information from the pickle file. We need to look for ways to improve the performance of the Python UDF that we have created.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 3 (Cachetools) - Execution" duration="5">
+        <h2 is-upgraded>What You&#39;ll Do</h2>
+<p>This lab consists of the following major steps:</p>
+<ol type="1">
+<li>Importing libraries and connecting to Snowflake</li>
+<li>Creating a pickle file</li>
+<li>Running a UDF without Cachetools</li>
+<li>Running a UDF with Cachetools</li>
+<li>Conclusion and Cleanup</li>
+</ol>
+<h2 is-upgraded>Run the lab</h2>
+<p>In Snowsight, open a notebook called lab3_cachetools_library_snow.ipynb and run each of the cells.</p>
+<h2 is-upgraded>Conclusion</h2>
+<p>Based on the our testing, we have identified that the total duration for the query using Cachetools decorator for this use case yields a significant performance increase for the Python UDF execution.</p>
+<p>It is important to understand that the UDF executes code from top-to-bottom for every row/batch (if vectorised). This also includes any code that loads an artifact from disk, as in this case. So, if you have 1000 batches, without cachetools you will load the artifact 1000 times. But, with cachetools, you only load it once per Python process. This is also dependent on the warehouse size and the total nodes underneath.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 4 (Local Testing) - Overview and Setup" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>The lab provides a local testing framework that allows users to leverage their compute resources from local machine to perform basic DE/DS tasks, instead of using Snowflake&#39;s built-in Virtual Warehouse. It&#39;s a great approach for users to save compute costs during development and testing phase.</p>
+<h2 is-upgraded>Prepare Data</h2>
+<ol type="1">
+<li>Please requested access to a <a href="https://other-docs.snowflake.com/en/collaboration/consumer-listings-exploring" target="_blank">Snowflake marketplace</a> dataset called  ‘United States Retail Foot Traffic Data&#39;, or you can access it directly <a href="https://app.snowflake.com/marketplace/listing/GZT1ZVTYF7/constellation-network-united-states-retail-foot-traffic-data?search=us+foot+traffic" target="_blank">here</a>.</li>
+<li>Once data share is available, run the below sql in a worksheet using the same sysadmin role. This is the database and tables we will use for this lab.</li>
+</ol>
+<pre><code>   use role sysadmin;   
+   create or replace database RETAIL_FOOT_TRAFFIC_DATA;  
+   use database RETAIL_FOOT_TRAFFIC_DATA;  
+   use schema PUBLIC;  
+   create or replace table FOOT_TRAFFIC_JSON_DATA as select * from UNITED_STATES_RETAIL_FOOT_TRAFFIC_DATA.PUBLIC.FOOT_TRAFFIC_JSON_DATA WHERE json_data:state=&#39;CA&#39; AND json_data:timestamp BETWEEN (&#39;2021-01-01 00:00:00&#39;) AND (&#39;2022-09-13 23:59:59&#39;);
+</code></pre>
+<h2 is-upgraded>Install Snowpark and required libraries in your local machine.</h2>
+<ol type="1">
+<li>If you don&#39;t have a local snowpark python environment, please run the below command in Mac Terminal(or Windows Shell if you are using Windows) to install Snowpark.</li>
+</ol>
+<pre><code>conda create --name  env_py311 --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.11
+</code></pre>
+<ol type="1" start="2">
+<li>In terminal, run the below scripts step by step to get into your local snowpark environment, install required libraries for local testing and start jupyter notebook.</li>
+</ol>
+<pre><code>conda activate env_py311   
+conda install --override-channels -c https://repo.anaconda.com/pkgs/snowflake notebook pytest python-dotenv snowflake pandas   
+jupyter notebook
+</code></pre>
+<ol type="1" start="3">
+<li>Open the directory where you cloned the github repo, modify connection.json file for account, user, password, role and warehouse based on your credentials.<pre><code>{  
+  &#34;account&#34;   : &#34;****&#34;,  
+  &#34;user&#34;      : &#34;****&#34;,   
+  &#34;password&#34;  : &#34;****&#34;,   
+  &#34;role&#34;: &#34;sysadmin&#34;,   
+  &#34;warehouse&#34;: &#34;app_wh&#34;,   
+  &#34;database&#34;: &#34;RETAIL_FOOT_TRAFFIC_DATA&#34;,   
+ &#34;schema&#34;: &#34;PUBLIC&#34;   
+ }
+</code></pre>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab 4 (Local Testing) - Execution" duration="0">
+        <h2 is-upgraded>Run the lab</h2>
+<p>Open up the jupyter notebook with name lab4_local_testing.ipynb in the local directory and run each of the cells.</p>
+<h3 is-upgraded>Step 1: Running all tests locally</h3>
+<p>The below cell invokes .py jobs in test_integration folder and run the snowpark session using your local resources. Write down the time you kick off this cell.</p>
+<pre><code>%%bash
+pytest test_integration/ --disable-warnings --snowflake-session local
+</code></pre>
+<h3 is-upgraded>Step 2: Running all tests through Virtual Warehouse</h3>
+<p>The below cell invokes .py jobs in test_integration folder and run the snowpark session using Snowflake Virtual Warehouse. Once first step 1 is done, wait 2 minutes before you kick off this job. Write down the time you kick off this cell.</p>
+<pre><code>%%bash
+pytest test_integration/ --disable-warnings --snowflake-session live
+</code></pre>
+<h3 is-upgraded>Step 3: Go to snowsight query history to locate query history for Step 1 and Step 2.</h3>
+<p>You should be able to see query history with Step 2 using Virtual Warehouse, and you won&#39;t be able to find any query from Step 3 because it&#39;s using local compute resources and query history is not supported by local testing. Please refer to <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/testing-locally" target="_blank">Snowflake documentation </a> for details related to this.</p>
+<h3 is-upgraded>Step 4: Clean up</h3>
+<p>Run the below command in a snowflake worksheet to drop the database and all objects under database SNOWPARK_BEST_PRACTICES_LABS.</p>
+<pre><code>DROP DATABASE IF EXISTS SNOWPARK_BEST_PRACTICES_LABS CASCADE ;
+</code></pre>
+<h2 is-upgraded>Lab Conclusion</h2>
+<p>Snowpark local testing framework provides developer a convenient way to easily toggle between live and local testing. Developers can leverage the local testing feature to save compute cost during development and testing phase.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="3">
+        <p>Congratulations! You&#39;ve successfully performed all the labs illustrating the best practices for getting optimal performance when using Snowpark Python.  You&#39;re now ready to implement these concepts in your own projects.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>The performance benefits of Vectorised UDFs, and what type of operations benefit the most from them</li>
+<li>The performance of UDTF vs Vectorised UDTF operations using different approaches and warehouse configurations</li>
+<li>The performance benefits of the cachetools library</li>
+<li>How to test your code locally when working with Snowpark.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-snowpark-python-top-three-tips-for-optimal-performance" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#0" target="_blank">Getting Started with Data Engineering and ML using Snowpark Python</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html" target="_blank">Advanced: Snowpark for Python Data Engineering Guide</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html" target="_blank">Advanced: Snowpark for Python Machine Learning Guide</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md" target="_blank">Snowpark for Python Demos</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark for Python Developer Guide</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

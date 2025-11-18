@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "data_apps_summit_lab_kr",
+  "duration": 42,
+  "title": "Snowflake 마켓플레이스, Snowpark, Streamlit으로 데이터 애플리케이션 구축",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "data_apps_summit_lab_kr/data_apps_summit_lab_kr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "app-development"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "kr",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_apps_summit_lab_kr"
+}

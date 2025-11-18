@@ -1,0 +1,623 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a ReactJS app with ThoughtSpot and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_thoughtspot"
+                  title="Build a ReactJS app with ThoughtSpot and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>With massive amounts of data being generated every day, it is no surprise that the need to store and make sense of all this data is critical to business success. To store data, Snowflake has emerged as one of the leading Cloud Data Platforms for its ease of setup, maintenance and speed. Alongside Snowflake, ThoughtSpot follows a similar mentality of ease of use with powerful AI-based search and analytics tools. This tutorial will teach you how to use ThoughtSpot to connect to Snowflake and, using the ThoughtSpot Everywhere developer tools, add insights into a React-based web app.</p>
+<p>Whilst we are using React for this tutorial, similar techniques can be used to add ThoughtSpot to any app, regardless of platform, thanks to the open API approach ThoughtSpot delivers. You can use scalable RESTful APIs or SDKs in major programming languages. The choice is yours.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake and React</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to connect Snowflake and ThoughtSpot together</li>
+<li>how to add ThoughtSpot to a React app</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://trial.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>A <a href="https://www.thoughtspot.com/trial?utm=snowtstutorial" target="_blank">ThoughtSpot</a> Account</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A React web app with ThoughtSpot Everywhere insights backed by Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started" duration="0">
+        <p>To get started, we are going to need a few cloud environments, one for Snowflake and another for ThoughtSpot. Thankfully, both platforms offer free trials you can sign up for online. This tutorial will use sample datasets in each environment. If you already have an existing Snowflake or ThoughtSpot instance, it is recommended to create a new free trial instance.</p>
+<h2 is-upgraded>Sign up for a Snowflake Free Trial</h2>
+<p>Jump over to the <a href="https://signup.snowflake.com/?utm_source=tsquickstart" target="_blank">Snowflake Free Trial signup page</a>, enter the details required, and tap continue. Follow the steps required and check your email for an Activation link. Once you are logged in, tap on the Worksheets icon and click the + tag to create a new worksheet. Go ahead and name it Snowflake+ThoughtSpot Tutorial.</p>
+<p>A worksheet is a space where you can write SQL statements to interrogate data. We can use this to test our setup. First, we need to select the database and schema we want to use. Tap on the Context dropdown and select the following values:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Warehouse    </strong></p>
+</td><td colspan="1" rowspan="1"><p>COMPUTE_WH(XS)    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Database    </strong></p>
+</td><td colspan="1" rowspan="1"><p>SNOWFLAKE_SAMPLE_DATA    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Schema    </strong></p>
+</td><td colspan="1" rowspan="1"><p>TPCDS_SF10TCL    </p>
+</td></tr>
+</table>
+<p class="image-container"><img alt="alt_text" src="img/4c751651538a5e22.gif"></p>
+<p>Let&#39;s go ahead and test that everything is configured correctly. WIthin the query editor, execute the following statement. You should see results populate below.</p>
+<pre><code>select s_store_name, s_hours, s_Manager, s_street_number, s_street_name, s_city, s_county, s_state, s_country from store
+</code></pre>
+<p>That&#39;s it. You&#39;ve set up your Snowflake instance. Throughout the tutorial we are going to use this store data within ThoughtSpot to analyse sales trends. Before we switch gears and set up ThoughtSpot, we want to note down a few configuration items which we will need to create the connection within ThoughtSpot. Take a note of the following items:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Snowflake URL    </p>
+</td><td colspan="1" rowspan="1"><p>This is the first part of the snowflake instance URL, right before <code>.snowflakecomputing.</code> In the screenshot above, it is <code>mxa45427</code>. Yours will be different, but take a note of it here.    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Username    </p>
+</td><td colspan="1" rowspan="1"><p>This is your username assigned to you by Snowflake. Check your Activation email if you forgot it.    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Password    </p>
+</td><td colspan="1" rowspan="1"><p>The password you created upon signup    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Role    </p>
+</td><td colspan="1" rowspan="1"><p>In our tutorial we will use SYSADMIN    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Warehouse    </p>
+</td><td colspan="1" rowspan="1"><p>COMPUTE_WH    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Database    </p>
+</td><td colspan="1" rowspan="1"><p>SNOWFLAKE_SAMPLE_DATA    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Schema    </p>
+</td><td colspan="1" rowspan="1"><p>TPCDS_SF10TCL    </p>
+</td></tr>
+</table>
+<h2 is-upgraded>Sign up for a ThoughtSpot Free Trial</h2>
+<p>Next, let&#39;s sign-up for a ThoughtSpot Free Trial. Head over to the <a href="https://www.thoughtspot.com/trial?utm=snowtstutorial" target="_blank">sign-up page</a> and complete the required fields. Select Snowflake as your Cloud Data Warehouse provider. This is not necessary, but does help us better understand trends in customer data usage. If you have already signed up with ThoughtSpot previously, but want to use the same email address, you can add a +1 to your email name, and still have it registered to your existing email. For example, let&#39;s say I previously signed up with my work email address of <a href="mailto:quinton.wall@acmecorp.com" target="_blank">quinton.wall@acmecorp.com</a>. I could use <a href="mailto:quinton.wall+1@acmecorp.com" target="_blank">quinton.wall+1@acmecorp.com</a> to satisfy the sign-up requirements and receive activation emails to my original email address.</p>
+<p>In a few minutes you should receive an activation email. Follow the instructions included to finish creating your Trial account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create A Connection" duration="0">
+        <p>Now that we have our cloud environments setup, it is time to create the connection from ThoughtSpot to Snowflake. If you haven&#39;t done so already, go ahead and log into your ThoughtSpot account. From the top menu, select <strong>Data</strong>, then <strong>Connections</strong> from the left hand menu, tap <strong>Snowflake</strong>, give your connection the name <code>TutorialSnowStore</code>, and tap continue.</p>
+<p class="image-container"><img alt="alt_text" src="img/29d9308282da572e.gif"></p>
+<p>After tapping <strong>Continue</strong>, you will be prompted to enter Snowflake connection details. These are the details you collected earlier from the Snowflake Worksheet Context. Copy these into form, paying careful attention to case. Connection details are case sensitive and need to appear exactly as they appear in Snowflake. Once you have entered your details, tap **Continue **to select the tables we want to connect to.</p>
+<p>We will use three tables throughout this tutorial: store, item, and store_sales. Store and item are pretty self-explanatory, containing data related to products and physical stores in the sample database. Store_sales is the junction of the two, containing information on which products were sold in which store. In database terms, this is a many-to-many relationship: one store can sell many products, and a product can be sold at many store.</p>
+<p>Go ahead and map the following fields from each table.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>Table    </strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>Field    </strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_store_sk    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_store_id    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_store_name    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_hours    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_Manager    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_street_number    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_street_name    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_city    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_county    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_state    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store    </p>
+</td><td colspan="1" rowspan="1"><p>s_country    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Item    </p>
+</td><td colspan="1" rowspan="1"><p>i_item_sk    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Item    </p>
+</td><td colspan="1" rowspan="1"><p>i_item_desc    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Item    </p>
+</td><td colspan="1" rowspan="1"><p>i_size    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Item    </p>
+</td><td colspan="1" rowspan="1"><p>i_color    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Item    </p>
+</td><td colspan="1" rowspan="1"><p>i_product_name    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store_sales    </p>
+</td><td colspan="1" rowspan="1"><p>ss_item_sk    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store_sales    </p>
+</td><td colspan="1" rowspan="1"><p>ss_quantity    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store_sales    </p>
+</td><td colspan="1" rowspan="1"><p>ss_net_paid    </p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Store_sales    </p>
+</td><td colspan="1" rowspan="1"><p>ss_store_sk    </p>
+</td></tr>
+</table>
+<p>Once you have selected all the appropriate fields, tap Create Connection. To confirm you created everything, tap Data from the top menu, then Connections. You should see a tile like the one below.</p>
+<p class="image-container"><img alt="alt_text" src="img/87d5d07acb2e19f8.png"></p>
+<h2 is-upgraded>Model the Data</h2>
+<p>Now that we have the connection to Snowflake completed, it is time to model the data. Data modeling in ThoughtSpot is similar to how you would go about it in a traditional database. We want to establish relationships between data, the joins, and create some sort of view to make it easier for users to work with the data. Within ThoughtSpot, a view is called a <code>Worksheet</code>. Don&#39;t get confused with Snowflake&#39;s definition of worksheets. They are different. If you are more familiar with databases, just remember that a Worksheet in ThoughtSpot is similar to a materialized view in a database. Let&#39;s start by creating ours.</p>
+<p>If you remember from above, one of the tables we connected to was <code>Store_sales</code>. This junction object contains the relationship between stores and items sold. We need to tell ThoughtSpot which fields are the foreign keys in this table. To do so, tap on the <code>TutorialSnowStore</code> tile, select <code>Store_Sales</code>, then <strong>Joins</strong> from the navigation. We need to create two joins, one from <code>Store_Sales</code> to <code>Sales</code>, and the other from <code>Store_Sales</code> to <code>Item</code>. Create your connections like the images below, remembering to set the cardinality field.</p>
+<h3 is-upgraded>Join 1: Store_Sales to Store</h3>
+<p class="image-container"><img alt="alt_text" src="img/82ab347e9958ac52.png"></p>
+<h3 is-upgraded>Join 2: Store_Sales to Item</h3>
+<p class="image-container"><img alt="alt_text" src="img/b8d0e2e1743f2097.png"></p>
+<p>Once you are done, you should see a final configuration like this, with a handy visual ERD for your reference. That&#39;s it. No need to write SQL statements. ThoughtSpot takes care of all the syntax and optimization for you.</p>
+<p class="image-container"><img alt="alt_text" src="img/41befc8ee633a838.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Worksheet" duration="0">
+        <h2 is-upgraded>Using the Visual Designer</h2>
+<p>Now, it is time to create the worksheet that user&#39;s will interact with. Just remember, a worksheet in ThoughtSpot functions very similar to a database view. The good news is that now that we have our modeling complete, creating a Worksheet is really simple. From the top navigation, select <strong>Data</strong>, then <strong>Worksheets</strong>, and finally <strong>New Worksheet</strong>. Select the three tables from Snowflake, using the <strong>Filter by name</strong> box to quickly locate the tables we need. Once select, tap <strong>Close.</strong></p>
+<p class="image-container"><img alt="alt_text" src="img/f37a4dda77d0fee3.png"></p>
+<p>With the tables selected, we can create the worksheet by expanding the <strong>Sources</strong> tree on the left, and selecting the columns we need. To keep things simple, we are just going to select them all. If you don&#39;t want to select individual columns, you can also tap on the name of the table, the tap <strong>Add Columns</strong> to add all the columns at once.</p>
+<p class="image-container"><img alt="alt_text" src="img/41aac6ec035d582d.gif"></p>
+<h2 is-upgraded>Using SQL</h2>
+<p>So far we have used the visual designers to create an answer. If you are more familiar with, or have an existing, SQL statement, you can also use this to create a Worksheet using the new SQL based view feature currently available in Beta. To do, select SQL based view from the Data tab, and choose the TutorialSnowStore connection.</p>
+<p class="image-container"><img alt="alt_text" src="img/4b8a86d5b041b482.png"></p>
+<p>From here, you can write your query using familiar SQL syntax. For example, if we wanted to create a similar Worksheet from the tutorial steps above, we could write the following statement.</p>
+<pre><code>SELECT i.i_product_name, s.s_store_name, s.s_state, s.s_country, sales.ss_quantity, sales.ss_net_paid
+FROM TPCDS_SF10TCL.STORE as s, TPCDS_SF10TCL.item as i, TPCDS_SF10TCL.STORE_SALES as sales
+WHERE sales.ss_store_sk = s.s_store_sk
+AND sales.ss_item_sk = i.i_item_sk
+</code></pre>
+<p>Go ahead and run the statement to see the results. From here, give your Worksheet a name and tap <strong>Save</strong> to create a Worksheet your users can use to analyze data. The great thing too, is that now that my Worksheet has been created within ThoughtSpot, you can customize it using the visual designer tools as well. This hybrid approach to Worksheet creation works very well for the typical developer who is comfortable with typical sql, but may not be an expert in more advanced grouping, and functions. You can quickly create a worksheet from an existing SQL statement, then tweak the aggregate functions using the visual designer.</p>
+<p class="image-container"><img alt="alt_text" src="img/e86e8de4971a1ff3.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize the Data with Liveboards" duration="0">
+        <p>For many users, viewing data in charts is the most efficient way of analysing data. The trouble with most charting solutions is that the results is very static. Consider a traditional dashboard to view daily sales. Charts on these dashboards are effectively pre-defined queries. With ThoughtSpot however, charts and dashboards are fully dynamic; they are alive. You can modify the filters with natural language, tap and drill in to view deeper insights, and more. For this tutorial, we are going to create a Liveboard, a dynamic dashboard, to represent product sales by store.  Let&#39;s get started.</p>
+<p>From the top navigation, select <strong>Liveboards</strong>, then tap the <strong>+Liveboard</strong> button in the top right, and name your Liveboard <code>Snow - Store Sales</code>. Click <strong>Create</strong>. Your Liveboard is now available alongside any other Liveboards you may have in your environment. Go ahead and tap on <code>Snow - Store Sales</code> to open it.</p>
+<p class="image-container"><img alt="alt_text" src="img/9a6446989355da65.gif"></p>
+<h2 is-upgraded>Add a Stacked Column Chart</h2>
+<p>Our Liveboard isn&#39;t terribly exciting right now. We can fix that easily by creating an Answer and a Chart to represent the results. You can think of an Answer as just that, an answer to a question about data. For our tutorial, this question is &#34;show me all the product sales for all stores&#34;. The ThoughtSpot platform let&#39;s you pose this question using natural language. But don&#39;t worry, if you prefer to use SQL, you can do that too. We will get to that in a moment. Right now, we will use the ThoughtSpot platform to do the work for us.</p>
+<p>Go ahead and tap on the <strong>Start Searching</strong> button. You will be presented with a familiar interface show data sources on the left. We are going to leverage the StoreSales worksheet we created previously. Tap on the small</p>
+<p><img alt="alt_text" src="img/f51348be28643bd3.png"> icon and type StoreSales in the filter dialog, then select StoreSales. Be careful not to select STORE_SALES. This is the junction object from Snowflake, and not the materialized View or Worksheet we created during this tutorial.</p>
+<p>Now that we have our data source selected, add the following columns to our search criteria. Here is where you see the work we did creating the Worksheet start to pay off. A user doesn&#39;t need to understand the underlying data structure or master complex sql statements like joins and aggregate functions, everything is taken care of for you. And, best of all, users can simply type questions to retrieve the answers they need. Go ahead add the following fields by typing  into the query box. The results will update in real time.Tap <strong>Enter</strong> when complete.</p>
+<pre><code>S_Store_Name, I_Product_Name, Ss_Quantity, S_Country, S_State, S_Net_Paid
+</code></pre>
+<p>Next, we will add our chart. Thoughtspot provides many typical charting options likes line, donuts, and column charts. We are going to use a stacked column chart to group sales by state and stack product types to give the end user an easy way to visualize the results.  Tap the chart icon on the right of the screen and select Stacked Column</p>
+<p class="image-container"><img alt="alt_text" src="img/db87e02eeab713a4.png"></p>
+<p>At first, the chart layout isn&#39;t exactly what we are looking for. Tap the <strong>Cog</strong> icon, directly under the chart icon you just tapped, and configure you chart using the settings below. When you are done, tap <strong>Pin</strong> to save your chart to the Liveboard.</p>
+<p class="image-container"><img alt="alt_text" src="img/4aedd784a5f79af.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Embed Analytics with ThoughtSpot Everywhere" duration="0">
+        <p>One of the major benefits of the ThoughtSpot Platform is the ability to a spectrum of development processes. So far during this tutorial we have utilized the visual tools. Now it is time to write some code. ThoughtSpot provides a complete set of RESTful APIs, and SDKs to allow you to embed analytics into any application. Collectively, these developer tools are called ThoughtSpot Everywhere.</p>
+<p>For this tutorial weThoughtSpot Everywhere Visual Embed SDK to take the Liveboard we just created and embed it into a REACT-based web application. This is a very typical scenario where a business may have an existing portal employees or customers use to track orders, sales, or whatever they need. With ThoughtSpot Everywhere, adding analytics is incredibly easy. Let&#39;s get started.</p>
+<h2 is-upgraded>Set up your Local Development Environment</h2>
+<p>We are going to use React to build our web application. Installing and configuring React, and it&#39;s dependencies is different for each environment. This tutorial will use Mac OS as the example development environment. You can find steps to install React for Windows <a href="https://docs.microsoft.com/en-us/windows/dev-environment/javascript/react-on-windows" target="_blank">here</a>. For the Mac, you will need the following:</p>
+<h3 is-upgraded>Node.js &amp; NPM</h3>
+<p>NPM, is a very popular package management solution built with Node.js (thus the name, Node Package Manager). This tutorial will use NPM to install the React.js framework. Many Macs have Node and NPM already installed. You can check this by opening a terminal window and typing <code>$ node -v</code> If you do not see a successful response, go ahead and <a href="https://nodejs.org/en/download/" target="_blank">download the installer</a> for your platform. (Please use the LTS version. Occasionally the latest release has minor bugs). Once downloaded, double-click and follow the prompts to install.</p>
+<h3 is-upgraded>React Framework</h3>
+<p>With NPM installed, installing the React Framework is simple. Enter the following command in your terminal window:</p>
+<pre><code>$ sudo npm install -g create-react-app
+</code></pre>
+<p>You can verify the installation by typing:</p>
+<pre><code>$ npm -v$create-react-app — version
+</code></pre>
+<h3 is-upgraded>VSCode</h3>
+<p>Whilst not required, a good IDE is certainly a productivity booster for many developers. Everyone has their own preference. Feel free to use your IDE of choice. For the examples within this tutorial, we will use VSCode. If you like it, you can <a href="https://code.visualstudio.com/download" target="_blank">download it for free</a> for your preferred platform.</p>
+<h2 is-upgraded>Create the React webapp</h2>
+<h3 is-upgraded>Step 1: Create app</h3>
+<p>With your terminal window still open, let&#39;s get started creating the React app. Enter the following command:</p>
+<pre><code>$ npx create-react-app snowsales-app
+</code></pre>
+<p>Open your favorite IDE to the <code>snowsales-app</code> folder. By default, React uses localhost:3000. We need to change this to <code>localhost:8000</code>. This host and port name are pre-configured within ThoughtSpot&#39;s Content Security Policy settings to allow local development. Within your project&#39;s root directly open package.json and change the scripts start value to the following:</p>
+<pre><code> &#34;scripts&#34;: {
+   &#34;start&#34;: &#34;PORT=8000 react-scripts start&#34;,
+   &#34;build&#34;: &#34;react-scripts build&#34;,
+   &#34;test&#34;: &#34;react-scripts test&#34;,
+   &#34;eject&#34;: &#34;react-scripts eject&#34;
+ },
+</code></pre>
+<p>Change the name of Replace the contents of <code>App.js</code> to <code>App.jsx</code>, then replace the context with the following code:</p>
+<pre><code>import &#39;./App.css&#39;;
+
+function App() {
+ return (
+   &lt;div className=&#34;App&#34;&gt;
+
+
+   &lt;/div&gt;
+ );
+}
+export default App;
+</code></pre>
+<h3 is-upgraded>Step 2: Add sub-pages</h3>
+<p>Next, we are going to set up routing to support navigating through our app. We will be creating a multi-page page app, with separate pages designed to encapsulate different features of our app. Whether you decide to build a single page or multi-page app really comes down to personal preference.</p>
+<p>Create a new folder Components in the src directory, then create 2 additional pages:</p>
+<ul>
+<li>storesales.js</li>
+<li>About.js</li>
+</ul>
+<p class="image-container"><img alt="alt_text" src="img/64926a1a4594186e.png"></p>
+<h3 is-upgraded>Step 3: Add Routing support to your project</h3>
+<p>From the terminal, make sure you <code>cd</code> into <code>snowsales-app</code> folder, then execute the following command.</p>
+<pre><code>$snowsales-app&gt; npm add react-router-dom@6
+</code></pre>
+<p>Once the command completes, replace the contents of index.js with the following:</p>
+<pre><code>import React from &#39;react&#39;;
+import ReactDOM from &#39;react-dom&#39;;
+import { BrowserRouter as Router } from &#39;react-router-dom&#39;;
+import &#39;./index.css&#39;;
+import App from &#39;./App&#39;;
+
+ReactDOM.render(
+ &lt;Router&gt;
+   &lt;App /&gt;
+ &lt;/Router&gt; 
+ ,
+ document.getElementById(&#39;root&#39;)
+);
+</code></pre>
+<p>Then add the following import line to the top of <code>App.jsx</code>, directly below the import statement for <code>App.css</code>:</p>
+<pre><code>import { Route, Routes} from &#34;react-router-dom&#34;;
+</code></pre>
+<h3 is-upgraded>Step 4: Configure the subpages</h3>
+<p>Copy the following code into the relevant subpages. We will add more to these pages later, but for now, we just want to get everything set up to support navigation</p>
+<ul>
+<li>storesales.jsx<pre><code>import React from &#39;react&#39;
+
+export default function StoreSales() {
+   return (
+       &lt;div&gt;
+           &lt;h1&gt;Store Sales&lt;/h1&gt;
+       &lt;/div&gt;
+   )
+}
+</code></pre>
+</li>
+<li>about.jsx<pre><code>import React from &#39;react&#39;
+
+export default function About() {
+   return (
+       &lt;div&gt;
+           &lt;h1&gt;About&lt;/h1&gt;
+       &lt;/div&gt;
+   )
+}
+
+</code></pre>
+</li>
+</ul>
+<h3 is-upgraded>Step 5: Add a hamburger menu</h3>
+<p>Currently, our app isn&#39;t very useful. There is no navigation. Let&#39;s go ahead and fix that by adding a hamburger menu using <a href="https://github.com/negomi/react-burger-menu" target="_blank">react-hamburger-menu</a>. Add it to your project:</p>
+<pre><code>$snowsales-app&gt; npm add react-hamburger-menu
+</code></pre>
+<p>Then, create a new folder, <code>Components</code>, with a subfolder, <code>Burger</code>, and two files, <code>burger.css</code> and <code>BurgerMenu.js</code>. Once complete, your app structure should look like this:</p>
+<p class="image-container"><img alt="alt_text" src="img/1d3efbeb4428c6cd.png"></p>
+<p>Then, add the following code:</p>
+<h4 is-upgraded>BurgerMenu.js</h4>
+<pre><code>import React from &#34;react&#34;;
+import { slide as Menu } from &#34;react-burger-menu&#34;;
+import &#34;./burger.css&#34;;
+
+const toggleMenu = ({ isOpen }) =&gt; {
+ const menuWrap = document.querySelector(&#34;.bm-menu-wrap&#34;);
+ isOpen
+   ? menuWrap.setAttribute(&#34;aria-hidden&#34;, false)
+   : menuWrap.setAttribute(&#34;aria-hidden&#34;, true);
+};
+
+const BurgerMenu = () =&gt; {
+ return (
+   &lt;Menu noOverlay onStateChange={toggleMenu}&gt;     
+       &lt;a className=&#34;bm-item&#34; href=&#34;/&#34;&gt;Home&lt;/a&gt;
+       &lt;a className=&#34;bm-item&#34; href=&#34;/storesales&#34;&gt;Store Sales&lt;/a&gt;
+       &lt;a className=&#34;bm-item&#34; href=&#34;/about&#34;&gt;About&lt;/a&gt;     
+   &lt;/Menu&gt;
+ );
+};
+export default BurgerMenu;
+</code></pre>
+<h4 is-upgraded>burger.css</h4>
+<pre><code>/* Position and sizing of burger button */
+.bm-burger-button {
+   position: fixed;
+   width: 36px;
+   height: 30px;
+   left: 36px;
+   top: 36px;
+ }
+  /* Color/shape of burger icon bars */
+ .bm-burger-bars {
+   background: #373a47;
+ }
+  /* Color/shape of burger icon bars on hover*/
+ .bm-burger-bars-hover {
+   background: #a90000;
+ }
+  /* Position and sizing of clickable cross button */
+ .bm-cross-button {
+   height: 24px;
+   width: 24px;
+ }
+  /* Color/shape of close button cross */
+ .bm-cross {
+   background: #bdc3c7;
+ }
+  /*
+ Sidebar wrapper styles
+ Note: Beware of modifying this element as it can break the animations - you should not need to touch it in most cases
+ */
+ .bm-menu-wrap {
+   position: fixed;
+   height: 100%;
+ }
+  /* General sidebar styles */
+ .bm-menu {
+   background: #373a47;
+   padding: 2.5em 1.5em 0;
+   font-size: 1.15em;
+ }
+  /* Morph shape necessary with bubble or elastic */
+ .bm-morph-shape {
+   fill: #373a47;
+ }
+  /* Wrapper for item list */
+ .bm-item-list {
+   color: #b8b7ad;
+   padding: 0.8em;
+ }
+  /* Individual item */
+ .bm-item {
+   display: inline-block;
+   color: #b8b7ad;
+ }
+  /* Styling of overlay */
+ .bm-overlay {
+   background: rgba(0, 0, 0, 0.3);
+ }
+</code></pre>
+<h3 is-upgraded>Step 6: Create route navigation</h3>
+<p>All that is left for us to do is create the React routes, and add the Hamburger menu to our app. To finish wiring everything up, add the following imports to your App.jsx.</p>
+<pre><code>import BurgerMenu from &#39;./Components/Burger/BurgerMenu&#39;;
+import { Route, Routes} from &#39;react-router-dom&#39;;
+import StoreSales from &#39;./Components/storesales&#39;
+import About from &#39;./Components/about&#39;;
+</code></pre>
+<p>Then, within <code>&lt;div className="App"></code> element add our routing logic, and the hamburger menu component.</p>
+<pre><code>&lt;div className=&#34;App&#34;&gt;
+     &lt;header&gt;
+       &lt;BurgerMenu/&gt; 
+     &lt;/header&gt;
+
+     &lt;Routes&gt;
+       &lt;Route path=&#34;/&#34; element={&lt;h1&gt;Home&lt;/h1&gt;} /&gt;
+       &lt;Route path=&#34;/storesales&#34; element={&lt;StoreSales /&gt;} /&gt;
+       &lt;Route path=&#34;/about&#34; element={&lt;About /&gt;} /&gt;
+     &lt;/Routes&gt;
+ &lt;/div&gt; 
+</code></pre>
+<p>Your complete App.jsx page should look like this:</p>
+<pre><code>import &#39;./App.css&#39;;
+import React from &#39;react&#39;;
+import BurgerMenu from &#39;./Components/Burger/BurgerMenu&#39;;
+import { Route, Routes} from &#39;react-router-dom&#39;;
+import StoreSales from &#39;./Components/storesales&#39;
+import About from &#39;./Components/about&#39;;
+function App() {
+
+ return (
+   &lt;div className=&#34;App&#34;&gt;
+     &lt;header&gt;
+       &lt;BurgerMenu/&gt; 
+     &lt;/header&gt;
+
+     &lt;Routes&gt;
+       &lt;Route path=&#34;/&#34; element={&lt;h1&gt;Home&lt;/h1&gt;} /&gt;
+       &lt;Route path=&#34;/storesales&#34; element={&lt;StoreSales /&gt;} /&gt;
+       &lt;Route path=&#34;/about&#34; element={&lt;About /&gt;} /&gt;
+     &lt;/Routes&gt;
+ &lt;/div&gt;
+  );
+}
+export default App;
+</code></pre>
+<h3 is-upgraded>Step 7: Run the app</h3>
+<p>It&#39;s time to test your app out. From the terminal, execute the following command from within your app directory</p>
+<pre><code>$snowsales-app&gt; npm start
+</code></pre>
+<p>You should see an app like below. Try tapping on the hamburger and testing out the links. For extra style credits, you can also change the animation import from slide to <a href="https://www.npmjs.com/package/react-burger-menu" target="_blank">another supported animation</a>. For example, let&#39;s say I prefer the bubble animation, my import line in BurgerMenu.js would look like this:</p>
+<pre><code>import { bubble as Menu } from &#34;react-burger-menu&#34;;
+</code></pre>
+<p class="image-container"><img alt="alt_text" src="img/233e23017ac6d171.gif"></p>
+<p>If you receive an error message that starts with Error: Invalid Hook Call Warning, you may need to explicitly set the react-router-dom version. If so, open <code>package.json</code> and add the following to the dependencies array:</p>
+<pre><code>&#34;react-router-dom&#34;: &#34;^6.0.2&#34;,
+</code></pre>
+<p>Save the file, and execute the following from the command line, then run your project again:</p>
+<pre><code>$snowsales-app&gt; npm install
+</code></pre>
+<h2 is-upgraded>Use the Developer Playground</h2>
+<p>With our basic app up and running, it is time to start adding ThoughtSpot components to it. Similar to when we created our Worksheet, the ThoughtSpot platform gives developers the freedom to choose how they work. Many like to jump in and write all the code, while others may want to use a visual tool to iterate and experiment. ThoughtSpot provides a really handy Developer Playground for iterating and experimenting with embedded components. We are going to use the Playground to generate a lot of the boilerplate code we need, then when everything is configured correctly, we will jump into some more fine tuning. This hybrid approach to developing with ThoughtSpot is a great way to quickly create your app without having to spend a lot of time searching documentation for all the parameters and configurations you need.</p>
+<p>From within Thoughtspot, Tap Develop in the top navigation, then Liveboard from the left hand navigation. You are now in the Playground. On the left of the screen is the selector of the feature or component  you want to embed, and its configurable parameters. As you change the configuration, it dynamically changes the code for you. Tapping on run then renders the results on the right hand side.</p>
+<p class="image-container"><img alt="alt_text" src="img/fb979ba848413832.gif"></p>
+<p>We want to start by embedding the Liveboard we created earlier. From the Liveboard selector, select <strong>Snow - Store Sales</strong>. You will immediately see that the code has been updated to include the unique identifier of the Liveboard. Tap run to render the Liveboard. Before we move on, find the <code>pinboardId</code> in the generated code, and copy this. We will use it later in the tutorial. The actual id gets dynamically selected when you change the component you want to render in the Playground.</p>
+<p class="image-container"><img alt="alt_text" src="img/a981acb4eec77154.png"></p>
+<pre><code>Information: Pinboards have recently been replaced by Liveboards. This change is taking place in phases. The first phase will be deployed December 2021 and will include product naming, navigation, and UI. Phase two, available in 2022 will update API paths, parameters and SDKs. Until Phase two is deployed, you will still need to refer to pinboards within any code related development. 
+</code></pre>
+<h2 is-upgraded>Add ThoughtSpot React Components</h2>
+<p>Now that we have our app structure, and have played with configurations through the Playground, let&#39;s go ahead and add the ThoughtSpot Everywhere Embed SDK. This SDK gives you access to the ThoughtSpot Everywhere platform components such as Liveboards, Visualizations, and Search. We will be using the Liveboard component in this tutorial. Change directory to <code>snowsales-app</code>, then enter the following command:</p>
+<pre><code>$ npm i @thoughtspot/visual-embed-sdk
+</code></pre>
+<p>Then, in <code>App.jsx</code>, add the following directly after the existing imports.</p>
+<pre><code>// ThoughtSpot
+import {
+ AuthType,
+ init,
+ Page,
+} from &#34;@thoughtspot/visual-embed-sdk&#34;;
+
+const TSURL = &#34;https://try.thoughtspot.cloud&#34;;
+</code></pre>
+<p>And, initialize the connection within the App() function. ThoughtSpot Everywhere supports a <a href="https://docs.thoughtspot.com/visual-embed-sdk/release/en/?pageid=search-embed#_add_the_embed_domain" target="_blank">number of different authentication mechanisms</a>. For this tutorial, we are using <code>AuthType.None</code>. <code>AuthType.None</code> will prompt you for login credentials at runtime and store it as a session cookie. <code>AuthType.None</code> is not recommended for production use but works fine for our demo app.</p>
+<pre><code> init({
+   thoughtSpotHost: TSURL,
+   authType: AuthType.None
+ });
+</code></pre>
+<p>Next, we will update storesales.js to embed the Liveboard we created earlier. This is where we can take advantage of the Visual Embed SDK. There are a number of approaches you can use via the SDK. We are going to use the React components for adding Live services. Go ahead and replace the contents with the following code:</p>
+<pre><code>import { PinboardEmbed } from &#34;@thoughtspot/visual-embed-sdk/lib/src/react&#34;;
+export default function StoreSales() {
+   return (
+       &lt;div&gt;
+           &lt;h1&gt;Store Sales&lt;/h1&gt;
+           &lt;PinboardEmbed frameParams=&#123;&#123;height: &#34;80vw&#34;}}
+                       pinboardId={&#34;YOUR-LIVEBOARDID-HERE&#34;}/&gt;
+       &lt;/div&gt;    
+   );
+}
+</code></pre>
+<p>Save your changes, and run your app. Tap on the hamburger icon, then Store Sales. You will now be presented with a login to your ThoughtSpot instance. Enter your details, and the Liveboard shall be rendered within your app. Tap around and see how you can interact with the data. Cool huh?</p>
+<p class="image-container"><img alt="alt_text" src="img/9ead5fc710887823.gif"></p>
+<h2 is-upgraded>Adding Additional Live Components</h2>
+<p>So far we have embedded a Liveboard into our React app. You can also embed Search, other Visualization components, or even the full ThoughtSpot app, just as easily. To demonstrate, we will create a new page and add the full app using a React component.</p>
+<h3 is-upgraded>Step 1: Add fullapp.js</h3>
+<p>Create a new file, <code>fullapp.js</code> in the <strong>Components</strong> folder of your project</p>
+<pre><code>export default function FullApp() {
+   return (
+       &lt;div&gt;
+           &lt;h1&gt;FullApp&lt;/h1&gt;
+       &lt;/div&gt;
+   );
+}
+</code></pre>
+<h3 is-upgraded>Step 2: Add Routes</h3>
+<p>Within App.jsx, add the import for fullapp.</p>
+<pre><code>import FullApp from &#39;./Components/fullapp&#39;;
+</code></pre>
+<p>Then, add the path to the Routes element</p>
+<pre><code>&lt;Routes&gt;
+       &lt;Route path=&#34;/&#34; element={&lt;h1&gt;Home&lt;/h1&gt;} /&gt;
+       &lt;Route path=&#34;/storesales&#34; element={&lt;StoreSales /&gt;} /&gt;
+       &lt;Route path=&#34;/fullapp&#34; element={&lt;FullApp /&gt;} /&gt;
+       &lt;Route path=&#34;/about&#34; element={&lt;About /&gt;} /&gt;
+     &lt;/Routes&gt;
+</code></pre>
+<h3 is-upgraded>Step 3: Add to the Burger Menu</h3>
+<p>Now, add a link  to <code>BurgerMenu.js</code> to allow users to navigate to the new page. Your links should now look like this.</p>
+<pre><code>&lt;Menu noOverlay onStateChange={toggleMenu}&gt;
+
+
+       &lt;a className=&#34;bm-item&#34; href=&#34;/&#34;&gt;Home&lt;/a&gt;
+       &lt;a className=&#34;bm-item&#34; href=&#34;/storesales&#34;&gt;Store Sales&lt;/a&gt;
+       &lt;a className=&#34;bm-item&#34; href=&#34;/fullapp&#34;&gt;Full App&lt;/a&gt;
+       &lt;a className=&#34;bm-item&#34; href=&#34;/about&#34;&gt;About&lt;/a&gt; 
+
+
+ &lt;/Menu&gt;
+</code></pre>
+<h3 is-upgraded>Step 4: Add Component</h3>
+<p>Go ahead and replace the contents of fullapp.js with the following code.</p>
+<pre><code>import { AppEmbed } from &#34;@thoughtspot/visual-embed-sdk/lib/src/react&#34;;
+import &#34;../index.css&#34;;
+
+export default function FullApp() {
+ return (
+     &lt;div&gt;
+         &lt;h1&gt;Full App&lt;/h1&gt;
+         &lt;AppEmbed frameParams=&#123;&#123;height: &#34;80vw&#34;}} fullHeight=&#34;true&#34;
+                     pageId=&#34;Page.Home&#34; /&gt;
+     &lt;/div&gt;
+
+
+ );
+}
+</code></pre>
+<p>That&#39;s it. Go ahead and run the app, navigate to the Full App page, and check out all of your hard work. Nice job! If you want to modify aspects of the full app experience, there are a number of parameters you can configure in the <code>AppEmbed</code> component. The best way to learn what you can change is by jumping into the Developer Playground and experimenting with the options.</p>
+<p class="image-container"><img alt="alt_text" src="img/80099200fcc8528.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Summary" duration="0">
+        <p>During this tutorial you created an app which utilizes two fundamental components of the Modern Data Stack: a cloud data platform with Snowflake, and an Analytics platform with ThoughtSpot. What&#39;s more, you combined both platforms and embedded the insights into a React-based application using ThoughtSpot Everywhere. We only demonstrated a small portion of what&#39;s possible, whether it is embedding other ThoughtSpot components like Search, or even the full ThoughtSpot experience, or leveraging the powerful APIs for sharing and interrogating data. You can download the complete app to jumpstart your own app development. If you want to learn more about how you can take advantage of everything you can do with ThoughtSpot, check out <a href="developers.thoughtspot.com" target="_blank">developers.thoughtspot.com</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

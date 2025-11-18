@@ -1,0 +1,1054 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting started with GraphRAG and RelationalAI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_graphrag_and_relationalai"
+                  title="Getting started with GraphRAG and RelationalAI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this guide, we will use RelationalAI — a Snowflake Native App available in the Snowflake Marketplace — as well as <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowflake Cortex LLMs</a> and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/vector-embeddings" target="_blank">Snowflake Embeddings Models</a> to perform Graph Retrieval Augmented Generation (GraphRAG) on a corpus of documents.</p>
+<p>The text corpus is a set of documents with a information about people, companies and academic institutions and provides a good basis for constructing a dense knowledge graph. Each document is a brief CV of a prominent figure in the tech industry. We will use the corpus as input to a Snowflake Cortex LLM to extract entities and their relations. Having done this, we will use the RelationalAI Native App to produce a knowledge graph representation of the entities and relations. This will allow us to execute RelationalAI community detection algorithms to summarize the corpus and identify the main topics and entities.</p>
+<h2 is-upgraded>What is RelationalAI?</h2>
+<p>RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.</p>
+<p>Users can build a knowledge graph using Python and materialize it on top of their Snowflake data, which are shared with the RelationalAI app through Snowflake Data Streams. Insights can be written back to Snowflake tables and shared across the organization.</p>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>How to install the RelationalAI Native App in your Snowflake account</li>
+<li>How to use Snowflake LLMs to extract entities and relations from the corpus</li>
+<li>How to represent the entities and relations with a RelationalAI graph</li>
+<li>How to run graph algorithms on the graph</li>
+<li>How to visualize the graph</li>
+<li>How to use the graph to answer user questions</li>
+</ul>
+<h2 is-upgraded>What you will need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a> on AWS in the US East (N. Virginia) region or the US West (Oregon) region</li>
+<li>Basic knowledge of using a Snowflake SQL Worksheet</li>
+<li><a href="https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges" target="_blank">Snowflake privileges</a> on your user to install a Native Application</li>
+<li>Snowflake account privileges to create databases and schemas in your Snowflake account</li>
+<li>The <a href="https://relational.ai/docs/reference/cli/" target="_blank">RelationalAI CLI</a></li>
+</ul>
+<h2 is-upgraded>What you will build</h2>
+<ul>
+<li>A processing pipeline in Snowflake Cortex for extracting named entities and relations from unstructured text data</li>
+<li>A knowledge graph representation of the entities and relations with the RelationalAI Native App</li>
+<li>A method of summarization of corpus items based on the graph community they belong to</li>
+<li>A visualization of the communities in the graph</li>
+<li>A semantically similar retrieval pipeline of a user question against the community summaries</li>
+<li>A LLM-based question answering pipeline grounded on the community summaries</li>
+</ul>
+<aside class="special"><p> NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions <a href="https://relational.ai/docs/native_app/installation" target="_blank">here</a></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Artifact and Corpus" duration="3">
+        <p>We shall proceed with creating the Snowflake artifacts required for this guide.</p>
+<aside class="special"><p>Steps (3) and (4) exist for educational purposes, the Snowflake application can be installed by executing this <a href="https://github.com/RelationalAI/graphrag/tree/main/getting-started/sql/script.sql" target="_blank">SQL script</a>.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+</code></pre>
+<h2 is-upgraded>Create a database, schema, tables etc.</h2>
+<pre><code language="language-sql" class="language-sql">/***
+* Create a database, schema, warehouse and tables.
+**/
+CREATE OR REPLACE DATABASE graph_rag;
+CREATE OR REPLACE SCHEMA graph_rag;
+CREATE OR REPLACE WAREHOUSE graph_rag WAREHOUSE_SIZE=&#39;X-Small&#39; AUTO_SUSPEND = 300;
+
+-- Create data tables.
+CREATE OR REPLACE TABLE corpus(
+  ID INT NOT NULL AUTOINCREMENT START 1 INCREMENT 1 
+  , CONTENT VARCHAR NOT NULL
+)
+COMMENT = &#39;Table containing the corpus which will be loaded from Azure storage&#39;;
+
+CREATE OR REPLACE TABLE community_summary(
+    COMMUNITY_ID INT
+    , CONTENT VARCHAR
+)
+COMMENT = &#39;Table to store community-based corpus summaries&#39;;
+</code></pre>
+<h2 is-upgraded>Installing the application UDFs</h2>
+<p>We shall now install the following Snowflake UDFs that wrap the functionality of extracting the entities and relations from the corpus, performing summarization and question answering:</p>
+<ul>
+<li><code>LLM_EXTRACT_JSON</code>: this is a helper UDF for sanitizing the LLM response and extracting the JSON payload.</li>
+<li><code>LLM_ENTITIES_RELATIONS</code>: this UDF will be used to call the LLM model and extract entities and relations from the text corpus.</li>
+<li><code>LLM_ENTITIES_RELATIONS_TO_GRAPH</code>: this UDF will be used to convert the LLM output to a temporary graph representation.</li>
+<li><code>CREATE_NODES_EDGES_STREAMS_SOURCES</code>: this is the main entry point for extracting entities and relations from the corpus.</li>
+<li><code>LLM_SUMMARIZE</code>: we will be using this UDF to extract summaries of all corpus items that belong to a specific community.</li>
+<li><code>LLM_ANSWER</code>: this UDF will be used to answer user questions based on the community summaries.</li>
+<li><code>LLM_ANSWER_SUMMARIES</code>: we shall use this UDF to generate answers to user questions based on the community summaries. The LLM context will be provided by a window of community summaries and prompted to answer the user question if it exists in the context.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">/***
+* Install UDFs.
+**/
+CREATE OR REPLACE FUNCTION LLM_EXTRACT_JSON(llm_response OBJECT)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.10&#39;
+HANDLER = &#39;main&#39;
+AS
+$$
+import json
+import re
+
+def main(llm_response):
+    payload = llm_response[&#34;choices&#34;][0][&#34;messages&#34;]
+    
+    try:    
+        # Remove whitespaces.
+        payload = &#34; &#34;.join(payload.split())
+
+        # Extract JSON from the string.
+        return json.loads(re.findall(r&#34;{.+[:,].+}|\[.+[,:].+\]&#34;, payload)[0])
+    except:
+        return json.loads(payload)
+$$;
+
+CREATE OR REPLACE FUNCTION LLM_ENTITIES_RELATIONS(content VARCHAR, additional_prompts VARCHAR DEFAULT &#39;&#39;) 
+RETURNS TABLE 
+(response OBJECT) 
+LANGUAGE SQL 
+AS 
+$$
+    SELECT SNOWFLAKE.CORTEX.COMPLETE(
+        &#39;llama3-70b&#39;,
+        [
+            {
+                &#39;role&#39;: &#39;system&#39;, 
+                &#39;content&#39;: &#39;
+                    # Knowledge Graph Instructions
+        
+                    ## 1. Overview
+                        - You are a top-tier algorithm designed for extracting information in structured formats to build a knowledge graph.
+                        - Your aim is to achieve simplicity and clarity in the knowledge graph, making it accessible for a vast audience.
+                        - **Nodes** represent entities and concepts. They are akin to Wikipedia nodes.
+                            - If the entities cannot be extracted, return nothing.
+                        - **Relations** represent links between entities. They are akin to predicates.
+                        
+                    ## 2. Labeling entities and relations
+                        - **Completeness**
+                            - Ensure that all entities are identified.
+                        - **Consistency**
+                            - Ensure you use basic or elementary types for entity labels.
+                                - Example: when you identify an entity representing a person, always label it as &#34;person&#34;. Avoid using more specific terms like &#34;mathematician&#34; or &#34;scientist&#34;.
+                        - **Entity IDs**: never utilize integers as entity IDs. Entity IDs must be names or human-readable identifiers found in the text, exactly as they appear in the text.
+                            - Example: the ID of entity &#34;John Doe&#34; must be &#34;John Doe&#34;.
+                        - **Property format**
+                            - Properties must be in a key-value format. 
+                            - Properties must be in &lt;entity&gt;_has_&lt;property&gt; format.
+                            - Do not include the entity ID in the properties, just the entity type.
+                                - Example: &#34;john_doe_has_age&#34; is wrong. Correct naming is &#34;has_age&#34;.
+                        - **Relation naming**
+                            - Relation names must never contain the entity types and names.
+                            - Example:
+                                - &#34;person_is_president_of_company&#34; is invalid because it includes the node name &#34;person&#34; and &#34;company&#34; in the relation name. Correct relation name must be &#34;is_president_of&#34;.
+                        - **Unique semantic relation naming**
+                            - Relation names must semantically represent one and only one concept.
+                            - Example: 
+                                - &#34;is_president_and_ceo_of&#34; is invalid because it combines entities &#34;president&#34; and &#34;ceo&#34; into one relation.
+                            - If a list of allowed relation names is provided, only use those relation names in the knowledge graph.
+                    
+                    ## 3. Handling node and relation properties
+                        - **Property retrieval**
+                            - Extract only the properties relevant to the entities and relations provided.
+                                - Example: if the entity &#34;studied_at&#34; is identified, extract properties like &#34;from_date&#34;, &#34;to_date&#34;, &#34;qualification&#34;.
+                    
+                    ## 4. Handling numerical data and dates
+                        - **No separate nodes for dates / numbers**
+                            - Do not create separate nodes for dates or numerical values. Always attach them as attributes or properties of nodes.
+                        - **Quotation marks**
+                            - Never use escaped single or double quotes within property values.
+                        - **Naming convention**
+                            - Use snake_case for property keys, e.g., &#34;birth_date&#34;.
+                        - **Numerical data**
+                            - Dates, numbers etc. must be incorporated as attributes or properties of their respective nodes.
+                    
+                    ## 5. Coreference resolution
+                        - **Maintain entity consistency**
+                            - When extracting entities, it is vital to ensure consistency.
+                            - If an entity, such as &#34;John Doe&#34;, is mentioned multiple times in the text but is referred to by different names or pronouns (e.g., &#34;John&#34;, &#34;he&#34;), always use the most complete identifier for that entity throughout the knowledge graph. In this example, use &#34;John Doe&#34; as the entity ID.
+                            - The knowledge graph must be coherent and easily understandable, so maintaining consistency in entity references is crucial.
+                    
+                    ## 6. Relation subject / object consistency
+                        - **Precedence**
+                            - It is crucial that relations are consistent in terms of subject and object. Subjects are entities of lower granularity than objects. 
+                            
+                    ## 7. Output
+                        - **Format**
+                            - Produce well formatted, pure JSON only. 
+                            - The JSON must be parsable by Python, as follows:
+                            
+                            {
+                                &#34;nodes&#34;: [
+                                    {
+                                        &#34;id&#34;: entity ID (required),
+                                        &#34;type&#34;: entity type (required),
+                                        &#34;properties&#34;: entity properties (optional)
+                                    },
+                                    ...
+                                ],
+                                &#34;relations&#34;: [
+                                    {
+                                        &#34;src_node_id&#34;: source entity ID (required),
+                                        &#34;dst_node_id&#34;: destination entity ID (required),
+                                        &#34;type&#34;: relation type (required)
+                                        &#34;properties&#34;: relation properties (optional)
+                                    },
+                                    ...
+                                ]
+    
+                            }
+                            
+                        - **Response**: 
+                            - Respond strictly with the JSON object and nothing else.
+                            - Do not include verbose information such as &#34;here is what you asked for&#34; etc.
+                        
+                    ## 8. Strict compliance
+                        - Adhere to the rules strictly. Non-compliance will result in termination.
+                    &#39; 
+                    || additional_prompts ||
+                    &#39;
+                    Your response:
+                &#39; 
+            },
+            {
+                &#39;role&#39;: &#39;user&#39;, 
+                &#39;content&#39;: content
+            }
+        ], 
+        {
+            &#39;temperature&#39;: 0,
+            &#39;top_p&#39;: 0
+        }
+    ) AS response
+$$;
+
+CREATE OR REPLACE AGGREGATE FUNCTION LLM_ENTITIES_RELATIONS_TO_GRAPH(corpus_id INT, llm_response VARIANT)
+RETURNS ARRAY
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.10&#39;
+HANDLER = &#39;GraphBuilder&#39;
+PACKAGES = (&#39;networkx&#39;, &#39;snowflake&#39;)
+AS
+$$
+import logging
+from typing import Any, Dict, List
+
+import networkx as nx
+import pandas as pd
+import snowflake.snowpark as snowpark
+
+logger = logging.getLogger(&#34;GRAPH_RAG&#34;)
+
+class GraphBuilder(object):
+    def __init__(self) -&gt; None:
+        self._graph: nx.Graph = nx.MultiDiGraph()
+
+    def _nodes_df(self) -&gt; pd.DataFrame:
+        nodes_df: pd.DataFrame = None
+        nodes: List = []
+        edges: List = []
+        corpus_ids: List = []
+        node_types: List = []
+        props: List = []
+
+        try:
+            for node, properties in self._graph.nodes(data=True):
+                nodes.append(node)
+
+                try:
+                    corpus_ids.append(properties[&#34;corpus_id&#34;])
+                except:
+                    corpus_ids.append(0)
+                    
+                try:
+                    node_types.append(properties[&#34;type&#34;])
+                except:
+                    node_types.append(&#34;undefined&#34;)
+                    
+                if len(properties) &gt; 0:
+                    props.append(properties)
+                else:
+                    props.append(0)
+    
+            nodes_df = pd.DataFrame(
+                data={
+                    &#34;id&#34;: nodes,
+                    &#34;corpus_id&#34;: corpus_ids, 
+                    &#34;type&#34;: node_types,
+                    &#34;properties&#34;: props
+                },
+                columns=[&#34;id&#34;, &#34;corpus_id&#34;, &#34;type&#34;, &#34;properties&#34;]
+            )
+        except Exception as error:
+            logger.error(&#34;Error calling _nodes_df function&#34;)
+            logger.error(error)
+            raise error
+        finally:
+            logger.info(f&#34;Graph contains {len(nodes_df)} nodes&#34;)
+            return nodes_df
+
+    def _edges_df(self) -&gt; pd.DataFrame:
+        edges_df: pd.DataFrame = None
+        src_nodes: List = []
+        dst_nodes: List = []
+        corpus_ids: List = []
+        edge_types: List = []
+        props: List = []
+
+        try:
+            for src_node, dst_node, properties in self._graph.edges(data=True):
+                src_nodes.append(src_node)
+                dst_nodes.append(dst_node)
+
+                try:
+                    corpus_ids.append(properties[&#34;corpus_id&#34;])
+                except:
+                    corpus_ids.append(0)
+                    
+                try:
+                    edge_types.append(properties[&#34;type&#34;])
+                except:
+                    edge_types.append(&#34;undefined&#34;)
+                    
+                if len(properties) &gt; 0:
+                    props.append(properties)
+                else:
+                    props.append(None)
+        
+            edges_df = pd.DataFrame(
+                data={
+                    &#34;src_node_id&#34;: src_nodes,
+                    &#34;dst_node_id&#34;: dst_nodes,
+                    &#34;corpus_id&#34;: corpus_ids, 
+                    &#34;type&#34;: edge_types,
+                    &#34;properties&#34;: props
+                },
+                columns=[&#34;src_node_id&#34;, &#34;dst_node_id&#34;, &#34;corpus_id&#34;, &#34;type&#34;, &#34;properties&#34;]
+            )
+        except Exception as error:
+            logger.error(&#34;Error calling _edges_df function&#34;)
+            logger.error(error)
+            raise error
+        finally:
+            logger.info(f&#34;Graph contains {len(edges_df)} edges&#34;)
+            return edges_df
+            
+    @property
+    def aggregate_state(self) -&gt; nx.Graph:
+        return self._graph
+
+    # Add graph nodes and edges from LLM response.
+    def accumulate(self, corpus_id, llm_response):
+        try:
+            # Add nodes with (optional) properties.
+            for node in llm_response[&#34;nodes&#34;]:
+                try:
+                    if &#34;properties&#34; in node.keys():
+                        self._graph.add_node(node[&#34;id&#34;], type=node[&#34;type&#34;], corpus_id=corpus_id, **node[&#34;properties&#34;])
+                    else:
+                        self._graph.add_node(node[&#34;id&#34;], type=node[&#34;type&#34;], corpus_id=corpus_id)
+                except Exception as error:
+                    logger.error(&#34;Error accumulating graph nodes&#34;)
+                    logger.error(error)
+                    
+            # Add edges with (optional) properties.
+            for relation in llm_response[&#34;relations&#34;]:
+                try:
+                    if &#34;properties&#34; in relation.keys():
+                        self._graph.add_edge(relation[&#34;src_node_id&#34;], relation[&#34;dst_node_id&#34;], type=relation[&#34;type&#34;], corpus_id=corpus_id, **relation[&#34;properties&#34;])
+                    else:
+                        self._graph.add_edge(relation[&#34;src_node_id&#34;], relation[&#34;dst_node_id&#34;], type=relation[&#34;type&#34;], corpus_id=corpus_id)
+                except Exception as error:
+                    logger.error(&#34;Error accumulating graph edges&#34;)
+                    logger.error(error)
+    
+        except Exception as error:
+            logger.error(&#34;Error calling _edges_df function&#34;)
+            logger.error(error)
+    
+    def merge(self, graph) -&gt; nx.Graph:
+        self._graph = nx.union(self._graph, graph)
+
+    # Return accumulated graph nodes and edges.
+    def finish(self) -&gt; List:
+        nodes_df = self._nodes_df()
+        edges_df = self._edges_df()
+        return [
+            nodes_df.to_dict(&#34;records&#34;),
+            edges_df.to_dict(&#34;records&#34;)
+        ]
+$$;
+
+CREATE OR REPLACE PROCEDURE CREATE_NODES_EDGES_STREAMS_SOURCES() 
+RETURNS VARCHAR
+LANGUAGE SQL 
+AS 
+$$
+    BEGIN
+        CREATE OR REPLACE TEMPORARY TABLE nodes_edges_staging(nodes ARRAY, edges ARRAY);
+
+        /***
+        * Extract node and edge objects with the LLM and temporarily store the output to staging tables.
+        **/
+        INSERT INTO nodes_edges_staging
+        WITH c AS (
+            SELECT 
+                c.id AS id
+                , c.content AS content
+            FROM 
+                corpus AS c
+        )
+        , entities_relations AS (
+            SELECT 
+                c.id AS corpus_id
+                , LLM_EXTRACT_JSON(r.response) AS response
+            FROM 
+                c
+            JOIN TABLE(LLM_ENTITIES_RELATIONS(c.content, &#39;&#39;)) AS r
+        )
+        , nodes_edges AS (
+            SELECT
+                LLM_ENTITIES_RELATIONS_TO_GRAPH(er.corpus_id, er.response) AS graph
+            FROM
+                entities_relations AS er
+        )
+        SELECT 
+            ne.graph[0]::ARRAY AS nodes
+            , ne.graph[1]::ARRAY AS edges
+        FROM
+            nodes_edges AS ne;
+
+        /***
+        * Populate Data Stream source tables.
+        *
+        * These tables will be used for creating the downstream RelationalAI graph.
+        **/
+        -- Nodes table.
+        CREATE OR REPLACE TABLE nodes
+        AS
+        WITH nodes AS (
+            SELECT 
+                ne.nodes AS nodes
+            FROM 
+                nodes_edges_staging AS ne
+        )
+        SELECT 
+            VALUE:&#34;id&#34;::VARCHAR id 
+            , VALUE:&#34;corpus_id&#34;::INT corpus_id 
+            , VALUE:&#34;type&#34;::VARCHAR type 
+        FROM
+            nodes AS n 
+            , LATERAL FLATTEN(n.nodes) AS items;
+
+        -- Edges table.
+        CREATE OR REPLACE TABLE edges 
+        AS 
+        WITH edges AS ( 
+            SELECT 
+                ne.edges AS edges 
+            FROM 
+                nodes_edges_staging AS ne 
+        ) 
+        SELECT 
+            VALUE:&#34;src_node_id&#34;::VARCHAR src_node_id 
+            , VALUE:&#34;dst_node_id&#34;::VARCHAR dst_node_id 
+            , VALUE:&#34;corpus_id&#34;::INT corpus_id 
+            , VALUE:&#34;type&#34;::VARCHAR type 
+        FROM 
+            edges AS n 
+            , LATERAL FLATTEN(n.edges) AS items;
+
+        RETURN &#39;OK&#39;;
+    END;
+$$;
+
+CREATE OR REPLACE FUNCTION LLM_SUMMARIZE(content VARCHAR) 
+RETURNS TABLE 
+(response OBJECT) 
+LANGUAGE SQL 
+AS 
+$$
+    SELECT SNOWFLAKE.CORTEX.COMPLETE(
+        &#39;llama3-70b&#39;,
+        [
+            {
+                &#39;role&#39;: &#39;system&#39;, 
+                &#39;content&#39;: &#39;
+                    # Summarization instructions
+        
+                    ## 1. Overview
+                        - You are a top-tier algorithm designed for summarizing the provided text.
+
+                    ## 2. Instructions
+                        - Summarize the provided text so that all information mentioned in the text is retained.
+                        - The text contains information about entities and relations that must be the target of summarization.
+                        - Produce summary of the context you are given and nothing else. Do not extrapolate beyond the context given.
+                        - Relations between entities must be preserved.
+                        - The summarization must produce coherent and succinct text.
+    
+                    ## 3. Output
+                        - **Format**
+                            - Produce well formatted, pure JSON only.
+                            - The JSON must be parsable by Python, as follows:
+                                {&#34;answer&#34;: &#34;&lt;output&gt;&#34;}
+                            - The &lt;output&gt; must always be formatted as plain text.
+                            
+                        - **Response**: 
+                            - Respond strictly with the JSON object and nothing else.
+                            - Do not include verbose information such as &#34;here is what you asked for&#34; etc.
+                        
+                    ## 4. Strict compliance
+                        - Adhere to the rules strictly. Non-compliance will result in termination.
+    
+                    Your response:
+                &#39; 
+            },
+            {
+                &#39;role&#39;: &#39;user&#39;, 
+                &#39;content&#39;: content
+            }
+        ], 
+        {
+            &#39;temperature&#39;: 0,
+            &#39;top_p&#39;: 0
+        }
+    ) AS response
+$$;
+
+CREATE OR REPLACE FUNCTION LLM_ANSWER(context VARCHAR, question VARCHAR) 
+RETURNS TABLE 
+(response OBJECT) 
+LANGUAGE SQL 
+AS 
+$$
+    SELECT SNOWFLAKE.CORTEX.COMPLETE(
+        &#39;llama3-70b&#39;,
+        [
+            {
+                &#39;role&#39;: &#39;system&#39;, 
+                &#39;content&#39;: &#39;
+                    # Question answering instructions
+        
+                    ## 1. Overview
+                        - You are a top-tier algorithm designed for answering questions given specific context provided by the user.
+                        
+                    ## 2. Instructions
+                        - Be concise and do not hallucinate.
+                        - Be very specific.
+                        - Be very precise.
+                        - Answer the question based on the provided context and only that.
+                        - If the question cannot be answered with the provided context information, clearly say so and do not answer the question.
+                        
+                    ## 3. Context
+                        - This is the context on which to base your answer:
+
+                        ```context
+                    &#39; 
+                    ||
+                            context
+                    ||
+                    &#39;
+                        ```
+                        
+                    ## 4. Output
+                        - **Format**
+                            - Produce well formatted, pure JSON only.
+                            - The JSON must be parsable by Python, as follows:
+                                {
+                                    &#34;answer&#34;: &#34;&lt;output&gt;&#34;,
+                                    &#34;evidence&#34;: &#34;&lt;supporting evidence as found in the provided context ONLY, otherwise this field must be empty.&gt;&#34;, 
+                                    &#34;confidence&#34;: &#34;&lt;confidence score between 0.0 and 1.0 in human-readable format&gt;&#34;
+                                }
+                            - &lt;output&gt; must always be formatted as plain text.
+                            - &lt;evidence&gt; must always come from context.
+                            
+                        - **Response**: 
+                            - Respond strictly with the JSON object and nothing else.
+                            - Do not include verbose information such as &#34;here is what you asked for&#34; etc.
+                        
+                    ## 5. Strict compliance
+                        - Adhere to the rules strictly. Non-compliance will result in termination.
+    
+                    Your response:
+                &#39; 
+            },
+            {
+                &#39;role&#39;: &#39;user&#39;, 
+                &#39;content&#39;: question
+            }
+        ], 
+        {
+            &#39;temperature&#39;: 0.0,
+            &#39;top_p&#39;: 0
+        }
+    ) AS response
+$$;
+
+CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(summarization_window INTEGER, question VARCHAR)  
+RETURNS TABLE 
+(
+    answer VARIANT
+    , evidence VARIANT
+)
+LANGUAGE SQL 
+AS 
+$$
+DECLARE
+    max_community_id INTEGER;
+    community_id_from INTEGER DEFAULT 1;
+    community_id_to INTEGER DEFAULT 0;
+    counter INTEGER;
+    resultset RESULTSET;
+BEGIN
+    CREATE OR REPLACE TEMPORARY TABLE temp_results(community_id_from INTEGER, community_id_to INTEGER, community_summaries VARCHAR, result VARIANT);
+
+    SELECT
+        MAX(community_id)
+    INTO
+        max_community_id
+    FROM
+        community_summary;
+
+    counter := (max_community_id / :summarization_window) + 1;
+    community_id_to := :summarization_window;
+  
+    FOR i IN 1 TO counter DO
+        INSERT INTO 
+            temp_results 
+        WITH cs AS (
+            SELECT DISTINCT 
+                content
+            FROM 
+                community_summary
+            WHERE 
+                community_id BETWEEN :community_id_from AND :community_id_to
+        )
+        , c AS (
+            SELECT 
+                LISTAGG(content, &#39;\n\n&#39;) WITHIN GROUP(ORDER BY content) AS content
+            FROM 
+                cs
+        )
+        SELECT 
+            :community_id_from
+            , :community_id_to
+            , c.content
+            , PARSE_JSON(LLM_EXTRACT_JSON(r.response)) AS response
+        FROM 
+            c
+        JOIN TABLE(
+            LLM_ANSWER(
+                c.content,
+                :question
+            )
+        ) AS r;
+    
+        community_id_from := community_id_from + :summarization_window;
+        community_id_to := community_id_to + :summarization_window;
+    END FOR;
+
+    resultset := (
+        WITH summary_answers AS (
+            SELECT DISTINCT 
+                result:answer AS summary_answer
+                , result:evidence AS summary_evidence
+            FROM 
+                temp_results 
+            WHERE
+                result:evidence &lt;&gt; &#39;&#39;
+        )
+        , filtered_summary_answers AS (
+            SELECT 
+                LISTAGG(sa.summary_answer, &#39;\n\n&#39;) WITHIN GROUP(ORDER BY sa.summary_answer) AS content
+            FROM 
+                summary_answers AS sa
+        )
+        , final_llm_answer AS (
+            SELECT 
+                fsa.content AS content
+                , PARSE_JSON(LLM_EXTRACT_JSON(r.response)) AS response
+            FROM 
+                filtered_summary_answers AS fsa
+            JOIN TABLE(
+                LLM_ANSWER(
+                    fsa.content,
+                    :question
+                )
+            ) AS r
+        )
+        SELECT 
+            fla.response:answer AS answer
+            , fla.response:evidence AS evidence
+        FROM 
+            final_llm_answer AS fla
+    );
+    
+    RETURN TABLE(resultset);
+END;
+$$;
+</code></pre>
+<h2 is-upgraded>Loading the corpus table</h2>
+<p>We shall now load the data from the public Azure storage into the <code>corpus</code> table:</p>
+<pre><code language="language-sql" class="language-sql">/***
+* Copy data from Azure storage into the corpus table.
+**/
+COPY INTO corpus(content)
+FROM &#39;azure://rdaxllm.blob.core.windows.net/dataset/graphrag/csv/tech_industry_cvs.csv&#39;
+FILE_FORMAT = (
+    TYPE = CSV
+    COMPRESSION = AUTO 
+    FIELD_DELIMITER = &#39;|&#39;
+    NULL_IF = &#39;\\N&#39;
+    EMPTY_FIELD_AS_NULL = TRUE
+    FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39;
+)
+ON_ERROR = CONTINUE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Entities/Relations Extraction" duration="5">
+        <p>With all our Snowflake artifacts in place, we are now ready to extract the entities and relations from the corpus.</p>
+<p>As mentioned, we shall call the entrypoint UDF <code>CREATE_NODES_EDGES_STREAMS_SOURCES</code> to extract the entities and relations from the corpus, storing the output in the <code>nodes</code> and <code>edges</code> tables:</p>
+<aside class="special"><p>The parameter value <code>llama3-70b</code> is the name of the Snowflake Cortex LLM that we will use.</p>
+</aside>
+<aside class="warning"><p>Occasionally, you may encounter the error message:</p>
+<p><code>SQL compilation error: Unsupported subquery type cannot be evaluated</code>.</p>
+<p>This may happen due to the LLM responding in a non-prompt-compliant way and can be resolved by re-running the UDF.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">CALL CREATE_NODES_EDGES_STREAMS_SOURCES(&#39;llama3-70b&#39;);
+</code></pre>
+<aside class="special"><p>Expect this process to take a few minutes to complete.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Local Environment Setup" duration="10">
+        <h2 is-upgraded>Python</h2>
+<p>In addition to your Snowflake account setup, follow the steps below to set up a local installation of Python with Jupyter Lab and other required packages.</p>
+<ul>
+<li>Clone the <a href="https://github.com/RelationalAI/graphrag" target="_blank">Quickstart repository</a></li>
+</ul>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/RelationalAI/graphrag.git
+</code></pre>
+<ul>
+<li>Navigate to the cloned repository directory and open a terminal under:</li>
+</ul>
+<pre><code language="language-bash" class="language-bash">cd getting-started
+</code></pre>
+<ul>
+<li>Set up a virtual environment for the packages you&#39;ll install</li>
+</ul>
+<h3 is-upgraded>With Anaconda</h3>
+<p>Follow these steps if you use Anaconda for virtual environment management.</p>
+<p>The repository provides an <code>environment.yml</code> which can be used to create an Anaconda virtual environment and install  required packages:</p>
+<pre><code language="language-sh" class="language-sh">conda env create --file environment.yml
+</code></pre>
+<p>The Anaconda environment is named <code>snowflake-rai-graph-rag</code> so let us activate it:</p>
+<pre><code language="language-sh" class="language-sh">conda activate snowflake-rai-graph-rag
+</code></pre>
+<h3 is-upgraded>With venv</h3>
+<p>Follow these steps if you use venv for virtual environment management.</p>
+<pre><code language="language-sh" class="language-sh">python -m venv .venv
+</code></pre>
+<p>Activate the virtual environment on Linux and MacOS:</p>
+<pre><code language="language-sh" class="language-sh">source .venv/bin/activate
+</code></pre>
+<p>Activate the virtual environment on Windows:</p>
+<pre><code language="language-sh" class="language-sh">.venv\Scripts\activate
+</code></pre>
+<p>Install required Python packages:</p>
+<pre><code language="language-sh" class="language-sh">python -m pip install python-dotenv jupyterlab snowflake-snowpark-python relationalai
+</code></pre>
+<h2 is-upgraded>Create a RelationalAI config file</h2>
+<p>Having installed the <code>relationalai</code> Python package, you will need to set up a RAI configuration with the Snowflake credentials you want to use (similar to the configuration for Snowflake CLI).</p>
+<p>Run <code>rai init</code> from your terminal and follow the prompts to enter your credentials and other configuration data:</p>
+<ul>
+<li>Choose <code>Snowflake</code> as your host platform</li>
+<li>Select a profile from <code>~/.snowflake/connections.toml</code> if you have one, or enter your username, password, and Account ID otherwise</li>
+<li>Select your role <code>rai_user</code> that you created earlier</li>
+<li>Select a Snowflake warehouse</li>
+<li>Select <code>[CREATE A NEW ENGINE]</code> to create a new engine. Enter any name you want for the engine e.g. <code>graph_rag</code></li>
+<li>Select the engine <code>HighMem|S</code> size</li>
+<li>Choose the compute pool <code>rai_engine_pool_s</code> that you have created previously</li>
+<li>Press Enter to accept the default profile name of <code>default</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="RelationalAI Engine" duration="10">
+        <p>We shall now setup the RelationalAI engine that we will be using for performing graph analytics.</p>
+<p>To create a RelationalAI engine, follow the steps below (using the RelationalAI CLI):</p>
+<pre><code language="language-sh" class="language-sh">rai engines:create
+</code></pre>
+<ul>
+<li>When prompted for the engine name enter <code>graph_rag</code></li>
+<li>When prompted for the engine size, select an engine size from the list of options e.g. <code>HighMem|S</code>. Note that a small size engine is more than enough for this guide.</li>
+<li>When prompted for the engine pool, select a pool from the list of options e.g. <code>M_ENGINES</code>.</li>
+</ul>
+<aside class="special"><p>Creating the engine may take a few minutes to complete. The CLI will notify you when the engine is ready.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake/RelationaAI Data Streams" duration="3">
+        <p>Having the source <code>nodes</code> and <code>edges</code> tables in place, we shall now setup the Snowflake / RelationalAI Data Streams to synchronize data between a Snowflake and a RelationalAI model.</p>
+<p>Next, we shall be creating a the Data Streams for the <code>nodes</code> and <code>edges</code> tables, respectively:</p>
+<pre><code language="language-sh" class="language-sh">rai imports:stream --source graph_rag.graph_rag.nodes --model graph_rag
+rai imports:stream --source graph_rag.graph_rag.edges --model graph_rag
+</code></pre>
+<aside class="special"><p><strong>IMPORTANT</strong> An import stream utilizes change data capture to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute.</p>
+</aside>
+<aside class="special"><p>The <code>rai imports:stream</code> command may take a few minutes to complete. The streams are ready only after issuing the command:</p>
+<pre><code language="language-sh" class="language-sh">rai imports:list --model graph_rag
+</code></pre>
+<p>is listing both streams in status <code>LOADED</code>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building Graph / Answering Questions" duration="20">
+        <p>We shall now proceed with creating the RelationalAI graph and answer questions using the model. In this step, we shall be doing the following:</p>
+<ul>
+<li>Inspecting data in the RelationalAI model</li>
+<li>Using RelationalAI algorithms for community detection, specifically <a href="https://relational.ai/docs/reference/python/std/graphs/Compute/louvain/" target="_blank">Louvain</a></li>
+<li>Visualizing graph communities</li>
+<li>Producing summaries from all corpus items that belong to a specific community</li>
+<li>Querying the graph for answers to user questions</li>
+</ul>
+<h2 is-upgraded>Jupyter notebook walkthrough</h2>
+<h3 is-upgraded>Creating a RelationalAI model</h3>
+<p>A RelationalAI model is the abstraction that defines the data structures for representing the graph. The model is synchronized through the Data Streams already provisioned:</p>
+<pre><code language="language-python" class="language-python"># Defining a RelationalAI model named `graph_rag`.
+rai_model = rai.Model(&#34;graph_rag&#34;, dry_run=False)
+snowflake_model = Snowflake(rai_model)
+
+# Defining an `Entity` type. A `Entity` is a node in the graph.
+Entity = rai_model.Type(&#34;Entity&#34;, source=&#34;graph_rag.graph_rag.nodes&#34;)
+
+# Defining a `Relation` type. A `Relation` is an edge in the graph.
+# Note how we attach `src` and `dst` properties in the `Relation`,
+# indicatiing the source and destination entities, respectivelly.
+Relation = rai_model.Type(&#34;Relation&#34;, source=&#34;graph_rag.graph_rag.edges&#34;)
+Relation.define(
+    src=(Entity, &#34;src_node_id&#34;, &#34;id&#34;), 
+    dst=(Entity, &#34;dst_node_id&#34;, &#34;id&#34;)
+)
+</code></pre>
+<h3 is-upgraded>Computing Louvain community identifiers</h3>
+<pre><code language="language-python" class="language-python"># Creating a graph representation of our model.
+graph = Graph(model=rai_model, undirected=True)
+
+# Applying the Louvain community detection on the model.
+with rai_model.rule():
+    entity = Entity()
+    community_id = graph.compute.louvain(node=entity, max_levels=5, max_sweeps=10, level_tolerance=1e-2, sweep_tolerance=1e-4)
+    entity.set(community_id=community_id)
+</code></pre>
+<h3 is-upgraded>Creating the RelationalAI graph</h3>
+<pre><code language="language-python" class="language-python">with rai_model.rule():
+    relation = Relation()
+    graph.Node.extend(Entity, id=Entity.id, corpus_id=str(Entity.corpus_id), type=Entity.type, community_id=Entity.community_id)
+    graph.Edge.add(from_=relation.src, to=relation.dst, corpus_id=str(relation.corpus_id), type=relation.type)
+</code></pre>
+<h3 is-upgraded>Visualizing the graph communities</h3>
+<pre><code language="language-python" class="language-python">community_color_map = get_random_color_map(communities_length=200)
+
+vis = graph.visualize(
+    three=False, 
+    graph_height=1000, 
+    show_node_label=True, 
+    show_edge_label=True, 
+    style={
+        &#34;node&#34;: {
+            &#34;label&#34;: lambda n: f&#34;{n.get(&#39;id&#39;)} ({n.get(&#39;type&#39;)})&#34;, 
+            &#34;color&#34;: lambda n: community_color_map.get(n[&#34;community_id&#34;], &#34;black&#34;), 
+            &#34;size&#34;: 30, 
+            &#34;hover&#34;: lambda n: f&#34;{n.get(&#39;id&#39;)} (type: {n.get(&#39;type&#39;)}, community: {n.get(&#39;community_id&#39;)})&#34;
+        }, 
+        &#34;edge&#34;: {
+            &#34;label&#34;: lambda e: e.get(&#34;type&#34;), 
+            &#34;color&#34;: &#34;grey&#34;, 
+            &#34;hover&#34;: lambda e: e.get(&#34;type&#34;)
+        }
+    }
+)
+
+vis.display(inline=True)
+</code></pre>
+<p>Here is what is should look like:</p>
+<p class="image-container"><img alt="RelationaAI graph with Louvain communities" src="img/6a272dbbb91cc06d.png"></p>
+<h3 is-upgraded>Community-based summarization</h3>
+<pre><code language="language-python" class="language-python">with rai_model.query() as select:
+    entity = Entity()
+    response = select(alias(entity.id, &#34;id&#34;), alias(entity.community_id, &#34;community_id&#34;), alias(entity.corpus_id, &#34;corpus_id&#34;))
+
+# Getting a (community, corpus-id) multi-index.
+communities_count_df = results_df.groupby(by=[&#34;community_id&#34;, &#34;corpus_id&#34;]).count().rename(columns={&#34;id&#34;: &#34;entities_count&#34;}).sort_index()
+
+# Convert the multi index to a dict.
+index = communities_count_df.index.to_flat_index()
+d = {}
+for x, y in index:
+    d.setdefault(x, []).append(y)
+
+execute_statement(
+    session=session, 
+    statement=f&#34;TRUNCATE TABLE community_summary&#34;
+)
+
+# Summarize all corpus items of a community.
+for k, v in d.items():
+    corpus_ids = &#34;, &#34;.join([str(i) for i in v])
+    logger.info(f&#34;Producing summarized versions of IDs ({corpus_ids}) for community {k}&#34;)
+    try:
+        execute_statement(
+            session=session, 
+            statement=&#34;&#34;&#34;
+                INSERT INTO community_summary(COMMUNITY_ID, CONTENT)
+                WITH c AS (
+                    SELECT 
+                        LISTAGG(content, &#39;\n\n&#39;) WITHIN GROUP(ORDER BY id) AS content
+                    FROM 
+                        CORPUS
+                    WHERE 
+                        id IN ({CORPUS_IDS})
+                )
+                SELECT 
+                    {COMMUNITY_ID} AS community_id
+                    , PARSE_JSON(LLM_EXTRACT_JSON(r.response)):answer AS response
+                FROM 
+                    c
+                JOIN TABLE(LLM_SUMMARIZE(c.content)) AS r;
+            &#34;&#34;&#34;, 
+            parameters={
+                &#34;COMMUNITY_ID&#34;: str(k), 
+                &#34;CORPUS_IDS&#34;: corpus_ids
+            }
+        )
+    except Exception as error:
+        logger.error(&#34;Error producing summarized versions of IDs ({corpus_ids}) for community {k}&#34;)
+</code></pre>
+<h3 is-upgraded>Answering questions by querying with community summaries as context</h3>
+<p><code>Question</code>: <em>Describe in detail the connection between Samuel Altman and Elon Musk, if one exists.</em></p>
+<pre><code language="language-python" class="language-python">question = &#34;Describe in detail the connection between Samuel Altman and Elon Musk, if one exists.&#34;
+</code></pre>
+<p>Using a window of concatenated community summaries and asking the LLM if the question can be asked from evidence in the context window:</p>
+<pre><code language="language-python" class="language-python"># The previous-before-last parameter of the procedure call is the summarization window i.e. how many per-community summaries to include as context in the answer.
+# A smaller value produces a smaller i.e. a finer context window at the cost of incurring more LLM calls.
+execute_statement(
+    session=session, 
+    statement=&#34;&#34;&#34;
+        CALL LLM_ANSWER_SUMMARIES(5, &#39;{QUESTION}&#39;);
+    &#34;&#34;&#34;, 
+    parameters={
+        &#34;QUESTION&#34;: question
+    }
+)
+
+# Gather results.
+answer = execute_statement(
+    session=session, 
+    statement=&#34;&#34;&#34;
+        SELECT 
+            * 
+        FROM 
+            TABLE(result_scan(last_query_id()));
+    &#34;&#34;&#34;
+)[0][0]
+</code></pre>
+<p><code>Answer</code>: <em>Samuel Altman and Elon Musk are connected through their involvement with OpenAI, a non-profit artificial intelligence research organization. Samuel Altman is the CEO of OpenAI, while Elon Musk is one of the co-founders of the organization.</em></p>
+<h2 is-upgraded>Putting it all together</h2>
+<p>All operations can be performed using the RelationalAI Python library in the provided <a href="https://github.com/RelationalAI/graphrag/tree/main/getting-started/notebook/getting_started_with_graphrag_and_relationalai.ipynb" target="_blank">Jupyter notebook</a>. We already have set up our Python virtual environment in a previous step so let us go ahead and start the Jupyter Lab server:</p>
+<pre><code language="language-sh" class="language-sh">jupyter lab
+</code></pre>
+<p>Please switch to the Jupyter notebook and follow the instructions to reproduce the steps outlined above.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Thanks to RelationalAI&#39;s Native App on Snowflake, we have built a basic GraphRAG system with just a few steps. Although the dataset used is a small graph, our solution can scale to real-world graphs comprising millions of nodes and edges. This is due to our cloud-native architecture that not only separates compute from storage but also scales horizontally and vertically.</p>
+<h2 is-upgraded>What you have learned</h2>
+<p>In this Quickstart you have learned how to:</p>
+<ul>
+<li>Find and install the <a href="https://app.snowflake.com/marketplace/listing/GZTYZOOIX8H/relationalai-relationalai?search=relationalai&originTab=provider&providerName=RelationalAI&profileGlobalName=GZTYZOOIX7W" target="_blank">RelationalAI Native App</a> in the <a href="https://www.snowflake.com/en/data-cloud/marketplace/" target="_blank">Snowflake Marketplace</a></li>
+<li>Build a knowledge graph on top of your Snowflake data without having to move data outside Snowflake&#39;s perimeter</li>
+<li>Create a basic GraphRAG implementation using RelationalAI graph algorithms</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li>To learn about more about RelationalAI and view full documentation, visit the <a href="https://relational.ai" target="_blank">RelationalAI</a> website.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

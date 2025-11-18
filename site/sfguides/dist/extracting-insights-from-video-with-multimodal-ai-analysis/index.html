@@ -1,0 +1,383 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Extracting Insights from Video with Multimodal AI Analysis</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="extracting-insights-from-video-with-multimodal-ai-analysis"
+                  title="Extracting Insights from Video with Multimodal AI Analysis"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Troves of enterprise data exists as video and audio, but its utility has been limited due to the difficulty of processing it to extract insights. That barrier to entry has rapidly crumbled in the last few years, with the advances of AI models that enable cheap and fast Optical Character Recognition (OCR) and Automatic Speech Recognition (ASR), as well as powerful Vision Language Models (VLMs), able to extract meaning and grounding data from video.</p>
+<p>In this Quickstart, we will employ all three techniques to analyze meeting video to extract insights. We are using the <a href="https://groups.inf.ed.ac.uk/ami/corpus/" target="_blank">AMI Corpus</a>, which is a <strong>multi-modal dataset of 100s of hours of simulated scenario meetings in which particpants play different roles in a design team, taking a design project from kick-off to completion over the course of a day</strong>. The same technques shown here are broadly applicable to other meeting video, especially when valuable information is displayed on-screen, such as presentation slides or demos.</p>
+<h2 is-upgraded>Preqrequisites</h2>
+<ul>
+<li>Basic understanding of Snowflake and containers.</li>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li>Installation of <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli/index" target="_blank">Snowflake CLI</a></li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a></li>
+<li><a href="https://www.docker.com/get-started/" target="_blank">Docker Desktop</a></li>
+<li><a href="https://huggingface.co" target="_blank">Hugging Face</a> account and <a href="https://huggingface.co/docs/hub/en/security-tokens" target="_blank">Access Token</a> for downloading models</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>You will build a multi-step pipeline that uses <a href="https://www.snowflake.com/en/product/features/cortex/" target="_blank">Snowflake Cortex AI</a> for OCR and ASR, and VLM deployed on <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/" target="_blank">Snowpark Container Services</a> to extract structured data from meeting video. You&#39;ll store the output from all three models into structured Snowflake tables and build a simple chatbot allowing you to use language to generate rich analytical queries. You will be able to assess meeting effectiveness, identify decision points, and extract action items—directly within the AI Data Cloud.</p>
+<p class="image-container"><img alt="1" src="img/b8a85b93a6ccac65.png"></p>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>You will gain hands-on experience with:</p>
+<ul>
+<li><strong>Cortex </strong><strong><code>AI_TRANSCRIBE</code></strong> for ASR</li>
+<li><strong>Cortex </strong><strong><code>PARSE_DOCUMENT</code></strong> for OCR</li>
+<li><strong>Snowpark Container Services (SPCS)</strong> for loading the <a href="https://github.com/QwenLM/Qwen2.5-VL" target="_blank">Qwen2.5-VL</a> large vision model from Hugging Face and running online inference</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Component Overview" duration="3">
+        <p>Snowpark Container Services and Snowflake Cortex AI are two of the major components that are utilized within this Quickstart. Below is an overview of them.</p>
+<h2 is-upgraded>Overview of Snowpark Container Services</h2>
+<p><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services</a> is a fully managed container offering designed to facilitate the deployment, management, and scaling of containerized applications within the Snowflake ecosystem. This service enables users to run containerized workloads directly within Snowflake, ensuring that data doesn&#39;t need to be moved out of the Snowflake environment for processing. Unlike traditional container orchestration platforms like Docker or Kubernetes, Snowpark Container Services offers an OCI runtime execution environment specifically optimized for Snowflake. This integration allows for the seamless execution of OCI images, leveraging Snowflake&#39;s robust data platform.</p>
+<p class="image-container"><img alt="spcs" src="img/b8c276ce132ddbb.png"></p>
+<h2 is-upgraded>Overview of Cortex AI</h2>
+<p><a href="https://www.snowflake.com/en/product/features/cortex/" target="_blank">Snowflake Cortex AI</a> enables you to quickly analyze unstructured data and build generative AI applications using fully managed LLMs, RAG and text-to-SQL services. Enable multiple users to use AI services with no-code, SQL and REST API interfaces.</p>
+<p class="image-container"><img alt="Cortex_AI" src="img/d59b3215b77ca5ef.jpeg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Environment" duration="15">
+        <h2 is-upgraded>Create Snowflake Account</h2>
+<p>Log into Snowflake using your unique credentials if you have a Snowflake account.</p>
+<p>For this guide, you will only need Snowflake&#39;s <strong>Standard Edition</strong> on AWS. You may want to select <strong>Enterprise</strong> to try out advanced features such as Time Travel, materialized views, or Failover.</p>
+<p>Choose <strong>US West (Oregon)</strong> for the AWS Region and log in.</p>
+<h2 is-upgraded>Set up SQL Environment</h2>
+<ol type="1">
+<li>Git clone the Quickstart&#39;s <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis" target="_blank">repo</a> to your local machine.</li>
+<li>To prepare your Snowflake environment, in Snowsight, create a SQL file by clicking on <strong>+ Create</strong>, then <strong>SQL File</strong>.</li>
+<li>Name the file <code>run.sql</code> and copy the contents <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/run.sql" target="_blank">run.sql</a> from the cloned repository</li>
+</ol>
+<p class="image-container"><img alt="4" src="img/b53c3bf9ef51fa70.png"></p>
+<h2 is-upgraded>Install Snowflake CLI</h2>
+<p>Install the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli/index" target="_blank">Snowflake CLI</a>. Snowflake CLI can be used to upload the video and audio files to a Stage, check resources, and push container images to the Image Registrykk.</p>
+<p>Use Snowsight&#39;s <strong>Connect a Tool</strong> to <a href="https://docs.snowflake.com/user-guide/gen-conn-config#using-sf-web-interface-to-get-connection-settings" target="_blank">configure Snowflake CLI</a> to access your Snowflake account.  Viewing <strong>Account Details</strong> and then <strong>Config File</strong> will provide you with the .toml file necessary to configure Snowflake CLI to connect to your account. Add the following modified for your account to your snow CLI config file (e.g. <code>~/.snowflake.config.toml</code>):</p>
+<pre><code language="language-TOML" class="language-TOML">default_connection_name = &#34;hol&#34;    -- sets the below connection to be implicitly used
+[connections.hol]
+account = &#34;SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI&#34; -- from Connection Tool
+user = &#34;&lt;username&gt;&#34;    -- update username
+password = &#34;&lt;password&gt;&#34;  -- update password
+role = &#34;container_user_role&#34;  -- update from Quickstart
+warehouse = &#34;hol_warehouse&#34;
+database = &#34;hol_db&#34;
+schema = &#34;public&#34;
+</code></pre>
+<p>Copy the above contents into <code>config.toml</code> in the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli#location-of-the-toml-configuration-file" target="_blank">Snowflake CLI configuration directory</a> (e.g. <code>~/.snowflake/config.toml</code>)</p>
+<p>Verify SnowCLI is correctly configured by running:</p>
+<ol type="1">
+<li><code>snow connection list</code></li>
+<li><code>snow connection test --connection hol</code></li>
+<li><code>snow connection test</code>  to verify the default value</li>
+</ol>
+<pre><code>+-----------------------------------------------------------------------------------------+
+| key             | value                                                                 |
+|-----------------+-----------------------------------------------------------------------|
+| Connection name | hol                                                                   |
+| Status          | OK                                                                    |
+| Host            | SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI.snowflakecomputing.com |
+| Account         | SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI                        |
+| User            | USER                                                                  |
+| Role            | CONTAINER_USER_ROLE                                                   |
+| Database        | HOL_DB                                                                |
+| Warehouse       | HOL_WAREHOUSE                                                         |
++-----------------------------------------------------------------------------------------+
+</code></pre>
+<h2 is-upgraded>Run Common Setup</h2>
+<p>Execute the first section of the <code>run.sql</code> file labeled with the comment <code>COMMON SETUP</code>:</p>
+<ol type="1">
+<li>Create the <code>hol_user_role</code> Role, <code>hol_db</code> Database, and <code>hol_warehouse</code> Warehouse which we will use to run subsequent steps.</li>
+<li>To use Snowpark Container Services, we&#39;ll create the <code>hol_compute_pool</code> Compute Pool, which provides computing resources to run our containerized Service.</li>
+<li>We&#39;ll also need to enable our Service to reach external sites such as Hugging Face and PyPI, so we create the <code>dependencies_access_integration</code> External Access Integration. Snowflake accounts are secure by default and do not allow external access.</li>
+<li>We create the <code>hol_db.public.repo</code> Image Repository for storing container images</li>
+<li>Finally, we create Stages <code>@video</code> and <code>@model</code> for storing files used in later stages</li>
+</ol>
+<h2 is-upgraded>Upload Files to Stage</h2>
+<p>Our application will process video and audio files that are stored on a Snowflake Stage. We&#39;ll need to first upload the video and audio files from the Github repo to our Snowflake account.</p>
+<p>Using the Snow CLI, list the Stage you previously created</p>
+<pre><code language="language-bash" class="language-bash">$ snow stage list
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+|        |        |        |        |     |         |        |         |        |        |         |       | notifi |         |        |         |        |
+|        |        | databa |        |     | has_cre | has_en |         |        |        |         |       | cation | storage |        | owner_r | direct |
+| create |        | se_nam | schema |     | dential | crypti |         | commen |        |         |       | _chann | _integr | endpoi | ole_typ | ory_en |
+| d_on   | name   | e      | _name  | url | s       | on_key | owner   | t      | region | type    | cloud | el     | ation   | nt     | e       | abled  |
+|--------+--------+--------+--------+-----+---------+--------+---------+--------+--------+---------+-------+--------+---------+--------+---------+--------|
+| 2025-0 | VIDEOS | HOL_DB | PUBLIC |     | N       | N      | ACCOUNT |        | None   | INTERNA | None  | None   | None    | None   | ROLE    | Y      |
+| 5-29   |        |        |        |     |         |        | ADMIN   |        |        | L NO    |       |        |         |        |         |        |
+| 15:21: |        |        |        |     |         |        |         |        |        | CSE     |       |        |         |        |         |        |
+| 23.957 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
+| 000-07 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
+| :00    |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+<p>Upload the contents of the <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos" target="_blank"><code>videos</code></a> directory and <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/chatbot" target="_blank">chatbot</a> directories from cloned repo the Stage:</p>
+<pre><code language="language-bash" class="language-bash">$ snow stage copy --recursive ./videos @hol_db.public.videos
+$ snow stage copy --recursive ./chatbot @hol_db.public.model
+</code></pre>
+<p>List the contents of the Stage</p>
+<pre><code language="language-bash" class="language-bash">$ snow stage list-files @hol_db.public.videos
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| name                                                        | size     | md5                              | last_modified                 |
+|-------------------------------------------------------------+----------+----------------------------------+-------------------------------|
+| videos/amicorpus/IS1004/audio/IS1004a.Mix-Lapel.mp3         | 12748652 | f9ee1bfce574d6ec1de89717465ebf3b | Fri, 30 May 2025 22:33:00 GMT |
+| videos/amicorpus/IS1004/audio/IS1004c.Mix-Lapel.mp3         | 36222956 | 6c25066bfdecf7db3a302c7a43f6173b | Fri, 30 May 2025 22:32:57 GMT |
+...
++-------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+<h2 is-upgraded>Meeting Source Setup</h2>
+<p>Execute the two lines in <code>run.sql</code> that set the <code>meeting_id</code> and <code>meeting_part</code> variables. This will determine which video, audio, and image files you just uploaded will be used by subsequent analysis steps. This should match files that you uploaded to the Stage.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Video Analysis" duration="20">
+        <h2 is-upgraded>Build Docker Container</h2>
+<p>In your downloaded <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos" target="_blank">repo</a>, navigate to the <code>video_analysis</code> directory.</p>
+<p>Using the Snow CLI, list your Image Registry:</p>
+<pre><code language="language-bash" class="language-bash">$ snow spcs image-repository list
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+| created_on                 | name | database_name | schema_name | repository_url             | owner        | owner_role_type | comment | encryption    |
+|----------------------------+------+---------------+-------------+----------------------------+--------------+-----------------+---------+---------------|
+| 2025-05-29                 | REPO | HOL_DB        | PUBLIC      | sfsehol-summit25-unstr-dat | ACCOUNTADMIN | ROLE            |         | SNOWFLAKE_SSE |
+| 15:21:19.834000-07:00      |      |               |             | a-processtest-bchxei.regis |              |                 |         |               |
+|                            |      |               |             | try.snowflakecomputing.com |              |                 |         |               |
+|                            |      |               |             | /hol_db/public/repo        |              |                 |         |               |
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+<p>Get the Image Registry URL</p>
+<pre><code language="language-bash" class="language-bash">$ snow spcs image-repository url repo
+sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo 
+</code></pre>
+<p>Build the Docker Container The syntax of this command is <code>docker build --rm --platform linux/amd64 -t <repository_url>/<image_name> .</code> where <code>repository_url</code> is from the previous command and <code>image_name</code> is <code>process_video:latest</code></p>
+<pre><code language="language-bash" class="language-bash">$ docker build --rm --platform linux/amd64 -t sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video:latest .
+
+&lt;...build output...&gt;
+
+$ docker images
+REPOSITORY                                                                                                        TAG       IMAGE ID       CREATED             SIZE
+sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video   latest    8a051200cd1d   About an hour ago   16.5GB
+</code></pre>
+<p>Login to your Repository with Docker using Snow CLI</p>
+<pre><code language="language-bash" class="language-bash">$ snow spcs image-registry login
+Login Succeeded
+</code></pre>
+<h2 is-upgraded>Push Container to Registry</h2>
+<p>Now that you&#39;ve built the container, we need to upload or Push the container image to the registry. The Snowpark Container Services (SPCS) Container Registry is a secure, Snowflake-managed repository for storing and versioning container images. It enables developers to seamlessly build, deploy, and run containerized applications within the Snowflake Data Cloud.</p>
+<pre><code language="language-bash" class="language-bash">$ docker push sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video:latest
+</code></pre>
+<p>List the Image in the repository:</p>
+<pre><code language="language-bash" class="language-bash">$ snow spcs image-repository list-images repo
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+| created_on                | image_name    | tags   | digest                                                   | image_path                              |
+|---------------------------+---------------+--------+----------------------------------------------------------+-----------------------------------------|
+| 2025-05-30 15:11:34-07:00 | process_video | latest | sha256:077c6883533f7d384b0e6594038895995de6f5470892cb15e | hol_db/public/repo/process_video:latest |
+|                           |               |        | 51e4afcea611a35                                          |                                         |
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+<h2 is-upgraded>Execute Containerized Job</h2>
+<p>The image you built and pushed to SPCS Image Repository contains the <a href="https://docs.vllm.ai/en/latest/" target="_blank">vLLM</a> runtime which provides scalable hosting for large AI models with support for multiple GPU instances. It is pre-configured to load the <a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct" target="_blank">Qwen2.5-VL-7B-Instruct</a> VLM from Hugging Face. This model excels at:</p>
+<ul>
+<li>Visual understanding: object recognition, but also analyzing slides, charts, and graphics</li>
+<li>Understanding long videos and capturing events: for videos of over 1 hour, complete with the ability to capture events and pinpoint relevant video segments</li>
+<li>Generating structured outputs: returning results in structured formats to be used for Snowflake analytical processing</li>
+</ul>
+<p>We will use <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services#execute-a-job-service" target="_blank">SPCS Jobs</a> to run the model against meeting videos with the following prompt:</p>
+<p><em>Provide a detailed description of this meeting video, dividing it in to sections with a one sentence description, and capture the most important text that&#39;s displayed on screen. Identify the start and end of each section with a timestamp in the ‘hh:mm:ss&#39; format. Return the results as JSON&#34;</em></p>
+<p>The resulting JSON will be parsed into a structured table called <code>video_analysis</code>.</p>
+<p>Follow these steps in the <code>VIDEO ANALYSIS</code> section of <code>run.sql</code>:</p>
+<ol type="1">
+<li>(Optional) Dun the <code>DROP SERVICE IF EXISTS</code> command if you are executing the Job repeatedly to clean up previous runs</li>
+<li>Run the <code>EXECUTE JOB SERVICE</code> command to run the Job</li>
+</ol>
+<ul>
+<li>Replace the <code>&lt;image&gt;:&lt;version&gt;</code> section with the image path from the previous step</li>
+<li>Replace <code>&lt;your_hf_token&gt;</code> with you Hugging Face token to download the model</li>
+<li>The exact meeting the model will analyze have already been preset when you set the <code>$meeting_id</code> and <code>$meeting_part</code> SQL variables earlier</li>
+<li>The command is configured to run asynchronously, so it should complete within a few seconds, however the underlying Job may take 10+ minutes to complete. <ul>
+<li>To monitor the Job status and progress, use the <strong>Jobs</strong> tab of the  <strong>Services &amp; jobs</strong> area in Snowsight</li>
+<li>Select the <code>PROCESS_VIDEO</code> Job to see the status of the containerized workload. You can also use the <strong>Logs</strong> tab to see the log lines being emitted by the model</li>
+</ul>
+</li>
+</ul>
+<ol type="1" start="3">
+<li>Run the <code>SELECT</code> statement in the <code>video_analysis</code> table when the Job completes to see the model&#39;s anslysis of the meeting. The output should look similar to the below:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">+------------+--------------+----------------------------------------------+------------+----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| MEETING_ID | MEETING_PART | VIDEO_PATH                                   | START_TIME | END_TIME | DESCRIPTION                                                                                                                                                                                                                                                                                                              |
++------------+--------------+----------------------------------------------+------------+----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:00:00   | 00:00:21 | The video opens with a group of four individuals entering a room equipped with a large screen displaying a presentation titled &#34;Conceptual Design Meeting.&#34; The room is set up for a collaborative discussion, with a table covered in papers and a laptop. The individuals sit down and begin engaging in conversation. |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:00:21   | 00:01:45 | The group continues their discussion, focusing on the content displayed on the screen. The screen shows a slide titled &#34;Method&#34; with bullet points about user preferences and constraints. The individuals take notes and discuss the information presented.                                                             |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:01:45   | 00:03:09 | The screen transitions to a slide titled &#34;Findings,&#34; listing various aspects such as user preferences, device requirements, and design constraints. The group discusses these findings, taking notes and sharing insights related to the design process.                                                                 |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:03:09   | 00:04:58 | The screen changes to a slide titled &#34;Interface Concept,&#34; which includes a diagram and text discussing the design model and technology. The group engages in a detailed discussion about the interface concept, with one individual standing and pointing at the screen while others take notes.                         |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:04:58   | 00:06:57 | The screen displays a slide titled &#34;Method&#34; again, listing steps for the next phase of the project. The group continues their discussion, focusing on the outlined steps and making decisions based on the information presented.                                                                                        |
++------------+--------------+----------------------------------------------+------------+----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Slides Analysis with OCR" duration="10">
+        <p>Next, we will utilize <a href="https://docs.snowflake.com/en/sql-reference/functions/parse_document-snowflake-cortex" target="_blank">Snowflake Cortex AI&#39;s <code>PARSE_DOCUMENT</code></a> to carry out Optical Character Recognition (OCR) of the slide content presented in the meeting. The function can extract full-text and table content from slides. We will employ <em>layout mode</em> to maintain document structure via semantic chunking.</p>
+<p>In your Snowsight <code>run.sql</code> file, go to the section labeled <code>OCR</code>:</p>
+<ol type="1">
+<li>Create the <code>slides_analysis</code> table</li>
+<li>Run the <code>INSERT</code> statement, which invokes <code>PARSE_DOCUMENT</code> in layout mode on each slide image (JPG) presented in the meeting</li>
+<li>List the contents of the table, it should contain a row for each slide. Note that the recognized text will still contain a number of irrelevant word fragments and other artifacts, since the input images frequently include the full desktop of the presenter, not just the slide content. This will be addressed in the subsequent analysis.</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">+------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
+| MEETING_ID | MEETING_PART | IMAGE_PATH                                           | TEXT_CONTENT                                                                                                                       |         |
++------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
+| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.1.34__72.51.jpg      | werPoint- [Agenda2]Window Help 107% 2) »i Arial 18 18 Design New Slide 18  Real Reaction al Design meeting Agenda                  |         |
+| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.116.06__135.99.jpg   | werPoint - [Agenda2]Window Help X107% 2) »i Arial 18 Design New Slide Real Reaction  Real Reaction al Design meeting by: S. Marcel |
+| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.1219.96__1490.04.jpg | 1)lide Shov Window 107% 2)»i Arial 18  # Method # For the Power Source: Solar Cells and Batteries                                  |         |
++------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Speech Recognition" duration="10">
+        <p>In this section we will use Snowflake Cortex AI&#39;s <code>AI_TRANSCRIBE</code> to carry out Automatic Speech Recognition (ASR) and transcribe the meeting audio. Cortex AI Transcribe provides high-quality transcription of audio files using the latest AI models, allowing us to easily integrate transcription into our application.  We will use Cortex to transcribe the audio into text and then add it into our database.</p>
+<p><strong>Note: </strong><code>AI_TRANSCRIBE</code> is currently a <a href="https://docs.snowflake.com/en/release-notes/preview-features" target="_blank">Snowflake Preview feature</a>. Contact your account representative to obtain access.</p>
+<p>In your Snowsight <code>run.sql</code> file, go to the section labeled <code>SPEECH RECOGNITION</code>:</p>
+<ol type="1">
+<li>Create the <code>speech_analysis</code> table</li>
+<li>Run the <code>INSERT</code> statement, which invokes <code>AI_TRANSCRIBE</code> on the meeting audio</li>
+<li>List the contents of the table, it should contain a single entry for each audio file, similar to this:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">+------------+--------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| MEETING_ID | MEETING_PART | AUDIO_PATH                                           | TEXT_CONTENT                                                                                                                                     |
++------------+--------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| IS1004     | IS1004c      | @videos/amicorpus/IS1004/audio/IS1004c.Mix-Lapel.mp3 | Okay, good afternoon. Hope you have good lunch. Yeah, we had falafel. Oh, nice. And you? Uh, yes, I had something similar, but non-vegetarian... |
++------------+--------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Chatbot using Semantic Model" duration="20">
+        <p>By completing the previous steps, we now have 3 distinct data sources about the meeting (semantic analysis of video, audio transcription, OCR of slides), all extracted from a single video file. Lets now turn to the analysis part, where we leverage all three to gain insights into the meeting. We will construct a conversational bot that lets us use language to query the table data generated by the previous steps.</p>
+<h2 is-upgraded>Cortex Analyst</h2>
+<p><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Snowflake Cortex Analyst</a> allows users to ask questions in natural language and receive direct answers without writing SQL. The structured data we have extracted so far contains columns identifying the meeting part and time stamps. With tweaks to model prompts, additional structured columns can be added to our analysis.</p>
+<p>To use Cortex Analyst, we create a <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec" target="_blank"><strong>semantic model</strong></a> which allows us to map our domain specific terminology (meeting, video, transcript, slides, etc) to database schemas and add contextual meaning. For example, when a user asks a query about a specific time in the meeting, we can establish a link with the <code>start_time</code> and <code>end_time</code> columns in our <code>video_analysis</code> table. This mapping helps Cortex Analyst understand the user&#39;s intent and provide accurate answers.</p>
+<ol type="1">
+<li>Navigate to the <strong>Cortex Analyst</strong> area in Snowsight under <strong>Snowflake AI &amp; ML Studio</strong></li>
+<li>Specify <code>hol_user_role</code> and <code>hol_warehouse</code> when prompted</li>
+<li>Select the <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/chatbot/meeting_analysis.yaml" target="_blank"><code>meeting_analysis.yaml</code></a> file from the <code>@model</code> stage <img alt="semantic_view" src="img/801f7e0e32860e0c.png"></li>
+<li>You should now see the semantic model that we have pre-defined over our three tables <img alt="semantic_model" src="img/de7002de35cb60.png"></li>
+<li>You can use the chat view to test some queries against the data, the <strong>Verified Queries</strong> section provides a good starting point. <img alt="semantic_query" src="img/68b7724d1dcbe4b4.png"></li>
+</ol>
+<p>Explore the model and verified queries that have been pre-defined. Test out any questions you&#39;d like to ask the model and define verified queries when the built text-to-SQL engine is unable to automatically infer the right SQL.</p>
+<h2 is-upgraded>Streamlit Chatbot</h2>
+<p>In this final step, we&#39;ll put all the pieces we built so far together into a single LLM-powered chatbot, allowing us to be able to use natural language to learn about the meeting.</p>
+<ol type="1">
+<li>Navigate to <strong>Streamlit</strong> under <strong>Projects</strong> in Snowsight</li>
+<li>Create a new Streamlit app called <code>meeting_chat</code> using <code>hol_db</code> and <code>hol_warehouse</code><img alt="create_streamlit" src="img/db421197b0b6811c.png"></li>
+<li>In the <strong>Packages</strong> menu, include <code>snowflake-ml-python</code> in the list of necessary packages</li>
+<li>Replace the <code>streamlit_app.py</code> with <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/chatbot/streamlit_app.py" target="_blank">this file from the repo</a></li>
+<li>Run the Streamlit app</li>
+</ol>
+<p>You should now be able to as the chatbot questions about the meeting. The relevant rows returned by Cortex Analyst are parsed into the LLM&#39;s context, which is able to summarize them into clear and accurate answers. <img alt="chatbot" src="img/5588578579503270.png"></p>
+<p>Expanding the analyst section, you will be able to see the underlying queries being executed against the parsed data. <img alt="chatbot_sql" src="img/27629e388fe59e04.png"></p>
+<p>If a question you ask is not understood by Cortex Analyst, the chatbot will return some suggestions. You can edit the semantic model&#39;s verified queries (see previous step) to allow the model to uderstand more custom questions. <img alt="chatbot_suggestions" src="img/ce177eabc86e76da.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean up" duration="2">
+        <p>In the <code>run.sql</code> file, run the steps in the <code>CLEANUP</code> section. Ensure the following are removed in order to not incur charges:</p>
+<ul>
+<li><code>meeting_chat</code> Streamlit app</li>
+<li><code>hol_db</code> Database</li>
+<li><code>hol_warehouse</code> Warehouse</li>
+<li><code>hol_compute_pool</code> Compute Pool</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>In this quickstart, you used Optical Character Recognition (OCR),  Automatic Speech Recognition (ASR), as well as powerful Vision Language Models (VLMs) to extract meeting insights from video files.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Creating a Snowpark Container Service based application that hosts an AI model</li>
+<li>Calling Snowflake Cortex AI functions.</li>
+<li>Using Cortex Analyst with semantic models</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li>Github repo <a href="https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis" target="_blank">Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis</a></li>
+<li>Snowpark Container Services <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Documentation</a></li>
+<li>Snowflake Cortex AI <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">documentation</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/" target="_blank">Getting Started with Cortex Analyst Quickstart</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

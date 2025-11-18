@@ -1,0 +1,394 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes – Débuter avec Snowflake – Transformation</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_zero_to_snowflake_transformation_fr"
+                  title="Tasty Bytes – Débuter avec Snowflake – Transformation"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Transformation dans Snowflake" duration="1">
+        <p class="image-container"><img src="img/f8bc76ba6d917730.png"></p>
+<h2 is-upgraded>Présentation</h2>
+<p>Bienvenue dans le guide Quickstart Powered by Tasty Bytes Débuter avec Snowflake sur la transformation !</p>
+<p>Ce guide présente un large éventail de fonctionnalités Snowflake clés (clonage zéro copie et Time Travel, par exemple) qui permettent de répondre aux besoins de Tasty Bytes.</p>
+<h2 is-upgraded>Conditions préalables</h2>
+<ul>
+<li>Avant de commencer, assurez-vous de suivre l&#39;intégralité du guide Quickstart <a href="/guide/tasty_bytes_introduction_fr/#3" target="_blank"><strong>Présentation de Tasty Bytes</strong></a>, qui explique comment configurer un compte d&#39;essai et déployer les éléments de base de Tasty Bytes requis pour suivre ce guide Quickstart.</li>
+</ul>
+<h2 is-upgraded>Vous allez apprendre :</h2>
+<ul>
+<li>Comment cloner une table</li>
+<li>Comment utiliser le cache de jeux de résultats de Snowflake</li>
+<li>Comment ajouter une colonne à une table</li>
+<li>Comment mettre à jour les données d&#39;une colonne</li>
+<li>Comment utiliser la fonctionnalité Time Travel</li>
+<li>Comment échanger, supprimer et restaurer une table</li>
+</ul>
+<h2 is-upgraded>Vous allez :</h2>
+<ul>
+<li>Découvrir la principale fonctionnalité de transformation Snowflake</li>
+<li>Créer le clone d&#39;une table de production pour créer une table de développement</li>
+<li>Ajouter une colonne à une table renseignant l&#39;âge calculé, en années, des food trucks</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Créer une feuille de calcul et la copier dans un fichier SQL" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Dans ce guide Quickstart, vous allez suivre une histoire de Tasty Bytes via une feuille de calcul SQL Snowsight. Cette page, qui fait office de guide étape par étape, comprend également des commentaires, des images et des liens vers de la documentation.</p>
+<p>Cette section vous explique comment vous connecter à Snowflake, comment créer une nouvelle feuille de calcul et la renommer, mais aussi comment copier le fichier SQL que nous allons utiliser dans ce guide Quickstart depuis GitHub et le coller.</p>
+<h2 is-upgraded>Étape 1 – Accéder à Snowflake via une URL</h2>
+<ul>
+<li>Ouvrez une fenêtre de votre navigateur et saisissez l&#39;URL de votre compte Snowflake.</li>
+</ul>
+<h2 is-upgraded>Étape 2 – Se connecter à Snowflake</h2>
+<ul>
+<li>Connectez-vous à votre compte Snowflake. <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Étape 3 – Accéder aux feuilles de calcul</h2>
+<ul>
+<li>Cliquez sur l&#39;onglet Worksheets (Feuilles de calcul) dans la barre de navigation de gauche. <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Étape 4 – Créer une feuille de calcul</h2>
+<ul>
+<li>Sous l&#39;onglet Worksheets (Feuilles de calcul), cliquez sur le bouton « + » dans le coin supérieur droit de Snowsight, puis sélectionnez « SQL Worksheet » (Feuille de calcul SQL). <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Étape 5 – Renommer une feuille de calcul</h2>
+<ul>
+<li>Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant &#34;Tasty Bytes – Transformation&#34;. <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Étape 6 – Accéder au fichier SQL de ce guide Quickstart dans GitHub</h2>
+<ul>
+<li>Cliquez sur le bouton ci-dessous pour être redirigé vers notre fichier SQL Tasty Bytes hébergé sur GitHub. <a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_transformation.sql" target="_blank"><paper-button class="colored" raised>tb_zts_transformation</paper-button></a></li>
+</ul>
+<h2 is-upgraded>Étape 7 – Copier le fichier de configuration SQL depuis GitHub</h2>
+<ul>
+<li>Dans GitHub, à droite, cliquez sur « Copy raw contents » (Copier le contenu brut). L&#39;ensemble du fichier SQL requis est copié dans votre presse-papiers. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Étape 8 – Coller le fichier de configuration SQL depuis GitHub dans une feuille de calcul Snowflake</h2>
+<ul>
+<li>Revenez dans Snowsight et dans votre nouvelle feuille de calcul, puis collez (<em>CMD + V pour Mac ou CTRL + V pour Windows</em>) ce que vous venez de copier dans GitHub.</li>
+</ul>
+<h2 is-upgraded>Étape 9 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cloner instantanément une table de production pour créer une table de développement" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Dans le cadre de l&#39;analyse de la flotte de camionnettes de Tasty Bytes, il vous a été demandé, en tant que développeur, d&#39;ajouter une colonne Âge calculé des camionnettes dans notre table Camionnette.</p>
+<p>Experts en la matière, nous savons que nous ne pouvons pas développer une table de production. Nous devons donc commencer par créer un environnement de développement semblable à un environnement de production.</p>
+<h2 is-upgraded>Étape 1 – Créer le clone d&#39;une table de production</h2>
+<p>Grâce à l&#39;architecture unique de Snowflake, nous pouvons créer un instantané de notre table de production <code>raw_pos.truck</code> à l&#39;aide de la fonctionnalité <a href="https://docs.snowflake.com/fr/sql-reference/sql/create-clone" target="_blank">CLONE</a> et le nommer <code>raw_pos.truck_dev</code>.</p>
+<p>Exécutons notre prochain ensemble de requêtes pour définir notre contexte de rôle <code>tasty_dev</code> et créer le clone de la table. Notons que nous n&#39;avons pas besoin de définir de contexte d&#39;entrepôt, car le clonage n&#39;en nécessite aucun.</p>
+<pre><code>USE ROLE tasty_dev;
+
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
+    CLONE frostbyte_tasty_bytes.raw_pos.truck; 
+</code></pre>
+<p class="image-container"><img src="img/5b99d036e2b7f1c5.png"></p>
+<aside class="special"><p><strong>Clonage zéro copie</strong> : permet de créer une copie d&#39;une base de données, d&#39;un schéma ou d&#39;une table. Un instantané des données figurant dans l&#39;objet source est créé au moment de la création du clone, puis est mis à la disposition de l&#39;objet cloné. L&#39;objet cloné est accessible en écriture et est indépendant de la source du clone. Autrement dit, aucune modification apportée à l&#39;objet source n&#39;est reproduite sur le clone, et vice-versa.</p>
+</aside>
+<h2 is-upgraded>Étape 2 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tester le cache de jeux de résultats des requêtes de Snowflake" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Notre clone zéro copie étant disponible instantanément, nous pouvons commencer à le développer sans craindre d&#39;affecter la table de production. Toutefois, avant d&#39;y apporter des modifications, interrogeons-le en exécutant des requêtes simples pour tester le cache de jeux de résultats de Snowflake.</p>
+<h2 is-upgraded>Étape 1 – Interroger la table clonée</h2>
+<p>Pour interroger la table, nous allons devoir utiliser l&#39;entrepôt <code>tasty_dev_wh</code>.</p>
+<p>Exécutons les deux requêtes suivantes avec la deuxième instruction pour produire un jeu de résultats composé de nos camionnettes, ainsi que de leurs âge, marque et modèle, tout en nous assurant de trier notre colonne <code>truck_id</code> avec la requête <a href="https://docs.snowflake.com/fr/sql-reference/constructs/order-by" target="_blank">ORDER BY</a>.</p>
+<pre><code>USE WAREHOUSE tasty_dev_wh;
+
+SELECT 
+    t.truck_id, 
+    t.year, 
+    t.make, 
+    t.model 
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t 
+ORDER BY t.truck_id; 
+</code></pre>
+<p class="image-container"><img src="img/be7f1afb641310a7.png"></p>
+<h2 is-upgraded>Étape 2 – Exécuter de nouveau la requête</h2>
+<p>Pour tester le <a href="https://docs.snowflake.com/fr/user-guide/querying-persisted-results" target="_blank">cache de jeux de résultats</a> Snowflake, nous allons exécuter la même requête que la précédente. Nous allons aller plus loin et accéder au profil de requête, qui montre les résultats renvoyés instantanément par cette requête, ces derniers provenant de notre cache de jeux de résultats.</p>
+<p>Après avoir exécuté la requête ci-dessous, suivez les étapes indiquées sur la capture d&#39;écran pour accéder au <a href="https://docs.snowflake.com/fr/user-guide/ui-query-profile" target="_blank">profil de requête</a>. Dans le profil de requête, un seul nœud nommé <code>QUERY RESULT REUSE</code> apparaît.</p>
+<pre><code>SELECT
+    t.truck_id,
+    t.year,
+    t.make,
+    t.model
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
+ORDER BY t.truck_id;
+</code></pre>
+<p class="image-container"><img src="img/c21de369a9e0f27e.png"> <img src="img/fc1173575cf0a777.png"></p>
+<aside class="special"><p> Si un utilisateur répète une requête qui a déjà été exécutée et que les données de la ou des tables n&#39;ont pas changé depuis la dernière fois que la requête a été exécutée, alors le résultat de la requête sera le même. Au lieu d&#39;exécuter à nouveau la requête, Snowflake peut simplement renvoyer le même résultat que précédemment.</p>
+<p>Cette procédure permet de réduire considérablement le temps de requête, car Snowflake contourne l&#39;exécution de la requête et, à la place, récupère le résultat directement dans le cache.</p>
+</aside>
+<h2 is-upgraded>Étape 3 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Mettre à jour les données et calculer l&#39;âge des food trucks" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Les résultats de la section ci-dessus montrent que nous devons tout d&#39;abord corriger les fautes de frappe des enregistrements Ford_ figurant dans notre colonne <code>make</code>. Nous pourrons ensuite commencer notre calcul qui nous donnera l&#39;âge de chaque camionnette.</p>
+<h2 is-upgraded>Étape 1 – Mettre à jour les valeurs incorrectes d&#39;une colonne</h2>
+<p>Pour commencer cette section, assurons-nous de corriger les fautes de frappe en exécutant la requête suivante, qui utilise l&#39;instruction <a href="https://docs.snowflake.com/fr/sql-reference/sql/update" target="_blank">UPDATE</a> pour modifier les lignes de notre clause <code>truck_dev</code> <a href="https://docs.snowflake.com/fr/sql-reference/constructs/where" target="_blank">WHERE</a> make = &#39;Ford_&#39;.</p>
+<pre><code>UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev 
+SET make = &#39;Ford&#39; 
+WHERE make = &#39;Ford_&#39;;
+</code></pre>
+<p class="image-container"><img src="img/5a932a5c48ee2c34.png"></p>
+<h2 is-upgraded>Étape 2 – Calculer l&#39;âge</h2>
+<p>Une fois les fautes de frappe corrigées, nous pouvons calculer l&#39;âge, en années, des camionnettes de notre flotte. Exécutez la requête suivante, où les fonctions <a href="https://docs.snowflake.com/fr/sql-reference/functions/year" target="_blank">YEAR</a> et <a href="https://docs.snowflake.com/fr/sql-reference/functions/current_date" target="_blank">CURRENT_DATE</a> seront utilisées pour le calcul.</p>
+<pre><code>SELECT
+    t.truck_id,
+    t.year,
+    t.make,
+    t.model,
+    (YEAR(CURRENT_DATE()) - t.year) AS truck_age_year
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
+</code></pre>
+<p class="image-container"><img src="img/4a3ecdf97771687.png"></p>
+<h2 is-upgraded>Étape 3 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ajouter une colonne et la mettre à jour" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Une fois l&#39;âge, en années, des camionnettes calculé et mis à jour, ajoutons une nouvelle colonne à notre table clonée en conséquence, puis mettons-la à jour avec les valeurs calculées.</p>
+<h2 is-upgraded>Étape 1 – Ajouter une colonne à une table</h2>
+<p>Pour commencer, exécutez la requête suivante, qui utilise la clause <a href="https://docs.snowflake.com/fr/sql-reference/sql/alter-table-column" target="_blank">ALTER TABLE... ADD COLUMN</a> pour créer une colonne <code>truck_age</code> vide de <a href="https://docs.snowflake.com/fr/sql-reference/data-types-numeric" target="_blank">type de données numériques</a> dans notre table <code>truck_dev</code>.</p>
+<p>Cette requête va renvoyer un résultat <code>Statement executed successfully</code>.</p>
+<pre><code>ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
+    ADD COLUMN truck_age NUMBER(4);
+</code></pre>
+<h2 is-upgraded>Étape 2 – Ajouter des valeurs calculées dans une colonne</h2>
+<p>Une fois la colonne ajoutée, nous pouvons exécuter la requête <a href="https://docs.snowflake.com/fr/sql-reference/sql/update" target="_blank">UPDATE</a>, qui va mettre à jour la nouvelle colonne <code>truck_age</code> vide avec l&#39;âge des camionnettes que nous avons calculé à la section précédente.</p>
+<pre><code>UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
+    SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
+</code></pre>
+<p class="image-container"><img src="img/16741f97c6b07b7.png"></p>
+<h2 is-upgraded>Étape 3 – Interroger la nouvelle colonne</h2>
+<p>Une fois les données mises à jour, interrogeons la table en exécutant une requête rapide pour voir à quoi ressemble notre colonne <code>truck_age</code>.</p>
+<pre><code>SELECT
+    t.truck_id,
+    t.year,
+    t.truck_age
+FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
+</code></pre>
+<p class="image-container"><img src="img/de784695cb66e2a.png"></p>
+<p><strong>Oups !</strong> Heureusement, nous avons eu la finesse d&#39;esprit de ne pas réaliser ce processus à l&#39;aveugle dans la table de production.</p>
+<p>Il semble que nous avons commis une erreur dans le calcul <code>truck_age</code>, en faisant une division au lieu d&#39;une soustraction. Nous allons devoir corriger cela dans la section suivante.</p>
+<h2 is-upgraded>Étape 4 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Utiliser la fonctionnalité Time Travel à des fins de récupération de données après sinistre" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Même si nous avons commis une erreur, Snowflake compte de nombreuses fonctionnalités pour y remédier. Le processus consiste à utiliser l&#39;historique des requêtes, des variables SQL et Time Travel pour restaurer notre table <code>truck_dev</code> telle qu&#39;elle était avant l&#39;exécution de cette instruction de mise à jour incorrecte.</p>
+<aside class="special"><p> La fonction Time Travel permet d&#39;accéder à des données historiques (données qui ont été modifiées ou supprimées) à n&#39;importe quel moment d&#39;une période définie.</p>
+</aside>
+<h2 is-upgraded>Étape 1 – Exploiter l&#39;historique des requêtes</h2>
+<p>Pour commencer notre processus de récupération, exécutons la requête suivante, qui utilisera la fonction <a href="https://docs.snowflake.com/fr/sql-reference/functions/query_history" target="_blank">QUERY_HISTORY</a> de Snowflake pour récupérer la liste de toutes les instructions de mise à jour que nous avons exécutées sur notre table <code>truck_dev</code>.</p>
+<pre><code>SELECT 
+    query_id,
+    query_text,
+    user_name,
+    query_type,
+    start_time
+FROM TABLE(frostbyte_tasty_bytes.information_schema.query_history())
+WHERE 1=1
+    AND query_type = &#39;UPDATE&#39;
+    AND query_text LIKE &#39;%frostbyte_tasty_bytes.raw_pos.truck_dev%&#39;
+ORDER BY start_time DESC;
+</code></pre>
+<p class="image-container"><img src="img/462cda7dc123e199.png"></p>
+<h2 is-upgraded>Étape 2 – Définir une variable SQL</h2>
+<p>Comme prévu, nous voyons que nos fautes de frappe ont été corrigées et que notre calcul incorrect et les instructions query_id qui y sont associées ont été mis à jour. Exécutez la requête suivante, qui créé une variable SQL <code>query_id</code> que nous utiliserons pour annuler nos modifications via la fonction Time Travel lors de l&#39;étape suivante.</p>
+<p>Cette requête va renvoyer un résultat <code>Statement executed successfully</code>.</p>
+<pre><code>SET query_id = 
+(
+    SELECT TOP 1 query_id
+    FROM TABLE(frostbyte_tasty_bytes.information_schema.query_history())
+    WHERE 1=1
+        AND query_type = &#39;UPDATE&#39;
+        AND query_text LIKE &#39;%SET truck_age = (YEAR(CURRENT_DATE()) / t.year);&#39;
+    ORDER BY start_time DESC
+);
+</code></pre>
+<h2 is-upgraded>Étape 3 – Utiliser la fonction Time Travel pour restaurer une table</h2>
+<p>Étant donné que notre instruction query_id incorrecte est stockée en tant que variable, nous pouvons exécuter la requête suivante, qui restaurera notre table <code>truck_dev</code> telle qu&#39;elle était avant (clause <a href="https://docs.snowflake.com/fr/sql-reference/constructs/at-before" target="_blank">BEFORE</a>) l&#39;exécution de l&#39;instruction query_id incorrecte, et ce à l&#39;aide de la fonction Time Travel.</p>
+<pre><code>CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
+    AS 
+SELECT * FROM frostbyte_tasty_bytes.raw_pos.truck_dev 
+BEFORE(STATEMENT =&gt; $query_id); 
+</code></pre>
+<p class="image-container"><img src="img/feb25e368432f8f1.png"></p>
+<p>Pour connaître les autres options d&#39;instruction Time Travel disponibles, consultez la liste ci-dessous.</p>
+<aside class="special"><p><strong>AT :</strong> le mot clé AT spécifie que la requête inclut tous les changements apportés par une instruction ou une transaction dont l&#39;horodatage est égal au paramètre spécifié.</p>
+<p><strong>BEFORE :</strong> le mot clé BEFORE spécifie que la requête se réfère à un point précédant immédiatement le paramètre spécifié.</p>
+<p><strong>TIMESTAMP :</strong> spécifie une date et une heure exactes à utiliser pour Time Travel.</p>
+<p><strong>OFFSET :</strong> spécifie le décalage, en secondes, par rapport à l&#39;heure et la date actuelles pour utiliser Time Travel.</p>
+<p><strong>STATEMENT :</strong> spécifie l&#39;ID de requête d&#39;une instruction à utiliser comme point de référence pour Time Travel.</p>
+</aside>
+<h2 is-upgraded>Étape 4 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Basculer la table de développement en table de production" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Notre table <code>truck_dev</code> étant restaurée telle qu&#39;elle était avant l&#39;exécution de notre instruction de mise à jour incorrecte, nous pouvons désormais nous assurer que la colonne est correctement mise à jour. Nous allons basculer notre table, contenant le bon calcul, en table de production afin de réaliser la tâche qui nous a été attribuée.</p>
+<h2 is-upgraded>Étape 1 – Ajouter des valeurs correctement calculées dans une colonne</h2>
+<p>À l&#39;aide du même processus, exécutez la requête suivante en vérifiant que nous utilisons bien une soustraction, et non une division.</p>
+<pre><code>UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
+SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
+</code></pre>
+<p class="image-container"><img src="img/b9eb9242cea655e6.png"></p>
+<h2 is-upgraded>Étape 2 – Basculer la table de développement en table de production</h2>
+<p>Une fois que tout est terminé dans <code>truck_dev</code>, exécutez les deux requêtes suivantes, pour lesquelles nous supposons que le rôle privilégié est <code>sysadmin</code>. En tant que <code>sysadmin</code>, la deuxième requête utilise la clause <a href="https://docs.snowflake.com/en/sql-reference/sql/alter-table" target="_blank">ALTER TABLE... SWAP WITH</a> pour modifier notre table <code>truck_dev</code> en <code>truck</code>, et vice versa.</p>
+<p>Cette requête va renvoyer un résultat <code>Statement executed successfully.</code>.</p>
+<pre><code>USE ROLE sysadmin;
+
+ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev 
+    SWAP WITH frostbyte_tasty_bytes.raw_pos.truck; 
+</code></pre>
+<h2 is-upgraded>Étape 3 – Valider la table de production</h2>
+<p>Pour confirmer la réussite du processus, jetons un œil à notre table de production <code>truck</code> pour pouvoir la valider et vérifier que les résultats <code>truck_age</code> sont valides.</p>
+<pre><code>SELECT 
+    t.truck_id, 
+    t.year, 
+    t.truck_age FROM 
+frostbyte_tasty_bytes.raw_pos.truck t 
+WHERE t.make = &#39;Ford&#39;;
+</code></pre>
+<p class="image-container"><img src="img/c9cfc453a65358f5.png"></p>
+<h2 is-upgraded>Étape 4 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Supprimer et restaurer des tables" duration="1">
+        <h2 is-upgraded>Présentation</h2>
+<p>Nous pouvons officiellement dire que la tâche de développement qui nous avait été attribuée est achevée. La colonne <code>truck_age</code> étant ajoutée et ses valeurs correctement calculées, le <code>sysadmin</code> n&#39;a plus qu&#39;à nettoyer la table restante.</p>
+<h2 is-upgraded>Étape 1 – Supprimer une table</h2>
+<p>Pour supprimer la table de notre base de données, exécutez la requête suivante, qui utilise la clause <a href="https://docs.snowflake.com/fr/sql-reference/sql/drop-table" target="_blank">DROP TABLE</a>.</p>
+<pre><code>DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
+</code></pre>
+<p class="image-container"><img src="img/b52965b1f575ffb0.png"></p>
+<p><strong>Oups !</strong> Ce jeu de résultats montre que même le <code>sysadmin</code> peut commettre des erreurs. Nous avons supprimé par erreur la table de production <code>truck</code> au lieu de la table de développement <code>truck_dev</code> ! Heureusement, la fonction Time Travel de Snowflake peut de nouveau y remédier.</p>
+<h2 is-upgraded>Étape 2 – Restaurer une table</h2>
+<p>Avant que les systèmes ne soient impactés, empressez-vous d&#39;exécuter la requête suivante (<a href="https://docs.snowflake.com/fr/sql-reference/sql/undrop-table" target="_blank">UNDROP</a>), qui restaurera la table <code>truck</code>.</p>
+<pre><code>UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
+</code></pre>
+<p class="image-container"><img src="img/e41b5f53934abd4f.png"></p>
+<h2 is-upgraded>Étape 3 – Supprimer la bonne table</h2>
+<p>Finissons-en officiellement en exécutant la dernière requête afin de supprimer correctement la table <code>truck_dev</code>.</p>
+<pre><code>DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
+</code></pre>
+<p class="image-container"><img src="img/e7fb6b69180c3bb0.png"></p>
+<h2 is-upgraded>Étape 4 – Cliquer sur Next (Suivant) –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion et étapes suivantes" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Beau travail ! Vous avez terminé le guide Quickstart Tasty Bytes Débuter avec Snowflake sur la transformation.</p>
+<p>Vous avez :</p>
+<ul>
+<li>Cloné une table</li>
+<li>Utilisé le cache de jeux de résultats de Snowflake</li>
+<li>Ajouté une colonne à une table - Mis à jour les données d&#39;une colonne</li>
+<li>Utilisé la fonction Time Travel à des fins de récupération de données après sinistre</li>
+<li>Échangé, supprimé et restauré une table</li>
+</ul>
+<p>Si vous voulez recommencer ce guide Quickstart, utilisez les scripts de réinitialisation en bas de votre feuille de calcul associée.</p>
+<h2 is-upgraded>Prochaines étapes</h2>
+<p>Pour continuer à découvrir le Data Cloud Snowflake, cliquez sur le lien ci-dessous pour voir tous les autres guides Quickstart Powered by Tasty Bytes à votre disposition.</p>
+<ul>
+<li><h2 is-upgraded><a href="/guide/tasty_bytes_introduction_fr/index.html#3" target="_blank">Table des matières des guides Quickstart Powered by Tasty Bytes</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

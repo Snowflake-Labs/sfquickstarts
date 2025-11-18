@@ -1,0 +1,411 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Native Connector - Java (Push Based)</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="connectors_example_push_based_java"
+                  title="Native Connector - Java (Push Based)"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this tutorial you will learn how to build a native Snowflake push based connector. In the following steps we will cover what constitutes a connector, how to build and deploy it and how to build an application UI using Streamlit.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prerequisites" duration="1">
+        <ul>
+<li>Basic knowledge of <a href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">Snowflake Native Apps</a></li>
+<li>Basic knowledge of Java</li>
+<li>Snowflake user with <code>accountadmin</code> role</li>
+<li>macOS or Linux machine to build a project and run deployment scripts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="You will learn" duration="1">
+        <ul>
+<li>Creating Native Applications in Snowflake</li>
+<li>Ingesting data to Snowflake using snowflake-ingestion-sdk</li>
+<li>Running Snowflake procedures using snowflake-jdbc</li>
+<li>How to optimize merge for the CDC scenario using <a href="img/e5a0394034661f7.pdf" target="_blank">deferred merge approach</a><img src="img/e5a0394034661f7.pdf"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your local environment" duration="5">
+        <ul>
+<li>Install Java 11 or later</li>
+<li>Install <a href="https://docs.snowflake.com/en/user-guide/snowsql" target="_blank">snowsql</a></li>
+<li>Configure snowsql to allow using <a href="https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution" target="_blank">variables</a> (<code>variable_substitution = True</code>)</li>
+<li>Configure snowsql to <a href="https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error" target="_blank">exit on first error</a> (<code>exit_on_error = True</code>)</li>
+<li>Clone the <a href="https://github.com/snowflakedb/connectors-native-sdk" target="_blank">connectors-native-sdk repository</a> and go to <code>./examples/example-push-based-java-connector</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector overview" duration="4">
+        <p>This connector consist of Java Agent and Native Application. Java Agent acts as an application which is close to the data source, it fetches data from the data source and pushes it to Snowflake.</p>
+<p class="image-container"><img alt="overview.svg" src="img/6df35e9345fcf6d0.svg"></p>
+<h2 is-upgraded>Native Application</h2>
+<ul>
+<li>runs <a href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">natively</a> in Snowflake</li>
+<li>contains a <a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-overview" target="_blank">stored procedure</a> which initializes resources by creating all objects in the database needed for the deferred merge</li>
+<li>contains <a href="https://docs.streamlit.io/" target="_blank">Streamlit</a> UI which visualises data</li>
+<li>contains the following database elements: <ul>
+<li>schemas: <ul>
+<li><code>PUBLIC</code> - versioned, used to store all public procedures</li>
+<li><code>TASKS</code> - stateful, used for tasks</li>
+</ul>
+</li>
+<li>procedures: <ul>
+<li><code>INIT_DESTINATION_DATABASE</code> - procedure which is used to create a destination database for the resources</li>
+<li><code>INIT_RESOURCE</code> - procedure which initializes a resource, it creates the following elements in the destination database: <ul>
+<li>base table</li>
+<li>delta table</li>
+<li>view which contains merged data from the base and delta tables</li>
+<li>task which periodically merges the data from the delta to the base table</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>destination database - a database for all the resource data, it is created outside the Native Application by the <code>INIT_DESTINATION_DATABASE</code> procedure</li>
+</ul>
+</li>
+</ul>
+<p>Only selected objects will be visible to customer who installed the app. See: <a href="https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script#visibility-of-objects-created-in-the-setup-script-to-consumers" target="_blank">docs</a>.</p>
+<h2 is-upgraded>Java Agent</h2>
+<ul>
+<li>a simple Java application</li>
+<li>connects to the Native Application</li>
+<li>runs <code>INIT_DESTINATION_DATABASE</code> procedure on startup</li>
+<li>initializes a new resources using the Native Application&#39;s procedure <code>INIT_RESOURCE</code><ul>
+<li>uses <a href="https://docs.snowflake.com/en/developer-guide/jdbc/jdbc" target="_blank">snowflake-jdbc</a> library for calling stored procedure</li>
+</ul>
+</li>
+<li>ingests the data to Snowflake <ul>
+<li>uses <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview" target="_blank">snowflake-ingest-sdk</a> library for ingesting the data</li>
+</ul>
+</li>
+<li>contains a CLI for enabling new resources</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Project structure" duration="3">
+        <p>Let&#39;s take a look at the structure of this connector.</p>
+<pre><code language="language-text" class="language-text">├── Makefile
+├── example-push-based-java-connector-agent
+│    ├── build.gradle
+│    └── src
+├── example-push-based-java-connector-native-app
+│    ├── environment.yml
+│    ├── manifest.yml
+│    └── scripts
+│    │   ├── deploy.sql
+│    │   └── install.sql
+│    ├── setup.sql
+│    └── streamlit_app.py
+├── gradle
+├── gradlew
+├── gradlew.bat
+├── imgs
+├── integration-test
+├── README.md
+├── settings.gradle
+└── sf_build.sh
+</code></pre>
+<h2 is-upgraded>Native Application module</h2>
+<p>Contains files which are needed to create a Snowflake Native App:</p>
+<ul>
+<li><code>manifest.yml</code> - Manifest file required by the native apps model.</li>
+<li><code>setup.sql</code> - This script includes definition of all components that constitute the connector including procedures, schemas and tables.</li>
+<li><code>streamlit_app.py</code> - File which contains the UI of the connector.</li>
+<li><code>scripts/deploy.sql</code> - Script which uploads <code>manifest.yml</code>, <code>setup.sql</code> and <code>streamlit_app.py</code> to Snowflake.</li>
+<li><code>scripts/install.sql</code> - Script which creates a native application from the files uploaded by <code>deploy.sql</code> script.</li>
+</ul>
+<h2 is-upgraded>Java Agent module</h2>
+<p>Contains Java files that constitute the Agent application and gradle files that are needed to build this application.</p>
+<h2 is-upgraded>sf_build.sh script</h2>
+<p>Simple script to collect all files needed to deploy Snowflake Native App into sf_build folder. This directory will be used in deployment script.</p>
+<h2 is-upgraded>imgs directory</h2>
+<p>Images used in README file.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application logs" duration="2">
+        <p>Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to <a href="https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging" target="_blank">enable loging</a> documentation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector configuration" duration="6">
+        <h2 is-upgraded>Snowsql configuration</h2>
+<p>This quickstart uses some convenience scripts for running necessary commands. Those scripts use snowsql. Before proceeding you need to configure snowsql connection to your Snowflake account according to <a href="https://docs.snowflake.com/en/user-guide/snowsql-start#using-named-connections" target="_blank">documentation</a>.</p>
+<h2 is-upgraded>Generating Pubic and Private Keys</h2>
+<p>Java Agent uses <code>snowflake-ingestion-sdk</code> library which uses <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth" target="_blank">key pair authentication</a>. In order to set up the connection you need to generate Public and Private Keys. To achieve it, run the following commands:</p>
+<pre><code language="language-sh" class="language-sh">openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+</code></pre>
+<p>The commands will create 2 files with a public key (<code>rsa_key.pub</code>) and a private key (<code>rsa_key.p8</code>). The keys will be used in the following steps.</p>
+<h2 is-upgraded>Configure user in Snowflake</h2>
+<p>Configure a public key for your user by running the following sql command in your Snowflake worksheet. Use the public key generated in the previous step. Key inside the query should not have any whitespaces and should be a one-line string.</p>
+<pre><code language="language-sql" class="language-sql">ALTER USER &lt;your_user&gt; SET RSA_PUBLIC_KEY=&#39;&lt;Your Public Key&gt;&#39;;
+</code></pre>
+<p>If your user does not have a password configured, run the following command to set the password.</p>
+<pre><code language="language-sql" class="language-sql">ALTER USER &lt;your_user&gt; SET PASSWORD = &#39;&lt;Your Password&gt;&#39; MUST_CHANGE_PASSWORD = FALSE;
+</code></pre>
+<p>The password will be needed for the Java Agent to connect to the Native Application using <code>snowflake-jdbc</code>.</p>
+<h2 is-upgraded>Native application configuration</h2>
+<p>In order to create a native application you need to adjust the value in the <code>Makefile</code> script for:</p>
+<ul>
+<li><code>CONNECTION</code> - a name of snowsql connection defined in previous step</li>
+</ul>
+<p>You can also change the rest of the properties:</p>
+<ul>
+<li><code>APP_NAME</code></li>
+<li><code>APP_VERSION</code></li>
+<li><code>STAGE_DB</code></li>
+<li><code>STAGE_NAME</code></li>
+</ul>
+<p>Those values will be used by all scripts used in this quickstart.</p>
+<p>Note: After changing <code>APP_NAME</code> you will need to adjust <code>native_application.database_name</code> property in the <code>Java agent configuration</code> step below.</p>
+<h2 is-upgraded>Java agent configuration</h2>
+<p>In order to build the Java Agent and connect it to Snowflake you need to edit the following properties in <code>/example-push-based-java-connector-agent/src/main/resources/connector.properties</code>:</p>
+<ul>
+<li><code>account</code> - Snowflake account name</li>
+<li><code>user</code> - Snowflake username</li>
+<li><code>jdbc.password</code> - Snowflake password for given user, it will be used to connect to Snowflake via jdbc</li>
+<li><code>warehouse</code> - warehouse which you want to use</li>
+<li><code>ingestion.host</code> - Snowflake host</li>
+<li><code>ingestion.private_key</code> - private key generated in previous step with removed whitespaces (one-line string). To make sure that your private key property does not contain any whitespace at the beginning and at the end you can wrap it with quotes.</li>
+<li><code>jdbc.url</code> - jdbc url which should contain correct Snowflake host</li>
+<li><code>native_application.database_name</code> - this property has to be changed if <code>APP_NAME</code> in Makefile was changed, it should have <code>APP_NAME</code> value with <code>_INSTANCE</code> suffix</li>
+</ul>
+<p>Example file with all the necessary properties looks like this:</p>
+<pre><code language="language-properties" class="language-properties">account=myaccount
+user=myuser
+role=accountadmin
+warehouse=mywarehouse
+
+native_application.database_name=EXAMPLE_PUSH_BASED_CONNECTOR_TEST_INSTANCE
+native_application.schema_name=PUBLIC
+destination_database.database_name=EXAMPLE_PUSH_BASED_CONNECTOR_DATA
+destination_database.schema_name=PUBLIC
+
+ingestion.host=myaccount.snowflakecomputing.com
+ingestion.scheme=https
+ingestion.port=443
+ingestion.private_key=&#34;MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCsm5SOTkt/I0K5(...)&#34;
+jdbc.password=mypassword
+jdbc.url=jdbc:snowflake://myaccount.snowflakecomputing.com
+
+upload.initial.record-count=100
+upload.periodical.record-count=20
+upload.periodical.interval-seconds=10
+upload.scheduler.pool-size=3
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector logic" duration="5">
+        <p>When user starts the Java Agent application, it connects to the Native Application and runs the <code>INIT_DESTINATION_DATABASE</code> procedure. Then the CLI is launched and user can enable and disable resources using appropriate commands. When a resource is enabled, Java Agent performs the following steps:</p>
+<ul>
+<li>Initializes the resource - connects to the Native App and runs <code>INIT_RESOURCE</code> procedure</li>
+<li>Runs initial upload - loads some records from the data source and uploads them to the base table</li>
+<li>Schedules periodical upload (CDC) - loads and uploads some records to the delta table every 1 minute</li>
+</ul>
+<p>In the meantime, on the Native App side, the merge task is invoked. It merges the data from the delta to the base table.</p>
+<h2 is-upgraded>Simplified sequence diagram</h2>
+<p class="image-container"><img alt="simplified.svg" src="img/200b02f9c2d83dfc.svg"></p>
+<h2 is-upgraded>Detailed sequence diagram</h2>
+<p class="image-container"><img alt="detailed.svg" src="img/d58b17208f99ebae.svg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build the connector" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>Build step for the app consist of:</p>
+<ol type="1">
+<li>Creating a new <code>sf_build</code> directory on the local machine for the Native App artifacts</li>
+<li>Creating a new <code>sf_build_java</code> directory on local machine for the Java Agent artifacts</li>
+<li>Copying of the <code>Agent.jar</code> to the <code>sf_build_java</code> folder</li>
+<li>Copying of the <code>manifest.yml</code> to the <code>sf_build</code> folder</li>
+<li>Copying of the <code>setup.sql</code> to the <code>sf_build</code> folder</li>
+<li>Copying of the <code>streamlit_app.py</code> to the <code>sf_build</code> folder</li>
+</ol>
+<p>The <code>sf_build</code> directory serves as the source of truth about the Native Application definition.</p>
+<h2 is-upgraded>Building</h2>
+<p>To build the connector execute a convenience script:</p>
+<pre><code language="language-sh" class="language-sh">make build
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy the connector" duration="2">
+        <p>In this step we will deploy the connector to the Snowflake account.</p>
+<h2 is-upgraded>Overview</h2>
+<p>Deployment step consists of:</p>
+<ol type="1">
+<li>Creating a database and stage for the app artifacts</li>
+<li>Uploading the <code>sf_build</code> contents to the newly created stage</li>
+<li>Creating an application package using the data from the stage</li>
+</ol>
+<h2 is-upgraded>Deploy the app</h2>
+<p>To deploy the connector execute a convenience script:</p>
+<pre><code language="language-sh" class="language-sh">make deploy
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installing the connector" duration="2">
+        <p>In this step you will install the connector. The installation is encapsulated in a convenience script <code>install.sql</code>.</p>
+<h2 is-upgraded>Overview</h2>
+<p>The installation step consists of:</p>
+<ol type="1">
+<li>Creating a new application using the application package which was created in the previous step</li>
+<li>Granting the necessary privileges to the application</li>
+</ol>
+<h2 is-upgraded>Running the installation script</h2>
+<p>To install the connector using the convenience script run the following command:</p>
+<pre><code language="language-shell" class="language-shell">make install
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Grant privileges and create sink database" duration="3">
+        <p>To configure the connector and grant the rest of the necessary privileges log into Snowflake and go to the <code>Apps</code> tab.</p>
+<h2 is-upgraded>Grant privileges</h2>
+<p>When accessing the Streamlit dashboard of the connector for the first time a permissions pop-up will be displayed. The requested privileges must be granted for the connector to work properly.</p>
+<p class="image-container"><img alt="privileges1.png" src="img/c7c0c69f717084d3.png"></p>
+<h2 is-upgraded>Create a sink database</h2>
+<p>Agent that provides the data to the Native App requires a database to work. This database is created by the Native App. To create it just enter the database name in the input box and press <code>Configure</code> button.</p>
+<p class="image-container"><img alt="configure1.png" src="img/1e9b8e18b1403e36.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Java Agent to enable a resources" duration="3">
+        <p>To run the Java Agent run the following command:</p>
+<pre><code language="language-shell" class="language-shell">make run_agent
+</code></pre>
+<p>This command runs the agent&#39;s command line interface. The following commands are available to use:</p>
+<ul>
+<li><code>enable {resource_name}</code> - initializes a resource and runs the initial and the periodical upload, example usage: <code>enable first_resource</code></li>
+<li><code>disable {resource_name}</code> - disables periodical upload of a given resource, example usage: <code>disable first_resource</code></li>
+<li><code>quit</code> - disables all the active resources and quits the application</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Streamlit app to visualise data" duration="0">
+        <p class="image-container"><img alt="streamlit.png" src="img/ab1ab8586280b64d.png"></p>
+<p>You can check the <code>Refresh automatically</code> checkbox to enable a periodical refresh of the page - this way you will see rising charts when the data is being ingested.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run integration test" duration="4">
+        <p>Example-push-based-java-connector repository contains a module with an integration test.</p>
+<h2 is-upgraded>Overview</h2>
+<p>This test checks if the whole application flow works as expected. It performs the following steps:</p>
+<ul>
+<li>builds the connector</li>
+<li>deploys the connector</li>
+<li>installs the connector</li>
+<li>initializes the destination database</li>
+<li>initializes a new resource</li>
+<li>performs the initial upload</li>
+<li>performs a single iteration of the periodical upload</li>
+<li>executes the merge task</li>
+<li>drops the connector application and all the database elements that were created</li>
+</ul>
+<h2 is-upgraded>Running the test</h2>
+<p>The integration test can be run using a simple make command:</p>
+<pre><code language="language-shell" class="language-shell">make test
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p><strong>Congratulations! You have successfully completed these Labs</strong></p>
+<p>In this guide, you have learned how to:</p>
+<ul>
+<li>create a push based connector</li>
+<li>create Native Applications in Snowflake</li>
+<li>use <code>snowflake-ingestion-sdk</code> to ingest the data to Snowflake</li>
+<li>use <code>snowflake-jdbc</code> to run Snowflake procedures</li>
+<li>optimize merge for the CDC scenario using the deferred merge approach</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

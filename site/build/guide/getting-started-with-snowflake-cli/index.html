@@ -1,0 +1,803 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake CLI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-snowflake-cli"
+                  title="Getting Started with Snowflake CLI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage a Snowflake Native App, Snowpark functions, stored procedures, Snowpark Container Services, and much more. This guide will show you how to configure and efficiently use Snowflake CLI.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=gGPKYGN0VQM" target="_blank">Video: Introduction to Snowflake</a></li>
+<li><a href="https://youtu.be/htLsbrJDUqk?si=vfTjL6JaCdEFdiSG" target="_blank">Video: Snowflake Data Loading Basics</a></li>
+<li>Basic knowledge of Snowflake concepts</li>
+<li>You&#39;ll need a Snowflake account. You can sign up for a free 30-day trial account here: <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">https://signup.snowflake.com/</a>.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to install Snowflake CLI</li>
+<li>How to configure Snowflake CLI</li>
+<li>How to switch between different Snowflake connections</li>
+<li>How to download and upload files using Snowflake CLI</li>
+<li>How to execute SQL using Snowflake CLI</li>
+<li>How to manage Snowflake objects</li>
+<li>How to build and deploy Snowpark and Streamlit applications</li>
+<li>How to build and deploy a Snowflake Native App</li>
+<li>How to create and deploy Snowpark Container Services projects</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install Snowflake CLI" duration="0">
+        <h2 is-upgraded>Create a Snowflake Account</h2>
+<p>You&#39;ll need a Snowflake account. You can sign up for a free 30-day trial account here: <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">https://signup.snowflake.com/</a>.</p>
+<h2 is-upgraded>Access Snowflake&#39;s Web Interface</h2>
+<p>Navigate to <a href="https://app.snowflake.com/" target="_blank">https://app.snowflake.com/</a> and log into your Snowflake account.</p>
+<h2 is-upgraded>Install the Snowflake CLI</h2>
+<p>Snowflake CLI can be installed on Linux, Windows, or Mac. To install it we recommend using package manager dedicated for your operating system. Follow the detailed instruction from the <a href="https://docs.snowflake.com/developer-guide/snowflake-cli/installation/installation#install-sf-cli-using-package-managers" target="_blank">official documentation</a> to install the CLI.</p>
+<p>Once the CLI has been successfully installed, run the following command to verify that it was successfully installed:</p>
+<pre><code language="language-bash" class="language-bash">snow --help
+</code></pre>
+<p>If Snowflake CLI was installed successfully, you should see output similar to the following:</p>
+<pre><code language="language-bash" class="language-bash">Usage: snow [OPTIONS] COMMAND [ARGS]...                                                        
+                                                                                                
+ Snowflake CLI tool for developers.                                                             
+                                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────╮
+│ --version                    Shows version of the Snowflake CLI                              │
+│ --info                       Shows information about the Snowflake CLI                       │
+│ --config-file          FILE  Specifies Snowflake CLI configuration file that should be used  │
+│                              [default: None]                                                 │
+│ --help         -h            Show this message and exit.                                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────╮
+│ app         Manages a Snowflake Native App                                                   │
+│ connection  Manages connections to Snowflake.                                                │
+│ object      Manages Snowflake objects like warehouses and stages                             │
+│ snowpark    Manages procedures and functions.                                                │
+│ spcs        Manages Snowpark Container Services compute pools, services, image registries,   │
+│             and image repositories.                                                          │
+│ sql         Executes Snowflake query.                                                        │
+│ streamlit   Manages Streamlit in Snowflake.                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+</code></pre>
+<h2 is-upgraded>Troubleshooting</h2>
+<p>You may encounter an error like the following when attempting to use Snowflake CLI for the first time:</p>
+<pre>╭─ Error ──────────────────────────────────────────────────────────────────────────────────────╮
+│ Configuration file /Users/yourusername/.snowflake/config.toml has too wide permissions, run    │
+│ `chmod 0600 &#34;/Users/yourusername/.snowflake/config.toml&#34;`                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+<p>In this case, run <code>chmod 0600 "/Users/yourusername/.snowflake/config.toml"</code> in the terminal to update the permissions on the file. After running this command, run <code>snow --help</code> again. You should see the output shown earlier in this section.</p>
+<h2 is-upgraded>Configure connection to Snowflake</h2>
+<p>Snowflake CLI uses a <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/connecting/specify-credentials#how-to-add-snowflake-credentials-using-a-configuration-file" target="_blank">configuration file named <strong>config.toml</strong> for storing your Snowflake connections</a> . This file is created automatically when you run Snowflake CLI for the first time. The file is typically created at <strong>~/.snowflake/config.toml</strong>, but to confirm the default config file path, run the following command:</p>
+<pre>snow --info
+</pre>
+<p>The output will be an array of dictionaries. One of the dictionaries will contain the default config file path, similar to the following:</p>
+<pre>...
+
+{
+  &#34;key&#34;: &#34;default_config_file_path&#34;,
+  &#34;value&#34;: &#34;/Users/yourusername/.snowflake/config.toml
+},
+
+...
+</pre>
+<p>You can add your connection details within <strong>config.toml</strong> either manually or by using Snowflake CLI. Let&#39;s add a connection using Snowflake CLI.</p>
+<p>To add a new connection, run the following:</p>
+<pre><code language="language-bash" class="language-bash">snow connection add
+</code></pre>
+<p>The command will guide you through defining a connection. You can omit all fields denoted by <code>[optional]</code> by pressing &#34;Enter&#34; or &#34;return&#34; on your keyboard.</p>
+<p>Here&#39;s an example:</p>
+<pre>Name for this connection: my_connection
+Snowflake account name: my_account
+Snowflake username: jdoe
+Snowflake password [optional]: 
+Role for the connection [optional]: 
+Warehouse for the connection [optional]: 
+Database for the connection [optional]: 
+Schema for the connection [optional]: 
+Connection host [optional]: 
+Connection port [optional]: 
+Snowflake region [optional]: 
+Authentication method [optional]: 
+Path to private key file [optional]: 
+</pre>
+<p>For more detailed information about configuring connections see DOCS LINK.</p>
+<h2 is-upgraded>Test connection to Snowflake</h2>
+<p>To test a connection to Snowflake, run the following command</p>
+<pre><code language="language-bash" class="language-bash">snow connection test --connection my_connection
+</code></pre>
+<p>In the example above, we use <code>my_connection</code> as the connection name, as it corresponds to the prior example connection. To test your connection, replace <code>my_connection</code> with the name of the connection you defined during the connection definition process.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with connections" duration="5">
+        <p>An understanding of connections is critical for efficiently working with Snowflake CLI. In the next step, you&#39;ll learn how to work with connections.</p>
+<h2 is-upgraded>Default connection</h2>
+<p>You can define a default Snowflake connection by adding the following at the top of <strong>config.toml</strong>:</p>
+<pre><code language="language-toml" class="language-toml">default_connection_name = &#34;my_connection&#34;
+</code></pre>
+<p>This is the connection that will be used by default if you do not specify a connection name when using the <code>-c</code> or <code>--connection</code> flag with Snowflake CLI.</p>
+<p>You can also set a default connection directly from the terminal:</p>
+<pre><code language="language-bash" class="language-bash">snow connection set-default &lt;connection-name&gt;
+</code></pre>
+<p>Running <code>set-default</code> will update your <code>config.toml</code> file to use the specified connection as the default connection. This command is incredibly convenient if you work across multiple Snowflake accounts.</p>
+<h2 is-upgraded>Using multiple connections</h2>
+<p>By default, Snowflake CLI commands operate within context of a specified connection. The only required fields in a named connection in <strong>config.toml</strong> are <code>user</code> and <code>account</code>, however, many Snowflake CLI commands require <code>database</code>, <code>schema</code>, or <code>warehouse</code> to be set in order for a command to be successful. For this reason, it&#39;s convenient to proactively set these fields in your named connections:</p>
+<pre><code language="language-toml" class="language-toml">[connections.my_connection]
+user = &#34;jdoe&#34;
+account = &#34;my_account&#34;
+database = &#34;jdoe_db&#34;
+warehouse = &#34;xs&#34;
+</code></pre>
+<p>This is especially recommended if you usually work with a particular context (i.e., a single database, dedicated warehouse, or role, etc.).</p>
+<p>If you switch your Snowflake context often (for example, when using different roles), it&#39;s good practice to define several connections that each correspond to a specific context, like so:</p>
+<pre><code language="language-toml" class="language-toml">[connections.admin_connection]
+user = &#34;jdoe&#34;
+account = &#34;my_account&#34;
+role = &#34;accountadmin&#34;
+
+[connections.eng_connection]
+user = &#34;jdoe&#34;
+account = &#34;my_account&#34;
+role = &#34;eng_ops_rl&#34;
+</code></pre>
+<p>In such cases, switching between multiple connections can be easily done by using the <code>snow connection set-default</code> command shown previously.</p>
+<h2 is-upgraded>Overriding connection details</h2>
+<p>There may be instances where you might want to override connection details without directly editing <strong>config.toml</strong>. You can do this in one of the following ways:</p>
+<ol type="1">
+<li>Using connection flags in CLI commands</li>
+<li>Using environment variables</li>
+</ol>
+<h3 is-upgraded>Using CLI flags</h3>
+<p>All commands that require an established connection to Snowflake support the following flags:</p>
+<pre>╭─ Connection configuration ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --connection,--environment  -c      TEXT  Name of the connection, as defined in your `config.toml`. Default: `default`.                                                                                 │
+│ --account,--accountname             TEXT  Name assigned to your Snowflake account. Overrides the value specified for the connection.                                                                    │
+│ --user,--username                   TEXT  Username to connect to Snowflake. Overrides the value specified for the connection.                                                                           │
+│ --password                          TEXT  Snowflake password. Overrides the value specified for the connection.                                                                                         │
+│ --authenticator                     TEXT  Snowflake authenticator. Overrides the value specified for the connection.                                                                                    │
+│ --private-key-path                  TEXT  Snowflake private key path. Overrides the value specified for the connection.                                                                                 │
+│ --database,--dbname                 TEXT  Database to use. Overrides the value specified for the connection.                                                                                            │
+│ --schema,--schemaname               TEXT  Database schema to use. Overrides the value specified for the connection.                                                                                     │
+│ --role,--rolename                   TEXT  Role to use. Overrides the value specified for the connection.                                                                                                │
+│ --warehouse                         TEXT  Warehouse to use. Overrides the value specified for the connection.                                                                                           │
+│ --temporary-connection      -x            Uses connection defined with command line parameters, instead of one defined in config                                                                        │
+│ --mfa-passcode                      TEXT  Token to use for multi-factor authentication (MFA)                                                                                                            │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+<p>You can access this list by running any Snowflake CLI command with <code>--help</code>.</p>
+<p>You can override any of the connection settings above directly from the CLI. Overriding a connection detail using a CLI flag will always take precedence over other overwriting methods (as in the next section).</p>
+<h3 is-upgraded>Using environment variables</h3>
+<p>Another option for overriding connection details is to use environment variables. This option is recommended for passwords or any other sensitive information, especially if you use Snowflake CLI with external systems (e.g., CI/CD pipelines, etc.)</p>
+<p>For every connection field, there are two flags:</p>
+<ol type="1">
+<li>A generic flag in form of <code>SNOWFLAKE_[KEY]</code></li>
+<li>A connection-specific flag in form of <code>SNOWFLAKE_CONNECTIONS_[CONNECTION_NAME]_[KEY]</code></li>
+</ol>
+<p>Connection specific flags take precedence over generic flags.</p>
+<p>Let&#39;s take a look at an example, where we test a connection with a role that doesn&#39;t exist in that Snowflake environment:</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_ROLE=funny_role snow connection test
+</code></pre>
+<p>If the role does not exist, you should see error similar the one below:</p>
+<pre>╭─ Error ───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Invalid connection configuration. 250001 (08001): None: Failed to connect to DB: myacc.snowflakecomputing.com:443.    │
+│ Role &#39;FUNNY_ROLE&#39; specified in the connect string does not exist or not authorized. Contact your local system         │
+│ administrator, or attempt to login with another role, e.g. PUBLIC.                                                    │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+<h2 is-upgraded>Using temporary connection</h2>
+<p>In situations where you are unable to add a new connection to <strong>config.toml</strong>, you may specify a temporary connection directly from the command line using the <code>-x</code> or <code>--temporary-connection</code> flags. These flags allow you to specify connection details inline, like so:</p>
+<pre><code language="language-bash" class="language-bash">snow sql -q &#34;SELECT r_value FROM my_table LIMIT 10&#34; -x --account=&lt;account_name&gt; --user=&lt;user_name&gt; --password=&lt;your_password&gt;
+</code></pre>
+<p>In the example above, we establish a temporary connection to Snowflake and execute the <code>SELECT r_value FROM my_table LIMIT 10</code> SQL statement.</p>
+<aside class="warning"><p><strong>Note:</strong> If your account does not allow password authentication, use proper authentication using <code>--authenticator</code>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Snowflake CLI to execute SQL commands" duration="6">
+        <p>Snowflake CLI enables basic execution of SQL. In this step you will learn how to execute ad-hoc queries or entire SQL files.</p>
+<h2 is-upgraded>The <code>sql</code> command</h2>
+<p>To execute SQL queries using Snowflake CLI, you can use the <code>snow sql</code> command.</p>
+<p>The <code>snow sql</code> command can be run as follows:</p>
+<pre>snow sql --help                
+                                                                                                                         
+ Usage: snow sql [OPTIONS]                                                                                               
+                                                                                                                         
+ Executes Snowflake query.                                                                                               
+ Query to execute can be specified using query option, filename option (all queries from file will be executed) or via   
+ stdin by piping output from other command. For example `cat my.sql | snow sql -i`.                                      
+                                                                                                                         
+╭─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --query     -q      TEXT  Query to execute. [default: None]                                                           │
+│ --filename  -f      FILE  File to execute. [default: None]                                                            │
+│ --stdin     -i            Read the query from standard input. Use it when piping input to this command.               │
+│ --help      -h            Show this message and exit.                                                                 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+</pre>
+<p>Whenever you&#39;re working with a new Snowflake CLI command, consider running it initially with the <code>--help</code> flag  to learn more about how to use it.usages.</p>
+<h2 is-upgraded>Executing ad-hoc query</h2>
+<p>To execute an ad-hoc query run the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow sql --query &#34;select 1 as a, 2 as b, 3 as c&#34;
+</code></pre>
+<p>This command will output the following:</p>
+<pre><code>+-----------+
+| A | B | C |
+|---+---+---|
+| 1 | 2 | 3 |
++-----------+
+
+</code></pre>
+<p>You can execute multiple queries using <code>--query</code> parameter. For example:</p>
+<pre><code language="language-bash" class="language-bash">snow sql --query &#34;select 42 as a; select 2 as b&#34;
+</code></pre>
+<p>This will return result for each query separately:</p>
+<pre><code>select 42 as a;
++----+
+| A  |
+|----|
+| 42 |
++----+
+
+select 2 as b
++---+
+| B |
+|---|
+| 2 |
++---+
+</code></pre>
+<h3 is-upgraded>Process the output programmatically</h3>
+<p>You may encounter situations where you might want to process the output of a SQL query programmatically. To do this, you&#39;ll need to change the output format of the command output.</p>
+<p>Currently Snowflake CLI supports only JSON output. To format the output of your SQL queries to JSON, you&#39;ll need to add <code>--format=JSON</code> to your query commands.</p>
+<p>Let&#39;s re-run the above examples using JSON format. To do so run the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow sql --query &#34;select 1 as a, 2 as b, 3 as c&#34; --format=JSON
+</code></pre>
+<p>This will return data as single array (because there&#39;s only single query) with rows:</p>
+<pre><code language="language-json" class="language-json">[
+  {
+    &#34;A&#34;: 1,
+    &#34;B&#34;: 2,
+    &#34;C&#34;: 3
+  }
+]
+</code></pre>
+<p>Next run the other example with JSON format:</p>
+<pre><code language="language-bash" class="language-bash">snow sql --query &#34;select 42 as a; select 2 as b&#34; --format=JSON
+</code></pre>
+<p>In this case data will be returned as array of arrays due to executing multiple queries:</p>
+<pre><code language="language-json" class="language-json">[
+  [
+    {
+      &#34;A&#34;  :   42
+    }
+  ],
+  [
+    {
+      &#34;B&#34;  :   2
+    }
+  ]
+]
+
+</code></pre>
+<h2 is-upgraded>Executing query from file</h2>
+<p>Snowflake CLI also allows you to execute SQL files. Let&#39;s start by preparing a SQL file with a very simple script.</p>
+<p>First, write <code>select 1</code> to a file called <strong>test.sql</strong>. This will create the file in your working directory.</p>
+<pre><code language="language-bash" class="language-bash">echo &#34;select 1 as a;&#34; &gt;&gt; test.sql
+</code></pre>
+<p>Next, execute the contents of the file by running the following:</p>
+<pre><code language="language-bash" class="language-bash">snow sql --filename test.sql
+</code></pre>
+<p>As a result you should see the following output:</p>
+<pre>+---+
+| a |
+|---|
+| 1 |
++---+
+</pre>
+<h2 is-upgraded>Templating SQL queries</h2>
+<p>In many case you may want to change your queries depending on some context, for example type of environment (production vs. testing). This is possible thanks to client-side templating in Snowflake CLI. We call it client-side to distinguish if from <a href="https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from#jinja2-templating" target="_blank">server-side rendering supported by EXECUTE IMMEDIATE FROM</a>.</p>
+<p>Snowflake CLI is using <code><% VARIABLE_NAME %></code> pattern for specifying variables in SQL. You can use templates in both ad-hoc queries and files.</p>
+<p>Variables can be defined using <code>-D/--variable</code> flag in <code>snow sql</code> command. The input for this flag has to be in form of <code>key=value</code> string.</p>
+<p>To test out the templating functionality run the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow sql -q &#34;select &lt;% my_var %&gt; + 2&#34; -D &#34;my_var=40&#34;
+</code></pre>
+<p>in the result you should see the following:</p>
+<pre>select 40 + 2
++--------+
+| 40 + 2 |
+|--------|
+| 42     |
++--------+
+</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Managing Snowflake objects" duration="5">
+        <p>Snowflake CLI offers commands for generic object operations like <code>SHOW</code>, <code>DROP</code> and <code>DESCRIBE</code>. Those commands are available under <code>snow object</code> command.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Let&#39;s create a new database using <code>snow sql</code>:</p>
+<pre><code language="language-bash" class="language-bash">snow sql -q &#34;create database snowflake_cli_db&#34;
+</code></pre>
+<h2 is-upgraded>Listing objects</h2>
+<p>Snowflake CLI allows you to list existing objects of given type. In this example we will use `database`` as the type.</p>
+<p>To list available databases to you run:</p>
+<pre><code language="language-bash" class="language-bash">snow object list database
+</code></pre>
+<p>You can filter results by specifying <code>--like</code> flag. For example running the following command should return only one database:</p>
+<pre><code language="language-bash" class="language-bash">snow object list database --like=snowflake_cli_db
+</code></pre>
+<p>To learn more about supported objects, run <code>snow object list --help</code>.</p>
+<h2 is-upgraded>Describing objects</h2>
+<p>Snowflake CLI allows you to describe objects of a given type. In this example, we will use `database`` as the type.</p>
+<p>By running the following command you will get details of the database we created in previous steps:</p>
+<pre><code language="language-bash" class="language-bash">snow object describe database snowflake_cli_db
+</code></pre>
+<p>To check for list of supported objects run <code>snow object describe --help</code>.</p>
+<h2 is-upgraded>Dropping objects</h2>
+<p>Snowflake CLI allows you to drop existing objects of a given type. In this example we will use `database`` as the type.</p>
+<p>By running the following command you will drop the database we created in previous steps:</p>
+<pre><code language="language-bash" class="language-bash">snow object drop database snowflake_cli_db
+</code></pre>
+<p>To check for list of supported objects run <code>snow object drop --help</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Snowflake CLI to work with stages" duration="10">
+        <p>You can use Snowflake CLI to work with stages. In this step you will learn how to use the <code>snow stage</code> commands.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Commands in this section require a <code>database</code> and <code>schema</code> to be specified in your connection details. If you skipped creating <code>snowflake_cli_db</code> database in previous steps, you should create it now by running the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow sql -q &#34;create database snowflake_cli_db&#34;
+</code></pre>
+<p>After running the command you should see output similar to this one:</p>
+<pre>+---------------------------------------------------+
+| status                                            |
+|---------------------------------------------------|
+| Database SNOWFLAKE_CLI_DB successfully created.   |
++---------------------------------------------------+
+</pre>
+<h2 is-upgraded>Creating a stage</h2>
+<p>You can create a new stage using by running the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow stage create snowflake_cli_db.public.my_stage
+</code></pre>
+<p>If the command succeeds, you should see the following output:</p>
+<pre>+----------------------------------------------------+
+| key    | value                                     |
+|--------+-------------------------------------------|
+| status | Stage area MY_STAGE successfully created. |
++----------------------------------------------------+
+</pre>
+<h2 is-upgraded>Uploading files to a stage</h2>
+<p>Now that the stage is created, you can upload files from your local file system to the stage. First, you&#39;ll need to create these files before uploading them.</p>
+<p>Let&#39;s create an empty CSV file:</p>
+<pre><code language="language-bash" class="language-bash">touch data.csv
+</code></pre>
+<p>Next, upload this file to the stage by running the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow stage copy data.csv @snowflake_cli_db.public.my_stage
+</code></pre>
+<p>Running this command should return the following output:</p>
+<pre>+----------------------------------------------------------------------------------------------------------------+
+| source   | target   | source_size | target_size | source_compression | target_compression | status   | message |
+|----------+----------+-------------+-------------+--------------------+--------------------+----------+---------|
+| data.csv | data.csv | 0           | 16          | NONE               | NONE               | UPLOADED |         |
++----------------------------------------------------------------------------------------------------------------+
+</pre>
+<h2 is-upgraded>Listing stage contents</h2>
+<p>At this point you should have a stage with a single file in it. To list the contents of the stage, you can run:</p>
+<pre><code language="language-bash" class="language-bash">snow stage list @snowflake_cli_db.public.my_stage 
+</code></pre>
+<p>After running this command you should see output similar to the folowing:</p>
+<pre>+--------------------------------------------------------------------------------------------+
+| name              | size | md5                              | last_modified                |
+|-------------------+------+----------------------------------+------------------------------|
+| my_stage/data.csv | 16   | beb79a90840ec142a6586b03c2893c77 | Fri, 1 Mar 2024 20:56:24 GMT |
++--------------------------------------------------------------------------------------------+
+</pre>
+<h2 is-upgraded>Downloading a file from stage</h2>
+<p>You can also download files from a stage. Let&#39;s download the CSV file we just uploaded.</p>
+<p>You can download files from a stage using the same `snow stage copy`` command, only this time you will replace the order of the arguments.</p>
+<p>To download the file from the stage to your current working directory run the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow stage copy @snowflake_cli_db.public.my_stage/data.csv .
+</code></pre>
+<p>This command should return output similar to the following:</p>
+<pre>+----------------------------------------+
+| file     | size | status     | message |
+|----------+------+------------+---------|
+| data.csv | 0    | DOWNLOADED |         |
++----------------------------------------+
+</pre>
+<h2 is-upgraded>Removing stage</h2>
+<p>Lastly, you can use Snowflake CLI to remove a stage. You can do this with the <code>snow object drop</code> command.</p>
+<p>To remove the stage you created for this tutorial, run:</p>
+<pre><code language="language-bash" class="language-bash">snow object drop stage snowflake_cli_db.public.my_stage
+</code></pre>
+<p>In the output, you should see a message like this one:</p>
+<pre>+--------------------------------+
+| status                         |
+|--------------------------------|
+| MY_STAGE successfully dropped. |
++--------------------------------+
+</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building applications using Snowflake CLI" duration="1">
+        <p>In the next steps, you&#39;ll learn how to use Snowflake CLI to bootstrap and develop Snowpark, Snowflake Native App and Streamlit apps.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with Snowpark applications" duration="10">
+        <p>Let&#39;s take a look at how Snowflake CLI can support development of Snowpark applications with multiple functions and procedures.</p>
+<h2 is-upgraded>Initializing Snowpark project</h2>
+<p>You can use Snowflake CLI to initialize a Snowpark project. To do so, run the following command</p>
+<pre><code language="language-bash" class="language-bash">snow init my_project --template example_snowpark      
+</code></pre>
+<p>Running this command will create a new <code>my_project</code> directory. Now move to this new directory by running:</p>
+<pre><code language="language-bash" class="language-bash">cd my_project
+</code></pre>
+<p>This new directory include:</p>
+<ul>
+<li><strong>snowflake.yml</strong> – a project definition file that includes definitions of procedures and functions</li>
+<li><strong>requirements.txt</strong> – a requirements file for this Python project.</li>
+<li><strong>app/</strong> - directory with Python code for your app</li>
+</ul>
+<p>In its initial state, the project defines:</p>
+<ul>
+<li>A function called <code>hello_function(name string)</code></li>
+<li>Two procedures: <code>hello_procedure(name string)</code> and <code>test_procedure()</code></li>
+</ul>
+<h2 is-upgraded>Building Snowpark project</h2>
+<p>Working with a Snowpark project requires two main steps: building and deploying. In this step you will build the project.</p>
+<p>Building a Snowpark project results in the creation of a ZIP file. The name of the ZIP file is the same as the value of the <code>snowpark.src</code> key from <code>snowflake.yml</code>. The archive contains code for your application, as well as downloaded dependencies that were defined in <strong>requirements.txt</strong> (not present in Snowflake&#39;s Anaconda channel).</p>
+<p>You can build the project by running:</p>
+<pre><code language="language-bash" class="language-bash">snow snowpark build
+</code></pre>
+<h2 is-upgraded>Deploying the Snowpark project</h2>
+<p>The next step is to deploy the Snowpark project. This step uploads your code and required dependencies to a stage in Snowflake. At this point, functions and procedures will be created in your Snowflake account.</p>
+<p>Before deploying the project, you will need to create a database to store the the functions and procedures. This is also where the stage will be created.</p>
+<p>To create a database, use the <code>snow sql</code> command:</p>
+<pre><code language="language-bash" class="language-bash">snow sql -q &#34;create database snowpark_example&#34;
+</code></pre>
+<p>Now, you can deploy the project to the newly created database:</p>
+<pre><code language="language-bash" class="language-bash">snow snowpark deploy --database=snowpark_example
+</code></pre>
+<p>This will result in the creation of the functions and procedures. After the process is completed you should see message similar to this one:</p>
+<pre>+----------------------------------------------------------------------------+
+| object                                               | type      | status  |
+|------------------------------------------------------+-----------+---------|
+| SNOWPARK_EXAMPLE.PUBLIC.HELLO_PROCEDURE(name string) | procedure | created |
+| SNOWPARK_EXAMPLE.PUBLIC.TEST_PROCEDURE()             | procedure | created |
+| SNOWPARK_EXAMPLE.PUBLIC.HELLO_FUNCTION(name string)  | function  | created |
++----------------------------------------------------------------------------+
+</pre>
+<h2 is-upgraded>Executing functions and procedures</h2>
+<p>You have successfully deployed Snowpark functions and procedures. Now you can execute them to confirm that they function as intended.</p>
+<p>To execute the <code>HELLO_FUNCTION</code> function run the following</p>
+<pre><code language="language-bash" class="language-bash">snow snowpark execute function &#34;SNOWPARK_EXAMPLE.PUBLIC.HELLO_FUNCTION(&#39;jdoe&#39;)&#34;
+</code></pre>
+<p>Running this command should return output similar to this:</p>
+<pre>+--------------------------------------------------------------+
+| key                                            | value       |
+|------------------------------------------------+-------------|
+| SNOWPARK_EXAMPLE.PUBLIC.HELLO_FUNCTION(&#39;JDOE&#39;) | Hello jdoe! |
++--------------------------------------------------------------+
+</pre>
+<p>To execute the <code>HELLO_PROCEDURE</code> procedure run the following command:</p>
+<pre><code language="language-bash" class="language-bash">snow snowpark execute procedure &#34;SNOWPARK_EXAMPLE.PUBLIC.HELLO_PROCEDURE(&#39;jdoe&#39;)&#34;
+</code></pre>
+<p>Running this command should return an output similar to this one:</p>
+<pre>+-------------------------------+
+| key             | value       |
+|-----------------+-------------|
+| HELLO_PROCEDURE | Hello jdoe! |
++-------------------------------+
+</pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with a Snowflake Native App" duration="10">
+        <p>Let&#39;s take a look at how Snowflake CLI can support development of a Snowflake Native App.</p>
+<h2 is-upgraded>Initializing a Snowflake Native App project</h2>
+<p>You can use Snowflake CLI to initialize a Snowflake Native App project. To do so, run the following command</p>
+<pre><code language="language-bash" class="language-bash">snow app init na_streamlit_project --template streamlit-python
+</code></pre>
+<p>Running this command will create a new <code>na_streamlit_project</code> directory from a predetermined template provided by Snowflake called <code>streamlit-python</code>. For a full list of templates, check out the official <a href="https://github.com/snowflakedb/native-apps-templates/tree/main" target="_blank">Snowflake Native App templates repo</a>.</p>
+<p>Once the directory is created, navigate to it by running:</p>
+<pre><code language="language-bash" class="language-bash">cd na_streamlit_project
+</code></pre>
+<p>This new directory includes:</p>
+<ul>
+<li><strong>snowflake.yml</strong> – a project definition file that includes information about the Snowflake Native App that you will create.</li>
+<li><strong>src/</strong> – a directory that contains all the source code for stored procedures, UDFs and streamlit application.</li>
+<li><strong>app/</strong> - a directory that contains the files required by Snowflake Native App such as manifest.yml and a setup script.</li>
+<li><strong>scripts/</strong> - a directory that contains scripts that will be run as part of the Snowflake Native App creation.</li>
+</ul>
+<p>This template will be used to build a simple calculator as a Snowflake Native App.</p>
+<h2 is-upgraded>Building a Snowflake Native App</h2>
+<p>Working with this Snowflake Native App project involves two main steps: deploying an application package and creating an application object from this application package.</p>
+<p>The following step will create an application package for you, upload the files specified in <strong>snowflake.yml</strong> to a stage, run any scripts in <strong>scripts/</strong> if they are specified in <strong>snowflake.yml</strong>, and create an application object from this application package using named files on the stage.</p>
+<p>You can achieve all of the above from your project by running a single commnad:</p>
+<pre><code language="language-bash" class="language-bash">snow app run
+</code></pre>
+<p>As a note, this template assumes that the role and warehouse you specified in your <strong>config.toml</strong> file has the required privileges to create an application package and an application object. If you did not specify either in <strong>config.toml</strong> file, then the default role and/or warehouse assigned to your user will be used.</p>
+<p>After the process is completed you should see message similar to this one:</p>
+<pre>Your application object na_streamlit_project_$USER is now available:
+https://app.snowflake.com/.../apps/application/na_streamlit_project_$USER
+</pre>
+<p>where <code>$USER</code> is populated from the environment variable from your machine. This will navigate you directly to the application object created in your account.</p>
+<h2 is-upgraded>Executing functions and procedures in your application object</h2>
+<p>You have successfully created an application object in your account. Now you can use either the Streamlit UI or SQL to interact with it.</p>
+<p>To execute the <code>core.add</code> function in the application object using SQL, run the following</p>
+<pre><code language="language-bash" class="language-bash">snow sql -q &#34;select na_streamlit_project_$USER.core.add(1, 2)&#34;
+</code></pre>
+<p>replacing <code>na_streamlit_project_$USER</code> with the actual name of your application object. This will output the result of the function call also on the console.</p>
+<h2 is-upgraded>Opening a Snowflake Native App from the command line</h2>
+<p>Snowflake CLI also allows you to retrieve the URL for a Snowflake Native App, as well as open the app directly from the command line. To open the application created in previous step while still in the project directory, run:</p>
+<pre><code language="language-bash" class="language-bash">snow app open
+</code></pre>
+<p>This will open the Snowflake Native App in your browser.</p>
+<h2 is-upgraded>Dropping a Snowflake Native App from the command line</h2>
+<p>Snowflake CLI allows you to drop both the application object and the application package you created as part of the previous <code>snow app run</code> in one go. To do that, run:</p>
+<pre><code language="language-bash" class="language-bash">snow app teardown
+</code></pre>
+<p>This will drop both the objects for you. As a note, it will not drop any other roles, databases, warehouses etc associated with the Snowflake Native App project.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with Streamlit applications" duration="10">
+        <p>Snowflake CLI also provides commands to work with Streamlit applications. In this step you will learn how to deploy a Streamlit application using Snowflake CLI.</p>
+<h2 is-upgraded>Initializing Streamlit project</h2>
+<p>Start by initializing a Streamlit project. To do so, run:</p>
+<pre><code language="language-bash" class="language-bash">snow init streamlit_app --template example_streamlit
+</code></pre>
+<p>By running this command a new <code>streamlit_app</code> directory will be created. Similar to a Snowpark project, this directory also includes also a <strong>snowflake.yml</strong> file which defines the Streamlit app.</p>
+<p>Navigate to this new project directory by running:</p>
+<pre><code language="language-bash" class="language-bash">cd streamlit_app/
+</code></pre>
+<h2 is-upgraded>Deploying a Streamlit project</h2>
+<p>The next step is to deploy the Streamlit application. Before deploying you will need to create database where the Streamlit and related sources will live. To do so run:</p>
+<pre><code language="language-bash" class="language-bash">snow sql -q &#34;create database streamlit_example&#34;
+</code></pre>
+<p>You&#39;ll also need a warehouse to deploy the Streamlit application. If you already have a warehouse that you can use, then you should update the Streamlit definition in the <strong>snowflake.yml</strong> file to use the specified warehouse:</p>
+<pre><code language="language-yml" class="language-yml">definition_version: 1
+streamlit:
+  # ...
+  query_warehouse: &lt;warehouse_name&gt;
+</code></pre>
+<p>Once you specify an existing warehouse, you can deploy the Streamlit application by running:</p>
+<pre><code language="language-bash" class="language-bash">snow streamlit deploy --database=streamlit_example
+</code></pre>
+<p>Successfully deploying the Streamlit should result in message similar to this one:</p>
+<pre>Streamlit successfully deployed and available under https://app.snowflake.com/.../streamlit-apps/STREAMLIT_EXAMPLE.PUBLIC.STREAMLIT_APP
+</pre>
+<h2 is-upgraded>Opening Streamlit app from the command line</h2>
+<p>Snowflake CLI also allows you to retrieve the URL for a Streamlit app, as well as open the app directly from the command line. To open the application created in previous step run:</p>
+<pre><code language="language-bash" class="language-bash">snow streamlit get-url streamlit_app --database=streamlit_example --open
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with Snowpark Container Services" duration="15">
+        <aside class="warning"><p><strong>Note:</strong> Snowpark Container Services is currently in Public Preview in select AWS <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=g3LX4YOG&_fsi=g3LX4YOG#available-regions" target="_blank">regions</a>. In addition, trial accounts do not support Snowpark Container Services. Reach out to your Snowflake account team to enable your account for Snowpark Container Services.</p>
+</aside>
+<p>You can also manage Snowpark Container Services with Snowflake CLI. In this step, you&#39;ll learn how to create and use Snowpark Container Services with Snowflake CLI. To proceed, you&#39;ll need the following prerequisites:</p>
+<ul>
+<li>A Snowflake account with Snowpark Container Services enabled</li>
+<li>A user in your Snowflake account with ACCOUNTADMIN privileges</li>
+<li><a href="https://docs.docker.com/get-docker/" target="_blank">Docker Desktop</a> installed on your computer</li>
+</ul>
+<h2 is-upgraded>Download the source code</h2>
+<p>Download the source code for this section: <a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/snowflake_cli_snowpark_container_services" target="_blank">snowflake_cli_snowpark_container_services</a></p>
+<h2 is-upgraded>Set up your connection</h2>
+<ol type="1">
+<li>Navigate to the downloaded folder (i.e., <code>cd snowflake_cli_snowpark_container_services</code>, or wherever you saved the source code).</li>
+<li>Setup the connection for your admin user by running <code>snow connection add</code> and filling in the admin user login along with the following settings:</li>
+</ol>
+<pre>Name for this connection: admin
+Snowflake account name: &lt;account_name&gt;
+Snowflake username: &lt;admin_user&gt;
+Snowflake password [optional]: &lt;password&gt; (note that your password input will be hidden)
+Role for the connection [optional]: accountadmin
+</pre>
+<h2 is-upgraded>Create a test role</h2>
+<ol type="1" start="3">
+<li>Edit the <strong>setup/admin_setup.sql</strong> file and fill in <code><user_name></code> with the name of the test user.</li>
+<li>Run <code>snow sql -f setup/admin_setup.sql -c admin</code>. This does the following:</li>
+</ol>
+<ul>
+<li>Creates a role (<code>test_role</code>) and other Snowflake objects. To create the role and objects, you must use the ACCOUNTADMIN role. (This restriction helps to control costs and manage business information risks.) The script also grants the <code>test_role</code> role the privileges needed to manage the newly created objects.</li>
+<li>Grants the role to the specified test user, who then uses the role to explore the tutorial.</li>
+</ul>
+<h2 is-upgraded>Set up a connection for your test role</h2>
+<ol type="1" start="5">
+<li>Setup the connection for your test user by running <code>snow connection add</code> and filling in the user login as well as the following settings:</li>
+</ol>
+<pre>Name for this connection: default
+Snowflake account name: &lt;account_name&gt;
+Snowflake username: &lt;test_user&gt;
+Snowflake password [optional]: &lt;password&gt; (note that your password input will be hidden)
+Role for the connection [optional]: tutorial_role
+Warehouse for the connection [optional]: tutorial_warehouse
+Database for the connection [optional]: tutorial_db
+Schema for the connection [optional]: data_schema
+</pre>
+<h2 is-upgraded>Create an image repository for your service code</h2>
+<ol type="1" start="6">
+<li>Run <code>snow sql -f setup/user_setup.sql</code>. This does the following:</li>
+</ol>
+<ul>
+<li>Creates a schema for your image repository and service.</li>
+<li>Creates an image repository to store your service code (container images).</li>
+</ul>
+<h2 is-upgraded>Verify proper set up</h2>
+<ol type="1" start="7">
+<li>Verify that you have the correct objects from the setup with the following commands</li>
+</ol>
+<pre># should describe your newly created compute pool
+snow object describe compute-pool tutorial_compute_pool
+
+# should describe your newly created warehouse
+snow object describe warehouse tutorial_warehouse
+
+# confirms that tutorial repository exists and also returns the url
+snow spcs image-repository url tutorial_repository
+</pre>
+<h2 is-upgraded>Build an image and upload it to an image repository</h2>
+<ol type="1">
+<li>Get the repository URL by running:</li>
+</ol>
+<pre>snow spcs image-repository url tutorial_repository
+</pre>
+<p>You could also run the following handy command to retrieve the repository URL and store it:</p>
+<pre>repo_url=$(snow spcs image-repository url tutorial_repository)
+image_name=&#34;my_echo_service_image:latest&#34;
+
+</pre>
+<ol type="1" start="2">
+<li>Open another terminal window, and change to the <code>snowflake_cli_snowpark_container_services/tutorial</code> directory.</li>
+<li>To build a Docker image, execute the following docker build command using the Docker CLI. Note the command specifies the current working directory (<code>.</code>) as the PATH for files to use for building the image. You may need to update it according to your preferred directory structure.</li>
+</ol>
+<pre>docker build --rm --platform linux/amd64 -t &lt;repository_url&gt;/&lt;image_name&gt; .
+</pre>
+<p>For <code>image_name</code>, use <code>my_echo_service_image:latest</code>.</p>
+<ol type="1" start="4">
+<li>To login to Docker, use <code>snow spcs image-registry login</code>.</li>
+<li>Push your image to Docker with the following command:</li>
+</ol>
+<pre>docker push &lt;repository_url&gt;/&lt;image_name&gt;
+</pre>
+<h2 is-upgraded>Create the service</h2>
+<ol type="1">
+<li>Create the service with the following command</li>
+</ol>
+<pre>snow spcs service create echo_service --compute-pool tutorial_compute_pool --min-instances 1 --spec-path spec.yaml
+</pre>
+<ol type="1" start="2">
+<li>Inspect your service with the following commands:</li>
+</ol>
+<pre><code># check that your service is listed
+snow object list service
+
+# get the current status of the service
+snow spcs service status echo_service
+
+# get the logs of the service
+snow spcs service logs echo_service --container-name echo --instance-id 0
+
+# get detailed info on your service
+snow object describe service echo_service
+</code></pre>
+<h2 is-upgraded>Use the service</h2>
+<ol type="1">
+<li>Test the service endpoints using the UI. Start by retrieving the public endpoint of your service with:</li>
+</ol>
+<pre><code>snow spcs service list-endpoints echo_service
+</code></pre>
+<ol type="1" start="2">
+<li>In your web browser, navigate to <code><endpoint_url>/ui</code>.</li>
+<li>Type in some input and press <code>return</code> or <code>Enter</code> on your keyboard</li>
+<li>You should see output like the following, which is what was specified in <strong>echo_service.py</strong>:</li>
+</ol>
+<p class="image-container"><img alt="ui for the service" src="img/6442327d2f98f1de.png"></p>
+<h2 is-upgraded>Clean up</h2>
+<p>Finally, clean up billable resources by suspending or dropping <code>tutorial_compute_pool</code> and <code>tutorial_warehouse</code>. Run the following commands:</p>
+<pre><code># suspend (currently no native SnowCLI support for suspending warehouses)
+snow spcs compute-pool suspend tutorial_compute_pool
+snow sql -q &#34;alter warehouse tutorial_warehouse suspend&#34; 
+
+# drop
+snow object drop compute-pool tutorial_compute_pool
+snow object drop warehouse tutorial_warehouse
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! In just a few short steps, you were able to get up and running with Snowflake CLI for connection and object management, working with stages, and building and deploying Snowpark projects, Snowflake Native App and Streamlit applications.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Snowflake CLI setup</li>
+<li>Connection management in Snowflake CLI</li>
+<li>Uploading data using Snowflake CLI</li>
+<li>Executing SQL using Snowflake CLI</li>
+<li>Managing Snowflake objects using the CLI</li>
+</ul>
+<h2 is-upgraded>Additional resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/LIMITEDACCESS/snowcli-v2/snowcli-guide" target="_blank">Snowflake CLI Guide</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

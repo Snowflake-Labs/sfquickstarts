@@ -1,0 +1,677 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>SAP Accounts Receivable to Snowflake using ADF</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="sap_accounts_receivable_to_snowflake_using_adf"
+                  title="SAP Accounts Receivable to Snowflake using ADF"
+                  environment="web"
+                  feedback-link="david.richert@snowflake.com">
+    
+      <google-codelab-step label="Overview" duration="60">
+        <p>This step-by-step shows you how to:</p>
+<ul>
+<li>Deploy an SAP ECC demo system in Azure using SAP CAL:</li>
+</ul>
+<p class="image-container"><img alt="cal" src="img/9c6ffad8942dd391.png"></p>
+<ul>
+<li>Activate your Snowflake account:</li>
+</ul>
+<p class="image-container"><img alt="Snowflake Account" src="img/94b9a152c373c99e.png"></p>
+<ul>
+<li>Extract and load Accounts Receivable data through 0fi_ar_4 extractor–&gt;ODP API –&gt;Azure Data Factory to Snowflake, full and delta:</li>
+</ul>
+<p class="image-container"><img alt="Data flow" src="img/9497d33da4b201f7.png"></p>
+<ul>
+<li>Use pre-built <a href="https://docs.getdbt.com/dbt-cli/cli-overview" target="_blank">dbt CLI</a> data flows to: <ul>
+<li>translate technical field names into business friendly terms</li>
+<li>perform a currency conversion transform</li>
+<li>combine customer master data with accounts documents.</li>
+</ul>
+</li>
+</ul>
+<p>This is a screen capture of DBT&#39;s auto-documentation of the data flow we will create:</p>
+<p class="image-container"><img alt="DBT Data Flow" src="img/2b860c3b1d39e3f8.png"></p>
+<p>We provide a Tableau report to visualize the data regionally, per customer, per DSO, and per document number. <img alt="Tableau Dashboard" src="img/92cc93157ee7ab3a.png"> Let&#39;s get started!</p>
+<h2 is-upgraded>What you need to have before starting the lab</h2>
+<p>To participate in the virtual hands-on lab, attendees need the following:</p>
+<ul>
+<li>Admin rights to an Azure trial account</li>
+<li><a href="https://blogs.sap.com/2020/01/17/creating-a-p-user-in-sap-cloud-platform-to-practise-sap-hana./" target="_blank">An SAP s- or p-user or linked Universal ID</a> to log on to SAP&#39;s Cloud Appliance Library (cal.sap.com).</li>
+<li>A credit card to add billing information to the Azure account</li>
+<li>A Snowflake account with <code>ACCOUNTADMIN</code> access (you can get a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free Trial account here</a>)</li>
+<li>Familiarity with Snowflake and Snowflake objects (eg. through the <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Zero-To-Snowflake hands-on-lab</a>)</li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">git</a> installed on your local machine</li>
+<li><a href="https://www.tableau.com/products/desktop/download" target="_blank">Tableau desktop</a> installed on your local machine (optional)</li>
+</ul>
+<h2 is-upgraded>What you will install during the lab</h2>
+<p>You will install <a href="https://docs.getdbt.com/dbt-cli/install/pip" target="_blank">dbt CLI</a> during the lab.</p>
+<p>The following will be installed or used in your Azure environment:</p>
+<ul>
+<li>SAP ECC</li>
+<li>a Windows virtual machine</li>
+<li>an Azure self-hosted integrated runtime on the virtual machine</li>
+<li>Azure Data Factory</li>
+<li>an Azure auto resolve integration runtime.</li>
+<li>ADLS Gen 2 storage</li>
+</ul>
+<p>You will activate your Snowflake account.</p>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>How to deploye and activate an SAP test machine using SAP Computer Appliance Library.</li>
+<li>How to use Azure Data Factory to request data from SAP through the ODP API.</li>
+<li>How to install and run a pipelines using DBT &amp; Snowflake.</li>
+<li>How to transform SAP data in Snowflake.</li>
+</ul>
+<h2 is-upgraded>What you will build</h2>
+<p>An Accounts Receivable pipeline for Financial Services from SAP ECC to Snowflake to Tableau.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Azure account &amp; deploy SAP ERP" duration="120">
+        <aside class="special"><p> In the interest of getting data out of SAP for this lab, we will use Azure Data Factory&#39;s SAP CDC connector, but there are many other ways to do this, and we are not recommending this particular path. If you otherwise have access to the demo data in this lab, you can skip building the Azure and SAP environments and go directly to the sections of creating your Snowflake account and installing and configuring DBT. </p>
+</aside>
+<p>In this section, we: create and activate an Azure free-trial environment access SAP Cloud Application Library (SAP CAL), choose a template and deploy:</p>
+<ul>
+<li>SAP ERP 6.0 EHP6</li>
+<li>Windows virtual machine</li>
+<li>Subnets</li>
+</ul>
+<aside class="special"><p> I use an SAP ECC instance, but you can adapt this quickstart to use an S/4HANA instance. </p>
+</aside>
+<p>For full documentation on the Azure/SAP setup, check <a href="https://learn.microsoft.com/en-us/azure/data-factory/sap-change-data-capture-introduction-architecture" target="_blank">here</a>.</p>
+<p>Alternatively, if you are on AWS, you can adapt from the following AWS lab: <a href="https://catalog.workshops.aws/sap-on-aws-beyond/en-US/01-preparation/60-sap-env" target="_blank">SAP on AWS Beyond Lab</a>.</p>
+<aside class="special"><p> After this section you will set up the Snowflake account and Configure ADF. If you wish, you can configure Snowflake first. </p>
+</aside>
+<h2 is-upgraded>Use SAP CAL to create SAP ERP</h2>
+<p>Prerequisites:</p>
+<ul>
+<li>Admin rights on an <a href="https://learn.microsoft.com/en-us/training/modules/create-an-azure-account/" target="_blank">Azure account</a></li>
+<li>Access to https://cal.sap.com Use the following video to set up your Azure account and create an SAP instance in Azure through SAP CAL:</li>
+</ul>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/iORePziUMBk?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<p>Adjust the following resources in Usage + quotas in your Azure subscription, before deploying from SAP CAL.</p>
+<ul>
+<li>Total Regional vCPUs to <code>50</code>.</li>
+<li>Standard ESv5 Family CPUs to <code>10</code> vCPU.</li>
+<li>Standard DSv5 Family CPUs to <code>10</code> vCPU.</li>
+</ul>
+<aside class="special"><p> IDES trial accounts have data in them, but are limited to 30 days. Development accounts tend not to have data in them, but the developer licenses are renewable. </p>
+</aside>
+<p>Deployment can easily take an <strong>hour</strong>, so now is a good time to go to the Snowflake section and follow the setup steps. When the instance is activated and Snowflake is configured, come back here and continue.</p>
+<h2 is-upgraded>Test access to SAP</h2>
+<ol type="1">
+<li>From  cal.sap.com &gt; Appliances, select <strong>Connect</strong> next to your deployed appliance.</li>
+<li>Choose RDP &gt; Connect User name: Administrator, Password is the Master one you entered for the appliance.</li>
+<li>Double-click the <strong>SAP Logon</strong> icon.</li>
+<li>Click <strong>Log On</strong>: <ul>
+<li>User: idadmin,</li>
+<li>Password: ides123 (or check the Getting Started Guide for the SAP instance)</li>
+</ul>
+</li>
+</ol>
+<aside class="special"><p> Check that you have Accounting &gt;  Financial Accounting &gt; Accounts Receivable in the SAP menu. If you don&#39;t you may not have any data, and may have to terminate this instance and launch a new, different instance. </p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create &amp; configure Snowflake" duration="25">
+        <ol type="1">
+<li>Sign up for a Snowflake trial account at https://signup.snowflake.com/.</li>
+<li>Login to your Snowflake trial account.<br><img alt="Login Screen" src="img/94b9a152c373c99e.png"></li>
+<li>Click <a href="https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface" target="_blank">here</a> for a quick tour of the Snowflake&#39;s user interface, Snowsight.</li>
+<li>Create a database and a service accounts for dbt. Create a worksheet, copy the below, paste into the worksheet,  change the password and run it.</li>
+</ol>
+<aside class="special"><p> Make sure you change the password before running the script! </p>
+</aside>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------
+-- create demo database
+-------------------------------------------
+USE ROLE accountadmin;
+CREATE DATABASE IF NOT EXISTS sap_demo; 
+-------------------------------------------
+-- create virtual warehouse compute cluster
+-------------------------------------------
+USE ROLE sysadmin;
+CREATE OR REPLACE WAREHOUSE sap_dbt_wh 
+  WAREHOUSE_SIZE = &#39;MEDIUM&#39; 
+  AUTO_SUSPEND = 60 
+  AUTO_RESUME = TRUE 
+  MIN_CLUSTER_COUNT = 1 
+  MAX_CLUSTER_COUNT = 3 
+  INITIALLY_SUSPENDED = TRUE;
+-------------------------------------------
+-- role and user
+-------------------------------------------
+USE ROLE securityadmin;
+CREATE OR REPLACE ROLE sap_dbt_role;
+------------------------------------------- Please replace with your dbt user password
+CREATE OR REPLACE USER sap_dbt_user default_role = sap_dbt_role default_warehouse = sap_dbt_wh PASSWORD = &#34;sap_dbt123!&#34;;
+-------------------------------------------
+-- Grants
+-------------------------------------------
+GRANT ROLE sap_dbt_role TO USER  sap_dbt_user;
+GRANT ROLE sap_dbt_role TO ROLE sysadmin;
+GRANT ALL ON DATABASE sap_demo TO ROLE sap_dbt_role;
+GRANT ALL ON ALL SCHEMAS IN DATABASE sap_demo  TO ROLE sap_dbt_role;
+GRANT ALL ON ALL TABLES IN DATABASE sap_demo TO ROLE sap_dbt_role;
+GRANT ALL ON FUTURE SCHEMAS IN DATABASE sap_demo TO ROLE sap_dbt_role;
+GRANT ALL ON FUTURE TABLES IN DATABASE sap_demo TO ROLE sap_dbt_role;
+GRANT ALL ON WAREHOUSE sap_dbt_wh TO ROLE sap_dbt_role;
+</code></pre>
+<p>As result of these steps, you will have:</p>
+<ul>
+<li>one empty databases: <code>sap_demo</code></li>
+<li>one virtual warehouse: <code>sap_dbt_wh</code></li>
+<li>one role and one user: <code>sap_dbt_role</code> and <code>sap_dbt_user</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Azure Data Factory, runtimes &amp; storage" duration="0">
+        <p>In this section, we will set up:</p>
+<ul>
+<li>Azure Data Factory</li>
+<li>a self-hosted Integrated Run-time (IR) for the SAP to ADF connection</li>
+<li>an Azure AutoResolveIR to connect to Snowflake</li>
+<li>an ADLS Gen 2 storage area.</li>
+</ul>
+<p>For more information on how to use Azure Data Factory, please see <a href="https://learn.microsoft.com/en-us/azure/data-factory/" target="_blank">here</a>.</p>
+<h2 is-upgraded>Create Azure Data Factory</h2>
+<ol type="1">
+<li>From the remote desktop Windows machine that was deployed by CAL, access https://portal.azure.com/#home and select Data Factories</li>
+<li>Select <strong>+ Create</strong> and fill in the details.</li>
+<li>Select <strong>West Europe</strong> for the region.</li>
+<li>Review + create &gt; Read the Terms &gt; Create.</li>
+<li>The system creates the Data Factory.</li>
+<li>Select Go to resource &gt; Launch studio.</li>
+</ol>
+<h2 is-upgraded>Create self-hosted integration runtime</h2>
+<ol type="1">
+<li>From Data Factory Studio select <strong>Manage</strong> from the left (Tool Box icon).</li>
+<li>Select Integration runtimes &gt; + New &gt; Azure, Self-Hosted &gt; Continue</li>
+<li>Select Self-Hosted &gt; Continue (yes, again...)</li>
+<li>Name it <code>SapIR</code>.</li>
+<li>Select <strong>Create</strong>.</li>
+<li>Select <strong>Option 1: Express setup</strong> to install the IR on the remote desktop Windows machine</li>
+<li>The executable downloads onto the remote machine.</li>
+<li>From the downloads, right-click on the executable, <strong>run as Administrator</strong>. The IR installs on the remote machine.</li>
+<li>Install the <a href="https://support.sap.com/en/product/connectors/msnet.html" target="_blank">SAP NCo 3.0</a> (<code>not 3.1</code>), with option Install assemblies to GAC.</li>
+<li>Back in Home &gt; Virtual Machines &gt; ERP6... &gt; Networking, add inbound port rule for <code>3200</code> and <code>3300</code>. See <a href="https://learn.microsoft.com/en-us/azure/data-factory/sap-change-data-capture-shir-preparation" target="_blank">Setup SHIR</a> for more detailed information.</li>
+</ol>
+<h2 is-upgraded>Create ADLS Gen 2 storage</h2>
+<ol type="1">
+<li>From https://portal.azure.com/#home &gt; Storage, select + Create.</li>
+<li>Name it <code>azurestage</code>.</li>
+<li>Assign it to your subscription, sap resource group, and West Europe Region, with Standard performance, and Locally-redundant storage.</li>
+<li>Select Create. Azure deploys the storage.</li>
+<li>Go to Azure &gt; Storage &gt; <code>azurestage</code> &gt; Data Protection, and turn <em>off </em><strong>Enable soft delete for blobs</strong>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure linked &amp; staging linked services" duration="0">
+        <p>The following sections give the main steps to configure ADF. Otherwise, use the provided ADF ARM template to deploy.</p>
+<h2 is-upgraded>Create linked service to SAP</h2>
+<ol type="1">
+<li>From Azure Data Factory, select <strong>Manage</strong> &gt; Linked services &gt; Create linked service.</li>
+<li>Search for SAP CDC and select Continue.</li>
+<li>Enter the following details:<ul>
+<li>Name: <code>ABA_ODP</code>, or the name of your SAP system.</li>
+<li>Integration runtime: <code>SapIR</code>.</li>
+<li>IP address of the SAP system.</li>
+</ul>
+  <aside class="special"><p>    You can get the ip address from Azure Home &gt; Virtual Machines &gt; Linux machine, or from SAP CAL.  </p>
+</aside>
+  * System number: `00`  * Client ID: `100`  * Language: `en`  * SNC mode: **Off**  * User name: `idadmin`  * Password: `ides123` (or check the Getting Started Guide for the SAP instance) </li>
+<li>Select <strong>Create</strong>.</li>
+<li><strong>Test connection</strong>. If it fails, check that you installed <code>Nco 3.0</code> on the Windows virtural machine, and configured the in-bound rules ports 3200 or 3300 in Azure.</li>
+</ol>
+<h2 is-upgraded>Create staging linked service to storage</h2>
+<ol type="1">
+<li>From Azure Data Factory Designer, select <strong>Manage</strong> &gt; Linked services &gt; Create linked service.</li>
+<li>Search for Azure and select <strong>Azure Data Lake Storage Gen2</strong>.</li>
+<li>Select Continue.</li>
+<li>Name: <code>azurestage</code>.</li>
+<li>Select from Azure subscription.</li>
+<li>Select the Storage account name, <code>azurestage</code>.</li>
+</ol>
+<h2 is-upgraded>Create linked service to Snowflake</h2>
+<ol type="1">
+<li>From Azure Data Factory Designer, select <strong>Manage</strong> &gt; Linked services &gt; Create linked service.</li>
+<li>Search for Snowflake and select <strong>Continue</strong>.</li>
+<li>Connect via integration runtime, <strong>AutoResolveIntegrationRuntime</strong>.</li>
+<li>Fill in the connection information to your Snowflake account.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create source &amp; sink datasets" duration="0">
+        <h2 is-upgraded>Create fi_ar_4 source datset</h2>
+<ol type="1">
+<li>From Azure Data Factory Designer, select <strong>Author</strong></li>
+<li>Select Datasets and click on  <strong>(...)</strong> &gt; New dataset</li>
+<li>Search SAP CDC, Select and Continue.</li>
+<li>Enter the following:<ul>
+<li>Name: <code>sapfi_ar_4</code></li>
+<li>Linked Service: <code>ABA_ODP</code></li>
+<li>Integration runtime: <code>SapIR</code></li>
+<li>ODP Context: <strong>SAPI</strong></li>
+<li>ODP Name: <strong>0FI_AR_4</strong></li>
+</ul>
+The dataset is created.</li>
+<li>Select Preview data. The data appears:</li>
+</ol>
+<p class="image-container"><img alt="ADF Preview AF4" src="img/c082052d4d944095.png"></p>
+<p>If the preview does not work, you may have to turn on the debugging.</p>
+<h2 is-upgraded>Create new data sources in SAP</h2>
+<p>Some tables may not be exposed to ODP in your trial system. Not to worry, you can use transaction <strong>RSO2</strong> and create new data sources.</p>
+<h3 is-upgraded>Expose customer &amp; currency tables to ODP in SAP</h3>
+<ol type="1">
+<li>From SAP GUI, enter transaction /nRSO2 (that&#39;s the letter O, not zero (0)). <ol type="1">
+<li>Create a new datasource <ul>
+<li>Select Master Data Attributes</li>
+<li>Enter name for new data source, <code>ZTCURR</code>.</li>
+<li>Select Create.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<p class="image-container"><img alt="RS02 Create Datasource" src="img/4d543bf88b3cddf2.png"></p>
+<ol type="1">
+<li>A configuration window opens. Click on the loop next to <strong>Applic. Component</strong>. <ol type="1">
+<li>Select SAP-R/3 &gt; 0CS &gt; 0CS-IO (or your choice of component).</li>
+<li>Double-click on <strong>OCS-IO</strong>. You return to the previous screen.</li>
+<li>Enter Currency for the short, medium, and long description.</li>
+<li>Enter <code>TCURR</code> in the View/Table.</li>
+<li>Click the diskette icon (save). <ol type="1">
+<li>Select Local Object. You may have to do this twice. The fields for TCURR appear.</li>
+</ol>
+</li>
+<li>Repeat the above steps for Customer, naming the table <code>ZCUSTOMER_ATTR</code> and pointing to the table <code>KNA1</code>.</li>
+</ol>
+</li>
+</ol>
+<h3 is-upgraded>Create remaining source datasets</h3>
+<ol type="1">
+<li>From Azure Data Factory, select <strong>Author</strong>.</li>
+<li>Select Datasets and click on  <strong>(...)</strong> &gt; New dataset</li>
+<li>Search SAP CDC, Select and Continue<ul>
+<li>Name: <code>Currency</code></li>
+<li>Linked Service: <code>ABA_ODP</code></li>
+<li>Integration runtime: <code>SapIR</code></li>
+<li>ODP Context: <strong>SAPI</strong></li>
+<li>ODP Name: <strong>ZTCURR</strong></li>
+</ul>
+The dataset is created.</li>
+<li>Select Preview data. The data appears.</li>
+<li>Repeat the above for the customer data source.</li>
+</ol>
+<h2 is-upgraded>Create sink datasets</h2>
+<ol type="1">
+<li>From Azure Data Factory, select <strong>Author</strong>.</li>
+<li>Select Datasets and click on <strong>(...)</strong> &gt; New dataset</li>
+<li>Search Snowflake, Select and Continue</li>
+<li>For table name, select edit. For Schema put <code>sap_raw</code>, for the name put <code>ztcurr_attr</code>.</li>
+<li>Repeat the above steps for the sinks <code>0customer_attr</code> and <code>0fi_ar_4</code>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create data flows" duration="0">
+        <aside class="special"><p> These steps are only shown as an example, and following along with the example may require additional rights in third-party data, products, or services that are not owned or provided by Snowflake.  Please ensure that you have the appropriate rights in third-party data, products, or services before continuing. </p>
+</aside>
+<p> ### Create df_FIAR4_trunc_full_load 1. From Azure Data Factory, select **Author**  1. Select Dataflows and click on **(...)** &gt; New dataflow.  1. Name the dataflow df_FIAR4_trunc_full_load. 1. Select the box in the flow. 1. In Source settings tab:    1.  name the Output stream name sapFiar4.    1. Add the description: Import data from sapFiar4.    1. Choose Dataset as the Source type.    1. Choose sapFiar4 as the dataset. Toggle **Data flow debug** to test the connection.    1. Select the options: Allow sehema drift, Infer drifted column types, and Validate schema    1. Select Currency as a source    1. Select the **+ button**, scroll to the bottom and choose **sink**. 1. In the Source options tab, choose **Full on every run** for the Run mode. 1. In the Projection tab, check the column names and type.  1. Leave the defaults for the other tabs. 1. Click the + sign found to the lower right of the output stream, and choose **Sink**. 1. In the Sink tab:     1. Name the Output stream name of the sink to snowFiar4.     1. Add a description.     1. Choose the 0fi_ar_4 dataset     1. Select the optoins, Allow schema drift and Validate schema. 1. In the Settings tab:     1. Select Allow insert     1. Select the toggle Recreate Table. 1. In the Mapping tab:     1.  Choose the options to Skip duplicate input columns and Skip duplicate output columns.     1. Choose Auto mapping. </p>
+<h2 is-upgraded>Create df_MASTER_trunc_full_load</h2>
+<p>Follow the steps above, but create flows for sapCurrency -&gt; ztcurr_attr, and sapCustomer -&gt; 0custoemr_attr</p>
+<h2 is-upgraded>Create df_FIAR4_delta_load</h2>
+<p>Follow the steps above, but choose Incremental changes only in the source options for sapFiar4 as the datasource and 0fi_ar_4 as the sink.</p>
+<p>In the sink, make sure that all the options are selected and the key columns are mapped. <img alt="DF Delta" src="img/7ffd64ae0f91cd25.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create &amp; trigger pipeline" duration="0">
+        <p>Using a combination of the data flows, build pipelines. Here is an example of a full load pipeline: <img alt="Pipeline Full" src="img/2cf7fd6567707dad.png"></p>
+<p>Notice, in Settings, the Compute Size (Small),  the staging linked service (azurestage) and the Staging storage folder (sap_/ar).</p>
+<p>To trigger the pipeline: From Data Factory &gt; Author &gt; Pipelines &gt; pipe_all_recreate_full_load, select Add trigger &gt; Trigger Now &gt; OK.</p>
+<p>Monitor the pipeline run. (My run, with a Small compute on the ADF side, took about five minutes.)</p>
+<p>In Snowflake, you can also monitor the progress through Query History <img alt="SF Full Load" src="img/1a4b528092ea2fa4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clone project, install dbt, python &amp; packages" duration="60">
+        <h2 is-upgraded>Clone the dbt project from git</h2>
+<ol type="1">
+<li>Open a terminal on your local machine.</li>
+<li>Make and navigate to the directory where you want the dbt project to reside, for example in your home directory:</li>
+</ol>
+<pre><code language="language-sh" class="language-sh">$ cd ~/
+</code></pre>
+<ol type="1">
+<li>Within the above directory, run the following command to clone the project from github:</li>
+</ol>
+<pre><code language="language-sh" class="language-sh">$ git clone https://github.com/Snowflake-Labs/sf-samples.git                       
+</code></pre>
+<ol type="1">
+<li>Check that the project (a set of directories and files) has been downloaded:</li>
+</ol>
+<pre><code language="language-sh" class="language-sh"> $ ls sf-samples/samples/sap_accounts_receivable_dbt
+</code></pre>
+<p>You should see the following directories and files:</p>
+<pre><code language="language-sh" class="language-sh">Dockerfile		documentation		profiles.example.yml
+README.md		generators		requirements.txt
+analysis		macros			snapshots
+data			models			tableau
+dbt_project.yml		packages.yml		tests
+</code></pre>
+<h2 is-upgraded>Install dbt &amp; python</h2>
+<p>If you already have dbt installed, feel free to skip this step.</p>
+<p>Install <a href="https://www.getdbt.com/" target="_blank">dbt</a> using the following command that sources the right requirements. Use the <code>requirements.txt</code> in the project directory which includes the most recent tested version of Snowflake compatible package.</p>
+<pre><code language="language-sh" class="language-sh">$ cd ~/sf-samples/samples/sap_accounts_receivable_dbt
+$ pip3 install -r requirements.txt --upgrade
+</code></pre>
+<p>Verify that dbt was installed:</p>
+<pre><code language="language-sh" class="language-sh">$ dbt --version
+</code></pre>
+<p>You will get a message similiar to the following (version might vary):</p>
+<pre><code language="language-sh" class="language-sh">installed version: 1.0.1
+   latest version: 1.0.1
+
+Up to date!
+
+Plugins:
+  - snowflake: 1.0.0
+
+</code></pre>
+<aside class="warning"><p> If you face any issues please refer to the official installation guide for dbt core. </p>
+</aside>
+<h2 is-upgraded>Install additional dbt packages</h2>
+<p>Our project uses third-party modules. Install them using this command in the repository folder:</p>
+<pre><code language="language-bash" class="language-bash">$ dbt deps
+</code></pre>
+<p>This creates a new folder <code>dbt_packages</code> directory in your project.</p>
+<p>Ok! let&#39;s get to configuring the project in the next section!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Point dbt project to Snowflake" duration="5">
+        <ol type="1">
+<li>To point dbt to your Snowflake instance, open file <code>~/.dbt/profiles.yml</code> in your prefered text editor</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">Open  ~/.dbt/profiles.yml
+</code></pre>
+<ol type="1" start="2">
+<li>Copy the text below and paste it into  profiles.yml:</li>
+</ol>
+<pre><code language="language-yaml" class="language-yaml">sap_dbt_lab:
+  target: default
+  outputs:
+    default:
+      type: snowflake
+      account: &lt;mysnowflakeacccount&gt;
+      
+      user: sap_dbt_user
+      password: &lt;mysecretpassword&gt;
+      # If you want run an account with SSO uncomment following line and remove the password line
+      # authenticator: externalbrowser
+      
+      role: sap_dbt_role
+      warehouse: sap_dbt_wh
+      database: sap_demo # Database must exist prior to running 
+      schema: sap_raw
+      threads: 8
+</code></pre>
+<ol type="1" start="3">
+<li>Edit &lt;mysnowflakeacccount&gt; and replace it with your Snowflake account name (for example eu_demo123.eu-central-1, without the https:// and without .snowflakecomputing.com).</li>
+<li>Edit &lt;mysecretpassword&gt; and replace it with the password you set for sap_dbt_user.</li>
+<li>Save the file.</li>
+</ol>
+<p>To learn more about the profiles.yml, see <a href="https://docs.getdbt.com/dbt-cli/configure-your-profile" target="_blank">here</a>.</p>
+<p>Use this command to check the connection details, dependencies, and that all required databases exist:</p>
+<pre><code language="language-bash" class="language-bash">$ dbt compile
+</code></pre>
+<p>Fix any errors thrown by this command.</p>
+<p>OK! Now we are ready to run our data flow in the next section!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run dbt model" duration="2">
+        <p><code>dbt run</code> executes compiled sql model files, in this case pulling data from the SAP_RAW schema and transforming it at various stages until we reach the datamart schema. Models are run in the order defined by the dependency graph generated during compilation. Intelligent multi-threading is used to minimize execution time without violating dependencies.</p>
+<pre><code language="language-bash" class="language-bash">$ dbt run
+</code></pre>
+<p>Results look like this:</p>
+<pre><code language="language-bash" class="language-bash">13:48:47  2 of 13 START view model sap_l10_staging.ods_0fi_ar_4........................... [RUN]
+13:48:47  3 of 13 START view model sap_l10_staging.ods_2lis_12_vcitm...................... [RUN]
+13:48:47  4 of 13 START view model sap_l10_staging.ods_ztcurr_attr........................ [RUN]
+13:48:47  1 of 13 START view model sap_l10_staging.ods_0customer_attr..................... [RUN]
+13:48:50  4 of 13 OK created view model sap_l10_staging.ods_ztcurr_attr................... [SUCCESS 1 in 2.84s]
+13:48:50  5 of 13 START view model sap_l15_semantic.en_ztcurr_attr........................ [RUN]
+13:48:50  2 of 13 OK created view model sap_l10_staging.ods_0fi_ar_4...................... [SUCCESS 1 in 2.87s]
+13:48:50  6 of 13 START view model sap_l15_semantic.en_0fi_ar_4........................... [RUN]
+13:48:50  1 of 13 OK created view model sap_l10_staging.ods_0customer_attr................ [SUCCESS 1 in 2.87s]
+13:48:50  7 of 13 START view model sap_l15_semantic.en_0customer_attr..................... [RUN]
+13:48:50  3 of 13 OK created view model sap_l10_staging.ods_2lis_12_vcitm................. [SUCCESS 1 in 2.92s]
+13:48:50  8 of 13 START view model sap_l15_semantic.en_2lis_12_vcitm...................... [RUN]
+13:48:53  6 of 13 OK created view model sap_l15_semantic.en_0fi_ar_4...................... [SUCCESS 1 in 3.11s]
+13:48:53  5 of 13 OK created view model sap_l15_semantic.en_ztcurr_attr................... [SUCCESS 1 in 3.15s]
+13:48:53  9 of 13 START view model sap_l15_semantic.currency.............................. [RUN]
+13:48:53  8 of 13 OK created view model sap_l15_semantic.en_2lis_12_vcitm................. [SUCCESS 1 in 3.07s]
+13:48:53  7 of 13 OK created view model sap_l15_semantic.en_0customer_attr................ [SUCCESS 1 in 3.13s]
+13:48:53  10 of 13 START view model sap_l20_transform.delivery_item_data.................. [RUN]
+13:48:56  9 of 13 OK created view model sap_l15_semantic.currency......................... [SUCCESS 1 in 2.20s]
+13:48:56  11 of 13 START view model sap_l15_semantic.currency_0fi_ar_4.................... [RUN]
+13:48:56  10 of 13 OK created view model sap_l20_transform.delivery_item_data............. [SUCCESS 1 in 2.56s]
+13:48:58  11 of 13 OK created view model sap_l15_semantic.currency_0fi_ar_4............... [SUCCESS 1 in 2.50s]
+13:48:58  12 of 13 START view model sap_l20_transform.accounts_receivable................. [RUN]
+13:49:00  12 of 13 OK created view model sap_l20_transform.accounts_receivable............ [SUCCESS 1 in 2.26s]
+13:49:00  13 of 13 START table model sap_l30_mart.accounts_receivable_mart................ [RUN]
+13:49:11  13 of 13 OK created table model sap_l30_mart.accounts_receivable_mart........... [SUCCESS 1 in 10.46s]
+</code></pre>
+<p>After the run your Snowflake Account should look like:</p>
+<p class="image-container"><img alt="Snowflake Target State" src="img/bb5d0dad7d9d6668.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize your data flow!" duration="1">
+        <p>dbt automatically generates the model code, a DAG of your project, any tests you&#39;ve added to a column, and enables you to annotate models, columns, and sources! This is critically important for lineage, impact analysis, troubleshooting, and just plain visibility into your project!</p>
+<p>To generate and serve your data flow:</p>
+<ol type="1">
+<li>From the terminal</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">$ dbt docs generate
+</code></pre>
+<ol type="1" start="2">
+<li>Once the docs are generated, you will want to view them in the browser, so run this command:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">$ dbt docs serve
+</code></pre>
+<p>This command can be rerun for every model and documentation change.</p>
+<ol type="1" start="3">
+<li>The browser window opens automatically. Otherwise navigate to <a href="http://localhost:8080" target="_blank">http://localhost:8080</a><img alt="Data Share" src="img/ff1fe19af3b0e2c8.png"></li>
+<li>Select the data flow button in the bottom right to see the data flow: <img alt="Tableau Dashboard" src="img/2b860c3b1d39e3f8.png"></li>
+</ol>
+<p>You can access the lineage graph at any time using the graph button in the bottom right corner. For more information see <a href="https://docs.getdbt.com/docs/building-a-dbt-project/documentation" target="_blank">here</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Track your DSO in Tableau" duration="5">
+        <p>Visualize your Days of Sales Outstanding (DSO) by geography and customer through this Tableau dashboard! <img alt="Tableau Dashboard" src="img/92cc93157ee7ab3a.png"></p>
+<ol type="1">
+<li>Launch Tableau Desktop.</li>
+<li>Navigate to <code>~/sf-samples/samples/sap_accounts_receivable_dbt/tableau</code> and open `Account_Receivables.twbx_v1``</li>
+</ol>
+<p>Alternatively you can launch from a command line: /Applications/Tableau\ Desktop\ 2021.3.app/Contents/MacOS/Tableau -f ~/sf-samples/samples/sap_accounts_receivable_dbt/tableau/Account_Receivables_v1.twbx</p>
+<ol type="1">
+<li>You are prompted for the password. Wait! You need to edit the connection first!</li>
+<li>Select <code>Edit connection</code>  and adjust the connection settings to your instance: <img alt="Edit Tableau Connection" src="img/e88771f76be3b861.png"></li>
+<li>Select <code>Sign In</code>.</li>
+</ol>
+<p>Once the connection is established you will be redirected to the main Dashboard visualizing the resulting data mart</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Optional: Create Snowsight dashboard" duration="2">
+        <p>You can find some example queries in the analysis director of the project, for example for dso details analysis</p>
+<pre><code language="language-sql" class="language-sql">SELECT 
+  COMPANY_CODE
+  , DOCUMENT_TYPE
+  , DOCUMENT_NUMBER
+  , POSTING_DATE
+  , CLEARING_DATE
+  , DEBIT_AMT_LOCAL_CURRENCY
+  , STATUS
+  , DSO 
+FROM &#123;&#123; ref(&#39;accounts_receivable_mart&#39;) }} 
+WHERE DOCUMENT_TYPE=&#39;RV&#39;
+ORDER BY DEBIT_AMT_LOCAL_CURRENCY DESC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>During this tutorial you learned following topics:</p>
+<ul>
+<li>Configuring your Snowflake account</li>
+<li>Installation and configuration of dbt</li>
+<li>Working with the dbt documentation</li>
+<li>Connecting a Tableau Dashboard</li>
+<li>Demonstrating SAP Accounts Receivable data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Optional: Clean up environment" duration="0">
+        <h2 is-upgraded>Clean up Snowflake</h2>
+<p>Use the following commands in a Snowflake worksheet to permanently delete databases, warehouse, role and user.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+DROP DATABASE IF EXISTS sap_demo;
+DROP WAREHOUSE IF EXISTS sap_dbt_wh;
+DROP ROLE IF EXISTS sap_dbt_role;
+DROP USER IF EXISTS sap_dbt_user;
+</code></pre>
+<h2 is-upgraded>Clean up Local machine</h2>
+<ol type="1">
+<li>Use pip uninstall to remove the dbt and packages. Run this before deleting the <code>sf-samples</code> directory if you want to delete the snowflake adapter and other directories, which are located under ~/anaconda/anaconda3/lib/python3.9/site-packages/dbt/.</li>
+</ol>
+<pre><code language="language-Bash" class="language-Bash">$ cd ~/sf-samples/samples/sap_accounts_receivable_dbt
+$ pip3 uninstall -r requirements.txt
+
+Found existing installation: dbt-snowflake 1.0.0
+Uninstalling dbt-snowflake-1.0.0:
+  Would remove:
+    ~/anaconda/anaconda3/lib/python3.9/site-packages/dbt/adapters/snowflake/*
+    ~/anaconda/anaconda3/lib/python3.9/site-packages/dbt/include/snowflake/*
+    ~/anaconda/anaconda3/lib/python3.9/site-packages/dbt_snowflake-1.0.0.dist-info/*
+Proceed (Y/n)? Y
+Successfully uninstalled dbt-snowflake-1.0.0
+</code></pre>
+<ol type="1" start="2">
+<li>Removing the sf-samples repo To remove the demo package you can simply delete the directory <code>~/sf-samples/samples/sap_accounts_receivable_dbt</code></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Optional: SAP extractors" duration="15">
+        <p>There are <a href="https://medium.com/snowflake/if-extraction-from-sap-were-easy-b5f3d02f0ec9" target="_blank">several tools on the market</a> to manage initial and delta extractions from SAP. This section simply gives a couple of example applications that extract data from SAP.</p>
+<aside class="special"><p> It is not required to perform the steps in the videos. </p>
+</aside>
+<p> ### How to install Qlik Replicate to get data out of an SAP system: </p>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/EwhgASMXGR4?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h2 is-upgraded>How to use SNP Glue to get data out of an SAP systems:</h2>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/PyybzHl6A3M?rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="[Appendix] Business Semantics" duration="10">
+        <p>All downstream descriptions and translation of the SAP columns are auto-generated. We used publicly available column information and consolidated them into a single machine-parsable csv file to generate the documentation. The used code can be found in the dbt project under the <code>/generators</code> folder.</p>
+<p>To regenerate or extend the source documentation it is suggested to update the raw data and use the <code>generate_dbt_source.py</code> script. That script will lookup all available source tables and columns and add corresponding fields to the dbt documentation.</p>
+<p>For further details on the available scripts please refer to the <code>README.md</code> in the generators folder or see the commented source code.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Further reading" duration="0">
+        <p><a href="https://resources.snowflake.com/migration-guides/migrating-from-sap-to-snowflake" target="_blank">SAP to Snowflake transformations</a></p>
+<p><a href="https://medium.com/snowflake/if-extraction-from-sap-were-easy-b5f3d02f0ec9" target="_blank">Connecting to SAP</a></p>
+<p><a href="https://quickstarts.snowflake.com/guide/data_teams_with_dbt_core/index.html" target="_blank">Accelerating Data Teams with dbt Core &amp; Snowflake</a></p>
+<p><a href="https://medium.com/@sasha.mitrovich/optimize-your-hierarchical-data-with-snowflake-part-one-508384b9b857" target="_blank">Optimising hierarchical data in Snowflake</a></p>
+<p><a href="https://medium.com/snowflake/curry-encies-never-tasted-so-good-36dcecfcd0bd" target="_blank">SAP currency conversion in Snowflake</a></p>
+<p><a href="https://blog.getdbt.com/how-we-configure-snowflake/" target="_blank">How we (DBT) configure Snowflake by Fishtown Team</a></p>
+<p><a href="https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/#model-structure" target="_blank">Model Structure by GitLab team</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

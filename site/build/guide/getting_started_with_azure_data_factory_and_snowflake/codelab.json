@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_azure_data_factory_and_snowflake",
+  "duration": 95,
+  "title": "Getting Started with Azure Data Factory and Snowflake",
+  "summary": "This is a quickstart for using Snowflake with Azure Data Factory",
+  "source": "getting_started_with_azure_data_factory_and_snowflake/getting_started_with_azure_data_factory_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "microsoft"
+  ],
+  "tags": [
+    "azure",
+    "dataengineering",
+    "gettingstarted",
+    "microsoft",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_azure_data_factory_and_snowflake"
+}

@@ -1,0 +1,276 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>An Introduction to Tasty Bytes</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_introduction"
+                  title="An Introduction to Tasty Bytes"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="An Introduction to Tasty Bytes" duration="1">
+        <p class="image-container"><img src="img/e3b4e5ffa7881e0d.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Within this Tasty Bytes Introduction Quickstart you will first be learning about the fictitious food truck brand, Tasty Bytes, created by Snowflake.</p>
+<p>After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC).</p>
+<p>Upon finishing this Quickstart, you will have deployed the foundation required to run the Quickstarts seen in our <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3" target="_blank">Powered by Tasty Bytes - Quickstarts</a> section.</p>
+<h2 is-upgraded>Who is Tasty Bytes?</h2>
+<p class="image-container"><img src="img/a51f501137dea3c5.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Supported Snowflake <a href="https://docs.snowflake.com/en/user-guide/setup#browser-requirements" target="_blank">Browser</a></li>
+<li>An Enterprise or Business Critical Snowflake Account <ul>
+<li>If you do not have a Snowflake Account, please <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank"><strong>sign up for a Free 30 Day Trial Account</strong></a>. When signing up, please make sure to select <strong>Enterprise</strong> edition. You are welcome to choose any <a href="https://docs.snowflake.com/en/user-guide/intro-regions" target="_blank">Snowflake Cloud/Region</a>.</li>
+<li>After registering, you will receive an email with an activation link and your Snowflake Account URL.</li>
+<li><img style="width: 300.00px" src="img/1e925e111069cf28.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to Create a Snowflake Worksheet</li>
+<li>How to Execute All Queries within a Snowflake Worksheet Synchronously</li>
+<li>How to Explore Databases, Schemas, Tables, Roles and Warehouses via SQL in a Snowflake Worksheet</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>The Tasty Bytes Foundation that empowers you to run Powered by Tasty Bytes - Quickstarts. <ul>
+<li>A Snowflake Database</li>
+<li>Raw, Harmonized and Analytic Schemas complete with Tables and Views</li>
+<li>Workload Specific Snowflake Roles and Warehouses</li>
+<li>Role Based Access Control (RBAC)</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Tasty Bytes" duration="6">
+        <h2 is-upgraded>Overview</h2>
+<p>For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight, we highly recommend taking a look at our <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight" target="_blank">Snowsight Documentation</a> for a high-level walkthrough.</p>
+<h2 is-upgraded>Step 1 - Accessing Snowflake via URL</h2>
+<ul>
+<li>Open a browser window and enter the URL of your Snowflake Account. If you do not already have a Snowflake account please revisit the previous section to sign up for a Free Snowflake Trial Account.</li>
+</ul>
+<h2 is-upgraded>Step 2 - Logging into Snowflake</h2>
+<ul>
+<li>Log into your Snowflake account.</li>
+</ul>
+<h2 is-upgraded>Step 3 - Navigating to Worksheets</h2>
+<ul>
+<li>Click on the Projects Tab in the left-hand navigation bar and click Worksheets.</li>
+</ul>
+<h2 is-upgraded>Step 4 - Creating a Worksheet</h2>
+<ul>
+<li>Within Worksheets, click the &#34;+&#34; button in the top-right corner of Snowsight.</li>
+</ul>
+<h2 is-upgraded>Step 5 - Renaming a Worksheet</h2>
+<ul>
+<li>Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting &#34;Tasty Bytes - Introduction&#34;</li>
+</ul>
+<h2 is-upgraded>Step 6 - Accessing hosted Setup SQL in GitHub</h2>
+<ul>
+<li>Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.</li>
+</ul>
+<p><a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/FY25_Zero_To_Snowflake/tb_introduction.sql" target="_blank"><paper-button class="colored" raised>tb_introduction.sql</paper-button></a></p>
+<h2 is-upgraded>Step 7 - Copying Setup SQL from GitHub</h2>
+<ul>
+<li>Within GitHub navigate to the right side and click &#34;Copy raw contents&#34;. This will copy all of the required SQL into your clipboard. <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet</h2>
+<ul>
+<li>Path back to Snowsight and your newly created Worksheet and Paste (<em>CMD + V for Mac or CTRL + V for Windows</em>) what we just copied from GitHub.</li>
+</ul>
+<h2 is-upgraded>Step 9 - Synchronously Running all Setup SQL</h2>
+<ul>
+<li>Click inside the newly created Tasty Bytes - Setup Worksheet, and next to &#34;► Run&#34; Click &#34;▼&#34; and choose &#34;Run All&#34; <ul>
+<li><img src="img/4a346f7428aa5931.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 10 - Completing Setup</h2>
+<ul>
+<li>After clicking &#34;Run All&#34; you will see queries begin to execute. These queries will run one after another with the entire worksheet taking around 3 minutes. Upon completion you will see a message stating <code>tb_101 setup is now complete</code> . <ul>
+<li><img src="img/297237df360e9156.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 11 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploring the Tasty Bytes Foundation" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>With the Tasty Bytes Setup successful, we can now explore the Database, Roles and Warehouses we created.</p>
+<aside class="warning"><p><strong>Note:</strong> Within the <em>Tasty Bytes - Setup</em> worksheet you created in previous section, please scroll to the bottom and Copy, Paste and  Run the SQL included in each step below.</p>
+</aside>
+<h2 is-upgraded>Step 1 - Exploring the Tasty Bytes Database</h2>
+<p>This query will return the Database we created via <a href="https://docs.snowflake.com/en/sql-reference/sql/show-databases.html" target="_blank">SHOW DATABASES</a> using our SYSADMIN role.</p>
+<pre><code>USE ROLE sysadmin;
+SHOW DATABASES LIKE &#39;tb_101&#39;;
+</code></pre>
+<p class="image-container"><img src="img/e8e88bae8658374d.png">  </p>
+<h2 is-upgraded>Step 2 - Exploring the Schemas within the Tasty Bytes Database</h2>
+<p>This query will return the Schemas within the Database we created via <a href="https://docs.snowflake.com/en/sql-reference/sql/show-schemas" target="_blank">SHOW SCHEMAS</a>.</p>
+<pre><code>SHOW SCHEMAS IN DATABASE tb_101;
+</code></pre>
+<p class="image-container"><img src="img/8889d54e28595976.png">  </p>
+<h2 is-upgraded>Step 3 - Exploring the Tables within the RAW_POS Schema within the Tasty Bytes Database</h2>
+<p>This query will return the Tables within the <code>raw_pos</code> schema via <a href="https://docs.snowflake.com/en/sql-reference/sql/show-tables" target="_blank">SHOW TABLES</a></p>
+<pre><code>SHOW TABLES IN SCHEMA tb_101.raw_pos;
+</code></pre>
+<p class="image-container"><img src="img/cb7581e7b693760f.png">  </p>
+<h2 is-upgraded>Step 4 - Exploring the Tasty Bytes Roles</h2>
+<p>This query will return the Roles we created via <a href="https://docs.snowflake.com/en/sql-reference/sql/show-roles" target="_blank">SHOW ROLES</a>.</p>
+<pre><code>SHOW ROLES LIKE &#39;tb%&#39;;
+</code></pre>
+<p class="image-container"><img src="img/ddf4e65209e2da5c.png">  </p>
+<h2 is-upgraded>Step 5 - Exploring the Tasty Bytes Warehouses</h2>
+<p>This query will return the Warehouses we created via <a href="https://docs.snowflake.com/en/sql-reference/sql/show-warehouses" target="_blank">SHOW WAREHOUSES</a>.</p>
+<pre><code>SHOW WAREHOUSES LIKE &#39;tb%&#39;;
+</code></pre>
+<p class="image-container"><img src="img/b9f201e917c70259.png">  </p>
+<h2 is-upgraded>Step 6 - Putting it All Together</h2>
+<p>These next three queries will:</p>
+<ol type="1">
+<li>Assume the <code>tb_data_engineer</code> role via <a href="https://docs.snowflake.com/en/sql-reference/sql/use-role.html" target="_blank">USE ROLE</a></li>
+<li>Leverage the <code>tb_de_wh</code> Warehouse via <a href="https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html" target="_blank">USE WAREHOUSE</a></li>
+<li>Query our <code>raw_pos.menu</code> table to find which Menu Items are sold at our Plant Palace branded food trucks.</li>
+</ol>
+<pre><code>USE ROLE tb_data_engineer;
+USE WAREHOUSE tb_de_wh;
+
+SELECT
+    m.menu_type_id,
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_name
+FROM tb_101.raw_pos.menu m
+WHERE m.truck_brand_name = &#39;Plant Palace&#39;;
+</code></pre>
+<p class="image-container"><img src="img/3657db106e33eb6e.png">  </p>
+<p>Amazing! Within a few minutes we now have a Tasty Bytes demo environment complete with data, roles and warehouses set up in our Snowflake account. Let&#39;s now take a look at all of the other Tasty Bytes Quickstarts available to us to leverage.</p>
+<h2 is-upgraded>Step 7 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Powered by Tasty Bytes - Quickstarts" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>Congratulations! You have now completed the Tasty Bytes Foundational Setup!</p>
+<p>The Table of Contents below will outline all of the available Tasty Bytes Quickstarts that leverage the foundation you just built.</p>
+<p class="image-container"><img src="img/a84d9cfd645f2656.png"></p>
+<h2 is-upgraded>Zero to Snowflake</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/index.html?index=..%2F..index" target="_blank">Cost Management</a></h3>
+<ul>
+<li>Learn about Snowflake Virtual Warehouses and their configurability, Resource Monitors, Account and Warehouse Level Timeout Parameters, and Exploring Cost.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/index.html?index=..%2F..index" target="_blank">Transformation</a></h3>
+<ul>
+<li>Learn about Snowflake Cloning, Caching, Table Manipulation, Time-Travel and Table level Swap, Drop and Undrop functionality.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/index.html?index=..%2F..index" target="_blank">Semi-Structured Data</a></h3>
+<ul>
+<li>Learn about Snowflake VARIANT Data Type, Semi-Structured Data Processing via Dot and Bracket Notation and Lateral Flattening, Array Functions, View creation, and Snowsight Charting.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index" target="_blank">Governance with Snowflake Horizon</a></h3>
+<ul>
+<li>Learn about Snowflake System Defined Roles, Role Based Access Control, Tag Based Masking, Policies (Row-Access, Aggregation, and Projection), Data Classification, Access History and Universal Search.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/index.html?index=..%2F..index" target="_blank">Collaboration</a></h3>
+<ul>
+<li>Learn about the Snowflake Marketplace by leveraging free, instantly available, live data from Weathersource to conduct data driven analysis harmonizing first and third party sources.</li>
+</ul>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/index.html?index=..%2F..index" target="_blank">Geospatial</a></h3>
+<ul>
+<li>Learn Snowflake&#39;s Geospatial capabilities, beginning with obtaining free, real-time data from SafeGraph. Progress through creating geographic points (ST_POINT), measuring distances (ST_DISTANCE), aggregating coordinates (ST_COLLECT), establishing a Minimum Bounding Polygon (ST_ENVELOPE), determining areas (ST_AREA), identifying central points (ST_CENTROID), and executing advanced Geospatial Analysis using the H3 (Hexagonal Hierarchical Geospatial Indexing System).</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Other Tasty Bytes Quickstarts</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index" target="_blank">Extracting Insights from Unstructured Data using DocumentAI</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index" target="_blank">Customer Reviews Analytics using Snowflake Cortex</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index" target="_blank">Tasty Bytes - Snowpark 101 for Data Science</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/index.html?index=..%2F..index" target="_blank">Developing React Native Applications using Snowflake Hybrid Tables</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/developing_tasty_bytes_react_native_application_with_snowflake_sql_api/index.html?index=..%2F..index" target="_blank">Tasty Bytes - Developing React Native Data Application with SQL API</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/index.html?index=..%2F..index" target="_blank">Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_working_with_iceberg_tables/index.html?index=..%2F..index" target="_blank">Tasty Bytes - Working with Iceberg Tables</a></h3>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

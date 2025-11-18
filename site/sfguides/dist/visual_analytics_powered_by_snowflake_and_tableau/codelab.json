@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "visual_analytics_powered_by_snowflake_and_tableau",
+  "duration": 42,
+  "title": "Visual Analytics Powered by Snowflake and Tableau",
+  "summary": "Visual Analytics Powered by Snowflake and Tableau",
+  "source": "visual_analytics_powered_by_snowflake_and_tableau/visual_analytics_powered_by_snowflake_and_tableau.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "datacollaboration",
+    "dataengineering",
+    "datelake",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "visual_analytics_powered_by_snowflake_and_tableau"
+}

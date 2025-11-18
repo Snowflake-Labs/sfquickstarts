@@ -1,0 +1,226 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowpark for Python and Feast</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_feast_snowflake"
+                  title="Getting Started with Snowpark for Python and Feast"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="6">
+        <p>In this guide, we&#39;ll be walking you through how to setup the integration between <a href="https://docs.feast.dev/" target="_blank">Feast</a> and Snowflake to use Snowflake as the batch engine to perform push-down processing of data to create offline feature store. We will also be using Snowflake as an online feature store, however, configuration of Feast could be updated to easily use any Feast supported database for online feature serving.</p>
+<p>For both offline and online feature generation, all the operations would be pushed down on Snowflake where the source data exists. You will be able to leverage Snowflake&#39;s scalable compute to process large volumes of data and serve the features for various use cases without moving the data out of Snowflake, unless explicitly specified.</p>
+<p class="image-container"><img src="img/cd65a70b93a457cc.jpeg"></p>
+<p>In this guide, we will be:</p>
+<ol type="1">
+<li>Setting up your python environment to run Snowpark Python</li>
+<li>Loading and transforming data into Snowflake using Snowpark</li>
+<li>Setting up Feast with Snowflake</li>
+<li>Using Snowpark and Feast to walk through an end-to-end Machine Learning use case.</li>
+</ol>
+<p>The source code for this quickstart is available on <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-feast" target="_blank">GitHub</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Working knowledge of <a href="https://www.udemy.com/course/data-analysis-with-python-and-pandas/" target="_blank">Python</a></li>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a></li>
+<li>Familiarity with Git/GitHub</li>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html?index=..%2F..index#0" target="_blank">Snowpark Python</a></li>
+<li>Familiarity with <a href="https://docs.feast.dev/getting-started/architecture-and-components/overview" target="_blank">Feast feature store concepts</a> and <a href="https://docs.feast.dev/getting-started/architecture-and-components/overview" target="_blank">Feast feature store architecture</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Loading and transforming data using Snowpark Python</li>
+<li>Setting up Feast to use Snowflake as the batch engine, online store and offline store</li>
+<li>Use Offline store to create training dataset</li>
+<li>Train the model using the offline feature store</li>
+<li>Use online store to extract a feature vector and unit test the model inference</li>
+<li>Perform Model validation</li>
+<li>Deploy the model on Snowflake for batch inference</li>
+<li>Perform batch scoring of data using the deployed model</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account with <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">Anaconda Integration enabled by ORGADMIN</a> - if you do not already have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a></li>
+<li>A Snowflake login with the <code>ACCOUNTADMIN</code> role. If you have this role in your corporate environment, you may choose to use it directly. If not, you will either need to (1) register for a free trial account above, (2) use a different role that has the ability to create and use a database, schema and tables, and UDFs (edit the <code>config.py</code> file and Jupyter notebooks to use this alternative role), OR (3) use an existing database and schema in which you can create tables and UDFs (edit the <code>config.py</code> file and notebook to use that role, database, and schema). If you&#39;re confused, it is best to just sign up for a free Enterprise-level trial account via the link above.</li>
+<li>Python 3.8</li>
+<li>Jupyter Notebook</li>
+<li>ADMIN access on your working machine to install Snowpark, Feast and required dependencies.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end data science workflow leveraging Snowpark for Python to load, clean and prepare data, Feast to use the data and create online and offline feature stores utilising Snowflake infrastructure for required data processing, build a model using offline store, and lastly, deploy our trained model in Snowflake using Python UDF for inference.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use-Case: Predicting Customer Churn" duration="2">
+        <p>You are part of a team of data engineers and data scientists at a Telecom company that has been tasked to reduce customer churn using a machine learning based solution.</p>
+<p>To build this, you have access to customer demographic and billing data. Using Snowpark, we will ingest, analyse and transform this data to train a model that will then be deployed inside Snowflake to score new data.</p>
+<p class="image-container"><img src="img/80dc15196a8d2946.png"></p>
+<p>With Snowflake, it is easy to make all relevant data instantly accessible to your machine learning models whether it is for training or inference. For this guide, we are going to do all of our data and feature engineering with Snowpark for Python but users can choose to work with SQL or any of the other Snowpark supported languages including Java and Scala without the need for separate environments.</p>
+<p>To streamline your path to production, we will learn how to bring trained models (whether trained inside Snowflake or in an external environment) to run directly inside Snowflake as a UDF bringing models where the data and data pipelines live.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup - Snowpark Python" duration="5">
+        <p>Let&#39;s set up the Python environment necessary to run this quickstart:</p>
+<ol type="1">
+<li>First, clone the source code for this repo to your local environment:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-feast.git
+cd sfguide-getting-started-snowpark-python-feast/
+</code></pre>
+<h2 is-upgraded>Snowpark Python via Anaconda</h2>
+<ol type="1" start="2">
+<li>If you are using <a href="https://www.anaconda.com/python-r-distribution?utm_campaign=python&utm_medium=online-advertising&utm_source=google&utm_content=anaconda-download&gclid=Cj0KCQjwnNyUBhCZARIsAI9AYlFtPjClvSFJ8hUR4_IAtlQiDbNOm1QwqIzwf_bQvduX_OmrS8wtz5QaAhi8EALw_wcB" target="_blank">Anaconda</a> on your local machine, create a conda env for this quickstart:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">conda env create -f jupyter_env.yml
+conda activate getting_started_snowpark_python
+</code></pre>
+<p>Conda will automatically install <code>snowflake-snowpark-python</code> and all other dependencies for you.</p>
+<ol type="1" start="3">
+<li>Once Snowpark is installed, create a kernel for Jupyter:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">python -m ipykernel install --user --name=getting_started_snowpark_python
+</code></pre>
+<ol type="1" start="4">
+<li>Now, launch Jupyter Notebook on your local machine:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">jupyter notebook
+</code></pre>
+<ol type="1" start="5">
+<li>Open the <code>config.py</code> file located in the cloned git repository and modify with your account, username, and password information:</li>
+</ol>
+<p>Now, you are ready to get started with the notebooks. For the first and the third notebooks, make sure that you select the <code>getting_started_snowpark_python</code> kernel when running. You can do this by navigating to: <code>Kernel -> Change Kernel</code> and selecting <code>getting_started_snowpark_python</code> after launching each Notebook.</p>
+<h2 is-upgraded>Apple M1</h2>
+<p>There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL. Please refer to the Snowpark documentation to solve this issue: <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites" target="_blank">Issue with running Snowpark Python on Apple M1 chips</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Data Using Snowpark Python Client API" duration="10">
+        <p><strong>Persona</strong>: DBA/Platform Administrator/Data Engineer</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Establish the Snowpark Python session</li>
+<li>Create the database, schema, and warehouses needed for the remainder of the lab</li>
+<li>Load raw parquet data into Snowflake using Snowpark Python</li>
+<li>Process raw data into tables. This transformed data will be used as source for Feast Feature Store.</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-feast/blob/main/01-Load-Data-with-Snowpark.ipynb" target="_blank"><code>01-Load-Data-with-Snowpark</code></a> Jupyter notebook and run each of the cells to explore loading and transforming data with Snowpark Python.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup - Feast on Snowflake" duration="20">
+        <p><strong>Persona</strong>: ML Engineer/Data Scientist</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Install and Setup Feast on Snowflake</li>
+<li>Unit your Feast integration by creating Online and Offline Feature Stores</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-feast/blob/main/02-Install-and-Setup-Feast-Feature-Store.ipynb" target="_blank"><code>02-Install-and-Setup-Feast-Feature-Store</code></a> Jupyter notebook.</p>
+<p><strong>Note:</strong></p>
+<ol type="1">
+<li>There are required setup instructions in this notebook that require a terminal CLI for execution. In this notebook, you will be toggling between your notebook and the terminal window. Do not skip any instructions to ensure a successful setup.</li>
+<li>Feast repository is installed on your machine, that is used to setup this guide, as part of this setup.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build and Deploy ML Model using Snowpark Python and Feast" duration="15">
+        <p><strong>Persona</strong>: Data Scientist/ML Engineer</p>
+<p><strong>What You&#39;ll Do</strong>:</p>
+<ul>
+<li>Generate training dataset using offline feature store</li>
+<li>Train a model using the training dataset</li>
+<li>Materialize the online feature store</li>
+<li>Unit test the model using Feature vector generated using Online Feature Store</li>
+<li>Perform model validation</li>
+<li>Deploy the model into Snowflake for inference using Snowpark Python UDFs and SQL</li>
+</ul>
+<p>Open up the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-snowpark-python-feast/blob/main/03-Snowpark-UDF-Deployment.ipynb" target="_blank"><code>03-Snowpark-UDF-Deployment</code></a> Jupyter notebook and run each of the cells to train a model and deploy it for in-Snowflake inference using Snowpark Python UDFs</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>Through this Quickstart we were able to experience how Feast could be setup to utilise Snowflake as processing engine to create offline as well as offline feature stores. You experienced push down processing for the generation of offline and online features. This is particularly useful when you are dealing with very large datasets. Here&#39;s what you were able to complete:</p>
+<ul>
+<li>Load and transform data via Snowpark</li>
+<li>Setup up Feast on Snowflake</li>
+<li>Use Offline feature store to generate training dataset</li>
+<li>Materialise online feature store and use feature vector to unit test the trained model</li>
+<li>Deploy a trained machine learning model in Snowflake as Python UDF</li>
+<li>Run an inference using both Python as well as SQL language</li>
+</ul>
+<p>For more information on Snowpark Python, and Machine Learning in Snowflake, check out the following resources:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html" target="_blank">Snowpark Python API Docs</a></li>
+</ul>
+<p>For more information on Feast on Snowflake, check out the following resources:</p>
+<ul>
+<li><a href="https://docs.feast.dev/how-to-guides/feast-snowflake-gcp-aws" target="_blank">Running Feast with Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

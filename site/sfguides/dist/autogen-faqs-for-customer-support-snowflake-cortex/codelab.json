@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "autogen-faqs-for-customer-support-snowflake-cortex",
+  "duration": 80,
+  "title": "AutoGen FAQs for Customer Support with Snowflake Cortex",
+  "summary": "AutoGen FAQs for Customer Support with Snowflake Cortex",
+  "source": "autogen_faqs_for_customer_support_snowflake_cortex/autogen_faqs_for_customer_support_snowflake_cortex.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "customersupport",
+    "gettingstarted",
+    "snowflakecortex",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "autogen-faqs-for-customer-support-snowflake-cortex"
+}

@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_native_app",
+  "duration": 66,
+  "title": "Tasty Bytes - Snowflake Native Application",
+  "summary": "This is a Quickstart on how to build a Snowflake Native Application with Tasty Bytes.",
+  "source": "tasty_bytes_native_app/tasty_bytes_native_app.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "native-applications"
+  ],
+  "tags": [
+    "applications",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_native_app"
+}

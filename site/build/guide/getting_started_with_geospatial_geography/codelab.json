@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_geospatial_geography",
+  "duration": 120,
+  "title": "Getting Started with Geospatial - Geography",
+  "summary": "Getting Started with Geospatial - Geography",
+  "source": "getting_started_with_geospatial_geography/getting_started_with_geospatial_geography.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "geospatial",
+    "gettingstarted",
+    "sql",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_geospatial_geography"
+}

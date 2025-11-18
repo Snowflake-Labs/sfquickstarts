@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "terraforming_snowflake",
+  "duration": 41,
+  "title": "Terraforming Snowflake",
+  "authors": "Brad Culberson, Scott Winkler, François Vienneau Binette",
+  "summary": "Learn how to manage Snowflake using Terraform",
+  "source": "terraforming_snowflake/terraforming_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "app-development",
+    "devops"
+  ],
+  "tags": [
+    "dataapplications",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "terraform",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "terraforming_snowflake"
+}

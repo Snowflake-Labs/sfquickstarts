@@ -1,0 +1,298 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="finding-fraudulent-communities-with-neo4j"
+                  title="Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <h2 is-upgraded>What Is Neo4j Graph Analytics For Snowflake?</h2>
+<p>Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. <strong>Neo4j Graph Analytics for Snowflake</strong> brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake!</p>
+<h2 is-upgraded>Discovering Communities In P2P Fraud</h2>
+<p>P2P Fraud Losses are Skyrocketing. 8% of banking customers reported being victims of P2P Scams in the past year, and the average loss to these scams was $176.</p>
+<p>Finding different communities within P2P transactions is the first step towards identifying and ultimately ending P2P fraud.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>The Native App <a href="https://app.snowflake.com/marketplace/listing/GZTDZH40CN" target="_blank">Neo4j Graph Analytics</a> for Snowflake</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts" target="_blank">Snowflake account</a> with appropriate access to databases and schemas.</li>
+<li>Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below: <img alt="image" src="img/bb765f4d97e101ba.png"></li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A method to identify communities that are at high risk of fraud in P2P networks</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to prepare and project your data for graph analytics</li>
+<li>How to use community detection to identify fraud</li>
+<li>How to read and write directly from and to your snowflake tables</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Loading The Data" duration="5">
+        <p>Dataset overview : This dataset is modelled to design and analyze a peer to peer transaction network to identify fraudulent activity using graph analytics. <img alt="image" src="img/6e1be15d372035fe.png"></p>
+<p>Let&#39;s name our database <code>P2P_DEMO</code>. Using the CSVs found <a href="https://drive.google.com/drive/u/1/folders/1BnAnRSEfuwDvc4eQH8IRvy3tUkwOeaNf" target="_blank">here</a>, We are going to add two new tables:</p>
+<ul>
+<li>One called <code>P2P_TRANSACTIONS</code> based on the p2p_transactions.csv</li>
+<li>One called <code>P2P_USERS based</code> on p2p_users.csv</li>
+</ul>
+<p>Follow the steps found <a href="https://docs.snowflake.com/en/user-guide/data-load-web-ui" target="_blank">here</a> to load in your data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up" duration="0">
+        <h2 is-upgraded>Import The Notebook</h2>
+<ul>
+<li>We&#39;ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!</li>
+<li>Download the .ipynb found <a href="https://github.com/neo4j-product-examples/snowflake-graph-analytics/tree/main/QuickStarts/Python%20Notebooks" target="_blank">here</a>, and import the notebook into snowflake. <img alt="image" src="img/a89dc50996fda907.png"></li>
+<li>Don&#39;t forget to install streamlit and python package before you run.</li>
+</ul>
+<h2 is-upgraded>Permissions</h2>
+<p>Before we run our algorithms, we need to set the proper permissions. But before we get started granting different roles, we need to ensure that you are using <code>accountadmin</code> to grant and create roles. Lets do that now:</p>
+<pre><code language="language-sql" class="language-sql">-- you must be accountadmin to create role and grant permissions
+use role accountadmin;
+</code></pre>
+<p>Next let&#39;s set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the <code>p2p_demo.public schema</code>. It creates a consumer role (gds_user_role) for users and administrators, grants the Neo4j Graph Analytics application access to read from and write to tables and views, and ensures that future tables are accessible.</p>
+<p>It also provides the application with access to the required compute pool and warehouse resources needed to run graph algorithms at scale.</p>
+<pre><code language="language-sql" class="language-sql">USE SCHEMA P2P_DEMO.PUBLIC;
+
+-- Create a consumer role for users and admins of the Neo4j Graph Analytics application
+CREATE ROLE IF NOT EXISTS gds_user_role;
+GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_user_role;
+
+CREATE DATABASE ROLE IF NOT EXISTS gds_db_role;
+GRANT DATABASE ROLE gds_db_role TO ROLE gds_user_role;
+GRANT DATABASE ROLE gds_db_role TO APPLICATION neo4j_graph_analytics;
+
+-- Grant access to consumer data
+GRANT USAGE ON DATABASE P2P_DEMO TO ROLE gds_user_role;
+GRANT USAGE ON SCHEMA P2P_DEMO.PUBLIC TO ROLE gds_user_role;
+
+-- Required to read tabular data into a graph
+GRANT SELECT ON ALL TABLES IN DATABASE P2P_DEMO TO DATABASE ROLE gds_db_role;
+
+-- Ensure the consumer role has access to created tables/views
+GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT CREATE TABLE ON SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT CREATE VIEW ON SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON ALL VIEWS IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE gds_db_role;
+
+-- Compute and warehouse access
+GRANT USAGE ON WAREHOUSE GDSONSNOWFLAKE TO APPLICATION neo4j_graph_analytics;
+</code></pre>
+<p>Now we will switch to the role we just created:</p>
+<pre><code language="language-sql" class="language-sql">use role gds_user_role;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleaning Our Data" duration="5">
+        <p>We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:</p>
+<h2 is-upgraded>For The Table Representing Nodes:</h2>
+<p>The first column should be called <code>nodeId</code>, which represents the ids for the each node in our graph</p>
+<h2 is-upgraded>For The table Representing Relationships:</h2>
+<p>We need to have columns called <code>sourceNodeId</code> and <code>targetNodeId</code>. These will tell Graph Analytics the direction of the transaction, which in this case means:</p>
+<ul>
+<li>Who sent the money (sourceNodeId) and</li>
+<li>Who received it (targetNodeId)</li>
+<li>We also include a total_amount column that acts as the weights in the relationship</li>
+</ul>
+<p>We are going to use aggregated transactions for our relationships. Let&#39;s create that table now:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE p2p_demo.public.P2P_AGG_TRANSACTIONS (
+	SOURCENODEID NUMBER(38,0),
+	TARGETNODEID NUMBER(38,0),
+	TOTAL_AMOUNT FLOAT
+) AS
+SELECT sourceNodeId, targetNodeId, SUM(transaction_amount) AS total_amount
+FROM p2p_demo.public.P2P_TRANSACTIONS
+GROUP BY sourceNodeId, targetNodeId;
+SELECT * FROM p2p_demo.public.P2P_AGG_TRANSACTIONS;
+</code></pre>
+<p>We are also going to create a view that just has the unique <code>nodeId</code>s from the <code>p2p_demo</code> table and use that as the nodes when we project the graph in the next step:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE VIEW p2p_users_vw (nodeId) AS
+    SELECT DISTINCT p2p_demo.public.p2p_users.NODEID as nodeid
+    FROM p2p_users;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running Your Algorithms" duration="10">
+        <p>Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.</p>
+<p>You can find more information about writing this function in our <a href="https://neo4j.com/docs/snowflake-graph-analytics/current/getting-started/" target="_blank">documentation</a>.</p>
+<p>You can use this code block as an outline of what you need to fill in:</p>
+<pre><code>CALL neo4j_graph_analytics.graph.louvain(&#39;COMPUTE_POOL&#39;, {
+    &#39;project&#39;: {
+        &#39;nodeTables&#39;: [&#39;EXAMPLE_DB.DATA_SCHEMA.NODES&#39;],
+        &#39;relationshipTables&#39;: {
+            &#39;EXAMPLE_DB.DATA_SCHEMA.RELATIONSHIPS&#39;: {
+                &#39;sourceTable&#39;: &#39;EXAMPLE_DB.DATA_SCHEMA.NODES&#39;,
+                &#39;targetTable&#39;: &#39;EXAMPLE_DB.DATA_SCHEMA.NODES&#39;,
+                &#39;orientation&#39;: &#39;NATURAL&#39;
+            }
+        }
+    },
+    &#39;compute&#39;: { &#39;consecutiveIds&#39;: true },
+    &#39;write&#39;: [{
+        &#39;nodeLabel&#39;: &#39;NODES&#39;,
+        &#39;outputTable&#39;: &#39;EXAMPLE_DB.DATA_SCHEMA.NODES_COMPONENTS&#39;
+    }]
+});
+</code></pre>
+<p>But broadly, you will need a few things:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Name</p>
+</td><td colspan="1" rowspan="1"><p>Description</p>
+</td><td colspan="1" rowspan="1"><p>Our Value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>EXAMPLE_DB.DATA_SCHEMA.NODES</code></p>
+</td><td colspan="1" rowspan="1"><p>A table for nodes</p>
+</td><td colspan="1" rowspan="1"><p><code>p2p_demo.public.p2p_users_vw</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>EXAMPLE_DB.DATA_SCHEMA.RELATIONSHIPS</code></p>
+</td><td colspan="1" rowspan="1"><p>A table for relationships</p>
+</td><td colspan="1" rowspan="1"><p><code>p2p_demo.public.P2P_AGG_TRANSACTIONS</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>COMPUTE_POOL</code></p>
+</td><td colspan="1" rowspan="1"><p>The size of the compute pool you would like to use</p>
+</td><td colspan="1" rowspan="1"><p><code>CPU_X64_XS</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>EXAMPLE_DB.DATA_SCHEMA.NODES_COMPONENTS</code></p>
+</td><td colspan="1" rowspan="1"><p>A table to output results</p>
+</td><td colspan="1" rowspan="1"><p><code>p2p_demo.public.p2p_users_vw_lou</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>NODES</code></p>
+</td><td colspan="1" rowspan="1"><p>A node label for our nodes</p>
+</td><td colspan="1" rowspan="1"><p><code>p2p_users_vw</code></p>
+</td></tr>
+</table>
+<pre><code language="language-sql" class="language-sql">CALL neo4j_graph_analytics.graph.louvain(&#39;CPU_X64_XS&#39;, {
+    &#39;project&#39;: {
+        &#39;nodeTables&#39;: [&#39;p2p_demo.public.p2p_users_vw&#39;],
+        &#39;relationshipTables&#39;: {
+            &#39;p2p_demo.public.P2P_AGG_TRANSACTIONS&#39;: {
+                &#39;sourceTable&#39;: &#39;p2p_demo.public.p2p_users_vw&#39;,
+                &#39;targetTable&#39;: &#39;p2p_demo.public.p2p_users_vw&#39;,
+                &#39;orientation&#39;: &#39;NATURAL&#39;
+            }
+        }
+    },
+    &#39;compute&#39;: { &#39;consecutiveIds&#39;: true, &#39;relationshipWeightProperty&#39;:&#39;TOTAL_AMOUNT&#39;},
+    &#39;write&#39;: [{
+        &#39;nodeLabel&#39;: &#39;p2p_users_vw&#39;,
+        &#39;outputTable&#39;: &#39;p2p_demo.public.p2p_users_vw_lou&#39;
+    }]
+});
+</code></pre>
+<p>Our resulting table assigns a community id to each node based on their connections to other nodes in the graph.</p>
+<pre><code language="language-sql" class="language-sql">SELECT community, COUNT(*) AS community_size, 
+FROM p2p_demo.public.p2p_users_vw_lou
+GROUP BY community
+ORDER BY community_size DESC;
+</code></pre>
+<p>We can then use then add in the <code>fraud_transfer_flag</code> (which was provided by the vendor) to our communities to see if users in that community are at greater risk for fraud:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+  l.community,
+  COUNT(*) AS community_size,
+  SUM(n.fraud_transfer_flag) AS fraud_count
+FROM
+  p2p_users_vw_lou l
+JOIN
+  p2p_users n
+ON
+  l.nodeId = n.nodeId
+GROUP BY
+  l.community
+ORDER BY
+  community_size DESC, fraud_count DESC;
+</code></pre>
+<p>You can use plotly as a visualization package and explore more. Nodes that cluster closely represent communities of highly interconnected users. You can immediately spot the tight clusters (possible fraud rings) versus the loosely connected periphery. Find more on exploratory analysis and demos <a href="https://github.com/neo4j-product-examples/snowflake-graph-analytics" target="_blank">here</a>. <img alt="image" src="img/c43f4c3b08dcb7e4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusions And Resources" duration="2">
+        <p>In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>By working with a P2P transaction dataset, you were able to:</p>
+<ol type="1">
+<li>Set up the <a href="https://app.snowflake.com/marketplace/listing/GZTDZH40CN/neo4j-neo4j-graph-analytics" target="_blank">Neo4j Graph Analytics</a> application within Snowflake.</li>
+<li>Prepare and project your data into a graph model (users as nodes, transactions as relationships).</li>
+<li>Ran Louvain community detection to identify clusters of users with high internal interaction.</li>
+</ol>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://neo4j.com/docs/snowflake-graph-analytics/" target="_blank">Neo4j Graph Analytics Documentation</a></li>
+<li><a href="https://neo4j.com/docs/snowflake-graph-analytics/installation/" target="_blank">Installing Neo4j Graph Analytics on SPCS</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "visual_data_stories_with_snowflake_notebooks",
+  "duration": 31,
+  "title": "A Guide to Visual Data Storytelling in Snowflake Notebooks",
+  "summary": "This guide provides the instructions on how to build visualizations in Snowflake Notebook.",
+  "source": "visual_data_stories_with_snowflake_notebooks/visual_data_stories_with_snowflake_notebooks.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "visual_data_stories_with_snowflake_notebooks"
+}

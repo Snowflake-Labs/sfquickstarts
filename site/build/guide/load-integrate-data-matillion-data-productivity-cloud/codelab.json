@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "load-integrate-data-matillion-data-productivity-cloud",
+  "duration": 42,
+  "title": "Getting Started with Matillion Data Productivity Cloud",
+  "summary": "Load and Integrate data from multiple sources using the Matillion Data Productivity Cloud",
+  "source": "load-integrate-data-matillion-data-productivity-cloud/load-integrate-data-matillion-data-productivity-cloud.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "dataintegration",
+    "datatransformation",
+    "gettingstarted",
+    "matillion",
+    "partner",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "load-integrate-data-matillion-data-productivity-cloud"
+}

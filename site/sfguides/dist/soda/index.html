@@ -1,0 +1,323 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data Quality Testing with Soda</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="soda"
+                  title="Data Quality Testing with Soda"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img alt="soda-data-quality" src="img/ab4e88e09091da48.png"></p>
+<p>Is Soda the data quality testing solution you&#39;ve been looking for? 🥤Take a sip and see!  Use this guide to install Soda, connect it to your Snowflake data source, and run a simple Soda scan for data quality.</p>
+<p>Soda is a tool that enables Data Engineers to test data for quality where and when they need to.</p>
+<p>Is your data fresh? Is it complete or missing values? Are there unexpected duplicate values? Did something go wrong during transformation? Are all the data values valid? These are the questions that Soda answers for Data Engineers.</p>
+<ul>
+<li>Use Soda with GitHub Actions to test data quality during CI/CD development.</li>
+<li>Use it with Airflow to test data quality after ingestion and transformation in your pipeline.</li>
+<li>Import your dbt tests into the Soda Cloud to facilitate issue investigation and track dataset health over time.</li>
+<li>Integrate Soda with your data catalog to gauge dataset health from within the catalog.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>This guide assumes you are comfortable using the command-line.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to install Soda from the command line</li>
+<li>How to connect Soda to Snowflake</li>
+<li>How to create and connect a Soda Cloud account</li>
+<li>How to write checks to test for data quality</li>
+<li>How to run a scan and see test results in the CLI and in Soda Cloud</li>
+</ul>
+<h2 is-upgraded>What You Need</h2>
+<ul>
+<li>You have installed <a href="https://www.python.org/downloads/" target="_blank">Python 3.8</a> or greater.</li>
+<li>You have installed Pip 21.0 or greater.</li>
+<li>You have installed a code editor such as <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a> or <a href="https://www.sublimetext.com/" target="_blank">Sublime</a>.</li>
+<li>You have a Snowflake Account. If not, <a href="https://trial.snowflake.com/?owner=SPN-PID-420074" target="_blank">start a free trial</a>!</li>
+<li>You have a Snowflake database that contains data.</li>
+<li>You have login credentials for your Snowflake database.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>You&#39;ll have a set of data quality tests and a means to execute them against your data in Snowflake.</li>
+<li>You&#39;ll have a Soda Cloud account that enables you to set up alert notifications, access visualized scan results that track trends in data quality over time, and invite colleagues to join your data quality testing efforts.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="How Soda Works" duration="2">
+        <p>Soda works by taking the data quality checks that you prepare and using them to run a scan of datasets in a data source. A scan is a CLI command which instructs Soda to prepare optimized SQL queries that execute data quality checks on your data source to find invalid, missing, or unexpected data. When checks fail, they surface bad-quality data and present check results that help you investigate and address quality issues.</p>
+<p>To test your data quality, you install the <strong>Soda Library CLI tool</strong> and sign up for a <strong>Soda Cloud account</strong> so that you can complete the following tasks:</p>
+<ul>
+<li><strong>Connect to your data source</strong> To connect to your Snowflake data source, you use a <code>configuration.yml</code> file which stores access details for your data source such as host, port, and data source login credentials.</li>
+<li><strong>Define checks to surface &#34;bad&#34; data</strong> To define the data quality checks that Soda runs against a dataset, you use a <code>checks.yml</code> file. A Soda Check is a test that Soda performs when it scans a dataset in your data source. The checks YAML file stores the checks you write using the Soda Checks Language (SodaCL), a domain-specific language for data quality testing.</li>
+<li><strong>Run a scan to execute your data quality checks</strong> During a scan, Soda does not ingest your data, it only scans it for quality metrics, then uses the metadata to prepare scan results. (An exception to this rule is when Soda collects failed row samples that it presents in scan output to aid with issue investigation, a feature you can limit or disable.) <br>After a scan, each check results in one of three default states: <ul>
+<li>pass: the values in the dataset match or fall within the thresholds you specified</li>
+<li>fail: the values in the dataset do not match or fall within the thresholds you specified</li>
+<li>error: the syntax of the check is invalid, or there are runtime or credential errors</li>
+<li>A fourth state, warn, is something you can explicitly configure for individual checks.</li>
+</ul>
+</li>
+<li><strong>Review scan results and investigate issues</strong> You can review the scan output in the command-line and in your Soda Cloud account. Add API keys to the same <code>configuration.yml</code> file to push check results to your account so you can access visualized scan results, set alert notifications, track trends in data quality over time, and integrate with the messaging, ticketing, and data cataloging tools you already use, like Slack, Jira, and Alation.</li>
+</ul>
+<p>Add Soda data quality checks to your <strong>data pipeline</strong> to prevent downstream issues.</p>
+<p class="image-container"><img alt="data-pipeline" src="img/2dcbde6e19d4c738.png"></p>
+<p>Use GitHub Actions to add automated Soda data quality checks to your <strong>development workflow</strong> to prevent merging issues into production.</p>
+<p class="image-container"><img alt="dev-workflow" src="img/7d6ef3a1a67c31d7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install Soda" duration="2">
+        <ol type="1">
+<li>In your command-line interface, create a Soda project directory in your local environment, then navigate to the directory. <pre><code language="language-shell" class="language-shell">mkdir soda_sip
+cd soda_sip
+</code></pre>
+</li>
+<li>Best practice dictates that you install the Soda using a virtual environment. In your command-line interface, create a virtual environment in a <code>.venv</code> directory. <pre><code>python3 -m venv .venv
+</code></pre>
+</li>
+<li>Activate the virtual environment. <pre><code language="language-shell" class="language-shell">source .venv/bin/activate
+</code></pre>
+</li>
+<li>Execute the following command to install the Soda package for Snowflake in your virtual environment. <pre><code language="language-shell" class="language-shell">pip install -i https://pypi.cloud.soda.io soda-snowflake
+</code></pre>
+</li>
+<li>Validate the installation. <pre><code language="language-shell" class="language-shell">soda --help
+</code></pre>
+<pre><code language="language-shell" class="language-shell"># Example output
+Usage: soda [OPTIONS] COMMAND [ARGS]...
+
+  Soda Library CLI version 1.0.0, Soda Core CLI version 3.0.39
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  ingest           Ingests test results from a different tool
+  scan             Runs a scan
+  suggest          Generates suggestions for a dataset
+  test-connection  Tests a connection
+  update-dro       Updates contents of a distribution reference file
+</code></pre>
+</li>
+</ol>
+<p>To exit the virtual environment when you are done with this tutorial, use the command <code>deactivate</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Soda to Snowflake" duration="8">
+        <p>To connect Soda to Snowflake, you use a <code>configuration.yml</code> file which stores access details for your data source.</p>
+<p>This guide also instructs you to connect to a Soda Cloud account using API keys that you create and add to the same <code>configuration.yml</code> file. Available for free as a 45-day trial, your Soda Cloud account gives you access to visualized scan results, tracks trends in data quality over time, enables you to set alert notifications, and much more.</p>
+<ol type="1">
+<li>In a code editor such as Sublime or Visual Studio Code, create a new file called <code>configuration.yml</code> and save it in your <code>soda_sip</code> directory.</li>
+<li>Copy and paste the connection configuration details for Snowflake as in the example below.</li>
+</ol>
+<ul>
+<li>Replace <code>my_datasource_name</code> with the name of your own Snowflake data source.</li>
+<li>Replace the values for each parameter with your own Snowflake-specific values. Refer to <a href="https://go.soda.io/connect-snowflake" target="_blank">Soda documentation</a> for details. <pre><code language="language-yaml" class="language-yaml"> data_source my_datasource_name:
+   type: snowflake
+   connection:
+     username: ${SNOWFLAKE_USER}
+     password: ${SNOWFLAKE_PASS}
+     account: plu449.us-west-1
+     database: sodadata_test
+     warehouse: compute_wh
+     role: analyst
+     session_parameters:
+       QUERY_TAG: soda-queries
+       QUOTED_IDENTIFIERS_IGNORE_CASE: false
+   schema: public
+</code></pre>
+</li>
+</ul>
+<ol type="1" start="3">
+<li>In a browser, navigate to <a href="https://cloud.soda.io/signup?utm_source=snowflake+quickstart" target="_blank">cloud.soda.io/signup</a> to create a new Soda account. If you already have a Soda account, log in.</li>
+<li>Navigate to <strong>your avatar</strong> &gt; <strong>Profile</strong>, then access the <strong>API keys</strong> tab. Click the plus icon to generate a new set of API keys. <img alt="create-api-keys" src="img/259959ce6970a5f2.png"></li>
+<li>Copy the <code>soda_cloud</code> syntax and paste into your <code>configuration.yml</code> file. Do not nest the <code>soda_cloud</code> syntax in the <code>data_source</code> block. <pre><code language="language-yaml" class="language-yaml"> data_source my_datasource_name:
+   type: snowflake
+   connection:
+     username: ${SNOWFLAKE_USER}
+     password: ${SNOWFLAKE_PASS}
+     ...
+
+ soda_cloud:
+    host: cloud.soda.io
+    api_key_id: 2ca***4679
+    api_key_secret: 1iDldq***vhg
+</code></pre>
+</li>
+<li>Save the <code>configuration.yml</code> file and close the API modal in your Soda account.</li>
+<li>From the command-line, in the virtual environment in the <code>soda_sip</code> directory, run the following command to test Soda&#39;s connection to Snowflake, replacing the value of <code>my_datasource_name</code> with the name of your Snowflake data source. <pre><code language="language-shell" class="language-shell">soda test-connection -d my_datasource_name -c configuration.yml
+</code></pre>
+<pre><code language="language-shell" class="language-shell"># Example output
+Soda Library 1.0.0
+Soda Core 3.0.39
+Successfully connected to &#39;adventureworks&#39;.
+Connection &#39;adventureworks&#39; is valid.
+</code></pre>
+Need help? Ask the <a href="https://go.soda.io/slack" target="_blank">Soda community on Slack</a>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write data quality checks and run a scan" duration="6">
+        <p>A check is a test that Soda executes when it scans a dataset in your data source. The <code>checks.yml</code> file stores the checks you write using the <a href="https://go.soda.io/sodacl" target="_blank">Soda Checks Language (SodaCL)</a>. You can create multiple checks.yml files to organize your data quality checks and run all, or some of them, at scan time.</p>
+<ol type="1">
+<li>In the same <code>soda_sip</code> directory, create another file named <code>checks.yml</code>.</li>
+<li>Open the <code>checks.yml</code> file in your code editor, then copy and paste the following rather generic checks into the file. Note that the <code>row_count</code> check is written to fail to demonstrate what happens when a data quality check fails.</li>
+</ol>
+<ul>
+<li>Replace the value of <code>dataset_name</code> with the name of a dataset in your Snowflake data source.</li>
+<li>Replace the value of <code>column1</code> with the name of a column in the dataset. <pre><code language="language-yaml" class="language-yaml">   checks for dataset_name:
+   # Checks that dataset contains fewer than 2 rows; written to fail
+     - row_count &lt; 2:
+         name: Dataset is unreasonably small
+   # Checks that column contains no NULL values
+     - missing_count(column1) = 0:
+         name: No NULL values
+   # Checks for columns removed or added, or changed type or index 
+     - schema:
+         warn:
+           when schema changes: any
+         name: No changes to schema
+</code></pre>
+</li>
+</ul>
+<ol type="1" start="3">
+<li>Save the <code>checks.yml</code> file, then, from the command-line, use the following command to run a scan. A scan is a CLI command which instructs Soda to prepare SQL queries that execute data quality checks on your data source. As input, the command requires:</li>
+</ol>
+<ul>
+<li><code>-d</code> the name of the data source to scan; replace <code>my_datasource_name</code> with your Snowflake data source name</li>
+<li><code>-c</code> the filepath and name of the <code>configuration.yml</code> file</li>
+<li>the filepath and name of the <code>checks.yml</code> file <pre><code language="language-shell" class="language-shell">soda scan -d my_datasource_name -c configuration.yml checks.yml
+</code></pre>
+<pre><code language="language-shell" class="language-shell"># Example output
+Soda 1.0.0
+Soda Core 3.0.39
+By downloading and using Soda Library, you agree to Sodas Terms &amp; Conditions (https://go.soda.io/t&amp;c) and Privacy Policy (https://go.soda.io/privacy). 
+Sending failed row samples to Soda Cloud
+Scan summary:
+3/5 checks PASSED: 
+ dim_customer in adventureworks
+ No changes to schema [PASSED]
+ Emails formatted correctly [PASSED]
+ No null values for last name [PASSED]
+2/5 checks FAILED: 
+ dim_customer in adventureworks
+ No duplicate phone numbers [FAILED]
+   check_value: 715
+ Data is fresh [FAILED]
+   max_column_timestamp: 2014-01-28 23:59:59.999999
+   max_column_timestamp_utc: 2014-01-28 23:59:59.999999+00:00
+   now_variable_name: NOW
+   now_timestamp: 2023-04-24T21:02:15.900007+00:00
+   now_timestamp_utc: 2023-04-24 21:02:15.900007+00:00
+   freshness: 3372 days, 21:02:15.900008
+Oops! 2 failures. 0 warnings. 0 errors. 3 pass.
+Sending results to Soda Cloud
+Soda Cloud Trace: 4417******32502
+</code></pre>
+Need help? Ask the <a href="https://go.soda.io/slack" target="_blank">Soda community on Slack</a>.<br></li>
+</ul>
+<ol type="1" start="4">
+<li>As you can see from the CLI output, some checks failed and Soda sent the results to your Soda Cloud account. To access visualized check results and further examine the failed checks, return to your Soda account in your browser and click <strong>Checks</strong>. <img alt="quick-sip-results" src="img/c8ad85ad25e65455.png"></li>
+<li>In the table of check results Soda displays, you can click the line item for one of the checks that failed to examine the visualized results in a line graph, and to access the failed row samples that Soda automatically collected when it ran the scan and executed the checks. <img alt="check-result" src="img/9db277e24ed83547.png"></li>
+</ol>
+<p>✨Well done!✨ You&#39;ve taken the first step towards a future in which you and your colleagues can trust the quality and reliability of your data. Huzzah!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <p>Now that you have seen Soda in action, learn more about how and where to integrate data quality into your existing workflows and pipelines.</p>
+<h2 is-upgraded>Choose Your Adventure</h2>
+<ul>
+<li><a href="https://go.soda.io/cicd" target="_blank">Test data during development</a></li>
+<li><a href="https://go.soda.io/pipeline" target="_blank">Test data in your pipeline</a></li>
+<li><a href="https://go.soda.io/self-serve" target="_blank">Enable end-user testing</a></li>
+</ul>
+<h2 is-upgraded>Experiment</h2>
+<ul>
+<li><a href="https://go.soda.io/sodacl-quick-start" target="_blank">SodaCL tutorial</a></li>
+<li><a href="https://go.soda.io/metric_check_configurations" target="_blank">Discover 25+ built-in Soda metrics and checks</a></li>
+<li><a href="https://go.soda.io/compare" target="_blank">Compare your data</a></li>
+</ul>
+<h2 is-upgraded>Sip More Soda</h2>
+<ul>
+<li><a href="https://go.soda.io/integrate-slack" target="_blank">Integrate with Slack</a></li>
+<li><a href="https://go.soda.io/alerts" target="_blank">Add alert notification rules</a></li>
+<li><a href="https://go.soda.io/soda-dbt" target="_blank">Integrate with dbt</a></li>
+<li><a href="https://go.soda.io/reporting-api" target="_blank">Report on data health</a></li>
+</ul>
+<h2 is-upgraded>Need help?</h2>
+<ul>
+<li><a href="https://www.soda.io/schedule-a-demo" target="_blank">Request a demo.</a> Hey, what can Soda do for you?</li>
+<li>Join the <a href="https://go.soda.io/slack" target="_blank">Soda community on Slack</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

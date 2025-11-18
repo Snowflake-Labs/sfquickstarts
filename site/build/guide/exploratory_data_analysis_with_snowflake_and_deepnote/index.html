@@ -1,0 +1,148 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Exploratory Data Analysis with Snowflake and Deepnote</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="exploratory_data_analysis_with_snowflake_and_deepnote"
+                  title="Exploratory Data Analysis with Snowflake and Deepnote"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Deepnote brings Python and SQL into a collaborative data science notebook, along with a suite of low-code tools and tight integration with Snowflake. Altogether, Deepnote and Snowflake reduce the &#34;time to insight&#34; for teams as they explore their data.</p>
+<p class="image-container"><img alt="img" src="img/df8b43e2b544e4a7.png"></p>
+<p>In this quick-start guide, we will build an accelerated EDA workflow with Deepnote and Snowflake. Specifically, we look at various methods for effectively cleaning and visualizing weather readings; however, the techniques used can be applied more generally to any dataset used within Deepnote.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with basic Python and SQL</li>
+<li>Familiarity with data science notebooks</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>This guide will walk you through a generalizable workflow for exploratory data analysis (EDA) using Deepnote and Snowflake. You will learn how to combine Python, SQL, and low-code solutions to complete common EDA tasks—including data wrangling and interactive data visualization.</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://deepnote.com/sign-up?utm_source=eda_with_snowflake_and_deepnote&utm_medium=snowflake_quickstart" target="_blank">Deepnote account</a></li>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake account</a> with admin access</li>
+<li>The <a href="https://drive.google.com/file/d/127iMXdC3ZYdfrlqAFLm2pPORZ6tGj_wM/view?usp=sharing" target="_blank">weather dataset</a> uploaded to your Snowflake database (uploading instructions <a href="https://docs.snowflake.com/en/user-guide/script-data-load-transform-parquet.html" target="_blank">here</a>)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will use the EDA tools in Deepnote to explore weather patterns in New York city. By the end of the guide, you will have created a notebook that contains generalizable techniques—and one that demonstrates how Snowflake and Deepnote work together to solve the hardest data analysis problems.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup a Snowflake integration inside Deepnote" duration="1">
+        <p>To connect a Snowflake database to a Deepnote project, open the Snowflake integration modal and supply the associated Snowflake credentials (i.e., account, username, password). Note that the connection parameters to Snowflake are stored in the notebook as Python environment variables but can only be viewed by the workspace Admin.</p>
+<p class="image-container"><img alt="img" src="img/3bee7ca79b3615ba.png"></p>
+<p>Once you are connected, you will be able to browse your schema directly from Deepnote and query your tables with SQL blocks (described below).</p>
+<p class="image-container"><img alt="img" src="img/80cc25af473a34c1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Snowflake with Deepnote&#39;s SQL blocks" duration="3">
+        <p>Similar to Python code cells used in Jupyter notebooks, Deepnote also includes native SQL cells which include syntax highlighting and autocomplete based on the Snowflake schema. Hover your mouse on the border of block, click the ➕ sign, and select your Snowflake SQL block from the list. Now you can write SQL as you would in a standard SQL editor as shown below.</p>
+<p>Notice that in the example below we can already start exploring the weather data via the rich DataFrame display. This includes being able to use filters, sorting, pagination, as well as examining histograms, ratios of values, and data types. Importantly, the results set is saved to a Pandas DataFrame (in this case <code>df</code>)—meaning that you can continue using Pandas or any other tool in the Python library ecosystem to further explore the data.</p>
+<p class="image-container"><img alt="img" src="img/c5cd5a2496544bd.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Mix-and-match Python and SQL" duration="3">
+        <p>SQL queries in Deepnote also support the JinjaSQL templating language. This allows users to pass Python variables <strong>directly into SQL queries</strong> as well as use jinja-style control structures (conditionals and loops) for supplementing standard SQL.</p>
+<p>In the example below, weather stations are filtered in the <code>WHERE</code> clause by passing in the python list called <code>station_list</code> rather than having to list them all out manually.</p>
+<p>This is just one way to parameterize your SQL queries; we will see later how you can build a UI around your SQL blocks, allowing for interactive data exploration without having to repeat similar blocks of code, over and over again.</p>
+<p class="image-container"><img alt="img" src="img/202da0735ea89e23.png"></p>
+<p class="image-container"><img alt="img" src="img/f16e63f52e50aaf5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize the results of a query" duration="4">
+        <p>Deepnote provides no-code data visualization tools for streamlining EDA. Given the results of the query above, let&#39;s build a data visualization to quickly explore the expected weather patterns (again, click the ➕ sign to choose a chart block type). We should expect temperature to get warmer in the summer months and colder in the winter months.</p>
+<p>Let&#39;s choose <code>df</code> as the DataFrame to visualize by selecting it from the dropdown at the top of the Chart block. Select &#34;point chart&#34; and specify how you would like to map columns of your data to the X/Y coordinates on the chart. Since we want to see temperature as a function of time, let&#39;s select <code>date</code> for the X axis and <code>temp</code> for the Y axis (example below).</p>
+<p>Sure enough, we can verify the seasonality in the weather patterns—and all without a single line of code.</p>
+<p class="image-container"><img alt="img" src="img/a61b75fec8650512.png"></p>
+<p>While the chart above confirms the expected seasonality, we can&#39;t see the data broken down by station (i.e., the location/city of the weather sensor). Since the <code>name</code> column contains this information, we can again use no-code charts to look at the average <code>temp</code> by <code>name</code> to get a sense of how locations/cities differ in terms of temperature.</p>
+<p>As shown below, aggregations and other options can be selected by clicking the ellipsis next to the encoding channels (X, Y, and Color). Here, we can visualize average temperature by station name by selecting <code>Average</code> from the aggregation options on the X axis (which is set to <code>temp</code>), and setting the Y and Color channels to <code>name</code>.</p>
+<p class="image-container"><img alt="img" src="img/3430aba324a37632.gif"></p>
+<p>Many chart types and encoding combinations can used to create helpful data visualizations. This can be helpful not only in terms of developer speed but also for non-technical team members who may not be as familiar with plotting via code. For more complex needs, nothing is stopping us from using Altair, Plotly, or any other Python visualization library in Deepnote.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build a UI around the SQL query" duration="4">
+        <p>Data exploration is iterative. Put another way—data exploration is repetitive. While analysts strive to follow the DRY principle (do not repeat yourself), EDA code and behaviour is often at odds with that principle (in practice). For example, an SQL query that neatly displays one aspect of the data is likely going to be copied and pasted, then slightly changed, in order to display another aspect of the data.</p>
+<p>Deepnote understands this tendency and provides a set of rich, interactive widgets (called Input blocks) that can be used to parameterize your SQL queries (or Python code). That is, instead of copying and pasting around similar queries, quickly wire up a slider bar (or some other UI element) to scroll through dimensions of your data. This approach is great for readability, reproducibility, and ease of use (especially for those non-technical users). As usual, click the ➕ button above to choose from the available input blocks.</p>
+<p>The SQL query below constructs binned temperature readings (i.e., similar to a histogram) so that we can examine a distribution of results. As you can see, the <code>bin_size</code> slider bar and <code>name</code> dropdown selector provide a small UI for controlling the variables passed into the SQL query. This way, we can look at binned results for any station we&#39;d like (including tweaking the bin size) without having to write additional code.</p>
+<p class="image-container"><img alt="img" src="img/4118c589eca8a75a.png"></p>
+<p>As a bit of a bonus, and to bring things full circle, remember that the output of this SQL query is still a Pandas DataFrame; therefore, we can again use a chart block to visualize it further (and we should get an actual histogram). Perfect.</p>
+<p class="image-container"><img alt="img" src="img/e237acece2116f1d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>With Deepnote and Snowflake you get the best in class for secure data governance and rapid exploratory programming, together in the same place. Snowflake provides a single unified view of data and ability execute diverse analytics workloads—with near-unlimited scale, concurrency, and performance. Snowflake dovetails perfectly with Deepnote&#39;s collaborative data science notebook and suite of tools built for exploratory data analysis.</p>
+<p>If you want to learn more about Deepnote&#39;s data science notebook platform, visit <a href="http://deepnote.com" target="_blank">deepnote.com</a>.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<p>We have built a generalizable workflow for exploratory data analysis. Deepnote&#39;s Python, SQL, and low-code solutions make analyzing data in Snowflake straightforward and time efficient—even for team members without advanced technical knowledge. Apply these approaches to your own datasets to make exploratory data analysis more productive.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

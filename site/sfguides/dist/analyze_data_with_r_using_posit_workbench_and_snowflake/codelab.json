@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "analyze_data_with_r_using_posit_workbench_and_snowflake",
+  "duration": 31,
+  "title": "Analyze Data with R using Posit Workbench and Snowflake",
+  "summary": "Analyze Data with R using Posit Workbench and Snowflake",
+  "source": "analyze_data_with_r_using_posit_workbench_and_snowflake/analyze_data_with_r_using_posit_workbench_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "nativeapplications",
+    "positworkbench",
+    "r",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "analyze_data_with_r_using_posit_workbench_and_snowflake"
+}

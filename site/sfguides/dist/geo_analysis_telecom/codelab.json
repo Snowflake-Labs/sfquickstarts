@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "geo_analysis_telecom",
+  "duration": 80,
+  "title": "Geospatial Analytics for Telecom with Snowflake and Carto",
+  "summary": "Geospatial Analysis for Telecom with Snowflake and Carto",
+  "source": "geo_analysis_telecom/geo_analysis_telecom.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "geospatial",
+    "gettingstarted",
+    "pythonudfs",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "geo_analysis_telecom"
+}

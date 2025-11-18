@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build-unified-customer-360-using-amperity",
+  "duration": 17,
+  "title": "Build a Unified Customer 360 Database using Amperity and Snowflake",
+  "summary": "In this quickstart we will walk through the basic steps to turn raw data into a world class Customer 360 collection of tables in hours instead of months using Amperity.",
+  "source": "build-unified-customer-360-using-amperity/build-unified-customer-360-using-amperity.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "marketing",
+    "data-engineering",
+    "solution-examples"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build-unified-customer-360-using-amperity"
+}

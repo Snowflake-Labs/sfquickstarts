@@ -1,0 +1,36 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "resource_optimization_setup_kr",
+  "duration": 0,
+  "title": "리소스 최적화: 설정 및 구성",
+  "authors": "Matt Meredith",
+  "summary": "이 가이드는 고객이 쿼리는 과도한 소비를 초래할 수도 있는 특정 설정 및 구성 항목과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.",
+  "source": "resource_optimization_setup_kr/resource_optimization_setup_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "costoptimization",
+    "kr",
+    "monitoring",
+    "resourceoptimization",
+    "web",
+    "관리",
+    "구성",
+    "모니터링",
+    "비용최적화",
+    "설정",
+    "소비",
+    "스노우플레이크리소스최적화"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "resource_optimization_setup_kr"
+}

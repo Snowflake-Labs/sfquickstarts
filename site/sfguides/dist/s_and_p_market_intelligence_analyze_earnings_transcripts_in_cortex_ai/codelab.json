@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai",
+  "duration": 44,
+  "title": "S\u0026P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI",
+  "summary": "This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake",
+  "source": "s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai/s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai"
+}

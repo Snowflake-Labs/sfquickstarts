@@ -1,0 +1,254 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Recommender Systems with RelationalAI&#39;s Snowflake Native App</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_collaborative_filtering_recommender_system_with_relationalai_and_snowflake"
+                  title="Recommender Systems with RelationalAI&#39;s Snowflake Native App"
+                  environment="web"
+                  feedback-link="https://github.com/RelationalAI/rai-samples/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>By completing this guide, you will be able to build a collaborative filtering recommender system RelationalAI&#39;s Native App on Snowflake.</p>
+<h2 is-upgraded>What Is RelationalAI?</h2>
+<p>RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.</p>
+<p>Users can build a knowledge graph using Python, and materialize it on top of their Snowflake data, shared with the RelationalAI app through Snowflake Streams.  Insights can be written to Snowflake tables and shared across the organization.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this quickstart, you&#39;ll learn how to:</p>
+<ul>
+<li><strong>Set Up Your Environment</strong>: How to run graph algorithms on your data, where it already lives.</li>
+<li><strong>Prepare Data</strong>: How to load data from a Snowflake table into a RelationalAI model</li>
+<li><strong>Build a Recommender System</strong>: How to use the graph representation to build a recommendation algorithm</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Account</li>
+<li>Snowflake privileges on your user to <a href="https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges" target="_blank">Install a Native Application</a></li>
+<li>The <a href="https://github.com/RelationalAI/rai-samples/tree/main/samples/recommender-system/collaborative_filtering.ipynb" target="_blank">RAI Recommendation Jupyter notebook</a> used in this quickstart</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A recommmender system on the 100k MovieLens database using Snowflake and RelationalAI</li>
+</ul>
+<aside class="special"><p> NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions <a href="https://relational.ai/docs/native_app/installation" target="_blank">here</a></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Preparation" duration="15">
+        <p>To prepare data needed for this tutorial, follow these steps:</p>
+<ol type="1">
+<li><strong>Download Movielens-100K Dataset</strong>: Obtain the <a href="https://grouplens.org/datasets/movielens/100k/" target="_blank">Movielens-100K dataset</a> locally to use as sample data for your recommender system.</li>
+<li><strong>Install Snowflake VS Code Extension</strong>: Install the <a href="https://marketplace.visualstudio.com/items?itemName=snowflake-computing.snowflake" target="_blank">Snowflake Visual Studio Code Extension</a> for seamless integration with Snowflake in your development environment.</li>
+<li><strong>Connect to Snowflake and Prepare Data</strong>: Utilize the Snowflake extension to establish a connection to your Snowflake instance. Once connected, create tables and prepare your data directly from within VS Code by running the commands below:</li>
+</ol>
+<aside class="special"><p> IMPORTANT:</p>
+<ul>
+<li>If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</li>
+<li>For each SQL script block below, select all the statements in the block and execute them top to bottom.</li>
+</ul>
+</aside>
+<p>Run the following SQL commands to create the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database.html" target="_blank">database</a> and prepare data needed for this tutorial.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE IF NOT EXISTS RECOMMENDATION_DEMO;
+USE DATABASE RECOMMENDATION_DEMO;
+USE SCHEMA PUBLIC;
+</code></pre>
+<p>Run the following SQL commands to create an internal stage and upload files to the stage.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE STAGE movielens_stage;
+-- Note: Change the file paths to your local paths before running these commands.
+PUT file:///path/to/your/local/movielens_demo/ml-100k/u1.base @movielens_stage;
+PUT file:///path/to/your/local/movielens_demo/ml-100k/u1.test @movielens_stage;
+PUT file:///path/to/your/local/movielens_demo/ml-100k/u.item @movielens_stage;
+</code></pre>
+<p>Run the following SQL commands to create file formats.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FILE FORMAT csv_format_pipe
+  TYPE = &#39;CSV&#39;
+  RECORD_DELIMITER = &#39;\n&#39;
+  SKIP_HEADER = 0
+  FIELD_DELIMITER = &#39;|&#39;
+  NULL_IF = (&#39;NULL&#39;, &#39;null&#39;)
+  EMPTY_FIELD_AS_NULL = TRUE
+  ENCODING = &#39;ISO-8859-1&#39; 
+  FIELD_OPTIONALLY_ENCLOSED_BY = &#39;0x22&#39;;
+  
+CREATE OR REPLACE FILE FORMAT csv_format_tab
+  TYPE = CSV
+  RECORD_DELIMITER = &#39;\n&#39;
+  FIELD_DELIMITER = &#39;\t&#39;
+  SKIP_HEADER = 0
+  NULL_IF = (&#39;NULL&#39;, &#39;null&#39;)
+  EMPTY_FIELD_AS_NULL = TRUE
+  FIELD_OPTIONALLY_ENCLOSED_BY = &#39;0x22&#39;;
+</code></pre>
+<p>Run the following SQL commands to create tables for <strong>TRAIN</strong>, <strong>TEST</strong> and <strong>MOVIE_DETAILS</strong> that we will use during our solution.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE TRAIN (
+    USER_ID VARCHAR(255),
+    ITEM_ID VARCHAR(255),
+    RATING FLOAT,
+    TIMESTAMP TIMESTAMP
+);
+
+CREATE OR REPLACE TABLE TEST (
+    USER_ID VARCHAR(255),
+    ITEM_ID VARCHAR(255),
+    RATING FLOAT,
+    TIMESTAMP TIMESTAMP
+);
+
+CREATE OR REPLACE TABLE MOVIE_DETAILS (
+    item_id VARCHAR(255),
+    title VARCHAR(255),
+    date DATE,
+    A1 VARCHAR(255),
+    A2 VARCHAR(255),
+    A3 VARCHAR(255),
+    A4 VARCHAR(255),
+    A5 VARCHAR(255),
+    A6 VARCHAR(255),
+    A7 VARCHAR(255),
+    A8 VARCHAR(255),
+    A9 VARCHAR(255),
+    A10 VARCHAR(255),
+    A11 VARCHAR(255),
+    A12 VARCHAR(255),
+    A13 VARCHAR(255),
+    A14 VARCHAR(255),
+    A15 VARCHAR(255),
+    A16 VARCHAR(255),
+    A17 VARCHAR(255),
+    A18 VARCHAR(255),
+    A19 VARCHAR(255),
+    A20 VARCHAR(255),
+    A21 VARCHAR(255)
+);
+</code></pre>
+<p>Run the following commands to load data from the stage to tables.</p>
+<pre><code language="language-sql" class="language-sql">COPY INTO TRAIN
+    FROM @movielens_stage
+    FILE_FORMAT = csv_format_tab
+    FILES = (&#39;u1.base.gz&#39;);
+
+COPY INTO TEST
+    FROM @movielens_stage
+    FILE_FORMAT = csv_format_tab
+    FILES = (&#39;u1.test.gz&#39;);
+
+COPY INTO MOVIE_DETAILS
+    FROM @movielens_stage
+    FILE_FORMAT = csv_format_pipe
+    FILES = (&#39;u.item.gz&#39;);
+</code></pre>
+<p>By following these steps, you&#39;ll be ready to build and deploy your Recommender System using Snowflake seamlessly.</p>
+<aside class="special"><p> IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</p>
+</aside>
+<p>The last step is to stream data from snowflake tables into RelationalAI model:</p>
+<pre><code language="language-bash" class="language-bash">rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TRAIN --source RECOMMENDATION_DEMO.PUBLIC.TEST --source RECOMMENDATION_DEMO.PUBLIC.MOVIE_DETAILS --model recommendation_demo
+</code></pre>
+<ul>
+<li><code>--source</code>: This flag specifies the fully-qualified name of a Snowflake table or view.</li>
+<li><code>--model</code>: This flag specifies the name of the model to which the data in the Snowflake table or view is streamed.</li>
+</ul>
+<aside class="special"><p> IMPORTANT: An import stream utilizes <a href="https://docs.snowflake.com/en/user-guide/streams" target="_blank">change data capture</a> to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building a Recommender System" duration="20">
+        <p>The Notebook linked below covers the following steps.</p>
+<ol type="1">
+<li>Convert user-item interactions to a bipartite graph</li>
+<li>Use user-item interactions to compute item-item by leveraging the functions supported by the graph analytics library</li>
+<li>Use the similarities to predict the scores for all (user, movie) pairs. Each score is an indication of how likely it is for a user to interact with a movie</li>
+<li>Sort the scores for every user in order to generate top-k recommendations</li>
+<li>Evaluate performance using evaluation metrics that are widely used for recommender systems</li>
+</ol>
+<h2 is-upgraded>Walkthrough Notebook in Jupyter or Visual Studio Code</h2>
+<p>To get started, follow these steps:</p>
+<ol type="1">
+<li>If not done already, in a terminal window, browse to this folder and run <code>jupyter lab</code> at the command line. (You may also use other tools and IDEs such Visual Studio Code.)</li>
+<li>Open and run through the cells in <a href="https://github.com/RelationalAI/rai-samples/blob/main/samples/recommender-system/collaborative_filtering.ipynb" target="_blank">collaborative_filtering.ipynb</a></li>
+</ol>
+<aside class="special"><p> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to <strong><em>rai_recsys</em></strong>– which is the name of the environment created in <strong>Setup Environment</strong> step.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="2">
+        <p>Thanks to RelationalAI&#39;s Native App on Snowflake, we built a recommendation system with just a few steps. Although the dataset used was a small graph with thousands of nodes and edges, our solution can scale to real world datasets due to our cloud-native architecture that separates compute from storage.</p>
+<p>In this Quickstart you learned</p>
+<ul>
+<li>How to find and install the RelationalAI Native App from the Snowflake Marketplace</li>
+<li>How to build a knowledge graph on top of your Snowflake data without having to extract data from Snowflake</li>
+<li>How to create a recommender system using graph algorithms on the MovieLens 100k dataset.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li>To learn about more about RelationalAI and view full documentation, visit <a href="https://relational.ai" target="_blank">https://relational.ai</a></li>
+<li>To see a brief summary of the recommender system you just built, see <a href="https://medium.com/@haythemtellili/recommender-systems-with-relationalais-snowflake-native-app-68d9c76bb07f" target="_blank">Blogpost</a></li>
+<li><a href="https://app.snowflake.com/marketplace" target="_blank">Snowflake Marketplace</a></li>
+<li>More info on <a href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">Snowflake Native Apps</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - ゼロからのSnowflake - 半構造化データ</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_zero_to_snowflake_semi_structured_data_ja"
+                  title="Tasty Bytes - ゼロからのSnowflake - 半構造化データ"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Snowflakeにおける半構造化データ処理" duration="1">
+        <p class="image-container"><img src="img/9cdef4f98342f4b0.png"></p>
+<h2 is-upgraded>概要</h2>
+<p>Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。今回は半構造化データ処理を中心的に取り上げます。</p>
+<p>このクイックスタートでは、VARIANTデータ型、ドット表記とラテラルフラット化を組み合わせた半構造化データ処理、ビューの作成、Snowsightチャートを詳しく調べることにより、Snowflakeにおける半構造化データの処理について学習します。</p>
+<p>Snowflakeにおける半構造化データの詳細については、<a href="https://docs.snowflake.com/ja/user-guide/semistructured-concepts" target="_blank">半構造化データの概要ドキュメンテーション</a>を参照してください。</p>
+<h2 is-upgraded>前提条件</h2>
+<ul>
+<li>開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している<a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html" target="_blank"><strong>Tasty Bytesの紹介クイックスタート</strong></a>を完了しておくようにしてください。</li>
+</ul>
+<h2 is-upgraded>学習する内容</h2>
+<ul>
+<li>バリアントデータ型について</li>
+<li>ドット表記を使用して半構造化データをクエリする方法</li>
+<li>半構造化データをフラット化する方法</li>
+<li>配列の分析方法</li>
+<li>ビューの作成方法</li>
+<li>Snowsightで結果セットからチャートを構築する方法</li>
+</ul>
+<h2 is-upgraded>構築するもの</h2>
+<ul>
+<li>エンドツーエンドの半構造化データプロセス</li>
+<li>整合（シルバー）と分析（ゴールド）のビュー</li>
+<li>幹部にふさわしい棒チャート</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ワークシートの作成とSQLのコピー" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。</p>
+<p>本セクションでは、Snowflakeへのログイン、新しいワークシートの作成、ワークシートの名前の変更、GitHubからのSQLのコピー、このクイックスタートで利用するSQLの貼り付けについて説明します。</p>
+<h2 is-upgraded>ステップ1 - URLでSnowflakeにアクセスする</h2>
+<ul>
+<li>ブラウザウィンドウを開き、SnowflakeアカウントのURLを入力します</li>
+</ul>
+<h2 is-upgraded>ステップ2 - Snowflakeにログインする</h2>
+<ul>
+<li>Snowflakeアカウントにログインします。 <ul>
+<li><img style="width: 300.00px" src="img/1346a057955049be.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ3 - ワークシートに移動する</h2>
+<ul>
+<li>左側のナビゲーションバーにある「ワークシート」タブをクリックします。 <ul>
+<li><img style="width: 250.00px" src="img/59d00b2b38a5e06a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ4 - ワークシートを作成する</h2>
+<ul>
+<li>ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。 <ul>
+<li><img style="width: 200.00px" src="img/62ed63220cd0f07c.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ5 - ワークシートの名前を変更する</h2>
+<ul>
+<li>自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - 半構造化データ」と入力してワークシートの名前を変更します。 <ul>
+<li><img src="img/38d78f2f0c7c1bbf.gif"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ6 - GitHubでQuickstart SQLにアクセスする</h2>
+<ul>
+<li>下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQLファイルに移動します。 <a href="https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_zts_semi_structured_data.sql" target="_blank"><paper-button class="colored" raised>tb_zts_semi_structured_data.sql</paper-button></a></li>
+</ul>
+<h2 is-upgraded>ステップ7 - GitHubからSetup SQLをコピーする</h2>
+<ul>
+<li>GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。 <ul>
+<li><img src="img/886f3ded8c3dec4a.png"></li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける</h2>
+<ul>
+<li>Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（<em>Macの場合はCMD + V、Windowsの場合はCTRL + V</em>）。</li>
+</ul>
+<h2 is-upgraded>ステップ9 - 「Next」クリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="半構造化メニューデータのプロファイリング" duration="1">
+        <h2 is-upgraded>概要</h2>
+<p>Tasty Bytesのデータエンジニアとして、私たちは半構造化データ列を含むメニューデータのプロファイリングを任されました。このメニューテーブルから、食事と成分のデータをエンドユーザーに公開する分析レイヤービューを作成する必要があります。</p>
+<h2 is-upgraded>ステップ1 - コンテキストを設定しテーブルをクエリする</h2>
+<p>はじめに、最初の3つのクエリを一緒に実行してみましょう。これらのクエリによって以下が実行されます。</p>
+<ul>
+<li>ロールコンテキストを<code>tasty_data_engineer</code>に設定する</li>
+<li>ウェアハウスコンテキストを<code>tasty_de_wh</code>に設定する</li>
+<li><code>raw_pos.menu</code>テーブルの <a href="https://docs.snowflake.com/ja/sql-reference/constructs/top_n" target="_blank">TOP</a> 10の結果セットを生成する</li>
+</ul>
+<pre><code>USE ROLE tasty_data_engineer;
+USE WAREHOUSE tasty_de_wh;
+
+SELECT TOP 10
+    m.truck_brand_name,
+    m.menu_type,
+    m.menu_item_name,
+    m.menu_item_health_metrics_obj
+FROM frostbyte_tasty_bytes.raw_pos.menu m;
+</code></pre>
+<p class="image-container"><img src="img/c6e9b80054add2f0.png"></p>
+<p>出力の中で、<code>menu_item_health_metrics_obj</code>が、私たちがダウンストリームに提供する必要があるメトリックが含まれていると伝えられていた半構造化データであることがわかります。</p>
+<p>この列のセルをクリックすると、Snowsightによって統計ペインが自動的に展開され、内容がわかりやすい形式で表示されます。</p>
+<p class="image-container"><img src="img/d0fb05606dbae142.png"></p>
+<h2 is-upgraded>ステップ2 - 半構造化列を調査する</h2>
+<p>この列がSnowflakeでどのように定義されているかを詳しく調べるには、次のクエリを実行し、<a href="https://docs.snowflake.com/ja/sql-reference/sql/show-columns" target="_blank">SHOW COLUMNS</a>を活用して<code>menu</code>テーブルに存在するデータ型を調べてください。</p>
+<pre><code>SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
+</code></pre>
+<p class="image-container"><img src="img/a66f703ce0b39248.png"></p>
+<p>結果セットを見ると、<code>menu_item_health_metrics_obj</code>は<a href="https://docs.snowflake.com/ja/sql-reference/data-types-semistructured" target="_blank">VARIANT</a>データ型であることが分かります。</p>
+<aside class="special"><p> ほとんどが規則的でネイティブから半構造化形式のデータ型（例：JSON形式用の文字列と整数）のみを使用するデータの場合、リレーショナルデータとVARIANT列のデータに対するストレージ要件とクエリパフォーマンスは非常に似ています。</p>
+</aside>
+<h2 is-upgraded>ステップ3 - ドット表記を使用して半構造化データを走査する</h2>
+<p><code>menu_item_health_metrics_obj</code>列には、<code>menu_item_id</code>が、より深くネストされた原材料および食事制限データと一緒に含まれています。私たちはこれらのデータにアクセスする必要があります。</p>
+<p>次のクエリを実行し、<a href="https://docs.snowflake.com/ja/user-guide/querying-semistructured#dot-notation" target="_blank">ドット表記</a>を活用して半構造化データを走査してください。</p>
+<pre><code>SELECT 
+    m.menu_item_health_metrics_obj:menu_item_id AS menu_item_id,
+    m.menu_item_health_metrics_obj:menu_item_health_metrics AS menu_item_health_metrics
+FROM frostbyte_tasty_bytes.raw_pos.menu m;
+</code></pre>
+<p class="image-container"><img src="img/1b7500f1e4614e67.png"></p>
+<p>ドット表記を使用することで、<code>menu_item_id</code>を完全に抽出することには成功しましたが、<code>menu_item_health_metrics</code>列の出力には追加の半構造化オブジェクトがまだ残っているようです。</p>
+<p>もう1度、この列のセルをクリックして、さらに詳しく見てみましょう。</p>
+<p class="image-container"><img src="img/f65b844b229498c7.png"></p>
+<p><strong>しっかり進んでいますね！</strong> 次のセクションでは、追加のSnowflake関数を使って<code>menu_item_health_metrics</code>の処理を進める方法を見ていきましょう。</p>
+<h2 is-upgraded>ステップ4 - 「Next」クリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="半構造化データのフラット化" duration="2">
+        <h2 is-upgraded>概要</h2>
+<p>ドット表記を使用して、Variant列に存在する半構造化データを簡単にクエリできる方法が分かりました。社内のステークホルダーに要求されたデータを提供するというTastyのデータエンジニアのタスクは順調に進んでいます。</p>
+<p>このセクションでは、要件を満たすために追加の半構造化データ処理を実行します。</p>
+<h2 is-upgraded>ステップ1 - Lateral Flattenへの導入</h2>
+<p>下流ユーザーが求めているデータを<code>menu_item_health_metrics_obj</code>列から抽出するために、次のクエリを実行してください。ここでは、先ほど説明したドット表記機能とともに、Snowflakesの<a href="https://docs.snowflake.com/ja/sql-reference/functions/flatten" target="_blank">FLATTEN</a>関数と<a href="https://docs.snowflake.com/ja/sql-reference/constructs/join-lateral" target="_blank">LATERAL JOIN</a>機能を利用して、求められている最初の<code>ingredient</code>配列を取得します。</p>
+<aside class="special"><p><strong>フラット化：</strong> VARIANT、OBJECT、またはARRAY列を受け取り、ラテラルビューを生成するテーブル関数です。フラット化は、半構造化データをリレーショナル表現に変換するために使用できます。</p>
+<p><strong>ラテラル結合：</strong> 非ラテラル結合の出力とは異なり、ラテラル結合の出力には、インラインビューから生成された行のみが含まれます。左側の行は、インラインビューに渡されることで既に考慮されているため、左側の行を右側に結合する必要はありません。</p>
+</aside>
+<pre><code>SELECT 
+    m.menu_item_name,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+</code></pre>
+<p class="image-container"><img src="img/a9417cebf41a91f2.png"></p>
+<h2 is-upgraded>ステップ2 - 配列関数を調査する</h2>
+<p>求められた食事データを抽出する前に、次のクエリを開始してください。ここでは、Snowflake配列関数に着目し、<a href="https://docs.snowflake.com/ja/sql-reference/functions/array_contains" target="_blank">ARRAY_CONTAINS</a>を活用してレタスを含む<code>menu_item_name</code>の<code>ingredients</code>列を探っていきます。</p>
+<pre><code>SELECT 
+    m.menu_item_name,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj
+WHERE ARRAY_CONTAINS(&#39;Lettuce&#39;::VARIANT, obj.value:&#34;ingredients&#34;::VARIANT);
+</code></pre>
+<p class="image-container"><img src="img/e81ca6268f120579.png"></p>
+<p>出力を見ると、相当数のメニューにレタスが含まれていることが分かります。このような分析は、私たちがサポートする都市や国で食品関連のリコールが発生した場合に、サプライチェーン調達マネージャーにとって非常に価値のあるものとなります。</p>
+<h2 is-upgraded>ステップ3 - 半構造化データを大規模に構造化する</h2>
+<p>組織に対してどのような価値を提供できるかを確認したところで、次に、このセクションの最後のクエリを実行しましょう。</p>
+<p>このクエリでは、ドット表記、ならびにラテラル結合とフラット化を組み合わせたテーブル関数を使用して、最初に生成するように指示された結果セットを提供します。</p>
+<pre><code>SELECT 
+    m.menu_item_health_metrics_obj:menu_item_id::integer AS menu_item_id,
+    m.menu_item_name,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients,
+    obj.value:&#34;is_healthy_flag&#34;::VARCHAR(1) AS is_healthy_flag,
+    obj.value:&#34;is_gluten_free_flag&#34;::VARCHAR(1) AS is_gluten_free_flag,
+    obj.value:&#34;is_dairy_free_flag&#34;::VARCHAR(1) AS is_dairy_free_flag,
+    obj.value:&#34;is_nut_free_flag&#34;::VARCHAR(1) AS is_nut_free_flag
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+</code></pre>
+<p class="image-container"><img src="img/4706804d69f1ecd6.png"></p>
+<p><strong>すばらしい！</strong> この出力は、ステークホルダーが要求した要件を正確に満たしていると言えるでしょう。次のセクションでは、この出力をどのように分析レイヤーに昇格させ、ステークホルダーがアクセスできるようにするかを検討していきます。</p>
+<h2 is-upgraded>ステップ4 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="半構造化データに対する構造化ビューの作成" duration="2">
+        <h2 is-upgraded>概要</h2>
+<p>前のセクションでは、一連のSnowflakeの半構造化データ機能を使用して、エンドユーザーが必要とする正確な出力を提供するクエリを構築しました。次に、このクエリを未加工レイヤーから整合レイヤーを経て最終的にはエンドユーザーが読み取ることができる分析レイヤーに昇格させるプロセスを追います。</p>
+<p><strong>注意：</strong> ブロンズ、シルバー、ゴールドのデータモデルに馴染みのある人は、未加工をブロンズ、整合をシルバー、分析をゴールドと捉えることができます。</p>
+<h2 is-upgraded>ステップ1 - 半構造化のフラット化SQLを使用してハーモナイズビューを作成する</h2>
+<p>前セクションの最後に出てきたクエリをそのまま利用し、次のクエリを実行してください。ここには、このSQLの他に、既に構造化された追加の<code>menu</code>テーブルの列がすべて含まれています。</p>
+<p>このクエリでは、整合スキーマで<a href="https://docs.snowflake.com/ja/sql-reference/sql/create-view" target="_blank">CREATE VIEW</a>を使用し、半構造化処理ロジックと追加の列をテーブルとしてカプセル化します。</p>
+<aside class="special"><p> ビューを使用すると、クエリの結果にテーブルのようにアクセスできます。  ビューは、データの結合、分離、保護など、さまざまな目的に役立ちます。</p>
+</aside>
+<pre><code>CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.menu_v
+    AS
+SELECT 
+    m.menu_id,
+    m.menu_type_id,
+    m.menu_type,
+    m.truck_brand_name,
+    m.menu_item_health_metrics_obj:menu_item_id::integer AS menu_item_id,
+    m.menu_item_name,
+    m.item_category,
+    m.item_subcategory,
+    m.cost_of_goods_usd,
+    m.sale_price_usd,
+    obj.value:&#34;ingredients&#34;::VARIANT AS ingredients,
+    obj.value:&#34;is_healthy_flag&#34;::VARCHAR(1) AS is_healthy_flag,
+    obj.value:&#34;is_gluten_free_flag&#34;::VARCHAR(1) AS is_gluten_free_flag,
+    obj.value:&#34;is_dairy_free_flag&#34;::VARCHAR(1) AS is_dairy_free_flag,
+    obj.value:&#34;is_nut_free_flag&#34;::VARCHAR(1) AS is_nut_free_flag
+FROM frostbyte_tasty_bytes.raw_pos.menu m,
+    LATERAL FLATTEN (input =&gt; m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
+</code></pre>
+<p class="image-container"><img src="img/36149b0169ddd359.png"></p>
+<p><code>harmonized.menu_v</code>ビューが作成されたことにより、ビュー内で使用した複雑なSQLを活用することなく、直接ビューにクエリを実行できるようになりました。しかし、ステークホルダーがデータにアクセスする場所は分析レイヤーであるため、次のステップを実行してこれを作成しましょう。</p>
+<h2 is-upgraded>ステップ2 - ハーモナイズから簡単に分析へ昇格させる</h2>
+<p><code>harmonized.menu_v</code>を参照しながら、次のクエリを実行してください。このクエリは、ダウンストリームに即座に価値を提供し始める<code>analytics.menu_v</code>を作成します。</p>
+<p>このクエリには、まだ説明していない新しい関数がいくつか含まれています。まず、<a href="https://docs.snowflake.com/ja/sql-reference/sql/show" target="_blank">SHOW VIEWS</a>コマンドまたはSnowsightインターフェイス内で見られる<a href="https://docs.snowflake.com/ja/sql-reference/sql/comment" target="_blank">COMMENT</a>を追加しを追加しています。これは、ユーザーがこのビューをクエリしたときに表示される内容を文書化する関数です。</p>
+<p>また、<a href="https://docs.snowflake.com/ja/sql-reference/sql/select#parameters" target="_blank">SELECT * EXCLUDEおよびRENAME</a>パラメータを利用し、クエリやビュー定義の複雑さを軽減することで、SQL開発者の作業を大幅に簡略化することもできます。</p>
+<aside class="special"><p><strong>除外：</strong> すべての列を選択する場合（SELECT *またはSELECT table_name.*）、EXCLUDEは、結果から除外する列を指定します。</p>
+<p><strong>名前を変更：</strong> すべての列を選択する場合（SELECT *またはSELECT table_name.*）、結果で使用すべき列エイリアスを指定します。</p>
+</aside>
+<p class="image-container"><img src="img/6423766894a12d52.png"></p>
+<h2 is-upgraded>ステップ3 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowsightで処理された半構造化データの分析" duration="2">
+        <h2 is-upgraded>概要</h2>
+<p>分析レイヤーでメニュービューが利用できるようになりました。次に、私たちがエンドユーザーに提供するいくつかのクエリを実行することで、Snowflakeでは追加のコピーや複雑な処理を行うことなく、半構造化データに対して強力なリレーショナルクエリを実行できることを示しましょう。</p>
+<h2 is-upgraded>ステップ 1 - 配列を分析する</h2>
+<p>前のセクションでは、<code>ingredients</code>列がクエリ結果として表示されましたが、ここでは、ドット表記なしで<code>analytics.menu_v</code>ビューで利用できるようになりました。</p>
+<p>ここで、次のクエリを実行してください、ここでは、<a href="https://docs.snowflake.com/ja/sql-reference/functions/array_intersection" target="_blank">ARRAY_INTERSECTION</a>と<a href="https://docs.snowflake.com/ja/sql-reference/functions/arrays_overlap" target="_blank">ARRAYS_OVERLAP</a>という2つの追加のSnowflake配列関数を活用し、キッチンカーブランドの各メニューで重複している飲料以外のメニュー項目を確認します。</p>
+<pre><code>SELECT 
+    m1.menu_type,
+    m1.menu_item_name,
+    m2.menu_type AS overlap_menu_type,
+    m2.menu_item_name AS overlap_menu_item_name,
+    ARRAY_INTERSECTION(m1.ingredients, m2.ingredients) AS overlapping_ingredients
+FROM frostbyte_tasty_bytes.analytics.menu_v m1
+JOIN frostbyte_tasty_bytes.analytics.menu_v m2
+    ON m1.menu_item_id &lt;&gt; m2.menu_item_id -- avoid joining the same menu item to itself
+    AND m1.menu_type &lt;&gt; m2.menu_type 
+WHERE 1=1
+    AND m1.item_category &lt;&gt; &#39;Beverage&#39; -- remove beverages
+    AND m2.item_category &lt;&gt; &#39;Beverage&#39; -- remove beverages
+    AND ARRAYS_OVERLAP(m1.ingredients, m2.ingredients) -- evaluates to TRUE if one ingredient is in both arrays
+ORDER BY m1.menu_type;
+</code></pre>
+<p class="image-container"><img src="img/7db043d4ac309c42.png"></p>
+<p>ここでもまた、私たちが構築したビューをそのまま使用することで、この種のクエリからキッチンカー事業者に実際のビジネス価値がもたらされます。毎週の調達業務の際に必要な食材を予測して注文できるようになるからです。</p>
+<h2 is-upgraded>ステップ2 - 幹部にメトリックを提供する</h2>
+<p>次に、私たちがブランド全体で現在取り組んでいる食事制限に関する高レベルのメトリックを提供することで、Tasty Bytesの幹部がメニューについてデータドリブンな意思決定を下せるようにしましょう。</p>
+<p>次のクエリを実行してください。ここでは、<a href="https://docs.snowflake.com/ja/sql-reference/functions/count" target="_blank">COUNT</a>、<a href="https://docs.snowflake.com/ja/sql-reference/functions/sum" target="_blank">SUM</a>、および条件付き<a href="https://docs.snowflake.com/ja/sql-reference/functions/case" target="_blank">CASE</a>ステートメントを利用して<code>analytics.menu_v</code>から必要なメトリックを集約します。</p>
+<pre><code>SELECT
+    COUNT(DISTINCT menu_item_id) AS total_menu_items,
+    SUM(CASE WHEN is_healthy_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS healthy_item_count,
+    SUM(CASE WHEN is_gluten_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS gluten_free_item_count,
+    SUM(CASE WHEN is_dairy_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS dairy_free_item_count,
+    SUM(CASE WHEN is_nut_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS nut_free_item_count
+FROM frostbyte_tasty_bytes.analytics.menu_v m;
+</code></pre>
+<p class="image-container"><img src="img/9b9aa6e7a1f3ee4b.png"></p>
+<p>ここで得られた出力により、半構造化データを含む未加工テーブルから、組織内の誰でも簡単にアクセスでき、Tasty Bytesがさらにデータドリブンになるのに役立つ単一の集計行が得られました。</p>
+<h2 is-upgraded>ステップ3 - 結果をチャート化する</h2>
+<p>Tasty Bytesの幹部の中にはデータの視覚的表示を望む人もいるため、Snowsight内で表形式の結果を理解しやすい視覚的チャートに変換するのが、どれほど簡単かを見ていきましょう。</p>
+<p>次のクエリを実行してください。ここでは、前回実行したSQLに3つのキッチンカーブランド名のフィルターを追加します。</p>
+<pre><code>SELECT
+    m.brand_name,
+    SUM(CASE WHEN is_gluten_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS gluten_free_item_count,
+    SUM(CASE WHEN is_dairy_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS dairy_free_item_count,
+    SUM(CASE WHEN is_nut_free_flag = &#39;Y&#39; THEN 1 ELSE 0 END) AS nut_free_item_count
+FROM frostbyte_tasty_bytes.analytics.menu_v m
+WHERE m.brand_name IN  (&#39;Plant Palace&#39;, &#39;Peking Truck&#39;,&#39;Revenge of the Curds&#39;)
+GROUP BY m.brand_name;
+</code></pre>
+<p class="image-container"><img src="img/3d7b44629b2a0fd.png"></p>
+<p>デフォルトでは、Snowsightはクエリ結果を表形式で返します。しかし、まだ紹介していませんでしたが、Snowsightの強力な機能の1つに<a href="https://docs.snowflake.com/ja/user-guide/ui-snowsight-visualizations#using-charts" target="_blank">チャートの使用</a>があります。</p>
+<p>次のスクリーンショットの矢印に従って、特定の食事制限に対応するメニュー項目についての、これらの各種キッチンカーブランド間の比較を示す棒グラフを作成してください。</p>
+<p class="image-container"><img src="img/ae788e60462c4bbe.png"></p>
+<p>このクイックスタートの締めくくりとして、Tasty Bytesの幹部が、私たちが構築したビューでカプセル化された半構造化データ処理について知らなくても、このような分析を自力で簡単に実行できるということを指摘しておく必要があります。これにより、私たちはTasty Bytesの組織においてデータの民主化の推進に貢献しているということに確信を持てます。</p>
+<h2 is-upgraded>ステップ4 - 「Next」をクリックする</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめと次のステップ" duration="1">
+        <h2 is-upgraded>まとめ</h2>
+<p>すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - 半構造化データクイックスタートが無事完了しました。</p>
+<p>これにより、次のことができるようになりました。</p>
+<ul>
+<li>バリアントデータ型について知る</li>
+<li>ドット表記を使用して半構造化データをクエリする</li>
+<li>半構造化データをフラット化する</li>
+<li>配列を分析する</li>
+<li>2つのビューを作成する</li>
+<li>Snowsightで結果セットからチャートを構築する</li>
+</ul>
+<p>このクイックスタートを再実行したい場合は、関連するワークシートの下部にあるリセットスクリプトを利用してください。</p>
+<h2 is-upgraded>次のステップ</h2>
+<p>引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html#3" target="_blank">Powered by Tasty Bytes - クイックスタート目次</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

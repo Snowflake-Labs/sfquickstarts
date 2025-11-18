@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "text_embedding_as_snowpark_python_udf",
+  "duration": 12,
+  "title": "Text Embedding As A Snowpark Python UDF",
+  "summary": "Text Embedding As A Snowpark Python UDF",
+  "source": "text_embedding_as_snowpark_python_udf/text_embedding_as_snowpark_python_udf.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "datascience",
+    "machinelearning",
+    "nlp",
+    "snowparkpython",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "text_embedding_as_snowpark_python_udf"
+}

@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "build_rag_based_equipment_maintenance_app_using_snowflake_cortex",
+  "duration": 71,
+  "title": "Build Rag Based Equipment Maintenance App Using Snowflake Cortex",
+  "summary": "Build Rag Based Equipment Maintenance App Using Snowflake Cortex",
+  "source": "build_rag_based_equipment_maintenance_app_using_snowflake_cortex/build_rag_based_equipment_maintenance_app_using_snowflake_cortex.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cortex",
+    "getting-started",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "build_rag_based_equipment_maintenance_app_using_snowflake_cortex"
+}

@@ -1,0 +1,362 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_with_datastage"
+                  title="A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>IBM DataStage is a world-class data integration tool that helps users build trusted data pipelines, orchestrate data across distributed landscapes, and move and transform data between cloud sources and data warehouses. It provides a native Snowflake connector, among many others, to read, write, and load data into Snowflake and integrate it into the data pipeline. This Quickstart demonstrates how to load enterprise data into Snowflake quickly and efficiently through IBM DataStage. Let&#39;s get going!   <br><br></p>
+<p class="image-container"><img alt="datastage_snowflake_banner.png" src="img/b74a99f2f9adb8ad.png"><br><br></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to an <a href="https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source=Exinfluencer&utm_content=CPDWW&utm_term=30AE5&utm_id=PRODUCT1ENCTA1&context=cpdaas&apps=cos%2Cdatastage&regions=us-south%2Ceu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF" target="_blank">IBM CP4DaaS account</a> (or free trial)</li>
+<li>Access to a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake account</a> (or free trial)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to start working with DataStage</li>
+<li>How to design a DataStage flow</li>
+<li>How to configure a Snowflake connection</li>
+<li>How to compile and execute a DataStage job</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A DataStage flow that loads enterprise data from a Db2 Warehouse into a Snowflake data warehouse table</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and prepare a Snowflake data warehouse" duration="2">
+        <p>Your goal is to use IBM DataStage to load data into your Snowflake account. To accomplish that, you need a data warehouse in your Snowflake account. Follow these steps to create a data warehouse in your Snowflake account.</p>
+<ol type="1">
+<li>Log in to your Snowflake trial account.</li>
+<li>In the navigation pane, click <strong>Admin &gt; Warehouses</strong>.<ul>
+<li>Click <strong>+ Warehouse</strong>.</li>
+<li>For the <em>Name</em>,  type <strong>DATASTAGEDATA</strong>.</li>
+<li>Accept the defaults for the rest of the fields, and click <strong>Create Warehouse</strong>. <br><img alt="datastage_snowflake_3" src="img/9f2d9739605c9ec5.png"><br><img alt="datastage_snowflake_4" src="img/a831cbdd4c09eb8.png"><br><br></li>
+</ul>
+</li>
+<li>In the navigation pane, click <strong>Data</strong>.<ul>
+<li>Click <strong>+ Database</strong>.</li>
+<li>For the <em>Name</em>, type <strong>DATASTAGEDB</strong>, and click <strong>Create</strong>. <br><img alt="datastage_snowflake_6" src="img/77b4ea3f725853f7.png"> <br><img alt="datastage_snowflake_7" src="img/2ab11485ffeee24b.png"><br><br></li>
+</ul>
+</li>
+<li>Click the newly created <strong>DATASTAGEDB</strong> database in the list, and select <strong>+ Schema</strong>.<ul>
+<li>For the <em>Schema</em> name, type <strong>MORTGAGE</strong>.</li>
+<li>Click <strong>Create</strong>. <br><img alt="datastage_snowflake_8" src="img/217ba0bff4e7296e.png"> <br><img alt="datastage_snowflake_9" src="img/4cd7f509310d8d57.png"> <br></li>
+</ul>
+</li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows the DATASTAGEDB database in Snowflake. You now have all of the credentials ready on Snowflake to begin working in DataStage.</p>
+<p class="image-container"><img alt="datastage_snowflake_datastagedb" src="img/88ec6bc80a39f6bb.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Provision DataStage on Cloud Pak for Data as a Service" duration="2">
+        <p class="image-container"><img alt="datastage_snowflake_trydatastage" src="img/bc743dd86aaf45ac.png"><br></p>
+<p>To provision DataStage and begin working with the enterprise data, you must first sign up for Cloud Pak for Data as a Service and provision DataStage.</p>
+<ol type="1">
+<li>Visit the <a href="https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source=Exinfluencer&utm_content=CPDWW&utm_term=30AE5&utm_id=PRODUCT1ENCTA1&context=cpdaas&apps=cos%2Cdatastage&regions=us-south%2Ceu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF" target="_blank">DataStage Trial Page</a>.</li>
+<li>Check the box to agree to the terms.</li>
+<li>If you have an existing Cloud Pak for Data as a Service or IBM Cloud account, then follow these steps: <ul>
+<li>Click <strong>Log in with your IBMid</strong>.</li>
+<li>Provide your IBMid, and click <strong>Continue</strong>.</li>
+<li>Provide your password, and click <strong>Log in</strong>. Wait for the Cloud Pak for Data home page to display.</li>
+</ul>
+</li>
+<li>If you don&#39;t have an existing Cloud Pak for Data as a Service or IBM Cloud  account, then follow these steps: <ul>
+<li>Click <strong>Create an IBM Cloud account</strong>.</li>
+<li>Provide an email address and password to be used as your IBMid, and click <strong>Next</strong>.</li>
+<li>Access your email account, open the email from <em>IBM Cloud</em>, and copy your 7-digit verification code.</li>
+<li>Return to the sign up page, paste your verification code, and click <strong>Next</strong>.</li>
+<li>Provide your personal information, and click <strong>Next</strong>.</li>
+<li>Check the box to accept the terms and conditions, and click <strong>Continue</strong>.</li>
+<li>Check the box to acknowledge the data privacy notice, and click <strong>Continue</strong>. Wait for the Cloud Pak for Data home page to display.</li>
+<li>Enter in your billing and payment information. <strong>Note</strong>: Credit card information is only for identity verification purposes. You will be using the DataStage lite plan for this Quickstart so there will be no charge for using DataStage.<br></li>
+</ul>
+</li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows the Cloud Pak for Data home page.</p>
+<p class="image-container"><img alt="datastage_snowflake_homepage" src="img/fee2275bd9661ecd.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a DataStage project" duration="2">
+        <p>You need a project to store the connections to external data sources and the DataStage flow. A project is a collaborative workspace where you work with data and other assets to accomplish a particular goal. Follow these steps to create the sample project:</p>
+<ol type="1">
+<li>From the pop-up, select <strong>Sample Project</strong> and then select <strong>Next</strong>.</li>
+<li>Click <strong>Create Project</strong>.<img alt="datastage_snowflake_createproject" src="img/81e0339b1661efda.png"><br><br></li>
+<li>The project name and description are filled in for you. Click <strong>Create</strong>. This creates the project containing a connection to a Db2 Warehouse on Cloud instance where the enterprise data is stored, and then you can begin constructing the DataStage flow.<img alt="datastage_snowflake_19" src="img/3daf7ac52f9d7f0.png"><br><br></li>
+<li>Once the project has finished importing, select <strong>View new project</strong>.<img alt="datastage_snowflake_20" src="img/f4a180c235c7da54.png"><br><br></li>
+<li>Click the <strong>Assets Tab</strong> to verify that the project and assets were created successfully.<img alt="datastage_snowflake_21" src="img/668b907d97bd4cc6.png"><br><br></li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows the sample project. You are now ready to create the connection to Snowflake.</p>
+<p class="image-container"><img alt="datastage_snowflake_22" src="img/d6f336bc5e167710.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a connection to your Snowflake data warehouse" duration="2">
+        <p>You need to add the connection information to your project so you can access the Snowflake data warehouse in your DataStage flow. Follow these steps to create the connection asset in your project:</p>
+<ol type="1">
+<li>From the <em>Assets</em> tab, click <strong>New Asset</strong> on the right side of the screen.</li>
+<li>In the <em>Data Access Tools</em> section, click <strong>Connection</strong>.<img alt="datastage_snowflake_24" src="img/ab3860ed746eb58b.png"><br><br></li>
+<li>Search for <em>Snowflake</em> in the <strong>Find connection types</strong> search field.<img alt="datastage_snowflake_25" src="img/c616c2320c0ba4cc.png"><br><br></li>
+<li>Select the <strong>Snowflake</strong> connector, and then click <strong>Select</strong>.<img alt="datastage_snowflake_26" src="img/fc95ca432f08c194.png"><br><br></li>
+<li>On the <em>Create</em> connection: <em>Snowflake</em> page, type <strong>Snowflake</strong> for the connection name.<br><br></li>
+<li>For the <em>Connection details</em>, complete the following fields using the information from the Snowflake account you created in the first task:<ul>
+<li>Account name: Your account name is a combination of your account ID, your region, and your cloud provider. You can find this information in the URL when logged in to your Snowflake account. For example, if your login URL is https://app.snowflake.com/us-east4.gcp/iu68134, then your account name is iu68134.us-east4.gcp.</li>
+<li>Database: Type <strong>DATASTAGEDB</strong>.</li>
+<li>Role: Type <strong>ACCOUNTADMIN</strong>.</li>
+<li>Warehouse: Type <strong>DATASTAGEDATA</strong>.</li>
+<li>Username: Type your Snowflake account username.</li>
+<li>Password: Type your Snowflake account password.</li>
+<li>Click <strong>Test Connection</strong> to test the connection to your Snowflake account.<br><br></li>
+</ul>
+</li>
+<li>If the test is successful, click <strong>Create</strong>. This will create the Snowflake connector which you can use to load the data from Db2 Warehouse into your Snowflake account. <br><br></li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows the new connection information. You are now ready to create the DataStage flow.</p>
+<p class="image-container"><img alt="datastage_snowflake_27" src="img/7328594f4db8b61.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a DataStage flow" duration="1">
+        <p>Now you are ready to create a DataStage flow that loads the Db2 Warehouse data to your Snowflake data warehouse. Follow these steps to create the DataStage flow:</p>
+<ol type="1">
+<li>From the <em>Assets</em> tab, click <strong>New Asset</strong>.</li>
+<li>In the <em>Graphical builders</em> section, click <strong>DataStage</strong>. <br><img alt="datastage_snowflake_29" src="img/64a283a4d9139929.png"><br><br></li>
+<li>For the <em>Name</em>, type <strong>Load Db2 data to Snowflake</strong>.<img alt="datastage_snowflake_30" src="img/2170bf48d6ad08b7.png"><br><br></li>
+<li>Click <strong>Create</strong>. The DataStage canvas displays where you can create the flow to load data onto Snowflake.<br><br></li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows an empty DataStage canvas. You are now ready to design a DataStage flow.</p>
+<p class="image-container"><img alt="datastage_snowflake_31" src="img/ff4472d1d6b57143.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Design the DataStage flow" duration="5">
+        <p>Now you are ready to design a DataStage flow to load data into Snowflake. The DataStage flow contains two connector nodes: the Db2 Warehouse connector pointing to the source data asset and the Snowflake connector pointing to the target data asset. You will also add in two other nodes to perform simple transformations and join and filter the data assets. Follow these steps to add the nodes to your canvas:<br></p>
+<p><strong>Add the two connector nodes</strong>:</p>
+<ol type="1">
+<li>In the node palette, expand the <strong>Connectors</strong> section. <br><img alt="datastage_snowflake_35" src="img/c5e714aef0e89d40.png"><br><br></li>
+<li>Drag the <strong>Asset browser</strong> connector and drop it anywhere on the empty canvas. <br><img alt="datastage_snowflake_36" src="img/b7a749dfe546f9f.png"><br><br></li>
+<li>When you drop the <em>Asset Browser connector</em> on the canvas, you are prompted to select the asset.<ul>
+<li>To locate the asset, select <strong>Connection &gt; Data Fabric Trial - Db2 Warehouse &gt; BANKING &gt; MORTGAGE_APPLICATION</strong>. <strong>Note</strong>: To expand the connection and schema, click the connection or schema name instead of the checkbox.<br><img alt="datastage_snowflake_37" src="img/8a52bc81b642bab6.png"><br><br></li>
+<li>Click <strong>Add</strong> to drop the Db2 data source onto the DataStage canvas. <br><img alt="datastage_snowflake_38" src="img/80a3c12de54b0dad.png"><br><img alt="datastage_snowflake_39" src="img/ed61999af774b0c5.png"><br><br></li>
+</ul>
+</li>
+<li>Double-click the <strong>MORTGAGE_APPLICATION</strong> node to see its settings.<ul>
+<li>Click the <strong>Output</strong> tab.</li>
+<li>Check the <strong>Runtime column propagation</strong> option. DataStage is flexible about metadata. It can handle where metadata is not fully defined. In this case, we select <strong>Runtime column propagation</strong> so that if the DataStage job encounters extra columns that are not defined in the metadata when it actually runs, it adopts these extra columns and propagates them through the rest of the job. This feature allows your flow design to be flexible for schema drift.</li>
+<li>Click <strong>Save</strong>. <br><img alt="datastage_snowflake_40" src="img/c92d3dcccd7b98c4.png"> <br></li>
+</ul>
+</li>
+</ol>
+<p>Because you are reading data from Db2 Warehouse into Snowflake, the Db2 connector is positioned first in the flow. Your goal is to load the Db2 Warehouse data into Snowflake. Next, you will add a Snowflake connector that reads the data from the Db2 Warehouse connector. Thus, the Snowflake connector is positioned second in the flow.<br></p>
+<ol type="1" start="5">
+<li>Back in the <strong>Node palette</strong>, expand the <strong>Connectors</strong> section.</li>
+<li>Drag the <strong>Asset browser</strong> connector and drop it on the canvas so it is positioned as the second node.<ul>
+<li>To locate the schema, select <strong>Connection &gt; Snowflake &gt; MORTGAGE. Note:</strong> Click the checkbox to select the <em>MORTGAGE</em> schema name.</li>
+<li>Click <strong>Add</strong> to drop the Snowflake connection onto the DataStage canvas.<img alt="datastage_snowflake_41" src="img/e153b4f4cc1dec85.png"><br><br></li>
+</ul>
+</li>
+<li>To link the nodes together, hover over the <strong>Mortgage_Application_1</strong> node until you see an arrow. Drag the arrow to the Snowflake connection to connect the two nodes.<img alt="datastage_snowflake_42" src="img/c6c5c72c46087dd2.png"><br><br></li>
+<li>Double-click the <strong>MORTGAGE_1</strong> connector to see its settings.<ul>
+<li>Change the node name to <strong>Snowflake_mortgage_data</strong>.<img alt="datastage_snowflake_43" src="img/a24ed4d0669ce9c0.png"><br></li>
+<li>In the settings side panel, click the <strong>Input</strong> tab.</li>
+<li>Expand the <strong>Usage</strong> section.</li>
+<li>For <em>Write mode</em>, select <strong>Insert</strong>.</li>
+<li>For the <em>Table name</em>, add <strong>APPLICATION</strong> after the schema name, so the full table name reads <strong><em>MORTGAGE.APPLICATION</em></strong>.</li>
+<li>For the <em>Table action</em>, select <strong>Replace</strong>. This setting will create the table in the specified database and schema in Snowflake, and then load the enterprise data into that table. All other selections under Actions can be kept the same.</li>
+<li>Click <strong>Save</strong> to update the changes, and return to the DataStage flow. <br><img alt="datastage_snowflake_44" src="img/526a9976547efd8a.png"><img alt="datastage_snowflake_45" src="img/326c598d8fea40ae.png"><br><br></li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Transformation Nodes" duration="5">
+        <p>Now you have a basic DataStage flow to load the data into Snowflake. Follow these steps to add two nodes to join and filter the data: <br><br></p>
+<p><strong>Asset connector node</strong></p>
+<ol type="1">
+<li>In the node palette, expand the <strong>Connectors</strong> section.<br></li>
+<li>Drag the <strong>Asset browser</strong> connector on to the canvas close to the MORTGAGE_APPLICATION node.<br></li>
+<li>When you drop the <em>Asset Browser</em> connector on the canvas, you are prompted to select the asset.<ul>
+<li>To locate the asset, select <strong>Connection &gt; Data Fabric Trial - Db2 Warehouse &gt; BANKING &gt; MORTGAGE_APPLICANT. Note</strong>: To expand the connection and schema, click the connection or schema name instead of the checkbox.</li>
+<li>Click <strong>Add</strong> to drop the Db2 Warehouse data source onto the DataStage canvas.<img alt="datastage_snowflake_46" src="img/69960871f9e06101.png"><br><br></li>
+</ul>
+</li>
+<li>Double-click the <strong>MORTGAGE_APPLICANT</strong> node to see its settings.<ul>
+<li>Click the <strong>Output</strong> tab.</li>
+<li>Check the <strong>Runtime column propagation</strong> option. DataStage is flexible about metadata. It can handle where metadata is not fully defined. In this case, we select <strong>Runtime column propagation</strong> so that if the DataStage job encounters extra columns that are not defined in the metadata when it actually runs, it adopts these extra columns and propagates them through the rest of the job. This feature allows your flow design to be flexible for schema drift.</li>
+<li>Click <strong>Save</strong>. <br><img alt="datastage_snowflake_47" src="img/b97260f2700e2700.png"> <br></li>
+</ul>
+</li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows what the DataStage flow should look like after adding in the <em>Mortgage_Applicant</em> node. You are now ready to add in the join and filter nodes.</p>
+<p class="image-container"><img alt="datastage_snowflake_48" src="img/e3f89712d0b9c0bf.png"><br><br></p>
+<p><strong>Join Stage Node</strong></p>
+<ol type="1">
+<li>In the <em>Node palette</em>, expand the <strong>Stages</strong> section. <br><img alt="datastage_snowflake_49" src="img/1f05f3794b5476ba.png"><br><br></li>
+<li>In the <em>Node palette</em>, drag the <strong>Join</strong> stage on to the canvas, and drop the node on the link line between the <em>MORTGAGE_APPLICATION</em> and <em>Snowflake_mortgage_data</em> nodes. This action maintains links from the <em>MORTGAGE_APPLICATION</em> node to the <em>JOIN</em> node to the <em>Snowflake_mortgage_data</em> node. <br><img alt="datastage_snowflake_50" src="img/184b05ef699594d7.png"><br><img alt="datastage_snowflake_51" src="img/9917829bc89877e3.png"><br><br></li>
+<li>Hover over the <strong>MORTGAGE_APPLICANT</strong> connector to see the arrow. Connect the arrow to the <strong>Join</strong> stage.<img alt="datastage_snowflake_52" src="img/bc5314f1cd7afb40.png"><br><br></li>
+<li>Double-click the <strong>Join_1</strong> node to edit the settings.<ul>
+<li>Expand the <strong>Properties</strong> section.</li>
+<li>Click <strong>Add key</strong>.<ul>
+<li>Click <strong>Add key</strong> again.</li>
+<li>Select <strong>ID</strong> from the list of possible keys.</li>
+<li>Click <strong>Apply</strong>.</li>
+<li>Click <strong>Apply and return</strong> to return to the <em>Join_1</em> node settings. <br><img alt="datastage_snowflake_53" src="img/74a15b21a5f49d07.png"><br><img alt="datastage_snowflake_joinID" src="img/afcbcb01bd1a40e6.png"> <br></li>
+</ul>
+</li>
+<li>Change the <em>Join_1</em> node name to <strong>Join_on_ID</strong>.</li>
+<li>Click the <strong>Output</strong> tab.<ul>
+<li>Check the <strong>Runtime column propagation</strong> option.</li>
+</ul>
+</li>
+<li>Click <strong>Save</strong> to save the <em>Join_on_ID</em> node settings.<br><img alt="datastage_snowflake_55" src="img/7ea09528f1edfb5f.png"><br><br></li>
+</ul>
+</li>
+</ol>
+<p><strong>Filter Stage Node</strong></p>
+<ol type="1">
+<li>In the <em>Node palette</em>, in the <em>Stages</em> section, drag the <strong>Filter</strong> node to the canvas, and drop the node on the link line between the <em>Join_on_ID</em> and <em>Snowflake_mortgage_data</em> nodes.<img alt="datastage_snowflake_56" src="img/e576c9442540b5ee.png"><br><br></li>
+<li>Double-click the <strong>Filter_1</strong> node to edit the settings.<ul>
+<li>Change the <em>Filter_1</em> node name to <strong>Filter_on_CA</strong>. <br><img alt="datastage_snowflake_57" src="img/40cac0815c0856e0.png"> <br></li>
+<li>Expand the <strong>Properties</strong> section. <br><img alt="datastage_snowflake_58" src="img/c7ae1dc9a34a856f.png"> <br></li>
+<li>Under <em>Predicates</em>, click <strong>Edit</strong>.<ul>
+<li>Click below <strong>Where clause</strong> to enter in a custom filter clause.<img alt="datastage_snowflake_59" src="img/2c3c5878958afa3b.png"></li>
+<li>Type <strong>STATE_CODE=‘CA&#39;</strong>. This will filter all mortgage applications to only keep those that came from California.<img alt="datastage_snowflake_60" src="img/84c4b9ec6e13e64.png"></li>
+<li>Click <strong>Apply and return</strong>.</li>
+</ul>
+</li>
+<li>Click the <strong>Output</strong> tab.<ul>
+<li>Check the <strong>Runtime column propagation</strong> option.</li>
+<li>Click <strong>Save</strong> to save the Filter node settings. <br><img alt="datastage_snowflake_61" src="img/371156373fe67353.png"><br><br></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows the completed DataStage flow. You are now ready to run the DataStage job.</p>
+<p class="image-container"><img alt="datastage_snowflake_62" src="img/d7fc7c51ad12267e.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the DataStage job" duration="1">
+        <p>Now you are ready to compile and run the DataStage job to load the Mortgage Application data from Db2 Warehouse into Snowflake. Follow these steps to run the DataStage job:</p>
+<ol type="1">
+<li>On the toolbar, click <strong>Compile</strong>. This action validates your DataStage flow.</li>
+<li>When the flow compiles successfully, click <strong>Run</strong> on the toolbar to start the DataStage job. The run might take a few seconds to complete.</li>
+<li>When the run completes, you will see a message stating <strong>Run successful with warnings</strong>.<br></li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows the successful run completed. Now that the DataStage job ran successfully, you can view the new table in Snowflake.</p>
+<p class="image-container"><img alt="datastage_snowflake_63" src="img/87d56862a0d55f82.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="View the data asset in the Snowflake data warehouse" duration="1">
+        <p>To check whether the data was loaded data into Snowflake correctly, you can go back to your Snowflake dashboard.</p>
+<ol type="1">
+<li>Navigate to <strong>Data &gt; Databases</strong>.</li>
+<li>Expand <strong>DATASTAGEDB &gt; MORTGAGE &gt; TABLES</strong>.</li>
+<li>Select the <strong>APPLICATION</strong> table.</li>
+<li>Under the table name, click the <strong>Data Preview</strong> tab.</li>
+<li>Select the <strong>DATASTAGEDATA</strong> warehouse.</li>
+<li>Click <strong>Preview</strong> to see a preview of the <em>Mortgage Application</em> data imported from DataStage.</li>
+</ol>
+<p><strong>Check your progress</strong>: The following image shows the loaded table in Snowflake.</p>
+<p class="image-container"><img alt="datastage_snowflake_64" src="img/49937c49e9c16364.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations on completing this lab! You&#39;ve successfully used <a href="https://www.ibm.com/products/datastage?utm_content=SRCWW&p1=Search&p4=43700050328190090&p5=e&gclid=EAIaIQobChMIgqOUjdrj_QIVEgZ9Ch3rvwWwEAAYASAAEgLNzPD_BwE&gclsrc=aw.ds" target="_blank">DataStage</a> to load enterprise data into Snowflake and perform <a href="https://video.ibm.com/playlist/650317" target="_blank">data transformations</a> (of which there are hundreds of <a href="https://dataplatform.cloud.ibm.com/docs/content/dstage/com.ibm.swg.im.iis.ds.parjob.dev.doc/topics/processingdata.html?audience=wdp" target="_blank">pre-built objects</a> in DataStage). <br></p>
+<p>We would love your feedback on this Quickstart! Please submit any and all feedback using this <a href="http://s.alchemer.com/s3/Quickstart-Feedback-A-Data-Integration-Guide-Load-Banking-Data-into-Snowflake-with-IBM-DataStage" target="_blank">Feedback Form</a>. <br></p>
+<h2 is-upgraded><strong>What You Learned</strong></h2>
+<ol type="1">
+<li>How to provision DataStage as a Service</li>
+<li>How to create a DataStage flow</li>
+<li>How to configure a Snowflake connection and load data into Snowflake</li>
+<li>How to perform join and filter data transformations</li>
+<li>How to run a DataStage job <br></li>
+</ol>
+<h2 is-upgraded><strong>Next Steps and Related Resources</strong></h2>
+<p>We encourage you to continue with your free trial by loading in your own sample or production data and by using some of the more advanced capabilities of Snowflake not covered in this lab. There are several ways Snowflake can help you with this:</p>
+<ol type="1">
+<li>Read the <a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/?utm_source=Snowflake&utm_medium=lab" target="_blank">Definitive Guide to Maximizing Your Free Trial</a>.</li>
+<li>Attend a Snowflake virtual or in-person <a href="https://www.snowflake.com/about/webinars/" target="_blank">event</a> to learn more about our capabilities and how customers use us.</li>
+<li>Contact <a href="https://www.snowflake.com/free-trial-contact-sales/?utm_source=Snowflake&utm_medium=lab" target="_blank">Sales</a> to learn more.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

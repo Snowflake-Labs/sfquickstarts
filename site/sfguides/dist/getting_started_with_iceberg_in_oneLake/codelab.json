@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_iceberg_in_oneLake",
+  "duration": 33,
+  "title": "Getting Started with Iceberg in OneLake",
+  "summary": "This is a quickstart for creating Iceberg tables usable by both Snowflake and Microsoft Fabric",
+  "source": "getting_started_with_Iceberg_in_OneLake/getting_started_with_iceberg_in_oneLake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "azure",
+    "iceberg",
+    "microsoft",
+    "fabric",
+    "onelake",
+    "search"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_iceberg_in_oneLake"
+}

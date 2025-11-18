@@ -1,0 +1,255 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Accelerate Your GraphQL Development on Snowflake with Hasura</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="accelerate_your_graphql_development_on_snowflake_with_hasura"
+                  title="Accelerate Your GraphQL Development on Snowflake with Hasura"
+                  environment="web"
+                  feedback-link="https://github.com/matt-hasura">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>The Hasura GraphQL Engine is a blazingly-fast GraphQL server that allows developers to instantly build and deploy real-time GraphQL and REST APIs on top of any new or existing Snowflake database.</p>
+<p>In this tutorial, you will learn how to use <a href="https://cloud.hasura.io/signup" target="_blank">Hasura Cloud</a> to connect to your Snowflake database and query your data using GraphQL.</p>
+<p class="image-container"><img alt="logos" src="img/9e2d7fbbe3b2739e.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with an accessible warehouse and role to create a new database and schema</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create and configure an Hasura Cloud project</li>
+<li>How to connect Hasura Cloud to a Snowflake database</li>
+<li>How to query data in your Snowflake database using GraphQL</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A valid email address to create an Hasura Cloud account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A GraphQL API for your Snowflake database</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Cloud Account" duration="2">
+        <aside class="special"><p> If you are an existing Hasura Cloud user, sign in to your account and proceed to <strong>Create a Project</strong>.</p>
+</aside>
+<p>Navigate to <a href="https://cloud.hasura.io/signup" target="_blank"><paper-button class="colored" raised>Hasura Cloud</paper-button></a> and click on the <strong>Sign Up With Email</strong> link.</p>
+<p class="image-container"><img alt="signup" src="img/206b468b32911c7a.png"></p>
+<p>Complete the sign up form and click on the <strong>Create My Account</strong> button.</p>
+<p class="image-container"><img alt="signup-form" src="img/9bf5a67d899b0915.png"></p>
+<p>Check your inbox for a verifcation email to confirm your account. If you did not receive an email, scan your spam/junk folder or request another verification email.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Project" duration="2">
+        <aside class="special"><p> If you are new to Hasura Cloud, a free tier project has automatically been deployed for you in <em>AWS us-west-1</em>. If you require a different region or cloud provider, continue with this step, otherwise proceed to <strong>Configure a Project</strong>.</p>
+</aside>
+<p>In the Hasura Cloud dashboard, click on the <strong>New Project</strong> button.</p>
+<p class="image-container"><img alt="new-project" src="img/4b8cccf024687f86.png"></p>
+<p>Select <strong>Free</strong> from the pricing plans, pick an <strong>AWS</strong> region from the drop-down menu, and click on the <strong>Create Free Project</strong> button to create a project.</p>
+<p class="image-container"><img alt="new-project" src="img/c26f5404d8e1ffec.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure a Project" duration="1">
+        <aside class="special"><p> Each Hasura Cloud project is automatically assigned a dynamic name and corresponding DNS hostname. If you want to change your project name, continue with this step, otherwise proced to <strong>Create a Sample Database</strong>.</p>
+</aside>
+<aside class="warning"><p> Users on free tier projects are not allowed to change regions. If you want to change regions without upgrading to a paid tier project, create a new project in the desired AWS region.</p>
+</aside>
+<p>Click on the <img alt="gear-icon" src="img/2e63cebef62dbf99.png"> icon for the project you want to configure.</p>
+<p class="image-container"><img alt="configure-project" src="img/1b873c378db8b247.png"></p>
+<p>Click on the <img alt="pencil-icon" src="img/7e261bb81a667363.png"> icon to the right of the <code>Name</code> field. Enter a globally unique project name and click on <strong>Save</strong>.</p>
+<p class="image-container"><img alt="change-project-name" src="img/9facf295e7a3a842.png"></p>
+<p>Additional information worth noting on the configuration page includes:</p>
+<ul>
+<li>GraphQL API Endpoint</li>
+<li>Admin Secret</li>
+<li>Hasura Cloud IP Address</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Sample Database" duration="2">
+        <p>Sign in to your Snowflake account and create a new <strong>SQL Worksheet</strong>.</p>
+<p class="image-container"><img alt="new-worksheet" src="img/47bda439502c884.png"></p>
+<p>Copy the <a href="https://raw.githubusercontent.com/hasura/snowflake-quickstart/main/sql/sample_music_database.sql" target="_blank"><paper-button class="colored" raised>SQL Script</paper-button></a> and paste it into the SQL Worksheet, then click on the <strong>Run All</strong> button to execute the script.</p>
+<p class="image-container"><img alt="copy-sql" src="img/b141a448c07e685e.png"></p>
+<p>After the script has successfully executed, you will see a <code>MUSIC</code> database with the following tables:</p>
+<p class="image-container"><img alt="music-database" src="img/c66149f1d94eea37.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Your Database" duration="3">
+        <p>In the Hasura Cloud dashboard, click on the <strong>Launch Console</strong> for your project.</p>
+<p class="image-container"><img alt="launch-console" src="img/b0563cd212a9c263.png"></p>
+<p>Click on <strong>Data</strong> in the navigation bar and select <strong>Snowflake</strong> as the database type. Click on the <strong>Connect Existing Database</strong> button to configure the Snowflake connector.</p>
+<p class="image-container"><img alt="select-snowflake" src="img/99244eb515f139a6.png"></p>
+<p>Enter <strong>music</strong> as the database name, followed by your JDBC connection string.</p>
+<p class="image-container"><img alt="connect-database" src="img/4aeb68db2a0ccc7c.png"></p>
+<aside class="warning"><p> Special characters in the JDBC connection string must be URL encoded.</p>
+</aside>
+<p>The Snowflake JDBC connection string uses the following format:</p>
+<pre><code>Format:
+  jdbc:snowflake://{organization}-{account}.snowflakecomputing.com/?user={username}&amp;password={password}&amp;warehouse={warehouse_name}&amp;db={db_name}&amp;schema={schema_name}
+
+Example:
+  jdbc:snowflake://RLTEPEF-LKR90823.snowflakecomputing.com/?user=hasura&amp;password=Hasura%2123&amp;warehouse=compute_wh&amp;db=music&amp;schema=public
+</code></pre>
+<aside class="special"><p> For more information on Snowflake&#39;s JDBC Driver Connection String, please visit the Hasura <a href="https://docs.snowflake.com/developer-guide/jdbc/jdbc-configure#jdbc-driver-connection-string" target="_blank">documentation</a>.</p>
+</aside>
+<aside class="special"><p><strong>Using Environment Variables</strong></p>
+<p>Setting the connection string as an environment viariable is a security best practice to prevent any secret information from being exposed in your instance&#39;s metadata. For more information on using an environment variable to connect to your Snowflake database, please visit the Hasura <a href="https://docs.snowflake.com/developer-guide/jdbc/jdbc-configure#jdbc-driver-connection-string" target="_blank">documentation</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a GraphQL API" duration="3">
+        <p>On the left side of the Hasura Cloud console, click on the <strong>music</strong> database and select all of the tables. Click on the <strong>Track Selected</strong> button to enable Hasura to track all of the database tables and instantly create a GraphQL API.</p>
+<p class="image-container"><img alt="track-tables" src="img/c1faa833d062a3b.png"></p>
+<p>With the auto-generated GraphQL API, you can now query for non-related data.</p>
+<p class="image-container"><img alt="non-tracked-query" src="img/7e0ee916c5f5ca8f.png"></p>
+<p>Click on the <img alt="arrow-icon" src="img/d738bd51f666c9e2.png"> to expand the <code>Foreign Key Relationships</code> and select all of the suggested relationships. Hasura automatically discovers table relationships by introspecting the schema. Click on the <strong>Track Selected</strong> button to re-generate the GraphQL API.</p>
+<p class="image-container"><img alt="track-relationships" src="img/48c8854f6f877cf2.png"></p>
+<p>You are now able to query for all related data (i.e. nested query).</p>
+<p class="image-container"><img alt="tracked-query" src="img/4941663621e73f4a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="GraphQL Queries" duration="5">
+        <aside class="warning"><p> Hasura support for Snowflake is currently limited to GraphQL read-only queries, relationships, and permissions.</p>
+</aside>
+<p>Click on the <strong>API</strong> button in the navigation bar. In the GraphiQL Explorer, paste the <strong>AllArtists</strong> query to retrieve the <code>name</code> and <code>id</code> of all artists.</p>
+<pre><code language="language-graphql" class="language-graphql">query AllArtists {
+  artists {
+    name
+    id
+  }
+}
+</code></pre>
+<p>Execute the query by clicking on the <strong>Play</strong> button. The results will be displayed in the box to the right of the query.</p>
+<p class="image-container"><img alt="allartists-query" src="img/d20d4172849b825.png"></p>
+<p>Now let&#39;s query for both artists and their respective albums. In the GraphiQL Explorer, paste the <strong>AllArtistsAlbums</strong> query and execute it.</p>
+<pre><code language="language-graphql" class="language-graphql">query AllArtistsAlbums {
+  artists {
+    name
+    id
+    artists_albums {
+      title
+      artist_id
+    }
+  }
+}
+</code></pre>
+<p>This is a nested query that fetches artist and album information based on the related <code>id</code> of the artist and <code>artist_id</code> of the album.</p>
+<p class="image-container"><img alt="allartistalbums-query" src="img/bf2ea8c0ed6f21d2.png"></p>
+<p>Using a variable, we can narrow the results for a specific artist. In the GraphiQL Explorer, paste the <strong>ArtistAlbums</strong> query that contains a filter using the <code>$artist</code> variable.</p>
+<pre><code language="language-graphql" class="language-graphql">query ArtistAlbums($artist: string!) {
+  artists(where: {name: {_eq: $artist}}) {
+    name
+    artists_albums {
+      title
+    }
+  }
+}
+</code></pre>
+<p>In the Query Variables box, paste the JSON string to set the <code>$artist</code> variable to <code>Green Day</code>.</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;artist&#34;: &#34;Green Day&#34;
+}
+</code></pre>
+<p>Execute the query and now the results are filtered for albums belong to the artist <code>Green Day</code>.</p>
+<p class="image-container"><img alt="artistalbums-query" src="img/6802bbb0f44fe804.png"></p>
+<aside class="special"><p> For more information on GraphQL queries, please visit the Hasura documentation <a href="https://hasura.io/docs/latest/queries/quickstart/" target="_blank">website</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Summary" duration="1">
+        <p>Congratulations! You&#39;ve just deployed a GraphQL API for your Snowflake database in less than 20 minutes! And by doing so, you&#39;ve discovered how easily Hasura can accelerate your application development on Snowflake by providing a fast way to create and deploy real-time GraphQL (and REST) APIs on top of your new or existing Snowflake databases.</p>
+<p>What we did not cover in this Quickstart is Hasura&#39;s robust and flexible authorization engine that enables fine-grained access controls for your Snowflake databases. This will be a topic of a future Quickstart.</p>
+<p>Hasura requires minimal setup and configuration, making it an ideal solution for any developer who wants to quickly fetch Snowflake data in a uniform and consistent manner without having to be a database or SQL expert.</p>
+<h2 is-upgraded>What You&#39;ve Learned</h2>
+<ul>
+<li>How to connect Hasura to your Snowflake database with automatic schema introspection.</li>
+<li>How to use Hasura to instantly create a GraphQL API for your Snowflake data.</li>
+<li>How to execute GraphQL queries, including nested queries with variables.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://hasura.io/blog/introducing-instant-graphql-apis-for-snowflake-cloud-data-platform/" target="_blank">Instant Realtime GraphQL and REST APIs on Snowflake</a></li>
+<li><a href="https://hasura.io/docs/latest/databases/snowflake/getting-started/index/" target="_blank">Get Started with Snowflake</a></li>
+<li><a href="https://hasura.io/docs/latest/queries/overview/" target="_blank">GraphQL Queries</a></li>
+<li><a href="https://hasura.io/docs/latest/auth/authorization/index/" target="_blank">Authorization</a></li>
+<li><a href="https://hasura.io/docs/latest/restified/overview/" target="_blank">RESTified Endpoints</a></li>
+<li><a href="https://hasura.io/docs/latest/data-federation/overview/" target="_blank">GraphQL Federation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

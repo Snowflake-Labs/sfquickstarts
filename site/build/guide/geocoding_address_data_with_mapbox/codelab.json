@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "geocoding_address_data_with_mapbox",
+  "duration": 23,
+  "title": "Geocoding Address Data with Mapbox",
+  "summary": "Forward and Reverse Geocoding with the Mapbox App",
+  "source": "geocoding_address_data_with_mapbox/geocoding_address_data_with_mapbox.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "api",
+    "geo",
+    "geocoding",
+    "geospatial",
+    "gettingstarted",
+    "spatial"
+  ],
+  "feedback": "https://github.com/chriswhong/sfquickstarts",
+  "url": "geocoding_address_data_with_mapbox"
+}

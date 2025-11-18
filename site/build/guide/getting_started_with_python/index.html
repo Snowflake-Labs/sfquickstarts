@@ -1,0 +1,291 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_python"
+                  title="Getting Started with Python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>You can connect to Snowflake in many languages. If your language of choice is Python, you&#39;ll want to begin here to connect to Snowflake. We&#39;ll walk you through getting the Python Connector up and running, and then explore the basic operations you can do with it. You&#39;ll find the Python Connector to be quite robust, as it even supports integration with Pandas DataFrames.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Python</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to set up the Python connector</li>
+<li>how to test your installation</li>
+<li>how to connect to Snowflake</li>
+<li>how to set session parameters</li>
+<li>how to create a warehouse</li>
+<li>how to create a database</li>
+<li>how to create a schema</li>
+<li>how to create a table</li>
+<li>how to insert data</li>
+<li>how to query data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://www.snowflake.com/" target="_blank">Snowflake</a> Account</li>
+<li>A Text Editor</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Examples of using the Snowflake Python Connector</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up the Python Connector" duration="5">
+        <p>For this guide, we&#39;ll be using Python 3. Let&#39;s check what version of Python you have on your system. Do this by opening a terminal and entering the following command:</p>
+<pre><code>python --version
+</code></pre>
+<p>If it outputs 3.5 or higher, you&#39;re good to go! If not, you&#39;ll need to install a newer version of Python. You can grab the latest release on the Python website.</p>
+<p>Once you&#39;ve got a recent version of Python, you can install the Snowflake Connector for Python. You&#39;ll do this via the Python package installer <code>pip</code> and by running the following command:</p>
+<pre><code>pip install --upgrade snowflake-connector-python
+</code></pre>
+<p>If you&#39;re on a Linux distribution, you&#39;ll also need to install a few packages from your distribution&#39;s repository. Specifically, you&#39;ll need the equivalent of:</p>
+<ul>
+<li>libm-devel</li>
+<li>openssl-devel</li>
+</ul>
+<p>Once you have both Python and the Snowflake Connector installed, you&#39;re ready to go! Let&#39;s make sure that&#39;s the case.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test Your Installation" duration="3">
+        <p>Before we delve into <em>using</em> the Snowflake connector, let&#39;s ensure it&#39;s installed correctly. We can do this with the following script.</p>
+<pre><code>#!/usr/bin/env python
+import snowflake.connector
+
+# Gets the version
+ctx = snowflake.connector.connect(
+    user=&#39;&lt;your_user_name&gt;&#39;,
+    password=&#39;&lt;your_password&gt;&#39;,
+    account=&#39;&lt;your_account_name&gt;&#39;
+    )
+cs = ctx.cursor()
+try:
+    cs.execute(&#34;SELECT current_version()&#34;)
+    one_row = cs.fetchone()
+    print(one_row[0])
+finally:
+    cs.close()
+ctx.close()
+</code></pre>
+<p>Open up a text editor and copy that script in and save it as <code>validate.py</code>. You&#39;ll need to input your own user name, password, and account in the corresponding fields.</p>
+<p>Open up a terminal in the location where the file is saved, and run the following command:</p>
+<pre><code>python validate.py
+</code></pre>
+<p>If everything is good to go, you&#39;ll see the installed Snowflake version. Otherwise, you&#39;ll get errors specific to your situation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect to Snowflake" duration="5">
+        <p>It&#39;s time to use the Snowflake Connector for Python. Open up your Python environment. The first thing you&#39;ll need to do is to import the Snowflake Connector module. Do this before using any Snowflake related commands.</p>
+<pre><code>import snowflake.connector
+</code></pre>
+<p>You may want to consider reading in your login information from external sources, such as environment variables. This will add some security to your scripts, and save you time in the long run. In this example, we&#39;re using <code>os.getenv</code> to pull the environment variable <code>SNOWSQL_PWD</code> for our variable <code>PASSWORD.</code></p>
+<pre><code>PASSWORD = os.getenv(&#39;SNOWSQL_PWD&#39;)
+</code></pre>
+<p>You&#39;ll use those variables within the Python Connector like so:</p>
+<pre><code>conn = snowflake.connector.connect(
+    user=USER,
+    password=PASSWORD,
+    account=ACCOUNT
+    )
+</code></pre>
+<p>Nice! Now let&#39;s delve into the specifics.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Session Parameters" duration="1">
+        <p>You can set session parameters to tweak your session and have it set up just the way you want it. There are two ways to accomplish this. First, you can set them when you initially connect, like so:</p>
+<pre><code>conn = snowflake.connector.connect(
+    user=&#39;XXXX&#39;,
+    password=&#39;XXXX&#39;,
+    account=&#39;XXXX&#39;,
+    session_parameters={
+        &#39;QUERY_TAG&#39;: &#39;EndOfMonthFinancials&#39;,
+    }
+)
+</code></pre>
+<p>Alternatively, you can set them after you connect by executing the SQL statement <code>ALTER SESSION SET</code>:</p>
+<pre><code>conn.cursor().execute(&#34;ALTER SESSION SET QUERY_TAG = &#39;EndOfMonthFinancials&#39;&#34;)
+</code></pre>
+<p>You may have taken advantage of Snowflake&#39;s ability to use robust security methods. If so, you&#39;ll want to take extra steps to configure the Snowflake Python Connector.</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/admin-security-fed-auth-use.html#label-sso-with-command-line-clients" target="_blank">Single Sign-on (SSO)</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/python-connector-example.html#using-key-pair-authentication" target="_blank">Key Pair Authentication</a><ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/python-connector-example.html#key-rotation" target="_blank">Key Rotation</a></li>
+</ul>
+</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/oauth-intro.html#label-oauth-intro-clients-drivers-conns" target="_blank">OAuth</a></li>
+</ul>
+<p>At this point, you can begin manipulating objects within Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Warehouse" duration="2">
+        <p>If you&#39;re familiar with the SQL commands to interact with Snowflake, then the commands within the Python connector will be familiar as well. Let&#39;s break down what a command looks like.</p>
+<p>Remember that <code>conn</code> is the object that connects you to your Snowflake account. You can use that to execute SQL commands with the following format.</p>
+<pre><code>conn.cursor().execute(&#34;YOUR SQL COMMAND&#34;)
+</code></pre>
+<p>We first want to create a <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview.html" target="_blank">virtual warehouse</a>. Virtual warehouses contain the servers that are required for you to perform queries and DML operations with Snowflake. Creating one can be done by incorporating the <code>CREATE WAREHOUSE</code> SQL command.</p>
+<pre><code>conn.cursor().execute(&#34;CREATE WAREHOUSE IF NOT EXISTS tiny_warehouse_mg&#34;)
+</code></pre>
+<p>The <code>CREATE WAREHOUSE</code> command creates a warehouse, as expected, but also implicitly sets that warehouse as the active warehouse for your session. If you&#39;ve already created a warehouse, you can explicitly set it as the active warehouse with the <code>USE WAREHOUSE</code> command.</p>
+<pre><code>conn.cursor().execute(&#34;USE WAREHOUSE tiny_warehouse_mg&#34;)
+</code></pre>
+<p>Now that you have a warehouse, let&#39;s talk about databases.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Database" duration="2">
+        <p>The next step is to create a database. Databases contain your schemas, which contain your database objects. We can create one in a similar manner to creating a warehouse, but this time with the <code>CREATE DATABASE</code> command.</p>
+<pre><code>conn.cursor().execute(&#34;CREATE DATABASE IF NOT EXISTS testdb&#34;)
+</code></pre>
+<p>Again, creating a database also sets that database as the active one for the current session. If you need to set an already created database as the active database for the session, use the <code>USE DATABASE</code> command.</p>
+<pre><code>conn.cursor().execute(&#34;USE DATABASE testdb&#34;)
+</code></pre>
+<p>After that, you need to create a schema.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Schema" duration="2">
+        <p>Schemas are the grouping of your database objects. These include your tables, the data within them, and views. Schemas are found within databases. You can create a schema with the <code>CREATE SCHEMA</code> command.</p>
+<pre><code>conn.cursor().execute(&#34;CREATE SCHEMA IF NOT EXISTS testschema&#34;)
+</code></pre>
+<p>Since <code>CREATE SCHEMA</code> also sets it as the active schema for your session, you don&#39;t have to explicitly call <code>USE SCHEMA</code> as well. Only do so if you would like to use an already created schema.</p>
+<pre><code>conn.cursor().execute(&#34;USE SCHEMA testschema&#34;)
+</code></pre>
+<p>By default, the schema will be used in the current database. You can use it in another database by specifying that other database.</p>
+<pre><code>conn.cursor().execute(&#34;USE SCHEMA otherdb.testschema&#34;)
+</code></pre>
+<p>With a schema in use, it&#39;s time to move on to dealing with tables.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Table" duration="2">
+        <p>Alright, with a warehouse, database, and schema created you have everything you need to begin manipulating data in tables. First, you&#39;ll need to create the table. That&#39;s done with the <code>CREATE TABLE</code> command.</p>
+<pre><code>conn.cursor().execute(
+    &#34;CREATE OR REPLACE TABLE &#34;
+    &#34;test_table(col1 integer, col2 string)&#34;)
+</code></pre>
+<p>Within <code>conn.cursor().execute</code> this example creates a table named <code>test_table</code> with two columns, one named <code>col1</code> which will contain integers and <code>col2</code> which will contain strings.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Insert Data" duration="2">
+        <p>With the table <code>test_table</code> created, you can add data to it. You can do so with the command <code>INSERT</code>.</p>
+<pre><code>conn.cursor().execute(
+    &#34;INSERT INTO test_table(col1, col2) &#34;
+    &#34;VALUES(123, &#39;test string1&#39;),(456, &#39;test string2&#39;)&#34;)
+</code></pre>
+<p>This command inserts data into <code>test_table</code> row by row. The value found in the first column and first row is &#34;123&#34; and so on.</p>
+<p>If you don&#39;t want to manually insert data row by row, however, you can load data instead. This is done with a combination of the <code>PUT</code> and <code>COPY INTO</code> commands.</p>
+<pre><code>conn.cursor().execute(&#34;PUT file:///tmp/data/file* @%test_table&#34;)
+conn.cursor().execute(&#34;COPY INTO test_table&#34;)
+</code></pre>
+<p>The <code>PUT</code> command here is staging the file, and the <code>COPY INTO</code> command is copying that data from that file into the specified table. You can also use the <code>COPY INTO</code> command to copy data from an external location.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Data" duration="2">
+        <p>Of course, you&#39;ll want to query your data at some point. It&#39;s easy to do that within the Python Connector too. To view values from the table, you can do so easily with the <code>print</code> command.</p>
+<pre><code>col1, col2 = conn.cursor().execute(&#34;SELECT col1, col2 FROM test_table&#34;).fetchone()
+print(&#39;{0}, {1}&#39;.format(col1, col2))
+</code></pre>
+<p>This code snippet is using the SQL command <code>SELECT col1, col2 FROM test_table</code> to select specific columns, and then is printing the first values in each, or in other words, the first row.</p>
+<p>If you&#39;d like to print entire columns, you can do so in a similar manner.</p>
+<pre><code>for (col1, col2) in conn.cursor().execute(&#34;SELECT col1, col2 FROM test_table&#34;):
+	print(&#39;{0}, {1}&#39;.format(col1, col2))
+</code></pre>
+<p>To efficiently use your resources, you&#39;ll want to remember to explicitly close your connection to Snowflake after performing queries.</p>
+<pre><code>connection.close()
+</code></pre>
+<p>Look at that! You have now implemented all the steps needed to manipulate data within Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps: Advanced Manipulation with Python" duration="1">
+        <p>By now you have a grasp on the basics of using the Python Connector. As you may have noticed, it leans heavily on already-established Snowflake SQL commands. Of course, this isn&#39;t all you can do with the Connector. Here are some potential next steps that may be of interest to you depending on your use case.</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/python-connector-example.html#binding-data" target="_blank">Bind Data</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/python-connector-pandas.html" target="_blank">Use Pandas Dataframes</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/sqlalchemy.html" target="_blank">Snowflake SQLAlchemy Toolkit</a></li>
+</ul>
+<p>This is just the surface of what you can do with Snowflake. To learn more, see the <a href="https://docs.snowflake.com/en/" target="_blank">Snowflake documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

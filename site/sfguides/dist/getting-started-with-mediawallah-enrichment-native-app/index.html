@@ -1,0 +1,953 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with MediaWallah Enrichment Application</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-mediawallah-enrichment-native-app"
+                  title="Getting Started with MediaWallah Enrichment Application"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p><strong>Note: The Enrichment Application is currently only available on</strong><code>AWS US-EAST-1</code><em>MediaWallah is working to make this available in other regions</em> MediaWallah&#39;s Enrichment Data Marketplace listing holds Two Applications. <strong>Matchtest</strong> and <strong>Enrichment</strong>. <strong>Matchtest</strong> - Allows users to quickly test overlap between consumer&#39;s own data with various MediaWallah dataverse without exposure. Providing informed insights on if dataset is worth enrichment. <strong>Enrichment</strong> - Returns consumer&#39;s data linked to MediaWallah&#39;s dataverse. Allowing consumers to check for data quality and usability. Users of the free Enrichment application has a limited version of the Enrichment Application; only returning a percentage of the total for a limited time window. Please Contact MediaWallah if additional time or trial runs are needed. Enrichment results are returned in four tables.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://signup.snowflake.com/" target="_blank">Snowflake Account</a></li>
+<li>The provider must accept the Snowflake Marketplace Provider Terms of Service.</li>
+<li>The consumer must accept the Snowflake Marketplace Consumer Terms of Service.</li>
+<li>The consumer must be able to operate ACCOUNTADMIN, SECURITYADMIN roles.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to download the MediaWallah Enrichment Application from Snowflake Data Marketplace</li>
+<li>How to install the application</li>
+<li>How to setup log share with MediaWallah</li>
+<li>How to permission tables for data enrichment</li>
+<li>How to view and access results produced by the application</li>
+<li>How to upgrade or uninstall the application</li>
+<li>How to view the metadata table for privileges and usage rates.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>The requied databases, schemas, warehouse, and role to use MediaWallah&#39;s Enrichment Application</li>
+</ul>
+<h2 is-upgraded>Architecture</h2>
+<p class="image-container"><img alt="solution_architecture" src="img/6b6157375792306e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installation" duration="2">
+        <h2 is-upgraded>Account Setup (Post-Install)</h2>
+<p>Create objects and &#34;helper&#34; stored procedures. The following scripts help streamline the log sharing process and app usage considerably, and can be executed by the consumer before or after the app installation. Executing the scripts will create everything the consumer needs to use the app, including roles and warehouses. <strong>NOTE:</strong> The ACCOUNTADMIN and SECURITYADMIN roles are required create the APP_ADMIN_ROLE, which is granted privileges to complete the pre-install setup:</p>
+<ul>
+<li>IMPORT SHARE</li>
+<li>CREATE SHARE</li>
+<li>CREATE DATABASE</li>
+<li>CREATE WAREHOUSE</li>
+<li>CREATE APPLICATION</li>
+</ul>
+<h3 is-upgraded>Account Setup</h3>
+<h4 is-upgraded>This script sets up the Consumer&#39;s account to install the Native App</h4>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------------------------------------------
+-- 01_account_setup.sql
+-- This script sets up the Consumer&#39;&#39;s account to install the Native App
+-- Note: it takes some time to switch between ROLEs,
+--       wait a few seconds before running the next lines after switching roles.
+-------------------------------------------------------------------------------
+--get current user
+SET APP_USER = CURRENT_USER();
+
+--set parameter for admin role
+SET APP_ADMIN_ROLE = &#39;C_MWEN_APP_ADMIN&#39;;
+
+--set parameter for warehouse
+SET APP_WH = &#39;C_MWEN_APP_WH&#39;;
+
+--create admin role
+USE ROLE SECURITYADMIN;
+CREATE ROLE IF NOT EXISTS IDENTIFIER($APP_ADMIN_ROLE) ;
+ALTER ROLE IF EXISTS IDENTIFIER($APP_ADMIN_ROLE) SET COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;app_admin_role&#34;}}&#39;;
+GRANT ROLE IDENTIFIER($APP_ADMIN_ROLE) TO ROLE SYSADMIN;
+GRANT ROLE IDENTIFIER($APP_ADMIN_ROLE) TO USER IDENTIFIER($APP_USER);
+
+--grant privileges to admin role
+USE ROLE ACCOUNTADMIN;
+GRANT IMPORT SHARE ON ACCOUNT TO ROLE IDENTIFIER($APP_ADMIN_ROLE);
+GRANT CREATE SHARE ON ACCOUNT TO ROLE IDENTIFIER($APP_ADMIN_ROLE);
+GRANT MANAGE SHARE TARGET ON ACCOUNT TO ROLE IDENTIFIER($APP_ADMIN_ROLE);
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE IDENTIFIER($APP_ADMIN_ROLE);
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($APP_ADMIN_ROLE);
+GRANT CREATE APPLICATION ON ACCOUNT TO ROLE IDENTIFIER($APP_ADMIN_ROLE);
+
+USE ROLE IDENTIFIER($APP_ADMIN_ROLE);
+
+CREATE OR REPLACE WAREHOUSE IDENTIFIER($APP_WH) WITH WAREHOUSE_SIZE = &#39;XSMALL&#39;
+  WAREHOUSE_TYPE = &#39;STANDARD&#39;
+  AUTO_SUSPEND = 300
+  AUTO_RESUME = TRUE
+  --MIN_CLUSTER_COUNT = 1
+  --MAX_CLUSTER_COUNT = 1
+  --SCALING_POLICY = &#39;STANDARD&#39;
+  COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;app_warehouse&#34;}}&#39;
+;
+
+UNSET (APP_USER, APP_ADMIN_ROLE, APP_WH);
+</code></pre>
+<h3 is-upgraded>Create Helper DB</h3>
+<h4 is-upgraded>This script creates a database that houses the input data for the application and the helper stored procedure.</h4>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------------------------------------------
+-- 02_create_helper_db.sql
+-- This script creates a database that houses the input data for the application
+-- and the helper stored procedure.
+-------------------------------------------------------------------------------
+--set parameter for admin role
+SET APP_ADMIN_ROLE = &#39;C_MWEN_APP_ADMIN&#39;;
+
+--set parameter for warehouse
+SET APP_WH = &#39;C_MWEN_APP_WH&#39;;
+
+--set parameter for helper db
+SET HELPER_DB = &#39;C_MWEN_HELPER_DB&#39;;
+
+USE ROLE IDENTIFIER($APP_ADMIN_ROLE);
+USE WAREHOUSE IDENTIFIER($APP_WH);
+
+--source data db/schemas
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($HELPER_DB);
+
+USE DATABASE IDENTIFIER($HELPER_DB);
+CREATE SCHEMA IF NOT EXISTS SOURCE;
+CREATE SCHEMA IF NOT EXISTS PRIVATE; --to store wrapper stored procedures
+
+UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
+</code></pre>
+<h3 is-upgraded>Create Create Share Logs Procedure.sql</h3>
+<h4 is-upgraded>This procedure serves as a wrapper procedure that calls the app&#39;s LOG_SHARE_INSERT procedure.  In adddition it makes the necessary grants to the log/metric tables to the app and creates the log share to the Provider.</h4>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------------------------------------------
+-- 03_create_create_log_share_procedure.sql
+-- This procedure serves as a wrapper procedure that calls the app\&#39;s LOG_SHARE_INSERT procedure.
+-- In adddition it makes the necessary grants to the log/metric tables to the app
+-- and creates the log share to the Provider.
+-------------------------------------------------------------------------------
+--set parameter for admin role
+SET APP_ADMIN_ROLE = &#39;C_MWEN_APP_ADMIN&#39;;
+
+--set parameter for warehouse
+SET APP_WH = &#39;C_MWEN_APP_WH&#39;;
+
+--set parameter for helper db
+SET HELPER_DB = &#39;C_MWEN_HELPER_DB&#39;;
+
+USE ROLE IDENTIFIER($APP_ADMIN_ROLE);
+USE WAREHOUSE IDENTIFIER($APP_WH);
+USE DATABASE IDENTIFIER($HELPER_DB);
+
+CREATE OR REPLACE PROCEDURE PRIVATE.CREATE_LOG_SHARE(app_name VARCHAR, app_code VARCHAR, provider_locator VARCHAR)
+  RETURNS VARCHAR
+  LANGUAGE JAVASCRIPT
+  COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;helper_sproc_create_log_share}}&#39;
+  EXECUTE AS CALLER
+  AS
+  $$
+
+    //get consumer_name
+    var rset = snowflake.execute({sqlText: `SELECT consumer_name FROM ${APP_NAME}.UTIL_APP.METADATA_C_V;`});
+    rset.next();
+    var consumer_name = rset.getColumnValue(1);
+
+    var timeout = 300000; //milliseconds - 5 min timeout
+
+    try {
+
+      snowflake.execute({sqlText:`USE ROLE C_MWEN_APP_ADMIN;`});
+
+      //create app share DB
+      snowflake.execute({sqlText:`CREATE OR REPLACE DATABASE MWEN_APP_SHARE;`});
+
+      //create log share schema
+      snowflake.execute({sqlText:`CREATE OR REPLACE SCHEMA MWEN_APP_SHARE.logs;`});
+
+      //create logs table
+      snowflake.execute({sqlText:`CREATE OR REPLACE TABLE MWEN_APP_SHARE.logs.logs(msg VARIANT, signature BINARY) CHANGE_TRACKING=TRUE COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;consumer_log_share&#34;}}&#39;;`});
+
+      //create metrics share schema
+      snowflake.execute({sqlText:`CREATE OR REPLACE SCHEMA MWEN_APP_SHARE.metrics;`});
+
+      //create metrics table
+      snowflake.execute({sqlText:`CREATE OR REPLACE TABLE MWEN_APP_SHARE.metrics.metrics(msg VARIANT, signature BINARY) CHANGE_TRACKING=TRUE COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;consumer_log_share&#34;}}&#39;;`});
+
+      //grant privileges on logs/metrics to application
+      snowflake.execute({sqlText:`GRANT USAGE ON DATABASE MWEN_APP_SHARE TO APPLICATION ${APP_NAME};`});
+      snowflake.execute({sqlText:`GRANT USAGE ON SCHEMA MWEN_APP_SHARE.LOGS TO APPLICATION ${APP_NAME};`});
+      snowflake.execute({sqlText:`GRANT USAGE ON SCHEMA MWEN_APP_SHARE.METRICS TO APPLICATION ${APP_NAME};`});
+      snowflake.execute({sqlText:`GRANT SELECT, INSERT, UPDATE ON TABLE MWEN_APP_SHARE.LOGS.LOGS TO APPLICATION ${APP_NAME};`});
+      snowflake.execute({sqlText:`GRANT SELECT, INSERT, UPDATE ON TABLE MWEN_APP_SHARE.METRICS.METRICS TO APPLICATION ${APP_NAME};`});
+
+      //call provider log_share_insert SP to insert installation logs
+      var rset = snowflake.execute({sqlText:`CALL ${APP_NAME}.PROCS_APP.LOG_SHARE_INSERT(&#39;${PROVIDER_LOCATOR}&#39;, &#39;${APP_CODE}&#39;);`});
+      rset.next();
+      var provision_results = rset.getColumnValue(1);
+
+      //create share
+      snowflake.execute({sqlText:`CREATE SHARE IF NOT EXISTS MWEN_${consumer_name}_APP_SHARE COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;consumer_log_share&#34;}}&#39;;`});
+
+      //grant privileges on logs table to share
+      snowflake.execute({sqlText:`GRANT USAGE ON DATABASE MWEN_APP_SHARE TO SHARE MWEN_${consumer_name}_APP_SHARE;`});
+
+      snowflake.execute({sqlText:`GRANT USAGE ON SCHEMA MWEN_APP_SHARE.logs TO SHARE MWEN_${consumer_name}_APP_SHARE;`});
+      snowflake.execute({sqlText:`GRANT SELECT ON TABLE MWEN_APP_SHARE.logs.logs TO SHARE MWEN_${consumer_name}_APP_SHARE;`});
+
+      snowflake.execute({sqlText:`GRANT USAGE ON SCHEMA MWEN_APP_SHARE.metrics TO SHARE MWEN_${consumer_name}_APP_SHARE;`});
+      snowflake.execute({sqlText:`GRANT SELECT ON TABLE MWEN_APP_SHARE.metrics.metrics TO SHARE MWEN_${consumer_name}_APP_SHARE;`});
+
+      //share logs with provider
+      snowflake.execute({sqlText:`ALTER SHARE MWEN_${consumer_name}_APP_SHARE ADD ACCOUNTS=${PROVIDER_LOCATOR};`});
+
+
+      //current date
+      const date = Date.now();
+      var currentDate = null;
+
+      //poll metadata_c_v view until consumer is enabled, or timeout is reached
+      do {
+          currentDate = Date.now();
+          var rset = snowflake.execute({sqlText:`SELECT value FROM ${APP_NAME}.UTIL_APP.METADATA_C_V WHERE UPPER(key) = &#39;ENABLED&#39; AND UPPER(value) = &#39;Y&#39;;`});
+      } while ((rset.getRowCount() == 0) &amp;&amp; (currentDate - date &lt; timeout));
+
+      //if the timeout is reached, disable consumer and return
+      while (currentDate - date &gt;= timeout){
+        return `WARNING:  Consumer has not been enabled yet. Continue to monitor the METADATA_C_V view and contact Provider for more details.`;
+      }
+
+      return &#39;Consumer is now enabled&#39;;
+    } catch (err) {
+      var result = `
+      Failed: Code: `+err.code + `
+      State: `+err.state+`
+      Message: `+err.message+`
+      Stack Trace:`+ err.stack;
+
+      return `Error: ${result}`;
+  }
+  $$
+  ;
+
+UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
+</code></pre>
+<h3 is-upgraded>Create Generate Request Procedure</h3>
+<h4 is-upgraded>This procedure serves as a wrapper procedure that calls the app&#39;s REQUEST stored procedure, passing in a parameters object that includes the input table (if applicable), the app procedure to call, the procedure parameters, and the results table (if applicable)</h4>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------------------------------------------
+-- 04_create_generate_request_procedure.sql
+-- This procedure serves as a wrapper procedure that calls the app\&#39;s REQUEST stored procedure,
+-- passing in a parameters object that includes the input table (if applicable),
+-- the app procedure to call, the procedure parameters, and the results table (if applicable)
+-------------------------------------------------------------------------------
+--set parameter for admin role
+SET APP_ADMIN_ROLE = &#39;C_MWEN_APP_ADMIN&#39;;
+
+--set parameter for warehouse
+SET APP_WH = &#39;C_MWEN_APP_WH&#39;;
+
+--set parameter for helper db
+SET HELPER_DB = &#39;C_MWEN_HELPER_DB&#39;;
+
+USE ROLE IDENTIFIER($APP_ADMIN_ROLE);
+USE WAREHOUSE IDENTIFIER($APP_WH);
+USE DATABASE IDENTIFIER($HELPER_DB);
+
+CREATE OR REPLACE PROCEDURE PRIVATE.GENERATE_REQUEST(app_name VARCHAR, app_code VARCHAR, parameters VARCHAR)
+  RETURNS VARCHAR
+  LANGUAGE JAVASCRIPT
+  COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;helper_sproc_generate_request&#34;}}&#39;
+  EXECUTE AS CALLER
+  AS
+  $$
+
+    try {
+      var PARAMETERS_JSON = JSON.parse(PARAMETERS);
+      //clean up input_table_name and results_table_name and append to inner parameters object
+      PARAMETERS_JSON.input_table = PARAMETERS_JSON.input_table.replace(/&#34;/g, &#34;&#34;);
+      PARAMETERS_JSON.results_table = PARAMETERS_JSON.results_table.replace(/&#34;/g, &#34;&#34;);
+      PARAMETERS_JSON.proc_parameters[0].input_table_name = PARAMETERS_JSON.input_table;
+      PARAMETERS_JSON.proc_parameters[0].results_table_name = PARAMETERS_JSON.results_table;
+
+      //update PARAMETERS string
+      PARAMETERS = JSON.stringify(PARAMETERS_JSON).replace(/\&#39;/g, &#34;\\&#39;&#34;);
+
+      let { input_table } = PARAMETERS_JSON;
+
+      snowflake.execute({sqlText:`USE ROLE C_MWEN_APP_ADMIN;`});
+
+      if(input_table) {
+
+        //grant privs to source database, schema, and table to application
+        const [src_db, src_sch, src_tbl] = input_table.split(&#34;.&#34;);
+
+        snowflake.execute({sqlText:`GRANT USAGE ON DATABASE ${src_db} TO APPLICATION ${APP_NAME};`});
+        snowflake.execute({sqlText:`GRANT USAGE ON SCHEMA ${src_db}.${src_sch} TO APPLICATION ${APP_NAME};`});
+        snowflake.execute({sqlText:`GRANT SELECT ON TABLE ${src_db}.${src_sch}.${src_tbl} TO APPLICATION ${APP_NAME};`});
+      }
+
+      //if the application can write results outside of its DB, provide grants here:  FEATURE NOT ENABLED YET
+      //TODO:  add a field called RESULTS_LOCATION to specify db.sch where results should reside, if desired.
+      //snowflake.execute({sqlText:`GRANT USAGE,CREATE TABLE ON SCHEMA C_MWEN_HELPER_DB.RESULTS TO APPLICATION ${APP_NAME};`});
+
+
+      //call the app REQUST sproc
+      var rset = snowflake.execute({sqlText:`CALL ${APP_NAME}.PROCS_APP.REQUEST(&#39;MWEN&#39;, &#39;${PARAMETERS}&#39;);`});
+      rset.next();
+      var response_json = JSON.parse(rset.getColumnValue(1));
+
+      return `${response_json.state}: ${response_json.message}`;
+    } catch (err) {
+      var result = `
+      failed: Code: `+err.code + `
+      state: `+err.state+`
+      message: `+err.message+`
+      stackTrace:`+err.stackTrace || err.stack;
+
+      return `Error: ${result}`;
+  }
+  $$
+  ;
+
+UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
+</code></pre>
+<h3 is-upgraded>Create Uninstall Procedure</h3>
+<h4 is-upgraded>This procedure serves as a wrapper procedure that uninstalls the Provider&#39;s app and removes</h4>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------------------------------------------
+-- 05_create_uninstall_procedure.sql
+-- This procedure serves as a wrapper procedure that uninstalls the Provider\&#39;s app and removes
+-------------------------------------------------------------------------------
+--set parameter for admin role
+SET APP_ADMIN_ROLE = &#39;C_MWEN_APP_ADMIN&#39;;
+
+--set parameter for warehouse
+SET APP_WH = &#39;C_MWEN_APP_WH&#39;;
+
+--set parameter for helper db
+SET HELPER_DB = &#39;C_MWEN_HELPER_DB&#39;;
+
+USE ROLE IDENTIFIER($APP_ADMIN_ROLE);
+USE WAREHOUSE IDENTIFIER($APP_WH);
+USE DATABASE IDENTIFIER($HELPER_DB);
+
+CREATE OR REPLACE PROCEDURE PRIVATE.UNINSTALL(app_name VARCHAR)
+  RETURNS VARCHAR
+  LANGUAGE JAVASCRIPT
+  COMMENT = &#39;{&#34;origin&#34;:&#34;sf_ps_wls&#34;,&#34;name&#34;:&#34;acf&#34;,&#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:3},&#34;attributes&#34;:{&#34;role&#34;:&#34;consumer&#34;,&#34;component&#34;:&#34;helper_sproc_app_uninstall&#34;}}&#39;
+  EXECUTE AS CALLER
+  AS
+  $$
+
+  try {
+    //drop all existing outbound shares to the Provider account
+    snowflake.execute({sqlText: `SHOW SHARES LIKE &#39;%MWEN_%_APP_SHARE%&#39;`});
+    snowflake.execute({sqlText: `CREATE OR REPLACE TEMPORARY TABLE C_MWEN_HELPER_DB.PRIVATE.OUTBOUND_SHARES AS SELECT &#34;name&#34; FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE &#34;owner&#34; = &#39;C_MWEN_APP_ADMIN&#39; AND &#34;kind&#34; = &#39;OUTBOUND&#39;;`});
+
+    var rset = snowflake.execute({sqlText: `SELECT * FROM C_MWEN_HELPER_DB.PRIVATE.OUTBOUND_SHARES;`});
+    while(rset.next()){
+      var full_share_name = rset.getColumnValue(1);
+      full_share_name_arr = full_share_name.split(&#34;.&#34;);
+      share_name = full_share_name_arr[2];
+
+      snowflake.execute({sqlText:`DROP SHARE IF EXISTS ${full_share_name};`});
+      snowflake.execute({sqlText:`DROP SHARE IF EXISTS ${full_share_name};`});
+    }
+
+    //drop log database
+    snowflake.execute({sqlText: `DROP DATABASE IF EXISTS MWEN_APP_SHARE;`});
+
+    //drop application
+    snowflake.execute({sqlText: `DROP APPLICATION IF EXISTS ${APP_NAME};`});
+
+    return `App: ${APP_NAME} removed.`;
+
+  } catch (err) {
+    var result = `
+    Failed: Code: `+err.code + `
+    State: `+err.state+`
+    Message: `+err.message+`
+    Stack Trace:`+err.stack;
+
+    return `Error: ${result}`;
+    }
+$$
+;
+
+UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
+</code></pre>
+<h3 is-upgraded>Grant Application Role</h3>
+<h4 is-upgraded>This grants the application role to a specific user of the application if one was not granted on installation</h4>
+<pre><code language="language-sql" class="language-sql">-------------------------------------------------------------------------------
+-- 06_grant_application_role.sql
+-- This grants the application role to a specific user of the application if one was not granted on installation
+-------------------------------------------------------------------------------
+USE ROLE ACCOUNTADMIN;
+SHOW APPLICATIONS;
+
+SET APP_OWNER = (SELECT &#34;owner&#34; FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE UPPER(&#34;name&#34;) = &#39;MEDIAWALLAH_ENRICHMENT_APP&#39;);
+
+USE ROLE IDENTIFIER($APP_OWNER);
+
+GRANT APPLICATION ROLE MEDIAWALLAH_ENRICHMENT_APP.APP_ROLE TO ROLE C_MWEN_APP_ADMIN;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Verify Installation" duration="1">
+        <p>Once the app is installed, the consumer should verify installation by querying the METADATA_C_V view. If the table&#39;s headers are visible then the consumer can continue to Onboarding. <strong>Example:</strong></p>
+<pre><code language="language-sql" class="language-sql">------------------------ Step 02: Verify Installation ------------------------
+USE ROLE C_MWEN_APP_ADMIN;
+USE WAREHOUSE C_MWEN_APP_WH;
+SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V;
+-- NOTE: should see metadata table headers
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Onboarding" duration="1">
+        <p>To be onboarded the consumer must send their CURRENT_ORGANIZATION_NAME, CURRENT_ACCOUNT, and CURRENT_ACCOUNT_NAME to operations@mediawallah.com; with the subject line &#34;Native App Onboarding Request: MediaWallah MEDIAWALLAH_ENRICHMENT_APP App&#34;. These details can be found using the following queries:</p>
+<pre><code language="language-sql" class="language-sql">------------------------ Step 03.a: Onboarding ------------------------
+SELECT CURRENT_ORGANIZATION_NAME();
+SELECT CURRENT_ACCOUNT();
+SELECT CURRENT_ACCOUNT_NAME();
+</code></pre>
+<p>Onboarding typically will occur on the day of the request, however, please allow up to 2 business days. Once onboarded, the consumer should see metadata entries when querying the METADATA_C_V view. <strong>Example:</strong></p>
+<pre><code language="language-sql" class="language-sql">------------------------ Step 03.b: Onboarding ------------------------
+USE ROLE C_MWEN_APP_ADMIN;
+USE WAREHOUSE C_MWEN_APP_WH;
+SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V;
+-- NOTE: should see metadata table with entries
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Log/Metric Sharing" duration="3">
+        <p>After being successfully Onboarded, the consumer uses the <strong>C_MWEN_APP_ADMIN</strong> role to call the CREATE_LOG_SHARE helper stored procedure. This procedure creates the necessary database, tables, and share to store the logs and metrics tables and enable MediaWallah to access them. <strong>Example:</strong></p>
+<pre><code language="language-sql" class="language-sql">------------------------ Step 04: Log/Metric Sharing ------------------------
+USE ROLE C_MWEN_APP_ADMIN;
+USE WAREHOUSE C_MWEN_APP_WH;
+CALL C_MWEN_HELPER_DB.PRIVATE.CREATE_LOG_SHARE(
+  &#39;MEDIAWALLAH_ENRICHMENT_APP&#39;
+ ,&#39;MWEN&#39;
+ ,&#39;MEDIAWALLAH&#39;
+);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enablement" duration="1">
+        <p>The consumer will be automatically enabled once the log share is verified by the application (this process takes about two minutes). Query the METADATA_C_V table to check for successful enablement: <strong>Example:</strong></p>
+<pre><code language="language-sql" class="language-sql">------------------------ Step 05: Enablement ------------------------
+SELECT *
+FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
+WHERE KEY = &#39;enabled&#39;
+;
+-- NOTE: should see metadata key/value pairs, along with enabled = &#39;Y&#39;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Granting Application Access to the Consumer&#39;s Dataset(s)" duration="1">
+        <h2 is-upgraded>Granting Access to the Consumer&#39;s Dataset(s)</h2>
+<p>The application will need access to the consumer&#39;s dataset; <strong>Either directly to the table or a view of the table.</strong></p>
+<p><strong>Example:</strong> Granting access to the a consumer&#39;s dataset <code>[CONSUMER_DB].[CONSUMER_SCH].[CONSUMER_TBL]</code> owned by <code>SYSADMIN</code> role to the <strong>C_MWEN_APP_ADMIN</strong> role. (Replace placeholders accordingly)</p>
+<pre><code language="language-sql" class="language-sql">-- Below is the code with all the database, schema, and table names that need to be replaced in brackets
+-- use the role that has ownership of the source data table
+USE ROLE SYSADMIN;
+-- grant privileges to source data
+GRANT USAGE ON DATABASE [CONSUMER_DB] TO ROLE C_MWEN_APP_ADMIN;
+GRANT USAGE ON SCHEMA [CONSUMER_DB].[CONSUMER_SCH] TO ROLE C_MWEN_APP_ADMIN;
+GRANT SELECT ON TABLE [CONSUMER_DB].[CONSUMER_SCH].[CONSUMER_TBL] TO ROLE C_MWEN_APP_ADMIN;
+-- Now the Table [CONSUMER_DB].[CONSUMER_SCH].[CONSUMER_TBL] can be used by the Application!
+
+-- Creating a view of source dataset table in C_MWEN_HELPER_DB.SOURCE schema
+USE ROLE C_MWEN_APP_ADMIN;
+CREATE OR REPLACE VIEW C_MWEN_HELPER_DB.SOURCE.[CONSUMER_VIEW] AS
+  SELECT * FROM [CONSUMER_DB].[CONSUMER_SCH].[CONSUMER_TBL];
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generating Requests" duration="5">
+        <p>Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumer&#39;s allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. View <a href="https://nativeapps.mediawallah.com/MEDIAWALLAH_ENRICHMENT_APP/MWEN%20-%20Results%20Guide.pdf" target="_blank">Results Guide</a> for a detailed explanation of the generated data. Optimal warehouse sizing will depend on consumer input dateset dimensions. MediaWallah maintains an average run times based on historical runs in a Warehouse Sizing Doc, ask for details. <strong>For a detailed explanation of the parameters used in GENERATE_REQUEST, see next section</strong></p>
+<p><strong>Matchtest Example:</strong></p>
+<pre><code language="language-sql" class="language-sql">------------------------ Generating Request: Matchtest Example ------------------------
+USE ROLE C_MWEN_APP_ADMIN;
+USE WAREHOUSE C_MWEN_APP_WH;
+ALTER WAREHOUSE C_MWEN_APP_WH
+SET WAREHOUSE_SIZE = &#34;2X-LARGE&#34; WAIT_FOR_COMPLETION = TRUE;
+
+-- NOTE: execution time is determined by warehouse size, and is
+-- controlled by the consumer.
+CALL C_MWEN_HELPER_DB.PRIVATE.GENERATE_REQUEST(
+  &#39;MEDIAWALLAH_ENRICHMENT_APP&#39;
+ ,&#39;MWEN&#39;
+ ,$${
+    &#34;input_table&#34;: &#34;C_MWEN_HELPER_DB.SOURCE.[CONSUMER_TBL]&#34;,
+    &#34;proc_name&#34;: &#34;matchtest&#34;,
+    &#34;proc_parameters&#34;: [{
+      &#34;app_code&#34;: &#34;MWEN&#34;,
+      &#34;primary_key&#34;: &#34;EMAIL_ADD_MD5&#34;,
+      &#34;primary_key_type&#34;: &#34;MD5_HASH&#34;
+      &#34;return_types&#34;: &#34;DEVICE_ID,IP_ADDRESS&#34;
+    }],
+    &#34;results_table&#34;: &#34;MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]&#34;
+  }$$
+);
+-- NOTE: third argument in the GENERATE_REQUEST SP string quoted in $$
+-- NOTE: if [OUTPUT_TABLE_NAME] already exists, this will overwrite the data
+</code></pre>
+<p><strong>Enrichment Example:</strong></p>
+<pre><code language="language-sql" class="language-sql">------------------------ Generating Request: Enrichment Example ------------------------
+USE ROLE C_MWEN_APP_ADMIN;
+USE WAREHOUSE C_MWEN_APP_WH;
+ALTER WAREHOUSE C_MWEN_APP_WH
+SET WAREHOUSE_SIZE = &#34;2X-LARGE&#34; WAIT_FOR_COMPLETION = TRUE;
+
+-- NOTE: execution time is determined by warehouse size, and is
+-- controlled by the consumer.
+CALL C_MWEN_HELPER_DB.PRIVATE.GENERATE_REQUEST(
+  &#39;MEDIAWALLAH_ENRICHMENT_APP&#39;
+ ,&#39;MWEN&#39;
+ ,$${
+    &#34;input_table&#34;: &#34;C_MWEN_HELPER_DB.SOURCE.[CONSUMER_VIEW]&#34;,
+    &#34;proc_name&#34;: &#34;enrichment&#34;,
+    &#34;proc_parameters&#34;: [{
+      &#34;app_code&#34;: &#34;MWEN&#34;,
+      &#34;primary_key&#34;: &#34;EMAIL_ADD_MD5&#34;,
+      &#34;primary_key_type&#34;: &#34;MD5_HASH&#34;,
+      &#34;return_types&#34;: &#34;DEVICE_ID,IP_ADDRESS&#34;
+    }],
+    &#34;results_table&#34;: &#34;MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]&#34;
+  }$$
+);
+-- NOTE: third argument in the GENERATE_REQUEST SP string quoted in $$
+-- NOTE: if [OUTPUT_TABLE_NAME] already exists, this will overwrite the data
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Parameters Description" duration="1">
+        <h4 is-upgraded>JSON Parameters Description</h4>
+<pre><code language="language-markdown" class="language-markdown">|------------------|----------------------------------------------------|
+| param            | description                                        |
+|==================|====================================================|
+| input_table      | the consumers input table name; must be granted to |
+|                  |  **C_MWEN_APP_ADMIN** role                 |
+| proc_name        | name of approved application consumer has access to|
+|                  |  (such as matchtest or enrichment)                 |
+| proc_parameters  | stringified json object containing parameters used |
+|                  |  in the approved proc_name                         |
+| results_table    | output location of the application; application    |
+|                  |  appends the proc_name to the final table name     |
+|                  |                                                    |
+|                  | **matchtest:** will produce one reporting table    |
+|                  |  for requested/allowed return_types return_types:  |
+|                  |    MEDIAWALLAH_ENRICHMENT_APP                          |
+|                  |      .RESULTS_APP.[OUTPUT_TABLE_NAME]_REPORT       |
+|                  |                                                    |
+|                  | **enrichment:** will produce multiple tables       |
+|                  |  depending on requested/allowed return_types,      |
+|                  |  as well as and a reporting table                  |
+|                  |    MEDIAWALLAH_ENRICHMENT_APP                          |
+|                  |      .RESULTS_APP                                  |
+|                  |      .[OUTPUT_TABLE_NAME]_CLIENT_ENRICHMENT        |
+|                  |        &gt; Contains an App Resolutiuon ID connected  |
+|                  |          to the consumer input_table data. This is |
+|                  |          used to join return_types data            |
+|                  |      .[OUTPUT_TABLE_NAME]_DIGITAL_ENRICHMENT       |
+|                  |        &gt; Contains an ARID to connect to requested  |
+|                  |          return_types if applicable                |
+|                  |      .[OUTPUT_TABLE_NAME]_PII_ENRICHMENT           |
+|                  |        &gt; Contains an ARID to connect to requested  |
+|                  |          return_types if applicable                |
+|                  |      .[OUTPUT_TABLE_NAME]_AUDIENCE_ENRICHMENT      |
+|                  |        &gt; Contains an ARID to connect to requested  |
+|                  |          return_types if applicable                |
+|                  |      .[OUTPUT_TABLE_NAME]_REPORT                   |
+| app_code         | the abbreviated codename of the MediaWallah app    |
+| primary_key      | the name of the column in the input_table dataset, |
+|                  |  that the consumer would like to match to          |
+|                  |  MediaWallah identity graph data                   |
+| primary_key_type | the type of the match_key, matching MediaWallah    |
+|                  |  available match key types (see below)             |
+| return_types     | the type of the return ids or audience consumer    |
+|                  |  wishes to get matchtest or enrichment against     |
+|                  |  (see below)                                       |
+|------------------|----------------------------------------------------|
+</code></pre>
+<p><strong>note</strong>: During Enrichment Trial users only recieve a percentage of the total data, complete data is shared in full application</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Match Key Type" duration="1">
+        <h4 is-upgraded>Available options for match_key_type:</h4>
+<p><em>note</em>: allowed match_key_types may vary due to contract</p>
+<pre><code language="language-markdown" class="language-markdown">|-----------------|-----------------------------------------------------|
+| match_key_types | description                                         |
+|=================|=====================================================|
+| DEVICE_ID       | Mobile Advertising ID such as IDFA, or AAID, or IDFV|
+| UBID            | MediaWallah Cookie                                  |
+| CTV_ID          | Connected TV such as Roku, fire                     |
+| IP_ADDRESS      | IPV4                                                |
+| MD5_HASH        | Hashed email using MD5 algorithm                    |
+| SHA1_HASH       | Hashed email using SHA1 algorithm                   |
+| SHA256_HASH     | Hashed email using SHA256 algorithm                 |
+| EMAIL           | Plain Text Email                                    |
+| ADDRESS         | Contactnate ADDRESS_1, ADDRESS_2, CITY, STATE, ZIP5 |
+| PHONE           | Standarization of phone number as varchar E. 164    |
+| APN             | AppNexus                                            |
+| TTD             | The Trade Desk                                      |
+| CRT             | Criteo                                              |
+| ADB             | Adobe                                               |
+| LTM             | Lotame                                              |
+| BWX             | BeesWax                                             |
+| NLS             | Nielsen                                             |
+| EYE             | Eyeota                                              |
+| PUB             | Pubmatic                                            |
+| MMA             | MediaMath                                           |
+| SOV             | Sovrn                                               |
+|-----------------|-----------------------------------------------------|
+</code></pre>
+<p><strong>note</strong>: Plain text emails should be lowered and white spaced removed before Hashing</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Return Type" duration="1">
+        <h4 is-upgraded>Available options for return_types:</h4>
+<p><em>note</em>: allowed return_types may vary due to contract</p>
+<pre><code language="language-markdown" class="language-markdown">|-----------------|-----------------------------------------------------|
+| DIGITAL         | description                                         |
+|=================|=====================================================|
+| DEVICE_ID       | Mobile Advertising ID such as IDFA, or AAID, or IDFV|
+| UBID            | MediaWallah Cookie                                  |
+| CTV_ID          | Connected TV such as Roku, fire                     |
+| IP_ADDRESS      | IPV4                                                |
+| MD5_HASH        | Hashed email using MD5 algorithm                    |
+| SHA1_HASH       | Hashed email using SHA1 algorithm                   |
+| SHA256_HASH     | Hashed email using SHA256 algorithm                 |
+| APN             | AppNexus                                            |
+| TTD             | The Trade Desk                                      |
+| CRT             | Criteo                                              |
+| ADB             | Adobe                                               |
+| LTM             | Lotame                                              |
+| BWX             | BeesWax                                             |
+| NLS             | Nielsen                                             |
+| EYE             | Eyeota                                              |
+| PUB             | Pubmatic                                            |
+| MMA             | MediaMath                                           |
+| SOV             | Sovrn                                               |
+|-----------------|-----------------------------------------------------|
+</code></pre>
+<pre><code language="language-markdown" class="language-markdown">|-----------------|-----------------------------------------------------|
+| PII             | description                                         |
+|=================|=====================================================|
+| EMAIL           | Plain Text Email                                    |
+| ADDRESS         | Contactnate ADDRESS_1, ADDRESS_2, CITY, STATE, ZIP5 |
+| PHONE           | Standarization of phone number as varchar E. 164    |
+|-----------------|-----------------------------------------------------|
+</code></pre>
+<pre><code language="language-markdown" class="language-markdown">|---------------------------|-------------------------------------------|
+| DEMO                      | description                               |
+|===========================|===========================================|
+| DEMO_GENDER               | Gender                                    |
+| DEMO_AGE_BRACKET          | Age                                       |
+| DEMO_INCOME_BRACKET       | Estimated Income Bracket                  |
+| DEMO_NET_WORTH            | Estimated Networth                        |
+| DEMO_HOMEOWNER            | Boolean if user is homeowner or not       |
+| DEMO_MARRIED              | Boolean if user is married or not         |
+| DEMO_CHILDREN             | Boolean if user has children or not       |
+|---------------------------|-------------------------------------------|
+| B2B_COMPANY_EMPLOYEE_COUNT| Estimated company size user belongs to    |
+| B2B_DEPARTMENT            | Department user works for                 |
+| B2B_JOB_TITLE             | Current Job title of user                 |
+| B2B_SENIORITY_LEVEL       | Current job level                         |
+| B2B_PRIMARY_INDUSTRY      | Industry user works at                    |
+| B2B_COMPANY_REVENUE       | Estimated company revenue user works for  |
+|---------------------------|-------------------------------------------|
+| PURCHASE_PRODUCT          | product purchased by the user in the last |
+|                           |   3 months                                |
+| PURCHASE_BRAND            | brand of product purchased by the user in |
+|                           |   last 3 months                           |
+| PURCHASE_SEGMENT          | segment category associated with product  |
+|                           |   purchased by the user in last 3 months  |
+|---------------------------|-------------------------------------------|
+| LOCATION_STATE            | location based on user residence          |
+|---------------------------|-------------------------------------------|
+</code></pre>
+<p><strong>Note</strong>: Plain text emails should be lowered and white spaced removed before Hashing</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Viewing Results" duration="1">
+        <h3 is-upgraded>View Results</h3>
+<p>Depending on which application (aka proc_name) used, the GENERATE_REQUEST procedure will generate different outputs based on the RESULTS_TABLE. <strong>Matchtest</strong></p>
+<pre><code language="language-sql" class="language-sql">-- MATCHTEST REPORT
+SELECT *
+FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]_REPORT
+ORDER BY BUCKET_TYPE, MATCHED_DATA_TYPE
+;
+</code></pre>
+<p><strong>Enrichment</strong></p>
+<pre><code language="language-sql" class="language-sql">-- ENRICHMENT RESULTS
+SELECT *
+FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]_CLIENT_ENRICHMENT
+LIMIT 100
+;
+
+SELECT *
+FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]_DIGITAL_ENRICHMENT
+LIMIT 100
+;
+
+SELECT *
+FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]_PII_ENRICHMENT
+LIMIT 100
+;
+
+SELECT *
+FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]_AUDIENCE_ENRICHMENT
+LIMIT 100
+;
+
+-- ENRICHMENT REPORT
+SELECT *
+FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[OUTPUT_TABLE_NAME]_REPORT
+ORDER BY BUCKET_TYPE, MATCHED_DATA_TYPE
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using ARID" duration="5">
+        <p>An ARID (App Resolution Identifier) is the primary key generated per run of the application, used to join the original data with enriched digital data, enriched offline data and/or enriched audience segment data. <strong>Example joining Data</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT c.*, e.ID_VALUE, e.ID_TYPE
+FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[RESULTS_TABLE_NAME]_ENRICHMENT c
+JOIN MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[RESULTS_TABLE_NAME]_ENRICHMENT e
+ON (
+    c.ARID = e.ARID
+AND e.ID_TYPE = &#39;MD5_HASH&#39;
+)
+;
+</code></pre>
+<p><strong>Example joining audience with taxonomy</strong></p>
+<pre><code language="language-sql" class="language-sql">SELECT a.ARID, t.SEGMENT, t.SEGMENT_VALUE, a.ID_VALUE, a.ID_SUMMARY_TYPE, a.ID_TYPE, a.TIER, a.MATCH_KEY
+FROM (
+    SELECT e.ARID, s1.VALUE::varchar AS ID_VALUE, e.ID_SUMMARY_TYPE, e.ID_TYPE, e.TIER, e.MATCH_KEY
+    FROM MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP.[RESULTS_TABLE_NAME]_AUDIENCE_ENRICHMENT e
+    ,TABLE(FLATTEN(e.ID_VALUE, OUTER=&gt; TRUE)) s1
+) a
+JOIN MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.TAXONOMY_C_V t
+ON (
+  a.ID_VALUE = t.SEGMENT_VALUE_ID
+)
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Metadata (Reference)" duration="1">
+        <h3 is-upgraded>Metadata (Reference)</h3>
+<pre><code language="language-markdown" class="language-markdown">SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
+</code></pre>
+<pre><code language="language-markdown" class="language-markdown">|----------------------------------|------------------------------------|
+| DEMO                             | description                        |
+|==================================|====================================|
+| allowed_procs                    | procedures consumer has access to  |
+| allowed_funcs                    | functions consumer has access to   |
+| enabled                          | if is able to use the application  |
+| install_count                    | number of times app is installed   |
+| total_requests                   | number of request made to app      |
+| total_records_processed          | total records processed by app     |
+| total_distinct_match_keys        | total match_keys sent to app       |
+| total_distinct_matched_match_keys| total match_keys matched by app    |
+| total_returned_rows              | total rows returned by app         |
+| total_returned_records           | total records returned by app      |
+| total_returned_pairs             | total pairs returned by app        |
+| allowed_return_types             | return_types available to consumer |
+| allowed_match_key_types          | match_key_types available          |
+| subscription_mode                | trial or paid                      |
+| trial_expiration_timestamp       | when trial expires                 |
+| trial_request_limit              | # request allowed during trial     |
+| trial_record_limit               | # of records allowed for trial     |
+| trial_match_key_limit            | # match_keys allowed for trial     |
+| trial_matched_match_key_limit    | # of matched match_keys for trial  |
+| trial_return_percentage          | percentage returned during trial   |
+| custom_client_name               | name of client                     |
+| usage_rate                       | contracted usage rate              |
+| billing_type                     | usage based or fixed rate          |
+|----------------------------------|------------------------------------|
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Uninstall (Optional)" duration="1">
+        <h3 is-upgraded>Uninstall (Optional)</h3>
+<p>In the event the consumer wishes to uninstall the app, the consumer can use the <strong>C_MWEN_APP_ADMIN</strong> role to call the UNINSTALL helper stored procedure. This procedure will drop the application database, the logs share, and the shared logs database. The Application Share (which includes the results and logs tables) will be permanently removed from the consumer&#39;s Snowflake instance. <strong>Note</strong>: It is important to note any data generated by the application stored in MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP will be lost. Please export results accordingly. <strong>Example:</strong></p>
+<pre><code language="language-sql" class="language-sql">------------------------ UNINSTALL ------------------------
+USE ROLE ACCOUNTADMIN;
+SHOW APPLICATIONS;
+
+SET APP_OWNER = (SELECT &#34;owner&#34; FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE UPPER(&#34;name&#34;) = &#39;MEDIAWALLAH_ENRICHMENT_APP&#39;);
+
+USE ROLE IDENTIFIER($APP_OWNER);
+CALL C_MWEN_HELPER_DB.PRIVATE.UNINSTALL(&#39;MEDIAWALLAH_ENRICHMENT_APP&#39;);
+</code></pre>
+<p>Example:</p>
+<ul>
+<li>To remove the C_MWEN_HELPER_DB:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">DROP DATABASE C_MWEN_HELPER_DB;
+</code></pre>
+<ul>
+<li>To remove the C_MWEN_APP_WH:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">DROP WAREHOUSE C_MWEN_APP_WH;
+</code></pre>
+<ul>
+<li>To remove the C_MWEN_APP_ADMIN:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+DROP ROLE C_MWEN_APP_ADMIN;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upgrade (Optional)" duration="1">
+        <h3 is-upgraded>Upgrade (Optional)</h3>
+<p>As new versions and patches are relased. To Upgrade use the following commands.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+ALTER APPLICATION MEDIAWALLAH_ENRICHMENT_APP UPGRADE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Re-Enablement" duration="2">
+        <h3 is-upgraded>Re-Enablement</h3>
+<p>Consumer usage of the application is disabled when either of the following happens:</p>
+<ol type="1">
+<li>MediaWallah loses access to the consumer log share (through either removing MediaWallah from the share or dropping the share altogether.</li>
+<li>The consumer purposely tampers with the logs shared to MediaWallah</li>
+</ol>
+<p>The consumer can re-enable themselves depending on the cases mentioned above:</p>
+<ol type="1">
+<li>When MediaWallah loses access to the log share, if the log share exists in the consumer account, the consumer can simply add MediaWallah back to the share.</li>
+</ol>
+<ul>
+<li>For example:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">ALTER SHARE MWEN_[CONSUMER NAME]_APP_SHARE
+ADD ACCOUNTS=MEDIAWALLAH;
+</code></pre>
+<p>If the log share no longer exists, the share can be re-created by calling the CREATE_LOG_SHARE helper stored procedure.</p>
+<ul>
+<li>For example:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CALL C_MWEN_HELPER_DB.PRIVATE.CREATE_LOG_SHARE(
+  &#39;MEDIAWALLAH_ENRICHMENT_APP&#39;
+ ,&#39;MEDIAWALLAH&#39;
+);
+</code></pre>
+<ol type="1" start="2">
+<li>However, when the consumer tampers with the logs, the consumer is disabled immediately and cannot re-enable themselves. MediaWallah decides if that the consumer can use the application again, and re-enables them. Once MediaWallah allows re-enablement, the consumer can re-share the logs, get enabled, and continue to use the application.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <h2 is-upgraded>Conclusions</h2>
+<p>Congratulations! You&#39;ve successfully completed the Getting Started with MediaWallah Enrichment Native Application quickstarts Guide. Now you can utilize this service at your convenience, and receive enriched data with a few simple actions. We look forward to working with you. Please reach out for any questions snowflake@mediawallah.com</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to download the MediaWallah Enrichment Application</li>
+<li>How to install the application</li>
+<li>how to setup log share with MediaWallah</li>
+<li>How to permission tables for data enrichment</li>
+<li>How to view and access results produced by the application</li>
+<li>How to upgrade or uninstall the application</li>
+<li>How to view the metadata table for privileges and usage rates.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://app.snowflake.com/marketplace/listing/GZSOZ5Q3W8J/mediawallah-inc-mediawallah-enrichment-app" target="_blank">MediaWallah Enrichment App</a></li>
+<li><a href="https://drive.google.com/file/d/1Es4gaeOOmpfmBDSp9RkCIGZB1PQHyzHg/view%5D" target="_blank">Reference Architecture</a></li>
+<li><a href="https://medium.com/snowflake/ultra-secure-identity-and-audience-profile-enrichment-made-simple-21e48a56ab4a" target="_blank">Blog</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

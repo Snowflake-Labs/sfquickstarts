@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "kepler_gl_maps_inside_snowflake",
+  "duration": 25,
+  "title": "Creating Interactive Maps with Kepler.gl in Snowflake Using Dekart",
+  "summary": "This guide will help you create interactive maps directly within Snowflake using Kepler.gl",
+  "source": "kepler_gl_maps_inside_snowflake/kepler_gl_maps_inside_snowflake.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "kepler.gl",
+    "maps",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "kepler_gl_maps_inside_snowflake"
+}

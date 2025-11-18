@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "secure_your_organization_with_security_analytics_using_snowflake_and_sigma",
+  "duration": 10,
+  "title": "Secure Your Organization with Security Analytics Using Snowflake and Sigma",
+  "summary": "Learn how to monitor your Snowflake security posture using Sigma",
+  "source": "secure_your_organization_with_security_analytics_using_snowflake_and_sigma/secure_your_organization_with_security_analytics_using_snowflake_and_sigma.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "cybersecurity",
+    "data-warehousing"
+  ],
+  "tags": [
+    "cybersecurity",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "secure_your_organization_with_security_analytics_using_snowflake_and_sigma"
+}

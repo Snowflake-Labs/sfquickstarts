@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs",
+  "duration": 24,
+  "title": "A Guide to Triggering Real-Time Notifications Using Dynamic Tables and Census Live Syncs",
+  "summary": "In this guide, you will learn how to set up a live sync between Census and Snowflake to move data to your activation platforms in real time.",
+  "source": "triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs/triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "partner-integrations",
+    "marketing"
+  ],
+  "tags": [
+    "census",
+    "dynamictables",
+    "real-time",
+    "reverseetl",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs"
+}

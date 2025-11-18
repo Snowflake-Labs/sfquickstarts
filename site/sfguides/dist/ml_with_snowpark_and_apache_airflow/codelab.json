@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "ml_with_snowpark_and_apache_airflow",
+  "duration": 7,
+  "title": "Machine Learning with Snowpark and Apache Airflow",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "machine_learning_with_apache_airflow_and_snowpark/machine_learning_with_apache_airflow_and_snowpark.md",
+  "theme": "",
+  "status": [
+    "development"
+  ],
+  "category": [
+    "data-engineering",
+    "architecture-patterns",
+    "partner-integrations"
+  ],
+  "tags": [
+    "ai",
+    "airflow",
+    "dataengineering",
+    "machinelearning",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "ml_with_snowpark_and_apache_airflow"
+}

@@ -1,0 +1,228 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Orchestrate LLM Evaluations in Snowflake with Evalanche</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="orchestrate-llm-evaluations-with-evalanche"
+                  title="Orchestrate LLM Evaluations in Snowflake with Evalanche"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>By completing this guide, you will have deployed the Evalanche application in a Snowflake account and conducted your first LLM use case evaluation.</p>
+<p class="image-container"><img alt="Evalanche" src="img/30ec437436f6224a.png"></p>
+<h2 is-upgraded>Why Conduct Evaluations?</h2>
+<p>Building and refining LLM use cases can be an arduous process. Differences in models, architectures, prompts, contexts, etc. can all have impactful changes in your results. Using objective, quantitative measurements to compare results is critical to achieving desired results and selecting the best implementation.</p>
+<h2 is-upgraded>What is Evalanche?</h2>
+<p>Evalanche is a Streamlit in Snowflake (SiS) app that provides a single location to evaluate and compare LLM use case outputs in a streamlined, on demand, and automated fashion.</p>
+<p>Evalanche&#39;s primary structure is based on 2 components: 1) Metrics and 2) Data Sources. Together, Metrics and Data Sources can be combined to make an Evaluation. In other words, an Evaluation will calculate 1 or more Metrics for every record in a Data Source.</p>
+<p>Learn more about <a href="https://medium.com/snowflake/lookout-its-an-evalanche-cac23f983970" target="_blank">Evalanche</a>.</p>
+<h2 is-upgraded>Metrics</h2>
+<p>Metrics rely on LLMs to Judge (or score) results. A Metric mostly consists of required input(s) and a prompt asking the LLM to assess a specific quality of these required input(s).</p>
+<h2 is-upgraded>Data Sources</h2>
+<p>Data Sources provide the values to Metrics&#39; required inputs. Data Sources can be a Snowflake table or a SQL SELECT statement.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to deploy Evalanche to a Snowflake account</li>
+<li>How create and run an LLM Evaluation</li>
+<li>How to save an LLM Evaluation</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Streamlit in Snowflake application</li>
+<li>An LLM Evaluation in Evalanche</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploying Evalanche to Streamlit" duration="2">
+        <ol type="1">
+<li>Copy the entire contents of file <a href="https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-evalanche/setup/git_setup.sql" target="_blank"><code>git_setup.sql</code></a>.</li>
+<li>Login to your Snowflake account. Open a new SQL Worksheet by selecting <strong>Projects</strong> &gt; <strong>Worksheets</strong> &gt; <strong>+ SQL Worksheet</strong>. Paste the copied contents from #1 into the SQL Worksheet.</li>
+<li>Select <strong>Run All</strong> in the top right of the SQL Worksheet.</li>
+</ol>
+<p>The logic running will:</p>
+<ul>
+<li>Create a database, schema, stage, and several tables</li>
+<li>Create an <a href="https://docs.snowflake.com/en/developer-guide/git/git-overview" target="_blank">API Integration and Git Repository</a> in Snowflake for the source code in Snowflake-Labs Github</li>
+<li>Copy the source code from the Github repo to Snowflake stage</li>
+<li>Create the <a href="https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/" target="_blank">Streamlit in Snowflake application</a></li>
+</ul>
+<p>Once competed, Evalanche will be accessible in your Snowflake account under the Streamlit section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Sample Data" duration="1">
+        <p>Next, we will create hypothetical data for our first Evaluation. Within Snowsight, select the + tab to create a new SQL Worksheet.</p>
+<p>Copy and paste the below SQL into the new SQL Worksheet and select Run All. This SQL will create a new table with hypothetical user questions, reference answers, and LLM-generated responses. Later, we will evaluate various qualities of the LLM-generated responses to the corresponding question, given the ideal reference answers.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE GENAI_UTILITIES.EVALUATION.SAMPLE_TABLE(
+    USER_QUESTION TEXT,
+    EXPECTED_RESPONSE TEXT,
+    GENERATED_RESPONSE TEXT
+);
+
+INSERT INTO GENAI_UTILITIES.EVALUATION.SAMPLE_TABLE (USER_QUESTION, EXPECTED_RESPONSE, GENERATED_RESPONSE) VALUES
+(&#39;What is a common use case for Docker in software engineering?&#39;,&#39;Docker is commonly used to containerize applications, allowing for consistent environments across development, testing, and production.&#39;,&#39;Docker is used for creating isolated environments for testing new code, ensuring faster deployment across platforms.&#39;),
+(&#39;How does a load balancer improve the scalability of a web application?&#39;,&#39;A load balancer distributes incoming traffic across multiple servers, ensuring that no single server becomes overwhelmed, improving scalability and availability.&#39;,&#39;Load balancers split the network traffic between servers but might introduce delays if not configured properly.&#39;),
+(&#39;What is the difference between REST and SOAP APIs?&#39;,&#39;REST is an architectural style that uses standard HTTP methods, while SOAP is a protocol that defines strict rules for communication between systems.&#39;,&#39;REST uses simple HTTP requests and is less secure, while SOAP provides built-in security through protocols like WS-Security.&#39;),
+(&#39;Why would you use microservices architecture over monolithic?&#39;,&#39;Microservices offer modularity, scalability, and ease of deployment, whereas monolithic architectures can be harder to scale and maintain as the codebase grows.&#39;,&#39;Microservices are faster and more secure than monolithic architectures, which are generally used for smaller projects.&#39;),
+(&#39;How does a version control system like Git work?&#39;,&#39;Git tracks changes to files in a repository, allowing for collaboration, branching, and rollback to previous versions.&#39;,&#39;Git allows for creating multiple versions of software, which can then be integrated together in a final release.&#39;),
+(&#39;What is Continuous Integration (CI) in DevOps?&#39;,&#39;CI is a practice where developers frequently integrate code into a shared repository, with automated tests to catch bugs early.&#39;,&#39;CI means developers frequently push code changes and perform tests to ensure they integrate smoothly with other changes.&#39;),
+(&#39;Can you explain the SOLID principles in object-oriented design?&#39;,&#39;SOLID principles are guidelines for writing maintainable and scalable object-oriented software, including concepts like single responsibility and open-closed principle.&#39;,&#39;SOLID principles are techniques to ensure that each object is designed correctly in the software development lifecycle.&#39;),
+(&#39;How is a NoSQL database different from a relational database?&#39;,&#39;NoSQL databases are schema-less and can handle unstructured data, whereas relational databases use structured schemas and SQL for querying.&#39;,&#39;NoSQL is faster and more scalable than SQL, making it better suited for large data sets, while relational databases are outdated.&#39;),
+(&#39;What are the benefits of using Kubernetes in cloud deployment?&#39;,&#39;Kubernetes automates the deployment, scaling, and management of containerized applications, simplifying the operation of complex distributed systems.&#39;,&#39;Kubernetes is the main tool for managing cloud deployments, and it can replace virtual machines entirely in many setups.&#39;),
+(&#39;What is the purpose of unit testing in software development?&#39;,&#39;Unit testing involves testing individual components or functions of the codebase to ensure they work as expected in isolation.&#39;,&#39;Unit tests are run after the entire software is complete to check for errors in the final version of the product.&#39;),
+(&#39;How does caching improve the performance of a web application?&#39;,&#39;Caching stores frequently accessed data in memory to reduce response time, improving performance and reducing the load on the backend.&#39;,&#39;Caching can make the website run faster by keeping a copy of files in memory to avoid fetching them each time.&#39;),
+(&#39;What are the main types of software testing?&#39;,&#39;The main types of testing include unit testing, integration testing, system testing, and acceptance testing.&#39;,&#39;Software testing includes functional, non-functional, and regression testing, each ensuring the application meets its requirements.&#39;),
+(&#39;What is the role of an API gateway in microservices architecture?&#39;,&#39;An API gateway acts as an entry point to a microservices architecture, handling request routing, rate limiting, and security.&#39;,&#39;An API gateway serves as a firewall, protecting microservices from outside threats by filtering and blocking malicious requests.&#39;),
+(&#39;How do you ensure database transactions maintain ACID properties?&#39;,&#39;ACID properties ensure that database transactions are atomic, consistent, isolated, and durable, preventing data corruption or loss.&#39;,&#39;ACID properties help ensure that the database runs faster by breaking down larger transactions into smaller parts.&#39;),
+(&#39;What is the difference between asynchronous and synchronous programming?&#39;,&#39;Asynchronous programming allows multiple tasks to be performed concurrently, whereas synchronous programming executes tasks one after another.&#39;,&#39;Asynchronous programming waits for a task to finish before starting the next, while synchronous runs tasks concurrently.&#39;),
+(&#39;Why is refactoring important in software engineering?&#39;,&#39;Refactoring improves code readability, maintainability, and performance without changing its external behavior.&#39;,&#39;Refactoring reduces the code base size and increases performance by eliminating redundant or dead code.&#39;),
+(&#39;What is the purpose of load testing in software applications?&#39;,&#39;Load testing measures how a system performs under heavy usage to ensure it can handle expected traffic.&#39;,&#39;Load testing is the process of testing the maximum number of users that can access a website simultaneously.&#39;),
+(&#39;How does OAuth differ from OpenID Connect?&#39;,&#39;OAuth is used for authorization, while OpenID Connect is used for authentication, allowing users to sign in securely.&#39;,&#39;OAuth lets you log in using a third-party service, while OpenID Connect is used for authorizing access to specific APIs.&#39;),
+(&#39;What is the difference between blue/green and canary deployment strategies?&#39;,&#39;Blue/green deployment switches traffic between two environments, while canary deployment gradually introduces changes to a subset of users.&#39;,&#39;In blue/green deployment, one environment is updated while the other handles traffic; canary deployment releases small updates first.&#39;),
+(&#39;What is the main function of a CI/CD pipeline?&#39;,&#39;A CI/CD pipeline automates the process of integrating code changes, testing, and deploying them to production.&#39;,&#39;The CI/CD pipeline is the development process where developers write, test, and deploy code to a production server.&#39;)
+;
+</code></pre>
+<p>Run the below to view the created table.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM GENAI_UTILITIES.EVALUATION.SAMPLE_TABLE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open Evalanche and Select Metrics" duration="1">
+        <p>Navigate to the Evalanche app by selecting <strong>Projects</strong> &gt; <strong>Streamlit</strong> &gt; <strong>Evalanche: GenAI Evaluation Application</strong>. For a quick overview of the application, select the Help button.</p>
+<ol type="1">
+<li>Select <code>Correctness</code> in the Metric Preview box to understand the Metric&#39;s Description and Required Inputs.</li>
+<li>Select <code>Answer Relevancy</code> in the Metric Preview.</li>
+<li>Select the checkboxes next to <code>Correctness</code> and <code>Answer Relevancy</code> Metrics. They will display on the left-side panel upon selection.</li>
+</ol>
+<p class="image-container"><img alt="SelectMetrics" src="img/a953d9c6f51b71f9.png"></p>
+<p>Click Continue.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Select and Configure Data Source" duration="2">
+        <p>A Data Source should have at least the required input(s) for the select Metric(s). A Data Source can be a single table, 2 tables (if expected and generated results are separate), and/or custom SQL if the data are not readily available as singular tables.</p>
+<p>Select the sample dataset we created and select all columns.</p>
+<p class="image-container"><img alt="Data Source Selection" src="img/30d29f3792d6ab6d.png"></p>
+<p>Click Configure. In the pop up, select the column that corresponds to each Metric&#39;s required inputs as shown below.</p>
+<p class="image-container"><img alt="Data Source Configuration" src="img/6bc9ee485d3c210e.png"></p>
+<p>Click Run.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="View Evaluation Results" duration="2">
+        <p class="image-container"><img alt="Evaluation Results" src="img/f6d581a9829877bf.png"></p>
+<p>The Evaluation results are now shown with each record in the Data Source receiving Metric value(s).</p>
+<ol type="1">
+<li>Select the checkbox next to a record with a low Metric value</li>
+<li>Click Review Record.</li>
+<li>In the dialog, toggle the Metric to the one corresponding to the low score.</li>
+<li>Select Analyze to gain an understanding of why the low score may have been received.</li>
+</ol>
+<p class="image-container"><img alt="Analyze Result" src="img/75f22c554377caa0.png"></p>
+<p>Based on the analysis, can you update the GENERATED_RESPONSE to improve the score? Change the GENERATED_RESPONSE to the below content (if you&#39;ve selected the record about ACID properties as shown in the screenshot).</p>
+<pre><code language="language-text" class="language-text">ACID properties maintain data consistency and prevent data corruption. They ensure integrity and consistency of database transactions.
+</code></pre>
+<p>Click Rerun. The score should improve. Click Save.</p>
+<p class="image-container"><img alt="Rerun Result" src="img/7423399d2b7647b0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Save Results and Evaluation" duration="2">
+        <p>Evaluation results can be saved to Snowflake table(s) for subsequent analysis if desired. Click Record Results and provide a Snowflake database, schema, and table name.</p>
+<p class="image-container"><img alt="Record Results" src="img/81c40967fbb30bc3.png"></p>
+<p>Lastly, we can save the Evaluation to run in the future and/or automate the Evaluation moving forward. Saving an Evaluation will enable us to run the same Evaluation directly from the homepage. An automated Evaluation will monitor the Data Source, scoring every new record that arrives and storing the result to a table. Like saved Evaluations, automated Evaluation results are viewable directly from the homepage.</p>
+<p>Click Save Evaluation. Provide an Evaluation name (omitting spaces and special characters) and a description. Click Save.</p>
+<p class="image-container"><img alt="Save Evalation" src="img/31d73969f67a91ec.png"></p>
+<p>Return to the homepage by clicking home in the left-side panel. Click the saved Evaluation in the Saved Evaluation section. The collapsed sections contain metadata detailing the Data Source, Metric(s), and configuration. Click Run to re-run the same Evaluation.</p>
+<p class="image-container"><img alt="View Saved Evalation" src="img/6ee0ef0424e15b8f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully deployed Evalanche and created your first saved Evaluation using out of the box Metrics. For ongoing evaluations or experimentation, we encourage using Automated Evaluations.</p>
+<p>Have an LLM use case that would benefit from a novel Metric? Check out <a href="https://github.com/Snowflake-Labs/emerging-solutions-toolbox/tree/main/framework-evalanche#custom-metrics" target="_blank">Creating Custom Metrics</a> or message us with information about your use case!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Deploying Evalanche to Streamlit in Snowflake</li>
+<li>Creating an Evalanche Evaluation</li>
+<li>Analyzing Evaluation results</li>
+<li>Saving an Evaluation configuration</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/emerging-solutions-toolbox/tree/main/framework-evalanche" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://medium.com/snowflake/lookout-its-an-evalanche-cac23f983970" target="_blank">Medium Article</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

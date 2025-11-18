@@ -1,0 +1,234 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Microsoft Power Platform and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="power_apps_snowflake"
+                  title="Getting Started with Microsoft Power Platform and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>Join Snowflake and Microsoft for a quickstart to build a business application with Microsoft Power Apps that can access retail customer data as virtual tables, do a writeback, trigger a flow using Power Automate without making a copy of the data.</p>
+<p>We will use the new Power Apps connector from Microsoft premium connectors marketplace, which leverages Snowflake SQL API, and allows you to read, write and execute Snowflake objects.</p>
+<h2 is-upgraded>Power Apps</h2>
+<p>Microsoft Power Apps and Power Automate are part of the Microsoft Power Platform, a suite of tools designed to empower organizations to create custom applications and automate workflows with minimal coding effort.</p>
+<h2 is-upgraded>Snowflake</h2>
+<p>Snowflake is a cloud-based data platform that allows organizations to store, process, and analyze massive amounts of structured and semi-structured data. It provides a scalable and fully managed services that support diverse data types, making it an ideal choice for businesses looking to harness the power of their data.</p>
+<h2 is-upgraded>You&#39;ll Learn</h2>
+<ul>
+<li>Using Power Platform to read and write to Snowflake.</li>
+<li>Leveraging Snowflake ML in Power Automate</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Signup for free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li>Signup for <a href="https://www.microsoft.com/en-us/power-platform/products/power-apps/" target="_blank">Power Apps Account</a></li>
+<li>You must have a premium Power Apps license</li>
+<li>Use your existing Company Entra ID, or <a href="https://signup.microsoft.com/get-started/signup?products=FAF849AB-BD30-42B2-856C-8F1EDC230CE9" target="_blank">sign-up</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Load customer data into Snowflake tables.</li>
+<li>Configure a connection between PowerPlatform and Snowflake.</li>
+<li>Use Power Apps to build a model app, access Snowflake tables to read and writeback.</li>
+<li>Use Snowflake Notebook to create a Machine Learning model.</li>
+<li>Invoke model predictions using Power Automate.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Snowflake Environment" duration="15">
+        <h2 is-upgraded>Create Snowflake Objects</h2>
+<p>The first thing we will do is create a database and warehouse in your Snowflake environment.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+
+CREATE OR REPLACE DATABASE HOL_DB;
+
+GRANT USAGE ON WAREHOUSE hol_wh TO ROLE public;
+grant usage on database hol_db to role public;
+grant usage on schema hol_db.public to role public;
+
+-- Create a Table with the columns suggested below 
+USE ROLE accountadmin;
+USE DATABASE hol_db;
+USE WAREHOUSE hol_wh;
+CREATE OR REPLACE TABLE CUSTOMER_PRESEGMENT (
+	ID NUMBER(38,0),
+	AGE NUMBER(38,0),
+	GENDER VARCHAR(16777216),
+	INCOME NUMBER(38,0),
+	SPENDING_SCORE NUMBER(38,0),
+	MEMBERSHIP_YEARS NUMBER(38,0),
+	PURCHASE_FREQUENCY NUMBER(38,0),
+	PREFERRED_CATEGORY VARCHAR(16777216),
+	LAST_PURCHASE_AMOUNT NUMBER(38,2)
+);
+GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
+
+</code></pre>
+<h2 is-upgraded>Get Sample data and scripts</h2>
+<ol type="1">
+<li>Download the data for the demo <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/tree/main/data/customer_segmentation_data.csv" target="_blank">sample data file</a> =======</li>
+<li>Login to Snowflake Account and go to Data -&gt; Databases -&gt; HOL_DB</li>
+<li>Select table CUSTOMER_PRESEGMENT and click Load Data <img alt="load data" src="img/1360c199eccd02ab.png"></li>
+<li>Accept the defaults and complete loading data.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Power Apps Environment" duration="15">
+        <h2 is-upgraded>Set up Azure AD (Entra ID) authentication for Snowflake</h2>
+<p>Now we need to set up an app registration for Active Directory (Entra ID) OAuth, which will establish trust between your Power Platform and Snowflake. This allows you to define and manage permissions and ensures only authorized users to access your application.</p>
+<p>For the purposes of this demo, we will create a  <strong>MAKE SURE YOU FOLLOW SERVICE PRINCIPAL AUTH</strong> Authentication and the steps are provided in the document below.</p>
+<p>https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities-for-power-apps, but you can download &amp; run the scripts below in Azure CLI as an admin</p>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_win.ps1" target="_blank">Script-for-Windows Users</a> | <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_Mac.ps1" target="_blank">Script-for-Mac Users</a></p>
+<h2 is-upgraded>Build a PowerApp and connect to Snowflake data</h2>
+<p>After you have configured Power Apps Connector to Snowflake, go to Power Apps</p>
+<ol type="1">
+<li>Click Tables -&gt; Create Virtual Table <img alt="virtualtable" src="img/eef1e22c43632643.png"></li>
+<li>Select Connection that you have setup in prior step, click NEXT <img alt="connection" src="img/c4fe31114ac28561.jpg"></li>
+<li>You should now see the table CUSTOMER_PRESEGMENT, click NEXT</li>
+<li>On Configuration screen, click Next and click FINISH on the last screen.</li>
+<li>Now, you see that age is negative for ID1 and ID2, click the pencil to make changes and save. <img alt="crud" src="img/af2477bc171c9714.png"></li>
+<li>Click Apps, click [Start with a page design]</li>
+<li>Select a dataverse table, and search CUSTOMER_PRESEGMENT and click Create App</li>
+<li>Save the app as Marketing Segments.</li>
+<li>Click the Play button. <img alt="app" src="img/76c5408afa2124a3.png"></li>
+<li>As a marketer you notice the customers aren&#39;t segmented as there is no segment field.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Segmentation ML Model" duration="0">
+        <h2 is-upgraded>Lets look at the clustering Model and deploy it</h2>
+<p>Typically your datascience teams trains and deploy the ML models, and you can invoke them.</p>
+<ol type="1">
+<li>Download the Customer Segmentation Notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/customer_segmentation.ipynb" target="_blank">Jupyter ipynb</a></li>
+<li>Connect to Snowflake: Projects -&gt; Notebook</li>
+<li>Import the notebook you downloaded earlier by clicking import .ipynb file <img alt="notebook" src="img/aa4385281e9f2ca0.jpg"></li>
+<li>Click on packages, and make sure you add the packages listed in the screenshot<img alt="packages" src="img/ab1b5755324a334b.png"></li>
+<li>Click the RunALL button or click START and execute individual cell.</li>
+<li>Create a Procedure to Invoke Model Predictions by running below SQL in a worksheet<a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/segment_storedproc.sql" target="_blank">storedproc</a></li>
+</ol>
+<h2 is-upgraded>Build a Power Automate Flow</h2>
+<p>Let&#39;s build a Power Automate Flow to call stored procedure you created and run the model.</p>
+<ol type="1">
+<li>Launch Power Automate</li>
+<li>Click My flows -&gt; + New Flow  -&gt; Instant Cloud Flow</li>
+<li>Give a name Call_Segmentize and select &#34;When Power Apps calls a flow (V2)&#34; for Choose how to trigger this flow <img alt="flowcreate" src="img/af26bfd33eb14f70.png"></li>
+<li>In the canvas -&gt; click New step</li>
+<li>Search &#34;Snowflake&#34; and select &#34;Submit SQL Statement for Execution&#34; as shown <img alt="flow" src="img/a7fc889cd6c35b64.png"></li>
+<li>Let&#39;s add the following parameters<ul>
+<li>Instance - your Snowflake account URL(<strong><em>WITHOUT https</em></strong>)</li>
+<li>Body/statement - CALL segmentize(‘CUSTOMER_PRESEGMENT&#39;,‘CUSTOMER_SEGMENTS&#39;); (*** Advanced Parameters ***)</li>
+<li>database - HOL_DB</li>
+<li>schema - PUBLIC</li>
+<li>warehouse - HOL_WH</li>
+<li>role  - ANALYST</li>
+</ul>
+Make sure to set connection to the one you created <a href="#set-up-azure-ad-entra-id-authentication-for-snowflake" target="_blank">above</a><img alt="automateconnect" src="img/97b4db663f8a03bb.png"></li>
+<li>Run the flow and ensure it completes successfully.</li>
+</ol>
+<h2 is-upgraded>Update PowerApp to invoke your Flow</h2>
+<ol type="1">
+<li>Put a button called Segmentize in the CUSTOMER_PRESEGMENT screen. <img alt="add_trigger" src="img/b851f9bf44fe355d.png"></li>
+<li>Click Tables -&gt; Create Virtual Tables and select CUSTOMER_SEGMENTS <img alt="connection" src="img/c4fe31114ac28561.jpg"></li>
+<li>Let&#39;s create another screen (name: Trigger_Success) to indicate when the flow is completed.</li>
+<li>You can choose &#34;Header and Table&#34; or &#34;Blank: for the screen type, we will connect new view named CUSTOMER_SEGMENTS which has the PREDICTION field. <img alt="show_segment" src="img/ac60d4a6cc5b8c49.png"> (*** You may see data because you tested the flow ***)</li>
+<li>Go back the CUSTOMER_PRESEGMENT screen, click the segmentize button and in the Properties-&gt;Advanced table pick ONSELECT action and enter (Call_Segmentize.Run(); Navigate(Trigger_Success)) <img alt="flow_trigger" src="img/f5c00124cc7f2161.png"></li>
+<li>Now you can see PREDICTION column in the CUSTOMER_SEGMENTS view displayed. <img alt="show_prediction" src="img/a82fd8aaf91a1954.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="0">
+        <p>Run the below SQL in Snowsight</p>
+<pre><code language="language-sql" class="language-sql">DROP DATABASE hol_db;
+DROP WAREHOUSE hol_wh;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations! you have completed the lab.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>In this lab we queried Snowflake tables as Virtual tables in Power Apps, performed write-back.</li>
+<li>Invoked a Snowflake UDF to get a ML prediction using Power Automate.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview" target="_blank">Snowflake ML</a></p>
+<p>[Power Platform](https://learn.microsoft.com/en-us/power-apps/Power Apps-overview)</p>
+<h2 is-upgraded>Things to look out for</h2>
+<ul>
+<li>Use Service Principal based Authentication and test the connection with a Power Automate flow for troubleshooting</li>
+<li>Make sure you have set the role, default_namespace, default_warehouse, login_name are set are set for the service_principal user.</li>
+<li>If you&#39;re not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you&#39;re using an environment where the Snowflake connector is available.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

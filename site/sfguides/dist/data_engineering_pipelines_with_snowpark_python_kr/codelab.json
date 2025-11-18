@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_pipelines_with_snowpark_python_kr",
+  "duration": 130,
+  "title": "Snowpark Python을 사용한 데이터 엔지니어링 파이프라인",
+  "authors": "Jeremiah Hansen",
+  "summary": "This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python",
+  "source": "data_engineering_pipelines_with_snowpark_python_kr/data_engineering_pipelines_with_snowpark_python_kr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "kr",
+    "python",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_pipelines_with_snowpark_python_kr"
+}

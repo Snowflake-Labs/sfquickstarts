@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_snowpark_dataframe_api_kr",
+  "duration": 65,
+  "title": "Snowpark 및 DataFrame API 시작하기",
+  "authors": "Robert Fehrmann",
+  "summary": "Snowpark에서 Jupyter Notebook을 시작하고 DataFrame API를 사용하는 방법을 알아보십시오.",
+  "source": "getting_started_with_snowpark_dataframe_api_kr/getting_started_with_snowpark_dataframe_api_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "kr",
+    "snowpark",
+    "web",
+    "데이터과학",
+    "데이터엔지니어링",
+    "스노우플레이크시작하기"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpark_dataframe_api_kr"
+}

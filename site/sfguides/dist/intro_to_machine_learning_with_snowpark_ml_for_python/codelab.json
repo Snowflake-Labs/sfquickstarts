@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "intro_to_machine_learning_with_snowpark_ml_for_python",
+  "duration": 41,
+  "title": "Getting Started with ML Development in Snowflake",
+  "summary": "Through this quickstart guide, you will explore Snowflake for Machine Learning.",
+  "source": "intro_to_machine_learning_with_snowpark_ml_for_python/intro_to_machine_learning_with_snowpark_ml_for_python.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "intro_to_machine_learning_with_snowpark_ml_for_python"
+}

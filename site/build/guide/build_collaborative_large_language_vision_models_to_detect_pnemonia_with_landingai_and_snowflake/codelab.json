@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_collaborative_large_language_vision_models_to_detect_pnemonia_with_landingai_and_snowflake",
+  "duration": 68,
+  "title": "Visual AI Models with LandingLens on Snowflake",
+  "summary": "This guide shows how to use LandingLens and Snowflake to create a computer vision model that detects pneumonia in X-ray images.",
+  "source": "build_collaborative_large_language_vision_models_to_detect_pnemonia_with_landingai_and_snowflake/build_collaborative_large_language_vision_models_to_detect_pnemonia_with_landingai_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "data-applications",
+    "healthcare",
+    "data-science-\u0026-ai",
+    "app-development"
+  ],
+  "tags": [
+    "dataapplications",
+    "datascience",
+    "gettingstarted",
+    "healthcare",
+    "landingai",
+    "lvm",
+    "web"
+  ],
+  "url": "build_collaborative_large_language_vision_models_to_detect_pnemonia_with_landingai_and_snowflake"
+}

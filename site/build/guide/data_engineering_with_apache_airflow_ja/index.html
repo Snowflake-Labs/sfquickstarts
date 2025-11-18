@@ -1,0 +1,489 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Apache Airflow、Snowflake、dbtによるデータエンジニアリング</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_with_apache_airflow_ja"
+                  title="Apache Airflow、Snowflake、dbtによるデータエンジニアリング"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="概要" duration="5">
+        <p class="image-container"><img alt="アーキテクチャ" src="img/910e5bbd35f22796.png"></p>
+<p>多くの企業が、アジリティ、成長、運用効率をサポートするプラットフォーム上に構築された最新のデータ戦略に注目しています。Snowflakeはデータクラウドであり、あらゆるビジネスのデータパイプラインを簡素化し、企業がインフラストラクチャの管理やメンテナンスではなく、データと分析に集中できるようにする将来を見据えたソリューションです。</p>
+<p>Apache Airflowは、データパイプラインの作成と管理に使用できるオープンソースのワークフロー管理プラットフォームです。Airflowは、タスクの有向非巡回グラフ（DAG）で構成されるワークフローを使用します。</p>
+<p><a href="https://www.getdbt.com/" target="_blank">dbt</a>は、<a href="https://www.getdbt.com/" target="_blank">dbt Labs</a>によって管理されている最新のデータエンジニアリングフレームワークであり、Snowflakeなどのクラウドデータプラットフォームを活用した最新のデータアーキテクチャで非常に人気が高まっています。<a href="https://docs.getdbt.com/dbt-cli/cli-overview" target="_blank">dbt CLI</a>は、DBTプロジェクトを実行するためのコマンドラインインターフェイスです。このCLIは無料で使用できるオープンソースです。</p>
+<p>このバーチャルハンズオンラボでは、Airflowとdbtを使用するためのステップバイステップのガイドに従ってデータ変換ジョブスケジューラを作成します。</p>
+<p>では始めましょう。</p>
+<h2 is-upgraded>前提条件</h2>
+<p>このガイドは、Pythonとdbtに関する基本的な実務知識があることを前提としています。</p>
+<h2 is-upgraded>学習する内容</h2>
+<ul>
+<li>Airflowなどのオープンソースツールを使用してデータスケジューラを作成する方法</li>
+<li>DAGを作成してAirflowにアップロードする方法</li>
+<li>dbt、Airflow、Snowflakeを使用してスケーラブルなパイプラインを構築する方法</li>
+</ul>
+<h2 is-upgraded>必要なもの</h2>
+<p>始める前に以下のものが必要です。</p>
+<ol type="1">
+<li>Snowflake</li>
+<li><strong>Snowflakeアカウント</strong></li>
+<li>**適切な権限で作成されたSnowflakeユーザー。**このユーザーには、DEMO_DB データベースにオブジェクトを作成する権限が必要です。</li>
+<li>GitHub</li>
+<li>**GitHubアカウント。**まだGitHubアカウントを持っていない場合は、無料で作成できます。アカウントの作成を開始するには、<a href="https://github.com/join" target="_blank">Join GitHub</a>ページにアクセスしてください。</li>
+<li>**GitHubレポジトリ。**まだレポジトリを作成していない場合、または新しく作成したい場合は、<a href="https://github.com/new" target="_blank">新しいレポジトリを作成</a>します。タイプは「<code>Public</code>」を選択します（どちらも使用できます）。また、現時点では、README、.gitignore、ライセンスの追加をスキップできます。</li>
+<li>統合開発環境（IDE）</li>
+<li>**お気に入りのIDEとGitの統合。**お気に入りのIDEとGitをまだ統合していない場合は、<a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>をお勧めします。これは無料で利用できるオープンソースの優れたIDEです。</li>
+<li>**コンピュータに複製されたプロジェクトレポジトリ。**Gitレポジトリの接続の詳細については、レポジトリを開き、ページ上部付近にある<code>HTTPS</code>リンクをコピーします。レポジトリに1つ以上のファイルがある場合は、ページ上部付近にあるの緑色の<code>Code</code>アイコンをクリックし、<code>HTTPS</code>リンクをコピーします。そのリンクをVS Codeまたはお好みのIDEで使用して、コンピュータにレポジトリを複製します。</li>
+<li>Docker</li>
+<li><strong>ノートパソコン上のDocker Desktop。</strong>  Airflowをコンテナとして実行します。<a href="https://docs.docker.com/desktop/" target="_blank">Dockerの設定手順</a>に従って、ご希望のOSにDocker Desktopをインストールしてください。</li>
+</ol>
+<h2 is-upgraded>構築するもの</h2>
+<ul>
+<li>dbtとSnowflakeを使用したシンプルで実用的なAirflowパイプライン</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="環境設定" duration="2">
+        <p>まず、以下のコマンドを実行してフォルダを作成しましょう。</p>
+<pre><code>mkdir dbt_airflow &amp;&amp; cd &#34;$_&#34;
+</code></pre>
+<p>次に、Airflowのdocker-composeファイルを取得します。これを行うため、ローカルのノートパソコンへのこのファイルのcurlを実行しましょう。</p>
+<pre><code language="language-bash" class="language-bash">curl -LfO &#39;https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.yaml&#39;
+</code></pre>
+<p>ここで、docker-composeファイルを調整し、2つのフォルダをボリュームとして追加します。<code>dags</code>は、Airflowが取得して分析するためにAirflow DAGが配置されているフォルダです。<code>dbt</code>は、dbtモデルとCSVファイルを設定したフォルダです。</p>
+<pre><code language="language-bash" class="language-bash">  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ./dbt:/dbt # add this in
+    - ./dags:/dags # add this in
+
+</code></pre>
+<p>ここで、追加のdocker-composeパラメータを含む追加ファイルを作成する必要があります。こうすることで、コンテナの起動時にdbtがインストールされます。</p>
+<p><code>.env</code></p>
+<pre><code language="language-bash" class="language-bash">_PIP_ADDITIONAL_REQUIREMENTS=dbt==0.19.0
+</code></pre>
+<p>次に、<code>dbt</code>プロジェクトと<code>dags</code>フォルダを作成する必要があります。</p>
+<p>DBTプロジェクトの場合は、<code>dbt init dbt</code>を実行します。後のステップ4で、ここにdbtを設定します。</p>
+<p>dagsフォルダの場合は、次を実行してフォルダを作成します。</p>
+<pre><code>mkdir dags
+</code></pre>
+<p>ツリーレポジトリは次のようになります。</p>
+<p class="image-container"><img alt="Folderstructure" src="img/526b15af3f7538f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DBTプロジェクトの設定" duration="6">
+        <p>レポジトリを作成したので、次はDBTプロジェクトを設定します。</p>
+<p>始める前に、少し時間を取ってDBTプロジェクトで何をしようとしているのかを理解しましょう。</p>
+<p>下の図からわかるように、3つのcsvファイル（<code>bookings_1</code>、<code>bookings_2</code>、<code>customers</code> ）があります。これらのcsvファイルをテーブルとしてSnowflakeにシードします。これについては、後のステップ4で詳しく説明します。</p>
+<p>続いて、<code>bookings_1</code>テーブルと<code>bookings_2</code>テーブルを<code>combined_bookings</code>にマージします。次に、customer_idで<code>combined_bookings</code>テーブルと<code>customer</code>テーブルを結合し、<code>prepped_data</code>テーブルを作成します。</p>
+<p>最後に、2つのビューを作成して、<code>prepped_data</code>の分析と変換を実行します。</p>
+<ol type="1">
+<li><code>hotel_count_by_day.sql</code>：ANALYSISスキーマにhotel_count_by_dayビューを作成し、日別のホテル予約数をカウントします。</li>
+<li><code>thirty_day_avg_cost.sql</code>：ANALYSISスキーマにthirty_day_avg_costビューを作成し、過去30日間の予約の平均コストを計算します。</li>
+</ol>
+<p class="image-container"><img alt="dbt_structure" src="img/d36a140ee3fb4128.png"></p>
+<p>まず、Snowflakeコンソールに移動し、以下のスクリプトを実行しましょう。これにより、dbt_userとdbt_dev_roleが作成されます。その後、dbt_userのデータベースを設定します。</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE SECURITYADMIN;
+
+CREATE OR REPLACE ROLE dbt_DEV_ROLE COMMENT=&#39;dbt_DEV_ROLE&#39;;
+GRANT ROLE dbt_DEV_ROLE TO ROLE SYSADMIN;
+
+CREATE OR REPLACE USER dbt_USER PASSWORD=&#39;&lt;PASSWORD&gt;&#39;
+	DEFAULT_ROLE=dbt_DEV_ROLE
+	DEFAULT_WAREHOUSE=dbt_WH
+	COMMENT=&#39;dbt User&#39;;
+    
+GRANT ROLE dbt_DEV_ROLE TO USER dbt_USER;
+
+-- Grant privileges to role
+USE ROLE ACCOUNTADMIN;
+
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE dbt_DEV_ROLE;
+
+/*---------------------------------------------------------------------------
+Next we will create a virtual warehouse that will be used
+---------------------------------------------------------------------------*/
+USE ROLE SYSADMIN;
+
+--Create Warehouse for dbt work
+CREATE OR REPLACE WAREHOUSE dbt_DEV_WH
+  WITH WAREHOUSE_SIZE = &#39;XSMALL&#39;
+  AUTO_SUSPEND = 120
+  AUTO_RESUME = true
+  INITIALLY_SUSPENDED = TRUE;
+
+GRANT ALL ON WAREHOUSE dbt_DEV_WH TO ROLE dbt_DEV_ROLE;
+
+</code></pre>
+<p><code>dbt_user</code>でログインし、次のコマンドを実行して<code>DEMO_dbt</code>データベースを作成しましょう。</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE DEMO_dbt
+
+</code></pre>
+<p class="image-container"><img alt="airflow" src="img/bcdcf208927fcb3d.png"></p>
+<p>ここで、ステップ1で設定したプロジェクト<code>dbt_airflow</code> &gt; <code>dbt</code>に戻りましょう。</p>
+<p>以下のそれぞれのファイルに対していくつかの構成を設定します。<code>dbt_project.yml</code>については、modelsセクションを置き換えるだけでよいことに注意してください。</p>
+<p>profiles.yml</p>
+<pre><code language="language-yml" class="language-yml">default:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      ######## Please replace with your Snowflake account name 
+      ######## for example sg_demo.ap-southeast-1
+      account: &lt;ACCOUNT_URL&gt;.&lt;REGION&gt; 
+
+      user: &#34;&#123;&#123; env_var(&#39;dbt_user&#39;) }}&#34;
+      ######## These environment variables dbt_user and dbt_password 
+      ######## are read from the variabls in Airflow which we will set later
+      password: &#34;&#123;&#123; env_var(&#39;dbt_password&#39;) }}&#34;
+
+      role: dbt_dev_role
+      database: demo_dbt
+      warehouse: dbt_dev_wh
+      schema: public
+      threads: 200
+</code></pre>
+<p>packages.yml</p>
+<pre><code language="language-yml" class="language-yml">packages:
+  - package: fishtown-analytics/dbt_utils
+    version: 0.6.4
+</code></pre>
+<p>dbt_project.yml</p>
+<pre><code language="language-yml" class="language-yml">models:
+  my_new_project:
+      # Applies to all files under models/example/
+      transform:
+          schema: transform
+          materialized: view
+      analysis:
+          schema: analysis
+          materialized: view
+</code></pre>
+<p>次に、<code>packages.yml</code>内に配置した<code>fishtown-analytics/dbt_utils</code>をインストールします。これを行うには、<code>dbt</code>フォルダから<code>dbt deps</code>コマンドを実行します。</p>
+<p>ここで、<code>macros</code>フォルダの下に<code>custom_demo_macros.sql</code>というファイルを作成し、以下のsqlを入力します。</p>
+<pre><code language="language-sql" class="language-sql">{% macro generate_schema_name(custom_schema_name, node) -%}
+    {%- set default_schema = target.schema -%}
+    {%- if custom_schema_name is none -%}
+        &#123;&#123; default_schema }}
+    {%- else -%}
+        &#123;&#123; custom_schema_name | trim }}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro set_query_tag() -%}
+  {% set new_query_tag = model.name %} {# always use model name #}
+  {% if new_query_tag %}
+    {% set original_query_tag = get_current_query_tag() %}
+    &#123;&#123; log(&#34;Setting query_tag to &#39;&#34; ~ new_query_tag ~ &#34;&#39;. Will reset to &#39;&#34; ~ original_query_tag ~ &#34;&#39; after materialization.&#34;) }}
+    {% do run_query(&#34;alter session set query_tag = &#39;{}&#39;&#34;.format(new_query_tag)) %}
+    &#123;&#123; return(original_query_tag)}}
+  {% endif %}
+  &#123;&#123; return(none)}}
+{% endmacro %}
+</code></pre>
+<p>すべてが正しく完了すると、フォルダは次のようになります。注釈付きのボックスは、上で説明した内容です。</p>
+<p>最後のステップは、<code>db_utils</code>のdbtモジュールをインストールすることです。dbtディレクトリから次を実行します。</p>
+<pre><code language="language-\u00a0" class="language-\u00a0">dbt deps
+</code></pre>
+<p>関連するモジュールが<code>dbt_modules</code>フォルダにインストールされていることがわかります。</p>
+<p>ここまでで、次のようなフォルダ構造になります。</p>
+<p class="image-container"><img alt="airflow" src="img/559f995347083ec8.png"></p>
+<p>これでdbtの設定は完了です。次のセクションでは、csvファイルとdagsの作成に進みましょう。</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="dbtでのCSVデータファイルの作成" duration="10">
+        <p>このセクションでは、サンプルのCSVデータファイルと関連するSQLモデルを準備します。</p>
+<p>まず、dbtフォルダ内の<code>data</code>フォルダに3つのExcelファイルを作成しましょう。</p>
+<p>bookings_1.csv</p>
+<pre><code language="language-csv" class="language-csv">id,booking_reference,hotel,booking_date,cost
+1,232323231,Pan Pacific,2021-03-19,100
+1,232323232,Fullerton,2021-03-20,200
+1,232323233,Fullerton,2021-04-20,300
+1,232323234,Jackson Square,2021-03-21,400
+1,232323235,Mayflower,2021-06-20,500
+1,232323236,Suncity,2021-03-19,600
+1,232323237,Fullerton,2021-08-20,700
+</code></pre>
+<p>bookings_2.csv</p>
+<pre><code language="language-csv" class="language-csv">id,booking_reference,hotel,booking_date,cost
+2,332323231,Fullerton,2021-03-19,100
+2,332323232,Jackson Square,2021-03-20,300
+2,332323233,Suncity,2021-03-20,300
+2,332323234,Jackson Square,2021-03-21,300
+2,332323235,Fullerton,2021-06-20,300
+2,332323236,Suncity,2021-03-19,300
+2,332323237,Berkly,2021-05-20,200
+</code></pre>
+<p>customers.csv</p>
+<pre><code language="language-csv" class="language-csv">id,first_name,last_name,birthdate,membership_no
+1,jim,jone,1989-03-19,12334
+2,adrian,lee,1990-03-10,12323
+</code></pre>
+<p>フォルダ構造は次のようになります。</p>
+<p class="image-container"><img alt="airflow" src="img/bc601bb6767d64e2.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="modelsフォルダへのdbtモデルの作成" duration="2">
+        <p>modelsフォルダに<code>analysis</code>と<code>transform</code>の2つのフォルダを作成します。分析と変換については、それぞれ以下のセクションに従ってください。</p>
+<h2 is-upgraded>transformフォルダのdbtモデル</h2>
+<p><code>transform</code>フォルダ内には3つのSQLファイルがあります。</p>
+<ol type="1">
+<li><code>combined_bookings.sql</code>：上記の2つの予約のCSVファイルを結合し、<code>TRANSFORM</code>スキーマに<code>COMBINED_BOOKINGS</code>ビューを作成します。</li>
+</ol>
+<p>combined_bookings.sql</p>
+<pre><code language="language-sql" class="language-sql">&#123;&#123; dbt_utils.union_relations(
+    relations=[ref(&#39;bookings_1&#39;), ref(&#39;bookings_2&#39;)]
+) }}
+</code></pre>
+<ol type="1" start="2">
+<li><code>customer.sql</code>：<code>TRANSFORM</code>スキーマに<code>CUSTOMER</code>ビューを作成します。</li>
+</ol>
+<p>customer.sql</p>
+<pre><code language="language-sql" class="language-sql">SELECT ID 
+    , FIRST_NAME
+    , LAST_NAME
+    , birthdate
+FROM &#123;&#123; ref(&#39;customers&#39;) }}
+</code></pre>
+<ol type="1" start="3">
+<li><code>prepped_data.sql</code>：<code>TRANSFORM</code>スキーマに<code>PREPPED_DATA</code>ビューを作成し、上記の手順で作成した<code>CUSTOMER</code>ビューと<code>COMBINED_BOOKINGS</code>ビューの内部結合を実行します。</li>
+</ol>
+<p>prepped_data.sql</p>
+<pre><code language="language-sql" class="language-sql">SELECT A.ID 
+    , FIRST_NAME
+    , LAST_NAME
+    , birthdate
+    , BOOKING_REFERENCE
+    , HOTEL
+    , BOOKING_DATE
+    , COST
+FROM &#123;&#123;ref(&#39;customer&#39;)}}  A
+JOIN &#123;&#123;ref(&#39;combined_bookings&#39;)}} B
+on A.ID = B.ID
+</code></pre>
+<h2 is-upgraded>analysisフォルダのdbtモデル</h2>
+<p>次に、<code>analysis</code>フォルダに進みましょう。<code>analysis</code>フォルダに移動し、以下の2つのSQLファイルを作成します。</p>
+<ol type="1">
+<li><code>hotel_count_by_day.sql</code>：<code>ANALYSIS</code>スキーマにhotel_count_by_dayビューを作成し、日別のホテル予約数をカウントします。</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT
+  BOOKING_DATE,
+  HOTEL,
+  COUNT(ID) as count_bookings
+FROM &#123;&#123; ref(&#39;prepped_data&#39;) }}
+GROUP BY
+  BOOKING_DATE,
+  HOTEL
+</code></pre>
+<ol type="1" start="2">
+<li><code>thirty_day_avg_cost.sql</code>：<code>ANALYSIS</code>スキーマにthirty_day_avg_costビューを作成し、過去30日間の予約の平均コストを計算します。</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT
+  BOOKING_DATE,
+  HOTEL,
+  COST,
+  AVG(COST) OVER (
+    ORDER BY BOOKING_DATE ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+  ) as &#34;30_DAY_AVG_COST&#34;,
+  COST -   AVG(COST) OVER (
+    ORDER BY BOOKING_DATE ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+  ) as &#34;DIFF_BTW_ACTUAL_AVG&#34;
+FROM &#123;&#123; ref(&#39;prepped_data&#39;) }}
+</code></pre>
+<p>ファイル構造は次のようになります。dbtモデルはすでに完了しているので、Airflowの作業に進むことができます。</p>
+<p class="image-container"><img alt="airflow" src="img/c50fe4445f3c7a09.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Airflow DAGの準備" duration="5">
+        <p><code>dags</code>フォルダに、<code>init.py</code>と<code>transform_and_analysis.py</code>の2つのファイルを作成します。<code>init.py</code>は初期化を行い、CSVデータを参照します。<code>transform_and_analysis.py</code>は変換と分析を実行します。</p>
+<p>Airflowを使用すると、<code>transform_and_analysis</code> DAGを毎日スケジュールできます。ただし、この例では手動でDAGをトリガーします。</p>
+<p>init.py</p>
+<pre><code language="language-python" class="language-python">from datetime import datetime
+import os
+
+from airflow import DAG
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.dummy_operator import DummyOperator
+
+default_args = {
+    &#39;owner&#39;: &#39;airflow&#39;,
+    &#39;depends_on_past&#39;: False,
+    &#39;start_date&#39;: datetime(2020,8,1),
+    &#39;retries&#39;: 0
+}
+
+
+with DAG(&#39;1_init_once_seed_data&#39;, default_args=default_args, schedule_interval=&#39;@once&#39;) as dag:
+    task_1 = BashOperator(
+        task_id=&#39;load_seed_data_once&#39;,
+        bash_command=&#39;cd /dbt &amp;&amp; dbt seed --profiles-dir .&#39;,
+        env={
+            &#39;dbt_user&#39;: &#39;&#123;&#123; var.value.dbt_user }}&#39;,
+            &#39;dbt_password&#39;: &#39;&#123;&#123; var.value.dbt_password }}&#39;,
+            **os.environ
+        },
+        dag=dag
+    )
+
+task_1  
+</code></pre>
+<p>transform_and_analysis.py</p>
+<pre><code language="language-python" class="language-python">from airflow import DAG
+from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.dummy_operator import DummyOperator
+from datetime import datetime
+
+
+default_args = {
+    &#39;owner&#39;: &#39;airflow&#39;,
+    &#39;depends_on_past&#39;: False,
+    &#39;start_date&#39;: datetime(2020,8,1),
+    &#39;retries&#39;: 0
+}
+
+with DAG(&#39;2_daily_transformation_analysis&#39;, default_args=default_args, schedule_interval=&#39;@once&#39;) as dag:
+    task_1 = BashOperator(
+        task_id=&#39;daily_transform&#39;,
+        bash_command=&#39;cd /dbt &amp;&amp; dbt run --models transform --profiles-dir .&#39;,
+        env={
+            &#39;dbt_user&#39;: &#39;&#123;&#123; var.value.dbt_user }}&#39;,
+            &#39;dbt_password&#39;: &#39;&#123;&#123; var.value.dbt_password }}&#39;,
+            **os.environ
+        },
+        dag=dag
+    )
+
+    task_2 = BashOperator(
+        task_id=&#39;daily_analysis&#39;,
+        bash_command=&#39;cd /dbt &amp;&amp; dbt run --models analysis --profiles-dir .&#39;,
+        env={
+            &#39;dbt_user&#39;: &#39;&#123;&#123; var.value.dbt_user }}&#39;,
+            &#39;dbt_password&#39;: &#39;&#123;&#123; var.value.dbt_password }}&#39;,
+            **os.environ
+        },
+        dag=dag
+    )
+
+    task_1 &gt;&gt; task_2 # Define dependencies
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Airflowのdocker-composeファイルの実行" duration="5">
+        <p><code>docker-compose up</code>を実行し、<a href="http://localhost:8080/" target="_blank">http://localhost:8080/</a>に移動しましょう。デフォルトのユーザー名は<code>airflow</code>、パスワードは<code>airflow</code>です。</p>
+<p class="image-container"><img alt="airflow" src="img/3c5867454e0426d7.png"></p>
+<p>ここでは2つの変数を作成します。<code>admin > Variables</code>に移動し、<code>+</code>アイコンをクリックします。</p>
+<p class="image-container"><img alt="airflow" src="img/895a8bd6de0ede43.png"></p>
+<p>まず、<code>dbt_user</code>のキーと値<code>dbt_user</code>を作成しましょう。</p>
+<p class="image-container"><img alt="airflow" src="img/6ab54f17b7f0c069.png"></p>
+<p>次に、<code>dbt_password</code>の2番目のキーと値<code><ADD IN YOUR PASSWORD></code>を作成しましょう。</p>
+<p class="image-container"><img alt="airflow" src="img/d0b9e76723d5ffd9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DAGのアクティブ化と実行" duration="0">
+        <p>DAGをアクティブ化します。<code>1_init_once_seed_data</code>と<code>2_daily_transformation_analysis</code>の青いボタンをクリックします。</p>
+<p class="image-container"><img alt="airflow" src="img/f2b16e9ea0323b55.png"></p>
+<h2 is-upgraded>1_init_once_seed_dataの実行</h2>
+<p>次に、<code>1_init_once_seed_data</code>を実行してデータをシードしましょう。実行するには、DAGの右側の<code>Actions</code>の下にある再生アイコンをクリックします。</p>
+<p class="image-container"><img alt="airflow" src="img/92a97444078fce7f.png"></p>
+<h2 is-upgraded>パブリックスキーマに作成されたテーブルのシードデータの表示</h2>
+<p>Snowflakeインスタンスに戻ったときにすべてがうまくいっている場合は、<code>PUBLIC</code>スキーマに正常に作成されたツリーテーブルが表示されます。</p>
+<p class="image-container"><img alt="airflow" src="img/4d7ba239f2c8ee2b.png"></p>
+<h2 is-upgraded>2_daily_transformation_analysisの実行</h2>
+<p>次に、2番目のDAG <code>2_daily_transformation_analysis</code>を実行して、<code>transform</code>モデルと<code>analysis</code>モデルを実行します。</p>
+<p class="image-container"><img alt="airflow" src="img/c294cb40356b3e3b.png"></p>
+<p><code>Transform</code>ビューと<code>Analysis</code>ビューが正常に作成されました。</p>
+<p class="image-container"><img alt="airflow" src="img/549536ac9cffd679.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめ" duration="1">
+        <p>おめでとうございます。dbtとSnowflakeを使用して最初のApache Airflowを作成しました。無料トライアルを続行し、自分のサンプルデータまたは本番データをロードして、このラボで扱っていないAirflowとSnowflakeのより高度な機能を試してみることをお勧めします。</p>
+<h2 is-upgraded>関連リソース：</h2>
+<ul>
+<li>18,000人を超えるデータ実務者が参加する<a href="https://www.getdbt.com/community/" target="_blank">dbtコミュニティのSlack</a>に今すぐ参加してください。専用のSlackチャネル#db-snowflakeでは、Snowflake関連コンテンツを配信しています。</li>
+<li>簡単な<a href="https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html" target="_blank">Airflow DAG</a>の作成方法に関するクイックチュートリアル</li>
+</ul>
+<h2 is-upgraded>ここまで学んだ内容：</h2>
+<ul>
+<li>Airflow、dbt、Snowflakeの設定方法</li>
+<li>DAGを作成し、DAGからdbtを実行する方法</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

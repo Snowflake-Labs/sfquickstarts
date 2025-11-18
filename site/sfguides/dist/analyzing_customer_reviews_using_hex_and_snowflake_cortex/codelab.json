@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "analyzing_customer_reviews_using_hex_and_snowflake_cortex",
+  "duration": 101,
+  "title": "Analyzing Customer Reviews With Hex and Snowflake Cortex",
+  "summary": "This lab will walk you through how to use Hex with Snowflake Cortex to analyze and understand sentiment on customer reviews.",
+  "source": "hex_snowflake_vhol_q4_2024/customer_reviews.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "hex",
+    "notebooks",
+    "partnerconnect",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "analyzing_customer_reviews_using_hex_and_snowflake_cortex"
+}

@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_with_datastage",
+  "duration": 21,
+  "title": "A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage",
+  "summary": "Lab to demonstrate ease of loading enterprise data into Snowflake through DataStage.",
+  "source": "data_engineering_with_datastage/data_engineering_with_datastage.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "dataintegration",
+    "datastage",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_with_datastage"
+}

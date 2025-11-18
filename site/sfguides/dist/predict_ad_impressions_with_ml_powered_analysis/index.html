@@ -1,0 +1,241 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Predict Ad Impressions with ML-Powered Analysis</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="predict_ad_impressions_with_ml_powered_analysis"
+                  title="Predict Ad Impressions with ML-Powered Analysis"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>The pacing of ad campaigns can be unpredictable. Consider an advertiser with a cross-channel campaign.  Some channels may not be able to fulfill the level of inventory desired, leading to advertisers needing to increase spending on other channels to make up the gap.  On the sell side, a media publisher might want to show how a campaign is likely to pace over the remaining period of the campaign.</p>
+<p>This unpredictability can also lead to problems being going unnoticed.  When making an optimization, a media buyer could make a mistake when setting campaign parameters.  They could add one more zero, or one too few, when typing target impressions or spend and buy a very different number than intended.</p>
+<p>Fortunately, for those advertisers or ad platforms who are bringing their data into Snowflake, Snowflake&#39;s <a href="https://docs.snowflake.com/en/guides-overview-analysis" target="_blank">ML-Powered Analysis</a> makes solving these types of problems very easy.  In this Quickstart, we will start with example time series impression data for several months. We will use Snowflake&#39;s Forecasting feature to project what the impression volume will be in the two weeks following the training period.  We will also show how data from new incoming days can be checked with Snowflake&#39;s Anomaly Detection capability, to see if there might have been an error in delivery.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a Snowflake account or use of the <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial</a></li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to generate example impression data</li>
+<li>How to build models using Snowflake&#39;s ML-Powered Analysis capabilities</li>
+<li>How to use Snowsight to visualize the forecast results</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>SQL scripts to build the relevant models</li>
+<li>Visualizations of the results</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Environment" duration="8">
+        <p>If you do not have a Snowflake account, you can register for a <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial</a>. The cloud provider (AWS, Azure, Google Cloud), and Region (US East, EU, e.g.) do <em>not</em> matter for this lab. However, we suggest you select the region which is physically closest to you.</p>
+<p>To easily follow the instructions, resize your browser windows so you can view this Quickstart and your Snowflake environment side-by-side. If possible, even better is to use a secondary display dedicated to the Quickstart.</p>
+<h2 is-upgraded>Create a Warehouse, Database, Schemas</h2>
+<p>Create a warehouse, database, and schema that will be used for loading, storing, processing, and querying data for this Quickstart. We will use the UI within the Worksheets tab to run the DDL that creates these objects.</p>
+<p>Copy the commands below into your trial environment. To execute a single statement, just position the cursor anywhere within the statement and click the Run button. To execute several statements, they must be highlighted through the final semi-colon prior to clicking the Run button.</p>
+<pre><code language="language-sql" class="language-sql">-- setup warehouse, database and schema
+USE ROLE ACCOUNTADMIN;
+CREATE WAREHOUSE AD_FORECAST_DEMO_WH WITH WAREHOUSE_SIZE=&#39;XSmall&#39;  STATEMENT_TIMEOUT_IN_SECONDS=600 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS=15;
+USE WAREHOUSE AD_FORECAST_DEMO_WH;
+CREATE DATABASE AD_FORECAST_DEMO;
+CREATE SCHEMA AD_FORECAST_DEMO.DEMO;
+</code></pre>
+<h2 is-upgraded>Set up an analyst role</h2>
+<p>The <a href="https://docs.snowflake.com/en/user-guide/analysis-forecasting#granting-privileges-to-create-forecast-objects" target="_blank">Snowflake documentation recommends creating a role</a> for people who need to create forecasts.  As such, we run the following SQL to set up a role and grant the necessary privileges.</p>
+<pre><code language="language-sql" class="language-sql">-- set up analyst role
+CREATE ROLE analyst;
+GRANT USAGE ON DATABASE AD_FORECAST_DEMO TO ROLE analyst;
+GRANT USAGE ON SCHEMA AD_FORECAST_DEMO.DEMO TO ROLE analyst;
+GRANT USAGE ON WAREHOUSE AD_FORECAST_DEMO_WH TO ROLE analyst;
+GRANT CREATE TABLE ON SCHEMA AD_FORECAST_DEMO.DEMO TO ROLE analyst;
+GRANT CREATE VIEW ON SCHEMA AD_FORECAST_DEMO.DEMO TO ROLE analyst;
+GRANT CREATE SNOWFLAKE.ML.FORECAST ON SCHEMA AD_FORECAST_DEMO.DEMO TO ROLE analyst;
+GRANT CREATE SNOWFLAKE.ML.ANOMALY_DETECTION ON SCHEMA AD_FORECAST_DEMO.DEMO TO ROLE analyst;
+GRANT ROLE analyst TO USER &lt;your_user_here&gt;;
+</code></pre>
+<h2 is-upgraded>Create the table and generate test data</h2>
+<p>The table we create for example data will store just a timestamp representing the day, and a number of impressions.  In a real-world situation, we would likely get raw logs from a DSP (such as <a href="https://app.snowflake.com/marketplace/listing/GZSNZ4ARCR/the-trade-desk-raw-event-data-stream-reds" target="_blank">The Trade Desk REDS</a>) or ad server. Then, the data would be aggregated into hourly or daily buckets.  Then, the aggregated data would be fed to the model for forecasting.</p>
+<p>For this demo, however, we will directly generate aggregated data. This makes it easier to generate data that is interesting from a forecasting perspective. Data that is purely random would not make for an interesting forecast, as the forecast would just be the mean of the distribution.  We start by making a table to hold the data.</p>
+<pre><code language="language-sql" class="language-sql">-- create table to hold the generated data
+create table daily_impressions(day timestamp, impression_count integer);
+</code></pre>
+<p>Next, we fill the table with just over three months of data, with impression counts that are random.</p>
+<pre><code language="language-sql" class="language-sql">-- generate random data to fill the table
+insert into daily_impressions
+ select dateadd(day, seq2(1), (&#39;2022-09-01&#39;::timestamp)) as day,
+ abs(round(normal(35000, 7000, random(4)))) as impression_count
+ from table(generator(rowcount=&gt;96));
+</code></pre>
+<p>Here the data is completely random, so as mentioned, it does not make for an interesting forecast.  So next, we will massage the data to add two effects.  One, we will add a slightly upward trend, so that on average more impressions are delivered later in the campaign than were delivered earlier in the campaign.  Second, we add a day of week effect, so that weekends have lower numbers of impressions delivered than weekdays.</p>
+<pre><code language="language-sql" class="language-sql">-- change data to give a slight upward trend and a day of week effect
+update daily_impressions
+set impression_count=((CASE WHEN dayname(day) IN (&#39;Sat&#39;, &#39;Sun&#39;) THEN 0.7
+                            WHEN dayname(day)=&#39;Fri&#39; THEN 0.9
+                            ELSE 1
+                        END)*
+                     (impression_count+(DATEDIFF(day, &#39;2022-09-01&#39;::timestamp, 
+                      day)*120)));
+</code></pre>
+<h2 is-upgraded>Verify the data</h2>
+<p>We can run the following statement to verify our data.</p>
+<pre><code language="language-sql" class="language-sql">-- verify data
+select * from daily_impressions;
+</code></pre>
+<p>It is easiest to visual the data by clicking <em>Chart</em>.  You should see a graph like the following.</p>
+<p class="image-container"><img alt="Test data" src="img/1879320e7afd39d6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and visualize a forecast" duration="4">
+        <p>Now we have data that could represent the number of impressions delivered over the first several months of a campaign. An analyst might want to understand how many impressions are likely to be delivered if no changes are made to the campaign.  To do this, we will show how to forecast the number of impressions over the next two weeks, and show how the analyst can visualize the forecast.</p>
+<h2 is-upgraded>Create the model</h2>
+<p>The first step is to write a query that calculates the cumulative impressions served by day.</p>
+<pre><code language="language-sql" class="language-sql">-- create the forecast
+CREATE OR REPLACE SNOWFLAKE.ML.FORECAST impressions_forecast(INPUT_DATA =&gt;
+    SYSTEM$REFERENCE(&#39;TABLE&#39;, &#39;daily_impressions&#39;),
+                    TIMESTAMP_COLNAME =&gt; &#39;day&#39;,
+                    TARGET_COLNAME =&gt; &#39;impression_count&#39;
+    );
+</code></pre>
+<p>Here we are building the machine learning model that will be used to forecast future impressions.  It should take less than about 20 seconds to build the model.  You will see a message that says <code>Instance IMPRESSIONS_FORECAST successfully created.</code> when the model training is complete.</p>
+<h2 is-upgraded>Make a forecast</h2>
+<p>Next, we use the model to forecast the 14 days following the timeframe covered by the test data.</p>
+<pre><code language="language-sql" class="language-sql">-- get the forecast values
+CALL impressions_forecast!FORECAST(FORECASTING_PERIODS =&gt; 14);
+</code></pre>
+<p>The output will contain the timestamp for the next 14 days, the forecast, and an upper and lower bound of the prediction interval.  Note that this interval is configurable using the <code>prediction_interval</code> configuration.</p>
+<h2 is-upgraded>Visualize the results</h2>
+<p>It can be easier to visualize these results by viewing them alongside the actual data.  You can do that as follows.</p>
+<pre><code language="language-sql" class="language-sql">-- select actual data and forecast
+SELECT day AS ts, impression_count AS actual, NULL AS forecast, NULL AS lower_bound, NULL AS upper_bound
+  FROM daily_impressions
+UNION ALL
+SELECT ts, NULL AS actual, forecast, lower_bound, upper_bound
+  FROM TABLE(RESULT_SCAN(-1));
+</code></pre>
+<p>Here we use <code>UNION ALL</code> to combine the results of the forecast with the actual data on which the model was trained.  To visualize, we can click on <em>Chart</em> then click <em>Add column</em> so that both <em>Forecast</em> and <em>Actual</em> are added to the chart. For both, under <em>Aggregation</em> select <em>None</em> as follows.</p>
+<p class="image-container"><img alt="Chat configuration" src="img/12da3a8c7c3a927c.png"></p>
+<p>Once that is configured, you should see the results as follows.</p>
+<p class="image-container"><img alt="Forecast results visualization" src="img/dd29703db82cf4af.png"></p>
+<p>As you can see, the forecast was able to successfully capture the day of week effect, as the dips in the chart correspond to weekends.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Anomaly detection" duration="4">
+        <p>Many ad campaigns are still manually set up, with people typing impression volumes or budgets into ad platforms. With that comes the possibility of human error. The same data used to train the forecasting model can be used to train an anomaly detection model. This model could be used when data for a new time period comes into the system to detect if the new time period is an outlier. If it is an outlier, that could trigger an alert, where analysts could check to make sure that the change was intentional. This would enable those running the campaign to detect possible human error as soon as possible.</p>
+<h2 is-upgraded>Build the model</h2>
+<p>To build the anomaly detection model, we run the following SQL.</p>
+<pre><code language="language-sql" class="language-sql">-- build model to detect anomalies
+CREATE OR REPLACE SNOWFLAKE.ML.ANOMALY_DETECTION impression_anomaly_detector(
+  INPUT_DATA =&gt; SYSTEM$REFERENCE(&#39;TABLE&#39;, &#39;daily_impressions&#39;),
+  TIMESTAMP_COLNAME =&gt; &#39;day&#39;,
+  TARGET_COLNAME =&gt; &#39;impression_count&#39;,
+  LABEL_COLNAME =&gt; &#39;&#39;);
+</code></pre>
+<p>This model takes approximately 20 seconds to train.  You will see <code>Instance IMPRESSION_ANOMALY_DETECTOR successfully created.</code> when the model is trained.</p>
+<h2 is-upgraded>Run the model on data</h2>
+<p>We can test how the model would react to new time periods with different quantities of impressions as follows. We will start with a test of a low value of impressions.</p>
+<pre><code language="language-sql" class="language-sql">-- see if a potential new day would be an outlier
+  CALL impression_anomaly_detector!DETECT_ANOMALIES(
+  INPUT_DATA =&gt; SYSTEM$QUERY_REFERENCE(&#39;select \&#39;2022-12-06\&#39;::timestamp as day, 12000 as impressions&#39;),
+  TIMESTAMP_COLNAME =&gt;&#39;day&#39;,
+  TARGET_COLNAME =&gt; &#39;impressions&#39;);
+</code></pre>
+<p>Here we see that this is an outlier, with a percentile of <code>0.0009950594591</code>.  Next, we try a high number of impressions.</p>
+<pre><code language="language-sql" class="language-sql">-- check a way too high row
+CALL impression_anomaly_detector!DETECT_ANOMALIES(
+  INPUT_DATA =&gt; SYSTEM$QUERY_REFERENCE(&#39;select \&#39;2022-12-06\&#39;::timestamp as day, 120000 as impressions&#39;),
+  TIMESTAMP_COLNAME =&gt;&#39;day&#39;,
+  TARGET_COLNAME =&gt; &#39;impressions&#39;);
+</code></pre>
+<p>Here again, this is an outlier. Note that the <code>prediction_interval</code> configuration can be used to control the percentile of possible values that would be considered an outlier.</p>
+<p>Finally, we can try a more reasonable value.</p>
+<pre><code language="language-sql" class="language-sql">-- try a reasonable value
+CALL impression_anomaly_detector!DETECT_ANOMALIES(
+  INPUT_DATA =&gt; SYSTEM$QUERY_REFERENCE(&#39;select \&#39;2022-12-06\&#39;::timestamp as day, 60000 as impressions&#39;),
+  TIMESTAMP_COLNAME =&gt;&#39;day&#39;,
+  TARGET_COLNAME =&gt; &#39;impressions&#39;);
+</code></pre>
+<p>This value is still fairly high, well above the forecast of almost 44,000.  However, because it is below the upper bound, this does not qualify as an outlier.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>Congratulations, you have completed this Quickstart for a quick overview of using ML-Powered Analysis to make predictions about ad impression data in Snowflake.</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>How to create test impression data.</li>
+<li>How to build a model to forecast future values.</li>
+<li>How to build a model to detect anomalies in incoming data.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/guides-overview-analysis" target="_blank">Snowflake Documentation: ML-Powered Analysis</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

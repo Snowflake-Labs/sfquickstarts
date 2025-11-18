@@ -1,0 +1,882 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Data-centric Approach to Machine Learning Using Snowflake and Amazon SageMaker Data Wrangler</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="vhol_snowflake_data_wrangler"
+                  title="Data-centric Approach to Machine Learning Using Snowflake and Amazon SageMaker Data Wrangler"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This guide will take you through the process of integrating SageMaker and Snowflake using Data Wrangler and SageMaker Studio. It will cover the powerful features in both Snowflake and Data Wrangler to enrich your data with Snowflake Marketplace data, and also how to quickly and effectively evaluate the enriched data&#39;s potential to train ML models.</p>
+<p>We will be exploring a financial service use of evaluating loan information to predict if a lender will default on a loan. The base data set was derived from loan data from the Lending Club.</p>
+<p>We will first load this data set into Snowflake to simulate data collected from internal systems for analytical purposes. Using Snowflake&#39;s Zero Copy Cloning feature will make this data available to the Data Science team, without duplicating the data and also protecting the production data from any data manipulation. The data will then be enriched with unemployment data from Knoema on the Snowflake Marketplace.</p>
+<p>From within SageMaker Studio we will then retrieve the data using Data Wrangler, which we will use to do analysis of the combined loan and unemployment data. Using Data Wrangler we will perform feature engineering and then analyze the data for ML model potential. The data prep flow will then be used to provide data for model training. Finally we will deploy a scoring pipeline and write the data back to Snowflake.</p>
+<p class="image-container"><img src="img/948287b5b1619039.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake, basic SQL knowledge, Snowsight UI and Snowflake objects</li>
+<li>Familiarity with AWS Services, Networking and the Management Console</li>
+<li>Basic knowledge of Python, Jupyter notebook and Machine Learning</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need During the Lab</h2>
+<p>To participate in the virtual hands-on lab, attendees need the following:</p>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Enterprise Account on preferred AWS region</a> <strong>ACCOUNTADMIN</strong> access</li>
+<li>An <a href="https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/" target="_blank">AWS Account</a> with <strong>admin access</strong></li>
+<li>In the AWS account <a href="https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html" target="_blank">create a VPC</a> in the <strong>same region</strong> as the Snowflake account</li>
+<li>In the VPC <a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html" target="_blank">create subnets</a> in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Snowflake data management features for machine learning</li>
+<li>How to leverage data in Snowflake&#39;s Data Marketplace</li>
+<li>How to connect SageMaker Data Wrangler and Studio to Snowflake</li>
+<li>The analysis and feature engineering capabilities in Data Wrangler</li>
+<li>Building and deploying SageMaker Pipelines</li>
+<li>Options to integrate the ML models and pipeline with Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake database for machine learning and data enrichment using the Data Marketplace</li>
+<li>SageMaker Studio environment with integration to Snowflake</li>
+<li>SageMaker Data Wrangler flow with Snowflake data</li>
+<li>SageMaker Pipeline to prep Snowflake data and perform inference</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake" duration="3">
+        <p>The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab. <strong>Click the green button to download the file</strong><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_Data_Wrangler/V2/files/Data_Wrangler_Snowflake_VHOL_V2.sql" target="_blank"><paper-button class="colored" raised>Data_Wrangler_Snowflake_VHOL_V2.sql</paper-button></a></p>
+<p>At this point log into your Snowflake. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.</p>
+<p>In the Snowflake UI click on <strong>Worksheets</strong> on the left side.</p>
+<p class="image-container"><img src="img/154318b25fcf64e0.png"></p>
+<p>Create a new Worksheet by clicking on the new worksheet button (+ Worksheet) on the top right side.</p>
+<p class="image-container"><img src="img/d3264beac196c89d.png"></p>
+<p>To ingest SQL file in the Snowflake UI, navigate to the worksheet name (the worksheet name will be the date and time) on the top left hand side and click on the small down arrow next to it. This will give you the option to change the worksheet name and also the option to import a SQL scrpt file. Click on <strong>Import SQL from File</strong></p>
+<p class="image-container"><img src="img/76518e3d8fb928b5.png"></p>
+<p>You can now select the .sql file you downloaded earlier.</p>
+<p>The SQL script file should show up as text in a new worksheet. You may need to scroll to the top of the file to start executing commands.</p>
+<p>Each step throughout the Snowflake portion of the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab.</p>
+<p>First we will switch to the SECURITYADMIN role and create a role (ML_ROLE), as well as a user (ML_USER) that we will use in the lab.</p>
+<pre><code>USE ROLE SECURITYADMIN;
+
+CREATE OR REPLACE ROLE ML_ROLE COMMENT=&#39;ML Role&#39;;
+
+GRANT ROLE ML_ROLE TO ROLE SYSADMIN;
+
+
+CREATE OR REPLACE USER ML_USER PASSWORD=&#39;AWSSF123&#39;
+
+        DEFAULT_ROLE=ML_ROLE
+
+        DEFAULT_WAREHOUSE=ML_WH
+
+        DEFAULT_NAMESPACE=ML_WORKSHOP.PUBLIC
+
+        COMMENT=&#39;ML User&#39;;
+
+GRANT ROLE ML_ROLE TO USER ML_USER;
+</code></pre>
+<p><strong>Please note the default password assigned for the user. If you choose to change it make sure to record the password as you will need to provide it later in the lab for the integration with Data Wrangler.</strong></p>
+<p>Next we will grant privileges to the ML_ROLE to allow it to create storage integrations that are needed for Data Wrangler. We will also grant privileges to create databases in Snowflake and also import shares. This will allow the roles to access and import Snowflake Marketplace data, as well as create the Snowflake database that will be used for machine learning. For this we need to use the ACCOUNTADMIN role.</p>
+<pre><code>USE ROLE ACCOUNTADMIN;
+
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE ML_ROLE;
+
+GRANT IMPORT SHARE ON ACCOUNT TO ML_ROLE;
+
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_ROLE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Amazon SageMaker Studio and Snowflake Storage Integration with AWS" duration="12">
+        <p>Before configuring the Sagemaker environment we will need to determine the <strong>Snowflake Account Identifier</strong> for your account. First you can reference the Snowflake region by running the following SQL.</p>
+<pre><code>SELECT CURRENT_REGION();
+</code></pre>
+<p>This will show you the Snowflake region.</p>
+<p>Next you can find the account name by running.</p>
+<pre><code>SELECT CURRENT_ACCOUNT();
+</code></pre>
+<p>Combine the output from CURRENT_ACCOUNT with the reference below for the Snowflake region to get your full Snowflake Account Identifier.</p>
+<h3 is-upgraded>Use this <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#non-vps-account-locator-formats-by-cloud-platform-and-region" target="_blank"><strong>reference</strong></a> to identify the region you need to add to your account identifier.</h3>
+<p><strong>To save some time we will configure the SageMaker environment and the Snowflake Storage Integration that will be used by Data Wrangler by using a CloudFormation Template. <br></strong> Open another tab in your browser and log into your AWS console.</p>
+<p>Next we will go to a Github repo by <strong>clicking the link below</strong>.</p>
+<p><a href="https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops" target="_blank"><paper-button class="colored" raised>Github Repo</paper-button></a></p>
+<p class="image-container"><img src="img/de49421434d3b5a6.png"></p>
+<p>Click on the launch template button in the <strong>Launch Template</strong> column</p>
+<p>The top button will deploy SageMaker Studio in the AWS region.</p>
+<p>The bottom button can be used if you already have SageMaker Studio deployed in the AWS region.</p>
+<p>We will use the top button to deploy SageMaker Studio in this example.</p>
+<p>Select the <strong>AWS region</strong> where you want to deploy the CloudFormation. <strong>It is recommended to use the same region as where you have your Snowflake account</strong>. For example we will use Oregon(us-west-2).</p>
+<p>On the Create Stack page select <strong>Next</strong></p>
+<p class="image-container"><img src="img/a5a880d766408b79.png"></p>
+<p>On the next page you will specify your stack details. Please pay close attention as these parameters are used to create various objects.</p>
+<ul>
+<li><strong>Stack name</strong> - use the default <strong>snowflake-sagemaker-credit-risk-workshop</strong></li>
+<li><strong>Repository Configurations</strong> - Workshop Templates URL <ul>
+<li>Leave the URL as is</li>
+</ul>
+</li>
+<li><strong>Snowflake Configurations</strong>: <ul>
+<li>Snowflake External Stage S3 Bucket Name - This is a base name to which the region and account id will be added. Must be universally unique.</li>
+<li>Snowflake Storage Integration Name - Base name for what the storage integration will be called. Region and account ID will be added. Leave as is or if changed - only use CAPITAL LETTER, numbers and underscores</li>
+<li>Snowflake User Name - ML_USER</li>
+<li>Snowflake Password - The password you assigned to the ML_USER in the previous step - Required to enter.</li>
+<li>Snowflake Account - the Snowflake account name -<strong>see account identifier section above</strong></li>
+<li>Snowflake Role - ML_ROLE</li>
+</ul>
+</li>
+<li><strong>SageMaker Studio Configurations</strong><ul>
+<li>SageMaker Studio Domain Name</li>
+<li>SageMaker Studio User Profile Name</li>
+</ul>
+</li>
+<li><strong>VPC Configurations</strong><ul>
+<li>VPC - Choose existing VPC</li>
+<li>VPC Subnet - Choose existing VPC Subnet(s) in availability zones supported by SageMaker (You can select multiple subnets)</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/e78be8fd60cf97a9.png"></p>
+<p>Click <strong>Next</strong></p>
+<p>On the next page - <strong>Configure stack options</strong> - click <strong>Next</strong> (no need to change anything)</p>
+<p>On the Review page -</p>
+<ul>
+<li>Review the parameters</li>
+<li>Check the <strong>I acknowledge that AWS CloudFormation might create IAM resources with custom names.</strong> Box</li>
+<li>Check the <strong>I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND</strong> Box</li>
+<li>Click on <strong>Create Stack</strong></li>
+</ul>
+<p class="image-container"><img src="img/d2d3f86312c37e33.png"></p>
+<p>It may take a few minutes for the stack to be created and we will use the time to continue with Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load data in Snowflake and access the Marketplace" duration="7">
+        <p>Next we will create a virtual warehouse that we will use to compute with the <strong>SYSADMIN</strong> role, and then grant all privileges to the <strong>ML_ROLE</strong>.</p>
+<pre><code>USE ROLE SYSADMIN;
+
+--Create Warehouse for AI/ML work
+
+CREATE OR REPLACE WAREHOUSE ML_WH
+
+  WITH WAREHOUSE_SIZE = &#39;XSMALL&#39;
+
+  AUTO_SUSPEND = 120
+
+  AUTO_RESUME = true
+
+  INITIALLY_SUSPENDED = TRUE;
+
+GRANT ALL ON WAREHOUSE ML_WH TO ROLE ML_ROLE;
+</code></pre>
+<p>We are now ready to start creating databases and loading data.</p>
+<p>First we will switch to the ML_ROLE and use the ML_WH warehouse for compute.</p>
+<pre><code>USE ROLE ML_ROLE;
+
+USE WAREHOUSE ML_WH;
+</code></pre>
+<p>Next we will create a database and table that will represent the aggregation of data from internal systems.</p>
+<pre><code>CREATE DATABASE IF NOT EXISTS LOANS_V2;
+
+
+
+CREATE OR REPLACE TABLE LOAN_DATA (
+
+    LOAN_ID NUMBER(38,0),
+
+    LOAN_AMNT NUMBER(38,0),
+
+    FUNDED_AMNT NUMBER(38,0),
+
+    TERM VARCHAR(16777216),
+
+    INT_RATE VARCHAR(16777216),
+
+    INSTALLMENT FLOAT,
+
+    GRADE VARCHAR(16777216),
+
+    SUB_GRADE VARCHAR(16777216),
+
+    EMP_TITLE VARCHAR(16777216),
+
+    EMP_LENGTH VARCHAR(16777216),
+
+    HOME_OWNERSHIP VARCHAR(16777216),
+
+    ANNUAL_INC NUMBER(38,0),
+
+    VERIFICATION_STATUS VARCHAR(16777216),
+
+    PYMNT_PLAN VARCHAR(16777216),
+
+    URL VARCHAR(16777216),
+
+    DESCRIPTION VARCHAR(16777216),
+
+    PURPOSE VARCHAR(16777216),
+
+    TITLE VARCHAR(16777216),
+
+    ZIP_SCODE VARCHAR(16777216),
+
+    ADDR_STATE VARCHAR(16777216),
+
+    DTI FLOAT,
+
+    DELINQ_2YRS NUMBER(38,0),
+
+    EARLIEST_CR_LINE DATE,
+
+    INQ_LAST_6MON NUMBER(38,0),
+
+    MNTHS_SINCE_LAST_DELINQ VARCHAR(16777216),
+
+    MNTHS_SINCE_LAST_RECORD VARCHAR(16777216),
+
+    OPEN_ACC NUMBER(38,0),
+
+    PUB_REC NUMBER(38,0),
+
+    REVOL_BAL NUMBER(38,0),
+
+    REVOL_UTIL FLOAT,
+
+    TOTAL_ACC NUMBER(38,0),
+
+    INITIAL_LIST_STATUS VARCHAR(16777216),
+
+    MTHS_SINCE_LAST_MAJOR_DEROG VARCHAR(16777216),
+
+    POLICY_CODE NUMBER(38,0),
+
+    LOAN_DEFAULT NUMBER(38,0),
+
+    ISSUE_MONTH NUMBER(2,0),
+
+    ISSUE_YEAR NUMBER(4,0)
+
+);
+</code></pre>
+<p>Next we will create an external stage to load the lab data into the table. This is done from a public S3 bucket to simplify the workshop. Typically an external stage will be using various secure integrations as described in this <a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config.html" target="_blank">link</a>.</p>
+<pre><code>CREATE OR REPLACE STAGE LOAN_DATA
+
+  url=&#39;s3://snowflake-corp-se-workshop/VHOL_Snowflake_Data_Wrangler/V2/data/&#39;;
+</code></pre>
+<p>We can now use the COPY command to load the data into Snowflake.</p>
+<pre><code>COPY INTO LOAN_DATA FROM @LOAN_DATA/loan_data.csv
+
+    FILE_FORMAT = (TYPE = &#39;CSV&#39; SKIP_HEADER = 1);
+</code></pre>
+<p><strong>This data represents aggregation from various internal systems for lender information and loans.</strong></p>
+<p>We can have a quick look and see the various attributes in it.</p>
+<pre><code>SELECT * FROM LOAN_DATA LIMIT 100;
+</code></pre>
+<h2 is-upgraded>Snowflake Marketplace data</h2>
+<p>We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let&#39;s look in the Snowflake Marketplace and see what external data is available from the data providers.</p>
+<p>Click on the <strong>Home (House symbol)</strong> button on the top left corner to go to the Snowflake UI home menu.</p>
+<p class="image-container"><img src="img/9b8de10e9ace52b8.png"></p>
+<p>Once in the Home Menu on the top left hand corner click on your username and then hover over the <strong>Switch Role</strong> menu. Scroll and select the <strong>ML_ROLE</strong> from the list of roles.</p>
+<p class="image-container"><img src="img/41239b39b883fc23.png"></p>
+<p>Then select <strong>Marketplace</strong>.</p>
+<p class="image-container"><img src="img/840857ea21dcabd.png"></p>
+<p>Once in the Marketplace type <strong>Unemployment</strong> in the top <strong>Search Data Marketplace</strong> and hit Enter/Return. This will provide a list of Data Providers with employment data.</p>
+<p class="image-container"><img src="img/97c28c17e0918ff3.png"></p>
+<p>Click on the tile with <strong>Knoema - Labor Data Atlas.</strong></p>
+<p>This will show what data is available from the listing. We will notice indicators such as employment and unemployment rates.</p>
+<p class="image-container"><img src="img/9cf3bd8d4f1cb824.png"></p>
+<p>Next click on the <strong>Get Data</strong> button. This will provide a pop up window in which you can create a database in your account that will provide the data from the data provider.</p>
+<p><strong>Click on the down arrow next to Options</strong></p>
+<p>Change the name of the database to <strong>KNOEMA_LABOR_DATA_ATLAS</strong> and then click the <strong>Get</strong> button.</p>
+<p class="image-container"><img src="img/f77224b6e95ded5b.png"></p>
+<p>When the confirmation is provided click on <strong>Done</strong></p>
+<p class="image-container"><img src="img/821ce660c0b87bfe.png"></p>
+<p>Click on <strong>Worksheets</strong> on the left hand menu and then select your worksheet you have been using.</p>
+<p class="image-container"><img src="img/2a557f0a9c29e15c.png"></p>
+<p>Data from the Snowflake Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.</p>
+<p>Let&#39;s start using the marketplace data. First we will create a view to pivot the data for the different employment metrics to columns for easier consumption.</p>
+<pre><code>USE LOANS_V2.PUBLIC;
+
+
+CREATE OR REPLACE VIEW KNOEMA_EMPLOYMENT_DATA AS (
+
+SELECT *
+
+FROM (SELECT &#34;Measure Name&#34; MeasureName, &#34;Date&#34;, &#34;RegionId&#34; State, AVG(&#34;Value&#34;) Value FROM &#34;KNOEMA_LABOR_DATA_ATLAS&#34;.&#34;LABOR&#34;.&#34;BLSLA&#34; WHERE &#34;RegionId&#34; is not null and &#34;Date&#34; &gt;= &#39;2018-01-01&#39; AND &#34;Date&#34; &lt; &#39;2018-12-31&#39; GROUP BY &#34;RegionId&#34;, &#34;Measure Name&#34;, &#34;Date&#34;)
+
+        PIVOT(AVG(Value) FOR MeasureName IN (&#39;civilian noninstitutional population&#39;, &#39;employment&#39;, &#39;employment-population ratio&#39;, &#39;labor force&#39;, &#39;labor force participation rate&#39;, &#39;unemployment&#39;, &#39;unemployment rate&#39;))
+
+         AS p (Date, State, civilian_noninstitutional_population, employment, employment_population_ratio, labor_force, labor_force_participation_rate, unemployment, unemployment_rate)
+
+);
+</code></pre>
+<p>We will now create a new table to join the loan data with the unemployment data using the geography and time periods. This will provide us with unemployment data in the region associated with the specific loan.</p>
+<pre><code>CREATE OR REPLACE TABLE UNEMPLOYMENT_DATA AS
+
+        SELECT l.LOAN_ID, e.CIVILIAN_NONINSTITUTIONAL_POPULATION, e.EMPLOYMENT, e.EMPLOYMENT_POPULATION_RATIO, e.LABOR_FORCE,            e.LABOR_FORCE_PARTICIPATION_RATE, e.UNEMPLOYMENT, e.UNEMPLOYMENT_RATE
+
+        FROM LOAN_DATA l LEFT JOIN KNOEMA_EMPLOYMENT_DATA e
+
+            on l.ADDR_STATE = right(e.state,2) and l.issue_month = month(e.date) and l.issue_year = year(e.date);
+</code></pre>
+<p>We can quickly look at the metrics by running a simple query.</p>
+<pre><code>SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
+</code></pre>
+<h2 is-upgraded>Database for Machine Learning</h2>
+<p>The last step is to create a database that can be used by the data science team. This will allow them full access to the data without impacting any of the other analyst or production teams. Snowflake provides a very unique feature called <a href="https://www.youtube.com/watch?v=yQIMmXg7Seg" target="_blank">Zero Copy Cloning</a> that will create a new copy of the data by <strong>only making a copy of the metadata of the objects</strong>. This drastically speeds up creation of copies and also drastically reduces the storage space needed for data copies.</p>
+<p>This feature can be very handy for Machine Learning as it will allow for feature engineering in Snowflake and also the ability to save copies of the data used for the training of ML models for future reference.</p>
+<p>In this lab we will just clone table objects, though complete databases can also be cloned. First we will create a database and schema to clone the tables objects to.</p>
+<pre><code>CREATE OR REPLACE DATABASE ML_LENDER_DATA;
+
+CREATE OR REPLACE SCHEMA ML_LENDER_DATA.ML_DATA;
+
+USE ML_LENDER_DATA.ML_DATA;
+</code></pre>
+<p>Next we will clone the loan_data and unemployment_data tables to the new database.</p>
+<pre><code>CREATE TABLE LOAN_DATA_ML CLONE LOANS_V2.PUBLIC.LOAN_DATA;
+
+CREATE TABLE UNEMPLOYMENT_DATA CLONE LOANS_V2.PUBLIC.UNEMPLOYMENT_DATA;
+</code></pre>
+<p>We will also create a table to allow us to write the ML Model predictions back in the future.</p>
+<pre><code>CREATE OR REPLACE TABLE ML_RESULTS (LABEL NUMBER, PREDICTIONS NUMBER, P_DEFAULT FLOAT);
+</code></pre>
+<p>Lastly we will get the storage integration information that was created by the CloudFormation template.</p>
+<pre><code>SHOW INTEGRATIONS;
+</code></pre>
+<p>Make sure to note the name of the storage integration that was created as it will be used with Data Wrangler configuration.</p>
+<p><strong>Note:</strong> We can also get the storage integration name from the CloudFormation stack. Click on the NESTED stack with a name like snowflake-sagemaker-credit-risk-workshop-StorageIntegrationStack and then the Outputs tab in the CloudFormation browser tab. You can also find Snowflake Secret ARN in the Output tab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Wrangler - Data Prep &amp; Feature Analysis" duration="30">
+        <h3 is-upgraded>Let&#39;s go to SageMaker Studio.</h3>
+<p>Click on this link (<a href="https://console.aws.amazon.com/sagemaker/home" target="_blank">https://console.aws.amazon.com/sagemaker/home</a>) and it will open a new browser tab with the SageMaker Console.</p>
+<p>Click on the <strong>Amazon SageMaker - Control panel</strong> menu on the left hand side.</p>
+<p class="image-container"><img src="img/14d41c3914092248.png"></p>
+<p>In the <strong>Users</strong> you will see Name <strong>sagemaker-user</strong> click on the <strong>Launch App</strong> button then select <strong>Studio</strong> to open SageMaker Studio</p>
+<p class="image-container"><img src="img/7530c2aa7144a798.png"></p>
+<p>This will open SageMaker Studio. It may take a minute or two to create the environment.</p>
+<h3 is-upgraded>Next we can clone the Git repository that includes all the files we need for the lab in SageMaker Studio.</h3>
+<p>On the Left side menu click on the Git repository icon and then the <strong>Clone a Repository</strong> button.</p>
+<p class="image-container"><img src="img/9279fde91017e29b.png"></p>
+<p>You will then copy the Git URL below for the repository in the popup window and then click CLONE</p>
+<p><a href="https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops" target="_blank">https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops</a></p>
+<p class="image-container"><img src="img/18d6ace3f2af2b86.png"></p>
+<p>The Studio environment will then switch to the folder browser.</p>
+<p>Navigate to the <strong>/snowflake-sagemaker-workshops/loan-default/notebooks</strong> folder by double clicking each folder in the path.</p>
+<p class="image-container"><img src="img/805305f9884c1b66.png"></p>
+<p>Open the <strong>snowflake-loan-default-workshop-v1.1.ipnyb</strong> notebook by double clicking on it.</p>
+<p>A window will pop up to select the Image and Kernel you want to use. Under <strong>Image</strong> select the <strong>Custom Image</strong> then <strong>snowflake-workshop</strong> and then select <strong>snowflake-workshop-v1</strong>, keep the Kernel as Python 3 and click <strong>Select</strong>.</p>
+<p class="image-container"><img src="img/2af1b6c7c008cb03.png"></p>
+<p>Give the kernel a little time to startup.</p>
+<p>The notebook is very well documented with the steps needed for the workshop.</p>
+<p>You can execute the code sections by selecting them and hitting the <strong>run button</strong> at the top or <strong>shift+return/enter</strong>.</p>
+<p>Execute the first code block to import libraries and set environment variables.</p>
+<p class="image-container"><img src="img/a1890a69c0be8283.png"></p>
+<p>Once you have run the cell you will note a number in the square brackets next to it.</p>
+<p>Next we will provide access to the AWS Secrets Manager. Execute the next code block.</p>
+<p class="image-container"><img src="img/d6883067095ee8a1.png"></p>
+<h3 is-upgraded>Data Wrangler</h3>
+<p>We will now create a Data Wrangler flow.</p>
+<p>Create a new Data Wrangler flow by selecting it from the top <strong>File Menu</strong></p>
+<p><strong>File &gt; New &gt; Data Wrangler Flow</strong></p>
+<p class="image-container"><img src="img/b91aff3b19f51008.png"></p>
+<p>This can take a few minutes to start an instance.</p>
+<h4 is-upgraded>Connect to Snowflake and Add Data</h4>
+<p>A new tab will open in Studio with untitled.flow</p>
+<p>Select the <strong>Import</strong> tab at the top left</p>
+<p class="image-container"><img src="img/107243c5f91b7a6b.png"></p>
+<p>Click on <strong>Add data source</strong> and Select <strong>Snowflake</strong></p>
+<p class="image-container"><img src="img/4c24692157569605.png"></p>
+<p>You can either use the <strong>username and password</strong> that was created in Snowflake earlier <strong>or the AWS Secret</strong> that was created in the CloudFormation template to connect to Snowflake. You can use AWS Secret Manager Console (<a href="https://console.aws.amazon.com/secretsmanager/home" target="_blank">https://console.aws.amazon.com/secretsmanager/home</a> ) to get the secret <strong>ARN</strong>.</p>
+<p>Use the Snowflake account name from Step 3 if you don&#39;t use the AWS Secrets Manager</p>
+<p>The Snowflake Storage Integration name from Step 4 will be used - <strong>SMSNOW_&lt;region&gt;_&lt;accountid&gt;_STORAGE_INTEGRATION</strong></p>
+<p>Provide a name for the connection.</p>
+<p class="image-container"><img src="img/b944c30d25190f7e.png"></p>
+<p>You can now navigate the Snowflake data by looking at the Snowflake objects on the left hand side or use the SQL window to run queries.</p>
+<p>When using the SQL window you can set the context of the queries, similar to Snowflake. Select:</p>
+<p><strong>Data Warehouse - ML_WH</strong></p>
+<p><strong>Database - ML_LENDER_DATA</strong></p>
+<p><strong>Schema - ML_DATA</strong></p>
+<p>To see the LOAN_DATA in Data Wrangler execute the following SQL and click <strong>Run</strong></p>
+<pre><code>SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML
+</code></pre>
+<p>You can see the Query Results with the data.</p>
+<p>We can refine the features by only selecting columns that will likely be good features.</p>
+<p>We will also Snowflake to generate a repeatable sampling of the table&#39;s data to split the data in a train/test data set.</p>
+<p>Execute the following SQL to acquire a filtered list of potential features.</p>
+<pre><code>SELECT
+
+LOAN_ID, LOAN_AMNT, FUNDED_AMNT,
+
+TERM, INT_RATE, INSTALLMENT,
+
+GRADE, SUB_GRADE, EMP_LENGTH,
+
+HOME_OWNERSHIP, ANNUAL_INC, VERIFICATION_STATUS,
+
+PYMNT_PLAN, PURPOSE, ZIP_SCODE,
+
+DTI, DELINQ_2YRS, EARLIEST_CR_LINE,
+
+INQ_LAST_6MON, MNTHS_SINCE_LAST_DELINQ,
+
+MNTHS_SINCE_LAST_RECORD, OPEN_ACC,
+
+PUB_REC, REVOL_BAL, REVOL_UTIL,
+
+TOTAL_ACC, INITIAL_LIST_STATUS,
+
+MTHS_SINCE_LAST_MAJOR_DEROG,
+
+POLICY_CODE, LOAN_DEFAULT, ISSUE_MONTH
+
+FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML
+
+SAMPLE BLOCK (80) REPEATABLE(100)
+</code></pre>
+<p>Click <strong>Run</strong> and then click the <strong>Import</strong> button on the top right.</p>
+<p class="image-container"><img src="img/673b3a0dca08fd79.png"></p>
+<p>Enter a name for the Dataset - loan_data</p>
+<p>Then click <strong>Add</strong></p>
+<p class="image-container"><img src="img/460c66afe0735625.png"></p>
+<h4 is-upgraded>Profile your data</h4>
+<p>Click on the <strong>Data Flow</strong> tab</p>
+<p class="image-container"><img src="img/9904828024cf104a.png"></p>
+<p>Profile the data by Clicking the <strong>+ sign</strong> next to the Data types block</p>
+<p>Select <strong>Add Analysis</strong></p>
+<p class="image-container"><img src="img/da2068a127000c30.png"></p>
+<p>In the Analysis select:</p>
+<p>Type - Histogram</p>
+<p>X axis - LOAN_DEFAULT</p>
+<p class="image-container"><img src="img/699439061e78259d.png"></p>
+<p>Then click <strong>Preview</strong> to get an analysis of the skew.</p>
+<h3 is-upgraded>Apply Feature Transformations</h3>
+<p>Next we will use Data Wrangler to perform some feature transformations.</p>
+<p>In the Analysis window click <strong>Data flow</strong> at the top.</p>
+<p class="image-container"><img src="img/c4788b27238eba9b.png"></p>
+<p>Click on the <strong>+</strong> and select <strong>Add Transform</strong> by the Data types box.</p>
+<p class="image-container"><img src="img/9095015aad004b40.png"></p>
+<p>Click on <strong>+ Add Step</strong> - To add a transform step</p>
+<p class="image-container"><img src="img/9072bc77cd4d347f.png"></p>
+<p>First we will fix the <strong>INT_RATE</strong> column from a string with a % sign to a numeric data type.</p>
+<ul>
+<li>Scroll down under ADD TRANSFORM and click on <strong>Search and edit</strong></li>
+<li>Select Input Columns as INT_RATE</li>
+<li>Enter % in the Pattern field</li>
+<li>In the <strong>Replacement string </strong><em>type space and then delete it</em> to have % replaced with an empty string</li>
+<li>Click Preview</li>
+<li>Click Add</li>
+</ul>
+<p class="image-container"><img src="img/8cd0b3303cc1140e.png"></p>
+<p>To add additional steps click <strong>+ Add Step</strong> each time</p>
+<ul>
+<li>Next select <strong>Parse column as type</strong></li>
+<li>Select INT_RATE column</li>
+<li>From: String</li>
+<li>To: Float</li>
+<li>Click Preview</li>
+<li>Click Add</li>
+</ul>
+<p class="image-container"><img src="img/ece33bb5fc61c8bd.png"></p>
+<p>Next we will address the <strong>VERIFICATION_STATUS</strong> column, which has various string values to indicate boolean values.</p>
+<p>Select <strong>Custom Transform</strong> then make sure <strong>Python(PySpark)</strong> is selected and copy the following Python code in the code box to repalce the existing text</p>
+<pre><code>from pyspark.sql.functions import udf
+from pyspark.sql.types import LongType
+
+
+def categories(status) :
+  if not status :
+    return None
+  elif status == &#34;not verified&#34; :
+    return 0
+  elif status == &#34;VERIFIED - income&#34;:
+    return 1
+  elif status == &#34;VERIFIED - income source&#34;:
+    return 1
+  else :
+    return None
+bucket_udf = udf(categories, LongType())
+
+df = df.withColumn(&#34;VERIFIED&#34;, bucket_udf(&#34;VERIFICATION_STATUS&#34;))
+</code></pre>
+<p>Select Preview and then Add</p>
+<p class="image-container"><img src="img/86efaeb9d1082889.png"></p>
+<p>This code creates a new column VERIFIED with boolean values.</p>
+<p>Now we can drop the original VERIFICATION_STATUS column.</p>
+<ul>
+<li>Select <strong>Manage columns</strong></li>
+<li>Transform - select Drop Column</li>
+<li>Column to Drop - select VERIFICATION_STATUS</li>
+<li>Select Preview and then Add</li>
+</ul>
+<p class="image-container"><img src="img/c09b3da3c513a6e3.png"></p>
+<p>Finally we will drop the LOAN_ID column using the steps above.</p>
+<p class="image-container"><img src="img/89c61a0b801700b2.png"></p>
+<p>Click on <strong>Data flow</strong>. You should see the five transform steps of your data prep flow.</p>
+<p class="image-container"><img src="img/d620d4d1251d5d08.png"></p>
+<h3 is-upgraded>Data Validation</h3>
+<p>Next we will check for <strong>Target Leakage</strong>.</p>
+<p>Target leakage occurs when you accidently train a model with features that are not available in production. As a consequence, you end up with a deceptively effective model in development that causes problems in production. You can mitigate production issues by performing target leakage analysis.</p>
+<p>Click the <strong>+ sign</strong> next to the 5 Transform Steps and select Add analysis.</p>
+<p class="image-container"><img src="img/18cd9da80087a9c5.png"></p>
+<p>In the Analysis select:</p>
+<ul>
+<li>Analysis type - <strong>Target Leakage</strong></li>
+<li>Max Features - 30</li>
+<li>Problem type - Classification</li>
+<li>Target - LOAN_DEFAULT</li>
+</ul>
+<p class="image-container"><img src="img/b5698a905e9e5699.png"></p>
+<p>Select <strong>Preview</strong></p>
+<p class="image-container"><img src="img/973dea4ec00da4a4.png"></p>
+<p>The report indicates that there is no target leakage risk. It does detect some potentially redundant features.</p>
+<p><strong>Next we will create a Bias Report</strong></p>
+<p>Our data does not have any obvious sensitive attributes like gender and race. However, it does contain zip codes. It&#39;s possible that we have a flawed dataset with an abnormal number of loan defaults in minority communities. This might not represent the actual distribution. Regardless, this situation could create a model that is biased against minorities resulting in legal risk.</p>
+<p>In the Analysis window select:</p>
+<ul>
+<li>Analysis Type - <strong>Bias Report</strong></li>
+<li>SELECT the column your model predicts (target): LOAN_DEFAULT</li>
+<li>Is your predicted column a value or threshold?: Value</li>
+<li>Predicted value(s): 0;1</li>
+<li>SELECT the column to analyze for bias: ZIPS_CODE</li>
+<li>Is your column a value or threshold?: Value</li>
+<li>Column value(s) to analyze for bias: 200xx;207xx;206xx;900xx;100xx;941xx</li>
+</ul>
+<p>Click <strong>Check for bias</strong></p>
+<p class="image-container"><img src="img/2123138284316832.png"></p>
+<p>The report does not reveal any salient data bias issues.</p>
+<p class="image-container"><img src="img/a6fe2b54a950e1c0.png"></p>
+<h3 is-upgraded>Prototype Model</h3>
+<p><strong>Create a Quick Model Report</strong></p>
+<p>Amazon Data Wrangler provides a Quick Model report which can serve as a prototyping mechanism. The report will sample your dataset, process your flow and generates a Random Forest Model. The report provides model and feature importance scores to help you assess:</p>
+<ul>
+<li>What features are most impactful?</li>
+<li>Does your data have enough predictive signals to produce a practical model?</li>
+<li>Are your changes to your dataset leading to improvements?</li>
+</ul>
+<p>Navigate to the Analysis panel from the tail end of your flow—as you did in the previous section.</p>
+<p>Configure your report:</p>
+<ul>
+<li>Analysis type: <strong>Quick Model</strong></li>
+<li>Analysis name: Quick Test</li>
+<li>Label: LOAN_DEFAULT</li>
+</ul>
+<p class="image-container"><img src="img/da1dcabf5ca97021.png"></p>
+<p>It can take few minutes to generate a report like the following:</p>
+<p class="image-container"><img src="img/b85b0b4d15616a3c.png"></p>
+<p>Take note of the feature importance ranking in the bar chart. This gives you an approximation of which features have strong predictive signals.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Iterate, Experiment and Improve" duration="5">
+        <p>We will now add additional data to your existing flow.</p>
+<p>First click <strong>Data flow</strong></p>
+<p>SELECT the <strong>Import tab</strong> at the top and click on the Snowflake icon.</p>
+<p class="image-container"><img src="img/cd9a6c05b13825a3.png"></p>
+<p>Run the following query to extract the unemployment rate data that you obtained from the Snowflake Marketplace.</p>
+<pre><code>SELECT LOAN_ID, UNEMPLOYMENT_RATE
+
+FROM ML_LENDER_DATA.ML_DATA.UNEMPLOYMENT_DATA
+</code></pre>
+<p>Click <strong>Run</strong> and then the <strong>Import button</strong></p>
+<p>Name the dataset unemployment_data</p>
+<p>Click Add</p>
+<p class="image-container"><img src="img/7ee9cdcc74051865.png"></p>
+<p>Next, you&#39;re going to merge the two datasets. There are many ways to do this. You could have performed this entirely using Snowflake. In this lab, you&#39;ll learn how to perform this merge through Data Wrangler.</p>
+<p>Click back to the <strong>Data flow</strong></p>
+<p class="image-container"><img src="img/c4788b27238eba9b.png"></p>
+<p>First delete the last transformation from the original flow, so that we have <strong>LOAN_ID</strong> available.</p>
+<p>Click on the <strong>last step</strong> and then on the + next to it and select <strong>Delete</strong></p>
+<p class="image-container"><img src="img/b2cb4ac9c5edb124.png"></p>
+<p>Confirm the Delete</p>
+<p class="image-container"><img src="img/4b714ee0e0659b41.png"></p>
+<p>Next we will merge the data sets using a join operator</p>
+<p>Click on <strong>+</strong> at the end of the original flow and select the <strong>Join</strong> operator.</p>
+<p class="image-container"><img src="img/550222a6b6aa0c88.png"></p>
+<p>SELECT the other flow by clicking on the <strong>Data Types</strong> box on the bottom flow</p>
+<p class="image-container"><img src="img/39fdccae8aa87bb7.png"></p>
+<p>Click on <strong>Configure</strong> - lower left of the window</p>
+<p class="image-container"><img src="img/cf5c1e30014d7317.png"></p>
+<p>SELECT Left Outer as the Join Type.</p>
+<p>SELECT LOAN_ID for both the Left and Right join keys.</p>
+<p class="image-container"><img src="img/e7ed677e2e65981.png"></p>
+<p>Click <strong>Preview</strong></p>
+<p>Then click <strong>Add</strong> in the top right corner</p>
+<p>Select the Join Node and Add Transform</p>
+<p class="image-container"><img src="img/1756c52651d29d7f.png"></p>
+<p>Drop the columns, LOAN_ID_0 and LOAN_ID_1 using the same transformation step as before.</p>
+<p>Manage Columns &gt; Drop Column &gt; Columns to Drop &gt; Loan_ID_0 and Loan_ID_1</p>
+<p class="image-container"><img src="img/fba2c407e1eae222.png"></p>
+<p>Evaluate your Dataset Modifications</p>
+<p>Create a new Quick Model report to assess the impact of your modifications.</p>
+<p>The steps should be similar to the following:</p>
+<ul>
+<li>Click on the Analysis tab</li>
+<li>Analysis type - Quick Model</li>
+<li>Label - LOAN_DEFAULT</li>
+<li>Preview</li>
+</ul>
+<p class="image-container"><img src="img/a9912e98b2f90b2e.png"></p>
+<p>A couple of key takeaways:</p>
+<ul>
+<li>UNEMPLOYMENT_RATE is ranked as the most important feature.</li>
+<li>The F1 score increased substantially.</li>
+</ul>
+<p>This tells us that we are likely heading in the right direction. We added a feature that generated notable improvements to the &#34;quick model&#34; and the new feature had the greatest impact.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate the Dataset and Train your Model" duration="10">
+        <p>We are now ready to fully train and tune a model. First, we need to generate our datasets by executing the data flow that we&#39;ve created.</p>
+<p><strong>Export your Data Flow</strong></p>
+<p>DataWrangler supports multiple ways to export the flow for execution.</p>
+<p>In this lab, you will select the option that generates a notebook that can be run to execute the flow as a SageMaker Processing job. This is the simplest option.</p>
+<p>Click on <strong>Data flow</strong></p>
+<p>Click on the <strong>+ symbol</strong> next to the last transform step and select <strong>Export to</strong> and select <strong>Amazon S3(via Jupyter Notebook)</strong></p>
+<p class="image-container"><img src="img/81c270d41b74859d.png"></p>
+<p>This will generate a new notebook tab. Select the new notebook.</p>
+<p class="image-container"><img src="img/dcf332adf90e3a8b.png"></p>
+<ul>
+<li>Follow the steps outlined in the generated notebook.</li>
+<li>Run the cells and wait for the processing job to complete.</li>
+<li>COPY the output S3 URI of the processed dataset.</li>
+</ul>
+<p>This can take a few minutes</p>
+<p class="image-container"><img src="img/b3afc269a6782c1.png"></p>
+<p>The S3 URI will look similar to: s3://(YOUR_BUCKET)/export-flow-23-23-17-34-6a8a80ec/output/data-wrangler-flow-processing-23-23-17-34-6a8a80ec</p>
+<p>COPY the S3 URI to the PREP_DATA_S3 variable in your <strong>initial workshop notebook</strong></p>
+<p class="image-container"><img src="img/be5e4a3ce0e07401.png"></p>
+<p><strong>TIP:</strong> You can monitor the processing jobs in the SageMaker Console</p>
+<p class="image-container"><img src="img/ff29fc311e719e54.png"></p>
+<h2 is-upgraded>Train your Model</h2>
+<p>Your data can now be used to train a model. We&#39;ll be using an AutoML toolkit, <a href="https://auto.gluon.ai/stable/tutorials/tabular_prediction/index.html" target="_blank">AutoGluon</a>.</p>
+<p>More details are provided in the notebook description.</p>
+<p>Execute the next code cell to set the parameters for the remote training job.</p>
+<p class="image-container"><img src="img/157929e7c2ad3b1e.png"></p>
+<p>The following cell will launch the remote training job. This will take a few minutes.</p>
+<p class="image-container"><img src="img/8ed2a4646dc4790c.png"></p>
+<p>You can monitor the training job in the SageMaker Console</p>
+<p class="image-container"><img src="img/8a8cc0b42bcc0db6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy your Model [Optional]" duration="0">
+        <p>You can serve your predictions in a couple of ways. You could deploy the model as a real-time hosted endpoint on SageMaker and integrate it with Snowflake as an External Function. This will enable you to query your predictions in real-time and minimize data staleness.</p>
+<p>Alternatively, you can pre-calculate your predictions as a transient batch process. In the following section, you will use Batch Transform to do just that. When your use case allows you to pre-calculate predictions, Batch Transform is a good option.</p>
+<p>In the following sections we are going to deploy our model as a batch inference pipeline. The pipeline is designed to consume data from Snowflake, process it using our DataWrangler flow and then pre-calculate predictions using our trained model and Batch Transform.</p>
+<p><strong>Modify your Data Preparation flow for Inference</strong></p>
+<p>First we will make a copy of our flow file.</p>
+<ul>
+<li>Right click on the <strong>untitled.flow</strong> file and select <strong>Duplicate</strong></li>
+</ul>
+<p class="image-container"><img src="img/c6f664ede7999ab3.png"></p>
+<ul>
+<li>Right click on the duplicate copy <strong>untitled-Copy1.flow</strong> and select Rename</li>
+<li>Use <strong>inference_flow_loan.flow</strong> as the new name</li>
+</ul>
+<p><strong>TIP:</strong> Click on the Folder icon on the left hand side of the screen to see the files</p>
+<p>Set the INFERENCE_FLOW_NAME to the new flow file in your workshop notebook. By running the cell shown below.</p>
+<p class="image-container"><img src="img/1d5281f6c94fcec4.png"></p>
+<p><strong>Next we will open the new flow file by double clicking on it</strong>.</p>
+<p>We can now change the data source for the flow:</p>
+<ul>
+<li>Click on the <strong>Data Flow</strong> tab at the top</li>
+<li>Click on the + next to the Snowflake:loan_data source and select Edit Query</li>
+<li><img src="img/92057a3ba6e5dfd5.png"></li>
+<li>Click on the Snowflake Connection button</li>
+<li>Replace the current SQL query with a new query that will retrieve the 20% sample data that we didn&#39;t use for training.</li>
+</ul>
+<pre><code>SELECT
+  L1.LOAN_ID,
+  L1.LOAN_AMNT,
+  L1.FUNDED_AMNT,
+  L1.TERM,
+  L1.INT_RATE,
+  L1.INSTALLMENT,
+  L1.GRADE,
+  L1.SUB_GRADE,
+  L1.EMP_LENGTH,
+  L1.HOME_OWNERSHIP,
+  L1.ANNUAL_INC,
+  L1.VERIFICATION_STATUS,
+  L1.PYMNT_PLAN,
+  L1.PURPOSE,
+  L1.ZIP_SCODE,
+  L1.DTI,
+  L1.DELINQ_2YRS,
+  L1.EARLIEST_CR_LINE,
+  L1.INQ_LAST_6MON,
+  L1.MNTHS_SINCE_LAST_DELINQ,
+  L1.MNTHS_SINCE_LAST_RECORD,
+  L1.OPEN_ACC,
+  L1.PUB_REC,
+  L1.REVOL_BAL,
+  L1.REVOL_UTIL,
+  L1.TOTAL_ACC,
+  L1.LOAN_DEFAULT,
+  L1.ISSUE_MONTH
+FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML AS L1
+ LEFT OUTER JOIN
+ (SELECT * FROM ML_LENDER_DATA.ML_DATA.LOAN_DATA_ML sample block (80) REPEATABLE(100)) AS L2
+ ON L1.LOAN_ID = L2.LOAN_ID
+WHERE L2.LOAN_ID IS NULL
+</code></pre>
+<ul>
+<li>Click <strong>Run</strong> and then the <strong>Apply</strong> button on the top right</li>
+<li>Name the dataset loan_inference and click the <strong>Add</strong> button</li>
+</ul>
+<p>The purpose of this flow is for use in production to prep data from new loan applications. This data is then passed through your model to make predications about the default risks of these new applicants.</p>
+<p>For testing purposes, we&#39;re using the 20% of the data set we didn&#39;t use for training and we&#39;re including the LOAN_DEFAULT attribute so that we can evaluate our models and perform error analysis. We&#39;re going to move the the LOAN_DEFAULT column to the first position in our dataset, so that it&#39;s easier for us to filter this data out of the model input and merge it with the model&#39;s predictions.</p>
+<ul>
+<li>Select <strong>Add transform</strong> at the end of your data flow.</li>
+<li>Click on the orange button labeled <strong>Add step</strong></li>
+<li>Click on the <strong>&#34;Manage columns&#34;</strong> category.</li>
+<li>Select <strong>Move column</strong> under the <strong>Transform</strong> dialog.</li>
+<li>Select <strong>Move to start</strong> under the <strong>Move type</strong> dialog.</li>
+<li>Select <strong>LOAN_DEFAULT</strong> under the <strong>Column to move</strong> dialog.</li>
+<li>Click on the <strong>Preview</strong> button to preview the changes and finalize the transformation by clicking on the <strong>Add</strong> button.</li>
+</ul>
+<p class="image-container"><img src="img/7939495ba6e7a69c.png"></p>
+<h3 is-upgraded>Re-export and re-factor your flow as a Pipeline</h3>
+<p>Go back to the <strong>Data Flow</strong> by clicking on the top Data Flow link</p>
+<p>As previously select the <strong>+</strong> next to the last step in the flow.</p>
+<p class="image-container"><img src="img/a83c2df24a17410f.png"></p>
+<p>Then go to <strong>Export to</strong> and select <strong>SageMaker Pipelines (via Jupyter Notebook)</strong></p>
+<p>This will generate a new notebook - <strong>inference_flow_loan.ipynb</strong></p>
+<p>Scroll down in the notebook till you find the cell with output_name in it.</p>
+<p>COPY the node ID form this cell.</p>
+<p class="image-container"><img src="img/e68ee6766725cbb.png"></p>
+<p>In practice, you will need to refactor the exported script. This has been done for you, so all you need to do is locate the export node-id. Each step in your data flow is a unique node and the export script is dependent on the node that you select for export.</p>
+<h3 is-upgraded>Go back to your workshop notebook - snowflake-loan-default-workshop-v1.1.ipynb</h3>
+<p>COPY the node ID to the FLOW_NODE_ID cell and run the cell</p>
+<p class="image-container"><img src="img/14fbe71a54ad99be.png"></p>
+<p>You can run the next cell if you like to see the refactored script.</p>
+<p class="image-container"><img src="img/32f3023d0e6d325d.png"></p>
+<p>Next you will run your batch scoring pipeline by executing the next cell.</p>
+<p class="image-container"><img src="img/306582992cbb7204.png"></p>
+<p>This will process the data prep steps and then run batch inference using the model that was previously trained. These steps will take some time to complete.</p>
+<p>You can monitor the pipeline in SageMaker Studio.</p>
+<ul>
+<li>SELECT the SageMaker resources icon on the left hand menu bar</li>
+<li><img src="img/5f0b2acc51d011fd.png"></li>
+<li>SELECT Pipelines from the drop down menu</li>
+<li><img src="img/fdf1db39f2fceafa.png"></li>
+<li>Right click on your pipeline and select <strong>Open pipeline details</strong></li>
+<li><img src="img/b53cb8f650597964.png"></li>
+<li>This will open a pipeline tab. Right click on the status of the pipeline and select <strong>Open execution details</strong></li>
+<li><img src="img/76addf875028de80.png"></li>
+<li>This opens a tab with the pipeline steps. You can click on each step to get more information.</li>
+<li><img src="img/cc628832e84fe8e6.png"></li>
+</ul>
+<p><strong>TIP:</strong> Click the small refresh icon at the top left to refresh your few from time to time</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Evaluate Model Performance and Write Back to Snowflake [Optional]" duration="0">
+        <p>Since the data set is small enough we can load it to a local pandas dataframe and review the results.</p>
+<p>The next cell will load the data set and provide an output of the results.</p>
+<p class="image-container"><img src="img/ab4f986de7a3ab70.png"></p>
+<p>We can use some utilities to evaluate how well the model performed using the test data set.</p>
+<p>Execute the next 2 cells</p>
+<p class="image-container"><img src="img/d90008110f87e064.png"></p>
+<p class="image-container"><img src="img/4a303c3ce76e58f0.png"></p>
+<p>The last cell will provide an interactive chart to see how well the model performed based on the threshold we set for the prediction.</p>
+<h3 is-upgraded>Writeback to Snowflake</h3>
+<p>Typically for large batch transforms we will use Snowflake&#39;s automated capability to read data from S3 called <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html" target="_blank">Snowpipe</a>, or alternatively the <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html" target="_blank">COPY</a> command to perform bulk loads. Since this data set is in a dataframe we can use the Python connector to write it directly back to Snowflake.</p>
+<p>First we will use the AWS Secret we create with the CloudFormation template. Go to the <a href="https://console.aws.amazon.com/secretsmanager/home" target="_blank">Secrets Manager Console</a>. Select the Snowflake Secret and copy the Secret Name i.e. <strong>SnowflakeSecret-P4qyGUyk67hj</strong> in the cell below.</p>
+<p class="image-container"><img src="img/d00abe534c9900e0.png"></p>
+<p>The next cell creates a function to retrieve AWS Secrets for use in the notebook. Run the cell.</p>
+<p class="image-container"><img src="img/73e5634913dd177a.png"></p>
+<p>The next cell will establish a connection with Snowflake using the secret&#39;s information.</p>
+<p class="image-container"><img src="img/9f5dd8f6ab17fb3f.png"></p>
+<p>The last cell will write the dataframe data into a Snowflake table.</p>
+<p><strong>TIP:</strong> The same connection can be used to read data from Snowflake as well as issue Snowflake commands to help process data.</p>
+<p class="image-container"><img src="img/44b4a994cbf7e16.png"></p>
+<p>You can now query the results in your Snowflake account</p>
+<p>Congratulations! You have completed the lab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusions &amp; Next Steps" duration="5">
+        <p>In this lab we build an example of how you can enrich your internal data with Snowflake Marketplace data to improve the performance of your Machine Learning Models. We also covered how you can integrate Data Wrangler with Snowflake to gain access to the data and drive pipelines for your ML models.</p>
+<p>Additionally we covered how you can use SageMaker Studio and deploy CloudFormation Templates to create prebuild kernels with the Snowflake Python Connector. Also how to deploy the Snowflake Storage Integrations with a CloudFormation template and using AWS Secrets Manager to provide more secure connections with Snowflake.</p>
+<p>Related Resources</p>
+<ul>
+<li><a href="https://aws.amazon.com/blogs/apn/enabling-data-centric-artificial-intelligence-through-snowflake-and-amazon-sagemaker/" target="_blank">Data Centric AI with Snowflake and Amazon SageMaker</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-marketplace.html" target="_blank">Snowflake Marketplace</a></li>
+<li><a href="https://aws.amazon.com/sagemaker/data-wrangler/" target="_blank">SageMaker Data Wrangler</a></li>
+<li><a href="https://aws.amazon.com/sagemaker/studio/" target="_blank">SageMaker Studio</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

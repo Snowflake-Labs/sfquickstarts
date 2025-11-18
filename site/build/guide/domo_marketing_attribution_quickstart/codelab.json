@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "domo_marketing_attribution_quickstart",
+  "duration": 0,
+  "title": "Getting Started with Domo Marketing Attribution",
+  "summary": "Build powerful marketing attribution and media mix models",
+  "source": "domo-mmds-quickstart/snowflake-mmds-quickstart.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-engineering",
+    "marketing"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "marketing",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "domo_marketing_attribution_quickstart"
+}

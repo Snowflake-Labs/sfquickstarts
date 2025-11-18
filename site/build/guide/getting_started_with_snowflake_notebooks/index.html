@@ -1,0 +1,272 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Getting Started Guide With Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowflake_notebooks"
+                  title="A Getting Started Guide With Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p><a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> offer an interactive, cell-based programming environment for Python and SQL. With a Snowflake Notebook, you can perform exploratory data analysis, experiment with feature engineering for machine learning, and perform other data science tasks within Snowflake.</p>
+<p>You can write and execute code, visualize results, and tell the story of your analysis all in one place.</p>
+<ul>
+<li>Explore and experiment with data already in Snowflake, or upload new data to Snowflake from local files, external cloud storage, or datasets from the Snowflake Marketplace.</li>
+<li>Write SQL or Python code and quickly compare results with cell-by-cell development and execution.</li>
+<li>Interactively visualize your data using embedded Streamlit visualizations and other libraries like Altair, Matplotlib, or seaborn.</li>
+<li>Contextualize results and make notes about different results with Markdown cells.</li>
+<li>Keep your data fresh by relying on the default behavior to run a cell and all modified cells preceding it or debug your notebook by running it cell-by-cesll.</li>
+<li>Run your notebook on a schedule. See <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks-schedule" target="_blank">Schedule your Snowflake Notebook to run</a>.</li>
+<li>Make use of the role-based access control and other data governance functionality available in Snowflake to allow other users with the same role to view and collaborate on the notebook.</li>
+</ul>
+<p class="image-container"><img alt="Notebook" src="img/bc68aae6807655d.gif"></p>
+<p>In this guide, we will learn how to get started with your first notebook project!</p>
+<p>For ML workloads that require flexibility and scalability, Snowflake Notebooks are also available on the <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">container runtime</a>. These notebooks run on a fully managed container environment with many optimizations for ML workloads including access to CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture, Model Registry integration, and the ability to Leverage a set of preinstalled ML packages or pip install any custom package of choice. Check out this quickstart for an introductory overview of Snowflake Notebooks on container runtime.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account. Sign up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">30-day free trial</a> account, if required.</li>
+<li>Access to download <code>.ipynb</code> file from <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main" target="_blank">Snowflake notebooks demo repo</a></li>
+</ul>
+<h2 is-upgraded>What will you build?</h2>
+<p>Here is a summary of what you will be able to learn in each step by following this quickstart:</p>
+<ul>
+<li><strong>Adding Python Packages</strong>: How to use pre-installed libraries in Notebooks as well as adding additional packages from package picker</li>
+<li><strong>Switching between SQL and Python cells</strong>: How to switch between SQL and Python cells in the same notebook</li>
+<li><strong>Visualize your Data</strong>: How to use Altair and Matplotlib to visualize your data</li>
+<li><strong>Working with Snowpark</strong>: How to use Snowpark API to process data at scale within the Notebook</li>
+<li><strong>Using Python Variables in SQL cells</strong>: How to use Jinja syntax <code>&#123;&#123;.}}</code> to refer to Python variables within SQL queries, to reference previous cell outputs in your SQL query and more.</li>
+<li><strong>Creating an Interactive app with Streamlit</strong>: How to build a simple interactive Streamlit app</li>
+<li><strong>Keyboard Shortcuts in Notebooks</strong>: How to use Keyboard shortcuts in Notebooks to developer faster</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load demo notebooks to Snowflake" duration="5">
+        <p>You can create a Snowflake Notebook directly from the Snowsight UI or upload an existing IPython Notebook to Snowflake.</p>
+<p>In this example, we will upload an existing notebook from <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main" target="_blank">Snowflake Notebooks demo repo</a> into a Snowflake account.</p>
+<p>The notebook files are available for download as <code>.ipynb</code> files in the demo repository. To load the demo notebooks into your Snowflake Notebook, follow these steps:</p>
+<ol type="1">
+<li>On Github, click into each folder containing the tutorial and the corresponding <code>.ipynb file</code>, such as <a href="https://github.com/Snowflake-Labs/notebook-demo/blob/main/My%20First%20Notebook%20Project/My%20First%20Notebook%20Project.ipynb" target="_blank">this</a>. Download the file by clicking on the <code>Download raw file</code> from the top right.</li>
+<li>Go to the Snowflake web interface, <a href="https://app.snowflake.com" target="_blank">Snowsight</a>, on your browser.</li>
+<li>Navigate to <code>Project</code> &gt; <code>Notebooks</code> from the left menu bar.</li>
+<li>Import the .ipynb file you&#39;ve download into your Snowflake Notebook by using the <code>Import from .ipynb</code> button located on the top right of the Notebooks page.</li>
+</ol>
+<p class="image-container"><img alt="Import" src="img/a1acb8d5ebac065b.png"></p>
+<ol type="1" start="5">
+<li>Select the file from your local directory and press <code>Open</code>.</li>
+<li>A <code>Create Notebook</code> dialog will show up. Select a database, schema, and warehouse for the Notebook and click <code>Create</code>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running Snowflake Notebooks" duration="5">
+        <p>Let&#39;s walk through the first demo notebook in Snowflake now.</p>
+<h2 is-upgraded>Adding Python Packages</h2>
+<p>Notebooks comes pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more!</p>
+<p>If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.</p>
+<p>For the purpose of this demo, let&#39;s add the <code>matplotlib</code> and <code>scipy</code> package from the package picker.</p>
+<p class="image-container"><img alt="PackagePicker" src="img/5b1bc438751f39a.png"></p>
+<h2 is-upgraded>Switching between SQL and Python cells</h2>
+<p>It is often useful to switch between working with SQL and Python at different stages in your data analysis workflow.</p>
+<p>While creating a new cell, you can select between <code>SQL</code>, <code>Python</code> and <code>Markdown</code> cells to select an appropriate one you need.</p>
+<p>Every cell at the top left has a drop down list that shows the type of cell along with the cell number as well.</p>
+<p class="image-container"><img alt="CellType" src="img/14d6b4af310e653f.png"></p>
+<h2 is-upgraded>Accessing cell outputs as variables in Python</h2>
+<p>You can give cells a custom name (as opposed to the default cell#) and refer to the cell output in subsequent cells as well.</p>
+<p>For example, you can refer to the output of the SQL query in <code>cell5</code> in a <code>Python variable</code> called <code>cell5</code> in subsequent cells.</p>
+<p class="image-container"><img alt="CellType" src="img/8ed10eff0389361a.png"></p>
+<h2 is-upgraded>Visualize your data</h2>
+<p>You can use different visualization libraries such as Altair, Streamlit, matplotlib to plot your data.</p>
+<p>Let&#39;s use Altair to easily visualize our data distribution as a histogram.</p>
+<p class="image-container"><img alt="Histogram" src="img/960f22abf128412f.png"></p>
+<p>To learn more on how to visualize your data with other visualization libraries, refer to the <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-visualize-data" target="_blank">documentation</a>.</p>
+<h2 is-upgraded>Working with Data using Snowpark</h2>
+<p>In addition to using your favorite Python data science libraries, you can also use the <a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark API</a> to query and process your data at scale within the Notebook.</p>
+<p>First, you can get your session variable directly through the active notebook session. The session variable is the entrypoint that gives you access to using Snowflake&#39;s Python API.</p>
+<pre><code language="language-python" class="language-python">    from snowflake.snowpark.context import get_active_session
+    session = get_active_session()
+</code></pre>
+<p>Here we use the Snowpark API to write a pandas dataframe as a Snowpark table named <code>SNOW_CATALOG</code>.</p>
+<pre><code language="language-python" class="language-python">    session.write_pandas(df, &#34;SNOW_CATALOG&#34;, auto_create_table=True, table_type=&#34;temp&#34;)
+</code></pre>
+<h2 is-upgraded>Using Python variables in SQL cells</h2>
+<p>You can use the Jinja syntax <code>&#123;&#123;..}}</code> to refer to Python variables within your SQL queries as follows.</p>
+<pre><code language="language-python" class="language-python">threshold = 5
+</code></pre>
+<pre><code language="language-sql" class="language-sql">-- Reference Python variable in SQL
+SELECT * FROM SNOW_CATALOG where RATING &gt; &#123;&#123;threshold}}
+</code></pre>
+<p>Likewise, you can reference a Pandas dataframe within your SQL statment:</p>
+<pre><code language="language-sql" class="language-sql">-- Filtering from a Pandas dataframe
+SELECT * FROM &#123;&#123;my_df}} where VAR = 6
+</code></pre>
+<h2 is-upgraded>Simplifying your subqueries</h2>
+<p>Let&#39;s start with the output of <code>cell21</code> in this notebook. Here is how it looks!</p>
+<pre><code language="language-sql" class="language-sql">    SELECT * FROM SNOW_CATALOG;
+</code></pre>
+<p class="image-container"><img alt="Cell21_Output" src="img/abd284f96c965a7c.png"></p>
+<p>You can simplify long subqueries with <a href="https://docs.snowflake.com/en/user-guide/queries-cte" target="_blank">CTEs</a> by combining what we&#39;ve learned with Python and SQL cell result referencing.</p>
+<p>For example, if we want to compute the average rating of all products with ratings above 5. We would typically have to write something like the following:</p>
+<pre><code language="language-sql" class="language-sql">WITH RatingsAboveFive AS (
+    SELECT RATING
+    FROM SNOW_CATALOG
+    WHERE RATING &gt; 5
+)
+SELECT AVG(RATING) AS AVG_RATING_ABOVE_FIVE
+FROM RatingsAboveFive;
+</code></pre>
+<p>With Snowflake Notebooks, the query is much simpler! You can get the same result by filtering a SQL table from another SQL cell by referencing it with Jinja, e.g., <code>&#123;&#123;my_cell}}</code>.</p>
+<pre><code language="language-sql" class="language-sql">SELECT AVG(RATING) FROM &#123;&#123;cell21}}
+WHERE RATING &gt; 5
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Interactive Streamlit App" duration="5">
+        <p>Putting all our learnings together, let&#39;s build a streamlit app to explore how different parameters impact the shape of the data distribution histogram.</p>
+<p>Here is the code snippet to build interactive sliders:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+st.markdown(&#34;# Move the slider to adjust and watch the results update! 👇&#34;)
+col1, col2 = st.columns(2)
+with col1:
+    mean = st.slider(&#39;Mean of on RATING Distribution&#39;,0,10,3) 
+with col2:
+    stdev = st.slider(&#39;Standard Deviation of RATING Distribution&#39;, 0, 10, 5)
+</code></pre>
+<p class="image-container"><img alt="Streamlit_Slider" src="img/9fd9571cfab21584.png"></p>
+<p>Now, let us capture the mean and standard deviation values from the above slider and use it to generate a distribution of values to plot a histogram.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE SNOW_CATALOG AS 
+SELECT CONCAT(&#39;SNOW-&#39;,UNIFORM(1000,9999, RANDOM())) AS PRODUCT_ID, 
+        ABS(NORMAL(&#123;&#123;mean}}, &#123;&#123;stdev}}, RANDOM())) AS RATING, 
+        ABS(NORMAL(750, 200::FLOAT, RANDOM())) AS PRICE
+FROM TABLE(GENERATOR(ROWCOUNT =&gt; 100));
+</code></pre>
+<p>Let&#39;s plot the histogram using Altair.</p>
+<pre><code language="language-python" class="language-python"># Read table from Snowpark and plot the results
+df = session.table(&#34;SNOW_CATALOG&#34;).to_pandas()
+# Let&#39;s plot the results with Altair
+alt.Chart(df).mark_bar().encode(
+    alt.X(&#34;RATING&#34;, bin=alt.Bin(step=2)),
+    y=&#39;count()&#39;,
+)
+</code></pre>
+<p>As you adjust the slider values, you will see that cells below re-executes and the histogram updates based on the updated data.</p>
+<p class="image-container"><img alt="Histogram_Slider" src="img/c239c309045104b9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Keyboard Shortcuts" duration="1">
+        <p>These shortcuts can help you navigate around your notebook more quickly.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Command</p>
+</td><td colspan="1" rowspan="1"><p>Shortcut</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Run this cell and advance</strong></p>
+</td><td colspan="1" rowspan="1"><p>SHIFT + ENTER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Run this cell only</strong></p>
+</td><td colspan="1" rowspan="1"><p>CMD + ENTER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Run all cells</strong></p>
+</td><td colspan="1" rowspan="1"><p>CMD + SHIFT + ENTER</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Add cell BELOW</strong></p>
+</td><td colspan="1" rowspan="1"><p>b</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Add cell ABOVE</strong></p>
+</td><td colspan="1" rowspan="1"><p>a</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Delete this cell</strong></p>
+</td><td colspan="1" rowspan="1"><p>d+d</p>
+</td></tr>
+</table>
+<p><br> You can view the full list of shortcuts by clicking the <code>?</code> button on the bottom right on your Snowsight UI.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully completed the Getting Started with Snowflake Notebooks quickstart guide.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li><strong>Adding Python Packages</strong>: How to use pre-installed libraries in Notebooks as well as adding additional packages from package picker</li>
+<li><strong>Switching between SQL and Python cells</strong>: How to switch between SQL and Python cells in the same notebook TODO: (fix the error that says worksheet in the ipynb markdown)</li>
+<li><strong>Visualize your Data</strong>: How to use Altair and Matplotlib to visualize your data</li>
+<li><strong>Working with Snowpark</strong>: How to use Snowpark API to process data at scale within the Notebook</li>
+<li><strong>Using Python Variables in SQL cells</strong>: How to use Jinja syntax <code>&#123;&#123;.}}</code> to refer to Python variables within SQL queries, to reference previous cell outputs in your SQL query and more.</li>
+<li><strong>Creating an Interactive app with Streamlit</strong>: How to build a simple interactive Streamlit app</li>
+<li><strong>Keyboard Shortcuts in Notebooks</strong>: How to use Keyboard shortcuts in Notebooks to developer faster</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Here are some resources to learn more about Snowflake Notebooks:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-about" target="_blank">Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Container Runtime Documentation</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main" target="_blank">Github Demo Repo</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI" target="_blank">YouTube Playlist</a></li>
+<li><a href="https://developers.snowflake.com/solutions/?_sft_technology=notebooks" target="_blank">Solution Center</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

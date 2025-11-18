@@ -1,0 +1,411 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - RAG Chatbot Using Cortex and Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_rag_chatbot_using_cortex_and_streamlit"
+                  title="Tasty Bytes - RAG Chatbot Using Cortex and Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img alt="banner" src="img/37d5585e295ee0d4.png"></p>
+<p>Welcome to the Powered by Tasty Bytes - RAG Chatbot Using Cortex and Streamlit Quickstart.</p>
+<p>In this guide, we will build a Cortex LLM powered chatbot to help Tasty Bytes agents find answers to customer questions faster. This Streamlit chatbot uses retrieval augemented generation (RAG) by retrieving previous agent support chat logs and public-facing documents (Annual Reports, FAQs).</p>
+<p class="image-container"><img alt="chatbot-overview" src="img/7f1597fd28c9b8bc.gif"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to build a chatbot using Cortex LLMs</li>
+<li>How to build a Streamlit in Snowflake application</li>
+<li>Basics of retrieval augemented generation (RAG)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Snowflake account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Cortex LLM chatbot using Streamlit in Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <h2 is-upgraded>Create Snowflake Database, Schema, and Warehouse</h2>
+<p>Run the code below in a Snowsight worksheet. It creates basic objects in Snowflake.</p>
+<pre><code language="language-sql" class="language-sql">-- Database
+CREATE OR REPLACE DATABASE tasty_bytes_chatbot;
+
+--Schema
+CREATE OR REPLACE SCHEMA tasty_bytes_chatbot.app;
+
+--Warehouse
+CREATE OR REPLACE WAREHOUSE tasty_bytes_chatbot_wh with
+WAREHOUSE_SIZE = LARGE
+AUTO_SUSPEND = 60;
+</code></pre>
+<h2 is-upgraded>Load App Data</h2>
+<p>Run the code below in a Snowsight worksheet. It creates all data required to run the app.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FILE FORMAT tasty_bytes_chatbot.app.csv_ff 
+TYPE = &#39;csv&#39;;
+
+CREATE OR REPLACE STAGE tasty_bytes_chatbot.app.s3load
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39;
+url = &#39;s3://sfquickstarts/tastybytes-cx/app/&#39;
+file_format = tasty_bytes_chatbot.app.csv_ff;
+
+CREATE OR REPLACE TABLE tasty_bytes_chatbot.app.documents (
+	RELATIVE_PATH VARCHAR(16777216),
+	RAW_TEXT VARCHAR(16777216)
+)
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;voc&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;streamlit&#34;, &#34;vignette&#34;:&#34;rag_chatbot&#34;}}&#39;;
+
+COPY INTO tasty_bytes_chatbot.app.documents
+FROM @tasty_bytes_chatbot.app.s3load/documents/;
+
+-- https://docs.snowflake.com/en/sql-reference/data-types-vector#loading-and-unloading-vector-data
+CREATE OR REPLACE TABLE tasty_bytes_chatbot.app.array_table (
+  SOURCE VARCHAR(6),
+	SOURCE_DESC VARCHAR(16777216),
+	FULL_TEXT VARCHAR(16777216),
+	SIZE NUMBER(18,0),
+	CHUNK VARCHAR(16777216),
+	INPUT_TEXT VARCHAR(16777216),
+	CHUNK_EMBEDDING ARRAY
+);
+
+COPY INTO tasty_bytes_chatbot.app.array_table
+FROM @tasty_bytes_chatbot.app.s3load/vector_store/;
+
+CREATE OR REPLACE TABLE tasty_bytes_chatbot.app.vector_store (
+	SOURCE VARCHAR(6),
+	SOURCE_DESC VARCHAR(16777216),
+	FULL_TEXT VARCHAR(16777216),
+	SIZE NUMBER(18,0),
+	CHUNK VARCHAR(16777216),
+	INPUT_TEXT VARCHAR(16777216),
+	CHUNK_EMBEDDING VECTOR(FLOAT, 768)
+) AS
+SELECT 
+  source,
+	source_desc,
+	full_text,
+	size,
+	chunk,
+	input_text,
+  chunk_embedding::VECTOR(FLOAT, 768)
+FROM tasty_bytes_chatbot.app.array_table;
+</code></pre>
+<h2 is-upgraded>Streamlit File</h2>
+<ul>
+<li>From Snowsight, select the Streamlit tab</li>
+<li>Create a new Streamlit-in-Snowflake application with: <ul>
+<li>Database: TASTY_BYTES_CHATBOT</li>
+<li>Schema: APP</li>
+<li>Warehouse: TASTY_BYTES_CHATBOT_WH</li>
+</ul>
+</li>
+<li>Add snowpark-ml-python package from the packages dropdown in the code editor section</li>
+<li>Copy the code below into the code editor section</li>
+<li>Run the app!</li>
+</ul>
+<pre><code language="language-python" class="language-python"># Import python packages
+import pandas as pd
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+from snowflake.cortex import Complete
+import snowflake.snowpark.functions as F
+import snowflake.snowpark.types as T
+
+# Set Streamlit page configuration
+st.set_page_config(layout=&#34;wide&#34;, initial_sidebar_state=&#34;expanded&#34;)
+st.title(&#34;:truck: Tasty Bytes Support: Customer Q&amp;A Assistant  :truck:&#34;)
+st.caption(
+    f&#34;&#34;&#34;Welcome! This application suggests answers to customer questions based 
+    on corporate documentation and previous agent responses in support chats.
+    &#34;&#34;&#34;
+)
+
+# Get current credentials
+session = get_active_session()
+
+# Constants
+CHAT_MEMORY = 20
+DOC_TABLE = &#34;app.vector_store&#34;
+
+
+# Reset chat conversation
+def reset_conversation():
+    st.session_state.messages = [
+        {
+            &#34;role&#34;: &#34;assistant&#34;,
+            &#34;content&#34;: &#34;What question do you need assistance answering?&#34;,
+        }
+    ]
+
+
+##########################################
+#       Select LLM
+##########################################
+with st.expander(&#34;:gear: Settings&#34;):
+    model = st.selectbox(
+        &#34;Change chatbot model:&#34;,
+        [
+            &#34;mistral-large&#34;,
+            &#34;reka-flash&#34;,
+            &#34;llama2-70b-chat&#34;,
+            &#34;gemma-7b&#34;,
+            &#34;mixtral-8x7b&#34;,
+            &#34;mistral-7b&#34;,
+        ],
+    )
+    st.button(&#34;Reset Chat&#34;, on_click=reset_conversation)
+
+
+##########################################
+#       RAG
+##########################################
+def get_context(chat, DOC_TABLE):
+    chat_summary = summarize(chat)
+    return find_similar_doc(chat_summary, DOC_TABLE)
+
+
+def summarize(chat):
+    summary = Complete(
+        model,
+        &#34;Provide the most recent question with essential context from this support chat: &#34;
+        + chat,
+    )
+    return summary.replace(&#34;&#39;&#34;, &#34;&#34;)
+
+
+def find_similar_doc(text, DOC_TABLE):
+    doc = session.sql(f&#34;&#34;&#34;Select input_text,
+                        source_desc,
+                        VECTOR_COSINE_SIMILARITY(chunk_embedding, SNOWFLAKE.CORTEX.EMBED_TEXT_768(&#39;e5-base-v2&#39;, &#39;{text.replace(&#34;&#39;&#34;, &#34;&#39;&#39;&#34;)}&#39;)) as dist
+                        from {DOC_TABLE}
+                        order by dist desc
+                        limit 1
+                        &#34;&#34;&#34;).to_pandas()
+    st.info(&#34;Selected Source: &#34; + doc[&#34;SOURCE_DESC&#34;].iloc[0])
+    return doc[&#34;INPUT_TEXT&#34;].iloc[0]
+
+##########################################
+#       Prompt Construction
+##########################################
+if &#34;background_info&#34; not in st.session_state:
+    st.session_state.background_info = (
+        session.table(&#34;app.documents&#34;)
+        .select(&#34;raw_text&#34;)
+        .filter(F.col(&#34;relative_path&#34;) == &#34;tasty_bytes_who_we_are.pdf&#34;)
+        .collect()[0][0]
+    )
+
+
+def get_prompt(chat, context):
+    prompt = f&#34;&#34;&#34;Answer this new customer question sent to our support agent
+        at Tasty Bytes Food Truck Company. Use the background information
+        and provided context taken from the most relevant corporate documents
+        or previous support chat logs with other customers.
+        Be concise and only answer the latest question.
+        The question is in the chat.
+        Chat: &lt;chat&gt; {chat} &lt;/chat&gt;.
+        Context: &lt;context&gt; {context} &lt;/context&gt;.
+        Background Info: &lt;background_info&gt; {st.session_state.background_info} &lt;/background_info&gt;.&#34;&#34;&#34;
+    return prompt.replace(&#34;&#39;&#34;, &#34;&#34;)
+
+
+##########################################
+#       Chat with LLM
+##########################################
+if &#34;messages&#34; not in st.session_state:
+    reset_conversation()
+
+if user_message := st.chat_input():
+    st.session_state.messages.append({&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: user_message})
+
+for message in st.session_state.messages:
+    with st.chat_message(message[&#34;role&#34;]):
+        st.markdown(message[&#34;content&#34;])
+
+if st.session_state.messages[-1][&#34;role&#34;] != &#34;assistant&#34;:
+    chat = str(st.session_state.messages[-CHAT_MEMORY:]).replace(&#34;&#39;&#34;, &#34;&#34;)
+    with st.chat_message(&#34;assistant&#34;):
+        with st.status(&#34;Answering..&#34;, expanded=True) as status:
+            st.write(&#34;Finding relevant documents &amp; support chat logs...&#34;)
+            # Get relevant information
+            context = get_context(chat, DOC_TABLE)
+            st.write(&#34;Using search results to answer your question...&#34;)
+            # Ask LLM
+            prompt = get_prompt(chat, context)
+            response = Complete(model, prompt)
+            status.update(label=&#34;Complete!&#34;, state=&#34;complete&#34;, expanded=False)
+        st.markdown(response)
+    st.session_state.messages.append({&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: response})
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit App" duration="5">
+        <p>Within Streamlit in Snowflake, leverage the application to ask questions regarding Tasty Bytes. A few suggested questions and demo steps detailed below:</p>
+<ul>
+<li>Change the LLM mid-conversation. Ask the bot &#34;Can you answer that again?&#34; after changing.</li>
+</ul>
+<p class="image-container"><img alt="change-model" src="img/ae03522d227013cf.png"></p>
+<ul>
+<li>Highlight the document source (chat logs or document path) that was retrieved and used by the bot.</li>
+<li>Sample questions: <ul>
+<li>Who is the CEO?</li>
+<li>What cities are trucks in?</li>
+<li>Do you do private events and catering?</li>
+<li>How do I become a franchise?</li>
+<li>Do you have vegetarian options?</li>
+<li>What are the truck names?</li>
+<li>What food do the trucks serve?</li>
+<li>How do I find a truck&#39;s location?</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="food-served" src="img/d3d3c5f0f642999.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding the Streamlit Chatbot Application" duration="10">
+        <p>The following features are used in the RAG chatbot Streamlit Application.</p>
+<h2 is-upgraded>Cortex Complete</h2>
+<p>Cortex complete generates a response (completion) to a prompt using your choice of supported language model. In the application, we pass the prompt and selected model to Cortex complete to generate a response questions posed by the user. You can read more <a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">documentation here</a>.</p>
+<p>Users can select between many available models to pass to Cortex complete.</p>
+<pre><code language="language-python" class="language-python">model = st.selectbox(
+      &#34;Change chatbot model:&#34;,
+      [
+          &#34;mistral-large&#34;,
+          &#34;reka-flash&#34;,
+          &#34;llama2-70b-chat&#34;,
+          &#34;gemma-7b&#34;,
+          &#34;mixtral-8x7b&#34;,
+          &#34;mistral-7b&#34;,
+      ],
+  )
+</code></pre>
+<p>With just a single line of code, Cortex complete calls the relevant LLM to generate a response to a question.</p>
+<pre><code language="language-python" class="language-python">response = Complete(model, prompt)
+</code></pre>
+<h2 is-upgraded>Retrieval Augemented Generation (RAG)</h2>
+<p>The chatbot application uses retrieval augemented generation (RAG) to find the most relevant chats and other documents to answer the user&#39;s question.</p>
+<p class="image-container"><img alt="rag-overview" src="img/bb1a587f660489a4.png"></p>
+<p>The code below finds the document most similar to the current chat from our vector_store table. The documents in the table include chat logs and other public-facing documents (Annual Reports, FAQs).</p>
+<p><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/vector-embeddings#create-vector-embeddings-from-text" target="_blank">Vector Embeddings</a> have previously been created for documents (chat logs, annual reports, etc.) in the vector_store table. In our application, we use Cortex Embed to create a vector for the current chat. This allows us to determine the <a href="https://docs.snowflake.com/en/sql-reference/functions/vector_cosine_similarity" target="_blank">Vector Cosine Similarity</a> between the chat and existing documents and return the most similar document. The text of the most relevant document is later used in our prompt to ensure responses have all relevant information.</p>
+<pre><code language="language-python" class="language-python"># text: current chat
+# DOC_TABLE: table containing document vector embeddings (app.vector_store)
+def find_similar_doc(text, DOC_TABLE):
+    doc = session.sql(f&#34;&#34;&#34;Select input_text,
+                        source_desc,
+                        VECTOR_COSINE_SIMILARITY(chunk_embedding, SNOWFLAKE.CORTEX.EMBED_TEXT_768(&#39;e5-base-v2&#39;, &#39;{text.replace(&#34;&#39;&#34;, &#34;&#39;&#39;&#34;)}&#39;)) as dist
+                        from {DOC_TABLE}
+                        order by dist desc
+                        limit 1
+                        &#34;&#34;&#34;).to_pandas()
+    st.info(&#34;Selected Source: &#34; + doc[&#34;SOURCE_DESC&#34;].iloc[0])
+    return doc[&#34;INPUT_TEXT&#34;].iloc[0]
+</code></pre>
+<h2 is-upgraded>Prompt Engineering</h2>
+<p>The app builds prompts based on chat history, context, and Tasty Bytes background information. All of this information is passed to Cortex complete to ensure we accurately respond to user questions.</p>
+<ul>
+<li><strong>chat</strong> is the current chat history</li>
+<li><strong>context</strong> is the text of the most relevant document returned from RAG</li>
+<li><strong>background info</strong> is the text of the text of the <code>tasty_bytes_who_we_are.pdf</code> document. This contains high level information about Tasty Bytes.</li>
+</ul>
+<pre><code language="language-python" class="language-python">def get_prompt(chat, context):
+    prompt = f&#34;&#34;&#34;Answer this new customer question sent to our support agent
+        at Tasty Bytes Food Truck Company. Use the background information
+        and provided context taken from the most relevant corporate documents
+        or previous support chat logs with other customers.
+        Be concise and only answer the latest question.
+        The question is in the chat.
+        Chat: &lt;chat&gt; {chat} &lt;/chat&gt;.
+        Context: &lt;context&gt; {context} &lt;/context&gt;.
+        Background Info: &lt;background_info&gt; {st.session_state.background_info} &lt;/background_info&gt;.&#34;&#34;&#34;
+    return prompt.replace(&#34;&#39;&#34;, &#34;&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations, you&#39;ve created a RAG chatbot using Cortex and Streamlit! In this tutorial, we talked through all of the pieces required to build the Streamlit in Snowflake application, including Cortex LLMs and RAG fundamentals.</p>
+<p>If you want to learn more about RAG and Cortex from Snowflake, check out this incredible blog post - <a href="https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/" target="_blank">Easy and Secure LLM Inference and Retrieval Augmented Generation (RAG) Using Snowflake Cortex</a>.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build a chatbot using Cortex LLMs</li>
+<li>How to build a Streamlit in Snowflake application</li>
+<li>Basics of retrieval augmented generation (RAG)</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/" target="_blank">Easy and Secure LLM Inference and Retrieval Augmented Generation (RAG) Using Snowflake Cortex</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM Functions</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

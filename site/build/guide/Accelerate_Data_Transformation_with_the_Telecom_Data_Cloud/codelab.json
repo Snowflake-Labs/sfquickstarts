@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud",
+  "duration": 111,
+  "title": "Accelerate Data Transformation with the Telecom Data Cloud and Informatica",
+  "summary": "This is a guide for getting started with Data Integration using Informatica Data Management Cloud",
+  "source": "Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud/vhol_snowflake_informatica_for_telco.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "dataengineering",
+    "de:transformation"
+  ],
+  "tags": [
+    "dataengineering",
+    "de:transformation",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud"
+}

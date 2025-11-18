@@ -1,0 +1,367 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Pull-based Native Connector in Python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="connectors_github_python"
+                  title="Build a Pull-based Native Connector in Python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this tutorial you will learn how to build native Snowflake connectors. This example uses GitHub issues API as the source of the data. In the next steps we will cover what constitutes a connector, how to build and deploy it and how to build an application UI using Streamlit.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prerequisites" duration="1">
+        <ul>
+<li>Basic knowledge of <a href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">Snowflake Native Apps</a></li>
+<li>Basic knowledge of Python</li>
+<li>Snowflake user with <code>accountadmin</code> role</li>
+<li>GitHub account with <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token" target="_blank">access token</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="You will learn" duration="1">
+        <ul>
+<li>How to build a native connector</li>
+<li>How to achieve external connectivity</li>
+<li>How to use secrets</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your local environment" duration="5">
+        <ul>
+<li>Install Python 3.9. If you are looking a way to switch between Python versions, we recommend checking <a href="https://github.com/pyenv/pyenv" target="_blank">penv</a>.</li>
+<li>Install <code>build</code> package using <code>pip install build</code></li>
+<li>Install <a href="https://docs.snowflake.com/en/user-guide/snowsql" target="_blank">snowsql</a></li>
+<li>Configure snowsql to allow using <a href="https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution" target="_blank">variables</a> (<code>variable_substitution = True</code>)</li>
+<li>Configure snowsql to <a href="https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error" target="_blank">exit on first error</a> (<code>exit_on_error = True</code>)</li>
+<li>Clone the <a href="https://github.com/snowflakedb/connectors-native-sdk" target="_blank">connectors-native-sdk repository</a> and go to <code>./examples/example-github-python-connector</code></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector overview" duration="0">
+        <p><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark library</a> and encapsulated in <a href="https://docs.snowflake.com/en/sql-reference/stored-procedures-python" target="_blank">stored procedures</a>. The procedures constitute the interface to the connector.</p>
+<p>To facilitate recurring ingestion of resources the connector uses <a href="https://docs.snowflake.com/en/user-guide/tasks-intro" target="_blank">task</a> on configurable schedule.</p>
+<p>The connector consists of the following elements:</p>
+<ul>
+<li>schemas <ul>
+<li><code>PUBLIC</code> - versioned, used to store all public procedures</li>
+<li><code>STATE</code> - stateful, used for all stateful objects like tables</li>
+<li><code>TASKS</code> - stateful, used for tasks</li>
+</ul>
+</li>
+<li>tables <ul>
+<li><code>STATE.APP_CONFIGURATION</code> - application configuration (details will be covered in next steps)</li>
+<li><code>STATE.RESOURCE_CONFIGURATION</code> - resource configuration (details will be covered in next steps)</li>
+<li><code>STATE.APP_STATE</code> - application state (details will be covered in next steps)</li>
+</ul>
+</li>
+<li>procedures <ul>
+<li><code>PUBLIC.PROVISION_CONNECTOR</code> - configures the connectors</li>
+<li><code>PUBLIC.ENABLE_RESOURCE</code> - enables a repository for ingestion</li>
+<li><code>PUBLIC.INGEST_DATA</code> - used by tasks running the ingestion</li>
+</ul>
+</li>
+</ul>
+<p>Only selected objects will be visible to customer who installed the app. See: <a href="https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script#visibility-of-objects-created-in-the-setup-script-to-consumers" target="_blank">docs</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Project structure" duration="3">
+        <p>Let&#39;s take a look at the structure of this connector.</p>
+<pre><code language="language-text" class="language-text">├── Makefile
+├── README.md
+├── environment.yml
+├── hatch_build.py
+├── manifest.yml
+├── pyproject.toml
+├── setup.sql
+├── sql
+│    ├── deploy.sql
+│    └── install.sql
+├── src
+│    └── snowflake_github_connector
+│        ├── common.py
+│        ├── ingestion.py
+│        └── procedures.py
+├── streamlit_app.py
+└── tests-integrations/
+</code></pre>
+<h2 is-upgraded>Python module</h2>
+<p>The <code>src/snowflake_github_connector</code> is a Python package containing all the execution logic of the connector. This package is separated into three modules:</p>
+<ul>
+<li><code>procedures</code> module that contains definitions of all connector procedures</li>
+<li><code>ingestion</code> module that contains the ingestion logic (external connectivity with GitHub)</li>
+<li><code>common</code> that includes reusable elements</li>
+</ul>
+<h2 is-upgraded>Streamlit dashboard</h2>
+<p>Additionally, the connector has a UI build in Streamlit. The Streamlit dashboard is defined in <code>streamlit_app.py</code> file. Thanks to it the connector can be configured and monitored using Streamlit in Snowflake. Additionally, some of the privileges required by the application can be requested through a pop-up in Streamlit.</p>
+<h2 is-upgraded>setup.sql script</h2>
+<p><a href="https://docs.snowflake.com/en/developer-guide/native-apps/creating-setup-script" target="_blank">Setup script</a> defines objects which are created and needed inside the application. This includes procedures, schemas, tables etc.</p>
+<h2 is-upgraded>manifest.yml file</h2>
+<p>Manifest file is required by the native apps model. This file specifies properties of an application. Privileges and references required by the application can be specified inside the manifest file. For more information check <a href="https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest" target="_blank">manifest docs</a> and <a href="https://docs.snowflake.com/en/developer-guide/native-apps/requesting-about" target="_blank">requesting privileges docs</a>.</p>
+<h2 is-upgraded>hatch_build.py file</h2>
+<p>Build script responsible for packaging Python code into a zip file and copying all resources into sf_build directory.</p>
+<h2 is-upgraded>Makefile and scripts in sql/ directory</h2>
+<p>Commands for building and deployign applications are exposed in Makefile, and are also using sql scripts defined in sql/ directory.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector configuration" duration="3">
+        <p>The connector configuration is split into two domains:</p>
+<ul>
+<li>connector level configuration</li>
+<li>resource level configuration</li>
+</ul>
+<h2 is-upgraded>Configuring connector</h2>
+<p>Connector level configuration lives in the <code>STATE.APP_CONFIGURATION</code> table. This table is meant to keep information like API integration name used by the connector and secret name used for authentication in GitHub.</p>
+<p>The table is a key-value table.</p>
+<h2 is-upgraded>Ingestion resource configuration</h2>
+<p>Next to the global configuration the connector also stores a configuration for every enabled resource. In case of this example a single resource is represented as <code>org_name/repo_name</code>.</p>
+<p>The table is a key-value table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connector state" duration="2">
+        <p>Apart from configuration table, the connector uses <code>STATE.APP_STATE</code> table to persist a state of any ongoing ingestion.</p>
+<p>The state table is a key-value table with an additional timestamp column. To improve the performance, the table is an append only table. This means that creating or updating a value inserts a new row into the table. Reading a key is done by retrieving the newest row with the given key.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="External access" duration="2">
+        <p>Data from GitHub is ingested using <a href="https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview" target="_blank">external access</a> capabilities of Snowflake.</p>
+<h2 is-upgraded>Direct external access</h2>
+<p>Snowflake documentation: <a href="https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview" target="_blank">External network access overview</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application logs" duration="2">
+        <p>Example application logs various operations during runtime. By default, those logs are not stored anywhere. To enable log storing please refer to <a href="https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging" target="_blank">enable loging</a> documentation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ingestion logic" duration="2">
+        <p>When a repository is enabled the following objects are created:</p>
+<ul>
+<li>a sink table for raw data ingested from GitHub API</li>
+<li>a view over sink table that flattens the raw JSON data</li>
+<li>a task responsible for ingestion</li>
+</ul>
+<p>The task runs every 30 minutes and every repository has a dedicated task.</p>
+<p>The ingestion task calls <code>INGEST_DATA</code> procedure which does the following:</p>
+<ol type="1">
+<li>reads the GitHub Token from secret</li>
+<li>sends a request to GitHub issues API with authorization headers</li>
+<li>merges fetched data into sink table</li>
+<li>checks for a next page link in the response headers</li>
+<li>if the link is present it repeats the steps from 2 onward</li>
+<li>if the link is not present the procedure exits</li>
+</ol>
+<p>In this approach all the data for a given repository is fetched every time. The data is merged, meaning that the new records are added, while the changed records are updated in the sink table.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build the connector" duration="3">
+        <p>As we have learnt in the previous sections the project consists of the three components:</p>
+<ul>
+<li>code module</li>
+<li>manifest.yml</li>
+<li>setup.sql</li>
+</ul>
+<p>All of those components have to be uploaded to Snowflake prior to creating the app.</p>
+<h2 is-upgraded>Overview</h2>
+<p>Build step for the app consist of:</p>
+<ol type="1">
+<li>Creating a new <code>sf_build</code> directory on the local machine</li>
+<li>Creating a wheel artifact (for Python we additionally rename <code>whl</code> file to <code>zip</code>) and putting it in the <code>sf_build</code> folder</li>
+<li>Copying of the <code>manifest.yml</code> to the<code>sf_build</code> folder</li>
+<li>Copying of the <code>install.sql</code> to the <code>sf_build</code> folder</li>
+<li>Copying of the <code>streamlit_app.py</code> to the <code>sf_build</code> folder</li>
+</ol>
+<p>The <code>sf_build</code> directory serves as the source of truth about the app definition and its content.</p>
+<h2 is-upgraded>Building</h2>
+<p>To build the connector execute a convenience script:</p>
+<pre><code language="language-sh" class="language-sh">make build
+</code></pre>
+<p>Once the <code>sf_build</code> folder is created you can follow to the next step where we will deploy the connector.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy the connector" duration="0">
+        <h2 is-upgraded>Overview</h2>
+<p>Deployment step consists of:</p>
+<ol type="1">
+<li>Creating a database and stage for app artifacts</li>
+<li>Uploading the <code>sf_build</code> contents to the newly created stage</li>
+<li>Creating an application package using the data from the stage</li>
+</ol>
+<h2 is-upgraded>Connection and app setup</h2>
+<p>This quickstart uses some convenience scripts for running necessary commands. Those scripts use <a href="https://docs.snowflake.com/en/user-guide/snowsql" target="_blank">snowsql</a>. Before proceeding you need to configure snowsql connection to your Snowflake account.</p>
+<ol type="1">
+<li>Configure snowsql connection according to the <a href="https://docs.snowflake.com/en/user-guide/snowsql-start#using-named-connections" target="_blank">documentation</a>.</li>
+<li>Export the name of your connection in the terminal <code>export CONNECTION=<your connection name></code></li>
+<li>Adjust values for APP_NAME, APP_VERSION, STAGE_DB, STAGE_NAME, WAREHOUSE in the <code>Makefile</code> script. Those values will be used by all the scripts used in this quickstart.</li>
+</ol>
+<h2 is-upgraded>Deploy the app</h2>
+<p>To deploy the connector execute a convenience script:</p>
+<pre><code language="language-sh" class="language-sh">make deploy
+</code></pre>
+<p>Now an application package should be created on your account, and you can follow to the next step where you will create a new instance of the connector.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Installing the connector" duration="5">
+        <p>In this step you will install the connector. The installation is encapsulated in a convenience script.</p>
+<h2 is-upgraded>Creating external access integration and secrets</h2>
+<p>In order to  access external resources the connector requires 3 objects to be configured:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/LIMITEDACCESS/creating-using-external-network-access#label-creating-using-external-access-integration-network-rule" target="_blank">network rule</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-secret" target="_blank">secrets</a></li>
+<li><a href="https://docs.snowflake.com/en/LIMITEDACCESS/create-external-access-integration" target="_blank">external access integration</a></li>
+</ul>
+<p>The script will run commands like the following ones to bootstrap all necessary objects:</p>
+<pre><code language="language-snowflake" class="language-snowflake">CREATE DATABASE GITHUB_SECRETS;
+
+CREATE OR REPLACE NETWORK RULE GH_RULE
+MODE = EGRESS
+TYPE = HOST_PORT
+VALUE_LIST=(&#39;api.github.com:443&#39;);
+
+CREATE OR REPLACE SECRET GITHUB_TOKEN TYPE=GENERIC_STRING SECRET_STRING=&#39;&lt; PASTE API TOKEN &gt;&#39;;
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION GITHUB_INTEGRATION
+ALLOWED_NETWORK_RULES = (GH_RULE)
+ALLOWED_AUTHENTICATION_SECRETS = (&#39;GITHUB_SECRETS.PUBLIC.GITHUB_TOKEN&#39;)
+ENABLED = TRUE;
+</code></pre>
+<h2 is-upgraded>Granting privileges to the application</h2>
+<p>The script will grant some of the required privileges to the application. The rest of the privileges will be requested later through the Streamlit pop-up. The application requires the following privileges:</p>
+<ul>
+<li>usage on the external access integration you created in the previous step</li>
+<li>usage on the database and the schema with the secrets</li>
+<li>read on the secret itself</li>
+</ul>
+<p>This translates to queries like those:</p>
+<pre><code language="language-snowflake" class="language-snowflake">GRANT USAGE ON INTEGRATION GITHUB_INTEGRATION TO APPLICATION GITHUB_CONNECTOR;
+
+GRANT USAGE ON DATABASE DB_NAME TO APPLICATION GITHUB_CONNECTOR;
+GRANT USAGE ON SCHEMA DB_NAME.PUBLIC TO APPLICATION GITHUB_CONNECTOR;
+GRANT READ ON SECRET DB_NAME.PUBLIC.GITHUB_TOKEN TO APPLICATION GITHUB_CONNECTOR;
+</code></pre>
+<p>The following privileges will be granted using pop-ups inside Streamlit:</p>
+<ul>
+<li><code>create database</code> to create destination database</li>
+<li><code>execute task</code> to create and run ingestion tasks</li>
+<li><code>usage on warehouse</code> that will be used by the connector</li>
+</ul>
+<h2 is-upgraded>Running the installation script</h2>
+<p>To install the connector using the convenience script run the following:</p>
+<pre><code language="language-shell" class="language-shell">export GITHUB_TOKEN=&lt;your secret token&gt;
+make install
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuring the connector" duration="5">
+        <p>To start the data ingestion you need to configure the connector. To do this go to the Apps tab inside Snowflake and select your connector.</p>
+<p class="image-container"><img alt="apps.png" src="img/9fa9e455435b9e32.png"></p>
+<h2 is-upgraded>Grant privileges</h2>
+<p>When your connector is loaded by Streamlit a pop-up will be displayed. It will always be displayed at the start of the application, as long as any of the privileges are missing.</p>
+<p class="image-container"><img alt="privileges1.png" src="img/a95b11d80e7feda3.png"></p>
+<h2 is-upgraded>Configure the connector</h2>
+<p>First you need to specify what database should be used to store the ingested data. This database will be created, so it needs to have a name that is not used by any other database. Furthermore, a secret and integration that should be used by the connector need to be specified. Use names of the objects you created previously. Names of the objects will be visible in the execution log of the convenience scripts run in the previous steps. By default, created values are the following:</p>
+<ul>
+<li>Secret name: <code>{APP_NAME}_SECRETS.PUBLIC.GITHUB_TOKEN</code></li>
+<li>Integration name: <code>GITHUB_INTEGRATION</code></li>
+</ul>
+<p>Please note that the grey values visible in the form are just tooltips and are not used as the default values.</p>
+<p class="image-container"><img alt="configuration1.png" src="img/d7d922b42b14aba6.png"></p>
+<h2 is-upgraded>Warehouse privilege</h2>
+<p>After pressing the <code>Configure</code> button another pop-up will be displayed. It requires the user to choose a warehouse that will be used to schedule the ingestion task. Granting this privilege is necessary for the connector to work properly.</p>
+<p>After granting the privilege refresh the application page to ensure that the underlying database connection session is refreshed with all the granted privileges.</p>
+<p class="image-container"><img alt="privileges2.png" src="img/29f0b117dda21911.png"></p>
+<h2 is-upgraded>Enable data ingestion</h2>
+<p>Next you can enable a repository for ingestion. You can try <code>Snowflake-Labs/sfquickstarts</code>. Put <code>Snowflake-Labs</code> as an organization name and <code>sfquickstarts</code> as a repository name in the form marked red in the below picture. Once <code>Start ingestion</code> button is pressed a task will be scheduled and the ingestion will start. Configured repository will be visible in the table below the form. More than one repository can be configured.</p>
+<p class="image-container"><img alt="configuration2.png" src="img/f3e4fa4bfe170340.png"></p>
+<h2 is-upgraded>Monitor the ingestion</h2>
+<p>Once the ingestion is started you can monitor its state using state and data preview tabs. It might take some time before any data is visible. You may want to refresh the whole page if data does not appear in a minute or two. If multiple repositories were configured, the visible data can be changed using the selection box.</p>
+<p class="image-container"><img alt="state.png" src="img/9978900667e4e338.png"></p>
+<p class="image-container"><img alt="data.png" src="img/d13467e5cfb72afc.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

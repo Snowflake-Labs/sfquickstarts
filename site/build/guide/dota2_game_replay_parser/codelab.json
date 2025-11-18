@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "dota2_game_replay_parser",
+  "duration": 13,
+  "title": "Dota2 game replay parser",
+  "authors": "Marius Ndini",
+  "summary": "Parse a Dota 2 game replay",
+  "source": "dota2_game_replay_parser/dota2_game_replay_parser.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "dota2",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "dota2_game_replay_parser"
+}

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "viewing-location-data-on-an-interactive-map",
+  "duration": 39,
+  "title": "Viewing Location Data on an Interactive Map",
+  "summary": "This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.",
+  "source": "viewing-location-data-on-an-interactive-honeycomb-map/viewing-location-data-on-an-interactive-honeycomb-map.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-visualization",
+    "partner-integrations"
+  ],
+  "tags": [
+    "geospatial",
+    "gettingstarted",
+    "nativeapps",
+    "visualization",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "viewing-location-data-on-an-interactive-map"
+}

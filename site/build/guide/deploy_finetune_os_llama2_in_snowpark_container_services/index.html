@@ -1,0 +1,441 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="deploy_finetune_os_llama2_in_snowpark_container_services"
+                  title="Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="8">
+        <p>By completing this QuickStart guide, you will get to explore <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services</a> (SPCS), currently in <code>Public Preview</code>, to deploy and fine-tune open source Llama 2 Large Language Model (LLM) from Hugging Face. (<a href="https://docs.snowflake.com/developer-guide/snowpark-container-services/overview#available-regions" target="_blank">Check SPCS availability</a>).</p>
+<h2 is-upgraded>What is Snowpark Container Services?</h2>
+<p class="image-container"><img alt="Snowpark Container Service" src="img/a6b44d4fc43f61bb.png"></p>
+<p>Snowpark Container Services is a fully managed container offering that allows you to easily deploy, manage, and scale containerized services, jobs, and functions, all within the security and governance boundaries of Snowflake, with no data movement. As a fully managed service, SPCS comes with Snowflake&#39;s native security, RBAC support, and built-in configuration and operational best-practices.</p>
+<p>Snowpark Container Services are fully integrated with both Snowflake features and third-party tools, such as Snowflake Virtual Warehouses and Docker, allowing teams to focus on building data applications, and not building or managing infrastructure. This managed service allows you to run and scale your container workloads across regions and clouds without the additional complexity of managing a control plane, worker nodes, and also while having quick and easy access to your Snowflake data.</p>
+<p class="image-container"><img alt="Development to Deployment" src="img/d2912b9c97429151.png"></p>
+<p>For more information on these objects, check out <a href="https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741" target="_blank">this blog</a> along with the Snowpark Container Services <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">documentation</a>.</p>
+<aside class="warning"><p> NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.</p>
+</aside>
+<h2 is-upgraded>What you will learn</h2>
+<ul>
+<li>The working mechanics of Snowpark Container Services</li>
+<li>How to build and push a containerized Docker image to SPCS along with code and data files</li>
+<li>How to deploy and fine-tune open source Llama 2 LLM from Hugging Face in SPCS</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> installed and running.</li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed.</li>
+<li>A non-trial Snowflake account in a supported <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions" target="_blank">AWS region</a> with access to a role that has the <code>ACCOUNTADMIN</code> role. If not, you will need to work with your admin to perform the initial environment setup.</li>
+<li>A <a href="https://huggingface.co/" target="_blank">Hugging Face account</a>. <ul>
+<li>Completed Llama 2 request form <a href="https://ai.meta.com/resources/models-and-libraries/llama-downloads/" target="_blank">https://ai.meta.com/resources/models-and-libraries/llama-downloads</a>. <strong><em>NOTE: Your Hugging Face account email address MUST match the email you provide on the Meta website or your request will not be approved.</em></strong></li>
+<li>After approval, submit the form <a href="https://huggingface.co/meta-llama/Llama-2-7b-chat-hf" target="_blank">https://huggingface.co/meta-llama/Llama-2-7b-chat-hf</a> to access Llama 2 on Hugging Face to unlock access to the model. <strong><em>NOTE: This could take several hours so plan accordingly.</em></strong></li>
+<li>Login into your Hugging Face account and access your <a href="https://huggingface.co/settings/tokens" target="_blank">Hugging Face token</a> by browsing to <em>Settings -&gt; Access Tokens -&gt; New token</em>. Make note of this token – you will need to copy-paste it later on.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A hosted JupyterLab service running in Snowpark Container Services</li>
+<li>Open Source Llama 2 LLM base model deployed and fine-tuned in Snowpark Container Services</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="15">
+        <p><strong>Step 1</strong>. Clone <a href="https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services" target="_blank">GitHub repository</a>. If you don&#39;t have Git installed, you can also download the repo as a .zip file.</p>
+<p><strong>Step 2</strong>. In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> using <a href="https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services/blob/main/setup.sql" target="_blank"><code>setup.sql</code></a> and run the commands to create various objects such as database, schema, warehouse, stages, compute pool, image repository, etc.</p>
+<h3 is-upgraded>Useful resources for some of the newly introduced objects created during setup</h3>
+<ul>
+<li>The <a href="https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration" target="_blank">OAuth security integration</a> will allow us to login to our UI-based services using our web browser and Snowflake credentials.</li>
+<li>The <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool" target="_blank">compute pool</a> is the set of compute resources on which our services will run.</li>
+<li>The <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository" target="_blank">image repository</a> is the location in Snowflake where we will push our Docker images so that our services can use them.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build, Tag and Push Docker Image" duration="45">
+        <p>In the cloned repo, you should see a <a href="https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services/blob/main/Dockerfile" target="_blank"><code>Dockerfile</code></a> that looks like this:</p>
+<pre><code language="language-python" class="language-python"># Use rapidsai image for GPU compute
+FROM rapidsai/rapidsai:23.06-cuda11.8-runtime-ubuntu22.04-py3.10
+
+RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends
+
+# Set working directory
+WORKDIR /notebooks
+# Copy Notebooks and data into the container at /notebooks
+COPY llm-notebook-with-fine-tune.ipynb .
+COPY llm-notebook-with-fine-tune-all-rows.ipynb .
+COPY transcripts_base.json .
+COPY transcripts_inst.json .
+COPY utils.py .
+
+# Install Snowpark Python, Pandas and JupyterLab from Snowflake Anaconda channel
+RUN conda install -n rapids -c https://repo.anaconda.com/pkgs/snowflake snowflake-ml-python snowflake-snowpark-python pandas jupyterlab
+
+RUN pip install transformers==4.34.0 tokenizers &amp;&amp; \ 
+    pip install peft sentencepiece tokenizers vllm==0.2.1.post1 bitsandbytes datasets absl-py==1.3.0 
+
+# Make port 8888 publicly available 
+EXPOSE 8888
+
+# Run JupyterLab on port 8888 when the container launches
+CMD [&#34;/opt/conda/envs/rapids/bin/jupyter&#34;, &#34;llm-spcs&#34;, &#34;--ip=0.0.0.0&#34;, &#34;--port=8888&#34;, &#34;--no-browser&#34;, &#34;--allow-root&#34;, &#34;--NotebookApp.token=&#39;&#39;&#34;, &#34;--NotebookApp.password=&#39;&#39;&#34;]
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>We&#39;re selecting <code>rapidsai</code> for the base image which will enable us to run GPU workloads for deploying and fine-tuning Llama 2 in SPCS.</li>
+<li>We&#39;re setting working directory, and copying over Notebooks and data files.</li>
+<li>We&#39;re installing packages including Snowpark Python, Snowflake ML, Pandas and JupyterLab from Snowflake Anaconda channel and other open source libraries for fine-tuning the model.</li>
+<li>We&#39;re exposing port 8888.</li>
+<li>We&#39;re starting JupyterLab when the container launches.</li>
+</ul>
+<h2 is-upgraded>Build Image</h2>
+<p>Let&#39;s build the image locally. In a terminal window, browse to your local clone of the repo and run the following command:</p>
+<pre><code language="language-bash" class="language-bash">docker build --platform linux/amd64 -t llm-spcs .
+</code></pre>
+<h2 is-upgraded>Tag Image</h2>
+<p>Let&#39;s create a new tag of the image that points to the image repository in your Snowflake account.</p>
+<p>Replace <strong><em>your-org-name</em></strong> and <strong><em>your-account-name</em></strong> with your organization and account name. If your account name contains an underscore (_), you will need to replace it with a dash (-) for the below command. Otherwise, you may encounter an error similar to <code>Get "https:/v2/": http: no Host in request URL</code>.</p>
+<pre><code language="language-bash" class="language-bash">docker tag llm-spcs:latest your-org-name-your-account-name.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/llm-spcs:latest
+</code></pre>
+<h2 is-upgraded>Push Image</h2>
+<p>Next we need to push the image to Snowflake. From the same terminal window, run the following commands:</p>
+<p>Replace <strong><em>your-org-name</em></strong> and <strong><em>your-account-name</em></strong> with your organization and account name. If your account name contains an underscore (_), you will need to replace it with a dash (-) for the below commands. Otherwise, you may encounter an error similar to <code>Get "https:/v2/": http: no Host in request URL</code>.</p>
+<pre><code language="language-bash" class="language-bash">docker login your-org-name-your-account-name.registry.snowflakecomputing.com
+</code></pre>
+<pre><code language="language-bash" class="language-bash">docker push your-org-name-your-account-name.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/llm-spcs:latest
+</code></pre>
+<p>NOTE: This may take some time so you may move on to the next step <strong>Upload Spec YAML</strong> while the image is being pushed. Once the <code>docker push</code> command completes, you can verify that the image exists in your Snowflake Image Repository by running the following commands in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">use role DASH_SPCS;
+CALL SYSTEM$REGISTRY_LIST_IMAGES(&#39;/dash_db/dash_schema/dash_repo&#39;);
+</code></pre>
+<p>You should see image <code>llm-spcs</code> listed.</p>
+<h2 is-upgraded>Upload Spec YAML</h2>
+<p>Services in SPCS are defined using YAML files. These YAML files configure all of the various parameters needed to run the containers within your Snowflake account. Learn more about <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference" target="_blank">configurable parameters</a> in spec YAML files.</p>
+<p>Navigate to your local clone of the repo and you should see <code>llm-spcs.yaml</code> that looks like this:</p>
+<pre><code language="language-yaml" class="language-yaml">spec:
+  container:  
+  - name: llm-spcs
+    image: sfdevrel-sfdevrel-enterprise.registry.snowflakecomputing.com/dash_db/dash_schema/dash_repo/llm-spcs
+    volumeMounts: 
+    - name: llm-workspace
+      mountPath: /notebooks/llm-workspace
+    env:
+      SNOWFLAKE_MOUNTED_STAGE_PATH: /notebooks/llm-workspace
+    resources:                         
+        requests:
+          nvidia.com/gpu: 1
+        limits:
+          nvidia.com/gpu: 1
+  endpoint:
+  - name: llm-spcs
+    port: 8888
+    public: true
+  volume:
+  - name: llm-workspace
+    source: &#34;@llm_workspace&#34;
+    uid: 0
+    gid: 0
+</code></pre>
+<p>If needed, make edits to the default names of the database, schema, and/or image repository and save the file. Once the spec file is updated, use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#uploading-files-onto-a-stage" target="_blank">Snowsight to upload it to Snowflake Stage <code>dash_stage</code></a> so that it can be referenced in the service we will create in the next section.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create LLM Service" duration="5">
+        <p>Once we have successfully pushed the Docker image and uploaded the spec YAML, we have all of the components we need in order to create our service. There are three components required to create the service:</p>
+<ol type="1">
+<li>A service name</li>
+<li>A compute pool the service will run on</li>
+<li>A spec file that defines the service</li>
+</ol>
+<p>Before creating the service, run the following command to check the status of the compute pool DASH_GPU3 and make sure it is in IDLE or ACTIVE state.</p>
+<pre><code language="language-sql" class="language-sql">use role DASH_SPCS;
+
+show compute pools;
+</code></pre>
+<p>If the compute pool DASH_GPU3 is <strong>not</strong> in IDLE or ACTIVE state, run the following command and wait a few mins.</p>
+<pre><code language="language-sql" class="language-sql">alter compute pool DASH_GPU3 resume;
+</code></pre>
+<aside class="special"><p> NOTE: Before proceeding, make sure the compute pool DASH_GPU3 is in IDLE or ACTIVE state.</p>
+</aside>
+<p>To create the service, run the following commands in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">create service llm_service
+IN COMPUTE POOL DASH_GPU3
+FROM @dash_stage
+SPECIFICATION_FILE = &#39;llm-spcs.yaml&#39;
+MIN_INSTANCES = 1
+MAX_INSTANCES = 1
+EXTERNAL_ACCESS_INTEGRATIONS = (ALLOW_ALL_ACCESS_INTEGRATION);
+</code></pre>
+<p>To check the status of the service, run the following in a SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">select 
+  v.value:containerName::varchar container_name
+  ,v.value:status::varchar status  
+  ,v.value:message::varchar message
+from (select parse_json(system$get_service_status(&#39;llm_service&#39;))) t, 
+lateral flatten(input =&gt; t.$1) v;
+</code></pre>
+<aside class="special"><p> NOTE: Before proceeding, make sure the service is in READY state.</p>
+</aside>
+<h2 is-upgraded>Access LLM Service</h2>
+<p>Since we specified that the <code>llm-spcs</code> endpoint running on port <code>8888</code> would be <code>public: true</code> in our spec YAML, Snowflake will generate a URL that can be used to access the service via a web browser.</p>
+<p>Once the service is in a <code>READY</code> state, execute the following command in a SQL worksheet to get the endpoint URL:</p>
+<pre><code language="language-sql" class="language-sql">show endpoints in service llm_service;
+</code></pre>
+<p>Copy the endpoint URL, and paste it in your browser. At this point, you will be asked to login. Use your Snowflake username and password, after which you should see JupyterLab running, all inside of Snowflake in SPCS!</p>
+<aside class="special"><p> NOTE: To access the service, the user logging in must have <code>DASH_SPCS</code> role AND their default role cannot be <code>ACCOUNTADMIN</code>, <code>SECURITYADMIN</code>, or <code>ORGADMIN</code>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy Llama 2 in SPCS" duration="40">
+        <aside class="warning"><p> NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.</p>
+</aside>
+<p>Recall that in our <code>Dockerfile</code> we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab as shown below.</p>
+<p class="image-container"><img alt="JupyterLab" src="img/86f03f0a6d19c974.png"></p>
+<p>Here&#39;s a quick overview of the three notebooks.</p>
+<ol type="1">
+<li><strong>llm-notebook-with-fine-tune.ipynb</strong>: This is the main notebook you will run through to complete this QuickStart guide.</li>
+<li><strong>llm-notebook-with-fine-tune-all-rows.ipynb</strong>: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that–while all the code is exactly the same as in <em>llm-notebook-with-fine-tune.ipynb</em> the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in <em>llm-notebook-with-fine-tune.ipynb</em> the same model is fine-tuned using only 100 rows. And the improved model is evident in the inference results – refer to the <code>output</code> vs <code>predicted</code> dataframe columns of the evaluation dataset in both notebooks.</li>
+</ol>
+<aside class="special"><p> NOTE: Fine-tuning the model on a larger dataset compared to 100 rows in our case will take much longer so just be mindful of that.</p>
+</aside>
+<p>Let&#39;s get started!</p>
+<p>In JupyterLab, double-click on <strong>llm-notebook-with-fine-tune.ipynb</strong> and follow along the instructions to run each cell starting at the very top by first importing the libraries.</p>
+<h2 is-upgraded>Set Variables</h2>
+<p>Under <code>Set Variables</code> cell edit SNOWFLAKE_WAREHOUSE, SNOWFLAKE_COMPUTE_POOL if they&#39;re different from the default values and, more importantly, set HUGGING_FACE_TOKEN to your Hugging Face token.</p>
+<h2 is-upgraded>Establish Secure Connection</h2>
+<p>Under <code>Establish Secure Connection</code> cell pay special attention to the contents of the <code>get_login_token()</code> function:</p>
+<pre><code language="language-python" class="language-python">def get_login_token():
+  with open(&#39;/snowflake/session/token&#39;, &#39;r&#39;) as f:
+    return f.read()
+</code></pre>
+<p>When starting a service or a job, Snowflake provides credentials to the running containers in the form of an oauth token located at <code>/snowflake/session/token</code>, enabling your container code to use Snowflake connectors for <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/additional-considerations-services-jobs#connecting-to-snowflake-from-inside-a-container" target="_blank">connecting to Snowflake</a> and executing SQL–similar to any other code on your computer connecting to Snowflake.</p>
+<p>In our notebook, we will use this oauth token to configure the Snowpark Python Client to connect to our Snowflake account as outlined in <code>get_connection_params()</code> function:</p>
+<pre><code language="language-python" class="language-python">return {
+  &#34;account&#34;: os.getenv(&#34;SNOWFLAKE_ACCOUNT&#34;),
+  &#34;host&#34;: os.getenv(&#34;SNOWFLAKE_HOST&#34;),
+  &#34;warehouse&#34;: SNOWFLAKE_WAREHOUSE,
+  &#34;database&#34;: SNOWFLAKE_DATABASE,
+  &#34;schema&#34;: SNOWFLAKE_SCHEMA,
+  &#34;authenticator&#34;: &#34;oauth&#34;,
+  &#34;token&#34;: get_login_token()
+}
+</code></pre>
+<h2 is-upgraded>Reference Llama 2 from Hugging Face</h2>
+<p>Run this cell to reference the Llama 2 base model directly from Hugging Face. Notice that <code>model_id_or_path</code> is set to <code>meta-llama/Llama-2-7b-chat-hf</code></p>
+<h2 is-upgraded>Register, Log and Deploy Llama 2 into Snowpark Container Services</h2>
+<p>Run cells under this section to register, log and deploy the Llama 2 base model into SPCS. If all goes well, you should see cell output similar to the following showing the ModelReference object:</p>
+<pre><code language="language-bash" class="language-bash">&lt;snowflake.ml.registry.model_registry.ModelReference at 0x7f0c02d33970&gt;
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>Deploying model for the first time can take ~25-30mins</li>
+<li>If for any reason you need to delete the existing <code>BaseV1.1</code> model and start over, run the following cells:</li>
+</ul>
+<pre><code language="language-python" class="language-python">registry.list_models().to_pandas() 
+</code></pre>
+<pre><code language="language-python" class="language-python">registry.delete_model(model_name=MODEL_NAME model_version=&#39;BaseV1.1&#39;,delete_artifact=True)
+</code></pre>
+<h2 is-upgraded>Load Data from JSON into Snowflake</h2>
+<p>Once the model is deployed into SPCS, run this cell to load the transcripts data from <code>transcripts_base.json</code> into a (new) Snowflake table named <code>transcripts</code> that will be automatically created in your account.</p>
+<p>Here&#39;s what the transcripts looks like:</p>
+<p class="image-container"><img alt="Sample Transcripts" src="img/c8351facbfa5102b.png"></p>
+<h2 is-upgraded>Simple Prompt Engineering</h2>
+<p>Before we can use the deployed Llama 2 base model for inference, run this cell to create a new column named <code>input</code> (in <code>df_inputs</code> dataframe) with instruction to summarize the transcripts in less that 200 words. Like so <code>Summarize this transcript in less than 200 words:</code>.</p>
+<p>Here&#39;s what the transcripts with instructions look like:</p>
+<p class="image-container"><img alt="Sample Updated Transcripts" src="img/d48c5cdd9c73dbdd.png"></p>
+<h2 is-upgraded>Inference using Simple Prompt</h2>
+<p>Here we&#39;re calling <code>predict()</code> method on the deployed Llama 2 base model which will use the instruction in <code>input</code> column created in previous cell to give us the transcript summary in a column named <code>generated_text</code>.</p>
+<p>Here&#39;s what the transcript summaries look like:</p>
+<p class="image-container"><img alt="Transcript Summaries" src="img/a0ae7344d38c570.png"></p>
+<p>Notice that in this case Llama 2 base model performs really well and generates &lt;= 200 words summary for each of the call transcripts as per our instructions.</p>
+<h2 is-upgraded>Complex Prompt Engineering</h2>
+<p>Now let&#39;s try a bit more complex prompt that includes a concrete instruction to and see how the base model performs. Like so <code>Extract location and list of toys in JSON format:</code>.</p>
+<p>Notice that in this case the model does not perform as well and the output is not consistent across all transcripts. It also includes additional information in plain-text format which makes displaying and processing it as a JSON object tricky.</p>
+<p class="image-container"><img alt="Eval Inference 100 Rows" src="img/e49edcac596a9fe0.png"></p>
+<p>This is where fine-tuning the model can help. Let&#39;s see how we can accomplish that in the following sections.</p>
+<h2 is-upgraded>Cleanup Resources</h2>
+<p>Before we move on to the next section, run this cell to delete the base model service (identified as <code>SERVICE_XXXXXXXXXXXXX</code>) because we won&#39;t be using it anymore. This is to free up resources on our compute pool because we have it configured to max two nodes which we will need during fine-tuning of the Llama 2 model in the next section.</p>
+<p>Once the base model service is deleted, the only service running on your compute pool should be <code>LLM_SERVICE</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Fine-tune Llama 2 in SPCS" duration="40">
+        <p>In this section, we will continue working through the same <strong>llm-notebook-with-fine-tune.ipynb</strong> notebook where we left off in the previous <strong>Deploy Llama 2 in SPCS</strong> section.</p>
+<p>Fine-tuning is one form of model training. We start training from a pre-trained model and adjust a set of model parameters to better solve for a concrete task based on task specific data. In this guide, we are going to fine-tune <strong>7B Llama 2</strong> model using <strong>LoRA (Low-Rank Adaptation)</strong>–which is a parameter efficient way of fine-tuning LLM.</p>
+<p>Follow along the instructions to run each cell starting with importing the libraries.</p>
+<h2 is-upgraded>Set Hugging Face Token</h2>
+<p>In this cell we&#39;re using <code>huggingface-cli</code> tool to set the Hugging Face token that will be used by some of the fine-tuning libraries.</p>
+<h2 is-upgraded>Load Pre-trained Llama 2 Model From Hugging Face</h2>
+<p>In this cell we&#39;re loading the tokenizer and pre-trained Llama 2 Model From Hugging Face.</p>
+<h2 is-upgraded>Load and Split Dataset</h2>
+<p>Next we will load data (<strong><em>transcripts with instructions and expected output</em></strong>) from <code>transcripts_inst.json</code> file into a Pandas dataframe. Then we will split the dataset into train, eval, and test dataframes with 100 records each.</p>
+<p>Here&#39;s what the data looks like:</p>
+<p class="image-container"><img alt="Training Transcripts" src="img/cd62242671b2f465.png"></p>
+<h2 is-upgraded>Apply Prompt to Datasets</h2>
+<p>In order for the model to give us very specific output, we need to provide concrete instruction as well as example of expected output as <code>prompt</code> so the model is fine-tuned based on that information.</p>
+<h2 is-upgraded>Tokenize Datasets</h2>
+<p>Next we will tokenize the datasets.</p>
+<h2 is-upgraded>Fine-tune Configuration</h2>
+<p>Instead of adjusting all the parameters, LoRA allows us to adjust only a percent of model weights–which can save compute and memory resources dramatically. For this guide, we will fine-tune the model using LoRA on a single A10 GPU. This will demostrate how good the inference can be on fine-tuned models even with limited compute.</p>
+<p>After running the first cell under this section, you will see the following output which makes it clear that only ~4million out of ~6.7billion params were adjusted.</p>
+<pre><code language="language-bash" class="language-bash">trainable params: 4,194,304 || all params: 6,742,609,920 || trainable%: 0.06220594176090199
+</code></pre>
+<p>In the following cells in this section, note that we&#39;re passing <code>train_dataset</code> and <code>eval_dataset</code> that are used to generate loss calculation during fine-tuning process. And we&#39;ve set <code>output_dir</code> to <code>output_weights_dir</code> where the fine-tuned weights will be stored after fine-tuning job completes.</p>
+<p>To achieve good performance for the task, you will need at least 1 <code>num_epochs</code>.</p>
+<h2 is-upgraded>Log and Deploy Fine-tuned Llama 2</h2>
+<p>In the next few cells, we will log and deploy fine-tuned Llama 2. Note that you might need to delete existing model if you&#39;re rerunning or starting over. If that&#39;s the case, run the following cells:</p>
+<pre><code language="language-python" class="language-python">registry.delete_model(model_name=MODEL_NAME,model_version=&#39;BaseV1.1&#39;,delete_artifact=True)
+</code></pre>
+<h3 is-upgraded>Reference Llama 2 from Fine-tuning</h3>
+<p>Here we are referencing our fine-tuned weights and using the Hugging Face token to merge them with base Llama 2 model.</p>
+<h3 is-upgraded>Log and Deploy fine-tuned Llama 2 model using Model Registry</h3>
+<aside class="special"><p> NOTE: Logging and deploying fine-tuned model with our setup may take ~15mins.</p>
+</aside>
+<p>If all goes well, you should see cell output similar to the following:</p>
+<pre><code language="language-bash" class="language-bash">{&#39;name&#39;: &#39;DASH_DB.DASH_SCHEMA.FINETUNED_LLAMA2&#39;,
+ &#39;platform&#39;: &lt;TargetPlatform.SNOWPARK_CONTAINER_SERVICES: &#39;SNOWPARK_CONTAINER_SERVICES&#39;&gt;,
+ &#39;target_method&#39;: &#39;infer&#39;,
+ &#39;signature&#39;: ModelSignature(
+                     inputs=[
+                         FeatureSpec(dtype=DataType.STRING, name=&#39;input&#39;)
+                     ],
+                     outputs=[
+                         FeatureSpec(dtype=DataType.STRING, name=&#39;generated_text&#39;)
+                     ]
+                 ),
+ &#39;options&#39;: {&#39;compute_pool&#39;: &#39;DASH_GPU3&#39;, &#39;num_gpus&#39;: 1},
+ &#39;details&#39;: {&#39;service_info&#39;: {&#39;name&#39;: &#39;SERVICE_A9A0D450AE8811EEA8877667FC46AFBB&#39;,
+   &#39;database_name&#39;: &#39;DASH_DB&#39;,
+   &#39;schema_name&#39;: &#39;DASH_SCHEMA&#39;,
+   &#39;owner&#39;: &#39;DASH_SPCS&#39;,
+   &#39;compute_pool&#39;: &#39;DASH_GPU3&#39;,
+   &#39;spec&#39;:
+   ...
+   ...
+   ...
+</code></pre>
+<h2 is-upgraded>Inference on Eval Dataset using fine-tuned Llama 2</h2>
+<p>Now that the model is fine-tuned and deployed in SPCS, we&#39;re ready to use it for inference on the evaluation dataset.</p>
+<p>Here&#39;s what the evaluation dataset looks like:</p>
+<p class="image-container"><img alt="Eval Transcripts" src="img/8bc2375e6b604b03.png"></p>
+<p>For inference using the fine-tuned Llama 2 model, we&#39;re calling <code>predict()</code> method passing in the <code>eval_df</code> dataframe.</p>
+<p>Here&#39;s what the inference output looks like:</p>
+<p class="image-container"><img alt="Eval Inference" src="img/9aff8554bbf98672.png"></p>
+<h2 is-upgraded>Model Performance</h2>
+<p>As noted earlier, in most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. In our case, the improved model is evident in the inference results seen in <strong>llm-notebook-with-fine-tune-pre-run-all-rows.ipynb</strong> notebook where the model was fine-tuned on the entire dataset compared to only 100 rows.</p>
+<aside class="special"><p> NOTE: Fine-tuning the model on a larger dataset compared to 100 rows will take much longer so just be mindful of that.</p>
+</aside>
+<p>Here&#39;s what the inference output looks like when the model is fine-tuned on the entire dataset.</p>
+<p class="image-container"><img alt="Eval Inference All Rows" src="img/63be3cd02900fc0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="5">
+        <p>To cleanup resources and remove all of the objects you created during this QuickStart, run the following commands in a SQL worksheet. This will ensure that you don&#39;t incur any unnecessary costs specifically associated with this QuickStart guide.</p>
+<aside class="special"><p> NOTE: Snowpark Container Services bills credits/second based on the compute pool&#39;s uptime, similar to Virtual Warehouse billing.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">USE ROLE ROLE DASH_SPCS;
+DROP SERVICE DASH_DB.DASH_SCHEMA.llm_service;
+
+USE ROLE ACCOUNTADMIN;
+ALTER COMPUTE POOL DASH_GPU3 STOP ALL;
+ALTER COMPUTE POOL DASH_GPU3 SUSPEND;
+DROP COMPUTE POOL DASH_GPU3;
+DROP SCHEMA DASH_SCHEMA;
+DROP DATABASE DASH_DB;
+DROP WAREHOUSE DASH_WH_S;
+DROP ROLE DASH_SPCS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <p>Congratulations, you have successfully completed this QuickStart! By completing this guide, you were able to create and manage long-running service using Snowflake&#39;s managed Snowpark Container Services to deploy and fine-tune open source Llama 2 LLM from Hugging Face.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>The working mechanics of Snowpark Container Services</li>
+<li>How to build and push a containerized Docker image to SPCS along with code and data files</li>
+<li>How to deploy and fine-tune open source Llama 2 LLM from Hugging Face in SPCS</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-deploy-and-finetune-os-llama2-snowpark-container-services" target="_blank">QuickStart GitHub Repo</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#0" target="_blank">QuickStart Guide: Intro to Snowpark Container Services</a></li>
+<li><a href="https://www.snowflake.com/blog/snowpark-container-services-deploy-genai-full-stack-apps/" target="_blank">Blog: Snowflake Announces Snowpark Container Services</a></li>
+<li><a href="https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741" target="_blank">Blog: Snowpark Container Services - A Tech Primer</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Docs: Snowpark Container Services</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/commands-snowpark-container-services" target="_blank">Docs: Snowpark Container Services SQL Commands</a></li>
+<li><a href="https://www.youtube.com/watch?v=DelaJBm0UgI" target="_blank">Video: Building Advanced ML with Snowpark Container Services - Summit 2023</a></li>
+<li><a href="https://www.youtube.com/watch?v=u98YTgCelYg" target="_blank">Video: Snowpark Container Services with NVIDIA</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

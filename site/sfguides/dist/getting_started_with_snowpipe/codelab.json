@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_snowpipe",
+  "duration": 37,
+  "title": "Getting Started with Snowpipe",
+  "summary": "This guide will help you get started with Snowpipe.",
+  "source": "getting_started_with_snowpipe/getting_started_with_snowpipe.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started"
+  ],
+  "tags": [
+    "auto-ingest",
+    "aws",
+    "dataengineering",
+    "gettingstarted",
+    "snowpipe",
+    "sql",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpipe"
+}

@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "vhol_data_vault",
+  "duration": 69,
+  "title": "Building a Real-Time Data Vault in Snowflake",
+  "summary": "Building a Real-time Data Vault in Snowflake",
+  "source": "vhol_data_vault/vhol_data_vault.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "architecture-patterns",
+    "solution-examples",
+    "marketing"
+  ],
+  "tags": [
+    "dataenineering",
+    "datavault",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "vhol_data_vault"
+}

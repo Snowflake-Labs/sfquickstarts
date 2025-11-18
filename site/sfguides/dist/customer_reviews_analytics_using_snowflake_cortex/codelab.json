@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "customer_reviews_analytics_using_snowflake_cortex",
+  "duration": 28,
+  "title": "Customer Reviews Analytics using Snowflake Cortex",
+  "summary": "This guide demonstrates how we can leverage Snowflake Cortex to enable customer review analytics.",
+  "source": "customer_reviews_analytics_using_snowflake_cortex/customer_reviews_analytics_using_snowflake_cortex.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "gen-ai",
+    "data-science-\u0026-ai",
+    "tasty-bytes",
+    "cortex"
+  ],
+  "tags": [
+    "cortex",
+    "datascience",
+    "generativeai",
+    "llms",
+    "notebook",
+    "tastybytes",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "customer_reviews_analytics_using_snowflake_cortex"
+}

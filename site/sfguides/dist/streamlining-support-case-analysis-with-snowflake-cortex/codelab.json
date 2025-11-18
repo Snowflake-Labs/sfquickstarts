@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "streamlining-support-case-analysis-with-snowflake-cortex",
+  "duration": 6,
+  "title": "Streamlining Support Case Analysis with Snowflake Cortex",
+  "summary": "A streamlined approach using advanced data processing and AI-driven summarization to help analyze support tickets leading to faster resolution times and better insights into common customer issues. By integrating Snowflake Cortex AI features, product managers and support teams can automate the analysis and summarization of support tickets seamlessly.",
+  "source": "streamlining-support-case-analysis-with-snowflake-cortex/streamlining-support-case-analysis-with-snowflake-cortex.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "cortex",
+    "data-science-\u0026-ai",
+    "streamlit",
+    "app-development"
+  ],
+  "tags": [
+    "appdevelopment",
+    "cortex",
+    "datascience",
+    "datascience\u0026ai",
+    "gettingstarted",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "streamlining-support-case-analysis-with-snowflake-cortex"
+}

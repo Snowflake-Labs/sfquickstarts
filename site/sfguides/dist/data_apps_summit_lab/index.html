@@ -1,0 +1,400 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Data Application with Snowflake Marketplace, Snowflake Notebooks, and Streamlit in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_apps_summit_lab"
+                  title="Build a Data Application with Snowflake Marketplace, Snowflake Notebooks, and Streamlit in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>In this hands-on lab, you will build a weather prediction data application entirely within Snowflake. You&#39;ll leverage Weather &amp; Environment data from Snowflake Marketplace, train a simple ML model using sklearn within Snowflake Notebooks, and create an interactive Streamlit application, all without leaving Snowflake.</p>
+<p>You will process NOAA weather data with SQL, Snowpark, and develop a simple ML model to predict temperatures. You&#39;ll also create a Python User Defined Function (UDF) in Snowflake, then visualize historical weather data and predictions using Streamlit in Snowflake.</p>
+<h2 is-upgraded>Key Features &amp; Technology</h2>
+<ul>
+<li>Snowflake Marketplace</li>
+<li>Snowflake Notebooks</li>
+<li>Snowpark for Python</li>
+<li>User-Defined Functions (UDFs)</li>
+<li>Streamlit in Snowflake</li>
+<li>NOAA Weather Data</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><strong>ACCOUNTADMIN</strong> role access in Snowflake or a Snowflake trial account: <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">https://signup.snowflake.com/</a></li>
+<li>You&#39;ll need the companion repo for this lab: <a href="https://github.com/Snowflake-Labs/sfguide-data-apps-summit-lab/" target="_blank">sfguide-data-apps-summit-lab</a></li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+<li>Familiarity with Python (all code is provided)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to consume weather datasets from Snowflake Marketplace</li>
+<li>How to use Snowflake Notebooks for data exploration and ML model development</li>
+<li>How to perform queries on weather data using Snowpark DataFrames</li>
+<li>How to create a Snowpark for Python User-Defined Function (UDF) in Snowflake</li>
+<li>How to create a weather prediction application with Streamlit in Snowflake</li>
+<li>How to work with time series weather data for machine learning</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake Notebook that explores weather data and trains a Linear Regression model</li>
+<li>A Snowflake User-Defined Function (UDF) based on a trained weather prediction model</li>
+<li>A Streamlit application in Snowflake for weather visualization and predictions</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open a Snowflake Trial Account" duration="5">
+        <p>To complete this lab, you&#39;ll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:</p>
+<ol type="1">
+<li>Navigate to <a href="https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake" target="_blank">https://signup.snowflake.com/</a></li>
+<li>Start the account creation by completing the first page of the form on the page.</li>
+<li>On the next section of the form,  set the Snowflake edition to &#34;Enterprise (Most popular&#34;).</li>
+<li>Select &#34;AWS – Amazon Web Services&#34; as the cloud provider.</li>
+<li>Select &#34;US West (Oregon)&#34; as the region.</li>
+<li>Complete the rest of the form and click &#34;Get started&#34;.</li>
+</ol>
+<p class="image-container"><img alt="trial" src="img/49d34d39ae54b676.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data from Snowflake Marketplace" duration="10">
+        <p>Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes.</p>
+<p>Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.</p>
+<p>Because of this, we don&#39;t actually need to copy any data to our Snowflake account with any logic. Instead, we can directly access the weather data shared by a trusted provider in Snowflake Marketplace. Let&#39;s begin.</p>
+<ol type="1">
+<li>Log into your Snowflake account.</li>
+<li>Click on &#34;Data Products&#34;.</li>
+<li>Click on &#34;Marketplace&#34;.</li>
+<li>In the search bar, search for &#34;snowflake weather&#34;.</li>
+<li>The first result should be &#34;Weather &amp; Environment&#34; by the &#34;Snowflake Public Data Products&#34; provider. Click on the listing.</li>
+<li>The dataset is free. On the right, click &#34;Get&#34;.</li>
+<li>In the ensuing modal, click &#34;Get&#34; once more. Do <strong>NOT</strong> rename the dataset.</li>
+</ol>
+<p>This is a live dataset! No need to write ingestion logic to bring the data into your account. The data is maintained and kept fresh by the provider.</p>
+<p class="image-container"><img alt="data" src="img/25d7ba3d950bc01b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load the Snowflake Notebook" duration="10">
+        <p>Let&#39;s prepare our Snowflake environment so that we can begin exploring the weather data. We&#39;ll explore the data in a Snowflake Notebook.</p>
+<p>Snowflake Notebooks offer an interactive, cell-based programming environment for Python and SQL. With a Snowflake Notebook, you can perform exploratory data analysis, experiment with feature engineering for machine learning, and perform other data science tasks within Snowflake.</p>
+<p>Let&#39;s begin.</p>
+<ol type="1">
+<li>Create a new SQL worksheet.</li>
+<li>We&#39;ll need to create a database and schema for the notebook we&#39;ll run. In the worksheet, paste and run the following:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+USE WAREHOUSE compute_wh;
+
+CREATE OR REPLACE DATABASE weather_lab;
+CREATE OR REPLACE SCHEMA weather_schema;
+
+USE DATABASE weather_lab;
+CREATE OR REPLACE STAGE weather_schema.udf_stage;
+</code></pre>
+<p>The last line of SQL creates a stage that will be used when we deploy our user-defined function. We&#39;ll go into more detail on that in a later step.</p>
+<ol type="1" start="3">
+<li>Next, <a href="https://github.com/Snowflake-Labs/sfguide-data-apps-summit-lab/blob/main/EXPLORE_WEATHER_ENVIRONMENT.ipynb" target="_blank">download the notebook from the companion repo for this guide</a>. On the GitHub page, click on the &#34;Download raw file&#34; button at the top right.</li>
+<li>Next, navigate back to Snowflake. Click on &#34;Projects&#34;, then click on &#34;Notebooks&#34;.</li>
+<li>Create a new Notebook using the button at the top right. Click the drop-down menu, and select &#34;Import .ipynb file&#34;. Select the notebook file that you downloaded in the previous step.</li>
+<li>In the ensuing modal, name the notebook &#34;WEATHER_ENVIRONMENT_APP&#34;. Set the location to the <code>weather_lab</code> database and <code>weather_schema</code> schema.</li>
+<li>Select <strong>COMPUTE_WH</strong> as the query warehouse.</li>
+<li>Leave everything else as-is and click &#34;Create&#34;. The notebook session will be created for you with the notebook loaded and ready to run.</li>
+</ol>
+<p class="image-container"><img alt="notebook" src="img/85af3ca6a4dc0696.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explore data with SQL and Snowpark for Python" duration="15">
+        <p>The notebook contains all of the code necessary to complete the rest of the lab. In this step, we&#39;ll explore the weather data using SQL and Snowpark for Python.</p>
+<p>Recall that the Weather &amp; Environment dataset serves as a central source of global weather, energy, and environmental metrics. A single, unified schema joins together data across numerous sources that track global environmental factors.</p>
+<p>It covers topics like:</p>
+<ul>
+<li>Daily weather events (e.g. temperature, precipitation) across 180 countries</li>
+<li>Energy sales, generation, prices, and consumption in the US</li>
+<li>FEMA disaster declarations by county</li>
+<li>Greenhouse gas emissions by gas type, country, source, and sector</li>
+<li>Global temperature change</li>
+</ul>
+<p>...and much more.</p>
+<p>We&#39;ll use this data to build an application that lets us predict weather for the 90210 zip code (Beverly Hills) in California. We&#39;ll specifically explore and use the <strong>WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES</strong> and <strong>WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX</strong> datasets.</p>
+<p>Let&#39;s begin.</p>
+<ol type="1">
+<li>Let&#39;s make sure our notebook has the correct packages that our code will use. Click the &#34;Packages&#34; drop-down at the top of the notebook and type in &#34;snowflake&#34;. Click on the relevant result. This will instantly install this package into the notebook environment. That was easy!</li>
+<li>Let&#39;s do it again, only this time, type in &#34;scikit-learn&#34;. Click on the relevant result. Your notebook should have the following installed:</li>
+</ol>
+<p class="image-container"><img alt="packages" src="img/323e919b3d7aadf6.png"></p>
+<ol type="1" start="3">
+<li>Now run the first cell that sets our context:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+USE WAREHOUSE compute_wh;
+USE DATABASE weather_lab;
+USE SCHEMA weather_schema;
+</code></pre>
+<ol type="1" start="2">
+<li>Now let&#39;s get sense of the data in this dataset. Run the next SQL cell that contains this code:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Explore what weather variables are available
+SELECT DISTINCT variable_name
+FROM WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES
+LIMIT 20;
+</code></pre>
+<ol type="1" start="3">
+<li>We are interested in the NOAA weather data, so let&#39;s explore temperature data. Run the next SQL cell that contains the code below. It&#39;ll return the average temperature by state, in Celsius.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Average temperature by state, in Celsius
+SELECT 
+    idx.state_name,
+    AVG(ts.value) as avg_temperature
+FROM WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES ts
+JOIN WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX idx 
+    ON ts.noaa_weather_station_id = idx.noaa_weather_station_id
+WHERE ts.variable_name = &#39;Average Temperature&#39;
+    AND ts.date &gt;= &#39;2020-01-01&#39;
+    AND idx.country_geo_id = &#39;country/USA&#39;
+GROUP BY idx.state_name
+ORDER BY avg_temperature DESC;
+</code></pre>
+<ol type="1" start="4">
+<li>Let&#39;s drill down a little more. Since we&#39;re going to be predicting weather for a zip code in California, let&#39;s take a look at the average temperature in California zip codes where there is a weather station present. Run the next SQL cell that contains the following code:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Sample temperature data for zip codes for weather stations in California
+SELECT 
+    ts.date,
+    ts.value as temperature,
+    idx.noaa_weather_station_name,
+    idx.zip_name,
+    idx.state_name
+FROM WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES ts
+JOIN WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX idx 
+    ON ts.noaa_weather_station_id = idx.noaa_weather_station_id
+WHERE ts.variable_name = &#39;Average Temperature&#39;
+    AND idx.state_name = &#39;California&#39;
+    AND ts.date &gt;= &#39;2023-01-01&#39;
+    AND idx.zip_name IS NOT NULL
+ORDER BY ts.date DESC
+LIMIT 20;
+</code></pre>
+<ol type="1" start="5">
+<li>OK, great! We&#39;ve become a little more familiar with the data by exploring it with SQL. Now let&#39;s perform an equivalent exploratory query, but this time in Python. We&#39;ll use Snowpark for Python to do this. Since we&#39;re going to be training an ML model in Python, using the scikit-learn Python package, it&#39;s important to become familiar with how to use the Snowpark DataFrame API to build the data frames we&#39;ll use to train the model.</li>
+<li>Run the next cell containing the Python code below. The code below is the Snowpark for Python equivalent of the prior SQL query. It uses <code>session.table()</code> to create a Snowpark DataFrame that we can easily manipulate. Don&#39;t worry about the other package imports at the top, we&#39;ll use them later on in the notebook.</li>
+</ol>
+<pre><code language="language-py" class="language-py">from snowflake.snowpark import Session
+from snowflake.snowpark.types import IntegerType, FloatType, StringType
+from snowflake.snowpark.functions import avg, sum, col, udf, call_udf, call_builtin, year, month, dayofyear
+import pandas as pd
+from datetime import date
+import numpy as np
+
+# scikit-learn for training ML models, used later in notebook
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+session = Session.builder.getOrCreate()
+
+# Snowpark DataFrame equivalent to previous SQL query
+ts = session.table(&#34;WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES&#34;)
+idx = session.table(&#34;WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX&#34;)
+
+sample_weather_df = (
+    ts.join(idx, ts.col(&#34;NOAA_WEATHER_STATION_ID&#34;) == idx.col(&#34;NOAA_WEATHER_STATION_ID&#34;))
+    .filter(ts.col(&#39;VARIABLE_NAME&#39;) == &#39;Average Temperature&#39;)
+    .filter(idx.col(&#39;STATE_NAME&#39;) == &#39;California&#39;)
+    .filter(ts.col(&#39;DATE&#39;) &gt;= &#39;2023-01-01&#39;)
+    .filter(idx.col(&#39;ZIP_NAME&#39;).isNotNull())
+    .select(
+        ts.col(&#39;DATE&#39;),
+        ts.col(&#39;VALUE&#39;).alias(&#39;TEMPERATURE&#39;),
+        idx.col(&#39;NOAA_WEATHER_STATION_NAME&#39;),
+        idx.col(&#39;ZIP_NAME&#39;),
+        idx.col(&#39;STATE_NAME&#39;)
+    )
+    .orderBy(ts.col(&#39;DATE&#39;).desc())
+    .limit(100)
+)
+
+sample_weather_df.show(20)
+</code></pre>
+<p class="image-container"><img alt="notebook" src="img/a842cd20916810d9.png"></p>
+<p>Great job! In just a few simple queries, in both SQL and Python, you were able to explore the dataset and get a sense of the type of data it contains.</p>
+<p>In the next steps, we&#39;ll dive deeper into the dataset, and use several more columns in the data to get ready to train our ML model.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create features for ML training" duration="15">
+        <p>To train our ML model, we&#39;ll need to prepare the data that will be used to train the model. In this step, we&#39;ll perform the data preparation by transforming the raw weather measurements into a clean, structured dataset suitable for machine learning.</p>
+<p>We&#39;ll take the daily temperature readings from thousands of weather stations and consolidate them into consistent monthly averages by location. All of what we&#39;ll do in this step is also known as feature engineering.</p>
+<ol type="1">
+<li>Run the next Python cell in the notebook that starts with <code># Create Snowpark DataFrame for temperature data</code>. It could take around 30 seconds to execute. Once done, you should see output similar to the following:</li>
+</ol>
+<p class="image-container"><img alt="feature" src="img/c99e995ae655372.png"></p>
+<p>Here&#39;s what the code does:</p>
+<ul>
+<li>Joins measurement data with location metadata to add geographic context</li>
+<li>Filters for relevant records (US temperatures only, removing nulls)</li>
+<li>Extracts the time components (year/month) to use as predictive features</li>
+<li>Converts daily readings into monthly averages that reduce variability</li>
+<li>Scopes data to  California to create location-specific training datasets</li>
+</ul>
+<p>All of this is setting up the foundation that will feed into the linear regression models we&#39;ll train in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Train Linear Regression Model" duration="15">
+        <p>In this step, we&#39;ll train our ML model. We&#39;re specifically going to train a linear regression model to predict weather for the 90210 (Beverly Hills) zip code.</p>
+<ol type="1">
+<li>Run the next Python cell in the notebook that starts with <code># Train model for 90210</code>. It could take around 30 seconds to execute. Once done, you should see output similar to the following:</li>
+</ol>
+<p class="image-container"><img alt="model" src="img/b47f2b6bbffb62a7.png"></p>
+<p>Here&#39;s what the code does:</p>
+<ul>
+<li>Uses 25 years of historical temperature data (2000-2024) specifically for Beverly Hills from the NOAA weather database.</li>
+<li>Calculates geographic features including the zip code&#39;s latitude, longitude, elevation, and distance from the Pacific coast.</li>
+<li>Trains a Linear Regression model with features: month, latitude, longitude, elevation, coast distance, and month encodings. The model predicts monthly average temperatures based on these factors.</li>
+</ul>
+<p>The result is a weather prediction model for the Beverly Hills area in California. Rather than using a generic, California-wide model, the features we use in the training helps the model account for the area&#39;s geographic characteristics.</p>
+<p>In the next step, we&#39;ll deploy the model as a User Defined Function (UDF) for  making temperature predictions in our application.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and Register the UDF" duration="5">
+        <p>Let&#39;s now deploy this model as a user-defined function (UDF) in Snowflake. By deploying it as a UDF, we&#39;re able to quickly call it throughout our Snowflake environment, whether in a SQL worksheet, or in an application. We&#39;re going to call this UDF from our application&#39;s front-end, so that we can make weather predictions for specific months.</p>
+<ol type="1">
+<li>Run the next Python cell in the notebook that starts with <code>def predict_temperature</code>. It could take around 15 seconds to execute. Once done, you should see output similar to the following:</li>
+</ol>
+<p class="image-container"><img alt="udf" src="img/c91011fdc246e1f2.png"></p>
+<p>Here&#39;s what the code does:</p>
+<ul>
+<li>Creates a UDF called <code>predict_temperature</code> that accepts a zip code and month to make a prediction</li>
+<li>The UDF makes a prediction based on the arguments passed in, using the linear regression model trained in earlier steps</li>
+<li>We register the UDF in a stage, so that we can use it throughout our Snowflake environment</li>
+<li>Quickly test the UDF with a couple of sample predictions (i.e., <code>test_cases</code>)</li>
+</ul>
+<p>With our model now deployed as a UDF, we can use easily use it within our Streamlit in Snowflake application.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating the Streamlit Application in Snowflake" duration="10">
+        <p>Now that we&#39;ve trained our ML model and created a UDF that allows us to easily use it, we&#39;ll build an interactive Streamlit application directly in Snowflake to make predictions about the weather in zip code 90210.</p>
+<ol type="1">
+<li>In Snowflake, click on &#34;Projects&#34;, then click on &#34;Streamlit&#34;.</li>
+<li>At the top right, create a new Streamlit app. Name the app &#34;PREDICT_WEATHER_APP&#34;. Select <code>weather_lab</code> as the database, and <code>weather_schema</code> as the schema. Leave everything else as-is and create the app.</li>
+<li>You&#39;ll notice a sample Streamlit app boot up. Click the &#34;Edit&#34; button at the top right. It&#39;ll expand the code editor, which contains the code for the sample Streamlit app. Delete all of the sample code.</li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-data-apps-summit-lab/blob/main/app.py" target="_blank">Copy the code for the Streamlit app in this file</a>. Navigate back to your Streamlit app and paste it into the code editor.</li>
+<li>Using the &#34;Packages&#34; drop down at the top of the code editor, search for &#34;plotly&#34; and install the package by clicking on the returned result.</li>
+<li>Click &#34;Run&#34; to create and run the app.</li>
+<li>The application should start up on the right-hand side. There, you can select a month to predict weather for, and then predict the weather using the &#34;Predict Average Temperature&#34; button.</li>
+<li>Select &#34;July&#34; as the month to predict weather for, then click the button to predict the weather. Clicking the button will call the UDF, which will use 90210 and &#34;July&#34; as arguments to the trained model.</li>
+<li>You should see a chart rendered, with two important pieces of information. The blue line is the historical weather per month for the year 2024. The red dot represents the prediction for the current year. The model is pretty accurate! You&#39;ll notice the weather is returned in Fahrenheit thanks to line 39 of the app code, where we do client-side conversion of units.</li>
+</ol>
+<p class="image-container"><img alt="july" src="img/9c410d20b2d76120.png"></p>
+<ol type="1" start="10">
+<li>Scroll down to reveal the predictions for the entire year for 90210, visualized with a nice chart.</li>
+</ol>
+<p class="image-container"><img alt="fullyear" src="img/b320e2123d1dcedf.png"></p>
+<p>Great job! You successfully created the application.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="5">
+        <p>Congratulations! You&#39;ve built a data application using data from Snowflake Marketplace. You used the data to train a linear regression model to predict weather in a zip code, and you created a Streamlit in Snowflake app that uses the model to make predictions for different months. Let&#39;s recap what you did.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>You built a data app that predicts weather for the 90210 zip code in California. It uses a trained linear regression model to make the predictions, and the model was trained using 20+ years of weather data for that area. You also did the feature engineering to account for other geographic variables in the area.</p>
+<ul>
+<li><strong>Snowflake Marketplace</strong></li>
+</ul>
+<p>You used the free Weather &amp; Environment data from Snowflake Marketplace, provided by Snowflake.</p>
+<ul>
+<li><strong>Snowflake Notebooks</strong></li>
+</ul>
+<p>You explored the data within a Snowflake Notebook, using SQL and Snowpark for Python. You also trained the model within the notebook.</p>
+<ul>
+<li><strong>User-Defined Functions (UDFs)</strong></li>
+</ul>
+<p>You deployed the trained model as a UDF, so that it can be used throughout the Snowflake environment, like in our app.</p>
+<ul>
+<li><strong>Streamlit in Snowflake</strong></li>
+</ul>
+<p>You built a Streamlit in Snowflake application that uses the model to make predictions about the weather for different months for the 90210 zip code.</p>
+<p>Congratulations!</p>
+<h2 is-upgraded>Resources</h2>
+<p>For more resources, check out the following:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/notebooks" target="_blank">Snowflake Notebooks Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark for Python</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/index" target="_blank">Streamlit in Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/index" target="_blank">User Defined Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ml-functions-time-series-forecasting" target="_blank">Time Series Forecasting Guide</a></li>
+<li>Learn more at <a href="https://www.snowflake.com/en/developers/northstar/" target="_blank">Snowflake Northstar</a> for developers.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

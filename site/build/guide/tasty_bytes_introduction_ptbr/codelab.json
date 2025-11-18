@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_introduction_ptbr",
+  "duration": 10,
+  "title": "Introdução à Tasty Bytes",
+  "summary": "Este é o quickstart guide “Introdução à Tasty Bytes e base de dados“",
+  "source": "tasty_bytes_introduction_ptbr/tasty_bytes_introduction_ptbr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured"
+  ],
+  "tags": [
+    "dozeroaosnowflake",
+    "gettingstarted",
+    "introdução",
+    "ptbr",
+    "tastybytes",
+    "web",
+    "zerotosnowflake"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_introduction_ptbr"
+}

@@ -1,0 +1,297 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Bioinformatics Solubility Dashboard in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="bioinformatics-dashboard"
+                  title="Build a Bioinformatics Solubility Dashboard in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this tutorial, you&#39;ll build a complete bioinformatics project from scratch in Snowflake. You&#39;ll work with the Delaney solubility dataset to analyze molecular properties that are crucial for successful drug discovery efforts.</p>
+<p>By the end of this guide, you&#39;ll have created an interactive dashboard that visualizes important molecular properties and their relationship to solubility, providing valuable insights for pharmaceutical research.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to load and prepare bioinformatics data in Snowflake</li>
+<li>Techniques for data transformation using Pandas</li>
+<li>How to build an interactive dashboard with Streamlit</li>
+<li>Understanding of molecular solubility concepts relevant to drug discovery</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An interactive bioinformatics dashboard that visualizes molecular properties from the Delaney solubility dataset, allowing researchers to explore relationships between molecular weight, rotatable bonds, LogP values, and aromatic proportions.</p>
+<p>Here&#39;s an illustration of the overview of this bioinformatics project that you&#39;ll build:</p>
+<p class="image-container"><img alt="image" src="img/18d02e10a54fbcd4.png"></p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic familiarity with SQL and Python</li>
+<li>Understanding of fundamental data analysis concepts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <h2 is-upgraded>Prepare Your Environment</h2>
+<p>Firstly, to follow along with this quickstart, you can click on <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Bioinformatics_Solubility_Dashboard/Bioinformatics_Solubility_Dashboard.ipynb" target="_blank">Bioinformatics_Solubility_Dashboard.ipynb</a> to download the Notebook from GitHub.</p>
+<p>Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as NumPy, Pandas, Matplotlib, and more! If you need additional packages for this tutorial, click on the Packages dropdown on the top right to add them to your notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load and Explore the Data" duration="10">
+        <h2 is-upgraded>Create a database</h2>
+<p>Before we can upload data into Snowflake, we&#39;ll need to create a database. In Snowsight, you can create a database in by clicking on Projects → Worksheets in the left sidebar and on the top-right hand corner click on the &#34;+&#34; blue button to spin up a SQL worksheet.</p>
+<p>Enter the following SQL query into the worksheet and run it:</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS CHANINN_DEMO_DATA;
+</code></pre>
+<p>Note: Please replace <code>CHANINN_DEMO_DATA</code> with a database name of your choice.</p>
+<h2 is-upgraded>Upload the dataset</h2>
+<p>Download the Delaney data set as a <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Bioinformatics_Solubility_Dashboard/delaney_solubility_with_descriptors.csv" target="_blank">delaney_solubility_with_descriptors.csv </a> file.</p>
+<p>In Snowsight, click on Data → Add Data and then click on the &#34;Load data into a Table&#34; button. Drag-and-drop the CSV file or click on Browse to select the CSV file.</p>
+<p class="image-container"><img alt="image" src="img/1289499da0ca2edc.png"></p>
+<p>Scroll down, under the &#34;Select or create a database and schema&#34; section, select your database and schema which I&#39;ll use <code>CHANINN_DEMO_DATA.PUBLIC</code> and for the table name I&#39;ll use <code>SOLUBILITY</code>. Finally, click on the Next button to proceed. After a few moments, your CSV data will be loaded into Snowflake.</p>
+<p>The data table is now available at <code>CHANINN_DEMO_DATA.PUBLIC.SOLUBILITY</code>.</p>
+<h2 is-upgraded>Load the Delaney Dataset</h2>
+<p>First, we&#39;ll load the Delaney solubility dataset from Snowflake using a simple SQL query:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM CHANINN_DEMO_DATA.PUBLIC.SOLUBILITY
+</code></pre>
+<p>This query retrieves all records from the solubility table. The result is stored in a variable called <code>sql_data</code>.</p>
+<h2 is-upgraded>Convert to Pandas DataFrame</h2>
+<p>Next, we&#39;ll convert the SQL result to a Pandas DataFrame for easier manipulation and analysis:</p>
+<pre><code language="language-python" class="language-python">df = sql_data.to_pandas()
+</code></pre>
+<p>Let&#39;s examine the DataFrame:</p>
+<p class="image-container"><img alt="image" src="img/d82bf0e1ef5e5896.png"></p>
+<p>This would display the first segments of our dataset, showing columns like <code>MOLWT</code> (molecular weight), <code>NUMROTATABLEBONDS</code> (number of rotatable bonds), <code>MOLLOGP</code> (measure of lipophilicity), and <code>AROMATICPROPORTION</code> (proportion of aromatic atoms).</p>
+<h2 is-upgraded>Basic Data Analysis</h2>
+<p>We can perform some basic statistical analysis to understand our data better:</p>
+<pre><code language="language-python" class="language-python">df.describe()
+</code></pre>
+<p>This provides statistical summaries for each numerical column, including count, mean, standard deviation, minimum, and maximum values.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Preparation and Aggregation" duration="12">
+        <h2 is-upgraded>Classify Molecules by Size</h2>
+<p>For our analysis, we&#39;ll classify molecules based on their molecular weight:</p>
+<ul>
+<li>&#34;small&#34; if the molecular weight is less than 300</li>
+<li>&#34;large&#34; if the molecular weight is 300 or greater</li>
+</ul>
+<p>This classification will help us compare properties between smaller and larger molecules:</p>
+<pre><code language="language-python" class="language-python">df[&#39;MOLWT_CLASS&#39;] = pd.Series([&#39;small&#39; if x &lt; 300 else &#39;large&#39; for x in df[&#39;MOLWT&#39;]])
+</code></pre>
+<h2 is-upgraded>Aggregate Data by Molecular Weight Class</h2>
+<p>Now, let&#39;s calculate the average values of various properties for each molecular weight class:</p>
+<pre><code language="language-python" class="language-python">df_class = df.groupby(&#39;MOLWT_CLASS&#39;).mean().reset_index()
+df_class
+</code></pre>
+<p class="image-container"><img alt="image" src="img/c0434e0b0cac21da.png"></p>
+<p>This aggregation gives us a clear comparison between small and large molecules across all measured properties.</p>
+<h2 is-upgraded>Analyze the Results</h2>
+<p>The aggregated data reveals interesting patterns:</p>
+<ul>
+<li>Larger molecules typically have more rotatable bonds</li>
+<li>LogP values tend to be higher for larger molecules, indicating greater lipophilicity</li>
+<li>The aromatic proportion may vary between size classes</li>
+</ul>
+<p>These insights will form the basis of our visualization dashboard.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build the Interactive Dashboard" duration="15">
+        <h2 is-upgraded>Create a Streamlit Dashboard</h2>
+<p>Now we&#39;ll build an interactive dashboard using Streamlit to visualize our findings. Here&#39;s the complete code for our dashboard:</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+
+st.title(&#39;☘️ Solubility Dashboard&#39;)
+
+# Data Filtering
+mol_size = st.slider(&#39;Select a value&#39;, 100, 500, 300)
+df[&#39;MOLWT_CLASS&#39;] = pd.Series([&#39;small&#39; if x &lt; mol_size else &#39;large&#39; for x in df[&#39;MOLWT&#39;]])
+df_class = df.groupby(&#39;MOLWT_CLASS&#39;).mean().reset_index()
+
+st.divider()
+
+# Calculate Metrics
+molwt_large = round(df_class[&#39;MOLWT&#39;][0], 2)
+molwt_small = round(df_class[&#39;MOLWT&#39;][1], 2)
+numrotatablebonds_large = round(df_class[&#39;NUMROTATABLEBONDS&#39;][0], 2)
+numrotatablebonds_small = round(df_class[&#39;NUMROTATABLEBONDS&#39;][1], 2)
+mollogp_large = round(df_class[&#39;MOLLOGP&#39;][0], 2)
+mollogp_small = round(df_class[&#39;MOLLOGP&#39;][1], 2)
+aromaticproportion_large = round(df_class[&#39;AROMATICPROPORTION&#39;][0], 2)
+aromaticproportion_small = round(df_class[&#39;AROMATICPROPORTION&#39;][1], 2)
+
+# Data metrics and visualizations
+col = st.columns(2)
+with col[0]:
+    st.subheader(&#39;Molecular Weight&#39;)
+    st.metric(&#39;Large&#39;, molwt_large)
+    st.metric(&#39;Small&#39;, molwt_small)
+    st.bar_chart(df_class, x=&#39;MOLWT_CLASS&#39;, y=&#39;MOLWT&#39;, color=&#39;MOLWT_CLASS&#39;)
+
+    st.subheader(&#39;Number of Rotatable Bonds&#39;)
+    st.metric(&#39;Large&#39;, numrotatablebonds_large)
+    st.metric(&#39;Small&#39;, numrotatablebonds_small)
+    st.bar_chart(df_class, x=&#39;MOLWT_CLASS&#39;, y=&#39;NUMROTATABLEBONDS&#39;, color=&#39;MOLWT_CLASS&#39;)
+with col[1]:
+    st.subheader(&#39;Molecular LogP&#39;)
+    st.metric(&#39;Large&#39;, mollogp_large)
+    st.metric(&#39;Small&#39;, mollogp_small)
+    st.bar_chart(df_class, x=&#39;MOLWT_CLASS&#39;, y=&#39;MOLLOGP&#39;, color=&#39;MOLWT_CLASS&#39;)
+
+    st.subheader(&#39;Aromatic Proportion&#39;)
+    st.metric(&#39;Large&#39;, mollogp_large)
+    st.metric(&#39;Small&#39;, mollogp_small)
+    st.bar_chart(df_class, x=&#39;MOLWT_CLASS&#39;, y=&#39;AROMATICPROPORTION&#39;, color=&#39;MOLWT_CLASS&#39;)
+
+with st.expander(&#39;Show Original DataFrame&#39;):
+    st.dataframe(df)
+with st.expander(&#39;Show Aggregated DataFrame&#39;):
+    st.dataframe(df_class)
+</code></pre>
+<p>Here&#39;s the rendered dashboard:</p>
+<p class="image-container"><img alt="image" src="img/4fec5095cad01aed.png"></p>
+<h2 is-upgraded>Dashboard Components</h2>
+<p>Our dashboard includes several key components:</p>
+<ol type="1">
+<li><strong>Interactive Slider</strong>: Allows users to dynamically adjust the threshold for classifying molecules as &#34;small&#34; or &#34;large&#34;</li>
+<li><strong>Metrics Display</strong>: Shows the average values for each property by molecular weight class</li>
+<li><strong>Bar Charts</strong>: Visualizes the differences between small and large molecules for each property</li>
+<li><strong>Expandable Data Views</strong>: Provides access to the raw and aggregated data for deeper analysis</li>
+</ol>
+<h2 is-upgraded>Interpret the Dashboard</h2>
+<p>The dashboard makes it easy to observe how molecular properties change with size:</p>
+<ul>
+<li><strong>Molecular Weight</strong>: Confirms our classification is working correctly</li>
+<li><strong>Rotatable Bonds</strong>: Shows how molecular flexibility changes with size</li>
+<li><strong>LogP Values</strong>: Indicates how lipophilicity (fat solubility) varies</li>
+<li><strong>Aromatic Proportion</strong>: Reveals the relationship between size and aromaticity</li>
+</ul>
+<p>Users can adjust the molecular weight threshold to explore different classification schemes and see how that affects the property distributions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understand the Dataset" duration="0">
+        <p>Before diving into the code, let&#39;s understand what we&#39;re working with. The Delaney dataset contains information about various molecules and their properties, including:</p>
+<ul>
+<li>Molecular weight (<code>MOLWT</code>)</li>
+<li>Number of rotatable bonds (<code>NUMROTATABLEBONDS</code>)</li>
+<li>Molecular LogP (<code>MOLLOGP</code>)</li>
+<li>Aromatic proportion (<code>AROMATICPROPORTION</code>)</li>
+<li>Experimental solubility (<code>logS</code>)</li>
+</ul>
+<p>These properties are crucial in determining whether a molecule might make a good drug candidate or &#34;drug-like&#34; according to the Lipinski&#39;s Rule of 5.</p>
+<h2 is-upgraded>Why Solubility Matters in Drug Development</h2>
+<p>Molecular solubility is a critical property in pharmaceutical research that directly impacts whether a drug can effectively reach its target in the human body.</p>
+<h2 is-upgraded>Importance of Solubility</h2>
+<p>Solubility refers to a molecule&#39;s ability to dissolve in a liquid - specifically in the human bloodstream. If a drug cannot dissolve properly, it cannot be transported to its target site, rendering it ineffective regardless of its other properties.</p>
+<p>Poorly soluble drugs often require:</p>
+<ul>
+<li>Higher doses to achieve therapeutic effects</li>
+<li>Special formulations that can be complex and expensive</li>
+<li>More complicated treatment regimens for patients</li>
+</ul>
+<p>All of these factors can lead to increased side effects and reduced patient compliance.</p>
+<h2 is-upgraded>Lipinski&#39;s Rule of 5</h2>
+<p>In drug development, scientists often refer to Lipinski&#39;s Rule of 5 (RO5), a set of guidelines that help predict whether a molecule will be sufficiently soluble to make an effective oral medication. The rule states that an orally active drug generally has:</p>
+<ul>
+<li>No more than 5 hydrogen bond donors</li>
+<li>No more than 10 hydrogen bond acceptors</li>
+<li>A molecular weight under 500 daltons</li>
+<li>A partition coefficient (LogP) less than 5</li>
+</ul>
+<p>These parameters help researchers focus their efforts on molecules that are more likely to succeed in clinical trials and eventually become viable medications.</p>
+<p>By understanding and optimizing solubility early in the drug discovery process, pharmaceutical companies can develop more effective medicines that can be easily administered and work efficiently in the body.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built a bioinformatics dashboard that analyzes molecular properties crucial for drug discovery. Using Snowflake, Python, and Streamlit, you&#39;ve created an interactive tool that helps visualize and understand the relationships between molecular weight, rotatable bonds, LogP values, and aromatic proportions - all key factors in determining a molecule&#39;s solubility and potential as a drug candidate.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Loaded and prepared bioinformatics data in Snowflake</li>
+<li>Transformed and aggregated molecular data using Pandas</li>
+<li>Built an interactive dashboard with Streamlit to visualize molecular properties</li>
+<li>Analyzed the relationship between molecular size and properties relevant to drug solubility</li>
+<li>Applied concepts from Lipinski&#39;s Rule of 5 to understand drug-like characteristics</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Articles:</p>
+<ul>
+<li><a href="https://pubs.acs.org/doi/10.1021/ci034243x" target="_blank">ESOL: Estimating Aqueous Solubility Directly from Molecular Structure</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks Documentation</a></li>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">Streamlit Documentation</a></li>
+<li><a href="https://pandas.pydata.org/docs/" target="_blank">Pandas Documentation</a></li>
+</ul>
+<p>Happy coding and happy exploration of the fascinating intersection of data science and bioinformatics!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

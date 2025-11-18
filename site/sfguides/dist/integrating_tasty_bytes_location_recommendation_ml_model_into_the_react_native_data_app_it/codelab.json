@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_it",
+  "duration": 32,
+  "title": "Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native",
+  "summary": "Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native",
+  "source": "integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_it/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_it.md",
+  "theme": "",
+  "status": [
+    "pubblicato"
+  ],
+  "category": [
+    "tasty-bytes",
+    "guida-introduttiva",
+    "sviluppo-app",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "dataengineering",
+    "datascience",
+    "guidaintroduttiva",
+    "it",
+    "machinelearning",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_it"
+}

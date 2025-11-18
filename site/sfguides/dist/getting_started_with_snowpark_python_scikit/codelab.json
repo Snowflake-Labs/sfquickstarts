@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_snowpark_python_scikit",
+  "duration": 78,
+  "title": "Getting Started with Snowpark for Python with Scikit-learn",
+  "summary": "Getting Started with Snowpark for Python with Scikit-learn",
+  "source": "getting_started_with_snowpark_python_scikit/getting_started_with_snowpark_python_scikit.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpark_python_scikit"
+}

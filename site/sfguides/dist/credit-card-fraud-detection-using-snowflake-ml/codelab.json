@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "credit-card-fraud-detection-using-snowflake-ml",
+  "duration": 6,
+  "title": "Credit Card Fraud Detection using Snowflake ML Functions",
+  "summary": "Build a Credit card fraud detection app that leverages Snowflake ML to train a binary classification model to detect if a transaction is fraudulent or not",
+  "source": "credit-card-fraud-detection-using-snowflake-ml/credit-card-fraud-detection-using-snowflake-ml.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "datascience",
+    "featurestore",
+    "gettingstarted",
+    "machinelearning",
+    "snowflakemlfunction",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "credit-card-fraud-detection-using-snowflake-ml"
+}

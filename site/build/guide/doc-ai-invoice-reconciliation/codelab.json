@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "doc-ai-invoice-reconciliation",
+  "duration": 46,
+  "title": "Document AI Invoice Reconciliation",
+  "summary": "Snowflake Document AI for Automated Invoice Reconciliation",
+  "source": "doc-ai-invoice-reconciliation/doc-ai-invoice-reconciliation.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "document-ai",
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "documentai",
+    "documentextraction",
+    "gettingstarted",
+    "invoicereconciliation",
+    "unstructureddata",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "doc-ai-invoice-reconciliation"
+}

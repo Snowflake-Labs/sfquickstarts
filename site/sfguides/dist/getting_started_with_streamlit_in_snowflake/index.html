@@ -1,0 +1,202 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Quickstart Guide: Cybersyn Streamlit in Snowflake - Financial Demo</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_streamlit_in_snowflake"
+                  title="Quickstart Guide: Cybersyn Streamlit in Snowflake - Financial Demo"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p class="image-container"><img alt="logo-image" src="img/e58d5509dee789d6.png"></p>
+<p>In this guide, we will review how to build a Streamlit App within Snowflake that allows you to easily demo Cybersyn&#39;s Financial Data Package data tables with charts built in Vega-Lite.</p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit is a pure Python <a href="https://github.com/streamlit/streamlit" target="_blank">open source</a> application framework that enables developers to quickly and easily write, share, and deploy data applications. Learn more about <a href="https://streamlit.io/" target="_blank">Streamlit</a>.</p>
+<h2 is-upgraded>What is Vega-Lite?</h2>
+<p>Vega-Lite is an <a href="https://vega.github.io/vega-lite/" target="_blank">open-source</a> high-level grammar of interactive graphics. It provides a concise, declarative JSON syntax to create an expressive range of visualizations for data analysis and presentation.</p>
+<h2 is-upgraded>What You&#39;ll Build?</h2>
+<p>An application on Streamlit within Snowflake that connects directly to a data listing acquired (for free) through the Snowflake Marketplace. This application allows users to quickly demonstrate usage examples from data in the <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/cybersyn-inc-financial-data-package?search=financial%20data%20package" target="_blank">Cybersyn Financial Data Package</a>. This data specifically focuses on the US banking system and respective financials and performance.</p>
+<h2 is-upgraded>What You&#39;ll Learn?</h2>
+<ul>
+<li>How to access data from Snowflake Marketplace</li>
+<li>How to create and run Streamlit in Snowflake</li>
+<li>How to create VegaLite charts in Streamlit</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<p>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake account</a></p>
+<ul>
+<li>To ensure you can mount data from the Marketplace, login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges is required for this step). Keep this tab open during the session. <ul>
+<li>Click on the Billing on the left side panel</li>
+<li>Click on Terms and Billing</li>
+<li>Read and accept terms to continue</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Streamlit Application" duration="4">
+        <h2 is-upgraded>Step 1: Accessing Data in Snowflake Marketplace</h2>
+<p><a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7" target="_blank"><paper-button class="colored" raised>Cybersyn Financial Data Package</paper-button></a></p>
+<p>After logging into your Snowflake account, access <a href="https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/cybersyn-inc-financial-data-package?search=financial%20data%20package" target="_blank">Cybersyn&#39;s Financial Data Package</a> in the Marketplace.</p>
+<ul>
+<li>Click the Get button on the top right box on the listing</li>
+<li>Read and accept terms by clicking Get again <ul>
+<li>Note: This data listing is available for free, at no additional charge.</li>
+</ul>
+</li>
+<li>The data is now available in your Snowflake instance, as the <code>FINANCIAL_DATA_PACKAGE</code> database under Data on the left hand side panel.</li>
+</ul>
+<p class="image-container"><img alt="package-image" src="img/55d171730c423166.png"></p>
+<h2 is-upgraded>Step 2: Create a Database &amp; Schema</h2>
+<ul>
+<li>On the left side panel, click Data.</li>
+<li>Click the blue + Database button in the top right corner.</li>
+<li>Create a new database with a name of your choosing (eg. <code>FINANCIAL_STREAMLIT</code>) for the Streamlit to live in.</li>
+<li>Create a new Schema in the new database (eg. <code>FINANCIAL_STREAMLIT</code>) with a name of your choosing (eg. <code>STREAMLIT</code>).</li>
+</ul>
+<h2 is-upgraded>Step 3: Create a Streamlit</h2>
+<ul>
+<li>On the left side panel, click Streamlit.</li>
+<li>Click the blue button, blue + Streamlit App button in the top right corner. <ul>
+<li>Name your App (eg. Financial Streamlit)</li>
+<li>Select a Warehouse.</li>
+<li>Select the database and schema for your app. If you followed Step 2, select this database (eg. <code>FINANCIAL_STREAMLIT</code> and <code>STREAMLIT</code>).</li>
+<li>Click the blue Create button</li>
+<li>Delete all of the existing code.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 4: Copy the Python code from GitHub</h2>
+<p><a href="https://github.com/cybersyn-data/streamlit-in-snowflake-example/blob/main/streamlit_app.py" target="_blank"><paper-button class="colored" raised>streamlit_app.py</paper-button></a></p>
+<ul>
+<li>Click the button above which will direct you to our Financial Streamlit Python Setup file that is hosted on GitHub.</li>
+<li>Within GitHub navigate to the right side and click the ‘Copy raw contents&#39; button on the top right of the code block. This will copy all of the required Python into your clipboard.</li>
+<li>Paste the Python code to the Streamlit code block in your newly created Streamlit in Snowflake.</li>
+</ul>
+<h2 is-upgraded>Step 5: Create a Database &amp; Schema</h2>
+<ul>
+<li>Click the blue Run button  on the top right corner.</li>
+<li>Wait for app to load. <ul>
+<li>Note: If there is an error then try to refresh the page. If you continue to receive an error, please ensure that under Data you see the <code>FINANCIAL_DATA_PACKAGE</code> listing in your databases.</li>
+</ul>
+</li>
+</ul>
+<h3 is-upgraded>You&#39;ve successfully built the Cybersyn Financial Streamlit in Snowflake!</h3>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Walk-through of the App Functionality" duration="3">
+        <p>To see the Streamlit in the full window, click &lt; Streamlit Apps on the top left and reopen the application you created (eg. Financial Streamlit).</p>
+<p>All charts are setup to show a chart summary of the data, the raw data, and the SQL query to recreate the analysis.</p>
+<h2 is-upgraded>Chart 1: Deposits by Size of Bank</h2>
+<p class="image-container"><img alt="screenshot1" src="img/759dba58f0913426.png"></p>
+<ul>
+<li>This chart allows the user to see the US bank deposits broken down by Top 25 Banks and All Others since January 1999.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h2 is-upgraded>Chart 2: Share of Total Commercial Bank Deposits, Small Banks (Non-Top 25)</h2>
+<p class="image-container"><img alt="screenshot2" src="img/cbd720ca30749d0f.png"></p>
+<ul>
+<li>This chart shows the share of deposits help by the banks that are not in the top 25 US banks by total deposits.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h2 is-upgraded>Chart 3: Deposit Flows by Size of Bank, WoW</h2>
+<p class="image-container"><img alt="screenshot3" src="img/6fc5166b8029944d.png"></p>
+<ul>
+<li>This chart shows the WoW deposit inflows and (outflows) for banks.</li>
+<li>The chart can be filtered by date and the user can add in ‘Top 25 Banks&#39; and ‘All Other Banks&#39; to see the two breakdowns.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h2 is-upgraded>Chart 4: Monthly Change in Bank Branches Since COVID-19</h2>
+<p class="image-container"><img alt="screenshot4" src="img/5bb635d1c1105410.png"></p>
+<ul>
+<li>This chart shows the monthly and cumulative change of bank branch openings and closures since January 2018.</li>
+<li>Data is sourced from <a href="https://www.ffiec.gov/npw/FinancialReport/DataDownload" target="_blank">FFIEC</a>.</li>
+</ul>
+<h2 is-upgraded>Chart 5: As of Dec ‘23: Banks w/ $10B Assets with Lowest FDIC Insured Deposits</h2>
+<p class="image-container"><img alt="screenshot5" src="img/8f5858d754aa8e23.png"></p>
+<ul>
+<li>This chart shows the banks with lowest FDIC insured deposits as of December 2022.</li>
+<li>Data is sourced from <a href="https://banks.data.fdic.gov/docs/" target="_blank">FDIC</a>.</li>
+</ul>
+<h2 is-upgraded>Chart 6: Bank Failures by Quarter</h2>
+<p class="image-container"><img alt="screenshot6" src="img/7de4c7c8f14d072d.png"></p>
+<ul>
+<li>This chart shows the number of bank failures by quarter.</li>
+<li>Data is sourced from <a href="https://www.ffiec.gov/npw/FinancialReport/DataDownload" target="_blank">FFIEC</a>.</li>
+</ul>
+<h2 is-upgraded>Chart 7: Banking Industry Net Interest Income vs. Fed Funds Rate</h2>
+<p class="image-container"><img alt="screenshot7" src="img/751aac9f51d1f2e1.png"></p>
+<ul>
+<li>This chart shows net interest income by the bar charts against the left axis and the Fed Funds Rate in the line graph against the right axis since March 1985.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+<h2 is-upgraded>Chart 8: Interest Expense / Interest Income Ratio vs Fed Funds Rate</h2>
+<p class="image-container"><img alt="screenshot8" src="img/9aee2ed7a5fd4100.png"></p>
+<ul>
+<li>This chart shows the ratio of Interest Expense to Interest Income and compares it to the Fed Funds Rate since March 1985.</li>
+<li>Data is sourced from <a href="https://fred.stlouisfed.org/tags/series" target="_blank">FRED</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

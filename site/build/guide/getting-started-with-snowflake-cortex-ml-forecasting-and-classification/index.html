@@ -1,0 +1,530 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake ML Forecasting and Classification</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-snowflake-cortex-ml-forecasting-and-classification"
+                  title="Getting Started with Snowflake ML Forecasting and Classification"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: identify trends, identify abnormalities within their data, and classify users or entities into one of many groups. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach. For these use cases, Snowflake has developed a set of SQL based ML Functions that implement machine learning models on the user&#39;s behalf. As of June 2024, four ML Functions are available:</p>
+<h2 is-upgraded>Time series functions</h2>
+<ol type="1">
+<li>Forecasting: which enables users to forecast a metric based on past values. Common use-cases for forecasting include predicting future sales, demand for particular sku&#39;s of an item, or volume of traffic into a website over a period of time.</li>
+<li>Anomaly Detection: which flags anomalous values using both unsupervised and supervised learning methods. This may be useful in use-cases where you want to identify spikes in your cloud spend, identifying abnormal data points in logs, and more.</li>
+<li>Contribution Explorer: which enables users to perform root cause analysis to determine the most significant drivers to a particular metric of interest.</li>
+</ol>
+<h2 is-upgraded>Other analytical functions</h2>
+<ol type="1">
+<li>Classification: which enables users to sort data into different classes using patterns detected within the training data. Compared to the first three, classification doesn&#39;t require that the data have an explicit time stamp associated with each of the records.</li>
+</ol>
+<p>For further details on ML Functions, please refer to the <a href="https://docs.snowflake.com/guides-overview-analysis" target="_blank">Snowflake documentation</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account login with an <code>ACCOUNTADMIN</code> role. If not, you will need to use a different role- Access to Snowsight and working knowledge of SQL.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to make use of the Classification and Forecasting ML Function to create models and produce predictions</li>
+<li>How to evaluate and interpret the model results and feature importances</li>
+<li>How to score on new datasets to generate predictions</li>
+<li>How to schedule recurring model training and prediction with Snowflake Tasks</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>This Quickstart is designed to help you get up to speed with the Classification and Forecasting ML Functions.</p>
+<p>We will work through an example using data provided by the <a href="https://archive.ics.uci.edu/" target="_blank">Irvine Machine Learning Repository</a>; specifically their <a href="https://archive.ics.uci.edu/dataset/222/bank+marketing" target="_blank">Bank Marketing Dataset</a> to:</p>
+<ul>
+<li>Build a classification model to predict whether or not clients at a Portuguese bank subscribed to a term deposit during a marketing campaign.</li>
+<li>Build a forecasting model to predict the total number of subscriptions the bank should expect over the upcoming 30-day period.</li>
+</ul>
+<p>The dataset contains various variables you&#39;d find in a typical marketing campaign, including demographic details of the customer, their previous interactions with the bank, and a range of economic indicators that&#39;d help us predict whether or not the customer will subscribe to the term deposit. Furthermore, we have both numeric and categorical variables in our dataset, typical of something you would find within your organization&#39;s data.</p>
+<p>After we build our models, we will evaluate them and look at the feature importances to help us better understand the factors that were correlated with customers signing up for term deposits. Often in a business context, it is not only enough to just build a model to make predictions, we also need to understand the reasons why the predictions were made. Understanding these factors give us a better insight into what drives a customer&#39;s behavior, so that we may make meaningful recommendations to our stakeholders.</p>
+<p>Let&#39;s get started!</p>
+<p><strong>Note</strong>: As of April 2024, the ML Classification function is in Public Preview. From time to time, Snowflake may refine the underlying algorithm and will roll out the improvements through the regular Snowflake release process. You cannot revert to a previous version of the model, but models you have created with a previous version will continue to use that version. These changes in the underlying algorithm also means that the results you get when you run through the quickstart may differ from the images you see.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Data in Snowflake" duration="5">
+        <p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight" target="_blank">Snowsight</a>, the Snowflake web interface, to:</p>
+<ul>
+<li>Create Snowflake objects (i.e warehouse, database, schema, etc..)</li>
+<li>Ingest data from S3 and load it into a snowflake table</li>
+</ul>
+<p>Creating Objects, Loading Data, &amp; Set Up Tables:</p>
+<ul>
+<li>Create a new SQL worksheet by clicking on the ‘Worksheets&#39; tab on the left hand side.</li>
+<li>Paste and run the following SQL commands in the worksheet to create the required Snowflake objects, ingest data from S3, and create the tables we will use for this lab.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">-- Using accountadmin is often suggested for quickstarts, but any role with sufficient privledges can work
+USE ROLE ACCOUNTADMIN;
+
+-- Create development database, schema for our work: 
+CREATE OR REPLACE DATABASE quickstart;
+CREATE OR REPLACE SCHEMA ml_functions;
+
+-- Use appropriate resources: 
+USE DATABASE quickstart;
+USE SCHEMA ml_functions;
+
+-- Create warehouse to work with: 
+CREATE OR REPLACE WAREHOUSE quickstart_wh;
+USE WAREHOUSE quickstart_wh;
+
+-- Create a csv file format to be used to ingest from the stage: 
+CREATE OR REPLACE FILE FORMAT quickstart.ml_functions.csv_ff
+    TYPE = &#39;csv&#39;
+    SKIP_HEADER = 1,
+    COMPRESSION = AUTO;
+
+-- Create an external stage pointing to AWS S3 for loading our data:
+CREATE OR REPLACE STAGE s3load 
+    COMMENT = &#39;Quickstart S3 Stage Connection&#39;
+    URL = &#39;s3://sfquickstarts/hol_snowflake_cortex_ml_for_sql/&#39;
+    FILE_FORMAT = quickstart.ml_functions.csv_ff;
+
+-- Define our table schema
+CREATE OR REPLACE TABLE quickstart.ml_functions.bank_marketing(
+    CUSTOMER_ID TEXT,
+    AGE NUMBER,
+    JOB TEXT, 
+    MARITAL TEXT, 
+    EDUCATION TEXT, 
+    DEFAULT TEXT, 
+    HOUSING TEXT, 
+    LOAN TEXT, 
+    CONTACT TEXT, 
+    MONTH TEXT, 
+    DAY_OF_WEEK TEXT, 
+    DURATION NUMBER(4, 0), 
+    CAMPAIGN NUMBER(2, 0), 
+    PDAYS NUMBER(3, 0), 
+    PREVIOUS NUMBER(1, 0), 
+    POUTCOME TEXT, 
+    EMPLOYEE_VARIATION_RATE NUMBER(2, 1), 
+    CONSUMER_PRICE_INDEX NUMBER(5, 3), 
+    CONSUMER_CONFIDENCE_INDEX NUMBER(3,1), 
+    EURIBOR_3_MONTH_RATE NUMBER(4, 3),
+    NUMBER_EMPLOYEES NUMBER(5, 1),
+    CLIENT_SUBSCRIBED BOOLEAN,
+    TIMESTAMP TIMESTAMP_NTZ(9)
+);
+
+-- Ingest data from S3 into our table:
+COPY INTO quickstart.ml_functions.bank_marketing
+FROM @s3load/customers.csv;
+
+-- View a sample of the ingested data: 
+SELECT * FROM quickstart.ml_functions.bank_marketing LIMIT 100;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploratory Data Analysis" duration="3">
+        <p>Before building our model, let&#39;s first visualize our data to get a feel for what it looks like and get a sense of what variables we will be working with. Follow along below:</p>
+<pre><code language="language-sql" class="language-sql">-- Query a sample of the ingested data
+SELECT *
+FROM bank_marketing
+LIMIT 100;
+</code></pre>
+<p>After running the command, you&#39;ll notice that we have a total of 21 columns in the result set that is displayed at the bottom of the worksheet.</p>
+<p class="image-container"><img src="img/a9773c800c482cb2.png"></p>
+<p>The variables in this dataset can be roughly grouped into three categories:</p>
+<ol type="1">
+<li>Demographic data (i.e Age, Job, Marital Status) of the banking customer</li>
+<li>Data around the interactions that the bank may have had with the customer previously, i.e <code>contact</code> which describes communication type used (either cellular or telephone), and <code>previous</code> which describes the number of contacts that were performed before the campaign was run</li>
+<li>Social and economic data (i.e <code>employee_variation_rate</code>, etc..) that details economic indicators during the time that the contact was made. These variables add information about the macroeconomic for when the customer was contacted, and may prove to be useful in predicting whether or not the customer accepts the term deposit.</li>
+</ol>
+<p>The target variable that we will want to predict is the column denoted by <code>client_subscribed</code>. This is a binary variable, meaning it takes on one of two values, either <code>TRUE</code> OR <code>FALSE</code>. While in this case we only have two values, the ML Classification function can also handle <a href="https://en.wikipedia.org/wiki/Multiclass_classification" target="_blank">Multi-Class Classification</a>, where there are more than three classes we want to group/classify.</p>
+<p>For the full data dictionary, refer to the <a href="https://archive.ics.uci.edu/dataset/222/bank+marketing" target="_blank">Bank Marketing Dataset</a> for the Variables Table. <strong>Note</strong> that the macroeconomic variables are not listed in the chart, you may find that by downloading the dataset, and opening the file <code>bank-additional-names.txt</code> contained within the <code>bank-additional</code> folder.</p>
+<p>Lastly, on the right hand side of the result set, you&#39;ll notice that there are many visualizations for each of the variables, providing distribution plots for columns that are numeric, and also providing a count for those variables that are categorical. Feel free to scroll through them to get a better sense of the different values the dataset contains.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Classification" duration="6">
+        <h2 is-upgraded>Step 1: Preparing Training and Inference Views</h2>
+<p>Now that we have a sense of what our data looks like, let&#39;s prepare our dataset for both training and inference purposes.</p>
+<pre><code language="language-sql" class="language-sql">-- Total count of rows in the dataset
+SELECT COUNT(1) as num_rows
+FROM bank_marketing;
+
+-- Count of subscribed vs not subscribed: 
+SELECT client_subscribed, COUNT(1) as num_rows
+FROM bank_marketing
+GROUP BY 1;
+</code></pre>
+<p>Our input dataset has a total of 41,188 rows of data, and roughly 11% percent of the customers (4640) subscribed to the term deposit. To make sure we have some left over data to make predictions on, we will sample 95% of the data, and create a view for our training and testing dataset.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a view with a column that will be filtered for either training/inference purposes
+CREATE OR REPLACE TABLE partitioned_data as (
+  SELECT *, 
+        CASE WHEN UNIFORM(0::float, 1::float, RANDOM()) &lt; .95 THEN &#39;training&#39; ELSE &#39;inference&#39; END AS split_group
+  FROM bank_marketing
+);
+
+-- Training data view: 
+CREATE OR REPLACE VIEW training_view AS (
+  SELECT * EXCLUDE split_group
+  FROM partitioned_data 
+  WHERE split_group LIKE &#39;training&#39;);
+
+-- Inference data view
+CREATE OR REPLACE VIEW inference_view AS (
+  SELECT * EXCLUDE split_group
+  FROM partitioned_data 
+  WHERE split_group LIKE &#39;inference&#39;);
+</code></pre>
+<p>In the code above, we made use of the both the <code>Uniform</code> and the <code>Random</code> function to first generate a random number between 0 and 1, and then assign it to either the <code>training</code> or <code>inference</code> group. In the next section, we will use these views to build our model and make predictions.</p>
+<h2 is-upgraded>Step 2: Use Snowflake AI &amp; ML Studio</h2>
+<p>We&#39;ll use the new <strong>Snowflake AI &amp; ML Studio</strong> to set us up for classification.</p>
+<p>First, navigate to Snowsight. Click &#34;Create&#34; next to the Classification button below.</p>
+<p class="image-container"><img src="img/cc42602fb0338e68.png"></p>
+<p>Name your model <code>bank_classifier</code>, or whatever suits you! Also, select a role and warehouse. See the in-context warehouse suggestions for help on warehouse selection. Note that we&#39;re leaving &#34;Generate evaluation metrics&#34; checked, since we want to evaluate our model after we&#39;ve trained it.</p>
+<p class="image-container"><img src="img/d78764371e56f6.png"></p>
+<p>Next, choose <code>training_view</code> from the database and schema you&#39;ve been working in. A data preview should automatically appear – to help us sanity check that the data are as expected.</p>
+<p class="image-container"><img src="img/f77b8f204f272434.png"></p>
+<p>Choose <code>client_subscribed</code> as your target column. This is the column you want to predict for new customers (i.e., whether new customers will subscribe or not to your product). We leave &#34;Log all errors if training fails&#34; checked to allow the training process to complete and log all relevant errors instead of stopping at the first error encountered. This is helpful for debugging.</p>
+<p class="image-container"><img src="img/f34510f8c6498ef1.png"></p>
+<p>Now, select the data you&#39;d like to classify. In this scenario, we&#39;re selecting a new set of customers to predict whether they&#39;re likely to subscribe to our product or not. Note that we keep &#34;Skip rows that cannot be included in predictions&#34; so that we can get predictions for as many rows as possible without failing the whole process when a row without sufficient informationis encountered.</p>
+<p class="image-container"><img src="img/c137da9f6ceba115.png"></p>
+<p>Finally, we select the table we want to store our predictions into.</p>
+<p class="image-container"><img src="img/9a07b0260d13a64c.png"></p>
+<p>The results? A worksheet with all of the SQL you need to train your model, generate predictions and evaluate your results.</p>
+<p class="image-container"><img src="img/1b0ec1b69e851dbc.png"></p>
+<h2 is-upgraded>Step 2: Generate Predictions</h2>
+<p>Use the SQL generated in the previous section to train a model, generate predictions, evaluate your model and generate predictions. First, train your model:</p>
+<pre><code language="language-sql" class="language-sql">-- Train our classifier: 
+CREATE OR REPLACE snowflake.ml.classification bank_classifier(
+    INPUT_DATA =&gt; SYSTEM$REFERENCE(&#39;VIEW&#39;, &#39;training_view&#39;),
+    TARGET_COLNAME =&gt; &#39;CLIENT_SUBSCRIBED&#39;,
+    CONFIG_OBJECT =&gt; {&#39;on_error&#39;: &#39;skip&#39;}
+);
+</code></pre>
+<p>The above parameters map to the choices we made in the Snowflake AI &amp; ML Studio:</p>
+<ol type="1">
+<li><code>INPUT_DATA</code>: refers to the the reference to the training data. You can pass in a reference to a table or a view if the data is ready as it is in our case, or make use of a <a href="https://docs.snowflake.com/developer-guide/stored-procedure/stored-procedures-calling-references#label-reference-object-query-references" target="_blank">query reference</a> to pass in a query for the data you want to train the model on.</li>
+<li><code>TARGET_COLNAME</code>: refers to the variable/column we want to predict, which in our case is the binary variable <code>CLIENT_SUBSCRIBED</code>.</li>
+<li><code>CONFIG_OBJECT</code>: This is an optional object that contains key-value pairs that provides you the ability to create evaluation metrics as part of the training procedure, handle potential error riddled rows, and also to configure how much of the dataset passed into the <code>INPUT_DATA</code> would be reserved for the holdout evaluation set.</li>
+</ol>
+<p>For further details on the syntax for creating the models as well as the default values, please refer to the <a href="https://docs.snowflake.com/sql-reference/classes/classification/commands/create-classification" target="_blank">documentation</a>.</p>
+<p>Now, classify the customers in your new dataset (<code>inference_view</code>).</p>
+<pre><code language="language-sql" class="language-sql">-- Classify your data.
+CREATE TABLE My_classification_2024_04_15 AS SELECT
+    *, 
+    bank_classifier!PREDICT(
+        OBJECT_CONSTRUCT(*),
+        -- This option alows the prediction process to complete even if individual rows must be skipped.
+        {&#39;ON_ERROR&#39;: &#39;SKIP&#39;}
+    ) as predictions
+from INFERENCE_VIEW;
+
+-- View your predictions.
+SELECT * FROM My_classification_2024_04_15;
+</code></pre>
+<p class="image-container"><img src="img/25555739af7a11de.png"></p>
+<p>In the result set, we see that the model produces both a predicted class denoted by <code>True</code> or <code>False</code> as well giving us the probability of the respective class membership. Oftentimes, we may want to parse out the probabilities or the prediction directly, and have it in its own column. See the example below in how to do this, where we create a new table with the predicted class and its associated probability parsed out:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * EXCLUDE predictions,
+        predictions:class AS class,
+      round(predictions[&#39;probability&#39;][class], 3) as probability
+FROM My_classification_2024_04_15;
+</code></pre>
+<p class="image-container"><img src="img/266709e42266c7f3.png"></p>
+<p>Note that each row contains <code>CUSTOMER_ID</code>, so that we can understand which specific customers will subscribe <em>in addition</em> to understanding in aggregate how many customers will subscribe.</p>
+<h2 is-upgraded>Step 3: Evaluating our Classifier and Understanding Feature Importances</h2>
+<p>Now that we have built our classifier, we can begin to evaluate it to better understand both its performance as well as the primary factors within the dataset that were driving the predictions. Follow along below to see the various commands you may run to evalute your own classifier:</p>
+<h3 is-upgraded>3a. Confusion Matrix &amp; Model Accuracy</h3>
+<p>One of the most common ways of evaluating a classifier is by creating a <a href="https://en.wikipedia.org/wiki/Confusion_matrix" target="_blank">Confusion Matrix</a>, which allows us to visualize the types of errors that the model is making. Typically, they are used to calculate a classifier&#39;s <a href="https://en.wikipedia.org/wiki/Precision_and_recall" target="_blank">Precision &amp; Recall</a>; which describe both the accuracy of a model when it predicts a certain class of interest (Precision), as well as how many of that specific class of interest were classified (recall). In our use-case, the class of interest is knowing that if the customer will subscribe to the term deposit. In this case:</p>
+<ol type="1">
+<li>The Precision score will answer &#34;What percentage of the time when the model predicts the client subscribed did it get correct&#34; vs</li>
+<li>The Recall score will answer &#34;Of all the customers that did subscribe, what percentage were we able to identify successfully?&#34;</li>
+</ol>
+<p>Let&#39;s first create our confusion matrix before looking at these model metrics.</p>
+<pre><code language="language-sql" class="language-sql">CALL bank_classifier!SHOW_CONFUSION_MATRIX();
+</code></pre>
+<p class="image-container"><img src="img/8d63f10ca1729fa9.png"></p>
+<p>We can turn the output table above into a visualization by:</p>
+<ol type="1">
+<li>Clicking on the &#34;Chart&#34; button found above the result set</li>
+<li>Select &#34;Heatgrid&#34; as the chart type</li>
+<li>Select &#34;Actual Class&#34; for the Rows, and &#34;Predicted Class&#34; as the column</li>
+<li>Ensure that there are no aggregations selected, and &#34;None&#34; is selected for all the data.</li>
+</ol>
+<p class="image-container"><img src="img/e10e957bbcd0ecd9.png"></p>
+<p>With our confusion matrix, we can calculate both precision, recall and other classifier metrics by running the following queries below. The first one will provide model metrics against each class (i.e True vs False for <code>CLIENT_SUBSCRIBED</code>), while the global evaluation metrics provides the averaged model metrics across classes. For more information on how these metrics are calculated, please refer to the <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-powered/classification#metrics-in-show-evaluation-metrics" target="_blank">documentation</a> for further details. Note: The metrics below are calculated on a previously unseen holdout set that we had configured when first training the model.</p>
+<pre><code language="language-sql" class="language-sql">-- Calculate the evaluation metrics
+CALL bank_classifier!SHOW_EVALUATION_METRICS();
+CALL bank_classifier!SHOW_GLOBAL_EVALUATION_METRICS();
+</code></pre>
+<p class="image-container"><img src="img/fd0849ebaf0239e6.png"></p>
+<p>This image above calculates the overall precision, recall, f1, and AUC across all the classes (i.e the <code>GLOBAL_EVALUATION_METRICS</code>). In the case that you are working on a multi-class problem with more than two classes, looking at the <code>SHOW_EVALUATION_METRICS</code> will give you a better sense of how good the model is at predicting each one of the classes. A higher number here (i.e closer to 1) means that the model is more predictive of the outcomes.</p>
+<h3 is-upgraded>3b. Feature Importances</h3>
+<p>The last thing we want to understand when evaluating the classifier is to get a sense of the importance of each of the individual input columns or features we made use of. We may do this for many reasons -</p>
+<ol type="1">
+<li>Better understand what&#39;s driving a model&#39;s prediction to give us more insight into the business process we are trying to model out</li>
+<li>Engineer new features or remove ones that are not too impactful to increase the model&#39;s performance.</li>
+</ol>
+<p>The ML Classification function provides a method to do just this, and provides us a ranked list of the relative importance of all the input features, such that their values are between 0 and 1, and the importances across all the features sum to be 1. The higher the number, the more influential that data point was in driving the prediction the model made. For more details on how the feature importance is calculated, please refer to the <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-powered/classification#understanding-feature-importance" target="_blank">documentation</a>.</p>
+<pre><code language="language-sql" class="language-sql">CALL bank_classifier!SHOW_FEATURE_IMPORTANCE();
+</code></pre>
+<p class="image-container"><img src="img/50200dc8e9dc8fe.png"></p>
+<p>For this particular dataset, it appears that <code>Duration</code>, <code>Euribor_3_month_rate</code>, and <code>Age</code> were the top three features. From the data dictionary, these features should make sense, as <code>Duration</code> stands for the amount of time the customer spent with the bank in their previous interaction. If they spent a longer time, it&#39;d be likely indicative that they are strongly interested in the services the bank has to offer. Similarly, the macroeconomic variable <code>Euribor_3_month_rate</code> tells us the interest rate is highly indicative of a customer subscribing to the term deposit. If an interest rate is very high or low compared to the historical average, the customer may behave differently.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Forecasting" duration="3">
+        <p>Now that we&#39;ve built a model to understand whether specific customers are likely to subscribe to our term deposit or not, we want to understand how many total customers are likely to subscribe. That will help us with revenue projections and staffing needs.</p>
+<p>To do this, we&#39;ll train a forecasting model then use it to generate predictions – and evaluate the model to understand how accurate those predictions are likely to be.</p>
+<h2 is-upgraded>Step 1: Visualize Data and Prepare for Forecasting</h2>
+<p>In this scenario, we want to forecast the number of total subscriptions per day – for customers aged 40 and under, and aged 40 and up. This helps us better prepare for and market to our distinct customer segments.</p>
+<p>We want our model to train on historical counts of subscriptions by day – and on the Euribor rate, which is an interest rate. We include the Euribor rate because we know that interest rates can impact customer decisions about whether to subscribe or not to our deposits.</p>
+<p>This means we need to do the following:</p>
+<ul>
+<li>Add a label to our data indicating whether a customer is 40 and under, or 40 and up.</li>
+<li>Create a table to train on, including timestamp, the count of subscriptions per day, the Euribor (interest) rate, and the appropriate age category (age_bin).</li>
+<li>Create a table to help the model create predictions, which must rows for each timestamp and age bin combination we want to predict for and the Euribor rate for each of these days.</li>
+</ul>
+<p>Run the below SQL to accomplish this:</p>
+<pre><code language="language-sql" class="language-sql">-- Subset to the data we want to train on – and create age bins.
+-- Create bins from 18 and under, 18 to 30, 30 to 40, 40 to 50, 50 to 60, 60 and older 
+CREATE OR REPLACE TABLE bank_marketing_age_bins AS SELECT
+    timestamp,
+    client_subscribed,
+    euribor_3_month_rate,
+    CASE 
+        WHEN age &lt;= 40 THEN &#39;40 and under&#39;
+        ELSE &#39;40 and up&#39;
+    END as age_bin
+FROM bank_marketing;
+
+-- Now count subscriptions by day and age group. 
+CREATE OR REPLACE VIEW daily_subscriptions AS SELECT 
+    timestamp, 
+    age_bin,
+    AVG(euribor_3_month_rate) as interest_rate,
+    SUM(CASE WHEN client_subscribed = TRUE THEN 1 ELSE 0 END) AS subscribed_count 
+FROM bank_marketing_age_bins
+GROUP BY timestamp, age_bin;
+
+-- View our data for the 40+ category.
+select * from daily_subscriptions where age_bin = &#39;40 and up&#39;;
+
+-- Split data into data for training and hold out one month for predictions. 
+-- Since we are using interest rate to help train the model, we need to provide this variable at prediction time, too. 
+CREATE OR REPLACE TABLE forecast_training AS SELECT
+    * 
+FROM daily_subscriptions 
+WHERE  timestamp &lt;= (SELECT MAX(timestamp) - INTERVAL &#39;30 days&#39; FROM daily_subscriptions);
+
+CREATE OR REPLACE TABLE forecast_future_values AS SELECT
+    timestamp, 
+    age_bin, 
+    interest_rate
+FROM daily_subscriptions
+WHERE timestamp NOT IN (SELECT timestamp FROM forecast_training);
+</code></pre>
+<h2 is-upgraded>Step 2: Use Snowflake AI &amp; ML Studio</h2>
+<p>We&#39;ll use the new Snowflake AI &amp; ML Studio to set us up for forecasting.</p>
+<p>First, navigate to Snowsight. Click &#34;Create&#34; next to the Forecasting button below.</p>
+<p class="image-container"><img src="img/cc42602fb0338e68.png"></p>
+<p>Name your model <code>forecast_subscriptions_model</code>, or whatever suits you! Also, select a role and warehouse. See the in-context warehouse suggestions for help on warehouse selection. Note that we&#39;re leaving &#34;Generate evaluation metrics&#34; checked, since we want to evaluate our model after we&#39;ve trained it. You&#39;ll see later that we turn this option <em>off</em> when we are generating predictions on a recurring basis using Snowflake Tasks.</p>
+<p class="image-container"><img src="img/c609276199a0f19d.png"></p>
+<p>Next, choose <code>forecast_training</code> from the database and schema you&#39;ve been working in. A data preview should automatically appear – to help us sanity check that the data are as expected.</p>
+<p class="image-container"><img src="img/9020d9cc92b098a3.png"></p>
+<p>In the next two steps, choose <code>subscribed_count</code> as your target column. Your target column is the one you want the model to predict. And choose <code>timestamp</code> as your timestamp column.</p>
+<p class="image-container"><img src="img/15c0ba9c7ad4bac.png"><img src="img/93a370d0a505eb57.png"></p>
+<p>Now, select your &#34;series identifier&#34;, which in this case is <code>age_bin</code>. By using this option, we&#39;re telling the forecast function to train separate models for each of the unique categories in <code>age_bin</code>. In this case, the forecast function will train two separate models for us, one for &#34;40 and up&#34; the other for &#34;40 and under.&#34;</p>
+<p class="image-container"><img src="img/a9657b8c88b72adf.png"></p>
+<p>Confirm that you want to use all remaining columns in your table as features. In this case, we&#39;re using <code>interest_rate</code> as a feature when we train our model.</p>
+<p class="image-container"><img src="img/d8618e1a316cb284.png"></p>
+<p>In the next few steps, you&#39;ll pick the data the model should use as an input when it makes its predictions and indicate which columns hold timestamps and series identifiers, just like we did for the training data. Note that we <em>must</em> provide input data at this prediction step because we asked the model to train not only on historical subscription counts (our &#34;target&#34;) but also on interest rates. Now, the model needs to know what interest rates are predicted to be in order to predict daily subscription counts accurately.</p>
+<p class="image-container"><img src="img/92e8b71158139679.png"><img src="img/72fe6d73024762d5.png"><img src="img/d5dab8cd54b926e6.png"></p>
+<p>Finally, we select our prediction interval width and name the table we want to store our predictions into.</p>
+<p class="image-container"><img src="img/b02595c70b6447c3.png"></p>
+<p>The results? A worksheet with all of the SQL you need to train your model, generate predictions and evaluate your results.</p>
+<p class="image-container"><img src="img/b7d0b37227589b76.png"></p>
+<h2 is-upgraded>Step 3: Generate Predictions and Visualize</h2>
+<p><strong>Once you&#39;ve run the steps under </strong></p>
+<p><strong><code>SETUP</code></strong></p>
+<p><strong> in your worksheet,</strong> run this step in your worksheet to train your model:</p>
+<pre><code language="language-sql" class="language-sql">-- Train your forecasting model.
+CREATE OR REPLACE SNOWFLAKE.ML.FORECAST forecast_subscriptions_model(
+    INPUT_DATA =&gt; SYSTEM$REFERENCE(&#39;TABLE&#39;, &#39;forecast_training_v1&#39;),
+    SERIES_COLNAME =&gt; &#39;age_bin&#39;,
+    TIMESTAMP_COLNAME =&gt; &#39;timestamp&#39;,
+    TARGET_COLNAME =&gt; &#39;subscribed_count&#39;
+);
+</code></pre>
+<p>Call your model to generate forecasts of the number of customers who you expect to subscribe to our term deposit each day for the next month.</p>
+<p>We wrap our model call in a code block and leverage <code>result_scan</code> and <code>SQLID</code> to guarantee that our forecasts are stored to the forecast table we create. Keep an eye out for updates we&#39;re working on to simplify this syntax.</p>
+<p>Otherwise, the below SQL uses the <code>forecast_subscriptions_model</code> we just trained to generate forecasts for each of the timestamp and age bin combinations we provided to it, using the interest rate as context.</p>
+<pre><code language="language-sql" class="language-sql">-- Generate predictions and store the results to a table.
+BEGIN
+    -- This is the step that creates your predictions.
+    CALL forecast_subscriptions_model!FORECAST(
+        INPUT_DATA =&gt; SYSTEM$REFERENCE(&#39;TABLE&#39;, &#39;forecast_future_values_v1&#39;),
+        SERIES_COLNAME =&gt; &#39;age_bin&#39;,
+        TIMESTAMP_COLNAME =&gt; &#39;timestamp&#39;
+    );
+    -- These steps store your predictions to a table.
+    LET x := SQLID;
+    CREATE TABLE forecasts AS SELECT * FROM TABLE(RESULT_SCAN(:x));
+END;
+
+-- View your predictions.
+SELECT * FROM forecasts;
+</code></pre>
+<p>We added a <code>WHERE</code> clause to this step in your worksheet so that we can visualize just one segment of our customers. Update your worksheet to the below SQL to view historical and forecasted daily subscriptions for your 40 and up category.</p>
+<pre><code language="language-sql" class="language-sql">SELECT TIMESTAMP, subscribed_count AS actual, NULL AS forecast, NULL AS lower_bound, NULL AS upper_bound
+    FROM forecast_training 
+    WHERE age_bin = &#39;40 and up&#39; and TIMESTAMP &gt; &#39;2010-02-01&#39;
+UNION ALL
+SELECT  ts as TIMESTAMP, NULL AS actual, forecast, lower_bound, upper_bound
+    FROM forecasts 
+    WHERE series = &#39;40 and up&#39;;
+</code></pre>
+<p>Run the above SQL then click on &#34;Chart&#34; in the results pane. Be sure to add <code>FORECAST</code> as a variable and set &#34;Aggregation&#34; to &#34;None&#34; for both <code>ACTUAL</code> and <code>FORECAST</code>.</p>
+<p class="image-container"><img src="img/5c94ee7d5005f0c.png"></p>
+<h2 is-upgraded>Step 4: Evaluate the Model</h2>
+<p>Great, we&#39;ve trained a model and used it to generate forecasts. Before we rely on this model to make recurring business decisions, let&#39;s see how well it performs.</p>
+<p>To do this, we&#39;ll inspect the model&#39;s accuracy metrics by calling the below command.</p>
+<pre><code language="language-sql" class="language-sql">-- Inspect the accuracy metrics of your model. 
+CALL forecast_subscriptions_model!SHOW_EVALUATION_METRICS();
+</code></pre>
+<p>The results include separate evaluation metrics for <em>both</em> age bins we provided to the model. The results also list out various metrics we can use to understand our model&#39;s performance. We&#39;ll look at MAPE, Mean Absolute Error, which represents the average absolute error between actual and predicted values. At a high level, we can interpret this as a representation of how accurate the model&#39;s predictions will be. The lower the better.</p>
+<p>The results we get indicate that, on average, our forecasts are off by 3 to six daily sales.</p>
+<p class="image-container"><img src="img/67d4dbcee54e70e9.png"><img src="img/e6bf2ebe3b2e7de8.png"></p>
+<p>Next, we&#39;ll inspect the relative importance of the features the model auto-generated and the feature we provided (interest rate).</p>
+<pre><code language="language-sql" class="language-sql">-- Inspect the relative importance of your features, including auto-generated features. 
+CALL forecast_subscriptions_model!EXPLAIN_FEATURE_IMPORTANCE();
+</code></pre>
+<p>The results indicate that <code>aggregated_endogenous_trend_features</code> are the most important features to the model. These include rolling averages of our historical subscriptions (e.g., a 7-day rolling average of daily subscriptions). Our <code>interest_rate</code> feature, which we provided to the model, is the next most influential feature for generating prediction. The other features the model auto-generates are also listed in this table, including lags (e.g., a 7-day lag of daily subscriptions, calendar variables like day of quarter).</p>
+<p class="image-container"><img src="img/58eca8c950ea895e.png"></p>
+<p>We now know how well our model is likely to perform (accuracy) and what is influencing our model&#39;s predictions!</p>
+<h2 is-upgraded>Step 5: Use Tasks to Automate Training and Prediction</h2>
+<p>Now that we&#39;ve gotten comfortable with our model, we can schedule our model to train and predict on a regular basis. This is helpful when our business needs predictions each week to help make planning decisions. These steps are not included in the worksheet you produced, so you&#39;ll need to copy these into your worksheet.</p>
+<p>First, we&#39;ll schedule recurring model training. Notice that we specify the warehouse the task should use and the timing of the task. This task is scheduled for midnight Monday morning – so that our forecasts are ready first thing Monday morning for our decision makers. (Try <a href="https://crontab.guru/#0_*_*_*" target="_blank">crontab.guru</a> to create a different schedule.) The other important note is that we are training our model on the <code>forecast_training_v1</code> table. Separately, we&#39;ll need to make sure this table is updated weekly so that our model trains on the most recent data.</p>
+<pre><code language="language-sql" class="language-sql">-- Update your input data with recent data to make your predictions as accurate as possible. 
+CREATE TASK train_task
+WAREHOUSE = my_warehouse
+SCHEDULE = &#39;USING CRON 0 0 * * 1  America/Los_Angeles&#39; -- Runs at midnight PT, Monday morning.
+AS
+    CREATE OR REPLACE SNOWFLAKE.ML.FORECAST forecast_subscriptions_model(
+        INPUT_DATA =&gt; SYSTEM$REFERENCE(&#39;TABLE&#39;, &#39;forecast_training_v1&#39;),
+        SERIES_COLNAME =&gt; &#39;age_bin&#39;,
+        TIMESTAMP_COLNAME =&gt; &#39;timestamp&#39;,
+        TARGET_COLNAME =&gt; &#39;subscribed_count&#39;
+    );
+</code></pre>
+<p>Next, we&#39;ll schedule recurring predictions. Again, we set our warehouse and the training schedule. Just like we did with the training step, we need to ensure that <code>forecast_future_values_v1</code> is updated with future values for the timestamps we want to predict over. (For example, if we are predicting for the next two weeks, we need a table with a row for each day and age bin combination, with a column for the Euribor rate, since we included that feature in the model training step.)</p>
+<pre><code language="language-sql" class="language-sql">CREATE TASK predict_task
+WAREHOUSE = my_warehouse
+SCHEDULE = &#39;USING CRON 0 1 * * 1 America/Los_Angeles&#39; -- Runs at 1am PT, Monday morning.
+AS
+    BEGIN
+        CALL forecast_subscriptions_model!FORECAST(
+            INPUT_DATA =&gt; SYSTEM$REFERENCE(&#39;TABLE&#39;, &#39;forecast_future_values_v1&#39;),
+            SERIES_COLNAME =&gt; &#39;age_bin&#39;,
+            TIMESTAMP_COLNAME =&gt; &#39;timestamp&#39;
+        );
+        LET x := SQLID;
+        CREATE OR REPLACE TABLE my_forecasts AS SELECT * FROM TABLE(RESULT_SCAN(:x));
+    END; 
+</code></pre>
+<p>If you&#39;d like to test your task, you can run EXECUTE TASK. To suspend or drop your task, run the ALTER and DROP commands below.</p>
+<pre><code language="language-sql" class="language-sql">-- Execute your task immediately to confirm it is working. 
+EXECUTE TASK train_task;
+
+-- Suspend or drop your task.
+ALTER TASK train_task suspend;
+DROP TASK train_task;
+DROP TASK predict_task;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <p>You did it! You&#39;ve successfully built and evaluated Snowflake ML Classification and Forecast models!</p>
+<p>As a review, in this guide we covered how you are able to:</p>
+<ol type="1">
+<li>Import our data and perform some exploratory data analysis in the Snowsight UI</li>
+<li>Trained a model for classification to predict whether customers would subscribe to a new product, and a forecast model to predict the total number of subscriptions in the next 30 days.</li>
+<li>Created predictions using both models.</li>
+<li>Evaluated the models to get a better understanding of how well they perform.</li>
+</ol>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build your own classification model</li>
+<li>How to build your own forecasting model</li>
+<li>How to evaluate those models and use them for prediction</li>
+<li>How to apply abstract concepts like classification and forecasting to real world problems</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li>Classification <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-functions/classification" target="_blank">documentation</a>, alongside the <a href="https://docs.snowflake.com/sql-reference/classes/classification" target="_blank">classification syntax</a></li>
+<li>Forecasting <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting" target="_blank">documentation</a></li>
+<li>To explore other Cortex ML Functions, please refer to the Snowflake Cortex <a href="https://docs.snowflake.com/en/guides-overview-ml-powered-functions" target="_blank">ML Functions Page</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

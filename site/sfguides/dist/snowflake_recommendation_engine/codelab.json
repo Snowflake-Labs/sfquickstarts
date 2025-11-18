@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "snowflake_recommendation_engine",
+  "duration": 42,
+  "title": "Build a Real-Time Recommendation Engine",
+  "summary": "A guide to building and running a recommendation engine in Snowflake",
+  "source": "recommendation_api/recommendation_api.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "app-development",
+    "architecture-patterns",
+    "marketing",
+    "solution-examples"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "gettingstarted",
+    "machinelearning",
+    "marketing",
+    "personalization",
+    "recommendations",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowflake_recommendation_engine"
+}

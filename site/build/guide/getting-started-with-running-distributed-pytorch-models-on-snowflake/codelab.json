@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-running-distributed-pytorch-models-on-snowflake",
+  "duration": 24,
+  "title": "Getting Started with Running Distributed PyTorch Models on Snowflake",
+  "summary": "Getting Started with Running Distributed PyTorch Models on Snowflake",
+  "source": "getting-started-with-running-distributed-pytorch-models-on-snowflake/getting-started-with-running-distributed-pytorch-models-on-snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "tasty-bytes",
+    "data-science",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "dataapps",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-running-distributed-pytorch-models-on-snowflake"
+}

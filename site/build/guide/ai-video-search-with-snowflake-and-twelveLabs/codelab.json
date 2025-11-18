@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "ai-video-search-with-snowflake-and-twelveLabs",
+  "duration": 30,
+  "title": "AI Video Search with Snowflake and Twelve Labs",
+  "summary": "This guide outlines the process for creating a video search and summarization workflow in Snowflake Notebook on Container Runtime.",
+  "source": "ai_video_search_with_snowflake_and_twelveLabs/ai_video_search_with_snowflake_and_twelveLabs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "ai-video-search-with-snowflake-and-twelveLabs"
+}

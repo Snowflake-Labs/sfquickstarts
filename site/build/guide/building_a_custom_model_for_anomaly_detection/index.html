@@ -1,0 +1,695 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Custom Model to Detect Anomalies on the Production Floor</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="building_a_custom_model_for_anomaly_detection"
+                  title="Build a Custom Model to Detect Anomalies on the Production Floor"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>This guide follows the <strong>detect_anomalies_on_production_floor.ipynb</strong>  notebook to simulate production data, analyze it, and detect anomalies using Snowflake and machine learning. By the end, you will have a registered anomaly detection model in Snowflake&#39;s Model Registry. Download the Notebook <a href="https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb" target="_blank">detect_anomalies_on_production_floor.ipynb</a></p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Before you begin, ensure you meet the following prerequisites:</p>
+<ul>
+<li>Familiarity with Python programming.</li>
+<li>Basic understanding of machine learning concepts.</li>
+<li>Familiarity with Snowflake and the DataFrame API.</li>
+<li>Access to a Snowflake account with Snowflake Notebooks enabled.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>To complete this quickstart, you&#39;ll need:</p>
+<ul>
+<li>A Snowflake account in a region that supports Snowflake&#39;s Machine Learning and Model Registry capabilities.</li>
+<li>Access to a warehouse with GPU capabilities for training the LSTM model.</li>
+<li>Python libraries: <code>pandas</code>, <code>numpy</code>, <code>scikit-learn</code>, <code>tensorflow</code>, and <code>keras</code>.</li>
+<li>A copy of the <a href="https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb" target="_blank">detect_anomalies_on_production_floor.ipynb</a> notebook.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this quickstart, you&#39;ll learn how to:</p>
+<ol type="1">
+<li>Simulate production data with normal and anomalous patterns.</li>
+<li>Store and preprocess data using Snowflake Snowpark.</li>
+<li>Train a Long Short-Term Memory (LSTM) neural network model for anomaly detection.</li>
+<li>Register and retrieve machine learning models using Snowflake&#39;s Model Registry.</li>
+<li>Use your registered anomaly detection model for inference.</li>
+</ol>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build a complete anomaly detection workflow for IoT sensor data from production floor machinery, including:</p>
+<ul>
+<li><strong>Data Simulation:</strong> Generate synthetic IoT sensor data representing normal and anomalous patterns.</li>
+<li><strong>Data Processing:</strong> Preprocess and store data using Snowflake Snowpark.</li>
+<li><strong>Model Training:</strong> Train an LSTM model tailored for anomaly detection.</li>
+<li><strong>Model Deployment:</strong> Register your trained model in Snowflake&#39;s Model Registry for streamlined deployment.</li>
+<li><strong>Actionable Insights:</strong> Build a Streamlit-powered ChatUI to interact with the data and anomalies for deeper insights.</li>
+</ul>
+<p>By the end of this guide, you&#39;ll have a functional pipeline capable of detecting anomalies in IoT data and providing actionable insights for production monitoring and maintenance.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="0">
+        <h2 is-upgraded>Create Database</h2>
+<ol type="1">
+<li>Open a new worksheet in Snowflake</li>
+<li>Create the database</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE SYSADMIN;
+CREATE database Productionfloor_db;
+</code></pre>
+<h2 is-upgraded>Open Snowflake Notebooks</h2>
+<ol type="1">
+<li>Click <a href="https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb" target="_blank">Notebook</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</li>
+<li>In your Snowflake account:</li>
+</ol>
+<ul>
+<li>On the left hand navigation menu, click on Projects » Notebooks</li>
+<li>On the top right, click on Notebook down arrow and select <strong>Import .ipynb</strong> file from the dropdown menu</li>
+<li>Select the file you downloaded in step 1 above</li>
+</ul>
+<ol type="1" start="3">
+<li>In the Create Notebook popup</li>
+</ol>
+<ul>
+<li>For Notebook location, select your database and public schema</li>
+<li>Select your <strong>Warehouse</strong>. You will need to have access to a <strong>Container</strong> with a <strong>GPU Cluster</strong></li>
+<li>Click on Create button</li>
+</ul>
+<ol type="1" start="4">
+<li>Open the notebook once created</li>
+</ol>
+<ul>
+<li>You will want to ensure you have external access so we can access pip <img alt="External Access" src="img/98908b9abecfbebe.gif"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate Normal and Anomalous Data" duration="0">
+        <p>In this section, you will create synthetic IoT sensor data to simulate production floor machinery performance. This data will include both normal operating conditions and intentionally introduced anomalies, enabling you to train and validate your anomaly detection model.</p>
+<p>The simulated data will represent various sensor readings, such as temperature, vibration, motor RPM, and motor current. By generating this data, you can better understand how your model distinguishes between normal and anomalous behavior in a controlled environment.</p>
+<h2 is-upgraded>Generate Normal Data</h2>
+<p>Normal data simulates machinery operating under standard conditions without any malfunctions. Each sensor&#39;s data is modeled as a Gaussian distribution with predefined means and variances to replicate realistic sensor behavior.</p>
+<p>Here&#39;s how the data is generated:</p>
+<ul>
+<li><strong>Timestamps:</strong> Generate a sequence of evenly spaced timestamps to represent consistent sensor readings over time.</li>
+<li><strong>Sensor Parameters:</strong> Simulate sensor measurements (e.g., temperature, vibration, motor RPM, and motor current) as random values drawn from normal distributions.</li>
+</ul>
+<p>The resulting dataset serves as the baseline for normal operating conditions.</p>
+<p><strong>Code Example:</strong></p>
+<pre><code language="language-python" class="language-python"># Parameters
+num_records = 1000
+start_time = pd.Timestamp(&#34;2024-06-12 10:52:00&#34;)
+interval = pd.Timedelta(minutes=10)
+
+# Generate timestamps
+timestamps = [start_time + i * interval for i in range(num_records)]
+
+# Generate normal sensor data
+np.random.seed(42)
+temperature = np.random.normal(loc=0.06, scale=0.002, size=num_records)
+vibration = np.random.normal(loc=0.075, scale=0.002, size=num_records)
+motor_rpm = np.random.normal(loc=0.045, scale=0.001, size=num_records)
+motor_amps = np.random.normal(loc=0.084, scale=0.002, size=num_records)
+</code></pre>
+<h2 is-upgraded>Add Anomalies</h2>
+<p>Anomalous data introduces deviations that simulate potential failures or irregularities in the production machinery. This data is used to train and test the model&#39;s ability to detect unusual behavior.</p>
+<p>Here&#39;s how anomalies are added:</p>
+<ul>
+<li><strong>Start Point:</strong> Define the starting index for anomalies in the dataset.</li>
+<li><strong>Anomalous Patterns:</strong> Introduce significant deviations in sensor values to mimic realistic anomalies, such as overheating, excessive vibration, or power irregularities.</li>
+</ul>
+<p>By mixing anomalous and normal data, you create a diverse dataset that challenges the anomaly detection model to perform effectively in real-world scenarios.</p>
+<pre><code language="language-python" class="language-python"># Add anomalies
+anomaly_start_index = num_records - 200
+temperature[anomaly_start_index:] += np.random.uniform(0.005, 0.01, size=200)
+vibration[anomaly_start_index:] += np.random.uniform(0.003, 0.007, size=200)
+motor_rpm[anomaly_start_index:] -= np.random.uniform(0.002, 0.005, size=200)
+motor_amps[anomaly_start_index:] += np.random.uniform(0.005, 0.01, size=200)
+
+# Combine data into a DataFrame
+data = {
+    &#34;TEMPERATURE&#34;: temperature,
+    &#34;VIBRATION&#34;: vibration,
+    &#34;MOTOR_RPM&#34;: motor_rpm,
+    &#34;MOTOR_AMPS&#34;: motor_amps,
+    &#34;MEASURE_TS&#34;: timestamps,
+}
+snow_pd = pd.DataFrame(data)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Store Data in Snowflake" duration="0">
+        <p>Once the synthetic data (both normal and anomalous) has been generated, the next step is to store it in Snowflake for further processing and analysis. Snowflake provides a seamless way to store structured data, making it easily accessible for machine learning workflows.</p>
+<h2 is-upgraded>Steps to Store Data</h2>
+<ol type="1">
+<li><strong>Convert to a Snowpark DataFrame:</strong> Use the Snowpark library to create a DataFrame from the generated Pandas DataFrame.</li>
+<li><strong>Save Data to a Snowflake Table:</strong> Write the Snowpark DataFrame to a Snowflake table using the <code>save_as_table</code> method.</li>
+</ol>
+<p>The following code demonstrates how to store the data in Snowflake:</p>
+<pre><code language="language-python" class="language-python"># Convert to Snowpark DataFrame
+spdf = session.create_dataframe(snow_pd)
+
+# Save data to Snowflake
+spdf.write.save_as_table(&#34;SENSOR_PREPARED&#34;, mode=&#34;overwrite&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Anomaly Detection Model" duration="0">
+        <p>In this section, you will define a custom anomaly detection model, register it with Snowflake&#39;s Model Registry, and prepare it for use. Snowflake&#39;s Model Registry enables you to manage and deploy machine learning models seamlessly, ensuring efficient integration with your data workflows.</p>
+<h2 is-upgraded>Define the Custom Model</h2>
+<p>To detect anomalies in the sensor data, we&#39;ll create a custom model class that preprocesses the data, performs predictions, and calculates anomaly scores. This custom model will leverage an LSTM (Long Short-Term Memory) neural network for detecting patterns and deviations.</p>
+<p><strong>Key Steps:</strong></p>
+<ol type="1">
+<li><strong>Preprocessing:</strong> Normalize the input data using <code>MinMaxScaler</code> for consistency.</li>
+<li><strong>Model Inference:</strong> Use the trained LSTM model to make predictions on the input data.</li>
+<li><strong>Anomaly Scoring:</strong> Calculate the anomaly scores by comparing predicted values to the original data.</li>
+</ol>
+<pre><code language="language-python" class="language-python">from snowflake.ml.model import custom_model
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+
+class AnomalyDetectionModel(custom_model.CustomModel):
+    def __init__(self, context: custom_model.ModelContext) -&gt; None:
+        super().__init__(context)
+        
+    @custom_model.inference_api
+    def predict(self, train_data: pd.DataFrame) -&gt; pd.DataFrame:
+        cols = train_data.columns
+        scaler = MinMaxScaler()
+        
+        # Prepare the data
+        X_train_pd = train_data.to_numpy()
+        X = X_train_pd.reshape(X_train_pd.shape[0], 1, X_train_pd.shape[1])
+        
+        # Perform predictions
+        X_pred = self.context.model_ref(&#39;lstm&#39;).predict(X)
+        X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
+        
+        # Calculate anomaly scores
+        scored = np.abs(X_pred - X_train_pd)
+        return pd.DataFrame(scored, columns=[f&#34;feature_{i}&#34; for i in range(scored.shape[1])])
+
+# Create the custom model instance
+ad = AnomalyDetectionModel(
+    context=custom_model.ModelContext(models={&#39;lstm&#39;: model})
+)
+</code></pre>
+<h2 is-upgraded>Register the Model in Snowflake</h2>
+<pre><code language="language-python" class="language-python">from snowflake.ml.registry import Registry
+
+# Initialize the registry
+ml_reg = Registry(session=session)
+
+# Log the model
+mv = ml_reg.log_model(
+    ad,
+    model_name=&#34;ANOMALYDETECTION_MODEL_1&#34;,
+    version_name=&#39;v1&#39;,
+    sample_input_data=train_data,
+    conda_dependencies=[&#34;scikit-learn&#34;, &#34;keras==2.9&#34;, &#34;tensorflow==2.9&#34;],
+    options={
+        &#34;relax_version&#34;: True,
+        &#34;embed_local_ml_library&#34;: True
+    }
+)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Register the Model in Snowflake" duration="0">
+        <p>After defining the custom anomaly detection model, the next step is to register it in Snowflake&#39;s Model Registry. The Model Registry allows you to store, version, and manage your machine learning models directly within Snowflake, ensuring seamless integration and deployment.</p>
+<p><strong>Key Steps:</strong></p>
+<ol type="1">
+<li><strong>Initialize the Model Registry:</strong> Connect to the Model Registry using your active Snowflake session.</li>
+<li><strong>Log the Model:</strong> Save the custom model, including dependencies and version details, to the registry.</li>
+</ol>
+<pre><code language="language-python" class="language-python"># Retrieve the model from the registry
+reg = Registry(session=session) 
+model_ref = reg.show_models()
+
+# Access the specific model version
+m = reg.get_model(&#34;ANOMALYDETECTION_MODEL_1&#34;)
+mv = m.version(&#34;v1&#34;)
+
+# Use the model
+X_pred = mv.run(X_train_snowdf, function_name=&#34;predict&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build a ChatUI on Streamlit" duration="0">
+        <p>Streamlit provides an intuitive and interactive interface for building data-driven applications.<br> In this section, you&#39;ll create a ChatUI that allows you to interact with your anomaly detection data, enabling you to gain actionable insights and engage with the results of your model.</p>
+<p>This ChatUI leverages Streamlit&#39;s features to provide:</p>
+<ul>
+<li>A conversational interface for querying anomaly data.</li>
+<li>Seamless integration with Snowflake for real-time data retrieval.</li>
+<li>AI-powered suggestions and insights to help users make informed decisions.</li>
+</ul>
+<h2 is-upgraded>Key Components of the ChatUI</h2>
+<ol type="1">
+<li><strong>Streamlit Setup:</strong> Configure Streamlit to display the ChatUI interface.</li>
+<li><strong>Session Management:</strong> Manage user queries and responses in a conversational format.</li>
+<li><strong>Integration with Snowflake:</strong> Use Snowflake Cortex functions and Snowpark queries to fetch and analyze data.</li>
+<li><strong>Interactive Responses:</strong> Provide AI-powered responses and insights based on user questions.</li>
+</ol>
+<h2 is-upgraded>Features of the ChatUI</h2>
+<ol type="1">
+<li><strong>Natural Language Queries:<br></strong> Users can ask questions like &#34;What anomalies occurred in the last 24 hours?&#34; and receive contextually relevant answers.</li>
+<li><strong>Real-Time Data:<br></strong> The ChatUI fetches anomaly data directly from the Snowflake database, ensuring that users work with up-to-date information.</li>
+<li><strong>AI Assistance:<br></strong> Integrates Snowflake Cortex&#39;s <code>Complete</code> function to provide AI-enhanced insights, enabling users to make sense of complex datasets with ease.</li>
+<li><strong>User-Friendly Interface:<br></strong> Built with Streamlit, the ChatUI provides an intuitive and visually appealing experience, allowing seamless interaction with data and insights.</li>
+</ol>
+<h2 is-upgraded>Benefits</h2>
+<ul>
+<li><strong>Quick Identification of Anomalies:<br></strong> Users can swiftly identify and understand anomalies in IoT sensor data, reducing time to action.</li>
+<li><strong>Natural Interaction with Data:<br></strong> The ChatUI enables natural language queries, making it accessible to both technical and non-technical users.</li>
+<li><strong>Proactive Decision-Making:<br></strong> Gain actionable insights from anomaly data, supporting proactive maintenance and operational improvements.</li>
+<li><strong>Seamless Integration with Snowflake:<br></strong> Combines the power of Snowflake&#39;s Cortex and Snowpark capabilities with a user-friendly interface, creating an efficient and scalable solution.</li>
+<li><strong>Enhanced User Experience:<br></strong> The conversational design ensures that users can intuitively explore and analyze data without needing to write complex queries.</li>
+</ul>
+<pre><code language="language-python" class="language-python">    # Import python packages
+    import pandas as pd
+    import streamlit as st
+    from snowflake.core import Root
+    import snowflake.snowpark.functions as F
+    import snowflake.snowpark.types as T
+    from snowflake.core import Root
+    from snowflake.snowpark.exceptions import SnowparkSQLException
+    from snowflake.cortex import Complete, ExtractAnswer, Sentiment, Summarize, Translate, ClassifyText
+    from snowflake.snowpark.context import get_active_session
+
+    # Constants
+    DB = &#34;productionfloor_db&#34;
+    SCHEMA = &#34;public&#34;
+    SERVICE = &#34;cortex_search_production_data&#34;
+    BASE_TABLE = &#34;SENSORS_AD_DETECTED&#34;
+
+    st.set_page_config(layout=&#34;wide&#34;, initial_sidebar_state=&#34;expanded&#34;)
+    st.title(&#34;:gear: Manufacturing Floor Q&amp;A Assistant  :gear:&#34;)
+    st.caption(
+        f&#34;&#34;&#34;Welcome! This application suggests answers to questions based 
+        on the available data and previous agent responses in support chats.
+        &#34;&#34;&#34;
+    )
+
+    # Get current credentials
+    session = get_active_session()
+
+    # Constants
+    CHAT_MEMORY = 10
+
+
+    MODELS = [
+        &#34;mistral-large&#34;,
+        &#34;llama3.1-70b&#34;,
+        &#34;llama3.1-8b&#34;,
+        &#34;mistral-large2&#34;,
+        &#34;llama3.1-405b&#34;,
+    ]
+
+    def init_messages():
+        &#34;&#34;&#34;
+        Initialize the session state for chat messages. If the session state indicates that the
+        conversation should be cleared or if the &#34;messages&#34; key is not in the session state,
+        initialize it as an empty list.
+        &#34;&#34;&#34;
+        if st.session_state.clear_conversation or &#34;messages&#34; not in st.session_state:
+            st.session_state.messages = []
+            st.session_state.suggestions = []
+            st.session_state.active_suggestion = None
+
+
+
+    ##########################################
+    #       Cortex Search
+    ##########################################
+    def init_service_metadata():
+        &#34;&#34;&#34;
+        Initialize the session state for cortex search service metadata. 
+        &#34;&#34;&#34;
+        if &#34;service_metadata&#34; not in st.session_state:
+            services = session.sql(&#34;SHOW CORTEX SEARCH SERVICES;&#34;).collect()
+            service_metadata = []
+            if services:
+                for s in services:
+                    svc_name = s[&#34;name&#34;]
+                    svc_search_col = session.sql(
+                        f&#34;DESC CORTEX SEARCH SERVICE {svc_name};&#34;
+                    ).collect()[0][&#34;search_column&#34;]
+                    service_metadata.append(
+                        {&#34;name&#34;: svc_name, &#34;search_column&#34;: svc_search_col}
+                    )
+
+            st.session_state.service_metadata = service_metadata
+
+    def init_config_options():
+        &#34;&#34;&#34;
+        Initialize the configuration options in the Streamlit sidebar. Allow the user to select
+        a cortex search service, clear the conversation, toggle debug mode, and toggle the use of
+        chat history. Also provide advanced options to select a model, the number of context chunks,
+        and the number of chat messages to use in the chat history.
+        &#34;&#34;&#34;
+        st.sidebar.selectbox(
+            &#34;Select cortex search service:&#34;,
+            [s[&#34;name&#34;] for s in st.session_state.service_metadata],
+            key=&#34;selected_cortex_search_service&#34;,
+        )
+
+        st.sidebar.button(&#34;Clear conversation&#34;, key=&#34;clear_conversation&#34;)
+        st.sidebar.toggle(&#34;Debug&#34;, key=&#34;debug&#34;, value=False)
+        st.sidebar.toggle(&#34;Use chat history&#34;, key=&#34;use_chat_history&#34;, value=True)
+
+        with st.sidebar.expander(&#34;Advanced options&#34;):
+            st.selectbox(&#34;Select model:&#34;, MODELS, key=&#34;model_name&#34;)
+            st.number_input(
+                &#34;Select number of context chunks&#34;,
+                value=5,
+                key=&#34;num_retrieved_chunks&#34;,
+                min_value=1,
+                max_value=10,
+            )
+            st.number_input(
+                &#34;Select number of messages to use in chat history&#34;,
+                value=5,
+                key=&#34;num_chat_messages&#34;,
+                min_value=1,
+                max_value=10,
+            )
+
+        st.sidebar.expander(&#34;Session State&#34;).write(st.session_state)
+
+        if &#34;messages&#34; not in st.session_state:
+            st.session_state.messages = []
+
+
+        # Display chat messages from history on app rerun
+        for message in st.session_state.messages:
+            with st.chat_message(message[&#34;role&#34;]):
+                st.markdown(message[&#34;content&#34;])
+
+    def query_cortex_search_service(query):
+        &#34;&#34;&#34;
+        Query the selected cortex search service with the given query and retrieve context data.
+
+        Args:
+            query (str): The query to search the cortex search service with.
+
+        Returns:
+            str: The concatenated string of context.
+        &#34;&#34;&#34;
+        db, schema = session.get_current_database(), session.get_current_schema()
+
+        cortex_search_service = (
+            root.databases[db]
+            .schemas[schema]
+            .cortex_search_services[st.session_state.selected_cortex_search_service]
+        )
+
+        context_documents = cortex_search_service.search(
+            query, columns=[], limit=st.session_state.num_retrieved_chunks
+        )
+        results = context_documents.results
+
+        service_metadata = st.session_state.service_metadata
+        search_col = [s[&#34;search_column&#34;] for s in service_metadata
+                        if s[&#34;name&#34;] == st.session_state.selected_cortex_search_service][0]
+
+        context_str = &#34;&#34;
+        for i, r in enumerate(results):
+            context_str += f&#34;Context {i+1}: {r[search_col]} \n&#34; + &#34;\n&#34;
+
+        if st.session_state.debug:
+            st.sidebar.text_area(&#34;Context&#34;, context_str, height=500)
+
+        return context_str
+
+
+    def get_chat_history():
+        &#34;&#34;&#34;
+        Retrieve the chat history from the session state limited to the number of messages specified
+        by the user in the sidebar options.
+
+        Returns:
+            list: The list of chat messages from the session state.
+        &#34;&#34;&#34;
+        start_index = max(
+            0, len(st.session_state.messages) - st.session_state.num_chat_messages
+        )
+        return st.session_state.messages[start_index : len(st.session_state.messages) - 1]
+
+    def complete(model, prompt):
+        &#34;&#34;&#34;
+        Generate a completion for the given prompt using the specified model.
+
+        Args:
+            model (str): The name of the model to use for completion.
+            prompt (str): The prompt to generate a completion for.
+
+        Returns:
+            str: The generated completion.
+        &#34;&#34;&#34;
+        return session.sql(&#34;SELECT snowflake.cortex.complete(?,?)&#34;, (model, prompt)).collect()[0][0]
+
+    def make_chat_history_summary(chat_history, question):
+        &#34;&#34;&#34;
+        Generate a summary of the chat history combined with the current question to extend the query
+        context. Use the language model to generate this summary.
+
+        Args:
+            chat_history (str): The chat history to include in the summary.
+            question (str): The current user question to extend with the chat history.
+
+        Returns:
+            str: The generated summary of the chat history and question.
+        &#34;&#34;&#34;
+        
+        prompt = f&#34;&#34;&#34;
+            [INST]
+            Based on the chat history below and the question, generate a query that extend the question
+            with the chat history provided. The query should be in natural language.
+            Answer with only the query.
+
+            &lt;chat_history&gt;
+            {chat_history}
+            &lt;/chat_history&gt;
+            &lt;question&gt;
+            {question}
+            &lt;/question&gt;
+            [/INST]
+        &#34;&#34;&#34;
+
+        summary = complete(st.session_state.model_name, prompt)
+
+        if st.session_state.debug:
+            st.sidebar.text_area(
+                &#34;Chat history summary&#34;, summary.replace(&#34;$&#34;, &#34;\$&#34;), height=150
+            )
+
+        return summary
+
+    def create_prompt(user_question):
+        &#34;&#34;&#34;
+        Create a prompt for the language model by combining the user question with context retrieved
+        from the cortex search service and chat history (if enabled). Format the prompt according to
+        the expected input format of the model.
+
+        Args:
+            user_question (str): The user&#39;s question to generate a prompt for.
+
+        Returns:
+            str: The generated prompt for the language model.
+        &#34;&#34;&#34;
+        
+        if st.session_state.use_chat_history:
+            
+            chat_history = get_chat_history()
+            if chat_history != []:
+                question_summary = make_chat_history_summary(chat_history, user_question)
+                prompt_context = query_cortex_search_service(question_summary)
+            else:
+                
+                prompt_context = query_cortex_search_service(user_question)
+                question_summary=&#39;&#39;
+                    
+            
+
+        prompt = f&#34;&#34;&#34;
+                You are a AI assistant.There is data from various sensors monitoring a machine. Each sensor records different parameters such as vibration levels, temperature, motor_amps, motor_rpm sensors. The goal is to analyze this data for potential anomalies and gain insights into the machine&#39;s performance.
+                Answer this question by extracting information given between
+            between &lt;context&gt; and &lt;/context&gt; tags. \n
+                When presented with the question use the information between the \n
+                &lt;context&gt; and &lt;/context&gt; tags.You are offering a chat experience using the 
+                user&#39;s chat history provided in between the &lt;chat_history&gt; and &lt;/chat_history&gt; tags
+                to provide a summary that addresses the user&#39;s question. 
+            
+            When answering the question be concise and dont provide explanation.           
+            If you don´t have the information just say so.
+
+            
+            The question is given between the &lt;question&gt; and &lt;/question&gt; tags.
+
+            &lt;chat_history&gt;
+                {chat_history}
+                &lt;/chat_history&gt;
+                &lt;context&gt;
+                {prompt_context}
+                &lt;/context&gt;
+                
+            &lt;question&gt;
+            {user_question}
+            &lt;/question&gt;
+        
+            Answer:
+            &#34;&#34;&#34;
+        prompt = prompt.replace(&#34;&#39;&#34;, &#34;&#39;&#39;&#34;)
+        return prompt
+
+    ##########################################
+    #      Main
+    ##########################################
+
+    def main():
+        st.title(f&#34;:speech_balloon: Chatbot with Snowflake Cortex&#34;)
+
+        init_service_metadata()
+        init_config_options()
+        init_messages()
+
+        icons = {&#34;assistant&#34;: &#34;❄️&#34;, &#34;user&#34;: &#34;👤&#34;}
+        
+            
+        disable_chat = (
+            &#34;service_metadata&#34; not in st.session_state
+            or len(st.session_state.service_metadata) == 0
+        )
+        if question := st.chat_input(&#34;Ask a question...&#34;, disabled=disable_chat):
+            # Add user message to chat history
+            st.session_state.messages.append({&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: question})
+            # Display user message in chat message container
+            with st.chat_message(&#34;user&#34;, avatar=icons[&#34;user&#34;]):
+                st.markdown(question.replace(&#34;$&#34;, &#34;\$&#34;))
+                
+            
+
+            # Display assistant response in chat message container
+            with st.chat_message(&#34;assistant&#34;, avatar=icons[&#34;assistant&#34;]):
+                message_placeholder = st.empty()
+                # question = question.replace(&#34;&#39;&#34;, &#34;&#34;)
+                with st.spinner(&#34;Thinking...&#34;):
+                    # Generate the response
+                    generated_response = complete(
+                        st.session_state.model_name, create_prompt(question)
+                    )
+                    
+                    # Store the generated response directly in session state
+                    st.session_state.gen_response = generated_response
+                    
+                    # Display the generated response
+                    message_placeholder.markdown(generated_response)
+
+            st.session_state.messages.append(
+                {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: generated_response}
+            )
+            
+
+    if __name__ == &#34;__main__&#34;:
+        session = get_active_session()
+        root = Root(session)
+        main()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p><strong>Congratulations!</strong> You&#39;ve successfully followed the <strong>detect_anomalies_on_production_floor.ipynb</strong> notebook to:</p>
+<ul>
+<li>Simulate production data with normal and anomalous patterns.</li>
+<li>Train and register an LSTM-based anomaly detection model in Snowflake.</li>
+<li>Retrieve and prepare the model for inference.</li>
+</ul>
+<p>This workflow provides a foundation for real-time anomaly detection in production systems, enabling proactive maintenance and operational efficiency.</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<p>By completing this quickstart, you have learned:</p>
+<ul>
+<li>How to simulate IoT sensor data for anomaly detection.</li>
+<li>How to store, preprocess, and analyze data using Snowflake Snowpark.</li>
+<li>How to build, register, and retrieve an LSTM-based custom anomaly detection model.</li>
+<li>How to leverage Snowflake&#39;s Model Registry for deploying machine learning models.</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>To further explore the tools and methodologies used in this quickstart, check out the following resources:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/ml-model-registry/index" target="_blank">Snowflake ML Model Registry Documentation</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor" target="_blank">Source Code for This Quickstart</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight#notebooks" target="_blank">Snowflake Notebooks Overview</a></li>
+</ul>
+<p>These resources will help you deepen your understanding and build more complex machine-learning workflows using Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

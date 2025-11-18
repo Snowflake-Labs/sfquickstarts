@@ -1,0 +1,440 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake Cortex Agents API and React</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowflake_agents_api_and_react"
+                  title="Getting Started with Snowflake Cortex Agents API and React"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll learn how to leverage Snowflake&#39;s Cortex Agents to orchestrate across both structured and unstructured data sources to deliver insights. Cortex Agents can plan tasks, use tools to execute these tasks, and generate responses. They combine Cortex Analyst for structured data queries and Cortex Search for unstructured data insights, along with LLMs for natural language understanding.</p>
+<p>This guide walks you through a complete, functional application that demonstrates the Cortex Agent API in action. The tutorial project includes a fully working chatbot interface built with Next.js that allows users to interact with both structured and unstructured data through natural language queries. The application handles everything from authentication to rendering complex responses with charts, tables, and citations.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Building applications using Cortex Agents API</li>
+<li>Using Cortex Analyst for structured data queries</li>
+<li>Using Cortex Search for unstructured data insights</li>
+<li>Implementing key pair authentication</li>
+<li>Working with tool resources and specifications</li>
+<li>Managing API responses and data processing</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>An intelligent application that:</p>
+<ul>
+<li>Routes queries between Cortex Analyst and Cortex Search</li>
+<li>Accesses both structured and unstructured data sources</li>
+<li>Uses tools to execute specific tasks</li>
+<li>Processes results within Snowflake&#39;s secure perimeter</li>
+<li>Generates responses using LLMs</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account (<a href="https://signup.snowflake.com/" target="_blank">Sign up here</a>)</li>
+<li>RSA key pair authentication setup (<a href="https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key" target="_blank">Key Generation Instructions</a>)</li>
+<li>Knowledge of TypeScript/JavaScript</li>
+<li>Familiarity with React</li>
+<li>Required Access: <ul>
+<li>CORTEX_USER database role</li>
+<li>USAGE privilege on Cortex Search Service</li>
+<li>USAGE privilege on referenced databases, schemas, and tables</li>
+</ul>
+</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#availability" target="_blank">Supported Regions</a></li>
+<li>Where <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability" target="_blank">PARSE_DOCUMENT</a> is available. (<em>Note: This feature is in Public Preview as of 02/28/2025)</em></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Workspace" duration="10">
+        <p>To get started, clone or download the tutorial project from: <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react" target="_blank">Snowflake Agent API Chatbot Tutorial</a></p>
+<p><strong>Step 1.</strong> In Snowsight, create a SQL Worksheet and open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react/blob/main/data/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom.</p>
+<p>This script will:</p>
+<ul>
+<li>Create the database, schema, and warehouse</li>
+<li>Set up necessary roles and permissions</li>
+<li>Configure Cortex Search service</li>
+<li>Create a stage for semantic models</li>
+</ul>
+<p><strong>Step 2.</strong> Upload the semantic model:</p>
+<ul>
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react/blob/main/data/customer_semantic_model.yaml" target="_blank">semantic model</a> (NOTE: Do NOT right-click to download.)</li>
+<li>Navigate to Data » Databases » INSURANCEDB » DATA » Stages » CLAIM_STORAGE</li>
+<li>Click &#34;+ Files&#34; in the top right</li>
+<li>Select the semantic model file</li>
+<li>Click &#34;Upload&#34;</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Define Environment Variables" duration="15">
+        <p>Now that we have set up the workspace, let&#39;s configure the necessary environment variables for the application. Create an <code>.env</code> file in the root folder of your project and add the following variables:</p>
+<h2 is-upgraded>Agent API Parameters</h2>
+<pre><code># Snowflake URL with your account details
+NEXT_PUBLIC_SNOWFLAKE_URL=https://&lt;account_details&gt;.snowflakecomputing.com
+
+# Path to the semantic model file; for example, @INSURANCEDB.DATA.CLAIM_STORAGE/customer_semantic_model.yaml
+NEXT_PUBLIC_SEMANTIC_MODEL_PATH=@&lt;database&gt;.&lt;schema&gt;.&lt;stage_name&gt;/&lt;semantic_model_name&gt;.yaml
+
+# Path to the search service; for example, INSURANCEDB.DATA.SUPPORT_DOCS_SEARCH
+NEXT_PUBLIC_SEARCH_SERVICE_PATH=&lt;database&gt;.&lt;schema&gt;.&lt;search_service_name&gt;
+</code></pre>
+<h2 is-upgraded>Authentication Parameters</h2>
+<pre><code># Your Snowflake account name only
+SNOWFLAKE_ACCOUNT=&lt;your_account_identifier&gt;
+
+# Your Snowflake username
+SNOWFLAKE_USER=&lt;your_username&gt;
+
+# Private RSA Key for JWT token generation
+# You can skip this env var and set a rsa_key.p8 in the root folder if running locally
+SNOWFLAKE_RSA_KEY=&lt;your_private_rsa_key&gt;
+
+# Passphrase for RSA Key if it was encrypted
+SNOWFLAKE_RSA_PASSPHRASE=&lt;your_passphrase&gt;
+</code></pre>
+<aside class="warning"><p>NOTE: For help with setting your-account-identifier, refer to the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier?_fsi=LnJgA8TM" target="_blank">documentation</a>.</p>
+</aside>
+<h2 is-upgraded>UI Rendering Properties (Optional)</h2>
+<p>You can set an array of suggested queries for the initial load of the UI:</p>
+<pre><code>NEXT_PUBLIC_SUGGESTED_QUERIES=[&#34;How many claims are currently open? How many are $10K or higher?&#34;,&#34;Create a chart from repair invoices by zipcodes for Austin.  Are there certain areas with higher repair charges?&#34;,&#34;List appraisal clauses related to snowmobiles across all our contracts?&#34;,&#34;Rental car&#34;]
+</code></pre>
+<p>If not specified, the application will use default suggested queries.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Application" duration="10">
+        <p>Now that we have set up the workspace and configured the environment variables, let&#39;s run the application locally.</p>
+<p>If you haven&#39;t installed pnpm via npm or brew, you can do so with:</p>
+<pre><code>npm i -g pnpm
+# or
+brew install pnpm
+</code></pre>
+<p>Install dependencies:</p>
+<pre><code>pnpm i
+</code></pre>
+<p>Start the application:</p>
+<pre><code>pnpm dev
+</code></pre>
+<p>The application should now be running on <code>http://localhost:3000</code>.</p>
+<p class="image-container"><img alt="Chat Screen" src="img/b49ceff23811208e.png"></p>
+<p>Click on one of the questions to see what it can do!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explain the Integration" duration="15">
+        <p>Now that we have our application running, let&#39;s examine how to integrate with the Cortex Agent API. The bulk of the Agent API integration logic is located in the <code>@/lib/agent-api</code> directory.</p>
+<h2 is-upgraded>Define Tool Specifications</h2>
+<p>First, let&#39;s set up the constant definitions for Cortex tools:</p>
+<pre><code>export const CORTEX_ANALYST_TOOL = {
+    &#34;tool_spec&#34;: {
+        &#34;type&#34;: &#34;cortex_analyst_text_to_sql&#34;,
+        &#34;name&#34;: &#34;analyst1&#34;
+    }
+} as const;
+
+export const CORTEX_SEARCH_TOOL = {
+    &#34;tool_spec&#34;: {
+        &#34;type&#34;: &#34;cortex_search&#34;,
+        &#34;name&#34;: &#34;search1&#34;
+    }
+} as const;
+
+export const SQL_EXEC_TOOL = {
+    &#34;tool_spec&#34;: {
+        &#34;type&#34;: &#34;sql_exec&#34;,
+        &#34;name&#34;: &#34;sql_exec&#34;
+    }
+} as const;
+
+export const DATA_TO_CHART_TOOL = {
+    &#34;tool_spec&#34;: {
+        &#34;type&#34;: &#34;data_to_chart&#34;,
+        &#34;name&#34;: &#34;data_to_chart&#34;
+    }
+} as const;
+</code></pre>
+<p>These constants define the tool specifications that tell the Cortex Agent which capabilities to use for different types of queries. Each tool has a unique name and type that identifies its functionality within the Cortex ecosystem.</p>
+<h2 is-upgraded>Tool Resources</h2>
+<p>Next, define the interfaces for tool resources:</p>
+<pre><code>export interface CortexAnalystToolResource {
+    &#34;analyst1&#34;: {
+        &#34;semantic_model_file&#34;: string;
+    }
+}
+
+export interface CortexSearchToolResource {
+    &#34;search1&#34;: {
+        &#34;name&#34;: string;
+        &#34;max_results&#34;: number;
+    }
+}
+</code></pre>
+<p>These interfaces define the resources required by each tool. For the Cortex Analyst, you need to specify the semantic model file that maps natural language to SQL structures. For Cortex Search, you need to specify the name of the search service and the maximum number of results to return.</p>
+<h2 is-upgraded>Configure Request Parameters</h2>
+<p>Setup the standard request parameters for the Cortex Agent API:</p>
+<pre><code>export function buildStandardRequestParams(params: AgentRequestBuildParams) {
+    const {
+        authToken,
+        messages,
+        experimental,
+        tools,
+        toolResources,
+    } = params;
+
+    const headers = {
+        &#39;Accept&#39;: &#39;application/json&#39;,
+        &#39;Content-Type&#39;: &#39;application/json&#39;,
+        &#39;X-Snowflake-Authorization-Token-Type&#39;: &#39;KEYPAIR_JWT&#39;,
+        &#39;Authorization&#39;: `Bearer ${authToken}`,
+    }
+
+    const body = {
+        &#34;model&#34;: &#34;claude-4-sonnet&#34;,
+        &#34;experimental&#34;: experimental,
+        &#34;messages&#34;: messages,
+        &#34;tools&#34;: tools,
+        &#34;tool_resources&#34;: toolResources,
+    }
+
+    return { headers, body };
+}
+</code></pre>
+<p>The <code>buildStandardRequestParams</code> function creates the necessary headers and body for API requests to the Cortex Agent. It sets up authentication using JWT tokens and specifies which LLM model to use, along with messages, tools, and tool resources.</p>
+<h2 is-upgraded>Using the Agent API Hook</h2>
+<p>In <code>page.tsx</code>, we use the <code>useAgentApiQuery</code> hook to handle the Agent API and return state, message history, and a <code>handleNewMessage</code> function to send a new message:</p>
+<pre><code>// from page.tsx
+const { agentState, messages, latestMessageId, handleNewMessage } = useAgentAPIQuery({
+  authToken: jwtToken,
+  snowflakeUrl: process.env.NEXT_PUBLIC_SNOWFLAKE_URL!,
+  experimental: {
+    EnableRelatedQueries: true,
+  },
+  tools,
+  toolResources: {
+    &#34;analyst1&#34;: { &#34;semantic_model_file&#34;: process.env.NEXT_PUBLIC_SEMANTIC_MODEL_PATH },
+    &#34;search1&#34;: { &#34;name&#34;: process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 },
+  }
+})
+</code></pre>
+<p>The states returned from this hook are then passed to the appropriate components for rendering. This approach allows for clean separation of concerns between the API interaction logic and the UI rendering.</p>
+<h2 is-upgraded>Handle Citation Processing</h2>
+<p>In the Cortex Agent implementation, we need a way to process citations that are returned from search results. The code from the message.tsx file shows how this is handled:</p>
+<pre><code>// Extract from message.tsx showing citation handling
+message.content.forEach((content) =&gt; {
+    // if plain text
+    if (content.type === &#34;text&#34;) {
+        const { text } = (content as AgentMessageTextContent);
+        agentApiText = text;
+
+        if (citations.length &gt; 0) {
+            relatedQueries.push(...text.matchAll(RELATED_QUERIES_REGEX).map(match =&gt; ({
+                relatedQuery: match[1].trim(),
+                answer: match[2].trim()
+            })));
+        }
+
+        const postProcessedText = postProcessAgentText(text, relatedQueries, citations);
+
+        agentResponses.push(&lt;ChatTextComponent key={text} text={postProcessedText} role={role} /&gt;);
+    } else if (content.type === &#34;tool_results&#34;) {
+        const toolResultsContent = (content as AgentMessageToolResultsContent).tool_results.content[0].json;
+
+        // if search response
+        if (&#34;searchResults&#34; in toolResultsContent) {
+            citations.push(...toolResultsContent.searchResults.map((result: CortexSearchCitationSource) =&gt; ({
+                text: result.text,
+                number: parseInt(String(result.source_id), 10),
+            })))
+        }
+        
+        // Other content handling...
+    }
+});
+
+// Later in the component, citations are displayed when available
+{role === AgentMessageRole.ASSISTANT &amp;&amp; citations.length &gt; 0 &amp;&amp; agentState === AgentApiState.IDLE &amp;&amp; agentApiText &amp;&amp; (
+    &lt;ChatCitationsComponent agentApiText={agentApiText} citations={citations} /&gt;
+)}
+</code></pre>
+<p>This code demonstrates how the application:</p>
+<ol type="1">
+<li>Extracts citations from search results</li>
+<li>Collects them in an array for processing</li>
+<li>Uses them to generate related queries</li>
+<li>Renders them using a dedicated citations component when they are available</li>
+</ol>
+<p>The citation processing is a key part of making Cortex Search results more usable and presentable to end users.</p>
+<h2 is-upgraded>Message Content Flow</h2>
+<p>Let&#39;s examine how the message content flows through the application. In page.tsx, we can see how the hook is called and its results are passed to child components:</p>
+<pre><code>// from page.tsx
+const { agentState, messages, latestMessageId, handleNewMessage } = useAgentAPIQuery({
+  authToken: jwtToken,
+  snowflakeUrl: process.env.NEXT_PUBLIC_SNOWFLAKE_URL!,
+  experimental: {
+    EnableRelatedQueries: true,
+  },
+  tools,
+  toolResources: {
+    &#34;analyst1&#34;: { &#34;semantic_model_file&#34;: process.env.NEXT_PUBLIC_SEMANTIC_MODEL_PATH },
+    &#34;search1&#34;: { &#34;name&#34;: process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 },
+  }
+})
+
+// These values are then passed to child components
+&lt;Messages
+  agentState={agentState}
+  messages={messages}
+  latestMessageId={latestMessageId}
+/&gt;
+
+&lt;ChatInput
+  isLoading={agentState !== AgentApiState.IDLE}
+  messagesLength={messages.length}
+  handleSubmit={handleNewMessage} /&gt;
+</code></pre>
+<p>The Messages component will then render each message using the PreviewMessage component from message.tsx. This component handles the different types of content that can be present in Agent API responses and renders them appropriately.</p>
+<p>The flow of data through the application provides a complete picture of how the Agent API is integrated into a user interface for interactive querying of structured and unstructured data.</p>
+<h2 is-upgraded>Displaying Message Components in the UI</h2>
+<p>As seen in the message.tsx file, the application handles different types of content and displays them appropriately:</p>
+<pre><code>// From message.tsx - showing how different components are rendered based on content type
+return (
+    &lt;AnimatePresence&gt;
+        &lt;motion.div
+            className=&#34;w-full mx-auto max-w-3xl px-4 group/message&#34;
+            initial=&#123;&#123; y: 5, opacity: 0 }}
+            animate=&#123;&#123; y: 0, opacity: 1 }}
+            data-role={message.role}
+        &gt;
+            &lt;div
+                className=&#39;flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-lg group-data-[role=user]/message:w-fit&#39;
+            &gt;
+                &lt;div className=&#34;flex flex-col gap-4 w-full&#34;&gt;
+                    {agentResponses}
+
+                    {role === AgentMessageRole.ASSISTANT &amp;&amp; agentState === AgentApiState.EXECUTING_SQL &amp;&amp; (
+                        &lt;Data2AnalyticsMessage message=&#34;Executing SQL...&#34; /&gt;
+                    )}
+
+                    {role === AgentMessageRole.ASSISTANT &amp;&amp; agentState === AgentApiState.RUNNING_ANALYTICS &amp;&amp; (
+                        &lt;Data2AnalyticsMessage message=&#34;Analyzing data...&#34; /&gt;
+                    )}
+
+                    {role === AgentMessageRole.ASSISTANT &amp;&amp; relatedQueries.length &gt; 0 &amp;&amp; (
+                        &lt;ChatRelatedQueriesComponent relatedQueries={relatedQueries} /&gt;
+                    )}
+
+                    {role === AgentMessageRole.ASSISTANT &amp;&amp; citations.length &gt; 0 &amp;&amp; agentState === AgentApiState.IDLE &amp;&amp; agentApiText &amp;&amp; (
+                        &lt;ChatCitationsComponent agentApiText={agentApiText} citations={citations} /&gt;
+                    )}
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/motion.div&gt;
+    &lt;/AnimatePresence&gt;
+);
+</code></pre>
+<p>This code shows how the UI:</p>
+<ol type="1">
+<li>Displays the main content responses in the <code>agentResponses</code> array</li>
+<li>Shows loading states while SQL is executing or analytics are running</li>
+<li>Renders related queries when they are available</li>
+<li>Displays citations when they are available and the agent is idle</li>
+</ol>
+<p>The component uses conditional rendering to ensure that the appropriate UI elements are shown based on the current state and available data. This creates a responsive and informative interface for users interacting with the Cortex Agent.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations! You&#39;ve learned how to integrate the Snowflake Cortex Agent API into your applications. By implementing the citation extraction and processing functionality, you can now create intelligent applications that can access both structured and unstructured data while providing properly sourced responses to user queries.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Setting up Cortex tool specifications</li>
+<li>Configuring Cortex tool resources</li>
+<li>Building request parameters for the Agent API</li>
+<li>Processing Cortex Search results</li>
+<li>Implementing citation extraction and filtering</li>
+<li>Building user interfaces for displaying citations</li>
+<li>Implementing a complete Agent API integration</li>
+<li>Managing message state and responses</li>
+</ul>
+<p>Note: While Snowflake strives to provide high quality responses, the accuracy of the LLM responses or the citations provided are not guaranteed. You should review all answers from the Agents API before serving them to your users.</p>
+<h2 is-upgraded>Resources</h2>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst Documentation</a></li>
+</ul>
+<p>Sample Code &amp; Guides:</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react" target="_blank">Agent API Chatbot Tutorial</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html" target="_blank">Getting Started with Snowflake Agents API</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_microsoft_teams/index.html" target="_blank">Getting Started with Snowflake Agents (API) and Microsoft Teams</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_slack/index.html" target="_blank">Getting Started with Snowflake Agents (API) and Slack</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Modernize XML Processing for Financial Services with Snowpark XML</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="xml-processing-snowpark"
+                  title="Modernize XML Processing for Financial Services with Snowpark XML"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>This quickstart guides users through processing XML data using Snowflake&#39;s Snowpark XML.</p>
+<p>Snowflake <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a> and a US Treasury dataset downloaded from <a href="https://fiscaldata.treasury.gov/datasets/monthly-treasury-statement/securities-issued-by-federal-agencies-under-special-financing-authorities" target="_blank">Investments of Federal Government Accounts in Federal Securities</a> are used to demonstrate Snowpark XML capabilities.</p>
+<p>Snowpark XML enables scalable, Spark-like processing of XML files using Snowpark&#39;s Python API and UDTF-based backend.</p>
+<p>Users can leverage Snowpark XML capabilities to:</p>
+<ul>
+<li>Efficiently ingest large or multiple XML files using <code>rowTag</code>.</li>
+<li>Output as structured rows in VARIANT, enabling easier querying.</li>
+<li>Use simple, Spark-compatible API (<code>session.read.option(...).xml(...)</code>).</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com" target="_blank">Snowflake Account</a></li>
+<li>Privileges necessary to create a user, database, and virtual warehouse in Snowflake</li>
+<li>Intermediate knowledge of <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark</a> and Python</li>
+<li>Access to create and run <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Efficiently ingest large or multiple XML files using <code>rowTag</code>.</li>
+<li>Output as structured rows in <code>VARIANT</code>, enabling easier querying.</li>
+<li>Use simple, Spark-compatible API (<code>session.read.option(...).xml(...)</code>).</li>
+<li>Create and run <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account with ACCOUNTADMIN or a custom role with enough privileges</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Notebook for XML Data Processing with Snowpark XML on Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture" duration="3">
+        <p>This solution harnesses the power of Snowflake Snowpark XML to load, extract and render financial data in XML format.</p>
+<p class="image-container"><img src="img/559cdffe034a1b05.png"></p>
+<p>Snowflake <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Notebooks</a> serve as our interactive workspace. Through the skillful application of advanced Snowpark XML capabilities, we demonstrate how to process XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="8">
+        <h2 is-upgraded>Database</h2>
+<p>Login to your Snowflake account. Navigate to <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs" target="_blank">Worksheets</a>, click &#34;+&#34; in the top-right corner to create a new Worksheet and choose &#34;SQL Worksheet&#34;. Name it &#34;Snowpark XML Processing - Setup&#34;.</p>
+<p>Paste the following block to your worksheet.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE IF NOT EXISTS XML_PROCESSING;
+
+USE DATABASE XML_PROCESSING;
+
+CREATE SCHEMA IF NOT EXISTS NOTEBOOKS;
+
+CREATE WAREHOUSE IF NOT EXISTS XML_WH WAREHOUSE_SIZE=XSMALL INITIALLY_SUSPENDED=TRUE;
+
+USE WAREHOUSE XML_WH;
+
+CREATE FILE FORMAT IF NOT EXISTS my_xml_format
+  TYPE = XML
+  COMPRESSION = NONE;
+
+CREATE STAGE IF NOT EXISTS XML_PROCESSING.DATA.XMLDATA_STAGE
+  DIRECTORY = (ENABLE = TRUE)
+  FILE_FORMAT = my_xml_format
+  ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+</code></pre>
+<p>You will create Snowflake objects (database, schema, warehouse) executing the above SQL block from your worksheet.</p>
+<p>You can execute all at once &#34; &gt; Run All&#34; or, one at the time, by selecting each statement and clicking on the &#34;Run&#34; button.</p>
+<h2 is-upgraded>Data</h2>
+<p>We are using the <a href="https://fiscaldata.treasury.gov/datasets/monthly-treasury-statement/securities-issued-by-federal-agencies-under-special-financing-authorities" target="_blank">Investments of Federal Government Accounts in Federal Securities</a> dataset from the US Treasury.</p>
+<p>To download it, scroll down to &#34;Data Preview&#34;, set the following and click &#34;Download XML file&#34;:</p>
+<ul>
+<li>Data Table = &#34;Investments of Federal Government Accounts in Federal Securities&#34;</li>
+<li>Date Range (Record Date) = &#34;All&#34;</li>
+<li>Format type = &#34;XML&#34;</li>
+</ul>
+<p class="image-container"><img src="img/8c860201b135f56c.png"></p>
+<p>A file &#34;MTS_AgcyInvest_20150331_20250331.xml&#34; (13.7MB) will be downloaded to your local &#34;Downloads&#34; folder.</p>
+<p>Login to your Snowflake Account and from the left navigation menu select Data / Database &#34;XML_PROCESSING&#34; database, &#34;DATA&#34; schema and &#34;XMLDATA_STAGE&#34; stage</p>
+<p class="image-container"><img src="img/1e9ebf3fbbc9a35d.png"></p>
+<p>Click &#34;+Files&#34; in the top-right corner and &#34;Browse&#34; then select the downloaded file from your local /Downloads folder</p>
+<p class="image-container"><img src="img/7e109bb23e85c5b4.png"></p>
+<p>Hit &#34;Upload&#34; and the file will be uploaded to the internal stage. <img src="img/a12f1182b24ab592.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowpark XML Processing" duration="10">
+        <p>Select &#34;Projects&#34; / &#34;Notebooks&#34; from the left navigation menu. Click &#34;+ Notebook&#34; from the top-right corner.</p>
+<p>Complete the opened form:</p>
+<p class="image-container"><img src="img/e9cda4a30555e198.png"></p>
+<p>Click &#34;Create&#34; and a default notebook with 3 cells will be created. Remove those three cells from the right corner of each cell by choosing &#34;Delete&#34;. Repeat it for each cell.</p>
+<p>Click &#34;+ Markdown&#34; and paste to the cell the following code block:</p>
+<pre><code language="language-python" class="language-python"># Loading XML Data from internal stage
+Efficient ingestion of large or multiple XML files using rowTag.
+</code></pre>
+<p>Click &#34;+ Python&#34; and paste to the cell the following code block:</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+</code></pre>
+<p>Click &#34;+ Python&#34; and paste to the cell the following code block:</p>
+<pre><code language="language-python" class="language-python">stage_file_path = f&#39;@XML_PROCESSING.DATA.XMLDATA_STAGE/MTS_AgcyInvest_20150331_20250331.xml&#39;
+
+df = session.read.option(&#34;rowTag&#34;, &#34;row&#34;).xml(stage_file_path)
+# df.show()
+df.write.mode(&#34;overwrite&#34;).save_as_table(&#34;XML_PROCESSING.DATA.MTS_AgcyInvest&#34;)
+# print(df.queries)
+</code></pre>
+<p>Click &#34;+ SQL&#34; and paste to the cell the following code block:</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT COUNT(*) FROM XML_PROCESSING.DATA.MTS_AgcyInvest;
+</code></pre>
+<p>This returns the total number of rows loaded.</p>
+<p>This quickstart is focused on how to load XML data.  Once loaded, XML data can be also processed with <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark</a> or SQL XML functions like <a href="https://docs.snowflake.com/en/sql-reference/functions/check_xml" target="_blank">CHECK_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/parse_xml" target="_blank">PARSE_XML</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/xmlget" target="_blank">XMLGET</a>, <a href="https://docs.snowflake.com/en/sql-reference/functions/to_xml" target="_blank">TO_XML</a>. The output could be data ready for regulatory reporting.</p>
+<p>Click &#34;+ SQL&#34; and paste to the cell the following code block:</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;record_calendar_month&#39;)::STRING AS record_calendar_month,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;record_calendar_day&#39;)::STRING AS record_calendar_day,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;begin_year_acct_bal_amt&#39;)::STRING AS begin_year_acct_bal_amt,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;begin_month_acct_bal_amt&#39;)::STRING AS begin_month_acct_bal_amt,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;close_month_acct_bal_amt&#39;)::STRING AS close_month_acct_bal_amt ,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;current_month_net_txn_amt&#39;)::STRING AS current_month_net_txn_amt,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;data_type_cd&#39;)::STRING AS data_type_cd,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;fytd_net_txn_amt&#39;)::STRING AS fytd_net_txn_amt,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;line_code_nbr&#39;)::STRING AS line_code_nbr,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;parent_id&#39;)::STRING AS parent_id,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;print_order_nbr&#39;)::STRING AS print_order_nbr,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;prior_fytd_net_txn_amt&#39;)::STRING AS prior_fytd_net_txn_amt,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;sequence_level_nbr&#39;)::STRING AS sequence_level_nbr,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;sequence_number_cd&#39;)::STRING AS sequence_number_cd,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;src_line_nbr&#39;)::STRING AS src_line_nbr,
+  GET(&#34;&#39;data-element&#39;&#34;, &#39;table_nbr&#39;)::STRING AS table_nbr 
+FROM XML_PROCESSING.DATA.MTS_AgcyInvest
+WHERE GET(&#34;&#39;data-element&#39;&#34;, &#39;classification_desc&#39;) = &#39;Federal Housing Finance Agency&#39; 
+AND GET(&#34;&#39;data-element&#39;&#34;, &#39;record_calendar_year&#39;) = &#39;2016&#39;
+ORDER BY GET(&#34;&#39;data-element&#39;&#34;, &#39;record_date&#39;) ASC;
+</code></pre>
+<p>You got a notebook!!! Before running the notebook, install the latest snowpark-python package. In the top-right corner, click &#34;Packages&#34; and in &#34;Find Packages&#34; search window, type snowflake-snowpark-python&#34; and choose &#34;Latest&#34;.</p>
+<p>You can run all cells using &#34;Run all&#34; from the top-right corner. You can run cells, one by one, using &#34;run this cell only&#34; for each cell.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="3">
+        <p>You did it! You have successfully completed the &#34;Modernize XML Processing for Financial Services with Snowpark XML&#34; quickstart  with notebooks and Snowpark XML.</p>
+<h2 is-upgraded>What you learned</h2>
+<ul>
+<li>Load XML file to an internal stage via Snowflake UI</li>
+<li>Worksheet creation and execution for quickstart setup</li>
+<li>Notebook creation and execution for XML processing: <ul>
+<li>Efficiently ingest large or multiple XML files using rowTag.</li>
+<li>Output as structured rows in VARIANT, enabling easier querying.</li>
+<li>Use simple, Spark-compatible API (<code>session.read.option(...).xml(...)</code>).</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">About Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Developer Guide for Python | Snowflake Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

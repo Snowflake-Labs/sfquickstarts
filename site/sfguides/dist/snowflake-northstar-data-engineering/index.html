@@ -1,0 +1,457 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started – Data Engineering with Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowflake-northstar-data-engineering"
+                  title="Getting Started – Data Engineering with Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>In this Quickstart, we&#39;re going to focus on data engineering with Snowflake. We&#39;ll specifically build an end-to-end data pipeline with Snowflake. We&#39;ll apply the  <strong>Ingestion-Transformation–Delivery</strong> framework, also known as <strong>I-T-D</strong>, to build the pipeline.</p>
+<p><strong>Ingestion</strong></p>
+<p>We&#39;ll load data from:</p>
+<ul>
+<li>Snowflake Marketplace</li>
+<li>AWS S3</li>
+</ul>
+<p><strong>Transformation</strong></p>
+<p>We&#39;ll transform our data using:</p>
+<ul>
+<li>SQL</li>
+<li>Views</li>
+<li>User-defined functions (UDFs)</li>
+</ul>
+<p><strong>Delivery</strong></p>
+<p>We&#39;ll deliver a final data product using:</p>
+<ul>
+<li>Streamlit in Snowflake</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Some basic familiarity with SQL</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Snowflake for data engineering</li>
+<li>The Ingestion-Transformation-Delivery framework, or I-T-D, for data pipelines</li>
+<li>Data sharing from Snowflake Marketplace</li>
+<li>How to load data from AWS S3 blob storage</li>
+<li>How to perform transformations against data using SQL, Python, Views, UDFs, Stored Procedures</li>
+<li>How to deliver an end data product using Streamlit in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free Snowflake trial account: <a href="https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake" target="_blank">https://signup.snowflake.com/</a></li>
+<li>The companion GitHub repo that contains the code to complete this lab: <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering" target="_blank">sfguide-snowflake-northstar-data-engineering</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An end-to-end data pipeline in Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Open a Snowflake Trial Account" duration="5">
+        <p>To complete this lab, you&#39;ll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:</p>
+<ol type="1">
+<li>Navigate to <a href="https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake" target="_blank">https://signup.snowflake.com/</a></li>
+<li>Start the account creation by completing the first page of the form on the page.</li>
+<li>On the next section of the form,  be sure to set the Snowflake edition to &#34;Enterprise (Most popular&#34;).</li>
+<li>Select &#34;AWS – Amazon Web Services&#34; as the cloud provider.</li>
+<li>Select &#34;US West (Oregon)&#34; as the region.</li>
+<li>Complete the rest of the form and click &#34;Get started&#34;.</li>
+</ol>
+<p class="image-container"><img alt="trial" src="img/49d34d39ae54b676.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understand The Pipeline We&#39;ll Build" duration="2">
+        <p>Tasty Bytes is a food truck company that operates globally in many countries. You&#39;re a data engineer on the Tasty Bytes team, and you&#39;ve recently learned from data analysts on the team that:</p>
+<ul>
+<li>Sales in the city of Hamburg, Germany dropped to $0 for a few days in the month of February</li>
+</ul>
+<p>As a data engineer, your goal is to figure out why this happened, and to also build and end-to-end data pipeline that can  keep analysts up-to-date on the weather in Hamburg.</p>
+<p>Here&#39;s how we&#39;ll do this:</p>
+<p><strong>Ingestion</strong></p>
+<ul>
+<li>Load live weather data from Snowflake Marketplace</li>
+<li>Load Tasty Bytes sales data from an AWS S3 bucket</li>
+</ul>
+<p><strong>Transformation</strong></p>
+<ul>
+<li>Use SQL to perform transformations</li>
+<li>Create views that we can use for data analytics</li>
+<li>Create user-defined functions (UDFs) that perform weather-related calculations to enrich the views with more data</li>
+</ul>
+<p><strong>Deliver</strong></p>
+<ul>
+<li>Deliver final insights and a live graph of weather in Hamburg, Germany using Streamlit in Snowflake (write the application in Python)</li>
+</ul>
+<p>Let&#39;s get started!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Weather Data From Snowflake Marketplace" duration="5">
+        <p>Let&#39;s start by &#34;loading&#34; the raw weather data into Snowflake. It turns out that &#34;loading&#34; is really the wrong word here.</p>
+<p>We&#39;re using Snowflake&#39;s unique data sharing capability in Snowflake Marketplace. Because of this, we don&#39;t actually need to copy any data to our Snowflake account with any logic. Instead, we can directly access the weather data shared by a trusted provide in Snowflake Marketplace. Let&#39;s go ahead and do this.</p>
+<ol type="1">
+<li>Log into your Snowflake account.</li>
+<li>Click on &#34;Data Products&#34;.</li>
+<li>Click on &#34;Marketplace&#34;.</li>
+<li>In the search bar, search for &#34;weathersource frostbyte&#34;.</li>
+<li>The first result should be &#34;Weather Source LLC: frostbyte&#34; by the &#34;Weather Source, LLC&#34; provider. Click on the listing.</li>
+<li>On the right, click &#34;Get&#34;.</li>
+<li>In the ensuing modal, click &#34;Get&#34; once more. Do <strong>NOT</strong> rename the dataset.</li>
+</ol>
+<p>This is a live dataset! No need to write ingestion logic to bring the data into your account. The data is maintained and kept fresh by the provider.</p>
+<p class="image-container"><img alt="data" src="img/45d9aad2cfc4e5f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Sales Data From AWS S3" duration="15">
+        <p>Let&#39;s now load the Tasty Bytes sales data. This data is currently sitting across many CSV files in an AWS S3 bucket. Let&#39;s use Snowflake&#39;s COPY INTO command to load the data into your Snowflake account.</p>
+<ol type="1">
+<li>Start by creating a new SQL worksheet.</li>
+<li>Set your context. Set your role to <strong>ACCOUNTADMIN</strong>, and set your compute resource (virtual warehouse) to <strong>COMPUTE_WH</strong>.</li>
+<li>Next, create the database and schema to store the data that we&#39;ll load. Type the following into the worksheet:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE tasty_bytes;
+CREATE OR REPLACE SCHEMA raw_pos;
+</code></pre>
+<ol type="1" start="4">
+<li>Run this code by highlighting these two statements and clicking the Run button at the top right of the SQL worksheet.</li>
+<li>Next, navigate to the <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/00_ingestion/copy_into.sql" target="_blank"><strong>copy_into.sql</strong></a> file in the <strong>00_ingestion</strong> folder of the <strong>sfguide-snowflake-northstar-data-engineering</strong> repo. Copy the contents of this file.</li>
+<li>Navigate back to the SQL worksheet you opened. Paste in the code you copied under the two lines of SQL you wrote in the previous step.</li>
+<li>Start by creating the file format necessary to load the data into Snowflake. Type the following underneath the &#34;Create a CSV file format here:&#34; comment:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FILE FORMAT tasty_bytes.public.csv_ff
+type = &#39;csv&#39;;
+</code></pre>
+<p>Run this command.</p>
+<ol type="1" start="8">
+<li>In the next block of SQL, with the comment <code>-- Specify the file format below:</code>, we create the Snowflake stage that points to the S3 bucket containing the CSV files. It&#39;s currently missing the file format argument that&#39;s necessary during the loading process. Below the <code>url</code> parameter, type:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">file_format = tasty_bytes.public.csv_ff;
+</code></pre>
+<p>Run this entire command.</p>
+<ol type="1" start="9">
+<li>The next block of SQL creates a table called <strong>COUNTRY</strong> in the <strong>tasty_bytes.raw_pos</strong> schema. Run this block of SQL to create the table. Confirm the creation of the table using the object picker on the left-hand side.</li>
+<li>Let&#39;s bring it all together now! After creating the table, let&#39;s now load the data into this table using the powerful <strong>COPY INTO</strong> command. At the very bottom of the worksheet, underneath the &#34;Use the COPY INTO command...&#34; comment, type:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">COPY INTO tasty_bytes.raw_pos.country
+FROM @tasty_bytes.public.s3load/raw_pos/country/;
+</code></pre>
+<p>Run this command. You should see a success message in the console. Great job!</p>
+<p><strong>We&#39;re not quite done.</strong> We loaded about 30 rows of data into the <strong>COUNTRY</strong> table, but we actually need to load close to 1 GB of sales data. We won&#39;t do this line-by-line. Instead, you&#39;ll use some SQL that we&#39;ve written for you in advance.</p>
+<ol type="1">
+<li>Navigate to the <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/00_ingestion/load_tasty_bytes.sql" target="_blank"><strong>load_tasty_bytes.sql</strong></a> file in the <strong>00_ingestion</strong> folder within the <strong>sfguide-snowflake-northstar-data-engineering</strong> companion repo. Copy the contents.</li>
+<li>Navigate back to Snowflake and create a new SQL worksheet. Paste the contents you copied into the worksheet.</li>
+<li>Run the entire file at once by clicking the drop-down at the top right, and clicking &#34;Run All&#34;.</li>
+</ol>
+<p>Observations:</p>
+<ul>
+<li>This will load close to 1 GB of Tasty Bytes sales data from AWS S3 into your Snowflake account.</li>
+<li>The script programmatically creates an XL compute resource (virtual warehouse) used for the loading of the data. Once the loading is done, the compute resource is dropped.</li>
+<li>This worksheet contains about 300 lines of SQL. The powerful thing is that you can understand 99% of it because of the SQL you wrote earlier to load data into the <strong>COUNTRY</strong> table.</li>
+</ul>
+<p>After running the file, you should have all of the data loaded into your account! Confirm the creation of all the tables (and their data) using the object picker to the left.</p>
+<p>This completes the <strong>Ingestion</strong> aspect of our pipeline for this lab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Transformations With SQL" duration="10">
+        <p>We now have the necessary data in our Snowflake account. To get closer to the insights that we need – weather-related data for the city of Hamburg, Germany – we need to use SQL to apply transformations to the data. This will bring us closer to the insights we&#39;re after. Let&#39;s begin.</p>
+<ol type="1">
+<li>Start by navigating to the <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/hamburg_sales.sql" target="_blank"><strong>hamburg_sales.sql</strong></a> file in the <strong>01_transformation</strong> folder in repo. Copy the contents.</li>
+<li>Open a new SQL worksheet in Snowflake and paste the contents into the sheet.</li>
+</ol>
+<p>In this worksheet, we use SQL to explore the suspicion that there are weather-related anomalies affecting sales in February in Hamburg, Germany. Let&#39;s start exploring.</p>
+<ol type="1" start="3">
+<li>Run the first few lines to set your context.</li>
+<li>Run the first block of SQL that explores sales in Hamburg. You should encounter an error. We need to specify the city and country we&#39;re interested in exploring. On line 16, add <code>'Germany'</code> as the country, and <code>'Hamburg'</code> as the city. Re-run the block of SQL.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Query to explore sales in the city of Hamburg, Germany
+WITH _feb_date_dim AS (
+    SELECT DATEADD(DAY, SEQ4(), &#39;2022-02-01&#39;) AS date 
+    FROM TABLE(GENERATOR(ROWCOUNT =&gt; 28))
+)
+SELECT
+    fdd.date,
+    ZEROIFNULL(SUM(o.price)) AS daily_sales
+FROM _feb_date_dim fdd
+LEFT JOIN analytics.orders_v o
+    ON fdd.date = DATE(o.order_ts)
+    AND o.country = &#39;#&#39; -- Add country
+    AND o.primary_city = &#39;#&#39; -- Add city
+WHERE fdd.date BETWEEN &#39;2022-02-01&#39; AND &#39;2022-02-28&#39;
+GROUP BY fdd.date
+ORDER BY fdd.date ASC;
+</code></pre>
+<p><strong>It looks like the analysts were correct – there were several days in February where sales totaled 0.00. You can use the Chart feature to confirm this visually. We&#39;re on the right path!</strong></p>
+<ol type="1" start="5">
+<li>Let&#39;s now create a view that adds weather data – the data from our live data share we pulled from Snowflake Marketplace – to all cities where Tasty Bytes operates. Run the next block of SQL that creates the <code>tasty_bytes.harmonized.daily_weather_v</code> view. We&#39;ll use this view later on in our pipeline.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Create view that adds weather data for cities where Tasty Bytes operates
+CREATE OR REPLACE VIEW tasty_bytes.harmonized.daily_weather_v
+COMMENT = &#39;Weather Source Daily History filtered to Tasty Bytes supported Cities&#39;
+    AS
+SELECT
+    hd.*,
+    TO_VARCHAR(hd.date_valid_std, &#39;YYYY-MM&#39;) AS yyyy_mm,
+    pc.city_name AS city,
+    c.country AS country_desc
+FROM Weather_Source_LLC_frostbyte.onpoint_id.history_day hd
+JOIN Weather_Source_LLC_frostbyte.onpoint_id.postal_codes pc
+    ON pc.postal_code = hd.postal_code
+    AND pc.country = hd.country
+JOIN TASTY_BYTES.raw_pos.country c
+    ON c.iso_country = hd.country
+    AND c.city = hd.city_name;
+</code></pre>
+<ol type="1" start="6">
+<li>The next block of SQL helps us query this view to explore temperatures for the month of February in Hamburg. Run the block of code. Click on &#34;Chart&#34; once the block of code executes. Nothing seems to be out of the ordinary here...</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Query the view to explore daily temperatures in Hamburg, Germany for anomalies
+SELECT
+    dw.country_desc,
+    dw.city_name,
+    dw.date_valid_std,
+    AVG(dw.avg_temperature_air_2m_f) AS avg_temperature_air_2m_f
+FROM harmonized.daily_weather_v dw
+WHERE 1=1
+    AND dw.country_desc = &#39;Germany&#39;
+    AND dw.city_name = &#39;Hamburg&#39;
+    AND YEAR(date_valid_std) = &#39;2022&#39;
+    AND MONTH(date_valid_std) = &#39;2&#39; -- February
+GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
+ORDER BY dw.date_valid_std DESC;
+</code></pre>
+<ol type="1" start="7">
+<li>Run the next query that explores wind speeds in Hamburg. Once again, click &#34;Chart&#34; to visualize this data. Wow – there were spikes in windspeed that approached hurricane-force winds. <strong>It looks like this windspeed affected sales during the month of February!</strong></li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Query the view to explore wind speeds in Hamburg, Germany for anomalies
+SELECT
+    dw.country_desc,
+    dw.city_name,
+    dw.date_valid_std,
+    MAX(dw.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM tasty_bytes.harmonized.daily_weather_v dw
+WHERE 1=1
+    AND dw.country_desc IN (&#39;Germany&#39;)
+    AND dw.city_name = &#39;Hamburg&#39;
+    AND YEAR(date_valid_std) = &#39;2022&#39;
+    AND MONTH(date_valid_std) = &#39;2&#39; -- February
+GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
+ORDER BY dw.date_valid_std DESC;
+</code></pre>
+<ol type="1" start="8">
+<li>Now that we&#39;ve found a likely culprit behind the drop in sales, so let&#39;s create a view that tracks windspeed. We&#39;ll use this view later on in our pipeline. Locate the next block of SQL. Add <code>windspeed_hamburg</code> to the end of the first line, so that the line reads <code>CREATE OR REPLACE VIEW tasty_bytes.harmonized.windspeed_hamburg</code> and names our view. Run the final block of SQL to create the view.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Create a view that tracks windspeed for Hamburg, Germany
+CREATE OR REPLACE VIEW tasty_bytes.harmonized. --add name of view
+    AS
+SELECT
+    dw.country_desc,
+    dw.city_name,
+    dw.date_valid_std,
+    MAX(dw.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+FROM harmonized.daily_weather_v dw
+WHERE 1=1
+    AND dw.country_desc IN (&#39;Germany&#39;)
+    AND dw.city_name = &#39;Hamburg&#39;
+GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
+ORDER BY dw.date_valid_std DESC;
+</code></pre>
+<p>A view in Snowflake allows you to store and access the <strong>result</strong> of a query. This is in contrast to querying multiple tables with raw data to extract insights. The queries that views store can be arbitrarily simple or complex. This helps you query exactly what you need at a much faster speed.</p>
+<p>Views also help organize exactly which aspects of data might be valuable, and help with secure data access control. We can use views to power our data pipeline, without sacrificing performance.</p>
+<p>We&#39;ll use these views in our pipeline later on.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create User-Defined Functions For Calculations" duration="6">
+        <p>We&#39;re missing some critical data for our pipeline. Our analysts have requested that we track certain weather measurements using the metric system. We are tracking a country in Europe after all.</p>
+<p>They&#39;ve specifically requested that we include temperature measurements in Celsius, and precipitation in millimeters.</p>
+<p>To do this, we&#39;ll create two user-defined functions, or UDFs, that are able to take in existing data from our tables and perform the necessary conversions. We will then invoke them later on to derive these new values.</p>
+<p>Let&#39;s get started.</p>
+<ol type="1">
+<li>Copy the contents of the <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/udf.sql" target="_blank"><strong>udf.sql</strong></a> file in the <strong>01_transformation</strong> folder in the repo.</li>
+<li>Open a new SQL worksheet in Snowflake and paste the contents in.</li>
+<li>These two blocks of SQL each create a UDF. One converts temperatures from Fahrenheit to Celsius, and the other converts inches to millimeters.</li>
+<li>We need to finish these SQL statements before we can run this code and create the functions. Add the word <code>FUNCTION</code> after each the <code>CREATE OR REPLACE</code> statements. Be sure to remove the <code>/*  */</code> placeholders.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE /*  */ tasty_bytes.analytics.fahrenheit_to_celsius(temp_f NUMBER(35,4))
+  RETURNS NUMBER(35,4)
+  AS
+  $$
+    (temp_f - 32) * (5/9)
+  $$
+;
+
+CREATE OR REPLACE /*  */ tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
+  RETURNS NUMBER(35,4)
+  AS
+  $$
+    inch * 25.4
+  $$
+;
+</code></pre>
+<ol type="1" start="5">
+<li>After completing the SQL statements, run the entire worksheet. You should see a success message, and you can verify the creation of the functions in the <strong>tasty_bytes.analytics</strong> schema.</li>
+</ol>
+<p>Great! We&#39;ll use these functions to expand the views we&#39;re planning on using in our pipeline.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Apply UDFs For Data Transformations" duration="6">
+        <p>Let&#39;s now use the UDFs to add new columns in our views. These new columns will contains the converted values for temperature and precipitation.</p>
+<ol type="1">
+<li>Copy the contents of the <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/updated_hamburg_sales.sql" target="_blank"><strong>updated_hamburg_sales.sql</strong></a> file in the <strong>01_transformation</strong> folder in repo.</li>
+<li>Open a new SQL worksheet in Snowflake and paste the contents in.</li>
+<li>Notice that on lines 14 and 16, we call the UDFs and apply them against existing values, and then use the output of those functions to create new columns with corresponding data.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Apply UDFs and confirm successful execution
+...
+-- Code to focus on
+    ROUND(AVG(analytics.fahrenheit_to_celsius(fd.avg_temperature_air_2m_f)),2) AS avg_temperature_celsius,
+    ROUND(AVG(fd.tot_precipitation_in),2) AS avg_precipitation_inches,
+    ROUND(AVG(analytics.inch_to_millimeter(fd.tot_precipitation_in)),2) AS avg_precipitation_millimeters,
+
+...
+</code></pre>
+<ol type="1" start="4">
+<li>Name the view. On line 6, finish the statement by adding <code>weather_hamburg</code>. The entire line should read <code>CREATE OR REPLACE VIEW harmonized.weather_hamburg</code>.</li>
+<li>Run the entire file top to bottom. You should see a successful message, and you can confirm the creation of the view using the object picker on the left.</li>
+</ol>
+<p>Great job! We&#39;ve transformed our data using SQL to create views, and we&#39;ve used UDFs to expand our views (and create new views!). We&#39;ll use these transformations later on in our pipeline.</p>
+<p>This completes the <strong>Transformation</strong> aspect of our pipeline for this lab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deliver Insights With Streamlit in Snowflake" duration="6">
+        <p>We now have the insights that we need, and we can now also deliver them to our data analysts. We specifically have views that track the weather and sales in Hamburg, Germany. So how exactly will we make these insights easily accessible for our data analysts?</p>
+<p>We&#39;re going to create a Streamlit in Snowflake app that will visualize this data for them.</p>
+<p>For some context, Streamlit is a popular open-source Python library for creating data apps in Python – no need for HTML, CSS, or any other front-end frameworks. It&#39;s also natively available within Snowflake, which means creating data apps that use the data in our Snowflake environment is both powerful and easy to do.</p>
+<p>Let&#39;s go ahead and create the app for our analysts.</p>
+<ol type="1">
+<li>Copy the contents of the <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/02_delivery/streamlit.py" target="_blank"><strong>streamlit.py</strong></a> file in the <strong>02_delivery</strong> folder in the repo.</li>
+<li>Navigate to &#34;Projects&#34;, then click on &#34;Streamlit&#34;.</li>
+<li>At the top, create a new Streamlit app. Name the app &#34;HAMBURG_GERMANY_TRENDS&#34;.</li>
+<li>For the app location, select <strong>TASTY_BYTES</strong> as the database, and <strong>HARMONIZED</strong> for the schema. Leave everything else as-is.</li>
+<li>Create the app and wait for it to boot up. You&#39;ll notice a default, sample app rendered for you automatically.</li>
+<li>If the code editor is not present, click on &#34;Edit&#34; at the top. Otherwise, you can see the code powering this sample app in the Python editor in Snowflake.</li>
+<li>Delete all of this sample code.</li>
+<li>Paste in the Python code you copied earlier from the <strong>streamlit.py</strong> file.</li>
+</ol>
+<p>This code creates an app that visualizes the data within the views we created earlier.</p>
+<ol type="1" start="9">
+<li>Click &#34;Run&#34; at the top. You should encounter an error. On line 14, replace <code>"INSERT NAME OF VIEW HERE"</code> with <code>tasty_bytes.harmonized.weather_hamburg</code> and click &#34;Run once more.</li>
+<li>The application should render successfully! Congratulations!</li>
+</ol>
+<p class="image-container"><img alt="app" src="img/6bfbf6438f2bb8f4.png"></p>
+<p>In just 54 lines of code, we created a Streamlit in Snowflake application with Python that delivers the insights we extracted from our data.</p>
+<p>At the top, you could imagine clicking on &#34;Share&#34; and sharing the app with relevant analyst roles in your Snowflake account.</p>
+<p>With this application, we&#39;ve now completed our end-to-end data pipeline. This completes the <strong>Delivery</strong> aspect of our pipeline for this lab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations! You&#39;ve built an end-to-end data pipeline in Snowflake using the <strong>Ingestion-Transformation–Delivery</strong> framework, also known as <strong>I-T-D</strong>. Let&#39;s recap what you did.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>You built a data pipeline that tracks weather and sales data for Tasty Bytes food trucks in the city of Hamburg, Germany. As part of the I-T-D framework, you:</p>
+<p><strong>Ingestion</strong></p>
+<p>Loaded data from:</p>
+<ul>
+<li>Snowflake Marketplace</li>
+<li>AWS S3</li>
+</ul>
+<p><strong>Transformation</strong></p>
+<p>Transformed data using:</p>
+<ul>
+<li>SQL</li>
+<li>Views</li>
+<li>User-defined functions (UDFs)</li>
+</ul>
+<p><strong>Delivery</strong></p>
+<p>Delivered a final data product using:</p>
+<ul>
+<li>Streamlit in Snowflake</li>
+</ul>
+<p>Congratulations!</p>
+<h2 is-upgraded>Resources</h2>
+<p>For more resources, check out the following:</p>
+<ul>
+<li>You can build the objects we used in the pipeline using Snowpark for Python as well. The code to do this is provided in the <a href="https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/hamburg_sales_snowpark.ipynb" target="_blank"><strong>hamburg_sales_snowpark.ipynb</strong> Notebook file in the repo</a>.</li>
+<li>Learn more at <a href="https://www.snowflake.com/en/developers/northstar/" target="_blank">Snowflake Northstar</a> for developers.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

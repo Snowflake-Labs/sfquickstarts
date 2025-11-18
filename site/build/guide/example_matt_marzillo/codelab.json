@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "example_matt_marzillo",
+  "duration": 62,
+  "title": "Getting Started with Snowpark for Machine Learning on AzureML",
+  "summary": "This is a quickstart for using Snowpark for ML on AzureML",
+  "source": "getting_started_with_snowpark_for_machine_learning_on_azureml/getting_started_with_snowpark_for_machine_learning_on_azureml.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-engineering",
+    "azure",
+    "azureml",
+    "snowpark"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "example_matt_marzillo"
+}

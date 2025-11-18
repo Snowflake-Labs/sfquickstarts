@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_snowpipe_kr",
+  "duration": 27,
+  "title": "Snowpipe 시작하기",
+  "summary": "이 가이드는 Snowpipe를 시작하는 데 도움이 됩니다.",
+  "source": "getting_started_with_snowpipe_kr/getting_started_with_snowpipe_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "aws",
+    "kr",
+    "snowpipe",
+    "sql",
+    "web",
+    "데이터엔지니어링",
+    "스노우플레이크시작하기",
+    "자동수집"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpipe_kr"
+}

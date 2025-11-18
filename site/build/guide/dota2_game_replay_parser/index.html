@@ -1,0 +1,316 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Dota2 game replay parser</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="dota2_game_replay_parser"
+                  title="Dota2 game replay parser"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>Parse a replay into a table as described above as it is necessary.  Welcome to Snowflake! This guide designed for database and data warehouse administrators and architects will help you navigate the Snowflake interface and introduce you to some of our core capabilities. <a href="https://trial.snowflake.com" target="_blank">Sign up for a free 30-day trial of Snowflake</a> and follow along with this lab exercise. Once we cover the basics you&#39;ll be ready to start processing your own data and diving into Snowflake&#39;s more advanced features like a pro.</p>
+<h2 is-upgraded>Prerequisites:</h2>
+<ul>
+<li>Use of the <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial environment</a></li>
+<li>Basic knowledge of SQL, database concepts, and objects</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Learn:</h2>
+<ul>
+<li>how to parse a game replay</li>
+<li>how to load structured and semi-structured data</li>
+<li>how to query data including joins between tables</li>
+<li>how to clone objects</li>
+<li>how to undo user errors</li>
+<li>how to create roles and users, and grant them privileges</li>
+<li>how to securely and easily share data with other accounts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Lab Environment" duration="2">
+        <h2 is-upgraded>Steps to Prepare Your Lab Environment</h2>
+<p>If you haven&#39;t already, register for a <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial</a>.</p>
+<p>The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.</p>
+<h2 is-upgraded>Create the Necessary Tables &amp; Views</h2>
+<p>Copy the DDL below and execute it in your Snowflake account.</p>
+<pre><code language="language-SQL" class="language-SQL">create or replace database DOTA;
+create or replace schema PUBLIC;
+
+
+-- Create a raw data table for replay
+
+create or replace table RAW as
+select parse_json(parse_game_replay_udf(&#39;@replay_files/YOUR - REPLAY FILE.dem&#39;))::variant as RAW_DATA;
+
+
+-- Flatten table into individual rows
+select value::Variant as E 
+from RAW, table(flatten(input =&gt; RAW_DATA))
+;
+
+------------------------------------------------------------------------------------------------
+----- INSERT THE ROWS IN THE RESULT SET ABOVE INTO THE GAME TABLE BELOW ------------------------
+------------------------------------------------------------------------------------------------
+
+-- Please save your parsed replay here
+create or replace TABLE GAME (
+	E VARIANT
+);
+
+create or replace materialized view ALL_DAMAGE as
+select E:Time::TIME as time, 
+E:Attacker::string as attacker, 
+E:Target::string as target, 
+E:DamageCategory::int as CATEGORY,
+E:DmgType::int AS TYPE,
+E:LH::int as LH,
+E:NetWorth::int as NW,
+E:Inflictor::string as inflictor,
+nullif(E:Value::string,&#39;&#39;)::int as value, 
+nullif(E:HP::string,&#39;&#39;)::int as HP, 
+nullif(E:NHP::string,&#39;&#39;)::int as NHP
+
+
+from DOTA.PUBLIC.GAME
+where E:Type = &#39;DOTA_COMBATLOG_DAMAGE&#39;
+;
+
+
+create or replace materialized view BUILDINGS as
+select E:Time::TIME as Time
+,E:AttackerTeam::String as ATTACKERTEAM
+,E:Name::STRING as Building
+,E:TargetTeam::STRING AS TARGETTEAM
+,E:Units::STRING AS UNIT
+
+from DOTA.PUBLIC.GAME
+where E:Type = &#39;DOTA_COMBATLOG_TEAM_BUILDING_KILL&#39;
+
+;
+
+
+create or replace materialized view CREEP_KILLS as
+select E 
+,E:Time::time::String AS T
+,E:Attacker::STRING AS ATTACKER
+,E:Target::STRING AS Target
+,count(*) AS UNIT
+
+from DOTA.PUBLIC.GAME
+where E:Type = &#39;DOTA_COMBATLOG_DEATH&#39;
+GROUP BY 1, 2, 3, 4
+;
+
+
+
+create or replace materialized view GOLD as
+select E, 
+E:Time::time::String AS T, 
+E:Time::TIME AS TIME, 
+E:Target::String as TARGET,
+E:Reason::integer AS REASON,
+IFF(E:Direction::STRING = &#39;-&#39;, (E:Gold::INT) * -1, (E:Gold::INT)) as GOLD,
+E:Direction::String AS DIRECTION,
+E:X::Double AS X,
+E:Y::Double AS Y
+from dota.public.game
+where E:Type = &#39;DOTA_COMBATLOG_GOLD&#39;
+;
+
+
+create or replace materialized view HERO_DAMAGE as
+select E:Time::TIME as time, 
+E:Attacker::string as attacker, 
+E:Target::string as target, 
+E:DamageCategory::int as CATEGORY,
+E:DmgType::int AS TYPE,
+E:LH::int as LH,
+E:NetWorth::int as NW,
+E:Inflictor::string as inflictor,
+nullif(E:Value::string,&#39;&#39;)::int as value, 
+nullif(E:HP::string,&#39;&#39;)::int as HP, 
+nullif(E:NHP::string,&#39;&#39;)::int as NHP
+
+
+from DOTA.PUBLIC.GAME
+where E:Type = &#39;DOTA_COMBATLOG_DAMAGE&#39;
+and E:Target like &#39;npc_dota_hero%&#39;
+and E:Attacker like &#39;npc_dota_hero%&#39; 
+
+
+;
+
+
+create or replace materialized view HERO_DEATHS as
+select  E:Time::TIME as Time, 
+replace(E:Target::STRING,&#39; (illusion)&#39;,&#39;&#39;) as hero
+, count(E:Target) as death
+
+from DOTA.PUBLIC.GAME
+where E:Type = &#39;DOTA_COMBATLOG_DEATH&#39;
+AND (E:Target like &#39;npc_dota_hero%&#39;)
+
+group by 1,2
+;
+
+
+create or replace materialized view HERO_ITEMS as
+
+select E:Time::TIME as time
+,E:NetWorth::INT as NW
+,E:Target::String as target
+,E:Value::STRING as item
+
+from DOTA.PUBLIC.GAME
+where E:Type = &#39;DOTA_COMBATLOG_PURCHASE&#39;
+;
+
+
+create or replace materialized view HERO_KILLS as
+select E:Time::TIME as Time, 
+replace(E:Attacker::STRING,&#39; (illusion)&#39;,&#39;&#39;) as attacker
+, count(E:Target) as kill
+
+from DOTA.PUBLIC.GAME
+where E:Type = &#39;DOTA_COMBATLOG_DEATH&#39;
+AND (E:Target like &#39;npc_dota_hero%&#39;)
+
+group by 1,2
+;
+
+
+create or replace materialized view XP as
+select E, 
+E:Time::time::String AS T, 
+E:Time::TIME AS TIME, 
+E:Target::String as TARGET,
+E:Reason::integer AS REASON,
+E:XP::integer AS xp,
+E:Direction::String AS DIRECTION,
+E:X::Double AS X,
+E:Y::Double AS Y
+from GAME
+where E:Type = &#39;DOTA_COMBATLOG_XP&#39;
+;
+
+CREATE OR REPLACE FILE FORMAT CSV
+;
+CREATE OR REPLACE FILE FORMAT JSON
+	TYPE = JSON
+	NULL_IF = ()
+	COMPRESSION = NONE
+;
+
+</code></pre>
+<h2 is-upgraded>Set up Key Pair Authentication</h2>
+<p>You will have to set up Key pair authentication to utilize Snowflake APIs which are referenced below. Please follow the steps outlined here <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html#step-1-generate-the-private-key" target="_blank">alt text</a>.</p>
+<p>Once you have completed the steps above, place the public and private keys in the api-auth folder.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Java UDF" duration="2">
+        <p>PLACE JAVA UDF DOCS HERE</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Front End Viz App" duration="5">
+        <p>The visualization app is a node.js front end. It is pre-built for mac and windows in the <strong>Front End/Dist</strong> folder and available for download or should you want to combile the source code is provided.</p>
+<p>Once the app is downloaded and open - You will have to connect to Snowflake via the app utilizing Snowflake SQL Apis.</p>
+<p>If you would like to skip the line and view the app via web please go here <a href="https://appslications.s3.amazonaws.com/dota2analysis/snowflake/index.html" target="_blank">a</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connecting to Snowflake" duration="0">
+        <p>Click the <strong>Token</strong> button. This will bring a pop-up like below: <img alt="alt text" src="img/d2b4c2199a730db5.png"></p>
+<p>In the <strong>Snowflake API URL</strong> type the following: <strong>https://YourSFCAccount.Region.Snowflakecomputing.com/api/statements</strong>. This is so Snowflake knows where the app will route your APIs.</p>
+<p>In the <strong>Snowflake Auth Token</strong> Generate a Token using the Node.js codebase in <strong>Front End/api-auth</strong>. You can also do so using python with this code here <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#using-key-pair-authentication" target="_blank">alt text</a>.</p>
+<p>Below that Please - please position your players as necessary within the 10 input boxes. You can do this by having a select statement. Take a look at the image above as an example. Each game may have different heros that players slect and thus these inputs will change depending on which game/replay you are attempting to visualize.</p>
+<p>Finally, close this input pane and then click connect in the main menu. If all is done correctly, This will connect to Snowflake and run the necessary quiries.</p>
+<h2 is-upgraded>Viewing the Data</h2>
+<p>The replay data will like below. At the top you will have a timeline of the game, where you can click on the minute to advance the game. Below that you will a second by second bar where you will get any/all events which happened in that minute. <img alt="alt text" src="img/38ea747b46945fa7.png"></p>
+<h2 is-upgraded>Second Replay Events Below</h2>
+<p>Click here for more fun <img alt="alt text" src="img/c49c9bf9857780d3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="1">
+        <p>The Conclusion and Next Steps section is one of the most important parts of a guide. This last section helps to sum up all the information the reader has gone through, and in many ways should read like a <a href="https://www.howtogeek.com/435266/what-does-tldr-mean-and-how-do-you-use-it/#post-435266:~:text=How%20Do%20You%20Use%20TLDR%3F,you%E2%80%99re%20the%20author%20or%20commenter.%20Using" target="_blank">TLDR summary</a>.</p>
+<p>It&#39;s also important to remember that by the time a reader has completed a Guide, the goal is that they have actually built something! Guides teach through hands-on examples – not just explaining concepts.</p>
+<h2 class="checklist" is-upgraded>What We&#39;ve Covered</h2>
+<ul class="checklist">
+<li>creating steps and setting duration</li>
+<li>adding code snippets</li>
+<li>embedding images, videos, and surveys</li>
+<li>importing other markdown files</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguides" target="_blank">SFGuides on GitHub</a></li>
+<li><a href="https://guides.github.com/introduction/flow/" target="_blank">Learn the GitHub Flow</a></li>
+<li><a href="https://guides.github.com/activities/forking/" target="_blank">Learn How to Fork a project on GitHub</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

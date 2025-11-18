@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "end_to_end_model_development_with_snowpark_and_hex",
+  "duration": 66,
+  "title": "End to End Model Development with Hex and Snowpark",
+  "summary": "This lab will walk you through how to use Snowflake and Hex.",
+  "source": "hex_titanic/titanic.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "hex",
+    "notebooks",
+    "partnerconnect",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "end_to_end_model_development_with_snowpark_and_hex"
+}

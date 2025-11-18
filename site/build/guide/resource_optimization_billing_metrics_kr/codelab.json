@@ -1,0 +1,37 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "resource_optimization_billing_metrics_kr",
+  "duration": 0,
+  "title": "리소스 최적화: 청구 메트릭",
+  "authors": "Matt Meredith",
+  "summary": "이 가이드는 고객이 과도한 소비가 발생하는 영역을 확인하는 데 도움이 될 수 있는 청구 메트릭을 모니터링하는 것과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.",
+  "source": "resource_optimization_billing_metrics_kr/resource_optimization_billing_metrics_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "billing",
+    "billingmetrics",
+    "costoptimization",
+    "kr",
+    "monitoring",
+    "resourceoptimization",
+    "web",
+    "리소스최적화",
+    "모니터링",
+    "비용최적화",
+    "스노우플레이크",
+    "청구",
+    "청구메트릭"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "resource_optimization_billing_metrics_kr"
+}

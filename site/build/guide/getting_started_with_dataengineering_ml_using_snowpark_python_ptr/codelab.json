@@ -1,0 +1,39 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_dataengineering_ml_using_snowpark_python_ptr",
+  "duration": 81,
+  "title": "Introdução à engenharia de dados e ML com Snowpark para Python",
+  "authors": "Dash Desai",
+  "summary": "Introdução à engenharia de dados e ML com Snowpark para Python",
+  "source": "getting_started_with_dataengineering_ml_using_snowpark_python_ptbr/getting_started_with_dataengineering_ml_using_snowpark_python_ptbr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "aprendizadodemáquina",
+    "dataengineering",
+    "engenhariadedados",
+    "gettingstarted",
+    "introdução",
+    "machinelearning",
+    "ptbr",
+    "scikit-learn",
+    "snowparkpython",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_dataengineering_ml_using_snowpark_python_ptr"
+}

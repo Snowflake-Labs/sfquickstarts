@@ -1,0 +1,350 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis"
+                  title="NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This Quickstart will demonstrate how you can perform Natural Language Processing (NLP) and ML within Snowflake using Snowpark Python and Streamlit. We&#39;ll use these tools to perform sentiment analysis with Snowpark (feature engineering, training, and prediction).</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Working knowledge of Python</li>
+<li>Familiarity with Snowflake</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Do NLP and ML on Snowflake using Snowpark</li>
+<li>Load data into Snowflake</li>
+<li>Transform your data using Snowpark DataFrame API</li>
+<li>Train a scikit-learn model using Store Procedure inside Snowflake</li>
+<li>Deploy a model using UDF Function</li>
+<li>Inference with UDF Function</li>
+<li>Use Streamlit with Snowpark</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account with ACCOUNTADMIN role. If you don&#39;t have one, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a></li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> installed</li>
+<li><a href="https://www.python.org/downloads/" target="_blank">Python 3.8</a> installed</li>
+<li><a href="https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html" target="_blank">Conda</a> Installed</li>
+<li><a href="https://github.com/" target="_blank">GitHub</a> Account</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end Data Science workflow leveraging Snowpark for Python and Streamlit around the Sentiment Analysis use case.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Python Environment Setup" duration="6">
+        <p>This section covers cloning of the GitHub repository and creating a Python 3.8 environment.</p>
+<h2 is-upgraded>Clone GitHub repository</h2>
+<p>First, clone the source code for this repo to your local environment:</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/Snowflake-Labs/snowpark-python-demos.git
+cd snowpark_nlp_ml_demo/
+</code></pre>
+<h2 is-upgraded>Setup Python Environment</h2>
+<p>Create a conda environment. Let&#39;s name the environment nlp_ml_sentiment_analysis.</p>
+<pre><code language="language-shell" class="language-shell">conda update conda
+conda update python
+conda env create -f ./snowpark-env/conda-env_nlp_ml_sentiment_analysis.yml  --force
+</code></pre>
+<h2 is-upgraded>Snowflake Credentials</h2>
+<p>Update the Snowflake connexion file: connection.json</p>
+<pre><code language="language-shell" class="language-shell">{
+    &#34;account&#34;: &#34;&#34;,
+    &#34;user&#34;: &#34;&#34;,
+    &#34;password&#34;: &#34;&#34;,
+    &#34;role&#34;: &#34;ACCOUNTADMIN&#34;,
+    &#34;database&#34;: &#34;IMDB&#34;,
+    &#34;schema&#34;: &#34;PUBLIC&#34;,
+    &#34;warehouse&#34;: &#34;DEMO_WH&#34;
+ }
+</code></pre>
+<aside class="special"><p> For the <code>account</code> parameter, use your <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">account identifier</a>. Note that the account identifier does not include the snowflakecomputing.com suffix.</p>
+</aside>
+<h2 is-upgraded>Activate Python environment using conda</h2>
+<pre><code language="language-shell" class="language-shell">conda activate nlp_ml_sentiment_analysis
+</code></pre>
+<h2 is-upgraded>Run Streamlit App</h2>
+<pre><code language="language-shell" class="language-shell">cd streamlit
+streamlit run Sentiment_Analysis_APP.py
+</code></pre>
+<h2 is-upgraded>[OPTIONAL] : Notebook</h2>
+<p>The full code of the use case is also available in this Notebook <a href="https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/snowpark_nlp_ml_demo/notebook/Sentiment_Analysis_NLP_with_Snowpark_ML.ipynb" target="_blank"><strong>Sentiment_Analysis_NLP_with_Snowpark_ML.ipynb</strong></a>. Once the Setup is done (Create the Snowflake Objects and load the data) you can run all the Notebook.</p>
+<pre><code language="language-shell" class="language-shell">cd notebook
+jupyter notebook
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment Setup" duration="2">
+        <h2 is-upgraded>Option 1 - Environment setup via the Streamlit App</h2>
+<p>Use the Streamlit App to setup Snowflake Objects</p>
+<p class="image-container"><img alt="Puppy" src="img/bf5a202359d2e315.png"></p>
+<p>Make sure you have this result:</p>
+<p class="image-container"><img alt="Puppy" src="img/d9e8b69992a00c85.png"></p>
+<p>You can check directly with Snowsight that the data are available in Snowflake.</p>
+<p class="image-container"><img alt="Puppy" src="img/f599889beec59d6d.png"></p>
+<h2 is-upgraded>Option 2 - Manually : with Snowsight</h2>
+<p>First, log into your Snowflake Account (Snowsight Web UI) using your credentials.</p>
+<p>Then, run the following SQL commands to create the DATABASE:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE if not EXISTS IMDB;
+</code></pre>
+<p>Run the following SQL commands to create the TABLES:</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE IMDB;
+USE SCHEMA PUBLIC;
+
+CREATE TABLE if not EXISTS TRAIN_DATASET (
+	REVIEW STRING,
+	SENTIMENT STRING
+);
+
+CREATE TABLE if not EXISTS TEST_DATASET (
+	REVIEW STRING,
+	SENTIMENT STRING
+);
+</code></pre>
+<p>Run the following SQL commands to create the WAREHOUSE:</p>
+<pre><code language="language-sql" class="language-sql">CREATE WAREHOUSE if not EXISTS DEMO_WH WAREHOUSE_SIZE=MEDIUM INITIALLY_SUSPENDED=TRUE AUTO_SUSPEND=120;
+</code></pre>
+<p>Run the following SQL commands to create the STAGE:</p>
+<pre><code language="language-sql" class="language-sql">CREATE STAGE if not EXISTS MODELS;
+
+USE IMDB.PUBLIC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Data" duration="4">
+        <p>We used Python code to load the data into Snowflake. In order to simplify code execution you can click on the right button to start loading the data.</p>
+<h2 is-upgraded>What You&#39;ll Do</h2>
+<p>Use use the section <strong>Load Data</strong>:</p>
+<p class="image-container"><img alt="Puppy" src="img/faff321eb793dd52.png"></p>
+<h3 is-upgraded>Step 1 : Load Train Dataset</h3>
+<p>Here is the display that we expect after the execution.</p>
+<p class="image-container"><img alt="Puppy" src="img/b28f87fabaf00533.png"></p>
+<h3 is-upgraded>Step 2 : Load Test Dataset</h3>
+<p>Here is the display that we expect after the execution.</p>
+<p class="image-container"><img alt="Puppy" src="img/31d11e5332a7742d.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<h3 is-upgraded>Load Data into Snowflake with Snowpark</h3>
+<pre><code language="language-shell" class="language-shell">with z.open(&#34;TRAIN_DATASET.csv&#34;) as f:
+    pandas_df = pd.read_csv(f)
+    session.write_pandas(pandas_df, &#34;TRAIN_DATASET&#34;, auto_create_table=False, overwrite=True)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Analyze Data" duration="2">
+        <h2 is-upgraded>What You&#39;ll Do</h2>
+<p>Use use the section <strong>Analyze</strong> to explore and analyze the datasets and see some metrics.</p>
+<p class="image-container"><img alt="Puppy" src="img/50901f685f0a7830.png"></p>
+<h3 is-upgraded>Select your data</h3>
+<p>Choose the dataset that you want to analyze:</p>
+<p class="image-container"><img alt="Puppy" src="img/d1ab87154bf8ef06.png"></p>
+<h3 is-upgraded>Stats</h3>
+<p>Here is some statistics related to the dataset:</p>
+<p class="image-container"><img alt="Puppy" src="img/59147d5f49e72463.png"></p>
+<h3 is-upgraded>Sample Data</h3>
+<p>You can see a sample of data:</p>
+<p class="image-container"><img alt="Puppy" src="img/c8b5e7e8e1d4301.png"></p>
+<h3 is-upgraded>Data Description</h3>
+<p>Here a description of your dataset:</p>
+<p class="image-container"><img alt="Puppy" src="img/7ab02b915569476f.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<h3 is-upgraded>Analyze your dataset with Snowpark</h3>
+<pre><code language="language-shell" class="language-shell">table_to_print = &#34;TRAIN_DATASET&#34;
+
+df_table = session.table(table_to_print)
+df_table.count()
+
+pd_table = df_table.limit(10).to_pandas()
+
+pd_describe = df_table.describe().to_pandas()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Prep &amp; Train Model" duration="5">
+        <h2 is-upgraded>What You&#39;ll Do</h2>
+<p>Use use the section <strong>Train Model</strong>:</p>
+<p class="image-container"><img alt="Train_dataset" src="img/e2b8cba6c43818c9.png"></p>
+<h3 is-upgraded>Step 1 : Select the dataset</h3>
+<p>Choose the training dataset to build the model:</p>
+<p class="image-container"><img alt="Train_dataset" src="img/5d0a80d51d993b86.png"></p>
+<h3 is-upgraded>Step 2 : Select a Virtual Warehouse</h3>
+<p>Select a Virtual Warehouse:</p>
+<p class="image-container"><img alt="VW" src="img/d0fa7feb0efdb5c6.png"></p>
+<h3 is-upgraded>Step 3 : Check the configuration</h3>
+<p class="image-container"><img alt="Configuration" src="img/d468bb179e8fbf44.png"></p>
+<h3 is-upgraded>Step 4 : Run model</h3>
+<p>To run the model training, click on the button below:</p>
+<p class="image-container"><img alt="Puppy" src="img/dfd4b15f8b6018f4.png"></p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<h3 is-upgraded>Create the training function</h3>
+<p>We created a function called train_model_review_pipline():</p>
+<pre><code language="language-shell" class="language-shell">def train_model_review_pipline(session : Session, train_dataset_name: str) -&gt; Variant:
+    ...
+</code></pre>
+<p>that will do the following steps:</p>
+<ul>
+<li><strong>Data Preperation</strong>: using Snowpark DataFrame API, we will trasnform the data to make it ready for the training</li>
+<li><strong>Text Representation</strong>: create the Matrix by leveraging Python libraries</li>
+<li><strong>Fit the Model</strong>: Fit the model</li>
+<li><strong>Save the Model</strong>: Use stages and tables to ingest and organize raw data from S3 into Snowflake</li>
+</ul>
+<h3 is-upgraded>Register the function as a Store Procedure</h3>
+<p>Then we registered the function as a Store Procedure:</p>
+<pre><code language="language-shell" class="language-shell">session.sproc.register(func=train_model_review_pipline, name=&#34;train_model_review_pipline&#34;, replace=True)
+</code></pre>
+<h3 is-upgraded>Call the Stored Procedure</h3>
+<p>And use this <strong>Python code</strong> to call the SP that wil be execute the training into Snowflake with a Snowflake Virtual Warehouse:</p>
+<pre><code language="language-shell" class="language-shell">session.call(&#34;train_model_review_pipline&#34;, &#34;TRAIN_DATASET&#34;)
+</code></pre>
+<p>You can also execute the training from <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> directly with <strong>SQL code</strong>:</p>
+<pre><code language="language-SQL" class="language-SQL">CALL train_model_review_pipline(&#34;TRAIN_DATASET&#34;)
+</code></pre>
+<h3 is-upgraded>Deploy the model using an UDF Function</h3>
+<pre><code language="language-shell" class="language-shell">@udf(name=&#39;predict_review&#39;, session=session, is_permanent = False, stage_location = &#39;@MODELS&#39;, replace=True)
+    def predict_review(args: list) -&gt; float:
+        
+        import sys
+        import pandas as pd
+        from joblib import load
+
+        model = load_file(&#34;model_review.joblib&#34;)
+        vec = load_file(&#34;vect_review.joblib&#34;)
+            
+        features = list([&#34;REVIEW&#34;, &#34;SENTIMENT_FLAG&#34;])
+        
+        row = pd.DataFrame([args], columns=features)
+        bowTest = vec.transform(row.REVIEW.values)
+        
+        return model.predict(bowTest)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring &amp; Model Catalog" duration="1">
+        <h2 is-upgraded>Monitore your execution using QUERY_HISTORY</h2>
+<p>Use use the section <strong>Model Monitoring</strong>. You can use <strong>Snowsight (Snowflake UI)</strong> as well to get more details and see the <strong>Query Details</strong> and <strong>Query Profile</strong>.</p>
+<p class="image-container"><img alt="Puppy" src="img/bda44756c05eab7a.png"></p>
+<h2 is-upgraded>Model Catalog</h2>
+<p>Use use the section <strong>Model Catalog</strong>. Here you can see your models that you deployed and saved on Snowflake (Stage):</p>
+<p class="image-container"><img alt="Puppy" src="img/4fad65dcda0874b7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Inference &amp; Prediction" duration="6">
+        <h2 is-upgraded>Inference</h2>
+<p>Use use the section <strong>Inference</strong> to analyze the Test Dataset and see the Accuracy of your Model after the Inference.</p>
+<p><strong>Analyze Test Dataset</strong> Click on the Test Dataset sub-section to explore the dataset.</p>
+<p class="image-container"><img alt="Puppy" src="img/954c66f48c31c0c6.png"></p>
+<p><strong>Accuracy</strong> Click on the Accuracy sub-section to see the details.</p>
+<p class="image-container"><img alt="Puppy" src="img/93df54c26760c985.png"></p>
+<h2 is-upgraded>Inference Runs</h2>
+<p>Select the new dataset that you want to predict and the Inference will run automatically.</p>
+<p class="image-container"><img alt="Puppy" src="img/c76aa7eada8cb56b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>Use the section to clean Up to remove all the Snowflake Objects and the Data that you already load:</p>
+<p class="image-container"><img alt="Puppy" src="img/d627ea192360e914.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Resources" duration="3">
+        <p>Congratulations! You&#39;ve successfully performed the Sentiment Analysis use case and built an end-to-end Data Science workflow leveraging Snowpark for Python and Streamlit.</p>
+<p>In this quickstart we demonstrated how Snowpark Python enables rapid, end-to-end machine learning workload development, deployment, and orchestration. We were also able to experience how Snowpark for Python enables you to use familiar syntax and constructs to process data where it lives with Snowflake&#39;s elastic, scalable and secure engine, accelerating the path to production for data pipelines and ML workflows.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Do NLP and ML on Snowflake using Snowpark</li>
+<li>Load data into Snowflake</li>
+<li>Transform your data using Snowpark DataFrame API</li>
+<li>Train a scikit-learn model using Store Procedure inside Snowflake</li>
+<li>Deploy a model using UDF Function</li>
+<li>Inference with UDF Function</li>
+<li>Use Streamlit with Snowpark</li>
+</ul>
+<h2 is-upgraded>More resources</h2>
+<ul>
+<li><a href="https://medium.com/snowflake/natural-language-processing-nlp-and-ml-within-100-snowflake-using-snowpark-python-43e654111319" target="_blank">NLP and ML within Snowpark Python and Streamlit - Blog</a></li>
+<li><a href="https://medium.com/snowflake/pyspark-versus-snowpark-for-ml-in-terms-of-mindset-and-approach-8be4bdafa547" target="_blank">PySpark vs Snowpark for ML in terms of Mindset and Approach - Blog</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/" target="_blank">Snowpark Guide for Data Engineers&#39;</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

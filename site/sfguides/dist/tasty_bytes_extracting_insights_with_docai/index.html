@@ -1,0 +1,329 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Extracting Insights from Unstructured Data with Document AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_extracting_insights_with_docai"
+                  title="Extracting Insights from Unstructured Data with Document AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img src="img/f0071f69eaba0c9b.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Within this Quickstart, we will walk through how to train and leverage a Document Extraction Model using Document AI. We will use this model to convert unstructured Inspection Reports into structured, easy-to-analyze rows and columns all within the Snowflake AI Data Cloud.</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview" target="_blank">Document AI Documentation</a></li>
+<li><a href="https://www.snowflake.com/blog/arctic-tilt-compact-llm-advanced-document-ai/" target="_blank">Snowflake&#39;s Artic-TILT LLM for Document AI Documentation</a></li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Supported Snowflake <a href="https://docs.snowflake.com/en/user-guide/setup#browser-requirements" target="_blank">Browser</a></li>
+<li>A Snowflake Account <ul>
+<li>If you do not have a Snowflake Account, please <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank"><strong>sign up for a Free 30 Day Trial Account</strong></a>. When signing up, please make sure to select <strong>Enterprise</strong> edition. You can choose any AWS or Azure <a href="https://docs.snowflake.com/en/user-guide/intro-regions" target="_blank">Snowflake Region</a>.</li>
+<li>After registering, you will receive an email with an activation link and your Snowflake Account URL.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to Upload Files to a Stage</li>
+<li>How to Train a Data Extraction Model using Document AI</li>
+<li>How to Extract Data from Unstructured Documents</li>
+<li>How to Flatten Semi-Structured Data</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Database, Warehouse, Role and Privileges" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>For this section, please create a new Snowflake SQL Worksheet by Navigating to Projects -&gt; Worksheets and clicking the <strong>+</strong> button.</p>
+<p>Once your Worksheet is created, rename the Worksheet to <strong>DocumentAI Quickstart Setup</strong> before moving on.</p>
+<h2 is-upgraded>Step 1 - Setting up our Account</h2>
+<p>Please copy the following SQL and paste it in your Worksheet. Once pasted, run all of the queries at once using <strong>Run All</strong> which will deploy the following within your account:</p>
+<ul>
+<li>Database: <code>tb_doc_ai</code></li>
+<li>Schema: <code>raw_doc</code></li>
+<li>Stages: <code>doc_ai</code>, <code>inspection_reports</code></li>
+<li>Warehouse: <code>doc_ai</code></li>
+<li>Role: <code>tb_doc_ai</code></li>
+<li>Grants and Privileges</li>
+</ul>
+<pre><code>-- assume the accountadmin role
+USE ROLE accountadmin;
+
+-- create the tb_doc_ai database
+CREATE OR REPLACE DATABASE tb_doc_ai;
+
+-- create the raw_doc schema
+CREATE OR REPLACE SCHEMA tb_doc_ai.raw_doc;
+
+-- create the doc_ai stage
+CREATE OR REPLACE STAGE tb_doc_ai.raw_doc.doc_ai
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION =  (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+
+-- create the inspection_reports stage
+CREATE OR REPLACE STAGE tb_doc_ai.raw_doc.inspection_reports
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION =  (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+
+-- create the doc_ai warehouse
+CREATE OR REPLACE WAREHOUSE doc_ai
+    WAREHOUSE_SIZE = &#39;small&#39;
+    WAREHOUSE_TYPE = &#39;standard&#39;
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+COMMENT = &#39;document ai warehouse&#39;;
+
+-- create the tb_doc_ai role
+CREATE OR REPLACE ROLE tb_doc_ai;
+
+-- grant document ai privileges
+GRANT DATABASE ROLE SNOWFLAKE.DOCUMENT_INTELLIGENCE_CREATOR TO ROLE tb_doc_ai;
+
+-- grant doc_ai warehouse privileges
+GRANT USAGE, OPERATE ON WAREHOUSE doc_ai TO ROLE tb_doc_ai;
+
+-- grant tb_doc_ai database privileges
+GRANT ALL ON DATABASE tb_doc_ai TO ROLE tb_doc_ai;
+GRANT ALL ON SCHEMA tb_doc_ai.raw_doc TO ROLE tb_doc_ai;
+GRANT CREATE STAGE ON SCHEMA tb_doc_ai.raw_doc TO ROLE tb_doc_ai;
+GRANT CREATE SNOWFLAKE.ML.DOCUMENT_INTELLIGENCE ON SCHEMA tb_doc_ai.raw_doc TO ROLE tb_doc_ai;
+GRANT ALL ON ALL STAGES IN SCHEMA tb_doc_ai.raw_doc TO ROLE tb_doc_ai;
+
+-- set my_user_var variable to equal the logged-in user
+SET my_user_var = (SELECT  &#39;&#34;&#39; || CURRENT_USER() || &#39;&#34;&#39; );
+
+-- grant the logged in user the doc_ai_role
+GRANT ROLE tb_doc_ai TO USER identifier($my_user_var);
+</code></pre>
+<h2 is-upgraded>Step 2 - Downloading and Unzipping our Inspection Reports</h2>
+<p>For use in a future step, we will need to download 2 separate .zip files that contain a <strong>Train</strong> (5 PDFs) and <strong>Full</strong> (11 PDFs) set of Inspection Reports.</p>
+<p>Please leverage the two buttons below to download these .zip files. Once downloaded please unzip the files into a location that can easily be accessed in our next steps.</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_extracting_insights_with_docai/assets/inspection_reports_train.zip" target="_blank">Training Set ZIP</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/tasty_bytes_extracting_insights_with_docai/assets/inspection_reports_full.zip" target="_blank">Full Set ZIP</a></li>
+</ul>
+<h2 is-upgraded>Step 3 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Uploading our Inspection Reports to our Stage" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<h2 is-upgraded>Step 1 - Navigating to our Stage</h2>
+<p>Within the Snowsight interface, navigate to Data -&gt; Databases and then search for <code>TB_DOC_AI</code>. From there navigate to the <code>RAW_DOC</code> schema and the <code>INSPECTION_REPORTS</code> stage.</p>
+<p class="image-container"><img src="img/b4cb741ed1d1b85b.png"></p>
+<h2 is-upgraded>Step 2 - Uploading our Inspection Reports</h2>
+<p>In the top-right corner, click the <strong>+Files</strong> button and either drop or browse to the unzipped Inspection Reports Full from Step 1. From there click <strong>Upload</strong>.</p>
+<p class="image-container"><img src="img/988ef1e21c316aeb.png"></p>
+<p>This will kick off our file upload and you will eventually see our Inspection Report PDF&#39;s within the Stage.</p>
+<h2 is-upgraded>Step 3 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Training our Document AI Model" duration="30">
+        <h2 is-upgraded>Overview</h2>
+<h2 is-upgraded>Step 1 - Creating our Document AI Build</h2>
+<p>Within the Snowsight interface please switch your role to <code>TB_DOC_AI</code> and, navigate to AI &amp; ML -&gt; Document AI. From there click the <strong>+ Build</strong> button.</p>
+<p>Within the New Build screen, enter the following:</p>
+<ul>
+<li><strong>Build Name:</strong> INSPECTION_REPORT_EXTRACTION</li>
+<li><strong>Choose Database:</strong> TB_DOC_AI</li>
+<li><strong>Choose Schema:</strong> RAW_DOC</li>
+</ul>
+<p class="image-container"><img src="img/6426c45b8feb2a4f.png"></p>
+<h2 is-upgraded>Step 2 - Uploading our Training Documents</h2>
+<p>After the build creation is successful, we will land in our Document AI Build Details window, where we can begin our document upload by clicking the <strong>Upload documents</strong> button.</p>
+<p>Within the Upload documents screen drop or browse to the unzipped Training Inspection Reports from Step 1. From there click <strong>Upload</strong>.</p>
+<p class="image-container"><img src="img/3f8e602a661bd67e.png"></p>
+<h2 is-upgraded>Step 3 - Specifying our Values and Questions</h2>
+<p>Once the upload process is complete, please click <strong>Define value</strong> so we can begin to specify value names and questions we want to ask the model.</p>
+<p>To begin defining our values to extract from our documents, click the <strong>Add value</strong> button in the right-hand window.</p>
+<p>From here please enter the following set of Values and Questions one by one that are documented below. For each pair, please complete the following before clicking <strong>Add value</strong> to enter the next pair:</p>
+<p><strong>Did the Model extract the Value correctly?</strong></p>
+<ul>
+<li>If <strong>Yes</strong> - Click the check-box to indicate this value was extracted correctly.</li>
+<li>If <strong>No</strong> - Delete the provided value and enter the correct value.</li>
+</ul>
+<p><strong>Value | Question</strong></p>
+<ul>
+<li><strong>TRUCK_ID:</strong> What is the Truck Identifier?</li>
+<li><strong>DATE:</strong> What is the Date?</li>
+<li><strong>PIC_PRESENT:</strong> Was the Person in charge present (Y or N)?</li>
+<li><strong>FOOD_PROPER_TEMP:</strong> Was the Food received at the proper temperature (Y or N)?</li>
+<li><strong>VEHICLE_RUNS_WELL:</strong> Did the Vehicle run and was it in well maintained condition?</li>
+</ul>
+<aside class="special"><p> For demonstration purposes, we are only extracting 5 values however please feel free to add more.</p>
+<p>Please see <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/optimizing-questions" target="_blank">Question optimization for extracting information with Document AI</a> for best practices.</p>
+</aside>
+<p class="image-container"><img src="img/2764b83b87283675.png"></p>
+<h2 is-upgraded>Step 4 - Reviewing our Test Documents</h2>
+<p>After completing our initial document review in the previous step, we will now review the models&#39; initial extraction results for our remaining test documents.</p>
+<p>To begin, please move on to the second document by clicking the arrow at the bottom of the screen.</p>
+<p class="image-container"><img src="img/91d89eb9ccca1851.png"></p>
+<p>Once the next document appears, please again conduct the following steps for each Value and Question pair.</p>
+<p><strong>Did the Model extract the Value correctly?</strong></p>
+<ul>
+<li>If <strong>Yes</strong> - Click the check-box to indicate this value was extracted correctly.</li>
+<li>If <strong>No</strong> - Delete the provided value and enter the correct value.</li>
+</ul>
+<p class="image-container"><img src="img/f26dbf76b4aa2f9d.gif"></p>
+<p>After completing review of all documents, please navigate back to the Document AI UI by click the arrow next to <strong>Documents review</strong></p>
+<p class="image-container"><img src="img/ac4d17da8a270093.png"></p>
+<p>Next navigate to the Build Details tab.</p>
+<p class="image-container"><img src="img/f2f08bfacc47a7a9.png"></p>
+<h2 is-upgraded>Step 5 - Training our Model</h2>
+<p>Using the <strong>Model accuracy</strong> tile, we will now train our model by clicking the <strong>Train model</strong> button. Within the <strong>Start training</strong> pop-up click <strong>Start Training</strong> which will take around 20 minutes.</p>
+<p class="image-container"><img src="img/c399c701f5d0ff6e.png"></p>
+<ul>
+<li>For more on Document AI training time estimation please visit our <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/prepare-model-build#training-time-estimation" target="_blank">Document AI documentation</a>.</li>
+</ul>
+<p>When training is complete, you will see <strong>Trained</strong> next to the model name indicating it is ready to be leveraged.</p>
+<h2 is-upgraded>Step 6 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using our Document AI Model against our Inspection Reports" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>In the last section, we walked through training our Inspection Report Extraction model in Snowflake. We will now use that model to extract our values from the full set of documents we uploaded to our stage earlier.</p>
+<p>Please create a new Snowflake SQL Worksheet by Navigating to Projects -&gt; Worksheets and clicking the <strong>+</strong> button.</p>
+<p>Once your Worksheet is created, rename the Worksheet to <strong>DocumentAI Quickstart SQL</strong> before moving on.</p>
+<h2 is-upgraded>Step 1 - Setting our Context</h2>
+<p>Within our fresh SQL Worksheet, please execute the following three queries below to set our Role, Warehouse, Database and Schema context. Each of these will result in a <code>Statement executed successfully message.</code></p>
+<pre><code>USE ROLE tb_doc_ai;
+USE WAREHOUSE doc_ai;
+USE DATABASE tb_doc_ai;
+USE SCHEMA raw_doc;
+</code></pre>
+<h2 is-upgraded>Step 2 - Listing our Staged Inspection Reports</h2>
+<p>Using a <a href="https://docs.snowflake.com/en/sql-reference/sql/list" target="_blank">LIST</a> command, let&#39;s first take a look at the files that we staged earlier and want to use our extraction model against.</p>
+<pre><code>LIST @inspection_reports;
+</code></pre>
+<p class="image-container"><img src="img/6715d13ac8f41a23.png"></p>
+<h2 is-upgraded>Step 3 - Extraction for a single Document</h2>
+<p>To begin our extraction, let&#39;s use our model and the <a href="https://docs.snowflake.com/en/sql-reference/classes/classification/methods/predict" target="_blank">PREDICT</a> method against one of those staged files by executing the next query.</p>
+<pre><code>SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, &#39;02.13.2022.5.pdf&#39;));
+</code></pre>
+<p class="image-container"><img src="img/26298e2d61addce1.png"></p>
+<h2 is-upgraded>Step 4 - Extraction for all Documents</h2>
+<p>Our extracted object looks great, but before we begin to flatten this out let&#39;s create a raw table based on extraction from all our staged documents. Please execute the next query which may take around 2 minutes and result in a <code>Table IR_RAW successfully created.</code> message.</p>
+<pre><code>CREATE OR REPLACE TABLE ir_raw
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;voc&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;sql&#34;, &#34;vignette&#34;:&#34;docai&#34;}}&#39;
+AS
+SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, RELATIVE_PATH)) AS ir_object
+FROM DIRECTORY(@inspection_reports);
+</code></pre>
+<p>Before moving on let&#39;s take a look at our raw, extracted results.</p>
+<pre><code>SELECT * FROM ir_raw;
+</code></pre>
+<p class="image-container"><img src="img/bbc324652d411a24.png"></p>
+<h2 is-upgraded>Step 5 - Flattening our Extracted Object</h2>
+<p>Everything that was extracted for each document is present in the <code>ir_object</code> column. To make analysis easier, let&#39;s complete the Quickstart by using Snowflake&#39;s Semi-Structured Data Support to show how we can extract columns from our object.</p>
+<p>In production, a Data Engineer would typically flatten and promote this data downstream through our Medallion Architecture using objects like Dynamic Tables or Views.</p>
+<p>Please execute the next query in which we will use <a href="https://docs.snowflake.com/en/user-guide/querying-semistructured#dot-notation" target="_blank">Dot Notation</a> to: - Extract and normalize Date to a consistent format - Extract TRUCK_ID - Extract PIC_PRESENT and FOOD_PROPER_TEMP and convert Y to Pass, N to Fail and X to Not Observed</p>
+<pre><code>SELECT
+    TO_DATE(REPLACE(ir_object:&#34;DATE&#34;[0].value::varchar,&#39;-&#39;,&#39;/&#39;)) AS date,
+    ir_object:&#34;TRUCK_ID&#34;[0].value::varchar AS truck_id, 
+    CASE
+        WHEN ir_object:&#34;PIC_PRESENT&#34;[0].value::varchar = &#39;Y&#39; THEN &#39;Pass&#39; -- convert Y to Pass
+        WHEN ir_object:&#34;PIC_PRESENT&#34;[0].value::varchar = &#39;N&#39; THEN &#39;Fail&#39; -- convert N to Fail
+        WHEN ir_object:&#34;PIC_PRESENT&#34;[0].value::varchar = &#39;X&#39; THEN &#39;Not Observed&#39; -- convert X to Not Observed
+        ELSE &#39;Not Observed&#39;
+    END AS person_in_charge_present,
+    CASE
+        WHEN ir_object:&#34;FOOD_PROPER_TEMP&#34;[0].value::varchar = &#39;Y&#39; THEN &#39;Pass&#39; -- convert Y to Pass
+        WHEN ir_object:&#34;FOOD_PROPER_TEMP&#34;[0].value::varchar = &#39;N&#39; THEN &#39;Fail&#39; -- convert N to Fail
+        WHEN ir_object:&#34;FOOD_PROPER_TEMP&#34;[0].value::varchar = &#39;X&#39; THEN &#39;Not Observed&#39; -- convert X to Not Observed
+        ELSE &#39;Not Observed&#39;
+    END AS food_proper_temp
+FROM ir_raw
+ORDER BY truck_id;
+</code></pre>
+<p class="image-container"><img src="img/c1799146a3c04ba9.png"></p>
+<p><strong>Amazing!</strong> Exactly as desired we have moved from Unstructured PDF to easy to digest tabular results in the matter of minutes all within the Snowflake AI Data Cloud.</p>
+<h2 is-upgraded>Step 6 - Click Next –&gt;</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <p><strong>Fantastic work!</strong> You have successfully completed the Extracting Insights with Document AI Quickstart walking through the process of moving PDF to tabular result.</p>
+<h2 is-upgraded>What you Learned</h2>
+<ul>
+<li>How to Upload Files to a Stage</li>
+<li>How to Train a Data Extraction Model using Document AI</li>
+<li>How to Extract Data from Unstructured Documents</li>
+<li>How to Flatten Semi-Structured Data</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-extract-insights-from-unstructured-data-using-document-ai" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3" target="_blank">Powered by Tasty Bytes - Quickstarts Table of Contents</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview" target="_blank">Document AI</a></li>
+<li><a href="(https://www.snowflake.com/blog/arctic-tilt-compact-llm-advanced-document-ai/)" target="_blank">Snowflake&#39;s Artic-TILT LLM for Document AI Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

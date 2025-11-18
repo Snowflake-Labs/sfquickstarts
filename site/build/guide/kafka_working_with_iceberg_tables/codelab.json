@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "kafka_working_with_iceberg_tables",
+  "duration": 60,
+  "title": "Intro to Kafka and Snowflake Managed Iceberg",
+  "summary": "Through this quickstart guide, you will explore how to ingest data from kafka to Iceberg tables.",
+  "source": "kafka_working_with_iceberg_tables/kafka_working_with_iceberg_tables.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "kafka_working_with_iceberg_tables"
+}

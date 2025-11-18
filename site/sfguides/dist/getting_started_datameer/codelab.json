@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting_started_datameer",
+  "duration": 90,
+  "title": "Getting Started with Datameer",
+  "summary": "This is a broad introduction of Datameer and covers how to start, load and transform data, and share insights.",
+  "source": "getting_started_datameer/lab_index.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "cataloging",
+    "exploration",
+    "gettingstarted",
+    "tranformation",
+    "visualisation",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_datameer"
+}

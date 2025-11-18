@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "asking_questions_to_your_own_documents_with_snowflake_cortex",
+  "duration": 75,
+  "title": "Build A Document Search Assistant using Vector Embeddings in Cortex AI",
+  "summary": "Step-by-step guide on how to build a document search assistant using vector embeddings in Cortex AI.",
+  "source": "ask-questions-to-your-documents-using-rag-with-snowflake-cortex/ask-questions-to-your-documents-using-rag-with-snowflake-cortex.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-science",
+    "gen-ai"
+  ],
+  "tags": [
+    "embeddings",
+    "generativeai",
+    "gettingstarted",
+    "snowflakecortex",
+    "snowparkpython",
+    "streamlit",
+    "vectors",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "asking_questions_to_your_own_documents_with_snowflake_cortex"
+}

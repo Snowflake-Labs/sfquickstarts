@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:20-04:00",
+  "id": "xml-processing-snowpark",
+  "duration": 26,
+  "title": "Modernize XML Processing for Financial Services with Snowpark XML",
+  "summary": "Snowflake guide on how to process XML with Snowpark",
+  "source": "xml-processing-snowpark/xml-processing-snowpark.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "financialservices",
+    "gettingstarted",
+    "notebook",
+    "regulatory",
+    "snowpark",
+    "web",
+    "xml"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "xml-processing-snowpark"
+}

@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "servicenow_to_snowflake_connector",
+  "duration": 23,
+  "title": "Snowflake Connector for ServiceNow Installation",
+  "summary": "Step-by-step to set up Servicenow connector",
+  "source": "servicenow_to_snowflake_connector/servicenow_to_snowflake_connector.md",
+  "theme": "",
+  "status": [
+    "private"
+  ],
+  "category": [
+    "connectors"
+  ],
+  "tags": [
+    "connectors",
+    "dataengineering",
+    "servicenow",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "servicenow_to_snowflake_connector"
+}

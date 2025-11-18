@@ -1,0 +1,898 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Stream Kafka Data to Snowflake via Confluent Tableflow and Iceberg</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowflake-confluent-tableflow-iceberg"
+                  title="Stream Kafka Data to Snowflake via Confluent Tableflow and Iceberg"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll build a real-time data pipeline that connects Apache Kafka with Snowflake, without writing a single custom connector or ETL job. Using Confluent Cloud, Kafka, and Tableflow, you&#39;ll stream simulated data into Kafka topics, automatically materialize that data into Apache Iceberg tables on Amazon S3, and expose those tables directly to Snowflake&#39;s Open Data Catalog.</p>
+<p>Imagine you&#39;re building a modern trading platform or a customer-facing analytics dashboard. You&#39;re capturing user activity and stock trades as they happen, and you want your data teams and downstream systems to react in near real-time, whether it&#39;s for fraud detection, personalized recommendations, or operational intelligence.</p>
+<p>Traditionally, this would require stitching together multiple systems: Kafka for ingestion, Spark or Flink for transformation, cloud storage for persistence, and finally Snowflake for analytics, plus a ton of glue code and scheduling overhead.</p>
+<p>This quickstart shows how to streamline that entire process:</p>
+<ul>
+<li><strong>Kafka</strong> ingests and transports the data in real time.</li>
+<li><strong>Tableflow</strong> continuously materializes that data into Iceberg tables on <strong>Amazon S3</strong>.</li>
+<li><strong>Snowflake Open Catalog</strong> connects directly to those tables, giving analysts and apps live access to fresh data using simple SQL.</li>
+</ul>
+<p>This architecture supports use cases like:</p>
+<ul>
+<li><strong>Real-time dashboards</strong> for trading activity or user behavior</li>
+<li><strong>Feeding machine learning pipelines</strong> with live, structured data</li>
+<li><strong>Streaming feature stores</strong> for AI/ML applications</li>
+</ul>
+<h2 is-upgraded>Technologies at a Glance</h2>
+<h3 is-upgraded>Apache Kafka</h3>
+<p>Kafka is a distributed event streaming platform used to capture and route real-time data. In this lab, Kafka will act as the backbone for ingesting live event streams like user registrations and stock trades.</p>
+<h3 is-upgraded>Confluent Cloud</h3>
+<p>Confluent is a fully managed data streaming platform built on Apache Kafka. It handles the heavy lifting of provisioning, scaling, and securing Kafka in the cloud so you can focus on your data flow, not the infrastructure.</p>
+<h3 is-upgraded>Tableflow</h3>
+<p>Tableflow is a new Confluent-native service that simplifies getting data out of Kafka and into data lake and warehouse formats. It automatically handles schema evolution, file compaction, and catalog registration bridging the world of real-time streaming and batch analytics. Think of it as the glue between Kafka and your Iceberg or Delta Lake tables.</p>
+<h3 is-upgraded>Apache Iceberg</h3>
+<p>Iceberg is an open table format designed for large-scale analytic datasets. It brings reliability and performance to data lakes with features like ACID transactions, schema evolution, and partitioning, making it easy to work with both streaming and batch data as if it were a traditional database table.</p>
+<h2 is-upgraded>Assumptions and Prerequisites</h2>
+<p>Before you begin, make sure you have the following:</p>
+<ul>
+<li><a href="https://www.confluent.io/get-started" target="_blank"><strong>Confluent Cloud Account</strong></a>: You&#39;ve created (or have access to) a Confluent Cloud account where you can provision Kafka clusters and use Tableflow.</li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html" target="_blank"><strong>AWS Account with S3 Access</strong></a>: You can create or access an Amazon S3 bucket and configure IAM roles and policies.</li>
+<li><a href="https://app.snowflake.com/" target="_blank"><strong>Snowflake Account with OrgAdmin Permissions</strong></a>: You have a Snowflake account with <strong>Organization Administrator</strong> privileges, required to create an Open Data Catalog and configure external integrations.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Learn in the Lab</h2>
+<ul>
+<li>How to set up Apache Kafka and streaming data pipelines in Confluent Cloud.</li>
+<li>How to generate synthetic data using Datagen connectors.</li>
+<li>How to use Tableflow to write Kafka topics to Apache Iceberg tables stored in Amazon S3.</li>
+<li>How to configure secure access between AWS, Confluent, and Snowflake using IAM roles and trust policies.</li>
+<li>How to expose Iceberg tables in Snowflake&#39;s Open Data Catalog and run live queries on continuously updated data.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>By the end of this quickstart, you&#39;ll have:</p>
+<ul>
+<li>A fully functional <strong>Confluent Cloud</strong> environment with Kafka topics for user and stock trading events.</li>
+<li>Real-time <strong>Datagen</strong> connectors simulating events into Kafka.</li>
+<li>A <strong>Tableflow pipeline</strong> writing those topics as Iceberg tables into S3.</li>
+<li>A <strong>Snowflake Open Catalog</strong> integration that makes those Iceberg tables queryable with standard SQL.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an environment and Kafka cluster within your Confluent Cloud Account" duration="5">
+        <p>In Confluent Cloud, we need to create a Kafka cluster to run our Tableflow examples. This Kakfa cluster will be automatically sized and provisioned with a few clicks. This will allow us to stream our datasets for further work with Tableflow.</p>
+<p>In order to create a Kafka cluster, we need to first create an environment which will house all of the cloud resources we will create in this quickstart guide.</p>
+<ul>
+<li>Access the Environments console by clicking <strong>Environments</strong> left-hand side of the Confluent Cloud menu or by clicking <strong>Environments</strong> under <strong>Your resource overview.<br></strong><img src="img/10a19083ce3c8d65.png"></li>
+</ul>
+<p><em>If you already have an environment created, feel free to skip this section and use your existing environment for the remainder of the quickstart.</em></p>
+<ul>
+<li>From the Environments console, you will see an option to <strong>+ Add cloud environment</strong>. Click this to begin creating a new environment.<img src="img/e420cc65d2705b06.png"></li>
+<li>Let&#39;s give our environment a name, <strong>SnowflakeTableflowDemo</strong></li>
+<li>Leave the default &#34;Essentials&#34; governance package selected and click <strong>Create</strong>.</li>
+</ul>
+<p class="image-container"><img src="img/c4483581e3c8c27b.png"></p>
+<ul>
+<li>You now have a Confluent environment and we can proceed to create our Kafka cluster within the environment.</li>
+<li>On the next screen, you will be presented with options on which Kakfa cluster to create. Select the Basic option, and click <strong>Begin Configuration</strong></li>
+</ul>
+<p class="image-container"><img src="img/40ee010852180fac.png"></p>
+<ul>
+<li>On the next screen, choose <strong>AWS</strong> as the cloud provider, and choose <code>us-east-1</code> as the region. Then click <strong>Continue.</strong></li>
+</ul>
+<p class="image-container"><img src="img/3b2ba2f58c9e2dc5.png"></p>
+<ul>
+<li>Give your cluster a name, <strong>my-kafka-cluster</strong>, leave the configurations as default and <strong>Launch cluster.</strong></li>
+</ul>
+<p class="image-container"><img src="img/6f79bf9c77438e6e.png"></p>
+<ul>
+<li>You will then see a success banner &#34;Cluster created&#34;, and be taken to the Cluster Overview page. We are now ready to get started with Tableflow.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with Tableflow" duration="30">
+        <p>Tableflow simplifies the traditionally complex process of moving data from Kafka topics to data lakes or warehouses. It allows users to materialize Kafka topics and schemas into Apache Iceberg or Delta Lake tables within a few clicks, leveraging Confluent&#39;s Schema Registry for schema management and evolution. This eliminates manual data mappings and streamlines the data ingestion pipeline. Tableflow also continuously compacts Parquet files for improved read performance and offers integrations with popular catalog services. By unifying streaming and batch processing, Tableflow enables real-time data availability in the data lakehouse and simplifies stream processing jobs.</p>
+<h2 is-upgraded>Create Datagen Connectors for Users and Stock_Trades</h2>
+<p>To demonstrate how Tableflow moves data from Kafka into Apache Iceberg tables, we&#39;ll start by generating sample data into our Kafka topics. These data generators simulate user activity and stock trading data, generating example events that Tableflow will use to hydrate the data lake.</p>
+<p>Here is a sample of the user data topic:</p>
+<pre><code>{
+  &#34;registertime&#34;: 1491981791331,
+  &#34;userid&#34;: &#34;User_2&#34;,
+  &#34;regionid&#34;: &#34;Region_8&#34;,
+  &#34;gender&#34;: &#34;MALE&#34;
+}
+
+</code></pre>
+<p>The stock_trades topic will look like this:</p>
+<pre><code>{
+  &#34;side&#34;: &#34;BUY&#34;,
+  &#34;quantity&#34;: 1934,
+  &#34;symbol&#34;: &#34;ZBZX&#34;,
+  &#34;price&#34;: 974,
+  &#34;account&#34;: &#34;XYZ789&#34;,
+  &#34;userid&#34;: &#34;User_9&#34;
+}
+</code></pre>
+<p>In this quickstart, we will write the sample data to both the users and stock_trade topic in order to demonstrate how Tableflow works, write to Amazon S3 and reference these tables in Snowflake&#39;s Open Data Catalog.</p>
+<p>Let&#39;s get started.</p>
+<ul>
+<li>From the Confluent Cloud console, navigate to your environment either via the left-hand side portal or in the middle of the page under <strong>Your resource overview.</strong></li>
+<li>Find the environment you created and select it from the list of Environments</li>
+<li>You should now see your <strong>Environment Overview</strong> screen that shows your Kafka Cluster. <strong>Click into your Kafka cluster.</strong></li>
+<li>On the Cluster Overview screen, you will see Connectors on the left hand screen. Click on Connectors and then search for <strong>Datagen Source</strong> or click the datagen source, it is usually one of the first connectors on the page.</li>
+</ul>
+<p class="image-container"><img src="img/bc891ac64b0d8363.png"></p>
+<ul>
+<li>Choose the <code>Users</code> Sample Data.</li>
+<li>Click <strong>Launch</strong></li>
+<li>This will start a <strong>Datagen Source</strong> Kafka connector that writes User data to a Kafka topic called <code>sample_data_users</code>.</li>
+</ul>
+<p class="image-container"><img src="img/bd2b2bf0c33986fd.png"></p>
+<ul>
+<li>You will then see the connector you created from the Connector Screen, transitioning from Provisioning state to Running.</li>
+<li>Repeat this process to create another Datagen Source using the <strong>Stock Trades</strong> sample dataset. Once you have a connector, you should see the option to + <strong>Add Connector</strong> at the top right. Use this button to create a new datagen connector.</li>
+</ul>
+<p class="image-container"><img src="img/c9329767b3465c5a.png"></p>
+<ul>
+<li>Use the <strong>Stock trades</strong> dataset this time. Click <strong>Launch.</strong><img src="img/52a1cafd83afccb0.png"></li>
+<li>Once finished, you should have two Datagen sources, <strong>sample_data</strong> and <strong>sample_data_1</strong> in running state on the Connectors screen.</li>
+</ul>
+<p class="image-container"><img src="img/2e0ba9302fa17612.png"></p>
+<ul>
+<li>Verify that the subsequent Kafka topics have been created by navigating to the <strong>Topics</strong> menu on the left-hand navigation bar. You should see one topic called <code>sample_data_users</code>, and another called <code>sample_data_stock_trades</code>, each with 6 partitions.</li>
+</ul>
+<p class="image-container"><img src="img/dc27dc858d3ca1e5.png"></p>
+<ul>
+<li>We are now in position to start configuring our Tableflow sync process into our Data Lake.</li>
+</ul>
+<h2 is-upgraded>Configure your Amazon S3 Bucket and Provider Integration</h2>
+<p>Once you have your Kafka topics created, you can now get started with Tableflow to sync your data from your Kafka topics into Snowflake Data Cloud.</p>
+<p>But first, we need an Amazon S3 Bucket to write our Apache Iceberg data to.</p>
+<ol type="1">
+<li>If you already have an Amazon S3 bucket, feel free to skip to the next section</li>
+<li>In a new tab, navigate to the Amazon S3 console or click <a href="https://us-east-1.console.aws.amazon.com/s3/home?region=us-east-1#" target="_blank">here</a></li>
+<li>Click on <strong>Create Bucket</strong> on the top right.<br><img src="img/be5125964782812d.png"></li>
+<li>Leave everything default and give your bucket a name. The name of the bucket must be unique so let&#39;s name it <strong><code>tableflow-bucket-<<Account-ID>></code></strong>, using your account ID which can be retrieved from the dropdown at the top right of the screen.</li>
+</ol>
+<p class="image-container"><img src="img/773aaf708d000a36.png"></p>
+<ul>
+<li>Leave the rest of the options as default, scroll down and click <strong>Create Bucket</strong>.</li>
+</ul>
+<h2 is-upgraded>Configure Storage Provider</h2>
+<ol type="1">
+<li>Back on Confluent Cloud, navigate to the <strong>Tableflow</strong> page by clicking on Tableflow on the left-hand side of the menu bar within your Confluent Environment.</li>
+<li>In the center of the page, you&#39;ll see an option to configure a Storage Connection. Click on <strong>Go to Provider Integrations</strong> in order to configure the connection to Amazon S3.</li>
+</ol>
+<p class="image-container"><img src="img/318a2c194d8e087b.png"></p>
+<ol type="1" start="3">
+<li>From Provider Integrations, click on  <strong>+ Add Integration.</strong></li>
+<li>You can either create or use an existing role. For the sake of this example, we will create a <strong>new role</strong>. Click <strong>Continue.</strong></li>
+<li>On the <strong>Create Permission Policy in AWS</strong> page, select <strong>Tableflow S3 Bucket</strong> in the dropdown.</li>
+<li>You will need to copy this permissions-policy.json for use in the next step</li>
+</ol>
+<h2 is-upgraded>Create a new permissions policy on AWS</h2>
+<p>We need to create a permissions policy for Amazon S3 Access. In this section, we will create a permissions policy to be later used with an AWS Identity Access Management (IAM) Role.</p>
+<ol type="1">
+<li>In a new tab, open your Amazon Web Services (AWS) account and navigate to IAM Policies or <a href="https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1#/policies" target="_blank">click this link</a>.</li>
+<li>Click <strong>Create Policy<br></strong><img src="img/b8574b2946a10f9b.png"></li>
+<li>From the Create Policy screen, <strong>switch to the JSON editor</strong></li>
+<li>Copy the permissions-policy.json from the Confluent Provider Create Wizard into your policy editor on AWS. Ensure to replace the values for the Amazon S3 bucket we created above (<strong>tableflow-bucket-&lt;&lt;account-number&gt;&gt;)</strong>.</li>
+</ol>
+<p>Example:</p>
+<pre><code>{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:GetBucketLocation&#34;,
+                &#34;s3:ListBucketMultipartUploads&#34;,
+                &#34;s3:ListBucket&#34;
+            ],
+            &#34;Resource&#34;: [
+                &#34;arn:aws:s3:::tableflow-bucket-123456789101&#34;
+            ]
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:PutObject&#34;,
+                &#34;s3:PutObjectTagging&#34;,
+                &#34;s3:GetObject&#34;,
+                &#34;s3:DeleteObject&#34;,
+                &#34;s3:AbortMultipartUpload&#34;,
+                &#34;s3:ListMultipartUploadParts&#34;
+            ],
+            &#34;Resource&#34;: [
+                &#34;arn:aws:s3:::tableflow-bucket-123456789101/*&#34;
+            ]
+        }
+    ]
+}
+
+
+</code></pre>
+<p class="image-container"><img src="img/2de47c1f020d37ad.png"></p>
+<ol type="1" start="5">
+<li>Click <strong>Next</strong></li>
+<li>Give the policy the name <code>tableflow-s3-access-policy</code> and click <strong>Create Policy</strong>. <img src="img/ed5744fd684758ce.png"></li>
+<li>Once the policy has been created, you can click <strong>Continue</strong> on Confluent Cloud.</li>
+<li>The next page, <strong>Create role in AWS and map to Confluent</strong> will present a <strong>trust-policy.json</strong> that we will leverage for the next section of these instructions. Copy this down for later use.</li>
+</ol>
+<h2 is-upgraded>Create role in AWS and map to Confluent</h2>
+<ol type="1">
+<li>Next, we are going to create a role in AWS that will leverage the policy we just created, plus a <code>trust-policy.json</code> to allow Confluent to assume this role.</li>
+<li>Click <a href="https://us-east-1.console.aws.amazon.com/iam/home#/roles" target="_blank">here</a> or navigate to the <strong>Roles</strong> sub-menu under the IAM service on AWS</li>
+</ol>
+<p class="image-container"><img src="img/76918d9c91ca5997.png"></p>
+<ol type="1" start="3">
+<li>Once on the Roles sub-menu, on the top right of the screen, click <strong>Create role</strong> in order to begin creating the role for Tableflow to assume.<br><img src="img/36eb8527cf7c2150.png"></li>
+<li>Select <strong>Custom Trust Policy</strong> and paste in the <strong>trust-policy.json</strong> from Confluent.</li>
+</ol>
+<p class="image-container"><img src="img/2249b0698345db3.png"></p>
+<ol type="1" start="5">
+<li>Scroll down and click <strong>Next</strong></li>
+<li>In the next page, Add Permissions, search for the policy you created in the previous step, named <code>tableflow-s3-access-policy</code> and attach it to the role. Click <code>Next</code>.</li>
+</ol>
+<p class="image-container"><img src="img/291eb8c74c46663f.png"></p>
+<ol type="1" start="7">
+<li>Give the role a name, <code>quickstart-tableflow-assume-role</code>, scroll down and click <strong>Create Role</strong></li>
+<li>Once the role is created,you should see a green banner at the top of the console stating that the role was created. Click <strong>View Role</strong> to see the role details. <img src="img/4e1d567297260a90.png"></li>
+<li>Copy the AWS ARN of the role and paste it in the Mapping component on the Provider Integration wizard on Confluent Cloud</li>
+<li>Give the Provider integration the name s3-provider-integration and click <strong>Continue</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/c9243ad88168f3e.png"></p>
+<ol type="1" start="11">
+<li>You will now copy the updated Trust Policy from Confluent which contains the Confluent External ID and role. Copy the <code>trust-policy.json</code> from Confluent to your clipboard.</li>
+</ol>
+<p class="image-container"><img src="img/d771cb272bce08a.png"></p>
+<ol type="1" start="12">
+<li>Navigate back to your Role on AWS and switch to the <strong>Trust Relationships</strong> tab</li>
+<li>Click <strong>Edit Trust Policy</strong></li>
+</ol>
+<p class="image-container"><img src="img/f633d4955c0c54ba.png"></p>
+<ol type="1" start="14">
+<li>Paste in the updated Trust Policy from Confluent Cloud and <strong>update policy</strong>.</li>
+<li>Navigate back to Confluent Cloud and click Continue on Confluent Cloud once the role trust policy has been updated. You have now successfully created a Provider Integration.</li>
+</ol>
+<p class="image-container"><img src="img/9b0d56f3e1cd8950.png"></p>
+<h2 is-upgraded>Enable Tableflow on Users and Stock Trades Topics</h2>
+<p>Return to the Topics Confluent menu (Environments &gt; Your Environment &gt; Your Kafka Cluster &gt; Topics). We can now enable Tableflow from this menu.</p>
+<ul>
+<li>Find the <code>sample_data_stock_trades</code> topic in the list of topics.</li>
+<li>On the right-hand side of the topic table, you will see the option to <strong>Enable Tableflow</strong> for the <code>sample_data_stock_trades</code> topic. Select <strong>Enable Tableflow.<br></strong><img src="img/1466428ac033dbb1.png"></li>
+<li>You will be presented with two options: Configure Custom Storage or Use Confluent Storage. <strong>Choose Configure custom storage.</strong></li>
+<li>In the next menu, you will be able to choose the Provider Integration we created in the previous section. You can identify it by either the name of the provider integration or the IAM Role you created.</li>
+<li>Provide the AWS S3 bucket name (<code>tableflow-bucket-<<account-id>></code>)</li>
+</ul>
+<p class="image-container"><img src="img/2443070c170c85f.png"></p>
+<ul>
+<li>In the next screen, review the details and then click <strong>Launch.</strong></li>
+<li>You will now see <em>Tableflow sync pending</em> at the top of your topic information. This should transition to the <em>Syncing</em> status shortly.</li>
+<li>Repeat this process for the <code>sample_data_users</code> topic, navigating back to the Topics menu, clicking on Enable Tableflow, and provide the same provider integration and Amazon S3 Bucket. Finally, click <strong>Launch.</strong></li>
+<li>Once you have done this for both topics, your Topic list should look like this:</li>
+</ul>
+<p class="image-container"><img src="img/d39f0575b763e61f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create an Open Catalog Account on Snowflake" duration="10">
+        <p>If you do not already have Open Catalog Account set up on Snowflake, you can create one from the Snowflake homepage:</p>
+<ol type="1">
+<li>Open the Snowflake main screen by visiting <a href="https://app.snowflake.com/" target="_blank">https://app.snowflake.com/</a>, which should redirect you to your organization&#39;s Snowflake account.</li>
+<li>If you have the ORGADMIN permissions, you should see an option on the left-hand menu called <code>Admin</code>. Under the <code>Admin</code> menu, you should see an option for <code>Accounts</code>.</li>
+<li>Click on <code>Accounts</code> and look to the top-right side of the screen where you will see a blue Accounts action button. Select the arrow pointing down to expose the <code>Create Snowflake Open Catalog Account</code> option.<br><img src="img/6eef53560c570279.png"></li>
+<li>Go through the create wizard to create the Open Catalog account, and log in.</li>
+</ol>
+<h2 is-upgraded>Set up Open Catalog Connection on Snowflake</h2>
+<ol type="1">
+<li>When you first log in to the Snowflake Open Catalog account, you should see a screen that looks like this:</li>
+</ol>
+<p class="image-container"><img src="img/5a843a2e1ab2acba.png"></p>
+<p>From here, we will create a Connection:</p>
+<ol type="1" start="2">
+<li>On the left-hand menu, click on Connections &gt; + Connection (on top right side of screen). <ol type="1">
+<li>Name: <code>my-service-connection</code></li>
+<li>Query Engine: &lt; leave blank&gt;</li>
+<li>Check the option to <code>Create new principal role</code></li>
+<li>Give the principal role a name and click <code>Create</code></li>
+</ol>
+</li>
+</ol>
+<p class="image-container"><img src="img/1cf3af72920d5f0f.png"></p>
+<ol type="1" start="3">
+<li>After clicking <code>Create</code>, you will see your <code>Client ID</code> and <code>Client Secret</code> presented on screen. Make sure to copy these down as they will be required later for setting up the External Catalog Integration on Confluent Cloud and Snowflake.</li>
+</ol>
+<p class="image-container"><img src="img/c3ba34b115d266fc.png"></p>
+<p>Once you created the connection and principal role, you are now ready to create your Open<br> Data Catalog in Snowflake.</p>
+<ol type="1" start="4">
+<li>Navigate to the Catalogs menu on the left hand side of the Snowflake Open Catalog menu and Click on the <code>+ Catalog</code> wizard.</li>
+<li>You will now enter the details of your new Open Data Catalog: <ol type="1">
+<li><strong>Name</strong>: <code>my-snowflake-catalog</code></li>
+<li><strong>IMPORTANT:</strong> Check the box which says <code>External</code></li>
+<li><strong>Storage Provider</strong>: S3</li>
+<li><strong>Default Base Location: </strong><code>s3://tableflow-bucket-<<account-id>></code></li>
+<li><strong>Additional Locations:</strong> &lt; Leave Blank &gt;</li>
+<li><strong>S3 Role Arn</strong>: The ARN of the S3 Role you created earlier (<code>arn:aws:iam::<<account-id>>:role/quickstart-tableflow-assume-role</code>)</li>
+<li><strong>External ID: </strong><strong><code>snowflake-external-id</code></strong></li>
+</ol>
+</li>
+</ol>
+<p class="image-container"><img src="img/9b5cfb3c6abf9309.png"></p>
+<ol type="1" start="6">
+<li>Click <strong>Create</strong></li>
+<li>Note down the external ID assigned to the newly created catalog.</li>
+<li>In the Catalog page, you&#39;ll see a tab called Roles. Create a Catalog role by clicking the button  <strong>+ Catalog Role</strong>.</li>
+</ol>
+<p class="image-container"><img src="img/cf9aa20f7466b1b6.png"></p>
+<ol type="1" start="9">
+<li>Give the role a name (<code>my_role</code>) and Select <strong>CATALOG_MANAGE_CONTENT</strong> under Privileges.</li>
+<li>Click <strong>Create</strong>.<br><img src="img/f02dfe578b8bd80b.png"></li>
+<li>From here, we need to assign this role to a principal role. Click on the button <strong>Grant to Principal Role</strong> at the top right and select the catalog role you just created under <strong>Catalog role to grant</strong> and the principal role you created in the Connection Creation phase above for <strong>Principal role to receive grant.</strong></li>
+</ol>
+<p class="image-container"><img src="img/6e913a80afb4718c.png"></p>
+<ol type="1" start="12">
+<li>Click <strong>Grant.</strong></li>
+</ol>
+<p class="image-container"><img src="img/c3bd8ae37e2eeea3.png"></p>
+<h2 is-upgraded>Modify Role and Trust Policy for Snowflake</h2>
+<p>Now that we&#39;ve created the Open Data Catalog, we can allow Snowflake access to the storage provider (Amazon S3) through a trust policy.</p>
+<ol type="1">
+<li>Find the role you provided in the previous section (<strong>S3 Role ARN)</strong> in the AWS Management Console by searching for IAM in the top search bar.</li>
+<li>From the IAM Dashboard, you can click on the left hand side under Access Management &gt; Roles to open the Roles menu.</li>
+<li>From here, we can search for the role you previously created (<code>quickstart-tableflow-assume-role</code>)</li>
+<li>Click on the role name and find the tab in the middle of the page which reads <strong>Trust Relationships.</strong> This is where you will add the trust policy for Snowflake.</li>
+<li>Click <strong>Edit trust policy</strong> and add the following to your <strong>Statement</strong> section within the brackets:</li>
+</ol>
+<pre><code>        ,{
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+                &#34;AWS&#34;: &#34;&lt;&lt; Get this value from your snowflake catalog under IAM user arn &gt;&gt;&#34;
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+                    &#34;sts:ExternalId&#34;: &#34;&lt;&lt; external ID from snowflake catalog &gt;&gt;&#34;
+                }
+            }
+        }
+
+</code></pre>
+<ol type="1" start="6">
+<li>You will need to replace the values for <code>AWS</code> and <code>sts:ExternalId</code>. These can be found in your snowflake Catalog Details section.</li>
+</ol>
+<p class="image-container"><img src="img/dba75431e3cffd43.png"></p>
+<ol type="1" start="7">
+<li>Click <strong>Update Policy</strong> to save it.</li>
+<li>Your updated AWS Role Trust Policy should look like this:</li>
+</ol>
+<pre><code>{
+  &#34;Version&#34;: &#34;2012-10-17&#34;,
+  &#34;Statement&#34;: [
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        // from Confluent
+        &#34;AWS&#34;: &#34;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/&lt;&lt;role-id&gt;&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+      &#34;Condition&#34;: {
+        &#34;StringEquals&#34;: {
+          // from Confluent
+          &#34;sts:ExternalId&#34;: &#34;&lt;&lt;external-id&gt;&gt;&#34;
+        }
+      }
+    },
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        // from Confluent
+        &#34;AWS&#34;: &#34;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/&lt;&lt;role-id&gt;&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:TagSession&#34;
+    },
+    {
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+       // from Snowflake
+                &#34;AWS&#34;: &#34;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/&lt;&lt;role-id&gt;&gt;&#34;
+
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+      // from Snowflake
+                    &#34;sts:ExternalId&#34;: &#34;snowflake-external-id&#34;
+                }
+            }
+        }
+  ]
+}
+
+</code></pre>
+<p>You are now ready to add your External Provider to Tableflow.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add Snowflake as External Provider to Tableflow" duration="5">
+        <ul>
+<li>Navigate back to your Tableflow console on Confluent Cloud</li>
+<li>On the bottom of the page, you will see the External Catalog Integration. Within this sub-menu, click <strong>+ Add Integration</strong>.</li>
+</ul>
+<p class="image-container"><img src="img/3dd9cf3a2d1419f1.png"></p>
+<ul>
+<li>On the next page, select Snowflake Open Catalog as your integration type</li>
+<li>In the name column, type <code>my-polaris-catalog-integration</code></li>
+</ul>
+<p class="image-container"><img src="img/b26b90deed4b65cb.png"></p>
+<ul>
+<li>Click <strong>Continue.</strong></li>
+<li>Click <strong>Continue</strong> again.</li>
+<li>On the launch page, we will provide the following information: <ul>
+<li><strong>Snowflake Open Catalog URL</strong>: <code>https://<locatorID>.<region>.snowflakecomputing.com</code><ul>
+<li>You can retrieve the locatorID from your open catalog URL bar. It will be the ID after the domain name/region like so:</li>
+<li><a href="https://app.snowflake.com/us-east-1/" target="_blank">https://app.snowflake.com/us-east-1/</a>&lt;LOCATOR ID&gt;/#/</li>
+</ul>
+</li>
+<li><strong>Warehouse name:</strong> my-snowflake-catalog</li>
+<li><strong>Client ID:</strong> Retrieve this from the Client Connection credentials you generated in step two of Set Up Open Catalog Connection on Snowflake</li>
+<li><strong>Client secret:</strong> Retrieve this from the Client Connection credentials you generated in step two of Set Up Open Catalog Connection on Snowflake</li>
+<li><strong>Allowed scope: </strong><code>PRINCIPAL_ROLE:my-snowflake-principal-role</code></li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/d26dc0c6825030d0.png"></p>
+<ul>
+<li><strong>Click continue</strong> and then <strong>click launch.</strong></li>
+</ul>
+<p>After a few moments, you should see the External Catalog integration you have just set up transitioning from Pending to Connected.</p>
+<p class="image-container"><img src="img/1b9aedcadf657136.png"></p>
+<ul>
+<li>Navigate back to the Snowflake Open Data Catalog</li>
+<li>Under the Catalogs sub-menu, click on your catalog name (<code>my-snowflake-catalog</code>)</li>
+<li>You should see the Kafka cluster ID appear here</li>
+<li>Under the Kafka cluster ID, you will see the tables you enabled Tableflow on successfully materialized in Snowflake.</li>
+<li>You should also see the topics materialized under your cluster ID</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Iceberg Tables via Snowflake" duration="10">
+        <p>Now that we&#39;ve got our Snowflake Open Catalog set up receiving data from our Kafka topics, we can now see the full end-to-end integration by referencing our Snowflake Open Catalog within our Snowflake environment.</p>
+<ul>
+<li>Start by navigating back to your Snowflake environment. You can click <a href="https://app.snowflake.com/" target="_blank">this link</a> in order to open your Snowsight UI.</li>
+<li>Create a new SQL Worksheet by clicking <strong>+ Create</strong> at the top left hand corner, and select <strong>SQL Worksheet</strong></li>
+</ul>
+<p class="image-container"><img src="img/81abc9c235c3be2.png"></p>
+<ul>
+<li>This will open up a new SQL Worksheet named the current date and time. Feel free to rename this as <code>Open Data Catalog Setup</code> by clicking the three dots ⠇to the right of the worksheet tab.</li>
+</ul>
+<p class="image-container"><img src="img/2c098590fa86ab7c.png"></p>
+<h2 is-upgraded>Create an External Volume</h2>
+<ul>
+<li>Ensure you have <code>AccountAdmin</code> Privileges granted to your account in order to create an external volume</li>
+</ul>
+<p class="image-container"><img src="img/83f0995fcfbdaa6d.png"></p>
+<ul>
+<li>We will now create an external volume referencing our Amazon S3 bucket. Enter the following SQL statement, replacing the Amazon S3 bucket with the one you created earlier (<code>s3://tableflow-bucket-<<account-id>></code>), the IAM role you created earlier (<code>arn:aws:iam::<<account-id>>:role/quickstart-tableflow-assume-role</code>), and leave the rest.</li>
+</ul>
+<pre><code>CREATE OR REPLACE EXTERNAL VOLUME iceberg_external_volume
+   STORAGE_LOCATIONS =
+      (
+         (
+            NAME = &#39;my-iceberg-external-volume&#39;
+            STORAGE_PROVIDER = &#39;S3&#39;
+            STORAGE_BASE_URL = &#39;s3://tableflow-bucket-&lt;&lt;account-id&gt;&gt;&#39;
+            STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/quickstart-tableflow-assume-role&#39;
+            STORAGE_AWS_EXTERNAL_ID = &#39;snowflake-external-id&#39;
+         )
+      );
+</code></pre>
+<ul>
+<li>Execute this statement by highlighting the text and clicking the Play button  ▶️ to the top-right.</li>
+</ul>
+<p class="image-container"><img src="img/59d05f23478583dd.png"></p>
+<ul>
+<li>You will see the success message appear at the bottom of the page, showing that the external volume was successfully created.</li>
+<li>We need to get the <code>STORAGE_AWS_IAM_USER_ARN</code> to provide to our IAM Role trust policy. We can do so by running a describe query on the external volume we just created.</li>
+</ul>
+<pre><code>DESC EXTERNAL VOLUME iceberg_external_volume;
+</code></pre>
+<ul>
+<li>Run this command like we did with the first command by highlighting the text and clicking on the Play button  ▶️to the top right.</li>
+</ul>
+<p class="image-container"><img src="img/c6445d109d71f44.gif"></p>
+<ul>
+<li>The output of this command will appear at the bottom of the page. Under the results for <code>STORAGE_LOCATIONS</code> there will be a <code>property_value</code>, click this value to see the results on the right hand side.</li>
+<li>From the value of the <code>property_value</code> column, copy the value of <code>STORAGE_AWS_IAM_USER_ARN</code> which should look like an IAM ARN</li>
+</ul>
+<p class="image-container"><img src="img/45e0fbf293d014ad.png"></p>
+<h2 is-upgraded>Update Trust Policy for Snowflake</h2>
+<ul>
+<li>Let&#39;s now navigate back to our AWS IAM Role that we created previously (<strong>quickstart-tableflow-assume-role</strong>) and update the trust policy again: <ul>
+<li>Navigate back to your Role on AWS and switch to the <strong>Trust Relationships</strong> tab</li>
+<li>Click <strong>Edit Trust Policy</strong></li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/f633d4955c0c54ba.png"></p>
+<ul>
+<li>We will again be adding another entry to our trust policy under the Statement block that will look like this:</li>
+</ul>
+<pre><code>    {
+      &#34;Sid&#34;: &#34;&#34;,
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        &#34;AWS&#34;: &#34;&lt;&lt;STORAGE_AWS_IAM_USER_ARN&gt;&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+      &#34;Condition&#34;: {
+        &#34;StringEquals&#34;: {
+          &#34;sts:ExternalId&#34;: &#34;snowflake-external-id&#34;
+        }
+      }
+
+</code></pre>
+<ul>
+<li>Under the AWS key, paste your <code>STORAGE_AWS_IAM_USER_ARN</code></li>
+<li>Keep the external ID as <code>snowflake-external-id</code> as that&#39;s the external ID we created in the external volume</li>
+<li>Once you add the extra trust policy, your full trust policy should look like this:</li>
+</ul>
+<pre><code>        
+{
+  &#34;Version&#34;: &#34;2012-10-17&#34;,
+  &#34;Statement&#34;: [
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        // from Confluent
+        &#34;AWS&#34;: &#34;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/&lt;&lt;role-id&gt;&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+      &#34;Condition&#34;: {
+        &#34;StringEquals&#34;: {
+          // from Confluent
+          &#34;sts:ExternalId&#34;: &#34;&lt;&lt;external-id&gt;&gt;&#34;
+        }
+      }
+    },
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        // from Confluent
+        &#34;AWS&#34;: &#34;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/&lt;&lt;role-id&gt;&gt;&#34;
+      },
+      &#34;Action&#34;: &#34;sts:TagSession&#34;
+    },
+    {
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+       // from Snowflake Open Catalog
+                &#34;AWS&#34;: &#34;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/&lt;&lt;role-id&gt;&gt;&#34;
+
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+       // from Snowflake Open Catalog
+                    &#34;sts:ExternalId&#34;: &#34;snowflake-external-id&#34;
+                }
+            }
+        },
+{
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+       // from Snowflake 
+                &#34;AWS&#34;: &#34;arn:aws:iam::&lt;&lt;account-id&gt;&gt;:role/&lt;&lt;role-id&gt;&gt;&#34;
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+       // from Snowflake
+                    &#34;sts:ExternalId&#34;: &#34;snowflake-external-id&#34;
+                }
+            }
+        }
+  ]
+}
+
+</code></pre>
+<ul>
+<li>The next step is verifying that we can actually access the external volume via Snowflake. Execute this command:</li>
+</ul>
+<pre><code>SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME(&#39;iceberg_external_volume&#39;);
+</code></pre>
+<ul>
+<li>When this runs, you should see the keywords &#34;success&#34;:&#34;true&#34; and &#34;PASSED&#34; in the results set. This means the trust policy update took effect.</li>
+</ul>
+<h2 is-upgraded>Create Catalog Integration</h2>
+<ul>
+<li>We can now create our catalog integration, to link Snowflake to our Snowflake Open Data Catalog. For this SQL statement you will need to retrieve some information in the placeholders. Start by pasting in this placeholder create statement into your SQL worksheet.</li>
+</ul>
+<pre><code>CREATE OR REPLACE CATALOG INTEGRATION my_snowflake_open_catalog_int
+  CATALOG_SOURCE = POLARIS
+  TABLE_FORMAT = ICEBERG
+    CATALOG_NAMESPACE=&#39;&lt;&lt; KAFKA CLUSTER ID&gt;&gt;&#39;
+  REST_CONFIG = (
+     CATALOG_URI =&#39;https://&lt;&lt;organization-name&gt;&gt;-&lt;&lt;open-data-catalog-account-name&gt;&gt;.snowflakecomputing.com/polaris/api/catalog&#39;
+     WAREHOUSE = &#39;my-snowflake-catalog&#39;
+  )
+  REST_AUTHENTICATION = (
+     TYPE=OAUTH
+    OAUTH_CLIENT_ID=&#39;&lt;&lt;client-id&gt;&gt;&#39;
+    OAUTH_CLIENT_SECRET=&#39;&lt;&lt;client-secret&gt;&gt;&#39;
+     OAUTH_ALLOWED_SCOPES=(&#39;PRINCIPAL_ROLE:my-snowflake-principal-role&#39;)
+  )
+  REFRESH_INTERVAL_SECONDS = 60
+  ENABLED=true;
+
+
+</code></pre>
+<ul>
+<li>The first placeholder, <code>CATALOG_NAMESPACE</code> should be your Kafka cluster ID. This can be found by navigating to your Confluent Cloud Kafka cluster and checking the cluster details on the right hand menu. <strong>Copy this value and paste it in the value for CATALOG_NAMESPACE.</strong></li>
+</ul>
+<p class="image-container"><img src="img/360e5e90e423c98a.png"></p>
+<ul>
+<li>The next placeholder, <code>CATALOG_URI</code> will require your Snowflake Organization name and your open data catalog <strong>account name</strong>. The Snowflake Organization name can be found in your Snowflake homepage by clicking on your profile at the bottom left of the screen, hovering over your account and clicking on account details.</li>
+</ul>
+<p class="image-container"><img src="img/a9cf721cf74954ff.png"></p>
+<ul>
+<li>Copy the value of your <strong>Organization Name</strong> as the first part of your <code>CATALOG_URI</code>.</li>
+<li>The second part of your <code>CATALOG_URI</code> is the <strong>account name</strong> for your open data catalog account. This can be found under the same profile menu when you switch accounts. Just copy the account name and put it into the second part of your catalog URI for the placeholders.</li>
+<li>The final result should look like:<ul>
+<li><code>CATALOG_URI=</code>&#39;<code>https://organizationname-opendatacatalogaccountname.snowflakecomputing.com/polaris/api/catalog'</code></li>
+</ul>
+</li>
+<li>For the OATH client id and client secret, these were the values you copied down when creating your open data catalog connection. Copy and paste these values as appropriate.</li>
+<li>You are now ready to create your catalog integration. Highlight the command and click the Play ▶️button just as before.</li>
+</ul>
+<p class="image-container"><img src="img/39182a80d3a5634a.png"></p>
+<ul>
+<li>After running the command, you should see that the catalog integration was successfully created.</li>
+</ul>
+<h2 is-upgraded>Creating the Iceberg Table and Querying</h2>
+<ul>
+<li>Once we have the catalog integration set up, you can now create an Iceberg table to query your snowflake open data catalog data.</li>
+<li>Execute the following command, ensuring that all variables match exactly. If you named your external volume, catalog or kafka topic something different, this query will not work:</li>
+</ul>
+<pre><code>CREATE OR REPLACE ICEBERG TABLE snowflake_stock_trades
+    EXTERNAL_VOLUME = &#39;iceberg_external_volume&#39;
+    CATALOG = &#39;my_snowflake_open_catalog_int&#39;
+    CATALOG_TABLE_NAME = sample_data_stock_trades
+</code></pre>
+<p class="image-container"><img src="img/76566857e938a5fd.png"></p>
+<ul>
+<li>Finally we are ready to query the table. Here are some queries you can try and evaluate the results.</li>
+</ul>
+<pre><code>-- count the number of records
+SELECT COUNT(*) from snowflake_stock_trades;
+
+-- see one record in the table
+select * from snowflake_stock_trades limit 1;
+
+-- see all records in the table
+SELECT * FROM snowflake_stock_trades;
+
+</code></pre>
+<p>These query results should update periodically when run again, showcasing that we are continuously writing data to our Iceberg tables. You should expect to see updated results every 15 minutes or so depending on data volume and refresh frequency.</p>
+<p class="image-container"><img src="img/400853874c2594dc.png"></p>
+<p class="image-container"><img src="img/cd5a3e55764db34f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Optional: Automatic Anomaly Detection with Apache Flink" duration="10">
+        <p>While your data is flowing from Kafka to Snowflake via Tableflow, you may want to enrich or flag certain records <em>before</em> they land in the data lake. This is where <strong>Apache Flink</strong> comes in.</p>
+<p>In this optional step, you&#39;ll use Flink SQL in Confluent Cloud to detect basic anomalies in the stock trading stream. This can be useful for spotting potential fraud, pricing glitches, or unusually large trades as they happen.</p>
+<p>We&#39;ll create a lightweight streaming job using Flink SQL that watches for simple anomalies based on rules:</p>
+<ul>
+<li>Trades with <strong>unusually large quantities</strong></li>
+<li>Trades with a <strong>negative price</strong></li>
+<li>Trades that exceed a configurable threshold</li>
+</ul>
+<p>These flagged records will be tagged with an <code>anomaly_flag</code> field and written to a new Kafka topic called <code>flagged_stock_trades</code>. You could later route this to a separate Iceberg table, alerting system, or ML pipeline.</p>
+<h2 is-upgraded>Create the Anomaly Detection Flink Job</h2>
+<h3 is-upgraded>1. Open Flink SQL in Confluent Cloud</h3>
+<ul>
+<li>In your Confluent Cloud console, navigate to your cloud environment.</li>
+<li>In the left-hand menu, click <strong>Flink</strong>.</li>
+</ul>
+<p class="image-container"><img src="img/bb002dcbac519038.png"></p>
+<ul>
+<li>Click <strong>+ Add compute pool</strong></li>
+<li>On the next screen, choose <strong>AWS</strong> as the cloud provider, and choose <code>us-east-1</code> as the region. Then click <strong>Continue.</strong></li>
+<li>Finally, click <strong>Create</strong>.</li>
+<li>Once the compute pool is created, click <strong>Open SQL workspace</strong>.</li>
+</ul>
+<p>2. Define a Cleaned and Flagged Version of <code>stock_trades</code></p>
+<p>Paste the following SQL into the editor. This will read from the <code>sample_data_stock_trades</code> topic, apply simple anomaly rules, and write the results to a new topic.</p>
+<pre><code language="language-sql" class="language-sql">CREATE TABLE flagged_stock_trades
+AS SELECT
+  side,
+  quantity,
+  symbol,
+  price,
+  account,
+  userid,
+  CASE
+    WHEN price &lt; 0 THEN &#39;NEGATIVE_PRICE&#39;
+    WHEN quantity &gt; 4000 THEN &#39;LARGE_TRADE&#39;
+    WHEN price &gt; 900 THEN &#39;UNUSUAL_PRICE&#39;
+    ELSE &#39;NORMAL&#39;
+  END AS anomaly_flag
+FROM sample_data_stock_trades;
+</code></pre>
+<p class="image-container"><img src="img/9340eaa3c24ea093.png"></p>
+<p>3. Launch the Flink Job</p>
+<ul>
+<li>Click <strong>Run</strong> to execute the job.</li>
+<li>Once deployed, it will continuously process new <code>stock_trades</code> events and write flagged records to <code>flagged_stock_trades</code>.</li>
+</ul>
+<h3 is-upgraded>4. Inspect the Flagged Trade Messages</h3>
+<p>Once your Flink job is running, you can verify that it&#39;s working by looking at the <code>flagged_stock_trades</code> topic and checking for the <code>anomaly_flag</code> field in the messages or by creating and running another Flink job with the SQL below.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM flagged_stock_trades;
+</code></pre>
+<p>You should see live messages coming through that look something like this:</p>
+<p class="image-container"><img src="img/4c1cd8389104cb74.png"></p>
+<p><strong>Tip: Filter by Anomaly</strong></p>
+<p>To narrow in on only anomalous records, you can modify the Flink SQL to exclude <code>"NORMAL"</code> entries, or filter them later downstream when querying from Iceberg or Snowflake.</p>
+<h3 is-upgraded>5. (Optional) Enable Tableflow on <code>flagged_stock_trades</code></h3>
+<p>You can repeat the same Tableflow steps you followed earlier to sync <code>flagged_stock_trades</code> into your Iceberg tables and expose it to Snowflake.</p>
+<h2 is-upgraded>Why This Matters</h2>
+<p>By adding a lightweight Flink layer, you can inspect, clean, or augment your data <em>in motion</em>, before it ever hits storage or analytics layers. This pattern is useful for:</p>
+<ul>
+<li><strong>Pre-processing for machine learning</strong></li>
+<li><strong>Real-time monitoring and alerting</strong></li>
+<li><strong>Reducing noise or garbage in your data lake</strong></li>
+</ul>
+<p>While this was a simple rule-based example, Flink also supports more sophisticated anomaly detection techniques such as applying ML models or calculating dynamic thresholds using moving averages over time windows. All of this can be expressed declaratively in Flink SQL.</p>
+<p>This optional step shows how real-time intelligence fits naturally into a streaming lakehouse architecture with no batch jobs, no glue code, and no waiting.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="1">
+        <p>You&#39;ve now built a complete real-time data pipeline, from ingestion to insight, using Confluent Cloud, Tableflow, Apache Flink, and Snowflake.</p>
+<p>Along the way, you:</p>
+<ul>
+<li>Set up a Kafka-based streaming architecture with simulated user and stock trade data.</li>
+<li>Materialized Kafka topics directly into Iceberg tables using Tableflow.</li>
+<li>Queried fresh, continuously updated data from Snowflake&#39;s Open Data Catalog.</li>
+<li>(Optionally) Enriched and flagged anomalies in-flight using Flink SQL.</li>
+</ul>
+<p>This architecture is modular, cloud-native, and scalable giving you a flexible foundation for powering analytics, AI, and operational decision-making in real time.</p>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.confluent.io/cloud/current/topics/tableflow/overview.html" target="_blank">Tableflow in Confluent Cloud</a></li>
+<li><a href="https://docs.confluent.io/cloud/current/flink/overview.html" target="_blank">Stream Processing with Confluent Cloud for Apache Flink</a></li>
+<li><a href="https://docs.confluent.io/cloud/current/ai/overview.html" target="_blank">Build AI with Flink SQL and Confluent Cloud for Apache Flink</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" target="_blank">Apache Iceberg tables</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="5">
+        <p>Once you&#39;ve completed the lab (or if you&#39;re done experimenting), it&#39;s a good idea to clean up the cloud resources to avoid incurring unnecessary costs and to keep your environment tidy.</p>
+<h2 is-upgraded>Snowflake Cleanup</h2>
+<ol type="1">
+<li><strong>Remove the Iceberg Table(s)<br></strong> In your Snowflake SQL Worksheet, drop any Iceberg tables you created:</li>
+</ol>
+<pre><code>DROP TABLE IF EXISTS snowflake_stock_trades;
+DROP TABLE IF EXISTS flagged_stock_trades;
+</code></pre>
+<ol type="1">
+<li><strong>Remove the Catalog Integration<br></strong> Remove the integration between Snowflake and the Open Data Catalog:</li>
+</ol>
+<pre><code>DROP CATALOG INTEGRATION IF EXISTS my_snowflake_open_catalog_int;
+</code></pre>
+<ol type="1" start="2">
+<li><strong>Remove External Volume<br></strong> Delete the external volume referencing your S3 bucket:</li>
+</ol>
+<pre><code>DROP EXTERNAL VOLUME IF EXISTS iceberg_external_volume;
+</code></pre>
+<ol type="1" start="3">
+<li><strong>Delete Catalog Roles and Catalog<br></strong> In the Snowflake Open Data Catalog interface: <ul>
+<li>Go to <strong>Catalogs &gt; your catalog &gt; Roles</strong> and delete any catalog roles you created.</li>
+<li>Return to the <strong>Catalogs</strong> tab and delete the entire catalog (e.g., <code>my-snowflake-catalog</code>).</li>
+</ul>
+</li>
+<li><strong>Delete Connection and Principal Role<br></strong> In the <strong>Connections</strong> tab: <ul>
+<li>Delete the connection (<code>my-service-connection</code>).</li>
+<li>Delete the associated principal role.</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Confluent Cloud Cleanup</h2>
+<ol type="1">
+<li><strong>Delete Tableflow Syncs<br></strong> Go to the <strong>Topics</strong> section, select each topic with Tableflow enabled, and disable or delete the Tableflow sync.</li>
+<li><strong>Delete Kafka Topics<br></strong> Delete the <code>sample_data_users</code>, <code>sample_data_stock_trades</code>, and <code>flagged_stock_trades</code> topics.</li>
+<li><strong>Delete Connectors<br></strong> Go to the <strong>Connectors</strong> tab and delete both Datagen connectors you created.</li>
+<li><strong>Delete Flink SQL Statements<br></strong> Navigate to the <strong>Flink SQL</strong> section and delete the statement that was used for anomaly detection.</li>
+<li><strong>Delete the Kafka Cluster and Environment</strong> (optional)<br> If you don&#39;t plan to reuse the cluster or environment:<ul>
+<li>Go to the <strong>Cluster Settings</strong> and delete your Kafka cluster.</li>
+<li>Navigate back to <strong>Environments</strong> and delete the environment you created.</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>AWS Cleanup</h2>
+<ol type="1">
+<li><strong>Delete the S3 Bucket</strong><ul>
+<li>Go to the <strong>Amazon S3 Console</strong>, find the bucket you created (<code>tableflow-bucket-<<account-id>></code>), and delete it. Be sure to empty the bucket first if required.</li>
+</ul>
+</li>
+<li><strong>Remove IAM Role and Policy</strong><ul>
+<li>Navigate to the <strong>IAM Console</strong>, locate the <code>quickstart-tableflow-assume-role</code>, and delete it.</li>
+<li>Also delete the custom IAM policy (<code>tableflow-s3-access-policy</code>) if it was created for this demo.</li>
+</ul>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

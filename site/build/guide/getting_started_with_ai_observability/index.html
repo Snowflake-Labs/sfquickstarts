@@ -1,0 +1,444 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with AI Observability</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_ai_observability"
+                  title="Getting Started with AI Observability"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>AI Observability in Snowflake Cortex enables you to easily evaluate and trace your gen AI applications. With AI Observability, you can measure the performance of your AI applications by running systematic evaluations, and iterate on your application configurations to optimize performance. In addition, you can log the application traces to debug your application. AI Observability improves trust and transparency of gen AI applications and agents, enabling thorough benchmarking and performance measurement prior to deploying your applications.</p>
+<p>In this tutorial, you&#39;ll build a Retrieval-Augmented Generation (RAG) system using Cortex Search and Cortex LLMs. This will be the basis of our example. Then, you&#39;ll add OpenTelemetry tracing using TruLens to the app. Last, you&#39;ll create a test set and run LLM-as-judge evaluations in batch against your application.</p>
+<p>Here is a summary of what you will be able to learn in each step by following this quickstart:</p>
+<ul>
+<li><strong>Setup Environment</strong>: Create Snowflake objects required for the example.</li>
+<li><strong>Prepare Data</strong>: Load, parse and chunk data for RAG.</li>
+<li><strong>Create a RAG</strong>: Create a RAG with Cortex Search and Complete, adding TruLens instrumentation.</li>
+<li><strong>Register the App</strong>: Set application metadata for experiment tracking.</li>
+<li><strong>Create a Run</strong>: Configure your test set for evaluation.</li>
+<li><strong>Compute Evaluation Metrics</strong>: Compute evaluation metrics in batch on the run.</li>
+<li><strong>Examine Results</strong>: Navigate AI Observability in Snowsight to view and compare traces and evaluation results.</li>
+</ul>
+<h2 is-upgraded>What is TruLens?</h2>
+<p><a href="https://www.trulens.org/" target="_blank">TruLens</a> is a library for tracking and evaluating Generative AI applications in open source, along with powering Snowflake AI Observability.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to build a RAG with Cortex Search and Cortex LLM Functions.</li>
+<li>How to create a run.</li>
+<li>How to compute evaluation metrics.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A retrieval-augmented generation (RAG) app</li>
+<li>An evaluation run with computed metrics</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with Cortex LLM Functions and Cortex Search enabled.  If you do not have a Snowflake account, you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=yYZEVo4S&_fsi=yYZEVo4S" target="_blank">free trial account</a>.</li>
+<li>A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="8">
+        <p>If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN privileges, ensure that the user role has the following roles granted ():</p>
+<ul>
+<li>SNOWFLAKE.CORTEX_USER database role</li>
+<li>SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP application role</li>
+<li>CREATE EXTERNAL AGENT privilege on the schema</li>
+</ul>
+<p>For more information, see <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#label-ai-observability-required-privileges" target="_blank">Required Privileges for AI Observability</a>.</p>
+<p>To open the notebook, open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/getting-started-with-ai-observability.ipynb" target="_blank">getting-started-with-ai-observability.ipynb</a> to download the Notebook from GitHub. <strong><em>(NOTE: Do NOT right-click to download.)</em></strong></p>
+<p>Then, create a new Snowflake notebook by importing the notebook file in Snowsight.</p>
+<p>In your Snowflake notebook, install the following python packages from the Snowflake conda channel: <code>snowflake-ml-python</code> <code>snowflake.core</code> <code>trulens-core</code> <code>trulens-providers-cortex</code> <code>trulens-connectors-snowflake</code></p>
+<p>Once we have a Snowflake notebook with the right packages installed, we are ready to go.</p>
+<p>In the notebook, begin by setting up your Snowflake environment. Create a new database, warehouse, and establish a session.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+</code></pre>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS cortex_search_tutorial_db;
+
+CREATE OR REPLACE WAREHOUSE cortex_search_tutorial_wh WITH
+     WAREHOUSE_SIZE=&#39;X-SMALL&#39;
+     AUTO_SUSPEND = 120
+     AUTO_RESUME = TRUE
+     INITIALLY_SUSPENDED=TRUE;
+
+USE WAREHOUSE cortex_search_tutorial_wh;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Data" duration="10">
+        <p>You will use a sample dataset of the Federal Open Market Committee (FOMC) meeting minutes for this example. This is a sample of twelve 10-page documents with meeting notes from FOMC meetings from 2023 and 2024. Download the files directly from your browser by following this link:</p>
+<p><a href="https://drive.google.com/file/d/1C6TdVjy6d-GnasGO6ZrIEVJQRcedDQxG/view" target="_blank">FOMC minutes sample</a></p>
+<p>The complete set of FOMC minutes can be found at the <a href="https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm" target="_blank">US Federal Reserve&#39;s website</a>.</p>
+<p>Create a stage in Snowflake to store your PDF files.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE STAGE cortex_search_tutorial_db.public.fomc
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+</code></pre>
+<p>Now upload the dataset. You can upload the dataset in Snowsight or using SQL. To upload in Snowsight:</p>
+<ol type="1">
+<li>Sign in to Snowsight.</li>
+<li>Select <strong>Data</strong> in the left-side navigation menu.</li>
+<li>Select your database <code>cortex_search_tutorial_db</code>.</li>
+<li>Select your schema <code>public</code>.</li>
+<li>Select <strong>Stages</strong> and choose <code>fomc</code>.</li>
+<li>On the top right, select the <strong>+ Files</strong> button.</li>
+<li>Drag and drop files into the UI or select <strong>Browse</strong> to choose a file from the dialog window.</li>
+<li>Select <strong>Upload</strong> to upload your file.</li>
+</ol>
+<p>Ensure that your PDF files have been successfully uploaded to the stage.</p>
+<pre><code language="language-sql" class="language-sql">ls @cortex_search_tutorial_db.public.fomc
+</code></pre>
+<h2 is-upgraded>Parse the data</h2>
+<p>Parse the uploaded PDF files to extract their content.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.PARSED_FOMC_CONTENT AS SELECT 
+      relative_path,
+      TO_VARCHAR(
+        SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
+          @cortex_search_tutorial_db.public.fomc, 
+          relative_path, 
+          {&#39;mode&#39;: &#39;LAYOUT&#39;}
+        ) :content
+      ) AS parsed_text
+    FROM directory(@cortex_search_tutorial_db.public.fomc)
+    WHERE relative_path LIKE &#39;%.pdf&#39;
+</code></pre>
+<h2 is-upgraded>Chunk the data</h2>
+<p>Split the parsed text into manageable chunks for efficient searching.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.CHUNKED_FOMC_CONTENT (
+    file_name VARCHAR,
+    CHUNK VARCHAR
+);
+
+INSERT INTO CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.CHUNKED_FOMC_CONTENT (file_name, CHUNK)
+SELECT
+    relative_path,
+    c.value AS CHUNK
+FROM
+    CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.PARSED_FOMC_CONTENT,
+    LATERAL FLATTEN( input =&gt; SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
+        parsed_text,
+        &#39;markdown&#39;,
+        1800,
+        250
+    )) c;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a RAG" duration="10">
+        <p>Set up the Cortex Search service to enable efficient querying of the chunked content.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE CORTEX SEARCH SERVICE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.FOMC_SEARCH_SERVICE
+    ON chunk
+    WAREHOUSE = cortex_search_tutorial_wh
+    TARGET_LAG = &#39;1 hour&#39;
+    EMBEDDING_MODEL = &#39;snowflake-arctic-embed-l-v2.0&#39;
+    AS (
+    SELECT
+        file_name,
+        chunk
+    FROM CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.CHUNKED_FOMC_CONTENT
+    );
+</code></pre>
+<p>Next, we can create a <code>CortexSearchRetreiver</code> class to connect to our cortex search service and add the <code>retrieve</code> method that we can leverage for calling it.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+</code></pre>
+<pre><code language="language-python" class="language-python">import os
+from snowflake.core import Root
+from typing import List
+from snowflake.snowpark.session import Session
+
+class CortexSearchRetriever:
+
+    def __init__(self, snowpark_session: Session, limit_to_retrieve: int = 4):
+        self._snowpark_session = snowpark_session
+        self._limit_to_retrieve = limit_to_retrieve
+
+    def retrieve(self, query: str) -&gt; List[str]:
+        root = Root(session)
+
+        search_service = (root
+          .databases[&#34;CORTEX_SEARCH_TUTORIAL_DB&#34;]
+          .schemas[&#34;PUBLIC&#34;]
+          .cortex_search_services[&#34;FOMC_SEARCH_SERVICE&#34;]
+        )
+        resp = search_service.search(
+          query=query,
+          columns=[&#34;chunk&#34;],
+          limit=self._limit_to_retrieve
+        )
+
+        if resp.results:
+            return [curr[&#34;chunk&#34;] for curr in resp.results]
+        else:
+            return []
+</code></pre>
+<pre><code language="language-python" class="language-python">retriever = CortexSearchRetriever(snowpark_session=session, limit_to_retrieve=3)
+
+retrieved_context = retriever.retrieve(query=&#34;how was inflation expected to evolve in 2024?&#34;)
+
+retrieved_context
+</code></pre>
+<p>Before we put together the RAG, we want to enable TruLens-OpenTelemetry for tracing and observability.</p>
+<pre><code language="language-python" class="language-python">import os
+os.environ[&#34;TRULENS_OTEL_TRACING&#34;] = &#34;1&#34;
+</code></pre>
+<p>Create a database and schema to store our traces and evaluations.</p>
+<pre><code language="language-sql" class="language-sql">create or replace database observability_db;
+use database observability_db;
+create or replace schema observability_schema;
+use schema observability_schema;
+</code></pre>
+<p>Then, construct the RAG system with integrated instrumentation using the retriever we created previously. Including the span type and attributes in instrumentation will power evaluations of the spans captured.</p>
+<pre><code language="language-python" class="language-python">from snowflake.cortex import complete
+from trulens.core.otel.instrument import instrument
+from trulens.otel.semconv.trace import SpanAttributes
+
+class RAG:
+
+    def __init__(self):
+        self.retriever = CortexSearchRetriever(snowpark_session=session, limit_to_retrieve=4)
+
+    @instrument(
+        span_type=SpanAttributes.SpanType.RETRIEVAL,
+        attributes={
+            SpanAttributes.RETRIEVAL.QUERY_TEXT: &#34;query&#34;,
+            SpanAttributes.RETRIEVAL.RETRIEVED_CONTEXTS: &#34;return&#34;,
+            }
+    )
+    def retrieve_context(self, query: str) -&gt; list:
+        &#34;&#34;&#34;
+        Retrieve relevant text from vector store.
+        &#34;&#34;&#34;
+        return self.retriever.retrieve(query)
+
+
+    @instrument(
+        span_type=SpanAttributes.SpanType.GENERATION)
+    def generate_completion(self, query: str, context_str: list) -&gt; str:
+        &#34;&#34;&#34;
+        Generate answer from context.
+        &#34;&#34;&#34;
+        prompt = f&#34;&#34;&#34;
+          You are an expert assistant extracting information from context provided.
+          Answer the question in long-form, fully and completely, based on the context. Do not hallucinate.
+          If you don´t have the information just say so. If you do have the information you need, just tell me the answer.
+          Context: {context_str}
+          Question:
+          {query}
+          Answer:
+        &#34;&#34;&#34;
+        response = &#34;&#34;
+        stream = complete(&#34;mistral-large2&#34;, prompt, stream = True)
+        for update in stream:    
+          response += update
+          print(update, end = &#39;&#39;)
+        return response
+
+    @instrument(
+        span_type=SpanAttributes.SpanType.RECORD_ROOT, 
+        attributes={
+            SpanAttributes.RECORD_ROOT.INPUT: &#34;query&#34;,
+            SpanAttributes.RECORD_ROOT.OUTPUT: &#34;return&#34;,
+        })
+    def query(self, query: str) -&gt; str:
+        context_str = self.retrieve_context(query)
+        return self.generate_completion(query, context_str)
+
+
+rag = RAG()
+</code></pre>
+<p>Test the RAG system by querying it with a sample question.</p>
+<pre><code language="language-python" class="language-python">response = rag.query(&#34;how was inflation expected to evolve in 2024?&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Register the App" duration="5">
+        <p>Set metadata including application name and version, along with the snowpark session to store the experiments.</p>
+<pre><code language="language-python" class="language-python">from trulens.apps.app import TruApp
+from trulens.connectors.snowflake import SnowflakeConnector
+
+tru_snowflake_connector = SnowflakeConnector(snowpark_session=session)
+
+app_name = &#34;fed_reserve_rag&#34;
+app_version = &#34;cortex_search&#34;
+
+tru_rag = TruApp(
+        rag,
+        app_name=app_name,
+        app_version=app_version,
+        connector=tru_snowflake_connector
+    )
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Run" duration="5">
+        <p>Prepare a set of test queries to evaluate the RAG system.</p>
+<p>The test set can be either a dataframe in python or a table in Snowflake. In this example, we&#39;ll use a table in snowflake.</p>
+<p>First, download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/fomc_dataset.csv" target="_blank">dataset provided</a>.</p>
+<p>Then, upload <code>fomc_dataset.csv</code> to Snowflake:</p>
+<ol type="1">
+<li>Select Data -&gt; Add Data</li>
+<li>Choose the tile: Load data into a Table</li>
+<li>Upload <code>fomc_dataset.csv</code> from the <a target="_blank">github repository</a></li>
+<li>Choose <code>OBSERVABILITY_DB.OBSERVABILITY_SCHEMA</code>, create a new table</li>
+<li>Name the new table <code>FOMC_DATA</code> , then click next.</li>
+<li>Update the column names to <code>QUERY</code>, and <code>GROUND_TRUTH_RESPONSE</code> and select Load.</li>
+</ol>
+<p>Set up the configuration for running experiments and add the run to TruLens.</p>
+<pre><code language="language-python" class="language-python">from trulens.core.run import Run
+from trulens.core.run import RunConfig
+
+run_name = &#34;experiment_1_run&#34;
+
+run_config = RunConfig(
+    run_name=run_name,
+    dataset_name=&#34;FOMC_DATA&#34;,
+    description=&#34;Questions about the Federal Open Market Committee meetings&#34;,
+    label=&#34;fomc_rag_eval&#34;,
+    source_type=&#34;TABLE&#34;,
+    dataset_spec={
+        &#34;input&#34;: &#34;QUERY&#34;,
+        &#34;ground_truth_output&#34;:&#34;GROUND_TRUTH_RESPONSE&#34;,
+    },
+)
+
+run: Run = tru_rag.add_run(run_config=run_config)
+</code></pre>
+<p>Start the experiment run with the prepared test set. Doing so will invoke the application in batch using the inputs in the dataset you provided in the run.</p>
+<pre><code language="language-python" class="language-python">run.start()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Compute Evaluation Metrics" duration="2">
+        <p>Analyze the performance of the RAG system by computing relevant metrics.</p>
+<pre><code language="language-python" class="language-python">run.compute_metrics([
+    &#34;answer_relevance&#34;,
+    &#34;context_relevance&#34;,
+    &#34;groundedness&#34;,
+])
+</code></pre>
+<p>Evaluation metrics provide a quantifiable way to measure the accuracy and performance of your application. These metrics are computed using specific inputs to the application, LLM-generated outputs and any intermediate information (e.g., retrieved results for a RAG application). Additionally, some metrics can also be computed using ground truth if available.</p>
+<p>Metric computations using &#34;LLM-as-a-judge&#34; approach where an LLM is used to generate a score (between 0 - 1) and an associated explanation based on the provided information.</p>
+<p>The starting point for evaluating RAGs is the RAG triad of context relevance, groundedness and answer relevance. These are localized evaluations of a RAG system so you can pinpoint the root cause of poor performance. They are also reference-free, meaning they can be run without using ground truth data.</p>
+<p class="image-container"><img alt="RAG Triad" src="img/2f00466ca5a8244f.png"></p>
+<h2 is-upgraded>Context Relevance</h2>
+<p>Context Relevance determines if the retrieved context from the retriever or the search service is relevant to the user query. Given the user query and retrieved context, an LLM judge is used to determine relevance of the retrieved context based on the query.</p>
+<h2 is-upgraded>Groundedness</h2>
+<p>Groundedness determines if the generated response is supported by and grounded in the retrieved context from the retriever or the search service. Given the generated response and retrieved context, an LLM judge is used to determine groundedness. The underlying implementation uses Chain-of-thought reasoning when generating the groundedness scores.</p>
+<h2 is-upgraded>Answer Relevance</h2>
+<p>Answer relevance determines if the generated response is relevant to the user query. Given the user query and generated response, an LLM judge is used to determine how relevant the response is when answering the user&#39;s query. Note that this doesn&#39;t rely on ground truth answer reference, and therefore this is not equivalent to assessing answer correctness.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Examine Results" duration="0">
+        <p>To view evaluation results, navigate to Snowsight → AI &amp; ML → Evaluations in the side navigation menu. The following user journey navigates you through the steps to view the evaluation results for your application runs</p>
+<ol type="1">
+<li>View all applications: Navigate to Snowsight → AI &amp; ML → Evaluations</li>
+</ol>
+<p class="image-container"><img alt="apps" src="img/3a28527ceedcbdff.png"></p>
+<ol type="1" start="2">
+<li>View runs corresponding to an application: Select a specific application to view the list of runs.</li>
+</ol>
+<p class="image-container"><img alt="runs" src="img/3b8120149a3447e8.png"></p>
+<ol type="1" start="3">
+<li>View evaluation results for a run: Select a run to view the aggregated results as well as the results corresponding to each record.</li>
+</ol>
+<p class="image-container"><img alt="results" src="img/1834f3e368398a8c.png"></p>
+<ol type="1" start="4">
+<li>View traces for each record: Select a specific record to view detailed traces, metadata and evaluation results for a the record.</li>
+</ol>
+<p class="image-container"><img alt="record" src="img/f77e6bcf8db515f0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations! You&#39;ve successfully built a RAG by combining Cortex Search and Cortex Complete. You also created your first run, and computed evaluation metrics on the run. Last, you learned how to navigate the AI Observability interface to understand the detailed traces and individual evaluation results.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build a RAG with Cortex Search and Cortex LLM Functions.</li>
+<li>How to create a run for batch evaluation</li>
+<li>How to compute evaluation metrics on a run</li>
+<li>How to view results</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/" target="_blank">AI Observabilty Documentation</a></li>
+<li><a href="https://www.trulens.org/getting_started/" target="_blank">Open Source TruLens Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

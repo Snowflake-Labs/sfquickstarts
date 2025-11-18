@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_a_data_application_with_hybrid_tables",
+  "duration": 28,
+  "title": "Build a Data Application with Hybrid Tables",
+  "summary": "Build a data application using Snowflake Hybrid Tables for transactional processing",
+  "source": "build_a_data_application_with_hybrid_tables/build_a_data_application_with_hybrid_tables.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "hybridtables",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build_a_data_application_with_hybrid_tables"
+}

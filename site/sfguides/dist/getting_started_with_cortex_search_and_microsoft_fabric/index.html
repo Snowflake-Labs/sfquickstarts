@@ -1,0 +1,316 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Search and Microsoft Fabric</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_cortex_search_and_microsoft_fabric"
+                  title="Getting Started with Cortex Search and Microsoft Fabric"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p>Cortex Search enables low-latency, high-quality &#34;fuzzy&#34; search over your Snowflake data. Cortex Search powers a broad array of search experiences for Snowflake users including Retrieval Augmented Generation (RAG) applications leveraging Large Language Models (LLMs).</p>
+<p>Cortex Search gets you up and running with a hybrid (vector and keyword) search engine on your text data in minutes, without having to worry about embedding, infrastructure maintenance, search quality parameter tuning, or ongoing index refreshes. This means you can spend less time on infrastructure and search quality tuning, and more time developing high-quality chat and search experiences using your data. Check out the Cortex Search tutorials for step-by-step instructions on using Cortex Search to power AI chat and search applications.</p>
+<p class="image-container"><img src="img/5719997101802620.png"></p>
+<p>Microsoft Fabric is a unified analytics platform that integrates various data services like data engineering, data science, real-time analytics, and business intelligence into a single environment. It allows users to work across the entire analytics lifecycle, from data ingestion and transformation to advanced analytics and reporting. Fabric brings together key technologies like Power BI, Azure Synapse, and Data Factory under one umbrella for seamless data collaboration and processing. Its low-code/no-code tools, along with cloud-scale capabilities, make it accessible for both technical and non-technical users to build, analyze, and share insights. In this quickstart we will bbe using Fabric Notebooks to work with Cortex Search in Snowflake.</p>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-search-and-microsoft-fabric" target="_blank">GitHub</a></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>Familiarity with <a href="https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview" target="_blank">Microsoft</a> Fabric and a Fabric workspace.</li>
+<li>Familiarity with <a href="https://www.udemy.com/course/draft/579706/" target="_blank">Python</a></li>
+</ul>
+<h2 is-upgraded>You&#39;ll Learn</h2>
+<ul>
+<li>Using Fabric Notebooks with Snowflake Cortex Search</li>
+<li>Creating a Cortex Search Service in Snowflake on unstructured data</li>
+<li>Using Fabric Notebooks to explore data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li><a href="https://learn.microsoft.com/en-us/fabric/get-started/fabric-trial" target="_blank">Fabric Capacity</a></li>
+<li>For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end data science workflow leveraging Snowpark for Python</p>
+<ul>
+<li>to load data to Snowflake via Snowsight</li>
+<li>to create a Snowflake Cortex Search Services on unstructured data</li>
+<li>to query the Snowflake Cortex Search Service from Fabric Notebooks</li>
+</ul>
+<p>The end-to-end workflow will look like this: <img src="img/5bd075b77384f5cb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Case" duration="5">
+        <p>In this use case you will build a Cortex SEarch service on the free text data healthcare that represents discharge notes from a medical provider. The data is largely from this dataset on <a href="https://www.kaggle.com/datasets/bpkapkar/health-prescription-data" target="_blank">Kaggle</a>.</p>
+<p>There are many additional use cases that can be built on this dataset, but specifically we will be using Cortex Search to identify patients that were discharged and are allergic to Penicillin so that we can notify their treating physicians of outages of other antibiotics so that the doctors can be prepared to prescribe other antibiotics as alternatives.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Snowflake Environment and Cortex Search" duration="5">
+        <p>The first thing we will do is create a database and warehouse in your Snowflake environment. Copy and paste the below code to a SQL Worksheet in Snowflake an Snowsight and run through it.</p>
+<p>You will see that after creating the stage and table you will have to navigate to the database tab and load the data via the UI in Snowflake. The simple instruction are comments in the SQL worksheet.</p>
+<p>The final block of code in this SQL will create the Cortex Search service using SQL. The TARGET_LAG parameter is set to &#34;30 day&#34; that will check for updates to the base table every 30 days. While the data size in this datasets isn&#39;t that large notice how quickly the service is created.</p>
+<p>For practice of this quickstart we are creating the Cortex Search service quickly, but there are additional items you may want to consider additional items like token limits and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#token-limits-and-text-splitting" target="_blank">text splitting</a>. Additionally, there are several <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/overview-tutorials" target="_blank">Cortex Search Tutorials</a> to get customers more familiar with the nuances of building and querying Cortex Search.</p>
+<pre><code language="language-sql" class="language-sql">--create database and warehouse
+use role accountadmin;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+CREATE OR REPLACE DATABASE MEDICAL_NOTES;
+
+--create stage
+USE DATABASE MEDICAL_NOTES;
+CREATE OR REPLACE STAGE NOTES_STAGE
+URL=&#39;s3://hol-qs-bucket/mednotes/&#39;
+FILE_FORMAT = (TYPE = &#39;csv&#39;);
+list @notes_stage;
+
+--create customer_wrapped table
+CREATE OR REPLACE TABLE MEDICAL_NOTES
+  (SUBJECT_ID STRING,
+   ROW_ID STRING,
+   HADM_ID STRING,
+   CATEGORY STRING,
+   ADMISSION_TYPE STRING,
+   DIAGNOSIS STRING,
+   TEXT STRING,
+   AGE STRING,
+   GENDER STRING,
+   LOS STRING);
+
+--create allergy_table
+CREATE OR REPLACE TABLE ALLERGY_TABLE
+  (TEXT STRING,
+  SUBJECT_ID STRING,
+  CATEGORY STRING,
+  ADMISSION_TYPE STRING,
+  DIAGNOSIS STRING,
+  AGE STRING,
+  GENDER STRING,
+  LOS STRING);
+
+-- Load the data using the Snowflake wizard
+-- 1. Go to databases on the left of this screen then select the MEDICAL_NOTES database &gt; PUBLIC schema &gt; MEDICAL_NOTES table
+-- 2. Select &#39;Load Data&#39; in the top right, select the warehouse you just created then select &#39;Add from Stage&#39;. Select the MEDICAL_NOTES.PUBLIC databse and schema then select the NOTES_STAGE stage.
+-- 3. Select &#39;enable directory table&#39; then select the prescriptiondata.csv and click add.
+-- 4. Click &#39;Next&#39; then click &#39;Load&#39;
+-- 5. Once complete come back to this worksheet to verify the data has been loaded
+
+select top 10 * from MEDICAL_NOTES;
+
+-- Create Search Service
+CREATE OR REPLACE CORTEX SEARCH SERVICE MEDNOTES_SEARCH_SERVICE
+  ON TEXT
+  ATTRIBUTES ADMISSION_TYPE, DIAGNOSIS
+  WAREHOUSE = HOL_WH
+  TARGET_LAG = &#39;30 day&#39;
+  AS (
+    SELECT
+        SUBJECT_ID,
+        ROW_ID,
+        HADM_ID,
+        CATEGORY,
+        ADMISSION_TYPE,
+        DIAGNOSIS,
+        TEXT,
+        AGE,
+        GENDER,
+        LOS
+    FROM MEDICAL_NOTES
+);
+</code></pre>
+<p>Notice how we&#39;re setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we&#39;re setting up the service so that additional filters can be used on the attribute &#34;ADMISSION_TYPE&#34;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Fabric Environment" duration="2">
+        <p>Head to your Fabric workspace, click &#34;New&#34; in the top left then &#34;More Options&#34; and select the &#34;Notebook&#34; widget.</p>
+<p class="image-container"><img src="img/110dc02ac17ec0b8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Querying Cortex Search from Fabric" duration="15">
+        <p>Now let&#39;s copy and paste several blocks of code to the Fabric notebook and work through connecting to the Cortex Search service from Fabric.</p>
+<p>First, let&#39;s install two packages that we need to use the API to connect.</p>
+<pre><code language="language-python" class="language-python">!pip install snowflake
+%pip install --upgrade pydantic
+</code></pre>
+<p>Next, let&#39;s set up the connection request. For this quickstart you will have to populate the account identifier, your user name and password. For interactive work using username and password, but additional authentication methods are supported via the <a href="https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-connect" target="_blank">Snowflake Python Package</a>.</p>
+<pre><code language="language-python" class="language-python">import os
+import json
+
+from snowflake.core import Root
+from snowflake.connector import connect
+
+# replace with hardcoded values if you wish; otherwise, ensure all values are in your environment.
+CONNECTION_PARAMETERS = {
+    &#34;account&#34;: &#34;&lt;snowflake account&gt;&#34;,
+    &#34;user&#34;: &#34;&lt;user name&gt;&#34;,
+    &#34;password&#34;: &#34;&lt;password&gt;&#34;,
+    &#34;role&#34;: &#34;ACCOUNTADMIN&#34;,
+    &#34;warehouse&#34;: &#34;HOL_WH&#34;,
+    &#34;database&#34;: &#34;MEDICAL_NOTES&#34;,
+    &#34;schema&#34;: &#34;PUBLIC&#34;
+    }
+</code></pre>
+<p>Now, let&#39;s connect to the service. You will likely need to approve the connection via MFA.</p>
+<pre><code language="language-python" class="language-python"># create a SnowflakeConnection instance
+connection = connect(**CONNECTION_PARAMETERS,insecure_mode=True)
+</code></pre>
+<p>Next, we will build a function to query the Search service and return results. You can review and (if you would like) edit the query that we&#39;re sending to Cortex Search. Additionally, we&#39;re setting a high limit so that we return all relevant results and return all of the fields in the table with the free text field &#34;TEXT&#34;. Take time as you would like to review the code that we&#39;re using to build the request.</p>
+<pre><code language="language-python" class="language-python"># Replace with your search parameters
+# Replace with your search parameters
+query = &#34;you are a helpful assistant. Take your time to and be selective and only retrieve records that clearly show that the patient has an allergy to Penicillin and the diagnosis is related to Pneumonia. Exclude records where there is negation, for example there is mention of no pneumonia &#34;
+columns = [&#34;TEXT&#34;,&#34;SUBJECT_ID&#34;,&#34;CATEGORY&#34;,&#34;ADMISSION_TYPE&#34;,&#34;DIAGNOSIS&#34;,&#34;AGE&#34;,&#34;GENDER&#34;,&#34;LOS&#34;]
+svc = &#34;MEDNOTES_SEARCH_SERVICE&#34;
+filter_type={&#34;@eq&#34;: {&#34;ADMISSION_TYPE&#34;: &#34;EMERGENCY&#34;} }
+limit = 1000
+
+
+def search_records(connection, query, columns, svc, filter_type, limit):
+    &#34;&#34;&#34;
+    Args:
+        connection: The connection object to the database.
+        query (str): The search query string.
+        columns (list): The list of columns to retrieve.
+        svc (str): The service name to perform the search.
+        limit (int): The maximum number of results to return.
+
+    Returns:
+        dict: The search results in JSON format.
+    &#34;&#34;&#34;
+    try:
+        # create a root as the entry point for all objects
+        root = Root(connection)
+        
+        # perform the search
+        response = (
+            root.databases[CONNECTION_PARAMETERS[&#34;database&#34;]]
+            .schemas[CONNECTION_PARAMETERS[&#34;schema&#34;]]
+            .cortex_search_services[svc]
+            .search(
+                query,
+                columns,
+                filter_type,
+                limit=limit
+            )
+        )
+
+        print(f&#34;Received response with `request_id`: {response.request_id}&#34;)
+        results = json.dumps(response.results, indent=5)
+        print(results)
+        return results
+    except Exception as e:
+        print(f&#34;An error occurred: {e}&#34;)
+</code></pre>
+<p>Let&#39;s now run the function and place the results into a pandas dataframe.</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+results = search_records(connection, query, columns, svc, filter_type, limit)
+l = json.loads(results)
+df = pd.DataFrame(l)
+</code></pre>
+<p>We have created a function that calls the service filtering only on Emergency admissions and using plain text to query the service and return records in which the discharge notes indicate an allergy to Penicillin. Then created a data frame with those records.</p>
+<p>Now, let&#39;s take some time to review the results with some of Fabric Notebooks interactive EDA capabilities. Run the below code and click through the data to view the results. If you click through records on the &#34;TEXT&#34; field you can check to see if we&#39;re actually returning records where patients are allergic to Penicillin.</p>
+<pre><code language="language-python" class="language-python">display(df)
+</code></pre>
+<p class="image-container"><img src="img/f7a1baa90362504.png"></p>
+<p>Click through additional fields to view the values in the table.</p>
+<p>Now let&#39;s experiment with some more EDA in the results. Execute the below code in your Fabric Notebook.</p>
+<pre><code language="language-python" class="language-python">display(df, summary=True)
+</code></pre>
+<p>You can click through the different fields to see how patients allergic to Penicillin are separated across different categories.</p>
+<p class="image-container"><img src="img/2ff1460e07afe1db.png"></p>
+<p>To learn more about Fabric Notebook functionality check out the documentation <a href="https://learn.microsoft.com/en-us/fabric/data-engineering/author-execute-notebook" target="_blank">here</a>.</p>
+<p>Finally, we can write the results of the Search query back to a table in Snowflake.</p>
+<pre><code language="language-python" class="language-python">from snowflake.connector.pandas_tools import write_pandas
+
+# Write the DataFrame to Snowflake
+success, nchunks, nrows, _ = write_pandas(connection, df, &#39;ALLERGY_TABLE&#39;)
+</code></pre>
+<p>You can head back to Snowflake to verify the table was created. And you can do with this whatever you would like...analyze the results in Snowflake, connect Power BI to it or build models with Cortex, SnowflakeML, Azure Openai and AzureML!</p>
+<p class="image-container"><img src="img/1a0b9de825957613.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>This quickstart is just that, a quick way to get you started with using Fabric and Snowflake Cortex Search. There are plenty of different directions and enhancements you can make to this. The key thing is knowing that when you deploy Snowflake on Azure you have plenty of secure options for using Generative AI services regardless of where your data is and where you are orchestrating from!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Using Fabric Notebooks with Snowflake Cortex Search</li>
+<li>Creating a Cortex Search Service in Snowflake on unstructured data</li>
+<li>Using Fabric Notebooks to explore data</li>
+<li>Writing dataframes back to Snowflake</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li>There are some great blogs on Medium regarding Snowflake Cortex, Microsoft Fabric and how Snowflake and Fabric work together</li>
+<li><a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex</a></li>
+<li><a href="https://learn.microsoft.com/en-us/power-bi/fundamentals/fabric-get-started" target="_blank">Microsoft Fabric and Power BI</a></li>
+<li><a href="https://www.microsoft.com/en-us/microsoft-fabric/blog/2024/05/22/snowflake-and-microsoft-announce-expansion-of-their-partnership/" target="_blank">Fabric and Snowflake together</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

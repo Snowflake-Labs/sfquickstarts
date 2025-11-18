@@ -1,0 +1,225 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build an MCP Server for Cortex Agents</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="mcp-server-for-cortex-agents"
+                  title="Build an MCP Server for Cortex Agents"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This guide walks through how to build your own Cortex Agents MCP Server.</p>
+<p>The core functionalities include:</p>
+<ul>
+<li>Allow agents to interact with Cortex Agents as a tool</li>
+<li>Test the connection with Claude Desktop</li>
+</ul>
+<p>In this tutorial, we&#39;ll build a simple MCP <strong>Cortex Agents</strong> server and connect it to an MCP host (Claude for Desktop). We&#39;ll start with a basic setup, then progress to more complex use cases.</p>
+<h2 is-upgraded>What we&#39;ll be building</h2>
+<p>Many LLMs don&#39;t natively orchestrate external &#34;agent&#34; workflows. With MCP, we can expose Cortex Agents capabilities as first-class tools in your chat client.</p>
+<p>We&#39;ll build a server that exposes one tool:</p>
+<ul>
+<li><code>run_cortex_agents</code>: submit a query to Cortex Agents and get its output</li>
+</ul>
+<p>Then we&#39;ll connect the server to an MCP host (Claude for Desktop):</p>
+<p><strong>Note:</strong> you can connect any MCP-compatible client, but this guide uses Claude for Desktop for simplicity. See the official MCP <a href="https://modelcontextprotocol.io/quickstart/client" target="_blank">client SDK guide</a> for building your own, or browse <a href="https://modelcontextprotocol.io/clients" target="_blank">other clients</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account (<a href="https://signup.snowflake.com/" target="_blank">sign up for a trial account here</a>)</li>
+<li>Cortex Analyst semantic model and Cortex Search service created, such as via this <a href="https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0" target="_blank">quickstart</a></li>
+<li>A <a href="https://docs.snowflake.com/en/user-guide/programmatic-access-tokens" target="_blank">Programmatic Access Token</a> created</li>
+<li>Python <strong>3.10+</strong></li>
+<li>Python MCP SDK <strong>1.2.0+</strong></li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create an MCP Server</li>
+<li>How to use Cortex Agents</li>
+<li>How to configure an MCP client to use an MCP Server</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>An MCP Server for Cortex Agents.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p>First install the MCP CLI (<code>uv</code>) and bootstrap your project:</p>
+<h2 is-upgraded>macOS / Linux</h2>
+<pre><code language="language-bash" class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh
+# restart your terminal to pick up `uv`
+</code></pre>
+<h2 is-upgraded>Windows</h2>
+<pre><code language="language-bash" class="language-bash">irm https://astral.sh/uv/install.ps1 | iex
+# restart your shell
+</code></pre>
+<p>Configure and create your Cortex Agents project:</p>
+<pre><code language="language-bash" class="language-bash"># Clone the repo
+git clone https://github.com/Snowflake-Labs/sfguide-mcp-cortex-agent.git
+cd sfguide-mcp-cortex-agent
+
+# Create and activate venv
+uv venv
+source .venv/bin/activate   # macOS/Linux
+# .venv\Scripts\Activate.ps1 # Windows PowerShell
+
+# Install MCP SDK and HTTP client
+uv add &#34;mcp[cli]&#34; httpx
+</code></pre>
+<p>Set the keys and services needed to run Cortex Agents by creating a <code>.env</code> following the <code>.env.template</code> with:</p>
+<ul>
+<li>SNOWFLAKE_ACCOUNT_URL</li>
+<li>SNOWFLAKE_PAT</li>
+<li>SEMANTIC_MODEL_FILE</li>
+<li>CORTEX_SEARCH_SERVICE</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the MCP Server" duration="2">
+        <p>Run:</p>
+<pre><code language="language-bash" class="language-bash">uv run cortex_agents.py
+</code></pre>
+<p><strong>Note:</strong> Leave this (the MCP server) running while you call it from the MCP client.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add to the MCP Client" duration="5">
+        <p>Install or update Claude for Desktop.</p>
+<p>Open your config file:</p>
+<h2 is-upgraded>macOS / Linux</h2>
+<pre><code>~/Library/Application Support/Claude/claude_desktop_config.json
+</code></pre>
+<h2 is-upgraded>Windows</h2>
+<pre><code>%APPDATA%\Claude\claude_desktop_config.json
+</code></pre>
+<p>Add your Cortex Agents server:</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;mcpServers&#34;: {
+    &#34;cortex-agent&#34;: {
+      &#34;command&#34;: &#34;uv&#34;,
+      &#34;args&#34;: [
+        &#34;--directory&#34;,
+        &#34;/ABSOLUTE/PATH/TO/PARENT/FOLDER/sfguide-mcp-cortex-agent&#34;,
+        &#34;run&#34;,
+        &#34;cortex_agents.py&#34;
+      ]
+    }
+  }
+}
+</code></pre>
+<p><strong>Note:</strong> You may need to replace &#34;uv&#34; with the full uv path. You can find the uv path by running <code>which uv</code>.</p>
+<p>Launch the Claude for Desktop app.</p>
+<p>Now our Cortex Agents MCP server is available for use by Claude. We can see it by clicking on the tools icon, and toggle it on and off.</p>
+<p class="image-container"><img alt="mcp tool in claude" src="img/d2db053b81fad3b9.png"></p>
+<p>Then, run a query. If the query calls your MCP server, you will see the name of the tool used directly below your query in the Claude desktop app.</p>
+<p>Because we&#39;re connected to Cortex Agents, we can ask questions about both unstructured data (via Cortex Search) and structured data via Cortex Analyst.</p>
+<p>Unstructured data:</p>
+<p class="image-container"><img alt="cortex agents mcp unstructured" src="img/a8914bc94920ee7e.gif"></p>
+<p>Structured data:</p>
+<p class="image-container"><img alt="cortex agents mcp unstructured" src="img/2775e85cbaa7ee89.gif"></p>
+<p>What&#39;s happening under the hood When you ask a question:</p>
+<ol type="1">
+<li>The client sends your question to Claude</li>
+<li>Claude analyzes the available tools and decides which one(s) to use</li>
+<li>If the cortex agents tool is chosen, the client executes Cortex Agents through the MCP server</li>
+<li>The results are sent back to Claude</li>
+<li>Claude formulates a natural language response</li>
+<li>The response is displayed to you!</li>
+</ol>
+<h2 is-upgraded>Common Errors</h2>
+<p>When the MCP client calls the MCP server, you may run into some of these common issues.</p>
+<pre><code language="language-bash" class="language-bash">Error: Caused by SSLError(SSLCertVerificationError(1, &#34;[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...
+</code></pre>
+<pre><code language="language-bash" class="language-bash">Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found: post https://xxxxx.snowflakecomputing.com:443/session/v1/login-request?request_id=b4e367d4-d8ac-48d3-8e44-96f42defa9c5&amp;request_guid=4f63e07c-e42c-43b8-8f79-f6c577ee0d0e
+</code></pre>
+<aside class="warning"><p> NOTE: If you get the above errors, make sure the SNOWFLAKE_ACCOUNT_URL and PAT variables in the <strong><em>.env</em></strong> file are set correctly. Account URLs including an underscore (<code>_</code>) may cause this issue, which can be fixed by changing the underscore to a hyphen (<code>-</code>). For additional instructions and help, refer to the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">documentation</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Optional) Customize Cortex Agents" duration="5">
+        <p>In <code>cortex_agents.py</code>, update the <code>payload</code> included in the function <code>run_cortex_agents</code> to include more tools or different configurations (such as LLMs).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve sucessfully built an MCP server for Cortex Agents. I hope you are inspired to use this MCP server you&#39;ve built in interesting MCP clients!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build an MCP server</li>
+<li>How to use Cortex Agents REST API and integrate it with an MCP server</li>
+<li>How to set up an MCP client to call your Cortex Agents MCP server</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-mcp-cortex-agents" target="_blank">GitHub repo</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a></li>
+<li><a href="https://modelcontextprotocol.io/quickstart/server" target="_blank">MCP Server Quickstart</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

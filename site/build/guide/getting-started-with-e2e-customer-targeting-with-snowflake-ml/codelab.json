@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting-started-with-e2e-customer-targeting-with-snowflake-ml",
+  "duration": 18,
+  "title": "Getting Started with End-to-End Customer Targeting Using Snowflake ML",
+  "summary": "Learn how to leverage Snowflake ML to build and deploy propensity-based targeting models, enabling businesses to predict customer behaviors, segment audiences, and deliver personalized marketing campaigns at scale for maximum impact",
+  "source": "getting_started_with_e2e_customer_targeting_with_snowflake_ml/getting_started_with_e2e_customer_targeting_with_snowflake_ml.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "customer",
+    "customerpropensitymodeling",
+    "datascience",
+    "gettingstarted",
+    "mlops",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-e2e-customer-targeting-with-snowflake-ml"
+}

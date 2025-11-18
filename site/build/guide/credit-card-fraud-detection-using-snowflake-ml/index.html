@@ -1,0 +1,202 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Credit Card Fraud Detection using Snowflake ML Functions</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="credit-card-fraud-detection-using-snowflake-ml"
+                  title="Credit Card Fraud Detection using Snowflake ML Functions"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <h2 is-upgraded>Overview</h2>
+<p>In this Quickstart guide, we will train a model using Snowflake ML Functions for Credit card fraud detection. Fraud Detection involves a range of methods and techniques aimed at preventing fraudulent purchases, both online and in-store. The goal is to verify the legitimacy of the transaction and ensure that the true cardholder is involved. Depending on the detection techniques used one may address questions about the cardholder&#39;s identity and intentions either in real-time or after the transaction has occurred. Thus, credit card fraud detection serves as both a preventative measure against payment fraud and a method for investigating past transactions. We will be walking through a use case where the ML Capabilities of the Snowflake Data Cloud will be leveraged for investigating the past transactions.</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A pipeline to implement Feature Engineering and storing the features in a Feature Store inside Snowflake Notebooks A pipeline to build a binary classification model to predict if a transaction is fraudulent or not inside Snowflake Notebooks A Streamlit application with geospatial analysis that will be used to carry ongoing inference by detecting if new transactions are fraudulent or not.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>How to build a Model using Snowflake ML Classification Function How to build a Streamlit app to detect and visualize the fraudulent transactions in Snowflake How to render a map and plot in the Streamlit app</p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Snowflake account with a SYSADMIN role or a role that has CREATE SNOWFLAKE.ML.CLASSIFICATION privilege on the schema the model will be created</li>
+<li>A GitHub Account</li>
+<li>Intermediate knowledge of Snowsight, the UI interface of Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="5">
+        <p>You will use  Snowsight, the Snowflake web interface, to only create an initial database and schema that needs to be a prerequisite for Notebooks. And then we will be carrying the rest of the execution within Snowflake Notebooks.</p>
+<p><strong>Step 1</strong>. - Create a Warehouse, Database, Schema and an internal stage</p>
+<p>Create a new SQL worksheet by clicking on the ‘Worksheets&#39; tab on the left hand side. Paste and run the following SQL commands in a SQL worksheet to create the required Snowflake objects and a warehouse</p>
+<pre><code>CREATE DATABASE CC_FINS_DB;
+USE DATABASE CC_FINS_DB;
+CREATE SCHEMA ANALYTICS;
+CREATE OR REPLACE WAREHOUSE FD_WH WITH WAREHOUSE_SIZE=&#39;XSMALL&#39;;
+CREATE OR REPLACE STAGE CC_FINS_DB.ANALYTICS.FRAUD_DETECTION_APP 
+DIRECTORY = (ENABLE = TRUE) 
+ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;);
+
+
+</code></pre>
+<p><strong>Step 2</strong>. - Import Notebooks</p>
+<p>From Snowsight, create a Snowflake notebook by importing a notebook and using the role, schema, and warehouse by following the instructions below:</p>
+<ul>
+<li>Download the setup and fraud detections notebooks using this <a href="https://github.com/Snowflake-Labs/sfguide-credit-card-fraud-detection-using-snowflakeml" target="_blank">link</a>.</li>
+<li>Navigate to Notebooks in Snowsight by clicking on Projects -&gt; Notebook</li>
+<li>Switch to the SYSADMIN role or the custom role. Using the import button on the top right, import the downloaded  1_cc_fins_setup notebook.</li>
+<li>Provide a name for the notebook and select the database, schema and warehouse created earlier.</li>
+</ul>
+<p>Open the notebook once created and add the following packages by using the &#34;Packages&#34; button on the top right</p>
+<ul>
+<li>altair</li>
+<li>seaborn</li>
+<li>matplotlib</li>
+<li>snowflake-ml-python</li>
+</ul>
+<p>Follow the same steps( b-e ) for the 2_cc_fraud detection notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Preparation and Feature Engineering" duration="0">
+        <p>The end to end architecture involving all the stages is given below.</p>
+<p class="image-container"><img src="img/c56f52e94e23e711.png"></p>
+<h2 is-upgraded>Initial data setup and Feature Engineering - 1_CC_FINS_SETUP.ipynb</h2>
+<p>Now that you have uploaded the notebooks let us start running each of them. The first notebook 1_cc_fins_setup contains the logic for the initial data loading and Feature Engineering. Synthetically generated data has been uploaded to a public S3 bucket and this is loaded into a Snowflake External Stage. From the external stage, the data is loaded into a Snowflake table. The data contains numerical features and categorical features related to the transactions and customer demographics. The methodology applied to mimic real-world dataset of card transactions is carried out with attributes like Location, clicks, time elapsed, logins per hour and pages visited in addition to regular ones like Transaction date, amount and credit card number. This effectively detects fraudulent transactions by helping the model train and learn the patterns to maximize the detection of fraudulent transactions that will occur in the future. Using the Feature Store we will generate customer related features like how many transactions  a customer does, along with average dollars spent in a week, monthly and yearly basis.</p>
+<p>A sample output from the engineered features dataset related to Customer is seen below. <img src="img/7d6a9434f45f6c1c.png"></p>
+<p>Similarly the features related to Transaction data is generated that includes clicks, time elapsed before a transaction,cumulative logins, pages visited and the location such transaction originates from.A sample output from the engineered features dataset related to Transactions is seen below.</p>
+<p class="image-container"><img src="img/9a7e1b1cd205d994.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Training" duration="0">
+        <h2 is-upgraded>Data Exploration and Model Building - 2_CC_FRAUD_DETECTION.ipynb</h2>
+<p>The second notebook 2_cc_fraud_detection contains the logic for consuming the features, data exploration, model building and validation using a test dataset. With the ability to use visualization packages from the Snowflake Conda channel, one can simply add from the Package Selector on the top right and start exploring the underlying data. Common trends are observed for a subset of features and this can be expanded to other features as well. Enriches a spine Snowpark DataFrame that contains the source data with the derived feature values and then training ML models. This is the generated dataset. The ML Classification function Classification uses machine learning algorithms to sort data into different classes using patterns detected in training data.  We will first create a classification model object, passing in a reference to the training data. The model is fitted to the provided training data that is prepared in prior steps. Then use the resulting schema-level classification model object&#39;s PREDICT method to classify new data points and to understand the model&#39;s accuracy through its evaluation APIs.</p>
+<pre><code>SELECT *,CC_FINS_DB.ANALYTICS.fraud_classification_model!PREDICT(INPUT_DATA =&gt; object_construct(*)) as predictions
+from fraud_classification_val_view;
+</code></pre>
+<p class="image-container"><img src="img/4486efbb6546aafc.png"></p>
+<p>These metrics have been used to determine the overall model performance:</p>
+<ul>
+<li>show_evaluation_metrics() : <ul>
+<li>Precision: The ratio of true positives to the total predicted positives.</li>
+<li>Recall (Sensitivity): The ratio of true positives to the total actual positives.</li>
+<li>F1 Score: The harmonic mean of precision and recall.</li>
+</ul>
+</li>
+<li>show_threshold_metrics() : Provides raw counts and metrics for a specific threshold for each class.</li>
+<li>show_confusion_matrix(): A table used to assess the performance of a model by comparing predicted and actual values and evaluating its ability to correctly identify positive and negative instances.</li>
+<li>show_feature_importance(): Represents an approximate ranking of the features in your trained model by counting the number of times the model&#39;s trees used each feature to make a decision.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build a Fraud Detection App with GeoSpatial Analysis in Streamlit" duration="0">
+        <p>At this stage of the project, we have completed building out our end to end pipeline and are ready to use the trained model for detecting fraudulent patterns in new transactions. We will build a Streamlit in Snowflake application to deliver a Fraud Detection App for end users to easily understand the nature of incoming new transactions.</p>
+<p><strong>Step 1</strong>. - Load Streamlit Files</p>
+<ul>
+<li>Download all files from the app directory. This includes the environment.yml file as well.</li>
+<li>In Snowsight, change role to sysadmin</li>
+<li>Open the CC_FINS_DB.ANALYTICS.FRAUD_DETECTION_APP stage</li>
+<li>Click + Files in the top right of the stage</li>
+<li>Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory</li>
+<li>Fraud_Detection.py and environment.yml are at the top level</li>
+</ul>
+<p class="image-container"><img src="img/cccaa776f91a79e.png"></p>
+<p><strong>Step 2</strong>. - Create the Streamlit App Run the code below in a Snowsight worksheet to build the Streamlit app.</p>
+<pre><code>USE ROLE sysadmin;
+CREATE OR REPLACE STREAMLIT CC_FINS_DB.ANALYTICS.FRAUDDETECTION_APP
+ROOT_LOCATION = &#39;@CC_FINS_DB.ANALYTICS.FRAUD_DETECTION_APP&#39;
+MAIN_FILE = &#39;Fraud_Detection.py&#39;
+QUERY_WAREHOUSE = &#39;CC_FINS_WH&#39;;
+
+</code></pre>
+<p><strong>Step 3</strong>. - Open the Streamlit App</p>
+<p>From Snowsight, ensure you are using the SYSADMIN role or the custom role with necessary privileges. Under Projects, click Streamlit -&gt; Click and open the FRAUDDETECTION_APP from the list of apps</p>
+<p class="image-container"><img src="img/7ff2ccff6fa70c75.png"></p>
+<p><strong>Step 4</strong>. - Running the Fraud Detection App The new transaction types that need to be detected are displayed at the top. Click on &#34;Predict Fraudulent Transactions&#34;. For the sake of simplicity, in this vignette the validation dataset (which was not used for training) is injected for detecting the transaction type.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="0">
+        <p>Congratulations, you have built a Classification model to carry credit card fraud detection and an application in Streamlit to carry geospatial analysis. This powerful application can help Financial customers quickly understand fraudulent patterns and respond to it. Snowflake ML Classification function offers automated predictions and data insights using machine learning. All you need to provide is your data and it doesn&#39;t require time series as well. The Machine learning model enables users to sort data into different classes using patterns detected within the training data. If you want to learn more about Snowflake ML Functions, check out the quickstarts in the resources section.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to implement Feature Engineering using Snowflake Feature Store</li>
+<li>How to carry end to end ML in a Snowflake Notebook and build a binary classification model to predict if a transaction is fraudulent or not</li>
+<li>How to build a Streamlit application to detect fraudulent transactions and carry geospatial analysis.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/user-guide/ml-functions/classification" target="_blank">Snowflake ML Classification</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_feature_store/index.html?index=..%2F..index#0" target="_blank">Getting Started with Snowflake Feature Store</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cortex-ml-forecasting-and-classification/index.html?index=..%2F..index#0" target="_blank">Getting Started with Snowflake ML Forecasting and Classification</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/lead_scoring_with_ml_powered_classification/index.html?index=..%2F..index#0" target="_blank">Lead Scoring with ML-Powered Classification</a></h3>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

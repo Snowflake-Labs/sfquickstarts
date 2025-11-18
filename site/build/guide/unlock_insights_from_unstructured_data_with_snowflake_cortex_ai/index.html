@@ -1,0 +1,203 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Unlock Insights from Unstructured Data with Snowflake Cortex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="unlock_insights_from_unstructured_data_with_snowflake_cortex_ai"
+                  title="Unlock Insights from Unstructured Data with Snowflake Cortex AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This guide demonstrates how to create a Streamlit application running inside Snowflake that unlocks insights from unstructured data using <strong>Snowflake Cortex AI</strong>.<br> It shows how to translate, summarize, classify text, generate emails, and even analyze images — all without deploying external infrastructure.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account. If you don&#39;t have one, you can sign up for a free trial <a href="https://signup.snowflake.com/" target="_blank">here</a>.</li>
+<li>The ACCOUNTADMIN role to ensure you have full access for setup and configuration.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create a database, schema, and stage in Snowflake</li>
+<li>How to store unstructured data in Snowflake stages</li>
+<li>How to use SQL to run LLM functions (<code>TRANSLATE</code>, <code>SENTIMENT</code>, <code>SUMMARIZE</code>, <code>COMPLETE</code>)</li>
+<li>How to build a frontend application with Streamlit inside Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A fully functioning <strong>Streamlit app</strong> inside Snowflake that:</p>
+<ul>
+<li>Translates between multiple languages</li>
+<li>Scores sentiment of call transcripts</li>
+<li>Summarizes long-form text</li>
+<li>Classifies customer service inquiries</li>
+<li>Analyzes uploaded images using multimodal LLMs</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <h2 is-upgraded>Login to Snowsight</h2>
+<p>Log into Snowflake&#39;s web interface <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> using your Snowflake credentials.</p>
+<h2 is-upgraded>Enable Cross-Region Inference</h2>
+<p>In the Snowsight UI on the left hand sidebar, select the <strong>Projects &gt; Worksheets</strong> tab.</p>
+<p>In the top right hand corner, click the <strong>+</strong> button to create a new SQL worksheet.</p>
+<p>Run the following SQL commands to <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference.html" target="_blank">enable cortex cross-region inference</a>.</p>
+<pre><code language="language-sql" class="language-sql">-- set role context
+USE ROLE accountadmin;
+
+-- enable Cortex Cross Region Inference
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = &#39;ANY_REGION&#39;;
+</code></pre>
+<h2 is-upgraded>Create Snowflake Objects</h2>
+<p>In the same SQL worksheet, run the following SQL commands to create the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html" target="_blank">warehouse</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-database.html" target="_blank">database</a>, <a href="https://docs.snowflake.com/en/sql-reference/sql/create-schema.html" target="_blank">schema</a>, and <a href="https://docs.snowflake.com/en/sql-reference/sql/create-stage.html" target="_blank">stage</a></p>
+<aside class="special"><p> IMPORTANT:</p>
+<p>If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">-- Set role context
+USE ROLE sysadmin;
+
+-- Set Environment Name
+SET var_name = &#39;ai209&#39;;
+
+-- Generate Environment Identifiers
+SET var_warehouse_name = $var_name||&#39;_wh&#39;;
+SET var_database_name = $var_name||&#39;_db&#39;;
+SET var_schema_name = $var_name||&#39;_db.demo&#39;;
+
+-- Set Warehouse Context
+CREATE WAREHOUSE IF NOT EXISTS IDENTIFIER($var_warehouse_name) WITH
+    WAREHOUSE_SIZE = xsmall
+    AUTO_SUSPEND = 60
+    INITIALLY_SUSPENDED = true;
+USE WAREHOUSE IDENTIFIER($var_warehouse_name);
+
+-- Set Database Schema Context
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($var_database_name);
+CREATE SCHEMA IF NOT EXISTS IDENTIFIER($var_schema_name);
+USE SCHEMA IDENTIFIER($var_schema_name);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Streamlit Application" duration="5">
+        <p>Let&#39;s create a Streamlit application for interactive image analysis:</p>
+<h2 is-upgraded>Setting Up the Streamlit App</h2>
+<p>To create and configure your Streamlit application in Snowflake:</p>
+<ol type="1">
+<li>Navigate to Streamlit in Snowflake:<ul>
+<li>Click on the <strong>Streamlit</strong> tab in the left navigation pane</li>
+<li>Click on <strong>+ Streamlit App</strong> button in the top right</li>
+</ul>
+</li>
+<li>Configure App Settings:<ul>
+<li>Enter a name for your app (e.g., &#34;AI/ML Toolkit&#34;)</li>
+<li>Select the warehouse <strong>AI209_WH</strong></li>
+<li>Choose <strong>AI209_DB.DEMO</strong> as your database and schema</li>
+<li>Click <strong>Create</strong></li>
+</ul>
+</li>
+<li>Create the app:<ul>
+<li>In the editor, paste the complete code provided in the <a href="https://github.com/Snowflake-Labs/sfguide-unlock-insights-from-unstructured-data-with-snowflake-cortex-ai/blob/main/streamlit_app.py" target="_blank">streamlit_app.py</a> file</li>
+<li>Click &#34;Run&#34; to launch your application</li>
+</ul>
+</li>
+</ol>
+<p>The application provides:</p>
+<ul>
+<li>Translation: Translate text between 14 different languages using Snowflake Cortex</li>
+<li>Sentiment Analysis: Analyze the sentiment of call transcripts</li>
+<li>Data Summarization: Generate concise summaries of large text datasets</li>
+<li>Next Best Action: Use foundation models to identify customer next actions</li>
+<li>Text Classification: Categorize text into predefined categories</li>
+<li>Email Generation: Create customer emails based on call transcripts</li>
+<li>Question Answering: Ask questions to foundation models</li>
+<li>Multi-Modal Image Analysis: Analyze and categorize images using multi-modal models</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an end-to-end image analysis application using Snowflake Cortex AI models. This app showcases how to unlock value from unstructured data — including text and images - all within the Snowflake environment.</p>
+<p>By combining Snowflake-native large language models (LLMs) and multimodal capabilities with Streamlit, you built an interactive solution that can:</p>
+<ul>
+<li>Translate and classify text across multiple languages</li>
+<li>Analyze sentiment and summarize long-form content</li>
+<li>Automatically generate emails and next-best-actions from transcripts</li>
+<li>Perform real-time image analysis using multimodal foundation models</li>
+</ul>
+<p>This end-to-end pattern demonstrates how Snowflake Cortex can power intelligent applications directly on top of your data, reducing time-to-insight and simplifying operational complexity.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to provision warehouses, databases, schemas, and stages in Snowflake</li>
+<li>How to store and process unstructured text and image data</li>
+<li>How to run SQL-based AI functions (TRANSLATE, SUMMARIZE, SENTIMENT, etc.)</li>
+<li>How to analyze visual data using foundation models</li>
+<li>How to build a secure, fully integrated frontend using Streamlit in Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowflake Large Language Model (LLM) Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference" target="_blank">Snowflake Cross-region inference</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/complete-multimodal" target="_blank">Snowflake Cortex COMPLETE Multimodal</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

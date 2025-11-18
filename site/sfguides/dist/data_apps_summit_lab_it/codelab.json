@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "data_apps_summit_lab_it",
+  "duration": 42,
+  "title": "Creare una data application con il Marketplace Snowflake, Snowpark e Streamlit",
+  "summary": "questo è un esempio di guida di Snowflake",
+  "source": "data_apps_summit_lab_it/data_apps_summit_lab_it.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "app-development"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "guidaintroduttiva",
+    "it",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_apps_summit_lab_it"
+}

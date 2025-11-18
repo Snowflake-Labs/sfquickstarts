@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "attaining_consumer_insights_with_snowflake_and_microsoft_power_bi",
+  "duration": 23,
+  "title": "Attaining Consumer Insights with Snowflake and Microsoft Power BI",
+  "summary": "In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration.",
+  "source": "attaining_consumer_insights_with_snowflake_microsoft_power_bi/attaining_consumer_insights_with_snowflake_microsoft_power_bi.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "attaining_consumer_insights_with_snowflake_and_microsoft_power_bi"
+}

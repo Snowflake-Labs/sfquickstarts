@@ -1,0 +1,399 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Extract Attributes from DICOM Files using Snowpark for Python and Java</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="extract_attributes_dicom_files_java_udf"
+                  title="Extract Attributes from DICOM Files using Snowpark for Python and Java"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>This Quickstart is designed to help you understand the capabilities included in Snowflake&#39;s support for unstructured data and Snowpark. Although this guide is specific to processing DICOM files, you can apply this pattern of processing natively in Snowflake to many types of unstructured data. All source code for this guide can be found on <a href="https://github.com/Snowflake-Labs/sfquickstarts" target="_blank">Github</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Completion of <a href="http://quickstarts.snowflake.com/guide/getting_started_with_unstructured_data/index.html?index=..%2F..index" target="_blank">Getting Started with Unstructured Data</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Snowflake account</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql.html" target="_blank">SnowSQL</a> installed</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to access DICOM files in cloud storage from Snowflake</li>
+<li>How to extract attributes from DICOM files natively using Python and Java User-Defined Functions (UDFs)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An external stage to access files in S3 from Snowflake</li>
+<li>A user-defined function using Snowflake&#39;s engine to process files</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Environment" duration="2">
+        <p>If you haven&#39;t already, register for a <a href="https://trial.snowflake.com/" target="_blank">Snowflake free 30-day trial</a>. The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.</p>
+<h2 is-upgraded>Navigating to Snowsight</h2>
+<p>For this lab, you will use the latest Snowflake web interface, Snowsight.</p>
+<ol type="1">
+<li>Log into your Snowflake trial account</li>
+<li>Click on <strong>Snowsight</strong> Worksheets tab. The new web interface opens in a separate tab or window.</li>
+<li>Click <strong>Worksheets</strong> in the left-hand navigation bar. The <strong>Ready to Start Using Worksheets and Dashboards</strong> dialog opens.</li>
+<li>Click the <strong>Enable Worksheets and Dashboards button</strong>.</li>
+</ol>
+<p class="image-container"><img alt="Enable worksheets and dashboards" src="img/111785ef48da683b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Access the Data" duration="6">
+        <p>Let&#39;s start by accessing DICOM files from Snowflake. Snowflake supports two types of stages for storing data files used for loading and unloading:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#internal-stages" target="_blank">Internal</a> stages store the files internally within Snowflake.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-overview.html#external-stages" target="_blank">External</a> stages store the files in an external location (i.e. S3 bucket) that is referenced by the stage. An external stage specifies location and credential information, if required, for the bucket.</li>
+</ul>
+<p>For this quickstart, we will use an external stage, but processing and analysis workflows demonstrated in this quickstart can also be done using an internal stage.</p>
+<h2 is-upgraded>Create a Database, Warehouse, and Stage</h2>
+<p>Let&#39;s create a database, warehouse, and stage that will be used for processing the files. We will use the UI within the Worksheets tab to run the DDL that creates the database and schema. Copy the commands below into your trial environment, and execute each individually.</p>
+<pre><code language="language-sql" class="language-sql">use role sysadmin;
+
+create or replace database dicom;
+create or replace warehouse quickstart;
+
+use database dicom;
+use schema public;
+use warehouse quickstart;
+
+create or replace stage dicom_external
+url=&#34;s3://sfquickstarts/Extract DICOM Attributes/DICOM/&#34;
+directory = (enable = TRUE);
+</code></pre>
+<p>Verify if the DICOM files are accessible in your external stage by entering the following command on your Snowflake worksheet.</p>
+<pre><code language="language-sql" class="language-sql">ls @dicom_external;
+</code></pre>
+<p>You should now see an identical list of files from the S3 bucket. Make sure you see 24 files.</p>
+<p class="image-container"><img alt="List external stage" src="img/b6c8dae3b005c0e7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Extract Attributes from DICOM Files" duration="10">
+        <p>In this section, we want to extract attributes from the DICOM files. The entities extracted are going to be fields like manufacturer, patient position, and study date. The goal is to have these fields to enrich the file-level metadata for analytics.</p>
+<p>Using Snowpark runtimes and libraries, you can securely deploy and process Python, Java and Scala code to build pipelines, ML models, and applications in Snowflake. You can process unstructured files in Java (generally available), Python (public preview), and Scala (public preview) natively in Snowflake using Snowpark. In the following sections, you&#39;ll see how entity extraction can be done with Snowpark for both Java and Python.</p>
+<h2 is-upgraded>Python</h2>
+<p>The Python code to parse DICOM files requires the <a href="https://pydicom.github.io/pydicom/stable/index.html" target="_blank">pydicom</a> package, which isn&#39;t currently included in the <a href="https://repo.anaconda.com/pkgs/snowflake/" target="_blank">Anaconda Snowflake channel</a>. While you could download the package and upload to an internal stage via <a href="https://docs.snowflake.com/en/user-guide/data-load-web-ui" target="_blank">Snowsight</a> or SnowSQL CLI, we&#39;ve added the <code>whl</code> to an external stage for convenience.</p>
+<h3 is-upgraded>Creating a Python UDF</h3>
+<p>First, create the external stage to import the pydicom package file and the helper script to unzip the file and import into the UDF. Then, create the function.</p>
+<pre><code language="language-sql" class="language-sql">-- Create external stage to import pydicom package from S3
+create or replace stage python_imports
+ url = &#34;s3://sfquickstarts/Extract DICOM Attributes/Files/&#34;
+ directory = (enable = true auto_refresh = false);
+
+-- Create a Python UDF to parse DICOM files
+create or replace function python_read_dicom(file string)
+    returns variant
+    language python
+    runtime_version=3.10
+    imports = (&#39;@python_imports/pydicom.zip&#39;)
+    packages = (&#39;snowflake-snowpark-python&#39;)
+    handler = &#39;get_dicom_attributes&#39;
+AS
+$$
+import json
+from snowflake.snowpark.files import SnowflakeFile
+import sys
+import os
+
+def get_dicom_attributes(file_path):
+    
+    from pydicom import dcmread,errors
+
+    attributes = {}
+    
+    with SnowflakeFile.open(file_path, &#39;rb&#39;) as f:        
+        try:
+            ds = dcmread(f)
+        except errors.InvalidDicomError:
+            ds = dcmread(f, force=True)
+
+        attributes[&#34;PerformingPhysicianName&#34;] = str(ds.get(&#34;PerformingPhysicianName&#34;, &#34;&#34;))
+        attributes[&#34;PatientName&#34;] = str(ds.get(&#34;PatientName&#34;, &#34;&#34;))
+        attributes[&#34;PatientBirthDate&#34;] = str(ds.get(&#34;PatientBirthDate&#34;, &#34;&#34;))
+        attributes[&#34;Manufacturer&#34;] = str(ds.get(&#34;Manufacturer&#34;, &#34;&#34;))
+        attributes[&#34;PatientID&#34;] = str(ds.get(&#34;PatientID&#34;, &#34;&#34;))
+        attributes[&#34;PatientSex&#34;] = str(ds.get(&#34;PatientSex&#34;, &#34;&#34;))
+        attributes[&#34;PatientWeight&#34;] = str(ds.get(&#34;PatientWeight&#34;, &#34;&#34;))
+        attributes[&#34;PatientPosition&#34;] = str(ds.get(&#34;PatientPosition&#34;, &#34;&#34;))
+        attributes[&#34;StudyID&#34;] = str(ds.get(&#34;StudyID&#34;, &#34;&#34;))
+        attributes[&#34;PhotometricInterpretation&#34;] = str(ds.get(&#34;PhotometricInterpretation&#34;, &#34;&#34;))
+        attributes[&#34;RequestedProcedureID&#34;] = str(ds.get(&#34;RequestedProcedureID&#34;, &#34;&#34;))
+        attributes[&#34;ProtocolName&#34;] = str(ds.get(&#34;ProtocolName&#34;, &#34;&#34;))
+        attributes[&#34;ImagingFrequency&#34;] = str(ds.get(&#34;ImagingFrequency&#34;, &#34;&#34;))
+        attributes[&#34;StudyDate&#34;] = str(ds.get(&#34;StudyDate&#34;, &#34;&#34;))
+        attributes[&#34;StudyTime&#34;] = str(ds.get(&#34;StudyTime&#34;, &#34;&#34;))
+        attributes[&#34;ContentDate&#34;] = str(ds.get(&#34;ContentDate&#34;, &#34;&#34;))
+        attributes[&#34;ContentTime&#34;] = str(ds.get(&#34;ContentTime&#34;, &#34;&#34;))
+        attributes[&#34;InstanceCreationDate&#34;] = str(ds.get(&#34;InstanceCreationDate&#34;, &#34;&#34;))
+        attributes[&#34;SpecificCharacterSet&#34;] = str(ds.get(&#34;SpecificCharacterSet&#34;, &#34;&#34;))
+        attributes[&#34;StudyDescription&#34;] = str(ds.get(&#34;StudyDescription&#34;, &#34;&#34;))
+        attributes[&#34;ReferringPhysicianName&#34;] = str(ds.get(&#34;ReferringPhysicianName&#34;, &#34;&#34;))
+        attributes[&#34;ImageType&#34;] = str(ds.get(&#34;ImageType&#34;, &#34;&#34;))
+        attributes[&#34;ImplementationVersionName&#34;] = str(ds.get(&#34;ImplementationVersionName&#34;, &#34;&#34;))
+        attributes[&#34;TransferSyntaxUID&#34;] = str(ds.get(&#34;TransferSyntaxUID&#34;, &#34;&#34;))
+        
+    return attributes
+$$;
+</code></pre>
+<h3 is-upgraded>Invoking the Python UDF</h3>
+<p>The UDF can be invoked on any DICOM file with a simple SQL statement. First, make sure to refresh the directory table metadata for your external stage.</p>
+<pre><code>alter stage dicom_external refresh;
+
+select python_read_dicom(build_scoped_file_url(@dicom_external,&#39;/ID_0067_AGE_0060_CONTRAST_0_CT.dcm&#39;)) 
+as dicom_attributes;
+</code></pre>
+<p class="image-container"><img alt="Python UDF results" src="img/60a2a0e1a95199b8.png"></p>
+<p>The output is key-value pairs extracted from <code>ID_0067_AGE_0060_CONTRAST_0_CT.dcm</code>.</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;ContentDate&#34;: &#34;19860422&#34;,
+  &#34;ContentTime&#34;: &#34;111754.509051&#34;,
+  &#34;ImageType&#34;: &#34;[&#39;ORIGINAL&#39;, &#39;PRIMARY&#39;, &#39;AXIAL&#39;, &#39;CT_SOM5 SPI&#39;]&#34;,
+  &#34;ImagingFrequency&#34;: &#34;&#34;,
+  &#34;ImplementationVersionName&#34;: &#34;&#34;,
+  &#34;InstanceCreationDate&#34;: &#34;&#34;,
+  &#34;Manufacturer&#34;: &#34;SIEMENS&#34;,
+  &#34;PatientBirthDate&#34;: &#34;&#34;,
+  &#34;PatientID&#34;: &#34;TCGA-17-Z058&#34;,
+  &#34;PatientName&#34;: &#34;TCGA-17-Z058&#34;,
+  &#34;PatientPosition&#34;: &#34;HFS&#34;,
+  &#34;PatientSex&#34;: &#34;M&#34;,
+  &#34;PatientWeight&#34;: &#34;70.824&#34;,
+  &#34;PerformingPhysicianName&#34;: &#34;&#34;,
+  &#34;PhotometricInterpretation&#34;: &#34;MONOCHROME2&#34;,
+  &#34;ProtocolName&#34;: &#34;1WBPETCT&#34;,
+  &#34;ReferringPhysicianName&#34;: &#34;&#34;,
+  &#34;RequestedProcedureID&#34;: &#34;&#34;,
+  &#34;SpecificCharacterSet&#34;: &#34;ISO_IR 100&#34;,
+  &#34;StudyDate&#34;: &#34;19860422&#34;,
+  &#34;StudyDescription&#34;: &#34;&#34;,
+  &#34;StudyID&#34;: &#34;&#34;,
+  &#34;StudyTime&#34;: &#34;111534.486000&#34;,
+  &#34;TransferSyntaxUID&#34;: &#34;&#34;
+}
+</code></pre>
+<p>UDFs are account-level objects. So if a Python developer creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.</p>
+<h2 is-upgraded>Java</h2>
+<p>Alternatively, the same attribute extraction can be accomplished with Java running directly in Snowflake.</p>
+<h3 is-upgraded>Creating a Java UDF</h3>
+<p>The Java code to parse DICOM files requires some dependencies. Instead of downloading those jar files and uploading to an internal stage, you can create an external stage and reference them when creating a UDF inline.</p>
+<pre><code language="language-sql" class="language-sql">-- Create external stage to import jars from S3
+create or replace stage jars_stage
+ url = &#34;s3://sfquickstarts/Common JARs/&#34;
+ directory = (enable = true auto_refresh = false);
+
+-- Create a java function to parse DICOM files
+create or replace function read_dicom(file string)
+returns String
+language java
+imports = (&#39;@jars_stage/dcm4che-core-5.24.2.jar&#39;, &#39;@jars_stage/log4j-1.2.17.jar&#39;, 
+           &#39;@jars_stage/slf4j-api-1.7.30.jar&#39;, &#39;@jars_stage/slf4j-log4j12-1.7.30.jar&#39;,
+           &#39;@jars_stage/gson-2.8.7.jar&#39;)
+HANDLER = &#39;DicomParser.Parse&#39;
+as
+$$
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.io.DicomInputStream;
+import org.xml.sax.SAXException;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
+
+import com.snowflake.snowpark_java.types.SnowflakeFile;
+
+public class DicomParser {
+    public static String Parse(String file_url) throws IOException {
+     SnowflakeFile file = SnowflakeFile.newInstance(file_url);   
+String jsonStr = null;
+
+        try {
+            DicomInputStream dis = new DicomInputStream(file.getInputStream());
+            DicomInputStream.IncludeBulkData includeBulkData = DicomInputStream.IncludeBulkData.URI;
+            dis.setIncludeBulkData(includeBulkData);
+            Attributes attrs = dis.readDataset(-1, -1);
+
+            Map&lt;String, String&gt; attributes = new HashMap&lt;String, String&gt;();
+            attributes.put(&#34;PerformingPhysicianName&#34;,  attrs.getString(Tag.PerformingPhysicianName));
+            attributes.put(&#34;PatientName&#34;,  attrs.getString(Tag.PatientName));
+            attributes.put(&#34;PatientBirthDate&#34;,  attrs.getString(Tag.PatientBirthDate));
+            attributes.put(&#34;Manufacturer&#34;,  attrs.getString(Tag.Manufacturer));
+            attributes.put(&#34;PatientID&#34;,  attrs.getString(Tag.PatientID));
+            attributes.put(&#34;PatientSex&#34;,  attrs.getString(Tag.PatientSex));
+            attributes.put(&#34;PatientWeight&#34;,  attrs.getString(Tag.PatientWeight));
+            attributes.put(&#34;PatientPosition&#34;,  attrs.getString(Tag.PatientPosition));
+            attributes.put(&#34;StudyID&#34;,  attrs.getString(Tag.StudyID));
+            attributes.put(&#34;PhotometricInterpretation&#34;,  attrs.getString(Tag.PhotometricInterpretation));
+            attributes.put(&#34;RequestedProcedureID&#34;,  attrs.getString(Tag.RequestedProcedureID));
+            attributes.put(&#34;ProtocolName&#34;,  attrs.getString(Tag.ProtocolName));
+            attributes.put(&#34;ImagingFrequency&#34;,  attrs.getString(Tag.ImagingFrequency));
+            attributes.put(&#34;StudyDate&#34;,  attrs.getString(Tag.StudyDate));
+            attributes.put(&#34;StudyTime&#34;,  attrs.getString(Tag.StudyTime));
+            attributes.put(&#34;ContentDate&#34;,  attrs.getString(Tag.ContentDate));
+            attributes.put(&#34;ContentTime&#34;,  attrs.getString(Tag.ContentTime));
+            attributes.put(&#34;InstanceCreationDate&#34;,  attrs.getString(Tag.InstanceCreationDate));
+            attributes.put(&#34;SpecificCharacterSet&#34;,  attrs.getString(Tag.SpecificCharacterSet));
+            attributes.put(&#34;StudyDescription&#34;,  attrs.getString(Tag.StudyDescription));
+            attributes.put(&#34;ReferringPhysicianName&#34;,  attrs.getString(Tag.ReferringPhysicianName));
+            attributes.put(&#34;ImageType&#34;,  attrs.getString(Tag.ImageType));
+            attributes.put(&#34;ImplementationVersionName&#34;,  attrs.getString(Tag.ImplementationVersionName));
+            attributes.put(&#34;TransferSyntaxUID&#34;,  attrs.getString(Tag.TransferSyntaxUID));
+
+            Gson gsonObj = new Gson();
+            jsonStr = gsonObj.toJson(attributes);
+        }
+        catch (Exception exception) {
+            System.out.println(&#34;Exception thrown :&#34; + exception.toString());
+            throw exception;
+        }
+
+        return jsonStr;
+    }
+}
+$$;
+</code></pre>
+<h3 is-upgraded>Invoking the Java UDF</h3>
+<p>The UDF can be invoked on any DICOM file with a simple SQL statement. First, make sure to refresh the directory table metadata for your external stage.</p>
+<pre><code>alter stage dicom_external refresh;
+
+select read_dicom(build_scoped_file_url(&#39;@dicom_external&#39;,&#39;/ID_0067_AGE_0060_CONTRAST_0_CT.dcm&#39;))
+as dicom_attributes;
+</code></pre>
+<p class="image-container"><img alt="Java UDF results" src="img/b5efbb7401454de0.png"></p>
+<p>The output is key-value pairs extracted from <code>ID_0067_AGE_0060_CONTRAST_0_CT.dcm</code>.</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;PatientPosition&#34;: &#34;HFS&#34;,
+  &#34;SpecificCharacterSet&#34;: &#34;ISO_IR 100&#34;,
+  &#34;ProtocolName&#34;: &#34;1WBPETCT&#34;,
+  &#34;StudyDate&#34;: &#34;19860422&#34;,
+  &#34;PatientName&#34;: &#34;TCGA-17-Z058&#34;,
+  &#34;ImageType&#34;: &#34;ORIGINAL&#34;,
+  &#34;StudyTime&#34;: &#34;111534.486000&#34;,
+  &#34;PatientWeight&#34;: &#34;70.824&#34;,
+  &#34;ContentTime&#34;: &#34;111754.509051&#34;,
+  &#34;PhotometricInterpretation&#34;: &#34;MONOCHROME2&#34;,
+  &#34;PatientSex&#34;: &#34;M&#34;,
+  &#34;PatientID&#34;: &#34;TCGA-17-Z058&#34;,
+  &#34;ContentDate&#34;: &#34;19860422&#34;,
+  &#34;Manufacturer&#34;: &#34;SIEMENS&#34;
+}
+</code></pre>
+<p>UDFs are account-level objects. So if a developer familiar with Java creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.</p>
+<h2 is-upgraded>Extracting and Storing Attributes</h2>
+<p>We want to store the extracted attributes as columns in a table for analysts to be able to query, analyze, and retrieve files. This can be done easily with Snowflake&#39;s native support for semi-structured data. We could use either the Python or Java UDF for this task, but for the purpose of this Quickstart Guide, we&#39;ll use the Java UDF.</p>
+<pre><code language="language-sql" class="language-sql">create or replace table dicom_attributes as
+select
+    relative_path,
+    file_url,
+    parse_json(read_dicom(build_scoped_file_url(&#39;@dicom_external&#39;, relative_path))) as data,
+    data:PatientName::string as PatientName,
+    data:PatientID::string as PatientID,
+    to_date(data:StudyDate::string,&#39;yyyymmdd&#39;) as StudyDate,
+    data:StudyTime::string as StudyTime,
+    data:StudyDescription::string as StudyDescription,
+    data:ImageType::string as ImageType,
+    data:PhotometricInterpretation::string as PhotometricInterpretation,
+    data:Manufacturer::string as Manufacturer,
+    data:PatientPosition::string as PatientPosition,
+    data:PatientSex::string as PatientSex,
+    data:PerformingPhysicianName::string as PerformingPhysicianName,
+    data:ImagingFrequency::string as ImagingFrequency,
+    data:ProtocolName::string as ProtocolName
+from directory(@dicom_external);
+</code></pre>
+<p>If you collapse and expand the <code>DICOM</code> database in the Objects pane on the left, you should now see a table named <code>DICOM_ATTRIBUTES</code>. Click on that table, and below you should see a preview of the fields you have created along with icons to indicate the data type. You can also see a preview of the view by clicking on the button that looks like a magnifier glass.</p>
+<p class="image-container"><img alt="Create and preview table" src="img/dbd37991cd2f4dc3.gif"></p>
+<p>One of the many new things you can do with Snowsight is quickly see summary statistics and distributions of field values in query results. For example, select the entire table <code>EXTRACTED_DICOM_ATTRIBUTES</code>. Then in the query results, click on the columns such as <code>MANUFACTURER</code>, <code>PATIENTPOSITION</code>, and <code>PATIENTSEX</code> to see the distribution of values in each column.</p>
+<pre><code language="language-sql" class="language-sql">select * from dicom_attributes;
+</code></pre>
+<p class="image-container"><img alt="Snowsight column distributions" src="img/460eacb1cc495a9a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You used Snowflake to extract attributes from DICOM files.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Accessing unstructured data with an <strong>external stage</strong></li>
+<li>Processing unstructured data with a <strong>Java UDF</strong></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/analyze_pdf_invoices_java_udf_snowsight/index.html?index=..%2F..index#0" target="_blank">Quickstart: Analyze PDF Invoices using Java UDF and Snowsight</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/unstructured.html" target="_blank">Unstructured Data Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/java/udf-java.html" target="_blank">Java UDF Docs</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index.html" target="_blank">Snowpark Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

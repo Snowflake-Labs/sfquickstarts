@@ -1,0 +1,174 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Agentic Workflows with Hugging Face Smolagents in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build-agentic-workflows-with-huggingface-smolagents-in-snowflake"
+                  title="Build Agentic Workflows with Hugging Face Smolagents in Snowflake"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p>This guide outlines the process for creating agentic workflows in <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebook on Container Runtime</a> using Smolagents from Hugging Face. These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can use out of the box tools and also create a custom tool that uses Snowflake Cortex AI.</p>
+<h2 is-upgraded>What is Container Runtime?</h2>
+<p>Snowflake Notebooks on Container Runtime enable flexible and scalable model development and deployment directly within Snowflake for <a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">machine learning</a> and <a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">gen AI</a> workflows. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference. Container Runtime offers greater flexibility and tailored compute options for complex modeling workloads. <strong><em>NOTE: This feature is currently in Public Preview.</em></strong></p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Container Runtime</a>.</p>
+<h2 is-upgraded>What is Snowflake Cortex AI?</h2>
+<p>Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.</p>
+<p>Learn more about <a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex AI</a>.</p>
+<h2 is-upgraded>What is Smolagents?</h2>
+<p>It is a lightweight library introduced by Hugging Face that enables language models to perform tasks by writing and executing code. It allows for the creation of agents that can interact with tools, execute multi-step workflows, and integrate with various large language models (LLMs). It supports models hosted on the Hugging Face Hub, as well as those from providers like OpenAI and Anthropic. It also offers first-class support for code agents, facilitating the development of agents that write their actions in code.</p>
+<p>Learn more about <a href="https://github.com/huggingface/Smolagents" target="_blank">Smolagents</a>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a> with ACCOUNTADMIN role</li>
+<li>Access to a <a href="https://huggingface.co/" target="_blank">Hugging Face account and HF token</a><ul>
+<li>Log into your Hugging Face account and access your Hugging Face token by browsing to <strong><em>Settings -&gt; Access Tokens -&gt; New token</em></strong>. Make note of this token – you will need to copy-paste it later on.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create agentic workflows using Smolagents library from Hugging Face in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>Agentic workflow using Smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p><strong>Step 1.</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom.</p>
+<p><strong>Step 2.</strong> In Snowsight, switch your user role to <code>DASH_CONTAINER_RUNTIME_ROLE</code>.</p>
+<p><strong>Step 3.</strong> Click on <a href="https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/huggingface_smolagents_notebook_app.ipynb" target="_blank">huggingface_smolagents_notebook_app.ipynb</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</p>
+<p><strong>Step 4.</strong> In Snowsight:</p>
+<ul>
+<li>On the left hand navigation menu, click on <strong>Projects » Notebooks</strong></li>
+<li>On the top right, click on <strong>Notebook</strong> down arrow and select <strong>Import .ipynb file</strong> from the dropdown menu</li>
+<li>Select <strong>huggingface_smolagents_notebook_app.ipynb</strong> file you downloaded in the step above</li>
+<li>In the Create Notebook popup <ul>
+<li>For Notebook location, select <code>DASH_DB</code> and <code>DASH_SCHEMA</code></li>
+<li>For SQL warehouse, select <code>DASH_WH_S</code></li>
+<li>For Python environment, select <code>Run on container</code></li>
+<li>For Runtime, select <code>Snowflake ML Runtime CPU 1.0</code></li>
+<li>For Compute pool, select <code>CPU_X64_XS</code></li>
+<li>Click on <strong>Create</strong> button</li>
+</ul>
+</li>
+</ul>
+<p><strong>Step 5.</strong> Open Notebook</p>
+<ul>
+<li>Click in the three dots at the very top-right corner and select <code>Notebook settings</code> » <code>External access</code></li>
+<li>Turn on <strong>ALLOW_ALL_ACCESS_INTEGRATION</strong></li>
+<li>Click on <strong>Save</strong> button</li>
+<li>Click on <strong>Start</strong> button on top right</li>
+</ul>
+<aside class="special"><p> NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from <strong>Starting</strong> to <strong>Active</strong>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Notebook" duration="15">
+        <aside class="warning"><p> PREREQUISITE: Successful completion of steps outlined under <strong>Setup</strong>.</p>
+</aside>
+<p>Here&#39;s the code walkthrough of the <a href="https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/huggingface_smolagents_notebook_app.ipynb" target="_blank">huggingface_smolagents_notebook_app.ipynb</a> notebook that you downloaded and imported into your Snowflake account.</p>
+<p><strong>Cell 1</strong></p>
+<p>Install <strong>Smolagents</strong> library</p>
+<p><strong>Cell 2</strong></p>
+<p>Here we create instances of <strong>HfApiModel</strong>, <strong>ToolCallingAgent</strong>, and <strong>CodeAgent</strong> to perform web search using built-in <strong>DuckDuckGoSearchTool</strong>.</p>
+<aside class="special"><p> NOTE: Replace <code>hf_ZkEXVwIXXXXXXXXXXXXXXX</code> with your Hugging Face token before proceeding.</p>
+</aside>
+<p><strong>Cell 3</strong></p>
+<p>Here we use the instance of <strong>CodeAgent</strong> created in step / cell above and perform a web search using built-in tool (DuckDuckGoSearchTool) given the prompt <code>Top 5 announcements at Snowflake Summit 2024 in JSON format. Only return the JSON formatted output as the response and nothing else.</code>. If all goes well, you should see output similar to the following:</p>
+<p class="image-container"><img alt="Search Result 1" src="img/d7a66e856bc88777.png"></p>
+<p><strong>Cell 4</strong></p>
+<p>Here we use the same instance of <strong>CodeAgent</strong> and perform a web search using prompt <code>Top 5 blog articles on AI. Include blog title and link to the article. Return the response in a Pandas dataframe and nothing else.</code>. If all goes well, you should see output similar to the following:</p>
+<p class="image-container"><img alt="Search Result 2" src="img/c9f27bdb2669d836.png"></p>
+<p><strong>Cell 5</strong></p>
+<p>Here we create a new tools <strong>get_dzone_refcards</strong>, <strong>read_dzone_refcards</strong>, and <strong>summarize_article</strong>. The first tool retrieves <a href="https://dzone.com/refcardz?sort=popular" target="_blank">popular DZone Refcards</a>, the second one extracts the content of a given article, and the third one uses <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#complete-function" target="_blank">Snowflake Cortex Complete</a> function to summarize a given article using Anthropic <strong>claude-3-5-sonnet</strong> LLM and prompt <code>Summarize the text enclosed in ### in less than 500 words: ### {article_text} ###.Produce JSON output that includes article title, article url, article summary, and 3 highlights from the article.</code>.</p>
+<p><strong>Cell 6</strong></p>
+<p>Here we create a new instance of <strong>CodeAgent</strong> and provide the three tools created in the previous step with prompt <code>Generate a list of 5 popular DZone RefCard summaries by reading them.</code>.</p>
+<p>If all goes well, you should see the output similar to the following:</p>
+<p class="image-container"><img alt="Search Result 3" src="img/44bc9c2588988e09.png"></p>
+<aside class="special"><p> NOTES: In all of the cases, notice the Python and other code snippets being generated to perform the task(s).</p>
+<p>Since LLMs are non-deterministic in nature, the results for all of the 3 operations above may vary. So I encourage you to try different prompts and <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability" target="_blank">other supported LLMs</a> in your region.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully created agentic workflow using smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create agentic workflows using smolagents library from Hugging Face</li>
+<li>How to build custom tools and models with Snowflake Notebooks on Container Runtime</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake" target="_blank">GitHub Repo</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks on Container Runtime</a></li>
+<li><a href="https://huggingface.co/blog/smolagents#introducing-smolagents-a-simple-library-to-build-agents" target="_blank">Smolagents</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex AI</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

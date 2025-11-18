@@ -1,0 +1,661 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Automating Data Pipelines to Drive Marketing Analytics with Snowflake &amp; Fivetran</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="vhol_fivetran"
+                  title="Automating Data Pipelines to Drive Marketing Analytics with Snowflake &amp; Fivetran"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/devlabs/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>With the growth of your data and business, so does the complexity involved in traditional approaches and architecture. Snowflake and Fivetran have partnered to bring you the Data Cloud and the most automated data integration solution which helps customers simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance. In this virtual hands-on lab, you will follow a step-by-step guide to perform marketing analytics for Google Ads data by using Fivetran, Snowflake, and dbt. Let&#39;s get started.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>To participate in the virtual hands-on lab, attendees need the following:</p>
+<ul>
+<li>Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: <a href="https://github.com/join/" target="_blank">link</a>.  See appendix 1 for step-by-step instructions.</li>
+<li>Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial</a>.  Please sign up using an email address that hasn&#39;t been used previously. See appendix 2 for step-by-step instructions.</li>
+<li>OPTIONAL: Log in to your Google account, if you have one.</li>
+<li>OPTIONAL: Google Ads account credentials.</li>
+</ul>
+<p>Sample Google Ads data will be provided if you do not have a Google Ads account.</p>
+<h2 is-upgraded>What You&#39;ll Need During the Lab</h2>
+<ul>
+<li><a href="https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md" target="_blank">Sample Google Ads data</a> - a public Google Sheet with three workbooks. Each workbook will become a table in our sample Google Ads data schema. The above link takes you to a page full of Google Sheets links – all of these sheets are copies of the same data, you can use any link on that page.</li>
+<li><a href="https://github.com/fivetran/snowflake_fivetran_vhol" target="_blank">dbt Project Github Repository</a><ul>
+<li><a href="https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip" target="_blank">SQL Script file</a> - Participants will load <a href="https://github.com/fivetran/snowflake_fivetran_vhol/raw/main/LAB_ASSETS/vhol_script.sql.zip" target="_blank">this file</a> into a Snowflake worksheet when prompted during the lab.  Save this file where you can easily find it during the lab.</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to begin a Fivetran trial through Snowflake&#39;s Partner Connect</li>
+<li>How to load Google Ads data into Snowflake using Fivetran</li>
+<li>How to run a dbt project via Fivetran to generate models</li>
+<li>How to create analyst sandboxes in Snowflake using clones</li>
+<li>How to leverage data in Snowflake&#39;s Data Marketplace</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A sophisticated marketing data analytics pipeline leveraging Fivetran, dbt, and Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Configuration" duration="10">
+        <ol type="1">
+<li>Login to your Snowflake trial account.<br><img alt="Snowflake Log In Screen" src="img/65dcd59b3b8b1a.png"></li>
+<li>UI Tour (SE will walk through this live). For post-workshop participants, click <a href="https://docs.snowflake.com/en/user-guide/snowflake-manager.html#quick-tour-of-the-web-interface" target="_blank">here</a> for a quick tour of the UI.<br><img alt="Snowflake Worksheets" src="img/84b31301b206662f.png"></li>
+<li>Let&#39;s change our role and enable notifications. We need to work in the ACCOUNTADMIN role for this lab and notifications are how Snowflake will alert you when resource monitor thresholds have been crossed. Click on your User Name in the upper right-hand corner.</li>
+</ol>
+<p class="image-container"><img style="width: 400.00px" src="img/949fa9170c7d436f.png"></p>
+<ol type="1" start="4">
+<li>You&#39;ll get a popup with 4 items; click on Switch Role.</li>
+</ol>
+<p class="image-container"><img style="width: 400.00px" src="img/29e0159a23189b5a.png"></p>
+<ol type="1" start="5">
+<li>Select <strong>ACCOUNTADMIN</strong>.</li>
+</ol>
+<p class="image-container"><img style="width: 500.00px" src="img/6a57f6cb533a0fb8.png"></p>
+<ol type="1" start="6">
+<li>The UI will refresh and you should see ACCOUNTADMIN under your username. If you don&#39;t, go back to step 5.</li>
+</ol>
+<p class="image-container"><img style="width: 400.00px" src="img/eecb190f71662351.png"></p>
+<ol type="1" start="7">
+<li>Click on your username again and you&#39;ll get the same popup with 4 items; click on Preferences.</li>
+</ol>
+<p class="image-container"><img style="width: 500.00px" src="img/f67e5d9a910b5e7.png"></p>
+<ol type="1" start="8">
+<li>Click on <strong>Notifications</strong>.<br><img alt="Preferences - step 2" src="img/72243855159f23.png"></li>
+<li>Select <strong>All</strong>, which will send notifications to your email address and this UI (in the Notifications tile in the upper right).<br><img alt="Preferences - step 3" src="img/df807c36a2468e01.png"></li>
+<li>Now let&#39;s create your Fivetran account.  Click on the <strong>Partner Connect</strong> tile at the top of the UI...</li>
+</ol>
+<p class="image-container"><img style="width: 500.00px" src="img/b074195230ce6f99.png"></p>
+<ol type="1" start="11">
+<li>...and then click on the Fivetran tile inside Snowflake Partner Connect. (if you aren&#39;t in the ACCOUNTADMIN role you&#39;ll receive a warning.  Go back and complete steps 6-9.)<br><img alt="Create Fivetran Account - step 2" src="img/47f3779775f6d2cb.png"></li>
+<li>Click on <strong>Connect</strong>.<br><img alt="Create Fivetran Account - step 2" src="img/ffd1e175a757a63c.png"></li>
+<li>Click on <strong>Activate</strong> in the pop-up that appears. This will open a new browser tab and take you to Fivetran where you will enter a password for the trial account. <img alt="Create Fivetran Account - step 3" src="img/5e439e283f266ea7.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Fivetran - Configure Source" duration="5">
+        <p class="image-container"><img style="width: 500.00px" src="img/f9ef4a46a4b4440c.png"></p>
+<p>In the next three sections we will create an automated data pipeline, with an extract-load (ELT) architecture::</p>
+<ol type="1">
+<li>Extract and Load: <ul>
+<li>Complete Fivetran Account Setup</li>
+<li>Upload Sample Adwords Data using the Fivetran Google Sheets Connector</li>
+</ul>
+</li>
+<li>Transform: <ul>
+<li>Create our first dbt project</li>
+<li>Setup Fivetran dbt Transformations</li>
+</ul>
+</li>
+</ol>
+<p>Let&#39;s get started!</p>
+<h2 is-upgraded>Complete Fivetran Account Setup</h2>
+<ol type="1">
+<li>Create a password.<br><img alt="Fivetran - Password" src="img/2a7a339f9882970c.png"></li>
+<li>That is it! Hang out on this screen until the next section. To log into Fivetran in the future, you can navigate to <a href="https://fivetran.com/dashboard" target="_blank">https://fivetran.com/dashboard</a>. Your email is the same as your Snowflake email (at the time you connected with Partner Connect) and your password is whatever you entered in Step 1 of this section. <img alt="Fivetran - Source" src="img/a3f8b27ac957dc85.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upload Sample Adwords Data With Google Sheets" duration="20">
+        <p><strong>Note</strong>: The <strong>Setup Fivetran dbt Transformations</strong> section assumes you have uploaded the sample data as outlined in this section. If you used your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in the next section.</p>
+<p>For your convenience we have included sample Google Adwords data in the form of a Google Sheets containing three workbooks. Each workbook corresponds to a table to be synced to the Snowflake warehouse. This gives us the opportunity to explore another Fivetran feature, the Google Sheets connector. Google Sheets is, in fact, the most popular connector used by Fivetran customers. In the next section, we will:</p>
+<ul>
+<li>Use the Google Sheets connector to create a new Schema and Tables</li>
+<li>We will create one Google Sheets connector per table.</li>
+<li>We will use any one of the Google Sheet links found in this document: <a href="https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md" target="_blank">link</a></li>
+</ul>
+<ol type="1">
+<li>Google Sheets is the first connector in the list! Click on <strong>Google Sheets</strong>. <img alt="Fivetran - Source2" src="img/4012a2bdc170b5d4.png"></li>
+<li>You should see this screen.<br><img alt="Fivetran - Google Sheet" src="img/83448c9cdd6537e3.png"></li>
+<li>Please use the following values for the two fields:<ul>
+<li>Destination schema: <strong>google_ads_demo</strong></li>
+<li>Destination table: <strong>final_url_performance</strong><img alt="Fivetran - Google Sheet2" src="img/2d7fabda224ad017.png"></li>
+</ul>
+</li>
+<li>Scroll down the page a bit, and paste the URL you just copied into the Sheet URL field. (<a href="https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md" target="_blank">Follow these instructions to get a Google Sheets URL</a>) Then, click the <strong>FIND SHEET</strong> button. This step will take a few moments. <img alt="Fivetran - Google Sheet3" src="img/cb496edb8fb7ef1c.png"></li>
+<li>In the <strong>Named Range</strong> field, choose <strong>final_url_performance</strong>. <img alt="Fivetran - Google Sheet4" src="img/4d837d2250b7c655.png"></li>
+<li>Click <strong>SAVE &amp; TEST</strong>. <img alt="Fivetran - Google Sheet5" src="img/8b28b86c2eb04bca.png"></li>
+<li>When you see <strong>All connection tests passed!</strong>, click the <strong>VIEW CONNECTOR</strong> button. <img alt="Fivetran - Google Sheet6" src="img/10bae8f4e30f63e.png"></li>
+<li>Click <strong>Start Initial Sync</strong>. This will start the data sync into the warehouse! Now any updates to these sheets will be automatically synced to Snowflake. <img alt="Fivetran - Google Sheet7" src="img/accd8c9be03e04cc.png"></li>
+<li>Great! The Google Sheets connector is now syncing. Let&#39;s setup the next table. Click the <strong>Connectors</strong> menu.<br><img alt="Fivetran - Google Sheet8" src="img/37f33dfdbfad13bd.png"></li>
+<li>Click the <strong>+ Connector</strong> button.<br><img alt="Fivetran - Google Sheet9" src="img/6a57dc6f9850a4db.png"></li>
+<li>Please use the following values for the two fields:<ul>
+<li>Destination schema: <strong>google_ads_demo</strong></li>
+<li>Destination table: <strong>criteria_performance</strong><img alt="Fivetran - Google Sheet10" src="img/2b76e010baef7a1e.png"></li>
+</ul>
+</li>
+<li>Scroll down the page a bit, and paste the URL you just copied into the Sheet URL field. (Use the same Sheets URL as step 4, or <a href="https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md" target="_blank">follow these instructions to get a new Google Sheets URL</a>.) Then, click the <strong>FIND SHEET</strong> button. This step will take a few moments. <img alt="Fivetran - Google Sheet11" src="img/c4af094fd4e79a08.png"></li>
+<li>In the <strong>Named Range</strong> field, choose <strong>criteria_performance</strong>. Click <strong>SAVE &amp; TEST</strong>. <img alt="Fivetran - Google Sheet12" src="img/4a291431423c7807.png"></li>
+<li>When the connection tests complete, click <strong>VIEW CONNECTOR</strong>. <img alt="Fivetran - Google Sheet13" src="img/10bae8f4e30f63e.png"></li>
+<li>Click <strong>Start Initial Sync</strong>. Then click <strong>Connectors</strong> on the left-hand menu. <img alt="Fivetran - Google Sheet14" src="img/4750d51492ebe93d.png"></li>
+<li>Click <strong>+ Connector</strong>.<br><img alt="Fivetran - Google Sheet15" src="img/217c56ecf3f7b1a6.png"></li>
+<li>Please use the following values for the two fields:<ul>
+<li>Destination schema: <strong>google_ads_demo</strong></li>
+<li>Destination table: <strong>click_performance</strong><img alt="Fivetran - Google Sheet16" src="img/f1d6d3601e2d1770.png"></li>
+</ul>
+</li>
+<li>Scroll down the page a bit, and paste the URL you just copied into the Sheet URL field. (Use the same Sheets URL as step 4, or <a href="https://github.com/fivetran/snowflake_fivetran_vhol/blob/main/LAB_ASSETS/GSHEETS_LINKS.md" target="_blank">follow these instructions to get a new Google Sheets URL</a>.) Then, click the <strong>FIND SHEET</strong> button. This step will take a few moments.<br><img alt="Fivetran - Google Sheet17" src="img/85bc21dc8e7b80cc.png"></li>
+<li>In the <strong>Named Range</strong> field, choose <strong>click_performance</strong>. Click <strong>SAVE &amp; TEST</strong>.<br><img alt="Fivetran - Google Sheet18" src="img/992155335d4449a0.png"></li>
+<li>When the connection tests complete, click <strong>VIEW CONNECTOR</strong>.<br><img alt="Fivetran - Google Sheet19" src="img/10bae8f4e30f63e.png"></li>
+<li>Click <strong>Start Initial Sync</strong>. Then click <strong>Connectors</strong> on the left-hand menu.<br><img alt="Fivetran - Google Sheet20" src="img/ad79892f0c1cef55.png"></li>
+<li>Congratulations! You can see your 3 Google Sheets connectors running, each creating one of our three sample data tables. Click on <strong>Google Sheets (3)</strong>.<br><img alt="Fivetran - Google Sheet21" src="img/431fe156f8022fdb.png"></li>
+</ol>
+<p>This view shows you all of your Google Sheets connectors. Some of your connectors may still be syncing, that is fine; we will have time for them to complete while we perform the next part of the lab.<br><img alt="Fivetran - Google Sheet22" src="img/c866a844eba05374.png"></p>
+<p>In Snowflake (optional): When the sync is complete, you can see your schema and tables in Snowflake&#39;s Worksheet view. You should be able to see the data in the tables by clicking into the <strong>PC_FIVETRAN_DB</strong> database, into the <strong>GOOGLE_ADS_DEMO</strong> schema, then clicking on one of the tables and then clicking <strong>Preview Data</strong>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Fork Sample dbt Project on Github" duration="15">
+        <p><strong>Note</strong>: The <strong>Setup Fivetran dbt Transformations</strong> section assumes you have uploaded the sample data as outlined in the previous section. If you use your own Google Ads data, that is fine; you will just need to edit the dbt_project.yml file as discussed in this section.</p>
+<p>For your convenience, we have created a sample dbt Github project that is already configured to work with Fivetran&#39;s <a href="https://hub.getdbt.com/fivetran/google_ads_source/latest/" target="_blank">dbt_google_ads_source</a> and <a href="https://hub.getdbt.com/fivetran/google_ads/latest/" target="_blank">dbt_google_ads</a> packages. You can find the sample repository at the following link: https://github.com/fivetran/snowflake_fivetran_vhol</p>
+<p>This section assumes that you have created a Github account and are logged into that account. In this section we are going to:</p>
+<ul>
+<li>Fork the sample github repository.</li>
+<li>Explore the files in the project.</li>
+</ul>
+<p>When you click <a href="https://github.com/fivetran/snowflake_fivetran_vhol" target="_blank">https://github.com/fivetran/snowflake_fivetran_vhol</a> and you are logged in, you should see the following screen. Notice the user / owner is <strong>fivetran</strong> and the repository is named <strong>snowflake_fivetran_vhol</strong>.</p>
+<ol type="1">
+<li>On the upper right (but below your user icon) is a <strong>Fork</strong> button. Click it! <img alt="Fork repo - 1" src="img/27c902d78e3a7d20.png"></li>
+<li>If you have access to multiple github accounts, you will have the option to select into which account to fork this repository. Choose your personal user account.<br><img alt="Fork repo - 2" src="img/3a08247453a92b3a.png"></li>
+</ol>
+<p>That&#39;s it! Notice in the screenshot above the user / owner is <strong>crw</strong> and the repository is (still) named <strong>snowflake_fivetran_vhol</strong> - but now that repository is under your personal Github account. I can now manipulate this repository however I like, without impacting the sample repository. <img alt="Fork repo - 3" src="img/f03ce546ae0449a5.png"></p>
+<p>Congrats! You have successfully created your first dbt project! That was easy! <strong>The next section is OPTIONAL and not required for the workshop.</strong> It is included for your information only.</p>
+<p>There are three very important configuration files to be aware, all at the top level of the file tree.</p>
+<ul>
+<li><strong>dbt_project.yml</strong> - general dbt project settings.</li>
+<li><strong>packages.yml</strong> - include packages that bring functionality to your dbt project, like those provided by Fivetran to enhance your data!</li>
+<li><strong>deployment.yml</strong> - a Fivetran-specific configuration file that controls how frequently the dbt jobs run.</li>
+</ul>
+<p><a href="https://github.com/crw/snowflake_fivetran_vhol/blob/main/dbt_project.yml" target="_blank">dbt_project.yml</a>: <img alt="Fork repo - 4" src="img/fa7bbc34c91ba8ad.png"><br> Various configuration settings are found in this file. Please see <a href="https://docs.getdbt.com/reference/dbt_project.yml" target="_blank">dbt&#39;s documentation</a> for more information on these settings.</p>
+<aside class="special"><p><strong>Did You Know?</strong></p>
+</aside>
+<p>As previously mentioned, <strong>if you want to use your own Google Ads data</strong>, you will need to edit <strong>dbt_project</strong>.yml. You can edit files directly in Github using the pencil icon at the top of the file view (mid-upper right, to the right of the Blame button). All you need to do is remove or comment out the lines that say:</p>
+<pre><code>    vars
+        google_ad_schema: &#39;GOOGLE_ADS_DEMO&#39;
+</code></pre>
+<p>That&#39;s it! Remove those lines and you are good to go. This assumes, of course, that you loaded your own Google Ads data in the previous section! If you have an <strong>ADWORDS</strong> schema in your Snowflake warehouse, you successfully loaded Google Ads data.</p>
+<p><a href="https://github.com/crw/snowflake_fivetran_vhol/blob/main/packages.yml" target="_blank">packages.yml</a>:<br> This is where you can include outside packages to run! See <a href="https://hub.getdbt.com/" target="_blank">hub.getdbt.com</a> for a complete list and installation instructions. As of this writing, Fivetran has created over 17 packages, including packages for Netsuite, Salesforce, Twitter Ads, Marketo, Zendesk, Mailchimp, and more! <img alt="Fork repo - 5" src="img/415c2140af3a0011.png"></p>
+<p><a href="https://github.com/crw/snowflake_fivetran_vhol/blob/main/deployment.yml" target="_blank">deployment.yml</a>:<br> This is a Fivetran-specific file that configures what jobs will run when, leveraging a <a href="https://crontab.guru/" target="_blank">crontab-style syntax</a> for scheduling. Documentation can be found in the file itself. Remember, as described above, you can edit files directly in Github!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Fivetran dbt Transformations" duration="20">
+        <p>In this section we will take the dbt project we created in the previous section, and run it via Fivetran to generate models! We will be showing how Fivetran is used to orchestrate dbt jobs, and the first step is to connect to your dbt project in Github. There are a lot of steps in this section, but for the most part they are not too complicated. Let&#39;s get started!</p>
+<p><strong>Note: dbt Transformations in Fivetran are in beta</strong> as of this writing. Depending how you signed up for your Fivetran trial, you may or may not see the option to &#34;Try dbt Transformations&#34;. If you do not see this option, please reach out to us and we will try to get you enabled to try this feature.</p>
+<p>If you see this screen, please reach out to Fivetran sales – we can enable dbt Transformations beta for your account.<br><img alt="Transformations - 1" src="img/7c7e59bec156d54a.png"></p>
+<ol type="1">
+<li>If you have not already, <strong>switch back to your Fivetran tab in your web browser</strong>. First click on the <strong>Transformations</strong> section of your Fivetran interface. You should see the following interface. We will be clicking the button labeled <strong>Try dbt Transformations</strong>. <img alt="Transformations - 2" src="img/f2c710c8c2962178.png"></li>
+<li>Click <strong>Enable dbt Transformations</strong><img alt="Transformations - 3" src="img/c34cbd4bda3e1d87.png"></li>
+<li>Click <strong>I am ready to connect my Git repo</strong>. <img alt="Transformations - 4" src="img/a37b8c4e38302f5e.png"></li>
+<li>Now we will configure the connection to Github. Next to <strong>Public Key</strong>, click <strong>Copy to Clipboard</strong> (the papers icon). <img alt="Transformations - 5" src="img/83590090a03af040.png"></li>
+<li>On the Github repository we created above (your_username/snowflake_fivetran_vhol) click on <strong>Settings</strong> (farthest-right of the tabs under the repository name.) <img alt="Transformations - 6" src="img/81e5e210251bd6dc.png"></li>
+<li>On the left-hand navigation, click on <strong>Deploy Keys</strong> (lower half, under Integrations, above Secrets). <img alt="Transformations - 7" src="img/4e305f6f6bcb08aa.png"></li>
+<li>Click <strong>Add deploy key</strong>, on the mid-upper-right hand side of the screen. <img alt="Transformations - 8" src="img/7d513bb06e9e576c.png"></li>
+<li>Give the deploy key a memorable, distinct title, like <strong>Fivetran dbt access</strong>. Paste the previously-copied deploy key in the <strong>Key</strong> field. <strong>DO NOT</strong> check &#34;Allow write access&#34; - currently Fivetran only requires read access to the repository. Click <strong>Add key</strong><img alt="Transformations - 9" src="img/42ffaa89af631cfb.png"><br> Phew! Done! If at any time you want to revoke Fivetran&#39;s access to this repository, come back to this screen and delete the deploy key we just created.</li>
+<li>Before leaving Github, return to the <strong>Code</strong> tab. <img alt="Transformations - 10" src="img/3e4a0ed86cc30a12.png"></li>
+<li>Now click the green <strong>Code</strong> button. Make sure the <strong>SSH</strong> tab is selected, and copy the: <strong>git@github.com:your_username/snowflake_fivetran_vhol.git</strong> URL. We will need it on the next step. <strong>Note</strong>: it is safe to ignore errors about not having an SSH key configured here. The Deploy Key we configured will give Fivetran access to this repository. <img alt="Transformations - 10" src="img/698e38fb9300531b.png"></li>
+<li>Paste the value into the <strong>Repository URL</strong> field. <img alt="Transformations - 10" src="img/413bab7d43fe842a.png"></li>
+<li>For <strong>Default Schema Name</strong> field, enter <strong>GOOGLE_ADS_DBT</strong><img alt="Transformations - 10" src="img/fe4610d53d20b519.png">As of this writing, you need to perform the next actions to continue.<strong>Note</strong>: Github has changed their default branch name to &#34;main&#34;. This change was made very recently, and Fivetran has not yet caught up to the new naming convention. For the time being, for this guide, we will need to manually change the branch name.</li>
+<li>Click <strong>Show Advanced Options</strong>. <img alt="Transformations - 10" src="img/31cf31e092c78047.png"></li>
+<li>Change the <strong>Git branch</strong> field&#39;s value to <strong>main</strong>.<br><img alt="Transformations - 10" src="img/9c62c401a45a3fec.png"></li>
+<li>Click <strong>SAVE</strong>. Then when you see the green success message, click <strong>TRANSFORMATIONS</strong>. <img alt="Transformations - 10" src="img/2019f3dd5f3d4a34.png"></li>
+<li>That&#39;s it! Your dbt project  is now configured to run and be orchestrated with Fivetran. In the upper right corner, there is a toggle switch, <strong>Activate dbt Transformations</strong>. Click this switch to start your transformations running. <img alt="Transformations - 10" src="img/4f0554ac5b8fa33f.png"></li>
+<li>Now if left to their own devices, your transformations will run on the schedules listed below. As a reminder, these schedules are configured in the <a href="https://github.com/crw/snowflake_fivetran_vhol/blob/main/deployment.yml" target="_blank">deployment.yml</a> file, as discussed in the previous section. But let&#39;s run one right away! Click on the <strong>weekdays</strong> line item.<br><img alt="Transformations - 10" src="img/2d61af2d762f215a.png"></li>
+<li>In the upper right corner, click <strong>Run now</strong> (the circular arrow icon.) <img alt="Transformations - 10" src="img/155720d529de8e5.png"></li>
+<li>The dbt job runs successfully! Click on the line item with the green checkmark next to it. <img alt="Transformations - 10" src="img/78fde41991657e32.png"></li>
+<li>Here we can see the results of running the dbt job. Click on the down arrow (caret) next to run models. <img alt="Transformations - 10" src="img/4298515b51c4a738.png"></li>
+</ol>
+<p>This exposes the results of running the dbt job. If you scroll to the bottom of the page, you can see the job ran successfully. <img alt="Transformations - 10" src="img/4b4c690d8c9a6615.png"></p>
+<p>Congratulations! You have successfully run your first dbt job!</p>
+<p>In Snowflake (optional): We can see the results of all of this hard work in the Snowflake Worksheets view. On the left hand column, you can see the GOOGLE_ADS_DBT schema which has the results of running our dbt job: fresh models, produced simply by including Fivetran&#39;s open source dbt_google_ads package! We are that much closer to exposing the true value of this data!</p>
+<p>The tables created by these models do the following:</p>
+<ul>
+<li><strong>GOOGLE_ADS__CRITERIA_AD_ADAPTER</strong><ul>
+<li>Each record represents the daily ad performance of each criteria in each ad group and campaign.</li>
+</ul>
+</li>
+<li><strong>GOOGLE_ADS__URL_AD_ADAPTER</strong><ul>
+<li>Each record represents the daily ad performance of each URL in each ad group, including information about the used UTM parameters.</li>
+</ul>
+</li>
+<li><strong>GOOGLE_ADS__CLICK_PERFORMANCE</strong><ul>
+<li>Each record represents a click, with a corresponding Google click ID (gclid).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Did You Know?</strong> All of the code that produces these models is open source! Fivetran officially supports over 20 open source dbt packages that model data delivered by Fivetran, typically to provide commonly required aggregations. You can see all of the available packages at <a href="https://hub.getdbt.com/" target="_blank">https://hub.getdbt.com/</a> - scroll down to the Fivetran section.</p>
+<p>The two packages we use in this lab are the Google Ads packages: <a href="https://hub.getdbt.com/fivetran/google_ads_source/latest/" target="_blank">google_ads_source</a> <a href="https://github.com/fivetran/dbt_google_ads_source" target="_blank">source code on github</a><a href="https://hub.getdbt.com/fivetran/google_ads/latest/" target="_blank">google_ads</a> <a href="https://github.com/fivetran/dbt_google_ads" target="_blank">source code on github</a></p>
+<p>You can save considerable development time by leveraging Fivetran&#39;s open source dbt packages with data delivered by Fivetran. Now that you have a running dbt project, feel free to try including more packages!</p>
+<p>The summary so far: Maintenance-free data pipelines and powerful in-warehouse transformations</p>
+<p>In the previous sections, we learned the following skills:</p>
+<ul>
+<li>How to setup a Fivetran connector (in this case, a Google Sheets connector)</li>
+<li>How to create a dbt project by forking the snowflake_fivetran_vhol sample repository</li>
+<li>How to enable dbt Transformations in Fivetran by connecting our repository</li>
+</ul>
+<p>In doing so, we have set up a complete, end-to-end modern data pipeline focusing on the advantages of the Extract-Load-Transform (ELT) architectural approach. Data loading is extremely simple to configure and comes with the benefit of hands-free maintenance, forever. dbt is a powerful transformation tool that comes with many open source Fivetran modeling packages out-of-the-box. Moreover, Fivetran manages the execution of those transformation jobs, and the jobs run natively in the Snowflake warehouse, exposing all of the pßower of Snowflake&#39;s query engine to your transformations.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake - Part Two" duration="15">
+        <ol type="1">
+<li>Back in the Snowflake UI, let&#39;s take a quick look at the query history to see all the work that Fivetran/dbt performed.<br><img alt="Snowflake Part 2 - 1" src="img/44ebe718f8ccf685.png"></li>
+<li>Click on <strong>Add a filter</strong>.<br><img alt="Snowflake Part 2 - 2" src="img/1ed64d2ebda4a339.png"></li>
+<li>Change the left box to User and select PC_FIVETRAN_USER in the right box.  All of the Fivetran/dbt queries executed as this user.<br><img alt="Snowflake Part 2 - 3" src="img/fcbcfb67a95a4970.png"></li>
+<li>In the table below you can see all of these queries. Scroll down. Click on a SQL Text value and you&#39;ll see a pop-up of the specific SQL statement. You can read about this UI screen <a href="https://docs.snowflake.com/en/user-guide/ui-history.html" target="_blank">here</a>.<br><img alt="Snowflake Part 2 - 4" src="img/9fe9aa152f7b5364.png"></li>
+<li>Click on the <strong>Worksheets</strong> tile at the top. <img alt="Snowflake Part 2 - 5" src="img/c12444582a9093ef.png"></li>
+<li>Your screen will look like this.  This is where we will do most of our remaining work. <img alt="Snowflake Part 2 - 6" src="img/60e3b8e999b54392.png"></li>
+<li>Now load the script (vhol_script.sql) by clicking on the button and then selecting in the pop-up.  Navigate your computer and find the script. <img alt="Snowflake Part 2 - 7" src="img/15db573521c6fc23.png"></li>
+<li>The script should appear in your worksheet like this. <img alt="Snowflake Part 2 - 8" src="img/4cbd9668098a4a64.png"></li>
+<li>Notice on the left-hand side is a database browser with a database called PC_FIVETRAN_DB.  This is the database that you loaded with Fivetran.  Click on it and you will see the schemas.  GOOGLE_ADS_DEMO is where the data initially loaded and GOOGLE_ADS_DBT is the schema created by the dbt process.  Click on GOOGLE_ADS_DBT and you&#39;ll see the tables and views that live within. <img alt="Snowflake Part 2 - 9" src="img/70f86b71e568ff9c.png"></li>
+<li>Let&#39;s start our work performing DBA functions.   We need to set the context we want to use within the worksheet.  In each worksheet I can have a different role,  warehouse, database, and schema.  Each worksheet is independent of the others (like Snowflake compute!).  My worksheet role can also be different from the role I have in the upper right-hand corner under my name.  <br><br>Let&#39;s execute the SQL in script section <strong>A</strong> to set our worksheet context.  To do so, highlight the two lines (<em>use role..., use schema...</em>) and click the <img style="width: 60.00px" src="img/84332f39a521dafb.png"> button.  <br><br><strong><em>Pro Tip: You may get a pop-up asking if you want to run both statements.  If you don&#39;t want this warning every time, click in the check box and click OK.</em></strong></li>
+</ol>
+<pre><code>/*-----
+--A--
+-----
+--Let&#39;s set our worksheet role and db/schema*/
+use role ACCOUNTADMIN;
+use schema PC_FIVETRAN_DB.GOOGLE_ADS_DBT;
+</code></pre>
+<pre><code>Notice that your worksheet context now has a default role, database, and schema but no warehouse (yet).  
+![Snowflake Part 2 - 11](assets/image80.png)  
+</code></pre>
+<ol type="1" start="11">
+<li>Let&#39;s pretend that the data we loaded and transformed with Fivetran is our production data.  We only want it to be changed by our Fivetran process.  Since our analysts will want to experiment with and change the data,  we&#39;ll <strong>CLONE</strong> the entire PC_FIVETRAN_DB database so they can have their own sandbox.  This is a logical copy; it will consume no additional space unless the data in the clone starts to change.  This is a fantastic tool for creating as many sandboxes as you need.  It also works well for making time-specific snapshots.  <br><br><strong><em>Cloning reduces time to value  - full production clones are fast and support more accurate analytical results because they are rich and complete data sets.</em></strong></li>
+<li>Run the <strong>Create Database</strong> SQL and the <strong>Use Schema</strong> commands in section <strong>B</strong> to make a clone, then refresh the database browser with the (small) <img alt="Refresh" src="img/152df3eb54271ec2.png"> button:</li>
+</ol>
+<pre><code>/*-----
+--B--
+-----
+--Make a new DEV db and schema and then clone the 3 key tables for isolated analysis and experimentation*/
+create database GOOGLE_ADS_DEV clone PC_FIVETRAN_DB;
+use schema GOOGLE_ADS_DEV.GOOGLE_ADS_DBT;
+</code></pre>
+<pre><code>Now your analysts have GOOGLE_ADS_DEV - a complete clone of PC_FIVETRAN_DB.  
+</code></pre>
+<ol type="1" start="13">
+<li>Next we need to create a warehouse (compute) for the analysts. For this workshop we&#39;ll create an Extra Small - the smallest unit of Snowflake compute - with an auto suspend time of 2 minutes and auto resume enabled.  Auto resume means it will start up when a request is made.  Run the SQL in section <strong>C</strong> to create the warehouse.  Notice that this warehouse is now in your worksheet context.</li>
+</ol>
+<pre><code>/*-----
+ --C--
+ -----
+ --Create a virtual warehouse (compute) for the Marketing Analyst team to do their work*/
+create or replace warehouse MKT_ANALYSIS with warehouse_size = &#39;XSMALL&#39; auto_suspend = 120 --seconds
+  auto_resume = TRUE;
+</code></pre>
+<pre><code>_**Snowflake compute is unique.  It&#39;s (1) easy to define and manage; (2) fast to activate and suspend; (3) self-suspending; (4) self-healing; (5) isolated from the storage layer; (6) isolated  from other compute; (7) quick to scale up/down and out/in; (8) non-disruptive when any of this is happening.**_
+</code></pre>
+<ol type="1" start="14">
+<li>For our last act as DBA we&#39;ll create a <strong>resource monitor</strong> to track warehouse consumption.  Resource monitors are convenient tools for setting time-based consumption thresholds on compute at the warehouse or account level.  You can set alerts for various thresholds and even prevent a warehouse from running once it reaches a credit value that you set.</li>
+</ol>
+<pre><code>/*-----
+ --D--
+ -----
+ --Create a resource monitor to track credit usage of the marketing virtual warehouse*/
+create or replace RESOURCE MONITOR &#34;MARKETING_ANALYSIS&#34; with CREDIT_QUOTA = 20,
+  frequency = &#39;DAILY&#39;,
+  start_timestamp = &#39;IMMEDIATELY&#39;,
+  end_timestamp = null triggers 
+  ON 100 PERCENT DO SUSPEND 
+  ON 5 PERCENT do NOTIFY 
+  ON 10 PERCENT do NOTIFY 
+  ON 50 PERCENT do NOTIFY 
+  ON 90 PERCENT do NOTIFY;
+alter WAREHOUSE &#34;MKT_ANALYSIS&#34;
+set RESOURCE_MONITOR = &#34;MARKETING_ANALYSIS&#34;;
+</code></pre>
+<pre><code>Run the two SQL statements in section **D** to create a resource monitor that has a daily 20 credit limit, sends an alert at 5%, 10%, 50%, and 99% thresholds, and suspends the warehouse at 100% (20 credits).  The second statement associates the resource monitor to the warehouse.   
+</code></pre>
+<ol type="1" start="15">
+<li>Now we&#39;ll switch to ‘Analyst mode&#39;. In real life this would be a different person with a different userid and a different Role.  An analyst might write a query like the one in section <strong>E</strong> of the script to answer the question &#34;What was the best performing cranberry sauce campaign?&#34; Go ahead and run it.  We&#39;re working with tiny data sets in the lab but in reality we might run over millions or billions of rows.</li>
+</ol>
+<pre><code>/*-----
+ --E--
+ -----
+ --What was the best performing cranberry sauce campaign?*/
+select ad_group_name,
+  campaign_name,
+  sum(spend) as TOT_SPEND,
+  sum(clicks) as TOT_CLICKS,
+  sum(impressions) as TOT_IMPRESSIONS,
+  sum(impressions) / sum(spend) as IMPRESSIONS_PER_DOLLAR,
+  sum(spend) / sum(clicks) as cost_per_click
+from GOOGLE_ADS__URL_AD_ADAPTER
+where ad_group_name = &#39;cranberry sauce&#39;
+group by ad_group_name,
+  campaign_name
+order by 6 desc;
+</code></pre>
+<ol type="1" start="16">
+<li>These are interesting results, but you have a hypothesis:  clicks increase with snowy weather.  Let&#39;s go to the Snowflake Marketplace and find what we need.  The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab).  Click on Preview App at the top of the UI. <img alt="Snowflake Part 2 - 16" src="img/994f41b1b2825492.png"></li>
+<li>Click <strong>Sign in to continue</strong>.  You will need to use the same user and pw that you used to login to your Snowflake account the first time. <img alt="Snowflake Part 2 - 17" src="img/74156d415612bbc0.png"></li>
+<li>You&#39;re now in the new UI - Snowsight.  It&#39;s pretty cool - with charting and dashboards and context-sensitivity - but today we&#39;re just focused on getting to the Data Marketplace.  Click on <strong>Data</strong>... <img alt="Snowflake Part 2 - 18" src="img/c8c54c6d6fa3db14.png"></li>
+<li>...and then <strong>Marketplace</strong>...<br><img alt="Snowflake Part 2 - 19" src="img/bd8b922cd967cfce.png"></li>
+<li>...and now you&#39;re in!  Over 100 providers have made datasets available for you to enrich your data.  Today we&#39;re going to grab a sample of weather data.  Click the <strong>Ready to Query</strong> checkbox...<br><img alt="Snowflake Part 2 - 20" src="img/c0a14de2bb7fce57.png"></li>
+<li>And then find the <strong>Weather Source</strong> tile.  Once you find it, click on it.<br><img alt="Snowflake Part 2 - 21" src="img/94d7e1b025734989.png"></li>
+<li>Here you&#39;ll find a description of the data, example queries, and other useful information.  Let&#39;s get this data into our Snowflake account.  You&#39;ll be amazed at how fast and easy this is.  Click <img style="width: 60.00px" src="img/826dbc3d692b6bb0.png">. <img alt="Snowflake Part 2 - 22" src="img/54eb8237a550b78.png"></li>
+<li>In the pop-up, rename the database to WEATHERSOURCE (<strong>important!</strong>),  check the &#34;I accept...&#34; box and then <img style="width: 100.00px" src="img/4c901d5f324b35a5.png">.  No need to add additional roles (though you might in real-life).<br><img alt="Snowflake Part 2 - 24" src="img/7a6ff950ccbd7c46.png">What is happening here?  Weather Source has granted access to this data from their Snowflake account to yours.  You&#39;re creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts!  When you query you&#39;ll really be querying the data that lives in the Weather Source account.  If they change the data you&#39;ll automatically see those changes.  No need to define schemas, move data,  or create a data pipeline either. Isn&#39;t that slick?</li>
+<li>Now click <strong>Done</strong>. You can close this browser tab and go back to the other Snowflake UI that you started in. <img alt="Snowflake Part 2 - 25" src="img/f6018963f534bcd7.png"></li>
+<li>Refresh the database browser and notice you have a new shared database, ready to query and join with your data. Click on it and you&#39;ll see views under the PUBLIC schema. We&#39;ll use one of these next.<br><img alt="Snowflake Part 2 - 26" src="img/4c140a7e705c0bdf.png"></li>
+<li>With production-sized data sets we are likely to have very large tables and complex queries; therefore, we might want to increase the amount of compute we&#39;re using to perform this analysis.  In Snowflake this is fast and easy.  Run the statement in section <strong>G</strong>.  Notice how fast it scales up. No disruption. No shuffling of data.  We&#39;ve changed from an XS (one node cluster) to an XL (16 node cluster) in seconds.  Ready to go!</li>
+</ol>
+<pre><code>/*-----
+--G--
+----- 
+--With production-sized data sets we might want to join and query tables with billions of rows
+--In these cases it&#39;s easy and productive to scale up our virtual warehouse so these queries run faster*/
+alter warehouse mkt_analysis set warehouse_size = &#39;XLARGE&#39;;
+</code></pre>
+<ol type="1" start="27">
+<li>So, let&#39;s join that weather data to our Google Ads data and see if there is a correlation between clicks and snowfall.  Run the correlation query in section <strong>H</strong>. Remember that we&#39;re actually joining data across two accounts, but the experience and performance is seamless and fast.</li>
+</ol>
+<pre><code>/*-----
+ --H--
+ -----
+ --Is there any correlation between clicks and snowfall for any ad group?*/
+select ad_group_name,
+  abs(corr(clicks, w.tot_snowfall_in)) as clicks_snow_corr
+from GOOGLE_ADS__URL_AD_ADAPTER ga,
+  &#34;WEATHERSOURCE&#34;.&#34;PUBLIC&#34;.&#34;HISTORY_DAY&#34; w
+where ga.date_day = w.date_valid_std
+group by 1
+order by 2 desc;
+</code></pre>
+<pre><code>It&#39;s a weak correlation so maybe our hypothesis isn&#39;t worth exploring further. But our ability to quickly source Marketplace data and mash it with our own data has saved us lots of time and we can iterate further.
+![Snowflake Part 2 - 29](assets/image125.png)  
+</code></pre>
+<ol type="1" start="28">
+<li>Because this combination may yet have value, let&#39;s create a view that combines the correlations with the URL data so others can take a look more easily.  Run the SQL in section <strong>I</strong>.  One creates the view and the other queries it.</li>
+</ol>
+<pre><code>/*-----
+ --I--
+ -----
+ --Let&#39;s create new view with the correlations built in to the URL_AD_ADAPTER data*/
+create or replace view GOOGLE_ADS__URL_AD_ADAPTER_CORR as (
+    with corr as (
+      select ad_group_name,
+        abs(corr(clicks, w.tot_snowfall_in)) as clicks_snow_corr
+      from GOOGLE_ADS__URL_AD_ADAPTER ga,
+        &#34;WEATHERSOURCE&#34;.&#34;PUBLIC&#34;.&#34;HISTORY_DAY&#34; w
+      where ga.date_day = w.date_valid_std
+      group by 1
+    ),
+    base as (
+      select *
+      from GOOGLE_ADS__URL_AD_ADAPTER
+    )
+    select b.*,
+      c.clicks_snow_corr
+    from base b,
+      corr c
+    where b.ad_group_name = c.ad_group_name
+  );
+select *
+from GOOGLE_ADS__URL_AD_ADAPTER_CORR;
+</code></pre>
+<ol type="1" start="29">
+<li>Now that our heavy lifting is done, let&#39;s scale down the warehouse size. No need to pay for more compute than we need. Run the SQL in section <strong>J</strong>.</li>
+</ol>
+<pre><code>/*-----
+--J--
+-----
+--Once we&#39;re done with our complex queries we scale the warehouse back down*/
+alter warehouse mkt_analysis set warehouse_size = &#39;XSMALL&#39;;
+</code></pre>
+<ol type="1" start="30">
+<li>For our last trick let&#39;s imagine we&#39;ve accidentally dropped the table we&#39;re working with.  No one has ever done that!  Run the DROP statement in section <strong>K</strong> and then refresh the database browser.  Notice the table is gone.  Now run the UNDROP and refresh.  It&#39;s back! This is the power of time travel.  You can restore lost data for up to 90 days of history.</li>
+</ol>
+<pre><code>/*-----
+--K--
+-----
+--Let&#39;s look at one last great feature of Snowflake.  Have you ever accidentally dropped a table?  Or a database?  
+--Let&#39;s &#39;accidentally&#39; drop a table.*/
+drop table GOOGLE_ADS__URL_AD_ADAPTER; 
+
+/*--Fortunately, in Snowflake, this is an easy fix.*/
+undrop table GOOGLE_ADS__URL_AD_ADAPTER;
+</code></pre>
+<pre><code>: _Time Travel also enables you to query and replace tables as of a particular point in time or prior to a specific SQL statement._  
+</code></pre>
+<ol type="1" start="31">
+<li>One last thing. How is our Snowflake consumption looking?  It&#39;s easy to understand.  We&#39;ll look in two places. First, you might have a Notification, so click on that tile.  When you have notifications enabled and resource monitors built, you&#39;ll get notifications.<br><img alt="Snowflake Part 2 - 32" src="img/361c30ff58302e8.png"></li>
+<li>See anything that looks like this?  These notifications come from the resource monitor we set up earlier in the lab.  You&#39;ll also get emails with the same information.<br><img alt="Snowflake Part 2 - 33" src="img/8f6cfcca7ff8cf66.png"><br><img alt="Snowflake Part 2 - 33" src="img/8f6cfcca7ff8cf66.png"><img style="width: 400.00px" src="img/8f6cfcca7ff8cf66.png"></li>
+<li>Now, click on the <strong>Account</strong> tile.<br><img alt="Snowflake Part 2 - 34" src="img/864116f14b458545.png"></li>
+<li>Then click on <strong>Usage</strong>.<br><img alt="Snowflake Part 2 - 35" src="img/547afa49241596d7.png"></li>
+<li>Here you can see monthly/daily credit usage...<br><img alt="Snowflake Part 2 - 36" src="img/d23392c4af34f4ae.png"></li>
+<li>...and monthly/daily storage usage (you won&#39;t see much for storage yet since our data is small).  In addition to these screens you can query the Snowflake metadata layer for the same info and build reports in your favorite BI tool.<br><img alt="Snowflake Part 2 - 37" src="img/f2bd4ade57206755.png"></li>
+</ol>
+<p><strong>This concludes the lab.  We hope you learned a lot and are interested in exploring Fivetran and Snowflake for your use cases.  Please feel free to ask questions.</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="2">
+        <p>Congratulations on completing this lab on automating data pipelines to drive marketing analytics! You&#39;ve mastered the Fivetran and Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.</p>
+<p>We encourage you to continue with your free trials by loading your own sample or production data and by using some of the more advanced capabilities of Fivetran and Snowflake not covered in this lab.</p>
+<h2 is-upgraded>Additional Resources:</h2>
+<ul>
+<li>Read the <a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">Definitive Guide to Maximizing Your Free Trial</a> document</li>
+<li>Attend a <a href="https://www.snowflake.com/about/events/" target="_blank">Snowflake virtual or in-person event</a> to learn more about our capabilities and customers</li>
+<li><a href="https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake" target="_blank">Join the Snowflake community</a></li>
+<li><a href="https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University" target="_blank">Sign up for Snowflake University</a></li>
+<li><a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">Contact our Sales Team</a> to learn more</li>
+</ul>
+<h2 is-upgraded>What we&#39;ve covered:</h2>
+<ul>
+<li>How to begin a Fivetran trial through Snowflake&#39;s Partner Connect</li>
+<li>How to load Google Ads data into Snowflake using Fivetran</li>
+<li>How to run a dbt project via Fivetran to generate models</li>
+<li>How to create analyst sandboxes in Snowflake using clones</li>
+<li>How to leverage data in Snowflake&#39;s Data Marketplace</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Appendix I: Github Account Creation" duration="0">
+        <p>Enter a username, email address, and password. <img alt="Appendix I - 1" src="img/723804dda79a5d49.png"></p>
+<p>Solve the puzzle and continue! <img alt="Appendix I - 2" src="img/74332143bce6ed4d.png"></p>
+<p>You can skip down to the bottom of this screen, or take the time to choose your interests. <img alt="Appendix I - 3" src="img/72b1a66d3ccb12dd.png"></p>
+<p>Choose <strong>Complete setup</strong>. <img alt="Appendix I - 4" src="img/b8e2f0c2d2b4f1e8.png"></p>
+<p>Head to your email application and verify your email address. <img alt="Appendix I - 5" src="img/b8f7ee377d8cdc07.png"></p>
+<p>That&#39;s it! You now have a Github account. <img alt="Appendix I - 6" src="img/ba783682e85c4b58.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Appendix II: Snowflake Account Creation" duration="0">
+        <ol type="1">
+<li>Go to <a href="https://signup.snowflake.com/" target="_blank">https://signup.snowflake.com/</a>.</li>
+<li>Enter your personal information.  You need to use a valid email address that you can access and haven&#39;t used previously. <img alt="Appendix II - 1" src="img/9f43bc3ee2e20194.png"></li>
+<li>When you sign up for Snowflake it auto-populates to <strong>Enterprise</strong>. This is the best choice for this lab. Choose the cloud/region closest to you and click the &#34;GET STARTED&#34; button. <img alt="Appendix II - 2" src="img/5a89c48ece738d32.png"></li>
+<li>Your account will provision in 1-2 minutes and you will receive an email activation link like this to create a user.  Click on the <strong>CLICK TO ACTIVATE</strong> link.<br><img alt="Appendix II - 3" src="img/bdc66f8460dd558e.png"></li>
+<li>Next, you&#39;ll see this page your browser. Specify your username and password. Be sure to store your credentials in a safe location.<br><img alt="Appendix II - 4" src="img/8667f3fd2cfb1d62.png"></li>
+<li>You will be logged in to your new account and it will look like this.  You will also receive another email with your username and account URL.<br><img alt="Appendix II - 5" src="img/842be667e769a056.png"></li>
+</ol>
+<h2 is-upgraded>Congratulations, you are ready to work in Snowflake!</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Appendix III: Fivetran - Configure Google Adwords Connector" duration="0">
+        <p>Log into Fivetran and you should see the following screen, which shows our selection of source connectors. Use the type-down or the drop-down menu to find the <a href="https://fivetran.com/docs/applications/google-ads" target="_blank">Google Ads</a> connector. If you have already setup your first connector, you may need to go to the Connectors tab in the Fivetran web application, and choose <strong>+ Connector</strong>.<br><img alt="Appendix III - 1" src="img/eee6fd2f11f7dcea.png"></p>
+<p>The Fivetran Google Ads connector setup screen is shown below, before we begin to modify it. On the left are the configuration controls. On the right are inline, helpful setup instructions.<br><img alt="Appendix III - 2" src="img/6fa74560995cac8b.png"></p>
+<p>Obtain your customer ID per the instructions on the right.<br><img alt="Appendix III - 3" src="img/9f8db1be25dee937.png"></p>
+<p>And enter it in the field on the left. Click <strong>AUTHORIZE</strong> to sign in to Google.<br><img alt="Appendix III - 4" src="img/deccecfffae47dc8.png"></p>
+<p>Choose the account with which you wish to authenticate.<br><img alt="Appendix III - 5" src="img/c287f5a9a5c7db0f.png"></p>
+<p>Authorize Fivetran to access your Google Ads data by clicking <strong>Allow</strong>.<br><img alt="Appendix III - 5" src="img/c5401a71dbab0522.png"></p>
+<p>Now we need to configure three reports. These three reports will give us the raw data that we will use to generate our models later. Each report will require:</p>
+<ul>
+<li>A Destination Table Name</li>
+<li>A Report Type</li>
+<li>A selection of Fields</li>
+</ul>
+<p>For each report, we will use Configuration Type: Use Custom Report.</p>
+<aside class="special"><p><strong>Did You Know?</strong></p>
+</aside>
+<p>You can find the configuration requirements for these three reports in the documentation of the Fivetran dbt package for Google Ads we will be using later, <a href="https://hub.getdbt.com/fivetran/google_ads_source/latest/" target="_blank">dbt_google_ads_source</a>. You can always find a list of all of Fivetranour available packages on <a href="https://hub.getdbt.com/" target="_blank">dbt Hub</a> and in our <a href="https://fivetran.com/docs/transformations/dbt" target="_blank">documentation</a>.</p>
+<p>Ads connectors, also known as Marketing connectors,  are different from most other Fivetran connectors in that, rather than replicate a set schema, you configure a series of reports. Each report becomes a table in the destination schema. This is necessary as the raw data that is returned from Ads connectors changes depending on the Fields chosen in the report. After the Hands-on Lab, you can always return to the connector setup and add more reports.</p>
+<p>For the first report, use the following configuration:</p>
+<ul>
+<li>Destination Table Name: final_url_performance</li>
+<li>Report Type: FINAL_URL_REPORT</li>
+<li>Fields: <ul>
+<li>AccountDescriptiveName</li>
+<li>AdGroupId</li>
+<li>AdGroupName</li>
+<li>AdGroupStatus</li>
+<li>CampaignId</li>
+<li>CampaignName</li>
+<li>CampaignStatus</li>
+<li>Clicks</li>
+<li>Cost</li>
+<li>Date</li>
+<li>EffectiveFinalUrl</li>
+<li>ExternalCustomerId</li>
+<li>Impressions</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="Appendix III - 7" src="img/c3578178c61de1c3.png"></p>
+<p>For the second report, use the following configuration:</p>
+<ul>
+<li>Destination Table Name: criteria_performance</li>
+<li>Report Type: CRITERIA_PERFORMANCE_REPORT</li>
+<li>Fields: <ul>
+<li>AccountDescriptiveName</li>
+<li>AdGroupId</li>
+<li>AdGroupName</li>
+<li>AdGroupStatus</li>
+<li>CampaignId</li>
+<li>CampaignName</li>
+<li>CampaignStatus</li>
+<li>Clicks</li>
+<li>Cost</li>
+<li>Criteria</li>
+<li>CriteriaDestinationUrl</li>
+<li>CriteriaType</li>
+<li>Date</li>
+<li>ExternalCustomerId</li>
+<li>Id</li>
+<li>Impressions</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="Appendix III - 8" src="img/846192e1cb0472b.png"></p>
+<p>For the third report, use the following configuration:</p>
+<ul>
+<li>Destination Table Name: click_performance</li>
+<li>Report Type: CLICK_PERFORMANCE_REPORT</li>
+<li>Fields: <ul>
+<li>AccountDescriptiveName</li>
+<li>AdGroupId</li>
+<li>AdGroupName</li>
+<li>AdGroupStatus</li>
+<li>CampaignId</li>
+<li>CampaignName</li>
+<li>CampaignStatus</li>
+<li>Clicks</li>
+<li>CriteriaId</li>
+<li>Date</li>
+<li>ExternalCustomerId</li>
+<li>GclId</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="Appendix III - 9" src="img/31defab304d3d5d5.png"></p>
+<p>That&#39;s it for setting up reports! To review, your connector configuration screen should look like the screen shot below:<br><img alt="Appendix III - 10" src="img/8979651f679d4c57.png"></p>
+<p>Great! Now click <strong>SAVE &amp; TEST</strong> to save your configuration.<br><img alt="Appendix III - 11" src="img/8a7bff68fca08cd0.png"></p>
+<p>Click <strong>CONTINUE</strong> to see the next screen, where you can <strong>Start Initial Sync</strong> to start the data flowing!<br><img alt="Appendix III - 12" src="img/eed04bc8255fb21e.png"></p>
+<aside class="special"><p><strong>Did You Know?</strong></p>
+</aside>
+<p>Fivetran does more than just sync Ad connector reports. Fivetran has over 170 source connectors that you can use to keep your data in sync in Snowflake.  With Fivetran&#39;s Database (e.g.,x. Oracle, PostgreSQL) and Application (e.g., ex Salesforce, Marketo, NetSuite) connectors, your data is automatically kept up-to-date without any intervention on your part. Any schema changes to your source data are automatically updated in Snowflake with our Automatic Schema Migration technology. Never miss or lose data, and never worry about updating your data pipelines again.</p>
+<p>Moreover, Fivetran keeps your data up-to-date on your schedule, with recurring syncs on the timetable you specify. Keep reading for more information.</p>
+<p>Before we start the first sync, let&#39;s take a look at the configuration Fivetran provides for connectors. <img alt="Appendix III - 13" src="img/f4a9171a347a0b46.png"></p>
+<p>First let&#39;s look at the <strong>Schema</strong> tab. Here, depending on the connector type, you can configure up to three settings:</p>
+<ul>
+<li>Block a table from syncing to Snowflake.</li>
+<li>Block a column from syncing to Snowflake.</li>
+<li>Hash a column&#39;s values before they are stored in Snowflake. <ul>
+<li>Used to protect Personally Identifiable Information from being accessed by the users of the data, while maintaining the ability to SQL JOIN on those values.<br><img alt="Appendix III - 14" src="img/d1d6157e91d66f91.png"></li>
+</ul>
+</li>
+</ul>
+<p>With Ads connectors, you can enable or disable a particular report from syncing.</p>
+<p>Next let&#39;s visit the <strong>Setup</strong> tab. There is one very important configuration tool here, and that is the Sync Frequency. This can be set to as frequently as every 5 minutes, to as infrequently as every 24 hours. Fivetran starts and stops the Snowflake warehouse used for data loading on demand, and is extremely efficient at data loading, so you only pay for the time Fivetran is actually loading data.<br><img alt="Appendix III - 15" src="img/6b585e0b0e460239.png"></p>
+<p>OK! That is it! The Schema setup in the <strong>Schema</strong> tab, and the Sync Frequency setting in the <strong>Setup</strong> tab are the only configuration details you need to manage, and even those can be left on the defaults for flawless operation! With that visited, let&#39;s go back to the <strong>Status</strong> tab and start the sync!</p>
+<p>Once the <strong>Start Initial Sync</strong> button is clicked, you should see your sync start up.<br><img alt="Appendix III - 16" src="img/c8c45924df644bc5.png"></p>
+<p>While the sync is running, we can take a quick detour into the <strong>Logs</strong> tab. This is a real-time view into the data loading process. Fivetran offers ways to export these logs into your preferred log aggregation service. We even have a free connector called the <a href="https://fivetran.com/docs/logs/fivetran-log" target="_blank">Fivetran Log</a> connector, that exports log data, schema operation metadata, and Fivetran credit consumption data!<br><img alt="Appendix III - 17" src="img/30d1ff218200535f.png"></p>
+<p>For this demo, I chose to only sync 3 months of historical data, so the initial sync finished relatively quickly at two and a half minutes. When your sync has completed, you will see its status on the timeline, as per below.<br><img alt="Appendix III - 13" src="img/c2cdd55a7501e6bc.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

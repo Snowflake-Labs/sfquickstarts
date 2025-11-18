@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "hightouch_cdp",
+  "duration": 87,
+  "title": "Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake",
+  "summary": "Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake",
+  "source": "hightouch-composable-cdp/hightouch-composable-cdp.md",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "marketing",
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "composablecdp",
+    "gettingstarted",
+    "marketing",
+    "martech",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "hightouch_cdp"
+}

@@ -1,0 +1,207 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Enhance Customer Experience Using Unstructured Data</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_customer_experience_app"
+                  title="Tasty Bytes - Enhance Customer Experience Using Unstructured Data"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img alt="banner" src="img/37d5585e295ee0d4.png"></p>
+<p>Welcome to the Powered by Tasty Bytes - Enhance Customer Experience Using Unstructured Data Quickstart!</p>
+<p>This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience. By leveraging Cortex functions, it conducts sentiment analysis to assist in drafting emails for owners. Moreover, it includes built-in analytics for users to interact with review data and generate plots using LLM capabilities. Additionally, the integration of Document AI enhances its analytical prowess by extracting insights from handwritten, unstructured inspection documents.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to build a Streamlit app in Snowflake</li>
+<li>How to build a multi-page Streamlit app in Snowflake</li>
+<li>How to use Cortex LLMs in your application</li>
+<li>How DocumentAI can be used to create analytics from unstructured data</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Snowflake account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Streamlit application using Cortex and DocumentAI to provide insights into truck operations</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <h2 is-upgraded>Step 1 - Accessing hosted Setup SQL in GitHub</h2>
+<ul>
+<li>Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.</li>
+</ul>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/blob/main/customer-experience-app/setup/setup.sql" target="_blank"><paper-button class="colored" raised>setup.sql</paper-button></a></p>
+<h2 is-upgraded>Step 2 - Run the contents of setup.sql</h2>
+<p>Open a new Snowsight worksheet and run all commands from setup.sql.</p>
+<h2 is-upgraded>Step 3 - Load Streamlit Files</h2>
+<ul>
+<li>Download all files from the <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/tree/main/customer-experience-app/app" target="_blank">app directory</a>. This includes the file in the pages subdirectory.</li>
+<li>In Snowsight, change role to sysadmin</li>
+<li>open the tasty_bytes_customer_support_email.app.customer_support_email_app stage</li>
+</ul>
+<p class="image-container"><img alt="stage-location" src="img/589e282daab3d897.png"></p>
+<ul>
+<li>Click + Files in the top right of the stage</li>
+<li>Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory <ul>
+<li>Dashboard.py and environment.yml are at the top level</li>
+<li>Analytics.py is in the pages folder.</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="pages-folder" src="img/ecb85d9ad5c79146.png"></p>
+<p class="image-container"><img alt="streamlit-files" src="img/16c9ce21f464377c.png"></p>
+<h2 is-upgraded>Step 4 - Create the Streamlit App</h2>
+<p>Run the code below in a Snowsight worksheet to build the Streamlit app.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE sysadmin;
+
+CREATE OR REPLACE STREAMLIT tasty_bytes_enhancing_customer_experience.app.enhancing_customer_experience_app
+ROOT_LOCATION = &#39;@tasty_bytes_enhancing_customer_experience.app.enhance_customer_experience_app&#39;
+MAIN_FILE = &#39;Dashboard.py&#39;
+QUERY_WAREHOUSE = &#39;tasty_bytes_enhancing_customer_experience_wh&#39;
+COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;voc&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;streamlit&#34;, &#34;vignette&#34;:&#34;cust_exp_app&#34;}}&#39;;
+
+GRANT USAGE ON STREAMLIT tasty_bytes_enhancing_customer_experience.app.enhancing_customer_experience_app TO ROLE enhancing_customer_expereience_role;
+</code></pre>
+<h2 is-upgraded>Step 5 - Open the Streamlit App</h2>
+<ul>
+<li>From Snowsight, ensure you are using the enhancing_customer_experience_role role.</li>
+<li>Under Projects, click Streamlit</li>
+<li>Open ENHANCE_CUSTOMER_EXPERIENCE_APP from the list of apps</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running the Enhancing Customer Experiences Using Unstructured Data App" duration="10">
+        <p>This application consists of two sections. The dashboard presents reviews and inspection details for each truck, while the analytics section offers the ability to generate plots based on review data.</p>
+<ul>
+<li>To begin, navigate to the dashboard and select Truck 5 - Kitakata Ramen Bar. Once selected, you&#39;ll gain access to insights about the truck&#39;s reviews.</li>
+</ul>
+<p class="image-container"><img alt="truck-overview" src="img/c3360a3570b54199.png"></p>
+<ul>
+<li>Navigate to the inspections tab to view insights derived from inspections. If you wish to enhance the customer experience, you can opt to contact the owner.</li>
+</ul>
+<p class="image-container"><img alt="truck-inspections" src="img/57b7ed3fbd0d24f.png"></p>
+<ul>
+<li>Expand the Email the Owner for Improvement Suggestions section, which provides suggested emails to the truck owner, highlighting the top three issues and recommendations for improvement.</li>
+</ul>
+<p class="image-container"><img alt="truck-email" src="img/a52639db97f25c97.png"></p>
+<ul>
+<li>In the analytics section, you have the option to draw plots based on your specific requirements. For instance, you can identify trucks with low review sentiment by requesting a plot for Create a plot for the Trucks with low average sentiment. Limit to Top 10 Trucks.</li>
+</ul>
+<p class="image-container"><img alt="sentiment-graph" src="img/46ea7186d00a755f.png"></p>
+<h2 is-upgraded>Troubleshooting</h2>
+<p>If you are getting an error related to model availability, you can enable <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference" target="_blank">cross region inference</a>. To do that run the following sql <code>ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';</code></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding the Enhancing Customer Experiences Using Unstructured Data App" duration="10">
+        <h2 is-upgraded>Cortex Complete</h2>
+<p>Cortex complete generates a response (completion) to a prompt using your choice of supported language model. In the Enhancing Customer Experience App, we use Cortex Complete to generate emails and build custom analytics graphs. You can read more <a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">documentation here</a>.</p>
+<h3 is-upgraded>Generate Email Responses</h3>
+<p>We generate emails to truck owners using Cortex Complete. We pass the prompt and model (mistral-large) to Cortex complete to automatically generate an email based on inspection issues at their truck.</p>
+<pre><code language="language-python" class="language-python">prompt =f&#34;&#34;&#34;[INST]### Write me survey report email to the franchise owner summarizing the issues mentioned in following 
+            aggregated customer reviews and inspections with three concise bullet points under 50 words each such that each bullet 
+            point also has a heading along with recommendations to remedy those issues. Negative Reviews Category:
+            {negative_review_categories}. Inspection Reports Category: {negative_inspection_categories}[/INST]&#34;&#34;&#34;
+email_suggestion = Complete(&#39;mistral-large&#39;, prompt.replace(&#34;&#39;&#34;, &#34;&#39;&#39;&#34;))
+</code></pre>
+<h3 is-upgraded>Create Analytics Graphs</h3>
+<p>We again use Cortex Complete to create custom analytics graphs. We later use <strong>code</strong> to build analytics based on our own Tasty Bytes data.</p>
+<pre><code language="language-python" class="language-python">prompt = f&#39;You are a python developer that writes code using altair and streamlit to visualize data. \
+            Your data input is a pandas dataframe that you can access with df. \
+            The pandas dataframe has the following columns: {column_specifications}.\
+            {prompt}\
+            If you are asked to return a list, create a dataframe and use st.dataframe() to display the dataframe.&#39;
+code = Complete(&#39;mistral-large&#39;, prompt.replace(&#34;&#39;&#34;, &#34;&#39;&#39;&#34;))
+</code></pre>
+<h2 is-upgraded>DocumentAI</h2>
+<p>Unstructured inspection documents are used in the app. We have previously used DocumentAI to structure the contents of inspection reports and use that data for insights. Check out the <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index#0" target="_blank">Extracting Insights from Unstructured Data with Document AI</a> Quickstart for details on that process.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations, you have built an application in Streamlit using Cortex LLMs to enhance Tasty Bytes customer experience. This powerful application helps Tasty Bytes owners quickly understand truck metrics, including unstructured inspection data. We also used Cortex LLMs to generate emails to truck owners based on that unstructured data.</p>
+<p>If you want to learn more about Enhancing Customer Experience with Tasty Bytes, check out the quickstarts in the resources section.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build a Streamlit in Snowflake App</li>
+<li>How to build a multi-page Streamlit in Snowflake App</li>
+<li>How to use Cortex LLMs in your application including</li>
+<li>How DocumentAI can be used to create analytics from unstructured data</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index#0" target="_blank">Extracting Insights from Unstructured Data with Document AI</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM Functions</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html?index=..%2F..index" target="_blank">Tasty Bytes - RAG Chatbot Using Cortex and Streamlit</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_customer_support_email_app/index.html?index=..%2F..index#0" target="_blank">Tasty Bytes - Customer Support Streamlit App</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

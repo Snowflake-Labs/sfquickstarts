@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_engineering_with_snowpark_python_intro",
+  "duration": 74,
+  "title": "Intro to Data Engineering with Snowpark Python",
+  "summary": "This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python",
+  "source": "data_engineering_with_snowpark_python_intro/data-engineering-with-snowpark-python-intro.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "featured",
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "intro",
+    "python",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_with_snowpark_python_intro"
+}

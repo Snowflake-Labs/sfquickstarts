@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "quickstart-generative-bi-quicksight",
+  "duration": 0,
+  "title": "Build a Generative BI Dashboard with Amazon QuickSight and Amazon Q",
+  "summary": "Build a Generative BI Dashboard using Amazon QuickSight and Amazon Q.",
+  "source": "generative-bi-aws-snowflake/generative-bi-aws-snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "amazonq",
+    "amazonquicksight",
+    "dashboard",
+    "generativebi",
+    "naturallanguageq\u0026a",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "quickstart-generative-bi-quicksight"
+}

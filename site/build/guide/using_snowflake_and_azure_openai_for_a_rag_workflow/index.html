@@ -1,0 +1,301 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Using Snowflake with Azure OpenAI to build a RAG workflow</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="using_snowflake_and_azure_openai_for_a_rag_workflow"
+                  title="Using Snowflake with Azure OpenAI to build a RAG workflow"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Azure OpenAI that will generate a response from leveraging context from Snowflake data.</p>
+<p>In summary this is what you will do:</p>
+<ul>
+<li>Set up environments in both Snowflake and Azure.</li>
+<li>Create functions that leverage Snowpark External Access to make a calls to Open AI.</li>
+<li>Store embeddings in Snowflake.</li>
+<li>Create a Streamlit app that leverages the above functions to generate responses using data from Snowflake and prompts.</li>
+</ul>
+<h2 is-upgraded>What is Generative AI and RAG?</h2>
+<p>Generative AI is a category of artificial intelligence techniques that enable machines to create new, original content, such as text, images, or music, by learning from existing data. These models, often based on neural networks, generate content by understanding patterns and structures in the training data and then producing novel examples that resemble what they have learned. Generative AI has applications in various fields, including natural language processing, computer vision, and creative arts.</p>
+<p>Retrieval Augmentation Generation (RAG) model combines the best of retrieval-based and generative systems for natural language processing tasks. When presented with a prompt, the RAG system first retrieves a set of relevant documents or text snippets from a large corpus of information leveraging vector embeddings. These documents serve as context and support for the generative component of the model. Then, using this additional information, the generative component (an LLM) synthesizes the retrieved information to generate a coherent, informed response or output. This workflow effectively augments the generative model&#39;s ability to provide accurate, context-rich, and detailed answers by grounding its responses in concrete retrieved data, enhancing the overall quality and reliability of the information produced. RAG models are particularly useful for complex question answering, where providing accurate and detailed responses is crucial.</p>
+<h2 is-upgraded>What is Azure OpenAI?</h2>
+<p>Azure OpenAI is a cloud-based service provided by Microsoft that integrates OpenAI&#39;s powerful language models, including GPT-4, into the Azure platform, enabling developers and businesses to build and deploy AI applications with advanced natural language processing capabilities. This collaboration offers high scalability, enterprise-grade security, and compliance features, making it suitable for a wide range of applications, from chatbots to complex data analysis. Users can access Azure&#39;s robust infrastructure and tools to train, fine-tune, and manage AI models efficiently. Azure OpenAI simplifies the process of implementing AI solutions while providing the flexibility to customize them according to specific organizational needs.</p>
+<h2 is-upgraded>What is Snowflake?</h2>
+<p>Snowflake is a cloud-based data warehousing solution that allows businesses to store and analyze large volumes of data efficiently. It separates storage and compute functionalities, enabling users to scale resources independently and pay only for what they use. Snowflake supports a wide range of data workloads, including data warehousing, data lakes, and data engineering, and offers robust data sharing capabilities across different cloud platforms.</p>
+<h2 is-upgraded>What is Streamlit?</h2>
+<p>Streamlit is a Python library that makes it easy to create and share custom web apps for machine learning and data science. In just a few minutes you can build and deploy powerful data apps.</p>
+<h2 is-upgraded>Pre-requisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account with Access to <a href="https://streamlit.io/" target="_blank">Streamlit</a> in your Snowflake account.</li>
+<li><a href="https://azure.microsoft.com" target="_blank">Azure Account</a> with Azure OpenAI or a stand alone OpenAI service.</li>
+<li>Familiarity with the Python programming language.</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<p>We will build an efficient architecture all within Snowflake that will access product urls and images in Snowflake and pass that data to a an OpenAI model to generate a recommendation . The architecture will look like this</p>
+<p class="image-container"><img src="img/6b6cc03b2997e8f9.png"></p>
+<h2 is-upgraded>Use Case</h2>
+<p>This use case will leverage movie reviews and we will build a Streamlit app that uses those reviews to answer questions and provide recommendations. More details on the dataset are <a href="https://github.com/Azure/azure-openai-samples/tree/main/use_cases/archive/movie_reviews" target="_blank">here</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Azure / Open AI Environment" duration="10">
+        <p>For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openi.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response.</p>
+<p class="image-container"><img src="img/a6a69734e2d2802.png"></p>
+<p>If you have access to completion gpt models and embedding models in Azure you can follow the instructions <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/gpt-v-quickstart?tabs=image%2Ccommand-line&pivots=programming-language-studio" target="_blank">here</a> to deploy both models in Azure. (at the time of publishing this quickstart we will be using the text-embedding-3-small model and the gpt-3.5-turbo model). Make note of the deployment name for the image model that you deployed.</p>
+<p>Head back to the Azure portal and find the Azure Open AI service then click on &#34;Keys and Endpoint&#34; make note of the key and Endpoint as you will need this to generate a response.</p>
+<p class="image-container"><img src="img/b0f370bef7f3ceef.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment" duration="10">
+        <p>Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with the movie reviews and the related fields. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.</p>
+<pre><code language="language-sql" class="language-sql">--create database and warehouse
+use role accountadmin;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+CREATE OR REPLACE DATABASE REVIEWS_DB;
+
+--create stage
+USE DATABASE REVIEWS_DB;
+CREATE OR REPLACE STAGE REVIEWS_STAGE
+URL=&#39;s3://hol-qs-bucket/&#39;
+FILE_FORMAT = (TYPE = &#39;csv&#39;);
+list @REVIEWS_STAGE;
+
+--create loan_one table
+CREATE OR REPLACE TABLE MOVIE_REVIEWS
+  (MOVIE STRING,
+   PUBLISH STRING,
+   REVIEW STRING,
+   Date DATE,
+   SCORE INT);
+
+COPY INTO MOVIE_REVIEWS FROM @REVIEWS_STAGE/rottentomatoes-400k.csv
+FILE_FORMAT = (TYPE = &#39;CSV&#39; FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39; ESCAPE_UNENCLOSED_FIELD = &#39;\\&#39; SKIP_HEADER = 1) ON_ERROR = &#39;CONTINUE&#39;;
+
+select top 10 * from MOVIE_REVIEWS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploratory Analysis" duration="10">
+        <p>You can download the notebook <a href="https://github.com/Snowflake-Labs/sfguide-using-snowflake-and-azure-openai-for-rag-workflow/blob/main/notebook_app.ipynb" target="_blank">here</a> and utilize this in Snowflake notebooks to explore the data that was loaded to Snowflake.</p>
+<p>You can do this by navigating to &#34;Projects&#34; from the Snowflake UI, selecting &#34;Notebooks&#34; and click the upload button in the top right and uploading the notebook you just downloaded.</p>
+<p class="image-container"><img src="img/1fca4c64b517014.png"></p>
+<p>You will be able to run through the code to explore the data that we just loaded. If there are any errors related to package requirements you can make those updates using the package install functionality in Snowflake Notebooks.</p>
+<p class="image-container"><img src="img/e4b894adba3a466b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowpark External Access to call OpenAI" duration="10">
+        <p>Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access OpenAI via two functions, one called CHATGPT() and CHATGPT_EMBED() that leverage a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to OpenAI (or any other external service).</p>
+<p>You will have to replace the value of the endpoint and the token for the OpenAI service that you are using. Additionally, you may need to replace the name of the model near the bottom of the code that maps to the model/deployment name that you are using.</p>
+<p>The last two lines of code here create a new table that adds a field for the embeddings.</p>
+<pre><code language="language-sql" class="language-sql">use role ACCOUNTADMIN;
+use database REVIEWS_DB;
+use warehouse HOL_WH;
+
+CREATE OR REPLACE NETWORK RULE CHATGPT_NETWORK_RULE
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = (&#39;&lt;endpoint&gt;&#39;); --will be &#39;api.openai.com&#39; if using openai
+
+CREATE OR REPLACE SECRET CHATGPT_API_KEY
+    TYPE = GENERIC_STRING
+    SECRET_STRING=&#39;&lt;openai token&gt;&#39;;      
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENAI_INTEGRATION
+    ALLOWED_NETWORK_RULES = (CHATGPT_NETWORK_RULE)
+    ALLOWED_AUTHENTICATION_SECRETS = (CHATGPT_API_KEY)
+    ENABLED=TRUE;
+
+--Create function for embeddings with azure openai
+CREATE OR REPLACE FUNCTION CHATGPT_EMBED(text STRING)
+returns array
+language python
+runtime_version=3.8
+handler = &#39;ask_CHATGPT_EMBED&#39;
+external_access_integrations=(OPENAI_INTEGRATION)
+packages = (&#39;openai&#39;)
+SECRETS = (&#39;cred&#39; = chatgpt_api_key )
+as
+$$
+import _snowflake
+from openai import OpenAI
+client = OpenAI(
+    api_key=_snowflake.get_generic_secret_string(&#34;cred&#34;) )
+def ask_CHATGPT_EMBED(text):
+    return client.embeddings.create(input = text, model=&#34;text-embedding-3-small&#34;).data[0].embedding
+$$;
+
+--Create function for completion function with Azure OpenAI
+CREATE OR REPLACE FUNCTION CHATGPT(prompt STRING)
+returns string
+language python
+runtime_version=3.8
+handler = &#39;ask_CHATGPT&#39;
+external_access_integrations=(OPENAI_INTEGRATION)
+packages = (&#39;openai&#39;)
+SECRETS = (&#39;cred&#39; = chatgpt_api_key )
+as
+$$
+import _snowflake
+from openai import OpenAI
+client = OpenAI(
+    api_key=_snowflake.get_generic_secret_string(&#34;cred&#34;) )
+def ask_CHATGPT(prompt):
+    response = client.chat.completions.create(
+    model=&#34;gpt-3.5-turbo&#34;,
+    messages=[{&#34;role&#34;: &#34;system&#34;, &#34;content&#34;: f&#34;{prompt}&#34;}])
+    return response.choices[0].message.content
+$$;
+
+-- Create table with embeddings from Azure OpenAI
+CREATE OR REPLACE TABLE MOVIE_REVIEWS_EMBEDDING AS 
+SELECT *, TO_VARIANT(CHATGPT_EMBED(REVIEW)) AS EMBEDDING FROM MOVIE_REVIEWS_WC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Streamlit App - With data in Snowflake" duration="10">
+        <p>Now that we have our OpenAI functions, let&#39;s build our App.</p>
+<p>Go back to the main account view by clicking ‘&lt;- Worksheets&#39; and then select ‘Streamlit&#39;.</p>
+<p>Make sure that you&#39;re still using the ‘ACCOUNTADMIN&#39; role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RETAIL_HOL database where the link table and the image stage are located. You can name the app whatever you would like, something like &#34;Wardrobe Recommender&#34; is appropriate.</p>
+<p>Once the app is created paste the below code into the app code and click ‘Run&#39; in order to create the Streamlit App!</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+import pandas as pd
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import col, call_function
+
+# Title
+st.title(&#34;:movie_camera: Movie Review Explorer 	:clapper:&#34;)
+st.subheader(&#34;:snowflake: Powered by Snowflake &amp; Azure Open AI&#34;)
+session = get_active_session()
+
+default_prompt = &#39;&#39;
+with st.expander(&#34;Adjust prompt&#34;):
+    question_prompt = st.text_area(&#34;System instructions&#34;, value=default_prompt).replace(&#34;&#39;&#34;,&#34;&#34;)
+st.markdown(&#39;------&#39;) 
+
+
+# Use the job description to write the job to a table and run the function against it:
+if(st.button(&#39;Ask ChatGPT&#39;)):
+
+
+    context = session.sql(f&#34;&#34;&#34;
+    select movie_review from
+    (
+    select 
+        Review as movie_review,
+        CAST(chatgpt_embed(&#39;{question_prompt}&#39;)AS VECTOR(FLOAT, 1536)) as q_embed,
+        EMBEDDING,
+        VECTOR_COSINE_SIMILARITY(EMBEDDING, q_embed) as sim
+    from 
+        MOVIE_REVIEWS_EMBEDDING as content
+    where
+        sim &gt; 60
+    order by 
+        sim desc
+    limit 3
+    )&#34;&#34;&#34;)
+
+    
+    context_list = context.to_pandas()
+    context_list = context_list.MOVIE_REVIEW.str.cat(sep=&#39;NEXT REVIEW&#39;).replace(&#34;&#39;&#34;, &#34;&#34;)
+    result = session.sql(f&#34;&#34;&#34;SELECT chatgpt(&#39;{question_prompt}&#39; || &#39;using the following information as context&#39; || &#39;{context_list}&#39;)&#34;&#34;&#34;).collect()
+    st.header(&#39;Answer&#39;)
+    st.write(result[0][0].replace(&#39;&#34;&#39;,&#39;&#39;)) 
+
+
+    st.header(&#39;Context&#39;)
+    context
+</code></pre>
+<p>Once you have the app created you can adjust the prompt in the app and change the image selected in order to generate more tailored responses.</p>
+<p>Important to note that the VECTOR_COSINE_SIMILARITY() function is being used here to calculate distance, but other distance functions are available in Snowflake.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion  And Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built your first Streamlit App with OpenAI for a RAG workload! After setting up our Azure and Snowflake and environments we built two primary things: UDFs that utilize Snowpark External Access to make a call to an OpenAI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and OpenAI!</p>
+<p class="image-container"><img src="img/a8dccfe9409c16f4.png"></p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up a Snowflake and Azure / OpenAI environment to integrate the two platforms.</li>
+<li>How to build a Snowpark External Access integration to call OpenAI.</li>
+<li>How to build a Streamlit app that calls OpenAI leveraging tabular and image data from Snowflake.</li>
+<li>How to build your first Generative AI App with image data in Snowflake!</li>
+</ul>
+<h2 is-upgraded>Related resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=fALb8SosA_U" target="_blank">RBAC with External Services</a></li>
+<li><a href="https://github.com/VILA-Lab/ATLAS/blob/main/data/README.md" target="_blank">Prompting</a></li>
+<li><a href="https://streamlit.io/" target="_blank">Streamlit</a></li>
+<li><a href="https://azure.microsoft.com/en-us/products/ai-services/openai-service" target="_blank">Azure OpenAI</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

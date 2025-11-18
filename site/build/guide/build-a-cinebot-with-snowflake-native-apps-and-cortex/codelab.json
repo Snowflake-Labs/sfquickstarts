@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build-a-cinebot-with-snowflake-native-apps-and-cortex",
+  "duration": 29,
+  "title": "Build a CineBot with Snowflake Native Apps and Snowflake Cortex",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "build-a-cinebot-with-snowflake-native-apps-and-cortex/build-a-cinebot-with-snowflake-native-apps-and-cortex.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "cortex",
+    "dataapplications",
+    "gettingstarted",
+    "nativeapps",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build-a-cinebot-with-snowflake-native-apps-and-cortex"
+}

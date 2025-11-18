@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "deploy_finetune_os_llama2_in_snowpark_container_services",
+  "duration": 160,
+  "title": "Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services",
+  "summary": "Through this quickstart guide, you will explore Snowpark Container Services",
+  "source": "deploy_finetune_os_llama2_in_snowpark_container_services/deploy_finetune_os_llama2_in_snowpark_container_services.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "containers",
+    "gettingstarted",
+    "snowpark",
+    "snowparkcontainerservices",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "deploy_finetune_os_llama2_in_snowpark_container_services"
+}

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "tasty_bytes_customer_support_email_app",
+  "duration": 27,
+  "title": "Tasty Bytes - Customer Support Streamlit Application Powered by Cortex",
+  "summary": "This quickstart builds a customer support email application in Streamlit using Cortex LLM features to help agents quickly and effectively answer customer questions.",
+  "source": "tasty_bytes_customer_support_email_app/tasty_bytes_customer_support_email_app.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "cortex"
+  ],
+  "tags": [
+    "gettingstarted",
+    "snowflakecortex",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_customer_support_email_app"
+}

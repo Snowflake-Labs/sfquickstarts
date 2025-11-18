@@ -1,0 +1,1675 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with DCDF Data Architecture Incremental Processing &amp; Logical Partitions</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="dcdf_incremental_processing"
+                  title="Getting Started with DCDF Data Architecture Incremental Processing &amp; Logical Partitions"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>The topics of covered in this guide were originally presented in Episode 2 of Snowflake&#39;s Data Cloud Deployment Framework (DCDF) webinar series. <a href="https://www.snowflake.com/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/" target="_blank">DCDF Webinar Episode 2</a> focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.</p>
+<p>In this quickstart, we will focus on the actual SQL code templates for ingesting, transforming, and restructuring data into the presentation layer using incremental processing and logical partition definitions.</p>
+<aside class="warning"><p><strong>Caveat:</strong> This DCDF Data Architecture quickstart and template scripts are for illustrative purposes only. These scripts can be run in any Snowflake account in order to reinforce the concepts and patterns presented in DCDF Webinar Episode 2. They can be customized for your own business use cases.</p>
+</aside>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account.  Existing or a free <a href="https://trial.snowflake.com/" target="_blank">Trial Account</a>.</li>
+<li>ACCOUNTADMIN role (Note: Free Trial accounts provide this automatically)</li>
+<li>Working knowledge of Snowflake database objects and the Snowflake Web UI/Snowsight.</li>
+<li>Familiarity with Snowflake and Snowflake objects.</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">SnowSQL installed</a> and configured to your Snowflake account.</li>
+<li>Familiarity and understanding of SQL syntax</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>In this quickstart, we will build on the topics discussed in the webinar by loading and executing the SQL code used in the presentation.</p>
+<ul>
+<li>DCDF Data Architecture</li>
+<li>Data Ingestion</li>
+<li>Data Transformation</li>
+<li>Incremental processing and Logical Partitions</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A Snowflake Account or <a href="signup.snowflake.com" target="_blank">Trial Account</a>, any edition will do as the scripts will run on any edition.</li>
+<li>Login to Snowflake account that has ACCOUNTADMIN role access (Note: Free Trial accounts provide this automatically)</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">SnowSQL installed</a></li>
+<li>Snowsight or Classic Ui will be used in these examples.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>An extensible ELT data pipeline, using logical partitions, that employs repeatable patterns for ingestion, transformation and consumable data assets.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DCDF Data Architecture Review" duration="3">
+        <p>Let&#39;s review the DCDF Data Architecture processing layers and the purpose of each layer.  This was discussed in detail in the <a href="https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/" target="_blank">DCDF Webinar Series Episode 1</a>.</p>
+<p class="image-container"><img alt="img" src="img/cb107becdb692a04.png"></p>
+<h2 is-upgraded>Raw Layer</h2>
+<p>The Raw Layer represents the first processing layer within Snowflake.  It facilitates data ingestion into Snowflake and will manage the data as it exists in the source system, with no applied transformations. The following are attributes of the Raw Layer:</p>
+<ul>
+<li>One database per data source.</li>
+<li>Hash generation for surrogate keys.</li>
+<li>Replication of data as it exists in the source system along with the creation of a surrogate key or control column for downstream transformations.</li>
+</ul>
+<h2 is-upgraded>Integration Layer</h2>
+<p>The Integration Layer is used to centralize all business rules applied to the data. This layer performs the transformation, application of business rules, and materialization of data from the Raw Layer into one central location.  The following are attributes of the Integration Layer:</p>
+<ul>
+<li>Centralized business rules.</li>
+<li>Intermediate results persisted as tables.</li>
+<li>Units of work in one place with reusable components.</li>
+</ul>
+<h2 is-upgraded>Presentation Layer</h2>
+<p>The Presentation Layer performs the organization of data from the raw and integration layers into various purpose-built solutions for reporting and analytics. The following are attributes of the Presentation Layer:</p>
+<ul>
+<li>Conforming Dimensions</li>
+<li>Atomic Aggregate Fact Tables</li>
+<li>Flat data sets for data science model building</li>
+<li>Views for governing exposure of data for consumption, analytics and sharing.</li>
+</ul>
+<aside class="warning"><p><strong>Note</strong> Business rules should not be implemented within the Presentation Layer. Using permanent tables for incrementally updated tables is recommended.</p>
+</aside>
+<h2 is-upgraded>Common Database</h2>
+<p>The Common Database is a single database with one or more schemas to manage objects that span the breadth of the data architecture layers. The following are attributes of the Common Database:</p>
+<ul>
+<li>User Defined Functions</li>
+<li>File Formats</li>
+<li>External and Internal Stages</li>
+<li>Audit Tables</li>
+<li>Common dimensions such as Date, Zip Code, State, Country, etc.</li>
+<li>Common table data that is utilized across the DCDF layers.</li>
+</ul>
+<h2 is-upgraded>Workspace Databases</h2>
+<p>A Workspace is a sandbox environment where individual teams can persist data for their own development and testing. These workspaces can be a database and related virtual warehouse for each department or team within a business entity. One example can be a Data Science team that clones data from the Presentation Layer into their workspace and run models on that data to determine actionable insights. The following are attributes of a Workspace Database:</p>
+<ul>
+<li>Persist intermediate results</li>
+<li>Non-production datasets for testing purposes</li>
+<li>Compute isolation to mitigate contention and facilitate cost governance.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Incremental Processing Concepts" duration="4">
+        <aside class="special"><p>&#34;The best way to process big data, is to turn it into small data&#34;</p>
+</aside>
+<h2 is-upgraded>Three steps for Incremental Processing</h2>
+<h3 is-upgraded>Step 1 - Define Logical Partitions</h3>
+<p>The volume of data being processed from the source system will drive the need to create logical partitions. Logical partitions are commonly defined as logical periods of time, or time series data, such as day, week, or month based on a business event represented in the data.</p>
+<aside class="special"><p>In this quickstart order date will be used as the logical partition. The order date will define how to identify new or changed data.</p>
+</aside>
+<h3 is-upgraded>Step 2 - Identify Impacted Partitions</h3>
+<p>Next we want to identify the impacted logical partitions that are represented in the delta feed from the sources system. As the delta data is ingested into our staging tables in the raw layer, the impacted logical partitions (orderdate) can be identified.</p>
+<h3 is-upgraded>Step 3 - Incrementally Process those Partitions</h3>
+<p>We will utilize the logical partitions identified in Step 2, to incrementally process the partitions.</p>
+<p class="image-container"><img alt="img" src="img/649f082e6989829b.png"></p>
+<p>In our example above we implement the aforementioned three steps.</p>
+<h3 is-upgraded>Define Logical Partitions</h3>
+<ul>
+<li>We will use order date from the LINE_ITEM table.</li>
+<li>This identifies the business event in our data that represents lifecycle changes over time for a given period.</li>
+</ul>
+<h3 is-upgraded>Identify Impacted Partitions</h3>
+<ul>
+<li>We will query the LINE_ITEM_STG table in the Raw Layer for distinct order dates.</li>
+<li>We will insert these dates into the Common Database table DELTA_DATE because this table will be utilized across the different layers.</li>
+</ul>
+<h3 is-upgraded>Incrementally Process those Partitions</h3>
+<ul>
+<li>We will utilize the impacted partitions and process those dates of data through the raw, integration and presentation layers.</li>
+</ul>
+<p>Let&#39;s see how this works!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Lab Overview" duration="3">
+        <p>Below is an overview diagram of what we will be building.  Each step builds upon what was produced in the prior step.  We will only build the tables in this diagram.</p>
+<aside class="special"><p>Included in the code repository are additional table scripts that can be used to build out a dimensional model using these same concepts.</p>
+</aside>
+<p class="image-container"><img alt="img" src="img/649f082e6989829b.png"></p>
+<h2 is-upgraded>Lab Structure</h2>
+<ul>
+<li><strong>Explain Code Snippets</strong><ul>
+<li>We will work through the code for each DCDF data architecture layer, explaining what is happening in each code snippet.</li>
+</ul>
+</li>
+<li><strong>Execute Code and Verify Results</strong><ul>
+<li>In these sections, you will execute the code in your environment.</li>
+<li>We will validate that the data was loaded using our example tables line_items, orders, part and partsupp.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Lab summary</h2>
+<ul>
+<li>We are loading data for 17 days(logical partition) between 1998-06-18 and 1998-07-02 representing three distinct weeks.</li>
+<li>Generate CSV files for logical partition range from Snowflake Sample tables.</li>
+<li>Save this date range in a separate common delta table.</li>
+<li>For Raw data layer, use delta table to load data in Line Item History and Line Item table.</li>
+<li>Generate surrogate key and hash value to ensure only unique data is merged in Raw table.</li>
+<li>Use same Delta table to load data in subsequent layers(Integration and Presentation)</li>
+</ul>
+<h2 is-upgraded>DCDF Data Architecture Layers</h2>
+<ul>
+<li><strong>Raw Layer</strong><ul>
+<li>In this layer, we will build the tables in the Raw Layer.</li>
+<li>Transient Staging tables used for most recent loaded data and having a suffix of _stg.</li>
+<li>Permanent History tables to track the history of changes and having a suffix of _hist.</li>
+</ul>
+</li>
+<li><strong>Integration Layer</strong><ul>
+<li>In this layer, we will identify a unit of work to derive the margin (retail price minus cost) at the line item level.</li>
+<li>We will step through the code and extract these intermediate results by applying incremental processing.</li>
+</ul>
+</li>
+<li><strong>Presentation Layer</strong><ul>
+<li>In this layer, we will create the ORDER_LINE_FACT table as well as the PART_DM dimension table as part of a dimensional model that can be used for consumption.</li>
+<li>We will walk through how to incrementally process the new data coming in.</li>
+</ul>
+</li>
+<li><strong>Common database</strong><ul>
+<li>In this layer, we will create the DW_DELTA_DATE table that will be used for incremental processing.</li>
+<li>A table function named DW_DELTA_DATE_RANGE_F will be created in the Common database and utilized for the logical partitions. This will take place in the Quickstart Setup section.</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Quickstart Setup" duration="5">
+        <h2 is-upgraded>Clone Repository for Quickstart</h2>
+<p>The sample code templates provided will be used to demonstrate incremental processing and logical partitions.  This code is written using SQL Scripting.  The code is tool ignostic and can be easily implemented into your tool set.</p>
+<p>To clone the repository for this Quickstart, visit the <a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/dcdf_incremental_processing" target="_blank">DCDF Incremental Processing associated GitHub Repository</a>. Click on the green &#34;Code&#34; icon near the top of the page to obtain the &#34;HTTPS&#34; link needed to clone the repository. For more information on cloning a git repository please refer to the <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository" target="_blank">GitHub Docs</a>.</p>
+<p class="image-container"><img style="width: 300.00px" src="img/e1db21d0c6906488.png"></p>
+<aside class="special"><p><strong>NOTE:</strong> This sample code contains additional tables that we will not go through as part of the quickstart.  They are just a continuation of the patterns we will be discussing to build out a purpose built dimensional model sample.</p>
+</aside>
+<h2 is-upgraded>Sample Code Information</h2>
+<ul>
+<li>These code templates are written using SQL Scripting.<ul>
+<li>Purpose of these scripts is to illustrate incremental processing and logical partitions.</li>
+<li>These scripts are tool agnostic.</li>
+<li>These templates can be easily modified to your environment and implemented in your toolset.</li>
+</ul>
+</li>
+<li>Naming Conventions of scripts<ul>
+<li>Names of the folders are prefixed with a number to identify the order they will run as part of the data pipeline.</li>
+<li>Table Creation Scripts - Files with postfix of _tbl.sql</li>
+<li>ELT Process Scripts - Files with postfix of _ld.sql</li>
+<li>ddl_orch.sql is the parent script that will execute all the database, schema, and table creation scripts.</li>
+<li>dml_orch.sql is the parent script that will execute the data pipeline.</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Setup" duration="5">
+        <h2 is-upgraded>Sample Data Set</h2>
+<ul>
+<li>Login to your account and verify that you have access to the SNOWFLAKE_SAMPLE_DATA database.  See screenshot below.</li>
+<li>SNOWFLAKE_SAMPLE_DATA data share is created by default in newer accounts.  If you are not seeing this data share, you might need to create the data share in your account.  <a href="https://docs.snowflake.com/en/user-guide/sample-data-using.html" target="_blank">Using Sample Data</a></li>
+</ul>
+<p class="image-container"><img alt="img" src="img/e7d1e82a7b968d75.png"></p>
+<h2 is-upgraded>Creating Example Databases, Schemas, Tables and Warehouse</h2>
+<p>Let&#39;s create the databases, tables and warehouse using the default names.</p>
+<ul>
+<li>Make sure you are in the folder on your laptop where you cloned the sample code.  You want to be at the top level where you see the sub-folders of 000_admin, 100_raw, etc.</li>
+<li>Run Snowsql from the command line.  This will create all the databases, schemas, tables and a warehouse that are needed for this lab.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">snowsql -a &lt;account_name&gt; -u &lt;username&gt; -r sysadmin -D l_env=dev -f ddl_orch.sql -o output_file=ddl_orch.out
+</code></pre>
+<ul>
+<li>End of the output should show success like this screenshot.</li>
+</ul>
+<p class="image-container"><img alt="img" src="img/e60a5024b055879f.png"></p>
+<h2 is-upgraded>Example Line Items</h2>
+<p>As part of the quickstart, we will monitor specific line item records.</p>
+<ol type="1">
+<li>Login to your Snowflake account and open a worksheet.</li>
+<li>Copy and paste this query into a worksheet.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Sample Order
+select
+              row_number() over(order by uniform( 1, 60, random() ) ) as seq_no
+             ,l.l_orderkey
+             ,o.o_orderdate
+             ,l.l_partkey
+             ,l.l_suppkey
+             ,l.l_linenumber
+             ,l.l_quantity
+             ,l.l_extendedprice
+             ,l.l_discount
+             ,l.l_tax
+             ,l.l_returnflag
+             ,l.l_linestatus
+             ,l.l_shipdate
+             ,l.l_commitdate
+             ,l.l_receiptdate
+             ,l.l_shipinstruct
+             ,l.l_shipmode
+             ,l.l_comment
+        from
+            snowflake_sample_data.tpch_sf1000.orders o
+            join snowflake_sample_data.tpch_sf1000.lineitem l
+              on l.l_orderkey = o.o_orderkey
+        where
+                o.o_orderdate &gt;= to_date(&#39;7/1/1998&#39;,&#39;mm/dd/yyyy&#39;)
+            and o.o_orderdate  &lt; to_date(&#39;7/2/1998&#39;,&#39;mm/dd/yyyy&#39;)
+            and l_orderkey = 5722076550
+            and l_partkey in ( 105237594, 128236374);
+</code></pre>
+<ol type="1" start="3">
+<li>Output should look like this. <img alt="img" src="img/dea6420a24c08087.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Acquistion" duration="15">
+        <p>During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set for tables lineitem, orders, part, and partsupp to generate the data files to load into our raw layer.</p>
+<h2 is-upgraded>Step 1 - Explain code snippets</h2>
+<h3 is-upgraded>LINE_ITEM_ACQ.SQL</h3>
+<ol type="1">
+<li>Using the Snowsight UI, select Worksheets from the left hand menu.</li>
+<li>Click the ellipsis next to the blue +Worksheets button.</li>
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em> and load the 100_acquisition/line_item_acq.sql. <img alt="img" src="img/729ddcebe3051bf7.png"><img alt="img" src="img/bdc2c251b2e8d29a.png"></li>
+<li>In the first few lines of the script we are setting the context for this script. The defaults for database are DEV_WEBINAR_ORDERS_RL_DB and TPCH for the schema. This will be refered to as the Raw Layer going forward.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+</code></pre>
+<ol type="1" start="5">
+<li>Next we are setting the date range for the data we want to acquire by setting the l_start_dt and l_end_dt variables. For the purposes of this lab, we are using a 17 day date range.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Set variables for this sample data for the time frame to acquire
+set l_start_dt = dateadd( day, -16, to_date( &#39;1998-07-02&#39;, &#39;yyyy-mm-dd&#39; ) );
+set l_end_dt   = dateadd( day,   1, to_date( &#39;1998-07-02&#39;, &#39;yyyy-mm-dd&#39; ) );
+</code></pre>
+<ol type="1" start="6">
+<li>The <em>&#34;copy into&#34;</em> statement is where we are copying (Unloading) data, in CSV format, from the database SNOWFLAKE_SAMPLE_DATA into an Internal Table Stage.  As part of this <em>&#34;copy into&#34;</em> statement we are modifying the data to show changes in l_line_status over time.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- run this 2 or 3 times to produce overlapping files with new and modified records.
+copy into
+    @~/line_item
+from
+(
+    with l_line_item as
+    (
+        select
+              row_number() over(order by uniform( 1, 60, random() ) ) as seq_no
+             ,l.l_orderkey
+             ,o.o_orderdate
+             ,l.l_partkey
+             ,l.l_suppkey
+             ,l.l_linenumber
+             ,l.l_quantity
+             ,l.l_extendedprice
+             ,l.l_discount
+             ,l.l_tax
+             ,l.l_returnflag
+             ,l.l_linestatus
+             ,l.l_shipdate
+             ,l.l_commitdate
+             ,l.l_receiptdate
+             ,l.l_shipinstruct
+             ,l.l_shipmode
+             ,l.l_comment
+        from
+            snowflake_sample_data.tpch_sf1000.orders o
+            join sample_data.tpch_sf1000.lineitem l
+              on l.l_orderkey = o.o_orderkey
+        where
+                o.o_orderdate &gt;= $l_start_dt
+            and o.o_orderdate  &lt; $l_end_dt
+    )
+    select
+         l.l_orderkey
+        ,l.o_orderdate
+        ,l.l_partkey
+        ,l.l_suppkey
+        ,l.l_linenumber
+        ,l.l_quantity
+        ,l.l_extendedprice
+        ,l.l_discount
+        ,l.l_tax
+        ,l.l_returnflag
+        -- simulate modified data by randomly changing the status
+        ,case uniform( 1, 100, random() )
+            when  1 then &#39;A&#39;
+            when  5 then &#39;B&#39;
+            when 20 then &#39;C&#39;
+            when 30 then &#39;D&#39;
+            when 40 then &#39;E&#39;
+            else l.l_linestatus
+         end                            as l_linestatus
+        ,l.l_shipdate
+        ,l.l_commitdate
+        ,l.l_receiptdate
+        ,l.l_shipinstruct
+        ,l.l_shipmode
+        ,l.l_comment
+        ,current_timestamp()            as last_modified_dt -- generating a last modified timestamp as part of data acquisition.
+    from
+        l_line_item l
+    order by
+        l.l_orderkey
+)
+file_format      = ( type=csv field_optionally_enclosed_by = &#39;&#34;&#39; )
+overwrite        = false
+single           = false
+include_query_id = true
+max_file_size    = 16000000
+;
+</code></pre>
+<h2 is-upgraded>Step 2 - Execute the code and Verify results</h2>
+<p>In this step we will unload data for the LINE_ITEM, PART and ORDERS tables.</p>
+<h3 is-upgraded>LINE_ITEM_ACQ.SQL</h3>
+<ol type="1">
+<li>If you haven&#39;t done so already, click the ellipsis next to the blue +Worksheets button.</li>
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em> and load the 100_acquisition/line_item_acq.sql.</li>
+<li>Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Highlight the code to set the variables for l_start_dt, l_end_dt and run them.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Set variables for this sample data for the time frame to acquire
+set l_start_dt = dateadd( day, -16, to_date( &#39;1998-07-02&#39;, &#39;yyyy-mm-dd&#39; ) );
+set l_end_dt   = dateadd( day,   1, to_date( &#39;1998-07-02&#39;, &#39;yyyy-mm-dd&#39; ) );
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="5">
+<li>Let&#39;s verify those variables have been set. Run the following statement in your worksheet.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select $l_start_dt, $l_end_dt;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/2f89a522d8c6dede.png"></p>
+<ol type="1" start="6">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.</li>
+<li>This might take around 2-3 minutes on a small warehouse.  If you want to increase the size of your warehouse, it will run faster. The output should be similar to this. <img alt="img" src="img/a45009a3e9a88a25.png"></li>
+<li>Let&#39;s verify the number of files created. Paste this SQL into your worksheet and run it.  Output should be similar to this.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">list @~/line_item;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/61d3c7bb82f3753d.png"></p>
+<h3 is-upgraded>PART_ACQ.SQL</h3>
+<ol type="1">
+<li>Click the ellipsis next to the blue +Worksheets button.</li>
+<li>Select to <em>&#34;create worksheet from SQL file&#34;</em> and load the 100_acquisition/part_acq.sql.</li>
+<li>Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.  This might take a few minutes.  The output should be similar to this. <img alt="img" src="img/b86d0cbeb7e851cd.png"></li>
+</ol>
+<h3 is-upgraded>ORDERS_ACQ.SQL</h3>
+<ol type="1">
+<li>Click the ellipsis next to the blue +Worksheets button.</li>
+<li>Select to <em>&#34;create worksheet from SQL file&#34;</em> and load the 100_acquisition/orders_acq.sql.</li>
+<li>Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.  This might take a few minutes.  The output should be similar to this. <img alt="img" src="img/75a7bf59abcda349.png"></li>
+</ol>
+<h3 is-upgraded>PARTSUPP_ACQ.SQL</h3>
+<ol type="1">
+<li>Click the ellipsis next to the blue +Worksheets button.</li>
+<li>Select to <em>&#34;create worksheet from SQL file&#34;</em> and load the 100_acquisition/partsupp_acq.sql.</li>
+<li>Setting the context of your script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use database DEV_WEBINAR_ORDERS_RL_DB;
+use schema   TPCH;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.  This might take a few minutes.  The output should be similar to this. <img alt="img" src="img/d79313d080ef5a41.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Raw Layer - Staging the data" duration="10">
+        <p>In this section, we will take the acquired data from the Internal Table Stage mentioned in the previous section and load it into the staging tables in the Raw layer.  We will load LINE_ITEM_STG, ORDER_STG, PART_STG, and PARTSUPP_STG tables.</p>
+<p class="image-container"><img alt="img" src="img/3049bf4151b746af.png"></p>
+<aside class="special"><p>This diagram illustrates the first steps of loading the new data files into the raw layer tables.</p>
+<ul>
+<li><strong>Incremental Processing Step 1</strong> is to define the logical partitions.  In the line item data we have identified the orderdate as the logical partition.</li>
+<li>New data files from the Online Orders data source are placed into cloud storage.</li>
+<li>A Truncate/Reload pattern is used here to load the LINE_ITEM_STG table.</li>
+<li>First we truncate the prior data, and then load the new data into the LINE_ITEM_STG table.</li>
+</ul>
+</aside>
+<h2 is-upgraded>Step 1 - Explain code snippets</h2>
+<h3 is-upgraded>LINE_ITEM_STG_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 200_raw/line_item_stg_ld.sql</li>
+<li>In the code, after setting the context, the next step is to truncate the line_item_stg table to remove any old ddata from the previous run.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">truncate table line_item_stg;
+</code></pre>
+<ol type="1" start="3">
+<li>Below in the <em>&#34;copy into&#34;</em> statement, the data from the files produced in the acquisition steps will be loaded in one statement.  This is a bulk load.</li>
+<li>The purge parameter is set to true so that the files will be purged from the Internal Table Stage once they have been loaded.  This saves on storage usage and cost since these files are no longer needed.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- perform bulk load
+copy into
+    line_item_stg
+from
+    (
+    select
+         s.$1                                            -- l_orderkey
+        ,s.$2                                            -- o_orderdate
+        ,s.$3                                            -- l_partkey
+        ,s.$4                                            -- l_suppkey
+        ,s.$5                                            -- l_linenumber
+        ,s.$6                                            -- l_quantity
+        ,s.$7                                            -- l_extendedprice
+        ,s.$8                                            -- l_discount
+        ,s.$9                                            -- l_tax
+        ,s.$10                                           -- l_returnflag
+        ,s.$11                                           -- l_linestatus
+        ,s.$12                                           -- l_shipdate
+        ,s.$13                                           -- l_commitdate
+        ,s.$14                                           -- l_receiptdate
+        ,s.$15                                           -- l_shipinstruct
+        ,s.$16                                           -- l_shipmode
+        ,s.$17                                           -- l_comment
+        ,s.$18                                           -- last_modified_dt
+        ,metadata$filename                               -- dw_file_name
+        ,metadata$file_row_number                        -- dw_file_row_no
+        ,current_timestamp()                             -- dw_load_ts
+    from
+        @~ s
+    )
+purge         = true
+pattern       = &#39;.*line_item/data.*\.csv\.gz&#39;
+file_format   = ( type=csv field_optionally_enclosed_by = &#39;&#34;&#39; )
+on_error      = skip_file
+--validation_mode = return_all_errors
+;
+</code></pre>
+<h2 is-upgraded>Step 2 - Execute code and Verify Results</h2>
+<p>In this step we will load 3 _stg tables: LINE_ITEM_STG, ORDERS_STG, PART_STG and PARTSUPP_STG.</p>
+<h3 is-upgraded>LINE_ITEM_STG_LD.SQL</h3>
+<ol type="1">
+<li>First, we will load the Line Item data into the LINE_ITEM_STG table.</li>
+<li>Make sure you have 200_raw/line_item_stg_ld.sql script open in Snowsight.</li>
+<li>Setting the context of our session, highlight these SQL statements in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Highlight the truncate command in the script and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">truncate table line_item_stg;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="5">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.  On a small warehouse this will take approximately 1 minute to load the files. The results should look like this. <img alt="img" src="img/83038ac085106177.png"></li>
+<li>Let&#39;s verify the data was loaded.  Highlight the following SQL statement in your worksheet and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select 
+    *
+from 
+    table(information_schema.copy_history(table_name=&gt;&#39;LINE_ITEM_STG&#39;, start_time=&gt; dateadd(hours, -1, current_timestamp())))
+where
+    status = &#39;Loaded&#39;
+order by
+    last_load_time desc
+;
+</code></pre>
+<ol type="1" start="7">
+<li>The results will look similar to this.  The file name might differ. <img alt="img" src="img/153e78b940c36a85.png"></li>
+<li>Let&#39;s verify that the lines that we are monitoring are loaded into the LINE_ITEM_STG table. Highlight this SQL statement in your worksheet and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * 
+from dev_webinar_orders_rl_db.tpch.line_item_stg 
+where l_orderkey = 5722076550
+and l_partkey in ( 105237594, 128236374); -- 2 lines
+</code></pre>
+<p class="image-container"><img alt="img" src="img/3f9699e20c7a6228.png"></p>
+<h3 is-upgraded>PART_STG_LD.SQL</h3>
+<ol type="1">
+<li>Next, we will load the Part data into the PART_STG table.</li>
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em> and load the 200_raw/part_stg_ld.sql.</li>
+<li>Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Highlight the truncate command in the script and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">truncate table part_stg;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="5">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this. <img alt="img" src="img/e117d623a323e1e8.png"></li>
+</ol>
+<h3 is-upgraded>ORDERS_STG_LD.SQL</h3>
+<ol type="1">
+<li>Finally, we will load the Orders data into the ORDERS_STG table.</li>
+<li>Select to <em>&#34;create worksheet from SQL file&#34;</em> and load the 200_raw/orders_stg_ld.sql.</li>
+<li>Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Highlight the truncate command in the script and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">truncate table orders_stg;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="5">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this. <img alt="img" src="img/23559e1de58457c2.png"></li>
+</ol>
+<h3 is-upgraded>PARTSUPP_STG_LD.SQL</h3>
+<ol type="1">
+<li>Finally, we will load the Orders data into the PARTSUPP_STG table.</li>
+<li>Select to <em>&#34;create worksheet from SQL file&#34;</em> and load the 200_raw/partsupp_stg_ld.sql.</li>
+<li>Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Highlight the truncate command in the script and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">truncate table partsupp_stg;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="5">
+<li>Set your cursor on the <em>&#34;copy into&#34;</em> command and run it.  On a small warehouse this will take approximately 2 minutes to load the files. The results should look like this. <img alt="img" src="img/f2ec5b653888df48.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Raw Layer - Identify Impacted Partitions" duration="5">
+        <p>In this section we will identify the impacted partitions that were loaded into the staging tables in the Raw Layer and persist those identified partitions in a table for use in subsequent steps.</p>
+<p class="image-container"><img alt="img" src="img/265bae500753b27c.png"></p>
+<aside class="special"><p>In this diagram illustrates the concept of identifying the impacted partitions, persisting them to be utilized in all the layers of the data architecture to incrementally process the data.</p>
+<ul>
+<li><strong>Incremental Processing Step 2</strong> is to identify the impacted partitions.</li>
+<li>In this diagram, we select all the distinct orderdates from the LINE_ITEM_STG table that are impacted by the new data that was loaded.</li>
+<li>Then we persist those dates into a table called <em>&#34;dw_delta_date&#34;</em> so that we can utilize those impacted partitions to do our incremental processing at each layer (Raw, Integration and Presentation).</li>
+</ul>
+</aside>
+<h2 is-upgraded>Step 1 - Explain code snippets</h2>
+<h3 is-upgraded>DW_DELTA_DATE_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 200_raw/dw_delta_date_ld.sql</li>
+<li>After setting the context there is an <em>&#34;insert&#34;</em> statement.  As part of the <em>&#34;insert&#34;</em> statement, there is a <a href="https://docs.snowflake.com/en/user-guide/queries-cte.html" target="_blank">CTE (Common Table Expression)</a> identified by the <em>&#34;with&#34;</em> statement inside the <em>&#34;insert&#34;</em> statement. This <em>&#34;select&#34;</em> identifies all the orderdates that were impacted with the load into the _STG table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">insert overwrite into dw_delta_date
+with l_delta_date as
+(
+    select distinct
+        o_orderdate as event_dt
+    from
+        dev_webinar_orders_rl_db.tpch.line_item_stg 
+)
+select
+     event_dt
+    ,current_timestamp()            as dw_load_ts
+from
+    l_delta_date
+order by
+    1
+;
+</code></pre>
+<h3 is-upgraded>DW_DELTA_DATE_RANGE_F.SQL (Additional Information)</h3>
+<ol type="1">
+<li>As part of the objects we created back in the Getting Started Section, we created a table function called DW_DELTA_DATE_RANGE_F. This table function will take a type of time period such as day, week, month, quarter and year as a parameter, and return rows with a start_date and end_date of that period.  We want the end_dt to be one greater than the actual max when returned from the function.  This is so in our code for incremental processing we can use less than that end_date, to catch all data up through the end of that date.</li>
+<li>To review the code in Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 000_admin/dw_delta_date_range_f.sql</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use schema   &amp;{l_common_schema};;
+
+create or replace function dw_delta_date_range_f
+(
+    p_period_type_cd   varchar
+)
+returns table( start_dt timestamp_ltz, end_dt timestamp_ltz )
+as
+$$
+    select
+         start_dt
+        ,end_dt
+    from
+        (
+        select
+             case lower( p_period_type_cd )
+                 when &#39;all&#39;     then current_date()
+                 when &#39;day&#39;     then date_trunc( day, event_dt )
+                 when &#39;week&#39;    then date_trunc( week, event_dt )
+                 when &#39;month&#39;   then date_trunc( month, event_dt )
+                 when &#39;quarter&#39; then date_trunc( quarter, event_dt )
+                 when &#39;year&#39;    then date_trunc( year, event_dt )
+                 else current_date()
+             end                as partition_dt
+            ,min( event_dt ) as start_dt
+            ,dateadd( day, 1, max( event_dt ) ) as end_dt  -- To provide end date 
+        from
+            dw_delta_date
+        group by
+            1
+        )
+    order by
+        1
+$$
+;
+</code></pre>
+<h2 is-upgraded>Step 2 - Execute code and Verify Results</h2>
+<h3 is-upgraded>DW_DELTA_DATE_LD.SQL</h3>
+<ol type="1">
+<li>Setting the context of our script.  Highlight these in your worksheet, and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use database dev_webinar_common_db;
+use schema util;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="2">
+<li>Set the cursor on the <em>&#34;insert overwrite&#34;</em> statement and run it. The output should look like the following.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/c1f9d960deebf83a.png"></p>
+<ol type="1" start="3">
+<li>To verify that the order dates for 17 day window were loaded into the DW_DELTA_DATE table, highlight this query into your worksheet and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * 
+from dev_webinar_common_db.util.dw_delta_date
+order by event_dt;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/b08e7dcf2078ec6.png"></p>
+<h3 is-upgraded>DW_DELTA_DATE_RANGE_F.SQL (Query the table function)</h3>
+<ol type="1">
+<li>Verify the table function DW_DELTA_DATE_RANGE_F returns results as well. Highlight the following query your worksheet and run it.  This will return 3 rows representing 3 weeks of data.  We will utilize this table function in future scripts.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select start_dt, end_dt 
+FROM table(dev_webinar_common_db.util.dw_delta_date_range_f(&#39;week&#39;)) 
+order by 1;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/1c3305037dda2418.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Raw Layer - Incrementally Process" duration="15">
+        <p>In this section we will incrementally process the data and load it into the persistent tables in the Raw layer by utilizing the impacted partitions that were identified in the prior step.  We will load LINE_ITEM, LINE_ITEM_HIST, PART, ORDERS, and PARTSUPP tables.</p>
+<p class="image-container"><img alt="img" src="img/3cd7f442bb213846.png"></p>
+<aside class="special"><p> In this diagram we are illustrating the concept of &#34;looping&#34; through the impacted partitions and processing only that data impacted into the persistent tables in the raw layer.</p>
+<ul>
+<li><strong>Incremental Processing Step 3</strong> is to utilize the impacted partitions to process the data through each of the layers.</li>
+<li>Here we are using the order dates stored in the DW_DELTA_DATE table to identify the dates that need to be processed into the LINE_ITEM_HIST and LINE_ITEM tables.</li>
+<li>In the LINE_ITEM_HIST table we are capturing the life cycle of the rows as they change. This is for audit purposes or tracking.</li>
+<li>In the LINE_ITEM table, we are peristing the current state of that line_item row.</li>
+</ul>
+</aside>
+<h2 is-upgraded>Step 1 - Explain code snippets</h2>
+<h3 is-upgraded>LINE_ITEM_HIST_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 200_raw/line_item_hist_ld.sql</li>
+<li>After we set the context, there is the <em>&#34;execute immediate&#34;</em> statement.  Since we are using <a href="https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index.html" target="_blank">SQL Scripting</a> this statement is used to create an anonymous block.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">execute immediate $$
+</code></pre>
+<ol type="1" start="3">
+<li>In the declaration section, we are defining 2 variables (l_start_dt, and l_end_dt) that we will use to process the logical partition start and end dates.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">declare
+  l_start_dt date;
+  l_end_dt   date;
+</code></pre>
+<ol type="1" start="4">
+<li>Then we are declaring the cursor which holds the result of the DW_DELTA_DATE_RANGE_F table function that returns a start and end date for a week.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">declare
+  ...
+  c1 cursor for select start_dt, end_dt FROM table(dev_webinar_common_db.util.dw_delta_date_range_f(&#39;week&#39;)) order by 1;
+</code></pre>
+<ol type="1" start="5">
+<li>The <em>&#34;for&#34;</em> loop is where the script incrementally processes the data by looping through a week at a time.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">begin
+  --
+  -- Loop through the dates to incrementally process based on the logical partition definition.
+  -- In this example, the logical partitions are by week.
+  --
+  for record in c1 do
+    l_start_dt := record.start_dt;
+    l_end_dt   := record.end_dt;
+    ...
+  end for;
+
+end;
+</code></pre>
+<ol type="1" start="6">
+<li>Scroll down to the <em>&#34;insert&#34;</em> statement.</li>
+<li>Inside the <em>&#34;with&#34;</em> statement the script is creating a CTE named l_stg.</li>
+<li>The surrogate key and hash diff columns (_shk) being created in this CTE will be used to assist in identifying the rows that have changed.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">insert into line_item_hist
+with l_stg as
+    (
+        --
+        -- Driving CTE to identify all records in the logical partition to be processed.
+        select
+            -- generate hash key and hash diff to streamline processing
+             sha1_binary( concat( s.l_orderkey, &#39;|&#39;, s.l_linenumber ) )  as dw_line_item_shk
+            --
+            -- note that last_modified_dt is not included in the hash diff since it only represents recency of the record versus an 
+            -- actual meaningful change in the data
+            ,sha1_binary( concat( s.l_orderkey
+                                         ,&#39;|&#39;, coalesce( to_char( s.o_orderdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                         ,&#39;|&#39;, s.l_linenumber
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_partkey ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_suppkey ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_quantity ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_extendedprice ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_discount ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_tax ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_returnflag ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_linestatus ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_shipdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_commitdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( to_char( s.l_receiptdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( s.l_shipinstruct, &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( s.l_shipmode, &#39;~&#39; )
+                                         ,&#39;|&#39;, coalesce( s.l_comment, &#39;~&#39; )
+                                )
+        
+                        )               as dw_hash_diff
+            ,s.*
+        from
+            line_item_stg s
+</code></pre>
+<ol type="1" start="8">
+<li>In the CTE, the <em>&#34;where&#34;</em> clause is filtering the data from the LINE_ITEM_STG table to select only the rows that have an orderdate that is in the logical <em>&#34;week&#34;</em> partiton.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">insert into line_item_hist
+with l_stg as
+    (
+        --
+        -- Driving CTE to identify all records in the logical partition to be processed.
+        select
+            ...
+        from
+            line_item_stg s
+        where
+                s.o_orderdate &gt;= :l_start_dt
+            and s.o_orderdate  &lt; :l_end_dt
+    )
+</code></pre>
+<ol type="1" start="9">
+<li>The next CTE named l_deduped will go through and dedupe the records in the l_stg CTE, using the hash_diff to identify duplicate rows.  This eliminates duplicates from getting loaded into the permanent Raw layer LINE_ITEM_HIST table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">,l_deduped as
+    (
+        --
+        -- Dedupe the records from the staging table.
+        -- This assumes that there may be late arriving or duplicate data that were loaded
+        -- Need to identify the most recent record and use that to update the Current state table.
+        -- as there is no reason to process each individual change in the record, the last one would have the most recent updates
+        select
+            *
+        from
+            l_stg
+        qualify
+            row_number() over( partition by dw_hash_diff order by last_modified_dt desc, dw_file_row_no )  = 1
+    )
+</code></pre>
+<ol type="1" start="10">
+<li>The final outside <em>&#34;select&#34;</em> statement will select data from the LINE_ITEM_HIST table using the same logical <em>&#34;week&#34;</em> partition range, and compare it to the deduped staging records to identify what needs to be inserted into the LINE_ITEM_HIST table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">    select
+        ...
+    from
+        l_deduped s
+    where
+        s.dw_hash_diff not in
+        (
+            -- Select only the rows in that logical partition from the final table.
+            select dw_hash_diff from line_item_hist 
+            where
+                    o_orderdate &gt;= :l_start_dt
+                and o_orderdate  &lt; :l_end_dt
+        )
+</code></pre>
+<ol type="1" start="11">
+<li><strong>Important:</strong> To optimize query performance in Snowflake, and ensure proper clustering of data in each micropartition, the <em>&#34;order by&#34;</em> clause sorts the rows by orderdate as they are inserted into the table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">    order by
+        o_orderdate  -- physically sort rows by a logical partitioning date
+    ;
+</code></pre>
+<h3 is-upgraded>LINE_ITEM_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 200_raw/line_item_ld.sql</li>
+<li>The script is very similar to line_item_hist_ld.sql except this is a merge pattern. The script has the same anonymous block, variable declarations, and cursor definition using the DW_DELTA_DATE_RANGE_F table function to loop through the logical partitions, as well as the same <em>&#34;for&#34;</em> loop.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">execute immediate $$
+
+declare
+  l_start_dt date;
+  l_end_dt   date;
+  -- Grab the dates for the logical partitions to process
+  c1 cursor for select start_dt, end_dt FROM table(dev_webinar_common_db.util.dw_delta_date_range_f(&#39;week&#39;)) order by 1;
+
+begin
+
+  --
+  -- Loop through the dates to incrementally process based on the logical partition definition.
+  -- In this example, the logical partitions are by week.
+  --
+  for record in c1 do
+    l_start_dt := record.start_dt;
+    l_end_dt   := record.end_dt;
+    ...
+</code></pre>
+<ol type="1" start="3">
+<li>The script also has the same l_stg CTE to identify the LINE_ITEM_STG records within that week of logical partitions. It is also doing the same surrogate key and hash diff derivations.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">       with l_stg as
+        (
+            --
+            -- Driving CTE to identify all records in the logical partition to be processed
+            --
+            select
+                -- generate hash key and hash diff to streamline processing
+                 sha1_binary( concat( s.l_orderkey, &#39;|&#39;, s.l_linenumber ) )  as dw_line_item_shk
+                --
+                -- note that last_modified_dt is not included in the hash diff since it only represents recency of the record versus an 
+                -- actual meaningful change in the data
+                --
+                ,sha1_binary( concat( s.l_orderkey
+                                     ,&#39;|&#39;, coalesce( to_char( s.o_orderdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                     ,&#39;|&#39;, s.l_linenumber
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_partkey ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_suppkey ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_quantity ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_extendedprice ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_discount ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_tax ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_returnflag ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_linestatus ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_shipdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_commitdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.l_receiptdate, &#39;yyyymmdd&#39; ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.l_shipinstruct, &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.l_shipmode, &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.l_comment, &#39;~&#39; )
+                                    )
+            
+                            )               as dw_hash_diff
+                ,s.*
+            from
+                line_item_stg s
+            where
+                    s.o_orderdate &gt;= :l_start_dt
+                and s.o_orderdate  &lt; :l_end_dt
+        )
+</code></pre>
+<ol type="1" start="4">
+<li>The script has the same dedupe logic.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">,l_deduped as
+    (
+        --
+        -- Dedupe the records from the staging table.
+        -- This assumes that there may be late arriving or duplicate data that were loaded
+        -- Need to identify the most recent record and use that to update the Current state table.
+        -- as there is no reason to process each individual change in the record, the last one would have the most recent updates
+        select
+            *
+        from
+            l_stg
+        qualify
+            row_number() over( partition by dw_hash_diff order by last_modified_dt desc, dw_file_row_no )  = 1
+    )
+</code></pre>
+<ol type="1" start="5">
+<li>However...the script does have an additional CTE l_tgt. This CTE is important for partition pruning efficiencies because it is selecting only those rows from the LINE_ITEM table that are in the logical partition range we are processing.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">,l_tgt as
+        (
+            --
+            -- Select the records in the logical partition from the current table. 
+            -- Its own CTE, for partition pruning efficiencies
+            select *
+            from line_item
+            where
+                    o_orderdate &gt;= :l_start_dt
+                and o_orderdate  &lt; :l_end_dt
+        )
+</code></pre>
+<ol type="1" start="6">
+<li>Now let&#39;s look at the <em>&#34;merge&#34;</em> statement.  In the <em>&#34;select&#34;</em> statement below, the l_deduped CTE and l_tgt CTE are joined together with a left join to identify the rows that are in the LINE_ITEM_STG table that might not be in the LINE_ITEM table; or where the hash_diff is different and the modified date is after what already exists in the table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Merge Pattern 
+    --
+    merge into line_item tgt using
+    (
+      ...
+        select
+             current_timestamp()        as dw_version_ts
+            ,s.*
+        from
+            l_deduped s
+            left join l_tgt t on
+                t.dw_line_item_shk = s.dw_line_item_shk
+        where
+            -- source row does not exist in target table
+            t.dw_line_item_shk is null
+            -- or source row is more recent and differs from target table
+            or (
+                    t.last_modified_dt  &lt; s.last_modified_dt
+                and t.dw_hash_diff     != s.dw_hash_diff
+               )
+        order by
+            s.o_orderdate  -- physically sort rows by logical partitioning date
+    ) src
+</code></pre>
+<ol type="1" start="7">
+<li><strong>Important:</strong> Please note the <em>&#34;on&#34;</em> clause of the <em>&#34;merge&#34;</em> statement.  The logical partition dates are used to prevent a full table scan of the LINE_ITEM table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Merge Pattern 
+    --
+    merge into line_item tgt using
+    (
+      ...
+    on
+    (
+            tgt.dw_line_item_shk = src.dw_line_item_shk
+        and tgt.o_orderdate     &gt;= :l_start_dt
+        and tgt.o_orderdate      &lt; :l_end_dt
+    )
+</code></pre>
+<h2 is-upgraded>Step 2 - Execute code and Verify Results</h2>
+<h3 is-upgraded>LINE_ITEM_HIST_LD.SQL</h3>
+<ol type="1">
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em>, select the 200_raw/line_item_hist_ld.sql. Set the context of our script. Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="2">
+<li>Put your cursor on the <em>&#34;execute immediate&#34;</em> command at the top of the script and run it. <img alt="img" src="img/715c84ee6aabec69.png"></li>
+<li>Let&#39;s verify that the data was loaded into the LINE_ITEM_HISTORY table. Highlight the following query in your worksheet. If you have run these acquisition and load scripts multiple times you may see history changes in this table.</li>
+</ol>
+<aside class="warning"><p> If you are using the Snowflake Extension for VS Code to run the scripts, the SHA1_BINARY fields will not be displayed properly. To confirm that the SHA1_BINARY was created properly, run the following query in Snowflake.</p>
+</aside>
+<pre><code language="language-sql" class="language-sql">select * 
+from dev_webinar_orders_rl_db.tpch.line_item_hist 
+where l_orderkey = 5722076550 
+and l_partkey in ( 105237594, 128236374)
+order by 1;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/9f8569143fc64d87.png"></p>
+<h3 is-upgraded>LINE_ITEM_LD.SQL</h3>
+<ol type="1">
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em> and open the the 200_raw/line_item_ld.sql file.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="2">
+<li>Put your cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/715c84ee6aabec69.png"></li>
+<li>Let&#39;s verify that the data was loaded into the LINE_ITEM table. Highlight the following query in your worksheet and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * 
+from dev_webinar_orders_rl_db.tpch.line_item 
+where l_orderkey = 5722076550 
+and l_partkey in ( 105237594, 128236374)
+order by 1;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/9f8569143fc64d87.png"></p>
+<h3 is-upgraded>PART_LD.SQL</h3>
+<ol type="1">
+<li>Now we want to load the Part data into the PART table.</li>
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em> and open the worksheet 200_raw/part_ld.sql.</li>
+<li>Highlight the following SQL statements in the worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="2">
+<li>Put your cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/715c84ee6aabec69.png"></li>
+<li>Verify the PART table was loaded.  Highlight the following query and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select *
+from dev_webinar_orders_rl_db.tpch.part
+where p_partkey in ( 105237594, 128236374);
+</code></pre>
+<p class="image-container"><img alt="img" src="img/c17b0005514e264d.png"></p>
+<h3 is-upgraded>ORDER_LD.SQL</h3>
+<ol type="1">
+<li>Now we want to load the Order data into the ORDERS table.</li>
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em> and open the 200_raw/order_ld.sql file.</li>
+<li>Highlight the following SQL statements in the worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="2">
+<li>Put your cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/715c84ee6aabec69.png"></li>
+<li>Verify the ORDERS table was loaded with the order data.  Highlight the following query and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * 
+from dev_webinar_orders_rl_db.tpch.orders 
+where o_orderkey = 5722076550;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/c572f15e9268eb87.png"></p>
+<h3 is-upgraded>PARTSUPP_LD.SQL</h3>
+<ol type="1">
+<li>Now we want to load the partsupp data into the PARTSUPP table.</li>
+<li>Select <em>&#34;create worksheet from SQL file&#34;</em> and open the 200_raw/partsupp_ld.sql file.</li>
+<li>Highlight the following SQL statements in the worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_orders_rl_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="2">
+<li>Put your cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/715c84ee6aabec69.png"></li>
+<li>Verify the PARTSUPP table was loaded with the partsupp data.  Highlight the following query and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select * 
+from dev_webinar_orders_rl_db.tpch.partsupp
+where ps_partkey in ( 105237594, 128236374);
+</code></pre>
+<p class="image-container"><img alt="img" src="img/31b3fbe641520a5d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Integration Layer" duration="10">
+        <p>In this step we will incrementally process an isolated unit of work, deriving certain business rules from the impacted partitions that we previously identified.</p>
+<p class="image-container"><img alt="img" src="img/9bc183cccb275d1a.png"></p>
+<aside class="special"><p>This diagram illustrates the steps for incremental processing units of work in the integration layer of the DCDF data architecture.</p>
+<ul>
+<li>A unit of work has been identified where the line item margin needs to be derived/calculated for each line item.</li>
+<li>This is an isolated unit of work with business rules that should be incrementally processed each time new or changed line items are processed.</li>
+<li>Extensible, ease of maintenance for that unit of work.  As rules change to derive the margin, then they can be added/changed here in one place.</li>
+<li>The impacted logical partitions have been identified and will be incrementally processed.</li>
+</ul>
+</aside>
+<h2 is-upgraded>Step 1 - Explain code snippets</h2>
+<h3 is-upgraded>LINE_ITEM_MARGIN_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 310_derivation/line_item_margin_ld.sql</li>
+<li>This script is also using the anonymous block in SQL Scripting.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">execute immediate $$
+</code></pre>
+<ol type="1" start="3">
+<li>Again, the cursor is being declared using the result of the DW_DELTA_DATE_RANGE_F table function that returns a start and end date for a given week. We are going to loop through the weeks and process a week at a time. This is the incremental processing.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">declare
+  l_start_dt date;
+  l_end_dt   date;
+  -- Grab the dates for the logical partitions to process
+  c1 cursor for select start_dt, end_dt FROM table(dev_webinar_common_db.util.dw_delta_date_range_f(&#39;week&#39;)) order by 1;
+
+begin
+
+  --
+  -- Loop through the dates to incrementally process based on the logical partition definition.
+  -- In this example, the logical partitions are by week.
+  --
+  for record in c1 do
+    l_start_dt := record.start_dt;
+    l_end_dt   := record.end_dt;
+</code></pre>
+<ol type="1" start="4">
+<li>Just like the line_item_ld.sql file in the previous section, the merge processing pattern is being utilized here to select data by using the logical partitions. <strong>Important:</strong> Another note is the <em>&#34;on&#34;</em> clause of the <em>&#34;merge&#34;</em> statement.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">merge into line_item_margin t using
+    (
+        with l_src as
+        (
+            -- 
+            -- Driving CTE to identify all the records in the logical partition to be process
+            --
+            select
+                 s.dw_line_item_shk
+                ,s.o_orderdate
+                ,s.l_extendedprice - (s.l_quantity * p.ps_supplycost ) as margin_amt
+                ,s.last_modified_dt
+            from
+                dev_webinar_orders_rl_db.tpch.line_item s
+                join dev_webinar_orders_rl_db.tpch.partsupp p
+                  on ( p.ps_partkey = s.l_partkey
+                       and p.ps_suppkey = s.l_suppkey )
+            where
+                    s.o_orderdate &gt;= :l_start_dt
+                and s.o_orderdate  &lt; :l_end_dt
+        )
+        ,l_tgt as
+        (
+            -- 
+            -- Select the records in the logical partition from the current table.
+            -- Its own CTE, for partition pruning efficiencies
+            select *
+            from line_item_margin
+            where
+                    o_orderdate &gt;= :l_start_dt
+                and o_orderdate  &lt; :l_end_dt
+        )
+        select
+             current_timestamp()        as dw_update_ts
+            ,s.*
+        from
+            l_src s
+            left join l_tgt t on
+                t.dw_line_item_shk = s.dw_line_item_shk
+        where
+            -- source row does not exist in target table
+            t.dw_line_item_shk is null
+            -- or source row is more recent and differs from target table
+            or (
+                    t.last_modified_dt  &lt; s.last_modified_dt
+                and t.margin_amt       != s.margin_amt
+               )
+        order by
+            s.o_orderdate
+    ) s
+    on
+    (
+        t.dw_line_item_shk = s.dw_line_item_shk
+        and t.o_orderdate &gt;= :l_start_dt 
+        and t.o_orderdate  &lt; :l_end_dt
+    )
+</code></pre>
+<h2 is-upgraded>Step 2 - Execute code and Verify Results</h2>
+<h3 is-upgraded>LINE_ITEM_MARGIN_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em> and open the line_item_margin_ld.sql file.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_il_db;
+use schema   main;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="3">
+<li>Place your cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/715c84ee6aabec69.png"></li>
+<li>Let&#39;s verify that the data was loaded into the LINE_ITEM_MARGIN table. Highlight the following SQL query in your worksheet. If you have run these load scripts multiple times you may see history changes in this table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Integration
+select m.*
+from dev_webinar_il_db.main.line_item_margin m
+    join dev_webinar_orders_rl_db.tpch.line_item l
+where l.l_orderkey = 5722076550 
+and l.l_partkey in ( 105237594, 128236374)
+and m.dw_line_item_shk = l.dw_line_item_shk;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/15b7904c67d0d52a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Presentation Layer" duration="6">
+        <p>In this step we will incrementally process the data that was loaded in the previous section, and re-organizing the data for consumption from the Presentation layer, utilizing the identified impacted partitions.</p>
+<p class="image-container"><img alt="img" src="img/2a882c8718981610.png"></p>
+<aside class="special"><p>In this diagram illustrates the steps for incremental processing for the Presentation layer of the DCDF data architecture.</p>
+<ul>
+<li>Order_line_fact is a purpose built solution for consumption and analytics.</li>
+<li>Dimensional model as an example to provide a solution around the orders lines and consumption at that atomic level of data.</li>
+<li>The impacted logical partitions have been identified and will be incrementally processed in the presentation layer.</li>
+</ul>
+</aside>
+<h2 is-upgraded>Step 1 - Explain code snippets</h2>
+<h3 is-upgraded>ORDER_LINE_FACT_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 410_fact_atomic/order_line_fact_ld.sql</li>
+<li>This script uses the anonymous block in SQL Scripting.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">execute immediate $$
+</code></pre>
+<ol type="1" start="3">
+<li>Again, the cursor is being declared using the result of the DW_DELTA_DATE_RANGE_F table function that returns a start and end date for a given week. We are going to loop through the weeks and process a week at a time. This is the incremental processing.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">declare
+  l_start_dt date;
+  l_end_dt   date;
+  -- Grab the dates for the logical partitions to process
+  c1 cursor for select start_dt, end_dt FROM table(dev_webinar_common_db.util.dw_delta_date_range_f(&#39;week&#39;)) order by 1;
+
+begin
+
+  --
+  -- Loop through the dates to incrementally process based on the logical partition definition.
+  -- In this example, the logical partitions are by week.
+  --
+  for record in c1 do
+    l_start_dt := record.start_dt;
+    l_end_dt   := record.end_dt;
+</code></pre>
+<ol type="1" start="4">
+<li>Within the <em>&#34;for&#34;</em> loop is a delete/insert processing pattern. The <em>&#34;delete&#34;</em> statement will delete from the ORDER_LINE_FACT table any rows within the logical partition. This logical partition is the week of order dates in our example. Then the <em>&#34;insert&#34;</em> will insert all the rows for that logical partition into the ORDER_LINE_FACT table.</li>
+<li>We first apply deletes and then inserts in order to handle situations such as late arriving data. For instance if the supplier wasn&#39;t available when the order line item was first ordered, that value would be some default value. Then as the status of the line item changes, and the supplier was updated, the original defaulted row would need to be removed.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Delete the records using the logical partition 
+     -- Very efficient when all the rows are in the same micropartitions.  Mirrors a truncate table in other database platforms.
+     delete from order_line_fact
+     where orderdate &gt;= :l_start_dt
+       and orderdate &lt;  :l_end_dt;
+ 
+     -- Insert the logical partitioned records into the table
+     -- Inserts data from same order date into the same micropartitions
+     -- Enables efficient querying of the data for consumption
+     insert into order_line_fact
+     select
+         li.dw_line_item_shk
+        ,o.o_orderdate
+        ,o.dw_order_shk
+        ,p.dw_part_shk
+        ,s.dw_supplier_shk
+        ,li.l_quantity      as quantity
+        ,li.l_extendedprice as extendedprice
+        ,li.l_discount      as discount
+        ,li.l_tax           as tax
+        ,li.l_returnflag    as returnflag
+        ,li.l_linestatus    as linestatus
+        ,li.l_shipdate
+        ,li.l_commitdate
+        ,li.l_receiptdate
+        ,lim.margin_amt
+        ,current_timestamp() as dw_load_ts
+     from
+         webinar_rl_db.tpch.line_item li
+         --
+         join webinar_rl_db.tpch.orders o
+           on o.o_orderkey = li.l_orderkey
+         --
+         join webinar_il_db.main.line_item_margin lim
+           on lim.dw_line_item_shk = li.dw_line_item_shk
+         --
+         -- Left outer join in case the part record is late arriving
+         --
+         left outer join webinar_rl_db.tpch.part p
+           on p.p_partkey = li.l_partkey
+         --
+         -- left outer join in case the supplier record is late arriving
+         --
+         left outer join webinar_rl_db.tpch.supplier s
+           on s.s_suppkey = li.l_suppkey
+     where 
+             li.o_orderdate &gt;= :l_start_dt
+         and li.o_orderdate &lt;  :l_end_dt
+     order by o.o_orderdate;
+</code></pre>
+<ol type="1" start="6">
+<li>Let&#39;s look at a dimension table load to illlustrate a different processing pattern <em>&#34;insert overwrite&#34;</em>.</li>
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 400_dimension/part_dm_ld.sql</li>
+<li>This script is also using the anonymous block in SQL Scripting.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">execute immediate $$
+</code></pre>
+<ol type="1" start="9">
+<li>This script uses an <em>&#34;insert overwrite&#34;</em> pattern where the code will essentially be doing a truncate/insert. The advantage of doing <em>&#34;insert overwrite&#34;</em>, versus a truncate/insert, is that the table will never be empty. With a truncate/insert pattern there could be a time period in which the table is empty if users were to query the data.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">insert overwrite into part_dm
+   select
+       p.dw_part_shk
+      ,p.p_partkey
+      ,p.p_name as part_name
+      ,p.p_mfgr as mfgr
+      ,p.p_brand as brand
+      ,p.p_type as type
+      ,p.p_size as size
+      ,p.p_container as container
+      ,p.p_retailprice as retail_price
+      ,p.p_comment as comment
+      ,d.first_orderdate
+      ,p.last_modified_dt
+      ,p.dw_load_ts
+      ,p.dw_update_ts
+   from
+       dev_webinar_orders_rl_db.tpch.part p
+       left join dev_webinar_il_db.main.part_first_order_dt d
+         on d.dw_part_shk = p.dw_part_shk;
+</code></pre>
+<h2 is-upgraded>Step 2 - Execute code and Verify Results</h2>
+<h3 is-upgraded>ORDER_LINE_FACT_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em> and open the worksheet for the 410_fact_atomic/order_line_fact_ld.sql.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_pl_db;
+use schema   main;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p><img alt="img" src="img/5f0bdb2835c4accf.png"> 3. Place the cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/715c84ee6aabec69.png"></p>
+<ol type="1" start="4">
+<li>Let&#39;s verify that the data was loaded into the ORDER_LINE_FACT table. Highlight the following query in your worksheet. If you have run these load scripts multiple times you may see history changes in this table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select olf.*
+from dev_webinar_pl_db.main.order_line_fact olf
+  join dev_webinar_orders_rl_db.tpch.line_item l
+    on l.dw_line_item_shk = olf.dw_line_item_shk
+where l.l_orderkey = 5722076550 
+and l.l_partkey in ( 105237594, 128236374);
+</code></pre>
+<p class="image-container"><img alt="img" src="img/86c3a0ed7ebaa1c8.png"></p>
+<h3 is-upgraded>PART_DM_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em> and open the worksheet for the 400_dimension/part_dm_ld.sql.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_pl_db;
+use schema   main;
+use warehouse dev_webinar_wh;
+</code></pre>
+<ol type="1" start="3">
+<li>Place the cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/715c84ee6aabec69.png"></li>
+<li>Let&#39;s verify that the data was loaded into the PART_DM table. Highlight the following query in your worksheet. If you have run these load scripts multiple times you may see history changes in this table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select *
+from dev_webinar_pl_db.main.part_dm p
+where p_partkey in ( 105237594, 128236374);
+</code></pre>
+<p class="image-container"><img alt="img" src="img/e8f344058d5252e4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="BONUS - Type 2 Slowly Changing Dimension" duration="5">
+        <aside class="special"><p> Slowly changing dimension type 2 changes add a new row in the dimension with the updated attribute values. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row. -  Kimball Group.</p>
+</aside>
+<p>In this section we will go through incremental processing of a Type 2, slowly changing dimension; customer.   We will go through running each layer in the DCDF for this customer data.</p>
+<h2 is-upgraded>Step 1 - Acquistion</h2>
+<h3 is-upgraded>CUSTOMER_ACQ.SQL</h3>
+<ol type="1">
+<li>In Snowsight,  <em>&#34;create worksheet from SQL file&#34;</em>, select the 100_acquisition/customer_acq.sql.</li>
+<li>In the first few lines of the script we are setting the context for this script.</li>
+<li>Here you will see a <em>&#34;union all&#34;</em> statement where we are creating some modified data for a specific customer to illustrate changes over time to the data.</li>
+<li>The <em>&#34;copy into&#34;</em> statement is where we are copying (Unloading) the data from the SNOWFLAKE_SAMPLE_DATA into CSV formatted files into an internal table stage.<br><img alt="img" src="img/9f152dfcd333621e.png"></li>
+</ol>
+<h2 is-upgraded>Step 2 - Raw Layer</h2>
+<h3 is-upgraded>CUSTOMER_STG_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 100_acquisition/customer_stg_ld.sql.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_rl_orders_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="3">
+<li>Place the cursor on the <em>&#34;truncate table &#34;</em> command and run it. <img alt="img" src="img/5f0bdb2835c4accf.png"></li>
+<li>Place the cursor on the <em>&#34;execute immediate&#34;</em> command and run it. <img alt="img" src="img/5b5ee7aa67864b8e.png"></li>
+<li>Let&#39;s verify that the data was loaded into the CUSTOMER_STG table.  Highlight the following query at the bottom of your worksheet and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select *
+from dev_webinar_orders_rl_db.tpch.customer_stg
+where c_custkey in (50459048);
+</code></pre>
+<p class="image-container"><img alt="img" src="img/1c75b12ebd7786b1.png"></p>
+<h3 is-upgraded>DW_DELTA_DATE_LD_BONUS.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 200_raw/dw_delta_date_ld_bonus.sql.</li>
+<li>This script has been updated to identify logical partitions in the CUSTOMER_STG table as well as the LINE_ITEM_STG.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_rl_orders_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="4">
+<li>Place the cursor on the <em>&#34;insert overwrite&#34;</em> statement and run it. <img alt="img" src="img/758ab03860708a7f.png"></li>
+</ol>
+<h3 is-upgraded>CUSTOMER_HIST_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 100_acquisition/customer_hist_ld.sql.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_rl_orders_db;
+use schema   tpch;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="3">
+<li>Scroll down to the dw_customer_shk surrogate key generation in the <em>&#34;with&#34;</em> statement.  We are generating a surrogate key for each combination of the c_custkey and the change_date.  We want to use this in the presentation layer to match an order to the correct version of the customer at the time of the order.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">    select
+        -- generate hash key and hash diff to streamline processing
+        sha1_binary( s.c_custkey || to_char( s.change_date, &#39;yyyymmdd&#39; ) )  as dw_customer_shk
+        --
+        -- note that last_modified_dt is not included in the hash diff since it only represents recency of the record versus an 
+        -- actual meaningful change in the data
+        ,sha1_binary( concat( s.c_custkey || to_char( s.change_date, &#39;yyyymmdd&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.change_date, &#39;yyyymmdd&#39;), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.c_name, &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.c_address, &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.c_nationkey ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.c_phone, &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( to_char( s.c_acctbal ), &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.c_mktsegment, &#39;~&#39; )
+                                     ,&#39;|&#39;, coalesce( s.c_comment, &#39;~&#39; )
+                            )
+     
+                    )               as dw_hash_diff
+        ,s.*
+    from
+        customer_stg s
+    where
+            s.change_date &gt;= :l_start_dt
+        and s.change_date  &lt; :l_end_dt
+</code></pre>
+<ol type="1" start="4">
+<li>Place the cursor on the <em>&#34;execute immediate&#34;</em> command and run it.  Here we are loading the CUSTOMER_HIST table using the same repeatable pattern as we did with the LINE_ITEM_HIST table.<br><img alt="img" src="img/5b5ee7aa67864b8e.png"></li>
+<li>Let&#39;s verify that the data was loaded into the CUSTOMER_HIST table.  Highlight the following query at the bottom of your worksheet and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select *
+from dev_webinar_orders_rl_db.tpch.customer_hist
+where c_custkey in (50459048)
+order by 5;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/27bdf1f66ae3bf32.png"></p>
+<h2 is-upgraded>Step 3 - Integration Layer</h2>
+<p>There are no steps here for the integration layer as there aren&#39;t any business rules being defined for customer.</p>
+<h2 is-upgraded>Step 4 - Presentation Layer</h2>
+<h3 is-upgraded>CUSTOMER_DM.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 400_dimension/customer_dm_ld.sql.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_pl_db;
+use schema   main;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="3">
+<li>Place the cursor on the <em>&#34;execute immediate&#34;</em> command and run it.  Here we are loading the CUSTOMER_DM table.<br><img alt="img" src="img/5f0bdb2835c4accf.png"></li>
+<li>Let&#39;s veriy that the data was loaded into the CUSTOMER_DM table.  Highlight the query below in your worksheet and run it.  There should be two rows, where the values of the c_acctbal are different.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select *
+from dev_webinar_pl_db.main.customer_dm
+where c_custkey in (50459048)
+order by 5;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/b1e2a7adf1e7076a.png"></p>
+<h3 is-upgraded>ORDER_LINE_FACT_BONUS_LD.SQL</h3>
+<ol type="1">
+<li>In Snowsight, <em>&#34;create worksheet from SQL file&#34;</em>, select the 410_fact_atomic/order_line_fact_bonus_ld.sql.</li>
+<li>Highlight the following SQL statements in your worksheet and run them to set the context.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use role     sysadmin;
+use database dev_webinar_pl_db;
+use schema   main;
+use warehouse dev_webinar_wh;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/5f0bdb2835c4accf.png"></p>
+<ol type="1" start="3">
+<li>Place the cursor on the <em>&#34;execute immediate&#34;</em> command and run it.  Here we are loading the ORDER_LINE_FACT_BONUS table.<br><img alt="img" src="img/5f0bdb2835c4accf.png"></li>
+<li>Let&#39;s verify that the data was loaded into the ORDER_LINE_FACT_BONUS table and that we can see the one order with multiple line_items and the c_acctbal column is 1,293. Highlight the query below in your worksheet and run it.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">select 
+     c.c_custkey
+    ,c.c_name
+    ,c.c_acctbal
+    ,olf.*
+from dev_webinar_pl_db.main.customer_dm c
+   join dev_webinar_pl_db.main.order_line_fact_bonus olf
+     on olf.dw_customer_shk = c.dw_customer_shk
+where c.c_custkey in (50459048);
+order by olf.orderdate;
+</code></pre>
+<p class="image-container"><img alt="img" src="img/a7bc66a4a8c6a15.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="2">
+        <p>This step is to cleanup and drop all the objects we created as part of this quickstart.</p>
+<ol type="1">
+<li>Select to <em>&#34;create worksheet from SQL file&#34;</em> and open the worksheet for the 000_admin/cleanup.sql.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Cleanup all the objects we created
+
+use role sysadmin;
+
+drop database dev_webinar_orders_rl_db;
+drop database dev_webinar_il_db;
+drop database dev_webinar_pl_db;
+drop database dev_webinar_common_db;
+</code></pre>
+<ol type="1" start="2">
+<li>Run all the SQL statements to drop all the objects that were created. <img alt="img" src="img/5f0bdb2835c4accf.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="4">
+        <p>This tutorial was designed as a hands-on introduction to the Data Cloud Deployment Framework (DCDF) data architecture incremental processing and logical partitions.</p>
+<p>We encourage you to continue learning about the Data Cloud Deployment Framework, by watching the <a href="https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/" target="_blank">Data Cloud Deployment Framework Series Webinars</a> either on-demand on register for upcoming episodes.</p>
+<p>Also the github repo contains more scripts than what was covered in this lab.  It&#39;s a full, working template model taking source data from the Raw layer, through the Integration layer, and finally to the Presentation layer dimension model, ready for consumption. Please take the time to go through each one of these scripts and slowly work through the examples. Feel free to use these as code templates to be implemented in your own environments and accounts for your data processing.</p>
+<p>During this quickstart, our hope is that you noticed the repeatable patterns in these scripts which can facilitate an Agile Development Process.</p>
+<h2 is-upgraded>What we have covered</h2>
+<ul>
+<li>A data pipeline utilizing incremental processing and logical partition definitions</li>
+<li>Introduced the concepts of the Raw, Integration and Presentation layers and how each utilizes incremental processing and logical partition definitions.</li>
+<li>Walked through code examples used for different processing patterns such as truncate/reload, insert overwrite, merge and delete/insert.</li>
+</ul>
+<h2 is-upgraded>Potential Next Steps</h2>
+<ul>
+<li>Create a stored procedure for the LINE_ITEM_MARGIN business rules logic</li>
+<li>Create streams on the LINE_ITEM raw layer table.</li>
+<li>Create a Snowflake Task to execute the LINE_ITEM_MARGIN stored procedure when there is data in the LINE_ITEM stream.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

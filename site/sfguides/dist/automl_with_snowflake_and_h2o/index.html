@@ -1,0 +1,543 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AutoML with Snowflake and H2O Driverless AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="automl_with_snowflake_and_h2o"
+                  title="AutoML with Snowflake and H2O Driverless AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Use Case Overview" duration="0">
+        <p>H2O Driverless AI is a supervised machine learning platform leveraging the concept of automated machine learning. Supervised machine learning is a method that takes historic data where the response or <strong>target</strong> is known and build relationships between the input variables and the target variable. Driverless AI automates most of difficult supervised machine learning workflow such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines, which are produced from H2O Driverless AI, can exported as standalone scoring artifacts to power your AI/ML use case.</p>
+<p>This tutorial presents a quick introduction to the Driverless AI platform via Snowflake Partner Connect.</p>
+<p>We will use a dataset from LendingClub.com to build a classification model to help us predict the likelihood a LendingClub.com borrower will default on their loan. LendingClub.com is an established online loan marketplace that funds personal loans, commercial loans, funding of medical procedures, and other financing needs. The data consist of 25 columns and approximately 39,000 rows, with each row corresponding to a customer. Here is preview of the data:</p>
+<p class="image-container"><img src="img/d251b5ad3b011563.png"></p>
+<p class="image-container"><img src="img/f88a973b95fcc57.png"></p>
+<p>Note that the dataset consist of numerical columns (<code>loan_amount</code>, <code>installment</code>, <code>emp_length</code>, <code>dti</code>, etc.), categorical columns (<code>term</code>, <code>home_ownership</code>, <code>verification_status</code>, <code>purpose</code>, etc.), and a text column (<code>desc</code>). Our target variable is <code>bad_loan</code> which is a Boolean with values <code>True</code> and <code>False</code>, thus this will be a binary classification problem.</p>
+<p>We will use Snowflake and Driverless AI to:</p>
+<ul>
+<li><strong>Import</strong> the data from Snowflake</li>
+<li><strong>Explore</strong> the data using summary descriptive statistics and automated visualizations (AutoViz)</li>
+<li><strong>Build</strong> a predictive model using an evolutionary algorithm for automatic feature engineering and model optimization</li>
+<li><strong>Measure</strong> the model through diagnostics</li>
+<li><strong>Understand</strong> the model through MLI (machine learning interpretability)</li>
+<li><strong>Deploy</strong> the model into production in a Snowflake system</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the <code>ACCOUNTADMIN</code> role, which is required for this lab)</li>
+<li>A <a href="https://www.h2o.ai/try-driverless-ai/" target="_blank">H2O</a> trial license key</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">SnowSQL</a> installed (Snowflake&#39;s CLI tool)</li>
+<li>Past experience running and executing queries in Snowflake</li>
+<li>A basic understanding of data science and machine learning concepts</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to use Snowflake&#39;s &#34;Partner Connect&#34; to create a Driverless AI instance</li>
+<li>How to use Driverless AI to build a supervised learning classification model</li>
+<li>How to deploy the finished model pipeline as a Snowflake Java UDF</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake" duration="5">
+        <p>The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.</p>
+<p><a href="https://snowflake-workshop-lab.s3.amazonaws.com/h2o/Snowflake_H2o_VHOL_guides.sql" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download .sql File</paper-button></a></p>
+<p>At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close any hint boxes that are looking to help guide you. These will not be needed for this lab as most of the hints will be covered throughout the remainder of this exercise.</p>
+<p class="image-container"><img src="img/d36c61ad7f998d6.png"></p>
+<p>To ingest our script in the Snowflake UI, navigate to the ellipsis button on the top right hand side of a &#34;New Worksheet&#34; and load our script.</p>
+<p class="image-container"><img src="img/4a497a420169df97.png"></p>
+<p>Snowflake provides &#34;worksheets&#34; as the spot for you to execute your code. This lab assumes you have already run a few queries in Snowflake before. Therefore, we are going to execute a series of commands quickly, so we get the data in tables and continue to the more interesting part of the lab of building and deploying models. The .sql file that you upload should look like this:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE PC_H2O_ROLE;
+USE DATABASE PC_H2O_DB;
+USE SCHEMA public;
+USE WAREHOUSE PC_H2O_WH;
+
+CREATE OR REPLACE TABLE loans (
+    id INTEGER,
+    loan_amnt INTEGER,
+    term String(1024),
+    installment Real,
+    grade String(1024),
+    ...)
+
+...
+</code></pre>
+<p><strong>Note: before you execute the SQL statements, please proceed to the next section to connect to H2O and launch your Driverless AI instance.</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Launching Driverless AI" duration="5">
+        <p>Snowflake&#39;s Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible.</p>
+<p class="image-container"><img src="img/3063f4d3b55b2cad.png"></p>
+<p>Go ahead and click on the &#34;Partner Connect&#34; application. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool.</p>
+<p class="image-container"><img src="img/fd179c20adfeb060.png"></p>
+<p>To be able to continue test out partner applications, in our case H2O, we need to promote ourselves to the <code>ACCOUNTADMIN</code> role. This is an out of worksheet process, and therefore isn&#39;t a command for us to run. We need to do this one manually.</p>
+<p class="image-container"><img src="img/41b11e0e45a46e2e.png"></p>
+<p>Once you have completed this step, go ahead and click on the H2O application. This will present you with a screen to connect to H2O. It will outline a number of Snowflake objects that will be auto-created. For the purposes of this lab, we have already created the snowflake objects that we will need, so you can press &#34;Connect&#34; .</p>
+<p class="image-container"><img src="img/d0c0b5b34c3b2a36.png"></p>
+<p>This creates a partner account which you can immediately <code>Activate</code></p>
+<p class="image-container"><img src="img/136fac6698c19e4a.png"></p>
+<p>You next need to accept the H2O Terms and Conditions for the Trial Agreement</p>
+<p class="image-container"><img src="img/d20095295e58761.png"></p>
+<p>and wait while your H2O Driverless AI instance is configured and launched.</p>
+<p class="image-container"><img src="img/773db8a9889ade9c.png"></p>
+<h2 is-upgraded>Driverless AI Interface</h2>
+<p>Your brand new Driverless AI instance looks like</p>
+<p class="image-container"><img src="img/b3221a8870eb5b22.png"></p>
+<p>A summary of the information and views we will cover in this tutorial include:</p>
+<ol type="1">
+<li>H2O.ai information: This displays the version (Driverless AI 1.9.0.2), the license owner and status, and the current user (H2OAI).</li>
+<li><code>DATASETS</code>: A view for importing, listing, and operating on datasets.</li>
+<li><code>AUTOVIZ</code>: The Automatic Visualizations of data view.</li>
+<li><code>EXPERIMENTS</code>: The view where we build and deploy predictive models.</li>
+<li><code>DIAGNOSTICS</code>: Model diagnostics view.</li>
+<li><code>MLI</code>: Machine learning interpretability view, information to help us understand our models.</li>
+<li><code>RESOURCES</code>: A pull-down menu for accessing system information, clients, help, and other resources.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Loading dataset and creating a Snowflake table" duration="0">
+        <p>Now let&#39;s setup the database and warehouse in Snowflake, and create a table to use for the lab.</p>
+<p>In the Snowflake worksheet, you have previously loaded a <code>.sql</code> script. The SQL commands in this script will import the Lendingclub dataset and create a table called <code>loans</code>. This table will be used with H2O Driverless AI to train and deploy a machine learning model.</p>
+<p>To execute the entire .sql code, which contains 9 different statements, all we need to do is click on the &#34;All Queries&#34; button next to blue &#34;run&#34; button at the top left of the worksheet and then press &#34;run&#34;. You should see the &#34;run&#34; button has a &#34;(9)&#34;, meaning it will execute all 9 commands in the uploaded file.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import Data from Snowflake" duration="5">
+        <p>From the empty Datasets view, click the <code>Add Dataset</code> button and select the <code>SNOWFLAKE</code> connector:</p>
+<p class="image-container"><img src="img/43969db0aa3f42a0.png"></p>
+<p>This launches the <code>Make Snowflake Query</code> form.</p>
+<p><img src="img/d426b4af9245e271.png"> Enter into the form:</p>
+<ul>
+<li><strong>Database </strong><code>PC_H2O_DB</code></li>
+<li><strong>Warehouse</strong> as <code>PC_H2O_WH</code></li>
+<li><strong>Schema</strong> as <code>PUBLIC</code></li>
+<li><strong>Name</strong> as <code>loans.csv</code></li>
+<li><strong>Username</strong> and <strong>Password</strong> with the credentials you used at signup</li>
+<li><strong>File Formatting Parameters</strong> as <code>FIELD_OPTIONALLY_ENCLOSED_BY = '"'</code>note: the quotation marks are <strong><em>single double single</em></strong></li>
+<li><strong>SQL Query </strong><code>SELECT * FROM LOANS</code></li>
+</ul>
+<p>Then click the <code>CLICK TO MAKE QUERY</code> button. This imports the data into the Driverless AI system.</p>
+<p class="image-container"><img src="img/9416cbf3378bf3bb.png"></p>
+<p>The dataset is now available for next steps in Driverless AI</p>
+<p class="image-container"><img src="img/90adab8de88cb58f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dataset Details" duration="10">
+        <p>Right click the <code>loans</code> dataset to get details.</p>
+<p class="image-container"><img src="img/90e72649b663b455.png"></p>
+<p>The <code>Dataset Details</code> view is a quick way to inspect the dataset columns, see their storage type (integer, string, etc.), get summary statistics and distribution plots for each column.</p>
+<p class="image-container"><img src="img/567d41090b8a4189.png"></p>
+<p>In more advanced usage, you can edit the data type interactively</p>
+<p class="image-container"><img src="img/7c02d22f484ccdb7.png"></p>
+<p>Scrolling to the right, inspect the <code>bad_loans</code> column, our target variable.</p>
+<p class="image-container"><img src="img/a8673dab25814123.png"></p>
+<p>The target <code>bad_loans</code> is Boolean with 38,980 observations and has a mean value of 0.1592. This means that 15.92% of the customers (rows) in this dataset have a loan that was not paid off.</p>
+<p>Clicking the <code>DATASET ROWS</code> button on the upper right yields a spreadsheet format.</p>
+<p class="image-container"><img src="img/a8c1240a7f294276.png"></p>
+<p>This is helpful in understanding the layout of the data. A quick inspection of your dataset using <code>Details</code> is a good practice that we always recommended.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualizing Datasets" duration="10">
+        <p><code>Autoviz</code> in Driverless AI automatically creates a variety of informative interactive graphs that are designed for understanding the data to be used in building a predictive model. <code>Autoviz</code> is unique in that it only shows the graphs that are applicable for your data based on the information in your data.</p>
+<p>Right click the dataset name and select <code>VISUALIZE</code> to launch AutoViz</p>
+<p class="image-container"><img src="img/a7c29432e60a6ed9.png"></p>
+<p>The available visualizations for the <code>loans</code> data are shown below.</p>
+<p class="image-container"><img src="img/1b786d88dbca3d32.png"></p>
+<p>Selecting the <code>SKEWED HISTOGRAMS</code> section, for example, yields a series of histograms on only the columns that are sufficiently skewed. We show one below for the <code>credit_length</code> column.</p>
+<p class="image-container"><img src="img/788fc5d37c9ea067.png"></p>
+<p>Clicking the left and right navigation arrows allows you to inspect additional variables, ordered by their skewness.</p>
+<p>Close the <code>SKEWED HISTOGRAMS</code> display and scroll down to see <code>RECOMMENDATIONS</code>.</p>
+<p class="image-container"><img src="img/d833fd4f0e021fcf.png"></p>
+<p>Selecting <code>RECOMMENDATIONS</code> produces</p>
+<p class="image-container"><img src="img/853afaac99adad98.png"></p>
+<p>The philosophy underlying automatic visualizations is to make it easy for the data scientist to quickly understand their data fields, but it does not make decisions for the data scientist.</p>
+<p>There are a number of additional useful graphs that can be navigated to fully understand your data prior to modeling.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Split Data" duration="10">
+        <p>Splitting data into train and test sets allows models to be built with the train set and evaluated on the test data. This protects against overfit and yields more accurate error estimates. To use the Dataset Splitter utility, right click the dataset and select <code>SPLIT</code></p>
+<p class="image-container"><img src="img/53edf4e968790097.png"></p>
+<p>Name your <code>train</code> and <code>test</code> splits, then select a split ratio (here we use 0.8).</p>
+<p><img src="img/79574664f5b389f1.png"> For a time series use case, enter the time column. If your data have predefined folds for k-fold cross validation, enter the fold column. A seed is available for reproducibility. Select the target column <code>bad_loan</code></p>
+<p class="image-container"><img src="img/2985474f10b41d29.png"></p>
+<p>The data type of the target column determines the splitting algorithm. For classification problems, stratefied random sampling is used. For numeric target columns, simple random sampling is used.</p>
+<p>Click <code>SAVE</code> to create the datasets.</p>
+<p class="image-container"><img src="img/6fefc6f9af582e48.png"></p>
+<p>The <code>train</code> dataset has around 31,000 rows and the <code>test</code> dataset around 8000 rows.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Experiment" duration="15">
+        <p>We use the term <em>Experiment</em> in Driverless AI to refer to the entire feature engineering and model evolution process. Instead of fitting one model, we are fitting many and using a &#34;survival of the fittest&#34; approach to optimize features and model hyperparameters. The result is a combination feature engineering-modeling <em>pipeline</em>, which can easily be investigated and promoted into production.</p>
+<h2 is-upgraded>Set up an Experiment</h2>
+<p>We start an experiment from the <code>Datasets</code> view by clicking on the line corresponding to the <code>train</code> dataset and selecting <code>PREDICT</code> from the dropdown menu</p>
+<p class="image-container"><img src="img/780b2b61493bc627.png"></p>
+<p>This opens the following form for configuring an experiment.</p>
+<p class="image-container"><img src="img/42dfec04fd7496b0.png"></p>
+<p>The fields are</p>
+<ol type="1">
+<li>(Optional) Name your experiment. This is especially helpful for leaderboards in <code>Projects</code>.</li>
+<li>The prefilled training dataset.</li>
+<li>(Optional) Select columns to drop from modeling.</li>
+<li>(Optional) Select a validation dataset. Setting this option will enforce a train-validate split throughout the experiment.</li>
+<li>(Recommended) Select the test dataset. You should <strong>always</strong> have a holdout test dataset to evaluate your model!</li>
+<li>Select the target column. This option is flashing so you will not miss it.</li>
+<li>(Optional) Select a column containing fold numbers. This is used where folds for k-fold cross validation have already been defined.</li>
+<li>(Optional) Select weight column.</li>
+<li>(Optional) Select a time column. This switches Driverless AI into a time-series mode, where specialized data, feature engineering, and model settings are enabled.</li>
+</ol>
+<p>For our experiment, enter &#34;Baseline&#34; as the display name (#1). Next select the <code>TEST DATASET</code> file <code>test</code> (#5). The <code>desc</code> column contains a written explanation from the customer describing the reason for requesting a loan. Although Driverless AI has extensive NLP (natural language processing) capabilities, we omit them in this baseline model. Thus using <code>DROPPED COLUMNS</code> (#3), select <code>desc</code>:</p>
+<p class="image-container"><img src="img/cedd25f819a1ccfa.png"></p>
+<p>Next select <code>bad_loan</code> as the <code>TARGET COLUMN</code> (#6). You will have to scroll down, since <code>bad_loan</code> is the next-to-last variable in the dataset</p>
+<p class="image-container"><img src="img/348526f4eb01f820.png"></p>
+<p>After selecting the target variable, Driverless AI analyzes the data and experimental settings and prefills additional options:</p>
+<p class="image-container"><img src="img/1746ad64fca7879f.png"></p>
+<p>These include</p>
+<ol type="1">
+<li>Target variable status</li>
+<li>The <code>ACCURACY/TIME/INTERPRETABILITY</code> dials which range from 1 to 10 and largely determine the recipe for the experiment.</li>
+<li>The <code>CLASSIFICATION/REPRODUCIBLE/GPUS DISABLED</code> clickable buttons.</li>
+<li>The <code>SCORER</code> used in model building and evaluation.</li>
+<li><code>EXPERT SETTINGS</code> for fine control over a vast number of system, model, feature, recipe, and specialty options.</li>
+<li>A detailed settings description.</li>
+<li><code>LAUNCH EXPERIMENT</code> to run the experiment defined by dial settings, scorer, and expert settings.</li>
+</ol>
+<p>For our experiment,</p>
+<ul>
+<li>The target variable is <code>bool</code> (Boolean) with 31,184 observations, 4963 of which are equal to 1 (#1). The <code>CLASSIFICATION</code> button (#3) is enabled by default because the target is Boolean.</li>
+<li>The <code>ACCURACY</code> dial is set to 5. Higher values of accuracy are more computationally intensive. The description under (#6) shows that <code>ACCURACY</code> impacts how features are evaluated (model &amp; validation strategy) and what form the final pipeline will take (individual models vs. ensembles and validation strategy).</li>
+<li>The <code>TIME</code> dial is set to 4. Higher values of <code>TIME</code> allow for longer feature evolution. <code>TIME</code> levels also include early stopping rules for efficiency.</li>
+<li>Note: Higher values of <code>ACCURACY</code> and <code>TIME</code> do not always lead to better predictive models. Model performance should always be evaluated using a holdout test data set.</li>
+<li>The <code>INTERPRETABILITY</code> dial ranges from 1 (least interpretable = most complex) to 10 (most interpretable = least complex). <code>INTERPRETABILITY</code> set to 7 or higher enable monotonicity constraints, which significantly increases model understanding.</li>
+</ul>
+<p>Click on the <code>REPRODUCIBLE</code> button to enable reproducibility. This may be important for regulatory reasons or, as in our case, for educational purposes. Also select AUC as the scorer (#4)</p>
+<p class="image-container"><img src="img/4872b2953b30fa5b.png"></p>
+<p>Clicking on <code>EXPERT SETTINGS</code> (#5) exposes an immense array of options and settings</p>
+<p class="image-container"><img src="img/91a19934c0f5d1c3.png"></p>
+<p>This gives the expert data scientist complete control over the Driverless AI experience, including the ability to customize models, feature transformers, scorers, and data using <code>CUSTOM RECIPES</code>. Select <code>CANCEL</code> to exit out of the expert settings screen.</p>
+<h2 is-upgraded>Run Experiment</h2>
+<p>Before launching the experiment, your settings should look like the following.</p>
+<p class="image-container"><img src="img/5f635f566b6bd12d.png"></p>
+<p>Click <code>LAUNCH EXPERIMENT</code> to commence. The Driverless AI UI now includes a descriptive rotating dial in the center with live monitoring displays for model evolution, variable importance, resource usage, and model evaluation.</p>
+<p class="image-container"><img src="img/95fa5e078740079d.png"></p>
+<p>To get more detailed resource monitoring, go to <code>RESOURCES</code> in the menu and select <code>SYSTEM INFO</code>.</p>
+<p class="image-container"><img src="img/7dd8a7a6f7ece6f6.png"></p>
+<p>The <code>System Info</code> view shows hardware usage and live activity monitoring of individual CPU cores.</p>
+<p class="image-container"><img src="img/c4c7d730f08f7806.png"></p>
+<p>Clicking <code>CLOSE</code> sends us back to the running <code>Experiment Baseline</code> view.</p>
+<p class="image-container"><img src="img/ad13fa7b1120103d.png"></p>
+<p>Note that</p>
+<ol type="1">
+<li>The central dial shows 7% completion after 1:06 with 9/56 planned iterations completed.</li>
+<li>The CPU and memory usage monitor is a simplified version of the <code>System Info</code> view we just closed.</li>
+<li>Each dot in the <code>ITERATION</code> monitor corresponds to an individual model. The last model evaluated is a LightGBM model with 21 features and an AUC of 0.7316. Moving your mouse over any of the model dots will highlight that model and summary information.</li>
+<li>The <code>VARIABLE IMPORTANCE</code> display shows the features of the latest model (or the model selected in the <code>ITERATION DATA</code> display) and their relative importance.</li>
+<li>By default, the ROC curve for the selected model and AUC are displayed, but other displays are available: P-R (Precision Recall), Lift, Gains, and K-S (Kolmogorov-Smirnov).</li>
+</ol>
+<h3 is-upgraded>Notifications</h3>
+<p>Selecting <code>Notifications</code> in the <code>CPU/MEMORY</code> section (2) opens important information and discoveries from Driverless AI.</p>
+<p class="image-container"><img src="img/bb455b8451085bf7.png"></p>
+<p>Ours reports that</p>
+<ul>
+<li>Reproducible mode was enabled, along with its implications.</li>
+<li>Imbalanced data was detected but imbalanced settings were not enabled. Notifications then indicates the expert settings required to account for imbalance in the data.</li>
+<li>An ID column was identified and automatically dropped from data.</li>
+<li>Additional information on scoring during feature and model tuning.</li>
+</ul>
+<p>Notification are important to read and understand. The advice in notifications often leads to better models.</p>
+<h3 is-upgraded>Technical logs</h3>
+<p>The technical data scientist might consider selecting <code>Log</code> in the <code>CPU/MEMORY</code> section. Driverless AI logs its entire process in great detail. Clicking <code>Log</code> opens a system logging window for monitoring live. Logs can be downloaded during or after the experiment.</p>
+<p class="image-container"><img src="img/b1f2c67b31a56b9d.png"></p>
+<p>Nearing the conclusion of the experiment</p>
+<p class="image-container"><img src="img/12da90c2cb249389.png"></p>
+<p>we see that the dial is at 100% complete, the elapsed time is approximately 6:30 (while results are reproducible, times are not themselves exactly reproducible), and the experiment is stopping early, needing only 33 of 56 iterations.</p>
+<h2 is-upgraded>Completed Experiment</h2>
+<p>Upon completion, the <code>Experiment Baseline</code> view replaces the spinning dial in the center with a stack of clickable bars</p>
+<p class="image-container"><img src="img/5e3468be77896033.png"></p>
+<h3 is-upgraded>Summary</h3>
+<p>The lower right panel includes an experiment summary, zoomed in below:</p>
+<p class="image-container"><img src="img/f7040c66ce98c825.png"></p>
+<p>The summary contains information about the experiment settings, its seed, the train, validation, and test data, system (hardware) specifications, features created, models created, timing, and scores. In particular, note that</p>
+<ul>
+<li>230 features were created but only 28 were used,</li>
+<li>feature evolution used 35 models,</li>
+<li>feature tuning used 16 models,</li>
+<li>final pipeline training used an additional 8 models.</li>
+</ul>
+<p>Importantly, the MOJO latency timing of 0.13 milliseconds indicates the speed of scoring this model in production.</p>
+<h3 is-upgraded>Model Performance</h3>
+<p>Selecting ROC in the lower right replaces the summary with the ROC curve.</p>
+<p class="image-container"><img src="img/6bbb69d58ea4af54.png"></p>
+<p>You can toggle between <code>VALIDATION METRICS</code> and <code>TEST SET METRICS</code> for this display.</p>
+<p class="image-container"><img src="img/f2aec5ec6395130f.png"></p>
+<p>Selecting any point along the curve produces a confusion matrix with additional peformance metrics</p>
+<p class="image-container"><img src="img/79430d75fd10a305.png"></p>
+<p>You can view other model performance metrics, including Precision-Recall</p>
+<p class="image-container"><img src="img/9d556af109fb21d4.png"></p>
+<p>Lift chart</p>
+<p class="image-container"><img src="img/9a4cff43f3a4f9ef.png"></p>
+<p>Gains chart</p>
+<p class="image-container"><img src="img/373ef73379ea4853.png"></p>
+<p>and Kolmogorov-Smirnov</p>
+<p class="image-container"><img src="img/447a74f48f5445fc.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Experiment Inspection" duration="10">
+        <p>Once an experiment is completed, it is important to understand the final model&#39;s predictive performance, its features, parameters, and how the features and model combine to make a pipeline.</p>
+<h2 is-upgraded>Diagnostics</h2>
+<p>The <code>DIAGNOSE MODEL ON NEW DATASET ...</code> button is used to create extensive diagnostics for a model built in Driverless AI. After clicking the button,</p>
+<p class="image-container"><img src="img/2b52491584def7ee.png"></p>
+<p>select the dataset used for diagnostics, we will use the <code>test</code> dataset.</p>
+<p class="image-container"><img src="img/ca975b0b1ff67da3.png"></p>
+<p>The <code>Diagnostics</code> view that is returned is very complete. You can choose from a plethora of <code>Scores</code> on the left. And each of the <code>Metric Plots</code> on the right is interactive.</p>
+<p class="image-container"><img src="img/236b469092f910f1.png"></p>
+<p>Selecting the confusion matrix plot yields</p>
+<p class="image-container"><img src="img/2a5f75415fdf414c.png"></p>
+<p>Likewise, the interactive ROC curve produces</p>
+<p class="image-container"><img src="img/78665db03b896c61.png"></p>
+<h2 is-upgraded>AutoReport</h2>
+<p>By default, an automated report is created for each experiment that is run. Download the <code>AutoReport</code> by</p>
+<p class="image-container"><img src="img/52c4651f9fa7e5d2.png"></p>
+<p>The document that is created is a very thorough summary of the experiment in the form of a white paper, documenting in detail the data, settings, and methodologies used to create the final pipeline.</p>
+<p class="image-container"><img src="img/e9618b89856c5d4c.png"></p>
+<p>This includes detailed information on the features that were engineered and the process for engineering them.</p>
+<p class="image-container"><img src="img/6bb9de2157398096.png"></p>
+<p>It also contains validation and test metrics and plots.</p>
+<p class="image-container"><img src="img/648b26b509801e51.png"></p>
+<p>For this particular experiment, the AutoReport is a 36-page technically detailed document.</p>
+<h2 is-upgraded>Pipeline Visualization</h2>
+<p>Selecting the <code>VISUALIZE SCORING PIPELINE</code> button</p>
+<p class="image-container"><img src="img/b35499f39725ecbe.png"></p>
+<p>returns a visual representation of the pipeline</p>
+<p class="image-container"><img src="img/2e2944365c3bba56.png"></p>
+<p>This pipeline is also available in the AutoReport, along with explanatory notes copied below. The pipeline consists of</p>
+<ul>
+<li>28 total features, both original and engineered.</li>
+<li>Two LightGBM models created with 4-fold cross validation each.</li>
+<li>A stacked ensemble blending the two LightGBM models.</li>
+<li>The outputs are probabilities for <code>bad_loan = False</code> and <code>bad_loan = True</code>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model Interpretability" duration="10">
+        <p>One of Driverless AI&#39;s most important features is the implementation of a host of cutting-edge techniques and methodologies for interpreting and explaining the results of black-box models. In this tutorial, we just highlight some of the MLI features available in Driverless AI without discussing their theoretical underpinnings.</p>
+<p>To launch MLI from a completed experiment, select the <code>INTERPRET THIS MODEL</code> button</p>
+<p class="image-container"><img src="img/76d1cbd62111d48.png"></p>
+<p>The MLI view allows easy navigation through the various interactive plots.</p>
+<p class="image-container"><img src="img/f5b691f98ebc07a6.png"></p>
+<h2 is-upgraded>Dashboard</h2>
+<p>The <code>Dashboard</code> view displays four useful summary plots</p>
+<p class="image-container"><img src="img/e0806c52230f0651.png"></p>
+<ol type="1">
+<li>A K-LIME (Local Interpretable Model-agnostic Explanations) surrogate model.</li>
+<li>A Decision Tree surrogate model.</li>
+<li>A feature importance plot.</li>
+<li>A PDP (Partial Dependence Plot).</li>
+</ol>
+<p>Each of these plots are available in a larger format from the main MLI view.</p>
+<h2 is-upgraded>Feature Importance</h2>
+<p>Other plots include Feature importance on the transformed features</p>
+<p class="image-container"><img src="img/32a53b23024151b.png"></p>
+<p>and on the original features</p>
+<p class="image-container"><img src="img/a1e80ccbbdef5781.png"></p>
+<h2 is-upgraded>Shapley</h2>
+<p>Shapley values are also available for the transformed and original features</p>
+<p class="image-container"><img src="img/411695e1f737f57e.png"></p>
+<h2 is-upgraded>Additional Capabilities</h2>
+<p>The MLI view provides tools for disparate impact analysis and sensitivity analysis, also called &#34;What If&#34; analysis.</p>
+<p class="image-container"><img src="img/f5b691f98ebc07a6.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy the model using Java UDFs" duration="5">
+        <h2 is-upgraded>Introduction</h2>
+<p>The final model from a Driverless AI experiment can be exported as either a <strong>MOJO scoring pipeline</strong> or a <strong>Python scoring pipeline</strong>. The MOJO scoring pipeline comes with a <code>pipeline.mojo</code> file that can be deployed in any environment that supports Java or C++. There are a myriad of different deployment scenarios for Real-time, Batch or Stream scoring with the <code>pipeline.mojo</code> file. In this tutorial, we deploy the final model as a Snowflake Java UDF.</p>
+<h2 is-upgraded>Gather Driverless AI artifacts</h2>
+<p>We need to collect the following components from Driverless AI:</p>
+<ul>
+<li><code>pipeline.mojo</code></li>
+<li><code>mojo2-runtime.jar</code></li>
+<li><code>H2oDaiScore.jar</code></li>
+<li>A valid Driverless AI license file. <code>license.sig</code></li>
+<li>(as pointed out in the Prerequisites, a H2O Driverless AI trial license key can be obtained <a href="https://www.h2o.ai/try-driverless-ai/" target="_blank">here</a>.)</li>
+</ul>
+<p>The first two files we will download from Driverless AI directly. Select <code>DOWNLOAD MOJO SCORING PIPELINE</code> from the <code>STATUS: COMPLETE</code> buttons</p>
+<p class="image-container"><img src="img/5d6ceee5ab047db9.png"></p>
+<p>and then <code>DOWNLOAD MOJO SCORING PIPELINE</code> again from the <code>MOJO Scoring Pipeline instructions</code> screen</p>
+<p class="image-container"><img src="img/458b6842748a5298.png"></p>
+<p>This downloads a file <code>mojo.zip</code> which contains the <code>pipeline.mojo</code> and <code>mojo2-runtime.jar</code> files, along with a number of other files we will not be needing.</p>
+<p>The next file, <code>H2oDaiScore</code>, is a custom scorer developed by H2O.ai to deploy MOJOs using Snowflake Java UDFs. It can be downloaded from H2O here: <a href="https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html" target="_blank">https://s3.amazonaws.com/artifacts.h2o.ai/releases/ai/h2o/dai-snowflake-integration/java-udf/download/index.html</a>. Select the latest release (0.0.7 at the time of this writing). Extract the downloaded <code>H2oScore-0.0.7.tgz</code> file to find <code>H2oDaiScore-0.0.7.jar</code>.</p>
+<p>Last, you will need your Driverless AI license file <code>license.sig</code>.</p>
+<h2 is-upgraded>Setup Snowflake</h2>
+<p>The first step in creating a Java UDF in Snowflake is to put the 4 Driverless AI artifacts into the table stage, which was created when we created <code>loans</code> table and uploaded some data in the very beginning.</p>
+<p>In order to do that, we will need to leverage <a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">SnowSQL</a> (Snowflake&#39;s CLI tool), which will need to be installed locally so you can put the artifacts on your local computer into the table stage in your Snowflake Cloud.</p>
+<p>Travel to your command line and enter the follow:</p>
+<pre><code>snowsql
+</code></pre>
+<p>You will be asked for your <code>Account</code>:</p>
+<p>This is a part of the unique URL you were given when creating a trial. Here is how the URL is defined (.snowflakecomputing.com). Enter only the Account portion.</p>
+<p>Next enter your <code>User</code>: and <code>Password</code>:</p>
+<p>These are the login name  and password you created after navigating to the unique URL of your Snowflake deployment.</p>
+<p>Once logged in, you can now execute the following:</p>
+<pre><code>USE DATABASE PC_H2O_DB;
+USE SCHEMA public;
+USE WAREHOUSE PC_H2O_WH;
+USE ROLE PC_H2O_ROLE;
+</code></pre>
+<p>Finally, we can now upload the 4 artifacts:</p>
+<pre><code>put file://{path}/pipeline.mojo @%loans auto_compress=false;
+put file://{path}/license.sig @%loans auto_compress=false;
+put file://{path}/H2oDaiScore-0.0.7.jar @%loans auto_compress=false;
+put file://{path}/mojo2-runtime.jar @%loans auto_compress=false;
+</code></pre>
+<p>Note, you will need to change where it says <code>path</code> in the ‘put&#39; commands to path where the files you downloaded are located. This will take 1-2 mins to upload.</p>
+<h2 is-upgraded>Create a Java UDF in Snowflake</h2>
+<p>We are now ready to actually create the Java UDF via the <code>CREATE FUNCTION</code> statement. To do so, you must provide:</p>
+<ul>
+<li>a name for the function and its parameters,</li>
+<li>the location in the stage of <code>pipeline.mojo</code> and all other artifacts,</li>
+<li>the Java method to be invoked when the Java UDF is called.</li>
+</ul>
+<p>The code has been prepared for you. At this point, this can either be run in SnowSQL or back in your GUI session.</p>
+<pre><code language="language-sql" class="language-sql">CREATE FUNCTION H2OScore_Java(params STRING, rowData ARRAY)
+
+    returns variant language java
+
+    imports = (&#39;@%loans/pipeline.mojo&#39;,
+               &#39;@%loans/license.sig&#39;,
+               &#39;@%loans/mojo2-runtime.jar&#39;,
+               &#39;@%loans/H2oDaiScore-0.0.7.jar&#39;
+               )
+
+    handler = &#39;h2oDai.H2oDaiScore.h2oDaiScore&#39;;
+</code></pre>
+<h2 is-upgraded>Make predictions using the Java UDF</h2>
+<p>The syntax for calling a Java UDF in Snowflake is</p>
+<pre><code language="language-sql" class="language-sql">SELECT &lt;JAVA_UDF_FUNCTION_NAME&gt;(&lt;JAVA_UDF_FUNCTION_PARAMS&gt;) FROM &lt;TABLE_NAME&gt;;
+</code></pre>
+<p><strong>Importtant:</strong>  H2O&#39;s customer scorer, <code>H2oDaiScore.jar</code>, has a unique feature to autogenerate the SQL command for scoring. Simply call the Java UDF you just created (<code>H2OScore_Java</code>) with the parameter <code>sql</code> set to <code>true</code>.</p>
+<p>For example,</p>
+<pre><code language="language-sql" class="language-sql">SELECT H2OScore_Java(&#39;Modelname=pipeline.mojo Sql=true&#39;, ARRAY_CONSTRUCT());
+
+</code></pre>
+<p><strong>Results Preview</strong></p>
+<pre><code language="language-sql" class="language-sql">&#34;select ROW_NUMBER() OVER (ORDER BY (select 0)) as RowNumber, H2OScore_Java(&#39;Modelname=pipeline.mojo&#39;, ARRAY_CONSTRUCT(loan_amnt, term, int_rate, installment, emp_length, home_ownership, annual_inc, verification_status, addr_state, dti, delinq_2yrs, inq_last_6mths, pub_rec, revol_bal, revol_util, total_acc)) from &lt;add-table-name&gt;;&#34;
+</code></pre>
+<p>Now let&#39;s look at an example using the <code>H2OScore_Java</code> UDF defined above to score our table <code>loans</code> using <code>pipeline.mojo</code> as follows:</p>
+<pre><code language="language-sql" class="language-sql">SELECT
+    ROW_NUMBER() OVER (ORDER BY (select 0)) as RowNumber,
+    H2OScore_Java(
+        &#39;Modelname=pipeline.mojo&#39;,
+        ARRAY_CONSTRUCT(loan_amnt, term, int_rate, installment, emp_length,
+                        home_ownership, annual_inc, verification_status, addr_state,
+                        dti, delinq_2yrs, inq_last_6mths, pub_rec, revol_bal, revol_util, total_acc)
+    ) AS H2OScore
+FROM loans;
+</code></pre>
+<p>It should take about 7 seconds to score and the results should look like this:</p>
+<p><strong>Results Preview</strong> (first 3 rows)</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Row</p>
+</td><td colspan="1" rowspan="1"><p>ID</p>
+</td><td colspan="1" rowspan="1"><p>H2OScore</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>1077501</p>
+</td><td colspan="1" rowspan="1"><p>0.8469023406505585</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>1077430</p>
+</td><td colspan="1" rowspan="1"><p>0.5798575133085251</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>1077175</p>
+</td><td colspan="1" rowspan="1"><p>0.5994115248322487</p>
+</td></tr>
+</table>
+<p>And as they say, that is all folks! We have now scored a model inside Snowflake. What this does is give you the flexibility of Snowflake&#39;s Scale Up and Scale Out capabilities to score as much data as you want.</p>
+<h2 is-upgraded>(Extra) Easy Deployment using AutoGen</h2>
+<p>A Snowflake Worksheet template to deploy and score DAI MOJOs using Java UDFs can be automatically generated using the H2O REST Server deployment:</p>
+<pre><code language="language-sh" class="language-sh">curl &#34;&lt;ip&gt;:&lt;port&gt;/autogen?name=&lt;model_name&gt;&amp;notebook=snowflake.udf&#34;
+</code></pre>
+<p>For example,</p>
+<pre><code language="language-sh" class="language-sh">curl &#34;http://127.0.0.1:8080/autogen?name=pipeline.mojo&amp;notebook=snowflake.udf&#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

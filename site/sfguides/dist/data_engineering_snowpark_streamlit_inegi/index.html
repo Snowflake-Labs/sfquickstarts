@@ -1,0 +1,276 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Ingenieria de Datos con Snowpark y visualización con Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_snowpark_streamlit_inegi"
+                  title="Ingenieria de Datos con Snowpark y visualización con Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Contexto" duration="5">
+        <p><strong>INEGI</strong> es un organismo público autónomo responsable de normar y coordinar el Sistema Nacional de Información Estadística y Geográfica <a href="https://www.inegi.org.mx" target="_blank">Inegi</a>, así como de captar y difundir información de México en cuanto al territorio, los recursos, la población y economía, que permita dar a conocer las características del país y ayudar a la toma de decisiones, publican el <a href="https://www.inegi.org.mx/siscon/" target="_blank">Sistema de consulta</a> del cual se pueden tomar set de datos públicos.</p>
+<p>Base de datos (lista):</p>
+<ul>
+<li><a href="https://www.inegi.org.mx/app/descarga/" target="_blank">Descarga masiva</a></li>
+<li><a href="https://www.inegi.org.mx/datosabiertos/" target="_blank">Datos abiertos</a></li>
+</ul>
+<h2 is-upgraded>Qué aprenderás</h2>
+<ul>
+<li>Data Engineering</li>
+<li>Data load desde equipo local hacia nube Snowflake usando Python</li>
+<li>Data Visualization con Streamlit y Snowpark</li>
+</ul>
+<h2 is-upgraded>Qué necesitas</h2>
+<ul>
+<li>Cuenta Snowflake o <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Cuenta Snowflake trial</a></li>
+<li>Acceso a <a href="https://github.com/" target="_blank">GitHub</a></li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> con Jupyter Notebook</li>
+<li><a href="https://www.python.org/" target="_blank">Python</a> (Python 3.8)</li>
+<li><a href="https://www.anaconda.com/products/distribution" target="_blank">Anaconda</a></li>
+<li>Snowpark Python</li>
+<li>Streamlit</li>
+</ul>
+<h2 is-upgraded>Problema</h2>
+<ul>
+<li>Datos en un almacenamiento server, los datos no están con el formato correcto para ciencia o visualización de datos así como NULL (*) en algunas columnas. <img alt="contexto" src="img/3f9145b37da4fc0b.png"></li>
+</ul>
+<h2 is-upgraded>Qué construirás</h2>
+<ul>
+<li>Web App con Streamlit realizando data engineering: carga y transformación en base a tipos de datos( latitud/longitud) para realizar una programación End-2-End con Python. <img alt="Web App" src="img/679211b5a21b41e8.png"></li>
+</ul>
+<h2 is-upgraded>Arquitectura de Solución</h2>
+<p class="image-container"><img alt="Arquitectura y modelo de servicio desde descarga de archivos en fuente Hosting de proveedor de datos, extracción y transformación de datos con Snowpark Python, carga desde código hacia internal stage con Snowflake, y a través de Streamlit y Python implementar la visualización de datos" src="img/56a8f6b24b2dc53c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Instalación" duration="10">
+        <h3 is-upgraded>Código fuente</h3>
+<p> Descargar el repositorio que contiene el código necesario [github repo](https://github.com/sfc-gh-csuarez/snowpark_inegi.git) </p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/sfc-gh-csuarez/snowpark_inegi.git 
+</code></pre>
+<p>Después de la descarga ingresar a la carpeta <strong>snowpark_inegi-main</strong> y abrir con Visual Studio Code o el editor de preferencia que soporte archivos Jupyter Notebook</p>
+<h3 is-upgraded>Creación de ambiente de desarrollo Python</h3>
+<p>  Crear un ambiente local de desarrollo para la instalación de algunas librerías así como de Snowpark con la versión Python 3.8 Teniendo Anaconda instalado, con la aplicacicón terminal apuntar a la carpeta donde de descargo el clon de Github, para crear un ambiente de desarrollo ejecutar: </p>
+<pre><code language="language-shell" class="language-shell">conda create --name snowpark_env python=3.8  
+conda activate snowpark_env
+</code></pre>
+<h3 is-upgraded>Instalación Snowpark Python</h3>
+<p>  Instalación de Snowpark  </p>
+<pre><code language="language-shell" class="language-shell">pip install snowflake-snowpark-python pandas
+pip install lat-lon-parser
+pip install requests
+conda install -c conda-forge streamlit 
+conda install -c conda-forge pillow
+</code></pre>
+<h3 is-upgraded>Configuración en Snowflake UI</h3>
+<p>Ingresar con el usuario/contraseña a Snowflake, crear un Worksheet y ejecutar el siguiente código SQL para crear base de datos (INEGI), crear virtual warehouse (INEGI_WH) rol (INEGI_ROLE) y asignar los privilegios correspondientes:</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+--objetos 
+create database inegi;
+--wharehouse
+create warehouse inegi_wh 
+warehouse_type = &#39;STANDARD&#39; 
+warehouse_size =XSMALL 
+auto_suspend = 120 
+auto_resume = TRUE 
+max_cluster_count=1 
+min_cluster_count=1;
+--rol
+create role inegi_role;
+grant role inegi_role to user &lt;tu_usuario_snowflake&gt;;
+grant role sysadmin to user &lt;tu_usuario_snowflake&gt;;
+grant role sysadmin to role inegi_role;
+--privilegios  
+grant usage on database inegi to role inegi_role;
+grant all privileges on schema public to role inegi_role;
+grant usage on warehouse inegi_wh to role inegi_role;
+</code></pre>
+<p>A partir de este punto y en adelante se usará el rol &#34;inegi_role&#34;</p>
+<h3 is-upgraded>Configuración config.py</h3>
+<p>En la URL Snowflake <strong>https://&lt;id_cuenta&gt;.&lt;zona_region_cuenta&gt;.snowflakecomputing.com</strong> ejemplo: <strong>https://ly14496.south-central-us.azure.snowflakecomputing.com</strong>  los valores correspondientes son:</p>
+<p> id_cuenta = <strong>ly14496<br></strong> zona_region_cuenta = <strong>south-central-us.azure</strong></p>
+<p> En este archivo config.py ingresar los valores para cada propiedad  con la información para acceder a Snowflake desde Python usando Snowpark. </p>
+<pre><code language="language-javascript" class="language-javascript">connection_parameters = {
+    &#34;account&#34;: &#34;&lt;id_cuenta&gt;.&lt;zona_region_cuenta&gt;&#34;,
+    &#34;user&#34;: &#34;&lt;tu_usuario_snowflake&gt;&#34;,
+    &#34;password&#34;: &#34;&lt;tu_contraseñan_snowflake&gt;&#34;,
+    &#34;warehouse&#34;: &#34;INEGI_WH&#34;,
+    &#34;role&#34;: &#34;INEGI_ROLE&#34;,
+    &#34;database&#34;: &#34;INEGI&#34;,
+    &#34;schema&#34;: &#34;PUBLIC&#34;
+}
+</code></pre>
+<p>Detalle en repositorio <a href="https://github.com/sfc-gh-csuarez/snowpark_inegi.git" target="_blank">github repo</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Extraer y Transformar" duration="10">
+        <h2 is-upgraded>Descargar archivos desde web hosting</h2>
+<p>Dentro del directorio descargado desde Github,  abrir Visual Studio Code (VSC) y activar virtual environment <strong>snowpark_env</strong> creado en la instalación</p>
+<pre><code language="language-shell" class="language-shell">conda activate snowpark_env
+</code></pre>
+<p>Abir el archivo <strong>01_INEGI_download.ipynb</strong> y ejecutar el cell</p>
+<pre><code language="language-python" class="language-python">#Script para ejección de descarga de archivo y realizar transformaciones (Split a JSON)
+from inegidata import urlDownload
+# opción &#39;remote&#39; para descarga desde webhost de INEGI
+# opciób &#39;local&#39; para descompresión desde repo local
+urlDownload(&#39;remote&#39;)
+</code></pre>
+<p>Puede elegir como parámetro de la función <strong>urlDownload</strong> tanto <strong>remote</strong> como <strong>local</strong></p>
+<ul>
+<li>opción ‘remote&#39; para descarga desde webhost de INEGI</li>
+<li>opción ‘local&#39; para descompresión desde repo local</li>
+</ul>
+<p>Teniendo la conexión a internet activa, iniciará el proceso de descarga de archivo colocando dentro de la carpeta CSV la estructura de directorios origen, y create el archivo <strong>inegi.csv</strong> y dentro del directorio JSON los archivos particionados <strong>json</strong> y en compresión <strong>json.gz</strong></p>
+<p class="image-container"><img alt="VSC" src="img/d3bf41f212844063.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Modelo y Cargar a Snowflake" duration="10">
+        <p>Dentro del directorio descargado desde Github,  abrir Visual Studio Code (VSC) y activar virtual environment <strong>snowpark_env</strong> creado en la instalación</p>
+<pre><code language="language-shell" class="language-shell">conda activate snowpark_env
+</code></pre>
+<p>Abrir el archivo <strong>02_INEGI_dataEngineering.ipynb</strong> y ejecutar los dos primeros cells para cargar las librerías necesarias y activar la sesión a Snowflake. <img alt="VSC" src="img/8a5912b7262563ce.png"></p>
+<p>Ejecutar el cell <strong>#Activación</strong> para crear los objetos y privilegios Snowflake <img alt="VSC" src="img/9659fff26064779a.png"></p>
+<p>Ejecutar el cell <strong>#Crear internal Stage</strong> para la carga de datos JSON ya curados <img alt="VSC" src="img/2869fc1411e93206.png"></p>
+<p>Ejecutar el cell <strong>#Transformando a objeto Snowflake</strong> para la colocación de datos en el objeto Snowflake tabla <img alt="VSC" src="img/87f91e14b9515cde.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Vistas y Materialización" duration="15">
+        <p>Abrir el archivo <strong>03_INEGI_dataModeling.ipynb</strong> y ejecutar los dos primeros cells para cargar las librerías necesarias y activar la sesión a Snowflake. <img alt="VSC" src="img/ce9428a3bd8048f9.png"></p>
+<p>Ejecutar el cell <strong>#Crear vista</strong> para crear la vista que tendrá los datos que incluyen transformación de datos JSON en tabla INEGI_RAW<br><img alt="VSC" src="img/106bedc8ebb40861.png"></p>
+<p>Ejecutar el cell <strong>#UDF declaración</strong> para incorporar la función creada en python nom_entidad que servirá para convertir No. de entidad por nombre de entidad. <img alt="VSC" src="img/a01ea70c8973f394.png"></p>
+<p>Ejecutar el cell <strong>#Vista con totales por entidad aplicando</strong> para materializar datos aplicando UDF y que tendrá los totales máximos de población para cada entidad <img alt="VSC" src="img/ef621142cbeb9dfe.png"></p>
+<p>Ejecutar el cell <strong>#Validar la vista solo con totales por entidad</strong> para validar el contenido de la vista creada <img alt="VSC" src="img/d9c2d734e341e310.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualización de Datos" duration="10">
+        <p>Creación de sesión utilizando los constructores de Snowpark y los valores de acceso a Snowflake en el archivo <strong>04_Streamlit.py</strong> y ejecutar en terminal de Visual Studio Code</p>
+<pre><code language="language-shell" class="language-shell">conda activate snowpark_env
+streamlit run 04_Streamlit.py
+</code></pre>
+<pre><code language="language-python" class="language-python">@st.experimental_singleton
+def snowsesion() -&gt; Session:
+    sesion = Session.builder.configs(connection_parameters).create()
+    if sesion != None:
+        print(&#34;Conectado&#34;)
+        sesion.use_database(&#39;inegi&#39;)
+        print(sesion.sql(&#34;select current_warehouse(), current_database(), current_role()&#34;).collect()) 
+        return sesion
+    else:
+        print(&#34;Error de conexión&#34;)
+
+def run_query(sesion,query):
+    try:
+        return sesion.sql(query)
+    except :
+        print(&#34;error: &#34;)
+</code></pre>
+<p>Streamlit permite la visualización de datos programando en Python pero usando &#34;variables&#34; como controles de datos, iniciando por la configuración de la página de mostrará elementos visuales:</p>
+<pre><code language="language-python" class="language-python">   st.set_page_config(
+    page_title=&#34;INEGI App&#34;,
+    page_icon=&#34;☻&#34;,
+    layout=&#34;wide&#34;,
+    initial_sidebar_state=&#34;expanded&#34;,)
+    st.header(&#34;Censo y población México&#34;)
+</code></pre>
+<p>Podemos crear un slider para hacer interactivo, cada vez que se modifique su valor otros componentes actualizarán su contenido.</p>
+<pre><code language="language-python" class="language-python">image = Image.open(&#39;img/inegi.png&#39;)
+        st.image(image, caption=&#39;INEGI&#39;,width=220)
+        add_n_hab = st.slider(&#34;Elige volumen de problación (# habitantes):&#34;, 700000, 17000000,2125000 ,500000)
+        query = &#34;SELECT * FROM INEGI.PUBLIC.INEGI_MAPA where POBLACION_TOTAL &gt; &#34; + str(add_n_hab) + &#34; order by POBLACION_TOTAL desc;&#34;
+        sesion = snowsesion()
+        snowDF = run_query(sesion,query)
+        snowPD = snowDF.to_pandas()
+</code></pre>
+<p>Un componente de visualización es el mapa, que requiere dentro del set de datos los valores correspondientes de latitud y longitud:</p>
+<pre><code language="language-python" class="language-python">with st.container():
+            mapa = snowPD[[&#39;POBLACION_TOTAL&#39;,&#39;LATITUD&#39;, &#39;LONGITUD&#39;]]
+            mapa = mapa.rename(columns={&#39;LATITUD&#39;:&#39;latitude&#39;, &#39;LONGITUD&#39;:&#39;longitude&#39;})
+            st.map(mapa,zoom=4,use_container_width=True)
+</code></pre>
+<h2 is-upgraded>Resultado</h2>
+<p>Visualización de mapa con componentes HTML personalizados <img alt="Streamlit" src="img/679211b5a21b41e8.png"></p>
+<p>Visualización de histograma con tabla de datos <img alt="Streamlit" src="img/2324a680ceecd765.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusión" duration="5">
+        <p>Con Snowpark y Streamlit es posible de forma directa hacer aplicaciones End-to-End desde la carga y transformación, hasta la visualización aprovechando la capacidad de cómputo de Snowflake.</p>
+<h2 is-upgraded>¿Qué se cubrió?</h2>
+<ul>
+<li>Instalación</li>
+<li>Extraer y Transformar</li>
+<li>Modelo y Carga de datos en Snowflake</li>
+<li>Visualización de datos con Streamlit</li>
+</ul>
+<p><a href="https://developers.snowflake.com/demos/visualizacion-de-datos-demograficos-es/" target="_blank">Demo Completo en Snowflake Demo Hub</a></p>
+<p>Repositorio <a href="https://github.com/sfc-gh-csuarez/snowpark_inegi.git" target="_blank">github repo</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

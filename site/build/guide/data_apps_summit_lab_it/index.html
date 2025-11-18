@@ -1,0 +1,479 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Creare una data application con il Marketplace Snowflake, Snowpark e Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_apps_summit_lab_it"
+                  title="Creare una data application con il Marketplace Snowflake, Snowpark e Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Panoramica" duration="2">
+        <p>In questo lab pratico creerai una data application che utilizza il data set Economical Data Atlas pubblicato da Knoema nel Marketplace Snowflake.</p>
+<p>Elaborerai i dati con Snowpark, svilupperai un semplice modello ML e creerai una User Defined Function (UDF) Python in Snowflake, quindi visualizzerai i dati con Streamlit.</p>
+<h2 is-upgraded>Tecnologia e funzionalità chiave</h2>
+<ul>
+<li>Marketplace Snowflake</li>
+<li>Snowpark per Python</li>
+<li>Librerie Python</li>
+<li>User Defined Function (UDF) Python</li>
+<li>Streamlit</li>
+</ul>
+<h2 is-upgraded>Prerequisiti</h2>
+<ul>
+<li>Accesso con il ruolo ACCOUNTADMIN in Snowflake o un account di prova Snowflake: <a href="https://signup.snowflake.com/" target="_blank">https://signup.snowflake.com/</a></li>
+<li>Conoscenza di base di SQL, dei concetti di database e degli oggetti</li>
+<li>Familiarità con Python. Tutto il codice necessario viene fornito durante il workshop.</li>
+<li>La possibilità di installare ed eseguire software sul tuo computer</li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VS Code</a> installato</li>
+</ul>
+<h2 is-upgraded>Cosa imparerai</h2>
+<ul>
+<li>Come utilizzare data set nel Marketplace Snowflake.</li>
+<li>Come eseguire query sui dati in Python utilizzando i DataFrame</li>
+<li>Come sfruttare librerie Python esistenti</li>
+<li>Come creare una User Defined Function Snowpark Python in Snowflake</li>
+<li>Come creare una data application con Streamlit per visualizzare i dati</li>
+</ul>
+<h2 is-upgraded>Cosa realizzerai</h2>
+<ul>
+<li>Un notebook Python che si connette a Snowflake con Snowpark per Python e prepara le caratteristiche per l&#39;addestramento di un modello di regressione lineare.</li>
+<li>Una User Defined Function (UDF) Snowflake basata su un modello addestrato Python</li>
+<li>Una data application dashboard Streamlit</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparare l&#39;ambiente del workshop" duration="8">
+        <ol type="1">
+<li>Installa conda per gestire un ambiente separato eseguendo il comando pip install conda. NOTA: in alternativa puoi utilizzare <a href="https://docs.conda.io/en/latest/miniconda.html" target="_blank">Miniconda</a></li>
+<li>Apri il Terminale o il prompt dei comandi</li>
+</ol>
+<aside class="special"><p> IMPORTANTE: se usi un computer con chip Apple M1, segui <a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/setup" target="_blank">queste istruzioni</a> per creare l&#39;ambiente virtuale e installare Snowpark Python invece della procedura descritta qui.</p>
+</aside>
+<ol type="1" start="3">
+<li>Crea l&#39;ambiente eseguendo <code>conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8</code></li>
+<li>Attiva l&#39;ambiente conda eseguendo <code>conda activate snowpark</code></li>
+<li>Installa Snowpark per Python, Pandas e scikit-learn eseguendo <code>conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn</code></li>
+<li>Installa Streamlit eseguendo <code>pip install streamlit</code> o <code>conda install streamlit</code></li>
+<li>Crea una cartella, ad esempio &#34;Summit HOL PCE&#34;, e scarica/salva i file del workshop in quella cartella. <ul>
+<li>Link ai file necessari: https://drive.google.com/drive/folders/1CN6Ljj59XWv2B3Epqxk4DtfDmCH1co_Q?usp=sharing</li>
+</ul>
+</li>
+</ol>
+<h2 is-upgraded>Risoluzione dei problemi relativi a <code>pyarrow</code></h2>
+<ul>
+<li>Se la libreria <code>pyarrow</code> è già installata nel tuo sistema, disinstallala prima di installare Snowpark.</li>
+<li>Se <code>pyarrow</code> non è installata, non c&#39;è bisogno di farlo separatamente: la versione appropriata verrà installata automaticamente insieme a Snowpark.</li>
+<li>Non reinstallare una versione diversa di <code>pyarrow</code> dopo avere installato Snowpark.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparare l&#39;ambiente Snowflake" duration="6">
+        <h2 is-upgraded>Lavorare con il Marketplace Snowflake</h2>
+<p>Il Marketplace Snowflake fornisce visibilità a un&#39;ampia varietà di data set offerti da custodi di dati di terze parti che ampliano l&#39;accesso a punti dati in grado di trasformare i processi aziendali. Inoltre, il Marketplace Snowflake elimina la necessità di integrare e modellare i dati, assicurando l&#39;accesso sicuro a data set interamente gestiti dal provider di dati.</p>
+<p>Prima di iniziare a esaminare l&#39;utilizzo dei data set del Marketplace Snowflake, verifica di avere installato una versione di prova di Snowflake. In caso contrario, fai clic su Install Snowflake Trial. Con un account di prova attivo e dopo avere effettuato l&#39;accesso alla console Snowflake, esegui i seguenti passaggi.</p>
+<ul>
+<li>Nell&#39;angolo superiore destro, verifica di avere effettuato l&#39;accesso come ACCOUNTADMIN; in caso contrario, cambia ruolo</li>
+<li>Fai clic su Marketplace</li>
+<li>Nella barra di ricerca, digita: Knoema Economy, quindi fai clic sul riquadro dal titolo Economy Data Atlas.</li>
+</ul>
+<p class="image-container"><img alt="alt_text" src="img/e3914d4990fc2cbc.png"></p>
+<ul>
+<li>Nell&#39;angolo superiore destro, seleziona Get Data</li>
+<li>Seleziona i ruoli appropriati per accedere al database che stiamo creando e accetta i termini per i data consumer di Snowflake e i termini di utilizzo di Knoema.</li>
+<li>Crea il database</li>
+</ul>
+<p class="image-container"><img alt="alt_text" src="img/56e63ac60ae215eb.png"></p>
+<ul>
+<li>A questo punto puoi selezionare Query Data per aprire un foglio di lavoro con alcune query di esempio.</li>
+</ul>
+<p class="image-container"><img alt="alt_text" src="img/19e3dc81cc74dc8a.png"></p>
+<ul>
+<li>Ci interessano i dati sull&#39;inflazione negli Stati Uniti, quindi utilizzeremo questa query per esplorare i dati per l&#39;applicazione: <code>What is the US inflation over time?</code><pre><code language="language-SQL" class="language-SQL">SELECT * FROM &#34;ECONOMY&#34;.&#34;BEANIPA&#34; 
+WHERE &#34;Table Name&#34; = &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39; 
+AND &#34;Indicator Name&#34; = &#39;Personal consumption expenditures (PCE)&#39; 
+AND &#34;Frequency&#34; = &#39;A&#39; 
+ORDER BY &#34;Date&#34;
+</code></pre>
+</li>
+</ul>
+<h2 is-upgraded>Creare un nuovo database</h2>
+<p>Ora che abbiamo creato un database con i dati di Economy Data Atlas, dobbiamo creare un database per la nostra applicazione in cui memorizzare la User Defined Function.</p>
+<p>Seleziona &#34;Worksheets&#34; dal menu Home di Snowflake. Crea un nuovo foglio di lavoro selezionando il pulsante</p>
+<p><img alt="alt_text" src="img/cccdce5c53cfa231.png">.</p>
+<p>Nel foglio di lavoro, copia questo script:</p>
+<pre><code language="language-SQL" class="language-SQL">-- First create database using the Knoema Economical Data Atlas 
+-- Go to Marketplace to get database
+
+-- Setup database, need to be logged in as accountadmin role */ 
+--Set role and warehouse (compute) 
+USE ROLE accountadmin; 
+USE WAREHOUSE compute_wh;
+
+--Create database and stage for the Snowpark Python UDF 
+CREATE DATABASE IF NOT EXISTS summit_hol; 
+CREATE STAGE IF NOT EXISTS udf_stage;
+
+--Test the data 
+-- What is the size? 
+SELECT COUNT(*) FROM ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA;
+
+-- What is the US inflation over time? 
+SELECT * FROM 
+ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA 
+WHERE &#34;Table Name&#34; = &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39; 
+AND &#34;Indicator Name&#34; = &#39;Personal consumption expenditures (PCE)&#39; 
+AND &#34;Frequency&#34; = &#39;A&#39; 
+ORDER BY &#34;Date&#34; ;
+
+-- Now create UDF in VS Code / Notebook 
+-- Once we created the UDF with the Python Notebook we can test the UDF 
+SELECT predict_pce_udf(2021); 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Esplorare i dati con un notebook (Jupyter)" duration="15">
+        <p>Ora che abbiamo un database da utilizzare per l&#39;applicazione, vogliamo esplorare i dati e creare un modello ML in una User Defined Function (UDF) utilizzabile dalla nostra applicazione.</p>
+<p>Apri VS Code, quindi apri la cartella contenente gli script Python che abbiamo creato in precedenza.</p>
+<p>Puoi aprire il notebook Python (my_snowpark_pce.ipynb) e lo script dell&#39;applicazione Streamlit (my_snowpark_streamlit_app_pce.py). Esamineremo in sequenza le varie sezioni del codice.</p>
+<p>VS Code potrebbe richiedere l&#39;ambiente Python: \</p>
+<p class="image-container"><img alt="alt_t ext" src="img/5a5ee61b8346649f.png"></p>
+<p>Assicurati di selezionare l&#39;ambiente conda ‘snowpark&#39; creato in precedenza.</p>
+<p>Puoi selezionare l&#39;interprete facendo clic nell&#39;angolo inferiore destro: \</p>
+<p class="image-container"><img alt="alt_text" src="img/cc16b1fe36efe352.png"></p>
+<h2 is-upgraded>Inizializzare il notebook, importare le librerie e creare la connessione a Snowflake</h2>
+<p>Per iniziare, creiamo uno script Python e aggiungiamo le istruzioni di importazione per includere le librerie richieste.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.session import Session 
+from snowflake.snowpark.types import IntegerType, FloatType 
+from snowflake.snowpark.functions import avg, sum, col, udf, call_udf, call_builtin, year 
+import streamlit as st 
+import pandas as pd 
+from datetime import date
+
+# scikit-learn (install: pip install -U scikit-learn)
+from sklearn.linear_model import LinearRegression 
+</code></pre>
+<h2 is-upgraded>Effettuare la connessione a Snowflake</h2>
+<p>In questo passaggio creerai un <a href="https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-a-session" target="_blank">oggetto sessione</a> per effettuare la connessione a Snowflake. Qui utilizzeremo un metodo rapido per farlo, ma tieni presente che negli ambienti di produzione non è consigliato specificare le credenziali direttamente nel codice. In un ambiente di produzione, un approccio migliore sarebbe caricare le credenziali da <a href="https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py" target="_blank">AWS Secrets Manager</a> o da <a href="https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py" target="_blank">Azure Key Vault</a>, ad esempio.</p>
+<p>Utilizzeremo il database che abbiamo creato nella sezione Preparare l&#39;ambiente Snowflake.</p>
+<pre><code language="language-python" class="language-python"># Session
+connection_parameters = { 
+    &#34;account&#34;: &#34;&lt;account_identifier&gt;&#34;, 
+    &#34;user&#34;: &#34;&lt;username&gt;&#34;, 
+    &#34;password&#34;: &#34;&lt;password&gt;&#34;, 
+    &#34;warehouse&#34;: &#34;compute_wh&#34;, 
+    &#34;role&#34;: &#34;accountadmin&#34;, 
+    &#34;database&#34;: &#34;summit_hol&#34;, 
+    &#34;schema&#34;: &#34;public&#34; 
+} 
+session = Session.builder.configs(connection_parameters).create()
+# test if we have a connection
+session.sql(&#34;select current_warehouse() wh, current_database() db, current_schema() schema, current_version() v&#34;).show() 
+</code></pre>
+<p>Nel frammento di codice precedente, sostituisci le variabili delimitate da &#34;&lt;&gt;&#34; con i tuoi valori.</p>
+<h2 is-upgraded>Interrogare i dati utilizzando un&#39;istruzione SQL e con il DataFrame Snowpark</h2>
+<p>In questo passaggio interrogheremo i dati seguendo il metodo tradizionale che consiste nell&#39;eseguire un&#39;istruzione SQL nell&#39;oggetto sessione, in modo analogo alle query sui dati con il connettore Snowflake per Python.</p>
+<pre><code language="language-python" class="language-python"># SQL query to explore the data
+session.sql(&#34;SELECT * FROM ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA WHERE \&#34;Table Name\&#34; = &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39; AND \&#34;Indicator      Name\&#34; = &#39;Personal consumption expenditures (PCE)&#39; AND \&#34;Frequency\&#34; = &#39;A&#39; ORDER BY \&#34;Date\&#34;&#34;).show() 
+</code></pre>
+<p>Ora interrogheremo i dati utilizzando un DataFrame Snowpark. Poiché Snowpark utilizza la valutazione lazy, vengono create la query e le condizioni di filtro, quindi il metodo <em>show()</em> le invia al server Snowflake dove viene eseguita la query. Questo riduce la quantità di dati scambiati tra Snowflake e il client o l&#39;applicazione.</p>
+<pre><code language="language-python" class="language-python"># Now use Snowpark dataframe
+snow_df_pce = (session.table(&#34;ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA&#34;) 
+                            .filter(col(&#39;Table Name&#39;) == &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39;) 
+                            .filter(col(&#39;Indicator Name&#39;) == &#39;Personal consumption expenditures (PCE)&#39;) 
+                            .filter(col(&#39;&#34;Frequency&#34;&#39;) == &#39;A&#39;) 
+                            .filter(col(&#39;&#34;Date&#34;&#39;) &gt;= &#39;1972-01-01&#39;)) 
+snow_df_pce.show() 
+</code></pre>
+<h2 is-upgraded>Creare caratteristiche per l&#39;addestramento ML</h2>
+<p>Nell&#39;applicazione vogliamo ottenere alcune previsioni dell&#39;indice dei prezzi al consumo degli Stati Uniti &#34;Personal Consumption Expenditures (PCE) price index&#34;. Creeremo quindi un DataFrame Pandas che può essere utilizzato per l&#39;addestramento con il modello di regressione lineare scikit. La Snowpark API per Python espone un metodo per convertire i DataFrame Snowpark in Pandas. Di nuovo, con la valutazione lazy di Snowpark possiamo creare la query del DataFrame e la funzione <em>to_pandas()</em> la invierà a Snowflake e restituirà i risultati sotto forma di DataFrame Pandas.</p>
+<pre><code language="language-python" class="language-python"># Let Snowflake perform filtering using the Snowpark pushdown and display results in a Pandas dataframe
+snow_df_pce = (session.table(&#34;ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA&#34;) 
+                        .filter(col(&#39;&#34;Table Name&#34;&#39;) == &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39;) 
+                        .filter(col(&#39;&#34;Indicator Name&#34;&#39;) == &#39;Personal consumption expenditures (PCE)&#39;) 
+                        .filter(col(&#39;&#34;Frequency&#34;&#39;) == &#39;A&#39;) 
+                        .filter(col(&#39;&#34;Date&#34;&#39;) &gt;= &#39;1972-01-01&#39;)) 
+pd_df_pce_year = snow_df_pce.select(year(col(&#39;&#34;Date&#34;&#39;)).alias(&#39;&#34;Year&#34;&#39;), col(&#39;&#34;Value&#34;&#39;).alias(&#39;PCE&#39;) ).to_pandas() 
+pd_df_pce_year 
+</code></pre>
+<h2 is-upgraded>Addestrare il modello di regressione lineare</h2>
+<p>Ora che abbiamo creato le caratteristiche, possiamo addestrare il modello. In questo passaggio trasformeremo il DataFrame Pandas che contiene le caratteristiche in array utilizzando la libreria NumPy. Una volta completato l&#39;addestramento, potremo visualizzare una previsione.</p>
+<pre><code language="language-python" class="language-python"># train model with PCE index
+x = pd_df_pce_year[&#34;Year&#34;].to_numpy().reshape(-1,1) 
+y = pd_df_pce_year[&#34;PCE&#34;].to_numpy()
+
+model = LinearRegression().fit(x, y)
+
+# test model for 2021
+predictYear = 2021 pce_pred = model.predict([[predictYear]])
+# print the last 5 years
+print (pd_df_pce_year.tail() )
+# run the prediction for 2021
+print (&#39;Prediction for &#39;+str(predictYear)+&#39;: &#39;+ str(round(pce_pred[0],2))) 
+</code></pre>
+<h2 is-upgraded>Creare una User Defined Function in Snowflake con il modello addestrato</h2>
+<p>In questo passaggio creeremo una funzione Python che utilizzerà il modello addestrato per prevedere un indice dei prezzi al consumo (PCE) in base all&#39;input della funzione. Quindi utilizzeremo la Snowpark API per creare un&#39;UDF. La libreria Snowpark carica il codice (e il modello addestrato) per la funzione in uno stage interno. Quando richiami l&#39;UDF, la libreria Snowpark esegue la funzione sul server, dove si trovano i dati. Di conseguenza non è necessario trasferire i dati al client per consentire alla funzione di elaborare i dati.</p>
+<pre><code language="language-python" class="language-python">def predict_pce(predictYear: int) -&gt; float: 
+    return model.predict([[predictYear]])[0].round(2).astype(float)
+
+_ = session.udf.register(predict_pce, 
+                        return_type=FloatType(), 
+                        input_type=IntegerType(), 
+                        packages= [&#34;pandas&#34;,&#34;scikit-learn&#34;], 
+                        is_permanent=True, 
+                        name=&#34;predict_pce_udf&#34;, 
+                        replace=True, 
+                        stage_location=&#34;@udf_stage&#34;) 
+</code></pre>
+<p>Ora possiamo testare l&#39;UDF utilizzando un comando SQL in Python.</p>
+<pre><code language="language-python" class="language-python">session.sql(&#34;select predict_pce_udf(2021)&#34;).show()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creare l&#39;applicazione Streamlit" duration="7">
+        <h2 is-upgraded>Importare le librerie richieste</h2>
+<p>Ora che disponiamo di un modello ML addestrato e abbiamo creato un&#39;UDF per generare le previsioni, possiamo creare l&#39;applicazione Streamlit.</p>
+<p>In modo analogo al notebook, creiamo uno script Python e aggiungiamo istruzioni di importazione per includere le librerie richieste.</p>
+<pre><code language="language-python" class="language-python"># Import required libraries
+# Snowpark
+from snowflake.snowpark.session import Session 
+from snowflake.snowpark.types import IntegerType 
+from snowflake.snowpark.functions import avg, sum, col, call_udf, lit, call_builtin, year
+# Pandas
+import pandas as pd 
+#Streamlit 
+import streamlit as st 
+</code></pre>
+<h2 is-upgraded>Impostare il contesto per la pagina dell&#39;applicazione</h2>
+<p>Dobbiamo impostare il contesto per la pagina dell&#39;applicazione.</p>
+<pre><code language="language-python" class="language-python">#Set page context
+st.set_page_config(
+    page_title=&#34;Economical Data Atlas&#34;,
+    page_icon=&#34;🧊&#34;,
+    layout=&#34;wide&#34;,
+    initial_sidebar_state=&#34;expanded&#34;,
+    menu_items={
+        &#39;Get Help&#39;: &#39;https://developers.snowflake.com&#39;,
+        &#39;About&#39;: &#34;This is an *extremely* cool app powered by Snowpark for Python, Streamlit, and Snowflake Marketplace&#34;
+    }
+)
+</code></pre>
+<h2 is-upgraded>Effettuare la connessione a Snowflake</h2>
+<p>In questo passaggio creerai un <a href="https://docs.snowflake.com/en/LIMITEDACCESS/snowpark-python.html#creating-a-session" target="_blank">oggetto sessione</a> per effettuare la connessione a Snowflake. Qui utilizzeremo un metodo rapido per farlo, ma tieni presente che negli ambienti di produzione non è consigliato specificare le credenziali direttamente nel codice. In un ambiente di produzione, un approccio migliore sarebbe caricare le credenziali da <a href="https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py" target="_blank">AWS Secrets Manager</a> o da <a href="https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py" target="_blank">Azure Key Vault</a>, ad esempio.</p>
+<p>Utilizzeremo il database che abbiamo creato nella sezione Preparare l&#39;ambiente Snowflake.</p>
+<pre><code language="language-python" class="language-python"># Create Session object
+def create_session_object(): 
+    connection_parameters = { 
+        &#34;account&#34;: &#34;&lt;account_identifier&gt;&#34;, 
+        &#34;user&#34;: &#34;&lt;username&gt;&#34;, 
+        &#34;password&#34;: &#34;&lt;password&gt;&#34;, 
+        &#34;warehouse&#34;: &#34;compute_wh&#34;, 
+        &#34;role&#34;: &#34;accountadmin&#34;, 
+        &#34;database&#34;: &#34;SUMMIT_HOL&#34;, 
+        &#34;schema&#34;: &#34;PUBLIC&#34; 
+    } 
+    session = Session.builder.configs(connection_parameters).create() 
+    print(session.sql(&#39;select current_warehouse(), current_database(), current_schema()&#39;).collect()) 
+    return session 
+</code></pre>
+<p>Nel frammento di codice precedente, sostituisci le variabili delimitate da &#34;&lt;&gt;&#34; con i tuoi valori.</p>
+<h2 is-upgraded>Caricare dati nei DataFrame Snowpark</h2>
+<p>In questo passaggio creeremo un DataFrame con i dati annuali sull&#39;inflazione al consumo degli Stati Uniti (l&#39;indice PCE). Utilizzeremo la tabella BEANIPA (BEA NIPA: Bureau of Economic Analysis - National Income and Product Accounts). Questa tabella contiene circa 1,6 milioni di righe; utilizzando la valutazione lazy di Snowpark, questi dati vengono elaborati in Snowflake.</p>
+<p>Creeremo un DataFrame con i valori dell&#39;indice PCE effettivi e previsti basato sull&#39;UDF con un modello ML addestrato che abbiamo creato nella sezione dedicata al notebook.</p>
+<p>Quindi combineremo i DataFrame con i valori effettivi e previsti in un nuovo DataFrame per visualizzare i dati in un unico grafico.</p>
+<p>Nota anche che lavorando con Streamlit ci servono DataFrame Pandas e Snowpark API per Python espone un metodo per convertire i DataFrame Snowpark in Pandas.</p>
+<p>Inoltre vogliamo visualizzare alcune metriche chiave, quindi le estrarremo dai DataFrame.</p>
+<p>Infine vogliamo visualizzare i dati dell&#39;indice PCE per trimestre per un anno selezionato e suddividerli in base ai principali tipi di prodotto. Creeremo due DataFrame per questi dati.</p>
+<pre><code language="language-python" class="language-python">#US Inflation, Personal consumption expenditures (PCE) per year 
+#Prepare data frame, set query parameters 
+snow_df_pce = (session.table(&#34;ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA&#34;) 
+                .filter(col(&#39;Table Name&#39;) == &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39;) 
+                .filter(col(&#39;Indicator Name&#39;) == &#39;Personal consumption expenditures (PCE)&#39;) 
+                .filter(col(&#39;&#34;Frequency&#34;&#39;) == &#39;A&#39;) 
+                .filter(col(&#39;&#34;Date&#34;&#39;) &gt;= &#39;1972-01-01&#39;)) 
+#Select columns, substract 100 from value column to reference baseline 
+snow_df_pce_year = snow_df_pce.select(
+                year(col(&#39;&#34;Date&#34;&#39;)).alias(&#39;&#34;Year&#34;&#39;), 
+                (col(&#39;&#34;Value&#34;&#39;)-100).alias(&#39;PCE&#39;)).sort(&#39;&#34;Year&#34;&#39;, ascending=False) 
+#convert to pandas dataframe 
+pd_df_pce_year = snow_df_pce_year.to_pandas() 
+#round the PCE series 
+pd_df_pce_year[&#34;PCE&#34;] = pd_df_pce_year[&#34;PCE&#34;].round(2) 
+#create metrics 
+latest_pce_year = pd_df_pce_year.loc[0][&#34;Year&#34;].astype(&#39;int&#39;)
+latest_pce_value = pd_df_pce_year.loc[0][&#34;PCE&#34;] 
+delta_pce_value = latest_pce_value - pd_df_pce_year.loc[1][&#34;PCE&#34;]
+
+#Use Snowflake UDF for Model Inference 
+snow_df_predict_years = session.create_dataframe([ \
+                        [int(latest_pce_year+1)], \ 
+                        [int(latest_pce_year+2)], \
+                        [int(latest_pce_year+3)] \
+                        ], schema=[&#34;Year&#34;]) 
+pd_df_pce_predictions = snow_df_predict_years.select(
+                        col(&#34;year&#34;), \
+                        call_udf(&#34;predict_pce_udf&#34;, col(&#34;year&#34;)).as_(&#34;pce&#34;)
+                        ).sort(col(&#34;year&#34;)).to_pandas() 
+pd_df_pce_predictions.rename(columns={&#34;YEAR&#34;: &#34;Year&#34;}, inplace=True) 
+
+#round the PCE prediction series 
+pd_df_pce_predictions[&#34;PCE&#34;] = pd_df_pce_predictions[&#34;PCE&#34;].round(2).astype(float)-100
+
+
+# Combine actual and predictions dataframes 
+pd_df_pce_all = ( pd_df_pce_year.set_index(&#39;Year&#39;).sort_index()\
+                .rename(columns={&#34;PCE&#34;: &#34;Actual&#34;})\
+                .append(pd_df_pce_predictions.set_index(&#39;Year&#39;).sort_index()\
+                .rename(columns={&#34;PCE&#34;: &#34;Prediction&#34;})) )
+
+# Data per quarter 
+snow_df_pce_q = (session.table(&#34;ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA&#34;)\
+                .filter(col(&#39;Table Name&#39;) == &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39;)\
+                .filter(col(&#39;Indicator Name&#39;) == &#39;Personal consumption expenditures (PCE)&#39;)\
+                .filter(col(&#39;&#34;Frequency&#34;&#39;) == &#39;Q&#39;)\
+                .select(year(col(&#39;&#34;Date&#34;&#39;)).alias(&#39;Year&#39;),\ 
+                call_builtin(&#34;date_part&#34;, &#39;quarter&#39;, col(&#39;&#34;Date&#34;&#39;)).alias(&#39;&#34;Quarter&#34;&#39;) , \
+                (col(&#39;&#34;Value&#34;&#39;)-100).alias(&#39;PCE&#39;))\
+                .sort(&#39;Year&#39;, ascending=False))
+
+
+# by Major Type Of Product 
+snow_df_pce_all = (session.table(&#34;ECONOMY_DATA_ATLAS.ECONOMY.BEANIPA&#34;)\
+                 .filter(col(&#39;&#34;Table Name&#34;&#39;) == \
+                 &#39;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#39;)\
+                 .filter(col(&#39;&#34;Indicator Name&#34;&#39;) != &#39;Personal consumption expenditures (PCE)&#39;)\
+                 .filter(col(&#39;&#34;Frequency&#34;&#39;) == &#39;A&#39;) \
+                 .filter(col(&#39;&#34;Date&#34;&#39;) &gt;= &#39;1972-01-01&#39;)\
+                .select(&#39;&#34;Indicator Name&#34;&#39;,\
+                         year(col(&#39;&#34;Date&#34;&#39;)).alias(&#39;Year&#39;),\
+                        (col(&#39;&#34;Value&#34;&#39;)-100).alias(&#39;PCE&#39;) )) 
+</code></pre>
+<h2 is-upgraded>Aggiungere i componenti della pagina web</h2>
+<p>In questo passaggio aggiungerai</p>
+<ol type="1">
+<li>Un&#39;intestazione e una sotto-intestazione, oltre a utilizzare container e colonne per organizzare il contenuto dell&#39;applicazione utilizzando gli elementi <em>columns()</em> e <em>container()</em> di Streamlit</li>
+<li>Una visualizzazione delle metriche con delta utilizzando la funzione metric() di Streamlit.</li>
+<li>Un grafico a barre interattivo utilizzando gli elementi selectbox_()_ e _bar_chart()_ di Streamlit</li>
+</ol>
+<pre><code language="language-python" class="language-python"># Add header and a subheader 
+st.title(&#34;Knoema: Economical Data Atlas&#34;) 
+st.header(&#34;Powered by Snowpark for Python and Snowflake Marketplace | Made with Streamlit&#34;) 
+st.subheader(&#34;Personal consumption expenditures (PCE) over the last 25 years, baseline is 2012&#34;) 
+# Add an explanation on the PCE Price Index that can be expanded with 
+st.expander(&#34;What is the Personal Consumption Expenditures Price Index?&#34;): 
+        st.write(&#34;&#34;&#34; The prices you pay for goods and services change all the time – moving at different rates and even in different directions. Some prices may drop while others are going up. A price index is a way of looking beyond individual price tags to measure overall inflation (or deflation) for a group of goods and services over time.
+
+
+        The Personal Consumption Expenditures Price Index is a measure of the prices that people living in the United States, or those buying on their behalf, pay for goods and services.The PCE price index is known for capturing inflation (or deflation) across a wide range of consumer expenses and reflecting changes in consumer behavior.
+       &#34;&#34;&#34;)
+# Use columns to display metrics for global value and predictions 
+col11, col12, col13 = st.columns(3) 
+with st.container(): 
+   with col11: 
+        st.metric(&#34;PCE in &#34; + str(latest_pce_year), round(latest_pce_value), round(delta_pce_value), delta_color=(&#34;inverse&#34;)) 
+    with col12: 
+        st.metric(&#34;Predicted PCE for &#34; + str(int(pd_df_pce_predictions.loc[0][&#34;Year&#34;])), round(pd_df_pce_predictions.loc[0][&#34;PCE&#34;]), round((pd_df_pce_predictions.loc[0][&#34;PCE&#34;] - latest_pce_value)), delta_color=(&#34;inverse&#34;)) 
+    with col13: 
+        st.metric(&#34;Predicted PCE for &#34; + str(int(pd_df_pce_predictions.loc[1][&#34;Year&#34;])), round(pd_df_pce_predictions.loc[1][&#34;PCE&#34;]), round((pd_df_pce_predictions.loc[1][&#34;PCE&#34;] - latest_pce_value)), delta_color=(&#34;inverse&#34;))
+
+# Barchart with actual and predicted PCE 
+st.bar_chart(data=pd_df_pce_   all.tail(25), width=0, height=0, use_container_width=True)
+
+# Display interactive chart to visualize PCE per quarter and per major type of product. 
+with st.container():
+    year_selection = st.selectbox(&#39;Select year&#39;, pd_df_pce_year[&#39;Year&#39;].head(25),index=0 )
+    pd_df_pce_q = snow_df_pce_q.filter(col(&#39;Year&#39;) == year_selection).sort(col(&#39;&#34;Quarter&#34;&#39;)).to_pandas().set_index(&#39;Quarter&#39;)
+with st.expander(&#34;Price Indexes For Personal Consumption Expenditures per Quarter&#34;):
+    st.bar_chart(data=pd_df_pce_q[&#39;PCE&#39;], width=0, height=500, use_container_width=True)
+    pd_df_pce_all = snow_df_pce_all.filter(col(&#39;Year&#39;) == year_selection).sort(col(&#39;&#34;Indicator Name&#34;&#39;)).to_pandas().set_index(&#39;Indicator Name&#39;)
+    st.write(&#34;Price Indexes For Personal Consumption Expenditures By Major Type Of Product&#34;)
+    st.bar_chart(data=pd_df_pce_all[&#39;PCE&#39;], width=0, height=500, use_container_width=True)
+</code></pre>
+<p>Nel frammento di codice riportato sopra, viene creato un grafico a barre utilizzando l&#39;elemento <em>bar_chart()</em> di Streamlit, che richiede un DataFrame come primo parametro. Nel nostro caso, si tratta di un sottoinsieme (25 anni) del DataFrame che contiene l&#39;indice PCE filtrato per data mediante la funzione DataFrame di Snowpark filter() combinato con i valori previsti dell&#39;indice PCE sfruttando la User Defined Function Snowflake che contiene un modello ML addestrato. Metriche chiave, come l&#39;ultimo valore dell&#39;indice PCE e le prossime due previsioni, insieme al delta rispetto all&#39;anno precedente, sono visualizzate utilizzando la funzione metric() di Streamlit.</p>
+<p>È possibile visualizzare altri dettagli selezionando un anno (funzione selectbox() di Streamlit) e un grafico con i valori trimestrali per l&#39;anno selezionato, nonché un grafico dettagliato dei valori dell&#39;indice PCE dei principali tipi di prodotti per l&#39;anno selezionato. Ogni volta che si seleziona un anno, la query viene eseguita su Snowflake e i risultati vengono visualizzati da Snowpark e Streamlit.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Eseguire l&#39;applicazione web" duration="4">
+        <p>Questa è la parte divertente! Se lo script Python non presenta errori di sintassi o di collegamento, ora puoi eseguire l&#39;applicazione.</p>
+<p>Per farlo, esegui:<br><code>streamlit run my_snowpark_streamlit_app_pce.py</code> dalla riga di comando o nella sezione Terminale di VS Code. (Sostituisci <em>my_snowpark_streamlit_app_pce.py</em> con il nome del tuo script Python.)</p>
+<p>Assicurati di avere attivato l&#39;ambiente conda ‘snowpark&#39; utilizzando questo comando dal Terminale: <code>conda activate snowpark</code></p>
+<p>Un prompt del Terminale indicherà che hai selezionato l&#39;ambiente conda corretto:</p>
+<pre><code language="language-sql" class="language-sql">(base) user SummitHOL % conda activate snowpark 
+(snowpark) user SummitHOL %
+</code></pre>
+<p>Nell&#39;applicazione:</p>
+<ol type="1">
+<li>Puoi fare clic sulle sezioni indicate dal segno &#34;+&#34; per espanderle</li>
+<li>Puoi selezionare un anno per visualizzare informazioni dettagliate</li>
+<li>I valori trimestrali dell&#39;indice PCE sono compressi per impostazione predefinita; puoi espanderli facendo clic su &#34;+&#34;</li>
+</ol>
+<p class="image-container"><img alt="alt_text" src="img/e6c31f7bf4e849a4.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>AWS S3 Access Logs Ingestion</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="s3_access_log_ingestion"
+                  title="AWS S3 Access Logs Ingestion"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>S3 access logging allows for auditing of operations preformed on objects in an S3 bucket. Like CloudTrail events, S3 access logs will provide information about accessed objects, actors preforming those actions and the actions themselves. S3 access logs contain additional fields and may log events not logged in CloudTrail. Importantly to note is that they are delivered on a best effort basis and may not contain every action. More information about S3 access logs and CloudTrail can be found in the <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/logging-with-S3.html" target="_blank">official documentation</a>.</p>
+<p>This quickstart is a guide to ingesting and processing S3 Access Logs into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for data loss prevention and incident response.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>AWS user with permission to create and manage IAM policies and roles</li>
+<li>Snowflake user with permission to create tables, stages, tasks, streams and storage integrations as well as setup snowpipe.</li>
+<li>An S3 Logging Bucket, preferably in the same region as your Snowflake target account.</li>
+</ul>
+<h2 is-upgraded>Architecture</h2>
+<p><img alt="An architecture diagram of the ingestion process, described in detail below" src="img/d6bed076f5ea5812.png"> S3 access logs are configured to log to a separate bucket which serves as a snowflake external stage. When log files are created, an event notification triggers and SQS queue which triggers Snowpipe to copy logs to a staging table. A stream of incoming</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable S3 Access Logging" duration="5">
+        <p>See <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html" target="_blank">here</a> for more detailed instructions.</p>
+<ol type="1">
+<li>In the Buckets list, choose the bucket you want to enable logs on</li>
+<li>Look for the properties flag, in the server access logging area, select Edit.</li>
+<li>Enable server access logging and choose a bucket/prefix for the target bucket</li>
+</ol>
+<p class="image-container"><img alt="A screenshot of the edit server access logging page. It was the enable radio button selected and a target bucked specified" src="img/23744cd6f52dec05.png"></p>
+<p>Note: S3 access logging may take some time to start creating records.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a storage integration in Snowflake" duration="3">
+        <p><em>Replace &lt;RoleName&gt; with the desired name of the role you&#39;d like snowflake to use ( this role will be created in the next step).  Replace &lt;BUCKET_NAME&gt;/path/to/logs/ with the path to your S3 Access logs as set in the previous step</em></p>
+<pre><code language="language-sql" class="language-sql">create STORAGE INTEGRATION s3_int_s3_access_logs
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = S3
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = &#39;arn:aws:iam::&lt;AWS_ACCOUNT_NUMBER&gt;:role/&lt;RoleName&gt;&#39;
+  STORAGE_ALLOWED_LOCATIONS = (&#39;s3://&lt;BUCKET_NAME&gt;/&lt;PREFIX&gt;/&#39;);
+
+DESC INTEGRATION s3_int_s3_access_logs;
+</code></pre>
+<p>Take note of <strong>STORAGE_AWS_IAM_USER_ARN</strong> and <strong>STORAGE_AWS_EXTERNAL_ID</strong></p>
+<p class="image-container"><img alt="A screenshot showing the result of describing an integration. STORAGE_AWS_IAM_USER_ARN property is in the format of an aws ARN set to arn:aws:iam::123456789012:user/abc10000-a and the STORAGE_AWS_EXTERNAL_ID is in the format of ABC12345_SFCRole=1 ABCDEFGHIJKLMNOPORSTUVWXYZab= " src="img/1320242e65c2a1b1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create role and policy in AWS" duration="5">
+        <p><em>The following assumes a user with the ability to create and manage IAM logged into the AWS console or using the CLI.  A full explanation can be found in </em><a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config.html" target="_blank"><em>this documentation</em></a></p>
+<p>Open up Cloudshell in the AWS console by pressing the <img alt="aws cloudshell icon" src="img/f258742e8a725628.png"> icon on the right side of the top navigation bar or run the following commands in your terminal once configured to use the AWS CLI.</p>
+<p>Export the following variables, replacing the values with your own</p>
+<pre><code language="language-bash" class="language-bash">export BUCKET_NAME=&#39;&lt;BUCKET_NAME&gt;&#39;
+export PREFIX=&#39;&lt;PREFIX&gt;&#39; # no leading or trailing slashes
+export ROLE_NAME=&#39;&lt;ROLE_NAME&gt;&#39;
+export STORAGE_AWS_IAM_USER_ARN=&#39;&lt;STORAGE_AWS_IAM_USER_ARN&gt;&#39;
+export STORAGE_AWS_EXTERNAL_ID=&#39;&lt;STORAGE_AWS_EXTERNAL_ID&gt;&#39;
+</code></pre>
+<p>Create a role for Snowflake to assume</p>
+<pre><code language="language-bash" class="language-bash">aws iam create-role \
+    --role-name &#34;${ROLE_NAME}&#34; \
+    --assume-role-policy-document \
+&#39;{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+                &#34;AWS&#34;: &#34;&#39;${STORAGE_AWS_IAM_USER_ARN}&#39;&#34;
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+                    &#34;sts:ExternalId&#34;: &#34;&#39;${STORAGE_AWS_EXTERNAL_ID}&#39;&#34;
+                }
+            }
+        }
+    ]
+}&#39;
+</code></pre>
+<p>Create an inline-policy to allow snowflake to add and remove files from S3</p>
+<pre><code language="language-bash" class="language-bash">aws iam put-role-policy \
+    --role-name &#34;${ROLE_NAME}&#34; \
+    --policy-name &#34;${ROLE_NAME}-inlinepolicy&#34; \
+    --policy-document \
+&#39;{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+              &#34;s3:PutObject&#34;,
+              &#34;s3:GetObject&#34;,
+              &#34;s3:GetObjectVersion&#34;,
+              &#34;s3:DeleteObject&#34;,
+              &#34;s3:DeleteObjectVersion&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&#39;${BUCKET_NAME}&#39;/&#39;${PREFIX}&#39;/*&#34;
+        },
+        {
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;s3:ListBucket&#34;,
+                &#34;s3:GetBucketLocation&#34;
+            ],
+            &#34;Resource&#34;: &#34;arn:aws:s3:::&#39;${BUCKET_NAME}&#39;&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringLike&#34;: {
+                    &#34;s3:prefix&#34;: [
+                        &#34;&#39;${PREFIX}&#39;/*&#34;
+                    ]
+                }
+            }
+        }
+    ]
+}&#39;
+</code></pre>
+<p>You will now be able to see your role, policy and trust relationship in the console</p>
+<p class="image-container"><img alt="Screenshot of snowflake source displayed in AWS IAM" src="img/c2a37dee6eabe74c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Snowflake to receive data" duration="6">
+        <p>This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 1 minute of inactivity. For production workloads a larger warehouse will likely be required.</p>
+<pre><code language="language-sql" class="language-sql">create warehouse security_quickstart with 
+  WAREHOUSE_SIZE = MEDIUM 
+  AUTO_SUSPEND = 60;
+</code></pre>
+<p>S3 Access logs are in a non-standard format which we will be parsing with a custom function later on. For now we will create a file format to import logs unparsed.</p>
+<pre><code language="language-sql" class="language-sql">CREATE FILE FORMAT IF NOT EXISTS TEXT_FORMAT 
+TYPE = &#39;CSV&#39; 
+FIELD_DELIMITER = NONE
+SKIP_BLANK_LINES = TRUE
+ESCAPE_UNENCLOSED_FIELD = NONE;
+</code></pre>
+<p>Create External Stage using the storage integration and test that snowflake can test files. Make sure you include the trailing slash if using a prefix.</p>
+<pre><code language="language-sql" class="language-sql">create stage s3_access_logs
+  url = &#39;s3://&lt;BUCKET_NAME&gt;/&lt;PREFIX&gt;/&#39;
+  storage_integration = s3_int_s3_access_logs
+;
+
+list @s3_access_logs;
+</code></pre>
+<p class="image-container"><img alt="Screenshot of listing files in external stage" src="img/51c983989f51cb01.png"></p>
+<p>Create a table to store the raw logs</p>
+<pre><code language="language-sql" class="language-sql">create table s3_access_logs_staging(
+    raw TEXT,
+    timestamp DATETIME
+);
+</code></pre>
+<p>Create a stream on the table to track changes, this will be used to trigger processing later on</p>
+<pre><code language="language-sql" class="language-sql">create stream s3_access_logs_stream on table s3_access_logs_staging;
+
+</code></pre>
+<p>Test Injection from External Stage</p>
+<pre><code language="language-sql" class="language-sql">copy into s3_access_logs_staging from (
+SELECT 
+  STG.$1,
+  current_timestamp() as timestamp 
+FROM @s3_access_logs (FILE_FORMAT =&gt; TEXT_FORMAT) STG
+);
+</code></pre>
+<p class="image-container"><img alt="Screenshot showing result of above copy into command, for all files the status column shows &amp;ldquo;LOADED&amp;rdquo;" src="img/3ee1412438b22603.png"></p>
+<p>Verify the logs were loaded properly</p>
+<pre><code language="language-sql" class="language-sql">select * from public.s3_access_logs_staging limit 5;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowpipe for continuous loading" duration="5">
+        <p>The following instructions depend on a Snowflake account running on AWS. Accounts running on other cloud providers may invoke snowpipe from a rest endpoint. <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html</a></p>
+<p>Configure the Snowflake snowpipe</p>
+<pre><code language="language-sql" class="language-sql">create pipe public.s3_access_logs_pipe auto_ingest=true as
+  copy into s3_access_logs_staging from (
+    SELECT 
+      STG.$1,
+      current_timestamp() as timestamp 
+  FROM @s3_access_logs (FILE_FORMAT =&gt; TEXT_FORMAT) STG
+)
+;
+</code></pre>
+<p>Show pipe to retrieve SQS queue ARN</p>
+<pre><code language="language-sql" class="language-sql">show pipes;
+</code></pre>
+<p class="image-container"><img alt="Screenshot showing output of show pipes command" src="img/d4d814e394b51b96.png"></p>
+<p>Setup S3 bucket with following <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications.html" target="_blank">AWS instructions</a>.</p>
+<p>Target Bucket -&gt; Open property -&gt; Select &#34;Create Event notification&#34;</p>
+<p class="image-container"><img alt="Screenshot of empty event notifications dashboard in AWS" src="img/8e6e768f8a56b85d.png"></p>
+<p>Fill out below items</p>
+<ul>
+<li>Name: Name of the event notification (e.g. Auto-ingest Snowflake).</li>
+<li>Prefix(Optional) :  if you receive notifications only when files are added to a specific folder (for example, logs/).</li>
+<li>Events: Select the ObjectCreate (All) option.</li>
+<li>Send to: Select &#34;SQS Queue&#34; from the dropdown list.</li>
+<li>SQS: Select &#34;Add SQS queue ARN&#34; from the dropdown list.</li>
+<li>SQS queue ARN: Paste the SQS queue name from the SHOW PIPES output.</li>
+</ul>
+<p class="image-container"><img alt="Screenshot of create event notification form in AWS console" src="img/61c8325e760d3a62.png"></p>
+<p class="image-container"><img alt="Screenshot of destination configuration in create event notification form in AWS console" src="img/246ad6a5224abf66.png"></p>
+<p>Event notification has been created <img alt="Screenshot of event notifications dashboard with created notification in AWS" src="img/9f7b7df7dd73457.png"></p>
+<p>Refresh Snowpipe to retrieve unloaded files</p>
+<pre><code language="language-sql" class="language-sql">alter pipe s3_access_logs_pipe refresh;
+</code></pre>
+<p>You can confirm also if snowpipe worked properly</p>
+<pre><code language="language-sql" class="language-sql">select *
+  from table(snowflake.information_schema.pipe_usage_history(
+    date_range_start=&gt;dateadd(&#39;day&#39;,-14,current_date()),
+    date_range_end=&gt;current_date(),
+    pipe_name=&gt;&#39;public.s3_access_logs_pipe));
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Parse and transform the raw logs" duration="0">
+        <p>Now that the raw data is loaded into Snowflake, we will create a custom python function to parse and clean up the raw logs.</p>
+<p>Create a python user defined table function (UDTF) to process logs. This will return a table.</p>
+<pre><code language="language-sql" class="language-sql">create or replace function parse_s3_access_logs(log STRING)
+returns table (
+    bucketowner STRING,bucket_name STRING,requestdatetime STRING,remoteip STRING,requester STRING,
+    requestid STRING,operation STRING,key STRING,request_uri STRING,httpstatus STRING,errorcode STRING,
+    bytessent BIGINT,objectsize BIGINT,totaltime STRING,turnaroundtime STRING,referrer STRING, useragent STRING,
+    versionid STRING,hostid STRING,sigv STRING,ciphersuite STRING,authtype STRING,endpoint STRING,tlsversion STRING)
+language python
+runtime_version=3.8
+handler=&#39;S3AccessLogParser&#39;
+as $$
+import re
+class S3AccessLogParser:
+    def clean(self,field):
+        field = field.strip(&#39; &#34; &#34; &#39;)
+        if field == &#39;-&#39;:
+            field = None
+        return field
+        
+    def process(self, log):
+        pattern = &#39;([^ ]*) ([^ ]*) \\[(.*?)\\] ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\&#34;[^\&#34;]*\&#34;|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\&#34;[^\&#34;]*\&#34;|-) ([^ ]*)(?: ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*))?.*$&#39;
+        lines = re.findall(pattern,log,re.M)
+        for line in lines:
+            yield(tuple(map(self.clean,line)))
+$$;
+</code></pre>
+<p>Test the parsing function if desired</p>
+<pre><code language="language-sql" class="language-sql">select parsed_logs.*
+    from s3_access_logs_staging
+    join table(parse_s3_access_logs(s3_access_logs_staging.raw)) parsed_logs;
+</code></pre>
+<p>Create table to hold the parsed logs</p>
+<pre><code language="language-sql" class="language-sql">create or replace table s3_access_logs(
+ bucketowner STRING,bucket_name STRING,requestdatetime STRING,remoteip STRING,requester STRING,
+    requestid STRING,operation STRING,key STRING,request_uri STRING,httpstatus STRING,errorcode STRING,
+    bytessent BIGINT,objectsize BIGINT,totaltime STRING,turnaroundtime STRING,referrer STRING, useragent STRING,
+    versionid STRING,hostid STRING,sigv STRING,ciphersuite STRING,authtype STRING,endpoint STRING,tlsversion STRING
+);
+</code></pre>
+<p>Create a scheduled task that processes logs from staging table as they are ingested a task and the stream created earlier. Will run every ten minutes if there are logs in the stream.</p>
+<pre><code language="language-sql" class="language-sql">create or replace task s3_access_logs_transformation
+warehouse = security_quickstart
+schedule = &#39;10 minute&#39;
+when
+system$stream_has_data(&#39;s3_access_logs_stream&#39;)
+as
+insert into s3_access_logs (select parsed_logs.*
+    from s3_access_logs_stream
+    join table(parse_s3_access_logs(s3_access_logs_stream.raw)) parsed_logs
+    where s3_access_logs_stream.metadata$action = &#39;INSERT&#39;
+);
+--Task must be &#34;resumed&#34; after creation
+alter task s3_access_logs_transformation resume;
+</code></pre>
+<p>After the task runs, very that the data was parsed. If you don&#39;t wish to wait either reduce the time specified in schedule or run the above <code>insert into</code> command manually.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query the data" duration="2">
+        <p>Create a workbook to query the new view. If desired, use the following to help get you started:</p>
+<pre><code language="language-sql" class="language-sql">-- Investigate who deleted which object
+SELECT RequestDateTime, RemoteIP, Requester, Key 
+FROM s3_access_logs_db.mybucket_logs 
+WHERE key = &#39;path/to/object&#39; AND operation like &#39;%DELETE%&#39;;
+
+-- IPs by number of requests
+select count(*),REMOTEIP from s3_access_logs group by remoteip order by count(*) desc;
+
+-- IPs by traffic
+SELECT 
+    remoteip,
+    SUM(bytessent) AS uploadTotal,
+    SUM(objectsize) AS downloadTotal,
+    SUM(ZEROIFNULL(bytessent) + ZEROIFNULL(objectsize)) AS Total
+FROM s3_access_logs
+group by REMOTEIP
+order by total desc;
+
+-- Access denied errors
+SELECT * FROM s3_access_logs WHERE httpstatus = &#39;403&#39;;
+-- All actions for a specific user
+SELECT * 
+FROM s3_access_logs_db.mybucket_logs 
+WHERE requester=&#39;arn:aws:iam::123456789123:user/user_name&#39;;
+
+-- Show anonymous requests
+SELECT *
+FROM s3_access_logs
+WHERE Requester IS NULL;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; next steps" duration="0">
+        <p>Having completed this quickstart you have successfully:</p>
+<ul>
+<li>Configured S3 access logging</li>
+<li>Created and configured an external stage using S3</li>
+<li>Ingested S3 access logs into Snowflake</li>
+<li>Created and configured a pipeline to automatically load data</li>
+<li>Created a scheduled task and function to automatically process data</li>
+<li>Explored sample queries to get insights out of your access logs</li>
+</ul>
+<h2 is-upgraded>Additional References</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-s3-config.html" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-s3-config.html</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe" target="_blank">https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-s3-access-logs-to-identify-requests.html" target="_blank">https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-s3-access-logs-to-identify-requests.html</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

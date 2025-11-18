@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_ai_observability",
+  "duration": 45,
+  "title": "Getting Started with AI Observability",
+  "summary": "This is a guide for getting started with Snowflake AI Observability.",
+  "source": "getting_started_with_ai_observability/getting_started_with_ai_observability.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "observability"
+  ],
+  "tags": [
+    "ai",
+    "gettingstarted",
+    "llms",
+    "observability",
+    "rag",
+    "snowflake",
+    "trulens",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_ai_observability"
+}

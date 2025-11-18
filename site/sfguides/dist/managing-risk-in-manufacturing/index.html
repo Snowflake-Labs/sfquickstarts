@@ -1,0 +1,598 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="managing-risk-in-manufacturing"
+                  title="Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <h2 is-upgraded>What Is Neo4j Graph Analytics For Snowflake?</h2>
+<p>Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. <strong>Neo4j Graph Analytics for Snowflake</strong> brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake!</p>
+<h2 is-upgraded>Manage Risk in a Manufacturing Plant with Neo4j Graph Analytics</h2>
+<p>This quickstart shows how to model a manufacturing workflow and apply Graph Analytics algorithms to find structural risks, operational bottlenecks, and machine similarities.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>The Native App <a href="https://app.snowflake.com/marketplace/listing/GZTDZH40CN" target="_blank">Neo4j Graph Analytics</a> for Snowflake</li>
+</ul>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts" target="_blank">Snowflake account</a> with appropriate access to databases and schemas.</li>
+<li>Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below: <img alt="image" src="img/bb765f4d97e101ba.png"></li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to create a <strong>graph projection</strong>, which combines the nodes and their relationships into a single in-memory graph.</li>
+<li>How to conduct a <strong>connectivity analysis</strong>, which utilizes Weakly Connected Components to identify any isolated subsystem.</li>
+<li>How to conduct a <strong>criticality ranking</strong> by using PageRank to find influential machines and Betweenness Centrality to identify bridges that control workflow.</li>
+<li>How to calculate <strong>structural embeddings and similarity</strong>. First generate FastRP embeddings and then run KNN to group machines with similar roles or dependencies.</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>A mock database modeling machines and their relationships in a manufacturing process</li>
+<li>A notebook covering various graph algorithms and applying them to our mock database</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Our Database" duration="7">
+        <p>We are going to create a simple database with synthetic data. Let&#39;s first create the databse:</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS m_demo;
+USE SCHEMA m_demo.public;
+</code></pre>
+<p>Then let&#39;s add some tables to that database:</p>
+<pre><code language="language-sql" class="language-sql">create or replace TABLE NODES (
+	MACHINE_ID NUMBER(38,0),
+	MACHINE_TYPE VARCHAR(16777216),
+	CURRENT_STATUS VARCHAR(16777216),
+	RISK_LEVEL VARCHAR(16777216)
+);
+
+create or replace TABLE RELS (
+	SRC_MACHINE_ID NUMBER(38,0),
+	DST_MACHINE_ID NUMBER(38,0),
+	THROUGHPUT_RATE NUMBER(38,0)
+);
+</code></pre>
+<p>Next we are going to create a table that represents our nodes. In this case, that will be 20 machines, including cutters, welders, presses, assemblers, and painters.</p>
+<pre><code language="language-sql" class="language-sql">DELETE FROM nodes;
+
+INSERT INTO nodes (machine_id, machine_type, current_status, risk_level) VALUES
+(1, &#39;Cutter&#39;, &#39;active&#39;, &#39;low&#39;),
+(2, &#39;Welder&#39;, &#39;active&#39;, &#39;low&#39;),
+(3, &#39;Press&#39;, &#39;active&#39;, &#39;medium&#39;),
+(4, &#39;Assembler&#39;, &#39;active&#39;, &#39;medium&#39;),
+(5, &#39;Paint&#39;, &#39;active&#39;, &#39;low&#39;),
+(6, &#39;Cutter&#39;, &#39;active&#39;, &#39;low&#39;),
+(7, &#39;Welder&#39;, &#39;active&#39;, &#39;medium&#39;),
+(8, &#39;Press&#39;, &#39;active&#39;, &#39;medium&#39;),
+(9, &#39;Assembler&#39;, &#39;active&#39;, &#39;low&#39;),
+(10, &#39;Paint&#39;, &#39;active&#39;, &#39;low&#39;),
+(11, &#39;Cutter&#39;, &#39;active&#39;, &#39;medium&#39;),
+(12, &#39;Welder&#39;, &#39;active&#39;, &#39;high&#39;),
+(13, &#39;Press&#39;, &#39;active&#39;, &#39;medium&#39;),
+(14, &#39;Assembler&#39;, &#39;active&#39;, &#39;high&#39;),
+(15, &#39;Paint&#39;, &#39;active&#39;, &#39;medium&#39;),
+(16, &#39;Cutter&#39;, &#39;active&#39;, &#39;low&#39;),
+(17, &#39;Welder&#39;, &#39;active&#39;, &#39;medium&#39;),
+(18, &#39;Press&#39;, &#39;active&#39;, &#39;low&#39;),
+(19, &#39;Assembler&#39;, &#39;active&#39;, &#39;medium&#39;),
+(20, &#39;Assembler&#39;, &#39;active&#39;, &#39;high&#39;);
+</code></pre>
+<p>Next, we will have a table that reflects how those machines connect to eachother:</p>
+<pre><code language="language-sql" class="language-sql">DELETE FROM rels;
+
+INSERT INTO rels (SRC_MACHINE_ID, DST_MACHINE_ID, THROUGHPUT_RATE) VALUES
+(1, 2, 50),
+(2, 3, 50),
+(3, 4, 50),
+(4, 5, 50),
+(5, 6, 50),
+(6, 7, 50),
+(7, 8, 50),
+(8, 9, 50),
+(9, 10, 50),
+(5, 6, 40),
+(6, 5, 40),
+(8, 9, 30),
+(9, 8, 30),
+(1, 20, 200),
+(2, 20, 180),
+(3, 20, 160),
+(4, 20, 140),
+(11, 12, 20),
+(12, 13, 20),
+(13, 14, 20),
+(14, 15, 20),
+(15, 16, 20),
+(16, 17, 20),
+(17, 18, 20),
+(18, 19, 20),
+(19, 20, 20),
+(3, 11, 120),
+(10, 19, 19);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up" duration="5">
+        <p>Now that we have our data, we just need to create a notebook and grant the necessary permissions.</p>
+<h2 is-upgraded>Import The Notebook</h2>
+<ul>
+<li>We&#39;ve provided a notebook to walk you through each SQL and Python step—no local setup required!</li>
+<li>Download the .ipynb found <a href="https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/predictive-maintenance-manufacturing/predictive-maintenance-manufacturing.ipynb" target="_blank">here</a>, and import the notebook into snowflake. <strong>Please ensure that all cells are imported as SQL, except for </strong><strong><code>viz_display</code></strong><strong> which should be a python cell</strong>.</li>
+</ul>
+<h2 is-upgraded>Permissions</h2>
+<p>Before we run our algorithms, we need to set the proper permissions. But before we get started granting different roles, we need to ensure that you are using <code>accountadmin</code> to grant and create roles. Lets do that now:</p>
+<pre><code language="language-sql" class="language-sql">-- you must be accountadmin to create role and grant permissions
+use role accountadmin;
+</code></pre>
+<p>Next we can set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the <code>M_DEMO.public schema</code>. It creates a consumer role (gds_role) for users and administrators, grants the Graph Analytics application access to read from and write to tables and views, and ensures that future tables are accessible.</p>
+<p>It also provides the application with access to the required compute pool and warehouse resources needed to run graph algorithms at scale.</p>
+<pre><code language="language-sql" class="language-sql">-- Create an account role to manage the GDS application
+CREATE ROLE IF NOT EXISTS gds_role;
+GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_role;
+GRANT APPLICATION ROLE neo4j_graph_analytics.app_admin TO ROLE gds_role;
+
+--Grant permissions for the application to use the database
+GRANT USAGE ON DATABASE m_demo TO APPLICATION neo4j_graph_analytics;
+GRANT USAGE ON SCHEMA m_demo.public TO APPLICATION neo4j_graph_analytics;
+
+--Create a database role to manage table and view access
+CREATE DATABASE ROLE IF NOT EXISTS gds_db_role;
+
+GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
+
+GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
+GRANT ALL PRIVILEGES ON ALL VIEWS IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
+
+GRANT CREATE TABLE ON SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
+
+
+--Grant the DB role to the application and admin user
+GRANT DATABASE ROLE gds_db_role TO APPLICATION neo4j_graph_analytics;
+GRANT DATABASE ROLE gds_db_role TO ROLE gds_role;
+
+GRANT USAGE ON DATABASE M_DEMO TO ROLE GDS_ROLE;
+GRANT USAGE ON SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
+GRANT CREATE TABLE ON SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
+GRANT SELECT, INSERT, UPDATE, DELETE ON FUTURE TABLES IN SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
+</code></pre>
+<p>Then we need to switch the role we created:</p>
+<pre><code language="language-sql" class="language-sql">use warehouse neo4j_graph_analytics_APP_WAREHOUSE;
+use role gds_role;
+use database m_demo;
+use schema public;
+</code></pre>
+<p>Next, we are going to do a little clean up. We want our nodes table to just have the node ids.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE NODES_VW AS
+SELECT MACHINE_ID AS nodeId
+FROM NODES;
+</code></pre>
+<p>Your relationship table might have more than one row per machine‐pair, but we need to have exactly one throughput_rate per (source, target). To be safe you should aggregate the data, for example:</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE RELS_VW AS
+SELECT
+  SRC_MACHINE_ID  AS sourceNodeId,
+  DST_MACHINE_ID  AS targetNodeId,
+  CAST(SUM(THROUGHPUT_RATE) AS FLOAT) AS total_amount
+FROM RELS
+GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize Our Graph (Experimental)" duration="5">
+        <p>At this point, you may want to visualize your graph to get a better understanding of how everything fits together. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:</p>
+<pre><code language="language-sql" class="language-sql">CALL Neo4j_Graph_Analytics.experimental.visualize(
+{
+    &#39;nodeTables&#39;: [&#39;M_DEMO.PUBLIC.NODES_VW&#39;],
+    &#39;relationshipTables&#39;: {
+      &#39;M_DEMO.PUBLIC.RELS_VW&#39;: {
+        &#39;sourceTable&#39;: &#39;M_DEMO.PUBLIC.NODES_VW&#39;,
+        &#39;targetTable&#39;: &#39;M_DEMO.PUBLIC.NODES_VW&#39;
+      }
+    }
+  },
+  {}
+);
+</code></pre>
+<p>We can access the output of the previous cell by referencing its cell name, in this case <code>viz</code>. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the <code>viz</code> output as a Pandas DataFrame, then accessing the first row of the &#34;VISUALIZE&#34; column.</p>
+<pre><code language="language-sql" class="language-sql">import streamlit.components.v1 as components
+
+components.html(
+    cell8.to_pandas().loc[0][&#34;VISUALIZE&#34;],
+    height=600
+)
+</code></pre>
+<p class="image-container"><img alt="image" src="img/97a2156c0ffad69a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Structural Connectivity Analysis" duration="5">
+        <p>Structural connectivity helps verify whether your production line is truly integrated or split into isolated sections. We use Weakly Connected Components (WCC) to evaluate this.</p>
+<h2 is-upgraded>Weakly Connected Components (WCC)</h2>
+<p>WCC treats the graph as undirected and groups machines that can reach each other without considering direction. If the graph splits into multiple components, it may signal siloed operations or disconnected subsystems—both of which could introduce coordination challenges or unmonitored risks.tion.</p>
+<p>WCC gives a high-level view of connectivity, highlighting whether your plant functions as one unified system. SCC drills down into specific cycle structures that could be costing efficiency.</p>
+<p><strong>How to Interpret WCC Results</strong>: A single connected component for our domain is ideal; it suggests an integrated production network. Multiple smaller components imply isolated lines or equipment clusters that may need integration or review.</p>
+<p><strong>Expected result:</strong> The simulated data is designed to form a single significant component, reflecting a unified workflow.</p>
+<pre><code language="language-sql" class="language-sql">CALL neo4j_graph_analytics.graph.wcc(&#39;CPU_X64_XS&#39;, {
+  &#39;project&#39;: {
+    &#39;defaultTablePrefix&#39;: &#39;m_demo.public&#39;,
+    &#39;nodeTables&#39;: [&#39;nodes_vw&#39;],
+    &#39;relationshipTables&#39;: {
+      &#39;rels_vw&#39;: {
+        &#39;sourceTable&#39;: &#39;nodes_vw&#39;,
+        &#39;targetTable&#39;: &#39;nodes_vw&#39;
+      }
+    }
+  },
+  &#39;compute&#39;: {},
+  &#39;write&#39;: [
+    {
+      &#39;nodeLabel&#39;: &#39;nodes_vw&#39;,
+      &#39;outputTable&#39;: &#39;m_demo.public.nodes_vw_wcc&#39;
+    }
+  ]
+});
+</code></pre>
+<pre><code language="language-sql" class="language-sql">SELECT
+  component,
+  COUNT(*) AS count
+FROM M_DEMO.PUBLIC.NODES_VW_WCC
+GROUP BY component
+ORDER BY count DESC
+LIMIT 5;
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>COMPONENT</p>
+</td><td colspan="1" rowspan="1"><p>COUNT</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>0</p>
+</td><td colspan="1" rowspan="1"><p>20</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Criticality Analysis" duration="10">
+        <p>Identifying the most critical machines in your workflow can help avoid shutdowns. If these machines slow down or fail, downstream operations halt. We use centrality algorithms to surface high-impact nodes. Both machines concentrate flow (PageRank) and machines that connect key sections of the graph (Betweenness). This gives us a fuller picture of how risk and workload are distributed. With these analyses, we can:</p>
+<ul>
+<li>Prioritize monitoring of the machines whose disruption would ripple through the entire line</li>
+<li>Allocate maintenance resources where they&#39;ll have the most significant effect</li>
+<li>Design redundancy or backup processes around your process hubs Plan capacity expansions by understanding which machines handle the most &#34;traffic.&#34;</li>
+</ul>
+<h2 is-upgraded>PageRank Centrality</h2>
+<p>Designed initially to rank web pages, PageRank measures a node&#39;s importance by the &#34;quality and quantity&#34; of incoming edges. In our graph, an edge A FEEDS_INTO B means &#34;Machine A feeds into Machine B.&#34; A high PageRank score indicates a machine that receives material from many other well-connected machines.</p>
+<p><strong>How to Interpret Page Rank</strong>: The highest-performing machines manage the most critical data flow.</p>
+<p><strong>Expected Result</strong>:  Machine 20 has been set up as the processing hub for the simulated data, so it should be at the very top of the list.</p>
+<pre><code language="language-sql" class="language-sql">CALL neo4j_graph_analytics.graph.page_rank(&#39;CPU_X64_XS&#39;, {
+  &#39;project&#39;: {
+    &#39;defaultTablePrefix&#39;: &#39;m_demo.public&#39;,
+    &#39;nodeTables&#39;: [&#39;nodes_vw&#39;],
+    &#39;relationshipTables&#39;: {
+      &#39;rels_vw&#39;: {
+        &#39;sourceTable&#39;: &#39;nodes_vw&#39;,
+        &#39;targetTable&#39;: &#39;nodes_vw&#39;
+      }
+    }
+  },
+  &#39;compute&#39;: {
+    &#39;mutateProperty&#39;: &#39;score&#39;
+  },
+  &#39;write&#39;: [
+    {
+      &#39;nodeLabel&#39;: &#39;nodes_vw&#39;,
+      &#39;outputTable&#39;: &#39;m_demo.public.nodes_vw_pagerank&#39;,
+      &#39;nodeProperty&#39;: &#39;score&#39;
+    }
+  ]
+});
+</code></pre>
+<pre><code language="language-sql" class="language-sql">SELECT
+  nodeid,
+  score
+FROM m_demo.public.nodes_vw_pagerank
+ORDER BY score DESC
+LIMIT 5
+
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>NODEID</p>
+</td><td colspan="1" rowspan="1"><p>SCORE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>20</p>
+</td><td colspan="1" rowspan="1"><p>1.510187893</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>19</p>
+</td><td colspan="1" rowspan="1"><p>1.229185736</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>9</p>
+</td><td colspan="1" rowspan="1"><p>0.8718395565</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>8</p>
+</td><td colspan="1" rowspan="1"><p>0.8494144897</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>18</p>
+</td><td colspan="1" rowspan="1"><p>0.7493853549</p>
+</td></tr>
+</table>
+<p><strong>Interpretation</strong> As expected, machine 20 ranks highest, confirming its role as a central assembler in the workflow. Its high-risk status makes it a critical point of failure that should be closely monitored.### Betweenness Centrality</p>
+<p>PageRank highlights machines with the most influence based on incoming flow, but it doesn&#39;t capture which machines sit between major areas of the workflow. Betweenness Centrality fills that gap by identifying machines that appear frequently on the shortest paths between others, often acting as bridges or single points of failure.</p>
+<p><strong>How to Interpret Betweenness Results:</strong> Machines with high scores connect upstream and downstream sections of the plant. For example, Machine 3 ranks highest not because it handles the most volume but because it links multiple parts of the workflow. If it goes down, it risks disrupting connections across the system.</p>
+<p><strong>Expected Result:</strong> Machines positioned between major steps, especially those that route material across different sections—should have the highest betweenness scores.</p>
+<pre><code language="language-sql" class="language-sql">CALL neo4j_graph_analytics.graph.betweenness(&#39;CPU_X64_XS&#39;, {
+   &#39;project&#39;: {
+    &#39;defaultTablePrefix&#39;: &#39;m_demo.public&#39;,
+    &#39;nodeTables&#39;: [&#39;nodes_vw&#39;],
+    &#39;relationshipTables&#39;: {
+      &#39;rels_vw&#39;: {
+        &#39;sourceTable&#39;: &#39;nodes_vw&#39;,
+        &#39;targetTable&#39;: &#39;nodes_vw&#39;
+      }
+    }
+   },
+    &#39;compute&#39;: {
+        &#39;mutateProperty&#39;: &#39;score&#39;
+    },
+    &#39;write&#39;: [{
+        &#39;nodeLabel&#39;: &#39;nodes_vw&#39;,
+        &#39;outputTable&#39;: &#39;m_demo.public.nodes_vw_btwn&#39;,
+        &#39;nodeProperty&#39;: &#39;score&#39;
+    }]
+});
+</code></pre>
+<pre><code language="language-sql" class="language-sql">SELECT
+  nodeid,
+  score
+FROM m_demo.public.nodes_vw_btwn
+ORDER BY score DESC
+LIMIT 5
+
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>NODEID</p>
+</td><td colspan="1" rowspan="1"><p>SCORE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>32</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>14</p>
+</td><td colspan="1" rowspan="1"><p>30</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>13</p>
+</td><td colspan="1" rowspan="1"><p>29</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>15</p>
+</td><td colspan="1" rowspan="1"><p>29</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>12</p>
+</td><td colspan="1" rowspan="1"><p>26</p>
+</td></tr>
+</table>
+<p><strong>Interpretation</strong> Machines 14, 13, 3, and 15 act as structural bridges in the workflow. Their high scores suggest they connect otherwise separate paths, making them key points of potential disruption if taken offline.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Structural Embeddings &amp; Similarity" duration="10">
+        <p>Getting an even deeper understanding of each machine&#39;s workflow requires more than looking at direct connections, as we have done so far. Structural embeddings capture broader patterns by summarizing each machine&#39;s position in the overall operation into a numeric vector. This allows you to:</p>
+<ul>
+<li>Group machines with similar roles or dependencies</li>
+<li>Identify candidates for backup or load-balancing</li>
+<li>Spot unusual machines that behave differently from the rest of the plant</li>
+</ul>
+<p>We use embeddings to make these comparisons based on immediate neighbors and overall graph structure.</p>
+<p>We&#39;ll use two Graph Analytics algorithms:</p>
+<ul>
+<li><strong>Fast Random Projection (FastRP)</strong> FastRP generates a compact 16-dimensional vector for each machine. These vectors are built by sampling the graph around each node, so two machines with similar surroundings will end up with similar embeddings.</li>
+<li><strong>K-Nearest Neighbors (KNN)</strong> Finds, for each machine, the top K most similar peers based on cosine similarity of their embeddings.</li>
+</ul>
+<p>Together, embeddings + KNN surface structural affinities beyond simple degree or centrality measures.</p>
+<h2 is-upgraded>FastRP Embeddings</h2>
+<p>The results for FastRP are not immediately interpretable. However, machines with nearly identical embeddings have similar upstream and downstream relationships and likely play the same role in the plant. These embeddings are numerical representations that enable downstream clustering, similarity search, or anomaly detection.</p>
+<pre><code language="language-sql" class="language-sql">CALL neo4j_graph_analytics.graph.fast_rp(&#39;CPU_X64_XS&#39;, {
+  &#39;project&#39;: {
+    &#39;defaultTablePrefix&#39;: &#39;m_demo.public&#39;,
+    &#39;nodeTables&#39;: [&#39;nodes_vw&#39;],
+    &#39;relationshipTables&#39;: {
+      &#39;rels_vw&#39;: {
+        &#39;sourceTable&#39;: &#39;nodes_vw&#39;,
+        &#39;targetTable&#39;: &#39;nodes_vw&#39;
+      }
+    }
+  },
+    &#39;compute&#39;: {
+        &#39;mutateProperty&#39;: &#39;embedding&#39;,
+        &#39;embeddingDimension&#39;: 16
+    },
+  &#39;write&#39;: [
+    {
+      &#39;nodeLabel&#39;: &#39;nodes_vw&#39;,
+      &#39;outputTable&#39;: &#39;m_demo.public.nodes_vw_fast_rp&#39;,
+      &#39;nodeProperty&#39;: &#39;embedding&#39;
+    }
+  ]
+});
+</code></pre>
+<pre><code language="language-sql" class="language-sql">SELECT
+  nodeid as machine,
+  embedding
+FROM m_demo.public.nodes_vw_fast_rp
+LIMIT 5
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>MACHINE</p>
+</td><td colspan="1" rowspan="1"><p>EMBEDDING</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>[ -0.8355492, 0, 0.28867513, -0.28867513, 0, -0.80507296, 0, 0.28867513, -0.54687405, -0.28867513, 0, 0.25819892, 0, 0, 0.2277227, -0.80507296 ]</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>[ -0.42722976, -0.16903085, -0.16903085, -0.3380617, 0.50709254, -0.51639783, 0, 0.16903085, -0.25819892, -0.16903085, 0, -0.07986277, 0, -0.3380617, 0.51639783, -1.0234904 ]</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>[ 0.27818274, 0.05457595, 0.05457595, -0.3380617, 0.9543061, 0, 0, 0.16903085, 0, -0.16903085, 0, -0.7852753, 0.4472136, -0.114454895, 0, -0.7306993 ]</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>4</p>
+</td><td colspan="1" rowspan="1"><p>[ 0, -0.16666672, 0.49999997, 0.33333334, 0.33333334, 0, 0, 0, 0, 0, 0, 0.33333334, 0, 0.49999997, -0.33333334, -0.8333333 ]</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>5</p>
+</td><td colspan="1" rowspan="1"><p>[ 0, -0.33333334, 0.33333334, 0.33333334, 0, 0, -0.33333334, -0.33333334, 0, 0, 0, 0, -0.33333334, 0.33333334, -0.33333334, -0.6666667 ]</p>
+</td></tr>
+</table>
+<p>Our initial graph projection does not include any propery information, so we will have to create a new graph projection that includes the new ‘embedding&#39; property we created for any future downstream algorthims.### k-Nearest Neighbors (KNN) Once we have embeddings for every machine, we can use K-Nearest Neighbors to find the most structurally similar machines based on their vector representations. KNN compares the cosine similarity between embeddings to pull out the top matches for each machine.</p>
+<p><strong>How to Interpret KNN Results</strong>: Machines with similarity scores close to 1.0 share almost identical structural patterns in the graph. These often appear in mirrored parts of the workflow or play equivalent roles in different lines. They&#39;re good candidates for backup coverage, shared scheduling, or synchronized maintenance.</p>
+<p><strong>Expected Result</strong>: Machines that serve in parallel sections—especially those feeding into similar downstream equipment—should appear as near-duplicates. In this dataset, pairs like (17 and 9) were intentionally structured this way and are expected to rank near the top.</p>
+<pre><code language="language-sql" class="language-sql">CALL neo4j_graph_analytics.graph.knn(&#39;CPU_X64_XS&#39;, {
+    &#39;project&#39;: {
+        &#39;defaultTablePrefix&#39;: &#39;m_demo.public&#39;,
+        &#39;nodeTables&#39;: [ &#39;nodes_vw_fast_rp&#39; ],
+        &#39;relationshipTables&#39;: {}
+    },
+    &#39;compute&#39;: {
+        &#39;nodeProperties&#39;: [&#39;EMBEDDING&#39;],
+        &#39;topK&#39;: 1,
+        &#39;mutateProperty&#39;: &#39;score&#39;,
+        &#39;mutateRelationshipType&#39;: &#39;SIMILAR&#39;
+    },
+  &#39;write&#39;: [
+    {
+      &#39;outputTable&#39;: &#39;m_demo.public.nodes_vw_knn&#39;,
+      &#39;sourceLabel&#39;: &#39;nodes_vw_fast_rp&#39;,
+      &#39;targetLabel&#39;: &#39;nodes_vw_fast_rp&#39;,
+      &#39;relationshipType&#39;: &#39;SIMILAR&#39;,
+      &#39;relationshipProperty&#39;: &#39;score&#39;      
+    }
+  ]
+});
+</code></pre>
+<pre><code language="language-sql" class="language-sql">SELECT
+    sourcenodeid,
+    targetnodeid,
+    score
+FROM m_demo.public.nodes_vw_knn
+ORDER BY score DESC
+LIMIT 5
+</code></pre>
+<table>
+<tr><td colspan="1" rowspan="1"><p>SOURCENODEID</p>
+</td><td colspan="1" rowspan="1"><p>TARGETNODEID</p>
+</td><td colspan="1" rowspan="1"><p>SCORE</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>18</p>
+</td><td colspan="1" rowspan="1"><p>10</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>10</p>
+</td><td colspan="1" rowspan="1"><p>18</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>7</p>
+</td><td colspan="1" rowspan="1"><p>6</p>
+</td><td colspan="1" rowspan="1"><p>0.9304632555</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>6</p>
+</td><td colspan="1" rowspan="1"><p>7</p>
+</td><td colspan="1" rowspan="1"><p>0.9304632555</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>13</p>
+</td><td colspan="1" rowspan="1"><p>12</p>
+</td><td colspan="1" rowspan="1"><p>0.9233394969</p>
+</td></tr>
+</table>
+<p><strong>Intrepretation</strong> Even though machines like 10 and 18 do different things (Painter vs Press), their positions in the workflow are nearly identical. They both act as mid-line feeders into multiple downstream machines, and that structural role is what the algorithm captures.</p>
+<p>This doesn&#39;t mean they&#39;re functionally interchangeable—but it suggests they share similar dependencies, bottleneck risks, or monitoring needs. In a real plant, this insight could inform:</p>
+<ul>
+<li>Maintenance alignment or shared spares</li>
+<li>Redundancy planning</li>
+<li>Risk modeling and load distribution</li>
+</ul>
+<p>Structural similarity gives you a way to surface these patterns automatically—even across machines that don&#39;t look related on paper.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusions And Resources" duration="2">
+        <p>In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>By working with a our simulated manufacturing database, you were able to:</p>
+<ol type="1">
+<li>Set up the <a href="https://app.snowflake.com/marketplace/listing/GZTDZH40CN/neo4j-neo4j-graph-analytics" target="_blank">Neo4j Graph Analytics</a> application within Snowflake.</li>
+<li>Prepare and project your data into a graph model (machines as nodes, connections as relationships).</li>
+<li>Ran multiple graph algorithms, including embeddings, to manage risk in your manufacturing process</li>
+</ol>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://neo4j.com/docs/snowflake-graph-analytics/" target="_blank">Neo4j Graph Analytics Documentation</a></li>
+<li><a href="https://www.youtube.com/watch?v=2rksmcCe_tY&t=425s" target="_blank">See it in action!</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

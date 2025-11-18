@@ -1,0 +1,397 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Churn modeling using Snowflake and Hex</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="hex-churn-model"
+                  title="Churn modeling using Snowflake and Hex"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this Quickstart guide, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Hex in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with basic Python and SQL</li>
+<li>Familiarity with training ML models</li>
+<li>Familiarity with data science notebooks</li>
+<li>Go to the <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to import/export data between Hex and Snowflake</li>
+<li>How to train a Random Forest with Snowpark ML model</li>
+<li>How to visualize the predicted results from the forecasting model</li>
+<li>How to convert a Hex project into an interactive web app and make predictions on new users</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up partner connect" duration="5">
+        <p>After logging into your Snowflake account, you will land on the <code>Learn</code> page. To connect with Hex, navigate to the <code>Admin</code> tab on the left and click on <code>Partner connect</code>. In the search bar at the top, type <code>Hex</code> and the Hex partner connect tile will appear. Clicking on the tile will bring up a new screen, and click the <code>connect button</code> in the lower right corner. A new screen will confirm that your account has been created, from which you can click <code>Activate</code>.</p>
+<p class="image-container"><img src="img/cd6cfdab98dd48c8.gif"></p>
+<h2 is-upgraded>Creating a workspace</h2>
+<p>After activating your account, you&#39;ll be directed to Hex and prompted to create a new workspace and give it a name. Once you&#39;ve named your workspace, you&#39;ll be taken to the projects page where you can create new projects, import existing projects (Hex or Jupyter), and navigate to other sections of your workspace.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with Hex" duration="5">
+        <p>Now we can move back over to Hex and get started on our project. The first thing you&#39;ll need to do is get the Hex project that contains all of the code we&#39;ll work through to train our model.</p>
+<p>Clicking this button will copy the template project into your new workspace.</p>
+<p><a href="https://app.hex.tech/new-project?signup=true&baseHexId=057d76c5-b7c3-465e-9e61-f939106e7c5d&baseOrgId=hex-public" target="_blank"><paper-button class="colored" raised>Duplicate Hex project</paper-button></a></p>
+<p>Now that you&#39;ve got your project imported, you will find yourself in the <a href="https://learn.hex.tech/docs/develop-logic/logic-view-overview" target="_blank">Logic view</a> of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you&#39;ll see a control panel that will allow you to do things like upload files, import data connections, or search your project.</p>
+<p>Before we dive into the code, we&#39;ll need to import our Snowflake data connection, which has been automatically created by the partner connect process.</p>
+<p>Head over to the Data sources tab represented by a database icon with a lightning bolt. You should see two data connections - [Demo] Hex public data and Snowflake. Import both connections.</p>
+<p class="image-container"><img src="img/ada845f23abc492.gif"></p>
+<p>One nice feature of Hex is the <a href="https://learn.hex.tech/docs/develop-logic/compute-model/reactive-execution" target="_blank">reactive execution model</a>. This means that when you run a cell, all related cells are also executed so that your projects are always in a clean state. However, if you want to ensure you don&#39;t get ahead of yourself as we run through the tutorial, you can opt to turn this feature off. In the top right corner of your screen, you&#39;ll see a Run mode dropdown. If this is set to Auto, select the dropdown and change it to cell only.</p>
+<p class="image-container"><img src="img/cbf37afd93c96a68.gif"></p>
+<p>In the walkthrough video of the lab, we opt to leave this on and instead un-comment out the template code as we work through the project.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Reading and writing data" duration="8">
+        <p>To predict customer churn, we first need data to train our model. In the SQL cell labeled <strong>Pull churn results</strong> assign <code>[Demo] Hex public data</code> as the data connection source and run the cell.</p>
+<p class="image-container"><img src="img/117b9e74b05e415f.png"></p>
+<p>At the bottom of this cell, you will see a green output variable labeled <code>data</code>. This is a Pandas dataframe, and we are going to write it back into our <code>Snowflake</code> data connection. To do so, input the following configurations to the writeback cell (labeled: <strong>Writeback to snowflake)</strong></p>
+<p class="image-container"><img src="img/a235a5a248553f57.png"></p>
+<ul>
+<li><strong>Source</strong>: <code>data</code></li>
+<li><strong>Connection</strong>: <code>Snowflake</code></li>
+<li><strong>Database</strong>: <code>PC_HEX_DB</code></li>
+<li><strong>Schema</strong>: <code>Public</code></li>
+<li><strong>Table</strong>: <em>Static</em> and name it <code>CHURN_DATA</code></li>
+</ul>
+<p>Once the config is set, enable <code>Logic session</code> as the writeback mode (in the upper right of the cell) and run the cell.</p>
+<p>In the SQL cell labeled <strong>Churn data</strong>, change the data source to <code>Snowflake</code> and execute the cell. You will see a green output variable named data at the bottom.</p>
+<p class="image-container"><img src="img/b7cbb2f9ce48eb3e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data preparation" duration="2">
+        <p>Now that we have our data in Hex, we want to make sure the it&#39;s clean enough for our machine learning algorithm. To ensure this, we&#39;ll first check for any null values.</p>
+<pre><code language="language-python" class="language-python">data.isnull().sum()
+</code></pre>
+<p>Now that we have checked for null values, let&#39;s look at the distribution of each variable.</p>
+<pre><code language="language-python" class="language-python"># create a 15x5 figure
+plt.figure(figsize=(15, 5))
+
+# create a new plot for each variable in our dataframe
+for i, (k, v) in enumerate(data.items(), 1):
+    plt.subplot(3, 5, i)  # create subplots
+    plt.hist(v, bins = 50)
+    plt.title(f&#39;{k}&#39;)
+
+plt.tight_layout()
+plt.show();
+</code></pre>
+<p class="image-container"><img src="img/837015e9541e9eec.png"></p>
+<p>The charts&#39; results allow us to visualize each variables distribution, which can help us identify early signs of skewness, among other things. We can see that all of our continuous variables follow a fairly normal distribution, and further transformations won&#39;t be necessary. The <code>DataUsage</code> column appears a little off because many customers use 0GB of data, but there are also a lot of users who didn&#39;t have data plans in the first place, so this isn&#39;t considered an anomaly.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding churn rate" duration="2">
+        <p>If you take a look at our visuals, you may notice that the churn chart looks a little odd. Specifically, it looks like there are a lot more users who haven&#39;t churned than who have.</p>
+<p>We take a closer look at this by visualizing in a chart cell.</p>
+<p><img src="img/5b62c4e7fddf2f18.png"> As you can see, the majority of observations are in support of user who haven&#39;t yet churned. Specifically, 85% of user haven&#39;t churned while the other 15% has. In machine learning, a class imbalance such as this can cause issues when evaluating the model since it&#39;s not getting equal attention from each class. In the next section we will go over a method to combat the imbalance problem.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Establishing a Snowpark connection" duration="2">
+        <p>Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection and click on the dropdown next to the <code>query</code> button and select <code>get Snowpark session</code>. This will create a new cell for us with all the code needed to spin up a Snowpark session.</p>
+<p class="image-container"><img src="img/f3966e0f5d9185a5.gif"></p>
+<p>To ensure we don&#39;t run into any problems down the line, paste in the following line at the bottom of the cell.</p>
+<pre><code language="language-python" class="language-python">session.use_schema(&#34;PC_HEX_DB.PUBLIC&#34;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Feature engineering" duration="10">
+        <p>In order to predict the churn outcomes for customers not in our dataset, we&#39;ll need to train a model that can identify users who are at risk of churning from the history of users who have. However, it was mentioned in the last section that there is an imbalance in the class distribution that will cause problems for our model if not handled properly. One way to handle this is to create new data points such that the classes balance out. This is also known as upsampling.</p>
+<p>For this, we&#39;ll be using the <code>SMOTE</code> algorithm from the <code>imblearn</code> package.</p>
+<p>First, we&#39;ll get our features— aka everything except the target column, Churn. We do this in a SQL cell, making use of the SELECT / EXCLUDE syntax in Snowflake! Uncomment + run the SQL cell called &#34;Features&#34;.</p>
+<p>Now, we&#39;ll upsample. We could do this locally using SMOTE, but we want this entire workflow to run in Snowpark end-to-end, so we&#39;re going to create a stored procedure to do our upsampling.</p>
+<p>Run the code cell labeled <strong>Upsampling the data</strong>.</p>
+<pre><code language="language-python" class="language-python">def upsample(
+    session: Session,
+    features_table_name: str,
+) -&gt; str:
+
+    import pandas as pd
+    import sklearn
+    from imblearn.over_sampling import SMOTE
+
+    features_table = session.table(features_table_name).to_pandas()
+    X = features_table.drop(columns=[&#34;Churn&#34;])
+    y = features_table[&#34;Churn&#34;]
+    upsampler = SMOTE(random_state=111)
+    r_X, r_y = upsampler.fit_resample(X, y)
+    upsampled_data = pd.concat([r_X, r_y], axis=1)
+    upsampled_data.reset_index(inplace=True)
+    upsampled_data.rename(columns={&#39;index&#39;: &#39;INDEX&#39;}, inplace=True)
+
+
+
+    upsampled_data_spdf = session.write_pandas(
+        upsampled_data,
+        table_name=f&#39;{features_table_name}_SAMPLED&#39;,
+        auto_create_table=True,
+        table_type=&#39;&#39;, # creates a permanent table
+        overwrite=True,
+    )
+
+    return &#34;Success&#34;
+</code></pre>
+<p>Now we have created a function that will be our stored procedure. It will perform upsampling, and write the upsampled data back to a new Snowflake table called ‘{features_table_name}_SAMPLED&#39;.</p>
+<p>Now we create + call the stored procedure, in 2 more python cells:</p>
+<pre><code language="language-python" class="language-python">session.sql(&#39;CREATE OR REPLACE STAGE SNOWPARK_STAGE&#39;).collect()
+
+session.sproc.register(
+    upsample,
+    name=&#34;upsample_data_with_SMOTE&#34;,
+    stage_location=&#39;@SNOWPARK_STAGE&#39;,
+    is_permanent=True,
+    execute_as=&#39;caller&#39;,
+    packages=[&#39;imbalanced-learn==0.10.1&#39;, &#39;pandas&#39;, &#39;snowflake-snowpark-python==1.6.1&#39;, &#39;scikit-learn==1.2.2&#39;],
+    replace=True,
+)
+</code></pre>
+<pre><code language="language-python" class="language-python"># # here we call the sproc to perform the upsampling
+session.call(&#39;upsample_data_with_SMOTE&#39;, &#39;TELECOM_CHURN&#39;)
+</code></pre>
+<p>Now all that&#39;s left is to query the upsampled data from the table using another SQL cell, in this case the Features upsampled cell. If you prefer, you could change your stored procedure to return a Snowpark DataFrame directly rather than writing back a permanent table, but if you are going to be doing continued work on this dataset, writing a permanent table may make more sense.</p>
+<p>Now that we have balanced our dataset, we can prepare our model for training. The model we have chosen for this project is a Random Forest classifier. A random forest creates an ensemble of smaller models that all make predictions on the same data. The prediction with the most votes is the prediction the model chooses.</p>
+<p>Rather than use a typical random forest object, we&#39;ll make use of Snowflake ML. Snowflake ML offers capabilities for data science and machine learning tasks within Snowflake. It provides estimators and transformers compatible with scikit-learn and xgboost, allowing users to build and train ML models directly on Snowflake data. This eliminates the need to move data or use stored procedures. It uses wrappers around scikit-learn and xgboost classes for training and inference, ensuring optimized performance and security within Snowflake.</p>
+<p>In the cell labeled <code>Snowflake ML model preprocessing</code> we&#39;ll import Snowpark ML to further process our dataset to prepare it for our model.</p>
+<pre><code language="language-python" class="language-python">import snowflake.ml.modeling.preprocessing as pp
+from snowflake.ml.modeling.ensemble import RandomForestClassifier
+dataset = features_upsampled
+
+# Get the list of column names from the dataset
+feature_names_input = [c for c in dataset.columns if c != &#39;&#34;Churn&#34;&#39; and c != &#34;INDEX&#34;]
+
+
+# Initialize a StandardScaler object with input and output column names
+scaler = pp.StandardScaler(
+    input_cols=feature_names_input,
+    output_cols=feature_names_input
+)
+
+# Fit the scaler to the dataset
+scaler.fit(dataset)
+
+# Transform the dataset using the fitted scaler
+scaled_features = scaler.transform(dataset)
+
+# Define the target variable (label) column name
+label = [&#39;&#34;Churn&#34;&#39;]
+
+# Define the output column name for the predicted label
+output_label = [&#34;predicted_churn&#34;]
+
+# Split the scaled_features dataset into training and testing sets with an 80/20 ratio
+training, testing = scaled_features.random_split(weights=[0.8, 0.2], seed=111)
+</code></pre>
+<h2 is-upgraded>Accepting Anaconda terms</h2>
+<p>Before we can train the model, we&#39;ll need to accept the Anaconda terms and conditions. To do this, navigate back to Snowflake and click on your username in the top left corner. You&#39;ll see a section that will allow you to switch to the <code>ORGADMIN</code> role. Once switched over, navigate to the <code>Admin</code> tab and select <code>Billing & Terms</code>. From here, you will see a section that will allow you to accept the anaconda terms and conditions. Once this is done, you can head back over to Hex and run the cell that trains our model.</p>
+<p class="image-container"><img src="img/9a2f53fe8c9b1321.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model training" duration="5">
+        <p>Now we can train our model. Run the cell labeled <code>Model training</code>.</p>
+<pre><code language="language-python" class="language-python"># Initialize a RandomForestClassifier object with input, label, and output column names
+model = RandomForestClassifier(
+    input_cols=feature_names_input,
+    label_cols=label,
+    output_cols=output_label,
+)
+
+# Train the RandomForestClassifier model using the training set
+model.fit(training)
+
+# Predict the target variable (churn) for the testing set using the trained model
+results = model.predict(testing)
+</code></pre>
+<p class="image-container"><img src="img/fa0e8689ce70bff7.png"></p>
+<p>In the next section, we will look at how well our model performed as well as which features played the most important role when predicting the churn outcome.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Model evaluation and feature importance" duration="5">
+        <p>In order to understand how well our model performs at identifying users at risk of churning, we&#39;ll need to evaluate how well it does predicting churn outcomes. Specifically, we&#39;ll be looking at the recall score, which tells us <em>of all the customers that will churn, how many can it identify.</em></p>
+<p>Run the code cell labeled <strong>Evaluate model</strong> on <em>accuracy and recall.</em></p>
+<pre><code language="language-python" class="language-python">predictions = results.to_pandas().sort_values(&#34;INDEX&#34;)[[&#39;predicted_churn&#39;.upper()]].astype(int).to_numpy().flatten()
+actual = testing.to_pandas().sort_values(&#34;INDEX&#34;)[[&#39;Churn&#39;]].to_numpy().flatten()
+
+accuracy = round(accuracy_score(actual, predictions), 3)
+recall = round(recall_score(actual, predictions), 3)
+</code></pre>
+<p>This will calculate an accuracy and recall score for us which we&#39;ll display in a <a href="https://learn.hex.tech/docs/logic-cell-types/display-cells/single-value-cells#single-value-cell-configuration" target="_blank">single value cell</a>.</p>
+<p class="image-container"><img src="img/90909a4b0b25fe0b.png"></p>
+<h2 is-upgraded>Feature importance</h2>
+<p>Next, we want to understand which features were deemed most important by the model when making predictions. Lucky for us, our model keeps track of the most important features, and we can access them using the <code>feature_importances_</code> attribute. Since we&#39;re using Snowflake-ml, we&#39;ll need to extract the original <code>sklearn</code> object from our model. Then we can perform feature importance as usual.</p>
+<pre><code language="language-python" class="language-python">rf = model.to_sklearn()
+importances = pd.DataFrame(
+    list(zip(features.columns, rf.feature_importances_)),
+    columns=[&#34;feature&#34;, &#34;importance&#34;],
+)
+</code></pre>
+<p>Let&#39;s visualize the most important features. <img src="img/a66cf8dc84cb3a3e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Predicting churn for a new user" duration="10">
+        <p>Now is the moment we&#39;ve all been waiting for: predicting the churn outcome for a new user. In this section, you should see an array of input parameters already in the project. Each of these inputs allow you to adjust a different feature that goes into predicting customer churn, which will simulate a new user. But we&#39;ll still need to pass this data to our model, so how can we do that?</p>
+<p class="image-container"><img src="img/b83c44f0ea95500e.png"></p>
+<p>Each input parameter has its own variable as its output, and these variables can be referenced in a Python cell. The model expects the inputs it receives to be in a specific order otherwise it will get confused about what the features mean. Keeping this in mind, execute the Python cell labeled <strong><em>Create the user vector</em></strong>.</p>
+<pre><code language="language-python" class="language-python">inputs = [
+	    account_weeks,
+	    1 if renewed_contract else 0, # This value is a bool and we need to convert to numbers
+	    1 if has_data_plan else 0, # This value is a bool and we need to convert to numbers
+	    data_usage,
+	    customer_service_calls,
+	    mins_per_month,
+	    daytime_calls,
+	    monthly_charge,
+	    overage_fee,
+	    roam_mins,
+]
+</code></pre>
+<p>This creates a list where each element represents a feature that our model can understand. However, before our model can accept these features, we need to transform our array. To do this, we will convert our list into a numpy array and reshape it so that there is only one row and one column for all features.</p>
+<pre><code language="language-python" class="language-python">user_vector = np.array(inputs).reshape(1, -1)
+</code></pre>
+<p>As a last step, we&#39;ll need to scale our features within the original range that was used during the training phase. We already have a scaler fit on our original data and we can use the same one to scale these features.</p>
+<pre><code language="language-python" class="language-python">user_vector_scaled = scaler.transform(user_vector)
+</code></pre>
+<p>The final cell should look like this:</p>
+<pre><code language="language-python" class="language-python"># get model inputs
+user_vector = np.array([
+    account_weeks,
+    1 if renewed_contract else 0,
+    1 if has_data_plan else 0,
+    data_usage,
+    customer_service_calls,
+    mins_per_month,
+    daytime_calls,
+    monthly_charge,
+    overage_fee,
+    roam_mins,
+]).reshape(1,-1)
+
+user_dataframe = pd.DataFrame(user_vector, columns=scaler.input_cols)
+user_vector = scaler.transform(user_dataframe)
+user_vector.columns = [column_name.replace(&#39;&#34;&#39;, &#34;&#34;) for column_name in user_vector.columns]
+user_vector = session.create_dataframe(user_vector)
+</code></pre>
+<p>We are now ready to make predictions. In the last code cell labeled <strong><em>Make predictions and get results</em></strong>, we will pass our user vector to the model&#39;s predict function, which will output its prediction. We will also obtain the probability for that prediction, allowing us to say: <strong><em>&#34;The model is 65% confident that this user will churn.&#34;</em></strong></p>
+<pre><code language="language-python" class="language-python">predicted_value = model.predict(user_vector).toPandas()[[&#39;predicted_churn&#39;.upper()]].values.astype(int).flatten()
+user_probability = model.predict_proba(user_vector).toPandas()
+probability_of_prediction = max(user_probability[user_probability.columns[-2:]].values[0]) * 100
+prediction = &#39;churn&#39; if predicted_value == 1 else &#39;not churn&#39;
+</code></pre>
+<p>To display the results in our project, we can do so in a markdown cell. In this cell, we&#39;ll use Jinja to provide the variables that we want to display on screen.</p>
+<pre><code language="language-markdown" class="language-markdown">{% if predict %}
+
+#### The model is &#123;&#123;probability_of_prediction}}% confident that this user will &#123;&#123;prediction}}
+
+{% else %}
+
+#### No prediction has been made yet
+
+{% endif %}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Making Hex apps" duration="5">
+        <p>At this stage of the project, we have completed building out our logic and are ready to share it with the world. To make the end product more user-friendly, we can use the app builder to simplify our logic. The app builder enables us to rearrange and organize the cells in our logic to hide the irrelevant parts and only show what matters.</p>
+<p class="image-container"><img src="img/70c6ffe9e96fc155.gif"></p>
+<p>Once you&#39;ve arranged your cells and are satisfied with how it looks, use the share button to determine who can see this project and what level of access they have. Once shared, hit the publish button and your app will go live.</p>
+<p class="image-container"><img src="img/b2e3ddecd196c97f.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this <a href="https://app.hex.tech/hex-public/app/8bd7b9bb-7f6c-41f1-9b4c-ff563a7fcaea/latest" target="_blank">project here</a>!</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>Use Snowflake&#39;s &#34;Partner Connect&#34; to seamlessly create a Hex trial</li>
+<li>How to navigate the Hex workspace/notebooks</li>
+<li>How to train an Random forest model and deploy to Snowflake using UDFs</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://learn.hex.tech/docs" target="_blank">Hex docs</a></li>
+<li><a href="https://docs.Snowflake.com/en/" target="_blank">Snowflake Docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

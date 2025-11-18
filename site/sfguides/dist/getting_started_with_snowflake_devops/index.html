@@ -1,0 +1,550 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake DevOps</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowflake_devops"
+                  title="Getting Started with Snowflake DevOps"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>A data pipeline is a series of automated processes that ingest, process, and move data from one place to another. It&#39;s a crucial component in data management and analytics, enabling organizations to make use of the vast amounts of data available to them.</p>
+<p>The data engineer&#39;s work doesn&#39;t end when the pipeline is up and running for the first time. As businesses grow and change, so do their data needs. Data schemas as well as the pipeline as a whole need to evolve to capture new data sources or analyst requirements. In software engineering, DevOps techniques are applied to emphasize collaboration and communication to make changes rapidly and reliably. Similarly, DevOps best practices should be followed to ensure that changes to tables, data pipelines, and other database objects are made in a controlled, repeatable, and safe manner.</p>
+<p>Are you interested in bringing your database game to the next level by unleashing the power of Snowflake&#39;s many DevOps capabilities, empowering you to build safe and robust data pipelines? Well then, this Quickstart is for you!</p>
+<p>This quickstart will cover a lot of ground. By the end of this guide, you will have built a robust CI/CD pipeline that automates the deployment of changes to a data pipeline from Git, promotes the separation of dev and prod databases and facilitates monitoring. You&#39;ll also learn how to use Snowflake&#39;s marketplace to enrich your data without incurring storage costs, get to know the new developer CLI tool and the Visual Studio Code extension!</p>
+<p class="image-container"><img alt="DevOps Overview" src="img/354025c8f927a63d.png"></p>
+<p>The data pipeline used as an example in this quickstart makes use of data available on the Snowflake marketplace to come up with the perfect spot for a family vacation. Let&#39;s get started!</p>
+<aside class="warning"><p> Note: The Git integration, Create-or-Alter and Jinja templating are still in preview.</p>
+</aside>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake</li>
+<li>Fundamentals of data engineering. You can use <a href="https://quickstarts.snowflake.com/guide/data_engineering_with_snowpark_python_intro/index.html" target="_blank">Intro to Data Engineering with Snowpark Python</a> to refresh your memory</li>
+<li>Familiarity with Git repositories and GitHub</li>
+</ul>
+<h2 is-upgraded>What you will learn</h2>
+<p>You will learn about the following Snowflake features in this Quickstart:</p>
+<ul>
+<li>Native Git Integration</li>
+<li>Declarative Database Change Management</li>
+<li>Parametrization of SQL scripts with Jinja templating</li>
+<li>GitHub Actions (CI/CD) integration</li>
+<li>Snowflake&#39;s Visual Studio Code extension</li>
+<li>SnowflakeCLI tool</li>
+<li>Snowflake&#39;s Python APIs</li>
+<li>Data Sharing/Marketplace (instead of ETL)</li>
+<li>LLM interference with Snowflake Cortex</li>
+</ul>
+<h2 is-upgraded>What you will need</h2>
+<p>You will need the following things before starting:</p>
+<ul>
+<li>Snowflake <ul>
+<li><strong>A </strong><a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank"><strong>Snowflake Account</strong></a></li>
+<li><strong>A Snowflake user with ACCOUNTADMIN permissions</strong></li>
+<li><strong>Anaconda Terms &amp; Conditions accepted</strong>. See <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started" target="_blank">Using Third-Party Packages</a>.</li>
+</ul>
+</li>
+<li>GitHub <ul>
+<li>A GitHub account. If you don&#39;t already have one, you can <a href="https://github.com/" target="_blank">create one for free</a>.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What you will build</h2>
+<p>During this Quickstart you will accomplish the following things:</p>
+<ul>
+<li>Establish a connection between Snowflake and a GitHub repository</li>
+<li>Setup access to Snowflake Marketplace data</li>
+<li>Create a vectorized Python UDF making use of dynamic file access</li>
+<li>Create a data engineering pipeline to process data from multiple sources</li>
+<li>Orchestrate the pipeline with tasks</li>
+<li>Make declarative changes to the pipeline with Create-or-Alter and Python APIs</li>
+<li>Separate dev and prod environments with Jinja templating</li>
+<li>Deploy the pipeline via an automated CI/CD pipeline</li>
+<li>Enrich your data with Cortex LLM functions</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="4">
+        <h2 is-upgraded>Fork the Quickstart Repository</h2>
+<p>You&#39;ll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-devops" target="_blank">associated GitHub repository</a> and click on the &#34;Fork&#34; button near the top right. Complete any required fields and click &#34;Create Fork&#34;.</p>
+<h2 is-upgraded>Create GitHub Codespace</h2>
+<p>For this Quickstart we will be using <a href="https://docs.github.com/en/codespaces/overview" target="_blank">GitHub Codespaces</a> as our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. The free offering should be more than enough for this quickstart.</p>
+<p>To create a GitHub Codespace, click on the green &#34;&lt;&gt; Code&#34; button from the forked repository&#39;s homepage. In the Code popup, click on the green &#34;Create codespace on main&#34;.</p>
+<p class="image-container"><img alt="Start GitHub Codespace" src="img/6d61f8bec373a7e3.png"></p>
+<p>This will open a new tab and begin setting up your codespace. This will take a few minutes as it sets up the entire environment for this Quickstart.</p>
+<p>Once the codespace has been created and started, you should see a hosted web-based version of VS Code with your forked repository set up! Snowflake&#39;s VS Code extension and the Snowflake CLI have already been installed for you.</p>
+<h2 is-upgraded>Snowflake Extension for VS Code</h2>
+<p>You can run SQL queries against Snowflake in many different ways (through the Snowsight UI, SnowSQL, etc.) but for this Quickstart we&#39;ll be using the Snowflake extension for VS Code. For a brief overview of Snowflake&#39;s native extension for VS Code, please check out our <a href="https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc" target="_blank">VS Code Marketplace Snowflake extension page</a>.</p>
+<h2 is-upgraded>Snowflake CLI</h2>
+<p><a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli/index" target="_blank">Snowflake CLI</a> is an open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations. With Snowflake CLI, developers can create, manage, update, and view apps running on Snowflake across workloads such as Streamlit in Snowflake, the Snowflake Native App Framework, Snowpark Container Services, and Snowpark.</p>
+<p>Here we will make use of the CLI to quickly setup a CI/CD pipeline.</p>
+<h2 is-upgraded>Connecting to Snowflake</h2>
+<p>Both the VS Code extension and the CLI manage their Snowflake connections in a shared file. Open <code>.snowflake/config.toml</code> and add your <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">account identifier</a>, username and password in the corresponding placeholders. Note that the user must have ACCOUNTADMIN privileges. Make sure to not commit this file to Git.</p>
+<p>Now use these credentials to login with the VS Code extension, by clicking the Snowflake logo in the activity bar to the left of the editor. The dialog should have been pre-filled from the config file. Press &#34;Sign in&#34; and you are good to go.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="4">
+        <p>To get started we need to create some basic Snowflake objects like databases, stages and a warehouse that we will use later on. Open <code>steps/01_setup_snowflake.sql</code> to review what statements will be executed.</p>
+<h2 is-upgraded>Create and Connect a Git Repository</h2>
+<p>This quickstart makes extensive use of the <a href="https://docs.snowflake.com/en/developer-guide/git/git-overview" target="_blank">GIT REPOSITORY</a> object. This object acts similarly to an external stage except that it is backed by a GitHub repository. It enables the access to version controlled files at a certain commit, branch or tag. This way your database scripts and object definitions can be evolved with software engineering best practices such as branching, pull requests and code reviews.</p>
+<p>Before continuing, <strong>replace the two placeholders</strong> in <code>steps/01_setup_snowflake.sql</code> with your GitHub username and the url of the forked repository.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE API INTEGRATION git_api_integration
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = (&#39;https://github.com/&lt;insert GitHub username&gt;&#39;)
+  ENABLED = TRUE;
+
+CREATE OR REPLACE GIT REPOSITORY quickstart_common.public.quickstart_repo
+  API_INTEGRATION = git_api_integration
+  ORIGIN = &#39;&lt;insert URL of forked GitHub repo&gt;&#39;;
+</code></pre>
+<h2 is-upgraded>Run the Script</h2>
+<p>After replacing the git-related placeholders, it is time to execute the script to create all the objects we&#39;ll need for this quickstart.</p>
+<p>Start by opening the <code>steps/01_setup_snowflake.sql</code> script. Now you can run all the queries in this script, by using the &#34;Execute All Statements&#34; button in the upper right corner of the editor window. If you want to run them in chunks instead, you can highlight the ones you want to run and press &#34;CMD/CTRL+Enter&#34;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Data from the Marketplace" duration="8">
+        <p>In this step, we will be &#34;loading&#34; the raw data we need to find the perfect vacation spot to Snowflake. But &#34;loading&#34; is really the wrong word here. Because as we&#39;re using Snowflake&#39;s unique data sharing capability, we don&#39;t actually need to copy any data to our Snowflake account. Instead, we can directly access the data shared by various data providers in the Snowflake Data Marketplace.</p>
+<p>As we are looking to find the perfect vacation spot, we are interested in:</p>
+<ul>
+<li>The weather forecast</li>
+<li>Flight connections</li>
+<li>Points of interest</li>
+</ul>
+<h2 is-upgraded>Snowflake Data Marketplace</h2>
+<p>All this data is freely available on Snowflake&#39;s marketplace, and we won&#39;t incur any storage costs as long as we don&#39;t materialize it in our account. The other great thing about the marketplace is that we don&#39;t have to do anything to keep this data updated. The provider will do that for us, and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the additional insights you could extract from your data if only you had the necessary, always up-to-date supplementary data available.</p>
+<p>For this quickstart we will add a number of data sets to our account. The process is always the same:</p>
+<ol type="1">
+<li>Login to Snowsight</li>
+<li>Click on the &#34;Data Products&#34; link in the left navigation bar</li>
+<li>Enter the name of the data set in the search box and click return</li>
+<li>Click on the corresponding listing tile</li>
+<li>Click the blue &#34;Get&#34; button on the top right</li>
+<li>On the popup, click the blue &#34;Get&#34; button</li>
+</ol>
+<p>Now, perform these steps for the following data listings:</p>
+<ol type="1">
+<li>&#34;OAG: Flight Emissions Data (Sample)&#34; by OAG</li>
+<li>&#34;OAG: Flight Status Data (Sample)&#34; by OAG</li>
+<li>&#34;Global Weather &amp; Climate Data for BI&#34; by Weather Source</li>
+<li>&#34;Global Government&#34; by Cybersyn</li>
+<li>&#34;US Addresses &amp; POI&#34; by Cybersyn</li>
+</ol>
+<h2 is-upgraded>Inspect Imported Listings</h2>
+<p>That&#39;s all! The imported listings are now available in our account and can be accessed like any other table. Use the following sample queries to inspect the imported data and verify that all data sets are accessible. You can also find the sample queries in <code>steps/02_access_marketplace_data.sql</code> of the Git repository.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM oag_flight_emissions_data_sample.public.estimated_emissions_schedules_sample LIMIT 100;
+SELECT * FROM oag_flight_status_data_sample.public.flight_status_latest_sample LIMIT 100;
+SELECT * FROM global_weather__climate_data_for_bi.standard_tile.forecast_day LIMIT 100;
+SELECT * FROM global_government.cybersyn.datacommons_timeseries LIMIT 100;
+SELECT * FROM us_addresses__poi.cybersyn.point_of_interest_index LIMIT 100;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Harmonize Marketplace Data" duration="3">
+        <p>The step will establish a data pipeline that will help us answer the question of what the perfect vacation spot is by joining together the different data sources from the market place, aggregating data points and picking only the columns and rows we need.</p>
+<p>While most parts of our data pipeline are authored in SQL, <code>steps/03_harmonize_data.py</code> is written in Python. Snowflake supports seamlessly switching between SQL and Python when authoring data pipelines. Here, <a href="https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview" target="_blank">Snowflake&#39;s first class PythonAPI&#39;s</a> are used to manage creations, alterations, or drops of Snowflake objects just like you would otherwise do with SQL commands.</p>
+<p>We will skip the details of how the pipeline is constructed to focus on how we can employ DevOps practices to later safely evolve and manage the pipeline. If you want to learn more about the Python APIs check the tutorials <a href="https://docs.snowflake.com/en/developer-guide/snowflake-python-api/overview-tutorials" target="_blank">here</a>.</p>
+<h2 is-upgraded>Run the Script</h2>
+<p>To establish the pipeline, we need to run the commands in the Python file <code>steps/03_harmonize_data.py</code>. Open the file in VS Code. Next, click on &#34;Run Python File&#34; to run the script.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Orchestrate Jobs" duration="12">
+        <p>During this step we will be orchestrating our new pipeline with Snowflake&#39;s native orchestration feature named &#34;tasks&#34;. In this step, we will create two tasks and chain them together. We will then deploy or run the tasks to operationalize the data pipeline.</p>
+<p>The job of the first task &#34;vacation_spots_update&#34; is joining the views created in the previous step and merge the result into the output table &#34;vacation_spots&#34;. The second task &#34;email_notification&#34; runs after the update task has finished. It selects a number of suitable places for a summer vacation and feeds the results into an LLM to get a final verdict and turn the recommendation into an entire vacation plan. The answer the LLM comes up with is sent via email, informing you of the pipelines completion and providing you with the ultimate vacation plan. No more stressful vacation planning, just book your flights and hotel, share the email with friends and family and off you go!</p>
+<p>In this step, we will run through the commands in the Python file <code>steps/04_orchestrate_jobs.sql</code>. Open the file in VS Code and <strong>add your email address to the three placeholders</strong>. Then execute the file by clicking on on &#34;Execute All Statements&#34; to run all the commands sequentially.</p>
+<aside class="warning"><p> Note: The Snowflake Cortex LLM functions are currently not available in all regions. Check the <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability" target="_blank">docs</a> to verify your region is supported. If not, it is up to you to pick your favorite vacation spot from the results.</p>
+</aside>
+<aside class="special"><p> Tip: The query used in the &#34;email_notification&#34; task selects suitable places for a summer vacation. If you are running the pipeline in the colder months, it might not return any results. In that case, adapt the filters and off you go on your winter vacation! You might want to add snowfall days to your weather metrics.</p>
+</aside>
+<h2 is-upgraded>Declarative Create-or-Alter Command</h2>
+<p>When creating the target table and the tasks orchestrating the pipeline, we make use of the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table" target="_blank">CREATE OR ALTER</a> command. CREATE OR ALTER behaves similarly to CREATE OR REPLACE except that an existing object is not replaced, but rather altered to the target state.</p>
+<pre><code language="language-sql" class="language-sql">create or alter table vacation_spots (
+  city varchar,
+  airport varchar,
+  co2_emissions_kg_per_person float,
+  punctual_pct float,
+  avg_temperature_air_f float,
+  avg_relative_humidity_pct float,
+  avg_cloud_cover_pct float,
+  precipitation_probability_pct float
+) data_retention_time_in_days = 1;
+</code></pre>
+<aside class="warning"><p> Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.</p>
+</aside>
+<h2 is-upgraded>Verify Pipeline Completion</h2>
+<p>By this time the pipeline should has completed processing. You should have received an email with all the details for your dream vacation. If you haven&#39;t received an email, use the following query to see what is going on:</p>
+<pre><code language="language-sql" class="language-sql">SELECT *
+FROM TABLE(QUICKSTART_PROD.INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=&gt;DATEADD(&#39;DAY&#39;,-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT =&gt; 100))
+ORDER BY SCHEDULED_TIME DESC;
+</code></pre>
+<p>Check out <a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/#9" target="_blank">this</a> guide to learn more about the powerful Snowflake features enabling you to monitor the execution of your tasks.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Database Change Management" duration="12">
+        <p>Just as business needs change, so do data needs. Over time our data pipeline will need to adapt to capture new or differently formatted data. It is our responsibility as data engineers to make sure that these changes can be made in a safe manner. In DevOps, Infrastructure as Code (IaC) is a common pattern applied when making infrastructure changes. Managing our database resources in a common, versioned source allows us to effectively collaborate and have a source off truth that is consistent across all deployments. IaC if often done in a declarative manner using tools such as <a href="https://quickstarts.snowflake.com/guide/devops_dcm_terraform_github/#0" target="_blank">terraform</a>.</p>
+<p>Declarative definitions are concise, idempotent and easy to understand as we don&#39;t need to understand the entire stack of historic changes leading up to the current state as in tools like <a href="https://quickstarts.snowflake.com/guide/devops_dcm_schemachange_github/#0" target="_blank">schemachange</a>. Rolling back multiple ALTER statements to get back to a previous state can be a pain.</p>
+<h2 is-upgraded>Declarative Pipeline Evolution</h2>
+<p>This is where the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table" target="_blank">CREATE OR ALTER</a> command shines. It allows us to have one single source of truth for the current state of the object. Potential rollbacks are super easy to do thanks to the straightforward integration with version control tools such as Git. Just apply an older version of the CREATE OR ALTER. This makes CREATE OR ALTER a great choice to manage data pipelines.</p>
+<aside class="warning"><p> Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.</p>
+</aside>
+<h2 is-upgraded>Adding a new Data Source to the Pipeline</h2>
+<p>Until now our vacation spot pipeline did only consider the weather and the reachability of potential locations. But what about activities during the stay? After all, what is a vacation without a visit to at least one Korean restaurant? And it&#39;s a family vacation, so how about a visit to a zoo or an aquarium?</p>
+<p>Let&#39;s add data on these points of interest to our pipeline! <strong>Follow along and perform the described steps</strong> yourself in VS Code.</p>
+<ol type="1">
+<li>In DevOps it is always a good practice to make our changes on a development branch to properly test them before merging to main. Let&#39;s create a new branch for our changes. Open the terminal of your VS Code codespace and run:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">git checkout -b dev
+</code></pre>
+<ol type="1" start="2">
+<li>Open <code>steps/03_harmonize_data.py</code> and add the following view definition at the end of the file. This view makes use of the &#34;US Points of Interest &amp; Addresses&#34; data set we previously imported from the marketplace to find the number of Korean restaurants, zoos and aquariums for each potential vacation spot.</li>
+</ol>
+<pre><code language="language-py" class="language-py">View(
+    name=&#34;attractions&#34;,
+    columns=[
+        ViewColumn(name=&#34;geo_id&#34;),
+        ViewColumn(name=&#34;geo_name&#34;),
+        ViewColumn(name=&#34;aquarium_cnt&#34;),
+        ViewColumn(name=&#34;zoo_cnt&#34;),
+        ViewColumn(name=&#34;korean_restaurant_cnt&#34;),
+    ],
+    query=&#34;&#34;&#34;
+    select
+        city.geo_id,
+        city.geo_name,
+        count(case when category_main = &#39;Aquarium&#39; THEN 1 END) aquarium_cnt,
+        count(case when category_main = &#39;Zoo&#39; THEN 1 END) zoo_cnt,
+        count(case when category_main = &#39;Korean Restaurant&#39; THEN 1 END) korean_restaurant_cnt,
+    from us_addresses__poi.cybersyn.point_of_interest_index poi
+    join us_addresses__poi.cybersyn.point_of_interest_addresses_relationships poi_add 
+        on poi_add.poi_id = poi.poi_id
+    join us_addresses__poi.cybersyn.us_addresses address 
+        on address.address_id = poi_add.address_id
+    join major_us_cities city on city.geo_id = address.id_city
+    where true
+        and category_main in (&#39;Aquarium&#39;, &#39;Zoo&#39;, &#39;Korean Restaurant&#39;)
+        and id_country = &#39;country/USA&#39;
+    group by city.geo_id, city.geo_name
+    &#34;&#34;&#34;,
+),
+</code></pre>
+<ol type="1" start="3">
+<li>Next, let&#39;s update the schema of our target table to account for the new columns. Head over to <code>steps/04_orchestrate_jobs.sql</code> and modify the CREATE OR ALTER on top by appending the following columns to its column list:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">, aquarium_cnt int
+, zoo_cnt int
+, korean_restaurant_cnt int
+</code></pre>
+<ol type="1" start="4">
+<li>Then update the MERGE statement in task &#34;vacation_spots_update&#34; by adding a JOIN with the new view.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">join silver.attractions att on att.geo_name = city.geo_name
+</code></pre>
+<ol type="1" start="5">
+<li>Add the new columns to the WHEN MATCHED clause of the same MERGE statement.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">, vacation_spots.aquarium_cnt = harmonized_vacation_spots.aquarium_cnt
+, vacation_spots.zoo_cnt = harmonized_vacation_spots.zoo_cnt
+, vacation_spots.korean_restaurant_cnt = harmonized_vacation_spots.korean_restaurant_cnt
+</code></pre>
+<ol type="1" start="6">
+<li>Don&#39;t forget to also add the new columns to the MERGE statement&#39;s WHEN NOT MATCHED clause.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">, harmonized_vacation_spots.aquarium_cnt
+, harmonized_vacation_spots.zoo_cnt
+, harmonized_vacation_spots.korean_restaurant_cnt
+</code></pre>
+<ol type="1" start="7">
+<li>Finally, update the WHERE clause of the filter query in task &#34;email_notification&#34; to filter for vacation spots that have a Korean restaurant as well as either a zoo or an aquarium for the kids to enjoy.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">and korean_restaurant_cnt &gt; 0
+and (zoo_cnt &gt; 0 or aquarium_cnt &gt; 0)
+</code></pre>
+<h2 is-upgraded>Deploy Pipeline Changes</h2>
+<p>After accounting for the new data in our pipeline it is time to deploy the new version. First commit your changes to the Git repository. Run the following commands in the VS Code terminal:</p>
+<pre><code language="language-bash" class="language-bash">git add steps/*
+git commit -m &#34;added attractions to pipeline&#34;
+git push --set-upstream origin dev
+</code></pre>
+<p>Next, deploy the new version of the data pipeline manually. Open the terminal in VS Code and run <code>snow git fetch quickstart_common.public.quickstart_repo</code> to fetch the changes from GitHub to Snowflake. Finally, run <code>snow git execute @quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*</code>. The command reexecutes <code>steps/01_setup_snowflake.sql</code> to apply changes to the foundational objects, <code>steps/03_harmonize_data.py</code> to update the views used to transform the marketplace data and <code>steps/04_orchestrate_jobs.sql</code> to apply our changes to the target table and update and execute the two tasks.</p>
+<pre><code language="language-bash" class="language-bash">$ snow git fetch quickstart_common.public.quickstart_repo
++------------------------+
+| scope  | name | result |
+|--------+------+--------|
+| Branch | dev  | FORCED |
++------------------------+
+
+$ snow git execute &#39;@quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*&#39;
+SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/01_setup_snowflake.sql
+SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/03_harmonize_data.py
+SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/04_orchestrate_jobs.sql
++--------------------------------------------------------------------------------------------------------+
+| File                                                                                 | Status  | Error |
+|--------------------------------------------------------------------------------------+---------+-------|
+| @quickstart_common.public.quickstart_repo/branches/dev/steps/01_setup_snowflake.sql  | SUCCESS | None  |
+| @quickstart_common.public.quickstart_repo/branches/dev/steps/03_harmonize_data.py    | SUCCESS | None  |
+| @quickstart_common.public.quickstart_repo/branches/dev/steps/04_orchestrate_jobs.sql | SUCCESS | None  |
++--------------------------------------------------------------------------------------------------------+
+</code></pre>
+<p>If done correctly, you will shortly receive another email with your updated vacation plan.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Separate Dev and Prod Environments" duration="5">
+        <p>In the previous section we did not pause to verify our changes before deploying them to Snowflake. In this section, we will discuss how to properly test the changes before deploying them to our production database.</p>
+<p>DevOps emphasizes the use of separate environments for development, testing, and production to minimize the risk of bugs or regressions affecting live systems. By maintaining separate dev and prod databases, teams can isolate development activities from the production environment, reducing the likelihood of unintended consequences and data corruption. A common pattern to separate production from development environments is using separate databases.</p>
+<p>There is a problem preventing us from doing so: Our pipeline definitions contain hard references to the production database &#34;quickstart_prod&#34;. We need to parametrize these references to enable a CI/CD pipeline to choose the deployment target.</p>
+<h2 is-upgraded>Jinja Templating in Snowflake</h2>
+<p><a href="https://jinja.palletsprojects.com/en/3.1.x/" target="_blank">Jinja</a> is a popular templating language with features ranging from simple script parametrization to extensive scripting in a language similar to Python. Snowflake supports the execution of templated SQL scripts with the <a href="https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from" target="_blank">EXECUTE IMMEDIATE FROM</a> command.</p>
+<p>For the use case of changing the deployment target, variable replacement is all we need from Jinja. Jinja variables in SQL scripts are marked by <code>&#123;&#123;...}}</code>. We can provide a value for a variable in the USING clause of EXECUTE IMMEDIATE FROM. Template variables can be used everywhere is a SQL script. We can use variables to inject object names, property values or even entire statements.</p>
+<h2 is-upgraded>Parameterize the Deployment Target</h2>
+<p>A number of small changes are necessary to parametrize which database the data pipeline gets deployed to. To get more control over our storage costs, we will also parametrize the retention time for the data in our target table.</p>
+<p>Let&#39;s perform the necessary changes! Follow along and perform the described steps yourself in VS Code.</p>
+<ol type="1">
+<li>Open <code>steps/01_setup_snowflake.sql</code> and parametrize part the database name in the CREATE OR REPLACE DATABASE QUICKSTART_PROD command.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE OR ALTER DATABASE QUICKSTART_&#123;&#123;environment}}; 
+</code></pre>
+<ol type="1" start="2">
+<li>Open <code>steps/03_harmonize_data.py</code> and read the environment variable.</li>
+</ol>
+<pre><code language="language-py" class="language-py">silver_schema = root.databases[f&#34;quickstart_{os.environ[&#39;environment&#39;]}&#34;].schemas[&#34;silver&#34;]
+</code></pre>
+<ol type="1" start="3">
+<li>Open <code>steps/04_orchestrate_jobs.sql</code> and parametrize the USE SCHEMA command.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">use schema quickstart_&#123;&#123;environment}}.gold;
+</code></pre>
+<ol type="1" start="4">
+<li>Finally, in the same file, parametrize the value of the &#34;data_retention_time_in_days&#34; parameter in the CREATE OR ALTER TABLE command.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">data_retention_time_in_days = &#123;&#123;retention_time}};
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deployment Automation" duration="15">
+        <p>In this section we will use the Jinja templating to automatically deploy the pipeline using GitHub Actions. We build a CI/CD pipeline to deploy the data pipeline to the &#34;prod&#34; database when changes are pushed to the repository&#39;s &#34;main&#34; branch. Thanks to templating, commits to the &#34;dev&#34; branch are deployed to the &#34;dev&#34; database instead.</p>
+<h2 is-upgraded>Configuring Your Forked GitHub Project</h2>
+<p>By default, GitHub disables any workflows (or CI/CD pipelines) when forking a repository. The forked repository contains a CI/CD workflow to deploy your data pipeline to dev and prod environments. Enable the workflows by opening your forked repository in GitHub, clicking on the &#34;Actions&#34; tab near the top middle of the page, and then clicking on the &#34;I understand my workflows, go ahead and enable them&#34; green button.</p>
+<p class="image-container"><img alt="Enable GitHub Actions" src="img/ece95f00b594a666.png"></p>
+<p>In order for your GitHub Actions workflow to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables for use in CI/CD pipelines.</p>
+<p>In GitHub, click on the &#34;Settings&#34; tab near the top of the page. From the Settings page, click on the &#34;Secrets and variables&#34; then &#34;Actions&#34; tab in the left hand navigation. The &#34;Secrets&#34; tab should be selected. For each secret listed below click on the green &#34;New repository secret&#34; and enter the name given below along with the appropriate value (adjusting as appropriate).</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Secret name</p>
+</td><td colspan="1" rowspan="1"><p>Secret value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWFLAKE_ACCOUNT</p>
+</td><td colspan="1" rowspan="1"><p>myaccount</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWFLAKE_USER</p>
+</td><td colspan="1" rowspan="1"><p>myusername</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>SNOWFLAKE_PRIVATE_KEY</p>
+</td><td colspan="1" rowspan="1"><p>contents of private key file (follow <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth" target="_blank">this guide</a> to setup key-pair auth)</p>
+</td></tr>
+</table>
+<aside class="special"><p> Note: For more details on how to structure the account name in SNOWFLAKE_ACCOUNT secret, see the account name discussion in the <a href="https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-api#usage-notes-for-the-account-parameter-for-the-connect-method" target="_blank">Snowflake Python Connector install guide</a>.</p>
+</aside>
+<p>When you&#39;re finished adding all the secrets, the page should look like this:</p>
+<p class="image-container"><img alt="GitHub Actions Secrets" src="img/aadff25700a3889b.png"></p>
+<h2 is-upgraded>Deploy to Development Environment with CI/CD Pipeline</h2>
+<p>The CI/CD pipeline is ready to use. Let&#39;s push our changes to GitHub and let the CI/CD pipeline do its thing. Open the terminal of the VS Code codespace and execute the following commands.</p>
+<pre><code language="language-bash" class="language-bash">git add steps/*
+git commit -m &#34;parametrize pipeline&#34;
+git push
+</code></pre>
+<p>The CI/CD pipeline will pick us the changes and run the workflow defined in <code>.github/workflows/deploy_pipeline.yml</code>. To view the results go back to the homepage of your GitHub repository and do the following:</p>
+<ul>
+<li>From the repository, click on the Actions tab near the top middle of the page</li>
+<li>Click on the name of the most recent run (which should have the name &#34;parametrize pipeline&#34;)</li>
+<li>From the run overview page click on the &#34;deploy&#34; job and browse through the output from the various steps. In particular you might want to review the output of the &#34;Deploy data pipeline to dev&#34; step.</li>
+</ul>
+<p class="image-container"><img alt="CI/CD Pipeline Output" src="img/497830888716a0f2.png"></p>
+<p>The workflow should indicate a successful execution. If this is the case, you will receive the familiar email containing the vacation plan after about a minute. Great! We just successfully tested our parametrization changes in a dedicated test environment.</p>
+<h2 is-upgraded>Deploy to Production Environment with CI/CD Pipeline</h2>
+<p>After validating the changes, we can confidently merge them to our production database. Normally, at this point we would open a pull request to get our changes reviewed. Let&#39;s speed this up and merge directly to main by executing the following commands in the VS Code terminal:</p>
+<pre><code language="language-bash" class="language-bash">git checkout main
+git merge dev
+git push
+</code></pre>
+<p>Time to check GitHub&#39;s &#34;Actions&#34; tab again. Another run of the &#34;Deploy data pipeline&#34; has appeared. Since we have dutifully tested our changes beforehand, we can confidently expect the vacation plan email to arrive shortly indicating a successful run.</p>
+<p>To save storage costs, we also used templating to parametrize the data retention time of the target table &#34;vacation_spots&#34;. The CI/CD pipeline did set the retention time to 0 days for the dev environment, while the prod environment stayed at the default of 1 day. Confirm this with the following commands. Note, that as the production pipeline might still be running, the second command might throw an error initially.</p>
+<pre><code language="language-sql" class="language-sql">show parameters like &#39;data_retention_time_in_days&#39; in table quickstart_dev.gold.vacation_spots;
+&gt; returns 0
+show parameters like &#39;data_retention_time_in_days&#39; in table quickstart_prod.gold.vacation_spots;
+&gt; returns 1
+</code></pre>
+<h2 is-upgraded>CI/CD Pipeline using SnowflakeCLI</h2>
+<p>While the pipeline is running, let&#39;s understand how it works. Open <code>.github/workflows/deploy_pipeline.yml</code> in VS Code. The workflow is triggered on pushes to &#34;main&#34; or &#34;dev&#34;, sets up the SnowflakeCLI and stores the GitHub Actions secrets in environment variables. This environment is then used to execute two commands on Snowflake.</p>
+<pre><code language="language-yaml" class="language-yaml">name: Deploy data pipeline
+
+# Action will run on pushes to selected branches
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    env:
+      REPO_NAME: &#34;quickstart_common.public.quickstart_repo&#34;
+      SNOWFLAKE_CONNECTIONS_DEFAULT_AUTHENTICATOR: &#34;SNOWFLAKE_JWT&#34;
+      SNOWFLAKE_CONNECTIONS_DEFAULT_PRIVATE_KEY_FILE: &#34;.snowflake/snowflake_rsa_key&#34;
+      # Read connection secrets
+      SNOWFLAKE_CONNECTIONS_DEFAULT_ACCOUNT: $&#123;&#123; secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_CONNECTIONS_DEFAULT_USER: $&#123;&#123; secrets.SNOWFLAKE_USER }}
+
+    steps:
+      # Checkout step is necessary if you want to use a config file from your repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Write private key secret as file
+      - name: Configure Private Key
+        run: |
+          echo &#34;$&#123;&#123; secrets.SNOWFLAKE_PRIVATE_KEY }}&#34; &gt; .snowflake/snowflake_rsa_key
+
+      # Install Snowflake CLI GitHub Action and point to config file
+      - name: Install snowflake-cli
+        uses: Snowflake-Labs/snowflake-cli-action@v1.5
+        with:
+          cli-version: &#34;latest&#34;
+          default-config-file-path: &#34;.snowflake/config.toml&#34;
+
+      # Update Snowflake&#39;s copy of the repository
+      - name: Fetch repository changes
+        run: snow git fetch &#34;${REPO_NAME}&#34;
+
+      # Deploy pipeline with branch specific parameters
+      - name: Deploy data pipeline to $&#123;&#123; github.ref_name }}
+        run: |
+          BRANCH_NAME=$&#123;&#123; github.ref_name }}
+          if [ &#34;${BRANCH_NAME}&#34; == &#34;main&#34; ]; then
+            RETENTION_TIME=1
+          else
+            RETENTION_TIME=0
+          fi
+          snow git execute \
+            &#34;@${REPO_NAME}/branches/${BRANCH_NAME}/steps/0[134]_*&#34; \
+            -D &#34;environment=&#39;${BRANCH_NAME}&#39;&#34; \
+            -D &#34;retention_time=${RETENTION_TIME}&#34;
+</code></pre>
+<p>Both commands are executed using the <code>snow</code> command. This command is part of the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index" target="_blank">SnowflakeCLI</a> tool, not to be confused with its predecessor <a href="https://docs.snowflake.com/en/user-guide/snowsql" target="_blank">SnowSQL</a>. SnowflakeCLI is an open-source command-line tool explicitly designed for developer-centric workloads. Also provided is a <a href="https://github.com/Snowflake-Labs/snowflake-cli-action" target="_blank">native GitHub Action</a>, simplifying the setup and connection management. It is a flexible and extensible tool that can accommodate modern development practices and technologies. This makes it a perfect choice for DevOps.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>Once you&#39;re finished with the Quickstart and want to clean things up, you can drop all the objects you created by running the cleanup script. Open <code>steps/08_cleanup.sql</code> in the VS Code extension and run all command using the &#34;Execute All Statements&#34; button in the upper right corner of the editor window.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="2">
+        <p>Wow, we have covered a lot of ground during this Quickstart! Not only can you now skip this year&#39;s vacation planning, but you have also learned how to manage a data pipeline with DevOps practices. You followed the Infrastructure as Code principle and used Snowflake&#39;s version control capabilities in combination with declarative Create-or-Alters to make database change management much less error-prone and less painful. With the help of SnowflakeCLI and Jinja templating you verified your changes in a test environment before automatically rolling them out to production with the help of a CI/CD pipeline.</p>
+<p>But we&#39;ve really only just scratched the surface of what&#39;s possible with Snowflake DevOps. You now have the building blocks, and examples, you need to get started integrating DevOps best practices into your own data engineering pipelines. So, what will you DevOps-ify first?</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>You have learned a ton in this guide. Here are the highlights:</p>
+<ul>
+<li>How to connect Snowflake to Git with the native Git integration</li>
+<li>How to simplify database change management with declarative Create-or-Alters</li>
+<li>How to verify your changes in a test environment with Jinja templating</li>
+<li>How to use Snowflake&#39;s Visual Studio Code extension</li>
+<li>How to build CI/CD pipelines with SnowflakeCLI and GitHub Actions</li>
+<li>How to interact with Snowflake&#39;s Python APIs</li>
+<li>How to gain access to the powerful data on Snowflake&#39;s Marketplace</li>
+<li>How to enhance your data with Snowflake Cortex LLM functions</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-devops" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://medium.com/snowflake/devops-in-snowflake-how-git-and-database-change-management-enable-a-file-based-object-lifecycle-1f61a0d5257c" target="_blank">DevOps in Snowflake: How Git and Database Change Management enable a file-based object lifecycle</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/devops_dcm_terraform_github/#0" target="_blank">DevOps: Database Change Management with Terraform and GitHub</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/#0" target="_blank">Advanced: Data Engineering Pipelines with Snowpark Python</a></li>
+<li>Related Tools <ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/vscode-ext" target="_blank">Snowflake Visual Studio Code Extension</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index" target="_blank">SnowflakeCLI Tool</a> and <a href="https://github.com/Snowflake-Labs/snowflake-cli-action" target="_blank">GitHub Action</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

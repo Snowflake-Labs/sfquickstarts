@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "tasty_bytes_zero_to_snowflake_semi_structured_data_fr",
+  "duration": 10,
+  "title": "Tasty Bytes – Débuter avec Snowflake – Données semi-structurées",
+  "summary": "Tasty Bytes – Débuter avec Snowflake – Données semi-structurées",
+  "source": "tasty_bytes_zero_to_snowflake_semi_structured_data_fr/tb_zts_semi_structured_data_fr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "tasty-bytes",
+    "getting-started",
+    "featured"
+  ],
+  "tags": [
+    "dataengineering",
+    "datawarehouse",
+    "fr",
+    "gettingstarted",
+    "premierspas",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tasty_bytes_zero_to_snowflake_semi_structured_data_fr"
+}

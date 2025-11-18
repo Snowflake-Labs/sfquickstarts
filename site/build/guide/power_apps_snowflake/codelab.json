@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "power_apps_snowflake",
+  "duration": 45,
+  "title": "Getting Started with Microsoft Power Platform and Snowflake",
+  "summary": "This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake",
+  "source": "getting_started_with_power_apps_and_snowflake/getting_started_with_power_apps_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "microsoft",
+    "power-apps",
+    "power-platform",
+    "snowflake"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "microsoft",
+    "powerapps",
+    "powerautomate",
+    "powerplatform",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "power_apps_snowflake"
+}

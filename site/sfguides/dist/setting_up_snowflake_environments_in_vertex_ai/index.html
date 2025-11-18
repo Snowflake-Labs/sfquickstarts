@@ -1,0 +1,330 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Setting up Snowflake Environments in Vertex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="setting_up_snowflake_environments_in_vertex_ai"
+                  title="Setting up Snowflake Environments in Vertex AI"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p>Snowflake and Google Cloud empower countless customers to seamlessly run AI and machine learning (AI/ML) workloads, including cutting-edge Generative AI. With several proven architectural patterns, integrating Snowflake with Google services like Vertex AI has never been easier. Whether you&#39;re diving into traditional AI/ML or  Generative AI, we have quickstart guides to get you up and running fast (<a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_machine_learning_on_vertexai/index.html?index=..%2F..index#0" target="_blank">AI/ML quickstart</a> and <a href="https://quickstarts.snowflake.com/guide/customer_insights_analyzer_using_vertex_ai_and_snowflake/index.html?index=..%2F..index#0" target="_blank">Snowflake + VertexAI for Generative AI quickstart</a>).</p>
+<p>The Snowflake + Vertex AI Generative AI quickstarts are designed to be quick, practical, and simple to follow. But we also know that setting up Vertex AI to fully leverage Snowflake&#39;s capabilities can be a bit tricky at first. That&#39;s why we&#39;re here to help you configure your Vertex AI environment step-by-step—making it easy to connect with Snowflake. In this guide, we&#39;ll walk you through everything, from configuring scripts to pushing container images to Google Container Registry (GCR).</p>
+<h2 is-upgraded>Use Case</h2>
+<p>As this quickstart is targeted at getting environments there are no specific industry use cases, but rather &#34;Hello World&#34; examples to verify that the configuration scripts and containers are working appropriately.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>Familiarity with <a href="https://cloud.google.com/free" target="_blank">GCP</a> and a GCP account.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to set up a Snowflake environment in Vertex AI with configuration scripts.</li>
+<li>How to set up a Snowflake environment in Vertex AI with Google Container Registry.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li><a href="https://cloud.google.com/free" target="_blank">GCP Account</a> with access to Vertex AI</li>
+<li>For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network</li>
+<li>Basic familiarity with terminal commands and working with containers</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake specific environment in Vertex AI using configuration scripts</li>
+<li>A Snowflake specific environment in Vertex AI using Containers</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuration Script" duration="15">
+        <p>To use a startup script in Vertex AI that installs the current versions of the Snowflake and Snowpark Python packages, you can take advantage of custom training jobs or notebooks in Vertex AI. The below shows how use the startup script with a notebook in Vertex AI</p>
+<h2 is-upgraded>Create a Startup Script</h2>
+<p>The startup script will install the required Python packages via pip as soon as the Vertex AI instance starts. Here&#39;s an example startup script:</p>
+<pre><code>#!/bin/bash
+
+# Update the system package index
+sudo apt-get update
+
+# Install pip if it&#39;s not installed
+sudo apt-get install -y python3-pip
+
+# Install the current versions of Snowflake and Snowpark Python packages
+pip3 install --upgrade snowflake-connector-python snowflake-snowpark-python
+</code></pre>
+<p>Save this script as install_snowflake.sh locally.</p>
+<h2 is-upgraded>Make the Script Executable</h2>
+<p>Make sure the script has the correct permissions to be executed. If you&#39;re developing locally or in a development environment before uploading to Vertex AI, you can use:</p>
+<pre><code>chmod +x install_snowflake.sh
+</code></pre>
+<h2 is-upgraded>Upload the Script to Google Cloud Storage (GCS)</h2>
+<p>Vertex AI can reference a startup script stored in GCS. You will first need to upload the script to a GCS bucket.</p>
+<pre><code>gsutil cp install_snowflake.sh gs://your-bucket-name/install_snowflake.sh
+</code></pre>
+<h2 is-upgraded>Use a Vertex AI Notebook</h2>
+<p>You can specify the startup script to run during the notebook instance&#39;s initialization.</p>
+<ul>
+<li>Go to Vertex AI Workbench in the Google Cloud Console.</li>
+<li>Click on Create New Notebook or use an existing one.</li>
+</ul>
+<p>In the Customization section, under Startup Script, specify the path to your script stored in GCS: <img src="img/f8050222d1dd9780.png"></p>
+<pre><code>gs://your-bucket-name/install_snowflake.sh
+</code></pre>
+<p>Once the notebook starts, the script will run and install the packages.</p>
+<p>You should see the current versions of both packages installed and are ready to use Snowflake and Snowpark packages from Vertex AI!</p>
+<h2 is-upgraded>Verify Installation</h2>
+<p>Once the startup script runs, you can verify the installation of the packages by running:</p>
+<pre><code>pip show snowflake-connector-python
+pip show snowflake-snowpark-python
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Google Container Registry (GCR)." duration="15">
+        <p>Users can build the docker image locally then push the image to GCR however using the Google terminal offers a more robust method for building and pushing the image.</p>
+<p>Start by opening the terminal on your Google cloud account.</p>
+<p class="image-container"><img src="img/a4761865b22c52c0.png"></p>
+<h2 is-upgraded>Create and save the Dockerfile</h2>
+<p>A Dockerfile is a text file that contains a list of instructions on how to build a Docker image. Let&#39;s create the Dockerfile step by step: Create a new directory to store your Dockerfile and any related project files:</p>
+<pre><code>mkdir vertex-ai-snowflake
+cd vertex-ai-snowflake
+</code></pre>
+<p>Inside the vertex-ai-snowflake directory, create a new file named Dockerfile.</p>
+<pre><code>nano Dockerfile
+</code></pre>
+<p>Paste the below code into your Dockerfile. You are welcome to edit/update this file but for new users this will work to create a Snowflake image in Google.</p>
+<pre><code># Use an official Python runtime as a base image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update &amp;&amp; apt-get install -y \
+    libssl-dev \
+    libffi-dev \
+    libpq-dev \
+    build-essential \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip to the latest version
+RUN pip install --upgrade pip
+
+# Install Python packages required for your app
+RUN pip install google-cloud-storage \
+                cryptography \
+                snowflake-snowpark-python
+
+# Copy your application code into the container
+COPY . /app
+
+# Set the default command to run your Python script (replace &#39;your_script.py&#39; with your actual script)
+CMD [&#34;python&#34;, &#34;your_script.py&#34;]
+</code></pre>
+<p>If using nano, save the file by pressing CTRL + O, then ENTER, and finally CTRL + X.</p>
+<h2 is-upgraded>Create and Save the Python Script</h2>
+<p>Similar to creating the Dockerfile, create a sample python script that will run inside the image container. In practice you will have a different script that can:</p>
+<ul>
+<li>Prepare data in Snowflake</li>
+<li>Access data from Snowflake and train models in Vertex AI</li>
+<li>Deploy models to Snowflake</li>
+</ul>
+<p>This script does something much more simple, it creates a GREETING &#34;hello world&#34; table in Snowflake.</p>
+<p>You will have to update the below parameters with your Snowflake information</p>
+<ul>
+<li>Account</li>
+<li>User</li>
+<li>Role</li>
+<li>Warehouse</li>
+<li>Database</li>
+<li>Schema</li>
+<li>gcs_bucket_name (more on this later)</li>
+</ul>
+<pre><code>nano your_script.py
+</code></pre>
+<pre><code>from google.cloud import storage
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+from snowflake.snowpark import Session
+import os
+
+# Function to download the private key from GCS
+def download_private_key_from_gcs(bucket_name, key_file_name, local_temp_file):
+    # Initialize the GCS client
+    storage_client = storage.Client()
+
+    # Get the bucket object
+    bucket = storage_client.bucket(bucket_name)
+
+    # Get the blob object (file in GCS)
+    blob = bucket.blob(key_file_name)
+
+    # Download the file to the local temporary path
+    blob.download_to_filename(local_temp_file)
+    print(f&#34;Downloaded {key_file_name} from bucket {bucket_name} to {local_temp_file}&#34;)
+
+# Define your GCS bucket name and the file name of the key
+gcs_bucket_name = &#34;&#34;
+gcs_key_file_name = &#34;rsa_key_pkcs8.pem&#34;
+
+# Define a temporary location to store the private key locally
+local_private_key_file = &#34;/tmp/rsa_key_pkcs8.pem&#34;
+
+# Download the private key from GCS to a local temporary file
+download_private_key_from_gcs(gcs_bucket_name, gcs_key_file_name, local_private_key_file)
+
+# Load the private key in PKCS#8 format using the cryptography library
+with open(local_private_key_file, &#34;rb&#34;) as key_file:  # Open in binary mode
+    private_key = serialization.load_pem_private_key(
+        key_file.read(),
+        password=None,  # If your key is encrypted with a passphrase, pass it here
+        backend=default_backend()
+    )
+# Define your connection parameters
+connection_parameters = {
+    &#34;account&#34;: &#34;&#34;,
+    &#34;user&#34;: &#34;&#34;,
+    &#34;private_key&#34;: private_key,
+    &#34;role&#34;: &#34;&#34;,
+    &#34;warehouse&#34;: &#34;&#34;,
+    &#34;database&#34;: &#34;&#34;,
+    &#34;schema&#34;: &#34;&#34;
+}
+
+# Create a Snowpark session
+session = Session.builder.configs(connection_parameters).create()
+
+# Create a table named &#39;greeting&#39; with a single column &#39;hello&#39; (VARCHAR)
+session.sql(&#34;CREATE OR REPLACE TABLE greeting (hello STRING)&#34;).collect()
+
+# Insert one row into the table
+session.sql(&#34;INSERT INTO greeting VALUES (&#39;world&#39;)&#34;).collect()
+
+# Query the table to verify the row was inserted
+result = session.sql(&#34;SELECT * FROM greeting&#34;).collect()
+
+# Print the result
+for row in result:
+    print(f&#34;{row[&#39;HELLO&#39;]}&#34;)
+
+# Close the session
+session.close()
+</code></pre>
+<p>You will notice that we are using a private key to access Snowflake, it should only take 5 minutes to establish that key and move it to google storage. Here&#39;s how:</p>
+<h2 is-upgraded>Creating a Private Key to Access Snowflake</h2>
+<p>Generate a private key: Open a terminal on your local machine and run the following command:</p>
+<pre><code>openssl genrsa -out rsa_key.pem 2048
+</code></pre>
+<p>This creates a 2048-bit RSA private key and stores it in rsa_key.pem on your local machine. Extract the public key: To extract the public key from the private key, run the following command:</p>
+<pre><code>openssl rsa -in rsa_key.pem -pubout -out rsa_key.pub
+</code></pre>
+<p>This command extracts the public key and saves it in the rsa_key.pub file. Convert the private key to PKCS#8 format (required by Snowflake):</p>
+<pre><code>openssl pkcs8 -topk8 -inform PEM -outform PEM -in rsa_key.pem -out rsa_key_pkcs8.pem -nocrypt
+</code></pre>
+<p>You now have a rsa_key_pkcs8.pem file, which is the private key you&#39;ll use to authenticate to Snowflake.</p>
+<p>And now that you have the key created you have to upload it to Snowflake:</p>
+<p>Log in to Snowflake using your regular credentials (username and password) via the web interface - Snowsight.</p>
+<p>Assign the public key to your Snowflake user: Run the following SQL query to associate your public key with your Snowflake user account:</p>
+<pre><code language="language-sql" class="language-sql">ALTER USER &lt;your_username&gt; SET rsa_public_key=&#39;&lt;paste contents of rsa_key.pub here&gt;&#39;;
+</code></pre>
+<p>*Ensure the public key is a single line without newlines or extra spaces. Now upload the rsa_key_pkcs8.pem file to Google Storage in a bucket that your Vertex AI workspace has access to!</p>
+<h2 is-upgraded>Build and Push the Docker image</h2>
+<p>Go back to the terminal you have open in the Google Cloud and make sure that you&#39;re in the folder with Dockerfile and your_script.py. Chances are you already in the folder, but if not cd into like below.</p>
+<pre><code>cd /path/to/vertex-ai-snowflake
+</code></pre>
+<p>Build and push the Docker image, this should take a minute or two:</p>
+<pre><code>gcloud builds submit --tag gcr.io/your-project-id/snowflake-snowpark-image
+</code></pre>
+<p>Replace your-image-name with the name you want for your Docker image (e.g., snowflake-snowpark-image).</p>
+<h2 is-upgraded>Create a Vertex AI custom job using the container image</h2>
+<ol type="1">
+<li>Go to the Google Cloud Console.</li>
+<li>Navigate to Vertex AI &gt; Training &gt; Custom Jobs.</li>
+<li>Click Create.</li>
+<li>Under Container Image, find the image we just built and pushed in the Artifact Registry like below. <img src="img/8c477dfb5ef32347.png"></li>
+<li>Configure the job parameters (e.g., machine type, environment variables, etc.).</li>
+<li>Submit the job.</li>
+</ol>
+<h2 is-upgraded>Test and verify the setup</h2>
+<p>The job will run for several minutes once it successfully completes, head to your Snowflake account and verify you have a new table in the Database and Schema you specified and you&#39;re all done!</p>
+<p class="image-container"><img src="img/ac3dcd001ae3a2e1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>With these two methods customers are now equipped to use Snowflake from Vertex AI. The configuration script is a great way to set up a workbook for interactive work quickly while building the container image is a great way to create robust workloads. Any questions, please reach out to your Google and Snowflake account teams and ask them how to best use Snowflake and Google Cloud Services together!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up a Snowflake environment in Vertex AI with configuration scripts.</li>
+<li>How to set up a Snowflake environment in Vertex AI with Google Container Registry.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>There are some great resources for using Snowflake and GCP.</p>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_machine_learning_on_vertexai/index.html?index=..%2F..index#0" target="_blank">Snowflake and Vertex AI</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/customer_insights_analyzer_using_vertex_ai_and_snowflake/index.html?index=..%2F..index#0" target="_blank">Snowflake and GCP for Generative AI</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-gcs-config" target="_blank">Snowflake on Google Cloud Storage</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

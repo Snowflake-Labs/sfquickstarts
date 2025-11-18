@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build_customer_facing_applications_using_sigma_and_snowflake",
+  "duration": 60,
+  "title": "Build Customer Facing Applications Using Sigma and Snowflake",
+  "summary": "This guide will lead you through the process of connecting Sigma to a Snowflake environment and building an application that leverages the data in Snowflake. This guide additionally highlights unique end user capabilities when Sigma is embedded in an application.",
+  "source": "build_customer_facing_applications_using_sigma__and_snowflake/build_customer_facing_applications_using_sigma_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "app-development",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataapplications",
+    "dataengineering",
+    "gettingstarted",
+    "sigma",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build_customer_facing_applications_using_sigma_and_snowflake"
+}

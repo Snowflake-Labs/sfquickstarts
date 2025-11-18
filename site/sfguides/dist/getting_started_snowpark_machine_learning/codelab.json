@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting_started_snowpark_machine_learning",
+  "duration": 85,
+  "title": "Machine Learning with Snowpark Python: - Credit Card Approval Prediction",
+  "summary": "Machine Learning with Snowpark Python for Credit Card Approval Prediction",
+  "source": "getting_started_snowpark_python_machine_learning/machine_learning_with_snowpark_credit_card_approval_prediction.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "app-development",
+    "architecture-patterns",
+    "solution-examples"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_snowpark_machine_learning"
+}

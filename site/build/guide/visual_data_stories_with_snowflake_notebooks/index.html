@@ -1,0 +1,273 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Guide to Visual Data Storytelling in Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="visual_data_stories_with_snowflake_notebooks"
+                  title="A Guide to Visual Data Storytelling in Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p><a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a> offer an interactive, cell-based programming environment for Python and SQL. With a Snowflake Notebook, you can perform exploratory data analysis, visualize your data, build data dashboards, experiment with feature engineering for machine learning, and perform other data science tasks within Snowflake.</p>
+<p>You can write and execute code, visualize results, and tell the story of your analysis all in one place.</p>
+<ul>
+<li>Explore and experiment with data already in Snowflake, or upload new data to Snowflake from local files, external cloud storage, or datasets from the Snowflake Marketplace.</li>
+<li>Write SQL or Python code and quickly compare results with cell-by-cell development and execution.</li>
+<li>Interactively visualize your data using embedded Streamlit visualizations and other libraries like Altair, Matplotlib, or seaborn.</li>
+<li>Contextualize results and make notes about different results with Markdown cells.</li>
+<li>Keep your data fresh by relying on the default behavior to run a cell and all modified cells preceding it or debug your notebook by running it cell-by-cesll.</li>
+<li>Run your notebook on a schedule. See <a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks-schedule" target="_blank">Schedule your Snowflake Notebook to run</a>.</li>
+<li>Make use of the role-based access control and other data governance functionality available in Snowflake to allow other users with the same role to view and collaborate on the notebook.</li>
+</ul>
+<p class="image-container"><img alt="Notebook" src="img/bc68aae6807655d.gif"></p>
+<p>In this tutorial, we will walk you through the different ways you can enrich your data narrative through engaging visuals in Snowflake Notebooks. We will demonstrate how you can develop visualizations, work with Markdown text, embed images, and build awesome data apps all within your notebook, alongside your code and data.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account. Sign up for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">30-day free trial</a> account, if required.</li>
+<li>Access to download <code>.ipynb</code> file from <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main" target="_blank">Snowflake notebooks demo repo</a></li>
+<li>Please add the <code>matplotlib</code> and <code>plotly</code> package from the package picker on the top right. We will be using these packages in the notebook.</li>
+</ul>
+<h2 is-upgraded>What will you Learn?</h2>
+<p>Here is a summary of what you will be able to learn in each step by following this quickstart:</p>
+<ul>
+<li><strong>Plot with Altair, Matplotlib and Plotly</strong>: How to use different visualization libraries in Snowflake Notebooks</li>
+<li><strong>Working with Markdown cells</strong>: How to develop your narratives using Markdown language</li>
+<li><strong>Using Streamlit in Notebook</strong>: How to use Streamlit to embed images in Notebook</li>
+<li><strong>Build Interactive Data Apps</strong>: How to build interactive dashboards and data apps using Streamlit in Snowflake Notebook</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load demo notebooks to Snowflake" duration="5">
+        <p>You can create a Snowflake Notebook directly from the Snowsight UI or upload an existing IPython Notebook to Snowflake.</p>
+<p>In this example, we will upload an existing notebook from <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main" target="_blank">Snowflake Notebooks demo repo</a> into a Snowflake account.</p>
+<p>The notebook files are available for download as <code>.ipynb</code> files in the demo repository. To load the demo notebooks into your Snowflake Notebook, follow these steps:</p>
+<ol type="1">
+<li>On Github, click into each folder containing the tutorial and the corresponding <code>.ipynb file</code>, such as <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Visual%20Data%20Stories%20with%20Snowflake%20Notebooks/Visual%20Data%20Stories%20with%20Snowflake%20Notebooks.ipynb" target="_blank">this</a>. Download the file by clicking on the <code>Download raw file</code> from the top right.</li>
+<li>Go to the Snowflake web interface, <a href="https://app.snowflake.com" target="_blank">Snowsight</a>, on your browser.</li>
+<li>Navigate to <code>Project</code> &gt; <code>Notebooks</code> from the left menu bar.</li>
+<li>Import the .ipynb file you&#39;ve download into your Snowflake Notebook by using the <code>Import from .ipynb</code> button located on the top right of the Notebooks page.</li>
+</ol>
+<p class="image-container"><img alt="Import" src="img/a1acb8d5ebac065b.png"></p>
+<ol type="1" start="5">
+<li>Select the file from your local directory and press <code>Open</code>.</li>
+<li>A <code>Create Notebook</code> dialog will show up. Select a database, schema, and warehouse for the Notebook and click <code>Create</code>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Plotting data using Altair, Matplotlib and Plotly" duration="5">
+        <p>With Snowflake Notebook, you can use your favorite Python visualization library, including Altair, matplotlib and plotly, to develop your visualization.</p>
+<p>First, let&#39;s generate some toy data for the Iris dataset.</p>
+<pre><code language="language-python" class="language-python"># Sample data
+species = [&#34;setosa&#34;] * 3 + [&#34;versicolor&#34;] * 3 + [&#34;virginica&#34;] * 3
+measurements = [&#34;sepal_length&#34;, &#34;sepal_width&#34;, &#34;petal_length&#34;] * 3
+values = [5.1, 3.5, 1.4, 6.2, 2.9, 4.3, 7.3, 3.0, 6.3]
+df = pd.DataFrame({&#34;species&#34;: species,&#34;measurement&#34;: measurements,&#34;value&#34;: values})
+df
+</code></pre>
+<h2 is-upgraded>Plotting with Altair</h2>
+<p>Now let&#39;s plot a bar chart in Altair. You can learn more about Altair <a href="https://altair-viz.github.io/" target="_blank">here</a>.</p>
+<pre><code language="language-python" class="language-python">import altair as alt
+alt.Chart(df).mark_bar().encode(
+    x= alt.X(&#34;measurement&#34;, axis = alt.Axis(labelAngle=0)),
+    y=&#34;value&#34;,
+    color=&#34;species&#34;
+).properties(
+    width=700,
+    height=500
+)
+</code></pre>
+<p class="image-container"><img alt="altair" src="img/efb7af85fcae7d2e.png"></p>
+<h2 is-upgraded>Plotting with Matplotlib</h2>
+<p>Let&#39;s do the same with matplotlib. Note how convenient it is to do <code>df.plot</code> with your dataframe with pandas. This uses matplotlib underneath the hood to generate the plots. You can learn more about pandas&#39;s <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html" target="_blank">pd.DataFrame.plot</a> and about matplotlib <a href="https://matplotlib.org/" target="_blank">here</a>.</p>
+<p>First, let&#39;s pivot our data so that our data is stacked.</p>
+<pre><code language="language-python" class="language-python">pivot_df = pd.pivot_table(data=df, index=[&#39;measurement&#39;], columns=[&#39;species&#39;], values=&#39;value&#39;)
+</code></pre>
+<p>We build a quick Streamlit app to visualize the pivot operation. (Don&#39;t worry we will discuss what the st. Streamlit commands mean later in the tutorial!)</p>
+<pre><code language="language-python" class="language-python">col1, col2 = st.columns(2)
+with col1: 
+    st.markdown(&#34;Old Dataframe&#34;)
+    st.dataframe(df)    
+with col2:
+    st.markdown(&#34;Pivoted Dataframe&#34;)
+    st.dataframe(pivot_df)
+</code></pre>
+<p>Now let&#39;s use matplotlib to plot the stacked bar chart.</p>
+<pre><code language="language-python" class="language-python">import matplotlib.pyplot as plt
+ax = pivot_df.plot.bar(stacked=True)
+_ = ax.set_xticklabels(list(pivot_df.index), rotation=0)
+</code></pre>
+<p class="image-container"><img alt="matplotlib" src="img/359682251853c1bd.png"></p>
+<h2 is-upgraded>Plotting with Plotly</h2>
+<p>Finally, let&#39;s do the same plot with plotly. Learn more about plotly <a href="https://plotly.com/python/plotly-express/" target="_blank">here</a>.</p>
+<pre><code language="language-python" class="language-python">import plotly.express as px
+px.bar(df, x=&#39;measurement&#39;, y=&#39;value&#39;, color=&#39;species&#39;)
+</code></pre>
+<p class="image-container"><img alt="plotly" src="img/d2bd6bf4428af33c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Working with Markdown cells" duration="5">
+        <p>With Snowflake Notebooks, you can leverage Markdown language to develop rich text displays with formatting.</p>
+<p>You can change a cell type to render Markdown by clicking on the dropdown on the top left to select <code>Markdown</code> (or use <code>m</code> as the hotkey to convert a cell type to Markdown).</p>
+<p class="image-container"><img alt="Markdown" src="img/10a6908f311195c5.png"></p>
+<h2 is-upgraded>Inline Text Formatting</h2>
+<p>Here is some <em>italicized</em> text and <strong>bolded text</strong>. Markdown: <code>Here is some *italicized text* and **bolded text**</code>.</p>
+<p>Here is a link to the <a href="https://snowflake.com/" target="_blank">Snowflake website</a> Markdown: <code>Here is a link to the [Snowflake website](https://snowflake.com/)</code></p>
+<p>From here on, you can double click onto each Markdown cell to take a look at the underlying Markdown content.</p>
+<h2 is-upgraded>Bulleted List</h2>
+<p>Here is a bulleted list (with emojis 😊)</p>
+<ul>
+<li>❄️</li>
+<li>❄️❄️</li>
+<li>❄️❄️❄️ <ul>
+<li>Nested ❄️</li>
+<li>Nested ❄️❄️</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img alt="BulletedList" src="img/3585be3c4904a809.png"></p>
+<h2 is-upgraded>Formatting Code</h2>
+<p>Python:</p>
+<pre><code language="language-python" class="language-python">import pandas as pd
+df = pd.DataFrame([1,2,3])
+</code></pre>
+<p>SQL:</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM MYTABLE
+</code></pre>
+<p>Inline Code formatting:</p>
+<p>My data is stored in <code>DB.SCHEMA</code>.</p>
+<p class="image-container"><img alt="FormattingCode" src="img/3d21b7411895e44e.png"></p>
+<h2 is-upgraded>Embedding Images and GIFs</h2>
+<p>You can use the Markdown Syntax to embed images and GIFs in your notebook.</p>
+<p>The syntax looks like <code>![text](hyperlink)</code>. Here are some examples!</p>
+<p><code>![](https://www.snowflake.com/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg)![](https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif)</code></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using Streamlit in Notebook" duration="5">
+        <p>You can bring your data narrative alive in notebooks and make it even more interactive by using Streamlit.</p>
+<p><a href="https://streamlit.io/" target="_blank">Streamlit</a> is an open-source framework for building interactive data apps in Python (not a single line of HTML or Javascript required!)</p>
+<p>Unlike in other notebooks where you need to navigate to a separate terminal window to serve up your Streamlit app, you can test and develop your Streamlit app directly in your notebook.</p>
+<p>We saw how you can embed images using Markdown. Here we show how you can embed images in your notebook using Streamlit which gives you more image customization options.</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+st.image(&#34;https://www.snowflake.com/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg&#34;,width=500)
+</code></pre>
+<pre><code language="language-python" class="language-python"># Also works with a GIF animation!
+st.image(&#34;https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif&#34;, caption=&#34;Rotating Earth!&#34;)
+</code></pre>
+<p>Let&#39;s say you have some images in your Snowflake stage, you can stream in the image file and display it with Streamlit.</p>
+<pre><code language="language-sql" class="language-sql">LS @IMAGE_STAGE;
+</code></pre>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+image=session.file.get_stream(&#34;@IMAGE_STAGE/snowflake-logo.png&#34;, decompress=False).read() 
+st.image(image)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Interactive Data Apps with Streamlit" duration="5">
+        <p>Think of each cell in your Snowflake Notebook as a mini Streamlit app. As you interact with your data app, the relevant cells will get re-executed and the results in your app updates.</p>
+<pre><code language="language-python" class="language-python">st.markdown(&#34;&#34;&#34;# Interactive Filtering with Streamlit! :balloon: 
+Values will automatically cascade down the notebook cells&#34;&#34;&#34;)
+value = st.slider(&#34;Move the slider to change the filter value 👇&#34;, df.value.min(), df.value.max(), df.value.mean(), step = 0.3
+</code></pre>
+<p class="image-container"><img alt="interactive_filtering" src="img/9c724f2e31301ae1.png"></p>
+<pre><code language="language-python" class="language-python"># Filter the table from above using the Streamlit slider
+df[df[&#34;value&#34;]&gt;value].sort_values(&#34;value&#34;)
+</code></pre>
+<pre><code language="language-python" class="language-python">alt.Chart(df).mark_bar().encode(
+    x= alt.X(&#34;measurement&#34;, axis = alt.Axis(labelAngle=0)),
+    y=&#34;value&#34;,
+    color=&#34;species&#34;
+).properties(width=500,height=300)
+</code></pre>
+<p class="image-container"><img alt="altair_v2" src="img/526421a5064e82ed.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully completed the Visual Data Stories with Snowflake Notebooks quickstart guide. <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Try out Notebooks</a> yourself to build your own data narrative!</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li><strong>Plot with Altair, Matplotlib and Plotly</strong>: How to use different visualization libraries in Snowflake Notebooks</li>
+<li><strong>Working with Markdown cells</strong>: How to develop your narratives using Markdown language</li>
+<li><strong>Using Streamlit in Notebook</strong>: How to use Streamlit to embed images in Notebook</li>
+<li><strong>Build Interactive Data Apps</strong>: How to build interactive dashboards and data apps using Streamlit in Snowflake Notebook</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Here are some resources to learn more about Snowflake Notebooks:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-about" target="_blank">Documentation</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main" target="_blank">Github Demo Repo</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI" target="_blank">YouTube Playlist</a></li>
+<li><a href="https://developers.snowflake.com/solutions/?_sft_technology=notebooks" target="_blank">Solution Center</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

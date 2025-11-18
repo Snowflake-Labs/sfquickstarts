@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "connectors_github_java",
+  "duration": 40,
+  "title": "Native Connector - Java (Pull Based)",
+  "summary": "Overview of building Snowflake native connectors using Java snowpark and Native Apps. Example connector connects to GitHub issues API.",
+  "source": "connectors_github_java/github_java_connector.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "connectors",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "connectors",
+    "externalconnectivity",
+    "nativeapps",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "connectors_github_java"
+}

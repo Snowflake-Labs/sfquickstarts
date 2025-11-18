@@ -1,0 +1,394 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - データサイエンスのためのSnowpark入門</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_snowpark_101_for_data_science_ja"
+                  title="Tasty Bytes - データサイエンスのためのSnowpark入門"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="概要" duration="1">
+        <p class="image-container"><img src="img/82e3f493a86ab504.png"></p>
+<p>このデータサイエンスのためのSnowpark入門クイックスタートガイドでは、架空のキッチンカー会社であるTasty Bytes社に対し、キッチンカーの運転手にロケーション推奨を提供するモデルのトレーニングを行うことで売上を伸ばす支援をします。<strong>Snowpark for Python</strong>を使用してデータの準備、モデルのトレーニング、モデルの展開を行います。展開後は、<strong>Streamlit</strong>を使用してアプリケーションのプロトタイプを作成し、キッチンカーの運転手が次のシフトのために駐車する最適なロケーションを見つけるためにこのモデルをどのように利用できるかについてデモを行います。</p>
+<h2 is-upgraded>Snowparkとは</h2>
+<p>Snowparkでは、開発者はSnowflakeの伸縮性のあるエンジンで実行されるAPIとDataFrame型のプログラミングコンストラクトを使用して、クエリを実行したり、Python、Java、Scalaでデータアプリケーションを作成したりできます。詳しくは、<a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark</a>をご覧ください。</p>
+<h2 is-upgraded>Streamlitとは</h2>
+<p>Streamlit <em>（2022年3月にSnowflakeが買収）</em> は、カスタムウェブアプリを簡単に作成および共有できるようにするPythonライブラリです。詳しくは、<a href="https://docs.streamlit.io/" target="_blank">Streamlit</a>をご覧ください。</p>
+<h2 is-upgraded>学習する内容</h2>
+<ul>
+<li><strong>Snowflakeマーケット</strong>プレイスからサードパーティデータにアクセスする方法</li>
+<li><strong>Snowpark DataFrame API を使用してデータを探索し</strong>、特徴量エンジニアリングを実行する方法</li>
+<li>ストアドプロシージャを使用して<strong>Snowflakeでモデルをトレーニングする</strong>方法</li>
+<li>モデル推論のためにユーザー定義関数に<strong>Snowflakeでモデルを展開する</strong>方法</li>
+<li>モデルと対話するための<strong>Streamlitアプリを構築する</strong>方法</li>
+</ul>
+<h2 is-upgraded>前提条件</h2>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a>がインストールされていること</li>
+<li><a href="https://www.anaconda.com/" target="_blank">Anaconda</a>がインストールされていること</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda" target="_blank">ORGADMINによって有効化されたAnacondaパッケージ</a>を持つSnowflakeアカウント。Snowflakeアカウントをお持ちでない場合は、<a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">無料トライアルアカウント</a>に登録できます。</li>
+<li>アカウント管理者の役割を持つSnowflakeアカウントのログイン。ログインをお持ちでない場合は、無料トライアルに登録するか、データベース、スキーマ、テーブル、ステージ、ユーザー定義関数、ストアドプロシージャを作成する機能を持つ別のロールを使用する必要があります。</li>
+</ul>
+<h2 is-upgraded>構築するもの</h2>
+<ul>
+<li><strong>ロケーション別の売上予測<br> </strong><img src="img/8a0acf58b4e467cf.gif"></li>
+<li><strong>売上予測に基づいて上位のロケーションを見つけるStreamlitアプリケーション<br> </strong><img src="img/d644c14b0baf1931.gif"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflakeでのデータの設定" duration="6">
+        <h2 is-upgraded>概要</h2>
+<p>Snowflakeウェブインターフェースである<a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>を使用して、次のことを行います。</p>
+<ul>
+<li>SnowflakeマーケットプレイスからSafeGraphロケーションデータにアクセスする</li>
+<li>Snowflakeオブジェクト（ウェアハウス、データベース、スキーマ）を作成する</li>
+<li>S3からシフト売上データを取り込む</li>
+<li>シフト売上とSafeGraphロケーションデータを結合する</li>
+</ul>
+<p>Tasty Bytesは世界中の都市でキッチンカーを運行しており、各キッチンカーは1日に2つの異なる販売ロケーションを選択できます。これらのロケーションはSafeGraphの関心ポイントにマッピングされています。SafeGraphマーケットプレイスデータの緯度と経度をシフト売上データに結合し、モデルトレーニングで特徴量として使用します。</p>
+<h2 is-upgraded>ステップ1 - SnowflakeマーケットプレイスからSafeGraph POIデータを取得する</h2>
+<ul>
+<li>Snowflakeアカウントにログインします。</li>
+<li>以下の手順とビデオに従って、SnowflakeアカウントからSafeGraphマーケットプレイスのリストにアクセスします。<ul>
+<li>ホームアイコンをクリック</li>
+<li>マーケットプレイスをクリック</li>
+<li>frostbyteを検索</li>
+<li>「SafeGraph: frostbyte」をクリック</li>
+<li>「Get（取得）」をクリック</li>
+<li>データベースの名称をFROSTBYTE_SAFEGRAPH（すべて大文字）に変更</li>
+<li>追加ロールへの付与 -&gt; 「PUBLIC（公開）」</li>
+</ul>
+</li>
+</ul>
+<p><img src="img/991d128c82488de9.gif"> &gt; SafeGraphは、世界中のあらゆる場所に関するデータを提供するグローバルな地理空間データ会社です。Esri、Tripadvisor、Mapbox、Syscoなどの顧客は、SafeGraphのデータを使用して、自社の顧客をより正確に把握し、新しい製品を生み出し、より的確な経営判断を行っています。 </p>
+<h2 is-upgraded>ステップ2 - オブジェクトの作成、データのロード、データの結合を行う</h2>
+<ul>
+<li>ワークシートに移動し、右上の「+」をクリックして新しいワークシートを作成し、「SQLワークシート」を選択します。</li>
+<li>ワークシートに以下のSQLを貼り付けて実行します。このSQLは、Snowflakeオブジェクト（ウェアハウス、データベース、スキーマ）を作成し、S3からシフト売上データを取り込み、シフト売上とSafeGraphロケーションデータを結合します。</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+
+-- create a development database for data science work
+CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_dev;
+
+-- create raw, harmonized, and analytics schemas
+-- raw zone for data ingestion
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.raw;
+-- harmonized zone for data processing
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.harmonized;
+-- analytics zone for development
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.analytics;
+
+-- create csv file format
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_dev.raw.csv_ff 
+type = &#39;csv&#39;;
+
+-- create an external stage pointing to S3
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes_dev.raw.s3load
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39;
+url = &#39;s3://sfquickstarts/frostbyte_tastybytes/&#39;
+file_format = frostbyte_tasty_bytes_dev.raw.csv_ff;
+
+-- define shift sales table
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales(
+	location_id NUMBER(19,0),
+	city VARCHAR(16777216),
+	date DATE,
+	shift_sales FLOAT,
+	shift VARCHAR(2),
+	month NUMBER(2,0),
+	day_of_week NUMBER(2,0),
+	city_population NUMBER(38,0)
+);
+
+-- create and use a compute warehouse
+CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60;
+USE WAREHOUSE tasty_dsci_wh;
+
+-- ingest from S3 into the shift sales table
+COPY INTO frostbyte_tasty_bytes_dev.raw.shift_sales
+FROM @frostbyte_tasty_bytes_dev.raw.s3load/analytics/shift_sales/;
+
+-- join in SafeGraph data
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.harmonized.shift_sales
+  AS
+SELECT
+    a.location_id,
+    a.city,
+    a.date,
+    a.shift_sales,
+    a.shift,
+    a.month,
+    a.day_of_week,
+    a.city_population,
+    b.latitude,
+    b.longitude
+FROM frostbyte_tasty_bytes_dev.raw.shift_sales a
+JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b
+ON a.location_id = b.location_id;
+
+-- promote the harmonized table to the analytics layer for data science development
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_dev.analytics.shift_sales_v
+  AS
+SELECT * FROM frostbyte_tasty_bytes_dev.harmonized.shift_sales;
+
+-- view shift sales data
+SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowparkによるデータサイエンス" duration="22">
+        <h2 is-upgraded>概要</h2>
+<p>Tasty Bytesは、5年間で前年比25%の売上成長を達成することを目指しています。この目標をサポートし、キッチンカーフリート全体で1日の収益を最大化するため、データサイエンスチームは、所定のシフトで最も高い売上が期待できるロケーションにキッチンカーを誘導するMLモデルを構築する必要があります。</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a>ノートブックは、Snowpark for Pythonを利用した基本的なデータサイエンスワークフローの基本的な機能/関数をカバーしています。</li>
+<li>あなたは、キッチンカーの駐車に最適なロケーションを推奨するモデルをSnowflakeで構築して展開するタスクを任されたTasty Bytesのデータサイエンティストとして、次の手順を実行します。 <ul>
+<li><strong>Snowparkの基礎</strong><ul>
+<li>Snowflakeに接続する</li>
+<li>APIとDataFramesを探索する</li>
+</ul>
+</li>
+<li><strong>データ探索と特徴量エンジニアリング</strong><ul>
+<li>集計関数</li>
+<li>インピュテーション、エンコーディング、トレーニング/テストの分割</li>
+</ul>
+</li>
+<li><strong>モデルのトレーニングと展開</strong><ul>
+<li>ストアドプロシージャでのトレーニング</li>
+<li>伸縮性のあるスケーラビリティ</li>
+<li>モデル推論のためのユーザー定義関数の展開</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ1 - GitHubレポジトリを複製する</h2>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science" target="_blank">GitHubレポジトリ</a>を<a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository" target="_blank">複製します</a>。このレポジトリには、このクイックスタートガイドを正常に完了するために必要なすべてのコードが含まれています。</p>
+<pre><code>$ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science.git
+</code></pre>
+<h2 is-upgraded>ステップ2 - 認証ファイルを更新する</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json" target="_blank"><strong>data_scientist_auth.json</strong></a>ファイルをSnowflakeアカウント認証情報で更新します。Pythonノートブックはこのファイルを使って認証情報にアクセスし、Snowflakeに接続します。<br><img src="img/1a036af60747060d.png"></li>
+</ul>
+<p><code>account</code>パラメータには、<a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">アカウント識別子</a>を使用します。アカウント識別子には、接尾辞snowflakecomputing.comが含まれていないことに注意してください。</p>
+<h2 is-upgraded>ステップ3 - Python環境を作成する</h2>
+<p>この手順ではPython環境の作成に<a href="https://www.anaconda.com/" target="_blank">Anaconda</a>を使用します。<em>ただし、Python 3.8では、</em><a href="https://virtualenv.pypa.io/en/latest/" target="_blank"><em>virtualenv</em></a><em>などの他のPython環境を使用することもできます。</em></p>
+<p><strong>Apple M1</strong>：Apple M1チップ上でSnowpark Pythonを実行すると、pyOpenSSLでのメモリ処理に起因する既知の問題があります。この問題を解決するには、<a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html" target="_blank"><strong>Snowparkのドキュメント</strong></a>を参照してください。<br></p>
+<p><strong>ターミナルから以下を実行してPython環境を構築し、Jupyter Notebookを起動します。<br></strong> i. 「py38_env_tb1」（tb1 = Tasty Bytes 1）というPython 3.8環境を、Snowflake Anacondaチャネルのパッケージ（とバージョン）を使用して作成します。</p>
+<pre><code>conda create --name py38_env_tb1 --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.8
+</code></pre>
+<p>ii. py38_env_tb1環境をアクティブ化します。</p>
+<pre><code>conda activate py38_env_tb1
+</code></pre>
+<p>iii. Snowpark Pythonパッケージと、Snowflake AnacondaチャネルからSnowflakeに展開される関数で使用されるパッケージをインストールします。</p>
+<pre><code>conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python numpy pandas scikit-learn joblib cachetools
+</code></pre>
+<p>v. Python環境でのみ使用されるパッケージ（UI、視覚化など）をインストールします。</p>
+<pre><code>pip install streamlit matplotlib plotly notebook
+</code></pre>
+<p>vi. 複製したGitHubレポジトリに移動し、Jupyter Notebookを起動します。</p>
+<pre><code>jupyter notebook
+</code></pre>
+<h2 is-upgraded>ステップ4 - Jupyter Notebookを実行する</h2>
+<ul>
+<li>Jupyter Notebookで<a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a>のセルを開いて実行します。<img src="img/ba2d6637d153b57d.png"></li>
+</ul>
+<h2 is-upgraded>トラブルシューティング</h2>
+<ul>
+<li>PyArrow関連の問題：Snowparkをインストールする前に<code>pyarrow</code>をアンインストールしてください。</li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/environment.yml" target="_blank">environment.yml</a>ファイルから代替のPython環境を構築します。<br>i. ターミナルで、複製したGitHubレポジトリに移動し、環境を構築します。<pre><code>conda env create -f environment.yml
+</code></pre>
+ii . 環境をアクティブ化します。<pre><code>conda activate py38_env_tb1
+</code></pre>
+iii.Jupyter Notebookを起動します。<pre><code>jupyter notebook
+</code></pre>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlitによるアプリケーションプロトタイプ" duration="6">
+        <h2 is-upgraded>概要</h2>
+<p>今後のシフトの各ロケーションのシフト売上を予測するモデルを展開しました。次に、キッチンカーの運転手がこの予測を使用して駐車場所を選ぶ方法を見つけます。キッチンカーの運転手がシフト売上予測モデルをどのように操作するかをエンジニアリングチームに示すために、アプリケーションのプロトタイプを作成する必要があります。このアプリケーションでは、ユーザーが都市とシフト時間（午前または午後）を選択でき、その選択に応じて地図上にロケーションごとの売上予測が表示されます。</p>
+<h2 is-upgraded>ステップ1 - 前提条件を確認する</h2>
+<ul>
+<li>Streamlitアプリは、ステップ3のPython環境、認証ファイル、ユーザー定義関数を利用します。次の要件を確認します。 <ul>
+<li>Python 3.8環境のpy38_env_tb1が作成されている。</li>
+<li>data_scientist_auth.jsonファイルが入力されている。</li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb" target="_blank">tasty_bytes_snowpark_101.ipynb</a>ノートブックが実行されている。</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>ステップ2 - オプション：コードを確認する</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py" target="_blank">streamlit_app.py</a>を開きます。</li>
+<li>Snowflakeへの接続が行われる場所を特定します。</li>
+<li>シフト売上予測を迅速に提供するために、モデル推論のユーザー定義関数が呼び出される場所を特定します。</li>
+</ul>
+<h2 is-upgraded>ステップ3 - アプリを起動する</h2>
+<ul>
+<li>ターミナルで、複製したGitHubレポジトリに移動し、py38_env_tb1 Python環境をアクティ化します。 <pre><code>conda activate py38_env_tb1
+</code></pre>
+</li>
+<li>アプリケーションを起動します。 <pre><code>streamlit run streamlit_app.py
+</code></pre>
+</li>
+<li>ドロップダウンメニューから都市を選択します。更新された推奨が表示されます。<img src="img/f4a6619631509619.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="クリーンアップ" duration="5">
+        <h2 is-upgraded>このクイックスタートで作成されるオブジェクトの概要</h2>
+<p><strong>Snowflake：</strong></p>
+<ul>
+<li><strong>ウェアハウス：</strong> tasty_dsci_wh</li>
+<li><strong>データベース：</strong> frostbyte_tasty_bytes_dev <ul>
+<li><strong>スキーマ：未加工</strong><ul>
+<li><strong>テーブル：</strong> frostbyte_tasty_bytes_dev.raw.shift_sales</li>
+<li><strong>ステージ：</strong> frostbyte_tasty_bytes_dev.raw.s3load</li>
+<li><strong>ファイル形式：</strong> frostbyte_tasty_bytes_dev.raw.csv_ff</li>
+</ul>
+</li>
+<li><strong>スキーマ：</strong> 整合 <ul>
+<li><strong>テーブル：</strong> frostbyte_tasty_bytes_dev.harmonized.shift_sales</li>
+</ul>
+</li>
+<li><strong>スキーマ：</strong> 分析 <ul>
+<li><strong>テーブル：</strong><ul>
+<li>frostbyte_tasty_bytes_dev.analytics.shift_sales_train</li>
+<li>frostbyte_tasty_bytes_dev.analytics.shift_sales_test</li>
+</ul>
+</li>
+<li><strong>ビュー：</strong> frostbyte_tasty_bytes_dev.analytics.shift_sales_v</li>
+<li><strong>ステージ：</strong> frostbyte_tasty_bytes_dev.analytics.model_stage</li>
+<li><strong>プロシージャ：</strong> sproc_train_linreg</li>
+<li><strong>関数：</strong> udf_linreg_predict_location_sales</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>共有データベース：</strong> frostbyte_safegraph <ul>
+<li><strong>テーブル：</strong> frostbyte_safegraph.public.frostbyte_tb_safegraph_s</li>
+</ul>
+</li>
+</ul>
+<p><strong>Anaconda：</strong></p>
+<ul>
+<li>py38_env_tb1 Python環境</li>
+</ul>
+<p><strong>GitHub：</strong></p>
+<ul>
+<li>複製したレポジトリ：<a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/" target="_blank">sfguide-tasty-bytes-snowpark-101-for-data-science</a></li>
+</ul>
+<h2 is-upgraded>ステップ1 - Snowflakeオブジェクトを削除する</h2>
+<ul>
+<li>ワークシートに移動し、右上の「+」をクリックして新しいワークシートを作成し、「SQLワークシート」を選択します。</li>
+<li>次のSQLをワークシートに貼り付けて実行し、クイックスタートで作成したSnowflakeオブジェクトを削除します。</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+DROP PROCEDURE IF EXISTS frostbyte_tasty_bytes.analytics.sproc_train_linreg(varchar, array, varchar, varchar);
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.udf_linreg_predict_location_sales(float, float, float, float, float, float, float, float);
+DROP DATABASE IF EXISTS frostbyte_tasty_bytes_dev;
+DROP DATABASE IF EXISTS frostbyte_safegraph;
+DROP WAREHOUSE IF EXISTS tasty_dsci_wh;
+</code></pre>
+<h2 is-upgraded>ステップ2 - Python環境を削除する</h2>
+<ul>
+<li>ターミナルで次を実行します。</li>
+</ul>
+<pre><code>conda remove --name py38_env_tb1 --all
+</code></pre>
+<h2 is-upgraded>ステップ3 - 複製したGitHubレポジトリを削除する</h2>
+<ul>
+<li>GitHubレポジトリを複製したディレクトリのターミナルで、次を実行します。</li>
+</ul>
+<pre><code>rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="まとめと次のステップ" duration="1">
+        <h2 is-upgraded>まとめ</h2>
+<p><strong>お疲れ様でした。</strong> Tasty Bytes - データサイエンスのためのSnowpark入門クイックスタートを無事完了しました。</p>
+<p>これにより、次のことができるようになりました。</p>
+<ul>
+<li>SnowflakeマーケットプレイスからSafeGraph POIデータを取得する</li>
+<li>Snowparkでデータを探索し、特徴量エンジニアリングを実行する</li>
+<li>ストアドプロシージャを使用してSnowflakeでモデルをトレーニングする</li>
+<li>モデルをユーザー定義関数に展開する</li>
+<li>Streamlitアプリケーションを構築し、ロケーションごとのシフト売上予測を迅速に提供する</li>
+</ul>
+<h2 is-upgraded>次のステップ</h2>
+<p>引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なTasty Bytes - クイックスタートをご覧ください。</p>
+<ul>
+<li><h2 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3" target="_blank">Powered by Tasty Bytes - クイックスタート目次</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building Geospatial Multi-Layer Apps with Snowflake and Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="building-geospatial-mult-layer-apps-with-snowflake-and-streamlit"
+                  title="Building Geospatial Multi-Layer Apps with Snowflake and Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Welcome to the <strong>Building Geospatial Multi-Lay Apps with Snowflake and Streamlit quickstart</strong>.  Today you will learn how to analyse and transform <a href="https://www.ordnancesurvey.co.uk/blog/what-is-spatial-data" target="_blank">geospatial</a> data in Snowflake.  You will be using <strong>Ordnance Survey</strong> open datasets available on the marketplace as well as the worldwide open overture buildings dataset provided by <strong>CARTO</strong>.</p>
+<p class="image-container"><img style="width: 180.00px" src="img/75742135b742906f.png">       <img style="width: 140.00px" src="img/6b9e179298b70d70.png">       <img style="width: 65.00px" src="img/5c7d5f67598a6a1b.png"></p>
+<p>This is a progressive learning experience from viewing points on a mapk right through to building a multi layer app - which pulls together buildings with unique property reference numbers, the road network and urban extents.</p>
+<p>You will be covering:</p>
+<ul>
+<li>Geospatial datatypes and formats</li>
+<li>Points, Linestrings and Polygons</li>
+<li>H3</li>
+<li>Spatial Joins and Calculations</li>
+<li>Visualising the results using <strong>Pydeck</strong></li>
+<li>Search Optimisation</li>
+<li>Building a multi-layer app - which pulls together everything you have learned.</li>
+<li>Using what you have learnt to create a <strong>solar power what if scenario calculator</strong>.  This combines Roofing data and solar elevation data supplied by the <strong>Met Office</strong></li>
+</ul>
+<p>Thoughout the experience, you will demonstrate the concepts with <strong>Snowflake Notebooks</strong> and Streamlit.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/665dfe6eb8b8d6cc.png"></p>
+<h2 is-upgraded>Structure of the session</h2>
+<p>The Lab consists of three notebooks and two Streamlit applications.</p>
+<ul>
+<li>Completion of the (<strong>ANALYSE_LOCATION_DATA</strong>) notebook.This is an end-to-end tour on how location data works with Snowflake</li>
+<li>Creating a Streamlit app <strong>ROAD_NETWORK</strong>This is an example Streamlit application which brings together the different techniques learnt in notebook 1.</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>An understanding of geospatial data types and formats - and how this works in <strong>Snowflake</strong></li>
+<li>An understanding of Snowflakes built in <strong>H3</strong> capabilities</li>
+<li>Spatial Joins</li>
+<li>Geospatial Calculations</li>
+<li>Geospatial Filtering</li>
+<li>Using Search Optimisation to speed up geospatial queries</li>
+<li>Visualing points, linestrings and polygons on a multi layered map using <strong>Pydeck</strong> - all within a Streamlt application</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A streamlit application to visualise the UK road network together with buildings - which uses Ordnance survey road network data and the Carto Overture maps buildings dataset.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake Account. Sign up <a href="https://signup.snowflake.com/" target="_blank">here</a> for a free 30 day trial.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Initial Setup" duration="2">
+        <p>Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.</p>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE IF NOT EXISTS ANALYSE_LOCATION_DATA;
+
+CREATE WAREHOUSE IF NOT EXISTS LOCATION_ANALYTICS;
+
+CREATE SCHEMA IF NOT EXISTS NOTEBOOK;
+CREATE SCHEMA IF NOT EXISTS STREAMLIT;
+CREATE SCHEMA IF NOT EXISTS DEFAULT_SCHEMA;
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = &#39;ANY_REGION&#39;;
+
+CREATE OR REPLACE WAREHOUSE XX_LARGE_HEAVY_LIFT
+WITH 
+  WAREHOUSE_SIZE = &#39;2X-LARGE&#39;
+  AUTO_SUSPEND = 60
+  AUTO_RESUME = TRUE
+  INITIALLY_SUSPENDED = TRUE;
+
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Marketplace" duration="10">
+        <ul>
+<li>From the home page Navigate to <strong>Data Products » Marketplace</strong></li>
+</ul>
+<h2 is-upgraded>Ordnance Survey Datasets</h2>
+<ul>
+<li>In the search box provided, search for the following datasets:<ul>
+<li>Ordnance Survey - Urban Extents for Cities, Towns and Vilages</li>
+<li>Ordnance Survey - Postcodes, Place Names and Road Names</li>
+<li>Ordnance Survey - Road Network Great Britain - Open Roads</li>
+<li>Ordnance Survey - Unique Property Reference Numbers - Great Britain: Open UPRN</li>
+<li>Ordnance Survey - GB: GB: OS National Geographic Database</li>
+</ul>
+   <img style="width: 380.00px" src="img/cc2b02b7e10c8d4.png"><h2 is-upgraded>Met Office Dataset</h2>
+<ul>
+<li>Search for Met office and install the following dataset:</li>
+<li>Postcode Sector Weather Forecasts</li>
+</ul>
+<img style="width: 380.00px" src="img/4002abbc9481af76.png"></li>
+<li>For each dataset found, press <strong>Get</strong> to get the data.</li>
+</ul>
+<p class="image-container"><img alt="alt text" src="img/1b971aa2243bc06b.png"></p>
+<ul>
+<li>Follow the on screen prompts to install each dataset.</li>
+</ul>
+<h2 is-upgraded>Carto Datasets - Obtain the following datasets from the marketplace</h2>
+<p>This dataset provides sample building polygons all over the world.</p>
+<ul>
+<li>Carto - Overture Maps Buildings</li>
+</ul>
+<p class="image-container"><img alt="alt text" src="img/1f2b0e1b4140a456.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Notebook Walkthrough" duration="45">
+        <p>Are you ready to start learning about location data in Snowflake?</p>
+<p>This tutorial will take you through how you can use location data to perform spatial calculations, joins, and visualise the data using the popular <strong>Pydeck</strong> python package.  We will be using the freely available datasets which you have now installed to step through examples of how geospatial data can be handled.</p>
+<ul>
+<li>Click <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/ed83911899d64a123ebf0180e7e9dae407b18c06/Notebook/Analyse_Location_Data.ipynb" target="_blank">here</a> to download notebook</li>
+<li>From the home page, navigate to <strong>Projects &gt; Notebooks</strong></li>
+<li>Import the notebook as a new <strong>Snowflake Notebook</strong></li>
+</ul>
+<p class="image-container"><img alt="import" src="img/ce84ef59f976e699.png"></p>
+<ul>
+<li>Choose <strong>LOCATION_ANALYTICS</strong> as the database and <strong>Notebooks</strong> as the schema</li>
+<li>Choose <strong>LOCATION_ANALYTICS</strong> as the query warehouse</li>
+<li>Name the notebook <strong>ANALYSE_LOCATION_DATA</strong></li>
+<li>Before you start the notebook, click on <strong>packages</strong> and import the <strong>Pydeck</strong> package</li>
+<li>Press <strong>Start</strong> to initialise the notebook and follow the instructions within the notebook.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="The Streamlit Road Network Example" duration="10">
+        <p>This app gives you an example of how you can bring all these datasets together to form a multi layered mapping visual.</p>
+<ul>
+<li>Navigate to <strong>Projects &gt; Streamlit</strong></li>
+<li>Create a new streamlit application and call the application <strong>URBAN_PLANNING</strong> inside the <strong>LOCATION_ANALYTICS</strong> database and the <strong>STREAMLITS</strong> schema</li>
+<li>Delete all sample code and import the <strong>pydeck</strong> package by clicking on <strong>packages</strong> on the top left hand corner of the screen.</li>
+<li>copy and paste the following code into the <strong>Streamlit</strong> canvas from <a href="https://https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/towns_with_roads.pygithub.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/main/Streamlit/towns_with_roads.py" target="_blank">here</a></li>
+</ul>
+<p>You will add a selection of supporting files for the app.  In this example, you will import a logo, a style sheet and create a config.toml file.  All of which provide additional styling to the app.</p>
+<p>Download and the following <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/extra.css" target="_blank">Style Sheet</a> and add to the app directory.  The app directory is located in the side pane under the <strong>Files</strong> tab.</p>
+<p>To add a file, you will need to click on the <strong>+</strong> and select <strong>upload from local</strong>.</p>
+<p>Browse to the downloaded file and <strong>upload</strong>.</p>
+<p>Download the following <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/snowflake_logo_color_rgb.svg" target="_blank">Logo</a> and add to the app directory in the same way as previously.</p>
+<ul>
+<li>Click on the <strong>+</strong> and select Create new file and call it <strong>.streamlit/config.toml</strong><img style="width: 400.00px" src="img/7faa02f1ae443eff.png"></li>
+<li>Navigate to view the content of the newly created empty file, and copy and paste the content from the following file - <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/config.toml" target="_blank">config.toml</a></li>
+</ul>
+<p class="image-container"><img style="width: 800.00px" src="img/a8b32c6708ed989e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Slopey Roofs - Solar Powering our Buildings" duration="10">
+        <p>The following notebook will leverage building data from the UK Nationall Geographic database.  You will combine this with historic solar elevation data in order to determine what solar power could be generated from these buildings.</p>
+<ul>
+<li>Click <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/1e34125503e6212d004d564a95eb181afff079f8/Notebook/SLOPEY_ROOFS.ipynb" target="_blank">here</a> to download notebook</li>
+<li>From the home page, navigate to <strong>Projects &gt; Notebooks</strong></li>
+<li>Import the notebook as a new <strong>Snowflake Notebook</strong></li>
+<li>Select <strong>ANALYSE_LOCATION_DATA</strong> as the database and <strong>STREAMLIT</strong> as the schema.</li>
+<li>Select <strong>LOCATION_ANALYTICS</strong> as the compute</li>
+<li>Press <strong>Create</strong></li>
+<li>Before you start the notebook, click on <strong>packages</strong> and import the <strong>Pydeck</strong> package</li>
+<li>Press <strong>Start</strong> to initialise the notebook and follow the instructions within the notebook.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Solar Powered Insights" duration="10">
+        <p><img style="width: 800.00px" src="img/a6c4c52795098b91.png"> The following streamlit will allow you to visualise the buildings within any urban extent that has available sample building data to understand the potential solar radiation. </p>
+<ul>
+<li>Navigate to <strong>Projects &gt; Streamlit</strong></li>
+<li>Create a new streamlit application and call the application <strong>SOLAR_POWER_INSIGHTS</strong> inside the <strong>LOCATION_ANALYTICS</strong> database and the <strong>STREAMLITS</strong> schema</li>
+<li>Select <strong>LOCATION_ANALYTICS</strong> as the application warehouse.</li>
+<li>Delete all sample code and import the <strong>pydeck</strong> package by clicking on <strong>packages</strong> on the top left hand corner of the screen.</li>
+<li>Press <strong>Create</strong></li>
+<li>Copy and paste the following code into the <strong>Streamlit</strong> canvas from <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/1e34125503e6212d004d564a95eb181afff079f8/Streamlit/solar_power_insights/slopey_roofs.py" target="_blank">here</a></li>
+<li>Download and the following <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/extra.css" target="_blank">Style Sheet</a> and add to the app directory.</li>
+</ul>
+<p>Download the following <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/snowflake_logo_color_rgb.svg" target="_blank">Logo</a> and add to the app directory</p>
+<ul>
+<li>Create new file and call it <strong>.streamlit/config.toml</strong><br><img style="width: 400.00px" src="img/7faa02f1ae443eff.png"></li>
+<li>Navigate to view the content of the newly created empty file, and copy and paste the content from the following file - <a href="https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml" target="_blank">config.toml</a></li>
+</ul>
+<p>Run the app</p>
+<p>You will be able to select an urban area which will give you summary details as well as the buildings information.  Each building is color coded based on the level of potential energy efficiency.</p>
+<p>the side bar will give you more information about the buildings and weather in the selection.</p>
+<p>You will note that when you <strong>Run Cortex</strong> it leverages the Anthropic LLM which gives you written analysis about the building with the most potential.</p>
+<p class="image-container"><img style="width: 400.00px" src="img/6464eedbef8e63c5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations on completing the <strong>Building Geospatial Multi-Layer Apps with Snowflake and Streamlit</strong> Quickstart! Throughout this session, you&#39;ve explored how Snowflake can be used to analyze and transform geospatial data, combining multiple datasets to generate valuable insights.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li><strong>Fundamentals of Geospatial Analysis in Snowflake<br></strong> You started by learning how to work with location data in Snowflake, visualizing points on a map and understanding spatial relationships.</li>
+<li><strong>Building a Multi-Layer Application<br></strong> Using Streamlit, you explored how to bring together different layers of geospatial information into an interactive application.</li>
+<li>You have applied the above techniques to generate a <strong>solar panel insights app</strong></li>
+</ul>
+<h2 is-upgraded>Next Steps</h2>
+<p>With this foundational knowledge, you can extend your analyses by:</p>
+<ul>
+<li>Integrating additional external datasets, such as demographic or economic data, to enhance decision-making.</li>
+<li>Experimenting with different visualization techniques to improve data storytelling.</li>
+<li>Automating geospatial data processing with Snowpark and external APIs.</li>
+</ul>
+<p>We hope this hands-on lab has provided you with the confidence and skills to apply geospatial analytics in your own projects. <strong>Happy analyzing!</strong> 🚀</p>
+<h2 is-upgraded>Related Resources</h2>
+<h3 is-upgraded>Source code</h3>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data" target="_blank">Source Code on Github</a></li>
+</ul>
+<h3 is-upgraded>Further Related Material</h3>
+<ul>
+<li><a href="https://docs.os.uk" target="_blank">Ordnance Survey Documenation</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions-geospatial" target="_blank">Geospatial Functions</a></li>
+<li><a href="https://h3geo.org/docs/" target="_blank">H3 Indexing</a></li>
+<li><a href="https://streamlit.io/" target="_blank">Streamlit</a></li>
+<li><a href="https://deckgl.readthedocs.io/en/latest/index.html#" target="_blank">Pydeck</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1" target="_blank">Using Cortex and Streamlit With Geospatial Data</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator" target="_blank">Route Plan Optimisation Simulator</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0" target="_blank">Getting started with Geospatial AI and ML using Snowflake Cortex</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

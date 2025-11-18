@@ -1,0 +1,429 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started With External Functions on AWS</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_external_functions_aws"
+                  title="Getting Started With External Functions on AWS"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Snowflake&#39;s external functions feature enables you to create SQL functions that securely invoke externally implemented HTTPS endpoints. This means your functions can be implemented in any language and use any libraries. Using your functions with your data in Snowflake gives you quite a few options for processing your data. Using external functions, you can easily extend your data pipelines by calling out to external services, third-party libraries, or even your own custom logic, enabling exciting new use cases.</p>
+<p>This tutorial will walk you through a use-case of translating messages in a Snowflake table from English to Italian using a Snowflake External Function on AWS.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Some familiarity with AWS</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>how to create a Lambda Function on AWS</li>
+<li>how to create an IAM role for Snowflake use</li>
+<li>how to create and secure an AWS API Gateway</li>
+<li>how to create an API Integration in Snowflake</li>
+<li>how to create and call an external function in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>An account with AWS with the ability to create roles via IAM, Lambda functions, and an API Gateway endpoint.</li>
+<li>A Snowflake account in which you have <code>ACCOUNTADMIN</code> privileges or a role with the <code>CREATE INTEGRATION</code> privilege.</li>
+</ul>
+<p>As you progress through the tutorial, you&#39;ll want to record the following information as you acquire them, so copy this list to a text editor:</p>
+<ul>
+<li>Cloud Platform (IAM) Account Id:</li>
+<li>Lambda Function Name:</li>
+<li>New IAM Role Name:</li>
+<li>Cloud Platform (IAM) Role ARN:</li>
+<li>Proxy Service Resource Name:</li>
+<li>Resource Invocation URL:</li>
+<li>Method Request ARN:</li>
+<li>API_AWS_IAM_USER_ARN:</li>
+<li>API_AWS_EXTERNAL_ID:</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An example of using external functions to call an AWS Translate library to translate messages in Snowflake for English to Italian.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Lambda Function on AWS" duration="10">
+        <p>First, let&#39;s create a remote service implemented as a Python function executing in AWS Lambda. We&#39;ll be using a function written in Python that invokes the Amazon Translate API provided by Boto AWS SDK to return the Italian translation for a given input text string.</p>
+<p>It accepts data in the same format that Snowflake sends and returns data in the same format that Snowflake reads.</p>
+<p>First, you&#39;ll need to log in to <a href="https://aws.amazon.com/console/" target="_blank">AWS Management Console</a>. The first piece of information you&#39;ll need to record is your cloud platform account ID.</p>
+<p>Follow these steps to grab your ID:</p>
+<ol type="1">
+<li>Go to your user in the upper right corner of AWS and click the drop-down and select My Account.</li>
+<li>Under Account Settings, you&#39;ll see &#34;Account ID,&#34; note this above in&#34; Cloud Platform (IAM) Account Id.&#34;</li>
+</ol>
+<p class="image-container"><img alt="Snowflake_Account.png" src="img/37852a056972df8f.png"></p>
+<p>Once you have that written down, you need to create an AWS Lambda. To begin, go to the AWS main console,  then search and select Lambda.</p>
+<p class="image-container"><img alt="Snowflake_Lambda.png" src="img/85455e3c37b08169.png"></p>
+<p>Now that you&#39;re on the AWS Lambda Function page click the &#34;Create Function&#34; button on the top right corner.</p>
+<p class="image-container"><img alt="Snowflake_Lambda_Functions.png" src="img/1dae7a9fd8ff839d.png"></p>
+<p>You should create the function with the following selected parameters:</p>
+<ul>
+<li>Select the default option: &#34;Author from scratch&#34;</li>
+<li>Give your Lambda a name. Record this name in the template on the line labeled &#34;Lambda Function Name.&#34; We&#39;ll be using the name &#34;translate_eng_italian&#34;.</li>
+<li>Select the language to use. For this example, choose Python 3.8.</li>
+<li>Expand &#34;Choose or create an execution role&#34; and select &#34;Create a new role with basic Lambda permissions.&#34;</li>
+</ul>
+<aside class="warning"><p>Note that the role you are creating here is separate from both your cloud account role and your Snowflake role(s).</p>
+</aside>
+<p class="image-container"><img alt="Snowflake_Create_Function.png" src="img/50094a8ece7a433.png"></p>
+<p>After setting those parameters, click &#34;Create Function.&#34; Creating a function will direct you to the following view:</p>
+<p class="image-container"><img alt="Snowflake_Function_Code.png" src="img/82ac171edb280d8e.png"></p>
+<p>Within the folder named after your function, you should see a <code>lambda_function.py</code> file. Clicking on the file will open an editor. This is where you can write the code for your lambda function. Delete any existing code and paste the following python code into your lambda body:</p>
+<pre><code language="language-python" class="language-python">import json
+import boto3
+
+translate = boto3.client(&#39;translate&#39;)
+
+def lambda_handler(event, context):
+
+    # 200 is the HTTP status code for &#34;ok&#34;.
+    status_code = 200
+    
+    # The return value will contain an array of arrays (one inner array per input row).
+    translated = [ ]
+    
+    try:
+        # From the input parameter named &#34;event&#34;, get the body, which contains
+        # the input rows.
+        event_body = event[&#34;body&#34;]
+    
+        # Convert the input from a JSON string into a JSON object.
+        payload = json.loads(event_body)
+        
+        # This is basically an array of arrays. The inner array contains the
+        # row number, and a value for each parameter passed to the function.
+        rows = payload[&#34;data&#34;]
+    
+        # For each input row in the JSON object...
+        for row in rows:
+            translated_text = translate.translate_text(
+            Text = row[1],
+            SourceLanguageCode = &#39;en&#39;,
+            TargetLanguageCode = &#39;it&#39;)[&#34;TranslatedText&#34;]
+            translated.append([row[0], translated_text])
+    
+        json_compatible_string_to_return = json.dumps({&#34;data&#34; : translated})
+    
+    except Exception as err:
+        # 400 implies some type of error.
+        status_code = 400
+        # Tell caller what this function could not handle.
+        json_compatible_string_to_return = event_body
+    
+    # Return the return value and HTTP status code.
+    return {
+        &#39;statusCode&#39;: status_code,
+        &#39;body&#39;: json_compatible_string_to_return
+    }
+</code></pre>
+<p>Once you&#39;ve done so, simply click &#34;Deploy.&#34;</p>
+<p>The next step is to attach the required policies that will allow your Lambda Functions to call Amazon Translate.</p>
+<p>From the &#34;Permissions&#34; tab, select the displayed execution role. This will open a new IAM tab.</p>
+<p class="image-container"><img alt="Snowflake_Execution_Role.png" src="img/fff28fa720eaf36c.png"></p>
+<p>From the IAM tab, click on &#34;Attach Policies.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Role_Summary.png" src="img/3c97ac8224c6b28.png"></p>
+<p>You&#39;ll be directed to a searchable list. Search for and select the &#34;TranslateFullAccess&#34; policy. Then, attach it by clicking &#34;Attach Policy.&#34; This should successfully add the policy to the Lambda role.</p>
+<p class="image-container"><img alt="Snowflake_Permissions.png" src="img/45d3ca860dddc1d5.png"></p>
+<p>Now let&#39;s test your function!</p>
+<p>To do so, first, go back to the Configuration tab in your Lambda console. Click the &#34;Test&#34; drop-down and select &#34;Configure test events&#34;.</p>
+<p class="image-container"><img alt="Snowflake_Function_Test.png" src="img/82d7e71254f38394.png"></p>
+<p>You&#39;ll need to set up the parameters as such:</p>
+<ul>
+<li>Leave the &#34;event template&#34; as &#34;hello-world&#34;.</li>
+<li>Give it a name, for example: &#34;test&#34;.</li>
+<li>Replace any default data with the following test data.</li>
+</ul>
+<pre><code language="language-python" class="language-python">{
+  &#34;body&#34;: &#34;{ \&#34;data\&#34;: [ [ 0,  \&#34;hello\&#34; ], [ 1, \&#34;how are you\&#34; ] ] }&#34;
+}
+</code></pre>
+<p class="image-container"><img alt="Snowflake_Configure_Test.png" src="img/75ae8fa514b3dbd8.png"></p>
+<p>Then click &#34;create&#34;. Once you&#39;re back in the function console, click &#34;Test&#34;. You should get results like this:</p>
+<p class="image-container"><img alt="Snowflake_Test_Result.png" src="img/38056755fe942784.png"></p>
+<p>If everything has worked correctly, you now have an AWS Lambda function that you can use as the remote service for your external function!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating an IAM role for Snowflake use" duration="5">
+        <p>Now let&#39;s begin integrating it with Snowflake. First, go to the AWS main console. Search for and select IAM.</p>
+<p class="image-container"><img alt="Snowflake_IAM.png" src="img/8913dafd8b4faa31.png"></p>
+<p>Then, click &#34;Roles&#34; on the left &amp; click &#34;Create role.&#34;</p>
+<p class="image-container"><img alt="Snowflake_IAM_Roles.png" src="img/a793b4c8c110cf55.png"></p>
+<p>From the &#34;Create role&#34; view, set the following parameters:</p>
+<ul>
+<li>Choose &#34;Another AWS account&#34; when asked to select the type of trusted entity.</li>
+<li>Reference your template to past your Cloud Platform Account ID into the &#34;Account ID&#34; field under &#34;Specify accounts that can use this role.&#34;</li>
+</ul>
+<p class="image-container"><img alt="Snowflake_Create_Role.png" src="img/f7d934386f5a1e85.png"></p>
+<p>From there, click through the next steps of &#34;Permissions&#34; and Tags&#34; without making any modifications.</p>
+<p>Once you&#39;re on the &#34;Review&#34; view, enter a role name. We used the name &#34;SFLambdaIAMRole.&#34; Make a note of this name in your template as &#34;New IAM Role Name.&#34; Then, click &#34;create role.&#34;</p>
+<p class="image-container"><img alt="Snowflake_IAM_Role_Name.png" src="img/bf43fe9bf0217f06.png"></p>
+<p>Now that y you&#39;ve created the role, you&#39;ll want to record the ARN. Click on the role and record the ARN as &#34;Cloud Platform (IAM) Role ARN&#34; as found on your template.</p>
+<p class="image-container"><img alt="Snowflake_Role_ARN.png" src="img/dcc6a3526d8dd6ad.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating an AWS API Gateway" duration="10">
+        <p>Now let&#39;s create an AWS API Gateway for our function. From the main AWS console, search for and select &#34;API Gateway.&#34;</p>
+<p class="image-container"><img alt="Snowflake_API_Gateway.png" src="img/f84813a17e7aef06.png"></p>
+<p>Next, you&#39;ll want to click the &#34;Create API&#34; button in the upper right corner.</p>
+<p class="image-container"><img alt="Snowflake_Create_API.png" src="img/35081acdbb34df2a.png"></p>
+<p>That button will take you to a view where you will choose an API type. You&#39;ll want to select &#34;REST API&#34; and click on its &#34;Build&#34; button.</p>
+<p class="image-container"><img alt="Snowflake_API_Type.png" src="img/c102874c23aceff9.png"></p>
+<p>From this build page, set the parameters like so:</p>
+<ul>
+<li>Select &#34;New API.&#34;</li>
+<li>Enter a name. We used &#34;TranslateAPI.&#34;</li>
+<li>Make the endpoint type &#34;Regional.&#34;</li>
+</ul>
+<p>Once you do so, click &#34;Create API.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Create_New_API.png" src="img/c956804f766e24fa.png"></p>
+<p>You will now be on a page that says &#34;/Methods&#34; at the top. From the &#34;Actions&#34; drop-down, select &#34;Create Resource.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Create_Resource.png" src="img/a8fc98d95d9d16f1.png"></p>
+<p>From the &#34;New Child Resource&#34; view, enter a name for the resource. Once you do so, record that name in your template under &#34;Proxy Server Resource Name.&#34; Then, click &#34;Create Resource.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Child_Resource.png" src="img/fac77df3a7ec1354.png"></p>
+<p>You should now be on a page where it says &#34;/ Methods.&#34; Click the &#34;Actions&#34; drop-down and select &#34;Create Method.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Create_Method.png" src="img/1a5a485af34eb520.png"></p>
+<p>From the &#34;Methods&#34; view, select &#34;POST&#34; from the drop-down.</p>
+<p class="image-container"><img alt="Snowflake_POST.png" src="img/76674aafe3ec8ecb.png"></p>
+<p>Click the check box to the right of the word &#34;POST&#34;. Now that you&#39;re in the &#34;POST - setup&#34; view, set the parameters as such:</p>
+<ul>
+<li>The &#34;Integration type&#34; should be &#34;Lambda Function.&#34;</li>
+<li>Click the checkbox &#34;Use Lambda Proxy Integration.&#34;</li>
+<li>In the &#34;Lambda Function&#34; field, paste the Lambda Function Name that you recorded earlier in your template (ours was &#34;translate_eng_italian&#34;)</li>
+</ul>
+<p class="image-container"><img alt="Snowflake_POST_Setup.png" src="img/aa74585c345a33f0.png"></p>
+<p>Make sure to click &#34;Save.&#34; You might get a pop-up saying, &#34;You are about to give API Gateway permission to invoke your Lambda function;&#34; just press &#34;OK.&#34;</p>
+<p>The next step is to deploy the API. Click the Actions drop-down again and select &#34;Deploy API.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Deploy_API.png" src="img/b833bb5c87578c0e.png"></p>
+<p>From the &#34;Deploy API&#34; view, set the parameters as such:</p>
+<ul>
+<li>Select &#34;[New Stage]&#34; in the drop-down for &#34;Deployment stage.&#34;</li>
+<li>Enter a stage name. We used the name &#34;test.&#34;</li>
+</ul>
+<p>Then click the &#34;Deploy&#34; button.</p>
+<p class="image-container"><img alt="Snowflake_Deploy_Button.png" src="img/23e43d65cb266d5a.png"></p>
+<p>You will now be on the page &#34; Stage editor.&#34; Under &#34;Stages,&#34; expand until you see &#34;POST&#34; under your resource name.</p>
+<p class="image-container"><img alt="Snowflake_Stage_Editor.png" src="img/8c627d138ab91dd3.png"></p>
+<p>Click on &#34;POST&#34; and record the &#34;Invoke URL&#34; for the POST request as the &#34;Resource Invocation URL&#34; field in the template.</p>
+<aside class="warning"><p>Make sure that the invocation URL includes the name of the resource; if it doesn&#39;t, you might have clicked on the invocation URL for the stage rather than the resource.</p>
+</aside>
+<p class="image-container"><img alt="Snowflake_Resource_Invocation_URL.png" src="img/fde253fde435af1e.png"></p>
+<p>We are now done creating the API Gateway!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Securing the AWS API Gateway Proxy" duration="5">
+        <p>Now that we have created the API Gateway, we need to secure the API Gateway so that only your Snowflake account can access it.</p>
+<p>In the API Gateway console, go to your API POST method and click on &#34;Method Request.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Method_Request.png" src="img/1f9b15df50b83c66.png"></p>
+<p>Inside the Method Request, click on the pencil symbol next to &#34;Authorization&#34; and choose &#34;AWS_IAM.&#34; Click the checkmark just to the right to save.</p>
+<p class="image-container"><img alt="Snowflake_Method_Request_Auth.png" src="img/382e43b231d23f45.png"></p>
+<p>Then, click on &#34;Method execution.&#34; Find the ARN under &#34;Method Request.&#34; Record it as the &#34;Method Request ARN&#34; in the template.</p>
+<p class="image-container"><img alt="Snowflake_Method_Request_ARN.png" src="img/f0c4fd13ff000e6a.png"></p>
+<p>Next, go to &#34;Resource Policy&#34; from the right panel. You&#39;ll be setting the resource policy for the API Gateway to specify who is authorized to invoke the gateway endpoint. Once there, paste in this resource policy:</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;:
+    [
+        {
+        &#34;Effect&#34;: &#34;Allow&#34;,
+        &#34;Principal&#34;:
+            {
+            &#34;AWS&#34;: &#34;arn:aws:sts::&lt;12-digit-number&gt;:assumed-role/&lt;external_function_role&gt;/snowflake&#34;
+            },
+        &#34;Action&#34;: &#34;execute-api:Invoke&#34;,
+        &#34;Resource&#34;: &#34;arn:aws:execute-api:us-west-2:123456789012:ljkfds890a/*/POST/MyResourceName&#34;
+        }
+    ]
+}
+</code></pre>
+<p>You&#39;ll need to customize a few of the parameters, however:</p>
+<ul>
+<li>Replace the <code>&lt; 12-digit-number ></code> with your 12-digit number, &#34;Cloud Platform (IAM) Account ID.&#34;</li>
+<li>Replace the <code>&lt; external_function_role ></code> with the role name for the Cloud Platform (IAM) Role you created, which you recorded as &#34;New IAM Role Nam.&#34;.</li>
+<li>In the <code>Resource</code> field, replace the resource with your &#34;Method Request ARN.&#34;</li>
+</ul>
+<p>Once you&#39;re done, click &#34;Save.&#34;</p>
+<p class="image-container"><img alt="Snowflake_Method_Request.png" src="img/1f9b15df50b83c66.png"></p>
+<p>With this taken care of, you can securely redeploy the API. Do so by clicking on &#34;API Name,&#34; &#34;Actions,&#34; then &#34;Deploy API.&#34; Select the stage you created earlier and click deploy.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating an API Integration in Snowflake" duration="5">
+        <p>Now let&#39;s begin integrating that API with Snowflake! We&#39;ll be moving over to the Snowflake console, but don&#39;t close out of your AWS console just yet; you&#39;ll need to come back to it later.</p>
+<p>First, open up a Snowflake session, typically a GUI session. You need to use a Snowflake role with <code>ACCOUNTADMIN</code> privileges or a role with the <code>CREATE INTEGRATION</code> privilege. One way to get there is to enter the following:</p>
+<pre><code language="language-sql" class="language-sql">use role has_accountadmin_privileges;
+</code></pre>
+<p>Now that you have the proper privileges, type the <code>CREATE API INTEGRATION</code> command as shown, with a few user-specific edits:</p>
+<pre><code language="language-sql" class="language-sql">create or replace api integration my_aws_api_integration
+  api_provider = aws_api_gateway
+  api_aws_role_arn = &#39;&amp;lt; new_IAM_role_ARN &gt;&#39;
+  api_allowed_prefixes = (&#39;https://&#39;)
+  enabled = true
+;
+</code></pre>
+<p>Edit the command above like so:</p>
+<ul>
+<li>Replace the<code>&lt; cloud_platform_role_ARN ></code> with your Cloud Platform (IAM) Role ARN.</li>
+<li>Replace the <code>api_allowed_prefixes</code> field with your resource invocation URL.</li>
+</ul>
+<p>If you&#39;ve been keeping track of your values properly, it should look something like this:</p>
+<pre><code language="language-sql" class="language-sql">create or replace api integration my_aws_api_integration
+api_provider=aws_api_gateway    
+api_aws_role_arn=&#39;arn:aws:iam::293093199839:role/SFLambdaIAMRole&#39;    api_allowed_prefixes=(&#39;https://qr3na27uc2.execute-api.us-east-2.amazonaws.com/test/sf-proxy&#39;)
+enabled=true;
+</code></pre>
+<p>Execute the command, then follow it up with the following <code>DESCRIBE INTEGRATION</code> command:</p>
+<pre><code>describe integration my_aws_api_integration;
+</code></pre>
+<p>You&#39;ll need to jot down a few more pieces of information in your template:</p>
+<ul>
+<li>Look for the property named &#34;API_AWS_IAM_USER_ARN&#34; and then record that property&#39;s &#34;property_value.&#34;</li>
+<li>Find the property named &#34;API_AWS_EXTERNAL_ID&#34; and record that property&#39;s &#34;property_value.&#34;</li>
+</ul>
+<aside class="warning"><p>Note that the &#34;property_value&#34; of the &#34;API_AWS_EXTERNAL_ID&#34; often ends with an equal sign (&#34;=&#34;). That equals sign is part of the value; make sure that you cut and paste it along with the rest of the &#34;property_value.&#34;</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up a trust relationship between Snowflake and IAM role." duration="10">
+        <p>Now it&#39;s time to return to the AWS console using those values you grabbed from Snowflake. Don&#39;t close your Snowflake window, though; you&#39;ll have to return to it later!</p>
+<p>From the AWS main console, search for and select IAM.</p>
+<p class="image-container"><img alt="Snowflake_IAM_Search.png" src="img/b09d3582452541aa.png"></p>
+<p>Select &#34;Roles&#34; and search for the New IAM Role Name that you created and recorded earlier. Select it.</p>
+<p class="image-container"><img alt="Snowflake_Select_IAM_Role.png" src="img/f2f993328ccc9407.png"></p>
+<p>Click on the &#34;Trust relationships&#34; tab, then click on the button to edit the trust relationship.</p>
+<p class="image-container"><img alt="Snowflake_Trust_Relationships.png" src="img/ad43361f1f10a156.png"></p>
+<p>This should open the Policy Document into which you add authentication information. In the Policy Document, find the &#34;Statement.Principal.AWS&#34; field and replace the value (not the key) with the &#34;API_AWS_IAM_USER_ARN&#34; found in your template.</p>
+<p>Find the &#34;Statement.Condition&#34; field. Initially, this should contain only curly braces (&#34;{}&#34;). Paste the following between the curly braces:</p>
+<pre><code>&#34;StringEquals&#34;: { &#34;sts:ExternalId&#34;: &#34;xxx&#34; }
+</code></pre>
+<p>Replace the &#34;xxx&#34; with the value for the &#34;API_AWS_EXTERNAL_ID&#34; recorded in your template.</p>
+<p>After you are done editing the &#34;Policy Document&#34; for the trust relationship, it should look similar to the following:</p>
+<pre><code>{
+  &#34;Version&#34;: &#34;2012-10-17&#34;,
+  &#34;Statement&#34;: [
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        &#34;AWS&#34;: &#34;arn:aws:iam::582086746320:user/wky2-s-demo164-&#34;
+      },
+      &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+      &#34;Condition&#34;: {&#34;StringEquals&#34;: { &#34;sts:ExternalId&#34;: &#34;DEMO164_SFCRole=2_hQJ5yTf+n9fW6cqVllzDLDdzsgw=&#34; }}
+    }
+  ]
+}
+</code></pre>
+<p>Click on &#34;Update Trust Policy&#34; to finish setting up the trust relationship between Snowflake and the IAM role.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating an external function in Snowflake." duration="5">
+        <p>Now go back to the Snowflake console for creating an external function in Snowflake. Type the <code>CREATE EXTERNAL FUNCTION</code> command as shown, with a few customized parameters:</p>
+<pre><code language="language-sql" class="language-sql">create external function translate_eng_italian(message string)
+    returns variant
+    api_integration = &lt;api_integration_name&gt;
+    as &#39;&amp;lt; invocation_url &gt;&#39;
+    ;
+</code></pre>
+<p>The parameters adjustments you need to make are:</p>
+<ul>
+<li>Replace the <code>&lt; api_integration_name ></code> with the name of your API integration</li>
+<li>Replace the <code>&lt; invocation_url ></code> value with your resource invocation URL.</li>
+</ul>
+<p>Once you do so, execute the <code>CREATE EXTERNAL FUNCTION</code> command.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Calling the external function" duration="5">
+        <p>Now it&#39;s finally almost time to call the external function!</p>
+<p>But before we do so, we need to create a test table and insert some sample data. Paste and execute the below SQL commands in Snowflake:</p>
+<pre><code language="language-sql" class="language-sql">create or replace table messages( msg string );
+insert into messages (msg) values (&#39;good morning&#39;), (&#39;hello&#39;), (&#39;good night&#39;);
+</code></pre>
+<p>Now we can call the function! Execute your translate function by calling:</p>
+<pre><code language="language-sql" class="language-sql">select msg, translate_en_italian(msg) from messages;
+</code></pre>
+<p>If everything has gone smoothly, your output should look like this:</p>
+<p class="image-container"><img alt="Snowflake_Output.png" src="img/364373a8f0dd5595.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="1">
+        <p>In this tutorial, you learned how to use external functions to invoke an API via AWS API Gateway to trigger a Lambda function. The Lambda function was written in Python and invoked the Amazon Translator API to return the Italian translation for a given input text string.</p>
+<p>This solution with external functions eliminates the need to manually export the data out of Snowflake, translate it, and then reimport it, greatly simplifying the workflow.</p>
+<p>To see what else you can do with external functions, be sure to check out the Snowflake <a href="https://docs.snowflake.com/en/sql-reference/external-functions-introduction.html" target="_blank">Documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "building_scalable_time_series_forecasting_models_on_snowflake",
+  "duration": 14,
+  "title": "Building Scalable Time Series Forecasting Models on Snowflake",
+  "summary": "Automatically Build, Register and Run Inferencing on Paritioned Forecasting Models in Snowflake.",
+  "source": "building_scalable_time_series_forecasting_models_on_snowflake/forecast_model_builder.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "building_scalable_time_series_forecasting_models_on_snowflake"
+}

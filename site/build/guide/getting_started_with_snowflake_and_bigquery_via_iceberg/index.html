@@ -1,0 +1,515 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Snowflake and BigQuery via Iceberg</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowflake_and_bigquery_via_iceberg"
+                  title="Getting Started with Snowflake and BigQuery via Iceberg"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Apache Iceberg has become a very popular open-source table format for data lakes as its flexibility enables freedom of choice for organizations. Whether an organization wants to use best of breed services or they&#39;ve inherited multiple data platforms due to mergers or acquisitions, adopting an open table format could be key to eliminating data silos.</p>
+<h2 is-upgraded>Use Case</h2>
+<p>There is often no one-size-fits-all approach to tackling complex business challenges. Organizations often store their data in different places and use multiple tools and platforms to put that data to work. By uniting data across platforms and query engines using an open table format, organizations can serve a variety of business needs, including:</p>
+<ul>
+<li>Modernizing their data lake</li>
+<li>Enabling data interoperability and a joint data mesh architecture</li>
+<li>Building batch or streaming data pipelines</li>
+<li>Building transformation and change data capture (CDC) pipelines</li>
+<li>Serving analytics-ready data to business teams</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>Familiarity with <a href="https://cloud.google.com/free" target="_blank">Google Cloud</a> and a Google Cloud account.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Creating a Snowflake Managed Iceberg table and then have BigQuery read the table</li>
+<li>Creating a BigLake Managed table and then have Snowflake read the table</li>
+<li>Keeping BigQuery in-sync with Iceberg tables hosted on Snowflake</li>
+</ul>
+<p class="image-container"><img src="img/55ac2e5593cd041b.png"></p>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li><a href="https://cloud.google.com/free" target="_blank">Google Cloud account</a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake Managed Iceberg table</li>
+<li>A BigLake Managed Iceberg table</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Iceberg to BigQuery" duration="18">
+        <p>In this section, you will create a table in Snowflake using the Iceberg format and also create a BigLake (external) table in BigQuery that points to the same Iceberg files.</p>
+<h2 is-upgraded>Login to Snowflake</h2>
+<ul>
+<li>Click the Create button on the top left</li>
+<li>Select SQL Worksheet</li>
+<li>Run this command to switch to an account admin since we have to run some commands that requires this role:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+</code></pre>
+<h2 is-upgraded>Create a warehouse to hold the data</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE ICEBERG_WAREHOUSE WITH WAREHOUSE_SIZE=&#39;XSMALL&#39;;
+</code></pre>
+<p>Reference: https://docs.snowflake.com/en/sql-reference/sql/create-warehouse</p>
+<h2 is-upgraded>Create a database (the database)</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE ICEBERG_DATABASE;
+</code></pre>
+<h2 is-upgraded>Create a bucket to hold your BigLake Managed Table</h2>
+<p>Open: https://console.cloud.google.com/storage/browser</p>
+<ul>
+<li>Click the Create Bucket button</li>
+<li>Enter your bucket name: bigquery-snowflake-sharing (you can choose a different name)</li>
+<li>Click Next: Use Region: us-central1 &lt;- must match your snowflake region <ul>
+<li>Note: this quickstart uses the region us-central1 if you decide to use a different region you will have to make updates to this quickstart wherever ‘us-central1&#39; is referenced.</li>
+</ul>
+</li>
+<li>Click Create at the bottom</li>
+</ul>
+<h2 is-upgraded>Create a link between Snowflake and GCS.</h2>
+<ul>
+<li>In Snowflake, create a GCS volume integration.  This will create a link between Snowflake and GCS. A service principal will be created and we will grant access to our GCS bucket.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE STORAGE INTEGRATION bigquery_integration
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = &#39;GCS&#39;
+  ENABLED = TRUE
+  STORAGE_ALLOWED_LOCATIONS = (&#39;gcs://bigquery-snowflake-sharing&#39;);
+</code></pre>
+<p>Reference: https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration</p>
+<h2 is-upgraded>Get the service principal that we will grant Storage Object Admin in our GCS bucket</h2>
+<pre><code language="language-sql" class="language-sql">DESC STORAGE INTEGRATION bigquery_integration;
+</code></pre>
+<ul>
+<li>Copy the STORAGE_GCP_SERVICE_ACCOUNT</li>
+<li>e.g. xxxxxxxxx@gcpuscentral1-1dfa.iam.gserviceaccount.com</li>
+</ul>
+<h2 is-upgraded>Create a custom IAM role that has the permissions required to access the bucket and get objects.</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/iam-admin/roles</li>
+<li>Select Create Role.</li>
+<li>Enter a Title and optional Description for the custom role. [e.g. Snowflake Storage Admin]</li>
+<li>Select Add Permissions.</li>
+<li>In Filter, select Service and then select storage.</li>
+<li>Filter the list of permissions, and add the following from the list:</li>
+<li>storage.buckets.get</li>
+<li>storage.objects.get</li>
+<li>storage.objects.create</li>
+<li>storage.objects.delete</li>
+<li>storage.objects.list</li>
+<li>Select Add.</li>
+<li>Select Create.</li>
+<li>Reference: https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-gcs?_fsi=YFzl41ld&amp;_fsi=YFzl41ld&amp;_fsi=YFzl41ld</li>
+</ul>
+<h2 is-upgraded>Open the storage account you created</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/storage/browser</li>
+<li>Click on: bigquery-snowflake-sharing (or whatever you named it)</li>
+<li>Click on Permissions</li>
+<li>Click Grant Access</li>
+<li>Paste in the service account name (from Snowflake)</li>
+<li>For the role select Custom | Snowflake Storage Admin</li>
+<li>Click Save</li>
+</ul>
+<h2 is-upgraded>In Snowflake, create an external volume on GCS</h2>
+<pre><code language="language-sql" class="language-sql">CREATE EXTERNAL VOLUME snowflake_ext_volume
+  STORAGE_LOCATIONS =
+    (
+      (
+        NAME = &#39;us-central1&#39;
+        STORAGE_PROVIDER = &#39;GCS&#39;
+        STORAGE_BASE_URL = &#39;gcs://bigquery-snowflake-sharing/snowflake-volume/&#39;
+      )
+    ),
+    ALLOW_WRITES = TRUE;
+</code></pre>
+<p>Reference: https://docs.snowflake.com/en/sql-reference/sql/create-external-volume</p>
+<h2 is-upgraded>Describe the volume</h2>
+<pre><code language="language-sql" class="language-sql">DESCRIBE EXTERNAL VOLUME snowflake_external_volume
+</code></pre>
+<h2 is-upgraded>Set the current database</h2>
+<pre><code language="language-sql" class="language-sql">USE ICEBERG_DATABASE;
+</code></pre>
+<h2 is-upgraded>Create a schema in Snowflake</h2>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA iceberg_schema;
+</code></pre>
+<h2 is-upgraded>Make the schema active</h2>
+<pre><code language="language-sql" class="language-sql">USE SCHEMA iceberg_schema;
+Create Iceberg table using Snowflake Catalog
+CREATE ICEBERG TABLE driver (driver_id int, driver_name string)
+  CATALOG = &#39;SNOWFLAKE&#39;
+  EXTERNAL_VOLUME = &#39;snowflake_ext_volume&#39;
+  BASE_LOCATION = &#39;driver&#39;;
+</code></pre>
+<p>Reference: https://docs.snowflake.com/en/sql-reference/sql/create-iceberg-table-snowflake</p>
+<h2 is-upgraded>Show the table you just created</h2>
+<pre><code language="language-sql" class="language-sql">SHOW TABLES
+</code></pre>
+<h2 is-upgraded>Insert new data</h2>
+<pre><code language="language-sql" class="language-sql">INSERT INTO driver (driver_id, driver_name) VALUES (1, &#39;Driver 001&#39;);
+SELECT * FROM driver;
+</code></pre>
+<h2 is-upgraded>Review the latest metadata json file that Snowflake is pointing to as we need to point BigQuery to the same place</h2>
+<pre><code language="language-sql" class="language-sql">SELECT REPLACE(JSON_EXTRACT_PATH_TEXT(
+     SYSTEM$GET_ICEBERG_TABLE_INFORMATION(&#39;ICEBERG_DATABASE.iceberg_schema.driver&#39;),
+          &#39;metadataLocation&#39;), &#39;gcs://&#39;, &#39;gs://&#39;);
+</code></pre>
+<h2 is-upgraded>Open the storage account you created</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/storage/browser</li>
+<li>Click on: bigquery-snowflake-sharing (or whatever you named it)</li>
+<li>You can now browse the Iceberg files</li>
+</ul>
+<h2 is-upgraded>Create a BigQuery Dataset</h2>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA IF NOT EXISTS snowflake_dataset OPTIONS(location = &#39;us-central1&#39;);
+</code></pre>
+<h2 is-upgraded>Navigate to BigQuery</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/bigquery</li>
+<li>Click the Add button</li>
+<li>Select &#34;Connections to external data sources&#34;</li>
+<li>Select &#34;Vertex AI remote models, remote functions and BigLake (Cloud Resource)&#34;</li>
+<li>Select region: us-central1</li>
+<li>Enter a name: snowflake-connection (use the for friendly name and description)</li>
+</ul>
+<h2 is-upgraded>Expand your project in the left hand panel</h2>
+<ul>
+<li>Expand external connections</li>
+<li>Double click on us-central1.snowflake-connection</li>
+<li>Copy the service account id: e.g. bqcx-xxxxxxxxxxxx-s3rf@gcp-sa-bigquery-condel.iam.gserviceaccount.com</li>
+</ul>
+<h2 is-upgraded>Open the storage account you created</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/storage/browser</li>
+<li>Click on: blmt-snowflake-sharing (or whatever you named it)</li>
+<li>Click on Permissions</li>
+<li>Click Grant Access</li>
+<li>Paste in the service account name</li>
+<li>For the role select Cloud Storage | Storage Object Viewer [Since Snowflake is the write BigQuery just reads]</li>
+<li>Click Save</li>
+</ul>
+<h2 is-upgraded>The URIs needs to be from the following Snowflake command</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE EXTERNAL TABLE `snowflake_dataset.driver`
+WITH CONNECTION `us-central1.snowflake-connection`
+OPTIONS (
+  format = &#34;ICEBERG&#34;,
+  uris = [&#34;gs://bigquery-snowflake-sharing/snowflake-volume/driver/metadata/00001-2d763c77-df0a-4230-bd52-033877d02c40.metadata.json&#34;]
+);
+</code></pre>
+<h2 is-upgraded>View the data in BQ</h2>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM `snowflake_dataset.driver`;
+</code></pre>
+<h2 is-upgraded>Update table metadata in BQ</h2>
+<p>BigQuery will not see updated data in Snowflake since we are pointing to a specific snapshot or metadata json. We will have to update the table definition to the latest table metadata.</p>
+<ul>
+<li>You will need to run the &#34;SYSTEM$GET_ICEBERG_TABLE_INFORMATION&#34; command in Snowflake</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">SYSTEM$GET_ICEBERG_TABLE_INFORMATION(&#39;&lt;iceberg_table_name&gt;&#39;)
+</code></pre>
+<ul>
+<li>You will then need to update the table metadata in BigQuery: https://cloud.google.com/bigquery/docs/iceberg-external-tables#update-table-metadata</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Big Lake Iceberg to Snowflake" duration="19">
+        <p>In this section, you will create a table in BigQuery using the Iceberg format and also create an Iceberg (external) table in Snowflake that points to the same Iceberg files.</p>
+<h2 is-upgraded>Create a bucket to hold your BigLake Managed Table</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/storage/browser</li>
+<li>Click the Create Bucket button</li>
+<li>Enter your bucket name: blmt-snowflake-sharing (you can choose a different name)</li>
+<li>Click Next: Use Multi-region: us-central1</li>
+<li>Click Create at the bottom</li>
+</ul>
+<h2 is-upgraded>Navigate to BigQuery</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/bigquery</li>
+<li>Click the Add button</li>
+<li>Select &#34;Connections to external data sources&#34;</li>
+<li>Select &#34;Vertex AI remote models, remote functions and BigLake (Cloud Resource)&#34;</li>
+<li>Enter a name: blmt-connection (use the for friendly name and description)</li>
+</ul>
+<h2 is-upgraded>Expand your project in the left hand panel</h2>
+<ul>
+<li>Expand external connections</li>
+<li>Double click on us-central1.blmt-connection</li>
+<li>Copy the service account id: e.g. bqcx-xxxxxxxxxxxx-s3rf@gcp-sa-bigquery-condel.iam.gserviceaccount.com</li>
+<li>Open your storage account you created</li>
+<li>Open: https://console.cloud.google.com/storage/browser</li>
+<li>Click on: blmt-snowflake-sharing (or whatever you named it)</li>
+<li>Click on Permissions</li>
+<li>Click Grant Access</li>
+<li>Paste in the service account name</li>
+<li>For the role select Cloud Storage | Storage Object Admin [We want admin since we want Read/Write]</li>
+<li>Click Save</li>
+</ul>
+<h2 is-upgraded>Navigate to BigQuery</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/bigquery</li>
+<li>Open a query window</li>
+<li>Run this to create a dataset:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA IF NOT EXISTS blmt_dataset OPTIONS(location = &#39;us&#39;);
+</code></pre>
+<h2 is-upgraded>Create a BigLake Managed table</h2>
+<ul>
+<li>Run this to create a BigLake Managed table (change the storage account name below)</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE `blmt_dataset.driver`
+(
+ driver_id                 INT64,
+ driver_name               STRING,
+ driver_mobile_number      STRING,
+ driver_license_number     STRING,
+ driver_email_address      STRING,
+ driver_dob                DATE,
+ driver_ach_routing_number STRING,
+ driver_ach_account_number STRING
+)
+CLUSTER BY driver_id
+WITH CONNECTION `us-central1.blmt-connection`
+OPTIONS (
+ file_format = &#39;PARQUET&#39;,
+ table_format = &#39;ICEBERG&#39;,
+ storage_uri = &#39;gs://blmt-snowflake-sharing/driver&#39;
+);
+</code></pre>
+<h2 is-upgraded>Load the table with some data</h2>
+<pre><code language="language-sql" class="language-sql">LOAD DATA INTO `blmt_dataset.driver`
+FROM FILES (
+ format = &#39;parquet&#39;,
+ uris = [&#39;gs://data-analytics-golden-demo/biglake/v1-source/managed-table-source/driver/*.parquet&#39;]);
+</code></pre>
+<h2 is-upgraded>View the data</h2>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM `blmt_dataset.driver` LIMIT 1000;
+</code></pre>
+<h2 is-upgraded>View the storage metadata</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/storage/browser and click on your storage account</li>
+<li>You should see a folder called &#34;driver&#34;</li>
+<li>You can  navigate to the &#34;metadata&#34; folder</li>
+<li>You will probably see the file &#34;v0.metadata.json&#34;</li>
+</ul>
+<h2 is-upgraded>To export the most recent metadata run this in BigQuery (a separate window is preferred)</h2>
+<pre><code language="language-sql" class="language-sql">EXPORT TABLE METADATA FROM blmt_dataset.driver;
+</code></pre>
+<h2 is-upgraded>In your storage window</h2>
+<ul>
+<li>Press the Refresh button (top right)</li>
+<li>You will not see many files in the metadata folder</li>
+</ul>
+<h2 is-upgraded>Let&#39;s connect the data to Snowflake</h2>
+<ul>
+<li>Login to Snowflake</li>
+<li>Click the Create button on the top left</li>
+<li>Select SQL Worksheet</li>
+<li>Run this command to switch to an account admin since we have to run some commands that requires this role</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+</code></pre>
+<h2 is-upgraded>Create a warehouse to hold the data</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE BLMT_WAREHOUSE WITH WAREHOUSE_SIZE=&#39;XSMALL&#39;;
+</code></pre>
+<h2 is-upgraded>Create a database in snowflake</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE BLMT_DATABASE;
+</code></pre>
+<h2 is-upgraded>Select the database</h2>
+<pre><code language="language-sql" class="language-sql">USE DATABASE BLMT_DATABASE;
+</code></pre>
+<h2 is-upgraded>Create the schema to hold the table</h2>
+<pre><code language="language-sql" class="language-sql">CREATE SCHEMA IF NOT EXISTS BLMT_SCHEMA;
+</code></pre>
+<h2 is-upgraded>Select the schema</h2>
+<pre><code language="language-sql" class="language-sql">USE SCHEMA BLMT_SCHEMA;
+</code></pre>
+<h2 is-upgraded>Create our GCS volume integration.  This will create a link between Snowflake and GCS.</h2>
+<ul>
+<li>A service principal will be created and we will grant access to our GCS bucket.</li>
+<li>Reference: https://docs.snowflake.com/en/sql-reference/sql/create-storage-integration</li>
+<li>Change the name of the storage account</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE STORAGE INTEGRATION gcs_storage_integration
+ TYPE = EXTERNAL_STAGE
+ STORAGE_PROVIDER = &#39;GCS&#39;
+ ENABLED = TRUE
+ STORAGE_ALLOWED_LOCATIONS = (&#39;gcs://blmt-snowflake-sharing/&#39;);
+</code></pre>
+<h2 is-upgraded>Get the service principal that we will grant Storage Object Admin in our GCS bucket</h2>
+<pre><code language="language-sql" class="language-sql">DESC STORAGE INTEGRATION gcs_storage_integration;
+</code></pre>
+<ul>
+<li>Copy the STORAGE_GCP_SERVICE_ACCOUNT</li>
+<li>e.g. xxxxxxxxx@gcpuscentral1-1dfa.iam.gserviceaccount.com</li>
+</ul>
+<h2 is-upgraded>Configure an external volume for Google Cloud Storage</h2>
+<ul>
+<li>Create a custom IAM role</li>
+<li>Create a custom role that has the permissions required to access the bucket and get objects.</li>
+<li>Open: https://console.cloud.google.com/iam-admin/roles</li>
+<li>Select Create Role.</li>
+<li>Enter a Title and optional Description for the custom role. [e.g. Snowflake Reader]</li>
+<li>Select Add Permissions.</li>
+<li>In Filter, select Service and then select storage.</li>
+<li>Filter the list of permissions, and add the following from the list:</li>
+<li>storage.buckets.get</li>
+<li>storage.objects.get</li>
+<li>Storage.objects.list</li>
+<li>Select Add.</li>
+<li>Select Create.</li>
+<li>Reference: https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-gcs?_fsi=YFzl41ld&amp;_fsi=YFzl41ld&amp;_fsi=YFzl41ld</li>
+</ul>
+<h2 is-upgraded>Open your storage account you created</h2>
+<ul>
+<li>Open: https://console.cloud.google.com/storage/browser</li>
+<li>Click on: blmt-snowflake-sharing (or whatever you named it)</li>
+<li>Click on Permissions</li>
+<li>Click Grant Access</li>
+<li>Paste in the service account name (from Snowflake)</li>
+<li>For the role select Custom | Snowflake Reader</li>
+<li>Click Save</li>
+</ul>
+<p>Create an external volume on GCS Reference: https://docs.snowflake.com/en/sql-reference/sql/create-external-volume CREATE OR REPLACE EXTERNAL VOLUME gcs_volume STORAGE_LOCATIONS = ( ( NAME = ‘gcs_volume&#39; STORAGE_PROVIDER = ‘GCS&#39; STORAGE_BASE_URL = ‘gcs://blmt-snowflake-sharing/&#39; ) );</p>
+<h2 is-upgraded>Create a catalog integration to manage Iceberg tables in the external volume</h2>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE CATALOG INTEGRATION catalog_integration
+   CATALOG_SOURCE=OBJECT_STORE   -- Indicates that the catalog is backed by an object store
+   TABLE_FORMAT=ICEBERG          -- Specifies the table format as Iceberg
+   ENABLED=TRUE;                 -- Enables the catalog integration
+</code></pre>
+<h2 is-upgraded>Create the Iceberg table, pointing to the existing metadata file</h2>
+<ul>
+<li>To get the &#34;latest&#34; metadata file</li>
+<li>Open your storage account and navigate to the driver/metadata folder</li>
+<li>Open the version-hint.text, there will be a number inside</li>
+<li>Replace the number below (in the value of v173076288, but leave the &#34;v&#34;) NOTE: Due to some metadata optional parameters set/required by V1 of the Iceberg we need to ignore some metadata.  To due this, please ask Snowflake to perform this on your account. This should not be an issue when Iceberg V2 is used. JIRA for instructions to set the metadata flag on the Snowflake account - SNOW-1624657.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE ICEBERG TABLE driver
+   CATALOG=&#39;catalog_integration&#39;   -- The catalog where the table will reside
+   EXTERNAL_VOLUME=&#39;gcs_volume&#39;    -- The external volume for table data
+   BASE_LOCATION=&#39;&#39;                -- Optional: Subdirectory within the storage location
+   METADATA_FILE_PATH=&#39;driver/metadata/v1730762887.metadata.json&#39;; -- Path to the existing metadata file
+</code></pre>
+<h2 is-upgraded>This will show the table just created</h2>
+<pre><code language="language-sql" class="language-sql">SHOW TABLES
+</code></pre>
+<h2 is-upgraded>Query the Iceberg table</h2>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM driver;
+SELECT COUNT(*) FROM driver;
+</code></pre>
+<h2 is-upgraded>Now that you are linked, you can try the following, Insert a record into the BigQuery table:</h2>
+<pre><code language="language-sql" class="language-sql">INSERT INTO `blmt_dataset.driver`
+(driver_id, driver_name, driver_mobile_number, driver_license_number, driver_email_address,
+driver_dob, driver_ach_routing_number, driver_ach_account_number)
+VALUES (0, &#39;New Driver&#39;, &#39;xxx-xxx-xxxx&#39;, &#39;driver_license_number&#39;, &#39;driver_email_address&#39;,
+CURRENT_DATE(), &#39;driver_ach_routing_number&#39;,&#39;driver_ach_account_number&#39;);
+</code></pre>
+<h2 is-upgraded>Now Query the record in Snowflake</h2>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM driver WHERE driver_id = 0;
+</code></pre>
+<p>NOTE: You will not see the new record. You first need to tell BigQuery to export the latest metadata (see step &#34;View the storage metadata&#34;) and update the metadata used by Snowflake (see step &#34;Create the Iceberg table, pointing to the existing metadata file&#34;) pointing to the latest JSON file.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Keeping BQ in-sync with Snowflake" duration="5">
+        <p>In this section you will set up BigQuery to stay in-sync with Iceberg tables hosted in Snowflake.</p>
+<p class="image-container"><img src="img/55ac2e5593cd041b.png"></p>
+<ol type="1">
+<li>So far, in this Quickstart, you&#39;ve created an Iceberg table and exported Snowflake metadata to the Google Cloud Storage account upon each update. (Section 1 of this Quickstart)</li>
+<li>You&#39;ve also created BigLake Iceberg tables in BigQuery and pointed to a specific metadata JSON file on storage. (Section 2 of this Quickstart). However, you are pointing at a specific version of the data and if changes are made to the Iceberg table in Snowflake, BigQuery will not see them.</li>
+<li>To sync Iceberg tables in Snowflake with BigQuery, BigQuery will have to read the Iceberg Catalog in Snowflake which will provide the latest metadata json file. Please see this GitHub repository for steps to enable this sync and automating the process:</li>
+</ol>
+<ul>
+<li>https://github.com/GoogleCloudPlatform/data-analytics-golden-demo/blob/main/colab-enterprise/BigLake-Iceberg-Sync-Demo.ipynb</li>
+</ul>
+<ol type="1" start="4">
+<li>Finally, use the PATCH command to update BigQuery&#39;s Iceberg table to the latest metadata from Snowflake.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Technical Considerations</h2>
+<p>Technical considerations for the data sharing integration between BigQuery and Snowflake today include:</p>
+<ul>
+<li>An inconsistency in the manifest statistics prevents Snowflake from reading BigLake Managed Iceberg tables. You can create a support ticket with Snowflake customer support to address the issue and allow Snowflake to read Iceberg tables created in BigQuery.</li>
+<li>BigQuery does not yet support external federated Iceberg metastores such as Snowflake&#39;s Polaris catalog.</li>
+<li>BigQuery and Snowflake don&#39;t currently support self-managed table replication from external tables. Google Cloud and Snowflake continue to collaboratively develop deeper product integrations to achieve our shared goal of improving data interoperability for customers.</li>
+</ul>
+<h2 is-upgraded>What you learned</h2>
+<p>By following this quickstart, you learned how to:</p>
+<ul>
+<li>Create a Snowflake Managed Iceberg table and then have BigQuery read the table</li>
+<li>Create a BigLake Managed table and then have Snowflake read the table</li>
+<li>Keep BigQuery in-sync with Iceberg tables hosted in Snowflake</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>Google Cloud and Snowflake&#39;s commitment to Apache Iceberg&#39;s open-source table format empowers our customers to unite their data across query engines and platforms and use it to solve business problems with familiar features, tools, and services from both organizations. Learn how to build your first open data lakehouse with <a href="https://cloud.google.com/bigquery/docs/iceberg-external-tables" target="_blank">Google Cloud</a> and <a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" target="_blank">Snowflake</a> by exploring documentation from Google Cloud and Snowflake, watching a <a href="https://www.snowflake.com/en/resources/video/what-are-iceberg-tables-in-snowflake-6-minute-demo/" target="_blank">tutorial</a>, then diving into the <a href="https://quickstarts.snowflake.com/guide/getting_started_iceberg_tables/index.html?index=..%2F..index&_ga=2.118770249.1746561633.1731441235-1839732901.1722365997&_gac=1.79615718.1729101473.Cj0KCQjwyL24BhCtARIsALo0fSDcmw4TgPEhApywE1DwnzydK-hvnDtflFy4rTLx7QCKjh1hhw5cKfoaAjzUEALw_wcB#0" target="_blank">Quickstart Guide</a>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

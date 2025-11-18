@@ -1,0 +1,345 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building a Data Application</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_app"
+                  title="Building a Data Application"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Snowflake powers a huge variety of applications across many industries and use-cases. In this tutorial you will create a data application and API that uses Snowflake as its analytical engine. You will then load test against custom API endpoints and scale the backend both vertically and horizontally to see the impact. Finally, you will increase the API&#39;s efficiency and performance using a materialization.</p>
+<p>The example application you start with is based on <a href="https://expressjs.com/" target="_blank">Express</a> and connects to Snowflake through our connector. The dataset is a snapshot of <a href="https://www.citibikenyc.com/" target="_blank">Citi Bike</a> ride data.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Ability to install and run software on your computer</li>
+<li>Basic experience using git and editing JSON</li>
+<li>Intermediate knowledge of SQL</li>
+<li>Access to run SQL in the Snowflake console or SnowSQL</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How applications can be built on Snowflake</li>
+<li>Scaling workloads vertically for latency</li>
+<li>Scaling workloads horizontally for concurrency</li>
+<li>Optimizing applications through materialization</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> installed</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A data application</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Database and Warehouse" duration="1">
+        <p>The application needs a warehouse to query the data, and a database to store the data presented on the dashboard. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE WAREHOUSE IF NOT EXISTS DATA_APPS_ADHOC WITH WAREHOUSE_SIZE=&#39;medium&#39;;
+USE WAREHOUSE DATA_APPS_ADHOC;
+CREATE DATABASE IF NOT EXISTS DATA_APPS_DEMO;
+USE DATABASE DATA_APPS_DEMO;
+CREATE SCHEMA IF NOT EXISTS DATA_APPS_DEMO.DEMO;
+USE SCHEMA DEMO;
+CREATE WAREHOUSE IF NOT EXISTS DATA_APPS_DEMO WITH WAREHOUSE_SIZE=&#39;small&#39; STATEMENT_TIMEOUT_IN_SECONDS=15 STATEMENT_QUEUED_TIMEOUT_IN_SECONDS=15;
+CREATE STAGE IF NOT EXISTS &#34;DATA_APPS_DEMO&#34;.&#34;DEMO&#34;.&#34;DEMOCITIBIKEDATA&#34; ENCRYPTION=(TYPE=&#39;AWS_SSE_S3&#39;) URL=&#39;s3://demo-citibike-data/&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Service User for the Application" duration="0">
+        <p>You will now create a user account separate from your own that the application will use to query Snowflake. In keeping with sound security practices, the account will use key-pair authentication and have limited access in Snowflake.</p>
+<h2 is-upgraded>Create an RSA key for Authentication</h2>
+<p>Run the following commands to create a private and public key. These keys are necessary to authenticate the service account we will use for Terraform.</p>
+<pre><code language="language-Shell" class="language-Shell">$ cd ~/.ssh
+$ openssl genrsa -out snowflake_demo_key 4096
+$ openssl rsa -in snowflake_demo_key -pubout -out snowflake_demo_key.pub
+</code></pre>
+<h2 is-upgraded>Create the User and Role in Snowflake</h2>
+<p>To create a user account, log in to the Snowflake console and run the following commands as the <code>ACCOUNTADMIN</code> role.</p>
+<p>But first:</p>
+<ol type="1">
+<li>Open the <code>~/.ssh/snowflake_demo_key.pub</code> file and copy the contents for use in the following SQL.</li>
+<li>Prior to running the <code>CREATE USER</code> command, paste over the <code>RSA_PUBLIC_KEY_HERE</code> label, which follows the <code>RSA_PUBLIC_KEY</code> attribute.</li>
+</ol>
+<p>Execute the following SQL statements to create the user account and grant it access to the data needed for the application.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE ACCOUNTADMIN;
+CREATE ROLE IF NOT EXISTS DATA_APPS_DEMO_APP;
+
+GRANT USAGE ON WAREHOUSE DATA_APPS_DEMO TO ROLE DATA_APPS_DEMO_APP;
+GRANT USAGE ON DATABASE DATA_APPS_DEMO TO ROLE DATA_APPS_DEMO_APP;
+GRANT USAGE ON SCHEMA DATA_APPS_DEMO.DEMO TO ROLE DATA_APPS_DEMO_APP;
+
+CREATE OR REPLACE USER &#34;DATA_APPS_DEMO&#34; RSA_PUBLIC_KEY=&#39;RSA_PUBLIC_KEY_HERE&#39; DEFAULT_ROLE=DATA_APPS_DEMO_APP DEFAULT_WAREHOUSE=DATA_APPS_DEMO DEFAULT_NAMESPACE=DATA_APPS_DEMO.DEMO MUST_CHANGE_PASSWORD=FALSE;
+
+GRANT SELECT ON FUTURE TABLES IN SCHEMA DATA_APPS_DEMO.DEMO TO ROLE DATA_APPS_DEMO_APP;
+GRANT SELECT ON FUTURE MATERIALIZED VIEWS IN SCHEMA DATA_APPS_DEMO.DEMO TO ROLE DATA_APPS_DEMO_APP;
+GRANT ROLE DATA_APPS_DEMO_APP TO USER DATA_APPS_DEMO;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Importing the data" duration="10">
+        <p>The data for this demo is in an S3 bucket in the external stage that you added in step two. The following commands load the data into a temporary table for use by the data application.</p>
+<p>Import the base dataset for this demo by running the following SQL in SnowSQL or the Snowflake console:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE DATA_APPS_ADHOC;
+CREATE OR REPLACE TEMPORARY TABLE TEMP_TRIPS (
+	TRIPDURATION NUMBER(38,0),
+	STARTTIME TIMESTAMP_NTZ(9),
+	STOPTIME TIMESTAMP_NTZ(9),
+	START_STATION_ID NUMBER(38,0),
+	END_STATION_ID NUMBER(38,0),
+	BIKEID NUMBER(38,0),
+	USERTYPE VARCHAR(16777216),
+	BIRTH_YEAR NUMBER(38,0),
+	GENDER NUMBER(38,0)
+);
+
+CREATE OR REPLACE TEMPORARY TABLE TEMP_WEATHER (
+	STATE VARCHAR(80),
+	OBSERVATION_DATE DATE,
+	DAY_OF_YEAR NUMBER(3,0),
+	TEMP_MIN_F NUMBER(5,1),
+	TEMP_MAX_F NUMBER(5,1),
+	TEMP_AVG_F NUMBER(5,1),
+	TEMP_MIN_C FLOAT,
+	TEMP_MAX_C FLOAT,
+	TEMP_AVG_C FLOAT,
+	TOT_PRECIP_IN NUMBER(4,2),
+	TOT_SNOWFALL_IN NUMBER(4,2),
+	TOT_SNOWDEPTH_IN NUMBER(4,1),
+	TOT_PRECIP_MM NUMBER(8,1),
+	TOT_SNOWFALL_MM NUMBER(8,1),
+	TOT_SNOWDEPTH_MM NUMBER(8,1)
+);
+
+COPY INTO TEMP_TRIPS from @DEMO.DEMOCITIBIKEDATA
+file_format=(type=csv skip_header=1) pattern=&#39;.*trips.*.csv.gz&#39;;
+
+CREATE OR REPLACE TABLE TRIPS AS
+(Select * from TEMP_TRIPS order by STARTTIME);
+
+COPY INTO TEMP_WEATHER from @DEMO.DEMOCITIBIKEDATA
+file_format=(type=csv skip_header=1) pattern=&#39;.*weather.*.csv.gz&#39;;
+
+CREATE OR REPLACE TABLE WEATHER AS
+(Select * from TEMP_WEATHER order by OBSERVATION_DATE);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting the source code for the project" duration="3">
+        <p>The application you will be running is written on node.js. It is a Citi Bike dashboard that lets users view bike usage over time and in differing weather conditions. The source code is available in <a href="https://github.com/Snowflake-Labs/sfguide-data-apps-demo" target="_blank">GitHub</a>.</p>
+<p>Download the code into a folder of your choice and open the project in VSCode. In VSCode, go into the terminal and install the modules needed for this project:</p>
+<pre><code language="language-bash" class="language-bash">npm install
+npm install -g artillery
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure the Application" duration="5">
+        <p>Copy the contents of <code>config-template.js</code> to <code>config.js</code> and change the following settings to match the values that you created in the previous steps:</p>
+<ul>
+<li><code>snowflake_account</code></li>
+<li><code>snowflake_user</code></li>
+<li><code>snowflake_private_key</code></li>
+</ul>
+<p>To get the <code>snowflake_account</code> value from Snowflake, run <code>Select CURRENT_ACCOUNT()</code>. The user is <code>DATA_APPS_DEMO</code>, and the <code>snowflake_private_key</code> will be the text of the private key that you created previously.</p>
+<p>Run <code>npm start</code> in a terminal to start the application. If you see errors, check that the configuration is correct.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Testing the Application" duration="5">
+        <p>Open a web browser and go to: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+<p>If the page loads and renders graphs, your application works! Try choosing other date ranges to test the interactivity of the dashboard. Or let the application pick random dates by clicking the link in the upper right part of the page.</p>
+<p>The application processes gigabytes of data for the dashboard, aggregates counts over time, and joins data from trips and weather—all in real time. The application then returns data to the website via an API.</p>
+<p>Open these URIs in a browser to see the APIs that control the application:</p>
+<ul>
+<li><a href="http://localhost:3000/trips/monthly?start=03/04/2017&end=01/25/2020" target="_blank">Trips by Month</a></li>
+<li><a href="http://localhost:3000/trips/day_of_week?start=03/04/2017&end=01/25/2020" target="_blank">Trips by Day of Week</a></li>
+<li><a href="http://localhost:3000/trips/temperature?start=03/04/2017&end=01/25/2020" target="_blank">Trips by Temperature</a></li>
+</ul>
+<p>You now have a custom, single-page application that uses a custom API powered by Snowflake!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Cache Performance" duration="5">
+        <p>If Snowflake determines that the data result for a query remains unchanged, it returns cached results, increasing efficiency and decreasing latencies. The query cache is a really powerful Snowflake capability.</p>
+<p>To exercise Snowflake&#39;s performance when hitting the cache, we will be running a load test that uses <a href="https://artillery.io/" target="_blank">artillery</a>. To run the test, open a new terminal session (leave <code>npm start</code> running in the original session), then run the following:</p>
+<pre><code language="language-Shell" class="language-Shell">artillery run scripts/load_tests/all.yaml
+</code></pre>
+<p>Next, monitor incoming queries in terminal 1, and view the query results in terminal 2. The load test will run for 2 minutes.</p>
+<p>Open <strong>History</strong> in the Snowflake console to review how query latencies changed between the initial query and the subsequent cached queries. Latencies align to the load test min/max latencies. Each test in artillery hits the three endpoints referenced earlier with the default date range (all). The results should show that cached queries returned query results in under 100ms.</p>
+<p>In a dashboard application such as this, default queries reuse cached results when users visit the application. If additional data is ingested, the cache updates during the next query.</p>
+<p>API response times typically exceed query response times. This is partly due to latency and bandwidth constraints between the client and Snowflake, and partly due to the processing time it takes your computer to retrieve, format, and return the result set.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Test for a Small Cluster" duration="5">
+        <p>Clusters in Snowflake are restricted to eight concurrent queries. Let&#39;s perform another load test to validate the concurrency limit. To avoid the cached query results we saw in the previous step, we will use a different endpoint and run a different test that uses random dates. First, run the test against the endpoint to get a baseline result for a small cluster that should be able to do eight concurrency.</p>
+<pre><code language="language-Shell" class="language-Shell">artillery run scripts/load_tests/monthly_random.yaml
+</code></pre>
+<p>Open <strong>History</strong> in the Snowflake console to see the queries that executed in your account. You will notice that queries start queuing as load increases in this scenario, and in the load test, you will begin to see timeouts. The goal we are trying to attain with this application is a p95 under 5 seconds.</p>
+<p>Press Control-C to stop the test.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Test for a Medium Cluster" duration="5">
+        <p>In Snowflake we can scale out workloads both vertically (bigger clusters) and horizontally (more clusters). The first instinct for customers is usually to increase the cluster size. Increasing the cluster size does not increase concurrency but can double the performance of complex/data-intensive queries for every increase in size.</p>
+<p>Increasing the size of a cluster in Snowflake is REALLY easy. Run the following SQL either from SnowSQL or the Snowflake console:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+ALTER WAREHOUSE DATA_APPS_DEMO SET WAREHOUSE_SIZE=&#39;medium&#39;;
+</code></pre>
+<p>Now run the same load test again to look for improvement. (Again, leave <code>npm start</code> running in the original session.)</p>
+<pre><code language="language-Shell" class="language-Shell">artillery run scripts/load_tests/monthly_random.yaml
+</code></pre>
+<p>Unfortunately, these queries are not scanning enough data to distribute across a Medium-sized cluster, and you will still hit similar concurrency limits from the previous test. This would have decreased the query latency up to 2x if the query scanned more data. The amount of bytes scanned is available in the query history in the Snowflake console.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Test for a Multi-Cluster Warehouse" duration="5">
+        <p>To get more concurrency you need more clusters. Snowflake has a technology called multi-cluster warehouse that automatically adds clusters after queries are queued.</p>
+<p>After doing some usage analysis/projections/load tests, you can pick minimum and maximum cluster sizes that can meet your performance goals. It is quite easy to change this in production as load changes. In this lab, we&#39;ll use a minimum of one cluster and allow up to five clusters for peak usage. These settings would allow for up to 40 concurrent queries during peak load. When altering the warehouse you will see three clusters come online and be ready for your load test within seconds.</p>
+<p>Run the following SQL either from SnowSQL or the Snowflake console.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+ALTER WAREHOUSE DATA_APPS_DEMO SET MIN_CLUSTER_COUNT=1, MAX_CLUSTER_COUNT=5;
+</code></pre>
+<p>Run the same load test again to look for improvement. As before, leave <code>npm start</code> running in the original session.</p>
+<pre><code language="language-Shell" class="language-Shell">artillery run scripts/load_tests/monthly_random.yaml
+</code></pre>
+<p>In this load test you should no longer see timeouts because you have enough compute available to meet customer needs.</p>
+<p>Press Control-C to stop the load test.</p>
+<p>Log in to the Snowflake console to view the query history again. You will now see which cluster a query was executed on, as well as the timings of the query. As the load test ramped up, more clusters were <em>automatically</em> added to support the influx of users.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Materialization" duration="5">
+        <p>The SLO for this application is a five second p95. We are approaching success! The best way at this point to decrease latency is to simplify the amount of work needed to populate the dashboard.</p>
+<p>Open the <code>models/trips.js</code> file in VSCode. You should see the SQL queries we are running, and some optional queries that use materialized views when the environment variable <code>MATERIALIZED</code> is set. These new queries perform aggregation such that the UI aggregates less rows. For example, the API aggregates the counts per day instead of aggregating every ride during the query.</p>
+<p>Snowflake immediately and automatically computes the entire materialized view when the view is created. It also updates atomically on every change of the source table.</p>
+<p>Run the following SQL from SnowSQL or the Snowflake console:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE OR REPLACE MATERIALIZED VIEW COUNT_BY_DAY_MVW AS
+select COUNT(*) as trip_count, date_trunc(&#39;DAY&#39;, starttime) as starttime from demo.trips group by date_trunc(&#39;DAY&#39;, starttime);
+
+CREATE OR REPLACE MATERIALIZED VIEW COUNT_BY_MONTH_MVW AS
+select COUNT(*) as trip_count, MONTHNAME(starttime) as month, MIN(starttime) as starttime from demo.trips group by month;
+</code></pre>
+<p>The results of the queries are identical to the results you got before you used the materialization, but the queries required less compute resources.</p>
+<p>Stop the <code>Node.js</code> (<code>npm start</code>) application running in your terminal before starting the new instance with queries enabled.</p>
+<pre><code language="language-Shell" class="language-Shell">export MATERIALIZED=true &amp;&amp; npm start
+</code></pre>
+<pre><code language="language-Shell" class="language-Shell">artillery run scripts/load_tests/monthly_random.yaml
+</code></pre>
+<p>Your load tests will be faster than before. You should now be below the five second p95 desired by this application with no timeouts. You have now scaled out the API for higher performance and concurrency!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="1">
+        <p>To clean up the objects we created for this demo, run the following SQL either from SnowSQL or the Snowflake console:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+DROP DATABASE DATA_APPS_DEMO;
+DROP USER DATA_APPS_DEMO;
+DROP ROLE DATA_APPS_DEMO_APP;
+DROP WAREHOUSE DATA_APPS_DEMO;
+DROP WAREHOUSE DATA_APPS_ADHOC;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Next Steps" duration="2">
+        <p>In this guide you created a custom, single-page, data application and custom API powered by Snowflake. You also learned how Snowflake scales workloads vertically and horizontally.</p>
+<p>To learn more, review the code to see how we built the API endpoints. When you are comfortable with how the application works, modify the load tests and endpoints to see how changes affect performance and results. Create materialized views for all of the endpoints to get the maximum performance, and edit the load tests for other scenarios.</p>
+<h2 is-upgraded>What We Covered</h2>
+<ul>
+<li>Configuring and running a custom, single-page application and API powered by Snowflake</li>
+<li>Scaling a data application vertically and horizontally</li>
+<li>Improving performance by using materialization</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguides" target="_blank">SFGuides on GitHub</a></li>
+<li><a href="https://expressjs.com/en/starter/hello-world.html" target="_blank">Express getting started example</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/nodejs-driver.html" target="_blank">Node.js Snowflake Driver documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/warehouses-multicluster.html" target="_blank">Multi-cluster Warehouses documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/views-materialized.html" target="_blank">Materialized Views documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

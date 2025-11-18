@@ -1,0 +1,615 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Geospatial Analysis of Precisely Datasets using Snowflake Notebooks and Streamlit</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="using_precisely_enrich_data"
+                  title="Geospatial Analysis of Precisely Datasets using Snowflake Notebooks and Streamlit"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Analyzing location-specific data for decision-making often requires specialized techniques typically handled by geography experts. However, with Snowflake&#39;s native <a href="https://docs.snowflake.com/en/sql-reference/data-types-geospatial" target="_blank">Geospatial Data Types</a> and <a href="https://docs.snowflake.com/en/sql-reference/functions-geospatial" target="_blank">Geospatial Functions</a> anyone can analyze geographic data—whether it&#39;s regional demographics, city points, market data, or points of interest—using the platform&#39;s built-in geospatial functionalities.</p>
+<p>Numerous location-based datasets are available within the <a href="https://app.snowflake.com/marketplace" target="_blank">Snowflake Marketplace</a>, significantly reducing the time needed for data ingestion and engineering. Accessing these datasets is as simple as accepting Listing Usage Terms and clicking <code>Get</code>, allowing authorized users to derive geospatial insights with <code>SQL Queries</code> or <code>Snowpark DataFrames</code> in Snowflake Notebooks. These insights can then be visualized effortlessly using <code>Streamlit in Snowflake</code> (demos/examples <a href="https://github.com/Snowflake-Labs/snowflake-demo-streamlit" target="_blank">here</a>).</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake Notebook to explore and process geospatial data</li>
+<li>A Streamlit app to visualize: <ul>
+<li>Demographic and market insights</li>
+<li>Spatial relationships between regions and city points</li>
+<li>Geographic points of interest based on spatial queries</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this quickstart, we will use Snowflake&#39;s tools to:</p>
+<ul>
+<li><strong>Query and explore</strong> sample datasets, including: <ul>
+<li>Regional demographic data</li>
+<li>Points of Interest data</li>
+<li>Market data samples</li>
+</ul>
+</li>
+<li><strong>Integrate</strong> geographic and market data by: <ul>
+<li>Joining region and market datasets on the <code>MICROCODE</code> field</li>
+<li>Creating a new table (<code>mbi_demographics_jp</code>) that consolidates demographic and economic information</li>
+</ul>
+</li>
+<li><strong>Enhance</strong> geospatial data by: <ul>
+<li>Updating the <code>GEOM</code> column to store geographic point data using <code>ST_MakePoint</code> and <code>ST_GeogPoint</code></li>
+<li>Converting Well-Known Text (WKT) data into geometry format with SRID 4326 (WGS 84)</li>
+</ul>
+</li>
+<li><strong>Perform spatial analysis</strong> by: <ul>
+<li>Conducting spatial joins to identify points of interest (POI) within defined geographic regions</li>
+</ul>
+</li>
+<li><strong>Visualize</strong> insights using <strong>Streamlit in Snowflake</strong>.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Download the Notebook and Streamlit code from our git repo <a href="https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit" target="_blank">here</a></li>
+<li><a href="https://signup.snowflake.com/" target="_blank">Signup</a> for free trial of Snowflake in <code>a region of your choice</code>.</li>
+</ul>
+<p class="image-container"><img alt="alt text" src="img/79baf382495a34fc.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Acquire Datasets from Marketplace" duration="5">
+        <p>Once logged in go to the Snowflake Marketplace - this is under Data Products &gt; Marketplace</p>
+<p class="image-container"><img alt="alt text" src="img/84583068c2a6aa09.png"></p>
+<ol type="1">
+<li>Search for <code>World Points of Interest Premium Global</code></li>
+</ol>
+<p class="image-container"><img alt="alt text" src="img/6a0cc9f123016d1f.png"></p>
+<p>Press <strong>Get</strong> to get the data from Marketplace</p>
+<p class="image-container"><img alt="alt text" src="img/2ded86a6035f12be.png"></p>
+<ul>
+<li>Leave the <code>Database name</code> as default</li>
+<li><strong>Enter </strong><strong><code>PUBLIC</code></strong><strong> as an additional role</strong></li>
+</ul>
+<p>Press <strong>Get</strong> to install the database into your account.</p>
+<ol type="1" start="2">
+<li>Search for <code>MBI - Premium Geospatial & Market Data</code></li>
+</ol>
+<p class="image-container"><img alt="alt text" src="img/d9e74792006d6c6b.png"></p>
+<p>Click on the following dataset then press <strong>Get</strong>.</p>
+<p class="image-container"><img alt="alt text" src="img/b56d3de524066b06.png"></p>
+<ul>
+<li>Leave the <code>Database name</code> as default</li>
+<li><strong>Enter </strong><strong><code>PUBLIC</code></strong><strong> as an additional role</strong></li>
+</ul>
+<p>Press <strong>Get</strong> to install the database into your account.</p>
+<p>You will have access to the dataset for a period of <strong>30 days</strong></p>
+<p>Note: depending on your Snowflake account region you may get a dialog box saying it will take <strong>10 mins</strong> to get the data ready for you.</p>
+<p>While the data is getting ready, let us setup our database, schema, warehouse and roles. Run the following commands from Snowsight SQL worksheet.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+DROP WAREHOUSE IF EXISTS ENRICH_WH;
+CREATE WAREHOUSE ENRICH_WH WAREHOUSE_SIZE = &#39;SMALL&#39; AUTO_RESUME = true AUTO_SUSPEND = 300 ENABLE_QUERY_ACCELERATION = FALSE
+WAREHOUSE_TYPE =&#39;STANDARD&#39; MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 2 SCALING_POLICY = &#39;STANDARD&#39;;
+
+DROP ROLE IF EXISTS ENRICH_ROLE;
+CREATE ROLE ENRICH_ROLE;
+GRANT USAGE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
+GRANT OPERATE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
+CREATE OR REPLACE DATABASE SAMPLES_DB;
+CREATE SCHEMA NOTEBOOKS;
+CREATE SCHEMA APPS;
+GRANT OWNERSHIP ON DATABASE SAMPLES_DB TO ROLE ENRICH_ROLE;
+GRANT OWNERSHIP ON SCHEMA SAMPLES_DB.NOTEBOOKS TO ROLE ENRICH_ROLE;
+GRANT OWNERSHIP ON SCHEMA SAMPLES_DB.APPS TO ROLE ENRICH_ROLE;
+
+-- Grant the custom role to current user
+SET CURRENT_USER_NAME = CURRENT_USER();
+GRANT ROLE ENRICH_ROLE TO USER IDENTIFIER($CURRENT_USER_NAME);    
+ALTER USER IDENTIFIER($CURRENT_USER_NAME) SET DEFAULT_WAREHOUSE=&#39;ENRICH_WH&#39;, DEFAULT_NAMESPACE=&#39;SAMPLES_DB.NOTEBOOKS&#39;, DEFAULT_ROLE=&#39;ENRICH_ROLE&#39;;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Display Demographics for a Region" duration="15">
+        <p><strong>Switch current role to ENRICH_ROLE</strong> (by clicking on the user icon at the bottom left corner)</p>
+<p>Navigate to the left side panel: <strong>Projects</strong> » <strong>Notebooks</strong></p>
+<p>Download the notebook file <code>precisely_enrich.ipynb</code> from our git repo <a href="https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit" target="_blank">here</a>. Create a notebook using the <code>Import .ipynb file</code> option in the <strong>+Notebook</strong> pulldown.</p>
+<p class="image-container"><img alt="alt text" src="img/e6306985663dbca3.jpg"></p>
+<p>In <strong>Notebook Location</strong>, select SAMPLES_DB from the list of available databases and NOTEBOOKS from the available schemas. All data within the notebook will be held in this database and schema in an automatically created internal stage.</p>
+<p>Select the ENRICH_WH warehouse and press <strong>Create</strong>.</p>
+<p class="image-container"><img alt="alt text" src="img/60776f8b38e4c1c0.jpg"></p>
+<p>To experience the creation of the notebook yourself, create a blank notebook and copy/paste the code as we go along.</p>
+<h2 is-upgraded>Create the First Map</h2>
+<p>With the notebook loaded, we will need some additional Python packages in order to run. Click on <code>Packages</code> pulldown to see the two default installed.</p>
+<p class="image-container"><img alt="alt text" src="img/62002eb0dc884b1b.jpg"></p>
+<p>Enter these 7 additional Anaconda packages one-by-one, then click <code>Save</code> to install all.</p>
+<pre><code language="language-python" class="language-python">geopandas, ipython, pandas, pydeck, shapely, snowflake-snowpark-python, streamlit-folium
+</code></pre>
+<p class="image-container"><img alt="alt text" src="img/ad295d532059635c.jpg"></p>
+<p>Now we have all the packages we need. Lets start the notebook by pressing <strong>Start</strong> which is at the top right hand corner of the screen.</p>
+<p>You will be using a variety of Snowflake functions to do some transformation tasks. Some of the functions are built into the snowpark library (such as <code>array_agg</code>, <code>parse_json</code>), others we need to call using the <strong>call_function</strong> module. <strong>call_function</strong> allows the user to leverage ANY Snowflake scalar function - you can use this for both built in as well as user defined functions.</p>
+<p>All functions are held inside the <strong>snowflake.snowpark.functions</strong> module.</p>
+<p>We will import the call_function, streamlit library, json, numpy, pandas and pydeck packages.</p>
+<p>Click on the + Python button to add a new Python cell. On the top left hand corner of the screen, you can rename your cell from ‘cell1&#39; to something more meaningful. This is useful for debugging purposes.</p>
+<p><strong>Rename</strong> cell1 to libraries by typing over the text ‘cell1&#39;.</p>
+<p>Copy and paste the following code into the newly created cell.</p>
+<pre><code language="language-python" class="language-python"># Import python packages
+import pandas as pd
+import geopandas as gpd
+from shapely import wkt
+from shapely.geometry import Point
+from IPython.display import display, IFrame
+from snowflake.snowpark.context import get_active_session
+import streamlit as st
+
+
+# Get the current session
+session = get_active_session()
+</code></pre>
+<p class="image-container"><img alt="alt text" src="img/b5ae9884db7f6dc7.png"></p>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>geometry_conversion_to_point</strong> This function will convert the lat long values to points.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">def create_geom(row):
+    if &#39;WKT&#39; in row.keys():
+        return wkt.loads(row[&#39;WKT&#39;])
+    else:
+        return Point(row[&#39;LONGITUDE&#39;], row[&#39;LATITUDE&#39;])
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>data_filtering</strong> Here we will be filtering the data for one MICROCODE and then we will use helper function and then create a GeoDataFrame with the appropriate CRS.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python"># Filtering the mbi polygon data to one MICROCODE
+q = &#39;&#39;&#39;
+        select * from MBI__PREMIUM_GEOSPATIAL__MARKET_DATA.PROMOTIONAL.&#34;mbi_demographics_jp&#34;
+        where MICROCODE = &#39;13123031007&#39;
+    &#39;&#39;&#39;
+
+# Execute the query (ensure session is defined and connected to Snowflake)
+df = session.sql(q).to_pandas()
+
+# Create geometry column using the helper function
+df[&#39;GEOM&#39;] = df.apply(create_geom, axis=1)
+
+# Create a GeoDataFrame with the appropriate CRS
+gdf = gpd.GeoDataFrame(df, geometry=&#39;GEOM&#39;, crs=&#34;EPSG:4326&#34;)
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>geometry_conversion_to_polygon</strong> Extract coordinates from a geometry. If it&#39;s a Polygon, return its exterior coordinates in a list. If it&#39;s a MultiPolygon, return a list of exterior coordinates for each polygon.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">def get_polygon_coords(geom):
+    if geom.geom_type == &#39;Polygon&#39;:
+        return [list(geom.exterior.coords)]
+    elif geom.geom_type == &#39;MultiPolygon&#39;:
+        return [list(p.exterior.coords) for p in geom.geoms]
+    else:
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>render_mbi_polygon_data_to_map</strong>. Create a DataFrame for the polygon layer by dropping the GEOM column. Extract polygon coordinates using the helper function. Create the PolygonLayer for pydeck. Re-project gdf to a projected CRS (EPSG:3857) for correct centroid calculation. Transform the centroids back to the geographic CRS (EPSG:4326). Calculate the mean latitude and longitude from the centroids. Return the pydeck.Deck for rendering.</p>
+<p>This data is the one that we have created joining the boundary(polygon) and market data(attribute) on MICROCODE.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">import pydeck as pdk
+def render_polygon(gdf):
+    # Create a DataFrame for the polygon layer by dropping the GEOM column.
+    df_poly = pd.DataFrame(gdf.drop(columns=[&#39;GEOM&#39;]))
+
+    # Extract polygon coordinates using the helper function.
+    df_poly[&#39;coordinates&#39;] = gdf[&#39;GEOM&#39;].apply(get_polygon_coords)
+
+    # Create the PolygonLayer for pydeck.
+    polygon_layer = pdk.Layer(
+        &#39;PolygonLayer&#39;,
+        df_poly,
+        get_polygon=&#39;coordinates&#39;,
+        stroked=True,
+        extruded=False,
+        opacity=0.3,
+        filled=True,
+        get_fill_color=[0, 255, 0],
+        get_line_color=[255, 0, 0],
+        pickable=True
+    )
+
+    # Re-project gdf to a projected CRS (EPSG:3857) for correct centroid calculation.
+    gdf_projected = gdf.to_crs(epsg=3857)
+    centroids_projected = gdf_projected.centroid
+    # Transform the centroids back to the geographic CRS (EPSG:4326).
+    centroids = centroids_projected.to_crs(epsg=4326)
+
+    # Calculate the mean latitude and longitude from the centroids.
+    view_state = pdk.ViewState(
+        latitude=centroids.y.mean(),
+        longitude=centroids.x.mean(),
+        zoom=14,
+        bearing=0,
+        pitch=0
+    )
+
+    # Define a tooltip for extra details on each point.
+    tooltip = {
+        &#39;html&#39;: &#39;&#39;&#39;
+                &lt;b&gt;Name:&lt;/b&gt; {NAME}&lt;br&gt;
+                &lt;b&gt;Microcode:&lt;/b&gt; {MICROCODE}&lt;br&gt;
+                &lt;b&gt;Households: total number:&lt;/b&gt; {HH_T}&lt;br&gt;
+                &lt;b&gt;Average Household Size:&lt;/b&gt; {HH_SIZE}&lt;br&gt;
+                &lt;b&gt;Population (males):&lt;/b&gt; {MALE}&lt;br&gt;
+                &lt;b&gt;Population (Females):&lt;/b&gt; {FEMALE}&lt;br&gt;
+                &lt;b&gt;Population (University):&lt;/b&gt; {EDU_5}&lt;br&gt;
+                &lt;b&gt;Purchasing Power: Euro per capita:&lt;/b&gt; {PP_EURO} &lt;b&gt;
+
+            &#39;&#39;&#39;,
+        &#39;style&#39;: {
+            &#39;backgroundColor&#39;: &#39;steelblue&#39;,
+            &#39;color&#39;: &#39;white&#39;
+        }
+    }
+
+    # Return the pydeck.Deck for rendering.
+    return pdk.Deck(
+        map_style=&#39;mapbox://styles/mapbox/light-v9&#39;,
+        layers=[polygon_layer],
+        initial_view_state=view_state,
+        # Uncomment and customize the tooltip if needed:
+        tooltip=tooltip
+    )
+
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>create_map</strong> Render the data on to map with base layer from mapbox.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">st.pydeck_chart(render_polygon(gdf))
+</code></pre>
+<p>Below is an example of what you should see on map</p>
+<p class="image-container"><img alt="alt text" src="img/8b9ba2f657380a43.png"></p>
+<p>We have created a simple map using the streamlit <a href="https://docs.streamlit.io/develop/api-reference/charts/st.map" target="_blank">st.map</a> function.</p>
+<p>st.map is useful for quickly generating simple maps by rendering lines, points, polygons and H3 indexes. We will be leveraging the Pydeck library in the next step for creating points. pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer. When you hover over in the boundary box you will see a tooltip containing the attribute information of the data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Display POI for a Region" duration="5">
+        <p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>filter_poi_data</strong> Now we will be filtering the poi data for one MICROCODE and then we will use helper function and then create a GeoDataFrame with the appropriate CRS.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">q = &#39;&#39;&#39;
+        select * from MBI__PREMIUM_GEOSPATIAL__MARKET_DATA.PROMOTIONAL.&#34;poi_jp&#34;
+        where MICROCODE = &#39;13123031007&#39;
+    &#39;&#39;&#39;
+# Execute the query (assuming &#39;session&#39; is your active Snowflake session)
+df = session.sql(q).to_pandas()
+
+# Create a geometry column using the helper function.
+df[&#39;GEOM&#39;] = df.apply(create_geom, axis=1)
+
+# Convert LATITUDE and LONGITUDE columns to float.
+df[&#39;LATITUDE&#39;] = df[&#39;LATITUDE&#39;].astype(float)
+df[&#39;LONGITUDE&#39;] = df[&#39;LONGITUDE&#39;].astype(float)
+
+# Create a GeoDataFrame with the appropriate CRS.
+gdf = gpd.GeoDataFrame(df, geometry=&#39;GEOM&#39;, crs=&#34;EPSG:4326&#34;)
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>rendering_poi_data_on_map</strong>. Create a DataFrame for the polygon layer by dropping the GEOM column. Extract point coordinates using the helper function. Create the PointLayer for pydeck. Re-project gdf to a projected CRS (EPSG:3857) for correct centroid calculation. Transform the centroids back to the geographic CRS (EPSG:4326). Calculate the mean latitude and longitude from the centroids. Return the pydeck.Deck for rendering.</p>
+<p>This data is the one that we have created joining the boundary(polygon) and market data(attribute) on MICROCODE.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">def render_points(gdf):
+    # Set the initial view using the average of latitude and longitude.
+    view_state = pdk.ViewState(
+        latitude=gdf[&#39;LATITUDE&#39;].mean(),
+        longitude=gdf[&#39;LONGITUDE&#39;].mean(),
+        zoom=14,
+        bearing=0,
+    )
+
+    # Define the ScatterplotLayer.
+    layer = pdk.Layer(
+        &#34;ScatterplotLayer&#34;,
+        gdf,
+        get_position=[&#34;LONGITUDE&#34;, &#34;LATITUDE&#34;],
+        get_color=[255, 0, 0, 200],
+        get_radius=0.5,
+        pickable=True,
+        opacity=0.8,
+        stroked=True,
+        filled=True,
+        radius_scale=6,
+        radius_min_pixels=1,
+        radius_max_pixels=100,
+        line_width_min_pixels=1,
+    )
+
+    # Define a tooltip for extra details on each point.
+    tooltip = {
+        &#39;html&#39;: &#39;&#39;&#39;
+                &lt;b&gt;PB Id:&lt;/b&gt; {PB_ID}&lt;br&gt;
+                &lt;b&gt;Name:&lt;/b&gt; {NAME}&lt;br&gt;
+                &lt;b&gt;Microcode:&lt;/b&gt; {MICROCODE}&lt;br&gt;
+                &lt;b&gt;Address:&lt;/b&gt; {MAIN_ADDRE}&lt;br&gt;
+                &lt;b&gt;Post Code:&lt;/b&gt; {POSTCODE}&lt;br&gt;
+                &lt;b&gt;Main Class:&lt;/b&gt; {MAIN_CLASS}&lt;br&gt;
+                &lt;b&gt;Bussiness:&lt;/b&gt; {BUSINESS_L}&lt;br&gt;
+                &lt;b&gt;Group Name:&lt;/b&gt; {GROUP_NAME}&lt;br&gt;
+
+            &#39;&#39;&#39;,
+        &#39;style&#39;: {
+            &#39;backgroundColor&#39;: &#39;steelblue&#39;,
+            &#39;color&#39;: &#39;white&#39;
+        }
+    }
+
+    # Create and return the pydeck.Deck.
+    deck = pdk.Deck(
+        map_style=&#39;mapbox://styles/mapbox/light-v9&#39;,
+        layers=[layer],
+        initial_view_state=view_state,
+        tooltip=tooltip
+    )
+
+    return deck
+
+# Render the points on the map.
+st.pydeck_chart(render_points(gdf))
+
+</code></pre>
+<p>Below is an example of what you should see on map</p>
+<p class="image-container"><img alt="alt text" src="img/147ef41b6f755d4e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Overlay POI with Demographics" duration="5">
+        <p>Combining the demographics data from MBI with POI data can put us in a strong position to target where we can open a store. For example targeted stores(KFC) from POI data with an insight of purchasing power or monthly income from MBI will help us in making decesions on opening a store.</p>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>filter_mbi_data</strong> Now we will be filtering the poi data for one MICROCODE and then we will use helper function and then create a GeoDataFrame with the appropriate CRS.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">q_poly = &#39;&#39;&#39;
+        select * from MBI__PREMIUM_GEOSPATIAL__MARKET_DATA.PROMOTIONAL.&#34;mbi_demographics_jp&#34;
+        where MICROCODE = &#39;13123031007&#39;
+    &#39;&#39;&#39;
+
+df_poly = session.sql(q_poly).to_pandas()
+# Assume df_poly already has the necessary columns (or a WKT column)
+df_poly[&#39;GEOM&#39;] = df_poly.apply(create_geom, axis=1)
+# Create GeoDataFrame for polygons
+gdf_polygons = gpd.GeoDataFrame(df_poly, geometry=&#39;GEOM&#39;, crs=&#34;EPSG:4326&#34;)
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>filter_poi</strong> Now we will be filtering the poi data for one MICROCODE and then we will use helper function and then create a GeoDataFrame with the appropriate CRS.</p>
+<p>Copy and paste the code into the new python cell and run this notebook cell:</p>
+<pre><code language="language-python" class="language-python">q_point = &#39;&#39;&#39;
+        select * from MBI__PREMIUM_GEOSPATIAL__MARKET_DATA.PROMOTIONAL.&#34;poi_jp&#34;
+        where MICROCODE = &#39;13123031007&#39;
+    &#39;&#39;&#39;
+
+df_point = session.sql(q_point).to_pandas()
+df_point[&#39;GEOM&#39;] = df_point.apply(create_geom, axis=1)
+# Convert LATITUDE and LONGITUDE to float, if needed
+df_point[&#39;LATITUDE&#39;] = df_point[&#39;LATITUDE&#39;].astype(float)
+df_point[&#39;LONGITUDE&#39;] = df_point[&#39;LONGITUDE&#39;].astype(float)
+# Create GeoDataFrame for points
+gdf_points = gpd.GeoDataFrame(df_point, geometry=&#39;GEOM&#39;, crs=&#34;EPSG:4326&#34;)
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>rendering_both_layers_on_map</strong></p>
+<p>Here we will be overlaying poi and mbi data to get a proper insight on the area.</p>
+<pre><code language="language-python" class="language-python">def render_combined_map(gdf_points, gdf_polygons):
+    # ----- Polygon Layer -----
+    # Prepare a DataFrame for the polygon layer.
+    df_poly_layer = pd.DataFrame(gdf_polygons.drop(columns=[&#39;GEOM&#39;]))
+    df_poly_layer[&#39;coordinates&#39;] = gdf_polygons[&#39;GEOM&#39;].apply(get_polygon_coords)
+
+    polygon_layer = pdk.Layer(
+        &#39;PolygonLayer&#39;,
+        df_poly_layer,
+        get_polygon=&#39;coordinates&#39;,
+        stroked=True,
+        extruded=False,
+        opacity=0.3,
+        filled=True,
+        get_fill_color=[0, 255, 0],
+        get_line_color=[255, 0, 0],
+        pickable=True
+    )
+
+    # ----- Point Layer -----
+    point_layer = pdk.Layer(
+        &#34;ScatterplotLayer&#34;,
+        gdf_points,
+        get_position=[&#34;LONGITUDE&#34;, &#34;LATITUDE&#34;],
+        get_color=[255, 0, 0, 200],
+        get_radius=0.5,
+        pickable=True,
+        opacity=0.8,
+        stroked=True,
+        filled=True,
+        radius_scale=6,
+        radius_min_pixels=1,
+        radius_max_pixels=100,
+        line_width_min_pixels=1,
+    )
+
+    # ----- Combined View State -----
+    # For the point layer, compute average latitude and longitude.
+    point_lat = gdf_points[&#39;LATITUDE&#39;].mean()
+    point_lon = gdf_points[&#39;LONGITUDE&#39;].mean()
+
+    # For the polygon layer, compute centroids after reprojecting to a projected CRS.
+    gdf_poly_proj = gdf_polygons.to_crs(epsg=3857)
+    poly_centroids_proj = gdf_poly_proj.centroid
+    poly_centroids = poly_centroids_proj.to_crs(epsg=4326)
+    poly_lat = poly_centroids.y.mean()
+    poly_lon = poly_centroids.x.mean()
+
+    # Compute an overall center by averaging the two.
+    combined_lat = (point_lat + poly_lat) / 2
+    combined_lon = (point_lon + poly_lon) / 2
+
+    view_state = pdk.ViewState(
+        latitude=combined_lat,
+        longitude=combined_lon,
+        zoom=14,
+        bearing=0,
+        pitch=0
+    )
+
+    # Define a tooltip for extra details on each point.
+    tooltip = {
+        &#39;html&#39;: &#39;&#39;&#39;
+                &lt;b&gt;Name:&lt;/b&gt; {NAME}&lt;br&gt;
+                &lt;b&gt;Microcode:&lt;/b&gt; {MICROCODE}&lt;br&gt;
+                &lt;b&gt;Households: total number:&lt;/b&gt; {HH_T}&lt;br&gt;
+                &lt;b&gt;Average Household Size:&lt;/b&gt; {HH_SIZE}&lt;br&gt;
+                &lt;b&gt;Population (males):&lt;/b&gt; {MALE}&lt;br&gt;
+                &lt;b&gt;Population (Females):&lt;/b&gt; {FEMALE}&lt;br&gt;
+                &lt;b&gt;Population (University):&lt;/b&gt; {EDU_5}&lt;br&gt;
+                &lt;b&gt;Purchasing Power: Euro per capita:&lt;/b&gt; {PP_EURO} &lt;b&gt;
+                &lt;b&gt;Address:&lt;/b&gt; {MAIN_ADDRE}&lt;br&gt;
+                &lt;b&gt;Post Code:&lt;/b&gt; {POSTCODE}&lt;br&gt;
+                &lt;b&gt;Main Class:&lt;/b&gt; {MAIN_CLASS}&lt;br&gt;
+                &lt;b&gt;Bussiness:&lt;/b&gt; {BUSINESS_L}&lt;br&gt;
+                &lt;b&gt;Group Name:&lt;/b&gt; {GROUP_NAME}&lt;br&gt;
+
+            &#39;&#39;&#39;,
+        &#39;style&#39;: {
+            &#39;backgroundColor&#39;: &#39;steelblue&#39;,
+            &#39;color&#39;: &#39;white&#39;
+        }
+    }
+
+    # ----- Create the Combined Deck -----
+    deck = pdk.Deck(
+        map_style=&#39;mapbox://styles/mapbox/light-v9&#39;,
+        layers=[polygon_layer, point_layer],
+        initial_view_state=view_state,
+        tooltip=tooltip
+    )
+
+    return deck
+
+</code></pre>
+<p>Add a new python cell by hovering over the bottom edge of the cell and select Python.</p>
+<p class="image-container"><img alt="alt text" src="img/bf5f0ef6ac5a20cc.png"></p>
+<p>Rename the the cell to <strong>display_data_on_map</strong></p>
+<pre><code language="language-python" class="language-python">    st.pydeck_chart(render_combined_map(gdf_points, gdf_polygons))
+</code></pre>
+<p>Here you will see a map with tooltip that combines <strong>MBI Demographics</strong> with <strong>Points-of-Interest</strong> for a specific region in Tokyo: try hovering over any point in the polygon.</p>
+<p class="image-container"><img alt="alt text" src="img/aca059816b4f252.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualize with Streamlit" duration="10">
+        <p>Navigate to the left side panel: <strong>Projects</strong> » <strong>Streamlit</strong></p>
+<ul>
+<li>Set <code>Database</code> to <code>SAMPLES_DB</code> and <code>Owner role</code> to <code>ENRICH_ROLE</code></li>
+<li>Click on the blue <code>+ Streamlit App</code> button</li>
+<li>Choose an <code>App title</code>, set <code>App location</code> to <code>SAMPLES_DB</code>.<code>APPS</code></li>
+<li>Warehouse should be <code>ENRICH_WH</code></li>
+<li>Click on <strong>Create</strong></li>
+</ul>
+<p>Select ALL code (<code>Cmd-a</code> or <code>Ctrl-a</code>) in <code>streamlit_app.py</code> and delete</p>
+<p>Paste in Python code from <code>precisely_enrich_sis.py</code> downloaded from the lab git repo</p>
+<p>Install these 5 Anaconda packages one-by-one:</p>
+<pre><code language="language-python" class="language-python">geopandas, ipython, pandas, pydeck, shapely
+</code></pre>
+<p>Click on <strong>Run</strong></p>
+<p class="image-container"><img alt="alt text" src="img/d589c634b6be73a7.jpg"></p>
+<p>Try different <code>Layer Opacity</code> and <code>Point Radius</code> values, render by clicking <strong>Apply Filter</strong></p>
+<p>Hover over any point to see <strong>MBI Demographics</strong> and <strong>POI</strong> data overlay. You can also try a different <code>Microcode</code> region.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Conclusion</h2>
+<p>By completing this guide, you have successfully integrated and enriched geospatial data from Precisely using Snowflake&#39;s geospatial functions, performed spatial joins to identify Points of Interest (POI), and created interactive visualizations with Streamlit and Pydeck within Snowflake. You also leveraged Snowflake&#39;s powerful geospatial capabilities to conduct market and demographic analysis of MBI data. With these skills in hand, you&#39;re now well-equipped to extend your analysis further by incorporating additional datasets, developing more advanced spatial queries, and integrating AI/ML models using Snowflake Cortex</p>
+<h2 is-upgraded>What you Learned</h2>
+<p>• Integrated and enriched geospatial data from Precisely using Snowflake&#39;s geospatial functions.</p>
+<p>• Performed spatial joins to identify Points of Interest (POI).</p>
+<p>• Created interactive visualizations using Streamlit and Pydeck in Snowflake.</p>
+<p>• Leveraged Snowflake&#39;s geospatial capabilities for market and demographic analysis of MBI data.</p>
+<h2 is-upgraded>Related Resources</h2>
+<h3 is-upgraded>Datasources Used</h3>
+<ul>
+<li><a href="https://app.snowflake.com/marketplace/listing/GZT0Z2BR4ACAV/precisely-world-points-of-interest-premium-global" target="_blank">Points of Interest</a></li>
+<li><a href="https://app.snowflake.com/precisely/precisely_snowflake_marketplace/#/data/provider-studio/provider/listing/MBI_PREMIUM_GEOSPATIAL_MARKET_DATA" target="_blank">MBI</a></li>
+</ul>
+<h3 is-upgraded>Source code</h3>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit" target="_blank">Source Code on Github</a></li>
+</ul>
+<h3 is-upgraded>Further Related Material</h3>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions-geospatial" target="_blank">Geospatial Functions</a></li>
+<li><a href="https://streamlit.io/" target="_blank">Streamlit</a></li>
+<li><a href="https://deckgl.readthedocs.io/en/latest/index.html#" target="_blank">Pydeck</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

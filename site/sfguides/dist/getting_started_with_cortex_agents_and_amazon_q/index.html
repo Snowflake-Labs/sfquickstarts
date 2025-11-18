@@ -1,0 +1,712 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Agents and Amazon Q</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_cortex_agents_and_amazon_q"
+                  title="Getting Started with Cortex Agents and Amazon Q"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a> orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.</p>
+<p><a href="https://aws.amazon.com/q/business/" target="_blank">Amazon Q Business</a> is a generative AI assistant that transforms how work gets done in your organization. With specialized capabilities for software developers, business intelligence analysts, contact center employees, supply chain analysts, and anyone building with AWS, Amazon Q helps every employee get insights on their data and accelerate their tasks. Leveraging Amazon Q&#39;s advanced agentic capabilities, companies can streamline processes, get to decisions faster, and help employees be more productive.</p>
+<p>Cortex Search: A Snowflake service that combines advanced search capabilities to find relevant information within any text data stored in your organization&#39;s Snowflake environment. It takes care of all the complex technical processes automatically, allowing organizations to implement powerful search features without worrying about the underlying technical infrastructure. Amazon Q Business Plugin: An integration tool that connects Amazon Q Business with other business services and data sources through secure, customizable connections. These plugins enhance Amazon Q&#39;s functionality by allowing it to safely access and work with various company systems and services while maintaining security standards. Amazon Q Business Chat Interface: The main user interface where you can interact with Amazon Q Business through a conversational format to access company information and services. Users can ask questions and make requests using natural language, and the interface provides responses by gathering and synthesizing information from connected business systems.</p>
+<h2 is-upgraded>Use Case</h2>
+<p>Users will create an intelligent search system for movie script PDFs and structured movie data using Snowflake Cortex AI and Amazon Q Business. Snowflake Cortex AI will process and index the unstructured PDF movie scripts, making them searchable through advanced text analysis. Amazon Q Business will then provide a natural language interface, allowing users to ask questions about the scripts in conversational language and receive relevant answers. For example, users could ask about specific dialogues, scene descriptions, or character interactions across different movie scripts, and the system will retrieve and present the relevant information. This implementation demonstrates how to transform raw PDF scripts into an interactive, queryable knowledge base that understands and responds to complex questions about movie content.</p>
+<p>The end-to-end workflow will look like this: <img src="img/f887e13b12c199c2.png"></p>
+<p>Ingest data into structured and unstructured data stores then:</p>
+<ol type="1">
+<li>Create a Cortex Analyst service with structured data with a Semantic Model.</li>
+<li>Using Snowflake functions prepare the data and create a Cortex Search service with unstructured data.</li>
+<li>Create a Cortex Agent that brokers the decision on when to use each service (as well as other GenAI functions (potentially))</li>
+<li>Amazon Q for Business is connected to the Cortex Agents service with a plugin using oauth authentication.</li>
+<li>Users can use Amazon Q for Business with Cortex securely and seamlessly.</li>
+<li>(optional and not covered in this lab) Along with the Cortex Plugin users can access other AWS data and services through Amazon Q for Business</li>
+</ol>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account with Cortex Search.</li>
+<li>Familiarity with <a href="https://aws.amazon.com/free" target="_blank">AWS</a> and an AWS account.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Using Cortex Search along with complimentary functions in Snowflake.</li>
+<li>Using Cortex Analyst and semantic models in Snowflake.</li>
+<li>Using Cortex Agents.</li>
+<li>Using Amazon Q to leverage generative AI to get quick answers from your data.</li>
+<li>Connect Amazon Q to Snowflake Cortex Search with a custom plugin.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li><a href="https://aws.amazon.com/free" target="_blank">AWS Account</a> with access to Q</li>
+<li>For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end copilot workflow on unstructured data in Snowflake</p>
+<ul>
+<li>to load data to Snowflake via Snowsight</li>
+<li>to extract unstructured data and create chunks in Snowflake</li>
+<li>to create a Snowflake Cortex Search Service on unstructured data</li>
+<li>to create a semantic model with Cortex Analyst on structured data</li>
+<li>to create a Cortex Agent using the Search and Analyst services</li>
+<li>to create a connection from Amazon Q to Cortex Search with Oauth authentication</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Amazon Q App" duration="5">
+        <p>In this section, we&#39;ll set up <a href="https://aws.amazon.com/q/business/qstart" target="_blank">Amazon Q Business</a> , a generative AI-powered assistant that enables natural language interaction with business data. We&#39;ll create and configure a Q Business application that will connect with our Snowflake database, enabling intelligent querying of our movie script data. While we&#39;re using movie scripts for this example, these same steps can be applied to analyze any type of business documents in your organization.</p>
+<h2 is-upgraded>Create your Q Business Application</h2>
+<ol type="1">
+<li>Open Amazon Q Business on the console and select Get Started <img src="img/a0e68acee1cb9b05.png"></li>
+<li>Select <strong>Create application</strong><img src="img/854122d59de89ee3.png"></li>
+<li>Provide the name <strong>myQBusinessApp</strong> for your application under <strong>Application Name</strong> myapp. You may review all the other settings, but for now we will not change the default configuration. <img src="img/415c17848343440.png"></li>
+<li>To create our Q Business application we need to ensure we have Identity Center set up to help us manage user access to the app. As you scroll through the configuration select the Create account instance button to create an Identity Center instance for the AWS account and link our application. <img src="img/f043bf4bc1d67699.png"></li>
+<li>Once you have scrolled to the very bottom, select the <strong>Create</strong> button located in the right corner.co <img src="img/9af5b1e239835b51.png"></li>
+</ol>
+<p>Congratulations you have now created your first Q Business App!</p>
+<h2 is-upgraded>Copy the Deployed URL and save for later</h2>
+<p>After clicking Create, you should have been automatically routed to your QBusinessApp home page. Here you can see all of the information regarding your application. Be sure to copy the <strong>Deployed URL</strong> and store this in a notes page or text file to the side, we will need this later to set up our authorization between Snowflake and Q Business. <img src="img/a67406a6bea7196d.png"></p>
+<h2 is-upgraded>Create an IAM User</h2>
+<p>Before we continue on, we need to make sure we have configured a user to access our Q Business Application.</p>
+<ol type="1">
+<li>To first create a user select <strong>Manage user access</strong> on your Q Business App web page. <img src="img/88e18847f01d2c83.png"></li>
+<li>Next, select <strong>Add groups and users</strong>, then continue by selecting the <strong>Add new users</strong> button in the pop up window. <img src="img/49ae1a964c166426.png"></li>
+<li>Configure your new user with the following information, or feel free to use your own name. <strong>Please ensure that your email is an email you have access to</strong>. <img src="img/940a122b685e086d.png"></li>
+<li>Continue through the user management process by selecting, <strong>Add</strong>, then <strong>Assign</strong> .</li>
+<li>You should then be routed to the <strong>Manage access and subscriptions</strong> webpage where your user details will be available for you to review. One you are happy with your use details select Confirm. <img src="img/e544badd24e69e4e.png"></li>
+<li>By this time you should have received an email in your inbox from <strong>no-reply@login.awsapps.com</strong>. Please open this email and select <strong>Accept invitation</strong>. <img src="img/5ed1cc885446986e.png"></li>
+<li>Follow the prompts to create a password for your user and to register an MFA device. <strong>Please do not forget your password you will need it later to log in!</strong><img src="img/a06af91da837fda.png"></li>
+</ol>
+<p class="image-container"><img src="img/b16a6864e495d7b2.png"></p>
+<p><strong>Well done!</strong> From this section of the lab you have successfully configured your Q Business Application and created a user that has permissions to access the application.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cortex and Amazon Q Business" duration="15">
+        <p>In this section, we&#39;ll create the foundation for an AI-powered movie data analysis system. By configuring Snowflake Cortex Search, Cortex Analyst and a Cortex Agent, you&#39;ll build a system that can process, store, and intelligently search through movie scripts. Once completed, this setup will allow users to ask natural language questions about movie content and receive relevant answers through Amazon Q Business.</p>
+<h2 is-upgraded>Upload Data to Snowflake and Create Cortex Search Service</h2>
+<ol type="1">
+<li>Download the movie script for Toy Story, by clicking <a href="https://github.com/Snowflake-Labs/getting_started_with_cortex_agents_and_amazon_q/blob/main/toy-story-1995.pdf" target="_blank">here</a>  and selecting the download button. This PDF will be our test data for the search system and Q Business Application.</li>
+<li>Navigate to the Snowflake UI and create a new SQL worksheet where we&#39;ll run our setup commands. <img src="img/e72ed92464292ddf.png"></li>
+<li>Create database MOVIELENS and schema, table for the movie  and load the move dashboard data from a csv file.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE DATABASE movielens;
+CREATE OR REPLACE SCHEMA movielens.movies;
+CREATE OR REPLACE SCHEMA movielens.data;
+CREATE OR REPLACE WAREHOUSE workshopwh;
+
+USE DATABASE movielens;
+USE SCHEMA data;
+
+CREATE TABLE movies_dashboard (
+movie_id NUMBER,
+    	movie_title VARCHAR,
+   	movie_release_year INTEGER,
+    	genre VARCHAR,
+   	user_rating FLOAT,
+   	rating_timestamp TIMESTAMP_NTZ,
+    	user_id NUMBER,
+    	user_firstname VARCHAR,
+   	user_lastname VARCHAR,
+    	user_city VARCHAR,
+    	user_state VARCHAR,
+    	user_country VARCHAR,
+    	user_email VARCHAR,
+    	user_phonenumber VARCHAR,
+    	interaction_timestamp NUMBER ,
+    	interaction_type VARCHAR
+);
+
+CREATE OR REPLACE STAGE MOVIEDASHBOARD
+URL=&#39;s3://hol-qs-bucket/&#39;
+FILE_FORMAT = (TYPE = &#39;csv&#39;);
+
+COPY INTO movies_dashboard FROM @MOVIEDASHBOARD/movies_dashboard.csv
+  FILE_FORMAT=(TYPE = &#39;csv&#39; FIELD_DELIMITER = &#39;,&#39; SKIP_HEADER = 1);
+
+USE WAREHOUSE workshopwh;
+USE DATABASE movielens;
+USE SCHEMA data;
+CREATE STAGE DOCS
+DIRECTORY = ( ENABLE = true )
+ENCRYPTION = ( TYPE = &#39;SNOWFLAKE_SSE&#39; );
+</code></pre>
+<ol type="1" start="4">
+<li>Now that we have our database ready, we can also upload the script files to the PUBLIC schema of the DOCS stage in the SCRIPT_DB database. To do this select <strong>Data -&gt; MOVIELENS -&gt; DATA -&gt; Stages -&gt; DOCS. Click +FILES</strong> to upload the movie script you have previously downloaded. <img src="img/b0a0d6c5346b0137.png"></li>
+</ol>
+<p>Once uploaded you should be able to see your PDF file in your webpage to validate that you have successfully uploaded the movie script.</p>
+<ol type="1" start="5">
+<li>Run the following code to process your movie scripts. This code does two things: first, it extracts text from the PDFs into a table (SCRIPT_TABLE), then divides that text into searchable segments(chunks) stored into a new table SCRIPT_TABLE_CHUNK</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">--Create Table for text data
+CREATE OR REPLACE TABLE SCRIPT_TABLE AS
+SELECT
+&#39;toy-story-script&#39; as doc,
+SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@MOVIELENS.DATA.DOCS, &#39;toy-story-1995.pdf&#39;, {&#39;mode&#39;: &#39;LAYOUT&#39;}) as script_text;
+
+
+-- Create table with chunked text
+CREATE OR REPLACE TABLE SCRIPT_TABLE_CHUNK AS
+SELECT
+TO_VARCHAR(c.value) as CHUNK_TEXT, DOC
+FROM
+SCRIPT_TABLE,
+LATERAL FLATTEN( input =&gt; SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
+TO_VARCHAR(script_text:content),
+&#39;none&#39;,
+700,
+100
+)) c;
+SELECT * FROM SCRIPT_TABLE_CHUNK;
+
+</code></pre>
+<p>Note: The code splits the text into 700-token chunks with 100-token overlaps. These numbers can be adjusted later to optimize your search results. For more details about text processing options, see the <a href="https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex" target="_blank">Snowflake documentation</a>.</p>
+<ol type="1" start="6">
+<li>Now we are ready to create a Cortex Search Service by running the code on the CHUNK_TEXT field. This service will enable intelligent searching across your processed movie scripts:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">-- Create Search Service
+CREATE OR REPLACE CORTEX SEARCH SERVICE SCRIPT_SEARCH_SRV
+ON CHUNK_TEXT
+ATTRIBUTES DOC
+WAREHOUSE = HOL_WH
+TARGET_LAG = &#39;30 day&#39;
+AS (
+SELECT CHUNK_TEXT as CHUNK_TEXT, DOC FROM SCRIPT_TABLE_CHUNK);
+
+
+CREATE OR REPLACE STAGE models DIRECTORY = (ENABLE = TRUE);
+
+</code></pre>
+<p>The service automatically updates every 30 days and allows filtering by document name using the DOC attribute..</p>
+<h2 is-upgraded>Set up Cortex Analyst</h2>
+<ol type="1">
+<li>Download the <a href="https://github.com/Snowflake-Labs/getting_started_with_cortex_agents_and_amazon_q/blob/main/movie_dashboard.yaml" target="_blank">movie_dashboard.yaml</a> (NOTE: Do NOT right-click to download.)</li>
+<li>Navigate to <strong>Data » Databases » MOVIELENS » DATA » Stages »  MODELS</strong></li>
+<li>Click <strong>+ Files</strong> in the top right <img src="img/2e61b1de09b6847d.png"></li>
+<li>Browse and select movie_review.yaml file</li>
+<li>Click <strong>Upload</strong></li>
+</ol>
+<p><strong>Well Done!</strong> with this upload you have now created a Cortex Analyst service.</p>
+<h2 is-upgraded>Set up the Agent</h2>
+<p>In this section we create a stored procedure that passes a Cortex Agent spec to the Cortex API that utilizes the Search and Analyst Services we just created.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE PROCEDURE CALL_CORTEX_AGENT_PROC(query STRING, limit INT) 
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.9&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+HANDLER = &#39;call_cortex_agent_proc&#39;
+AS
+$$
+import json
+import _snowflake
+import re
+from snowflake.snowpark.context import get_active_session
+
+def call_cortex_agent_proc(query: str, limit: int = 10):
+    session = get_active_session()
+    
+    API_ENDPOINT = &#34;/api/v2/cortex/agent:run&#34;
+    API_TIMEOUT = 50000  
+
+    CORTEX_SEARCH_SERVICES = &#34;MOVIELENS.DATA.SCRIPT_SEARCH_SRV&#34;
+    SEMANTIC_MODELS = &#34;@MOVIELENS.DATA.MODELS/movie_dashboard.yaml&#34;
+
+    query = (
+        &#34;You are an assistant tasked with answering questions about the movie Toy Story. &#34;
+        &#34;Please summarize and answer this question concisely: &#34; + query
+    )
+
+    payload = {
+        &#34;model&#34;: &#34;claude-3-5-sonnet&#34;,
+        &#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: [{&#34;type&#34;: &#34;text&#34;, &#34;text&#34;: query}]}],
+        &#34;tools&#34;: [
+            {&#34;tool_spec&#34;: {&#34;type&#34;: &#34;cortex_analyst_text_to_sql&#34;, &#34;name&#34;: &#34;analyst1&#34;}},
+            {&#34;tool_spec&#34;: {&#34;type&#34;: &#34;cortex_search&#34;, &#34;name&#34;: &#34;search1&#34;}}
+        ],
+        &#34;tool_resources&#34;: {
+            &#34;analyst1&#34;: {&#34;semantic_model_file&#34;: SEMANTIC_MODELS},
+            &#34;search1&#34;: {&#34;name&#34;: CORTEX_SEARCH_SERVICES, &#34;max_results&#34;: limit}
+        }
+    }
+
+    try:
+        resp = _snowflake.send_snow_api_request(
+            &#34;POST&#34;, API_ENDPOINT, {}, {}, payload, None, API_TIMEOUT
+        )
+
+        if resp[&#34;status&#34;] != 200:
+            return {&#34;error&#34;: resp[&#34;status&#34;]}
+
+        response_content = json.loads(resp[&#34;content&#34;])
+        return process_cortex_response(response_content, session)
+
+    except Exception as e:
+        return {&#34;error&#34;: str(e)}
+
+def clean_text(text):
+    &#34;&#34;&#34; Cleans up unwanted characters and symbols from search results. &#34;&#34;&#34;
+    text = re.sub(r&#39;[\u3010\u3011\u2020\u2021]&#39;, &#39;&#39;, text)
+    text = re.sub(r&#39;^\s*ns\s+\d+\.*&#39;, &#39;&#39;, text)
+    return text.strip()
+
+def process_cortex_response(response, session):
+    &#34;&#34;&#34; Parses Cortex response and executes SQL if provided. &#34;&#34;&#34;
+    result = {&#34;type&#34;: &#34;unknown&#34;, &#34;text&#34;: None, &#34;sql&#34;: None, &#34;query_results&#34;: None}
+    full_text_response = []
+
+    for event in response:
+        if event.get(&#34;event&#34;) == &#34;message.delta&#34;:
+            data = event.get(&#34;data&#34;, {})
+            delta = data.get(&#34;delta&#34;, {})
+
+            for content_item in delta.get(&#34;content&#34;, []):
+                content_type = content_item.get(&#34;type&#34;)
+
+                if content_type == &#34;tool_results&#34;:
+                    tool_results = content_item.get(&#34;tool_results&#34;, {})
+
+                    for result_item in tool_results.get(&#34;content&#34;, []):
+                        if result_item.get(&#34;type&#34;) == &#34;json&#34;:
+                            json_data = result_item.get(&#34;json&#34;, {})
+
+                            if &#34;sql&#34; in json_data:
+                                result[&#34;type&#34;] = &#34;cortex_analyst&#34;
+                                result[&#34;sql&#34;] = json_data[&#34;sql&#34;]
+                                result[&#34;text&#34;] = json_data.get(&#34;text&#34;, &#34;&#34;)
+
+                                try:
+                                    query_results = session.sql(result[&#34;sql&#34;]).collect()
+                                    result[&#34;query_results&#34;] = [row.as_dict() for row in query_results]
+                                except Exception as e:
+                                    result[&#34;query_results&#34;] = {&#34;error&#34;: str(e)}
+
+                            elif &#34;searchResults&#34; in json_data:
+                                result[&#34;type&#34;] = &#34;cortex_search&#34;
+                                formatted_results = []
+
+                                for sr in json_data.get(&#34;searchResults&#34;, []):
+                                    search_text = clean_text(sr.get(&#34;text&#34;, &#34;&#34;).strip())
+                                    citation = sr.get(&#34;citation&#34;, &#34;&#34;).strip()
+
+                                    if search_text:
+                                        if citation:
+                                            formatted_results.append(f&#34;- {search_text} (Source: {citation})&#34;)
+                                        else:
+                                            formatted_results.append(f&#34;- {search_text}&#34;)
+
+                                if formatted_results:
+                                    full_text_response.extend(formatted_results)
+
+                elif content_type == &#34;text&#34;:
+                    text_piece = clean_text(content_item.get(&#34;text&#34;, &#34;&#34;).strip())
+                    if text_piece:
+                        full_text_response.append(text_piece)
+
+    result[&#34;text&#34;] = &#34;\n&#34;.join(full_text_response) if full_text_response else &#34;No relevant search results found.&#34;
+    return result
+$$;
+
+CALL call_cortex_agent_proc(&#39;what is the dinosaurs name in toy story?&#39;, 5);
+
+</code></pre>
+<p>Now you can access that stored procedure from external sources like Q for Business!</p>
+<h2 is-upgraded>Set up Oauth</h2>
+<p>The final step is setting up OAuth authentication, this creates a secure connection between Snowflake and Amazon Q Business nd ensures that only authorized requests can access your movie script data.</p>
+<ol type="1">
+<li>Run the following code to create the security integration. This code creates a secure connection that will allow Amazon Q Business to safely access your Snowflake data. You&#39;ll need to replace  with the URL of your Amazon Q application (which you have copied earlier from the AWS Console).</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">--create custom oauth
+CREATE OR REPLACE SECURITY INTEGRATION Q_AUTH_HOL
+TYPE = OAUTH
+ENABLED = TRUE
+OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+OAUTH_REFRESH_TOKEN_VALIDITY = 3600
+OAUTH_CLIENT = CUSTOM
+OAUTH_CLIENT_TYPE = CONFIDENTIAL
+OAUTH_REDIRECT_URI = &#39;&lt;Deployed URL&gt;/oauth/callback&#39;;
+
+GRANT USAGE on database MOVIELENS to role PUBLIC;
+GRANT USAGE on SCHEMA DATA to role PUBLIC;
+GRANT USAGE on CORTEX SEARCH SERVICE SCRIPT_SEARCH_SRV to role PUBLIC;
+GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
+GRANT USAGE ON PROCEDURE CALL_CORTEX_AGENT_PROC(VARCHAR, NUMBER) TO ROLE PUBLIC;
+GRANT USAGE ON WAREHOUSE WORKSHOPWH TO ROLE PUBLIC;
+
+DESC INTEGRATION Q_AUTH_HOL;
+
+SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS(&#39;Q_AUTH_HOL&#39;);
+</code></pre>
+<p class="image-container"><img src="img/2634ccb0363fe869.png"></p>
+<ol type="1" start="2">
+<li>After running the code, save these important credentials, we will need them later on!: OAUTH_CLIENT_ID from the results OAUTH_CLIENT_SECRET from the results Your Snowflake URL (find this by clicking your account name in the bottom left of the Snowflake UI, selecting your account,then view account details. Your snowflake URL is https:// + your Account/Server URL e.g. https://.snowflakecomputing.com) For more information about Snowflake&#39;s OAuth configuration, visit the <a href="https://docs.snowflake.com/en/user-guide/oauth-custom" target="_blank">Snowflake OAuth documentation</a>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Q plugin" duration="5">
+        <p>Next, we&#39;ll create a Q Business Custom Plugin to connect our Q Business Application with the Cortex Search in Snowflake. This integration enables the Q Business chatbot interface to access and analyze the movie script data stored in Snowflake.</p>
+<h2 is-upgraded>Create your Custom Plugin for Snowflake</h2>
+<ol type="1">
+<li>Navigate to the <strong>Plugins</strong> tab found in the left navigation menu in your Q App webpage and select <strong>Add Plugin</strong><img src="img/fb2c6802f0344375.png"></li>
+</ol>
+<p class="image-container"><img src="img/7a50213fe9454ed.png"></p>
+<ol type="1" start="2">
+<li>Select <strong>Create custom plugin</strong> button in the top right of your Q application page <img src="img/f559b9bf3d84341f.png"></li>
+<li>Name the plugin <strong>movie-agent</strong>. and provide a description.For example: <code>plugin to connect to movie script data from snowflake</code>.</li>
+<li>Under <strong>API Schema select the Define with in-line OpenAPI</strong> schema editor</li>
+<li>Select YAML format and paste the following OpenAPI specification. Important: Please update these 3 values in the code:</li>
+</ol>
+<ul>
+<li>url: </li>
+<li>authorizationUrl: /oauth/authorize</li>
+<li>tokenUrl: /oauth/token-request As a reminder you can find your Snowflake URL by clicking your account name in the bottom left of the Snowflake UI, selecting your account, then view account details. Your snowflake URL is https:// + your Account/Server URL e.g. https://.snowflakecomputing.com</li>
+</ul>
+<pre><code>openapi: 3.0.0
+info:
+  title: Cortex Agent via Stored Procedure
+  version: 1.0.0
+servers:
+  - url: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com
+paths:
+  /api/v2/statements:
+    post:
+      summary: Call Cortex Agent stored procedure
+      description: Calls the stored procedure MOVIELENS.DATA.call_cortex_agent_proc(query, 5) using the SQL API.
+      parameters:
+        - in: header
+          name: X-Snowflake-Authorization-Token-Type
+          required: true
+          description: Customer Snowflake OAuth header
+          schema:
+            type: string
+            enum: [&#34;OAUTH&#34;]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: &#39;#/components/schemas/QueryRequest&#39;
+      responses:
+        &#39;200&#39;:
+          description: Successful stored procedure execution
+          content:
+            application/json:
+              schema:
+                $ref: &#39;#/components/schemas/QueryResponse&#39;
+      security:
+        - oauth2: []
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - statement
+        - warehouse
+        - role
+      properties:
+        statement:
+          type: string
+          description: The SQL statement to execute
+        warehouse:
+          type: string
+          default: WORKSHOPWH
+          example: WORKSHOPWH
+        role:
+          type: string
+          default: PUBLIC
+          example: PUBLIC
+      example:
+        statement: CALL MOVIELENS.DATA.call_cortex_agent_proc(&#34;What is Toy Story about?&#34;, 5)
+        warehouse: WORKSHOPWH
+        role: PUBLIC
+
+    QueryResponse:
+      type: object
+      description: The response returned from the Snowflake SQL API.
+      properties:
+        data:
+          type: array
+          description: The result rows returned.
+          items:
+            type: object
+            additionalProperties: true
+        request_id:
+          type: string
+          description: ID of the SQL request.
+      required:
+        - data
+        - request_id
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com/oauth/authorize
+          tokenUrl: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com/oauth/token-request
+          scopes:
+            session:role:PUBLIC: Use PUBLIC role in Snowflake
+</code></pre>
+<p><strong>Some things to note</strong>*</p>
+<ul>
+<li>The path defined in the OpenAPI schema assumes you set up your Stored Procedure in the MOVIELENS database, in the DATA schema,  - if you used different names in your Snowflake setup, you&#39;ll need to modify these values accordingly.</li>
+<li>The description field under the POST method is crucial as Q uses this to determine when to route questions to this plugin.</li>
+</ul>
+<ol type="1" start="6">
+<li>After you have updated the YAML code, ensure that under the Authentication header, Authentication required has been selected.</li>
+<li>Next, look to the <strong>AWS Secrets Manager Section</strong> here:</li>
+</ol>
+<ul>
+<li>Select <strong>Create and add new secret</strong></li>
+<li>Name your secret (e.g., &#34;movie-scripts&#34;)</li>
+<li>Enter your Snowflake Client ID and Client Secret we have copied from the previous setup</li>
+<li>Add the OAuth callback URL (same as OAUTH_REDIRECT_URI from Snowflake security integration) <img src="img/91591a4c96132a61.png"></li>
+</ul>
+<p class="image-container"><img src="img/1b4f98a25700f568.png"></p>
+<ol type="1" start="8">
+<li>Finally, Click the <strong>Create</strong> button then <strong>Add Plugin</strong> to complete your plugin setup. You can validate that your plugin has been set up successfully when the <strong>Plugin Status</strong> is updated to green.</li>
+</ol>
+<p class="image-container"><img src="img/469ff75a7bd4424d.png"></p>
+<p>Great Job! Your plugin is now ready to use within Q Business to query movie script data from Snowflake</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test Application" duration="4">
+        <h2 is-upgraded>Testing your Q Business Application</h2>
+<ol type="1">
+<li>In the Q Business console navigate to the <strong>script-plugin</strong> on the left menu and select your plugin <strong>movie-scripts</strong><img src="img/6435cac4d5f26029.png"></li>
+<li>Now in your movie-scripts page select <strong>Preview web experience</strong> in the top right corner of your screen. This will open a preview of your web application&#39;s UI. <img src="img/8e3b4c603dd40ed7.png"></li>
+<li>For now, feel free to leave the default sessions as they are and select <strong>View web experience.</strong><img src="img/bfb9c50085e715a7.png"></li>
+<li>Here you will be directed to your application, and asked to sign in. Enter the credentials for your user and log in !</li>
+</ol>
+<ul>
+<li>Please note: Your username is the one you specified when creating the first user, <strong>not your email address.</strong></li>
+</ul>
+<ol type="1" start="5">
+<li>Once you have logged in simply select the Plugins option below the chat window and click on your plugin <strong>movie-scripts</strong>. This tells Q Business to use information from this specific source. <img src="img/3d26c415506694dd.png"></li>
+<li>Congratulations it&#39;s now time to test your application. Lets start with an example question:</li>
+</ol>
+<ul>
+<li>what is the average rating for an adventure movie? <img src="img/52b026e846ba5fae.png"></li>
+</ul>
+<ol type="1" start="7">
+<li>When you ask your first question you&#39;ll be asked to authorize the connection and be redirected to Snowflake. Sign in and select <strong>Allow</strong>. You&#39;ll then be automatically routed back to your Q Web app where Q will output an answer to your question. <img src="img/e01555516cde69f3.png"></li>
+</ol>
+<p class="image-container"><img src="img/51345faf48f51285.png"></p>
+<ol type="1" start="8">
+<li>Now it&#39;s your turn to explore! Try asking detailed questions about the movie. Q Business pulls answers directly from the script text, so you&#39;re getting the same information you would if you manually searched through the screenplay. Here are some questions to get you started:</li>
+</ol>
+<ul>
+<li>ask to return the sql from the previous request.</li>
+<li><strong>who is the primary villain in Toy Story</strong></li>
+<li><strong>who are the primary characters int Toy Store</strong></li>
+<li><strong>what are the highest rated movies in the database</strong></li>
+<li>ask to return the sql from the preevious request.</li>
+</ul>
+<ol type="1" start="9">
+<li>Congratulations! You&#39;ve successfully built an intelligent script analysis system, integrated Q Business with Snowflake, leveraged GenAI for natural language querying, and became a certified Toy Story expert in the process!</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake &amp; Quicksight" duration="0">
+        <p>OPTIONAL Duration: 20</p>
+<p>This lab introduces participants to <a href="https://aws.amazon.com/quicksight/q/" target="_blank">Amazon Q in QuickSight</a>, dashboard-authoring capabilities empower business analysts to swiftly build, uncover, and share valuable insights using natural language prompts. Simplify data understanding for business users through a context-aware Q&amp;A experience, executive summaries, and customizable data stories.</p>
+<p>Participants will connect the Snowflake table movies_dashboard to Amazon QuickSight to generate an interactive dashboard. This lab covers both personas – Authors (analysts) and Readers (business users/consumers), covering the Amazon Q in QuickSight features:</p>
+<ul>
+<li>Natural Language Queries: Users can ask questions and receive answers in plain language, eliminating the need for SQL or complex BI tools. This feature is designed to democratize data access, enabling business users to engage with data more intuitively.</li>
+<li>Visual Authoring: GenBI allows for rapid creation and customization of visualizations. Users can generate visuals in seconds and adjust them using natural language commands, streamlining the dashboard creation process.</li>
+<li>Data Stories: Stories enables users to create compelling narratives around their data insights, enhancing the storytelling aspect of data presentation. This feature helps in sharing insights in a more engaging manner.</li>
+</ul>
+<h2 is-upgraded>Set up Snowflake with QuickSight</h2>
+<p>This section is essential for integrating Snowflake data with Amazon QuickSight, enabling users to leverage QuickSight&#39;s visualization and analysis capabilities. By configuring a Snowflake data source and using custom SQL to query the movies_dashboard table, users ensure that the relevant data is accessible for creating interactive dashboards and reports.</p>
+<p><strong>Create and refine Dashboard as BI Author</strong></p>
+<p>Go to Amazon QuickSight on the <a href="https://ap-southeast-2.console.aws.amazon.com/ses/home?region=ap-southeast-2#/homepage" target="_blank">console</a> .</p>
+<ol type="1">
+<li>On the top right hand corner, click on the user icon → and select US East (N. Virginia).</li>
+<li>Ensure to select a <a href="https://docs.aws.amazon.com/quicksight/latest/user/regions-aqs.html" target="_blank">Supported AWS Regions for Amazon Q in QuickSight</a></li>
+</ol>
+<p class="image-container"><img src="img/dc0f26bf3e97f8d1.png"></p>
+<ol type="1" start="3">
+<li>Ensure to select a <a href="https://docs.aws.amazon.com/quicksight/latest/user/regions-aqs.html" target="_blank">Supported AWS Regions for Amazon Q in QuickSight</a></li>
+</ol>
+<p class="image-container"><img src="img/19f42808eda05459.png"></p>
+<ol type="1" start="4">
+<li>Use the following configuration, but replace &lt;snowflake_account_URL&gt;, &lt;snowflake_username&gt; and &lt;snowflake_password&gt; with your own.</li>
+</ol>
+<ul>
+<li>Data source name: movies-dashboard-sf</li>
+<li>Connection type: Public network</li>
+<li>Database server: &lt;snowflake_account_URL&gt; This is your Snowflake Account/Server URL (found in Snowflake by navigating to bottom left account menu -&gt; Account -&gt; View Account Details -&gt; Account/Server URL L, e.g. yoursnowflake.snowflakecomputing.com)</li>
+<li>Database name: movielens</li>
+<li>Warehouse: workshopwh</li>
+<li>Username: </li>
+<li>Password: </li>
+</ul>
+<p class="image-container"><img src="img/ebd16e709bb704c8.png"></p>
+<p class="image-container"><img src="img/a3faf7cc9eefa5d9.png"></p>
+<p class="image-container"><img src="img/d28141b608e0d5fb.png"></p>
+<ol type="1" start="5">
+<li>The following message &#34;Your database generated a SQL exception......&#34; will return. We shall proceed to create a custom data source.</li>
+<li>Click on Create data source → Use custom SQL.</li>
+</ol>
+<p class="image-container"><img src="img/fb05912588ab8d01.png"></p>
+<ol type="1" start="7">
+<li>Rename New custom SQL to movies-dashboard-sf. Use the following query, and then click the Confirm query button.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM movies.movies_dashboard;
+</code></pre>
+<p class="image-container"><img src="img/4854e4246ea6c28a.png"></p>
+<ol type="1" start="8">
+<li>We will be using <a href="https://docs.aws.amazon.com/quicksight/latest/user/spice.html" target="_blank">SPICE</a> (Super-fast, Parallel, In-memory Calculation Engine), an in-memory calculation engine that allows for fast analysis of large datasets, supporting billions of rows while ensuring high availability and performance.</li>
+</ol>
+<p>In Amazon QuickSight, SPICE and Direct Query represent different approaches to data access and analysis. SPICE involves importing data into QuickSight&#39;s in-memory engine for faster performance, while Direct Query retrieves data directly from the source in real-time. The choice between them depends on factors like data size, freshness requirements, and performance needs. Refer to the blog: <a href="https://aws.amazon.com/blogs/business-intelligence/best-practices-for-amazon-quicksight-spice-and-direct-query-mode/" target="_blank">Best practices for Amazon QuickSight SPICE and direct query mode</a> for further information.</p>
+<p class="image-container"><img src="img/1167b01f5ca4526d.png"></p>
+<p>We shall proceed as <strong>BI Author</strong></p>
+<ol type="1" start="9">
+<li>click on Visualize → CREATE to create a new analysis Before creating the visuals, let&#39;s ask Q to help create some calculated fields that show us the average user rating by movie title.</li>
+<li>Click on ‘+ Calculated Field&#39;.</li>
+</ol>
+<p class="image-container"><img src="img/cf3c8a37c4dc9623.png"></p>
+<ol type="1" start="11">
+<li>In the Add Calculated Field page, Click Build Calculation.</li>
+<li>Type rating by movie, Click Build then, Insert.</li>
+<li>Name it Average movie rating and click Save. We will use this calculated field in the visuals later.</li>
+</ol>
+<p class="image-container"><img src="img/3707524a96586357.png"></p>
+<h2 is-upgraded>Creating Visual as BI author</h2>
+<ol type="1">
+<li>Click on the &#34;Build visual&#34; bar at the top of the page and a right panel will appear. We will use this panel to build the analysis visualisation by entering the following 3 natural language prompts into Amazon Q.</li>
+</ol>
+<p class="image-container"><img src="img/8e8d21a4f841488b.png"></p>
+<ol type="1" start="2">
+<li>We will use the calculated field created earlier. Type the following prompt: What are the top 10 movies based on average user ratings? and click Build. When the visualisation has been generated, click on Add to Analysis to include it in your analysis.</li>
+</ol>
+<p class="image-container"><img src="img/dbce8afa52b3388c.png"></p>
+<ol type="1" start="3">
+<li>After adding the visual to the analysis, you can change the visual type using natural language. Click on Edit with Q, enter the prompt Turn this into a pie chart In the input box, and then click <strong>APPLY</strong></li>
+<li>The horizontal bar chart will now be displayed as a pie chart.</li>
+<li>Enter the next Prompt #2: Visualize the distribution of users by country.</li>
+</ol>
+<p class="image-container"><img src="img/4190722a6e746901.png"></p>
+<ol type="1" start="6">
+<li>Feel free to create more analysis. Once the analysis is complete, click on the PUBLISH button in the top right corner. Publish the new dashboard as movies-dashboard-sf and then click Publish dashboard. Ensure to select both  &#34;Data Story&#34; and &#34;Generative capabilities&#34;</li>
+</ol>
+<p class="image-container"><img src="img/2a2ecb0ddd30b998.png"></p>
+<h2 is-upgraded>As BI reader (business users/consumers) - we will now discover, summarize and share insights</h2>
+<ol type="1">
+<li>To interact with the dataset or dashboard, click on the Ask a question about movies-dashboard-sf bar at the top of the page. Amazon Q will suggest questions based on the provided dataset, and you can either choose from these suggestions or type your own questions.</li>
+<li>After posting a question to Amazon Q, all relevant data related to the query will be generated. You can ask &#34; What are the top 5 movies by user rating?&#34;</li>
+</ol>
+<p class="image-container"><img src="img/e59392b79ce8d00c.png"></p>
+<ol type="1" start="3">
+<li>In the dashboard, click on BUILD in the top right corner and select Executive summary to get a quick overview of the relevant statistics for the dashboard.</li>
+</ol>
+<p class="image-container"><img src="img/af8bbb6bffe5e555.png"></p>
+<p>Next, let&#39;s create a Data Story for the Dashboard.  Creating a data story in the dashboard provides stakeholders with insights into how various factors, such as movie ratings, genres, user demographics, and interactions, affect movie performance and user engagement. By typing a descriptive prompt, selecting visuals from the published dashboard, and building the report, users generate a comprehensive narrative that aids in understanding the data and making informed decisions. This step is crucial for creating a meaningful and actionable report that can guide content production, marketing strategies, and user experience improvements, and allows for sharing these insights with others. Please note that Data story drafts are not meant to replace your own ideas or to perform analysis but as a starting point to customize and expand on as needed</p>
+<ol type="1" start="4">
+<li>Click on BUILD in the top right corner and select <strong>Data story.</strong></li>
+<li>Type the following prompt into the &#34;Describe the data story you need&#34; box:</li>
+</ol>
+<p><strong>This report helps stakeholders understand how different factors such as movie ratings, genres, user demographics, and interactions impact overall movie performance and user engagement. It can guide decisions on content production, marketing strategies, and user experience improvements.</strong></p>
+<ol type="1" start="6">
+<li>Click on + ADD VISUALS and select all the visuals from the published dashboard, movies-dashboard-sf. Then click on BUILD.</li>
+</ol>
+<p class="image-container"><img src="img/d111954b50ba6ba1.png"></p>
+<ol type="1" start="7">
+<li>A report with the relevant graphs and explanation will be generated.</li>
+</ol>
+<p class="image-container"><img src="img/e92847fe78b222cc.png"></p>
+<ol type="1" start="8">
+<li>Feel free to explore and edit the narrative with Q by highlighting the text and click on Q icon. Use <strong>SHARE</strong> to publish the data story when ready.</li>
+</ol>
+<p class="image-container"><img src="img/af8bbb6bffe5e555.png"></p>
+<p>Congratulations, you have successfully extracted relevant insights from your movie dataset in Snowflake, enabling you to make informed business decisions based on the generated report with Amazon Q in QuickSight!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>This quickstart is just that, a quick way to get you started with using Amazon Q with Snowflake Cortex, though with this start you are now enabled to extend the quickstart in the below ways: - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service. - Scale Agents to include more robust Analyst services and multiple Analyst and Search Services. - Use a Cortex Q plugin alongside Quicksight to get next level answers on your data that&#39;s represented in your dashboards. - Use multiple plugins to Cortex from Q along with AWS service to create a robust web app for getting answers from your data with plain text.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use Cortex Search along with complimentary functions in Snowflake.</li>
+<li>How to use Cortex Analyst and semantic models in Snowflake.</li>
+<li>How to use Cortex Agents.</li>
+<li>How to use Amazon Q to leverage generative AI to get quick answers from your data.</li>
+<li>How to Connect Amazon Q to Snowflake Cortex Search with a custom plugin.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together:</p>
+<ul>
+<li><a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex</a></li>
+<li><a href="https://aws.amazon.com/q/?trk=c570e8a2-ec3c-4968-baa4-f8537e37dd1d&sc_channel=ps&s_kwcid=AL!4422!10!71949557907688!71950102400240&ef_id=07cc246a6d4218358de8430ee23fc18e:G:s&msclkid=07cc246a6d4218358de8430ee23fc18e" target="_blank">Amazon Q</a></li>
+<li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/2d4e5ea4-78c8-496f-8246-50d8971414c9/en-US/01-overview" target="_blank">Amazon Bedrock and Snowflake Cortex</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

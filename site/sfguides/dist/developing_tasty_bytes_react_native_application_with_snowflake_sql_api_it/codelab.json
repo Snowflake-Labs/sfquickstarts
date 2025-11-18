@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "developing_tasty_bytes_react_native_application_with_snowflake_sql_api_it",
+  "duration": 22,
+  "title": "Tasty Bytes - Sviluppare una data application React Native con la SQL API",
+  "summary": "Sviluppare una data application React Native per Tasty Bytes con Snowflake, SQL API",
+  "source": "developing_tasty_bytes_react_native_application_with_snowflake_sql_api_it/developing_tasty_bytes_react_native_application_with_snowflake_sql_api_it.md",
+  "theme": "",
+  "status": [
+    "pubblicato"
+  ],
+  "category": [
+    "tasty-bytes",
+    "guida-introduttiva",
+    "sviluppo-app"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "dataengineering",
+    "guidaintroduttiva",
+    "it",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "developing_tasty_bytes_react_native_application_with_snowflake_sql_api_it"
+}

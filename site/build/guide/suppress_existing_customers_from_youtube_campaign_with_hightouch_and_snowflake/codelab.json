@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake",
+  "duration": 14,
+  "title": "Suppress existing customers from a Youtube campaign with Hightouch and Snowflake",
+  "summary": "Build and sync an audience of existing customers to Youtube to suppress from future prospecting campaigns, using Hightouch and Snowflake.",
+  "source": "suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake/suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "adtech",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake"
+}

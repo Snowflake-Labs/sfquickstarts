@@ -1,0 +1,1276 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Data App and run it on Snowpark Container Services</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build_a_data_app_and_run_it_on_Snowpark_container_services"
+                  title="Build a Data App and run it on Snowpark Container Services"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Snowflake is a terrific platform on which to build data applications. The unique characteristics and cloud-based design allow for building applications that scale with data and workload. This tutorial will go through how to build and deploy both the Processing Layer and the User Interface Layer paired with Snowflake as the Persistence Layer.</p>
+<p>Our example will be using a fictional food truck franchise website, Tasty Bytes. We will be building a graphical user interface with charts and graphs for franchisees to be able to examine sales data related to their franchise of food trucks. After logging in via a login page, each franchisee will have one page that will show metrics at the franchise level, and another that will show metrics around the food truck brands for that franchise.</p>
+<p>The Processing and User Interface Layers will be built using Node.js. The dataset is an orders history for Tasty Bytes.</p>
+<p>The application itself will be built using containers and deployed to Snowflake. Snowpark Container Services (SPCS) allows the running of containerized workloads directly within Snowflake, ensuring that data doesn&#39;t need to be moved out of the Snowflake environment for processing.</p>
+<p>This lab builds directly on the same code and solution as the <a href="https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake" target="_blank">Build a Data App with Snowflake</a> quickstart, for in depth walk-through of the use case and the data, and how the application is built using Node Express and React you can review each step in that guide as well.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account, and familiarity with the Snowsight interface</li>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Basic experience using git</li>
+<li>Intermediate knowledge of Node.js and React JS</li>
+<li>Intermediate knowledge of containerised applications</li>
+<li>GitHub Codespaces -or- Ability to install and run software on your computer</li>
+</ul>
+<aside class="special"><p><strong>Snowpark Container Services availability</strong></p>
+<p>Snowpark Container Services is currently in a <em>Public Preview</em> and is available across a <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions" target="_blank">range of Snowflake AWS accounts</a>. For this lab ensure that you have an account in one of the supported regions.</p>
+</aside>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to configure and build a custom API Powered by Snowflake, written in Node.js</li>
+<li>How to configure and build a custom frontend website to communicate with the API, written in React and Node.js</li>
+<li>How to deploy a containerised application to Snowpark Container Services</li>
+<li>How to run and test the frontend and API on your machine</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<h3 is-upgraded>Option 1, using GitHub Codespaces:</h3>
+<ul>
+<li><a href="https://github.com/" target="_blank">GitHub Codespaces</a> GitHub Account with credits for GitHub Codespaces</li>
+</ul>
+<h3 is-upgraded>Option 2, local build:</h3>
+<ul>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> Installed</li>
+<li><a href="https://docs.docker.com/get-docker/" target="_blank">Docker</a> Installed</li>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" target="_blank">Git</a> Installed</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> Installed</li>
+<li><a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">NPM</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>In this quickstart we will build and deploy a Data Application running on Snowpark Container Services.</p>
+<p class="image-container"><img alt="Service Overview" src="img/629fdcd05c61b258.png"></p>
+<p>The solution consists of two services hosted on Snowpark Container Services:</p>
+<ul>
+<li><strong>The backend service</strong> - which hosts the API built on Node Express - API Powered by Snowflake built in Node.js</li>
+<li><strong>The frontend service</strong> - which hosts the React JS Web Application that connects to that API, and a router service in NGINX that allows calls from the browser-based React frontend to be routed to the backend services also.</li>
+</ul>
+<p>Without the router part of the frontend service, CORS would actually prevent the browser from talking to the backend service, even if we opened up a public endpoint for it. This is due to the fact that we cannot add our own headers to requests coming to the service endpoints - for security reasons Snowpark Container Services networking strips out any headers (but adds a few useful ones that we will use for authentication later).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up the Data" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this part of the lab we&#39;ll set up our Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our Tasty Bytes Food Truck orders data into our ORDERS table and run a few queries to get familiar with the data.</p>
+<aside class="warning"><p>The sample data for the quickstart that we load will only cover the dates between 2022-01-01 to 2022-10-31. Don&#39;t be alarmed if a query on a data later or earlier than that returns an empty response</p>
+</aside>
+<h2 is-upgraded>Step 2.1 Initial Snowflake Setup</h2>
+<p>For this part of the lab we will want to ensure we run all steps as the ACCOUNTADMIN role</p>
+<pre><code language="language-sql" class="language-sql">--change role to accountadmin
+use role accountadmin;
+</code></pre>
+<p>First we can create a <a href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">Virtual Warehouse</a> that can be used for data exploration and general querying in this lab.  We&#39;ll create this warehouse with a size of <code>Medium</code> which is right sized for that use case in this lab.</p>
+<pre><code language="language-sql" class="language-sql">--create a virtual warehouse for data exploration
+create or replace warehouse query_wh with 
+	warehouse_size = &#39;medium&#39; 
+	warehouse_type = &#39;standard&#39; 
+	auto_suspend = 300 
+	auto_resume = true 
+	min_cluster_count = 1 
+	max_cluster_count = 1 
+	scaling_policy = &#39;standard&#39;;
+</code></pre>
+<h2 is-upgraded>Step 2.2 Load Data</h2>
+<p>Next we will create a database and schema that will house the tables that store our application data.</p>
+<pre><code language="language-sql" class="language-sql">--create the application database and schema
+create or replace database frostbyte_tasty_bytes;
+create or replace schema app;
+</code></pre>
+<p>This DDL will create the structure for the ORDERS table which is the main source of data for our application in this lab.</p>
+<pre><code language="language-sql" class="language-sql">--create table structure for order data 
+create or replace table orders (
+	order_id number(38,0),
+	truck_id number(38,0),
+	order_ts timestamp_ntz(9),
+	order_detail_id number(38,0),
+	line_number number(38,0),
+	truck_brand_name varchar(16777216),
+	menu_type varchar(16777216),
+	primary_city varchar(16777216),
+	region varchar(16777216),
+	country varchar(16777216),
+	franchise_flag number(38,0),
+	franchise_id number(38,0),
+	franchisee_first_name varchar(16777216),
+	franchisee_last_name varchar(16777216),
+	location_id number(19,0),
+	customer_id number(38,0),
+	first_name varchar(16777216),
+	last_name varchar(16777216),
+	e_mail varchar(16777216),
+	phone_number varchar(16777216),
+	children_count varchar(16777216),
+	gender varchar(16777216),
+	marital_status varchar(16777216),
+	menu_item_id number(38,0),
+	menu_item_name varchar(16777216),
+	quantity number(5,0),
+	unit_price number(38,4),
+	price number(38,4),
+	order_amount number(38,4),
+	order_tax_amount varchar(16777216),
+	order_discount_amount varchar(16777216),
+	order_total number(38,4)
+);
+</code></pre>
+<p>For loading data into the ORDERS table we will create a new Virtual Warehouse sized as a <code>Large</code> to help us quickly ingest the data we have stored in an S3 bucket.</p>
+<pre><code language="language-sql" class="language-sql">--create a virtual warehouse for data loading
+create or replace warehouse load_wh with 
+	warehouse_size = &#39;large&#39; 
+	warehouse_type = &#39;standard&#39; 
+	auto_suspend = 300 
+	auto_resume = true 
+	min_cluster_count = 1 
+	max_cluster_count = 1 
+	scaling_policy = &#39;standard&#39;;
+</code></pre>
+<p>Next we have to create a <a href="https://docs.snowflake.com/en/user-guide/data-load-overview" target="_blank">STAGE</a> which is a Snowflake object that points to a cloud storage location Snowflake can access to both ingest and query data.  In this lab the data is stored in a publicly accessible AWS S3 bucket which we are referencing when creating the Stage object.</p>
+<pre><code language="language-sql" class="language-sql">--create stage for loading orders data
+create or replace stage tasty_bytes_app_stage
+	url = &#39;s3://sfquickstarts/frostbyte_tastybytes/app/orders/&#39;;
+</code></pre>
+<p>Once we&#39;ve created both the Virtual Warehouse we want to use for loading data and the Stage which points to where the data resides in cloud storage we can simply <a href="https://docs.snowflake.com/en/sql-reference/sql/copy-into-table" target="_blank">COPY</a> the data from that Stage into our ORDERS table.</p>
+<pre><code language="language-sql" class="language-sql">--copy data into orders table using the load wh
+ copy into orders from @tasty_bytes_app_stage;
+</code></pre>
+<h2 is-upgraded>Step 2.3 Explore Data</h2>
+<p>Now that we&#39;ve loaded our data into the ORDERS table we can run a few queries to get familiar with it - but first we will want to change the Virtual Warehouse we&#39;re using from the <code>LOAD_WH</code> back to the <code>QUERY_WH</code> created earlier in the lab.</p>
+<pre><code language="language-sql" class="language-sql">--change our Virtual Warehouse context to use our query_wh
+ use warehouse query_wh;
+</code></pre>
+<p>To begin with we can simply look at a sample of the entire table.</p>
+<pre><code language="language-sql" class="language-sql">--simple query to look at 10 rows of data 
+select * from orders limit 10;
+</code></pre>
+<p>Next we can see how many records we&#39;ve loaded into the table.  Notice how quickly the query executes - this is due to Snowflake&#39;s unique architecture which enables a certain class of queries like this one to pull results from metadata instead of requiring compute to generate the result.</p>
+<pre><code language="language-sql" class="language-sql">--query to count all records in the table
+select count(*) from orders;
+</code></pre>
+<p>Finally we can run a more complex query to look at the total revenue by month where we will use a couple of <a href="https://docs.snowflake.com/en/sql-reference-functions" target="_blank">functions</a> to parse the month number and name from the ORDER_TS column in the ORDERS table.</p>
+<pre><code language="language-sql" class="language-sql">--sales by month
+select month(order_ts),monthname(order_ts), sum(price)
+from orders 
+group by month(order_ts), monthname(order_ts)
+order by month(order_ts);
+</code></pre>
+<h2 is-upgraded>Step 2.4 Further explore the Data</h2>
+<p>To understand and explore the data even more, you can look through the <a href="https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake/#2" target="_blank">Quickstart for Building a Data Application - Lab 2: Queries</a> that offers a number of steps to explore it.</p>
+<p>If you already have done that, you can move directly to the next step in this guide. If not, you can continue below and explore the data further.</p>
+<p>Our queries will be broken into two groups - <code>Franchise</code> queries and <code>Truck Brand</code> level queries.  For the sake of ease we will focus on the following Franchise, Truck Brand and Date Range for this part of the lab.</p>
+<ul>
+<li>Franchise:  <code>1</code></li>
+<li>Truck Brand: <code>Guac 'n Roll</code></li>
+<li>Date Range: <code>1/1/2023 - 3/31/2023</code></li>
+</ul>
+<h2 is-upgraded>Setting Snowsight Context</h2>
+<p>To ensure the correct context is use for these queries we will set our database, schema and Virtual Warehouse using the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">--set query context
+use database frostbyte_tasty_bytes;
+use schema app;
+use warehouse query_wh;
+</code></pre>
+<h2 is-upgraded>Franchise Queries</h2>
+<p>To answer the business questions about how our overall Franchise business is doing we&#39;ll need to create the three following queries.  All of the columns required for these exist in the ORDERS table and no joining of tables are required.</p>
+<ol type="1">
+<li>Top 10 Countries Based on Revenue in a Time Window</li>
+<li>Top 10 Truck Brands Based on Revenue in a Time Window</li>
+<li>Year-to-Date Revenue, by Month, per Truck Brand</li>
+</ol>
+<p>You can spend some time creating the queries for each of these and then check your answers against the provided queries below by expanding each section.</p>
+<p><strong>Top 10 Countries Based on Revenue in a Time Window</strong></p>
+<pre><code language="language-sql" class="language-sql">    SELECT
+        TOP 10 country,
+        sum(price) AS revenue
+    FROM
+        app.orders
+    WHERE
+        date(order_ts) &gt;= &#39;2023-01-01&#39;
+        AND date(order_ts) &lt;= &#39;2023-03-31&#39;
+        AND franchise_id = 1
+    GROUP BY
+        country
+    ORDER BY
+        sum(price) desc;
+</code></pre>
+<p><strong>Top 10 Truck Brands Based on Revenue in a Time Window</strong></p>
+<pre><code language="language-sql" class="language-sql">    SELECT
+        TOP 10 truck_brand_name,
+        sum(price) AS revenue
+    FROM
+        app.orders
+    WHERE
+        date(order_ts) &gt;= &#39;2023-01-01&#39;
+        AND date(order_ts) &lt;= &#39;2023-03-31&#39;
+        AND franchise_id = 1
+    GROUP BY
+        truck_brand_name
+    ORDER BY
+        sum(price) desc;
+</code></pre>
+<p><strong>Year-to-Date Revenue, by Month, per Truck Brand</strong></p>
+<pre><code language="language-sql" class="language-sql">    SELECT
+        country,
+        month(order_ts) as date,
+        sum(price) AS revenue
+    FROM
+        app.orders
+    WHERE
+         year(order_ts) = 2023
+        AND franchise_id = 1
+    GROUP BY
+        country,
+        month(order_ts)
+    ORDER BY
+        sum(price) desc;
+</code></pre>
+<h2 is-upgraded>Truck Brand Queries</h2>
+<p>To answer the business questions about how our overall Franchise business is doing we&#39;ll need to create the three following queries.  All of the columns required for these exist in the ORDERS table and no joining of tables are required.</p>
+<ol type="1">
+<li>Total Sales by Day-of-Week</li>
+<li>Top Selling Items</li>
+<li>Top Selling items by Day-of-Week</li>
+</ol>
+<p>You can spend some time creating the queries for each of these and then check your answers against the provided queries below by expanding each section.</p>
+<p><strong>Top 10 Countries Based on Revenue in a Time Window</strong></p>
+<pre><code language="language-sql" class="language-sql">    SELECT
+        TOP 10 country,
+        sum(price) AS revenue
+    FROM
+        app.orders
+    WHERE
+        date(order_ts) &gt;= &#39;2023-01-01&#39;
+        AND date(order_ts) &lt;= &#39;2023-03-31&#39;
+        AND franchise_id = 1
+    GROUP BY
+        country
+    ORDER BY
+        sum(price) desc;
+</code></pre>
+<p><strong>Top 10 Truck Brands Based on Revenue in a Time Window</strong></p>
+<pre><code language="language-sql" class="language-sql">    SELECT
+        TOP 10 truck_brand_name,
+        sum(price) AS revenue
+    FROM
+        app.orders
+    WHERE
+        date(order_ts) &gt;= &#39;2023-01-01&#39;
+        AND date(order_ts) &lt;= &#39;2023-03-31&#39;
+        AND franchise_id = 1
+    GROUP BY
+        truck_brand_name
+    ORDER BY
+        sum(price) desc;
+</code></pre>
+<p><strong>Total Sales by City and Day-of-Week</strong></p>
+<pre><code language="language-sql" class="language-sql">    SELECT
+        country,
+        month(order_ts) as date,
+        sum(price) AS revenue
+    FROM
+        app.orders
+    WHERE
+         year(order_ts) = 2023
+        AND franchise_id = 1
+    GROUP BY
+        country,
+        month(order_ts)
+    ORDER BY
+        sum(price) desc;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>Now that we&#39;ve created our database, loaded data and developed the queries needed to answer our business questions, the last step before getting into application code is setting up the necessary objects so that the application can connect to Snowflake securely and query data on its own Virtual Warehouse. We will also set up the objects required to create and run services. The objects we will look at are:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-compute-pool" target="_blank">Compute Pools</a> that are responsible for providing compute to the services once they run.</li>
+<li><a href="https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-registry-repository" target="_blank">Image Repositories</a> that can hold docker images used by the services we create</li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services?utm_source=legacy&utm_medium=serp&utm_term=snowservices_ingress#ingress-using-a-service-from-outside-snowflake" target="_blank">Services Ingress Security Integration</a></li>
+</ul>
+<h2 is-upgraded>Step 3.1 Creating roles, permissions and virtual warehouse for running the application</h2>
+<p>Much like we created separate Virtual Warehouses for exploring and loading data, we will create one specifically for our service to use when executing queries on Snowflake.</p>
+<p>We start by creating a role that can be responsible for administering the setup of the services and everything else. There are a number of permissions that can be granted, and in a production build environment, these permissions may instead be granted to different roles with different responsibilities.</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE frostbyte_tasty_bytes;
+USE SCHEMA APP;
+
+CREATE ROLE tasty_app_admin_role;
+
+GRANT ALL ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_app_admin_role;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes.app TO ROLE tasty_app_admin_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes.app TO ROLE tasty_app_admin_role;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes.app TO ROLE tasty_app_admin_role;
+</code></pre>
+<p>We can now create a Virtual Warehouse that the application will use to execute queries.</p>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE WAREHOUSE tasty_app_warehouse WITH
+WAREHOUSE_SIZE=&#39;X-SMALL&#39;
+AUTO_SUSPEND = 180
+AUTO_RESUME = true
+INITIALLY_SUSPENDED=false;
+
+GRANT ALL ON WAREHOUSE tasty_app_warehouse TO ROLE tasty_app_admin_role;
+</code></pre>
+<h2 is-upgraded>Step 3.2 Creating Compute Pools for service to run on</h2>
+<p>The Compute Pools are used to run the services. We can create different pools for different purposes. In this example we create two different pools to run the services, one for the backend and one for the frontend. We could technically allow both services to use the same Compute Pool, in fact for this demo it would work very well, but in many scenarios the scaling requirements for the frontend and a backend may be different. Here we can see that the backend is given a pool of compute nodes that is slightly more scaled up than the nodes for the compute pool used for the frontend. There are multiple options for choosing the right instance family for a Compute Pool <a href="https://docs.snowflake.com/sql-reference/sql/create-compute-pool" target="_blank">Create Compute Pool</a>. This would be even more relevant if the backend needed to do some more compute heavy work, even to the point where it needed to have GPU enabled nodes.</p>
+<pre><code language="language-sql" class="language-sql">CREATE COMPUTE POOL tasty_app_backend_compute_pool
+MIN_NODES = 1
+MAX_NODES = 1
+INSTANCE_FAMILY = CPU_X64_S;
+
+GRANT USAGE ON COMPUTE POOL tasty_app_backend_compute_pool TO ROLE tasty_app_admin_role;
+GRANT MONITOR ON COMPUTE POOL tasty_app_backend_compute_pool TO ROLE tasty_app_admin_role;
+
+CREATE COMPUTE POOL tasty_app_frontend_compute_pool
+MIN_NODES = 1
+MAX_NODES = 1
+INSTANCE_FAMILY = CPU_X64_XS;
+
+GRANT USAGE ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_admin_role;
+GRANT MONITOR ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_admin_role;
+</code></pre>
+<p>The <code>tasty_app_admin_role</code> role must also be given the permission to bind service endpoints for services.</p>
+<pre><code language="language-sql" class="language-sql">GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE tasty_app_admin_role;
+</code></pre>
+<h2 is-upgraded>Step 3.3 Set up docker image repositories and stage for service specifications</h2>
+<p>We can now ensure that the current user can use the admin role.</p>
+<pre><code language="language-sql" class="language-sql">SET sql = (&#39;GRANT ROLE tasty_app_admin_role TO USER &#39; || CURRENT_USER() || &#39;&#39;);
+EXECUTE IMMEDIATE $sql;
+USE ROLE tasty_app_admin_role;
+</code></pre>
+<p>Here we create the <a href="https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-registry-repository" target="_blank"><code>IMAGE REPOSITORY</code></a> to hold images for services.</p>
+<pre><code language="language-sql" class="language-sql">-- Create image repository  
+CREATE OR REPLACE IMAGE REPOSITORY tasty_app_repository;
+-- Show the repo we just created
+SHOW IMAGE REPOSITORIES;
+-- List images in repo (can be called later to verify that images have been pushed to the repo)
+call system$registry_list_images(&#39;/frostbyte_tasty_bytes/app/tasty_app_repository&#39;);
+</code></pre>
+<p>We can also create a stage to hold service specification files, although for this guide we will provide the specifications inline with the service creation.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a stage to hold service specification files
+CREATE STAGE tasty_app_stage DIRECTORY = ( ENABLE = true );
+</code></pre>
+<h2 is-upgraded>Step 3.4 Create external users role and users for the external access</h2>
+<p>In order to allow the application users to access the application we can create dedicated <code>USERS</code> for each user. In the guide <a href="https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake" target="_blank">Build a Data App with Snowflake</a> users were actually stored in a <code>USERS</code> table that was created, where hashed passwords were stored and could be used to check the login from the frontend. Create that table by running the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">-- Create Users table for the Website
+create or replace table users (
+	user_id number(38,0) autoincrement,
+	user_name varchar(16777216) not null,
+	hashed_password varchar(16777216),
+	franchise_id number(38,0),
+	password_date timestamp_ntz(9),
+	status boolean,
+	unique (user_name)
+);
+
+ -- Add Franchisee logins 
+insert into users
+    values
+    (1,&#39;user1&#39;,&#39;$2b$10$v0IoU/pokkiM13e.eayf1u3DkgtIBMGO1uRO2O.mlb2K2cLztV5vy&#39;,1,current_timestamp,TRUE), 
+    (2,&#39;user2&#39;,&#39;$2b$10$e2TXM/kLlazbH1xl31SeOe6RTyfL3E9mE8sZZsU33AE52rO.u44JC&#39;,120,current_timestamp,TRUE),
+    (3,&#39;user3&#39;,&#39;$2b$10$WX4e1LAC.rAabBJV58RuKerEK4T/U4htgXrmedTa5oiGCWIRHwe0e&#39;,271,current_timestamp,TRUE);
+</code></pre>
+<p>In this guide, we will create those users as actual Snowflake Users and give them a role that is allowed to access the services we later create. This allows us to utilize the OAuth sign-in we created earlier to authenticate users.</p>
+<p>We can create the users like this:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+CREATE ROLE tasty_app_ext_role;
+
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_app_ext_role;
+GRANT USAGE ON SCHEMA app TO ROLE tasty_app_ext_role;
+
+CREATE USER IF NOT EXISTS user1 PASSWORD=&#39;password1&#39; MUST_CHANGE_PASSWORD=TRUE DEFAULT_ROLE=tasty_app_ext_role;
+GRANT ROLE tasty_app_ext_role TO USER user1;
+</code></pre>
+<p>Not that we force the user to change the password on the first login here. When testing it you can choose to set <code>MUST_CHANGE_PASSWORD=FALSE</code>, but in a real scenario these passwords should be changed on first login.</p>
+<p>Just for reference, the users that were created in the earlier database set up lab are the following:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>User name</p>
+</td><td colspan="1" rowspan="1"><p>Hashed password</p>
+</td><td colspan="1" rowspan="1"><p>Franchise id</p>
+</td><td colspan="1" rowspan="1"><p>Plaintext password</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>user1</p>
+</td><td colspan="1" rowspan="1"><p>$2b$10$3/teX....iH7NI1SjoTjhi74a</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>password1</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>user2</p>
+</td><td colspan="1" rowspan="1"><p>$2b$10$9wdGi....U8qeK/nX3c9HV8VW</p>
+</td><td colspan="1" rowspan="1"><p>120</p>
+</td><td colspan="1" rowspan="1"><p>password120</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>user3</p>
+</td><td colspan="1" rowspan="1"><p>$2b$10$CNZif....IXZFepwrGtZbGqIO</p>
+</td><td colspan="1" rowspan="1"><p>271</p>
+</td><td colspan="1" rowspan="1"><p>password271</p>
+</td></tr>
+</table>
+<p>We can create all the users this way:</p>
+<pre><code language="language-sql" class="language-sql">CREATE USER IF NOT EXISTS user2 PASSWORD=&#39;password120&#39; MUST_CHANGE_PASSWORD=TRUE DEFAULT_ROLE=tasty_app_ext_role;
+GRANT ROLE tasty_app_ext_role TO USER user2;
+
+CREATE USER IF NOT EXISTS user3 PASSWORD=&#39;password270&#39; MUST_CHANGE_PASSWORD=TRUE DEFAULT_ROLE=tasty_app_ext_role;
+GRANT ROLE tasty_app_ext_role TO USER user3;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building the backend code" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>We now look at the code for the backend and frontend to adapt it to run in Snowpark Container Services.</p>
+<h3 is-upgraded>Option 1 - Build using GitHub Codespaces</h3>
+<p>If you have access to GitHub and credits on an account that let&#39;s you run GitHub Codespaces, you can directly build the entire code and push the containerized images to the image repository in the cloud environment.</p>
+<p>If you don&#39;t have access to this, or prefer to build this locally, go to Option 2 instead.</p>
+<p>First, create your on fork of the main repository, go to the GitHub repository at <a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git" target="_blank">GitHub: Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs</a> and create your own fork of the repo. <img alt="Fork Repository" src="img/1f66611899739c9c.png"></p>
+<p>Once you have your own fork, go to the ‘&lt;&gt; CODE&#39; button and select ‘Codespaces&#39; and create a new. <img alt="Create Codespace" src="img/f4828dd13f9c5aec.png"></p>
+<p>The code for this lab is hosted on GitHub. Start by cloning the repository into a separate folder. Note that we are cloning a specific branch <code>spcs</code> here that contains the code adapted for this guide.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git zero-to-app-spcs
+</code></pre>
+<p>Change directory to the <code>zero-to-app-spcs/</code> directory that is created in the clone above. You should now have a directory with a <code>/src</code> subdirectory that contains <code>/backend</code> and <code>/frontend</code> directories.</p>
+<h2 is-upgraded>Step 4.1 The backend service</h2>
+<p>Let&#39;s start with looking at the backend code. Open a terminal and go to the <code>/src/backend</code> directory.</p>
+<p>First ensure that you have Docker installed on you environment:</p>
+<pre><code language="language-bash" class="language-bash">docker --version
+-- Docker version 24.0.6, build ed223bc
+</code></pre>
+<p>For local testing, we can then let the backend connect to the Snowflake account using credentials we supply in the environment variables. Copy the <code>.env.example</code> file to <code>.env</code> and fill out the details for your account there.</p>
+<pre><code language="language-bash" class="language-bash">cp .env.example .env
+sed -i -e &#34;s/{INSERT A RANDOM STRING HERE}/$(openssl rand -base64 12)/&#34; .env
+sed -i -e &#34;s/{INSERT ANOTHER RANDOM STRING HERE}/$(openssl rand -base64 12)/&#34; .env
+</code></pre>
+<p>:</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_ACCOUNT={INSERT_ACCOUNT_NAME_HERE}
+SNOWFLAKE_USERNAME={INSERT_USER_NAME_HERE}
+SNOWFLAKE_PASSWORD={INSERT_PASSWORD_HERE}
+SNOWFLAKE_ROLE=TASTY_APP_ADMIN_ROLE
+SNOWFLAKE_WAREHOUSE=TASTY_APP_WAREHOUSE
+SNOWFLAKE_DATABASE=frostbyte_tasty_bytes
+SNOWFLAKE_SCHEMA=app
+
+ACCESS_TOKEN_SECRET=a1to.....9wlnNq
+REFRESH_TOKEN_SECRET=KVDq9.....icVNh
+
+PORT=3000
+
+CLIENT_VALIDATION=Dev 
+</code></pre>
+<p>There is a <code>docker-compose.yaml</code> file in this folder that we will use to spin up a local service using this environment:</p>
+<pre><code language="language-bash" class="language-bash">docker compose up
+</code></pre>
+<p>Try to access the API by calling the endpoint now. If you are in GitHub Codespaces, you will be offered a unique URL that is generated for you, like ‘https://-3000.app.github.dev/&#39; that you can access, if you are on your local environment, it will be a localhost URL, like ‘http://localhost:3000/&#39; <img alt="Forwarded ports" src="img/98a0d1febc6d74db.png"></p>
+<pre><code language="language-bash" class="language-bash">curl https://&lt;random-generated-identifier&gt;-3000.app.github.dev/franchise/1
+</code></pre>
+<p>or, open up a new terminal and access it (this will also work inside Codespaces)</p>
+<pre><code language="language-bash" class="language-bash">curl http://localhost:3000/franchise/1
+</code></pre>
+<p>This should return the following JSON response:</p>
+<pre><code language="language-json" class="language-json">{
+   &#34;TRUCK_BRAND_NAMES&#34;:[
+      &#34;The Mac Shack&#34;,
+      &#34;Smoky BBQ&#34;,
+      &#34;Freezing Point&#34;,
+      &#34;Guac n&#39; Roll&#34;,
+      &#34;The Mega Melt&#34;,
+      &#34;Plant Palace&#34;,
+      &#34;Tasty Tibs&#34;,
+      &#34;Nani&#39;s Kitchen&#34;,
+      &#34;Better Off Bread&#34;,
+      &#34;Peking Truck&#34;,
+      &#34;Kitakata Ramen Bar&#34;,
+      &#34;Cheeky Greek&#34;,
+      &#34;Le Coin des Crêpes&#34;,
+      &#34;Revenge of the Curds&#34;,
+      &#34;Not the Wurst Hot Dogs&#34;
+   ],
+   &#34;START_DATE&#34;:&#34;2022-01-01 08:00:01.000&#34;,
+   &#34;END_DATE&#34;:&#34;2022-10-31 22:59:29.000&#34;
+}
+</code></pre>
+<h2 is-upgraded>Step 4.2 Authenticating and authorizing service users</h2>
+<p>Currently there is no authentication of the user calling this endpoint. We will change that to take advantage of the mechanism built into Snowflake Container Services.</p>
+<p>In the earlier guide <a href="https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake" target="_blank">Build a Data App with Snowflake</a> authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provider user name and password, and the service looked that up in the database (the <code>USERS</code> table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client&#39;s browser, even if the code is served from the frontend service, so calls to the API are coming from the end users&#39; browsers, not from the internal service hosting the frontend.</p>
+<aside class="special"><p>While React.js mainly relies on Client-Side Rendering, other frontend frameworks may rely on Server-Side Rendering, which changes this a little bit. CSR is very lightweight and makes it easy for the frontend service to serve static content to the end users, so for this solution it works well.</p>
+</aside>
+<p>What Snowpark Container Services offers is a different authentication model. Any user accessing the public endpoints for the services, needs to log in with a <code>USER</code> to the Snowflake interface.</p>
+<p class="image-container"><img alt="User authentication" src="img/f3177eac7444c8a1.png"></p>
+<p>In this example, one of the users we created in the earlier steps (<code>user1</code>, <code>user2</code>, <code>user3</code>,...) can now log in here. Once the user is authenticated, Snowpark Container Services adds that user name as a special header <code>Sf-Context-Current-User</code> to any request to the public endpoints. Since the environment strips away any other headers, there is no risk that the client can tamper with the value of this either, so from the perspective of the backend service, we can trust that the value in that header represents the user that authenticated with Snowflake.</p>
+<p>The request headers reaching the service endpoint will look something like this for a normal call:</p>
+<pre><code language="language-bash" class="language-bash">host: &#39;backend-service:3000&#39;
+referer: &#39;https://randomlygeneratedendpointname.snowflakecomputing.app/login&#39;
+content-type: &#39;application/json&#39;
+user-agent: &#39;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36&#39;
+accept: &#39;*/*&#39;
+&#39;sf-context-current-user&#39;: &#39;USER1&#39;
+...
+...
+</code></pre>
+<p>With this we can then look up that user and ensure that they have access to the application.</p>
+<p>Go to the code for <code>auth.js</code>, it contains code to validate this header and look up the user in the database, in order to check its association with a franchise. The following code does that:</p>
+<pre><code language="language-js" class="language-js">function lookupUser(user_name) {
+    return new Promise(async function (result, error) {
+        snowflake.getConnection().then(conn =&gt;
+            conn.execute({
+                sqlText: sql_queries.verify_user,
+                binds: [user_name],
+                complete: (err, stmt, rows) =&gt; {
+                    if (err) {
+                        error({result: false, message: &#39;Unable to lookup user&#39;, error:err});
+                    } else {
+                        if (rows.length == 0) {
+                            result({message: &#39;User does not exist&#39;});
+                        } else {
+                            user_row = rows[0]
+                            user_name = user_row.USER_NAME;
+                            franchise_id = user_row.FRANCHISE_ID;
+                            hashed_password = user_row.HASHED_PASSWORD;
+                            data = {result: true, validation: &#39;Snowflake&#39;, user_name: user_name, franchise_id: franchise_id, hashed_password: hashed_password };
+                            result(data);
+                        }
+                    }
+                },
+            }));
+    });
+}
+
+...
+
+function validateSnowflakeHeader(req, res, next) {
+
+    if (!req.headers[&#39;sf-context-current-user&#39;]) {
+        console.warn(&#39;Validation mode is Snowflake but sf-context-current-user header is missing - user is not validated&#39;);
+        res.status(422).send(&#34;Incorrect data&#34;);
+        return
+    }
+
+    const login_user = req.headers[&#39;sf-context-current-user&#39;]
+    console.log(&#39;sf-context-current-user: &#39; + login_user);
+    lookupUser(login_user).then(result =&gt; {
+        if (result.result === true){
+            console.log(&#39;Authorizing user &#39; + result.user_name + &#39; for franchise: &#39; + result.franchise_id);
+            req.user = { validation: &#39;Snowflake&#39;, user: result.user_name, franchise: result.franchise_id };
+            next();
+        } else {
+            console.warn(&#39;User does not exist: &#39; + login_user);
+            res.status(401).json(&#39;Invalid user or password&#39;);
+            return
+        }
+    }, error =&gt; {
+        console.error(error.message, error.error);
+        res.status(500).json({ error: error.message });
+        return
+    });
+};
+</code></pre>
+<p>Comparing this to the code that validates a JWT access token it is similar, but we here also have to look up the user in a database call, because unlike the JWT we cannot securely pass any additional information (like the <code>franchise_id</code> in the toke), the only value we can trust here is the user header, since it is securely set by the SPCS environment and cannot be tampered with by a javascript client. The rest of the code in that file is supporting the authentication using other methods, but this is the only one that will be used in this guide and when we deploy the services to Snowflake.</p>
+<p>Also review the file <code>/routes/login.js</code> that introduces a new endpoint <code>/authorize</code> that responds with an accesstoken containing the <code>user id</code> and <code>franchise id</code> when called with a header of <code>Sf-Context-Current-User</code>. This can be used by the frontend later on to check what franchise to set in the UI. Note that this endpoint also returns a JWT token, but we are only using that format to keep the code in the frontend as similar to the original code as possible, we are not using the JWT access token for future authorization of calls from the frontend to the backend.</p>
+<p>This endpoint is similar to the code in <code>auth.js</code> for validating a user.</p>
+<pre><code language="language-js" class="language-js">router.get(&#34;/authorize&#34;, async (req, res) =&gt; {
+
+    console.log(&#39;Authorize with request headers:&#39;)
+    if (!req.headers[&#39;sf-context-current-user&#39;]) {
+        res.status(422).send(&#34;Incorrect data&#34;);
+        return
+    }
+
+    const login_user = req.headers[&#39;sf-context-current-user&#39;]
+    console.log(`Authorizing user ${login_user} from context header`);
+    auth.lookupUser(login_user).then(result =&gt; {
+        if (result.result === true) {            
+            console.log(&#39;Authorizing user &#39; + result.user_name + &#39; for franchise: &#39; + result.franchise_id);
+            const accessToken = auth.generateAccessToken({ user: result.user_name, franchise: result.franchise_id, preauthorized: true });
+            const refreshToken = auth.generateRefreshToken({ user: result.user_name, franchise: result.franchise_id, preauthorized: true });
+            res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
+            return
+        } else {
+            console.warn(&#39;User does not exist: &#39; + login_user);
+            res.status(401).json(&#39;Invalid user or password&#39;);
+            return
+        }
+    }, error =&gt; {
+        console.error(error.message, error.error);
+        res.status(500).json({ error: error.message });
+        return
+    });
+});
+</code></pre>
+<p>With this we test run the application locally and simulate the SPCS environment. Change the <code>.env</code> file to use Snowflake authentication instead:</p>
+<pre><code language="language-bash" class="language-bash">CLIENT_VALIDATION=Snowflake
+</code></pre>
+<p>Restart the service running by pressing <code>CTRL+c</code> in the terminal where you started the docker service. Restart it again with <code>docker compose up</code> again. Once running you should now see the output:</p>
+<pre><code language="language-bash" class="language-bash">backend-backend_service-1  | Starting up Node Express, build version 00013
+backend-backend_service-1  | Server running on port 3000
+backend-backend_service-1  | Environment: development
+backend-backend_service-1  | CORS origin allowed: http://localhost:4000
+backend-backend_service-1  | Client validation: Snowflake
+backend-backend_service-1  | Using warehouse: TASTY_APP_WAREHOUSE
+backend-backend_service-1  | Using role: TASTY_APP_ADMIN_ROLE
+</code></pre>
+<p>Calling one of the endpoints now results in a <code>HTTP 422</code> response and the test <code>Incorrect data</code> (which is what we expect from the <code>validateSnowflakeHeader</code> in <code>auth.js</code>). If we provide a header that looks like the SPCS authentication header it now uses that to validate the user:</p>
+<pre><code language="language-bash" class="language-bash">curl --header &#34;Sf-Context-Current-User:user1&#34;  http://localhost:3000/franchise/1
+</code></pre>
+<p>This now responds with a the expected <code>HTTP 200</code> response:</p>
+<pre><code language="language-json" class="language-json">{
+   &#34;TRUCK_BRAND_NAMES&#34;:[&#34;The Mac Shack&#34;,&#34;Smoky BBQ&#34;,&#34;Freezing Point&#34;,&#34;Guac n&#39; Roll&#34;,&#34;The Mega Melt&#34;,&#34;Plant Palace&#34;,&#34;Tasty Tibs&#34;,&#34;Nani&#39;s Kitchen&#34;,&#34;Better Off Bread&#34;,&#34;Peking Truck&#34;,&#34;Kitakata Ramen Bar&#34;,&#34;Cheeky Greek&#34;,&#34;Le Coin des Crêpes&#34;,&#34;Revenge of the Curds&#34;,&#34;Not the Wurst Hot Dogs&#34;
+   ],
+   &#34;START_DATE&#34;:&#34;2022-01-01 08:00:01.000&#34;,
+   &#34;END_DATE&#34;:&#34;2022-10-31 22:59:29.000&#34;
+}
+</code></pre>
+<p>You can now terminate the service with <code>CTRL+c</code> and we can then destroy the local Docker service and images we just used for testing:</p>
+<pre><code language="language-bash" class="language-bash">docker rm backend-backend_service-1
+docker image rm backend-backend_service
+</code></pre>
+<h2 is-upgraded>Step 4.3 Connecting to Snowflake data</h2>
+<p>With this update, we can now look at how the backend service can access the data in the Snowflake tables and views. In the self hosted version of of the code (as in the <a href="https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake" target="_blank">Build a Data App with Snowflake</a>) we use a key pair authentication schema to connect the service to Snowflake. For a service running on Snowpark Container Services, we can benefit from the service already running on Snowflake and we can use a provided and pre-loaded authentication model based on OAuth. This is available for every service running on SPCS.</p>
+<p>Open the file <code>connect.js</code> and look at how the code is sending the options for the connection to Snowflake:</p>
+<pre><code language="language-js" class="language-js">    const options = {
+        database: process.env.SNOWFLAKE_DATABASE,
+        schema: process.env.SNOWFLAKE_SCHEMA,
+        warehouse: process.env.SNOWFLAKE_WAREHOUSE,
+    };
+
+    if (fs.existsSync(&#39;/snowflake/session/token&#39;)) {
+        options.token = fs.readFileSync(&#39;/snowflake/session/token&#39;, &#39;ascii&#39;);
+        options.authenticator = &#34;OAUTH&#34;;
+        options.account = process.env.SNOWFLAKE_ACCOUNT;
+        options.accessUrl = &#39;https://&#39; + process.env.SNOWFLAKE_HOST;
+    } else {
+        options.account = process.env.SNOWFLAKE_ACCOUNT;
+        options.username = process.env.SNOWFLAKE_USERNAME;
+        options.role = process.env.SNOWFLAKE_ROLE;
+        options.password = process.env.SNOWFLAKE_PASSWORD;
+    };
+</code></pre>
+<p>When the service is running on SPCS, the file located at <code>/snowflake/session/token</code> will contain an OAuth token that is pre-validated for accessing Snowflake. This means we don&#39;t need to supply a user and password for the connection. This token is authenticated for a temporary user that is given the same role as the <code>OWNER</code> for the Service being called. This is an important detail, as the service will be connecting as the very role that created it (here it will be <code>tasty_app_admin_role</code>), so think of it as a service account type of user that is connecting. This is analogous to how the original solution worked, but in there we created a dedicated user that the service connected as.</p>
+<p>Once connected, the rest of the backend code is working the same, regardless if it is running in the SPCS environment or somewhere else, like a local testing environment.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building the frontend code" duration="3">
+        <h2 is-upgraded>Overview</h2>
+<p>We can now look at how the frontend has been updated to take advantage of the changes and for us to be able to run it on SPCS.</p>
+<p>There are two areas that is updated here to allow it to run in the new environment:</p>
+<ul>
+<li>Authentication - by placing the service behind a public endpoint that forces users to login, it no longer makes sense to keep the login form in the client, the required authentication is already captured by the Snowflake OAuth login form</li>
+<li>Routing from client to the backend API, we can no longer directly control the CORS directives for the services, and calls from the client are actually made directly from the users&#39; browsers.</li>
+</ul>
+<p>The routing is something that changes somewhat significantly from the original solution. Instead of adding a CORS directive to the backend (e.g. allowing calls from another origin), we introduce a router service that takes calls from the public endpoint and <em>routes</em> them to either the frontend service, or the backend service, allowing us to maintain a single public endpoint.</p>
+<aside class="warning"><p>The frontend service and backend service are here hosted as two separate services, with a router bundled together with the frontend. For this simple application that may not be a necessary requirement to fulfill, but in a more complex and demanding application, it would be a good approach to separate the frontend and backend as they would have different non-functional requirements.</p>
+</aside>
+<p>The router ensures that calls made to routes starting with <code>/api</code> are forwarded to the <code>backend-service</code>, whereas any other calls <code>/*</code> are routed to the frontend container running in the same service as the router: <img alt="Routing" src="img/fee3118852cde7e5.png"></p>
+<h2 is-upgraded>Step 5.1 Building the router</h2>
+<p>The router is a simple service based on <a href="https://www.nginx.com/" target="_blank"><em>NGINX</em></a>. The code is very simple and serves a NGINX server that is given a configuration that defines the different routes, open <code>/src/frontend/router/nginx.conf.template</code>:</p>
+<pre><code language="language-yaml" class="language-yaml">events {
+  worker_connections  1024;
+}
+http {
+  server {
+    listen 8000;
+    listen [::]:8000;
+    server_name localhost;
+
+    location / {
+      proxy_pass  http://$FRONTEND_SERVICE/;
+    }
+
+    location /api {
+        rewrite     /api/(.*) /$1  break;
+        proxy_pass  http://$BACKEND_SERVICE/;
+    }
+
+    location /test {
+        add_header Content-Type text/html;
+
+        return 200 &#39;&lt;html&gt;&lt;body&gt;&lt;h1&gt;This is the router testpage&lt;/h1&gt;&lt;li&gt;Sf-Context-Current-User: $http_sf_context_current_user&lt;/li&gt;&lt;li&gt;Host: $http_host&lt;/li&gt;&lt;li&gt;Frontend Server: $FRONTEND_SERVICE&lt;/li&gt;&lt;li&gt;Backend Server: $BACKEND_SERVICE&lt;/li&gt;&lt;/body&gt;&lt;/html&gt;&#39;;
+    }
+  } 
+}
+</code></pre>
+<p>There are three routes in here, <code>/</code>, <code>/api</code> <code>/test</code>. The last one simply outputs debug information and can help to understand that the setup is correct (it should be removed when not testing out the services).</p>
+<p>The <code>/api</code> route means that anything prefixed with that gets rewritten to remove the &#34;<code>/api</code>&#34; part and then passed forward to the backend service URL. For all other calls they should be forwarded directly to the frontend service URL (which should be running on the same service as the router, in a different container).</p>
+<p>The <code>$FRONTEND_SERVICE</code> and <code>$BACKEND_SERVICE</code> variables allow us to dynamically replace these values when the Docker image is being used. If we look at the Dockerfile:</p>
+<pre><code language="language-bash" class="language-bash">FROM nginx:alpine
+
+ARG required FRONTEND_SERVICE
+ARG required BACKEND_SERVICE
+
+RUN apk update &amp;&amp; apk add bash
+
+EXPOSE 8000
+
+COPY nginx.conf.template /nginx.conf.template
+
+CMD [&#34;/bin/sh&#34; , &#34;-c&#34; , &#34;envsubst &#39;$FRONTEND_SERVICE $BACKEND_SERVICE&#39; &lt; /nginx.conf.template &gt; /etc/nginx/nginx.conf &amp;&amp; exec nginx -g &#39;daemon off;&#39;&#34;]
+</code></pre>
+<p>The last line substitutes these variables for values taken from the <code>environment</code> it is running in, before copying the contents into the <code>nginx.conf</code> file and starting up the server.</p>
+<p>You can test the router by running the container locally. From <code>/src/frontend</code> run the following: bash</p>
+<pre><code>docker compose --env-file .env.local.example up
+</code></pre>
+<p>This should run the router and the frontend on local ports. Test it out by running: bash</p>
+<pre><code>curl http://localhost:8888/test
+</code></pre>
+<p>It should return HTLM, like: html</p>
+<pre><code>&lt;html&gt;&lt;body&gt;&lt;h1&gt;This is the router testpage&lt;/h1&gt;&lt;li&gt;Sf-Context-Current-User: &lt;/li&gt;&lt;li&gt;Host: localhost:8888&lt;/li&gt;&lt;li&gt;Frontend Server: localhost:4000&lt;/li&gt;&lt;li&gt;Backend Server: localhost:3000&lt;/li&gt;&lt;/body&gt;&lt;/html&gt;
+</code></pre>
+<p>Terminate the running containers byt pressing <code>ctrl+c</code> in the terminal again.</p>
+<h2 is-upgraded>Step 5.2 Updating the frontend code</h2>
+<p>The frontend code itself needs fewer changes to adapt to the new environment. Primarily here we are looking at removing the actual login form and user management in favor of using the built in login capability.</p>
+<p class="image-container"><img alt="Tasty App UI" src="img/993839be57a59696.png"></p>
+<aside class="warning"><p>The original React code is actually built on older package dependencies. In order to keep this guide as similar to the original guide no changes to the React framework have been introduced, only minor changes are done as part of this guide. There are many ways to update the general React code to later standards, but this guide will focus on the core parts of connecting the services,</p>
+</aside>
+<p>In a commonly shared file <code>Utils.js</code> we can provide some methods that will help check how to communicate with the backend and to verify if the login button should be visible.</p>
+<pre><code language="language-js" class="language-js">export function enableLogin() {
+    if (clientValidation === &#39;JWT&#39;) {
+        return true;
+    } else if (clientValidation === &#39;Snowflake&#39;) {
+        return false;
+    }
+    console.log(` - Login disabled`);
+    return false;
+}
+
+export function isLoggedIn(state) {
+    if (clientValidation === &#39;JWT&#39;) {
+        if (state){
+            return (state.accessToken != null);
+        }
+    } else if (clientValidation === &#39;Snowflake&#39;) {
+        if (state){
+            return (state.accessToken != null);
+        }
+    } else if (clientValidation === &#39;Dev&#39;) {
+        if (state){
+            return (state.franchise != null);
+        }
+    }
+    return false;
+}
+</code></pre>
+<p>We can then use these functions to decide if the Login button should be visible or not:</p>
+<p>E.g. in <code>Home.js</code>, the logout button is conditionally shown using the above function:</p>
+<pre><code language="language-html" class="language-html">            &lt;div className=&#39;home-header&#39;&gt;
+                &lt;Image src=&#39;bug-sno-R-blue.png&#39; className=&#39;homeLogo&#39; /&gt;
+                &lt;h1 className=&#34;homeTitle&#34;&gt; Tasty App&lt;/h1&gt;
+
+                &lt;Button className=&#39;backBtn&#39; onClick={gotoDetails}&gt;  🚚 Truck Details&lt;/Button&gt;
+                { enableLogin() &amp;&amp;
+                    &lt;Button className=&#39;home-logoutBtn&#39; onClick={logout}&gt;⎋ Logout&lt;/Button&gt;
+                }
+            &lt;/div&gt;
+</code></pre>
+<p>And in the <code>App.js</code> routing we can use the same functions to conditionally route the user depending on if they are logged in or not.</p>
+<pre><code language="language-js" class="language-js">function App() {
+
+  const LoginWrapper = () =&gt; {
+    const location = useLocation();
+    return isLoggedIn(location.state) ? &lt;Outlet /&gt; : &lt;Navigate to=&#34;/login&#34; replace /&gt;;
+  };
+
+  return (
+    // Routing for the App.
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route path=&#34;/login&#34; element={ &lt;Login /&gt;  } /&gt;
+        &lt;Route element={&lt;LoginWrapper /&gt;}&gt;
+          &lt;Route path=&#34;/&#34; element={ &lt;Home /&gt; } /&gt;
+          &lt;Route path=&#34;/home&#34; element={ &lt;Home /&gt; } /&gt;
+          &lt;Route path=&#34;/details&#34; element={ &lt;Details /&gt; } /&gt;
+        &lt;/Route&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}
+</code></pre>
+<p>Finally we add a call in <code>Login.js</code> to check the <code>/authenticate</code> endpoint of the backend.</p>
+<pre><code language="language-js" class="language-js">const clientValidation = process.env.REACT_APP_CLIENT_VALIDATION;
+
+...
+
+    function checkAuthentication() {
+        if (clientValidation === &#39;JWT&#39;) {
+            //console.log(` - Validation enabled`);
+        } else if (clientValidation === &#39;Snowflake&#39;) {
+            console.log(`Checking client validation ${clientValidation} - Checking authorize endpoint of API`);
+            const requestOptions = {
+                method: &#39;GET&#39;,
+                headers: { &#39;Content-Type&#39;: &#39;application/json&#39;, &#39;Sf-Context-Current-User&#39;: &#39;user1&#39; }
+            };
+            fetch(backendURL + &#39;/authorize&#39;, requestOptions)
+                .then((result) =&gt; {
+                    if (result.ok) {
+                        result.json()
+                            .then((data) =&gt; {
+                                const token = decodeToken(data.accessToken);
+                                data.franchise = token.franchise;
+                                navigate(&#34;/&#34;, { state: data });
+                            });
+                    } else {
+                        console.warn(&#39;Current user is not authorized to use the application&#39;);
+                    }
+
+                });
+        } else {
+            console.warn(`Checking client validation ${clientValidation} - Validation disabled - hard coding franchise &#34;1&#34;`);
+            const data = { franchise: 1 };
+            navigate(&#34;/&#34;, { state: data });
+        }
+        return false;
+
+    };
+</code></pre>
+<p>When the <code>/login</code> page shows, this call is run and if the result is that a user context is returned then it navigates to the default route <code>/</code>. This all ensures that the same code runs both in the SPCS environment and in another hosting environment. By setting the <code>ENVIRONMENT</code> variable <code>REACT_APP_CLIENT_VALIDATION</code> to <code>Snowflake</code> when deploying this we ensure the method is called and evaluated.</p>
+<p>Remember, the <code>/authorize</code> endpoint of the backend service should return a JWT access token containing the user name and franchise when called from an authenticated context in SPCS, like the following result:</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;accessToken&#34;: &#34;eyJhbGc....goa_RUCl85NeM&#34;,
+    &#34;refreshToken&#34;: &#34;eyJhbGc.....VR5fnViRksNI&#34;
+}
+</code></pre>
+<p>And when decoded, that token should look something like this:</p>
+<pre><code language="language-json" class="language-json">{
+  &#34;user&#34;: &#34;user1&#34;,
+  &#34;franchise&#34;: 1,
+  &#34;preauthorized&#34;: true,
+  &#34;iat&#34;: 1705924945,
+  &#34;exp&#34;: 1705946545
+}
+</code></pre>
+<p>You can try this if you like, by starting up the backend again in a new Terminal window:</p>
+<pre><code language="language-bash" class="language-bash">cd src/backend
+docker compose up
+</code></pre>
+<p>And then directly call the <code>authorize</code> endpoint:</p>
+<pre><code language="language-bash" class="language-bash">curl --header &#34;Sf-Context-Current-User:user1&#34; http://localhost:3000/authorize
+</code></pre>
+<p>Copy the content of the <code>accessToken</code> attribute in the JSON response, and then go to <a href="https://jwt.io/" target="_blank">https://jwt.io/</a> and paste the response there. This should decode the token for you and show an output like above.</p>
+<p>Additionally, if you want to verify this token, you can supply the random string we added to the <code>.env</code> file for the backend.</p>
+<p>Throughout the <code>Home.js</code> and <code>Details.js</code> we then update all call to the backend to use the common helper function from <code>Utils.js</code> to call the backend, like this:</p>
+<pre><code language="language-js" class="language-js">const url = `${backendURL}/franchise/${franchise}/trucks?start=${fromDate}&amp;end=${toDate}`;
+fetch(url, getRequestOptions(location.state))
+    .then((result) =&gt; result.json())
+        .then((data) =&gt; {
+            setTop10Trucks(data)
+            let t = [];
+
+            for (let i=0; i&lt;data.length; i++) {
+                t.push(data[i].TRUCK_BRAND_NAME);
+            }
+            setTrucks(t);
+    })
+</code></pre>
+<p>With those changes, the code should be ready to be Dockerized and then deployed in Snowpark Container Services.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Containerize the Application" duration="5">
+        <p>Now we can prepare the services for deployment, and we will do that by building Docker container images for each service to deploy.</p>
+<p>Ensure that you have Docker installed on you environment:</p>
+<pre><code language="language-bash" class="language-bash">docker --version
+-- Docker version 24.0.6, build ed223bc
+</code></pre>
+<h2 is-upgraded>Step 6.1 Defining Dockerfiles for services</h2>
+<p>Each service that we will spin up consists of one or more containers, and each container is built on a Docker image.</p>
+<p>Let&#39;s start with the Dockerfile for the backend service. In the <code>/backend/Dockerfile</code> we are exposing the port this service is exposed on. By putting it in as a variable <code>${PORT}</code> we can set it through the service definition.</p>
+<pre><code language="language-bash" class="language-bash">FROM node:18
+
+ARG PORT
+
+WORKDIR /src/app
+COPY package.json /src/app/package.json
+
+RUN npm install
+
+ENV PORT=${PORT}
+EXPOSE ${PORT}
+
+COPY . /src/app
+
+CMD [&#34;npm&#34;, &#34;run&#34;, &#34;serve&#34;]
+</code></pre>
+<p>Ensure that there is a <code>.env</code> file there that will be picked up by the Docker build. It should look like this:</p>
+<pre><code language="language-bash" class="language-bash">SNOWFLAKE_WAREHOUSE=TASTY_APP_WAREHOUSE
+SNOWFLAKE_DATABASE=FROSTBUTE_TASTY_BYTES
+SNOWFLAKE_SCHEMA=APP
+
+ACCESS_TOKEN_SECRET={INSERT A RANDOM STRING HERE}
+REFRESH_TOKEN_SECRET={INSERT A RANDOM STRING HERE}
+
+PORT=3000
+
+CLIENT_VALIDATION=Snowflake 
+</code></pre>
+<p>The frontend service will contain two containers, so we will have two Dockerfiles, one for each image we are building.</p>
+<p>The frontend itself is here <code>/frontend/frontend/Dockerfile</code>:</p>
+<pre><code language="language-bash" class="language-bash">FROM node:latest
+
+ARG FRONTEND_SERVICE_PORT
+ARG REACT_APP_BACKEND_SERVICE_URL
+
+WORKDIR /src/
+COPY package.json /src/package.json
+
+RUN npm install
+
+ENV REACT_APP_BACKEND_SERVICE_URL=${REACT_APP_BACKEND_SERVICE_URL}
+
+ENV PORT=${FRONTEND_SERVICE_PORT}
+EXPOSE ${FRONTEND_SERVICE_PORT}
+
+COPY ./src /src/src
+COPY ./public /src/public
+
+CMD [&#34;npm&#34;, &#34;start&#34;]
+</code></pre>
+<p>Here we also allow the service to expose a port that is set through an environment variable <code>${FRONTEND_SERVICE_PORT}</code>. Additionally we inject the actual URL to the backend, i.e. what is the URL that the frontend is calling when connecting to the backend service, is also a variable <code>${REACT_APP_BACKEND_SERVICE_URL}</code>.</p>
+<p>The router that accompanies the frontend is built from a simple Dockerfile, <code>/frontend/router/Dockerfile</code>:</p>
+<pre><code language="language-bash" class="language-bash">FROM nginx:alpine
+
+ARG required FRONTEND_SERVICE
+ARG required BACKEND_SERVICE
+
+RUN apk update &amp;&amp; apk add bash
+
+EXPOSE 8000
+
+COPY nginx.conf.template /nginx.conf.template
+
+CMD [&#34;/bin/sh&#34; , &#34;-c&#34; , &#34;envsubst &#39;$FRONTEND_SERVICE $BACKEND_SERVICE&#39; &lt; /nginx.conf.template &gt; /etc/nginx/nginx.conf &amp;&amp; exec nginx -g &#39;daemon off;&#39;&#34;]
+</code></pre>
+<p>The last line is where the <code>$FRONTEND_SERVICE</code> and <code>$BACKEND_SERVICE</code> variables are replaced into the configuration for the NGINX server.</p>
+<h2 is-upgraded>Step 6.2 Login to the repo</h2>
+<p>We need to connect our local Docker to the remote <a href="https://docs.snowflake.com/developer-guide/snowpark-container-services/working-with-registry-repository" target="_blank">Image repository</a> that we created in Step 4. Start by grabbing the url for the repository by running the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE FROSTBYTE_TASTY_BYTES;
+USE SCHEMA APP;
+USE ROLE tasty_app_admin_role;
+
+SHOW IMAGE REPOSITORIES;
+</code></pre>
+<p>Now copy the value from the <code>repository_url</code> for the row for <code>TASTY_APP_REPOSITORY</code> (there should only be one row). The URL should look something like this:</p>
+<pre><code language="language-bash" class="language-bash">&lt;ACCOUNT_NAME&gt;.registry.snowflakecomputing.com/frostbyte_tasty_bytes/app/tasty_app_repository
+</code></pre>
+<p>Open up a terminal now and enter:</p>
+<pre><code language="language-bash" class="language-bash">export repo_url=&lt;insert repo url here&gt;
+</code></pre>
+<p>The user then you will use to login to this Docker image repository should be a user that is granted the role <code>tasty_app_admin_role</code>:</p>
+<pre><code language="language-bash" class="language-bash"># Snowflake user name
+export admin_user= &lt;your user name&gt;
+# login to the repo.  You&#39;ll need this for the push later.
+docker login ${repo_url} --username ${admin_user}
+</code></pre>
+<p>Type in the password for that user when prompted.</p>
+<pre><code language="language-bash" class="language-bash">Password: 
+Login Succeeded
+</code></pre>
+<p>With this, you can now push Docker images to this repository.</p>
+<h2 is-upgraded>Step 6.3 Build and push up the image</h2>
+<p>When building and pushing an image to the repo, we do a number of steps to ensure we build the image locally, tag it and then push it to the remote repository. Here is how the backend service is build in the <code>./build-all.sh</code> file:</p>
+<pre><code language="language-bash" class="language-bash">export image_name=backend_service_image
+docker image rm ${image_name}:${tag}
+docker build --rm --platform linux/amd64 -t ${image_name}:${tag} ./backend
+docker image rm ${repo_url}/${image_name}:${tag}
+docker tag ${image_name}:${tag} ${repo_url}/${image_name}:${tag}
+docker push ${repo_url}/${image_name}:${tag}
+echo ${repo_url}/${image_name}:${tag}
+</code></pre>
+<p>Note here that we are specifying to build the image directly for the <code>linux/amd64</code> architecture, this is needed for running it on the nodes in the compute pool for Snowpark Container Services. This may not be an image that can then be run on your local system, depending on the CPU architecture on that. It is important that we build it using this flag, otherwise it will not run on SPCS.</p>
+<p>We can now build and push all images to the Snowflake repository, from <code>/src</code> run:</p>
+<pre><code language="language-bash" class="language-bash">./build-all.sh 
+</code></pre>
+<p>Once that finishes, you can verify in a Snowflake worksheet that the images have been pushed to the repository:</p>
+<pre><code language="language-sql" class="language-sql">call system$registry_list_images(&#39;/frostbyte_tasty_bytes/app/tasty_app_repository&#39;);
+</code></pre>
+<p>The output should be similar to this:</p>
+<pre><code language="language-json" class="language-json">{
+   &#34;images&#34;:[
+      &#34;backend_service_image&#34;,
+      &#34;frontend_service_image&#34;,
+      &#34;router_service_image&#34;
+   ]
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Services" duration="5">
+        <h2 is-upgraded>Step 7.1 Creating the Service in Snowflake</h2>
+<p>The services can now be created in Snowflake. Go back to Snowflake and open a worksheet. Enter the following to create the backend service. The <code>CREATE SERVICE</code> command creates a new service.</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE FROSTBYTE_TASTY_BYTES;
+USE SCHEMA APP;
+USE ROLE tasty_app_admin_role;
+
+CREATE SERVICE backend_service
+  IN COMPUTE POOL tasty_app_backend_compute_pool
+  FROM SPECIFICATION $$
+spec:
+  container:
+  - name: backend
+    image: /frostbyte_tasty_bytes/app/tasty_app_repository/backend_service_image:tutorial
+    env:
+      PORT: 3000
+      ACCESS_TOKEN_SECRET: {INSERT A RANDOM STRING HERE}
+      REFRESH_TOKEN_SECRET: {INSERT ANOTHER RANDOM STRING HERE}
+      CLIENT_VALIDATION: Snowflake
+  endpoint:
+  - name: apiendpoint
+    port: 3000
+    public: true
+$$
+  MIN_INSTANCES=1
+  MAX_INSTANCES=1
+;
+GRANT USAGE ON SERVICE backend_service TO ROLE tasty_app_ext_role;
+</code></pre>
+<p>This creates the backend service using the image <code>backend_service_image:tutorial</code> that we should now have pushed to the repository. Note how we can supply overriding environment variables to the services.</p>
+<p>We also set this service to use the <code>tasty_app_backend_compute_pool</code> as the <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool" target="_blank">COMPUTE POOL</a> to run the service on. At the end we can set the scaling behavior of this service in the pool. In order to test this service we don&#39;t need any additional scaling setup here, but in a real scenario we may want to increase the number of instances available in case the load on the service goes up.</p>
+<p>Lastly we call <code>GRANT USAGE ON SERVICE</code> to allow the <code>tasty_app_ext_role</code> role and users with that role granted access to the service.</p>
+<p>We can then call <code>SHOW SERVICES</code> to look at the services created. In order to check the status of the newly created service we can call:</p>
+<pre><code language="language-sql" class="language-sql">SELECT SYSTEM$GET_SERVICE_STATUS(&#39;backend_service&#39;); 
+</code></pre>
+<p>Which will return the status of the service. After a few moments the service should report status <code>READY</code> and that it is running:</p>
+<pre><code language="language-json" class="language-json">[
+   {
+      &#34;status&#34;:&#34;READY&#34;,
+      &#34;message&#34;:&#34;Running&#34;,
+      &#34;containerName&#34;:&#34;backend&#34;,
+      &#34;instanceId&#34;:&#34;0&#34;,
+      &#34;serviceName&#34;:&#34;BACKEND_SERVICE&#34;,
+      &#34;image&#34;:&#34;&lt;ACCOUNT_NAME&gt;.registry.snowflakecomputing.com/frostbyte_tasty_bytes/app/tasty_app_repository/backend_service_image:tutorial&#34;,
+      &#34;restartCount&#34;:0,
+      &#34;startTime&#34;:&#34;&lt;CREATE TIME&gt;&#34;
+   }
+]
+</code></pre>
+<p>We can also look directly at the <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services#accessing-local-container-logs" target="_blank">logs from the service itself</a>, anything that is written to the standard logging can be retrieved from the service logs:</p>
+<pre><code language="language-sql" class="language-sql">CALL SYSTEM$GET_SERVICE_LOGS(&#39;backend_service&#39;, &#39;0&#39;, &#39;backend&#39;, 50);
+</code></pre>
+<p>Should show a log looking like this:</p>
+<pre><code language="language-bash" class="language-bash">&gt; serve
+&gt; node app.js
+
+Starting up Node Express, build version 00014
+Server running on port 3000
+Environment: development
+Client validation: Snowflake
+Using warehouse: tasty_app_warehouse
+Using role: TASTY_APP_ADMIN_ROLE
+</code></pre>
+<p>The frontend service can now be created in a similar fashion. The difference here is that it will contain two different containers, we are using both the image for the router and the frontend React app inside the same service.</p>
+<pre><code language="language-sql" class="language-sql">CREATE SERVICE frontend_service
+  IN COMPUTE POOL tasty_app_frontend_compute_pool
+  FROM SPECIFICATION $$
+spec:
+  container:
+  - name: frontend
+    image: /frostbyte_tasty_bytes/app/tasty_app_repository/frontend_service_image:tutorial
+    env:    
+      PORT: 4000
+      FRONTEND_SERVICE_PORT: 4000
+      REACT_APP_BACKEND_SERVICE_URL: /api
+      REACT_APP_CLIENT_VALIDATION: Snowflake
+  - name: router
+    image: /frostbyte_tasty_bytes/app/tasty_app_repository/router_service_image:tutorial
+    env:
+      FRONTEND_SERVICE: localhost:4000
+      BACKEND_SERVICE: backend-service:3000
+  endpoint:
+  - name: routerendpoint
+    port: 8000
+    public: true
+$$
+  MIN_INSTANCES=1
+  MAX_INSTANCES=1
+;
+GRANT USAGE ON SERVICE frontend_service TO ROLE tasty_app_ext_role;
+</code></pre>
+<p>In the same way we can check the status of the service and read the logs. Note that there are two logs to read, one for each container in the service.</p>
+<pre><code language="language-sql" class="language-sql">SELECT SYSTEM$GET_SERVICE_STATUS(&#39;frontend_service&#39;); 
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;frontend_service&#39;, &#39;0&#39;, &#39;frontend&#39;, 50);
+CALL SYSTEM$GET_SERVICE_LOGS(&#39;frontend_service&#39;, &#39;0&#39;, &#39;router&#39;, 50);
+</code></pre>
+<p>The log for the <code>frontend</code> container in the <code>frontend_service</code> should look something like this:</p>
+<pre><code language="language-bash" class="language-bash">&gt; tasty_app@0.1.0 start
+&gt; react-scripts start
+  
+Compiled successfully!
+
+You can now view tasty_app in the browser.
+
+  Local:            http://localhost:4000
+  On Your Network:  http://10.244.2.15:4000
+</code></pre>
+<h2 is-upgraded>Step 7.2 Testing the service</h2>
+<p>We are now finally ready to test the application in a browser. In order to do that we need the public endpoint exposed by the frontend_service. Call <code>SHOW ENDPOINTS</code> to retrieve that:</p>
+<pre><code language="language-sql" class="language-sql">SHOW ENDPOINTS IN SERVICE frontend_service;
+</code></pre>
+<p>The <code>ingress_url</code> in the response is the public endpoint URL, it should look similar to this, the first part is randomly generated for each endpoint and service:</p>
+<pre><code language="language-bash" class="language-bash">&lt;RANDOM&gt;-&lt;ACCOUNT NAME&gt;.snowflakecomputing.app
+</code></pre>
+<p>Now open up that URL in a browser. You will be prompted for a login, and here we can choose any of the users created earlier. You can use <code>user1</code> with password <code>password1</code>. Note that you will be forced to change this on first login. <img alt="Tasty App UI" src="img/f3177eac7444c8a1.png"></p>
+<p>Once logged in, the application loads the authorization status, and then redirects the user to the logged in <code>Home</code> page. After a few moments the data is loaded also and the charts for the current franchise (Franchise 1, if you logged in with user1) is shown.</p>
+<p class="image-container"><img alt="Tasty App UI" src="img/993839be57a59696.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean up resources" duration="1">
+        <p>Once we have tested the application we can tear down any resources that we have created. The following resouces should be removed:</p>
+<ul>
+<li>Services</li>
+<li>Compute Pools</li>
+<li>Warehouses</li>
+<li>Image Repositories</li>
+<li>Database and Schema</li>
+<li>Security Integration (NOTE: this may be used by other services, you can only have one active per ACCOUNT)</li>
+<li>Roles</li>
+<li>Users</li>
+<li>Local Docker images</li>
+</ul>
+<p>Open a worksheet in Snowflake and run the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE FROSTBYTE_TASTY_BYTES;
+USE SCHEMA APP;
+USE ROLE tasty_app_admin_role;
+
+-- Delete services
+SHOW SERVICE;
+DROP SERVICE BACKEND_SERVICE;
+DROP SERVICE FRONTEND_SERVICE;
+
+-- Delete compute pools
+SHOW COMPUTE POOLS;
+USE ROLE ACCOUNTADMIN;
+DROP COMPUTE POOL TASTY_APP_BACKEND_COMPUTE_POOL;
+DROP COMPUTE POOL TASTY_APP_FRONTEND_COMPUTE_POOL;
+
+-- Delete warehouses
+SHOW WAREHOUSES;
+DROP WAREHOUSE LOAD_WH;
+DROP WAREHOUSE QUERY_WH;
+DROP WAREHOUSE TASTY_APP_WAREHOUSE;
+
+-- Delete the Image repository
+USE ROLE tasty_app_admin_role;
+SHOW IMAGE REPOSITORIES;
+DROP IMAGE REPOSITORY TASTY_APP_REPOSITORY;
+
+-- Delete the database
+USE ROLE ACCOUNTADMIN;
+SHOW DATABASES;
+DROP DATABASE FROSTBYTE_TASTY_BYTES;
+
+-- Delete the OAuth security integration
+USE ROLE tasty_app_admin_role;
+SHOW SECURITY INTEGRATIONS;
+DROP SECURITY INTEGRATION &#34;Application Authentication&#34;;
+
+-- Delete the roles
+USE ROLE ACCOUNTADMIN;
+SHOW ROLES;
+DROP ROLE TASTY_APP_ADMIN_ROLE;
+DROP ROLE TASTY_APP_EXT_ROLE;
+
+-- Delete the users
+SHOW USERS;
+DROP USER USER1;
+DROP USER USER2;
+DROP USER USER3;
+</code></pre>
+<p>From a terminal, we can now also remove the built images:</p>
+<pre><code language="language-bash" class="language-bash">docker image prune --all
+</code></pre>
+<aside class="warning"><p>Warning, the above removes <em>all</em> unused Docker images. If you have other Docker images that you don&#39;t want to remove, then manually remove the images created in this guide using <code>docker image rm <IMAGE NAME></code>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Good work! You have now successfully built, deployed and run a data application on Snowpark Container Services.</p>
+<p>You now have gone through the basic concepts of building a a Data Application that can run directly on Snowflake, we have looked through how to adapt existing code to cover:</p>
+<ul>
+<li>Authentication and Authorization and user management</li>
+<li>Public endpoints for service</li>
+<li>Service to service communication</li>
+<li>Services connecting to Snowflake accounts</li>
+</ul>
+<p>Using this you should be able to build your own Data Application and run it direclty on Snowpark Container Services, directly connected to your data.</p>
+<p>We would love your feedback on this QuickStart Guide! Please submit your feedback using this Feedback Form.</p>
+<h2 is-upgraded>What You Learned</h2>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials" target="_blank">Snowpark Container Services tutorials</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake" target="_blank">Quickstart: Build a Data App with Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

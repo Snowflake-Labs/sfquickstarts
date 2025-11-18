@@ -1,0 +1,41 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks",
+  "duration": 90,
+  "title": "Getting Started with Time Series Analytics for IoT in Snowflake",
+  "summary": "Getting Started with Time Series Analytics for IoT in Snowflake",
+  "source": "getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks/getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "time-series",
+    "featured",
+    "data-engineering",
+    "streaming",
+    "streamlit",
+    "snowpark",
+    "cortex",
+    "solution-examples",
+    "snowflake"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "snowflake",
+    "snowpark",
+    "sql",
+    "streaming",
+    "streamlit",
+    "timeseries",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks"
+}

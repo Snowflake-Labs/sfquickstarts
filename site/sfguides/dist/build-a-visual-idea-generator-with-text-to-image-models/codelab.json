@@ -1,0 +1,43 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build-a-visual-idea-generator-with-text-to-image-models",
+  "duration": 88,
+  "title": "Build a Visual Concept/Idea Generator using a Text-to-Image AI Model",
+  "summary": "A guide to building a visual concept/idea generator from unstructured data powered by Text2Image LLM models and Streamlit.",
+  "source": "build-a-visual-idea-generator-with-text-to-image-models/build-a-visual-idea-generator-with-text-to-image-models.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ai",
+    "getting-started",
+    "app-development",
+    "cortex",
+    "data-science-\u0026-ml",
+    "solution-examples",
+    "streamlit"
+  ],
+  "tags": [
+    "adcreativeautomation",
+    "concepttesting",
+    "containerruntimenotebooks",
+    "cpgconcept",
+    "dataapplications",
+    "datascience\u0026ai",
+    "gettingstarted",
+    "ideageneration",
+    "innovation",
+    "modelregistry",
+    "services",
+    "streamlit",
+    "texttoimage",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build-a-visual-idea-generator-with-text-to-image-models"
+}

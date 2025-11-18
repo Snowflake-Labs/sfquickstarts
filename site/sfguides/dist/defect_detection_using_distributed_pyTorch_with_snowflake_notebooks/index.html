@@ -1,0 +1,258 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Defect Detection Using Distributed PyTorch With Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="defect_detection_using_distributed_pyTorch_with_snowflake_notebooks"
+                  title="Defect Detection Using Distributed PyTorch With Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In today&#39;s fast-paced manufacturing landscape, ensuring product quality early in the production process is crucial for minimizing defects and optimizing resources. With advancements in machine learning, manufacturers can now leverage computer vision models to automate defect detection, improving efficiency and accuracy.</p>
+<p>In this Quickstart guide, we will train a computer vision model for multiclass defect detection using <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks on Container Runtime</a> easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.</p>
+<p>The process includes the following steps:</p>
+<ul>
+<li>Preprocessing the dataset, which involves using the annotated data with labels and bounding boxes information for each image.</li>
+<li>Convert the image to a base64 bytes and store the contents in Snowflake table</li>
+<li>Training a PyTorch RCNN Object Detection model with distributed processing on multi-GPUs.</li>
+<li>Registering the trained model in the Snowflake Model Registry.</li>
+<li>Running detections and visualizing recommendations in a Streamlit app.</li>
+<li>Displaying inference results for any selected PCB image within the Streamlit app.</li>
+</ul>
+<h3 is-upgraded>What is Snowflake ML?</h3>
+<p><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a> is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.</p>
+<h3 is-upgraded>What is Snowflake Notebooks on Container Runtime?</h3>
+<p>Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of Python, Markdown and SQL code. By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for ML usecases. Notebooks on Container Runtime offer a robust environment with a comprehensive repository of pre-installed CPU and GPU machine learning packages and frameworks, significantly reducing the need for package management and dependency troubleshooting. This allows you to quickly get started with your preferred frameworks and even import models from external sources. Additionally, you can use pip to install any custom package as needed. The runtime also features an optimized data ingestion layer and provides a set of powerful APIs for training and hyperparameter tuning. These APIs extend popular ML packages, enabling you to train models efficiently within Snowflake. At the core of this solution is a Ray-powered distributed compute cluster, giving you seamless access to both CPU and GPU resources. This ensures high performance and optimal infrastructure usage without the need for complex setup or configuration, allowing you to focus solely on your machine learning workloads.</p>
+<p>Key Features:</p>
+<ul>
+<li>Managed Environment: Focus on your ML projects without the overhead of managing underlying infrastructure.</li>
+<li>Scalability: Leverage distributed computing resources to efficiently handle large datasets and complex computations.</li>
+<li>Integration: Seamlessly combine with Snowflake&#39;s ML operations for a cohesive workflow.</li>
+<li>Flexibility: While common ML packages come pre-installed, you have the option to install custom packages as needed.</li>
+</ul>
+<p class="image-container"><img alt="SnowparkNotebooks" src="img/c130aa2d5d98f451.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A GitHub Account</li>
+<li>A Snowflake Account</li>
+<li>Access to run Notebooks in Snowflake</li>
+<li>A Snowflake Account. Sign up for a 30-day free trial account, if required.</li>
+<li>To try Snowflake ML in a free trial, check out this <a href="https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0" target="_blank">quickstart</a></li>
+<li>(Optional) <a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0" target="_blank">Completed Getting Started with Snowflake Notebook Container Runtime</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to leverage Snowflake Notebooks on Container Runtime(GPUs) to carry model training using a Computer Vision Object Detection model.</li>
+<li>How to use the ShardedDataConnector that defines the training process for an individual worker during the training process.</li>
+<li>How to achieve independent execution on each worker during the distributed training.</li>
+<li>How to use the PyTorchDistributor to distribute and manage the execution of the training function across multiple workers.</li>
+<li>How to log a trained model to Snowflake Model Registry</li>
+<li>How to create a streamlit application to carry ongoing inference on new images.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Object Detection Model from PyTorch that was trained with distributed processing on GPUS in Snowflake Notebooks to carry multiclass defect detection.</li>
+<li>A Streamlit app that will fetch the predictions and plot the bounding boxes around the defects with the class and prediction score.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Environment" duration="2">
+        <p>This section will walk you through creating various objects.  The repository with the source code can be found <a href="https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks" target="_blank">here</a>. Access the gitrepo here and clone it to your local directory. The dataset can be accessed from <a href="https://github.com/Charmve/Surface-Defect-Detection" target="_blank">this</a> link. Review the licensing requirement before using the dataset.</p>
+<h2 is-upgraded>Initial Setup</h2>
+<p>We will work with two notebooks. The first one, <a href="https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks/0_data_preparation_run_in_local_IDE.ipynb" target="_blank">0_data_preparation_run_in_local_IDE.ipynb</a>, handles the creation of necessary Snowflake objects, compute instances, and data loading from a third-party dataset. Be sure to comply with the dataset&#39;s licensing terms and usage guidelines.</p>
+<h2 is-upgraded>Notebook Execution: 0_data_preparation_run_in_local_IDE.ipynb</h2>
+<p>To execute the notebook, follow these steps using an IDE like Jupyter or Visual Studio Code:</p>
+<ul>
+<li><strong>Snowflake Object Creation</strong>:<ul>
+<li>Create the required database, schema, stage, warehouse, compute pool, and external access integration in Snowflake.</li>
+</ul>
+</li>
+<li><strong>Data Preparation</strong>:<ul>
+<li>Extract images iteratively from subfolders, ensuring that the corresponding label files containing bounding box coordinates (xmin, ymin, xmax, ymax) and defect classifications are also retrieved.</li>
+</ul>
+</li>
+<li><strong>File Upload</strong>:<ul>
+<li>Upload all image files and label files to the designated Snowflake stage for storage and processing.</li>
+</ul>
+</li>
+<li><strong>Label Management</strong>:<ul>
+<li>Store the label data (defect classification and bounding box coordinates) in a dedicated table named LABELS_TRAIN for efficient management and access.</li>
+</ul>
+</li>
+<li><strong>Image Data Processing</strong>:<ul>
+<li>Read image files and encode their content in Base64 format.</li>
+<li>Combine the encoded image data with metadata such as filenames and corresponding labels.</li>
+<li>Store the resulting data in a Snowflake table, with each record containing the Base64-encoded image, filename, and associated metadata.</li>
+</ul>
+</li>
+</ul>
+<p>Once the setup is complete, proceed to the next step to begin distributed model training.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Distributed Model Training in Snowflake Notebooks" duration="2">
+        <p>It is time to set up a distributed training pipeline for training a PyTorch-based Faster R-CNN (Region-based Convolutional Neural Network) model for multiclass defect detection. The training is performed on a dataset of images (specifically, PCBs) with annotations for bounding boxes and labels, using Snowflake&#39;s Container Runtime, and utilizes GPUs for accelerated training.</p>
+<p>Import the notebook available <a href="https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks/1_Distributed_Model_Training_Snowflake_Notebooks.ipynb" target="_blank">here</a></p>
+<p>In Snowsight -&gt; Navigate to Project &gt; Notebooks from the left menu bar. Import the .ipynb file you have downloaded into your Snowflake Notebook by using the Import from .ipynb button located on the top right of the Notebooks page. Choose the database, schema, Compute pool and the warehouse that was created earlier.</p>
+<p>Let&#39;s break down step by step what the training code performs:</p>
+<h2 is-upgraded>Step 3.1 Distributed Setup</h2>
+<p>We will explore specific syntax in the distributed trainer that coordinates the training across multiple GPUs.</p>
+<ul>
+<li>context = get_context() &amp; rank = context.get_rank(): The get_context() function from Snowflake&#39;s framework provides the worker&#39;s rank (ID in the distributed system).</li>
+<li>dist.init_process_group(backend=&#34;nccl&#34;): Initializes the process group for distributed training. NCCL is a backend optimized for multi-GPU training.</li>
+<li>torch.cuda.device(rank): Ensures the model runs on the specific GPU based on the rank of the process.</li>
+</ul>
+<h2 is-upgraded>Step 3.2 Custom Dataset: FCBData</h2>
+<ul>
+<li>IterableDataset: This class wraps the source dataset (PCB images with annotations) to make it iterable for training.</li>
+<li>Image Loading: The contents from IMAGE_DATA is decoded from Base64, loaded as a PIL image, and then transformed into a tensor.</li>
+<li>Bounding Boxes and Labels: Extracts bounding box coordinates (XMIN, YMIN, XMAX, YMAX) and defect class labels from the dataset.Prepares a target dictionary containing the bounding boxes, labels, image IDs, and other metadata required by the Faster R-CNN model.</li>
+</ul>
+<h2 is-upgraded>Step 3.3 Model Setup</h2>
+<ul>
+<li>Loading Pre-trained Model: <ul>
+<li>weights = FasterRCNN_ResNet50_FPN_Weights.DEFAULT: Loads the pre-trained Faster R-CNN model with ResNet50 as the backbone.</li>
+<li>num_classes = 6: Sets the number of classes (including background) for defect detection.</li>
+<li>FastRCNNPredictor: Modifies the model&#39;s prediction head to match the custom number of classes.</li>
+</ul>
+</li>
+<li>The model is moved to the appropriate GPU (model.to(rank)) and wrapped in Distributed Data Parallel (DDP).</li>
+</ul>
+<h2 is-upgraded>Step 3.4 Model Training Setup</h2>
+<ul>
+<li>optimizer and lr_scheduler: Adam optimizer is used to update model parameters. The learning rate is reduced every 3 epochs (StepLR).</li>
+<li>DataLoader: Handles loading the dataset into batches. collate_fn groups the data into batches because the Faster RCNN model requires a custom way to handle images and targets together. Pinning memory to GPU: By specifying pin_memory=True, the data loading process is optimized for GPU usage.</li>
+</ul>
+<h2 is-upgraded>Step 3.5 Training Loop</h2>
+<ul>
+<li>For each epoch: <ul>
+<li>The model switches to training mode (model.train()).</li>
+<li>The images and targets are moved to the corresponding GPU for training.</li>
+<li>The loss is computed by the model on each batch of images. The optimizer updates the model weights based on the computed loss and the learning rate is updated after each epoch via the scheduler.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Step 3.6 Save model dict and Logging the model to Snowflake Registry</h2>
+<ul>
+<li>torch.save(model.module.state_dict(), model_file): Saves the trained model (only on the master node, rank 0) to a temporary file /tmp/models/detectionmodel.pt</li>
+<li>Using a custom model wrapper class  DefectDetectionModel(), we use the trained model to be register in Snowflake registry with a model name, version, and the other parameters.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit App" duration="2">
+        <p>Follow these steps to build a Streamlit application in Snowsight.</p>
+<ul>
+<li>Step 1. Click on Streamlit on the left navigation menu</li>
+<li>Step 2. Click on + Streamlit App on the top right</li>
+<li>Step 3. Enter App title</li>
+<li>Step 4. Select App location (pcb_dataset and Public Schema) and a warehouse</li>
+<li>Step 5. Click on Create. Replace the code with the streamlit code in the file</li>
+</ul>
+<p>Also upload the remaining files from <a href="https://github.com/Snowflake-Labs/sfguide-distributed-training-using-pytorch-object-detection-in-snowflake-notebooks/tree/main/scripts/streamlitapp" target="_blank">this</a> folder to the Streamlit stage by navigating to:</p>
+<ul>
+<li>Snowsight-&gt;Data</li>
+<li>Database-&gt;PCB_Dataset</li>
+<li>Schemas-&gt;Public</li>
+<li>Stages-&gt; streamlitstage</li>
+</ul>
+<p>Come back to the Streamlitapp and click Run. Choose an image and click the button to carry Defect Detection .</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>Congratulations! You have successfully performed distributed model training in Snowflake Notebooks on Container Runtime. By following these steps, you have trained a PyTorch Object Detection model with Snowflake, carry unstructured data(images) processing, train a PyTorch RCNN Object Detection model , log it in Snowflake Model Registry, and use Streamlit to visualize the inference results. To cleanup resources and remove all of the objects and compute pools that you created during this QuickStart. This will ensure that you don&#39;t incur any unnecessary costs specifically associated with this QuickStart guide.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Leverage Snowflake Notebooks on Container Runtime with seamless access to GPUs to carry model training using a Computer Vision Object Detection model.</li>
+<li>Leverage ShardedDataConnector that defines the training process for an individual worker during the training process.</li>
+<li>Carry independent execution on each worker during the distributed training.</li>
+<li>Use the PyTorchDistributor to distribute and manage the execution of the training function across multiple workers.</li>
+<li>Log a trained model to Snowflake Model Registry</li>
+<li>Create a streamlit application to carry ongoing inference on new images.</li>
+</ul>
+<p>Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts:</p>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0" target="_blank">Getting Started with Running Distributed PyTorch Models on Snowflake</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#0" target="_blank">Scale Embeddings with Snowflake Notebooks</a></li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://github.com/Snowflake-Labs/sfguide-distributed-training-using-pytorch-object-detection-in-snowflake-notebooks" target="_blank">Source Code on GitHub</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/user-guide/ui-snowsight/notebooks" target="_blank">Docs: Notebooks</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Docs: Notebooks on Container Runtime</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview" target="_blank">Docs: Snowflake Model Registry</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml" target="_blank">Snowflake ML Webpage</a></h3>
+</li>
+</ul>
+<h2 is-upgraded>Attribution</h2>
+<p>PyTorch, the PyTorch logo and any related marks are trademarks of The Linux Foundation.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

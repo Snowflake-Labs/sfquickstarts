@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "horizon_intra_org_sharing",
+  "duration": 156,
+  "title": "Horizon Access for Intra-Company Sharing",
+  "authors": "Matthias Nicola, Vinay Srihari",
+  "summary": "explore Horizon Access pillar features for intra-company sharing of data and apps",
+  "source": "horizon-intra-org-sharing/horizon-intra-org-sharing.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-sharing"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "horizon_intra_org_sharing"
+}

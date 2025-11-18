@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "image_recognition_snowpark_pytorch_streamlit_openai",
+  "duration": 28,
+  "title": "A Image Recognition App in Snowflake using Snowpark Python, PyTorch, Streamlit and OpenAI",
+  "summary": "This guide provides the instructions for writing image recognition applications in Snowflake using Snowpark for Python, PyTorch, Streamlit and OpenAI.",
+  "source": "image_recognition_snowpark_pytorch_streamlit_openai/image_recognition_snowpark_pytorch_streamlit_openai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "app-development",
+    "solution-examples"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "image_recognition_snowpark_pytorch_streamlit_openai"
+}

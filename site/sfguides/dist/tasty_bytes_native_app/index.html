@@ -1,0 +1,723 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Tasty Bytes - Snowflake Native Application</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="tasty_bytes_native_app"
+                  title="Tasty Bytes - Snowflake Native Application"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <aside class="warning"><p><strong>Important</strong> At the time of writing, Snowflake Native Application are currently only available to Snowflake accounts in all non-government AWS and Azure regions. Ensure your Snowflake deployment or trial account uses one of these options as the cloud provider. Native Apps will be available on other major cloud providers soon.</p>
+</aside>
+<p class="image-container"><img alt="app" src="img/51f8e1f12c0612a9.png"></p>
+<p>In this Quickstart, you&#39;ll build a Snowflake Native Application that provides food truck owners with a machine learning model they can use to forecast sales. Here are some additional details behind the scenario:</p>
+<p><strong>Consumer</strong></p>
+<ul>
+<li>The application consumer is a food truck franchisee. They own a Tasty Bytes food truck and have raw sales data in their Snowflake account. They&#39;d like to be able to use their data to predict sales volume across food trucks in different cities.</li>
+</ul>
+<p><strong>Provider</strong></p>
+<ul>
+<li>The application provider will build an application that the consumer will use to enrich their raw sales data. The application will also contain a machine learning model that will used for inference with the enriched data. Finally, the application will visualize the results of the inference.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<p>To successfully complete this Quickstart, your Snowflake account must have the Tasty Bytes data set and Tasty Bytes machine learning models. Make sure you complete the following before attempting this Quickstart:</p>
+<ol type="1">
+<li>Step 2 of <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#1" target="_blank">An Introduction to Tasty Byes</a></li>
+<li>Steps 2 and 3 of <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index#1" target="_blank">Tasty Bytes - Snowpark 101 for Data Science </a></li>
+</ol>
+<p>If these prerequisites are not completed, you will not able to complete this Quickstart.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>The Snowflake Native Application Framework</li>
+<li>Consumer account setup</li>
+<li>Provider account setup</li>
+<li>How the application is structured (data, logic, and user interface)</li>
+<li>How to create an application package</li>
+<li>How to add application source code to an application package</li>
+<li>How to create the first version of an application</li>
+<li>How to install and run the application in your account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account with ACCOUNTADMIN access (<a href="https://signup.snowflake.com/developers/?utm_cta=developer-toolkit-quickstart" target="_blank">trial</a>, or otherwise)</li>
+</ul>
+<aside class="warning"><p><strong>Important</strong> At the time of writing, Snowflake Native Apps are currently only available to Snowflake accounts in all non-government AWS and Azure regions. Ensure your Snowflake deployment or trial account uses one of these options as the cloud provider. Native Apps will be available on other major cloud providers soon.</p>
+</aside>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Snowflake Native Application for visualizing sales forecasts</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prerequisites" duration="10">
+        <p>To successfully complete this Quickstart, your Snowflake account must have the Tasty Bytes data set and Tasty Bytes machine learning models. Make sure you complete the following before attempting this Quickstart:</p>
+<ol type="1">
+<li>Step 2 of <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#1" target="_blank">An Introduction to Tasty Byes</a></li>
+<li>Steps 2 and 3 of <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index#1" target="_blank">Tasty Bytes - Snowpark 101 for Data Science </a></li>
+</ol>
+<p>If these prerequisites are not completed, you will not able to complete this Quickstart.</p>
+<p>In addition, clone or download the source code for the application you&#39;ll build in this Quickstart here: <a href="https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/sfguide-tasty-bytes-native-app" target="_blank">Tasty Bytes - Native App</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Account Set Up: Consumer" duration="3">
+        <p>For the purposes of convenience, we&#39;ll use one Snowflake account to build the application. This means the account will contain consumer data and provider data. In practice, there would be two separate accounts. Providers would build the application package in their account, publish it to the Snowflake marketplace, and consumers would discover the application there and install it into their Snowflake account.</p>
+<p>Let&#39;s start by setting up the consumer objects and data in the account. In Snowflake, open a SQL worksheet and run the following SQL:</p>
+<pre><code language="language-sql" class="language-sql">-- Create consumer roles and grant privileges
+USE ROLE accountadmin;
+
+CREATE ROLE IF NOT EXISTS franchise_admin;
+CREATE ROLE IF NOT EXISTS franchise_viewer;
+
+GRANT ROLE franchise_admin TO ROLE accountadmin;
+GRANT ROLE franchise_viewer TO ROLE accountadmin;
+
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE franchise_admin;
+GRANT CREATE APPLICATION ON ACCOUNT TO ROLE franchise_admin;
+GRANT EXECUTE TASK, EXECUTE MANAGED TASK ON ACCOUNT TO ROLE franchise_admin WITH GRANT option;
+GRANT ROLE franchise_viewer TO ROLE franchise_admin;
+
+-- Create a warehouse to be used by the application consumer
+CREATE WAREHOUSE IF NOT EXISTS franchise_wh;
+GRANT USAGE ON WAREHOUSE franchise_wh TO ROLE franchise_admin;
+GRANT USAGE ON WAREHOUSE franchise_wh TO ROLE franchise_viewer;
+
+-- Grant usage on source data to consumer roles
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_dev TO ROLE franchise_admin;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes_dev TO ROLE franchise_admin;
+GRANT SELECT ON TABLE frostbyte_tasty_bytes_dev.analytics.shift_sales_v TO ROLE franchise_admin;
+</code></pre>
+<p>The SQL above does the following:</p>
+<ul>
+<li>Creates two application roles, <code>franchise_admin</code> and <code>franchise_viewer</code>. These are roles that exist in the consumer account. An account admin in the consumer account would be able to assign users in the Snowflake account to either one of these roles. One role (say, <code>franchise_admin</code>) could have more privileges within the application than another role (say, <code>franchise_viewer</code>).</li>
+<li>Grants certain privileges to the <code>franchise_admin</code> role. It also allows the <code>franchise_admin</code> role to assume the <code>franchise_viewer</code> role if necessary.</li>
+<li>Creates a warehouse to be used by either one of these app user while running the application.</li>
+</ul>
+<p>With the base roles and privileges now defined, let&#39;s now create the consumer data in the account. Open a SQL worksheet and run the following:</p>
+<pre><code language="language-sql" class="language-sql">-- Create consumer data
+
+USE ROLE franchise_admin;
+USE WAREHOUSE franchise_wh;
+
+-- Create consumer database
+CREATE DATABASE IF NOT EXISTS franchise_consumer_data;
+USE DATABASE franchise_consumer_data;
+CREATE SCHEMA IF NOT EXISTS data;
+USE SCHEMA data;
+
+-- Create sales table for consumer
+CREATE OR REPLACE TABLE shift_sales AS
+(
+    WITH row_cte 
+    AS
+    (
+        SELECT
+            location_id,
+            shift_sales,
+            city,
+            ROW_NUMBER() OVER (ORDER BY shift_sales) as row_count
+        FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v
+    )
+    SELECT 
+        * EXCLUDE row_count 
+    FROM row_cte
+    WHERE city IN (&#39;Toronto&#39;, &#39;Vancouver&#39;, &#39;Montreal&#39;)
+    AND (row_count % 10) = 0 -- only copy 10% of sales
+);
+</code></pre>
+<p>The SQL above creates a database called <code>franchise_consumer_data</code> that contains some sales data for the cities of Toronto, Vancouver, and Montreal.</p>
+<p class="image-container"><img alt="consumer data" src="img/1c6b7ec6473773e0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Account Set Up: Provider" duration="3">
+        <p>Let&#39;s now prep the account with the roles, grants, and objects that the application provider will need to create the application.</p>
+<p>Open a SQL worksheet and run the following:</p>
+<pre><code language="language-sql" class="language-sql">-- Create application provider roles and grant privileges
+USE ROLE accountadmin;
+
+CREATE ROLE IF NOT EXISTS sales_forecast_provider;
+GRANT ROLE sales_forecast_provider TO ROLE accountadmin;
+GRANT CREATE application package ON ACCOUNT TO ROLE sales_forecast_provider;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE sales_forecast_provider;
+
+-- Create warehouse and ensure a warehouse is usable by provider
+CREATE WAREHOUSE IF NOT EXISTS franchise_wh;
+GRANT USAGE ON WAREHOUSE franchise_wh TO ROLE sales_forecast_provider;
+
+-- Grant usage on source data to provider role
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE sales_forecast_provider;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes TO ROLE sales_forecast_provider;
+GRANT SELECT ON TABLE frostbyte_tasty_bytes.raw_pos.location TO ROLE sales_forecast_provider;
+GRANT SELECT ON TABLE frostbyte_tasty_bytes.raw_pos.country TO ROLE sales_forecast_provider;
+</code></pre>
+<p>The SQL above does the following:</p>
+<ul>
+<li>Creates the application provider role, <code>sales_forecast_provider</code>. This is the provider role you can imagine is building the application. We will assume this role as we build the application in the account.</li>
+<li>Grants certain privileges to the <code>sales_forecast_provider</code> role. Note that this role is granted <code>CREATE application package</code> privileges. This is the grant that will enable us to package and distribute the application source code.</li>
+<li>Allows the <code>sales_forecast_provider</code> role to use the <code>franchise_wh</code>. This is for the purposes of convenience given that we are using a single Snowflake account to build the application. In practice, the provider would use their own compute resources (i.e., warehouses) in their account while building the application.</li>
+</ul>
+<p>With the provider roles, grants, and objects now defined, let&#39;s now create some provider data in the account. This is the data that will enrich the consumer data for use in the forecasting model.</p>
+<p>Open a SQL worksheet and run the following:</p>
+<pre><code language="language-sql" class="language-sql">-- Create provider data
+
+USE ROLE sales_forecast_provider;
+USE WAREHOUSE franchise_wh;
+
+CREATE DATABASE IF NOT EXISTS provider_data;
+CREATE SCHEMA IF NOT EXISTS provider_data.shared_data;
+
+CREATE OR REPLACE TABLE provider_data.shared_data.locations_detail
+AS
+(
+    WITH _location_point AS
+    (SELECT 
+        cpg.placekey,
+        l.location_id,
+        cpg.city,
+        cpg.country,
+        ST_MAKEPOINT(cpg.longitude, cpg.latitude) AS geo_point
+    FROM frostbyte_safegraph.public.frostbyte_tb_safegraph_s cpg
+    LEFT JOIN frostbyte_tasty_bytes.raw_pos.location l
+        ON cpg.placekey = l.placekey),
+    _distance_between_locations AS
+    (SELECT 
+        a.placekey,
+        a.location_id,
+        b.placekey AS placekey_2,
+        b.location_id AS location_id_2,
+        a.city,
+        a.country,
+        ROUND(ST_DISTANCE(a.geo_point, b.geo_point)/1609,2) AS geography_distance_miles
+    FROM _location_point a
+    JOIN _location_point b
+        ON a.city = b.city
+        AND a.country = b.country
+        AND a.placekey &lt;&gt; b.placekey
+    ),
+    _locations_within_half_mile AS
+    (
+    SELECT
+        dbl.placekey,
+        dbl.location_id,
+        COUNT(DISTINCT dbl.placekey_2) AS count_locations_within_half_mile
+    FROM _distance_between_locations dbl
+    WHERE dbl.geography_distance_miles &lt;= 0.5
+    GROUP BY dbl.location_id, dbl.placekey
+    ),
+    _locations_within_mile AS
+    (
+    SELECT
+        dbl.placekey,
+        dbl.location_id,
+        COUNT(DISTINCT dbl.placekey_2) AS count_locations_within_mile
+    FROM _distance_between_locations dbl
+    WHERE dbl.geography_distance_miles &lt;= 1
+    GROUP BY dbl.location_id, dbl.placekey
+    )
+    SELECT
+        l.location_id,
+        ZEROIFNULL(hm.count_locations_within_half_mile) AS count_locations_within_half_mile,
+        ZEROIFNULL(m.count_locations_within_mile) AS count_locations_within_mile,
+        cpg.placekey,
+        cpg.location_name,
+        cpg.top_category,
+        cpg.sub_category,
+        cpg.naics_code,
+        cpg.latitude,
+        cpg.longitude,
+        ST_MAKEPOINT(cpg.longitude, cpg.latitude) AS geo_point,
+        cpg.street_address,
+        cpg.city,
+        c.city_population,
+        cpg.region,
+        cpg.country,
+        cpg.polygon_wkt,
+        cpg.geometry_type
+    FROM frostbyte_tasty_bytes.raw_pos.location l
+    JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s cpg
+        ON l.placekey = cpg.placekey
+    JOIN frostbyte_tasty_bytes.raw_pos.country c
+        ON l.city = c.city
+    LEFT JOIN _locations_within_half_mile hm
+        ON l.location_id = hm.location_id
+    LEFT JOIN _locations_within_mile m
+        ON l.location_id = m.location_id
+);
+</code></pre>
+<p>The SQL above creates a table containing location data that will be used alongside the consumer data for forecasting and visualization within the application.</p>
+<p class="image-container"><img alt="location data" src="img/b0d1bcaf3c5d13a4.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application: Structure" duration="5">
+        <p>Before building the application, let&#39;s quickly take a look at the structure of the application.</p>
+<pre>tasty-bytes-native-app/
+├─ python/
+│  ├─ evaluate_model.py
+│  ├─ inference_pipeline.py
+│  ├─ linreg_location_sales_model.sav
+├─ scripts/
+│  ├─ setup.sql
+├─ streamlit/
+│  ├─ environment.yml
+│  ├─ forecast_ui.py
+├─ manifest.yml
+├─ README.md
+</pre>
+<ul>
+<li><strong>Application user interface (UI)</strong> – The code powering the UI of the application resides in <strong>streamlit/</strong>. This directory contains two files, <strong>environment.yml</strong> and <strong>forecast_ui.py</strong>. The former contains the definition for an environment used to build the UI, and contains references to dependencies (packages) used in the UI. The latter contains the Streamlit code that defines the layout and data rendering in the app.</li>
+<li><strong>Application logic</strong> – You can find the logic powering the sales forecasting model in the <strong>python/</strong> directory. The <strong>inference_pipeline.py</strong> file contains the logic that enriches, transforms, and preps the data that will be used for sales predictions. <strong>evaluate_model.py</strong> contains a user-defined function (UDF) that accepts a DataFrame and calls the prediction model (<strong>linreg_location_sales_model.sav</strong>) on that DataFrame to returns a sales forecast.</li>
+<li><strong>scripts/</strong> contains the application set up script <strong>setup.sql</strong>, which is required by the Snowflake Native Application framework and will execute when a consumer installs the application in their account.</li>
+<li><strong>manifest.yml</strong> contains application metadata, including references to important artifacts used by the application (the set up script, the default Streamlit file, etc.) and object references that describe the privileges the application should have on those objects.</li>
+<li><strong>README.md</strong> contains information about the application. The user interface will display a button that opens the README file. It&#39;s best practice to include one.</li>
+</ul>
+<p>That&#39;s a high level overview of the structure and components of the application. Let&#39;s dive into more details in subsequent sections.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application: User Interface (UI)" duration="5">
+        <p class="image-container"><img alt="app" src="img/51f8e1f12c0612a9.png"></p>
+<p>In GitHub, or your preferred code editor, navigate to <strong>streamlit/forecast_ui.py</strong> file. This file contains all of the code for the application&#39;s user interface (approximately 120 lines of code).</p>
+<p>Broadly, this file:</p>
+<ul>
+<li><strong>Imports required packages</strong> – The code imports the necessary Python packages, including Streamlit (used to build the interface), Snowpark (to establish a session withSnowflake), pandas, pydeck, and others.</li>
+<li><strong>Checks for object permissions</strong> – The Snowflake permissions SDK (specifically <code>snowflake.permissions</code>) is used to check whether the application has been granted access to the <code>shift_sales</code> table.  If not, it requests these permissions.</li>
+<li><strong>Defines layout and state</strong> – The file lays out the interface in three columns, along with a &#34;Get Forecast&#34; button. It also retrieves a list of distinct cities from the Snowflake database (only cities where the franchisee operates) and stores it in the session state for use in dropdown menus.</li>
+<li><strong>Generates a sales forecast</strong> – When the user clicks the &#34;Get Forecast&#34; button, the app calls a stored procedure in Snowflake to perform sales forecast inference for the selected city, date, and shift. The results are then formatted into a pandas DataFrame and displayed in a table with a gradient background based on sales forecast values.</li>
+<li><strong>Visualizes the sales forecast</strong> – The sales forecast data is visualized on a map using pydeck, with the size and color of scatter plot points varying based on the sales forecast. A scatter plot on a map shows locations of food trucks, with varying point sizes and colors representing different sales forecast values.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application: Logic" duration="10">
+        <p>Let&#39;s now take a look at some of the logic powering the application, including the data preparation and the sales forecasting generated by our pre-trained linear regression model.</p>
+<p>In GitHub, or your preferred code editor, navigate to <strong>python/evaluate_model.py</strong> file.</p>
+<pre><code language="language-py" class="language-py"># evaluate_model.py
+
+import sys
+import pandas as pd
+from joblib import load
+from _snowflake import vectorized
+
+# vectorized decorator allows the UDF to bulk process rows during inference to speed up processing
+@vectorized(input=pd.DataFrame)
+def evaluate_model(X: pd.DataFrame) -&gt; pd.Series:
+
+    # import model from package stage
+    import_dir = sys._xoptions.get(&#34;snowflake_import_directory&#34;)
+    model_file = import_dir + &#39;linreg_location_sales_model.sav&#39;
+    model = load(model_file)
+
+    # run inference
+    sales = model.predict(X)
+    return sales
+</code></pre>
+<p>The code in <strong>evaluate_model.py</strong> does the following:</p>
+<ul>
+<li><strong>Imports required packages</strong> – The script imports required Python libraries. <code>joblib</code> is specifically imported for loading the pre-trained linear regression model (<strong>linreg_location_sales_model.sav</strong>), and <code>vectorized</code> is imported to allow the UDF to process multiple rows at once for efficient bulk processing.</li>
+<li><strong>Defines the </strong><strong><code>evaluate_model()</code></strong><strong> function</strong> – The <code>@vectorized</code> decorator is applied to the function, allowing the function to process a DataFrame of input rows in batch, rather than one row at a time. The function accepts a pandas DataFrame as an argument.</li>
+<li><strong>Retrieves the pre-trained model, performs inference, and returns the results</strong> – The pre-trained model is retrieved, loaded using <code>load</code>, and is used to predict sales given a DataFrame by calling the model&#39;s <code>predict()</code> function. The function returns a pandas Series containing the sales predictions for each row in the DataFrame passed in.</li>
+</ul>
+<p>In GitHub, or your preferred code editor, navigate to <strong>python/inference_pipeline.py</strong> file.</p>
+<pre><code language="language-py" class="language-py"># inference_pipeline.py
+
+import snowflake.snowpark.functions as F
+import snowflake.snowpark.types as T
+from snowflake.snowpark import Session
+
+def inference(session: Session, city: T.StringType, shift: T.IntegerType, forecast_date: T.DateType):
+    # create dimensional table for date and shifts
+    dates_df = session.create_dataframe(
+        [[forecast_date.month, forecast_date.weekday(), shift]], 
+        schema = [&#34;month&#34;, &#34;day_of_week&#34;, &#34;shift&#34;]
+    )
+
+    # pull locations information from provider
+    locations_df = session.sql(&#39;&#39;&#39;
+                        select * 
+                        from package_shared.location_detail_v
+                        &#39;&#39;&#39;)
+    locations_df = locations_df.select([
+        &#34;city&#34;, 
+        &#34;location_name&#34;, 
+        &#34;location_id&#34;, 
+        &#34;count_locations_within_half_mile&#34;, 
+        &#34;latitude&#34;, &#34;longitude&#34;, 
+        &#34;city_population&#34;,
+    ])
+    locations_df = locations_df.filter(F.col(&#34;city&#34;) == city)
+    
+    # cross join with dates to have all locations and date/shift combinations
+    locations_df = locations_df.cross_join(dates_df)
+    
+    # get sales data from consumer
+    sales_df = session.sql(&#39;&#39;&#39;
+                        select location_id, shift_sales 
+                        from reference(&#39;shift_sales&#39;)
+                        &#39;&#39;&#39;)
+    sales_df = sales_df.group_by(&#34;location_id&#34;).agg(F.mean(&#34;shift_sales&#34;).alias(&#34;avg_location_shift_sales&#34;))
+    
+    # join sales and location data for inference
+    locations_df = locations_df.join(
+        sales_df, locations_df.location_id == sales_df.location_id
+    ).rename(
+        locations_df.location_id, &#34;location_id&#34;
+    ).drop(sales_df.location_id)
+
+    # run inference by calling evaluate_model udf
+    features = [
+        &#39;MONTH&#39;, 
+        &#39;DAY_OF_WEEK&#39;, 
+        &#39;LATITUDE&#39;, 
+        &#39;LONGITUDE&#39;, 
+        &#39;COUNT_LOCATIONS_WITHIN_HALF_MILE&#39;, 
+        &#39;CITY_POPULATION&#39;, 
+        &#39;AVG_LOCATION_SHIFT_SALES&#39;, 
+        &#39;SHIFT&#39;,
+    ]
+    df_results =  locations_df.select(
+        F.col(&#34;city&#34;),
+        F.col(&#34;location_name&#34;),
+        F.col(&#34;location_id&#34;),
+        F.col(&#34;latitude&#34;),
+        F.col(&#34;longitude&#34;),
+        F.col(&#34;month&#34;),
+        F.col(&#34;day_of_week&#34;),
+        F.iff(F.col(&#34;shift&#34;) == 1, &#34;AM&#34;, &#34;PM&#34;).alias(&#34;shift&#34;),
+        F.call_udf(&#34;code_schema.evaluate_model&#34;, [F.col(c) for c in features]).alias(&#34;prediction&#34;)
+    ).order_by(
+        F.col(&#34;prediction&#34;).desc()
+    ).limit(10)
+    
+    return df_results
+</code></pre>
+<p>The code in <strong>inference_pipeline.py</strong> does the following:</p>
+<ul>
+<li><strong>Creates the </strong><strong><code>inference()</code></strong><strong> function</strong> – The <code>inference()</code> function accepts a Snowflake session, city, shift (AM/PM), and forecast date. This is the function that will be called when a user clicks the &#34;Get Forecast&#34; button in the interface. It&#39;ll use the values set by the user in the user interface and make the call to <code>inference()</code> using those values. The function returns a DataFrame with the results.</li>
+<li><strong>Retrieves location data</strong> – Location details are retrieved from a view named <code>location_detail_v</code> within Snowflake. The data is filtered for the selected city and specific columns are selected for further analysis. This location data is then cross-joined with <code>dates_df</code> to combine location details with the date and shift information.</li>
+<li><strong>Aggregates sales data</strong> – Sales data is retrieved from the <code>shift_sales</code> table. The sales data is grouped by <code>location_id</code> and the average sales (<code>shift_sales</code>) per location is calculated.</li>
+<li><strong>Prepares data for inference</strong> – The location data and aggregated sales data are joined on <code>location_id</code>. A list of features are prepared for the model inference, including details like month, day of the week, geographical coordinates, city population, average sales, and shift.</li>
+<li><strong>Performs inference</strong> – The model inference is performed by calling a user-defined function (<code>evaluate_model()</code>, described earlier in the step), passing in the required features. The results are ordered by the prediction value in descending order and limited to the top 10 results. The function returns a DataFrame containing the city, location name, location ID, latitude, longitude, date details, shift (AM/PM), and the sales prediction.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application: manifest.yml" duration="3">
+        <p>Now that we&#39;ve covered the application user interface and logic, let&#39;s move on to a couple of files required by the Snowflake Native Application framework.</p>
+<p>In GitHub, or your preferred code editor, navigate to the <strong>manifest.yml</strong> file.</p>
+<pre><code language="language-yml" class="language-yml">manifest_version: 1
+
+version:
+  name: v1
+  label: &#34;version 1&#34;
+  comment: &#34;Initial version of the application&#34;
+
+artifacts:
+  setup_script: scripts/setup.sql
+  readme: readme.md
+  default_streamlit: code_schema.forecast_streamlit_app  
+
+references:
+  - shift_sales:
+      label: &#34;Shift Sales&#34;
+      description: &#34;Table that contains franchise sales data.&#34;
+      privileges:
+        - SELECT
+      object_type: TABLE
+      multi_valued: false
+      register_callback: config.register_sales_data_callback
+</code></pre>
+<p>This file is required by the Snowflake Native Application framework – all application packages must have a <strong>manifest.yml</strong> file. This file contains important metadata about the application (version, name), as well as references to artifacts and objects required by the application.</p>
+<p>In <code>artifacts</code>, we provide paths to the set up script <strong>setup.sql</strong> (which we&#39;ll cover in the next step), the README file, and the default Streamlit (also covered in the next step).</p>
+<p>In <code>references</code>, we describe the objects that the application will need access to. There&#39;s one entry, <code>shift_sales</code>, representing a table in the consumer&#39;s account that the application will require <code>SELECT</code> privileges on. The <code>register_callback</code> is set to a procedure that is intended to handle application references – we&#39;ll cover this in the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application: setup.sql" duration="5">
+        <p>In GitHub, or your preferred code editor, navigate to the <strong>setup.sql</strong> file.</p>
+<pre><code language="language-sql" class="language-sql">-- Setup script for sales forecast application
+
+CREATE APPLICATION ROLE app_public;
+CREATE APPLICATION ROLE app_admin;
+
+CREATE OR ALTER VERSIONED SCHEMA code_schema;
+GRANT USAGE ON SCHEMA code_schema TO APPLICATION ROLE app_public;
+GRANT USAGE ON SCHEMA code_schema TO APPLICATION ROLE app_admin;
+
+CREATE OR REPLACE FUNCTION code_schema.evaluate_model(month float, day_of_week float, latitude float, longitude float, count_locations_within_half_mile float, city_population float, avg_location_shift_sales float, shift float)
+RETURNS FLOAT
+LANGUAGE PYTHON
+RUNTIME_VERSION=3.8
+IMPORTS = (&#39;/python/evaluate_model.py&#39;, &#39;/python/linreg_location_sales_model.sav&#39;)
+PACKAGES = (&#39;snowflake-snowpark-python&#39;, &#39;scikit-learn&#39;, &#39;joblib&#39;,&#39;pandas&#39;)
+HANDLER=&#39;evaluate_model.evaluate_model&#39;;
+
+CREATE OR REPLACE PROCEDURE code_schema.inference(city string, shift int, forecast_date date)
+RETURNS TABLE()
+LANGUAGE PYTHON
+RUNTIME_VERSION=3.8
+IMPORTS = (&#39;/python/inference_pipeline.py&#39;)
+PACKAGES = (&#39;snowflake-snowpark-python&#39;, &#39;scikit-learn&#39;, &#39;joblib&#39;,&#39;pandas&#39;)
+HANDLER=&#39;inference_pipeline.inference&#39;;
+
+GRANT USAGE ON PROCEDURE code_schema.inference(STRING, INT, DATE) TO APPLICATION ROLE app_public;
+
+CREATE OR ALTER VERSIONED SCHEMA config;
+GRANT USAGE ON SCHEMA config TO APPLICATION ROLE app_admin;
+
+CREATE PROCEDURE CONFIG.register_sales_data_callback(ref_name STRING, operation STRING, ref_or_alias STRING)
+  RETURNS STRING
+  LANGUAGE SQL
+  AS $$
+    BEGIN
+      CASE (operation)
+        WHEN &#39;ADD&#39; THEN
+          SELECT SYSTEM$SET_REFERENCE(:ref_name, :ref_or_alias);
+        WHEN &#39;REMOVE&#39; THEN
+          SELECT SYSTEM$REMOVE_REFERENCE(:ref_name);
+        WHEN &#39;CLEAR&#39; THEN
+          SELECT SYSTEM$REMOVE_REFERENCE(ref_name);
+      ELSE
+        RETURN &#39;unknown operation: &#39; || operation;
+      END CASE;
+      RETURN NULL;
+    END;
+  $$;
+
+GRANT USAGE ON PROCEDURE CONFIG.register_sales_data_callback(STRING, STRING, STRING) TO APPLICATION ROLE app_admin;
+
+CREATE STREAMLIT code_schema.forecast_streamlit_app
+  FROM &#39;/streamlit&#39;
+  MAIN_FILE = &#39;/forecast_ui.py&#39;;
+
+GRANT USAGE ON STREAMLIT code_schema.forecast_streamlit_app TO APPLICATION ROLE app_admin;
+GRANT USAGE ON STREAMLIT code_schema.forecast_streamlit_app TO APPLICATION ROLE app_public;
+</code></pre>
+<p>This file is required by the Snowflake Native Application framework – all application packages must have a <strong>setup.sql</strong> file. This file executes when a consumer installs the application into their account.</p>
+<p>Set up scripts will typically define application roles, bind logic to functions or stored procedures, and define all of the grants and privileges that the application roles will have.</p>
+<p>We can summarize the majority of the script as follows:</p>
+<ul>
+<li><strong>Application roles</strong> – The application has two roles: <code>app_public</code> and <code>app_admin</code>.</li>
+<li><strong>Application logic</strong> – The logic we covered in the <strong>python/</strong> directory in the application&#39;s source code is defined as either a function or stored procedure within the script. This ensures that we can invoke the logic in the application. These are defined within a versioned schema called <code>code_schema</code>, allowing the application provider to upgrade them as necessary in any future versions of the application.</li>
+<li><strong>Role privileges</strong> - Take a look at the several different privileges granted to the different application roles. This is how the application provider creates different application experiences based on the role.</li>
+</ul>
+<p>There are a couple of other things that are created in the set up script that facilitate application references allow access to the user interface:</p>
+<ul>
+<li><strong><code>config</code></strong><strong> schema</strong> – This schema contains a procedure used to manage object references in the application. That is, it handles the adding, removing, or clearing of an object reference to the application, specifically the application&#39;s access to the <code>shift_sales</code> table specified in the manifest file.</li>
+<li><code>STREAMLIT code_schema.forecast_streamlit_app</code> – Creates a Streamlit from the file containing the user interface code (<strong>forecast_ui.py</strong>, which we covered in a previous step).</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the application package" duration="5">
+        <p>Now that we&#39;ve covered all of the components of the application&#39;s source code, let&#39;s begin creating the application package that will contain the source code.</p>
+<p>Open a SQL worksheet and run the following:</p>
+<pre><code language="language-sql" class="language-sql">-- Create application package
+USE ROLE sales_forecast_provider;
+USE WAREHOUSE franchise_wh;
+
+CREATE APPLICATION PACKAGE sales_forecast_package;
+USE APPLICATION PACKAGE sales_forecast_package;
+
+-- Allow package to reference provider data
+GRANT REFERENCE_USAGE ON DATABASE provider_data
+  TO SHARE IN APPLICATION PACKAGE sales_forecast_package;
+
+-- This schema will be accessible inside of our setup script
+CREATE SCHEMA IF NOT EXISTS sales_forecast_package.package_shared;
+USE SCHEMA sales_forecast_package.package_shared;
+
+-- View for location details
+CREATE VIEW IF NOT EXISTS package_shared.location_detail_v
+  AS SELECT *
+  FROM provider_data.shared_data.locations_detail;
+
+-- These grants allow our setup script to refer to our views
+GRANT USAGE ON SCHEMA package_shared
+  TO SHARE IN APPLICATION PACKAGE sales_forecast_package;
+GRANT SELECT ON VIEW package_shared.location_detail_v
+  TO SHARE IN APPLICATION PACKAGE sales_forecast_package;
+
+CREATE SCHEMA sales_forecast_package.stage_content;
+CREATE OR REPLACE STAGE sales_forecast_package.stage_content.sales_forecast_package_snowflake_stage;
+</code></pre>
+<p>The SQL above creates the application package <code>sales_forecast_package</code>. This application package will contain the application source code.</p>
+<p>We also share provider data with the consumer in a safe and secure way. In the SQL above, we grant <strong>reference usage</strong> on the provider&#39;s data to the application package. We then create a schema that holds a view constructed from the provider&#39;s data. We grant the application package privileges on the schema and view, allowing the consumer to &#34;access&#34; the provider data through the application when they run it in their account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upload application source code" duration="5">
+        <p>Let&#39;s now upload the application source code into the application package. We&#39;ll upload the source code into a stage in the package.</p>
+<p>Set your role to <strong>SALES_FORECAST_PROVIDER</strong>. Navigate to the <code>sales_forecast_package.stage_content.sales_forecast_package_snowflake_stage</code> stage. Click on the <strong>+ FILES</strong> button at the top right. Next, click <strong>Browse</strong> in the modal that appears.</p>
+<p>To avoid breaking any references to objects needed by the app, the folder structure within the stage must reflect the folder structure in the <strong>tasty-bytes-native-app</strong> directory. Be sure to upload the source code exactly as follows:</p>
+<ol type="1">
+<li>Ensure you&#39;re in the <strong>sfguide-tasty-bytes-native-app/tasty-bytes-native-app</strong> directory and start by uploading the following files: <strong>README.md</strong> and <strong>manifest.yml</strong>.</li>
+<li>Next, upload the set up script. Once again, click on the <strong>+ FILES button</strong>. Note the &#34;Specify the path to an existing folder or create a new one (optional)&#34; field in the modal. In this field, enter <strong>scripts</strong>. The modal will automatically prepend a forward slash to your entry, so the value will read as <strong>/scripts</strong>.</li>
+<li>Click <strong>Browse</strong>, navigate to the local <strong>sfguide-tasty-bytes-native-app/tasty-bytes-native-app/scripts</strong> folder on your computer, select <strong>setup.sql</strong> and upload the file.</li>
+<li>Next, upload the application logic files. Click on the <strong>+ FILES</strong> button, and use <strong>/python</strong> as the destination path in the stage.</li>
+<li>Click <strong>Browse</strong>, navigate to the local <strong>sfguide-tasty-bytes-native-app/tasty-bytes-native-app/python</strong> folder on your computer, select all files, and upload them.</li>
+<li>Finally, upload the user interface files. Click on the <strong>+ FILES</strong> button, and use <strong>/streamlit</strong> as the destination path in the stage.</li>
+<li>Click <strong>Browse</strong>, navigate to the local <strong>sfguide-tasty-bytes-native-app/tasty-bytes-native-app/streamlit</strong> folder on your computer, select all files, and upload them.</li>
+</ol>
+<p>The folder structure within the stage should now reflect the folder structure in your local application directory.</p>
+<p class="image-container"><img alt="stage" src="img/a99fede437583ac8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create first version" duration="2">
+        <p>With the application source code uploaded, let&#39;s create the first version of the application.</p>
+<p>Open a SQL worksheet and run the following:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE sales_forecast_provider;
+
+-- Allow the franchisee to install our new package
+GRANT INSTALL, DEVELOP ON APPLICATION PACKAGE sales_forecast_package TO ROLE franchise_admin;
+
+ALTER APPLICATION PACKAGE sales_forecast_package
+  ADD VERSION v1_0 USING &#39;@sales_forecast_package.stage_content.sales_forecast_package_snowflake_stage&#39;;
+</code></pre>
+<p>Recall that we are using a single Snowflake account for the purposes of convenience and demonstration. As a result, we must grant install and develop privileges to the application consumer so that we can install the application in the account. In practice, this would not be necessary.</p>
+<p>The final few lines of SQL create the first version of the application (<code>v1_0</code>) using the source code.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install application" duration="2">
+        <p>Let&#39;s now install the application in the account. In practice, the consumer would be installing the application in their own account, so we&#39;ll assume the role of a user in the consumer account (in this case, <code>franchise_admin</code>) and install the application. In addition, running this SQL would not be necessary in practice. Instead, consumers would install the application into their account directly from the Snowflake Marketplace listing.</p>
+<p>Open a SQL worksheet and run the following:</p>
+<pre><code language="language-sql" class="language-sql">-- Install application in account
+
+USE ROLE franchise_admin;
+USE WAREHOUSE franchise_wh;
+
+CREATE APPLICATION sales_forecast_app
+FROM APPLICATION PACKAGE sales_forecast_package
+USING VERSION v1_0;
+
+GRANT APPLICATION ROLE sales_forecast_app.app_public
+  TO ROLE franchise_viewer;
+</code></pre>
+<p>The SQL above creates the application from the application package and grants the <code>app_public</code> application role to the <code>franchise_viewer</code> role in the Snowflake account.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the application" duration="3">
+        <p>If all went as expected, the application is now installed in the account! Set your role to <strong>FRANCHISE_ADMIN</strong>, then navigate to the <strong>Apps</strong> section in your account. You should see an application titled <strong>SALES_FORECAST_APP</strong> installed. Click on the name of the app to run the app.</p>
+<p class="image-container"><img alt="installed" src="img/b6b71867f3bc2585.png"></p>
+<p>When running the app for the first time, you&#39;ll be prompted to create bindings. The bindings link references defined in the manifest file (<code>shift_sales</code>) to corresponding objects (<code>shift_sales</code> table) in the Snowflake account. These bindings ensure that the application can access necessary objects in the account.</p>
+<p class="image-container"><img alt="binding" src="img/a926583038c96e09.png"></p>
+<p>Once the bindings are properly configured, the application will start up. Play around in the app to get a feel for how it works!</p>
+<p class="image-container"><img alt="app" src="img/51f8e1f12c0612a9.png"></p>
+<aside class="warning"><p><strong>NOTE</strong> Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to <strong>ORGADMIN</strong>, then navigate to &#34;<strong>Admin</strong> -&gt; <strong>Billing &amp; Terms</strong>&#34;. Click <strong>Enable</strong> and then acknowledge and continue in the ensuing modal. If, when navigating back to the app, you are again prompted to accept the terms, refresh your browser.</p>
+</aside>
+<p class="image-container"><img alt="conda" src="img/feb8ec28efd424c5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean up" duration="1">
+        <p>To clean up, open a SQL worksheet and run the following:</p>
+<pre><code language="language-sql" class="language-sql">-- Tear down
+
+USE ROLE accountadmin;
+
+DROP ROLE IF EXISTS sales_forecast_provider;
+DROP ROLE IF EXISTS franchise_admin;
+DROP ROLE IF EXISTS franchise_viewer;
+
+DROP DATABASE IF EXISTS franchise_consumer_data;
+DROP DATABASE IF EXISTS provider_data;
+
+DROP APPLICATION IF EXISTS sales_forecast_app;
+DROP APPLICATION PACKAGE IF EXISTS sales_forecast_package;
+
+DROP WAREHOUSE IF EXISTS franchise_wh;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! In just a few steps, you were able to build a Snowflake Native Application that uses a pre-trained machine learning model to make sales forecasts on consumer data. You played the role of the application provider, building an application that provides the consumer with data enrichment and application logic that performs model inference on their raw sales data to visualize sales forecasts.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>The structure of the application</li>
+<li>How to create a application package</li>
+<li>How to add source code to an application package</li>
+<li>How to create the first version of an application</li>
+<li>How to install and run the app in the account</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

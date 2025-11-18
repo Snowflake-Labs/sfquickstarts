@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-08-22T15:42:37-04:00",
+  "id": "finding-similar-patients",
+  "duration": 39,
+  "title": "Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics",
+  "summary": "How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake",
+  "source": "neo4j-patient-journey/neo4j-patient-journey.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "finding-similar-patients"
+}

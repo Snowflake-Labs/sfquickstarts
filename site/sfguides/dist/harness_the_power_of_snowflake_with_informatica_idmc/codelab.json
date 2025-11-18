@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "harness_the_power_of_snowflake_with_informatica_idmc",
+  "duration": 76,
+  "title": "Harness the Power of Snowflake with Informatica Intelligent Data Management Cloud",
+  "summary": "This is a guide for getting started with Data Engineering using Informatica Data Management Cloud",
+  "source": "harness_the_power_of_snowflake_with_informatica_idmc/harness_the_power_of_snowflake_with_informatica_idmc.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "dataintegration",
+    "elt",
+    "etl",
+    "gettingstarted",
+    "informatica",
+    "pdo",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "harness_the_power_of_snowflake_with_informatica_idmc"
+}

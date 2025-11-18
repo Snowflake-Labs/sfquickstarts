@@ -1,0 +1,266 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Azure OpenAI and Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_azure_openai_and_snowflake"
+                  title="Getting Started with Azure OpenAI and Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Azure OpenAI is a groundbreaking collaboration between two industry leaders, Microsoft Azure and OpenAI, designed to empower businesses with the future of AI technology. This powerful partnership offers seamless access to OpenAI&#39;s cutting-edge natural language processing models through the Azure cloud platform, enabling organizations to effortlessly integrate AI-driven insights, automation, and conversational capabilities into their applications, products, and services. With Azure OpenAI, you can unlock new dimensions of productivity, innovation, and customer engagement, giving your business a competitive edge in today&#39;s data-driven world.</p>
+<p>In this quickstart we will build an architecture that demonstrates how to use Azure OpenAI with an AzureML Prompt Flow, AzureML Notebooks, Snowflake and the Snowflake + AzureML Connector to quickly generate results.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>Familiarity with Azure and an Azure account an AzureML workspace.</li>
+<li>Familiarity with <a href="https://www.udemy.com/course/draft/579706/" target="_blank">Python</a></li>
+</ul>
+<h2 is-upgraded>You&#39;ll Learn</h2>
+<ul>
+<li>How to deploy an Azure OpenAI model with AzureML Prompt Flow</li>
+<li>Utilize the Snowflake + AzureML Connector to bring data from Snowflake into AzureML</li>
+<li>Utilize an AzureML Notebook with Snowpark to coordinate the movement of data from Snowflake to the Prompt Flow and bring results back to Snowflake</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li><a href="https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c" target="_blank">Azure Account</a> with AzureML. AzureML will need Public Preview services enabled.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end Generative AI workflow using Azure OpenAI, AzureML and Snowflake</p>
+<ul>
+<li>Deploy an Azure OpenAI model</li>
+<li>Build an Prompt Flow</li>
+<li>Connect Snowflake data to AzureML</li>
+<li>Coordinate the flow with an AzureML Notebook</li>
+</ul>
+<p>The end-to-end workflow will look like this: <img src="img/5e5b2bb2550ecc40.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Case" duration="5">
+        <p>In this use case you will use purchase history data from a big box store, and leverage Azure Open AI to generate 3 suggested next items that can be marketed to the customer. Developing Next Best Offer (NBO) applications can often take months to develop, but with Snowflake and Azure we are able to set up this workload in hours.</p>
+<p>Additionally, the data leverages demographic information (Median Age for the zip code the customer lives in). This data was pulled directly from <a href="https://appliedgeographic.com/" target="_blank">AGS - Sociodemographics</a> via the Snowflake Marketplace.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Snowflake Environment" duration="5">
+        <p>The first thing you will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet. We are using the accountadmin role here for demo purposes, but in production you will likely use a different role.</p>
+<pre><code language="language-sql" class="language-sql">-- Create a new database (if not already created)
+CREATE DATABASE IF NOT EXISTS retail_db;
+USE DATABASE retail_db;
+-- Create a new virtual warehouse (if not already created)
+CREATE WAREHOUSE IF NOT EXISTS small_wh WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+
+-- Create purchase history table
+CREATE OR REPLACE TABLE purchase_history (
+    id INT,
+    recent_purchases STRING,
+    zip STRING,
+    med_age INT
+);
+
+-- Insert example data without brand names
+-- including data from Knoema Demographics Data Atlas
+INSERT INTO purchase_history (id, recent_purchases, zip, med_age)
+VALUES
+    (1, &#39;1 Gallon Milk, 24 oz Bread, Dozen Eggs&#39;, &#39;35404&#39;, 29),
+    (2, &#39;16 oz Toothpaste, 12 oz Shampoo, 8 oz Soap&#39;, &#39;33956&#39;, 64.7),
+    (3, &#39;5 lb Potatoes, 3 lb Onions, 1 lb Carrots&#39;, &#39;59703&#39;, 59.1),
+    (4, &#39;2 lb Chicken, 1 lb Beef, 0.75 lb Salmon&#39;, &#39;73043&#39;, 58.9),
+    (5, &#39;18 oz Cereal, 6 oz Yogurt, 1.5 oz Granola Bars&#39;, &#39;75412&#39;, 55.6),
+    (6, &#39;16 oz Pasta, 24 oz Tomato Sauce, 3 cloves Garlic&#39;, &#39;15467&#39;, 53.1),
+    (7, &#39;Bunch of Bananas, 1 lb Grapes, 16 oz Strawberries&#39;, &#39;75217&#39;, 28.4),
+    (8, &#39;8 oz Chips, 16 oz Salsa, 12 oz Guacamole, 10 ct Tortillas&#39;, &#39;65622&#39;, 46.1),
+    (9, &#39;6 Rolls Paper Towels, 12 Rolls Toilet Paper, 100 ct Tissues&#39;, &#39;60546&#39;, 41.6),
+    (10, &#39;1.5 qt Ice Cream, 12 inch Frozen Pizza, 16 oz Frozen Vegetables&#39;, &#39;01002&#39;, 23.2);
+
+-- View the generated data
+SELECT * FROM retail_db.public.purchase_history;
+</code></pre>
+<p>The result of the final select statement should look like this: <img src="img/816ffce9d1d4bce9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up AzureML Workspace" duration="5">
+        <p>Head over to your AzureML workspace, go to the Compute blade and make sure you have a Compute Instance running (any of the standard instances will work for this quickstart).</p>
+<p class="image-container"><img src="img/a0b7c7425f947761.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import and Register data from Snowflake in AzureML" duration="10">
+        <p>Next we&#39;re going to register and import data from Snowflake in AzureML. In your AzureML Workspace go to the Data blade and click Data Connections tab. Next you will name your connection, select the Snowflake Category and define your target. The target should follow the below syntax:</p>
+<pre><code language="language-bash" class="language-bash">jdbc:snowflake://&lt;server&gt;.&lt;region&gt;.azure.snowflakecomputing.com/?db=RETAIL_DB&amp;warehouse=SMALL_WH
+</code></pre>
+<p>You will then enter the username and password for your Snowflake account.</p>
+<ul>
+<li>Note that additional authentication methods will soon be supported in the AzureML + Snowflake Connector.</li>
+</ul>
+<p>You can reference the below image for an example of what the target should look like.</p>
+<p class="image-container"><img src="img/54b422b1f120091b.png"></p>
+<p>Now head to the Data Import tab and let&#39;s configure the actual import of the data. Select Snowflake, then name the new dataset something like &#34;purchasehistory&#34; and give it a description if you would like. Next choose the Snowflake connection you just created and enter the below query to retrieve the data from Snowflake (no semicolon in the query).</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM retail_db.public.purchase_history
+</code></pre>
+<p class="image-container"><img src="img/ec35984769df68ef.png"></p>
+<p>Next select &#34;Other Data Stores&#34; and select &#34;workspaceblobstore&#34; and select any path to place the data. The final review should look like this.</p>
+<p class="image-container"><img src="img/8055dd8936fb1835.png"></p>
+<p>Create the data import.</p>
+<p>The Connector is natively connecting to Snowflake and creating and registering an MLTable file based off your Connection and query. After several minutes you should head over to the Data Assets tab on the Data blade and see a new asset with the name you provided to the import job. Click on that asset then click explore to verify the data has been imported.</p>
+<p class="image-container"><img src="img/f559a8e3c3c6a9b7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy Azure Open AI Model" duration="5">
+        <p>Head to your Azure Portal home screen and create an Azure OpenAI service if you don&#39;t already have one. Place OpenAI in a Resource Group (or create a new one), use the East US Region, provide a unique name, select the Standard S0 pricing tier. <img src="img/863e1fc864bf3067.png"></p>
+<p>Click Next then leave it open to all networks for this lab. Continue to click next then create the service. Once the service is created, access the explorer from the service by clicking explore. <img src="img/849022a1a8fb82e2.png"></p>
+<p>You can familiarize yourself with the Azure AI Studio later, but for now click on the Models blade then select the most recent gpt-35-turbo model and click deploy. Use the Auto-update to default Model version and name the deployment &#34;gpt35turbo&#34; and click create. The model should deploy in seconds. We will be using this out-of-the-box OpenAI model for this quickstart. <img src="img/cf263cbcaa067ff8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Prompt Flow" duration="15">
+        <p>Go back to your AzureML workspace and access the Prompt Flow blade and click Create then click create on the Standard flow.</p>
+<p class="image-container"><img src="img/429b3fcf2d7dfcb6.png"></p>
+<p>Prompt Flow allows you to streamline your LLM-based application development. You can create executable flows that link LLMs, prompts, and Python tools through a UI graph. You can iterate and debug right from the Prompt Flow UI then deploy the LLM application. Here we will create a simple LLM application.</p>
+<p>Once you have your first flow open head to the to and edit the name and make it generate_products.</p>
+<p>Next delete the output, the echo and the joke prompts as they won&#39;t be needed.</p>
+<p>Next, add an LLM prompt from the top and select a runtime from the top, for this lab it can be the compute instance that you created earlier in the lab (or just use a compute instance that you already have).</p>
+<p>Your flow should now look like this:</p>
+<p class="image-container"><img src="img/26b8c5f2ca0edd76.png"></p>
+<p>In the LLM window select the Connection as the OpenAI service, select chat for the API and gpt35turbo for Deployment. Next copy and paste the below text into the prompt section:</p>
+<pre><code>system:
+can you recommend three products to advertise to a customer who recently purchased these items. 
+just list the three recommended items no description. Number the items like this: 1. 2. 3.
+&#123;&#123;purchase_history}}
+also, consider the median age in the zip code where the customer lives in your recommendation. the median age in the zip code where the customer lives is:
+&#123;&#123;med_age}}
+</code></pre>
+<p>This is the prompt that will be used to generate a response from the OpenAI model. You can see that you are prompting the model to provide a recommendation of the next 3 items for the customer based on two variables: their recent purchase history and the median age in the zip code where they live which will be coming from the Snowflake data that you registered in AzureML.</p>
+<p>Scroll to the top in the input section and create two input variables named: purchase_history and med_age.</p>
+<p>Scroll back down and click the blue button that says &#34;Validate and Parse Input&#34;. This will recognize the two variables in the prompt. On the right of those newly identified variables select the respective inputs you just created above.</p>
+<p>Scroll to the output section and add an output named ‘output&#39; the select the output from the model in the value section (it should be the only option). Save the Prompt Flow, it should look like this:</p>
+<p class="image-container"><img src="img/2112a5a3c2b465de.png"></p>
+<p>If you would like you can enter sample values in the two value sections in the input section of the flow then run a test with the blue Run button. The test will run for several seconds and once completed you can scroll down to the Outputs section of the LLM window to see the output and recommended items.</p>
+<p>Save the flow and then click deploy. Accept all of the default options by clicking next through the options and deploy. It will take several minutes to deploy the flow and create an endpoint.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Develop Notebook to Orchestrate Inference" duration="10">
+        <p>Head back to your AzureML Workspace and click on the notebook blade and select open terminal and start/select your compute instance near the top of the screen. In the terminal run the below code to copy the notebook that will use to orchestrate inference.</p>
+<pre><code>git clone https://github.com/Snowflake-Labs/sf-samples.git
+</code></pre>
+<p>You may have to refresh the folder listing to see the new folder and openai.ipynb file that you will open. Your workspace should now look like this: <img src="img/8481a3ca45ac4579.png"></p>
+<p>Navigate to the openai.ipynb and open it using your active compute instance.</p>
+<h2 is-upgraded>Slight Detour - Back to the Azure Portal</h2>
+<p>In the AzureML workspace head to the Endpoint blade and verify that your Prompt Flow has deployed, note the name of the endpoint. Now go to the Azure Portal and find the AzureML Workspace we&#39;re working in and select ‘Access Control (IAM)&#39; the select Add and ‘Add role assignment&#39;: <img src="img/e5d2ba37a37008b7.png"></p>
+<p>Select the ‘AzureML Data Scientist&#39; role then select next. Select ‘Managed Identity&#39; for ‘assign access to&#39; then select members. In the right menu select your Azure subscription then ‘Machine Learning online endpoint&#39; then select your prompt flow endpoint. Click Select then ‘Review and Assign&#39; twice. <img src="img/e9b547232bec439a.png"></p>
+<p>You have just given the Prompt Flow endpoint the appropriate role to interact with the AzureML Workspace.</p>
+<h2 is-upgraded>Back to the Notebook</h2>
+<p>Make sure that you&#39;re using the ‘Python 3.8 - AzureML&#39;kernel in the top right. Next uncomment rows 2-4 in the first code block and run the block to install necessary packages.</p>
+<p>In the second block of code enter in the 3 pieces of information: 1. your Azure subscription 2. the resource group name that contains your AzureML Workspace and 3. the name of your AzureML Workspace. Run this block of code to obtain a handle to the workspace.</p>
+<p>Run the third block of code as-is to access the Azure dataset that was created with the AzureML + Snowflake Connector earlier in the lab.</p>
+<p>In the fourth block of code you will have to copy and paste the Endpoint url and the API key from AzureML into the appropriate parts of the code. This is the endpoint to the Prompt Flow that you deployed. <img src="img/ebe9817a53b8c87b.png"></p>
+<p>Run the fourth block of code to see the magic happen! This code parses the Snowflake data and passes it to the Prompt Flow endpoint to generate a response.</p>
+<p>In the fifth code block fill in your Snowflake Account Identifier, username and password the run the code to write the recommendations back to a table in Snowflake.</p>
+<p>Head back to your Snowflake account and run the below SQL to see your recommendations with customer id to be used by your organization.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM retail_db.public.nbi_promo;
+</code></pre>
+<p class="image-container"><img src="img/3104695e4440d0cc.png"></p>
+<h2 is-upgraded>Troubleshooting <code>pyarrow</code> related issues</h2>
+<ul>
+<li>If you have <code>pyarrow</code> library already installed, uninstall it from terminal before installing Snowpark.</li>
+<li>If you do not have <code>pyarrow</code> installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.</li>
+<li>Do not reinstall a different version of <code>pyarrow</code> after installing Snowpark.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Additional Considerations" duration="5">
+        <p>This quickstart is just that, a quick way to get you started with Azure OpenAI with Snowflake. You will want to consider the additional items below for enterprise-grade workloads:</p>
+<ul>
+<li>Using <a href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-environments-v2?view=azureml-api-2&tabs=python#create-an-environment" target="_blank">Environments in AzureML</a> to load additional packages like Snowpark.</li>
+<li>Using an <a href="https://learn.microsoft.com/en-us/azure/machine-learning/tutorial-pipeline-python-sdk?view=azureml-api-2" target="_blank">AzureML pipeline</a> to automate and orchestrate the python script we built in the final step.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/machine-learning/concept-enterprise-security?view=azureml-api-2" target="_blank">Security and governance in AzureML</a> with consideration for things like access control, authentication methods and networking.</li>
+<li>Consideration of <a href="https://learn.microsoft.com/en-us/legal/cognitive-services/openai/overview?context=%2Fazure%2Fai-services%2Fopenai%2Fcontext%2Fcontext" target="_blank">Responsible AI practice with Azure OpenAI</a></li>
+</ul>
+<h2 is-upgraded>What We covered</h2>
+<ul>
+<li>How to deploy an Azure OpenAI model with AzureML Prompt Flow</li>
+<li>Utilize the Snowflake + AzureML Connector to bring data from Snowflake into AzureML</li>
+<li>Utilize an AzureML Notebook with Snowpark to coordinate the movement of data from Snowflake to the Prompt Flow and bring results back to Snowflake</li>
+</ul>
+<h2 is-upgraded>Additional Considerations</h2>
+<ul>
+<li>There are some great blogs on Medium regarding Snowpark, AzureML and using Snowflake with Azure.</li>
+<li><a href="https://www.youtube.com/watch?v=p8QUMiND7Ig" target="_blank">Snowpark with AzureML</a></li>
+<li><a href="https://medium.com/snowflake/integrating-azure-openai-with-snowflake-architecture-and-implementation-patterns-52b14d27b0c2" target="_blank">Snowflake and Azure OpenAI</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

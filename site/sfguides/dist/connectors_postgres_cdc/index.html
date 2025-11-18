@@ -1,0 +1,549 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="connectors_postgres_cdc"
+                  title="Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p class="image-container"><img src="img/21590fa4cc81090c.png"></p>
+<p>In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights on potential ways to increase customer spending with promotions.</p>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App and Dynamic Tables</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to connect PostgreSQL data to Snowflake using the <a href="https://other-docs.snowflake.com/en/connectors/postgres6/about" target="_blank">Snowflake Connector for PostgreSQL</a></li>
+<li>How to visualize data using <a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">Dynamic Tables</a> and display visualizations within <a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake (SiS)</a></li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker</a> installed on your local machine</li>
+<li>A tool available for connecting to the PostgreSQL database <ul>
+<li>This can be a database-specific tool or a general-purpose tool such as Visual Studio Code or PyCharm</li>
+</ul>
+</li>
+<li>Familiarity with basic Python and SQL</li>
+<li>Familiarity with data science notebooks</li>
+<li>Go to the <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Environment" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).</p>
+<h3 is-upgraded>Creating Objects and Loading Data</h3>
+<ol type="1">
+<li>Navigate to Worksheets, click <code>+</code> in the top-right corner to create a new Worksheet, and choose <strong>SQL Worksheet</strong></li>
+<li>Copy and paste the following code to create Snowflake objects (warehouse, database, schema) and click <strong>Run All</strong> at the top of the Worksheet</li>
+</ol>
+<pre><code>USE ROLE accountadmin;
+
+/*---------------------------*/
+-- Create our Database
+/*---------------------------*/
+CREATE OR REPLACE DATABASE cdc_prod;
+
+/*---------------------------*/
+-- Create our Schema
+/*---------------------------*/
+CREATE OR REPLACE SCHEMA cdc_prod.analytics;
+
+/*---------------------------*/
+-- Create our Warehouse
+/*---------------------------*/
+
+-- data science warehouse
+CREATE OR REPLACE WAREHOUSE cdc_ds_wh
+   WAREHOUSE_SIZE = &#39;xsmall&#39;
+   WAREHOUSE_TYPE = &#39;standard&#39;
+   AUTO_SUSPEND = 60
+   AUTO_RESUME = TRUE
+   INITIALLY_SUSPENDED = TRUE
+   COMMENT = &#39;data science warehouse for cdc&#39;;
+
+-- Use our Warehouse
+USE WAREHOUSE cdc_ds_wh;
+/*---------------------------*/
+-- sql completion note
+/*---------------------------*/
+SELECT &#39;cdc sql is now complete&#39; AS note;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="PostgreSQL Environment" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will set up a PostgreSQL database and create tables to simulate a financial company&#39;s customer transactional data.</p>
+<h3 is-upgraded>Starting the Database Instance</h3>
+<p>Before getting started with this step, make sure that you have Docker Desktop installed for either <a href="https://docs.docker.com/desktop/install/mac-install/" target="_blank">Mac</a>, <a href="https://docs.docker.com/desktop/install/windows-install/" target="_blank">Windows</a>, or <a href="https://docs.docker.com/desktop/install/linux/" target="_blank">Linux</a>. Ensure that you have <a href="https://docs.docker.com/compose/install/" target="_blank">Docker Compose</a> installed on your machine.</p>
+<ol type="1">
+<li>To initiate the PostgreSQL database using Docker, you&#39;ll need to create a file called <strong>docker-compose.yaml</strong>. This file will contain the configuration for the PostgreSQL database. If you have another container client, spin up the container and use the PostgreSQL image below.</li>
+<li>Open the IDE of your choice to copy and paste this file by copy and pasting the following:</li>
+</ol>
+<pre><code>services:
+  postgres:
+    image: &#34;postgres:17&#34;
+    container_name: &#34;postgres17&#34;
+    environment:
+      POSTGRES_DB: &#39;postgres&#39;
+      POSTGRES_USER: &#39;postgres&#39;
+      POSTGRES_PASSWORD: &#39;postgres&#39;
+    ports:
+      - &#34;5432:5432&#34;
+    command:
+      - &#34;postgres&#34;
+      - &#34;-c&#34;
+      - &#34;wal_level=logical&#34;
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+</code></pre>
+<ol type="1" start="3">
+<li>Open a terminal and navigate to the directory where the <strong>docker-compose.yaml</strong> file is located. Run the following command to start the PostgreSQL database:</li>
+</ol>
+<pre><code>docker-compose up -d
+</code></pre>
+<p>After running this command, you should see one Docker container actively running the source database.</p>
+<h3 is-upgraded>Connecting to the Database</h3>
+<p>To connect to the pre-configured databases using Visual Studio Code or PyCharm, or whichever IDE you choose for a database connection, perform the following steps with the provided credentials:</p>
+<ol type="1">
+<li>Open your tool of choice for connecting to the PostgreSQL database <ul>
+<li>For VSCode, you can use the <a href="https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-postgresql-client2" target="_blank">PostgreSQL extension</a></li>
+<li>For PyCharm, you can use the <a href="https://www.jetbrains.com/help/pycharm/database-tool-window.html" target="_blank">Database Tools and SQL plugin</a></li>
+</ul>
+</li>
+<li>Click the <code>+</code> sign or similar to add data source</li>
+<li>Use these connection parameters: <ul>
+<li><strong>User: </strong><code>postgres</code></li>
+<li><strong>Password: </strong><code>postgres</code></li>
+<li><strong>URL: </strong><code>jdbc:postgresql://localhost:5432/</code></li>
+</ul>
+</li>
+<li>Test the connection and save</li>
+</ol>
+<h3 is-upgraded>Loading Data</h3>
+<ol type="1">
+<li>Run the following <strong>postgres</strong> script in the PostgreSQL to create the database, schema, and tables:</li>
+</ol>
+<pre><code>CREATE SCHEMA raw_cdc;
+SET search_path TO raw_cdc;
+
+DROP TABLE IF EXISTS postgres.raw_cdc.customers;
+DROP TABLE IF EXISTS postgres.raw_cdc.merchants;
+DROP TABLE IF EXISTS postgres.raw_cdc.products;
+DROP TABLE IF EXISTS postgres.raw_cdc.transactions;
+
+CREATE TABLE postgres.raw_cdc.customers (
+   customer_id INTEGER PRIMARY KEY,
+   firstname VARCHAR,
+   lastname VARCHAR,
+   age INTEGER,
+   email VARCHAR,
+   phone_number VARCHAR
+);
+
+CREATE TABLE postgres.raw_cdc.merchants (
+   merchant_id integer PRIMARY KEY,
+   merchant_name VARCHAR,
+   merchant_category VARCHAR
+);
+
+CREATE TABLE postgres.raw_cdc.products (
+   product_id INTEGER PRIMARY KEY,
+   product_name VARCHAR,
+   product_category VARCHAR,
+   price DOUBLE PRECISION
+);
+
+CREATE TABLE postgres.raw_cdc.transactions (
+   transaction_id VARCHAR PRIMARY KEY,
+   customer_id INTEGER,
+   product_id INTEGER,
+   merchant_id INTEGER,
+   transaction_date DATE,
+   transaction_time VARCHAR,
+   quantity INTEGER,
+   total_price DOUBLE PRECISION,
+   transaction_card VARCHAR,
+   transaction_category VARCHAR
+);
+</code></pre>
+<ol type="1" start="2">
+<li>Download and save these csv files in a directory on your local machine:<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/postgres_csv/customers.csv" target="_blank">customers.csv</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/postgres_csv/merchants.csv" target="_blank">merchants.csv</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/postgres_csv/products.csv" target="_blank">products.csv</a></li>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/postgres_csv/transactions.csv" target="_blank">transactions.csv</a></li>
+</ul>
+</li>
+<li>We&#39;ll need to move the files from the local computer to the Docker container before loading the data into the PostgreSQL database.</li>
+<li>Navigate to your terminal to get the Docker container ID with this command:</li>
+</ol>
+<pre><code>docker ps
+</code></pre>
+<ol type="1" start="5">
+<li>To copy the CSV files to the container, run these commands in your terminal, replacing the file path with your actual file path,m and replacing <code>container_id</code> with your actual container ID from the previous command:</li>
+</ol>
+<pre><code>docker cp /Users/your_username/Downloads/customers.csv container_id:/tmp/customers.csv
+docker cp /Users/your_username/Downloads/merchants.csv container_id:/tmp/merchants.csv
+docker cp /Users/your_username/Downloads/products.csv container_id:/tmp/products.csv
+docker cp /Users/your_username/Downloads/transactions.csv container_id:/tmp/transactions.csv
+</code></pre>
+<ol type="1" start="6">
+<li>Back in your PostgreSQL console, run these SQL commands to load the files from the container to the PostgreSQL tables:</li>
+</ol>
+<pre><code>COPY postgres.raw_cdc.customers FROM &#39;/tmp/customers.csv&#39; DELIMITER &#39;,&#39; CSV HEADER;
+COPY postgres.raw_cdc.merchants FROM &#39;/tmp/merchants.csv&#39; DELIMITER &#39;,&#39; CSV HEADER;
+COPY postgres.raw_cdc.products FROM &#39;/tmp/products.csv&#39; DELIMITER &#39;,&#39; CSV HEADER;
+COPY postgres.raw_cdc.transactions FROM &#39;/tmp/transactions.csv&#39; DELIMITER &#39;,&#39; CSV HEADER;
+</code></pre>
+<ol type="1" start="7">
+<li>Next, make sure to run the <code>CREATE PUBLICATION</code> command to enable the logical replication for the tables in the <code>raw_cdc</code> schema. This will allow the Snowflake Connector for PostgreSQL to capture the changes made to the tables in the PostgreSQL database:</li>
+</ol>
+<pre><code>CREATE PUBLICATION agent_postgres_publication FOR ALL TABLES;
+</code></pre>
+<ol type="1" start="8">
+<li>Lastly, check that the tables have been loaded correctly by running the following SQL commands:</li>
+</ol>
+<pre><code>SELECT * FROM postgres.raw_cdc.customers;
+SELECT * FROM postgres.raw_cdc.merchants;
+SELECT * FROM postgres.raw_cdc.products;
+SELECT * FROM postgres.raw_cdc.transactions;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Connector" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>During this step, you will install and configure the Snowflake Connector for PostgreSQL Native App to capture changes made to the PostgreSQL database tables.</p>
+<h3 is-upgraded>Install the Snowflake Connector for PostgreSQL Native App</h3>
+<p>Navigate to <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>:</p>
+<ol type="1">
+<li>Navigate to the <strong>Data Products</strong> then to the <strong>Marketplace</strong> section</li>
+<li>Search for the <strong>Snowflake Connector for PostgreSQL</strong> Native App and install the application</li>
+<li>You should find your installed Native App under <strong>Data Products</strong>, <strong>Apps</strong> section</li>
+</ol>
+<h3 is-upgraded>Configure the Snowflake Connector for PostgreSQL Native App</h3>
+<ol type="1">
+<li>On your Snowflake Account, navigate to the <strong>Data Products</strong>, <strong>Apps</strong> section</li>
+<li>Open the application</li>
+<li>Select <strong>Mark all as done</strong> as we will create our source databases from scratch.</li>
+</ol>
+<p class="image-container"><img src="img/d9229a02d6fc9825.png"></p>
+<ol type="1" start="4">
+<li>Click <strong>Start configuration</strong></li>
+<li>If you have Event Tables already activated in your account, the <strong>Event Log Database</strong>, <strong>Event Log Schema</strong>, and <strong>Event Table</strong> will populate automatically with what is active. The names of the <strong>Event Log Database</strong>, <strong>Event Log Schema</strong>, and <strong>Event Table</strong> could be slightly different from what is shown.</li>
+<li>On the <strong>Configure Connector</strong> screen, select <strong>Configure</strong></li>
+</ol>
+<p class="image-container"><img src="img/c5d4889dfdf6f670.png"></p>
+<ol type="1" start="7">
+<li>On the <strong>Verify Agent Connection</strong> screen select <strong>Generate file</strong> to download the Agent Configuration file. The downloaded file name should resemble <strong>snowflake.json</strong>. Save this file for use during the Agent configuration section.</li>
+</ol>
+<p class="image-container"><img src="img/aa95c72812cbec67.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Agent Configuration" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>During this section, you will configure the Agent that will operate alongside our Source Databases.</p>
+<h2 is-upgraded>Configure the Agents</h2>
+<p>The first step is to create the <strong>agent-postgresql</strong> directory. In this directory, you will create 2 directories named <strong>agent-keys</strong> and <strong>configuration</strong>.</p>
+<h3 is-upgraded>Creating Configuration Files</h3>
+<p>You will fill the configuration files for each agent to operate correctly. The configuration files include <strong>snowflake.json</strong> file to connect to Snowflake, <strong>datasources.json</strong> file to connect to the Source Databases, and <strong>postgresql.conf</strong> file with additional Agent Environment Variables.</p>
+<p>Here&#39;s how the file structure should look like in the beginning:</p>
+<p>Directory Structure</p>
+<ul>
+<li>agent-postgresql     <ul>
+<li>agent-keys       </li>
+<li>configuration         <ul>
+<li>datasources.json</li>
+<li>postgresql.conf</li>
+<li>snowflake.json</li>
+</ul>
+       </li>
+<li>docker-compose.yaml</li>
+</ul>
+   </li>
+</ul>
+<ol type="1">
+<li>Navigate to the directory called <strong>agent-postgresql</strong></li>
+<li>Create the docker-compose file named <strong>docker-compose.yaml</strong> in the <strong>agent-postgresql</strong> directory with the following content:</li>
+</ol>
+<pre><code>services:
+  postgresql-agent:
+    container_name: postgresql-agent
+    image: snowflakedb/database-connector-agent:latest
+    volumes:
+      - ./agent-keys:/home/agent/.ssh
+      - ./configuration/snowflake.json:/home/agent/snowflake.json
+      - ./configuration/datasources.json:/home/agent/datasources.json
+    env_file:
+      - configuration/postgresql.conf
+    mem_limit: 6g
+</code></pre>
+<ol type="1" start="3">
+<li>Put the previously downloaded <strong>snowflake.json</strong> file in the <strong>configuration</strong> directory folder</li>
+<li>Create the file named <strong>datasources.json</strong> in the <strong>configuration</strong> directory with the following content:</li>
+</ol>
+<pre><code>{
+  &#34;PSQLDS1&#34;: {
+    &#34;url&#34;: &#34;jdbc:postgresql://host.docker.internal:5432/postgres&#34;,
+    &#34;username&#34;: &#34;postgres&#34;,
+    &#34;password&#34;: &#34;postgres&#34;,
+    &#34;publication&#34;: &#34;agent_postgres_publication&#34;,
+    &#34;ssl&#34;: false
+  }
+}
+</code></pre>
+<ol type="1" start="5">
+<li>Create the file named <strong>postgresql.conf</strong> in the <strong>configuration</strong> directory with the following content:</li>
+</ol>
+<pre><code>JAVA_OPTS=-Xmx5g
+</code></pre>
+<ol type="1" start="6">
+<li>Navigating to the <strong>agent-postgresql</strong> directory in your terminal, start the agent using the following command. The agent should generate public/private key for authorization to Snowflake.</li>
+</ol>
+<pre><code>docker-compose up -d
+</code></pre>
+<p>After running the <code>docker-compose up -d</code> command, you will see in your file structure that the <strong>agent-keys</strong> directory has been populated with the private and public keys. At the end, your directory structure should resemble the following.</p>
+<p>Directory Structure</p>
+<ul>
+<li>agent-postgresql     <ul>
+<li>agent-keys         <ul>
+<li>database-connector-agent-app-private-key.p8</li>
+<li>database-connector-agent-app-public-key.pub</li>
+</ul>
+       </li>
+<li>configuration         <ul>
+<li>datasources.json</li>
+<li>postgresql.conf</li>
+<li>snowflake.json</li>
+</ul>
+       </li>
+<li>docker-compose.yaml</li>
+</ul>
+   </li>
+</ul>
+<h3 is-upgraded>Verifying Connection with Snowflake</h3>
+<p>Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the <strong>Refresh</strong> button in the Agent Connection Section. When successfully configured, you should see the &#34;Successfully configured&#34; message. Click &#34;Define data to sync&#34;.</p>
+<p class="image-container"><img src="img/e7f66e40423cf652.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Replication Process" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>In this step, we will instruct the Connector to begin replicating the selected tables.</p>
+<h2 is-upgraded>Configure Data Ingestion</h2>
+<ol type="1">
+<li>Change the role to <strong>ACCOUNTADMIN</strong></li>
+<li>Download the <a href="https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb" target="_blank">Snowflake Notebook</a> and import it into Snowflake by navigating to Snowsight and going to <strong>Notebooks</strong> and to using the <code>Import .ipynb file</code> button.</li>
+<li>Select the <strong>CDC_PROD</strong> for the database, <strong>ANALYTICS</strong> for the schema, and <strong>CDC_DS_WH</strong> for the warehouse. This Notebook includes the SQL scripts needed to create the destination database for table replication of the PostgreSQL tables into Snowflake and monitor the replication process.</li>
+<li>Run the first 3 cells in the Notebook labeled <strong>create_db_objects</strong>, <strong>table_replication</strong>, and <strong>check_replication_state</strong>.</li>
+<li>Run the cell labeled <strong>check_replication_state</strong> until the output indicates successful replication as indicated in the Notebook.</li>
+<li>Once the replication process is complete, you can run the rest of the Notebook.</li>
+<li>Notice the Dynamic Table, <strong>cdc_prod.analytics.customer_purchase_summary</strong>, is created in the last cell labeled <strong>create_dynamic_table</strong>. This table will be used to visualize the data in the <strong>Customer Spending Dashboard</strong> Streamlit app.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit App" duration="10">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will create a Streamlit in Snowflake application to visualize the customer purchase summary data.</p>
+<h2 is-upgraded>Create the Streamlit in Snowflake Application</h2>
+<ol type="1">
+<li>Change the role to <strong>ACCOUNTADMIN</strong></li>
+<li>Navigate to Snowsight and go to <strong>Projects</strong> then <strong>Streamlit</strong></li>
+<li>Click on the <strong>+ Streamlit App</strong> to create a new Streamlit application</li>
+<li>For the <strong>App Title</strong>, enter <strong>Customer Spending Dashboard</strong></li>
+<li>For the <strong>App location</strong>, enter <strong>CDC_PROD</strong> for the database and <strong>ANALYTICS</strong> for the schema</li>
+<li>For the <strong>App warehouse</strong>, choose the <strong>CDC_DS_WH</strong> warehouse and click <strong>Create</strong></li>
+<li>Copy and paste the contents of the <a href="https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/customer_spending_dashboard.py" target="_blank">customer_purchase_summary.py</a> file into the Streamlit app code editor</li>
+<li>Here, we can view the purchase summary for all or selected customers by selecting various filter for dates, customer IDs, and product categories and more</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="CDC" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will ingest new transaction data from PostgreSQL into Snowflake.</p>
+<h2 is-upgraded>Ingest New Data</h2>
+<p>Navigate to your PostgreSQL console and run the following SQL command to create a stored procedure that inserts 1000 new records into the <code>transactions</code> table every minute:</p>
+<pre><code>CREATE OR REPLACE PROCEDURE insert_transactions()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_new_transaction_id TEXT;
+    v_customer_id INT;
+    v_product_id INT;
+    v_merchant_id INT;
+    v_transaction_date DATE;
+    v_transaction_time TEXT;
+    v_quantity INT;
+    v_product_price DOUBLE PRECISION;
+    v_total_price DOUBLE PRECISION;
+    v_existing_customer RECORD;
+    v_existing_product RECORD;
+    v_existing_merchant RECORD;
+    v_transaction_card TEXT;
+    v_transaction_category TEXT;
+BEGIN
+    -- Loop for 30 minutes (inserting 1000 records every minute)
+    FOR i IN 1..30 LOOP
+        FOR j IN 1..1000 LOOP
+            -- Select random valid customer, product, and merchant from existing tables
+            SELECT * INTO v_existing_customer
+            FROM postgres.raw_cdc.customers
+            ORDER BY RANDOM()
+            LIMIT 1;
+
+            SELECT * INTO v_existing_product
+            FROM postgres.raw_cdc.products
+            ORDER BY RANDOM()
+            LIMIT 1;
+
+            SELECT * INTO v_existing_merchant
+            FROM postgres.raw_cdc.merchants
+            ORDER BY RANDOM()
+            LIMIT 1;
+
+            -- Generate new transaction ID (unique)
+            v_new_transaction_id := &#39;TX&#39; || EXTRACT(EPOCH FROM NOW())::TEXT || j::TEXT;
+
+            -- Generate current date and time in New York time zone
+            v_transaction_date := (CURRENT_TIMESTAMP AT TIME ZONE &#39;America/New_York&#39;)::DATE;
+            v_transaction_time := TO_CHAR(CURRENT_TIMESTAMP AT TIME ZONE &#39;America/New_York&#39;, &#39;HH24:MI:SS&#39;);
+
+            -- Generate random quantity between 1 and 7
+            v_quantity := FLOOR(RANDOM() * 7 + 1);
+
+            -- Get product price and calculate total price
+            v_product_price := v_existing_product.price;
+            v_total_price := v_product_price * v_quantity;
+
+            v_transaction_card := (ARRAY[&#39;American Express&#39;, &#39;Visa&#39;, &#39;Mastercard&#39;, &#39;Discover&#39;])[FLOOR(RANDOM() * 4 + 1)];
+            v_transaction_category := CASE WHEN RANDOM() &lt; 0.8 THEN &#39;Purchase&#39; ELSE &#39;Refund&#39; END;
+
+            -- Insert new transaction into the transactions table
+            INSERT INTO postgres.raw_cdc.transactions (
+                transaction_id, customer_id, product_id, merchant_id, transaction_date, transaction_time, quantity, total_price, transaction_card, transaction_category
+            )
+            VALUES (
+                v_new_transaction_id, v_existing_customer.customer_id, v_existing_product.product_id,
+                v_existing_merchant.merchant_id, v_transaction_date, v_transaction_time,
+                v_quantity, v_total_price, v_transaction_card, v_transaction_category
+            );
+        END LOOP;
+
+        -- Commit after every batch of 1000 rows
+        COMMIT;
+
+        -- Wait for 30 seconds before inserting the next batch
+        PERFORM pg_sleep(30);
+    END LOOP;
+END;
+$$;
+</code></pre>
+<p>To run the stored procedure, execute the following SQL command:</p>
+<pre><code>CALL insert_transactions();
+</code></pre>
+<p>Navigate to the Streamlit dashboard and refresh the page by clicking on <strong>Refresh</strong> to view the new data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>When you&#39;re finished with this Quickstart, you can clean up the objects created in Snowflake.</p>
+<h2 is-upgraded>Clean Up Script</h2>
+<p>Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled <strong>clean_up</strong> to drop the connector objects created in this Quickstart.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <h2 is-upgraded>Congrats! You&#39;re reached the end of this Quickstart!</h2>
+<h2 is-upgraded>What You Learned</h2>
+<p>With the completion of this Quickstart, you have now delved into:</p>
+<ul>
+<li>How to connect PostgreSQL data to Snowflake using the Snowflake Connector for PostgreSQL</li>
+<li>Visualize data using Dynamic Tables and display visualizations within Streamlit in Snowflake (SiS)</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><a href="https://other-docs.snowflake.com/en/connectors/postgres6/about" target="_blank">Snowflake Connector for PostgreSQL</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">Snowflake Dynamic Tables</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/index" target="_blank">Snowpark API</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

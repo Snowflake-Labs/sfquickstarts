@@ -1,0 +1,38 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "sf_esri_arcgis_locationservice",
+  "duration": 61,
+  "title": "Interfacing with ArcGIS Location Services (API) using Snowpark",
+  "authors": "Venkatesh Sekar, Jhonatan Garrido-Lecca",
+  "summary": "Calculate ISOChrone or ServiceArea using ArcGIS Location Services (API), natively in Snowflake.",
+  "source": "interfacing_with_arcgis/interfacing_with_arcgis.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "geospatial",
+    "partner-integrations"
+  ],
+  "tags": [
+    "arcgis",
+    "dataengineering",
+    "datascience",
+    "esri",
+    "geospatial",
+    "isochrone",
+    "locationservices",
+    "servicearea",
+    "snowpark",
+    "snowparkpythonvudtf",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "sf_esri_arcgis_locationservice"
+}

@@ -1,0 +1,519 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_it"
+                  title="Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Panoramica" duration="2">
+        <p class="image-container"><img src="img/82e3f493a86ab504.png"></p>
+<p>Snowflake ha semplificato l&#39;integrazione dei modelli di machine learning nelle data application grazie a comode funzionalità che consentono di distribuire i modelli ML come stored procedure, User Defined Function (UDF) e User Defined Table Function (UDTF). Inoltre offre la Snowflake SQL API, un&#39;API RESTful che facilita l&#39;interrogazione dei modelli ML distribuiti e consente un&#39;integrazione trasparente tra l&#39;applicazione e il modello ML.</p>
+<p>In questo tutorial, stai creando un&#39;applicazione che aiuta l&#39;azienda fittizia di food truck Tasty Bytes e i suoi conducenti a visualizzare i suggerimenti sulle posizioni forniti dal modello ML direttamente nella data application. Questo modello ML per i suggerimenti sulle posizioni è stato creato all&#39;interno di Snowflake utilizzando Snowpark, che consente agli utenti Python di sfruttare con facilità la piattaforma Snowflake. Il modello utilizza i dati storici sulle vendite e dati meteorologici offerti da SafeGraph tramite il Marketplace Snowflake per fornire più informazioni al modello. Questo tutorial ti guiderà nel processo di distribuzione e integrazione del modello ML nell&#39;app per i conducenti dei food truck.</p>
+<h2 is-upgraded>Prerequisiti</h2>
+<ul>
+<li>I privilegi necessari per creare un utente, un database e un warehouse in Snowflake</li>
+<li>La possibilità di installare ed eseguire software sul tuo computer</li>
+<li>Esperienza di base nell&#39;uso di git</li>
+<li>Conoscenza di SQL a livello intermedio</li>
+<li>Accesso per eseguire SQL in Snowflake</li>
+</ul>
+<h2 is-upgraded>Cosa imparerai</h2>
+<ul>
+<li>Come accedere ai dati di terze parti dal <strong>Marketplace Snowflake</strong></li>
+<li>Come <strong>addestrare un modello in Snowflake</strong> con una stored procedure</li>
+<li>Come <strong>distribuire un modello in Snowflake</strong> sotto forma di User Defined Function per l&#39;inferenza del modello</li>
+<li>Come <strong>integrare un modello ML</strong> nella data application</li>
+</ul>
+<h2 is-upgraded>Cosa ti serve</h2>
+<ul>
+<li>Un account <a href="https://github.com/" target="_blank">GitHub</a></li>
+<li><a href="https://code.visualstudio.com/download" target="_blank">VS Code</a> installato (oppure il tuo IDE preferito)</li>
+<li><a href="https://nodejs.org/en/download/" target="_blank">NodeJS</a> installato</li>
+</ul>
+<h2 is-upgraded>Cosa realizzerai</h2>
+<ul>
+<li>Una data application alimentata da un modello ML utilizzando Snowpark</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configurare i dati in Snowflake" duration="3">
+        <p>Utilizzerai <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, l&#39;interfaccia web di Snowflake, per:</p>
+<ul>
+<li>Accedere ai dati sulle posizioni di SafeGraph dal Marketplace Snowflake</li>
+<li>Creare oggetti Snowflake (warehouse, database, schema)</li>
+<li>Caricare dati sulle vendite per turno da S3</li>
+<li>Unire le vendite per turno con i dati sulle posizioni di SafeGraph</li>
+</ul>
+<p>Tasty Bytes gestisce food truck in molte città di tutto il mondo e ogni food truck può scegliere due posizioni di vendita al giorno. Le posizioni corrispondono a punti di interesse di SafeGraph. Il tuo scopo è unire latitudine e longitudine nei dati Marketplace di SafeGraph con i tuoi dati sulle vendite per turno per utilizzarli come caratteristiche nell&#39;addestramento dei modelli.</p>
+<h2 is-upgraded>Passaggio 1 - Acquisire dal Marketplace Snowflake i dati sui punti di interesse di SafeGraph</h2>
+<ul>
+<li>Accedi al tuo account Snowflake.</li>
+<li>Segui i passaggi e il video riportati sotto per accedere ai dati SafeGraph nel Marketplace dal tuo account Snowflake.<ul>
+<li>Fai clic su -&gt; Icona Home</li>
+<li>Fai clic su -&gt; Marketplace</li>
+<li>Cerca -&gt; frostbyte</li>
+<li>Fai clic su -&gt; SafeGraph: frostbyte</li>
+<li>Fai clic su -&gt; Get</li>
+<li>Rinomina il database -&gt; FROSTBYTE_SAFEGRAPH (tutte maiuscole)</li>
+<li>Consenti l&#39;accesso ad altri ruoli -&gt; PUBLIC</li>
+</ul>
+</li>
+</ul>
+<p class="image-container"><img src="img/991d128c82488de9.gif"></p>
+<aside class="special"><p> SafeGraph è un&#39;azienda globale di dati geospaziali che offre dati su qualsiasi località nel mondo. Clienti come Esri, Tripadvisor, Mapbox e Sysco utilizzano i dati di SafeGraph per comprendere meglio i propri clienti, creare nuovi prodotti e prendere decisioni migliori per il proprio business.</p>
+</aside>
+<h2 is-upgraded>Passaggio 2 - Creare oggetti, caricare i dati e unire i dati</h2>
+<p>Vai a Worksheets, fai clic su &#34;+&#34; nell&#39;angolo superiore destro per creare un nuovo foglio di lavoro e scegli &#34;SQL Worksheet&#34;.</p>
+<p>Incolla ed esegui il seguente codice SQL nel foglio di lavoro per creare oggetti Snowflake (warehouse, database, schema), caricare i dati degli ordini grezzi da S3 e modellarli per l&#39;uso a valle.</p>
+<pre><code language="language-SQL" class="language-SQL">-- use our accountadmin role 
+USE ROLE accountadmin;
+
+-- create a development database for data science work 
+CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_ml_app;
+
+-- create raw, harmonized, and analytics schemas 
+-- raw zone for data ingestion 
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_ml_app.raw; 
+-- harmonized zone for data processing 
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_ml_app.harmonized; 
+-- analytics zone for development 
+CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_ml_app.analytics;
+
+-- create csv file format 
+CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_ml_app.raw.csv_ff 
+type = &#39;csv&#39;;
+
+-- create an external stage pointing to S3 
+CREATE OR REPLACE STAGE frostbyte_tasty_bytes_ml_app.raw.s3load 
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39; url = &#39;s3://sfquickstarts/frostbyte_tastybytes/&#39; 
+file_format = frostbyte_tasty_bytes_ml_app.raw.csv_ff;
+
+-- define shift sales table 
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_ml_app.raw.shift_sales( 
+        location_id NUMBER(19,0), 
+        city VARCHAR(16777216), 
+        date DATE, 
+        shift_sales FLOAT, 
+        shift VARCHAR(2), 
+        month NUMBER(2,0), 
+        day_of_week NUMBER(2,0), 
+        city_population NUMBER(38,0) 
+);
+
+-- create and use a compute warehouse 
+CREATE OR REPLACE WAREHOUSE tasty_ml_app_wh AUTO_SUSPEND = 60; 
+USE WAREHOUSE tasty_ml_app_wh;
+
+-- ingest from S3 into the shift sales table 
+COPY INTO frostbyte_tasty_bytes_ml_app.raw.shift_sales 
+FROM @frostbyte_tasty_bytes_ml_app.raw.s3load/analytics/shift_sales/;
+
+-- join in SafeGraph data 
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes_ml_app.harmonized.shift_sales 
+  AS 
+SELECT 
+    a.location_id, 
+    a.city, 
+    a.date, 
+    a.shift_sales, 
+    a.shift, 
+    a.month, 
+    a.day_of_week, 
+    a.city_population, 
+    b.latitude, 
+    b.longitude, 
+    b.location_name, 
+    b.street_address
+FROM frostbyte_tasty_bytes_ml_app.raw.shift_sales a 
+JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b 
+ON a.location_id = b.location_id;
+
+-- promote the harmonized table to the analytics layer for data science development 
+CREATE OR REPLACE VIEW frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v 
+  AS 
+SELECT * FROM frostbyte_tasty_bytes_ml_app.harmonized.shift_sales;
+
+-- view shift sales data 
+SELECT * FROM frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v; 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creare un utente per l&#39;applicazione" duration="5">
+        <p>Per garantire l&#39;efficacia delle misure di sicurezza, è essenziale stabilire un account utente dedicato per l&#39;applicazione, separato dal tuo account personale. Questo nuovo account verrà utilizzato per interrogare Snowflake. Secondo le best practice di sicurezza, l&#39;account utilizzerà l&#39;autenticazione a coppia di chiavi e avrà un accesso limitato all&#39;interno dell&#39;ambiente Snowflake.</p>
+<h2 is-upgraded>Passaggio 1 -  Generare la chiave pubblica e privata per l&#39;autenticazione</h2>
+<p>Esegui i seguenti comandi per creare una chiave pubblica e una chiave privata. Queste chiavi sono necessarie per autenticare l&#39;utente in Snowflake.</p>
+<pre><code language="language-Shell" class="language-Shell">$ cd ~/.ssh
+$ openssl genrsa -out snowflake_app_key 4096
+$ openssl rsa -in snowflake_app_key -pubout -out snowflake_app_key.pub
+</code></pre>
+<h2 is-upgraded>Passaggio 2 -  Creare l&#39;utente e il ruolo in Snowflake e concedere l&#39;accesso ai dati a questo nuovo ruolo</h2>
+<p>Esegui le seguenti istruzioni SQL per creare l&#39;account utente e concedere l&#39;accesso ai dati necessari per l&#39;applicazione.</p>
+<pre><code language="language-SQL" class="language-SQL">-- use our securityadmin role 
+USE ROkLE securityadmin;
+
+-- create our tasty_bytes_data_ml_app_demo role 
+CREATE ROLE tasty_bytes_data_ml_app_demo;
+
+-- use our accountadmin role 
+USE ROLE accountadmin;
+
+-- grant privileges to our tasty_bytes_data_app_demo role 
+GRANT USAGE ON WAREHOUSE tasty_ml_app_wh TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_ml_app TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_ml_app.raw TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT SELECT ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.analytics TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.harmonized TO ROLE tasty_bytes_data_ml_app_demo; 
+GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.raw TO ROLE tasty_bytes_data_ml_app_demo;
+
+-- use our useradmin role 
+USE ROLE useradmin;
+
+-- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE. 
+CREATE USER data_ml_app_demo 
+RSA_PUBLIC_KEY=&#39;&lt;INSERT_RSA_PUBLIC_KEY_HERE&gt;&#39; 
+DEFAULT_ROLE=tasty_bytes_data_ml_app_demo 
+DEFAULT_WAREHOUSE=tasty_ml_app_wh 
+MUST_CHANGE_PASSWORD=FALSE;
+
+-- use our securityadmin role 
+USE ROLE securityadmin; 
+GRANT ROLE tasty_bytes_data_ml_app_demo TO USER data_ml_app_demo; 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Addestrare e distribuire un modello ML in Snowflake" duration="10">
+        <h2 is-upgraded>Panoramica</h2>
+<p>Tasty Bytes intende ottenere una crescita annuale delle vendite del 25% per cinque anni. Per supportare questo obiettivo e massimizzare i ricavi giornalieri in tutta la flotta di food truck, il team di data science deve creare un modello ML per portare i food truck nelle posizioni in cui sono previste le vendite più elevate per un dato turno.</p>
+<p>Vai a Worksheets, fai clic su &#34;+&#34; nell&#39;angolo superiore destro per creare un nuovo foglio di lavoro e scegli &#34;SQL Worksheet&#34;.</p>
+<p>Incolla ed esegui il seguente codice SQL nel foglio di lavoro per addestrare e distribuire il modello per produrre suggerimenti sulle posizioni.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE accountadmin; 
+USE DATABASE frostbyte_tasty_bytes_ml_app; 
+USE SCHEMA analytics; 
+USE WAREHOUSE tasty_ml_app_wh;
+
+CREATE STAGE IF NOT EXISTS app_stage;
+
+-- Create stored proc for shift table 
+CREATE OR REPLACE PROCEDURE build_shift_feature_table() 
+    RETURNS string 
+    LANGUAGE python 
+    RUNTIME_VERSION = &#39;3.8&#39; 
+    PACKAGES = (&#39;snowflake-snowpark-python&#39;) 
+    HANDLER = &#39;create_table&#39; 
+AS 
+$$ 
+def create_table(session): 
+    import snowflake.snowpark.functions as F 
+    import snowflake.snowpark.types as T 
+    from snowflake.snowpark import Window
+    
+    # Create DataFrame
+    snowpark_df = session.table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v&#34;)
+    
+    # Create rolling average
+    window_by_location_all_days = (
+    Window.partition_by(&#34;location_id&#34;, &#34;shift&#34;)
+    .order_by(&#34;date&#34;)
+    .rows_between(Window.UNBOUNDED_PRECEDING, Window.CURRENT_ROW - 1))
+    
+    snowpark_df = snowpark_df.with_column(
+    &#34;avg_location_shift_sales&#34;, 
+    F.avg(&#34;shift_sales&#34;).over(window_by_location_all_days))
+    
+    # Impute
+    snowpark_df = snowpark_df.fillna(value=0, subset=[&#34;avg_location_shift_sales&#34;])
+    
+    # Encode
+    snowpark_df = snowpark_df.with_column(&#34;shift&#34;, F.iff(F.col(&#34;shift&#34;) == &#34;AM&#34;, 1, 0))
+    
+    # Get date
+    date_tomorrow = snowpark_df.filter(F.col(&#34;shift_sales&#34;).is_null()).select(F.min(&#34;date&#34;)).collect()[0][0]
+    
+    # Filter
+    feature_df = snowpark_df.filter(F.col(&#34;date&#34;) == date_tomorrow).drop(F.col(&#34;shift_sales&#34;))
+    
+    # Get Location Detail
+    location_df = session.table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v&#34;).select(&#34;location_id&#34;, &#34;location_name&#34;, &#34;street_address&#34;)
+    
+    # Join
+    feature_df = feature_df.join(location_df,
+                    feature_df.location_id == location_df.location_id,
+                    &#34;left&#34;) \
+                    .drop(location_df.location_id) \
+                    .drop(location_df.location_name) \
+                    .drop(location_df.street_address) \
+                    .rename(feature_df.location_id, &#34;location_id&#34;) \
+                    .rename(feature_df.location_name, &#34;location_name&#34;) \
+                    .rename(feature_df.street_address, &#34;street_address&#34;)
+    
+    # Save table
+    feature_df.write.mode(&#34;overwrite&#34;).save_as_table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_features&#34;)
+    
+    return &#34;SUCCESS&#34;
+$$;
+
+-- Call sproc to create feature table 
+Call build_shift_feature_table();
+
+-- Set permissions 
+GRANT ALL PRIVILEGES ON TABLE frostbyte_tasty_bytes_ml_app.analytics.shift_features to tasty_bytes_data_ml_app_demo;
+
+-- Create training stored procedure 
+CREATE OR REPLACE PROCEDURE SPROC_TRAIN_LINREG() 
+    RETURNS 
+    STRING LANGUAGE 
+    PYTHON RUNTIME_VERSION = &#39;3.8&#39; 
+    PACKAGES = (&#39;snowflake-snowpark-python&#39;,&#39;scikit-learn&#39;,&#39;joblib&#39;) 
+    HANDLER = &#39;train_model&#39; 
+AS 
+$$ 
+def train_model(session): 
+    import snowflake.snowpark.functions as F 
+    import snowflake.snowpark.types as T 
+    from snowflake.snowpark import Window
+    
+    # Create DataFrame
+    snowpark_df = session.table(&#34;frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v&#34;)
+    
+    # Create rolling average
+    window_by_location_all_days = (
+    Window.partition_by(&#34;location_id&#34;, &#34;shift&#34;)
+    .order_by(&#34;date&#34;)
+    .rows_between(Window.UNBOUNDED_PRECEDING, Window.CURRENT_ROW - 1))
+    
+    snowpark_df = snowpark_df.with_column(
+    &#34;avg_location_shift_sales&#34;, 
+    F.avg(&#34;shift_sales&#34;).over(window_by_location_all_days))
+    
+    # Impute
+    snowpark_df = snowpark_df.fillna(value=0, subset=[&#34;avg_location_shift_sales&#34;])
+    
+    # Encode
+    snowpark_df = snowpark_df.with_column(&#34;shift&#34;, F.iff(F.col(&#34;shift&#34;) == &#34;AM&#34;, 1, 0))
+    
+    # Get date
+    date_tomorrow = snowpark_df.filter(F.col(&#34;shift_sales&#34;).is_null()).select(F.min(&#34;date&#34;)).collect()[0][0]
+    
+    # Filter to historical
+    historical_snowpark_df = snowpark_df.filter(F.col(&#34;shift_sales&#34;).is_not_null())
+    
+    # Drop
+    historical_snowpark_df = historical_snowpark_df.drop(&#34;location_id&#34;, &#34;city&#34;, &#34;date&#34;)
+    
+    # Split
+    train_snowpark_df, test_snowpark_df = historical_snowpark_df.randomSplit([0.8, 0.2])
+    
+    # Import packages
+    from sklearn.linear_model import LinearRegression
+    from joblib import dump
+    
+    feature_cols = [&#34;MONTH&#34;, &#34;DAY_OF_WEEK&#34;, &#34;LATITUDE&#34;, &#34;LONGITUDE&#34;, &#34;CITY_POPULATION&#34;, &#34;AVG_LOCATION_SHIFT_SALES&#34;, &#34;SHIFT&#34;]
+    target_col = &#34;SHIFT_SALES&#34;
+
+    # Get training data
+    df = train_snowpark_df.to_pandas()
+
+    # Set inputs X and outputs y
+    X = df[feature_cols]
+    y = df[target_col]
+
+    # Train model
+    model = LinearRegression().fit(X, y)
+
+    # Save model
+    model_name = &#34;linreg_location_sales_model.sav&#34;
+    dump(model, &#34;/tmp/&#34; + model_name)
+    session.file.put(
+        &#34;/tmp/&#34; + model_name,
+        &#34;@APP_STAGE&#34;,
+        auto_compress=False,
+        overwrite=True
+    )
+
+    return &#34;SUCCESS&#34;
+$$;
+
+-- Train model 
+Call sproc_train_linreg();
+
+-- Deploy the model as a UDF 
+CREATE OR REPLACE 
+  FUNCTION udf_predict_location_sales_prod(arg1 FLOAT,arg2 FLOAT, 
+                                                arg3 FLOAT,arg4 FLOAT, 
+                                                arg5 FLOAT,arg6 FLOAT, arg7 FLOAT) 
+    RETURNS FLOAT 
+    LANGUAGE PYTHON 
+    RUNTIME_VERSION=3.8 
+    IMPORTS=(&#39;@APP_STAGE/linreg_location_sales_model.sav&#39;) 
+    PACKAGES=(&#39;scikit-learn&#39;,&#39;joblib&#39;,&#39;cloudpickle==2.0.0&#39;,&#39;pandas&#39;, &#39;cachetools&#39;) HANDLER=&#39;predict&#39; 
+    as 
+$$ 
+import pandas 
+import cachetools 
+from _snowflake import vectorized
+
+@cachetools.cached(cache={}) 
+def load_model(filename): 
+    import joblib 
+    import sys 
+    import os
+    
+    import_dir = sys._xoptions.get(&#34;snowflake_import_directory&#34;)
+    if import_dir:
+        with open(os.path.join(import_dir, filename), &#39;rb&#39;) as file:
+            m = joblib.load(file)
+            return m
+
+@vectorized(input=pandas.DataFrame) 
+def predict(X: pandas.DataFrame) -&gt; pandas.Series: 
+    # Load the model 
+    model = load_model(&#34;linreg_location_sales_model.sav&#34;)
+
+    # Get predictions
+    predictions = model.predict(X)
+
+    # Return rounded predictions
+    return predictions.round(2)
+$$;
+
+-- Set permissions 
+GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLOAT, FLOAT,FLOAT,FLOAT,FLOAT) to tasty_bytes_data_ml_app_demo; 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Recuperare i dati dal modello ML utilizzando la SQL API e integrarli nella data application" duration="10">
+        <p>L&#39;applicazione che eseguirai è scritta in React Native.</p>
+<h2 is-upgraded>Passaggio 1 -  Ottenere il codice sorgente</h2>
+<ol type="1">
+<li>Clona il repository utilizzando <code>https://github.com/sf-gh-sjasti/IntegrationTastyBytesMLModelInDataApp.git reactNativeMLApp</code></li>
+<li>Vai alla cartella <code>cd reactNativeMLApp</code></li>
+<li>Esegui <code>npm install</code> per installare le dipendenze</li>
+</ol>
+<h2 is-upgraded>Passaggio 2 -  Configurare l&#39;applicazione</h2>
+<ol type="1">
+<li>Apri la cartella <code>reactNativeMLApp</code> in VS Code o nel tuo IDE preferito.</li>
+<li>Apri il file <code>.env</code> e aggiorna il valore <code>PRIVATE_KEY</code> con la chiave privata. Copia e incolla l&#39;intera chiave privata da <code>~/.ssh/snowflake_app_key.pub</code>, compresa l&#39;intestazione (<code>-----BEGIN RSA PRIVATE KEY-----</code>) e il piè di pagina (<code>-----END RSA PRIVATE KEY-----</code>).</li>
+<li>Se ti trovi nella regione US-West, aggiorna <code>SNOWFLAKE_ACCOUNT_IDENTIFIER</code> con il tuo account Snowflake oppure, se non ti trovi nella regione US-West, aggiorna <code>SNOWFLAKE_ACCOUNT_IDENTIFIER</code> con ‘.&#39;. Per recuperare il valore snowflake_account da Snowflake, esegui <code>SELECT CURRENT_ACCOUNT()</code> in Snowsight. Per recuperare il valore della regione da Snowflake, esegui <code>SELECT CURRENT_REGION()</code> in Snowsight. Per la regione US-West, SNOWFLAKE_ACCOUNT_IDENTIFIER e SNOWFLAKE_ACCOUNT sono uguali.</li>
+<li>Aggiorna <code>SNOWFLAKE_ACCOUNT</code> con il tuo account Snowflake.</li>
+<li>Aggiorna <code>PUBLIC_KEY_FINGERPRINT</code> con l&#39;impronta digitale della tua chiave pubblica. Per ottenere l&#39;impronta digitale della chiave pubblica, esegui il seguente codice SQL in Snowsight <code>DESCRIBE USER data_app_demo</code>  e recupera il valore della proprietà RSA_PUBLIC_KEY_FP.</li>
+</ol>
+<h2 is-upgraded>Passaggio 3 -  Esaminare il codice sorgente</h2>
+<p>Stiamo utilizzando l&#39;autenticazione a coppia di chiavi per eseguire l&#39;autenticazione in Snowflake tramite la SQL API. Per capire come viene generato il token JWT, puoi fare riferimento a <code>Tokens.js</code>. <code>Locations.js</code> contiene il codice sorgente per il rendering della schermata Locations. Puoi anche fare riferimento a questo file per scoprire come interrogare un&#39;UDF utilizzando la SQL API, comprese le intestazioni necessarie.</p>
+<h2 is-upgraded>Passaggio 4 -  Testare l&#39;applicazione</h2>
+<ol type="1">
+<li>Esegui <code>npx expo start --clear</code> e premi il tasto <code>w</code> per eseguire l&#39;applicazione in un browser web</li>
+<li>L&#39;applicazione viene avviata in un browser web</li>
+<li>All&#39;avvio viene visualizzata la schermata degli ordini in coda,</li>
+</ol>
+<p class="image-container"><img src="img/5fada758b997368b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pulizia" duration="1">
+        <p>Vai a Snowsight Worksheets, fai clic su &#34;+&#34; nell&#39;angolo superiore destro per creare un nuovo foglio di lavoro e scegli &#34;SQL Worksheet&#34;. Incolla ed esegui il seguente codice SQL nel foglio di lavoro per eliminare gli oggetti Snowflake creati in questo quickstart.</p>
+<pre><code language="language-SQL" class="language-SQL">USE ROLE accountadmin; 
+DROP DATABASE frostbyte_tasty_bytes_ml_app; 
+DROP WAREHOUSE tasty_ml_app_wh;
+
+USE ROLE securityadmin; 
+DROP USER data_ml_app_demo; 
+
+DROP ROLE tasty_bytes_data_ml_app_demo; 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusione" duration="1">
+        <h2 is-upgraded>Conclusione</h2>
+<p><strong>Ce l&#39;hai fatta!</strong> Hai completato il quickstart Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native.</p>
+<p>Completando questo quickstart hai:</p>
+<ul>
+<li>Acquisito dati di terze parti dal <strong>Marketplace Snowflake</strong></li>
+<li>Addestrato un modello ML in Snowflake con una stored procedure</li>
+<li>Distribuito il modello ML come UDF in Snowflake per l&#39;inferenza del modello</li>
+<li>Integrato il modello ML nella data application</li>
+</ul>
+<h2 is-upgraded>Fasi successive</h2>
+<p>Per saperne di più sul modello ML per i suggerimenti sulle posizioni, fai riferimento al nostro quickstart <a href="/guide/tasty_bytes_snowpark_101_for_data_science_it" target="_blank">Tasty Bytes - Introduzione a Snowpark per la data science</a>.</p>
+<p>Per continuare il tuo percorso nel Data Cloud di Snowflake, visita il link riportato sotto per vedere gli altri quickstart Powered by Tasty Bytes disponibili.</p>
+<ul>
+<li><h2 is-upgraded><a href="/guide/tasty_bytes_introduction_it/" target="_blank">Quickstart Powered by Tasty Bytes - Sommario</a></h2>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "Snowflake Quickstarts",
+  "short_name": "Snowflake Quickstarts",
+  "theme_color": "#455a64",
+  "background_color": "#455a64",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/images/favicons/android-chrome-192x192.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/favicons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

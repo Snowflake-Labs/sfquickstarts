@@ -1,0 +1,537 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cost and Performance Optimization</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_cost_performance_optimization"
+                  title="Getting Started with Cost and Performance Optimization"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>By completing this guide, you will be able to understand and implement various optimization features on Snowflake.</p>
+<ul>
+<li><strong>Setup Environment</strong>: Use correct roles and sample datasets to use the optimization features</li>
+<li><strong>Account Usage</strong>: Understand purpose of Account Usage schema and use it to uncover savings opportunities</li>
+<li><strong>Warehouse Controls</strong>: Leverage settings on a virtual warehouse to optimize usage</li>
+<li><strong>Storage</strong>: Determine cost savings with high-churn and short-lived tables</li>
+<li><strong>Optimization Features</strong>: Utilize Snowflake optimization features to achieve cost or performance savings</li>
+</ul>
+<h2 is-upgraded><strong>Prerequisites</strong></h2>
+<ul>
+<li>Familiarity with <a href="https://docs.snowflake.com/en/user-guide/intro-key-concepts" target="_blank">Snowflake platform</a></li>
+<li>Basic understanding of <a href="https://docs.snowflake.com/en/user-guide/tables-clustering-micropartitions" target="_blank">micro-partitions</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-access-control-considerations#using-the-accountadmin-role" target="_blank">Accountadmin</a> access on a Snowflake account</li>
+<li>If you do not have access to a Snowflake account, you can sign up for a <a href="https://signup.snowflake.com/?utm_cta=website-homepage-hero-button-start-for-free" target="_blank">free trial</a></li>
+</ul>
+<h2 class="checklist" is-upgraded><strong>What You&#39;ll Learn</strong></h2>
+<ul class="checklist">
+<li>How to identify optimization patterns in your Snowflake account</li>
+<li>How to implement performance improvements in your Snowflake environment</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p>This section contains the code that needs to be executed in your Snowflake account to enable understanding of content in this guide.</p>
+<pre><code language="language-sql" class="language-sql">-- WAREHOUSE CREATION --
+USE ROLE ACCOUNTADMIN;
+
+create warehouse if not exists hol_compute_wh
+with warehouse_size=&#39;SMALL&#39;
+     warehouse_type=&#39;STANDARD&#39;
+     initially_suspended=TRUE
+     auto_resume=FALSE   
+;
+
+use warehouse hol_compute_wh;
+
+-- DATABASE SCHEMA CREATION --
+create database if not exists OPT_HOL;
+use database OPT_HOL;
+create schema if not exists DEMO;
+
+use schema OPT_HOL.DEMO;
+
+create or replace table lineitem as select * from snowflake_sample_data.tpch_sf100.lineitem order by L_PARTKEY;
+create or replace table orders as select * from snowflake_sample_data.tpch_sf100.orders;
+create or replace table part as select * from snowflake_sample_data.tpch_sf100.part;
+
+create or replace table lineitem_cl as select * from lineitem;
+alter table lineitem_cl cluster by linear(l_shipdate);
+
+create or replace materialized view lineitem_mv as
+select  
+        to_char(l_shipdate,&#39;YYYYMM&#39;) as ship_month
+        ,l_orderkey
+        ,sum(l_quantity*l_extendedprice) as order_price
+        ,sum(l_quantity*l_discount) as order_discount
+        ,order_price-order_discount as net_selling_price
+from    
+        lineitem_cl
+group by
+        to_char(l_shipdate,&#39;YYYYMM&#39;)
+        ,l_orderkey
+;
+
+create or replace table DATE_DIM
+as
+select * from SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.DATE_DIM
+;
+
+create or replace table CATALOG_RETURNS
+as
+select 
+        cr.*
+from 
+        SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.catalog_RETURNS cr
+        JOIN SNOWFLAKE_SAMPLE_DATA.TPCDS_SF100TCL.DATE_DIM d
+          ON cr.cr_returned_date_sk=d.d_date_sk
+where   
+        d.d_year in (2001,2002)
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Warehouse Controls" duration="10">
+        <p>This section covers the code for controls that can be enforced on virtual warehouses.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">-- SETTING CONTEXT FOR THE SESSION --
+USE ROLE ACCOUNTADMIN;
+
+-- Check what parameters or settings are being used in a warehouse 
+show parameters for warehouse hol_compute_wh;
+
+-- Setting Auto suspend for a warehouse, value in seconds
+alter warehouse hol_compute_wh set auto_suspend=60;
+
+-- Setting Auto Resume for a warehouse
+alter warehouse hol_compute_wh set auto_resume=TRUE;
+
+-- Changing Statement Timeout at account level
+alter account set statement_timeout_in_seconds=7200;
+
+-- Changing Statement Timeout at warehouse level
+alter warehouse hol_compute_wh set statement_timeout_in_seconds=3600;
+
+-- Create a resource monitor
+CREATE OR REPLACE RESOURCE MONITOR Credits_Quota_Monitoring
+  WITH CREDIT_QUOTA = 5000
+       NOTIFY_USERS = (JDOE, &#34;Jane Smith&#34;, &#34;John Doe&#34;)
+  TRIGGERS ON 75 PERCENT DO NOTIFY
+           ON 100 PERCENT DO SUSPEND
+           ON 110 PERCENT DO SUSPEND_IMMEDIATE;
+
+-- Activating a resource monitor
+alter warehouse hol_compute_wh set resource_monitor=Credits_Quota_Monitoring;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Account Usage Queries" duration="10">
+        <ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/account-usage" target="_blank">Account Usage</a> is a powerful tool in an administrator&#39;s toolbox to identify optimization opportunites. Apart from metadata about objects in the Snowflake account, it  contains usage metrics related to all services consumed in the account - Credits, Storage, Data Transfer.</li>
+<li>In addition, <a href="https://docs.snowflake.com/en/sql-reference/account-usage/query_history" target="_blank">Query History</a> contains all information related to a query - metrics for each operation in a query, rows scanned, warehouse used, query text etc. The below queries are examples for viewing results of different views in Account Usage schema.</li>
+</ul>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">-- SETTING CONTEXT FOR THE SESSION --
+USE ROLE ACCOUNTADMIN;
+USE SCHEMA SNOWFLAKE.ACCOUNT_USAGE;
+
+use warehouse hol_compute_wh;
+
+-- SAMPLE ACCOUNT USAGE QUERIES
+-- Warehouse Usage Metrics
+select * from snowflake.account_usage.warehouse_metering_history limit 10;
+
+-- Access History for objects used in queries
+select * from snowflake.account_usage.access_history limit 10;
+
+-- Snowpipe Usage Metrics
+select * from snowflake.account_usage.pipe_usage_history limit 10;
+
+-- Storage Metrics
+select * from snowflake.account_usage.storage_usage limit 10;
+
+-- Table Storage Detailed Metrics
+select * from snowflake.account_usage.table_storage_metrics limit 10;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Storage Usage Monitoring" duration="10">
+        <p>This section covers the code to identify high churn tables - significant DML, short lived tables - tables truncated and reloaded everyday and tables not active in the past 90 days.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">-- SETTING CONTEXT FOR THE SESSION ----
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE hol_compute_wh;
+
+-- Identify high churn tables or short lived tables
+SELECT
+        t.table_catalog||&#39;.&#39;||t.table_schema||&#39;.&#39;||t.table_name as fq_table_name
+        ,t.active_bytes/power(1024,3) as active_size_gb
+        ,t.time_travel_bytes/power(1024,3) as time_travel_gb
+        ,t.failsafe_bytes/power(1024,3) as failsafe_gb
+        ,t.retained_for_clone_bytes/power(1024,3) as clone_retain_gb
+        ,active_size_gb+time_travel_gb+failsafe_gb+clone_retain_gb as total_size_gb
+        ,(t.time_travel_bytes + t.failsafe_bytes + t.retained_for_clone_bytes)/power(1024,3) as non_active_size_gb
+       ,div0(non_active_size_gb,active_size_gb)*100 as churn_pct
+        ,t.deleted
+        ,timediff(&#39;hour&#39;,t.table_created,t.table_dropped) as table_life_duration_hours
+        ,t1.is_transient
+        ,t1.table_type
+        ,t1.retention_time
+        ,t1.auto_clustering_on
+        ,t1.clustering_key
+        ,t1.last_altered
+        ,t1.last_ddl
+FROM
+        snowflake.account_usage.table_storage_metrics t
+        JOIN snowflake.account_usage.tables t1
+          ON t.id=t1.table_id
+WHERE
+        1=1
+        --AND t1.table_catalog in (&#39;&#39;,&#39;&#39;) -- use this to filter on specific databases
+        AND 
+            (
+             churn_pct&gt;=40
+             OR
+             table_life_duration_hours&lt;=24  -- short lived tables
+            )
+ORDER BY total_size_gb desc;
+
+-- Unused tables
+-- Identify Table sizes and Last DDL/DML Timestamps
+SELECT TABLE_CATALOG || &#39;.&#39; || TABLE_SCHEMA || &#39;.&#39; || TABLE_NAME AS TABLE_PATH
+       ,TABLE_NAME
+       ,TABLE_SCHEMA AS SCHEMA
+       ,TABLE_CATALOG AS DATABASE
+       ,BYTES
+       ,TO_NUMBER(BYTES / POWER(1024,3),10,2) AS GB
+       ,LAST_ALTERED AS LAST_USE
+       ,DATEDIFF(&#39;Day&#39;,LAST_USE,CURRENT_DATE) AS DAYS_SINCE_LAST_USE
+FROM INFORMATION_SCHEMA.TABLES
+WHERE DAYS_SINCE_LAST_USE &gt; 90 --Use your Days Threshold
+ORDER BY BYTES DESC;
+ 
+-- Tables not used in any query in the last 90 days
+WITH access_history as
+(   
+SELECT  
+        distinct
+        split(base.value:objectName, &#39;.&#39;)[0]::string as DATABASE_NAME
+        ,split(base.value:objectName, &#39;.&#39;)[1]::string as SCHEMA_NAME
+        ,split(base.value:objectName, &#39;.&#39;)[2]::string as TABLE_NAME
+FROM snowflake.account_usage.access_history 
+     ,lateral flatten (base_objects_accessed) base
+where query_start_time between current_date()-90 and current_date()
+)
+SELECT  tbl.table_catalog||&#39;.&#39;||tbl.table_schema||&#39;.&#39;||tbl.table_name as FQ_table_name
+FROM    snowflake.account_usage.tables tbl
+        LEFT JOIN access_history ah
+          ON tbl.table_name=ah.table_name
+         AND tbl.table_schema=ah.schema_name
+         AND tbl.table_catalog=ah.database_name
+WHERE   ah.table_name is NULL
+        AND tbl.deleted is null
+;
+</code></pre>
+<h3 is-upgraded>Actions from query results</h3>
+<ul>
+<li>Decide on time travel setting for high churn tables</li>
+<li>Consider using transient table type for high churn tables and short lived tables</li>
+<li>Investigate the business value of tables that haven&#39;t been used in the last 90 days</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Automatic Clustering" duration="10">
+        <p>This section covers <a href="https://docs.snowflake.com/en/user-guide/tables-auto-reclustering" target="_blank">Automatic Clustering</a>. Automatic Clustering is a Snowflake managed service that manages reclustering (as needed) of clustered tables. Reclustering is the process of reordering data in tables to colocate rows that have same cluster key values, which reduces the number of micro-partitions that need to be scanned during execution of a query thereby reducing execution times and help with efficient query execution on smaller sized warehouses.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">---- SETTING CONTEXT FOR THE SESSION ----
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE hol_compute_wh;
+USE SCHEMA OPT_HOL.DEMO;
+
+-- Query to show Clustering information on a non-clustered table
+SELECT SYSTEM$CLUSTERING_INFORMATION(&#39;LINEITEM&#39;,&#39;LINEAR(L_SHIPDATE)&#39;);
+
+-- Executing a query on an non-clustered table
+-- Ensuring that we are not using cached results
+alter session set USE_CACHED_RESULT=false;
+
+SELECT  *
+FROM    lineitem
+WHERE   l_shipdate BETWEEN &#39;1995-01-01&#39; AND &#39;1995-03-01&#39;
+;
+
+-- uery to show Clustering information on a clustered table
+SELECT SYSTEM$CLUSTERING_INFORMATION(&#39;LINEITEM_CL&#39;);
+
+-- Executing a query on an clustered table
+SELECT  *
+FROM    lineitem_cl 
+WHERE   l_shipdate BETWEEN &#39;1995-01-01&#39; AND &#39;1995-03-01&#39;
+;
+
+
+</code></pre>
+<h3 is-upgraded>Results Screenshot</h3>
+<ul>
+<li>Unclustered table <img alt="Unclustered table" src="img/9d28bf5ee6ce8526.png"></li>
+<li>Clustered table <img alt="Clustered table" src="img/8b91bf4f3acf262.png"></li>
+</ul>
+<h3 is-upgraded>Outcome</h3>
+<ul>
+<li>Automatic clustering improves query performance by scanning less data (less micropartitions). Refer to <a href="https://docs.snowflake.com/en/user-guide/tables-clustering-keys#considerations-for-choosing-clustering-for-a-table" target="_blank">Clustering Considerations</a> for clustering considerations and choosing the right clustering key for a table.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Materialized Views" duration="5">
+        <p>This section covers use of <a href="https://docs.snowflake.com/en/user-guide/views-materialized" target="_blank">Materialized Views</a> as an option to optimize Snowflake workloads. A materialized view is a pre-computed data set derived from a query specification and stored for later use. Because the data is pre-computed, querying a materialized view is faster than executing a query against the base table of the view. This performance difference can be significant when a query is run frequently or is sufficiently complex. As a result, materialized views can speed up expensive aggregation, projection, and selection operations, especially those that run frequently and that run on large data sets.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">---- SETTING CONTEXT FOR THE SESSION ----
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE hol_compute_wh;
+USE SCHEMA OPT_HOL.DEMO;
+
+-- Let&#39;s say a user ran this query without knowing a Materialized View exists
+-- After execution of the query, check the query profile 
+SELECT  
+        to_char(l_shipdate,&#39;YYYYMM&#39;) as ship_month
+        ,l_orderkey
+        ,sum(l_quantity*l_extendedprice) as order_price
+        ,sum(l_quantity*l_discount) as order_discount
+FROM    
+        lineitem_cl
+WHERE
+        l_orderkey between 1000000 and 2000000
+GROUP BY 
+        ALL;
+
+</code></pre>
+<h3 is-upgraded>Screenshot</h3>
+<ul>
+<li>The image below shows the use of a materialized view even if a user query does not contain the materialized view. <img alt="alt-text-here" src="img/a5a0fce52c5cf7f1.png"></li>
+</ul>
+<h3 is-upgraded>Outcome</h3>
+<ul>
+<li>Refer to <a href="https://docs.snowflake.com/en/user-guide/views-materialized#best-practices-for-materialized-views" target="_blank">Materialized Views Best Practices</a> for considerations on choosing materialized views.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Query Acceleration" duration="10">
+        <p>This section covers use of <a href="https://docs.snowflake.com/en/user-guide/query-acceleration-service" target="_blank">Query Acceleration Service</a> which can accelerate parts of a query workload in a warehouse. When it is enabled for a warehouse, it can improve overall warehouse performance by reducing the impact of outlier queries, which are queries that use more resources than the typical query. The query acceleration service does this by offloading portions of the query processing work to shared compute resources that are provided by the service.</p>
+<p>Examples of the types of workloads that might benefit from the query acceleration service include:</p>
+<ul>
+<li>Ad hoc analytics.</li>
+<li>Workloads with unpredictable data volume per query.</li>
+<li>Queries with large scans and selective filters.</li>
+</ul>
+<p>The query acceleration service can handle these types of workloads more efficiently by performing more work in parallel and reducing the wall-clock time spent in scanning and filtering.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">-- SETTING CONTEXT FOR THE SESSION --
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE hol_compute_wh;
+USE SCHEMA OPT_HOL.DEMO;
+
+-- After execution of the query, check the query profile 
+-- before and after enabling Query Acceleration on the warehouse
+SELECT 
+        i_brand
+        ,sum(ss_quantity)
+        ,sum(ss_wholesale_cost)
+        ,sum(ss_sales_price)
+        ,sum(ss_list_price) 
+FROM 
+        snowflake_sample_data.tpcds_sf10tcl.store_sales ss 
+        JOIN  snowflake_sample_data.tpcds_sf10tcl.Item i
+          ON  i.i_item_sk=ss.ss_item_sk
+WHERE 
+        ss_store_sk=946
+GROUP BY
+        i_brand
+;
+
+alter warehouse hol_compute_wh 
+set enable_query_acceleration=true 
+    query_acceleration_max_scale_factor = 4;
+
+-- Find Queries that could be accelerated (for cost consistency, best to find an application workload with consistent query &#34;templates&#34;).
+-- &#34;Trusted&#34; user warehouses are also excellent use cases for QAS (but will accelerate poorly written queries)
+SELECT 
+        LEFT(qh.QUERY_TEXT,25) as QueryCat
+        ,qh.USER_NAME
+        ,qae.WAREHOUSE_NAME
+        ,COUNT(*) as QueryCount
+        ,AVG(qae.UPPER_LIMIT_SCALE_FACTOR) as AvgScaleFactor
+        ,AVG(ELIGIBLE_QUERY_ACCELERATION_TIME) as AvgTimeSavings
+        ,MAX(UPPER_LIMIT_SCALE_FACTOR) as MaxScaleFactor
+        ,MIN(UPPER_LIMIT_SCALE_FACTOR) as MinScaleFactor
+        ,SUM(ELIGIBLE_QUERY_ACCELERATION_TIME) as TotalAccelerationTime
+FROM    
+        SNOWFLAKE.ACCOUNT_USAGE.QUERY_ACCELERATION_ELIGIBLE qae
+        JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY qh 
+          ON qh.query_id = qae.query_id
+WHERE 
+        qae.WAREHOUSE_NAME IN (&#39;&#39;)
+        AND USER_NAME = &#39;&#39;
+        AND ELIGIBLE_QUERY_ACCELERATION_TIME &gt; 120
+        AND qae.START_TIME &gt;= CURRENT_DATE() - 7
+GROUP BY 
+        ALL
+ORDER BY 
+        TotalAccelerationTime DESC
+LIMIT 1000;
+
+-- Isolate the application queries that can be pulled together into a single warehouse
+SELECT  
+        qae.*
+        ,qh.USER_NAME
+        ,qh.ROLE_NAME
+FROM 
+        SNOWFLAKE.ACCOUNT_USAGE.QUERY_ACCELERATION_ELIGIBLE qae
+        JOIN SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY qh 
+          ON qh.query_id = qae.query_id
+WHERE 
+        qae.WAREHOUSE_NAME IN (&#39;&#39;)
+        AND USER_NAME = &#39;&#39;
+        AND ELIGIBLE_QUERY_ACCELERATION_TIME &gt; 120
+        AND qae.START_TIME &gt;= CURRENT_DATE() - 7
+LIMIT 1000;
+
+SELECT SYSTEM$ESTIMATE_QUERY_ACCELERATION(&#39;&#39;);
+
+</code></pre>
+<h3 is-upgraded>Results Screenshot</h3>
+<p class="image-container"><img alt="QAS" src="img/47865074f7abaefe.png"></p>
+<h3 is-upgraded>Outcome</h3>
+<ul>
+<li>Refer to <a href="https://docs.snowflake.com/en/user-guide/query-acceleration-service#viewing-query-performance" target="_blank">Evaluating Cost and Performance</a> to understand impact of Query Acceleration on workloads in your account.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Search Optimization" duration="10">
+        <p>This section covers use of <a href="https://docs.snowflake.com/en/user-guide/search-optimization-service" target="_blank">Search Optimization</a> which can significantly improve the performance of certain types of lookup and analytical queries. The search optimization service aims to significantly improve the performance of certain types of queries on tables, such as:</p>
+<ul>
+<li>Selective point lookup queries on tables</li>
+<li>Substring and regular expression searches</li>
+<li>Queries on fields in VARIANT, OBJECT, and ARRAY (semi-structured) columns that use the following types of predicates: EQUALITY, IN, ARRAY_CONTAINS, ARRAYS_OVERLAP etc.</li>
+<li>Queries that use selected geospatial functions with GEOGRAPHY values</li>
+</ul>
+<p>The search optimization service is generally transparent to users. Queries work the same as they do without search optimization; some are just faster. To improve performance of search queries, the search optimization service creates and maintains a persistent data structure called a search access path. The search access path keeps track of which values of the table&#39;s columns might be found in each of its micro-partitions, allowing some micro-partitions to be skipped when scanning the table.</p>
+<p>A maintenance service is responsible for creating and maintaining the search access path.</p>
+<h3 is-upgraded>SQL</h3>
+<pre><code language="language-sql" class="language-sql">-- SETTING CONTEXT FOR THE SESSION --
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE hol_compute_wh;
+USE SCHEMA OPT_HOL.DEMO;
+
+SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS(&#39;OPT_HOL.DEMO.CATALOG_RETURNS&#39;)
+  AS estimate_for_table_without_search_optimization;
+
+SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS(&#39;OPT_HOL.DEMO.CATALOG_RETURNS&#39;, &#39;EQUALITY(CR_ITEM_SK)&#39;)
+  AS estimate_for_columns_without_search_optimization;
+
+SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS(&#39;OPT_HOL.DEMO.CATALOG_RETURNS&#39;, &#39;EQUALITY(CR_ITEM_SK,CR_RETURNED_DATE_SK)&#39;)
+  AS estimate_for_columns_without_search_optimization;
+
+SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS(&#39;OPT_HOL.DEMO.LINEITEM&#39;, &#39;SUBSTRING(L_SHIPMODE)&#39;)
+  AS estimate_for_columns_without_search_optimization;
+
+</code></pre>
+<h3 is-upgraded>Results Screenshot</h3>
+<p class="image-container"><img alt="Search Optimization Results" src="img/d23347129c8da00c.png"></p>
+<h3 is-upgraded>Outcome</h3>
+<ul>
+<li>Refer to <a href="https://docs.snowflake.com/en/user-guide/search-optimization/cost-estimation" target="_blank">Search Optimization Cost Estimation and Management</a> for Search Optimization cost management considerations.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="10">
+        <p>Congratulations! You have learned about optimization features and tools to assist in your quest to optimize workloads on your Snowflake account. Apart from the features and options discussed in this guide, the below mentioned resources are worth taking a look to get guidance to optimize workloads on Snowflake.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up warehouse controls to optimize warehouse usage</li>
+<li>How to identify savings opportunities for table storage</li>
+<li>How to implement automatic clustering, materialized views, query acceleration or search optimization service to improve performance of Snowflake workloads</li>
+</ul>
+<h3 is-upgraded>Call to Action</h3>
+<ul>
+<li><a href="https://www.snowflake.com/wp-content/uploads/2023/10/Definitive-Guide-to-Managing-Spend-in-Snowflake.pdf" target="_blank">Definitive Guide to managing spend in Snowflake</a>.</li>
+<li><a href="https://learn.snowflake.com/en/" target="_blank">Snowflake Education</a></li>
+<li><a href="https://www.snowflake.com/snowflake-professional-services/" target="_blank">Professional Services</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

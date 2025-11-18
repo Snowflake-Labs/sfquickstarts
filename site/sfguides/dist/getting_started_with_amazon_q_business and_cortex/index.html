@@ -1,0 +1,370 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Amazon Q Business and Cortex</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_amazon_q_business and_cortex"
+                  title="Getting Started with Amazon Q Business and Cortex"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="15">
+        <p>Cortex Search enables low-latency, high-quality &#34;fuzzy&#34; search over your Snowflake data. Cortex Search powers a broad array of search experiences for Snowflake users including Retrieval Augmented Generation (RAG) applications leveraging Large Language Models (LLMs).</p>
+<p>Cortex Search gets you up and running with a hybrid (vector and keyword) search engine on your text data in minutes, without having to worry about embedding, infrastructure maintenance, search quality parameter tuning, or ongoing index refreshes. This means you can spend less time on infrastructure and search quality tuning, and more time developing high-quality chat and search experiences using your data. Check out the Cortex Search tutorials for step-by-step instructions on using Cortex Search to power AI chat and search applications.</p>
+<p class="image-container"><img src="img/5719997101802620.png"></p>
+<p>Amazon Q Business makes generative AI securely accessible to everyone in your organization. Leveraging your own company&#39;s content, data, and systems, Amazon Q Business makes it easier to get you fast, relevant answers to pressing questions, solve problems, generate content, and take actions on your behalf. Amazon Q Business easily and securely connects to commonly used systems and tools so it can synthesize everything and provide tailored assistance empowering your teams to be more data-driven, creative, and productive.</p>
+<p>Amazon Q Business offers plugins to enhance your application&#39;s functionality. Plugins help streamline tasks and boost productivity by integrating external services into the Amazon Q Business chat interface. With custom plugins from Q customers can quickly and securely connect to Cortex services like Search.</p>
+<h2 is-upgraded>Use Case</h2>
+<p>In this use case you will build a Cortex Search service on the free text data contained in the two manuals <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex" target="_blank">here</a> for pump and pump head maintenance.</p>
+<p>You will build a Cortex service that allows to you to us plain text to query these documents to get information. It is important to note that Cortex Search can scale much more than this use case. Please check out the Cortex Search documentation <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service" target="_blank">here.</a></p>
+<p>The end-to-end workflow will look like this: <img src="img/434e684fccf85f2f.png"></p>
+<ol type="1">
+<li>Ingest .pdf files into Snowflake Stage.</li>
+<li>Using the PARSE_DOCUMENT() and the SPLIT_TEXT_RECURSIVE_CHARACTER() the raw pdf files are converted to a chunked field in a table.</li>
+<li>The Cortex Search service is built on the chunked data.</li>
+<li>Amazon Q Business is connected to the Cortex Search service with a plugin using oauth authentication.</li>
+<li>Users can use Amazon Q Business with Cortex securely and seamlessly.</li>
+<li>Along with the Cortex Plugin users can access other AWS data and services through Amazon Q Business</li>
+</ol>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account with Cortex Search.</li>
+<li>Familiarity with <a href="https://aws.amazon.com/free" target="_blank">AWS</a> and an AWS account.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Using Cortex Search along with complimentary functions in Snowflake.</li>
+<li>Using Amazon Q to leverage generative AI to get quick answers from your data.</li>
+<li>Connect Amazon Q to Snowflake Cortex Search with a custom plugin.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li><a href="https://aws.amazon.com/free" target="_blank">AWS Account</a> with access to Q</li>
+<li>For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build an end-to-end copilot workflow on unstructured data in Snowflake</p>
+<ul>
+<li>to load data to Snowflake via Snowsight</li>
+<li>to extract unstructured data and create chunks in Snowflake</li>
+<li>to create a Snowflake Cortex Search Service on unstructured data</li>
+<li>to create a connection from Amazon Q to Cortex Search with Oauth authentication</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Snowflake and Cortex" duration="5">
+        <p>Download both of the files in <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex" target="_blank">this repo</a> by clicking on each file and clicking the download button near the top right.</p>
+<p>Once you have the files downloaded locally you will go to the Snowflake UI and open a new SQL worksheet and run the below code to create a database that we will be working out with. I&#39;m using the ACCOUNTADMIN role here, but you can use whatever role you know gives you access to create objects (databases, tables, services) in Snowflake.</p>
+<pre><code language="language-sql" class="language-sql">USE ACCOUNTADMIN;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+CREATE OR REPLACE DATABASE PUMP_DB;
+USE DATABASE PUMP_DB;
+CREATE STAGE DOCS 
+	DIRECTORY = ( ENABLE = true ) 
+	ENCRYPTION = ( TYPE = &#39;SNOWFLAKE_SSE&#39; );
+</code></pre>
+<p class="image-container"><img src="img/2ee1af83904c932e.png"></p>
+<p class="image-container"><img src="img/cc385716a51e1679.png"></p>
+<p>Now that you have the database created you can upload the 2 manuals to a stage in the PUMP_DB database in the DOCS stage by clicking on Data on the left side of the Snowflake UI, clicking through to find the DOCS stage in the PUBLIC schema then clicking &#34;+ files&#34; in the top right to upload the files from your local machine.</p>
+<p class="image-container"><img src="img/fe8741b90175dbc4.png"></p>
+<p>Now, you will run the below code that will parse the data out of the documents into a field in a table PUMP_TABLE, then chunk the fields into a new table PUMP_TABLE_CHUNK.</p>
+<pre><code language="language-sql" class="language-sql">--Create Table for text data
+CREATE OR REPLACE TABLE PUMP_TABLE AS
+SELECT 
+    &#39;1290IF_PumpHeadMaintenance_TN&#39; as doc,
+    SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@PUMP_DB.PUBLIC.DOCS, &#39;1290IF_PumpHeadMaintenance_TN.pdf&#39;, {&#39;mode&#39;: &#39;LAYOUT&#39;}) as pump_maint_text;
+
+INSERT INTO PUMP_TABLE (doc, pump_maint_text)
+SELECT &#39;PumpWorks 610&#39;, SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@PUMP_DB.PUBLIC.DOCS, &#39;PumpWorks 610 PWI pump_Maintenance.pdf&#39;, {&#39;mode&#39;: &#39;LAYOUT&#39;});
+
+-- Create table with chunked text
+CREATE OR REPLACE TABLE PUMP_TABLE_CHUNK AS
+SELECT
+   TO_VARCHAR(c.value) as CHUNK_TEXT, DOC
+FROM
+   PUMP_TABLE,
+   LATERAL FLATTEN( input =&gt; SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
+      TO_VARCHAR(pump_maint_text:content),
+      &#39;none&#39;,
+      700,
+      100
+   )) c;
+SELECT * FROM PUMP_TABLE_CHUNK;
+</code></pre>
+<p>You can see that we&#39;re setting the chunks up to be up to 700 tokens with 100 tokens overlap. After the initial setup you can adjust these settings as you would like. Additionally, we are using&#39;none&#39; for the format rather than ‘markdown&#39;. You can see more information using the SPLIT_TEXT_RECURSIVE_CHARACTER() funciton <a href="https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex" target="_blank">here.</a></p>
+<p>Next, we will run the code on the CHUNK_TEXT field to create a Cortex Search service.</p>
+<pre><code language="language-sql" class="language-sql">-- Create Search Service
+CREATE OR REPLACE CORTEX SEARCH SERVICE PUMP_SEARCH_SERVICE
+  ON CHUNK_TEXT
+  ATTRIBUTES DOC
+  WAREHOUSE = HOL_WH
+  TARGET_LAG = &#39;30 day&#39;
+  AS (
+    SELECT CHUNK_TEXT as CHUNK_TEXT, DOC FROM PUMP_TABLE_CHUNK);
+</code></pre>
+<p>Notice how we&#39;re setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we&#39;re setting up the service so that additional filters can be used on the attribute &#34;DOC&#34;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Q Business" duration="5">
+        <p>Head to you AWS console search &#34;Amazon Q Business&#34; then select the orange button &#34;Create Application&#34; then accept all of the default/recommended settings for creating your application, make sure that you have at least one user created for the app with a Q Business Pro subscription the select Create.</p>
+<p class="image-container"><img src="img/f7316b0aefd92c40.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up OAuth" duration="10">
+        <p>From the Q Business Application Details screen copy the &#34;Deployed URL&#34; and save it to a notebook.</p>
+<p class="image-container"><img src="img/298ad94f0b9ba59d.png"></p>
+<p>Next we will run the code which creates a security integration in Snowflake that we will use to authenticate with Q Business. The only change you will have to make to this code is replacing the value of the &#34;Deployed URL&#34; from the Q App in the value  below to complete the OAUTH_REDIRECT_URI value.</p>
+<pre><code language="language-sql" class="language-sql">--create custom oauth
+CREATE OR REPLACE SECURITY INTEGRATION Q_AUTH_HOL
+  TYPE = OAUTH
+  ENABLED = TRUE
+  OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+  OAUTH_REFRESH_TOKEN_VALIDITY = 3600
+  OAUTH_CLIENT = CUSTOM
+  OAUTH_CLIENT_TYPE = CONFIDENTIAL
+  OAUTH_REDIRECT_URI = &#39;&lt;Deployed URL&gt;/oauth/callback&#39;;
+
+GRANT USAGE on database PUMP_DB to role PUBLIC;
+GRANT USAGE on schema PUBLIC to role PUBLIC;
+GRANT USAGE on CORTEX SEARCH SERVICE PUMP_SEARCH_SERVICE to role PUBLIC;
+
+DESC INTEGRATION Q_AUTH_HOL;
+
+SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS(&#39;Q_AUTH_HOL&#39;);
+</code></pre>
+<p>After the security integration is created we grant the PUBLIC roles usage on the database, schema and the Search service.</p>
+<p>Additionally, after the &#34;SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS(‘Q_AUTH_HOL&#39;);&#34; query copy the OAUTH_CLIENT_ID and the OAUTH_CLIENT_SECRET. You can learn more about using Snowflake for Oauth <a href="https://docs.snowflake.com/en/user-guide/oauth-custom" target="_blank">here.</a></p>
+<p>Also, make note of your Snowflake url. You can do this by going to your alias in the bottom left of the Snowflake UI finding your account then selecting the &#34;link&#34; button that says &#34;copy account url&#34; when you hover over it.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Cortex Plugin" duration="15">
+        <p>Head back to your Q Business application and select &#34;Plugins&#34; under &#34;Actions&#34; on the left side. Select the orange &#34;Add Plugin&#34; button then &#34;Create Custom Plugin&#34; in the top right.</p>
+<p class="image-container"><img src="img/27fa3406d5ff10c0.png"></p>
+<ol type="1">
+<li>name the plugin &#34;cortex-pump&#34; and provide a description.</li>
+<li>Under &#34;API Schema&#34; select &#34;Define with in-line OpenAPI schema editor&#34; and make sure that &#34;YAML&#34; is selected and paste in the below openapi spec. Several notes:<ul>
+<li>you will have to copy in your  in 3 spots below where indicated.</li>
+<li>the path defined in the openapi schema assumes that you set up you Cortex Search service in the pump_db database and in the int public schema with the the name PUMP_SEARCH_SERVICE. If you did not make any changes to the Snowflake code that you already ran in this quickstart you will be good and not have to change anything.</li>
+<li>the ‘description&#39; value here is important as you will see Q uses this to know when to route questions to the plugin.</li>
+</ul>
+</li>
+</ol>
+<pre><code language="language-yaml" class="language-yaml">openapi: 3.0.0
+info:
+  title: Cortex Search API
+  version: 2.0.0
+servers:
+  - url: &lt;snowflake url&gt;
+paths:
+  /api/v2/databases/pump_db/schemas/public/cortex-search-services/PUMP_SEARCH_SERVICE:query:
+    post:
+      parameters:
+      - in: header
+        description: Customer Snowflake OAuth header
+        name: X-Snowflake-Authorization-Token-Type
+        schema:
+          type: string
+          enum: [&#34;OAUTH&#34;]
+        required: true
+      summary: Query the Cortex Search service
+      description: Submit a query to the Cortex Search service in order to answer questions specifically about Pumps or other mechanical parts or repair or maintenance information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: &#39;#/components/schemas/QueryRequest&#39;
+      responses:
+        &#39;200&#39;:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: &#39;#/components/schemas/QueryResponse&#39;
+      security:
+        - oauth2: []
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The search query
+        limit:
+          type: integer
+          description: The maximum number of results to return
+          example: 5
+    QueryResponse:
+      type: object
+      description: Search results.
+      properties:
+        results:
+          type: array
+          description: List of result rows.
+          items:
+            type: object
+            additionalProperties: true
+            description: Map of column names to bytes.
+        request_id:
+          type: string
+          description: ID of the request.
+      required:
+      - results
+      - request_id
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: &lt;snowflake url&gt;/oauth/authorize
+          tokenUrl: &lt;snowflake url&gt;/oauth/token-request
+          scopes:
+            refresh_token: Refresh the OAuth token
+            session:role:PUBLIC: The Snowflake role for the integration
+
+</code></pre>
+<p class="image-container"><img src="img/11d75244e86cabcb.png"></p>
+<ul>
+<li>Under &#34;Authentication&#34; select &#34;Authentication required&#34;.</li>
+<li>Under &#34;AWS Secrets Manager&#34; select the dropdown menu and select &#34;create an aws Secrets Manager secret&#34;. <ul>
+<li>Give the secret a name like &#34;...-cortex-pump&#34; then populate the &#34;Client Secret&#34; and the &#34;Client ID&#34; with the values from the last Snowflake query in the previous step.</li>
+<li>The &#34;OAuth callback url&#34; will be the same as the value for the OAUTH_REDIRECT_URI parameter that was used when creating the security integration object in Snowflake.</li>
+</ul>
+</li>
+<li>Click &#34;Create&#34; when done.</li>
+</ul>
+<p class="image-container"><img src="img/978c78817ad4c60b.png"></p>
+<p>Last, select &#34;Create and use a new service role&#34; to quickly create and use a role that has permissions to use Q Business.</p>
+<p>IF you elect to use an existing role you will have to add the below permission to that role.</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Sid&#34;: &#34;AllowQBusinessToGetSecretValue&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Action&#34;: [
+                &#34;secretsmanager:GetSecretValue&#34;
+            ],
+            &#34;Resource&#34;: [
+                &#34;&lt;secrets ARN&gt;&#34;
+            ]
+        }
+    ]
+}
+</code></pre>
+<p>Finally, select &#34;Add Plugin&#34; and it will take 1-2 minutes to get the plugin created.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Q and Cortex" duration="5">
+        <p>Navigate into the &#34;cortex-pump&#34; plugin and select &#34;Preview web experience&#34; in the top right, a new window will open to edit the web experience, leave it as-is and select &#34;View web experience&#34; in the top right:</p>
+<p class="image-container"><img src="img/ca7ef1c3d4ad35da.png"></p>
+<p>In the chat select &#34;plugin&#34; at the bottom and select the plugin we created for cortex-pump. When you select the plugin you are signaling to Q Business that you want to specifically invoke that action as opposed to using a different source. Ask the below question:</p>
+<ul>
+<li>What is the part description for part number G4204-68741?</li>
+</ul>
+<p>Q Business will likely attempt to create query,  retype (or re-paste) the question in the query window and select &#34;Submit&#34;.</p>
+<p>You will be asked to authorize and use the browser to authorize one time.</p>
+<p>Once complete Q will send the request to the plugin and you will get an answer!</p>
+<p class="image-container"><img src="img/fcbae9d4d3d6f8be.png"></p>
+<p>You can check the answer against the manuals, it should match! Test out other prompts including the examples below:</p>
+<ul>
+<li>What are the pump head assembly parts?</li>
+<li>Should I use a refurbished pump head for maintenance and repair OR disassemble a pump head?</li>
+<li>What are the high level steps for Replacing the Heat Exchanger?</li>
+<li>What are best ways to prevent the pump from damage?</li>
+<li>What are spare parts that are included with this pump?</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>This quickstart is just that, a quick way to get you started with using Amazon Q with Snowflake Cortex, though with this start you are now enabled to extend the quickstart in the below ways: - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service. - Use a Cortex Q plugin alongside Quicksight to get next level answers on your data that&#39;s represented in your dashboards. - Use multiple plugins to Cortex from Q along with AWS service to create a robust web app for getting answers from your data with plain text.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>Loading data to Snowflake via Snowsight</li>
+<li>Extracting unstructured data and creating chunks in Snowflake</li>
+<li>Creating a Snowflake Cortex Search Service on unstructured data</li>
+<li>Creating a connection from Amazon Q to Cortex Search with Oauth authentication using Q plugins</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together:</p>
+<ul>
+<li><a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex</a></li>
+<li><a href="https://aws.amazon.com/q/?trk=c570e8a2-ec3c-4968-baa4-f8537e37dd1d&sc_channel=ps&s_kwcid=AL!4422!10!71949557907688!71950102400240&ef_id=07cc246a6d4218358de8430ee23fc18e:G:s&msclkid=07cc246a6d4218358de8430ee23fc18e" target="_blank">Amazon Q</a></li>
+<li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/2d4e5ea4-78c8-496f-8246-50d8971414c9/en-US/01-overview" target="_blank">Amazon Bedrock and Snowflake Cortex</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_bedrock_streamlit_and_snowflake/index.html?index=..%2F..index#0" target="_blank">Using Snowflake, Streamlit and External Access with amazon Bedrcok</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

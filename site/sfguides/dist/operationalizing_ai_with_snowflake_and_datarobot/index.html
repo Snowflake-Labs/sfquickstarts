@@ -1,0 +1,282 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Operationalizing AI with Snowflake and DataRobot</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="operationalizing_ai_with_snowflake_and_datarobot"
+                  title="Operationalizing AI with Snowflake and DataRobot"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>This guide will take you through the process of developing, deploying, and monitoring machine learning models within your Snowflake environment using DataRobot and Snowpark.</p>
+<p>The use case for this lab is a fraud detection use case, and we will perform  supervised machine learning by building a binary classification model to help predict whether a transaction is likely to be fraud.</p>
+<p>The historical dataset we will be working with today contains details about the transaction. Here is a description of the features: <br><br><img src="img/ed162cbfab6f17d2.png"><br><br></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Basic knowledge of SQL, and database concepts and objects</li>
+<li>Basic understanding of Snowpark and Python</li>
+<li>Basic understanding of data science and machine learning</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Utilizing Snowpark and DataRobot-hosted Notebooks for feature engineering on your Snowflake data</li>
+<li>Applying DataRobot Machine Learning to build, analyze model performance, and transform it into actionable insights.</li>
+<li>Basic understanding of data science and machine learning</li>
+<li>Using DataRobot AI Production capabilities and Snowpark to simplify the deployment and monitoring processes within the Snowflake environment</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the <code>ACCOUNTADMIN</code> role, which is required for this lab). Be advised to configure it to be ‘Enterprise&#39; and on AWS.</li>
+<li>Download the following notebook that we will work on most of the lab <a href="https://github.com/datarobot-community/ai-accelerators/blob/main/ecosystem_integration_templates/Snowflake_snowpark_template/Native%20integration%20DataRobot%20and%20Snowflake%20Snowpark-Maximizing%20the%20Data%20Cloud.ipynb" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download the notebook</paper-button></a></li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Snowflake objects, including tables and warehouses, to scale and manage your data</li>
+<li>Acquire a training dataset from a Snowflake table using Snowpark for Python</li>
+<li>Feature engineering: analyze data and create new features using Snowpark</li>
+<li>Build a new DataRobot project with over 50+ machine learning models automatically to measure their performance and interpret</li>
+<li>Analyze and evaluate model performance and explainability using DataRobot predictive experimentation</li>
+<li>Deploy the recommended model to Snowflake using DataRobot AI Production</li>
+<li>Score the model via Snowpark for Java</li>
+<li>Monitor the model with DataRobot AI Production</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake" duration="5">
+        <p>The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.</p>
+<p><a href="https://datarobot.box.com/s/kucpd28zqvz4p38brsghye01ht2bn1bw" target="_blank"><paper-button class="colored" raised><iron-icon icon="file-download"></iron-icon>Download .sql File</paper-button></a><br><br></p>
+<p>At this point, log into your Snowflake account and open a new <code>Worksheet</code>. If you have just created a free trial account, you will land in the <code>Learn</code> section. Simply navigate to the <code>Worksheets</code> tab on the left and click <code>+ Worksheet</code> in the top right hand corner.</p>
+<p class="image-container"><img src="img/3d18f93f9c2fec04.png"><br><br></p>
+<p>To ingest our script in the Snowflake UI, click the down arrow next to the time your notebook was created in the top left hand side of your screen and load our <code>Snowflake_Datarobot_HOL.sql</code> script using the <code>Import SQL from File</code> button. You can also change the name of this worksheet to &#34;Snowflake-DataRobot VHOL&#34;</p>
+<p class="image-container"><img src="img/433ae8f7dd6aad2e.png"><br><br></p>
+<p>Snowflake provides &#34;worksheets&#34; as the spot for you to execute your code. For each worksheet you create, you will need to set the &#34;context&#34; so the worksheet knows how to behave. A &#34;context&#34; in Snowflake is made up of 4 distinctions that must be set before we can perform any work: the &#34;role&#34; we want to act as, the &#34;database&#34; and &#34;schema&#34; we want to work with, and the &#34;warehouse&#34; we want to perform the work.</p>
+<p>Lets go ahead and set the role we want to act as, which will be <code>ACCOUNTADMIN</code> to begin with. This can either be done manually in the UI or programmatically in a worksheet (<code>ACCOUNTADMIN</code> is the default role for a first time user). Lets do so programmatically in our worksheet by executing our first line of code:</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE accountadmin;
+</code></pre>
+<p>To execute this code, all we need to do is place our cursor on the line we wish to run and then either hit the &#34;run&#34; button at the top left of the worksheet or press <code>Cmd/Ctrl + Enter</code>.</p>
+<p>In addition to traditional SQL statements, Snowflake Data Definition (<a href="https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html" target="_blank">DDL</a>) commands, such as setting the worksheet context, we will also execute the following code within the worksheet. The &#34;role&#34;: <code>ACCOUNTADMIN</code>, we already set earlier. To set our &#34;database&#34;, &#34;schema&#34;, and &#34;warehouse&#34;, execute the following code:</p>
+<pre><code language="language-sql" class="language-sql">USE DATABASE SANDBOX;
+USE SCHEMA public;
+USE WAREHOUSE DEMO_WH;
+</code></pre>
+<p>Each step throughout the guide has an associated SQL command to perform the work we are looking to execute, and so feel free to step through each action running the code line by line as we walk through the lab.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Snowflake Table" duration="2">
+        <p>As part of the lab, we are going to create 2 tables:</p>
+<ul>
+<li><code>TRAIN_DATA</code> – The dataset that we will use to train our machine learning model</li>
+<li><code>SCORING_DATA</code> – Out of sample data that we will use to score and validate our model</li>
+</ul>
+<p>(We will create both both through DataRobot Notebooks)</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connecting Snowflake with DataRobot" duration="5">
+        <p>At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer machine learning capabilities, and therefore, happily partners with the leading data science and machine learning partners in the industry. We are on a mission to help us figure out which transactions are most likely to be fraud and DataRobot can help us build a machine learning model to answer that question.</p>
+<p>Snowflake&#39;s Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible. To get here, click our &#34;Home&#34; button and then navigate to &#34;Admin&#34; and then &#34;Partner Connect&#34;. This should take you to the following screen where you will see many of the Snowflake partners, and through a simple method of setting up an account and integration, allow you to quickly move data into a partner tool. Click the &#34;Data Science &amp; ML&#34; category and click &#34;DataRobot&#34;.</p>
+<p class="image-container"><img src="img/63996c04876a4c28.png"><br><br></p>
+<p>We have all the Snowflake objects we need created already, so press &#34;Connect&#34;.</p>
+<p class="image-container"><img src="img/bbfaf2a1722edb4e.png"></p>
+<p>And activate our account, so press &#34;Activate&#34;.</p>
+<p class="image-container"><img src="img/88c8ab6ad141caac.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting Started with DataRobot" duration="2">
+        <p>Go ahead and set up a password, and then click &#34;Sign up&#34; for us to proceed.</p>
+<p class="image-container"><img src="img/ff4f6cb534adcb94.png"><br><br></p>
+<p>DataRobot is software-as-a-service (SaaS) application deployed on the cloud for your convenience, provides all the tools you need to confidently build, deploy, manage, and govern both generative and predictive AI solutions for enterprises.</p>
+<p>Click &#34;Get started&#34; for us to proceed.</p>
+<p class="image-container"><img src="img/dbc923075f3a7162.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up a DataRobot Use Case" duration="5">
+        <p>This is Workbench, and is the next user interface and a logical update from DataRobot Classic. All new features will be built in the new Workbench.</p>
+<p>DataRobot provides easy access to all the necessary resources. Personal and shared projects are displayed, acting as a centralized folder for organized AI assets. It eliminates the need for manual folder management and allows quick access to datasets, experiments, apps, and notebooks. The organized approach facilitates tracking, management, asset consolidation, collaboration, and efficiency for individuals and teams.</p>
+<p>Let&#39;s create our Fraud Detection use case: On the top right click ‘+ Create Use Case&#39; and name it ‘Fraud Detection&#39;</p>
+<p class="image-container"><img src="img/ed3c3bc0a1178a50.png"><br><br></p>
+<p>Interacting with DataRobot is flexible. You can choose between a low-code option or code-first options.</p>
+<p>In the code-first option, you have the freedom to use DataRobot as an API call within your preferred notebook, similar to any modern data science library.</p>
+<p>Alternatively, you can utilize DataRobot&#39;s fully managed and hosted Notebooks to keep everything organized across teams, which is what we are going to do today.</p>
+<p>Now we can bring our Notebook: click on the ‘Notebooks&#39; tab and import the notebook from the prerequisites</p>
+<p class="image-container"><img src="img/81dc22b3adbea718.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DataRobot Notebook" duration="2">
+        <p>These notebooks support Python and R, letting data scientists easily run code with all essential tools on the platform. They offer built-in revision history for simple checkpointing and version reverting.</p>
+<p>DataRobot&#39;s notebooks negate the need for adjusting compute resources and images, allowing focus on work with one click, devoid of handling basic infrastructure tasks. Additionally, they provide common code snippets for time-saving and focus on creative experimentation.</p>
+<p>Integration with OpenAI offers superior Generative AI assistance, automated code generation, enhanced datasets, insights, and optimization, boosting productivity and performance.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DataRobot Notebook SetUp" duration="5">
+        <p>Before running the notebook or executing any cells, ensure the following environment variable:</p>
+<ol type="1">
+<li>Make sure the environment is Python 3.8</li>
+<li>Configure the following environmental variables (with your own Snowflake credentials):</li>
+</ol>
+<ul>
+<li>‘snowflake_user&#39;: Snowflake user name</li>
+<li>‘snowflake_password&#39;: Snowflake password</li>
+<li>‘snowflake_account&#39;: Snowflake account name (You can find it in the confirmation email from Snowflake - from the Dedicated Login URL: https://abcd-ab03384.snowflakecomputing.com - ‘abcd-ab03384&#39; is the account name)</li>
+</ul>
+<p>Most of this workflow is executed by the notebook, but you will create a deployment and monitor it via the DataRobot GUI. Supporting documentation for these steps are included in the notebook.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="DataRobot Notebook Experimentation" duration="15">
+        <p>Let&#39;s move to run cells and the instructions in the notebook. We will come back to the guide before moving to the ‘Model Deployment&#39; stage.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Snowflake Prediction Environment" duration="5">
+        <p>First, we need to change to ‘DataRobot Classic&#39;. ‘Deployments&#39; and our AI production capabilities are in ‘Classic&#39; and will be part of the new experience 11/7, and all functionality available in Classic will eventually migrate into the new experience.</p>
+<p class="image-container"><img src="img/4fb4f46604331712.png"><br><br></p>
+<p>Because we would like to deploy a model into the ‘Finance&#39; schema we need to create a new data connection.</p>
+<p>Click on the top right icon » ‘Data connections&#39; » Put your credentials + Add parameter - the schema ‘FINANCE&#39;</p>
+<p class="image-container"><img src="img/b38b62f5722410b6.png"><br><br></p>
+<p>Because we are going to deploy the model to Snowflake, we need to set up a Snowflake prediction environment.</p>
+<p>This means that DataRobot will completely manage and automatically control this prediction environment, including model deployment and replacement.</p>
+<p>Press on the ‘Deployment&#39; Tab » ‘Prediction Environments&#39; tab »Add prediction environment</p>
+<ol type="1">
+<li>Create prediction environment</li>
+<li>Choose the Snowflake data connection you have</li>
+<li>Press add environment</li>
+</ol>
+<p class="image-container"><img src="img/7ff29415be706f42.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Register the Model and Create a Snowflake Demployment" duration="5">
+        <p>To keep a version of the model we are going to deploy, we will add it to the registry.</p>
+<p>Press on the ‘Models&#39; tab » press on the desired model » press on ‘Predict&#39; tab » press on ‘Deploy&#39; tab » click ‘Add to Model Registry&#39;.</p>
+<p class="image-container"><img src="img/c39d4e8c91ccdd26.png"><br><br></p>
+<p>Press on the ‘Model registry&#39; tab » press on ‘Model Packages&#39; tab » press on the desired model » ‘Deploy model package&#39;.</p>
+<p class="image-container"><img src="img/ca145d907e382349.png"><br><br></p>
+<p>You can pick where to deploy it, here we choose Snowflake and choosing the prediction environment we set earlier.</p>
+<p class="image-container"><img src="img/2e9c827fd956b6dd.png"><br><br></p>
+<p>We are ready to deploy our model to Snowflake. Create the deployment by clicking ‘Deploy model&#39;. The JAVA UDF will be pushed automatically to your Snowflake environment.</p>
+<p class="image-container"><img src="img/18632740225c11a.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Check Deployment Status" duration="5">
+        <p>To ensure the deployment process was successful, you can go to the ‘Deployment&#39; tab and look for the deployment. We can see that the management agent is now running, and we have a health indicator in the GUI.</p>
+<p>To ensure the UDF was pushed you can check if the UDF appears in your snowflake account, under your schema.</p>
+<p class="image-container"><img src="img/d8dfb159164ba7a1.png"><br><br></p>
+<p>Please copy the deployment id from the URL, we will use it with the notebook.</p>
+<p class="image-container"><img src="img/5671146c71b158be.png"><br><br></p>
+<p>Now we can go back to the notebook to score our prediction data with Snowpark, see the results and come back here in the ‘Model monitoring&#39; section</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Monitoring job" duration="5">
+        <p>To make sure business decisions are aligned with external and internal factors, you need to monitor the model performance and understand if you need to replace or retrain it.</p>
+<p>DataRobot provides the flexibility to do that with models that are deployed in platforms outside of DataRobot, such as Snowflake.</p>
+<p>Let&#39;s define a monitoring job to read past predictions and/or actuals from a database table.</p>
+<p>Press on the ‘Deployment&#39; Tab » Choose the deployed model » Press on Job Definitions tab » Add job definition</p>
+<ol type="1">
+<li>Configure the table and columns to track - we choose the predictions columns ‘TRUE_FRAUD&#39; and ‘FALSE_FRAUD&#39;.Optional: track actuals for model accuracy</li>
+<li>Decide job schedule - you can decide if this job will run immediately or on a scheduled basis. This decision is based on your business rules and how often there is new data. For this lab, let&#39;s choose immediately</li>
+</ol>
+<p>Press ‘Save and run monitoring job definition&#39;</p>
+<p class="image-container"><img src="img/c1bc5fa145412ce8.png"><br><br></p>
+<p>We see that the job is being executed and right after that the job has been completed</p>
+<p class="image-container"><img src="img/585e93caa0cc0184.png"><br><br></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Track Model Performance" duration="2">
+        <p>DataRobot will monitor the predictions and the actual values and organize them over time in our Monitoring Engine to track data drift and accuracy for the model.</p>
+<p class="image-container"><img src="img/ccbebe7e908aaf3d.png"><br><br></p>
+<p>These out-of-the-box graphs will change over time and can help determine the model&#39;s accuracy.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="3">
+        <p>Together with Snowflake and DataRobot you can:</p>
+<ol type="1">
+<li>Empower Your Data Capabilities: By merging the power of Snowpark and DataRobot-hosted Notebooks, enhance your feature engineering capabilities on Snowflake data. Dive deep into the world of data science and machine learning to transform raw data into actionable insights seamlessly.</li>
+<li>Experience Comprehensive Building Tools: Elevate your data management skills by constructing vital Snowflake objects and experience automated machine learning, ensuring optimal performance and understanding.</li>
+<li>Efficient Deployment &amp; Seamless Monitoring: Simplify and streamline your deployment journey in the Snowflake environment. With the amalgamation of DataRobot AI Production capabilities and Snowpark, ensure not just the deployment but also the scoring and proactive monitoring of your models, ensuring maximum uptime and efficiency.</li>
+</ol>
+<p>For more, check our <a href="https://www.snowflake.com/en/why-snowflake/partners/technology-partners/DataRobot/" target="_blank">partnership page</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

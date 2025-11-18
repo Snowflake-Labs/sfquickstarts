@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "redpanda-connect-ingestion-with-snowpipe-streaming",
+  "duration": 27,
+  "title": "Ingesting data with Snowpipe Streaming using Redpanda Connect",
+  "summary": "How to use Redpanda Connect and Snowpipe Streaming to ingest data into Snowflake.",
+  "source": "redpanda-connect-ingestion-with-snowpipe-streaming/redpanda-connect-ingestion-with-snowpipe-streaming.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "ingestion",
+    "redpanda",
+    "snowpipestreaming",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "redpanda-connect-ingestion-with-snowpipe-streaming"
+}

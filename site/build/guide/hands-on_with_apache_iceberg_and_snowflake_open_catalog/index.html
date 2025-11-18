@@ -1,0 +1,547 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Lakehouse with Apache Iceberg and Snowflake Open Catalog</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="hands-on_with_apache_iceberg_and_snowflake_open_catalog"
+                  title="Build a Lakehouse with Apache Iceberg and Snowflake Open Catalog"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Snowflake&#39;s native integration with Apache Iceberg empowers organizations to build a highly interoperable and open lakehouse architecture. Additionally, Snowflake Open Catalog, a managed service for Apache Polaris, offers robust role-based access controls, ensuring seamless data governance and secure collaboration across multiple engines.</p>
+<p>This guide covers how to create managed Apache Iceberg™ tables in Snowflake using a csv file and syncing the Iceberg table with Snowflake Open Catalog</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to set up Snowflake Open Catalog</li>
+<li>Creating and configuring external volumes for Apache Iceberg tables</li>
+<li>Creating and managing Apache Iceberg tables in <a href="https://signup.snowflake.com/" target="_blank">Snowflake</a></li>
+<li>Syncing Iceberg tables with Snowflake Open Catalog</li>
+<li>Querying Iceberg data from different engines</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to an AWS account that you have full administrator permissions to (you can use/create your own personal AWS account). Note that this will incur only minimal charges with the steps followed in the HOL (less than $1 USD)</li>
+<li>Access to a Snowflake account that you have ORGADMIN permissions to (you can use/create your own personal Snowflake account). Note that this will incur only minimal charges with the steps followed in the HOL (less than $5 USD)</li>
+<li>Verify that all the resources ( S3 Bucket, <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a>, Snowflake Open Catalog account )  are in the same cloud and same region. <strong>This quickstart uses AWS US West-2</strong></li>
+<li>VS Code (optional, for Spark integration)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <h2 is-upgraded>Set Up Snowflake Open Catalog</h2>
+<ul>
+<li>Sign in to your <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Change your active role to ORGADMIN</li>
+<li>Click Admin -&gt; Accounts</li>
+<li>Click the dropdown arrow next to &#34;+ Account&#34; in the top right</li>
+</ul>
+<p class="image-container"><img alt="create snowflake open catalog account" src="img/66247d3a40bd0206.PNG"></p>
+<ul>
+<li>In the dialog box that pops up: For &#34;Cloud&#34;, choose &#34;AWS&#34; For &#34;Region&#34;, choose &#34;US West-2&#34; Don&#39;t change the &#34;Edition&#34;, leave it as default Click &#34;Next&#34;</li>
+<li>In the next screen: For &#34;Account Name&#34;, type in &#34;DECONNECT_HOL_DEMO&#34; For &#34;User Name&#34;, type in &#34;admin&#34; For &#34;Password&#34;, type in a password that meets the requirements (Must be at least 8 characters long, contain at least 1 digit, 1 uppercase letter and 1 lowercase letter). Note you&#39;ll have to change this password on first login For &#34;Email&#34;, type in your Snowflake email address Click &#34;Create Account&#34;</li>
+<li>In the next step, you should see &#34;Account created successfully&#34; Copy the &#34;Account Locator URL&#34; value and paste it in the HOL spreadsheet Now click on the value for &#34;Account Locator URL&#34; and it&#39;ll open in a new tab. Note you may get a 404 error while the account is being provisioned. Wait a minute or two and refresh the page and it&#39;ll go away Enter your user name and password and login If you have MFA set up on your Snowflake account, you&#39;ll be prompted to set up MFA for this account. Go through the steps to set that up. You&#39;ll be prompted to reset your password. Enter a new password that meets the same requirements (and can&#39;t be the same one you set in step 1.f.iii) Once you click &#34;Reset&#34;, you&#39;ll be logged in and redirected to the home page of Snowflake Open Catalog</li>
+</ul>
+<p class="image-container"><img alt="open catalog home page" src="img/e67d7b70bfeb31bd.PNG"></p>
+<h2 is-upgraded>Creating an S3 Bucket</h2>
+<ul>
+<li>Open a new tab and sign in to the AWS Management Console.</li>
+<li>In the top right corner, change your region to &#34;US West-2&#34;</li>
+<li>On the home dashboard, search for and select S3.</li>
+<li>Select Create bucket.</li>
+<li>On the Create bucket page: For Bucket name, enter &#34;deconnect-hol-demo-&#34; where  is your name (this is just to make it unique since you bucket names have to be unique globally, feel free to put whatever you want as a suffix, just only use characters, numbers, and hyphens) Leave the rest of the configuration default Select Create bucket.</li>
+<li>Once it&#39;s created successfully, on the next screen (S3 buckets list), click the name of the S3 bucket you created</li>
+<li>On the right, click &#34;Create folder&#34;</li>
+<li>On the next screen: For &#34;Folder name&#34;, enter &#34;snowflake-managed-iceberg&#34; Leave the rest of the configurations as default Click &#34;Create folder&#34;</li>
+<li>Click the checkbox next to the folder name you just created. Then click &#34;Copy S3 URI&#34;. Paste this value in the HOL spreadsheet.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup IAM Roles &amp; Policies" duration="10">
+        <h2 is-upgraded>Create an IAM policy that grants access to your S3 location</h2>
+<ul>
+<li>In the AWS Management Console, search or browse to IAM</li>
+<li>In the navigation pane on the left under &#34;Access management&#34;, select &#34;Account settings&#34;</li>
+<li>Under Security Token Service (STS), in the Endpoints list, find the line for <strong>US West-2</strong>. If the STS status is inactive, set the toggle to Active.</li>
+</ul>
+<p class="image-container"><img alt="sts endpoints page" src="img/bf04ab9a4ad50b08.PNG"></p>
+<ul>
+<li>In the navigation pane on the left under &#34;Access management&#34;, select &#34;Policies&#34;</li>
+<li>Select &#34;Create Policy&#34; in the top right</li>
+<li>On the next screen: For Policy editor, select JSON. Replace the pre-populated JSON contents of the Policy Editor with the following JSON. Note don&#39;t click save after pasting yet.</li>
+</ul>
+<pre><code language="language-json" class="language-json">{
+      &#34;Version&#34;: &#34;2012-10-17&#34;,
+      &#34;Statement&#34;: [
+            {
+               &#34;Effect&#34;: &#34;Allow&#34;,
+               &#34;Action&#34;: [
+                  &#34;s3:PutObject&#34;,
+                  &#34;s3:GetObject&#34;,
+                  &#34;s3:GetObjectVersion&#34;,
+                  &#34;s3:DeleteObject&#34;,
+                  &#34;s3:DeleteObjectVersion&#34;
+               ],
+               &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;my_bucket&gt;/*&#34;
+            },
+            {
+               &#34;Effect&#34;: &#34;Allow&#34;,
+               &#34;Action&#34;: [
+                  &#34;s3:ListBucket&#34;,
+                  &#34;s3:GetBucketLocation&#34;
+               ],
+               &#34;Resource&#34;: &#34;arn:aws:s3:::&lt;my_bucket&gt;&#34;,
+               &#34;Condition&#34;: {
+                  &#34;StringLike&#34;: {
+                        &#34;s3:prefix&#34;: [
+                           &#34;*&#34;
+                        ]
+                  }
+               }
+            }
+      ]
+   }
+</code></pre>
+<pre><code>Before clicking save, replace &#34;&lt;my_bucket&gt;&#34; with the name of the bucket you specified in step 2.e.i (i.e., deconnect-hol-demo-&lt;name&gt;) in both places. Note that the value you replace with this should just be the name of the bucket (&#34;deconnect-hol-demo-&lt;name&gt;&#34;) and not include the protocol (i.e., &#34;s3://&#34;)
+In the bottom right, click &#34;Next&#34;
+For &#34;Policy name&#34;, enter &#34;deconnect-hol-demo-policy&#34;
+Scroll down, and in the bottom right click &#34;Create policy&#34;
+</code></pre>
+<h2 is-upgraded>Create an IAM role to grant privileges on your S3 bucket</h2>
+<ul>
+<li>In the navigation pane on the left under &#34;Access management&#34;, select &#34;Roles&#34;</li>
+<li>Select &#34;Create role&#34;</li>
+<li>For &#34;Trusted entity type&#34;, select &#34;AWS account&#34;</li>
+<li>Under &#34;An AWS account&#34;: Select the radio button for &#34;This account (&lt;account_id&gt;)&#34; Check the box that says &#34;Require external ID&#34; In the text box that shows up after you check that box, enter &#34;deconnect_hol_demo&#34; Click &#34;Next&#34;</li>
+<li>On the &#34;Add permissions&#34; screen, search for and check the box next to the name of the policy created in step 3.f.v (&#34;deconnect-hol-demo-policy&#34;)</li>
+<li>Click &#34;Next&#34;</li>
+<li>For &#34;Role name&#34;, enter &#34;deconnect-hol-demo-role&#34;</li>
+<li>Scroll down and click &#34;Create role&#34;</li>
+<li>On the next screen, the &#34;Roles&#34; overview page, click on the name of the role you just created (&#34;deconnect-hol-demo-role&#34;)</li>
+<li>In the &#34;Summary&#34; box, under &#34;ARN&#34;, click the copy icon to copy the role&#39;s ARN to your clipboard. Paste this value in the HOL spreadsheet</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Catalog" duration="15">
+        <h2 is-upgraded>Creating a Catalog in Snowflake Open Catalog</h2>
+<ul>
+<li>Go to your browser tab that you&#39;re logged into Snowflake Open Catalog (or if you&#39;ve closed it, in a new browser tab, go to the account locator URL you copied earlier)</li>
+<li>On the left pane, click &#34;Catalogs&#34;</li>
+<li>In the upper right, click the &#34;+ Catalog&#34; button</li>
+<li>On the create catalog dialog that pops up: For &#34;Name&#34;, enter &#34;external_catalog_snowflake&#34; For &#34;External&#34;, enable the toggle so it&#39;s &#34;on&#34;   ** VERY IMPORTANT** For &#34;Storage provider&#34;, select &#34;S3&#34; For &#34;Default base location&#34;, enter the S3 URI you copied in step 2.j (keep the &#34;s3://&#34; prefix) Leave &#34;Additional locations&#34; blank/empty For &#34;S3 role ARN&#34;, enter the role ARN you copied in step 4.j For &#34;External ID&#34;, enter the external ID you specified in step 4.d.iii (&#34;deconnect_hol_demo&#34;) Click &#34;Create&#34;</li>
+<li>This will bring you to the main &#34;Catalogs&#34; page. Select the catalog you just created (&#34;external_catalog_snowflake&#34;)</li>
+<li>Under the &#34;Storage details&#34; section, click the copy icon next to &#34;IAM user arn&#34;. Paste this value in the HOL spreadsheet</li>
+</ul>
+<h2 is-upgraded>Grant the Snowflake Open Catalog IAM user permissions to access bucket objects</h2>
+<ul>
+<li>Go to your browser tab that you&#39;re logged into AWS management console (or if you&#39;ve closed it, in a new browser tab, go to it and log in)</li>
+<li>Search or browse to IAM</li>
+<li>In the navigation pane on the left under &#34;Access management&#34;, select &#34;Roles&#34;</li>
+<li>Click the name of the role you created in step 4.h</li>
+<li>Select the &#34;Trust relationships&#34; tab</li>
+<li>Replace the pre-populated JSON contents of the Policy Editor with the following JSON. Note don&#39;t click save after pasting yet</li>
+</ul>
+<pre><code language="language-json" class="language-json">{
+     &#34;Version&#34;: &#34;2012-10-17&#34;,
+     &#34;Statement&#34;: [
+       {
+         &#34;Sid&#34;: &#34;&#34;,
+         &#34;Effect&#34;: &#34;Allow&#34;,
+         &#34;Principal&#34;: {
+           &#34;AWS&#34;: &#34;&lt;open_catalog_iam_user_arn&gt;&#34;
+         },
+         &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+         &#34;Condition&#34;: {
+           &#34;StringEquals&#34;: {
+             &#34;sts:ExternalId&#34;: &#34;deconnect_hol_demo&#34;
+           }
+         }
+       }
+     ]
+   }
+</code></pre>
+<pre><code>Before clicking save, replace &#34;&lt;open_catalog_iam_user_arn&gt;&#34; with the ARN of the Snowflake Open Catalog IAM user you copied in step 5.f
+Click &#34;Update policy&#34;
+</code></pre>
+<h2 is-upgraded>Creating a Principal Role</h2>
+<ul>
+<li>Go to your browser tab that you&#39;re logged into Snowflake Open Catalog (or if you&#39;ve closed it, in a new browser tab, go to the account locator URL you copied earlier)</li>
+<li>In the left pane, click &#34;Connections&#34;</li>
+<li>Click the &#34;Roles&#34; tab</li>
+<li>In the top right, click the &#34;+ Principal Role&#34; button</li>
+<li>In the dialog box that pops up, for &#34;Name&#34;, enter &#34;admin_principal_role&#34;, and click &#34;Create&#34;</li>
+</ul>
+<h2 is-upgraded>Creating a Catalog Role</h2>
+<ul>
+<li>In the left pane, click &#34;Catalogs&#34;</li>
+<li>Click the name of the catalog you created in step 5.d</li>
+<li>Click the &#34;Roles&#34; tab</li>
+<li>Click the &#34;+ Catalog Role&#34; button</li>
+<li>In the dialog box that pops up: For &#34;Name&#34;, enter &#34;admin_catalog_role&#34; For &#34;Privileges&#34;, select &#34;CATALOG_MANAGE_CONTENT&#34; Click &#34;Create&#34;</li>
+</ul>
+<h2 is-upgraded>Granting the Catalog Role to the Principal Role</h2>
+<ul>
+<li>Click the &#34;Grant to Principal Role&#34; button on the right</li>
+<li>In the dialog box that pops up: For &#34;Catalog role to grant&#34;, select the catalog role you created in step 8.f For &#34;Principal role to receive grant&#34;, select the principal role you created in step 7.e Click &#34;Grant&#34;</li>
+</ul>
+<h2 is-upgraded>Creating a Service Connection</h2>
+<ul>
+<li>In the left pane, click &#34;Connections&#34;</li>
+<li>In the top right, click &#34;+ Connection&#34;</li>
+<li>In the dialog box that pops up: For &#34;Name&#34;, enter &#34;snowflake&#34; For &#34;Principal Role&#34;, select the principal role you created in step 7.e (&#34;admin_principal_role&#34;) Click &#34;Create&#34;</li>
+<li>After the create has succeeded, a new window will show that has the client ID and secret for the connection. Note this is the only time you&#39;ll see these credentials, so, in that window: Click the copy icon on the text box to the right of &#34;Client ID&#34;. Paste this value in the HOL spreadsheet Click the copy icon on the text box to the right of &#34;Client Secret&#34;. Paste this value in the HOL spreadsheet Now that you&#39;ve retained both, it&#39;s safe to click &#34;Close&#34;</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Iceberg Table" duration="15">
+        <h2 is-upgraded>Create Catalog Integration</h2>
+<ul>
+<li>Go to your browser tab that you&#39;re logged into your Snowflake account that you have ORGADMIN privileges for - i.e., the Snowflake account you logged into in step 1.a If you&#39;ve closed it, in a new browser tab, go to app.snowflake.com, but if you get brought to Snowflake Open Catalog again, click your account icon in the bottom left and hover over &#34;Account&#34; then select the account you logged into in step 1.a</li>
+<li>In the top left, click &#34;+ Create&#34;, then click &#34;SQL Worksheet&#34;</li>
+<li>Change your role from ORGADMIN to ACCOUNTADMIN</li>
+<li>Paste the following in the worksheet:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE CATALOG INTEGRATION deconnect_hol_demo_int 
+  CATALOG_SOURCE=POLARIS 
+  TABLE_FORMAT=ICEBERG 
+  CATALOG_NAMESPACE=&#39;default&#39; 
+  REST_CONFIG = (
+    CATALOG_URI =&#39;&lt;account_locator_url&gt;/polaris/api/catalog&#39; 
+    WAREHOUSE = &#39;external_catalog_snowflake&#39;
+  )
+  REST_AUTHENTICATION = (
+    TYPE=OAUTH 
+    OAUTH_CLIENT_ID=&#39;&lt;client_id&gt;&#39; 
+    OAUTH_CLIENT_SECRET=&#39;&lt;secret&gt;&#39; 
+    OAUTH_ALLOWED_SCOPES=(&#39;PRINCIPAL_ROLE:ALL&#39;) 
+  ) 
+  ENABLED=true;
+</code></pre>
+<ul>
+<li>Replace the following values in pasted code in the worksheet: &lt;account_locator_url&gt; with the pasted value for the Snowflake Open Catalog&#39;s &#34;Account Locator URL&#34; &#34;&lt;client_id&gt;&#34; with the pasted value for &#34;snowflake client ID&#34; &#34;&#34; with the pasted value for &#34;snowflake client secret&#34;</li>
+<li>Switch your role to ACCOUNTADMIN</li>
+<li>Execute the SQL statement</li>
+</ul>
+<h2 is-upgraded>Create an external volume object in Snowflake</h2>
+<ul>
+<li>Below that code in the same SQL worksheet, paste the following:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE DATABASE deconnect_hol_iceberg;
+
+CREATE SCHEMA deconnect_hol_iceberg.hol_demo;
+
+USE deconnect_hol_iceberg.hol_demo;
+
+CREATE OR REPLACE EXTERNAL VOLUME iceberg_hol_demo_ext_vol
+  STORAGE_LOCATIONS =
+      (
+        (
+            NAME = &#39;main_hol_s3&#39;
+            STORAGE_PROVIDER = &#39;S3&#39;
+            STORAGE_BASE_URL =&#39;&lt;s3_uri&gt;&#39;
+            STORAGE_AWS_ROLE_ARN = &#39;&lt;role_arn&gt;&#39;
+            STORAGE_AWS_EXTERNAL_ID = &#39;deconnect_hol_demo&#39;
+        )
+      );
+
+</code></pre>
+<ul>
+<li>Replace &lt;s3_uri&gt; with the copied S3 Path URI of the folder pasted as the value for &#34;S3 Path URI&#34; &lt;role_arn&gt; with the copied IAM role ARN pasted as the value for &#34;Role ARN&#34;</li>
+<li>Execute those statements</li>
+</ul>
+<h2 is-upgraded>Grant your Snowflake account IAM user permissions on your bucket</h2>
+<ul>
+<li>Execute <code>DESC EXTERNAL VOLUME iceberg_hol_demo_ext_vol;</code></li>
+<li>In the &#34;property_value&#34; field of the row that has &#34;STORAGE_LOCATION_1&#34; as the value of &#34;property&#34;, copy the value of the key &#34;STORAGE_AWS_IAM_USER_ARN&#34; and paste it into the spreadsheet</li>
+<li>Edit the trust policy of the role &#34;hol_demo-role&#34; to make it look like</li>
+</ul>
+<pre><code language="language-json" class="language-json">{
+    &#34;Version&#34;: &#34;2012-10-17&#34;,
+    &#34;Statement&#34;: [
+        {
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+                &#34;AWS&#34;: &#34;&lt;open_catalog_iam_user&gt;&#34;
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+                    &#34;sts:ExternalId&#34;: &#34;deconnect_hol_demo&#34;
+                }
+            }
+        },
+        {
+            &#34;Sid&#34;: &#34;&#34;,
+            &#34;Effect&#34;: &#34;Allow&#34;,
+            &#34;Principal&#34;: {
+                &#34;AWS&#34;: &#34;&lt;snowflake_extvol_iam_user&gt;&#34;
+            },
+            &#34;Action&#34;: &#34;sts:AssumeRole&#34;,
+            &#34;Condition&#34;: {
+                &#34;StringEquals&#34;: {
+                    &#34;sts:ExternalId&#34;: &#34;deconnect_hol_demo&#34;
+                }
+            }
+        }
+    ]
+}
+
+</code></pre>
+<h2 is-upgraded>Syncing a Snowflake managed table(s) with Snowflake Open Catalog</h2>
+<p>To query a Snowflake-managed Apache Iceberg™ table using a third-party engine such as Apache Spark™, you can sync the table with <a href="https://other-docs.snowflake.com/en/opencatalog/overview" target="_blank">Snowflake Open Catalog</a>.</p>
+<ul>
+<li>Set a CATALOG_SYNC after you run below statements, Snowflake syncs all Snowflake-managed Iceberg tables in the hol_demo schema to the external catalog in Open Catalog that you specified for the my_open_catalog_int catalog integration. Also set the the default catalog and external volume used for the schema.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">alter schema deconnect_hol_iceberg.hol_demo 
+    set catalog = &#39;snowflake&#39; 
+        external_volume = iceberg_hol_demo_ext_vol 
+        CATALOG_SYNC = deconnect_hol_demo_int;
+</code></pre>
+<h2 is-upgraded>Create a Snowflake-managed Iceberg table using a parquet file from a stage</h2>
+<ul>
+<li>Create a stage in the database iceberg_testing.hol_demo and load a csv file into the stage, For this HOL we are using Snowflake stage but it could be a S3 bucket as well .  in the same SQL worksheet, paste the following</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE STAGE rawdatastage ;
+ls @rawdatastage ;
+</code></pre>
+<ul>
+<li>Browse the stage using Snowsight UI and upload the csv file into it. Once the file is uploaded list stage contents to see the file . To load the CSV file into the iceberg table we will be using COPY INTO command to load the csv files and for snowflake to create parquet data and metadata files in the specified location. In order to create the ICEBERG table we will read the schema from the csv file using GENERATE_COLUMN_DESCRTION</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FILE FORMAT my_csv
+  TYPE = CSV
+  PARSE_HEADER = TRUE
+  FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39;
+  ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE
+  REPLACE_INVALID_CHARACTERS= TRUE
+  SKIP_BLANK_LINES = TRUE;
+
+SELECT GENERATE_COLUMN_DESCRIPTION(
+    ARRAY_AGG(OBJECT_CONSTRUCT(*)) WITHIN GROUP (ORDER BY ORDER_ID asc), &#39;table&#39;) AS COLUMNS
+      FROM TABLE (
+        INFER_SCHEMA(
+          LOCATION=&gt;&#39;@rawdatastage/&#39;,
+          FILE_FORMAT=&gt;&#39;MY_CSV&#39;,
+          IGNORE_CASE =&gt; FALSE,
+          MAX_FILE_COUNT =&gt; 1
+          ,MAX_RECORDS_PER_FILE =&gt; 1000
+        )
+      );
+
+CREATE or REPLACE iceberg table POI (LOCATION_NAME TEXT,
+TOP_CATEGORY TEXT,
+SUB_CATEGORY TEXT,
+NAICS_CODE NUMBER(6, 0),
+LATITUDE NUMBER(11, 9),
+LONGITUDE NUMBER(12, 9),
+STREET_ADDRESS TEXT,
+CITY TEXT,
+REGION TEXT,
+POSTAL_CODE NUMBER(5, 0),
+ISO_COUNTRY_CODE TEXT,
+PHONE_NUMBER NUMBER(11, 0) )
+;
+
+-- Load the CSV files and Snowflake will create Parquet data and metadata files in your specified base_location.
+
+COPY INTO POI
+FROM @rawdatastage
+FILE_FORMAT = my_csv 
+MATCH_BY_COLUMN_NAME = &#39;case_sensitive&#39; 
+ON_ERROR = CONTINUE
+LOAD_MODE = FULL_INGEST;
+</code></pre>
+<ul>
+<li>You should now see the table show up in snowflake open catalog</li>
+<li>Let&#39;s now query the data</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">select * from poi;
+</code></pre>
+<h2 is-upgraded>Run arbitrary SQL queries on this iceberg table from snowflake</h2>
+<p>Feel free to run any SQL you want against this iceberg table. Here&#39;s a sample query you can run:</p>
+<pre><code language="language-sql" class="language-sql">select city, region, count(*) 
+    from poi 
+    group by 1, 2
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Dynamic Iceberg Table" duration="5">
+        <p>Now, let&#39;s actually persist those query results as a dynamic iceberg table. You&#39;ll note that TARGET_LAG is set to 1 minute. This means that snowflake will automatically keep that dynamic table&#39;s contents up to date within 1 minute of any upstream source data changes. If when it checks, the upstream table (in this case &#34;poi&#34;) hasn&#39;t changed, then you won&#39;t be billed at all.</p>
+<pre><code language="language-sql" class="language-sql">CREATE DYNAMIC ICEBERG TABLE poi_dt_iceberg 
+  TARGET_LAG = &#39;1 minute&#39;
+  WAREHOUSE = COMPUTE_WH -- or a different warehouse name if you prefer
+  AS
+    select city, region, count(*) 
+    from poi 
+    group by 1, 2
+</code></pre>
+<p>You can see the checks snowflake has been making in the Snowsight UI via Monitoring -&gt; Dynamic Tables -&gt; poi_dt_iceberg and select the &#34;Refresh History&#34; tab. If you want to see confirmation that Snowflake has been doing checks each minute but not using any compute, uncheck the &#34;Warehouse used only&#34; checkbox</p>
+<h2 is-upgraded>Query the dynamic iceberg table from Snowflake</h2>
+<p>Feel free to query this dynamic iceberg table, either via a SELECT * or whatever arbitrary SQL you want to run against it.</p>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM poi_dt_iceberg 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="(Optional) Read Data from Spark" duration="10">
+        <ul>
+<li>In Snowflake Open Catalog, click &#34;Catalogs&#34; on the left sidebar, then click &#34;external_catalog_snowflake&#34;</li>
+<li>Under Storage Details, under &#34;Credential Vending&#34;, click the pencil icon and on the box that pops up, click &#34;Enable&#34;</li>
+<li>Now click &#34;Connections&#34; on the left</li>
+<li>In the top right, click &#34;+ Connection&#34;</li>
+<li>In the dialog box that pops up: For &#34;Name&#34;, enter &#34;spark&#34; For &#34;Principal Role&#34;, select the principal role you created in step 7.e (&#34;admin_principal_role&#34;) Click &#34;Create&#34;</li>
+<li>After the create has succeeded, a new window will show that has the client ID and secret for the connection. Note this is the only time you&#39;ll see these credentials, so, in that window: Click the copy icon on the text box to the right of &#34;Client ID&#34;. Paste this value in the HOL spreadsheet Click the copy icon on the text box to the right of &#34;Client Secret&#34;. Paste this value in the HOL spreadsheet Now that you&#39;ve retained both, it&#39;s safe to click &#34;Close&#34;</li>
+<li>Create a file called environment.yml and paste the below contents:</li>
+</ul>
+<pre><code language="language-yaml" class="language-yaml">name: deconnect-hol-demo
+channels:
+  - conda-forge
+dependencies:
+  - findspark=2.0.1
+  - jupyter=1.0.0
+  - pyspark=3.5.0
+  - openjdk=11.0.13
+</code></pre>
+<ul>
+<li>In a terminal in the same directory where you created the file above, run <code>conda env create -f environment.yml</code></li>
+</ul>
+<h2 is-upgraded>(Optional ) Query the Snowflake-managed Iceberg table from Spark</h2>
+<ul>
+<li>Open VS Code</li>
+<li>If you don&#39;t already have them installed, install the Python and Jupyter extensions</li>
+<li>Create a new file via File -&gt; New File and select Jupyter Notebook as the type</li>
+<li>In the top right, click &#34;Select Kernel&#34;, then &#34;Select another kernel&#34;, then &#34;Python environments&#34;, then &#34;deconnect-hol-demol&#34;</li>
+<li>Paste the following code in a cell</li>
+</ul>
+<pre><code language="language-python" class="language-python">import os
+os.environ[&#39;OPEN_CATALOG_SPARK_CRED&#39;] = 
+
+import pyspark
+from pyspark.sql import SparkSession 
+
+spark = SparkSession.builder.appName(&#39;hol-demo&#39;) \
+    .config(&#39;spark.driver.host&#39;, &#39;localhost&#39;) \
+    .config(&#39;spark.jars.packages&#39;, &#39;org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1,software.amazon.awssdk:bundle:2.20.160&#39;) \
+    .config(&#39;spark.sql.extensions&#39;, &#39;org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions&#39;) \
+    .config(&#39;spark.sql.defaultCatalog&#39;, &#39;open_catalog&#39;) \
+    .config(&#39;spark.sql.catalog.open_catalog&#39;, &#39;org.apache.iceberg.spark.SparkCatalog&#39;) \
+    .config(&#39;spark.sql.catalog.open_catalog.type&#39;, &#39;rest&#39;) \
+    .config(&#39;spark.sql.catalog.open_catalog.uri&#39;,&#39;&lt;Open Catalog Account Locator URL&gt;/polaris/api/catalog&#39;) \
+    .config(&#39;spark.sql.catalog.open_catalog.credential&#39;, &#39;&lt;client_id&gt;:&lt;client_secret&#39;) \
+    .config(&#39;spark.sql.catalog.open_catalog.header.X-Iceberg-Access-Delegation&#39;,&#39;vended-credentials&#39;) \
+    .config(&#39;spark.sql.catalog.open_catalog.warehouse&#39;,&#39;external_catalog_snowflake&#39;) \
+    .config(&#39;spark.sql.catalog.open_catalog.scope&#39;,&#39;PRINCIPAL_ROLE:ALL&#39;)\
+    .config(&#39;spark.sql.catalog.open_catalog.client.region&#39;,&#39;us-west-2&#39;)\
+    .config(&#34;spark.sql.iceberg.vectorization.enabled&#34;, &#34;false&#34;)\
+    .getOrCreate()
+
+print(&#39;Spark is running&#39;)
+
+</code></pre>
+<pre><code>    Replace &#34;&lt;Open Catalog Account Locator URL&gt;&#34; with the URL you pasted in the HOL spreadsheet
+    Replace &#34;&lt;spark client id&gt;&#34; with the client ID you copied in the HOL spreadsheet for spark
+    Replace &#34;&lt;spark client secret&gt; with the client ID you copied in the HOL spreadsheet for spark. Note you&#39;ll need to retain the colon (&#34;:&#34;) in between the two
+</code></pre>
+<ul>
+<li>Execute the cell. When spark is up and ready, you should see &#34;Spark is running&#34; outputted</li>
+<li>Here are additional statements you can run to get a feel for the environment, and select data from the Iceberg table Snowflake created.</li>
+</ul>
+<pre><code language="language-python" class="language-python">try:
+ spark.sql(&#34;show namespaces in open_catalog&#34;).show()
+ spark.sql(&#34;use open_catalog.DECONNECT_HOL_ICEBERG.HOL_DEMO&#34;).show()
+ spark.sql(&#34;show tables&#34;).show(20, False)
+ spark.sql(&#34;select * from POI limit 10&#34;).show()
+ spark.sql(&#34;select * from POI_DT_ICEBERG limit 10&#34;).show()
+except Exception as e :
+ import traceback
+ traceback.print_exc()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>❄️ Congratulations! This concludes our lab.</p>
+<h2 is-upgraded>What we&#39;ve covered:</h2>
+<ul>
+<li>How to set up Snowflake Open Catalog</li>
+<li>Creating and configuring external volumes for Apache Iceberg tables</li>
+<li>Creating and managing Apache Iceberg tables in Snowflake</li>
+<li>Syncing Iceberg tables with Snowflake Open Catalog</li>
+<li>Querying Iceberg data from different engines</li>
+</ul>
+<h2 is-upgraded>Additional Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg" target="_blank">Iceberg Tables in Snowflake</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog" target="_blank">Snowflake Open Catalog</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

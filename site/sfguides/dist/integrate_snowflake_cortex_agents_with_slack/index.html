@@ -1,0 +1,247 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex Agents and Slack</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="integrate_snowflake_cortex_agents_with_slack"
+                  title="Getting Started with Cortex Agents and Slack"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.</p>
+<p>In this guide, we will see how to integrate the Cortex Agents (<em>in Public Preview as of 01/12/2025</em>) with Slack.</p>
+<h2 is-upgraded>Why Cortex Agents?</h2>
+<p>Business users have typically relied on BI dashboards and reports for data insights, but these tools often lack flexibility, requiring users to wait on busy data analysts for updates. Cortex Agents addresses this with a natural language interface allowing organizations to develop conversational applications. This enables business users to query data in natural language and get accurate answers in near real time.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg" target="_blank">Cortex Agents</a>.</p>
+<h2 is-upgraded>Why Slack?</h2>
+<p>Slack is a communication and collaboration platform designed to streamline workplace interactions. It allows teams to organize conversations by channels, send direct messages, share files, and integrate with other tools for a seamless workflow. Slack also supports the deployment of bots and apps, making it a hub for productivity, quick information sharing, and team alignment across projects.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account in one of these <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability" target="_blank">regions</a> and also where <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability" target="_blank">PARSE_DOCUMENT</a> is available. If you do not have one you can register for a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">free trial account</a>.</li>
+<li>A Slack account with access to a workspace where you can install applications. <strong><em>NOTE </em></strong><em>: Slack recommends using a workspace where you won&#39;t disrupt real work getting done —</em><a href="https://slack.com/get-started#create" target="_blank"> <em>you can create a new one for free</em></a> <em>.</em></li>
+<li>Python version &gt;= 3.8, &lt; 3.13</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to setup Slack application</li>
+<li>How to setup Cortex Analyst</li>
+<li>How to setup Cortext Search</li>
+<li>How to use Cortex Agents REST API and integrate it with Slack</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>Cortex Agents integrated with Slack</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Slack" duration="10">
+        <p>Follow instructions in this <a href="https://tools.slack.dev/bolt-python/getting-started/" target="_blank">step-by-step guide</a> to create and set up your barebones Slack application in Python.</p>
+<p><strong><em>NOTE: You may skip the section titled &#34;</em></strong><a href="https://tools.slack.dev/bolt-python/getting-started/#sending-and-responding-to-actions" target="_blank"><strong><em>Sending and responding to actions</em></strong></a><strong><em>&#34; because we won&#39;t be using that in our application.</em></strong></p>
+<p>Before proceeding, please make sure you have the boilerplate Slack application running as shown in the above guide.</p>
+<pre><code language="language-python" class="language-python">@app.message(&#34;hello&#34;)  
+def message_hello(message, say):  
+  # say() sends a message to the channel where the event was triggered  
+  say(f&#34;Hey there &lt;@{message[&#39;user&#39;]}&gt;!&#34;)  
+  
+# Start your app  
+if __name__ == &#34;__main__&#34;:  
+  SocketModeHandler(app, os.environ[&#34;SLACK_APP_TOKEN&#34;]).start()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Snowflake" duration="10">
+        <p><strong>Step 1:</strong> Clone the <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack" target="_blank">GitHub repo</a>.</p>
+<p><strong>Step 2:</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom. This is to to create a database, schema, and table <strong>SUPPORT_TICKETS</strong> with data loaded from AWS S3. And also to create Snowflake managed internal stages for store the semantic model specification file and PDF documents.</p>
+<p><strong>Step 3:</strong> Use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage" target="_blank">Snowsight</a> to upload <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/support_tickets_semantic_model.yaml" target="_blank">the semantic model spec file</a> to the <strong>DASH_SEMANTIC_MODELS</strong> stage.</p>
+<p><strong>Step 4:</strong> Use <a href="https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage" target="_blank">Snowsight</a> to upload <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/tree/main/data" target="_blank">PDF documents</a> to the <strong>DASH_PDFS</strong> stage.</p>
+<p><strong>Step 5:</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/cortex_search_service.sql" target="_blank">cortex_search_service.sql</a> to execute all statements in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents. <em>NOTE: </em><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability" target="_blank"><em>PARSE_DOCUMENT</em></a><em> is in Public Preview as of 01/12/2025.</em></p>
+<p><strong>Step 6:</strong> Configure <a href="https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication" target="_blank">key-pair authentication</a> and assign the public key to your user in Snowflake and store/save/copy the private key file (<strong><em>.p8</em></strong>) in your cloned app folder.</p>
+<aside class="warning"><p> IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Application" duration="5">
+        <p><strong>Step 1:</strong> Change or browse to the cloned repo folder <strong><em>sfguide-integrate-snowflake-cortex-agents-with-slack</em></strong> on your local machine and open the contents of the folder in your favorite IDE — like VS Code.</p>
+<p><strong>Step 2:</strong> In the same folder, create a new file <strong>.env</strong> and set the following environment variables:</p>
+<pre><code language="language-bash" class="language-bash">DEMO_DATABASE=&#39;DASH_DB&#39;
+DEMO_SCHEMA=&#39;DASH_SCHEMA&#39;
+WAREHOUSE=&#39;DASH_S&#39;
+DEMO_USER=&#39;&lt;your-user-name&gt;&#39;
+DEMO_USER_ROLE=&#39;&lt;your-user-role&gt;&#39;
+SEMANTIC_MODEL=&#39;@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/support_tickets_semantic_model.yaml&#39;
+SEARCH_SERVICE=&#39;DASH_DB.DASH_SCHEMA.vehicles_info&#39;
+ACCOUNT=&#39;&lt;your-account-identifier&gt;&#39;
+HOST=&#39;&lt;your-account-identifier&gt;.snowflakecomputing.com&#39;
+AGENT_ENDPOINT=&#39;https://&lt;your-org&gt;-&lt;your-account&gt;.snowflakecomputing.com/api/v2/cortex/agent:run&#39;
+SLACK_APP_TOKEN=&#39;&lt;your-slack-app-token&gt;&#39;
+SLACK_BOT_TOKEN=&#39;&lt;your-slack-bot-token&gt;&#39;
+      
+# You may NOT edit below values  
+RSA_PRIVATE_KEY_PATH=&#39;rsa_key.p8&#39;
+MODEL = &#39;claude-4-sonnet&#39;
+</code></pre>
+<p><strong>Step 3:</strong> In a terminal window, browse to the same cloned folder <strong><em>sfguide-integrate-snowflake-cortex-agents-with-slack</em></strong> and run the following commands to create Python environment and install the Python packages and dependencies required for the application.</p>
+<pre><code language="language-bash" class="language-bash">python3 -m venv .venv  
+source .venv/bin/activate  
+pip install -r requirements.txt
+</code></pre>
+<p><strong>Step 4:</strong> Browse to your <strong>Slack App</strong> » navigate to <strong>OAuth &amp; Permissions</strong> on the left » scroll down to <strong>Scopes</strong>, and then add <code>files:write</code> by clicking on <strong>Add an OAuth Scope</strong> button. This is required by the app to generate, save, and display chart image files.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test" duration="3">
+        <p>Before proceeding, make sure you <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/test.py" target="_blank">test</a> that the Cortex Agents API endpoint and other env variables in <strong>.env</strong> have been set correctly.</p>
+<p>Browse to the cloned folder in VS Code and run <code>python test.py</code> in a terminal window.</p>
+<p>If you see the output as shown below, then you&#39;re good to go.</p>
+<pre><code language="language-bash" class="language-bash">✅ Cortex Agents response:
+
+event: message.delta
+data: {&#34;id&#34;:&#34;msg_001&#34;,&#34;object&#34;:&#34;message.delta&#34;,&#34;delta&#34;:{&#34;content&#34;:[{&#34;index&#34;:0,&#34;type&#34;:&#34;tool_use&#34;,&#34;tool_use&#34;:{&#34;tool_use_id&#34;:&#34;tooluse_257e026c935a46848d09b4&#34;,&#34;name&#34;:&#34;supply_chain&#34;,&#34;input&#34;:{&#34;query&#34;:&#34;Can you show me a breakdown of customer support tickets by service type cellular vs business internet?&#34;,&#34;model&#34;:&#34;snowflake-hosted-semantic&#34;,&#34;experimental&#34;:&#34;&#34;}}},{&#34;index&#34;:0,&#34;type&#34;:&#34;tool_results&#34;,&#34;tool_results&#34;:{&#34;tool_use_id&#34;:&#34;tooluse_257e026c935a46848d09b4&#34;,&#34;content&#34;:[{&#34;type&#34;:&#34;json&#34;,&#34;json&#34;:{&#34;sql&#34;:&#34;WITH __support_tickets AS (\n  SELECT\n    ticket_id,\n    service_type\n  FROM dash_db_swt_2024.data.support_tickets\n)\nSELECT\n  service_type,\n  COUNT(DISTINCT ticket_id) AS ticket_count\nFROM __support_tickets\nWHERE\n  service_type IN (\u0027Cellular\u0027, \u0027Business Internet\u0027)\nGROUP BY\n  service_type\n -- Generated by Cortex Analyst\n;&#34;,&#34;verified_query_used&#34;:false,&#34;text&#34;:&#34;This is our interpretation of your question:\n\nShow me the count of support tickets broken down by service type, specifically for Cellular and Business Internet services&#34;}}],&#34;status&#34;:&#34;success&#34;,&#34;name&#34;:&#34;supply_chain&#34;,&#34;type&#34;:&#34;cortex_analyst_text_to_sql&#34;}}]}}
+
+event: done
+data: [DONE]
+</code></pre>
+<p>If you see any errors, please double check all values set in <strong>.env</strong>. Common errors are related to ACCOUNT, HOST, AGENT_ENDPOINT and how the RSA key-pair is generated.</p>
+<p>If you get this error <strong>Caused by SSLError(SSLCertVerificationError(1, &#34;[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...</strong>, then try adding <strong>locator.region</strong> to <strong>your-account-identifier</strong>. For additional instructions and help, refer to the <a href="https://docs.snowflake.com/en/user-guide/admin-account-identifier" target="_blank">documentation</a>.</p>
+<aside class="warning"><p> IMPORTANT: Before proceeding, please make sure you have successfully tested everything as described above.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Application" duration="4">
+        <p>Browse to the cloned repo folder <strong><em>sfguide-integrate-snowflake-cortex-agents-with-slack</em></strong> in a terminal window where you executed the commands in the previous section and start the application by running the following command.</p>
+<pre><code language="language-bash" class="language-bash">./slack_bot
+</code></pre>
+<p>If all goes well, you should see the following output on the command line.</p>
+<pre><code language="language-bash" class="language-bash">⚡️ Bolt app is running!
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Slack It To Me" duration="5">
+        <p>Assuming your app is running without any errors, head over to your Slack channel/app you set up in the <strong>Setup Slack</strong> section and ask the following questions.</p>
+<h2 is-upgraded>Cortex Analyst: Structured Data</h2>
+<p><strong>Question: </strong><em>Can you show me a breakdown of customer support tickets by service type cellular vs business internet?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A1" src="img/6c79eae415b41c0c.png"></p>
+<p>Now let&#39;s ask this question.</p>
+<p><strong>Question: </strong><em>How many unique customers have raised a support ticket with a ‘Cellular&#39; service type and have ‘Email&#39; as their contact preference?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A1" src="img/728a92d78762cd0e.png"></p>
+<h2 is-upgraded>Cortex Search: Unstructured Data</h2>
+<p><strong>Question: </strong><em>What are the payment terms for Snowtires?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A1" src="img/d3960046d2d45940.png"></p>
+<p>Now let&#39;s ask this question.</p>
+<p><strong>Question: </strong><em>What&#39;s the latest, most effective way to recycle rubber tires?</em></p>
+<p>In a few moments, you should see the following response:</p>
+<p class="image-container"><img alt="Q&amp;A1" src="img/6e57f50c406ceaed.png"></p>
+<p>As you can see, now (business) users can directly get answers to their questions written in natural language using the Slack app.</p>
+<h2 is-upgraded>Code Walkthrough</h2>
+<p>As you may have noticed, the main application code is in <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/app.py" target="_blank">app.py</a> and the Cortex agent REST API code is in <a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/cortex_chat.py" target="_blank">cortex_chat.py</a>.</p>
+<p>Here are some things you should make a note of in case you&#39;d like to extend or modify the application.</p>
+<p><strong>init()</strong></p>
+<p>In this method, a secure connection to Snowflake is established and an instance of <strong>CortexChat</strong> is created. This CortexChat instance is initialized with AGENT_ENDPOINT, SEARCH_SERVICE, SEMANTIC_MODEL, MODEL, and a Java Web Token (JWT).</p>
+<p><strong>handle_message_events()</strong></p>
+<p>This method is decorated with <code>@app.event("message")</code> and is invoked when you type a question in Slack. After displaying the initial message, it calls <strong>ask_agent()</strong> passing it the question in variable <code>prompt</code>. Then it calls <strong>display_agent_response()</strong> passing it the response from</p>
+<p><strong>ask_agent()</strong></p>
+<p>This method is called from <strong>handle_message_events</strong>. It use the instance of <strong>CortexChat</strong> to call <strong>chat()</strong> method. This methods internally calls <strong>_retrieve_response()</strong>, <strong>_parse_response()</strong> and other methods to retrieve and parse the Cortex Agent response.</p>
+<p><strong>display_agent_response()</strong></p>
+<p>This method is called from <strong>handle_message_events.</strong> It takes the response from <strong>ask_agent()</strong> and sends the formatted output to Slack.</p>
+<p>NOTE: The response from Cortex Agents REST API includes the SQL query that is generated based on the natural language prompt/question passed in as input. This SQL query is executed in the application (<em>line 125 in app.py</em>) to display the results in Slack.</p>
+<p><strong>plot_chart()</strong></p>
+<p>This method takes a Pandas DataFrame as an input and dynamically generates a pie chart.</p>
+<p>NOTE: While the code to generate the chart is very specific to the data used in this example, the flow/logic is broadly applicable.</p>
+<ul>
+<li>A chart is generated based on the data</li>
+<li>The chart image is saved locally — <em>line 237 in app.py</em></li>
+<li>The image file is securely uploaded to Slack using Slack APIs <a href="https://api.slack.com/methods/files.getUploadURLExternal" target="_blank">getUploadURLExternal</a> and <a href="https://api.slack.com/methods/files.completeUploadExternal" target="_blank">completeUploadExternal</a></li>
+<li>The permalink provided by Slack is used to access / display the image — <em>line 176 in app.py</em></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve sucessfully integrated Cortex Agents with Slack. I hope you found this guide both educational and inspiring.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to setup Slack application</li>
+<li>How to setup Cortex Analyst</li>
+<li>How to setup Cortext Search</li>
+<li>How to use Cortex Agents REST API and integrate it with Slack</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack" target="_blank">GitHub repo</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

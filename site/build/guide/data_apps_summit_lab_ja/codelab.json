@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "data_apps_summit_lab_ja",
+  "duration": 42,
+  "title": "Snowflakeマーケットプレイス、Snowpark、Streamlitによるデータアプリケーションの構築",
+  "summary": "これはサンプルのSnowflakeガイドのカテゴリーです",
+  "source": "data_apps_summit_lab_ja/data_apps_summit_lab_ja.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "app-development"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "ja",
+    "twitter",
+    "web",
+    "日本語"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_apps_summit_lab_ja"
+}

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-08-22T15:44:06-04:00",
+  "id": "managing-risk-in-manufacturing",
+  "duration": 46,
+  "title": "Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics",
+  "summary": "How to manage risk in manufacturing using Neo4j Graph Analytics for Snowflake",
+  "source": "managing-risk-in-manufacturing/managing-risk-in-manufacturing.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "managing-risk-in-manufacturing"
+}

@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "cortex_ai_sentiment_iceberg",
+  "duration": 44,
+  "title": "Sentiment Analysis Using Snowflake Cortex AI on Iceberg Tables",
+  "summary": "This is a guide for applying artificial intelligence on an Iceberg open data lakehouse",
+  "source": "cortex_ai_sentiment_iceberg/cortex_ai_sentiment_iceberg.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cortex"
+  ],
+  "tags": [
+    "cortex",
+    "datalake",
+    "iceberg",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "cortex_ai_sentiment_iceberg"
+}

@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "building-snowflake-llm-based-functions-using-coalesce-and-iceberg",
+  "duration": 74,
+  "title": "Building Snowflake LLM Based Functions using Coalesce and Iceberg",
+  "summary": "Learn to build Cortex based data pipelines in Coalesce using Iceberg tables",
+  "source": "building-snowflake-llm-based-functions-using-coalesce/building-snowflake-llm-based-functions-using-coalesce-and-iceberg.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "building-snowflake-llm-based-functions-using-coalesce-and-iceberg"
+}

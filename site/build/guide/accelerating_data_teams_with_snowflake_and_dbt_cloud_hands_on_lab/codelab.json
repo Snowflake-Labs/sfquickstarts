@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab",
+  "duration": 92,
+  "title": "Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab",
+  "authors": "Bobby Birstock, Amy Chen",
+  "summary": "Build a dbt project and data pipeline with dbt Cloud and Snowflake",
+  "source": "accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab/accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-engineering",
+    "partner-integrations",
+    "marketing"
+  ],
+  "tags": [
+    "data",
+    "dataengineering",
+    "dbt",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab"
+}

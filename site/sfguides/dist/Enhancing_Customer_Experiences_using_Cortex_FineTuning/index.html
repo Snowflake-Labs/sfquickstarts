@@ -1,0 +1,239 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Enhancing Customer Experiences using Cortex Fine Tuning</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="Enhancing_Customer_Experiences_using_Cortex_FineTuning"
+                  title="Enhancing Customer Experiences using Cortex Fine Tuning"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p class="image-container"><img src="img/37d5585e295ee0d4.png"></p>
+<h2 is-upgraded>Overview</h2>
+<p>Tasty Bytes is a fictional global food truck enterprise that has established its presence in 30 cities spanning across 15 countries, boasting a network of 450 trucks offering 15 diverse menu types under various brands. Our mission at Tasty Bytes is committed to improve the Customer Experiences by leveraging the power of AI with Snowflake Cortex.</p>
+<p>In this tutorial, we will build a customer support agent that showcases the power of Cortex Fine-Tuning and helps the Tasty Bytes team to respond with a highly accurate automated email to customer tickets, all with minimal resources and time. Fine-tuning has significantly advanced the Tasty Bytes team&#39;s ability to meet the key objective which is nothing but enhancing customer experiences.</p>
+<p>With Cortex Fine-Tuning, Snowflake users can harness the power of parameter-efficient fine-tuning (PEFT) to develop custom adaptors for specialized tasks using pre-trained models. This approach avoids the high cost of training a large model from scratch while achieving improved latency and performance compared to prompt engineering or retrieval-augmented generation (RAG) methods.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Privileges necessary to create a user, database, and warehouse in Snowflake</li>
+<li>Access to run SQL in Snowflake</li>
+<li>Ability to install and run software on your computer</li>
+<li>Basic experience using git</li>
+<li>Intermediate knowledge of SQL</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to build an AI customer support Agent that delivers tailored, automated and natural responses to emails with both complete as well as partial information.</li>
+<li>How to use your unique data and create supervised dataset for fine tuning a model</li>
+<li>How to fine-tune a large language model (LLM) using Snowflake Cortex AI</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Snowflake Notebooks or Snowsight SQL Worksheet or any IDE of your choice</li>
+<li>A GitHub Account</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Fine tuned LLM to adapt for a domain specific business use case</li>
+<li>An automated AI agent for responding to customer emails in natural language with highest accuracy and efficiency.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Creating a Worksheet and Copying the SQL" duration="0">
+        <p>We will be using the Tasty Bytes customer support emails data for the purpose of this tutorial. When customers reach out to the Tasty Bytes support team over email, it is often found that there was partially missing information in the emails. The first interaction coming from the customer support agent in these cases will be a clarification question to get the missing information from the customer to provide a more tailored support. In order to increase the efficiency and reduce the operational overhead, automation can be achieved to respond based on the completeness of the email.</p>
+<p>For example if there are required labels with missing values in the email, then an automated response can be sent to the customer asking for that information. In the case of the Tasty Bytes emails, city, truck or the menu item are values that an agent requires to process next steps for such cases.</p>
+<p>Within this Quickstart we will follow the above Tasty Bytes Customer Support center story via a Snowsight SQL Worksheet and this page will serve as a side by side guide with additional commentary, images and documentation links. This section will walk you through logging into Snowflake, Creating a New Worksheet, Renaming the Worksheet, Copying SQL from GitHub, and Pasting the SQL we will be leveraging within this Quickstart.</p>
+<p><strong>Step 1</strong>. - Accessing Snowflake via URL</p>
+<p>Open a browser window and enter the URL of your Snowflake Account</p>
+<p><strong>Step 2</strong>. - Logging into Snowflake</p>
+<p>Log into your Snowflake account.</p>
+<p><strong>Step 3</strong>. - Navigating to Worksheets</p>
+<p>Click on the Projects Tab in the left-hand navigation bar and click Worksheets.</p>
+<p><strong>Step 4</strong>. - Creating a SQL Worksheet</p>
+<p>Within Worksheets, click the &#34;+&#34; button in the top-right corner of Snowsight.</p>
+<p><strong>Step 5</strong>. - Renaming a Worksheet</p>
+<p>Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting &#34;Tasty Bytes - Cortex Fine Tuning&#34;</p>
+<p><strong>Step 6</strong>. - Accessing Quickstart SQL from the  GitHub repo</p>
+<p>Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.</p>
+<p><a href="https://github.com/Snowflake-Labs/sfguide-enhancing-customer-experiences-using-cortex-finetuning/blob/main/scripts/setup.sql" target="_blank">Source Code</a></p>
+<p><strong>Step 7</strong>. - Copying Setup SQL from GitHub.</p>
+<p>Within GitHub navigate to the right side and click &#34;Copy raw contents&#34;. This will copy all of the required SQL into your clipboard.</p>
+<p class="image-container"><img src="img/17aff12ed2ae2eaa.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup and Prepare Data" duration="0">
+        <h2 is-upgraded>NOTE : DO NOT CLICK RUN ALL OR HIGHLIGHT ALL THE CODE AND ATTEMPT RUNNING AT ONCE. The model creation job takes 5-10 minutes and the subsequent statements are dependent on the Job completion.</h2>
+<h2 is-upgraded>Step 1 : Setup Database, Schema, role, warehouse,stage and tables.</h2>
+<p>To begin, let&#39;s execute all the DDL statements and setup various database objects. We will be creating a separate role and implementing access control for ensuring privacy and security.  Set the context.</p>
+<ul>
+<li>Set the Role context to CFT_ROLE</li>
+<li>Set the Warehouse context to CFT_WH</li>
+<li>Set the Database context to CFT_DB</li>
+<li>Set the schema CFT_SCHEMA</li>
+</ul>
+<p>Once data has been added to a stage, let&#39;s create a table called SUPPORT_EMAILS for storing the raw emails from the customers. This dataset will be used in the next phase of data preparation.</p>
+<h2 is-upgraded>Step 2 : Data Preparation- Build Train and Validation Dataset</h2>
+<p>The support emails contain a number of fields and we are more interested in required labels like truck and location, whether they are present or missing. If missing then the task for the LLM is to construct an email response that asks for clarification for the missing value. The goal of the data preparation step is to create a dataset that will be used to train the model and help it learn from the prompt/completion pairs and thus tune the LLM to make the automation agent parse and respond for future emails with right sense for missing and available annotations. The FINETUNE function expects the training data to come from a Snowflake table or view and the query result must contain columns named prompt and completion. After loading the data into the SUPPORT_EMAILS table using the copy command with raw data with customer email and annotations. Next step would be to build a function to construct the &#34;completion&#34; which will be a JSON response on the raw data. The BUILD_EXAMPLE function will help for the above task. Now that the prompt and completion pairs are created, construct a training and a validation dataset from the base dataset. Using a Mod function on the Id field the Train and Test split can be built that will give a reproducible sample. Cortex Fine Tuning job needs only a small number of samples and by some experiments, it was already evaluated that a sample size of 128 was a good one.</p>
+<h2 is-upgraded>Step 3: Create a fine-tuning job</h2>
+<p>The following code calls the FINETUNE function and uses the SELECT ... AS syntax to set two of the columns in the query result to prompt and completion.</p>
+<h2 is-upgraded>Pasting Setup SQL from GitHub into your Snowflake Worksheet</h2>
+<p>Path back to Snowsight and your newly created Worksheet and Paste (CMD + V for Mac or CTRL + V for Windows) which we just copied from GitHub.</p>
+<pre><code>SELECT SNOWFLAKE.CORTEX.FINETUNE(
+    &#39;CREATE&#39;, 
+    -- Custom model name
+    &#39;SUPPORT_MISTRAL_7B&#39;,
+    -- Base model name
+    &#39;mistral-7b&#39;,
+    -- Training data query
+    &#39;SELECT BODY AS PROMPT, GOLDEN_JSON AS COMPLETION FROM FINE_TUNING_TRAINING&#39;,
+    -- Validation data query 
+    &#39;SELECT BODY AS PROMPT, GOLDEN_JSON AS COMPLETION FROM FINE_TUNING_VALIDATION&#39; 
+);
+</code></pre>
+<p>To describe the properties of a fine-tuning job. If the job completes successfully, additional details about the job are returned, including the final model name. Wait for about 5-10 minutes for the state to move to Completed.</p>
+<pre><code>Select SNOWFLAKE.CORTEX.FINETUNE(
+  &#39;DESCRIBE&#39;,
+  &#39;&lt;&gt;&#39; -- replace the placeholder with the output from the previous statement
+);
+
+#### The model creation job takes 5-10 minutes and the subsequent statements are dependent on the Job completion. Wait until the Output moves to &#34;SUCCESS&#34; status indicating successful creation of the fine tuned model. 
+
+Sample Output of the Job Status showing successful Job Completion:
+{&#34;base_model&#34;:&#34;mistral-7b&#34;,&#34;created_on&#34;:1718917728596,&#34;finished_on&#34;:1718917883007,&#34;id&#34;:&#34;CortexFineTuningWorkflow_6dad71ea-1233-4193-1233424535&#34;,&#34;model&#34;:&#34;SUPPORT_MISTRAL_7B\&#34;,&#34;progress&#34;:1.0,&#34;status&#34;:&#34;SUCCESS&#34;,&#34;training_data&#34;:&#34;SELECT BODY AS PROMPT, GOLDEN_JSON AS COMPLETION FROM TRAINING&#34;,&#34;trained_tokens&#34;:112855,&#34;training_result&#34;:{&#34;validation_loss&#34;:0.8271147012710571,&#34;training_loss&#34;:0.8407678074306912},&#34;validation_data&#34;:&#34;&#34;}
+</code></pre>
+<p>Once the Status turns to &#34;SUCCESS&#34; we will create a function to compute the accuracy of the returned outputs by the Fine Tuned model.</p>
+<pre><code>CREATE OR REPLACE FUNCTION ACCURACY(candidate STRING, reference STRING)
+RETURNS number
+LANGUAGE SQL
+AS
+$$
+DIV0(SUM(IFF(
+    EQUAL_NULL(
+        reference, 
+        candidate
+    ),
+    -- THEN
+    1,
+    -- ELSE
+    0
+)), COUNT(*))
+$$
+;
+</code></pre>
+<p>Click Next –&gt;</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Evaluate the Output" duration="0">
+        <pre><code>CREATE OR REPLACE TABLE FINE_TUNING_VALIDATION_FINETUNED AS (
+    SELECT
+        -- Carry over fields from source for convenience.
+        ID, BODY, LABELED_TRUCK, LABELED_LOCATION,
+        -- Run the custom fine-tuned LLM.
+        SNOWFLAKE.CORTEX.COMPLETE(
+            -- Custom model
+            &#39;SUPPORT_MISTRAL_7B&#39;, 
+            body 
+        ) AS RESPONSE
+    FROM FINE_TUNING_VALIDATION
+);
+
+</code></pre>
+<p>The FINE_TUNING_VALIDATION_FINETUNED table contains the output by leveraging the Fine Tuned Model on the response body of the email. Further using the ACCURACY() function the accuracy score using the Fine Tuned Model with the Cortex COMPLETE Function is determined.</p>
+<h2 is-upgraded>Cleanup</h2>
+<p>Navigate to Snowsight Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;. Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.</p>
+<pre><code>USE ROLE SYSADMIN;
+DROP DATABASE CFT_DB;
+DROP WAREHOUSE CFT_WH;
+
+USE ROLE securityadmin;
+DROP ROLE CFT_ROLE;
+</code></pre>
+<p>Snowflake Cortex Fine-Tuning function incurs compute cost based on the number of tokens used in training. To get an estimate of the cost for the Fine Tuning job, refer to the consumption table for each cost in credits per million tokens. Also there are normal storage and warehouse costs applicable for storing the output customized adaptors, as well as for running any SQL commands.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <h2 is-upgraded>Conclusion</h2>
+<p>You did it! You have successfully completed the Tasty Bytes Enhancing Customer Experiences using Cortex Fine Tuning - Quickstart. By doing so you have learned how to:</p>
+<ul>
+<li>Fine tune LLM to adapt for a domain specific business use case</li>
+<li>Build an automated AI agent for responding to customer emails in natural language with highest accuracy and efficiency.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<ul>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index#0" target="_blank">Customer Reviews Analytics using Snowflake Cortex</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_customer_support_email_app/index.html?index=..%2F..index#0" target="_blank">Tasty Bytes - Customer Support Streamlit Application Powered by Cortex</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html?index=..%2F..index#0" target="_blank">Tasty Bytes - Enhance Customer Experience Streamlit App</a></h3>
+</li>
+<li><h3 is-upgraded><a href="https://quickstarts.snowflake.com/guide/build_rag_based_equipment_maintenance_app_using_snowflake_cortex/index.html?index=..%2F..index#0" target="_blank">Build Rag Based Equipment Maintenance App Using Snowflake Cortex</a></h3>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "e2emigration_sql_and_data",
+  "duration": 55,
+  "title": "End-to-End Migration to Snowflake: SQL Code Conversion and Data Migration",
+  "summary": "End-to-End Migration to Snowflake: SQL Code Conversion and Data Migration",
+  "source": "e2e-sqlserver-migration-snowconvert/e2e-sqlserver-migration-code-conversion.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "migration",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "e2emigration_sql_and_data"
+}

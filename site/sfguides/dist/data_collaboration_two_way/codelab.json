@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:11-04:00",
+  "id": "data_collaboration_two_way",
+  "duration": 195,
+  "title": "Two Way Data Collaboration",
+  "summary": "This is a Snowflake Guide on how to use Snowflake’s Data Collaboration features to share an enrich data.",
+  "source": "data_collaboration_two_way/data_collaboration_two_way.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_collaboration_two_way"
+}

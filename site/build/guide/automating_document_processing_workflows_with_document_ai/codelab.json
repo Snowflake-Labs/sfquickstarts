@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "automating_document_processing_workflows_with_document_ai",
+  "duration": 56,
+  "title": "Automating Document Processing Workflows With Document AI",
+  "summary": "This guide will provide step-by-step details for automating document processing workflows with Document AI",
+  "source": "automating_document_processing_workflows_with_document_ai/automating_document_processing_workflows_with_document_ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "documentai",
+    "generativeai",
+    "gettingstarted",
+    "llms",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "automating_document_processing_workflows_with_document_ai"
+}

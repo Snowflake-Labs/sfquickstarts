@@ -1,0 +1,522 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build and Secure Multi-Tenant Data Applications with Snowflake and Sigma</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowflake_build_secure_multitenant_data_applications_snowflake_sigma"
+                  title="Build and Secure Multi-Tenant Data Applications with Snowflake and Sigma"
+                  environment="web"
+                  feedback-link="https://github.com/sigmacomputing/sigmaquickstarts/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Whether you are a global retailer, a tech company, or a financial services firm, providing near real-time embedded analytics to your external users can help optimize your operations, improve your product conversion, drive new lines of revenue, and more.</p>
+<p>This Sigma and Snowflake lab is designed to teach you how to build customer facing analytics applications that allow your end users to dive deeper and go further with data.</p>
+<h2 is-upgraded>Target Audience</h2>
+<p>Data Analysts, Business Analysts, or others who are doing next level analysis on their data in Sigma. No SQL is required for this lab, but the concepts do get technically complex.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A computer with a current browser. It does not matter which browser you want to use.</li>
+<li>A Snowflake trial account with Enterprise Edition or higher.</li>
+</ul>
+<p><a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Free Trial</a></p>
+<p>Once you have created your Snowflake trial environment, you will need to complete the data loading and object creation steps found in the Snowflake Tasty Bytes Quickstart, which you can access here: <a href="https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0" target="_blank">An Introduction to Tasty Bytes.</a></p>
+<aside class="special"><p><strong>NOTE:<br></strong> You do not need a Sigma instance prior to starting this lab as one will be provisioned during the course of this lab. </p>
+</aside>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this lab you&#39;ll learn how to:</p>
+<ul>
+<li>Build an interactive, embeddable dashboard with unique drill down capabilities using Snowflake and Sigma</li>
+<li>Explore data sets using Sigma&#39;s unique UI</li>
+<li>Leverage column &amp; row-level security policies to secure data in Snowflake</li>
+<li>Dynamically assign Snowflake Role &amp; Warehouse using Sigma User Attributes</li>
+<li>Analyze engagement across customer demographics</li>
+<li>See the end user experience in data products built on Sigma &amp; Snowflake</li>
+</ul>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Lab Environment" duration="16">
+        <p>2.1 After setting up your trial, log into Snowflake.</p>
+<p>2.2 From the Snowflake home page click <code>Worksheets</code> then <code>+</code> button and select <code>SQL Worksheet</code>:</p>
+<p class="image-container"><img style="width: 500.00px" src="img/e2ec243d51561d50.png"></p>
+<p>2.3 Copy and Paste the following code into  your new SQL worksheet:</p>
+<pre>USE ROLE TASTY_ADMIN; 
+USE WAREHOUSE TASTY_BI_WH;
+USE DATABASE FROSTBYTE_TASTY_BYTES;
+USE SCHEMA HARMONIZED;
+ALTER WAREHOUSE TASTY_BI_WH SET WAREHOUSE_SIZE = &#39;MEDIUM&#39;;
+ALTER WAREHOUSE TASTY_DATA_APP_WH SET WAREHOUSE_SIZE = &#39;MEDIUM&#39;;
+
+---CREATE TABLE FROM VIEW---
+
+CREATE OR REPLACE TABLE ORDERS AS SELECT * FROM ORDERS_V;
+</pre>
+<p>2.4 Now that the SQL is in your worksheet, execute the code by placing your cursor in each line and hitting <code>Command + Enter</code>. You may also execute the code by selecting the blue arrow in the top right corner of the worksheet and selecting <code>Run All</code>.</p>
+<p>2.5 While the SQL executes, navigate back to the Snowflake homepage by <code>clicking the home icon</code>, then navigate to the <code>Admin tab</code>. Select <code>Partner Connect</code> under the Admin tab, then click to select <code>Sigma</code>.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/d1b5122e69135ae3.png"></p>
+<aside class="warning"><p><strong>NOTE:<br></strong> If you have trouble leveraging partner connect, ensure you are in the ACCOUNTADMIN role. </p>
+</aside>
+<p>2.6 You will now see a pop up explaining the objects that will be created as part of spinning up a new Sigma instance. Click the blue <code>Connect</code> button.</p>
+<p class="image-container"><img style="width: 500.00px" src="img/54c1dd3124845bf2.png"></p>
+<p>2.7 Click <code>Activate</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/571d2e923f919a86.png"></p>
+<p>2.8 You will be prompted to input a company name for your URL. You may choose whatever you feel best fits.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/53a6a93a4f6d09bb.png"></p>
+<p>2.9 Then complete the steps to create a user and password for yourself.</p>
+<p>2.10 Finally, select <code>Get Started Using Sigma</code>.</p>
+<p class="image-container"><img style="width: 500.00px" src="img/39c927216314fc9.png"></p>
+<p>2.11 If this was done correctly, you should now see the Sigma home page. Bookmark this page for easy access later in the lab:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/6d71ac47c5d0fcb5.png"></p>
+<p>2.12 In the top right corner, select your <code>name</code>, then select <code>Administration.</code></p>
+<p class="image-container"><img style="width: 400.00px" src="img/8e4b66e32e0a525a.png"></p>
+<p>2.14 From the left-hand panel, select <code>Connections</code>, then click the new connection that was created for you through partner connect. It should read something like <code>Snowflake PC_SIGMA_WH</code>:</p>
+<aside class="warning"><p><strong>NOTE:<br></strong> This is not the Sigma Sample Database Connection.  </p>
+</aside>
+<p class="image-container"><img style="width: 600.00px" src="img/3ba5a67a987f9ea4.png"></p>
+<p>2.15 Select <code>Edit</code> in the top right on the connection page:</p>
+<p class="image-container"><img style="width: 700.00px" src="img/49e6b76bce10e966.png"></p>
+<p>2.16 Adjust the connection so that the warehouse is <code>TASTY_BI_WH</code>, the role is <code>TASTY_ADMIN</code> and the User is <strong>YOUR</strong> Snowflake User name. Enter your Snowflake password and click <code>Save</code>.  <strong>You may adjust the connection name if you so choose as well</strong>.</p>
+<p>Upon save, Sigma will validate the connection is reachable.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/dbbfac34d637fe6f.png"></p>
+<p>2.17 Click the <code>paper crane</code> icon in the top left to return to the Sigma homepage:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/c62f481ca98575cd.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Workbook" duration="16">
+        <p>3.1 From the home page select <code>Create New</code> then select <code>Workbook</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/e2206181f1ec7fee.png"></p>
+<p>3.2 In the left-hand pane, select <code>Add New</code> then click <code>Table.</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/9446ff249b68cdec.png"></p>
+<p>3.3 Next, select <code>Tables and Datasets.</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/bd97428f1ff81359.png"></p>
+<p>3.4 For your source, select <code>Connections</code>, then choose the connection we created earlier. If you did not choose to rename it, it should be labeled something like <code>Snowflake  PC_SIGMA_WH.</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/b7652bc26c0126ed.png"></p>
+<p>3.5 When you have found the connection, expand the <code>FROSTBYTE_TASTY_BYTES</code> database, and select the <code>Orders</code> table from the Harmonized Schema.:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/d43e16ddf2b08018.png"></p>
+<aside class="warning"><p><strong>NOTE:<br></strong> This is different than the Orders_V view. </p>
+</aside>
+<p>3.6 You will notice that Sigma populates a preview of the table you have selected. On this interface, you have the ability to select which columns from the table you would like to bring into the workbook table. De-select <code>Customer Id, First Name, Last Name, Email, Phone Number, Children Count, Marital Status, Order Tax Amount, and Order Discount Amount</code>. You will not need these columns for the purpose of this lab.</p>
+<p>Then Click <code>Select</code> in the bottom right corner:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/65390a8f2ea10595.png"></p>
+<p>3.7 Rename the table by clicking on the title <code>Orders</code>, and rename it to <code>Orders Base Table</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/b5777ed2e363504.png"></p>
+<aside class="special"><p><strong>IMPORTANT:<br></strong> In Sigma, it is best practice to begin with base elements, and build child elements like visualizations from there.  </p>
+</aside>
+<p>3.8 Select the drop down arrow to the right of the <code>Order Ts</code> Column. Select <code>Truncate Date</code>, then choose <code>Day</code>.</p>
+<p>This will change the formatting to show the timestamp as just the year, month, and day of the timestamp:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/127c93daf74f88bc.png"></p>
+<p>3.9 Double click the column name and rename <code>Purchase Date</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/30e4c972059c545.png"></p>
+<p>3.10 Scroll through the Orders Base Table to the right until you locate the <code>Unit Price, Price, Order Amount, and Order Total</code> columns. Use <code>Shift + Click</code> to select all 4 columns, then hit the <code>Format As Currency</code> (or Dollar Sign) button on the top formula bar to format these columns as currency:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/4063c9da2e7f72d5.png"></p>
+<p>3.11 Now we will add another table to the <code>Workbook Page</code>.</p>
+<p>Click the <code>plus sign</code> in the left hand pane to add a new element, and select <code>Table</code>. Click the tab for <code>New</code> then select <code>Tables and Datasets</code>.</p>
+<p>This time, you are looking for the <code>Menu</code> table in the <code>RAW_POS</code> schema within the <code>FROSTBYTE_TASTY_BYTES</code> database. We only want the columns <code>Menu Item ID and Cost of Goods Usd</code>. Click <code>Select</code> when done.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/c400c98aa3f922c3.png"></p>
+<p>3.12 We now have two tables on the page and we want to create a relationship between them.</p>
+<p>On your <code>Orders Base Table</code>, scroll all the way to the far right column <code>Order Total</code>, then click the drop down arrow. Select <code>Add column via lookup</code>.</p>
+<p class="image-container"><img style="width: 400.00px" src="img/a07e67e602888f14.png"></p>
+<p>3.13 From the drop down, select <code>MENU</code> as the element, and <code>Cost of Goods Usd</code> as the column to add. Map the elements on <code>Menu Item Id</code>, then click <code>Done</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/e7bf8d81038ec753.png"></p>
+<p>3.14 With the <code>Cost of Goods Usd (Menu)</code> column still selected, click the <code>Format as Currency</code> button once again to format the cost as a currency.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/3265be9c869d90b4.png"></p>
+<p>3.15 Click the arrow next to <code>Cost of Goods Used (MENU)</code> and select <code>Add new column</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/2c5fa2b85a015782.png"></p>
+<p>3.16 In the formula bar, type <code>[Quantity] * [Cost of Goods Usd (MENU)]</code> and hit enter.</p>
+<p>This will create a new calculated column. Name this column <code>COGS</code> (Cost of Goods Sold)</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e055b2abac5dc268.png"></p>
+<p>3.17 Click the drop down by the newly created <code>COGS</code> column. Select <code>Add a new Column</code>. This time, type <code>[Price]-[COGS]</code> and hit Enter. Name this new column <code>Profit</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/437c9452a5f25d16.png"></p>
+<p>3.18 Scroll through the Orders Base Table until you find the <code>Truck Brand Name</code> column. Click the arrow to open the drop down, then select <code>Group Column</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/765f88c1110be749.png"></p>
+<p>3.19 Now that we have brought in our base elements, click the <code>Save As</code> button in the top right corner and save your workbook as <code>Tasty Bytes Sales Portal</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/7fa3dda443392252.png"></p>
+<p>3.20 Now, double click on <code>Page 1</code> in the bottom left corner. Rename the page <code>Data</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/8025d6fb83200324.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building the Workbook" duration="16">
+        <p>Now that we have created our base data elements and saved the first version of our workbook, we are ready to move on to building the visualizations for our sales portal.</p>
+<p>4.1 Hover over the upper right hand corner of the <code>Orders Base Table</code>, then select the icon for <code>Create Child Element</code> and select <code>Visualization</code> from the drop down:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/cf508b914bf11aa8.png"></p>
+<p>This places a empty visualization on the page.</p>
+<p>4.2 On the left hand pane, drag <code>Region to X-Axis</code>, then drag <code>Profit to the Y-Axis</code>.</p>
+<p>You will notice Sigma automatically performs the aggregation for profit, formatting it as <code>Sum of Profit</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/5b3f4a7312e308a.png"></p>
+<p>4.3 Double click the title for your new bar chart and rename it <code>Profit by Region</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/4e7dd3cf4bc82eb1.png"></p>
+<p>4.4 Now click the <code>three dot icon</code> in the top right of the new visualization. From the drop down, select <code>Move to</code> then <code>New Page</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/d69392cdbd5e8dd1.png"></p>
+<p>You will see your bar chart has now been moved to a separate page than the data sets.</p>
+<p>Lets create another visualization using the same workflow.</p>
+<p>4.5 Back on the <code>data</code> page, repeat the process of creating a <code>child visualization</code> from the <code>Orders Base Table</code> by hovering over the top right corner, selecting <code>Create Child Element</code>, then <code>Visualization</code>.</p>
+<p>4.6 On the left hand menu, change the visualization type to a Line chart by selecting <code>Line</code> from the drop down menu where you initially see Bar.</p>
+<p>4.7 Drag <code>Purchase Date to the X-Axis</code>.</p>
+<p>4.8 Once you have placed it there, click the arrow to the right of <code>Purchase Date</code>, select <code>Truncate Date</code>, then <code>Month</code>.</p>
+<p>This will group our values based on the purchase month rather than the individual purchase date.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/4ae048c30fb18830.png"></p>
+<p>4.9 <code>Drag in Order Id to the Y-Axis</code>. Select the drop down arrow and go to <code>Set Aggregate -> CountDistinct</code>.</p>
+<p>This will give us the count of distinct orders over time:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/6fa725c00fdf18b4.png"></p>
+<p>4.10 Rename this visual <code>Orders by Month</code>.</p>
+<p>4.11 You will notice a sharp decline in orders on the far right of the line graph. This is because our data set does not include the orders for the full month of November 2022. Right Click the furthest right data point, and select <code>Exclude 2022-11</code> to remove the sharp drop off from our visualization.</p>
+<p class="image-container"><img style="width: 400.00px" src="img/d74029ff45d0a591.png"></p>
+<p>4.12 Move this element to the page you placed your bar chart on earlier.</p>
+<p>4.13 On the <code>Orders base table</code>, locate the <code>Purchase Date</code> column, and select <code>Filter</code> from the drop-down.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/50862ca6ad59ee41.png"></p>
+<p>No need to set a date range right now so just click away from the calendar to make disappear.</p>
+<p>4.14 On the new <code>Filters & Controls</code> pane, click the <code>three dots</code> to the right of the filter. Select <code>Convert to page control</code> from the dropdown menu.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/aedb29bab41f5aa9.png"></p>
+<p>4.15 Move this new Control element to the page with your visualizations.</p>
+<aside class="warning"><p><strong>NOTE:<br></strong> You can drag page elements around to reorder them and also change their size. Drag the filter control to the top of the visualizations pages to make it easy for users to set filters. </p>
+</aside>
+<p>4.16 One last time, return to the <code>Orders Base Table</code> and select <code>Create Child Element</code>. This time, select <code>Pivot Table</code> from the drop down.</p>
+<p>4.17 Drag <code>Truck Id</code> to Pivot Rows, <code>Purchase Date</code> to Pivot Columns, and <code>Profit</code> and <code>COGS</code> to values.</p>
+<p>4.18 Select the arrow to the right of Purchase Date, and truncate to the year.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/c61b86f3e6703d2f.png"></p>
+<aside class="warning"><p><strong>NOTE:<br></strong> It may take a moment for the data to appear as there are almost 700M rows in the &#34;Orders Base Table&#34;. </p>
+</aside>
+<p>4.19 Double click on <code>Sum of Profit</code> on the left hand pane and rename to <code>Profit</code>. Repeat the same for <code>Sum of COGS</code>, renaming it <code>COGS</code>.</p>
+<p>4.20 Rename the pivot table <code>Yearly Profit & Cost by Truck</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/63fd1c7627b0b60e.png"></p>
+<p>4.21 With the pivot table selected, click on the <code>paintbrush</code> in the left hand pane, then click <code>Conditional Formatting</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/56db853e6b7cf988.png"></p>
+<p>4.22 On the Apply to drop down, select <code>Profit</code> as the column to apply formatting to.</p>
+<p>Then select <code>Color Scale</code> as the formatting type:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/cd4122fc8396dcd8.png"></p>
+<p>4.23 Finally, <code>move the pivot table</code> to the new page you created for your visualizations.</p>
+<p>4.24 On the visualizations page, double click where you see <code>Page 1</code> in the bottom left hand corner and rename the page to <code>Dashboard</code>.</p>
+<p>4.25 Click the plus sign in the top left corner of the page for Add New. Then select <code>Viz</code>.</p>
+<p>4.26 For the data source for the new visualization, select <code>ORDERS BASE TABLE</code> from the <code>Workbook Elements</code> field:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/4c5c541537eeaca1.png"></p>
+<p>4.27 Under visualization, change the type to <code>KPI</code>. Then drag <code>Truck Id</code> to the Value field:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/8954917af4ea03ed.png"></p>
+<p>4.28 To the right of Sum of Truck Id, select the drop down and <code>change the aggregate to CountDistinct</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/e85d4e610a584683.png"></p>
+<p>4.29 With the KPI selected, click the <code>decrease decimal button</code> in the top formula bar until you see the total count of trucks with no decimal places:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/7b8bab5307ed7662.png"></p>
+<p>4.30 Finally, double click <code>CountDistinct of Truck Id</code> in the left hand pane, and rename the value to <code>Number of Trucks</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/aa757791cb0ab5b3.png"></p>
+<p>4.31 Repeat the process to create another KPI Visualization from the <code>Orders Base Table</code>, but this time, drag <code>Order Id</code> to the value. Set the aggregate to <code>CountDistinct</code>, decrease the decimal places, set the datatype to <code>number</code> (under the &#34;123&#34; icon) and rename the field <code>Number of Orders</code>.</p>
+<p>Your KPI tile should look like this:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/9012d216695c032b.png"></p>
+<p>4.32 Drag your visualizations to rearrange them so that your KPIs are side by side at the top, your control element is below them, the bar &amp; line charts are side by side below that, with the pivot table at the bottom so that your page looks like this:</p>
+<p>Don&#39;t worry if you make a mistake; you can always just go back by clicking the <code>Undo icon</code> as shown by the red arrow:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/db08d60feab74b10.png"></p>
+<p>4.33 Once again select the plus sign in the left hand panel to add a new element. This time, select <code>Text</code>.</p>
+<p class="image-container"><img style="width: 400.00px" src="img/3863ef128260bde3.png"></p>
+<p>4.34 Drag your new text element to the top of the page.</p>
+<p>4.35 In the text box type the <code>=</code> sign and a formula bar will appear. Copy and paste this formula into the formula bar:</p>
+<pre>If(CountDistinct([Orders Base Table/Truck Brand Name]) &gt;1, &#34;Tasty Bytes&#34;, [Orders Base Table/Truck Brand Name])
+</pre>
+<p class="image-container"><img style="width: 600.00px" src="img/93a0222b30462a0b.png"></p>
+<p>4.36 Click the green checkmark after completing the formula, then type <code>Sales Performance</code>to the right of the dynamic text bubble.</p>
+<p>4.37 Format your new text element as a <code>Large Heading</code> and center on the page:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/75addecb17de4289.png"></p>
+<p>4.38 Click the <code>gear icon</code> in the bottom corner to open the <code>Workbook Settings</code> menu:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/73dff30fcb7e72a4.png"></p>
+<p>4.39 Uncheck the box for <code>Show Cards</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/86993154fe55421c.png"></p>
+<p>4.40 We don&#39;t want end-users to see the Data tab, so we will make that hidden for them. It will still be available to you, but not others who do not have the correct permissions to see it.</p>
+<p>From the drop down next to the data page, click <code>Hide</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/6fd142ac194b5302.png"></p>
+<p>4.41 Our work was being auto-saved as <code>Draft</code> as we made each change. We can now change the state of the Workbook to <code>Published</code>.</p>
+<p>Click the blue <code>Publish</code> button in the top right corner.</p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Security" duration="16">
+        <p>Now that we have created our workbook, we need to set up the security permissions on the data set and the workbook itself.</p>
+<p>5.1 Navigate back to your Snowflake instance and the worksheet you created earlier in this lab.</p>
+<p>5.2 Once you have navigated back to your Snowflake worksheet, copy and paste the following SQL into your worksheet:</p>
+<aside class="warning"><p><strong>NOTE:<br></strong> These statements will be executed one at a time by placing your cursor in the statement line and hitting &#34;Command + Enter&#34; or the play button in the top right hand corner of the Snowflake UI. Detail on what each statement is doing is provided just after the codeblock under &#34;What the script is doing&#34;. You may find it useful to read along as you run each statement in the set. </p>
+</aside>
+<p>You will have to modify this code to set the username to your Snowflake username:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/d7945bed68fdd958.png"></p>
+<pre>---SET DATABASE TO BE USED ---
+USE ROLE TASTY_ADMIN;
+USE DATABASE FROSTBYTE_TASTY_BYTES;
+USE SCHEMA HARMONIZED;
+
+---CREATE MAPPING TABLE FOR RLS POLICY ---
+CREATE OR REPLACE TABLE BRANDMANAGERS (MANAGER VARCHAR, BRAND VARCHAR);
+
+INSERT INTO BRANDMANAGERS (MANAGER, BRAND) VALUES 
+(&#39;KITAKATA_MANAGER&#39; , &#39;Kitakata Ramen Bar&#39;),
+(&#39;AMPEDUPFRANKS_MANAGER&#39;, &#39;Amped Up Franks&#39;),
+(&#39;CHEEKYGREEK_MANAGER&#39;, &#39;Cheeky Greek&#39;),
+(&#39;FREEZINGPOINT_MANAGER&#39;, &#39;Freezing Point&#39;);
+
+SELECT * FROM BRANDMANAGERS;
+
+--- CREATE MANAGER ROLE FOR USAGE IN RLS POLICY --- 
+USE ROLE ACCOUNTADMIN;
+CREATE ROLE KITAKATA_MANAGER;
+GRANT ROLE KITAKATA_MANAGER TO ROLE TASTY_ADMIN;
+GRANT ROLE KITAKATA_MANAGER TO USER &lt;YOUR USERNAME&gt;;
+GRANT USAGE ON DATABASE FROSTBYTE_TASTY_BYTES TO ROLE KITAKATA_MANAGER;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE FROSTBYTE_TASTY_BYTES TO ROLE KITAKATA_MANAGER;
+GRANT SELECT ON ALL TABLES IN DATABASE FROSTBYTE_TASTY_BYTES TO ROLE KITAKATA_MANAGER;
+GRANT USAGE ON WAREHOUSE TASTY_BI_WH TO ROLE KITAKATA_MANAGER;
+GRANT USAGE ON WAREHOUSE TASTY_DATA_APP_WH TO ROLE KITAKATA_MANAGER;
+
+
+---TEST YOU CAN ACCESS BOTH ROLES---
+
+USE ROLE KITAKATA_MANAGER;
+USE ROLE TASTY_ADMIN;
+
+--- CREATE ROW ACCESS POLICY THAT LEVERAGES THE BRANDMANAGERS MAPPING TABLE TO RESTRICT DATA ACCESS ---
+USE ROLE ACCOUNTADMIN;
+CREATE OR REPLACE ROW ACCESS POLICY brand_policy AS 
+(truck_brand_name VARCHAR) RETURNS BOOLEAN -&gt;
+&#39;TASTY_ADMIN&#39;= CURRENT_ROLE()
+    OR EXISTS (
+      SELECT 1 FROM BRANDMANAGERS
+       WHERE MANAGER = CURRENT_ROLE()
+       AND truck_brand_name = BRAND
+      )
+;
+
+--- SET POLICY ON ORDERS TABLE---
+
+ALTER TABLE FROSTBYTE_TASTY_BYTES.HARMONIZED.ORDERS ADD ROW ACCESS POLICY brand_policy on (truck_brand_name);
+
+---TEST IF POLICY WORKED----
+USE ROLE TASTY_ADMIN;
+USE WAREHOUSE TASTY_BI_WH;
+SELECT * FROM FROSTBYTE_TASTY_BYTES.HARMONIZED.ORDERS LIMIT 100;
+
+USE ROLE KITAKATA_MANAGER;
+USE WAREHOUSE TASTY_BI_WH;
+SELECT * FROM FROSTBYTE_TASTY_BYTES.HARMONIZED.ORDERS LIMIT 100;
+</pre>
+<p>5.3 Once you have run all of the SQL statements and successfully tested the Row Access Policy, you can return to your Sigma instance.</p>
+<h2 is-upgraded>What the script is doing:</h2>
+<p>The first statement sets the database to FROSTBYTE_TASTY_BYTES.</p>
+<p>The next two statements we will run create our BRANDMANAGERS table, and populate it with values. This table will be used as a mapping table for the creation of our row-level access policy.</p>
+<p>The third statement simply selects from this new table to verify the values have populated as expected into the table.</p>
+<p>The next set of statements creates a Snowflake role for our brand managers at Tasty Bytes to use, in this instance, the brand manager for Kitakata Ramen Bar. These statements additionally grant usage of the role to yourself, as well as grant usage on the Orders table that is powering our visualizations in Sigma. Finally, there are two statements that test your access to both roles. If you are unable to assume the new KITAKATA_MANAGER role, try running the grant statements again.</p>
+<p>The next statement we will run creates our Row Access Policy. This policy is written so that when a user is in the &#34;Tasty_Admin&#34; role, they will be able to see all the rows of the table. However, if they are not in the Tasty_Admin role, Snowflake will evaluate which rows they should be able to see based on their current role and the values we populated in our BRANDMANAGERS mapping table.</p>
+<p>Now that we have created our access policy, run the next statement in order to apply it to the ORDERS table, with access being determined by the value in the truck_brand_name field.</p>
+<p>Finally, run the next group of statements which will have you assume the TASTY_ADMIN role and select against the Orders table, then do the same from the KITAKATA_MANAGER role. You should notice that when you are in the KITAKATA_MANAGER role, you only see data related to the Kitakata Ramen Bar.</p>
+<p>For More Information on Snowflake Role-Based Access Control, please see the documentation here: <a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview" target="_blank">Snowflake Access Control</a></p>
+<p class="image-container"><img style="width: 800.00px" src="img/e1eabf19da5acc25.png"></p>
+<p>5.4 Back on the Sigma home page, click the icon with your initials in the top right hand corner, and select <code>Administration</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/104e059cc08d4b17.png"></p>
+<p>5.5 On the left hand side, select &#34;Teams&#34;, then select <code>Create Team</code>. We will create two different teams here.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/bc41ee5e0e9e8115.png"></p>
+<p>5.6 For the first team, give it the team name of <code>Tasty Admins</code>, then click <code>Create</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/a6eb3f1ac363e8d1.png"></p>
+<p>5.7 Click on <code>Teams</code> on the left sidebar and repeat this process, creating a second team called <code>Kitakata Managers</code>.</p>
+<p>5.8 Once you have created both teams, select <code>User Attributes</code> from the left-hand panel and click <code>Create Attribute</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/938b66f49f8681f7.png"></p>
+<p>5.9 Name your attribute <code>Tasty Role</code>, and give it a Default Value of <code>Public</code>. Click <code>Create</code> to finish.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/71d9a9d9c14e031a.png"></p>
+<p>5.10 Next, create a second User Attribute, this time calling it <code>Tasty Warehouse</code> and giving it a default value of <code>Compute_WH</code></p>
+<p class="image-container"><img style="width: 600.00px" src="img/f6181949304d5f23.png"></p>
+<p>5.11 Navigate back to User Attributes by clicking <code>User Attributes</code> on the left hand side. You should now see your Tasty Warehouse and Tasty Role attributes.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/bfbb0fb15e6aa1b1.png"></p>
+<p>5.12 Select <code>Tasty Role</code>, then click <code>Assign Attribute</code></p>
+<p class="image-container"><img style="width: 600.00px" src="img/b75ea4b1d3911946.png"></p>
+<p>5.13 From the drop down list, select the two teams you created earlier, <code>Tasty Admins and Kitakata Managers</code>. Assign them the role attributes of <code>TASTY_ADMIN and KITAKATA_MANAGER</code> respectively. Click the blue <code>Assign</code> button to complete:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/6e02546e4a90b55a.png"></p>
+<p>5.14 You will notice that the teams are listed by priority. If a user is on multiple teams, they will have the permissions of whichever team is given highest priority under the user attribute. As you are the only member of both teams, ensure that <code>Tasty Admins</code>  are in the highest priority position by dragging the team to the top.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/4d6cb39f5ce11fe5.png"></p>
+<p>5.15 Repeat this process for the Tasty Warehouse attribute, this time assigning your <code>Tasty Admins team the warehouse of TASTY_BI_WH</code> and your <code>Kitakata Managers team the warehouse of TASTY_DATA_APP_WH</code>. Click <code>Assign</code> to complete:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/3cccf75ad933637e.png"></p>
+<p>5.16 Once again, ensure that <code>Tasty Admins</code> is the highest priority team by dragging it to the number 1 slot.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/40ab2891582bf067.png"></p>
+<p>5.17 On the left hand side, navigate to the <code>Connections tab</code>, and select the connection you have been using throughout this lab. Click <code>Edit</code> next to the connection name:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/834220952be32d14.png"></p>
+<p>5.18 In the warehouse field, click the list icon to Set by User Attributes. From the dropdown, select the <code>Tasty Warehouse</code> attribute you created earlier.</p>
+<p>5.19 Do the same for the role field, selecting the <code>Tasty Role</code> attribute you created.</p>
+<p>5.20 Finally, enter your Snowflake password and click <code>Save</code> in the top right corner:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/9d5cb0e57f2f677f.png"></p>
+<p>Your Connection Details pane should now show that your warehouse and role in Snowflake will be determined by the User Attributes you have created.</p>
+<p>5.21 On the connections tab, select your TastyBytes connection and click <code>Browse Connection</code>.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/23ba4a4c888a6a84.png"></p>
+<p>5.22 Under Permissions, click ‘Add Permission&#39;</p>
+<p class="image-container"><img style="width: 600.00px" src="img/f39e7294db034fb.png"></p>
+<p>5.23 Select both teams you have created and grant them <code>Can Use</code> Permissions on the Connection. Un-check the box for <code>Send an email notification</code>, then click <code>Save</code>.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/a5c43a5101701665.png"></p>
+<aside class="special"><p><strong>IMPORTANT:<br></strong> By leveraging User Attributes and dynamically assigning the Snowflake role &amp; warehouse our end users have access to, we are able to allow the row level security policy we created in Snowflake to pass through to our users in Sigma.  </p>
+</aside>
+<p class="image-container"><img style="width: 600.00px" src="img/5652aa39b5c8c5e3.png"></p>
+<h2 is-upgraded>Create a Version Tag</h2>
+<p>5.24 On the left hand side, we will now select <code>Tags</code>. Next, click <code>Create Tag</code>.</p>
+<p>5.25 Name your tag <code>Production</code>, give it a description (required), and select a color. Click <code>Create</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/2cb5fb7f9c08991.png"></p>
+<h2 is-upgraded>Embedding Keys</h2>
+<p>5.26 For the last piece of work we will do in our administration UI, select the <code>Account</code> field from on the top left. Then scroll down to where you see <code>Embedding</code>. Click <code>Add</code>.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/6b83bf3fbe7eb1fb.png"></p>
+<p>5.27 You will see a prompt asking if you want to enable the premium feature. Click <code>Enable</code>. You will not be charged for leveraging this in a trial environment.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/cffb8c0d60a7de8f.png"></p>
+<p>5.28 Finally, you will see your embedding secret. You may save this to another location for future labs, but it will not be needed for this lab. Click <code>Close</code>.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/d0b275b2d800e3d9.png"></p>
+<p>5.29 Select <code>APIs & Embed Secrets</code> from the lefthand menu.</p>
+<p>5.30 Click <code>Create New</code>:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/b1f682729683d2fd.png"></p>
+<p>5.31 Select <code>Embed Secret</code>, and name the secret <code>Tasty Embed</code>.</p>
+<p>5.32 In the Owner field, select your Sigma user, and click <code>Create</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/905ea2300dd42539.png"></p>
+<p>Normally, you would save the <code>ClientID and Secret</code> keys that are auto-generated and presented in a pop-up to a secure location for use later.</p>
+<p>We do not need to do this for the purposes of this lab. The keys are required to exist as we will demonstrate embedding directly within Sigma.</p>
+<p>5.33 Click <code>Close</code>.</p>
+<h2 is-upgraded>Workspaces</h2>
+<p>We will create a Workspace and grant permission based on team membership.</p>
+<p>5.34 Navigate back to the Sigma homepage by clicking the <code>Paper Crane</code> logo in the top left corner. Select <code>Workspaces</code> from the left hand side:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/f48a781bd5c47857.png"></p>
+<p>5.35 Select <code>Create Workspace</code> in the top right corner, then name your workspace <code>Tasty Bytes</code>.</p>
+<p>You will see your user listed with <code>Can Manage</code> permissions.</p>
+<p>5.36 Add the two teams you created earlier by using the search bar below your user, and grant them <code>Can Contribute</code> permissions.</p>
+<p>5.37 Uncheck the <code>Send an email notification</code> so that we don&#39;t try to send mail at this time.</p>
+<p>5.38 Click <code>Save</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/e2e726f9d903fcc1.png"></p>
+<p>You will now see your new Tasty Bytes Workspace. Click on its title, then select <code>Create Folder</code> in the top right corner.</p>
+<p>5.39 Name your new folder <code>Workbooks</code>, then <code>click the green check mark</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/19de0c6a0b742536.png"></p>
+<p>5.40 Navigate back to the home page by <code>clicking the Sigma logo</code> in the top left corner.</p>
+<p>5.41 From the home page, click into your <code>Tasty Bytes Sales Portal</code> Workbook you created earlier. I should be at the top of the <code>RECENT</code> list:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/38c851c919318bbd.png"></p>
+<p>5.42 On the top bar, click the drop down next to the workbook title. Select <code>Tag this published version</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/feb0f7ab4915c677.png"></p>
+<p>5.43 From the drop down, select the <code>Production</code> tag we created earlier. Check the box for <code>Allow Saving as a New Workbook</code>, followed by <code>Set Tag</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/f6eb8a5b703af9fb.png"></p>
+<p>5.44 Once again, select the drop down by the workbook title, this time selecting <code>Move</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/e16efdd253d93353.png"></p>
+<p>5.45 When prompted to choose a destination, select the <code>Tasty Bytes workspace</code> we created earlier:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/581bd29d0e26e638.png"></p>
+<p>5.46 Then, select the <code>Workbooks folder</code> we created and click <code>Move</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/53ffd3ef19a40c57.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Exploring Embedding" duration="16">
+        <p>Many customers want to embed Sigma content in another web application. Embedding allows that to happen. In the case of this lab, we don&#39;t have another application handy, but we can still build and test embedding directly in Sigma.</p>
+<p>6.1 From the drop down by your workbook title select <code>Embedding</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/483d1ba227f06c3f.png"></p>
+<p>6.2 From the drop down labeled Generate Application Embed Path For, select &#34;Entire Workbook&#34;. Then click &#34;Test&#34;, which will take you to the Sigma Embedding Sandbox.</p>
+<p class="image-container"><img style="width: 600.00px" src="img/5729eb23c080419b.png"></p>
+<p>6.3 On the left hand side choose the following parameters:</p>
+<ul>
+<li>Select the embed secret we created earlier (Tasty Embed) from the Embed Secret drop down.</li>
+<li>For Mode, select &#34;User-Backed&#34;</li>
+<li>For Embed User Teams select &#34;Kitakata Managers&#34;</li>
+<li>For email, input any random email address that is NOT the email you log into Sigma with. It does            not need to be a real email address, and you can put something like managers@tastybytes.com.</li>
+<li>For account type select &#34;Creator&#34;</li>
+</ul>
+<p>6.4 Click <code>Load Embed</code>.</p>
+<p>If everything worked correctly, your dashboard should now read <code>Kitakata Ramen Bar Sales Performance</code>.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/6caa84b81c1aa3d6.png"></p>
+<p>This is because Sigma leveraged the User Attributes you set up previously, and filtered the data per the row access policy you created in Sigma. Now members of the Kitakata Managers team can only see data for the brand they manage.</p>
+<p>6.5 Click <code>Collapse</code> in the top left if you want to just view the embed full page.</p>
+<p>6.6 Hover over the pivot table and select <code>Maximize Element</code> in the top right corner:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/ab20df3d5d5c935d.png"></p>
+<p>You will now see the data set underlying the Pivot table.</p>
+<p>As you can see, <code>Sigma has created a grouped table automaically</code>, that powers the Pivot.</p>
+<p>Lets add additional metrics to the pivot table.</p>
+<p>6.7 Click the arrow on the right hand side of the <code>COGS</code> column, and select <code>Add new column</code>:</p>
+<p class="image-container"><img style="width: 600.00px" src="img/503a77a1efe6727a.png"></p>
+<p>6.8 In the formula bar, copy and paste this:</p>
+<pre>[Profit]/(Sum([Price]))
+</pre>
+<p>6.9 Then click the <code>% button</code> to format this as a percentage.</p>
+<p>6.10 Double click the <code>Calc</code> column header and re-name the column <code>Profit Margin</code>:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/2f7a5290cf41a8ba.png"></p>
+<p>6.11 Now click the two arrows in the top right corner to <code>minimize</code> the element:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/f4717990a2c62dea.png"></p>
+<p>You will see that the newly calculated column has been added to the Pivot Table on the main dashboard page:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/9628a76be923282e.png"></p>
+<p>6.12 Click the blue <code>Save as</code> button in the bottom right corner:</p>
+<p class="image-container"><img style="width: 400.00px" src="img/8fb7801f33012cbf.png"></p>
+<p>6.13 Save the updated workbook as <code>Tasty Bytes Sales Portal with Profit Margin</code> to the <code>Workbooks</code> folder within the <code>Tasty Bytes workspace</code> we created earlier.</p>
+<p class="image-container"><img style="width: 400.00px" src="img/861151e616b3ced5.png"></p>
+<p>6.14 Navigate back to the Sigma homepage, and select <code>Workspaces</code> from the left hand menu.</p>
+<p>6.15 Open the <code>Workbooks</code> folder within the <code>Tasty Bytes workspace</code>.</p>
+<p>You should now see the new version of the workbook that was created by your Embed User.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/c8aebfc928926ceb.png"></p>
+<p>6.16 Open the workbook <code>created by the embed user</code> to verify that the calculations they added to the pivot table have been maintained.</p>
+<p>6.17 Navigate back to the production workbook you created. You will notice that changes made by end users have not impacted the production tagged workbook version.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/af0872d59c0e7ba.png"></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>In this lab we learned how to connect Sigma to Snowflake, create interactive, embeddable dashboards in Sigma, and how to leverage Snowflake &amp; Sigma security policies to secure multi-tenant datasets backing an application. We thank you for your participation, and hope this exercise has helped you understand the value Sigma on Snowflake can drive for your organization and your customers.</p>
+<p><strong>Additional Resource Links</strong></p>
+<p><a href="https://help.sigmacomputing.com/hc/en-us" target="_blank">Help Center Home</a><br><a href="https://www.sigmacomputing.com/blog/" target="_blank">Sigma Blog</a><br><a href="https://www.sigmacomputing.com/resources/" target="_blank">Resources and Case Studies</a></p>
+<p class="image-container"><img alt="Footer" src="img/2112fdb2b2a4e638.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

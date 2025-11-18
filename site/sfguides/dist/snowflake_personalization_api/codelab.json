@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "snowflake_personalization_api",
+  "duration": 31,
+  "title": "Build a Real-Time Personalization API with Snowflake",
+  "summary": "A guide to building and running a custom point-lookup API Powered by Snowflake and Python/Flask",
+  "source": "snowflake_personalization_api/snowflake_personalization_api.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "app-development",
+    "architecture-patterns",
+    "marketing",
+    "solution-examples"
+  ],
+  "tags": [
+    "api",
+    "dataapplications",
+    "gettingstarted",
+    "marketing",
+    "personalization",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "snowflake_personalization_api"
+}

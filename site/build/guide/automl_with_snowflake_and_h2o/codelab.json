@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "automl_with_snowflake_and_h2o",
+  "duration": 85,
+  "title": "AutoML with Snowflake and H2O Driverless AI",
+  "summary": "This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.",
+  "source": "h2o/h2o.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "automl",
+    "databases",
+    "fileformats",
+    "h2o",
+    "partnerconnect",
+    "stages",
+    "tables",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "automl_with_snowflake_and_h2o"
+}

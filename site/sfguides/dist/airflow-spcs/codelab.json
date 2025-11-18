@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "airflow-spcs",
+  "duration": 60,
+  "title": "Running Apache Airflow on SPCS",
+  "summary": "Running Apache Airflow on SPCS",
+  "source": "airflow-spcs/airflow-spcs.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "apacheairflow",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "airflow-spcs"
+}

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-08-22T15:42:35-04:00",
+  "id": "modeling-subway-disruptions-with-neo4j",
+  "duration": 39,
+  "title": "Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics",
+  "summary": "How to model subway disruptions using dijsktra in Neo4j Graph Analytics for Snowflake",
+  "source": "neo4j-subways/neo4j-subways.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "twitter",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "modeling-subway-disruptions-with-neo4j"
+}

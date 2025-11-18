@@ -1,0 +1,576 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Customer Reviews Analytics using Snowflake Cortex</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="customer_reviews_analytics_using_snowflake_cortex"
+                  title="Customer Reviews Analytics using Snowflake Cortex"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>In this Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to identify where their customer experience may be falling short at the truck and business level by leveraging <strong>Snowflake Cortex</strong> within <strong>Snowflake Notebook</strong>. They collect customer reviews to get customer feedback on their food-trucks which come in from multiple sources and span multiple languages. This enables them to better understand the areas which require improvement and drive up customer loyalty along with satisfaction.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Python</li>
+<li>Familiarity with the DataFrame API</li>
+<li>Familiarity with Snowflake</li>
+<li>Familiarity with Snowpark</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ul>
+<li>Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability" target="_blank">supported</a>. <ul>
+<li>Cortex functions used - Complete, Translate, Sentiment</li>
+<li>Models used - snowflake-arctic, mistral-large</li>
+</ul>
+</li>
+<li>Snowflake Notebook enabled in your Snowflake account <ul>
+<li><strong>Note</strong>: To get access to Snowflake Notebook (currently in private preview) reach out to your Snowflake account team. This solution leverages Snowflake Cortex within Snowflake Notebook and you will not be able run the quickstart successfully otherwise.</li>
+</ul>
+</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this quickstart, you will learn:</p>
+<ul>
+<li>How to translate multilingual customer reviews</li>
+<li>How to categorise unstructured review text data at scale <ul>
+<li>How to get rating from reviews</li>
+<li>How to get intent to recommend from reviews</li>
+</ul>
+</li>
+<li>How to derive customer sentiment from reviews <ul>
+<li>How to derive aspect based customer sentiment from reviews</li>
+</ul>
+</li>
+<li>How to identify issues highlighted in customer reviews</li>
+<li>How to take action assisted by LLM</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>You will analyze Tasty Bytes&#39; customer reviews using <strong>Snowflake Cortex</strong> within <strong>Snowflake notebook</strong> to understand : <ul>
+<li>How likely their customers are to recommend Tasty Bytes food trucks to someone they know</li>
+<li>How good their overall experience was</li>
+<li>How is the customer sentiment across customer base</li>
+<li>What customers are feel saying about different aspects like food, price etc</li>
+<li>What are the main issues and how to remedy them</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the Data in Snowflake" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to:</p>
+<ul>
+<li>Create Snowflake objects (warehouse, database, schema, raw tables)</li>
+<li>Ingest data from S3 to raw tables</li>
+<li>Create review view</li>
+</ul>
+<h2 is-upgraded>Creating Objects, Loading Data, and Joining Data</h2>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view<pre><code language="language-sql" class="language-sql">USE ROLE sysadmin;
+
+/*--
+• database, schema and warehouse creation
+--*/
+
+-- create tb_voc database
+CREATE OR REPLACE DATABASE tb_voc;
+
+-- create raw_pos schema
+CREATE OR REPLACE SCHEMA tb_voc.raw_pos;
+
+-- create raw_customer schema
+CREATE OR REPLACE SCHEMA tb_voc.raw_support;
+
+-- create harmonized schema
+CREATE OR REPLACE SCHEMA tb_voc.harmonized;
+
+-- create analytics schema
+CREATE OR REPLACE SCHEMA tb_voc.analytics;
+
+-- create tasty_ds_wh warehouse
+CREATE OR REPLACE WAREHOUSE tasty_ds_wh
+    WAREHOUSE_SIZE = &#39;large&#39;
+    WAREHOUSE_TYPE = &#39;standard&#39;
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+COMMENT = &#39;data science warehouse for tasty bytes&#39;;
+
+
+USE WAREHOUSE tasty_ds_wh;
+
+/*--
+• file format and stage creation
+--*/
+
+CREATE OR REPLACE FILE FORMAT tb_voc.public.csv_ff 
+type = &#39;csv&#39;;
+
+CREATE OR REPLACE STAGE tb_voc.public.s3load
+COMMENT = &#39;Quickstarts S3 Stage Connection&#39;
+url = &#39;s3://sfquickstarts/tastybytes-voc/&#39;
+file_format = tb_voc.public.csv_ff;
+
+/*--
+raw zone table build 
+--*/
+
+-- menu table build
+CREATE OR REPLACE TABLE tb_voc.raw_pos.menu
+(
+    menu_id NUMBER(19,0),
+    menu_type_id NUMBER(38,0),
+    menu_type VARCHAR(16777216),
+    truck_brand_name VARCHAR(16777216),
+    menu_item_id NUMBER(38,0),
+    menu_item_name VARCHAR(16777216),
+    item_category VARCHAR(16777216),
+    item_subcategory VARCHAR(16777216),
+    cost_of_goods_usd NUMBER(38,4),
+    sale_price_usd NUMBER(38,4),
+    menu_item_health_metrics_obj VARIANT
+);
+
+-- truck table build 
+CREATE OR REPLACE TABLE tb_voc.raw_pos.truck
+(
+    truck_id NUMBER(38,0),
+    menu_type_id NUMBER(38,0),
+    primary_city VARCHAR(16777216),
+    region VARCHAR(16777216),
+    iso_region VARCHAR(16777216),
+    country VARCHAR(16777216),
+    iso_country_code VARCHAR(16777216),
+    franchise_flag NUMBER(38,0),
+    year NUMBER(38,0),
+    make VARCHAR(16777216),
+    model VARCHAR(16777216),
+    ev_flag NUMBER(38,0),
+    franchise_id NUMBER(38,0),
+    truck_opening_date DATE
+);
+
+-- order_header table build
+CREATE OR REPLACE TABLE tb_voc.raw_pos.order_header
+(
+    order_id NUMBER(38,0),
+    truck_id NUMBER(38,0),
+    location_id FLOAT,
+    customer_id NUMBER(38,0),
+    discount_id VARCHAR(16777216),
+    shift_id NUMBER(38,0),
+    shift_start_time TIME(9),
+    shift_end_time TIME(9),
+    order_channel VARCHAR(16777216),
+    order_ts TIMESTAMP_NTZ(9),
+    served_ts VARCHAR(16777216),
+    order_currency VARCHAR(3),
+    order_amount NUMBER(38,4),
+    order_tax_amount VARCHAR(16777216),
+    order_discount_amount VARCHAR(16777216),
+    order_total NUMBER(38,4)
+);
+
+-- truck_reviews table build
+CREATE OR REPLACE TABLE tb_voc.raw_support.truck_reviews
+(
+    order_id NUMBER(38,0),
+    language VARCHAR(16777216),
+    source VARCHAR(16777216),
+    review VARCHAR(16777216),
+    review_id NUMBER(18,0)
+);
+
+/*--
+• harmonized view creation
+--*/
+
+-- truck_reviews_v view
+CREATE OR REPLACE VIEW tb_voc.harmonized.truck_reviews_v
+    AS
+SELECT DISTINCT
+    r.review_id,
+    r.order_id,
+    oh.truck_id,
+    r.language,
+    source,
+    r.review,
+    t.primary_city,
+    oh.customer_id,
+    TO_DATE(oh.order_ts) AS date,
+    m.truck_brand_name
+FROM tb_voc.raw_support.truck_reviews r
+JOIN tb_voc.raw_pos.order_header oh
+    ON oh.order_id = r.order_id
+JOIN tb_voc.raw_pos.truck t
+    ON t.truck_id = oh.truck_id
+JOIN tb_voc.raw_pos.menu m
+    ON m.menu_type_id = t.menu_type_id;
+
+/*--
+• analytics view creation
+--*/
+
+-- truck_reviews_v view
+CREATE OR REPLACE VIEW tb_voc.analytics.truck_reviews_v
+    AS
+SELECT * FROM harmonized.truck_reviews_v;
+
+
+/*--
+raw zone table load 
+--*/
+
+
+-- menu table load
+COPY INTO tb_voc.raw_pos.menu
+FROM @tb_voc.public.s3load/raw_pos/menu/;
+
+-- truck table load
+COPY INTO tb_voc.raw_pos.truck
+FROM @tb_voc.public.s3load/raw_pos/truck/;
+
+-- order_header table load
+COPY INTO tb_voc.raw_pos.order_header
+FROM @tb_voc.public.s3load/raw_pos/order_header/;
+
+-- truck_reviews table load
+COPY INTO tb_voc.raw_support.truck_reviews
+FROM @tb_voc.public.s3load/raw_support/truck_reviews/;
+
+
+-- scale wh to medium
+ALTER WAREHOUSE tasty_ds_wh SET WAREHOUSE_SIZE = &#39;Medium&#39;;
+
+-- setup completion note
+SELECT &#39;setup is now complete&#39; AS note;
+</code></pre>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up Snowflake Notebook" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to create Snowflake notebook by importing notebook.</p>
+<ul>
+<li>Download the notebook <strong>customer_review_analytics.ipynb</strong> using this <a href="https://github.com/Snowflake-Labs/sfguide-customer-reviews-analytics-using-snowflake-cortex/tree/main/notebook" target="_blank">link</a></li>
+<li>Navigate to Notebooks in <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a> by clicking on Projects -&gt; Notebook</li>
+<li>Using the import button on the top right, import the downloaded notebook.</li>
+<li>Provide a name for the notebook and select appropriate database <code>tb_voc</code>, schema <code>analytics</code> and warehouse <code>tasty_ds_wh</code></li>
+<li>Open the notebook once created and add the following packages by using the &#34;Packages&#34; button on the top right<ul>
+<li>seaborn</li>
+<li>matplotlib</li>
+<li>snowflake-snowpark-python</li>
+<li>snowflake-ml-python</li>
+</ul>
+</li>
+<li>Now you are ready to run the notebook by clicking &#34;Run All&#34; button on the top right or running each cell individually.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Translate multilingual reviews" duration="2">
+        <h2 is-upgraded>Enabled by Cortex Translate</h2>
+<p>You will leverage <strong>Translate</strong> - one of the <strong>Snowflake Cortex specialised LLM functions</strong> are available in Snowpark ML, to translate the multilingual reviews to english to enable easier analysis. This is done within the notebook using following code snippet in cell <code>CORTEX_TRANSLATE</code>.</p>
+<pre><code language="language-python" class="language-python"># Conditionally translate reviews that are not english using Cortex Translate
+reviews_df = reviews_df.withColumn(&#39;TRANSLATED_REVIEW&#39;,when(F.col(&#39;LANGUAGE&#39;) != F.lit(&#34;en&#34;), \
+                                                            cortex.Translate(F.col(&#39;REVIEW&#39;), \
+                                                                            F.col(&#39;LANGUAGE&#39;), \
+                                                                            &#34;en&#34;)) \
+                                  .otherwise(F.col(&#39;REVIEW&#39;)))
+
+reviews_df.filter(F.col(&#39;LANGUAGE&#39;) != F.lit(&#34;en&#34;)).select([&#34;REVIEW&#34;,&#34;LANGUAGE&#34;,&#34;TRANSLATED_REVIEW&#34;]).show(3)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Categorise unstructured review text data" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, you will make use of <strong>Snowflake Cortex - Complete</strong> to categorise reviews to understand:</p>
+<ul>
+<li>How good their overall experience was</li>
+<li>How likely their customers are to recommend Tasty Bytes food trucks to someone they know</li>
+</ul>
+<h2 is-upgraded>Get ratings based on review</h2>
+<ul>
+<li>You will utilize <strong>Snowflake Cortex - Complete</strong> function to understand at scale based on a given customer&#39;s review what rating that customer is likely to rate their experience at the food truck. The prompt consists of the instruction of the task along with a sample example of the completed task also known as <strong>one-shot learning</strong>. This prompt is then provided to complete function along with the review. This is done within the notebook using the following code snippet in cell <code>GET_RATINGS</code>.<pre><code language="language-python" class="language-python"># Prompt to get a rating based on a customer review
+# We provide one shot incontext learning to better the answers we get from LLM
+prompt = &#34;&#34;&#34;[INST]
+### 
+You are tasked with rating cutsomer reviews for global food truck network called tasty bytes. \
+Rating can be one of the following - awful, poor, okay, good, excellent such that awful is the worst \
+possible rating and excellent is the best possible rating. Include only the rating in the output \
+without any additional text. \
+Rate the following review:
+The &#34;Freezing Point&#34; ice cream truck in Seoul offered a mix of classic and unique \
+options. The Sugar Cone and Waffle Cone were both fresh and crisp, providing a satisfying crunch. The \
+Bottled Water and Ice Tea were standard, as expected. The standout, however, was the Mango Sticky Rice \
+- a delightful blend of sweet and tangy, it was a refreshing twist to the usual ice cream flavors. The \
+service was efficient, but lacked a personal touch. Overall, it\&#39;s a decent choice for a quick, cool \
+treat in the city.
+Rating : good
+Rate the following review: 
+###&#34;&#34;&#34;
+
+# Ask cortex complete and create a new column
+review_df = reviews_df.withColumn(&#39;RATING&#39;, cortex.Complete(&#39;mistral-large&#39;, \
+                                                            F.concat(F.lit(prompt), \
+                                                                    F.col(&#39;REVIEW&#39;), \
+                                                                    F.lit(&#34;&#34;&#34;[/INST]&#34;&#34;&#34;))))\
+.withColumn(&#39;CLEAN_RATING&#39;, when(F.contains(F.lower(F.col(&#39;RATING&#39;)), F.lit(&#39;awful&#39;)), \
+                                                            F.lit(&#39;awful&#39;)) \
+            .when(F.contains(F.lower(F.col(&#39;RATING&#39;)), F.lit(&#39;poor&#39; )), \
+                                                            F.lit(&#39;poor&#39;)) \
+            .when(F.contains(F.lower(F.col(&#39;RATING&#39;)), F.lit(&#39;okay&#39;)), \
+                                                            F.lit(&#39;okay&#39;)) \
+            .when(F.contains(F.lower(F.col(&#39;RATING&#39;)), F.lit(&#39;good&#39;)), \
+                                                            F.lit(&#39;good&#39;)) \
+            .when(F.contains(F.lower(F.col(&#39;RATING&#39;)), F.lit(&#39;excellent&#39;)), \
+                                                            F.lit(&#39;excellent&#39;)) \
+                                  .otherwise(F.lit(&#39;unsure&#39;)))
+
+review_df.select([&#34;REVIEW&#34;,&#34;CLEAN_RATING&#34;]).show(3)
+</code></pre>
+</li>
+</ul>
+<h2 is-upgraded>Get intention to recommend based on review</h2>
+<ul>
+<li>You can understand if a customer would recommend the food truck based on their review using <strong>Snowflake Cortex - Complete</strong>. This time prompt doesn&#39;t contain any sample examples for the task within the prompt just the task instruction - <strong>zero shot learning</strong>. This is done within the notebook using the following code snippet in cell <code>INTENT_TO_RECOMMEND</code>.<pre><code language="language-python" class="language-python"># Prompt to understand whether a customer would recommend food truck based on their review 
+prompt = &#34;&#34;&#34;[INST]
+### 
+Tell me based on the following food truck customer review, will they recommend the food truck to \
+their friends and family? Answer should be only one of the following words - \
+&#34;Likely&#34; or &#34;Unlikely&#34; or &#34;Unsure&#34;. Make sure there are no additional additional text.
+Review -
+###&#34;&#34;&#34;
+
+# Ask cortex complete and create a new column
+reviews_df = reviews_df.withColumn(&#39;RECOMMEND&#39;, cortex.Complete(&#39;snowflake-arctic&#39;, \
+                                                            F.concat(F.lit(prompt), \
+                                                                    F.col(&#39;REVIEW&#39;), \
+                                                                    F.lit(&#34;&#34;&#34;[/INST]&#34;&#34;&#34;))))\
+.withColumn(&#39;CLEAN_RECOMMEND&#39;, when(F.contains(F.col(&#39;RECOMMEND&#39;), F.lit(&#39;Likely&#39;)), \
+                                                            F.lit(&#39;Likely&#39;)) \
+                                      .when(F.contains(F.col(&#39;RECOMMEND&#39;), F.lit(&#39;Unlikely&#39; )), \
+                                                            F.lit(&#39;Unlikely&#39;)) \
+            .when(F.contains(F.col(&#39;RECOMMEND&#39;), F.lit(&#39;Unsure&#39; )), \
+                                                            F.lit(&#39;Unsure&#39;)) \
+                                  .otherwise(F.lit(&#39;NA&#39;)))
+
+reviews_df.select([&#34;REVIEW&#34;,&#34;CLEAN_RECOMMEND&#34;]).show(3)
+</code></pre>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understand customer sentiment" duration="2">
+        <h2 is-upgraded>Enabled by Cortex Sentiment</h2>
+<p>So far you saw Snowflake Cortex - Translate &amp; Complete. Next, you will look at another <strong>task specific LLM function in Cortex - Sentiment</strong>. This sentiment function is used to understand the customer&#39;s tone  based on the review they provided. Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive. This is done within the notebook using the following code snippet in cell <code>CORTEX_SENTIMENT</code>.</p>
+<pre><code language="language-python" class="language-python"># Understand the sentiment of customer review using Cortex Sentiment
+reviews_df = reviews_df.withColumn(&#39;SENTIMENT&#39;, cortex.Sentiment(F.col(&#39;REVIEW&#39;)))
+
+reviews_df.select([&#34;REVIEW&#34;,&#34;SENTIMENT&#34;]).show(3)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dive deeper with aspect based sentiment" duration="2">
+        <h2 is-upgraded>Enabled by Cortex Complete</h2>
+<p>Taking this analysis a step further, you will be looking at aspect based sentiment instead of just the overall sentiment of review and understand what the customers think about different aspects like food quality, service, pricing etc. This done by leveraging <strong>Snowflake cortex - Complete</strong> coupled with a prompt that includes one shot example. This is done within the notebook using the following code snippet in cell <code>ASPECT_BASED_SENTIMENT</code>.</p>
+<pre><code language="language-python" class="language-python"># Prompt to understand sentiment for different categories mentioned in the customer review
+# We employ one shot incontext learning to inform LLM
+prompt = &#34;&#34;&#34;[INST]
+### 
+You are analyzing food-truck customer reviews to undertsand what a given review says about different relevant categories like \
+food quality, menu options, staff, overall experience, price, ambience, customer support, \
+hygiene standards etc and if sentiment is negative,positive or neutral for that category. \
+Only answer in a single valid JSON containing &#34;category&#34;, &#34;sentiment&#34; and &#34;details&#34;. \
+Make sure there is no additional text and not mention categories in answer which are not \
+talked in the review. \
+Get category based sentiment for the follwoing customer review:
+&#34;This food truck offers a disappointing experience. \
+The menu lacks healthy options and the food quality is subpar. Finding a parking spot near the \
+truck can also be a frustrating ordeal. Additionally, the value for money is not worth it. To top \
+it all off, the service provided at this food truck is less than pleasant, adding to the overall \
+negative dining experience. Tried reaching out the customer support but was unable to get through.&#34; 
+Answer : [{     &#34;category&#34;: &#34;food quality&#34;,     &#34;sentiment&#34;: &#34;negative&#34;,    &#34;details&#34;: &#34;subpar quality&#34;   }, {     &#34;category&#34;: &#34;menu options&#34;,     &#34;sentiment&#34;: &#34;negative&#34;,     &#34;details&#34;: &#34;lacks healthy options&#34;   },   {     &#34;category&#34;: &#34;staff&#34;,     &#34;sentiment&#34;: &#34;negative&#34;,     &#34;details&#34;: &#34;unpleasant&#34;   },   {     &#34;category&#34;: &#34;price&#34;,     &#34;sentiment&#34;: &#34;negative&#34;,     &#34;details&#34;: &#34;not worth the money&#34;   },   {     &#34;category&#34;: &#34;experience&#34;,     &#34;sentiment&#34;: &#34;negative&#34;,     &#34;details&#34;: &#34;regrettable dining experience&#34;   },   {     &#34;category&#34;: &#34;customer support&#34;,     &#34;sentiment&#34;: &#34;negative&#34;,     &#34;details&#34;: &#34;unable to get through&#34;   } ].
+Get category based sentiment for the follwoing customer review:
+###&#34;&#34;&#34;
+
+# Ask Cortex Complete and create a new column
+review_df = reviews_df.withColumn(&#39;CATEGORY_SENTIMENT&#39;, cortex.Complete(&#39;mistral-large&#39;, \
+                                                            F.concat(F.lit(prompt), \
+                                                                    F.col(&#39;REVIEW&#39;), \
+                                                                    F.lit(&#34;&#34;&#34;Answer:[/INST]&#34;&#34;&#34;))))
+review_df.select([&#34;REVIEW&#34;,&#34;CATEGORY_SENTIMENT&#34;]).show(1)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Identify the issues" duration="5">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, you will leverage <strong>Snowflake Cortex - Complete</strong> to identify the issues that are mentioned in customer reviews and understand:</p>
+<ul>
+<li>What is going wrong at business level?</li>
+<li>What is going wrong at truck level?</li>
+</ul>
+<h2 is-upgraded>Issues at business level</h2>
+<ul>
+<li>In this step, 100 most negative reviews are aggregated and provided to <strong>Snowflake Cortex - Complete</strong> along with a prompt to identify the  main issues found in those reviews. This is done within the notebook using the following code snippet in cell <code>ALL_MOST_NEG_100</code>.<pre><code language="language-python" class="language-python"># Aggregrate the 100 most negative reviews for tasty bytes
+reviews_agg_ = reviews_df.order_by(F.col(&#39;SENTIMENT&#39;)).select(F.col(&#39;REVIEW&#39;)).first(100)
+
+reviews_agg_str = &#39;&#39;.join(map(str,reviews_agg_))
+
+# Prompt to summarize the three top issues flagged in the aggregated reviews
+prompt = &#34;&#34;&#34;[INST]###Summarize the issues mentioned in following aggregated food truck customer reviews with three \
+concise bullet points under 50 words each such that each bullet point also has a heading along with \
+recommendations to remedy those issues.###&#34;&#34;&#34; + reviews_agg_str + &#34;&#34;&#34;[/INST]&#34;&#34;&#34;
+
+# Answer from Cortex Complete
+print(cortex.Complete(&#39;mistral-large2&#39;, prompt))
+</code></pre>
+</li>
+</ul>
+<h2 is-upgraded>Issues at truck level</h2>
+<ul>
+<li>Aggregate sentiment at truck level using <code>Snowpark Dataframe</code> functions. This is done within the notebook using the following code snippet in cell <code>SENTIMENT_BY_TRUCK</code>.<pre><code language="language-python" class="language-python"># Get average sentiment of reviews for Trucks 
+truck_agg_reviews_df = reviews_df.groupBy(F.col(&#39;TRUCK_ID&#39;)) \
+                .agg(F.avg(F.col(&#39;SENTIMENT&#39;)).alias(&#39;AVG_SENTIMENT&#39;),F.count(F.col(&#39;REVIEW_ID&#39;)).alias(&#39;REVIEW_COUNT&#39;)) 
+truck_agg_reviews_df.show(3)
+</code></pre>
+</li>
+<li>Average sentiment by truck is utilized to find the truck which is the most negatively reviewed truck and has at least 10 reviews. This is done within the notebook using the following code snippet in cell <code>MOST_NEGATIVELY_REVIEWED_TRUCK</code>.<pre><code language="language-python" class="language-python"># Get the truck with most negative average sentiment
+truck_agg_reviews_df.filter(F.col(&#39;REVIEW_COUNT&#39;) &gt;= 10).order_by(F.col(&#39;AVG_SENTIMENT&#39;)) \
+                .select(F.col(&#39;TRUCK_ID&#39;)).limit(1).collect()[0][0]
+</code></pre>
+</li>
+<li>Quick analysis of the most negative reviews for Truck 5 to understand the main issues that the customers complain about by leveraging <strong>Snowflake cortex - Complete</strong>. Similar to how it was performed at the business level. This is done within the notebook using the following code snippet in cell <code>UNDERSTAND_TRUCK_ISSUES_MD</code>.<pre><code language="language-python" class="language-python"># Aggregate the most negative reviews for Truck 5
+reviews_agg_ = reviews_df.filter(F.col(&#39;TRUCK_ID&#39;) == cells.MOST_NEGATIVELY_REVIEWED_TRUCK)\
+              .order_by(F.col(&#39;SENTIMENT&#39;)).select(F.col(&#39;REVIEW&#39;)).first(100)
+
+reviews_agg_str = &#39;&#39;.join(map(str,reviews_agg_))
+
+# Prompt to understand the main issues with Truck 5
+prompt = &#34;&#34;&#34;[INST]###Summarize three main issues mentioned in following aggregated customer review with three concise bullet 
+points under 50 words each such that each bullet point also has a heading.###&#34;&#34;&#34; + reviews_agg_str + &#34;&#34;&#34;[/INST]&#34;&#34;&#34;
+
+# Print Cortex Complete&#39;s answer
+print(cortex.Complete(&#39;mistral-large2&#39;, prompt))
+</code></pre>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate email response" duration="2">
+        <h2 is-upgraded>Take action assisted by Cortex Complete</h2>
+<p>In the final step, you will utilize <strong>Snowflake Cortex - Complete</strong> to draft an email to the owner of the most negatively reviewed truck summarizing the issues that are highlighted in customer reviews along with any recommendation to remedy those issues.This is done within the notebook using following code snippet in cell <code>GENERATE_EMAIL_RESPONSE</code>.</p>
+<pre><code language="language-python" class="language-python"># Prompt to get an email draft which reports the main issues with Truck 5 with recommendations to solve
+prompt =&#34;&#34;&#34; [INST]### Write me survey report email to the franchise owner summarizing the issues mentioned in following \
+aggregated customer review with three concise bullet points under 50 words each such that each bullet \
+point also has a heading along with recommendations to remedy those issues.###&#34;&#34;&#34;+ reviews_agg_str +&#34;&#34;&#34; \
+Mention the truck brand name and location in the email.[/INST]&#34;&#34;&#34;
+
+# Print the result from Cortex Complete
+print(cortex.Complete(&#39;mistral-large2&#39;, prompt))
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p><strong>Congratulations!</strong> You&#39;ve successfully enabled customer review analytics by leveraging Snowflake Cortex within Snowflake Notebook. And all this without ever needing to move any data outside of secure walls of Snowflake or managing infrastructure.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<p>With the completion of this quickstart, you have now:</p>
+<ul>
+<li>Enabled AI for analytics in minutes powered by Snowflake Cortex <ul>
+<li>Ran inference on industry performant LLMs with Complete which are hosted and served within Snowflake</li>
+<li>Performed well suited NLP tasks with Translate, Sentiment which require zero prompt engineering</li>
+</ul>
+</li>
+<li>Leveraged Snowflake Notebook which provides SQL, Python, and Markdown cell-based development interface in Snowsight <ul>
+<li>Explored data with language of choice and visualized results using popular Python libraries</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Want to learn more about the tools and technologies used in this quickstart? Check out the following resources:</p>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-customer-reviews-analytics-using-snowflake-cortex" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions" target="_blank">Cortex LLM</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Developer Guide</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

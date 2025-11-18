@@ -1,0 +1,664 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Building Orchestration Framework for Running Containerized Jobs in Parallel</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="orchestration-framework-running-multiple-containerized-jobs-parallel"
+                  title="Building Orchestration Framework for Running Containerized Jobs in Parallel"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>In the rapidly evolving landscape of containerized workloads for data processing and running ML workloads a, efficient orchestration of containerized workloads running in parallel has become a critical requirement for businesses to streamline their data pipelines. If you&#39;ve been using containers, executing multiple jobs with the help of external tools like Argo, and you&#39;re interested in learning how to run containerised jobs in parallel directly in Snowflake, this quickstart will helps you to build a custom orchestration framework.</p>
+<p><strong> Key features of the Custom Orchestration Framework </strong></p>
+<ul>
+<li>Declarative workflow definitions (Fan-Out and Fan-In ) using configuration file.</li>
+<li>Parallel job execution</li>
+<li>Automated resource management</li>
+<li>Built-in error handling and retry mechanisms</li>
+<li>Using Snowflake&#39;s core data platform capabilities.</li>
+</ul>
+<p>In this quickstart you will learn how to build a orchestration framework to run multiple containerized jobs in parallel. We will be implemeting custom logging which tracks the job status whether it failed or succeded. If it failed what is the error message and how long it took to complete.</p>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>This lab uses a custom built configuration file in json format which has the details about the docker image location, retry count and other details specific to the image we are running. The config file also has the dependencies mentioned which will be used while creating a DAG.</p>
+<ul>
+<li>You will create a Python Stored which reads the JSON file and creates a DAG using Snowflake task capabilities and runs the container.</li>
+<li>You will create another Python Stored Proc which will run the container and logs the execution details in Snowflake tables which can be later used for any kind of analysis.</li>
+<li>You will create a workflow that will implement fan-out and fan-in scenario using the JSON config file using Snowflake native capabilities like tasks.</li>
+<li>You will use the same image created as part of the pre-req for all the jobs but you can specify different images for each job in the config JSON file.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to build customer orchestration framework to run Snowpark Container Service Jobs.</li>
+<li>How to use tasks and Python Stored Procedures to run mutliple containerized jobs using configuration file.</li>
+<li>How to log the status of the jobs, duration of execution and also implement retry mechanism.</li>
+<li>How to simulate job failures and track the status of the execution along with the error messages.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with docker and Snowpark Container Services.</li>
+<li>Non trail Snowflake account (https://app.snowflake.com/)</li>
+<li>Completing the steps mentioned in this <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/tutorial-2#introduction" target="_blank">Tutorial</a>. We will be using the image created as part of the mentioned tutorial to run as containerized jobs.</li>
+<li>Clone the <a href="https://github.com/sfc-gh-praj/spcs-orchestration-utility" target="_blank">repo</a> which will have the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p>Clone the repo where you will find the notebook with the steps and ojects which needs to be created in one place. This quickstart will describe about all those steps and objects created <a href="https://github.com/sfc-gh-praj/spcs-orchestration-utility.git" target="_blank">spcs-orchestration-utilit</a>.This repo has the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.</p>
+<pre><code language="language-shell" class="language-shell">git clone https://github.com/sfc-gh-praj/spcs-orchestration-utility.git
+</code></pre>
+<p>Note: Update the image_name path in the config file(jobconfig.json) to the path that you have created by following the tutorial steps which is in pre-requisite section of this lab. Here we are using the same image in the entire DAG to demonstrate the framework and it will work with different images per step.</p>
+<pre><code language="language-json" class="language-json">[{
+    &#34;task_name&#34;:&#34;t_myjob_1&#34;,
+    &#34;image_name&#34;:&#34;/tutorial_db/data_schema/tutorial_repository/my_job_image:latest&#34;,
+    &#34;compute_pool_name&#34;:&#34;PR_STD_POOL_XS&#34;,
+    &#34;job_name&#34;:&#34;myjob_1&#34;,
+    &#34;table_name&#34;:&#34;results_1&#34;,
+    &#34;retry_count&#34;:0,
+    &#34;after_task_name&#34;:&#34;root_task&#34;
+   },
+   {
+       &#34;task_name&#34;:&#34;t_myjob_2&#34;,
+       &#34;image_name&#34;:&#34;/tutorial_db/data_schema/tutorial_repository/my_job_image:latest&#34;,
+       &#34;compute_pool_name&#34;:&#34;PR_STD_POOL_S&#34;,
+       &#34;job_name&#34;:&#34;myjob_2&#34;,
+       &#34;table_name&#34;:&#34;results_2&#34;,
+       &#34;retry_count&#34;:0,
+       &#34;after_task_name&#34;:&#34;root_task&#34;
+   },
+   {
+       &#34;task_name&#34;:&#34;t_myjob_3&#34;,
+       &#34;image_name&#34;:&#34;/tutorial_db/data_schema/tutorial_repository/my_job_image:latest&#34;,
+       &#34;compute_pool_name&#34;:&#34;PR_STD_POOL_S&#34;,
+       &#34;job_name&#34;:&#34;myjob_3&#34;,
+       &#34;table_name&#34;:&#34;results_3&#34;,
+       &#34;retry_count&#34;:2,
+       &#34;after_task_name&#34;:&#34;t_myjob_2&#34;
+   },
+   {
+    &#34;task_name&#34;:&#34;t_myjob_4&#34;,
+    &#34;image_name&#34;:&#34;/tutorial_db/data_schema/tutorial_repository/my_job_image:latest&#34;,
+    &#34;compute_pool_name&#34;:&#34;PR_STD_POOL_XS&#34;,
+    &#34;job_name&#34;:&#34;myjob_4&#34;,
+    &#34;table_name&#34;:&#34;results_4&#34;,
+    &#34;retry_count&#34;:1,
+    &#34;after_task_name&#34;:&#34;t_myjob_2&#34;
+},
+   {
+    &#34;task_name&#34;:&#34;t_myjob_5&#34;,
+    &#34;image_name&#34;:&#34;/tutorial_db/data_schema/tutorial_repository/my_job_image:latest&#34;,
+    &#34;compute_pool_name&#34;:&#34;PR_STD_POOL_XS&#34;,
+    &#34;job_name&#34;:&#34;myjob_5&#34;,
+    &#34;table_name&#34;:&#34;results_5&#34;,
+    &#34;retry_count&#34;:0,
+    &#34;after_task_name&#34;:&#34;t_myjob_1&#34;
+},
+{
+ &#34;task_name&#34;:&#34;t_myjob_6&#34;,
+ &#34;image_name&#34;:&#34;/tutorial_db/data_schema/tutorial_repository/my_job_image:latest&#34;,
+ &#34;compute_pool_name&#34;:&#34;PR_STD_POOL_S&#34;,
+ &#34;job_name&#34;:&#34;myjob_6&#34;,
+ &#34;table_name&#34;:&#34;results_6&#34;,
+ &#34;retry_count&#34;:0,
+ &#34;after_task_name&#34;:&#34;t_myjob_3,t_myjob_4,t_myjob_5&#34;
+}
+
+]
+</code></pre>
+<ul>
+<li>task_name — Is the name of the task that will be created for that job which will run a specific container.</li>
+<li>image_name — Name of the image in Snowpark container image repository. This is the image that you have created as part of the pre-requisite. Update the location where you have created the image repository for the image created in the pre-requisite tutorial.</li>
+<li>compute-pool —Compute pool name that you want the container to run on. This compute pool must be already provisioned.</li>
+<li>job_name — Name of the SPCS service job</li>
+<li>table_name — The application in the container will write the result to the table name mentioned in the json file and its only specific to this lab. You can include the required inputs needed by your image if you are using other images.</li>
+<li>retry_count — The framework will automatically attempt to re-execute the failed jobs. It will continue to retry the job up to the number of times specified by the retry_count.</li>
+<li>after_task_name — This fields build the dependency graph. The after_task_name field is particularly powerful in creating fan-out and fan-in scenarios.</li>
+</ul>
+<p>Run the following queries to create the objects required for this lab. Here we are using the image from the the tutorial mentioned in the pre-requisite.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE ROLE SPCS_DEMO_ROLE;
+
+CREATE DATABASE IF NOT EXISTS PR_Container_Orchestration;
+GRANT OWNERSHIP ON DATABASE PR_Container_Orchestration TO ROLE SPCS_DEMO_ROLE COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE PR_Container_Orchestration  TO ROLE SPCS_DEMO_ROLE COPY CURRENT GRANTS;
+
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE SPCS_DEMO_ROLE;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE SPCS_DEMO_ROLE;
+
+-- We are granting permissions to tutorial DB, Schema and the image repository to the role that you have created as part of the pre-requisite. If you have given a different name to the DB created as part of the tutorial then update the names accordingly in the below grant queries.
+GRANT USAGE ON DATABASE tutorial_db to role SPCS_DEMO_ROLE;
+GRANT USAGE ON SCHEMA tutorial_db.data_schema to role SPCS_DEMO_ROLE;
+GRANT READ ON IMAGE REPOSITORY tutorial_db.data_schema.tutorial_repository to ROLE SPCS_DEMO_ROLE;
+
+
+-- CREATING X-SMALL WAREHOUSE
+CREATE OR REPLACE WAREHOUSE small_warehouse WITH
+  WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+
+-- Granting permissions on the WH to the role
+GRANT USAGE ON WAREHOUSE small_warehouse TO ROLE SPCS_DEMO_ROLE;
+
+-- Creating XS compute pool
+CREATE COMPUTE POOL pr_std_pool_xs
+  MIN_NODES = 1
+  MAX_NODES = 1
+  INSTANCE_FAMILY = CPU_X64_XS;
+
+
+-- Creating S compute pool
+CREATE COMPUTE POOL PR_STD_POOL_S
+  MIN_NODES = 1
+  MAX_NODES = 2
+  INSTANCE_FAMILY = CPU_X64_S;
+
+-- Listing the compute pools created
+show compute pools like &#39;PR_STD_POOL_%S&#39;;
+
+-- Granting permissions on the pool to the role
+GRANT USAGE, MONITOR ON COMPUTE POOL pr_std_pool_xs TO ROLE SPCS_DEMO_ROLE;
+GRANT USAGE, MONITOR ON COMPUTE POOL pr_std_pool_s TO ROLE SPCS_DEMO_ROLE;
+
+-- Change the username
+GRANT ROLE SPCS_DEMO_ROLE TO USER &lt;user_name&gt;;
+
+
+USE ROLE SPCS_DEMO_ROLE;
+USE DATABASE PR_Container_Orchestration;
+USE WAREHOUSE small_warehouse;
+USE SCHEMA PUBLIC;
+
+-- Creating image repository
+CREATE IMAGE REPOSITORY IF NOT EXISTS IMAGES;
+
+-- List IMAGE RESGITRY URL
+SHOW IMAGE REPOSITORIES;
+
+-- Example output for the above query (image repository):
+--  &lt;orgname&gt;-&lt;acctname&gt;.registry.snowflakecomputing.com/PR_Container_Orchestration/public/images
+
+-- Upload the jobconfig.json file (from the cloned repo) to this stage from the Snowsight UI
+CREATE OR REPLACE STAGE JOBS DIRECTORY = (
+    ENABLE = true);
+</code></pre>
+<p>We are creating two logging tables and a UDTF to tracke the job status.</p>
+<ul>
+<li>jobs_run_stats table — This table is used to log individual container job status. If there are any errors while running the container then we log those errors in this table. This is used in the SP which is executing the SPC Service Jobs.</li>
+<li>task_logging_stats — This table is used to log the status (success or failure) of every task part of the DAG. This is used in the finalizer task.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">use role SPCS_DEMO_ROLE;
+
+-- logging individual job status. This is used by the SP which is executing the SPCS Service Jobs
+create or replace table jobs_run_stats( root_task_name string, task_name string, job_status string,GRAPH_RUN_ID string , graph_start_time timestamp_ltz, errors string, created_date datetime default current_timestamp());
+
+-- Tracking all tasks part of the task graph. Used by the finalizer task
+create table task_logging_stats (GRAPH_RUN_GROUP_ID varchar, NAME varchar,  STATE varchar , RETURN_VALUE varchar,QUERY_START_TIME varchar,COMPLETED_TIME varchar, DURATION_IN_SECS INT,ERROR_MESSAGE VARCHAR);
+
+-- UDTF for getting the task status for the graph - TASK_GRAPH_RUN_STATS
+create or replace function TASK_GRAPH_RUN_STATS(ROOT_TASK_ID string, START_TIME timestamp_ltz)
+ returns table (GRAPH_RUN_GROUP_ID varchar, NAME varchar,  STATE varchar , RETURN_VALUE varchar,QUERY_START_TIME varchar,COMPLETED_TIME varchar, DURATION_IN_SECS INT,
+ ERROR_MESSAGE VARCHAR)
+as
+$$
+select
+        GRAPH_RUN_GROUP_ID,
+        NAME,
+        STATE,
+        RETURN_VALUE,
+        to_varchar(QUERY_START_TIME, &#39;YYYY-MM-DD HH24:MI:SS&#39;) as QUERY_START_TIME,
+        to_varchar(COMPLETED_TIME,&#39;YYYY-MM-DD HH24:MI:SS&#39;) as COMPLETED_TIME,
+        timestampdiff(&#39;seconds&#39;, QUERY_START_TIME, COMPLETED_TIME) as DURATION,
+        ERROR_MESSAGE
+    from
+        table(INFORMATION_SCHEMA.TASK_HISTORY(
+              ROOT_TASK_ID =&gt; ROOT_TASK_ID ::string,
+              SCHEDULED_TIME_RANGE_START =&gt; START_TIME::timestamp_ltz,
+              SCHEDULED_TIME_RANGE_END =&gt; current_timestamp()
+      ))
+$$
+;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building Container Orchestration Workflow" duration="4">
+        <h2 is-upgraded>Creating Containerized Job SP</h2>
+<p>This is the code which does the heavy lifting of running the container and does the following :</p>
+<ul>
+<li>Accepts the name of the service job to be created, pool name where the service jobs will be executed on and some parameters which are the inputs to the container. It takes retry count which is used to identify how many time should the code should retry executing the container before gracefully terminating incase of errors.</li>
+<li>For every service job execution, we are tracking the status whether Done or Failed and tracking the stats in jobs_run_stats table. It has details about the container service jobs errors if any.</li>
+<li>This SP is invoked from another SP create_job_tasks(created in below section) which creates the task DAG based on the job config json file.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">use role SPCS_PSE_ROLE;
+
+CREATE OR REPLACE PROCEDURE ExecuteJobService(service_name VARCHAR, image_name VARCHAR, pool_name VARCHAR,table_name VARCHAR,retry_count INT)
+RETURNS VARCHAR
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.9&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+HANDLER = &#39;create_job_service&#39;
+AS
+$$
+from snowflake.snowpark.functions import col
+import uuid
+import re
+import logging
+import sys
+
+logger = logging.getLogger(&#34;python_logger&#34;)
+
+def get_logger():
+    &#34;&#34;&#34;
+    Get a logger for local logging.
+    &#34;&#34;&#34;
+    logger = logging.getLogger(&#34;service-job&#34;)
+    logger.setLevel(logging.INFO)
+    return logger
+
+# Functions which invokes the execute service job    
+def execute_job(session, service_name, image_name,pool_name,table_name):
+   # Drop the existing service if it exists
+   session.sql(f&#39;&#39;&#39;DROP SERVICE if exists {service_name}&#39;&#39;&#39;).collect()
+   sql_qry=f&#39;&#39;&#39;
+                        EXECUTE JOB SERVICE
+                        IN COMPUTE POOL {pool_name}
+                        NAME={service_name}
+                        FROM SPECIFICATION  
+                        &#39;
+                        spec:
+                         container:
+                         - name: main
+                           image: {image_name}
+                           env:
+                             SNOWFLAKE_WAREHOUSE: small_warehouse
+                           args:
+                           - &#34;--query=select current_time() as time,&#39;&#39;hello&#39;&#39;&#34;
+                           - &#34;--result_table={table_name}&#34;
+                        &#39;;
+                    &#39;&#39;&#39;
+   #print(sql_qry)
+   
+   try: 
+    _=session.sql(sql_qry).collect()
+    
+   except Exception as e:        
+    logger.error(f&#34;An error occurred running the app in the container: {e}&#34;)
+    
+   finally:
+                
+    job_status = session.sql(f&#39;&#39;&#39; SELECT    parse_json(SYSTEM$GET_SERVICE_STATUS(&#39;{service_name}&#39;))[0][&#39;status&#39;]::string as Status 
+                                &#39;&#39;&#39;).collect()[0][&#39;STATUS&#39;]
+
+    return job_status
+
+# This is the main function call invoked in the SP handler
+# This functin calls execute_job to run the container with all the parameters required.
+def create_job_service(session, service_name, image_name,pool_name,table_name,retry_count):
+    import uuid
+    logger = get_logger()
+    logger.info(&#34;job_service&#34;)
+    job_status = &#39;&#39;
+    job_errors = &#39;&#39;
+    current_root_task_name = &#39;&#39;
+    current_task_name = &#39;&#39;
+    current_graph_run_id = &#39;&#39;
+    current_graph_start_time = &#39;&#39;
+    try:
+
+
+        cnt = retry_count
+
+        # Execute the job service
+        logger.info(
+            f&#34;Executing the Job [{service_name}] on pool [{pool_name}]&#34;
+        )
+        job_status = execute_job(session, service_name,image_name, pool_name,table_name)
+
+        # Implementing retry mechanism. Fetching the retry count value from the config file per job
+        if job_status==&#39;FAILED&#39;:
+            while(cnt &gt;0):
+                r_cnt = retry_count+1 - cnt
+                logger.info(
+                                f&#34;Retrying Executing the Job [{service_name}] on pool [{pool_name}] - [{r_cnt}]  out of {retry_count} times &#34;
+                            )
+                job_status =  execute_job(session, service_name,image_name, pool_name,table_name)
+                if job_status == &#39;DONE&#39;:
+                    break
+                cnt = cnt - 1
+                
+        
+        if job_status==&#39;FAILED&#39;:
+            job_errors = re.sub(r&#34;&#39;&#34;, r&#34;\\&#39;&#34;,session.sql(f&#39;&#39;&#39;
+            select SYSTEM$GET_SERVICE_LOGS(&#39;{service_name}&#39;, 0, &#39;main&#39;)::string as logs;
+            &#39;&#39;&#39;).collect()[0][&#39;LOGS&#39;])
+        else:
+            job_errors = &#39;&#39;
+
+        # Getting the DAG Task details. SYSTEM$TASK_RUNTIME_INFO can only work inside a task.
+        result = session.sql(&#34;&#34;&#34;select
+                                SYSTEM$TASK_RUNTIME_INFO(&#39;CURRENT_ROOT_TASK_NAME&#39;)
+                                root_task_name,
+                                SYSTEM$TASK_RUNTIME_INFO(&#39;CURRENT_TASK_NAME&#39;) 
+                                task_name,
+                                SYSTEM$TASK_RUNTIME_INFO(&#39;CURRENT_TASK_GRAPH_RUN_GROUP_ID&#39;)
+                                run_id,
+                                SYSTEM$TASK_RUNTIME_INFO(&#39;CURRENT_TASK_GRAPH_ORIGINAL_SCHEDULED_TIMESTAMP&#39;)  dag_start_time
+                            
+                            &#34;&#34;&#34;).collect()[0]
+                            
+        current_root_task_name = result.ROOT_TASK_NAME
+        current_task_name = result.TASK_NAME
+        current_graph_run_id = result.RUN_ID
+        current_graph_start_time = result.DAG_START_TIME
+               
+        
+        # Inserting job status into logging table
+        _ = session.sql(f&#39;&#39;&#39;
+        INSERT INTO jobs_run_stats 
+        (root_task_name,task_name,graph_run_id ,job_status,graph_start_time, errors ,created_date)
+        SELECT &#39;{current_root_task_name}&#39;
+        ,&#39;{current_task_name}&#39;
+        ,&#39;{current_graph_run_id}&#39;
+        ,&#39;{job_status}&#39;
+        ,&#39;{current_graph_start_time}&#39;
+        ,&#39;{job_errors}&#39;
+        ,current_timestamp()
+        &#39;&#39;&#39;).collect()
+
+        
+        return job_status
+    except Exception as e:
+        print(f&#34;An error occurred: {e}&#34;)
+        if job_status==&#39;FAILED&#39;:
+            job_errors = re.sub(r&#34;&#39;&#34;, r&#34;\\&#39;&#34;,session.sql(f&#39;&#39;&#39;
+            select SYSTEM$GET_SERVICE_LOGS(&#39;{service_name}&#39;, 0, &#39;main&#39;)::string as logs;
+            &#39;&#39;&#39;).collect()[0][&#39;LOGS&#39;])
+        else:
+            job_errors = &#39;&#39;
+        
+        session.sql(f&#34;&#34;&#34;
+           INSERT INTO jobs_run_stats(task_name,errors,graph_run_id,job_status,created_date)
+           SELECT &#39;{service_name}&#39;,
+           &#39;{job_errors}&#39;,
+           &#39;{current_graph_run_id}&#39;,
+           &#39;{job_status}&#39;,
+           current_timestamp()
+            
+                    &#34;&#34;&#34;).collect()
+                    
+        return f&#39;Error Occured.. Refer the job error column - {e}&#39;
+                   
+$$;
+
+</code></pre>
+<h2 is-upgraded>Creating DAG for Job Execution</h2>
+<p>The code has the logic which creates the fan-in and fan-out workflow by creating a DAG and does the following tasks:</p>
+<ul>
+<li>Accepts the config file as input and creates the Snowflake task graphs (for fan-out and fan-in scenario) which calls the Python SP <strong><em>ExecuteJobService</em></strong> ( created above) passing the parameters fetched from the json config file( which includes the compute pool, image name, retry count etc).</li>
+<li>Every task has the dependency on other task(s) defined in the config file. Example T1 is dependent on root_task, T2 is dependent on root and T3 is dependent on T1 and T2 which implements the dependency workflow that is required.</li>
+<li>The code also creates a finalizer task which tracks the status of all the tasks( failure or Success) and logs it into one of the logging table task_logging_stats.</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">use role SPCS_DEMO_ROLE;
+
+CREATE OR REPLACE PROCEDURE create_job_tasks(file_name varchar)
+RETURNS string
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.9&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+HANDLER = &#39;create_jobservice_tasks&#39;
+AS
+$$
+from snowflake.snowpark.files import SnowflakeFile
+import json
+
+def create_jobservice_tasks(session, file_name):
+  parent_task_name = &#39;root_task&#39;
+  parent_task_sql = f&#39;&#39;&#39;CREATE OR REPLACE TASK {parent_task_name} 
+              USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = &#39;XSMALL&#39; 
+              SCHEDULE = &#39;59 MINUTE&#39; 
+      AS
+      SELECT CURRENT_TIMESTAMP() ;&#39;&#39;&#39;
+
+  session.sql(f&#39;&#39;&#39;{parent_task_sql}&#39;&#39;&#39;).collect()
+  print(parent_task_sql)
+
+
+  with SnowflakeFile.open(file_name) as j:
+      json_data= json.load(j)
+
+
+  for idx, task in enumerate(json_data):
+      task_name = task[&#39;task_name&#39;]
+      after_task_name = task[&#39;after_task_name&#39;]
+      task_sql = f&#34;CREATE  OR REPLACE TASK {task_name} &#34;
+      task_sql += f&#34;  WAREHOUSE = small_warehouse &#34;
+      task_sql += f&#34;  AFTER {after_task_name}  &#34;
+      task_sql += f&#34; AS CALL ExecuteJobService(&#39;{task[&#39;job_name&#39;]}&#39;,&#39;{task[&#39;image_name&#39;]}&#39;,&#39;{task[&#39;compute_pool_name&#39;]}&#39;,&#39;{task[&#39;table_name&#39;]}&#39;,{task[&#39;retry_count&#39;]})&#34;
+      # logger.info(f&#39;{task_sql}&#39;)
+      session.sql(f&#39;&#39;&#39;{task_sql}&#39;&#39;&#39;).collect()
+
+      print(task_sql)
+
+  # This is the Finalize task which gets the status for every task part of the DAG and loads into task_logging_stats table
+  session.sql(f&#34;&#34;&#34;
+              create or replace task GET_GRAPH_STATS
+  warehouse = &#39;small_warehouse&#39;
+  finalize = &#39;root_task&#39;
+  as
+    declare
+      ROOT_TASK_ID string;
+      START_TIME timestamp_ltz;
+      
+    begin
+      ROOT_TASK_ID := (call SYSTEM$TASK_RUNTIME_INFO(&#39;CURRENT_ROOT_TASK_UUID&#39;));
+
+      START_TIME := (call SYSTEM$TASK_RUNTIME_INFO(&#39;CURRENT_TASK_GRAPH_ORIGINAL_SCHEDULED_TIMESTAMP&#39;));
+
+      -- Insert into the logging table
+      INSERT INTO task_logging_stats(GRAPH_RUN_GROUP_ID , NAME ,  STATE  , RETURN_VALUE ,QUERY_START_TIME ,COMPLETED_TIME , DURATION_IN_SECS ,
+                                      ERROR_MESSAGE 
+                                    )
+      SELECT * FROM TABLE(TASK_GRAPH_RUN_STATS(:ROOT_TASK_ID, :START_TIME))  where NAME !=&#39;GET_GRAPH_STATS&#39;;
+
+    end;
+              &#34;&#34;&#34;
+              ).collect()
+
+  session.sql(&#39;alter task GET_GRAPH_STATS resume&#39;).collect()
+  
+  session.sql(f&#39;&#39;&#39;SELECT SYSTEM$TASK_DEPENDENTS_ENABLE(&#39;root_task&#39;)&#39;&#39;&#39;).collect()
+
+  return &#39;done&#39;
+
+$$;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running Container Orchestration Workflow" duration="2">
+        <p>Here we are invoking the orchestration workflow SP which accepts the jobconfig json file (uploaded to Snowflake stage) which has all the details required for the tasks to be created for Fan-Out and Fan-In scenarios.</p>
+<p>Upload the JSON file to JOBS stage that you have created in setup.sql.</p>
+<pre><code language="language-sql" class="language-sql">call create_job_tasks(build_scoped_file_url(@jobs, &#39;jobconfig.json&#39;));
+</code></pre>
+<p>After executing the SP below is the DAG that is created.The Root task is scheduled to run every 59 minutes.</p>
+<p class="image-container"><img alt="DAG" src="img/a3829cc14d32a15e.png"></p>
+<p>Run the below query to list the tasks part of the DAG created.</p>
+<pre><code language="language-sql" class="language-sql">--  Checks the DAG task created for the root_task. You can see the column predecessor which mentions the dependent task name
+select *
+  from table(information_schema.task_dependents(task_name =&gt; &#39;root_task&#39;, recursive =&gt; true));
+</code></pre>
+<p class="image-container"><img alt="List_Tasks" src="img/a99f79ba12e468a7.png"></p>
+<p><strong>Now run the Root Task using SQL or from the UI as shown in the below screenshot.</strong></p>
+<h4 is-upgraded>SQL Command</h4>
+<pre><code language="language-sql" class="language-sql">EXECUTE TASK root_task;
+</code></pre>
+<h4 is-upgraded>From Snowsight UI</h4>
+<p class="image-container"><img alt="DAG_UI" src="img/9f0b98da2a4259e4.png"></p>
+<h2 is-upgraded>Viewing execution Stats using Logging Tables</h2>
+<p>We have two logging tables that we have created and lets check the status of the each Container Service Job and also the status of every task that is invoking the service job.</p>
+<pre><code language="language-sql" class="language-sql">--  View job run status. This is per Service job logging
+select top 10 * from jobs_run_stats order by created_date desc;
+</code></pre>
+<p class="image-container"><img alt="Task_Stats" src="img/89662d91f5335d61.png"></p>
+<p>Every service job(which is invoking the container) is having same GUID per DAG execution. Below query gives additional metrics about the duration per task(which is executing the Container service jobs)</p>
+<pre><code language="language-sql" class="language-sql">--  Query task logging status (by the finalizer task)
+SELECT top 10 * FROM task_logging_stats ORDER BY CAST(QUERY_START_TIME AS DATETIME) DESC;
+</code></pre>
+<p class="image-container"><img alt="Task_Duration" src="img/c2183834b427ddd0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Simulating Job Failure" duration="2">
+        <p>We will simulate a failure usecase where the SPCS job execution will fail and we will validate that the retry happens multiple times before it gracefully exists and logs error details into logging tables we have created.</p>
+<pre><code language="language-sql" class="language-sql">--  With the below code we are simulating failure, so that we can tracjk what error are we tracking in the logging tables and to test the retry logic behaviour
+
+-- This should fail the myjob_3 having task name t_myjob_3
+ALTER TABLE RESULTS_3 DROP COLUMN &#34;&#39;HELLO&#39;&#34;;
+ALTER TABLE RESULTS_3 ADD COLUMN CREATEDATE DATETIME ;
+
+</code></pre>
+<p>Let re-run the DAG manually from Snowsight UI or using SQL query and check the log tables. You can see from the cofig file the retry count is 2 which means the code will retry to run the job twice incase of failure and only then exists.</p>
+<p>You see in the task history it takes double the time (around 32-35 seconds) before it gracefully exists and you can track the error details from the jobs_run_stats table.</p>
+<p class="image-container"><img alt="Task_3_UI_Duration" src="img/655f0dd672241153.png"></p>
+<p>Querying the jobs_run_stats to see the error message logged.</p>
+<pre><code language="language-sql" class="language-sql">select top 10 * from jobs_run_stats order by created_date desc;
+</code></pre>
+<p class="image-container"><img alt="Task_Error_Log" src="img/d7a87eb71798c74e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="2">
+        <p>Below code will create the SP which helps in deleting all the tasks that were created as part of the solution.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE SPCS_DEMO_ROLE;
+
+CREATE OR REPLACE PROCEDURE drop_job_tasks()
+RETURNS string
+LANGUAGE PYTHON
+RUNTIME_VERSION = &#39;3.8&#39;
+PACKAGES = (&#39;snowflake-snowpark-python&#39;)
+HANDLER = &#39;drop_tasks&#39;
+execute as caller
+AS
+$$
+from snowflake.snowpark.files import SnowflakeFile
+import json
+def drop_tasks(session):
+    session.sql(&#39;alter task root_task suspend&#39;).collect()
+    res= session.sql(f&#39;&#39;&#39; select name
+        from table(information_schema.task_dependents(task_name =&gt; &#39;root_task&#39;, recursive =&gt; true))&#39;&#39;&#39;).collect()
+    for r in res:
+        print(r.NAME)
+        session.sql(f&#39;drop task {r.NAME}&#39;).collect()
+    session.sql(&#39;drop task GET_GRAPH_STATS&#39;).collect()
+    return &#39;Done&#39;
+$$;
+</code></pre>
+<p>Run the SP to delete the tasks.</p>
+<pre><code language="language-sql" class="language-sql">-- Deleting the DAG (Task Graphs)
+
+USE ROLE SPCS_DEMO_ROLE;
+
+call drop_job_tasks();
+
+DROP DATABASE PR_Container_Orchestration;
+
+-- As accountadmin delete other resources which was created
+
+USE ROLE ACCOUNTAMDIN;
+DROP COMPUTE POOL pr_std_pool_xs;
+DROP COMPUTE POOL pr_std_pool_s;
+DROP WAREHOUSE SMALL_WAREHOUSE;
+DROP ROLE SPCS_DEMO_ROLE;
+
+--  DROP DATABSE AND COMPUTE POOL CREATED AS PART OF THE PRE-REQUISITE SECTIONS
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Resources" duration="2">
+        <h2 is-upgraded>Conclusion</h2>
+<p>Congratulations! You have successfully learnt how create a custom orchestration framework to run the contanerized jobs in parallel all driven through a config file. This allows you to build complex pipelines which uses containers to run you pipelines and define the dependencies and the inputs through a simple configuration. Using this approach you can reduce the dependencies on 3rd party tools and run your containerzed jobs all natively in Snowflake.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create custom orchestration framework which allows to run multiple containerized jobs in parallel with required dependencies all using a config file.</li>
+<li>How to create custom dependecies and creating fan-out and fan-in scenarios. Implement retry mechanism and simulate a failure scenario.</li>
+<li>Use Python and Snowpark to create logic to execute the containerized jobs and passing the details from the config file.</li>
+<li>How to track job execution along with errors and duration from logging tables that you have created.</li>
+</ul>
+<h2 is-upgraded>Resources</h2>
+<p>Want to learn more about the tools and technologies used by your app? Check out the following resources:</p>
+<ul>
+<li><a href="https://github.com/sfc-gh-praj/spcs-orchestration-utility" target="_blank">Source Code on Github</a></li>
+<li><a href="https://medium.com/@phaniraj2112/orchestration-framework-for-running-parallel-containerised-jobs-in-snowflake-457396a404c7" target="_blank">Blog post</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials" target="_blank">Snowpark Container Services Tutorials</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Developer Guide</a></li>
+<li><a href="https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/" target="_blank">Snowpark Guide for Data Engineers</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

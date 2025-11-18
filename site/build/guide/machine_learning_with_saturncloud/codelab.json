@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "machine_learning_with_saturncloud",
+  "duration": 59,
+  "title": "Machine Learning on Unstructured Data with Saturn Cloud and Snowflake",
+  "summary": "Machine learning on unstructured data with Saturn Cloud and Snowflake",
+  "source": "machine_learning_with_saturncloud/machine_learning_with_saturncloud.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "data-engineering",
+    "partner-integrations"
+  ],
+  "tags": [
+    "computervision",
+    "machinelearning",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/devlabs/issues",
+  "url": "machine_learning_with_saturncloud"
+}

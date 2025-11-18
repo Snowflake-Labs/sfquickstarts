@@ -1,0 +1,523 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with the Application Control Framework (ACF)</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="application-control-framework"
+                  title="Getting Started with the Application Control Framework (ACF)"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>This guide will show you how to deploy the ACF and build a demo Native App with controls and limits.</p>
+<p>The ACF is an accelerator, allowing you to easily integrate your existing Snowflake application logic into a controllable, auditable Native App. It gives you the ability to dynamically control what logic, functionality, AI/ML, and/or data your consumers receive using rules implemented at either the record or query level, ensuring consumers do not gain access to proprietary information. Once your Native App is installed, the ACF will track and log each consumer&#39;s usage and send that data back to you in near real-time. This allows you to quickly spot any usage or setup issues and rectify them immediately.</p>
+<p>The rest of this Snowflake guide walks you through deploying the ACF and demo data/application logic, setting the Native App Limits, listing the demo Native App, and using the app, as a consumer.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with SQL, SnowSQL, Native Apps, Event Tables, and Streamlit</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create an Event Account</li>
+<li>How to use the ACF Streamlit App (App Control Manager) to set Native App limits and which functionality consumers can access</li>
+<li>How to build and list a demo Native App, using the ACF</li>
+<li>How events are collected and used to update consumer metadata (i.e. the number of records processed)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql" target="_blank">SnowSQL</a> Installed</li>
+<li>An Integrated Development Environment (IDE) Installed.  <a href="https://code.visualstudio.com/download" target="_blank">VSCode</a> is recommended.</li>
+<li>Three (3) Snowflake accounts, each with <code>ACCOUNTADMIN</code> privileges (ideally in the same cloud/region) <ul>
+<li>One account will serve as the main account, where the ACF is deployed</li>
+<li>One account will serve as an event account, where consumer events from the Native Apps are shared to. <ul>
+<li>The event account uses the Listing API, which is in Public Preview (PuPr).  Visit https://other-docs.snowflake.com/en/progaccess/listing-progaccess-about for more information.</li>
+<li>Once this account is created, it will be set as the event account for the cloud region, by executing the following in the Snowflake Org account, as <code>ORGADMIN</code></li>
+<li><code>CALL SYSTEM$SET_EVENT_SHARING_ACCOUNT_FOR_REGION('<REGION>', 'PUBLIC', '<ACCOUNT_NAME>');</code><ul>
+<li>The account region can be found by executing <code>SELECT CURRENT_REGION();</code></li>
+<li>The account name can be found by executing <code>SELECT CURRENT_ACCOUNT_NAME();</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>One account will serve as a consumer account, to install the demo Native App.</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Native App that tracks consumer usage and enforces the limits set in the ACF.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Downloading the Code" duration="3">
+        <p>The code used in this guide is hosted in github. You can download the code as a ZIP from <a href="https://github.com/Snowflake-Labs/sfguide-application-control-framework/archive/refs/heads/main.zip" target="_blank">GitHub</a> or use the following git command to clone the repository.</p>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/Snowflake-Labs/sfguide-application-control-framework.git
+</code></pre>
+<p>After downloading you will have a folder <code>sfguide-application-control-framework</code> containing all the code needed to deploy the ACF. Open the folder in VSCode to review the project.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Event Account Setup" duration="5">
+        <p>The first step is to set up an event account for each region the native app will be deployed.  The script referenced below creates an event table (if one has not already been created), streams, tasks, and data listings to share consumer native app events from the event account to the ACF (main) account.</p>
+<h3 is-upgraded>Prerequisites</h3>
+<p>The event account must have been created for each region the native app will be deployed, along with setting each account as the event account for the region. Each event account must be enrolled in the Listing API Private Preview.  Please see the **What You&#39;ll Need section for more details.</p>
+<h3 is-upgraded>Script Execution</h3>
+<ol type="1">
+<li>The ACF code project includes the <code>config/config_events_aws_us_west_2.txt</code> file for the event account setup. Update this file, replacing the values in the config file accordingly.  Rename the config file, replacing <code>aws_us_west_2</code>, with your account&#39;s region.</li>
+</ol>
+<h4 is-upgraded>Configuration Parameters</h4>
+<ul>
+<li><strong>DIR</strong> - the URI where the <code>application_control_framework</code> root directory resides on the provider&#39;s local machine. <ul>
+<li><strong>NOTE:</strong>  The URI formatting differs depending on the provider&#39;s local operating system: <ul>
+<li>Linux/MacOS: <ul>
+<li>The path must include the initial forward slash in the path (e.g. <code>/Users/mhenderson/Documents/GitHub</code>).</li>
+<li>If the directory path and/or filename includes special characters, the entire URI must be enclosed in single quotation marks.</li>
+</ul>
+</li>
+<li>Windows: <ul>
+<li>You must include the drive and backslash in the path (e.g. <code>C:\Users\mhenderson\Documents\GitHub</code>).</li>
+<li>If the directory path and/or filename includes special characters, the entire file URI must be enclosed in single quotes. Note that the separator character is a forward slash (/) in enclosed URIs (e.g. <code>C:\Users\mhenderson\Documents\GitHub Repos</code> for a path in Windows that includes a directory named GitHub Repos).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>ORG_NAME</strong> - the organization provider&#39;s Snowflake account belongs (this can be found by executing the <code>SELECT CURRENT_ORGANIZATION_NAME()</code> command) <ul>
+<li><strong>NOTE:</strong>  only required for the config_events.txt file.</li>
+</ul>
+</li>
+<li><strong>ACF_ACCOUNT_NAME</strong> - the name of the provider&#39;s Snowflake where the ACF will be deployed (this can be found by executing the <code>SELECT CURRENT_ACCOUNT_NAME()</code> command). <ul>
+<li><strong>NOTE:</strong>  only required for the config_events.txt file.</li>
+</ul>
+</li>
+<li><strong>ACF_ACCOUNT_LOCATOR</strong> - the account identifier for provider&#39;s Snowflake account where the ACF will be deployed (this can be found by executing the <code>SELECT CURRENT_ACCOUNT()</code> command).</li>
+<li><strong>EVENTS_ACCOUNT_LOCATOR</strong> - the account identifier for provider&#39;s Snowflake account where ACF events will be collected. (this can be found by executing the <code>SELECT CURRENT_ACCOUNT()</code> command). <ul>
+<li><strong>NOTE:</strong>  only required for the config_events.txt file.</li>
+</ul>
+</li>
+<li><strong>APP_CODE</strong> - an abbreviated representation for the name of the app. <ul>
+<li><strong>NOTE:</strong> for this QuickStart, please use <strong>SDE</strong>.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example Config:</strong></p>
+<pre><code language="language-bash" class="language-bash">DIR=/Users/mhenderson/Documents/GitHub
+ORG_NAME=SFPSCOGS
+ACF_ACCOUNT_NAME=PS_WLS_COLLAB_PROVIDER
+ACF_ACCOUNT_LOCATOR=CDB65519
+EVENTS_ACCOUNT_LOCATOR=KDB59543
+APP_CODE=SDE
+</code></pre>
+<ol type="1" start="2">
+<li>Using <strong>SnowSQL</strong>, execute the script to set up the event account:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">./event_acct/setup/setup.sh config/config_events_&lt;REGION&gt;.txt
+</code></pre>
+<p>Where <strong>&lt;REGION&gt;</strong> = the cloud/region where the event account is being configured.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="ACF Account Setup" duration="5">
+        <p>The second step is to deploy the ACF to the main account.  This account is different from an event account and will be where the ACF will reside and be managed.</p>
+<p>The ACF includes all of the objects required to manage ACF functionality.  In addition, this script also deploys the App Control Manager, the Streamlit UI that is used to perform such actions as define custom controls and rules, create app package versions, onboard consumers, etc.</p>
+<h3 is-upgraded>Prerequisites</h3>
+<p>Complete the previous step, <strong>Event Account Setup</strong>.</p>
+<h3 is-upgraded>Script Execution</h3>
+<ol type="1">
+<li>The ACF code project includes the <code>config/config_acf.txt</code> file for the ACF account setup. Update this file, replacing the values in the config file accordingly.</li>
+</ol>
+<h4 is-upgraded>Configuration Parameters</h4>
+<ul>
+<li><strong>DIR</strong> - the URI where the <code>application_control_framework</code> root directory resides on the provider&#39;s local machine. <ul>
+<li><strong>NOTE:</strong>  The URI formatting differs depending on the provider&#39;s local operating system: <ul>
+<li>Linux/MacOS: <ul>
+<li>The path must include the initial forward slash in the path (e.g. /Users/mhenderson/Documents/GitHub.</li>
+<li>If the directory path and/or filename includes special characters, the entire URI must be enclosed in single quotation marks.</li>
+</ul>
+</li>
+<li>Windows: <ul>
+<li>You must include the drive and backslash in the path (e.g. C:\Users\mhenderson\Documents\GitHub).</li>
+<li>If the directory path and/or filename includes special characters, the entire file URI must be enclosed in single quotes. Note that the separator character is a forward slash (/) in enclosed URIs (e.g. ‘C:\Users\mhenderson\Documents\GitHub Repos&#39; for a path in Windows that includes a directory named GitHub Repos).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>ACF_ACCOUNT_LOCATOR</strong> - the account identifier for provider&#39;s Snowflake account where the ACF will be deployed (this can be found by executing the <code>SELECT CURRENT_ACCOUNT()</code> command).</li>
+<li><strong>APP_CODE</strong> - an abbreviated representation for the name of the app. <ul>
+<li><strong>NOTE:</strong> for this QuickStart, please use <strong>SDE</strong>.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example Config:</strong></p>
+<pre><code language="language-bash" class="language-bash">DIR=/Users/mhenderson/Documents/GitHub
+ACF_ACCOUNT_LOCATOR=CDB65519
+APP_CODE=SDE
+</code></pre>
+<ol type="1" start="2">
+<li>Using <strong>SnowSQL</strong>, execute the script to set up the ACF account:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">./main_acct/setup/setup.sh config/config_acf.txt
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Mount the Event Shares" duration="5">
+        <p>Once the ACF has been deployed, the shares from the event account(s) can be mounted in the ACF account.  The following step details how to mount the share from each event account set up from.</p>
+<h3 is-upgraded>Prerequisites</h3>
+<p>Complete the previous step, <strong>ACF Account Setup</strong>.</p>
+<h3 is-upgraded>Instructions</h3>
+<ol type="1">
+<li>In the ACF account, log into <strong>Snowsight</strong>.</li>
+<li>Once logged in, if not at the Snowsight home screen, click the <strong>Back</strong> button, in the top left area of the UI, to open the left navigation menu.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/3c9a742be0345914.png"></p>
+<ol type="1" start="3">
+<li>Switch to the <strong>P_SDE_ACF_ADMIN</strong> role, by clicking the drop-down in the bottom left area of the UI, then hovering over the <strong>Switch Role</strong> menu item.</li>
+<li>Click <strong>Data Products</strong>, then <strong>Private Sharing</strong>, then <strong>Get</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/d4e85449946d1418.png"></p>
+<ol type="1" start="5">
+<li>Click <strong>Get</strong> (<strong>NOTE:</strong> do not rename the database).</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/274a63be0104ba86.png"></p>
+<ol type="1" start="6">
+<li>Create a stream and tasks to stream events from each mounted event database to the EVENTS_MASTER table.</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">USE ROLE P_SDE_ACF_ADMIN;
+USE WAREHOUSE P_SDE_ACF_WH;
+CALL P_SDE_ACF_DB.EVENTS.STREAM_TO_EVENT_MASTER(TO_ARRAY(&#39;&lt;EVENT_DBS&gt;&#39;));
+</code></pre>
+<p><strong>&lt;EVENT_DBS&gt;</strong> = the event database created in <strong>Step 5</strong>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dev Environment Setup" duration="2">
+        <p>The ACF also comes with a set of scripts that creates the provider&#39;s dev environment.  This dev environment includes the application logic functions and/or procedures to be included in the Native App.  In addition, the dev environment also includes the objects required to test the application functions/procedures locally, to ensure desired functionality, before building the native app.</p>
+<h3 is-upgraded>Prerequisites</h3>
+<p>Complete the previous step, <strong>Mount the Event Shares</strong>.</p>
+<h3 is-upgraded>Script Execution</h3>
+<ol type="1">
+<li>Using <strong>SnowSQL</strong>, execute the script to set up the dev environment in the ACF account:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">./main_acct/dev_env/setup/setup.sh config/config_acf.txt
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Demo App Setup" duration="2">
+        <p>The ACF also comes with a set of scripts that creates objects in the provider&#39;s dev environment to build a demo data enrichment app.  The demo app includes sample source graph data, a function that can be shared with the consumer, and a stored procedure that enriches consumer data with data from the source graph.</p>
+<h3 is-upgraded>Prerequisites</h3>
+<p>Complete the previous step, <strong>Dev Environment Setup</strong>.</p>
+<h3 is-upgraded>Script Execution</h3>
+<ol type="1">
+<li>Using <strong>SnowSQL</strong>, execute the script to set up the dev environment in the ACF account:</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">./main_acct/demo_app/setup/setup.sh config/config_acf.txt
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="App Control Manager" duration="5">
+        <p>The ACF includes the App Control Manager, a Streamlit UI available in the provider account. The App Control Manager allows the provider to easily build and manage an app built on the ACF, manage consumers, and remove the ACF if/when desired.</p>
+<p>The App Control Manager can be accessed via the following steps:</p>
+<ol type="1">
+<li>In the ACF account, log into <strong>Snowsight</strong>.</li>
+<li>Once logged in, if not at the Snowsight home screen, click the <strong>Back</strong> button, in the top left area of the UI, to open the left navigation menu.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/3c9a742be0345914.png"></p>
+<ol type="1" start="3">
+<li>Switch to the <strong>P_SDE_ACF_ADMIN</strong> role, by clicking the drop-down in the bottom left area of the UI, then hovering over the <strong>Switch Role</strong> menu item.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/ac35dade5320ce65.png"></p>
+<ol type="1" start="4">
+<li>Click <strong>Projects</strong> » <strong>Streamlit</strong>, then <strong>P_SDE_APP_CONTROL_MANAGER</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/f9d35ca75ca97eed.png"></p>
+<p class="image-container"><img alt="img" src="img/4855400615e5961d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Demo Native App" duration="20">
+        <p>The demo app is a simple data enrichment app that enriches a consumer&#39;s dataset with attributes from the provider&#39;s dataset, when the records have the same email address.</p>
+<h2 is-upgraded>Create the Application Package</h2>
+<p>The native app&#39;s application package consists of views of the native app&#39;s source data, along with views of the required tables used to enforce the rules defined in the ACF and collect logs/metrics. In this demo, an application package will be created:</p>
+<ol type="1">
+<li>In the App Control Manager, click <strong>Manage App</strong> » <strong>App Package</strong> » <strong>Create</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/a56aa0c7e6c815a6.png"></p>
+<ol type="1" start="2">
+<li>Enter <strong>SDE_DEMO</strong> in the Application Package Name text field. This name will be prefixed by: <strong><em>P_SDE_APP_PKG_</em></strong>.</li>
+<li>Select the <strong>P_SDE_SOURCE_DB_DEV</strong> database from the Select Database drop-down.</li>
+<li>Select the <strong>DATA</strong> schema from the Select Schema drop-down</li>
+<li>Select the <strong>P_SDE_SOURCE_DB_DEV.DATA.CUSTOMER</strong> table from the Select Table(s)/View(s) drop-down.</li>
+<li>Click <strong>Create</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/926b398ba99a4de2.png"></p>
+<h2 is-upgraded>Create a Version for the Application Package</h2>
+<p>Once the application package is created, the application functions/procedures are tied to the application package by creating a version and a patch. In this demo, the App Control Manager will be used to create a new version and patch.</p>
+<ol type="1">
+<li>In the App Control Manager, click <strong>Manage App</strong> » <strong>App Package</strong> » <strong>Versions</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/a7af44f812bbb40e.png"></p>
+<ol type="1" start="2">
+<li>Select <strong>P_SDE_APP_PKG_SDE_DEMO</strong> from the Select Application Package drop-down.</li>
+<li>Select <strong>CREATE</strong> from the Create, Patch, or Drop Version drop-down.</li>
+<li>Enter a <strong>v1_0_0</strong> in the Version Name field.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/44045ae924c58aa3.png"></p>
+<ol type="1" start="5">
+<li>For this demo, select <strong>FREE</strong> from the Select App Mode drop-down</li>
+<li>Select <strong>Y</strong> from the Enforce Limits drop-down. By default, limits should be enforced, but this can be set to N if limit enforcement should be turned off (i.e. during testing).</li>
+<li>Select <strong>DEV</strong> from the Environment drop-downs to pull the <strong>Streamlit</strong> and <strong>template</strong> files from the dev environment.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/afc9787552709b74.png"></p>
+<ol type="1" start="8">
+<li>Select the <strong>P_SDE_SOURCE_DB_DEV</strong> database from the Select Database drop-down.</li>
+<li>Select the <strong>FUNCS_APP</strong> schema from the Select Schema drop-down.</li>
+<li>Select the <strong>P_SDE_SOURCE_DB_DEV.FUNCS_APP.JS_FACTORIAL(FLOAT)</strong> function from the Select Function(s) drop-down.</li>
+<li>Select the <strong>Accessible</strong> checkbox next to the function under Selected Functions to make the function accessible to the consumer.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/c63a64b96c12c508.png"></p>
+<ol type="1" start="12">
+<li>Select the <strong>P_SDE_SOURCE_DB_DEV</strong> database from the Select Database drop-down.</li>
+<li>Select the <strong>PROCS_APP</strong> schema from the Select Schema drop-down.</li>
+<li>Select the <strong>P_SDE_SOURCE_DB_DEV.PROCS_APP.ENRICH(VARCHAR,VARCHAR,VARCHAR,VARCHAR)</strong> procedure from the Select Procedure(s) drop-down.</li>
+<li>Select the <strong>Input Table</strong> checkbox next to the procedure under Selected Procedures.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/fa657690101b2360.png"></p>
+<ol type="1" start="16">
+<li>Click the <strong>CREATE</strong> button.</li>
+</ol>
+<h2 is-upgraded>Release Patch</h2>
+<p>To grant consumers access to the latest version/patch, the provider must create a release for the application package. The following steps detail how to release an application package&#39;s version/patch:</p>
+<ol type="1">
+<li>In Snowsight, click <strong>Projects</strong> » <strong>App Packages</strong>. Select the <strong>P_SDE_APP_PKG_SDE_DEMO</strong> application package created in the previous section.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/cf8ba6d9dc218510.png"></p>
+<ol type="1" start="2">
+<li>Click <strong>Release Patch</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/e73550f7643a97dc.png"></p>
+<ol type="1" start="3">
+<li>Select <strong>V1_0_0 patch 0</strong> from the Patch to release drop-down.</li>
+<li>Choose <strong>Set this patch to default</strong>.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/4aea4cddbb250820.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the Native App Listing" duration="10">
+        <p>Once the application package has a released version and patch, the native app is ready to be privately listed. For instructions on how to create a Private Listing for the native app and add the demo consumer account, visit the <strong>Create a Listing for Your Application</strong> section: <a href="https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#publish-and-install-your-application" target="_blank">https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#publish-and-install-your-application</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install the Native App in the Consumer Account" duration="5">
+        <p>In the demo consumer account added to the listing created in <strong>Create the Native App Listing</strong> section, install the native app available from the private listing. For instructions on how to install a native app, visit the <strong>Install the Application</strong> section <a href="https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#id6" target="_blank">https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial#id6</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run the Scripts from the Native App&#39;s Readme" duration="5">
+        <p>With each installation, the consumer is barred from using the native app until the consumer has executed a series of commands, including sharing events with the provider. These commands are located in the native app&#39;s Readme.</p>
+<ol type="1">
+<li>In Snowsight, click <strong>Data Products</strong> » <strong>Apps</strong>, under the Installed Apps section, click the native app installed in the previous section.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/b6e9f16cc32d1462.png"></p>
+<ol type="1" start="2">
+<li>Once loaded, the Streamlit UI will display the following error message:</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/7b67dc64e8d7a083.png"></p>
+<ol type="1" start="3">
+<li>Click the  icon in the top right of the page.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/da12055a817c1b66.png"></p>
+<ol type="1" start="4">
+<li>Make note of the <strong>NOTES</strong> section of the Readme. Hover over and click the <strong>Open in Worksheets</strong> button.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/1db582f79e1ac537.png"></p>
+<ol type="1" start="5">
+<li>In the new worksheet, replace the macros specified in the Readme with the appropriate values. Once the macros are replaced, <strong>run all commands</strong>.</li>
+<li>Open the native app. The Streamlit UI will display the warning message below. It will take a few minutes for the native app to be enabled.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/903dda9d62bb329f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="App Usage" duration="15">
+        <p>Once the native app has been enabled, the consumer can now use the app to enrich data. Sample data was created during executing the Readme commands. The following steps detail how to use the app to enrich data:</p>
+<ol type="1">
+<li>Open the app. Once the app is enabled, the warning message is removed.</li>
+<li>Click <strong>Select Table</strong>. Since this is the first time using the app, it needs to be granted privileges to the sample data table.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/b0b32cabfd965eba.png"></p>
+<ol type="1" start="3">
+<li>The app&#39;s security window will appear. Click ** Select Data**.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/23acbb8f9aec736e.png"></p>
+<ol type="1" start="4">
+<li>Select <strong>C_SDE_HELPER_DB.SOURCE.CUSTOMERS</strong>, then click <strong>Done</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/b9d9715f9e6bf8c0.png"></p>
+<ol type="1" start="5">
+<li>In the security window, click <strong>Save</strong>.</li>
+<li>Verify that the <strong>CUSTOMER</strong> table is selected from the Table drop-down.</li>
+<li>Select <strong>EMAIL</strong> from the Match Key drop-down.</li>
+<li>Enter a <strong>name</strong> for the results table in the Please enter a name for the Results Table field.</li>
+<li>Click <strong>Run</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/ab1b00541fff6a4b.png"></p>
+<ol type="1" start="10">
+<li>Once complete, the following message will briefly appear. In addition a new entry will be added to the Run History section.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/a978a438c87a54ed.png"></p>
+<p class="image-container"><img alt="img" src="img/1c461d8bf8a46bfb.png"></p>
+<ol type="1" start="11">
+<li>If desired, the output table can be inspected. In a worksheet, execute the following command:</li>
+</ol>
+<pre><code language="language-sql" class="language-sql">SELECT * FROM &lt;APP_NAME&gt;.RESULTS_APP.&lt;TABLE_NAME&gt; WHERE email IS NOT NULL LIMIT 100;
+</code></pre>
+<p><strong>NOTES:</strong></p>
+<ul>
+<li><strong>&lt;APP_NAME&gt;</strong> = the name of the app</li>
+<li><strong>&lt;TABLE_NAME&gt;</strong> = the name of the results table entered in.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Additional Test Scenarios" duration="10">
+        <h2 is-upgraded>Reach the Five Requests Limit Then Increase the Limit</h2>
+<p>By default, the ACF sets limits of the FREE version of the app to five requests. Once the limit is reached, the app is no longer usable, until the limit is increased by the provider in the App Control Manager.</p>
+<h3 is-upgraded>Attempt to Exceed Limit</h3>
+<p>In the app, make five requests to reach the limit, then attempt a sixth, which will fail.</p>
+<p class="image-container"><img alt="img" src="img/fe777efa8fdac4f3.png"></p>
+<h3 is-upgraded>Increase the Limit</h3>
+<p>Once the limit is reached, increase the consumer&#39;s request limit in the App Control Manager.</p>
+<ol type="1">
+<li>In the App Control Manager, click <strong>Manage Consumers</strong> » <strong>Manage</strong>.</li>
+<li>Select the <strong>Consumer</strong> from the Select Consumer drop-down. The consumer name will have a <strong>FREE_</strong> prefix, followed by the consumer&#39;s Snowflake account name.</li>
+<li>Select the <strong>limit</strong> control from the Select Consumer Controls to Update drop-down</li>
+<li>In the <strong>New Value</strong> field, enter <strong>10</strong>, then press Enter.</li>
+<li>Click <strong>Update</strong>.</li>
+</ol>
+<p class="image-container"><img alt="img" src="img/21334d5c7106fa8e.png"></p>
+<h3 is-upgraded>Make a New Request</h3>
+<p>In the native app in the consumer&#39;s account, attempt to make a new request.  Verify that the request is allowed and is successful.</p>
+<h2 is-upgraded>Consumer Usage of the App is Blocked, when Disabled</h2>
+<p>The App Control Manager allows the provider to control a consumer&#39;s access.</p>
+<h3 is-upgraded>Disable the Consumer</h3>
+<p>In the App Control Manager, disable the consumer.</p>
+<ol type="1">
+<li>In the App Control Manager, click <strong>Manage Consumers</strong> » <strong>Manage</strong>.</li>
+<li>Select the <strong>Consumer</strong> from the Select Consumer drop-down. The consumer name will have a <strong>FREE_</strong> prefix, followed by the consumer&#39;s Snowflake account name.</li>
+<li>Select the <strong>enabled</strong> control from the Select Consumer Controls to Update drop-down</li>
+<li>In the <strong>New Value</strong> field, enter <strong>N</strong>, then press Enter.</li>
+<li>Click <strong>Update</strong>.</li>
+</ol>
+<h3 is-upgraded>Attempt to Use the Native App</h3>
+<p>In the consumer account, relaunch the app and note that the consumer&#39;s access has been revoked.</p>
+<p class="image-container"><img alt="img" src="img/c817ef788c8d5852.png"></p>
+<h3 is-upgraded>Re-enable the Consumer</h3>
+<p>Repeat the steps in the <strong>Disable the Consumer</strong> section, but set the enabled value back to <strong>Y</strong>.  Then relaunch the app in the consumer&#39;s account to verify that usage has been restored.</p>
+<ol type="1">
+<li>In the App Control Manager, click <strong>Manage Consumers</strong> » <strong>Manage</strong>.</li>
+<li>Select the <strong>Consumer</strong> from the Select Consumer drop-down. The consumer name will have a <strong>FREE_</strong> prefix, followed by the consumer&#39;s Snowflake account name.</li>
+<li>Select the <strong>enabled</strong> control from the Select Consumer Controls to Update drop-down</li>
+<li>In the <strong>New Value</strong> field, enter <strong>N</strong>, then press Enter.</li>
+<li>Click <strong>Update</strong>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>You&#39;ve performed the following:</p>
+<ul>
+<li>Successfully built and deployed a Native App with consumer controls and limits, set via the ACF.</li>
+<li>Verified that the limits are enforced when the consumer hits the limits set.</li>
+<li>Updated the limits and verified that they are applied for the consumer in real-time.</li>
+<li>Disabled the consumer in the ACF and verified that the consumer cannot use the app.</li>
+</ul>
+<p>To get more comfortable with this solution, continue to toggle the limits set for the consumer, add additional functionality to the native app and set the allowed_procs values accordinglt.</p>
+<h2 class="checklist" is-upgraded>What we&#39;ve covered</h2>
+<ul class="checklist">
+<li>How to create an Event Account</li>
+<li>How to use the ACF Streamlit App (App Control Manager) to set Native App limits and which functionality consumers can access</li>
+<li>How to build and list a demo Native App, using the ACF</li>
+<li>How to update consumer metadata and verify that the changes are applied immediately.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

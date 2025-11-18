@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "connectors_google_analytics_raw_data",
+  "duration": 73,
+  "title": "Getting Started with the Snowflake Connector for Google Analytics",
+  "summary": "Getting Started with the Snowflake Connector for Google Analytics",
+  "source": "connectors_google_analytics_raw_data/connectors_google_analytics_raw_data.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "connectors",
+    "dynamictables",
+    "bigquery"
+  ],
+  "tags": [
+    "analytics",
+    "bigquery",
+    "connectors",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "connectors_google_analytics_raw_data"
+}

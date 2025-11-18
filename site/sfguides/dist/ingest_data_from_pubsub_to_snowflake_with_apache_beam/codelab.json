@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "ingest_data_from_pubsub_to_snowflake_with_apache_beam",
+  "duration": 30,
+  "title": "Ingest data from PubSub to Snowflake with Apache Beam",
+  "summary": "Ingest data from PubSub to Snowflake with Apache Beam",
+  "source": "ingest_data_from_pubsub_to_snowflake_with_apache_beam/beam.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering",
+    "architecture-patterns",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "apachebeam",
+    "dataengineering",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "ingest_data_from_pubsub_to_snowflake_with_apache_beam"
+}

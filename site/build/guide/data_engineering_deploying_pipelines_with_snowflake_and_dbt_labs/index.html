@@ -1,0 +1,344 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Deploying Pipelines with Snowflake and dbt labs</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="data_engineering_deploying_pipelines_with_snowflake_and_dbt_labs"
+                  title="Deploying Pipelines with Snowflake and dbt labs"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <h2 is-upgraded>Introduction</h2>
+<p>Modern businesses require data strategies that support agility, scalability, and operational efficiency.</p>
+<h2 is-upgraded>Why Snowflake?</h2>
+<p><a href="https://www.snowflake.com/" target="_blank">Snowflake</a> is a powerful Data Cloud that allows you to build data-intensive applications without the operational overhead. Unique architecture and years of innovation made Snowflake the best platform for mobilizing data in your organization.</p>
+<h2 is-upgraded>Why dbt?</h2>
+<p><a href="https://www.getdbt.com/" target="_blank">dbt</a> (Data Build Tool) is a transformation workflow that empowers teams to develop analytics code using best practices from software engineering—such as modularity, portability, CI/CD, and documentation. With dbt, anyone proficient in SQL can create production-ready data pipelines, transforming data directly within cloud data platforms like Snowflake.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to build and deploy pipelines using dbt and Snowflake</li>
+<li>How to change materialization options to achieve your service objectives</li>
+<li>How to benefit from recent Snowflake innovations, in particular Dynamic Tables</li>
+<li>How to upload data via SnowSight UI</li>
+<li>How to access data from Snowflake Marketplace and use it for your analysis</li>
+<li>How to use Snowflake Notebooks to deploy environment changes</li>
+<li>How to use Snowflake DevOps features, including CREATE OR ALTER</li>
+<li>How to execute SQL scripts from your Git repository directly in Snowflake</li>
+<li>How to build CI/CD pipelines using Snowflake&#39;s Git Integration</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>Build a <strong>Snowflake + dbt</strong> data pipelines to:</p>
+<ul>
+<li>Analyze trading <strong>P&amp;L</strong> and normalize multi-currency trades</li>
+<li>Extract insights using <strong>LLMs</strong> from trader execution notes</li>
+<li>Compare actual P&amp;L to portfolio targets</li>
+</ul>
+<h3 is-upgraded>Data Sources</h3>
+<p><strong>Snowflake Marketplace Sources</strong></p>
+<ul>
+<li><strong>FX rates</strong> – Foreign exchange rates for currency normalization</li>
+<li><strong>US equity trading price history</strong> – Historical price data for US equities</li>
+</ul>
+<p><strong>Manual Datasets</strong></p>
+<ul>
+<li><strong>Trading history</strong> – Records of executed trades</li>
+<li><strong>Target allocation ratios</strong> – Portfolio targets for FX and equity allocations</li>
+</ul>
+<h3 is-upgraded>Key Objectives</h3>
+<ul>
+<li><strong>Calculate deal desk P&amp;L</strong> across multiple currencies</li>
+<li><strong>Blend trading data with portfolio targets</strong> to assess performance</li>
+<li><strong>Analyze trader decision-making</strong> using LLMs on trade execution notes</li>
+</ul>
+<p>Here&#39;s a quick visual overview of what we&#39;ll accomplish in this Quickstart:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/60213168b6f3dd5.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with dbt</li>
+<li>Familiarity with Snowflake</li>
+<li>Familiarity with Git repositories and GitHub</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<p>You will need the following things before beginning:</p>
+<ul>
+<li>Snowflake account <ul>
+<li><strong>A Snowflake Account</strong>. Visit the <a href="https://app.snowflake.com/" target="_blank">Snowflake Account Sign In</a> page to log into your account or to sign up for a trial account.</li>
+<li><strong>A Snowflake user created with ACCOUNTADMIN permissions</strong>. This user will be used to get things setup in Snowflake.</li>
+<li><strong>Anaconda Terms &amp; Conditions accepted</strong>. See Getting Started section in <a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started" target="_blank">Third-Party Packages</a>.</li>
+</ul>
+</li>
+<li>GitHub account <ul>
+<li><strong>A GitHub account</strong>. If you don&#39;t already have a GitHub account you can create one for free. Visit the <a href="https://github.com/signup" target="_blank">Join GitHub</a> page to get started.</li>
+</ul>
+</li>
+</ul>
+<p>Let&#39;s get started! 🚀</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="15">
+        <h2 is-upgraded>Create a GitHub Personal Access Token</h2>
+<p>In order for Snowflake to authenticate to your GitHub repository, you will need to generate a personal access token. Please follow the <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic" target="_blank">Creating a personal access token</a> instructions to create your token.</p>
+<p>Make sure to save the token before leaving the page, as we will be using it a couple of times during this Quickstart.</p>
+<h2 is-upgraded>Fork and clone the Quickstart Repository</h2>
+<p>You&#39;ll need to fork and clone of the repository for this Quickstart from your GitHub account. Visit the <a href="https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs" target="_blank">Deploying Pipelines with Snowflake and dbt labs</a> and click on the &#34;Code&#34; button near the top right.</p>
+<pre><code language="language-shell" class="language-shell">gh repo clone Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs
+</code></pre>
+<h2 is-upgraded>Import the notebook</h2>
+<p>Some steps in this quickstart will be initiated from <strong>Snowflake Notebooks</strong> for transparency. In a real-world scenario, these steps would typically be part of your codebase and executed using the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli/index" target="_blank">Snowflake CLI</a> and/or <strong>GitHub Actions</strong>.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/4c247442dbaedc48.png"></p>
+<p>Pick <code>00_start_here.ipynb</code> that is in the root folder of the cloned repository.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/e8e45a182f64c5e7.png"></p>
+<p>Once imported, it should look like this. <strong>Congratulations! The first step is complete!</strong> 🎉</p>
+<p class="image-container"><img style="width: 800.00px" src="img/428934ebd8a1dbcb.png"></p>
+<h2 is-upgraded>Configure local dbt environment</h2>
+<p>In the repository you just checked out, there is a <code>./dbt_project</code> folder containing pre-built dbt pipelines. In <code>./dbt_project/dbt_project.yml</code>, you can see that the project expects to find a connection profile called <code>dbt_project</code>, which it will use later to access your Snowflake environment.</p>
+<p>Let&#39;s open <code>~/.dbt/profiles.yml</code> and add the following content. (Note: You will need to update the configuration with your Snowflake account locator and password for the dbt_hol_user.)</p>
+<pre><code language="language-yml" class="language-yml">dbt_project:
+  outputs:
+    dev:
+      account: your_snowflake_account_locator
+      database: dbt_hol_2025_dev
+      password: your_snowflake_user_password
+      role: dbt_hol_role_dev
+      schema: public
+      threads: 100
+      type: snowflake
+      user: dbt_hol_user
+      warehouse: vwh_dbt_hol_dev
+    prod:
+      account: your_snowflake_account_locator
+      database: dbt_hol_2025_prod
+      password: your_snowflake_user_password
+      role: dbt_hol_role_prod
+      schema: public
+      threads: 100
+      type: snowflake
+      user: dbt_hol_user
+      warehouse: vwh_dbt_hol_prod
+  target: dev
+</code></pre>
+<p>As you can see, we are setting up two targets: <strong>dev</strong> and <strong>prod</strong>, with <strong>dev</strong> as the default. For more info on configuring your local dbt profiles configuration please refer to the <a href="https://docs.getdbt.com/docs/core/connect-data-platform/profiles.yml" target="_blank">docs</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Access Data Products in Snowflake Marketplace" duration="10">
+        <p>Now, let&#39;s get access to the datasets we can work with. <strong>Snowflake Marketplace</strong> makes this process very easy. There are thousands of well-curated, ready-to-use data products (as well as Native apps and models) right at your fingertips. In this quickstart, we will onboard two datasets, both of which are free/free-to-try as a trial:</p>
+<h2 is-upgraded>US equity trading price history</h2>
+<p class="image-container"><img style="width: 800.00px" src="img/1bc80bafa78b9a86.png"><img style="width: 800.00px" src="img/61ad6cd400241bec.png"></p>
+<h2 is-upgraded>FX rates</h2>
+<p class="image-container"><img style="width: 800.00px" src="img/46e6e75968391646.png"><img style="width: 800.00px" src="img/246c0888757851b8.png"></p>
+<h2 is-upgraded>Validate</h2>
+<p>Great! So easy. Now, if we go back to the notebook we uploaded and click <strong>‘Databases&#39;</strong>, we can see two new databases with tables shared with our account by the provider. No ETL, no latency, no extra storage, and as performant as if they were in your account.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/6c395d2dca59aa11.png"></p>
+<p>With that, let&#39;s move on to the next step 🚀</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Development Environment" duration="5">
+        <h2 is-upgraded>Connect to Git from Snowflake</h2>
+<p>ow, let&#39;s go back to the notebook we uploaded and start executing the cells.<br> Before we do that, please ensure you have updated the information in cell <strong><em>Step 01 Setup Snowflake</em></strong> (<code>sql_step03_set_context</code>) with your credentials.</p>
+<pre><code language="language-sql" class="language-sql">SET MY_USER = CURRENT_USER();
+
+SET GITHUB_SECRET_USERNAME = &#39;yourgithubusername&#39;;
+SET GITHUB_SECRET_PASSWORD = &#39;yourgithubtoken&#39;;
+SET GITHUB_URL_PREFIX = &#39;https://github.com/yourgithubusername&#39;;
+SET GITHUB_REPO_ORIGIN = &#39;https://github.com/Snowflake-Labs/sfguide-deploying-pipielines-with-snowflake-and-dbt-labs.git&#39;;
+</code></pre>
+<p>Once you execute cells <code>sql_step03_set_context</code> and <code>sql_step03_database_objects</code> in Step 01 Setup Snowflake, this should create a Git repository object in the SANDBOX.PUBLIC schema. If you click on the details arrow, you should see the content of the Git repository/branch.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/6eb48e8469494163.png"></p>
+<h2 is-upgraded>Create development environment</h2>
+<p>Now, let&#39;s run cell <strong><em>Step 02 Setup dev environment</em></strong> (<code>sql_step04_deploy_dev_notebooks</code>).<br> Let&#39;s take a moment to discuss what&#39;s happening here. We just mounted the Git repository, and it&#39;s a good idea to ensure we fetch the latest changes from the main branch before using its content. Technically, the content of the repo is acting like a stage object in Snowflake. As the next step, we issue the <code>EXECUTE IMMEDIATE FROM @GIT/..</code> command, which runs a script maintained externally, passing <code>env='DEV'</code> as an argument.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+USE DATABASE SANDBOX;
+
+ALTER GIT REPOSITORY DEMO_GIT_REPO FETCH;
+EXECUTE IMMEDIATE FROM @DEMO_GIT_REPO/branches/main/scripts/deploy_environment.sql USING (env =&gt; &#39;DEV&#39;);
+</code></pre>
+<p>If you look inside the <code>deploy_environment.sql</code> file, you&#39;ll notice that it uses two very useful constructs:</p>
+<ul>
+<li><strong>Jinja macro</strong>: This allows running the same code with different parameters (in our case, it helps provision multiple template-based environments).</li>
+<li><strong><code>CREATE OR ALTER</code></strong> construct: This greatly simplifies the process of generating delta DDL commands to change or create your target environment. In this scenario, we are using it for fairly basic tasks, but it is an important step towards a declarative definition of your environment and good DevOps practices. You can read more about it in the <a href="https://docs.snowflake.com/en/sql-reference/sql/create-or-alter" target="_blank">docs</a>.</li>
+</ul>
+<p class="image-container"><img style="width: 800.00px" src="img/9875f3f1d3329001.png"></p>
+<p>Great. Once cell executed we should now have a dev environment(database, roles, warehouses) and be ready to start running pipelines!</p>
+<p class="image-container"><img style="width: 800.00px" src="img/922caeab3f446713.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Upload Manual Sources" duration="2">
+        <p>With all this prep next step should go swiftly. For this, let&#39;s change the directory to the <code>./dbt_project</code>  in the repo and run dbt seed command:</p>
+<pre><code language="language-shell" class="language-shell">cd dbt_project
+dbt seed
+</code></pre>
+<p>What&#39;s happening now is that dbt will connect to the default connection profile (dev) and will automatically create tables for all CSV files located in the <code>dbt_project/seed</code> folder.</p>
+<p>In our scenario, this represents the idea of loading static data, such as allocation weights, that could be maintained as part of the codebase. <img style="width: 800.00px" src="img/93ecc3c603528ffb.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy Dev Pipelines" duration="3">
+        <p>Amazing! Let&#39;s start creating models to represent our pipeline. As you can see from the screenshot below, in <code>dbt_project/models</code>, there are three subfolders representing the logical grouping of models into staging, intermediate, and marts. It&#39;s up to you to decide which breakdown will fit your solution best, but this is a great technique for making quick changes at the layer level in <code>dbt_project.yml</code>. In our quickstart, for example, models in these folders will be persisted in different schemas on the database side.</p>
+<p>Let&#39;s run the project:</p>
+<pre><code language="language-shell" class="language-shell">cd dbt_project
+dbt run
+</code></pre>
+<p>As you can see from the logs, models by default have a materialization of view, which is super fast to change during the prototyping stage. These can then be selectively adjusted if and when necessary.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/c4f7df9e75227a51.png"></p>
+<p>Congratulations! You just deployed your first pipelines! You can now query any of these objects or generate dbt documentation to share with your colleagues to better understand what you are building.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/3df577e719c7c00d.png"></p>
+<pre><code language="language-shell" class="language-shell">cd dbt_project
+dbt docs generate
+dbt docs serve
+</code></pre>
+<p class="image-container"><img style="width: 800.00px" src="img/c541f81be2a6f1ca.png"></p>
+<p>Since all models are materialized as views, the results are always up-to-date. However, they are calculated at runtime, using the compute power provided by the user when querying. With Snowflake, you can achieve a lot with virtual transformations, but if your objects need to be accessed by many users, materializing results starts to make sense. How can you do it efficiently? Let&#39;s see in the next chapter.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Change Materializations" duration="2">
+        <p>In a previous chapter, we deployed all models as views and discussed the trade-offs. In this chapter, we will demonstrate the ease of changing model materialization by converting them into tables. This means every time the <code>dbt run</code> command is issued, it will generate a CTAS query to re-deploy the entire content. This is great for illustration purposes, but in real life, please be pragmatic: materialize results that make sense to be materialized for reuse and learn about <a href="https://docs.getdbt.com/docs/build/incremental-models" target="_blank">incremental</a> materialization to maintain the efficiency of the pipeline.</p>
+<p>For now, to keep things simple lets open <code>dbt_project/dbt_project.yml</code> and update materialization settings for all model folders from <code>view</code> to <code>table</code>.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/27811b7e0cac66d0.png"></p>
+<p>Once done, lets run dbt again:</p>
+<pre><code language="language-shell" class="language-shell">cd dbt_project
+dbt run
+</code></pre>
+<p class="image-container"><img style="width: 800.00px" src="img/1f1c54e8a52b6ffc.png"><img style="width: 800.00px" src="img/9cdbf7f6c8646028.png"></p>
+<p>Now you see another angle of why dbt is such a force multiplier. It allows you to focus on the content of your data products, while the framework takes care of generating the DDL to deploy them with various materialization options.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Change Materializations: Dynamic Tables" duration="0">
+        <p><code>dbt_project/dbt_project.yml</code> and change the <code>intermediate</code> and <code>mart</code> models to be deployed as <a href="https://docs.snowflake.com/en/sql-reference/sql/create-dynamic-table" target="_blank">Dynamic Tables</a>. Uncomment the code provided in the repository, similar to what you see in the screenshot below. You might notice that I am deliberately forcing the <code>refresh_mode=incremental</code> (the default is AUTO) to illustrate a few ideas later on. In real scenarios, we recommend the default value, allowing the constantly-improving Snowflake engine to decide the best refresh mode based on the context.</p>
+<p class="image-container"><img style="width: 800.00px" src="img/1ed8fdba2234e4a8.png"></p>
+<pre><code language="language-shell" class="language-shell">cd dbt_project
+dbt run
+</code></pre>
+<p>Once you run it, you&#39;ll notice that the run failed because one of the models (<strong>int_extracted_entities</strong>) uses a non-deterministic function and can&#39;t be reliably refreshed incrementally. We will use this as an opportunity to illustrate the possibility of overwriting settings defined at the project level (<strong>dbt_project.yml</strong>) with settings directly inside the model file. While we are here, it is a great opportunity to highlight how easy it is to use the power of LLMs with Snowflake Cortex functions. In this scenario, we first ask the LLM to extract meaningful signals from the notes provided by a trader and subsequently classify them either as a strategy or a reaction to a market signal. Cool, isn&#39;t it?</p>
+<p>Let&#39;s update <code>int_extracted_entities.sql</code> and its downstream model <code>fct_trader_drivers.sql</code> to implement <code>refresh_mode=full</code> and run dbt again:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/8699bb97a8967b8f.png"><img style="width: 800.00px" src="img/2d98ef357483c811.png"></p>
+<pre><code language="language-shell" class="language-shell">cd dbt_project
+dbt run
+</code></pre>
+<p>Now we can validate from the Snowflake UI that the changes are successfully deployed and will be managed incrementally: <img style="width: 800.00px" src="img/8940804383d80d97.png"><img style="width: 800.00px" src="img/cd22573fc6dd7db8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and Deploy to Production Envirornment" duration="2">
+        <h2 is-upgraded>Create production environment</h2>
+<p>Similar to a way we created <code>dev</code> environment before we can go back to our notebook and execute cell <code>04 Setup Prod environment</code> to build the <code>prod</code> environment.</p>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+USE DATABASE SANDBOX;
+
+ALTER GIT REPOSITORY DEMO_GIT_REPO FETCH;
+EXECUTE IMMEDIATE FROM @DEMO_GIT_REPO/branches/main/scripts/deploy_environment.sql USING (env =&gt; &#39;PROD&#39;);
+</code></pre>
+<p class="image-container"><img style="width: 800.00px" src="img/f4a20886044619f9.png"></p>
+<h2 is-upgraded>Deploy latest version of dbt pipelines to prod</h2>
+<pre><code language="language-shell" class="language-shell">dbt seed --target=prod
+dbt run  --target=prod
+</code></pre>
+<p class="image-container"><img style="width: 800.00px" src="img/8085411c21be9cd5.png"><img style="width: 800.00px" src="img/26e7fa22222df1c2.png"></p>
+<p>As you can see, we start by deploying sample data and then simply change the target. Behind the scenes, dbt will use another database, role, and warehouse to deploy the production codebase and schedule its dynamic tables to run. Voilà! In a real-world scenario, such a deployment can be performed by GitHub Actions once a pull request is merged from the release candidate branch into the main branch.</p>
+<p>Hope you can see how this can help building and deploying reliable pipelines.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cleanup" duration="2">
+        <p>Once you&#39;re finished with the Quickstart and want to clean things up, toggle back to the <code>00_start_here</code> Notebook and scroll down to the &#34;Step 10 Teardown&#34; section. Then just run the SQL commands in the <code>sql_step10</code> cell to remove all the objects created during the Quickstart.</p>
+<p>Finally, you can delete the <code>00_start_here</code> Notebook. With the Notebook open click on the &#34;:&#34; button near the top right of the window and click on &#34;Delete&#34;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="5">
+        <p>Congratulations! You have now built end-to-end data engineering pipelines with dbt and Snowflake. You&#39;ve also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Dynamic Tables. Here&#39;s a quick visual recap:</p>
+<p class="image-container"><img style="width: 800.00px" src="img/60213168b6f3dd5.png"></p>
+<p>Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipelines with dbt and Snowflake. So, what will you build now?</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to build and deploy pipelines using dbt and Snowflake</li>
+<li>How to change materialization options to achieve your service objectives</li>
+<li>How to upload data via SnowSight UI</li>
+<li>How to access data from Snowflake Marketplace and use it for your analysis</li>
+<li>How to use Snowflake Notebooks to deploy environment changes</li>
+<li>How to use Snowflake DevOps features, including CREATE OR ALTER</li>
+<li>How to execute SQL scripts from your Git repository directly in Snowflake</li>
+<li>How to build CI/CD pipelines using Snowflake&#39;s Git Integration</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs" target="_blank">Source Code on GitHub</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0" target="_blank">Data Engineering Pipelines with Snowpark Python</a> (Advanced Quickstart)</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">About Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index" target="_blank">Snowflake CLI</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

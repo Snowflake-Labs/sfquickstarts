@@ -1,0 +1,214 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Process Change Data Capture (CDC) data from Oracle to Snowflake Using StreamSets</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="cdc_data_from_oracle_to_snowflake_in_streamsets"
+                  title="Process Change Data Capture (CDC) data from Oracle to Snowflake Using StreamSets"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Change Data Capture (CDC) is a design pattern to determine, track, capture, and deliver changes made to enterprise data sources. These sources are typically relational databases like Oracle, MySQL, and PostgreSQL. CDC is critical because when changes occur at the source the changed data must be made available to downstream destinations like data warehouses, because decisions can&#39;t be made and analysis can&#39;t be done using stale data.</p>
+<p>Given this critical need, let&#39;s look at how StreamSets DataOps Platform can be used to process CDC data from Oracle to Snowflake. To do this, you will build a data pipeline with StreamSets to send change data from Oracle to Snowflake. A data pipeline describes the flow of data from origin to destination systems and defines how to process the data along the way. Pipelines can access multiple types of external systems, including cloud data lakes, cloud data warehouses, and storage systems installed on-premises such as relational databases.</p>
+<p class="image-container"><img alt="page_3" src="img/838792a3a0d381a7.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to <a href="https://cloud.login.streamsets.com/login" target="_blank">StreamSets DataOps Platform account</a></li>
+<li>Setup <a href="https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/Environments/Overview.html#concept_z4x_nw2_v4b" target="_blank">Environment</a></li>
+<li>Setup Deployment with engine type Data Collector <ul>
+<li>Once a deployment has been successfully activated, the Data Collector engine must be up and running before you can create pipelines and run jobs</li>
+</ul>
+</li>
+<li>Access to <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account</li>
+<li>Access to Oracle database <ul>
+<li>Check <a href="https://docs.streamsets.com/portal/datacollector/4.0.x/help/datacollector/UserGuide/Installation/SupportedSystemVersions.html#concept_k4l_5ft_v4b" target="_blank">versions of Oracle</a> supported for CDC</li>
+<li>Complete <a href="https://docs.streamsets.com/portal/datacollector/4.0.x/help/datacollector/UserGuide/Origins/OracleCDC.html#concept_xwg_33w_cx" target="_blank">Oracle CDC prerequisites</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>NOTE:</strong> As a precursor in order to migrate existing data before processing CDC records, follow the <a href="https://go.streamsets.com/rs/535-TEA-657/images/StreamSets-Oracle-Snowflake-TechGuide.pdf" target="_blank">Oracle to Snowflake</a> guided walkthrough before proceeding.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>In this guide, you will learn how to process Change Data Capture (CDC) data from Oracle to Snowflake in StreamSets DataOps Platform.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import Pipeline" duration="1">
+        <p>To get started making a pipeline in StreamSets, download the <a href="https://github.com/iamontheinet/StreamSets/blob/master/Sample%20Pipelines/Oracle%20CDC%20To%20Snowflake/Oracle%20CDC%20To%20Snowflake.zip" target="_blank">sample pipeline from GitHub</a> and use the <strong>Import a pipeline</strong> feature to create an instance of the pipeline in your StreamSets DataOps Platform account.</p>
+<p>This sample pipeline includes some processors (Stream Selector and Field Masker) to show how StreamSets can help you transform data as it passes through the pipeline. They aren&#39;t necessary for a basic CDC design pattern, but are included to show such a design pattern might be extended.</p>
+<p class="image-container"><img alt="import pipeline" src="img/e1b06da840321223.png"></p>
+<p>Once the pipeline has been imported, open it in the pipeline canvas and select <strong>Authoring Data Collector</strong> – this is the Data Collector engine that would have been deployed once your deployment was successfully activated.</p>
+<p class="image-container"><img alt="data_collector" src="img/c2710c0bd4c01f00.png"><img alt="set_engine" src="img/f577516dd4900409.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Oracle CDC Client Origin" duration="2">
+        <p><a href="https://docs.streamsets.com/portal/#datacollector/latest/help/datacollector/UserGuide/Origins/OracleCDC.html#concept_rs5_hjj_tw" target="_blank">Oracle CDC Client</a> origin will enable you to capture Create, Update, and Delete operations across various tables in your Oracle data warehouse so that your Snowflake Data Cloud can be kept in sync.</p>
+<p>Key configuration on <strong>Oracle CDC</strong> tab for this setup:</p>
+<ul>
+<li>Set <strong>Table Name</strong> Pattern to &#34;%&#34; – this wildcard will capture changes across all tables in your Oracle data warehouse</li>
+<li>Set <strong>Dictionary Source</strong> to <strong><em>Online Catalog</em></strong></li>
+</ul>
+<p>For other configuration details such as JDBC connection string, limiting CDC operation to specific tables instead of all tables, LogMiner session window, transaction length, System change number, etc., refer to the detailed <a href="https://docs.streamsets.com/portal/#datacollector/latest/help/datacollector/UserGuide/Origins/OracleCDC.html#task_ehh_mjj_tw" target="_blank">configuration section</a>.</p>
+<p>In StreamSets DataOps Platform, it is really easy to optionally apply any number of transformations to data while it&#39;s in motion flowing through the pipeline. Here are a couple of examples using <a href="https://docs.streamsets.com/portal/datacollector/latest/help/datacollector/UserGuide/Processors/StreamSelector.html#concept_tqv_t5r_wq" target="_blank">Stream Selector</a> and <a href="https://docs.streamsets.com/portal/datacollector/latest/help/datacollector/UserGuide/Processors/FieldMasker.html#concept_hjc_t4k_wq" target="_blank">Field Masker</a> processors.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Stream Selector Processor" duration="2">
+        <p>This is an optional step and can be removed before proceding. This processor will conditionally route records based on user-defined conditions. For instance, in this case, we&#39;d like to protect customer email addresses from being ingested (in plaintext) in Snowflake.</p>
+<p>Key configuration on <strong>Conditions</strong> tab for this setup:</p>
+<ul>
+<li>Set Condition 1 to expression ${str:toLower(record:attribute(‘oracle.cdc. table&#39;)) == str:toLower(‘customers&#39;)} – this will route records being read from ‘customers&#39; table through Field Masker; all other records will flow directly into Snowflake.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Field Masker Processor" duration="2">
+        <p>This is another optional processor. This processor will enable us to &#34;mask&#34; PII in configured fields. In this case, it is configured to mask customer email addresses before sending it over to Snowflake.</p>
+<p>Key configuration on <strong>Mask</strong> tab for this setup: • Set Fields to Mask to /CUSTOMER_EMAIL • Set Mask Type to Custom • Set Custom Mask to XXXXXXXX</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Destination Configuration" duration="2">
+        <p><a href="https://docs.streamsets.com/portal/#datacollector/latest/help/datacollector/UserGuide/Destinations/Snowflake.html#concept_vxl_zzc_1gb" target="_blank">Snowflake</a> destination uses the MERGE command to write CDC data that&#39;s being captured from Oracle. Note that this provides real-time access to data as it is written into Snowflake tables.</p>
+<p>Key configuration on <strong>Snowflake Connection Info</strong> tab for this setup:</p>
+<ul>
+<li>Set <strong>Snowflake Region, Account, User, and PasswordNote:</strong> You can also take advantage of <a href="https://docs.streamsets.com/portal/#platform-controlhub/controlhub/UserGuide/ConnectionTypes/Snowflake.html#concept_ycf_xvd_q4b" target="_blank">Snowflake Connection</a> so these attributes can be used across multiple pipelines, shared with team members and any changes to credentials can be made in a centralized location.</li>
+</ul>
+<p>Key configuration on <strong>Snowflake tab</strong> for this setup:</p>
+<ul>
+<li>Set <strong>Warehouse, Database, Schema, and TableNote:</strong> Setting Table to ${record:attribute(‘oracle.cdc.table&#39;)} will dynamically get the table name from the record header attribute generated by the <a href="https://docs.streamsets.com/portal/#datacollector/latest/help/datacollector/UserGuide/Origins/OracleCDC.html#concept_rs5_hjj_tw" target="_blank">Oracle CDC Client</a> origin</li>
+<li>Enable Table Auto Create – this will automatically create the tables if they don&#39;t already exist in Snowflake</li>
+</ul>
+<p>Key configuration on <strong>Data tab</strong> for this setup:</p>
+<ul>
+<li>Enable <strong>Processing CDC Data (Use MERGE)</strong></li>
+<li>Set <strong>Table Key Columns</strong> for all the tables you&#39;d like to capture and sync changes. For example, in this case we&#39;d like to sync records from the following tables:</li>
+<li>Table: <strong>CUSTOMERS;</strong> Key Columns: CUSTOMER_ID</li>
+<li>Table: <strong>ORDERS;</strong> Key Columns: ORDER_ID</li>
+<li>Table: <strong>ORDER_ITEMS;</strong> Key Columns: ORDER_ITEM_ID, ORDER_ITEM_ ORDER_ID</li>
+</ul>
+<p>For other configuration details such as <strong>Staging, Snowflake File Format</strong>, defaults for missing fields, etc. refer to the <a href="https://docs.streamsets.com/portal/#datacollector/latest/help/datacollector/UserGuide/Destinations/Snowflake.html#task_nfs_c2k_mfb" target="_blank">configuration section</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Pipeline Parameters" duration="2">
+        <p>Click on the <strong>Edit</strong> button and update the following pipeline parameters.</p>
+<p class="image-container"><img alt="select_edit" src="img/2660e8ea61b95dd6.png"></p>
+<p>Pipeline parameters to update.</p>
+<ul>
+<li>SNOWFLAKE_WH</li>
+<li>SNOWFLAKE_DB</li>
+<li>SNOWFLAKE_SCHEMA</li>
+<li>SNOWFLAKE_ACCOUNT</li>
+<li>SNOWFLAKE_USER</li>
+<li>SNOWFLAKE_PWD</li>
+<li>ORACLE_JDBC_URL</li>
+<li>ORACLE_JDBC_USERNAME</li>
+<li>ORACLE_JDBC_PASSWORD</li>
+</ul>
+<p class="image-container"><img alt="pipeline_parameters_to_update" src="img/fa6cdee35c03f1c8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pipeline Validation, Preview and Test Run" duration="2">
+        <p>Once you&#39;ve updated the pipeline parameters, you can <strong>Validate</strong> it to make sure the credentials are correct.</p>
+<p class="image-container"><img alt="validate" src="img/f19a387b5eefdd96.png"></p>
+<p>Then, <strong>Preview</strong> the data to make sure the transformations are accurate.</p>
+<p class="image-container"><img alt="preview" src="img/f18ef3e1edc609bf.png"></p>
+<p>Next, <strong>Test Run</strong> the pipeline to ensure the data is being ingested into Snowflake correctly.</p>
+<p class="image-container"><img alt="test" src="img/237df1757032057a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and Run a Job" duration="0">
+        <p>Once you&#39;ve successfully executed a pipeline test run you can <strong>Check In</strong> your pipeline.</p>
+<p class="image-container"><img alt="check_in" src="img/f1ba9c4e4b837cee.png"></p>
+<p>You can create a job to run your pipeline. Jobs enable you to execute, manage and orchestrate data pipelines that run across multiple engines. You can increase the number of pipeline instances that run for a job, or you can enable a job for pipeline failover to minimize downtime due to unexpected failures.</p>
+<p class="image-container"><img alt="create_job" src="img/7cc1dd34a9b0c4f1.png"></p>
+<p class="image-container"><img alt="start_job" src="img/51953a6d8519c856.png"></p>
+<p>For more information on jobs, refer to the <a href="https://docs.streamsets.com/portal/#platform-controlhub/controlhub/UserGuide/Jobs/Jobs.html#concept_omz_yn1_4w" target="_blank">documentation.</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitor Job" duration="0">
+        <p>When you start a job, Control Hub sends the pipeline to the engines. The engine runs the pipeline, sending status updates and metrics back to Control Hub.</p>
+<p>As the job runs, click the Realtime Summary tab in the monitor panel to view the real-time statistics for the job.</p>
+<p class="image-container"><img alt="monitor_job" src="img/efe01e18c2dd35d4.png"></p>
+<p>For more information on monitoring jobs, refer to the <a href="https://docs.streamsets.com/portal/#platform-controlhub/controlhub/UserGuide/Jobs/Jobs-Monitoring.html#concept_msl_4nv_2y" target="_blank">documentation.</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>You&#39;ve learned how to process Change Data Capture (CDC) data from Oracle to Snowflake in StreamSets DataOps Platform.</p>
+<p>Get up and running with StreamSets in minutes - free. <a href="https://cloud.login.streamsets.com/signup" target="_blank">Start Now.</a></p>
+<p>Join our conversation at the <a href="https://community.streamsets.com/" target="_blank">StreamSets Community</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

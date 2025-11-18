@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_thoughtspot_kr",
+  "duration": 0,
+  "title": "ThoughtSpot 및 Snowflake로 ReactJS 앱 구축",
+  "summary": "ThoughtSpot 및 Snowflake로 대화형 React 앱 구축",
+  "source": "getting_started_thoughtspot_kr/getting_started_thoughtspot_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "undefined"
+  ],
+  "tags": [
+    "kr",
+    "twitter",
+    "데이터과학",
+    "데이터엔지니어링",
+    "스노우플레이크시작하기",
+    "웹"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_thoughtspot_kr"
+}

@@ -1,0 +1,298 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Validate Your Customer Identity Model with IdentityQA</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="validate_your_customer_identity_model_with_identityqa"
+                  title="Validate Your Customer Identity Model with IdentityQA"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this guide, we&#39;ll be walking you through how to validate that the assumptions you&#39;ve made about your identity model are correct using Simon Data&#39;s Snowflake native app, IdentityQA.  Let&#39;s get going!</p>
+<p class="image-container"><img alt="logos" src="img/eb10c2329ca93fe.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account with an accessible warehouse, database, schema, and role</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake role with the ability to install Snowflake native apps &amp; grant usage to the application (the ACCOUNTADMIN role works here)</li>
+<li>A basic understanding of your company&#39;s identity model and the relationships between customer identifiers</li>
+<li>A single source table that contains at least two identifier columns to validate (e.g. user_id &amp; email_address)</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>By the end of this guide, you&#39;ll learn:</p>
+<ul>
+<li>How to install &amp; use a Snowflake native app</li>
+<li>Whether or not the assumptions you&#39;ve made about your company&#39;s identity model are true <ul>
+<li>For example: is your stable identifier truly unique?  Is user_id truly 1:1 with email_address?</li>
+</ul>
+</li>
+<li>% of invalid email addresses &amp; phone numbers in your identity table with examples of each for easy cleanup</li>
+<li>How to improve your identity model based on the native app&#39;s findings</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A QA report on your company&#39;s identity model that provides insights into how the model and/or underlying data can be improved to support better &amp; more accurate marketing use cases</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Application Architecture" duration="1">
+        <h2 is-upgraded>Native App Overview</h2>
+<p>First, it&#39;s important to understand how Snowflake native apps work and the benefits they provide from a security &amp; privacy standpoint.</p>
+<ul>
+<li>Provider (in this case, Simon Data) creates an application package with manifest (metadata), setup script (SQL), and business logic (resource files).</li>
+<li>Provider publishes the application package as a listing on the Snowflake native app marketplace.</li>
+<li>Consumer (in this case, you) installs the application package from the listing in their own Snowflake account in order to create the application.</li>
+</ul>
+<p>By default, the application has no permissions to do anything in your Snowflake account.  You must grant account- &amp; object-level privileges to the application.  Once permission is granted, the app only has read-only access to the data within and will never make any changes or transformations to the data.  Once the app is run, the output is a set of tables in the application schema that you can query to see the results of the QA on your identity model.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="App Setup" duration="3">
+        <h2 is-upgraded>Install IdentityQA</h2>
+<p>In Snowflake, under <strong>Marketplace</strong>, search for Simon Data&#39;s <strong><em>IdentityQA</em></strong> listing.  Click <strong>Get</strong> to request the application for your Snowflake account.</p>
+<p class="image-container"><img alt="listing" src="img/89d7b6b368209ec9.png"></p>
+<p>You will be asked to select a warehouse to be used for installation and name the application.</p>
+<p class="image-container"><img alt="installation" src="img/81f46f13955870a.png"></p>
+<p>In Snowflake, under <strong>Data → Private Sharing</strong>, install the <strong><em>IdentityQA</em></strong> listing.</p>
+<h2 is-upgraded>Create the Application in Your Snowflake</h2>
+<p>Once installed, you&#39;ll have to change the name of the app to what you named it upon installation by running the following command in a worksheet:</p>
+<pre><code>CREATE APPLICATION &lt;CHOSEN APP NAME&gt;
+  FROM APPLICATION PACKAGE IDQAAPP;
+</code></pre>
+<p>Expand the <strong>APP</strong> schema and see a number of <strong>Procedures</strong> that make up the IdentityQA app.  The rest of this guide will walk you through how to use those procedures.</p>
+<h2 is-upgraded>Grant Privileges</h2>
+<p>Before the app can run, however, you need to give it access to the correct database, schema, and table. Run the following commands:</p>
+<pre><code>GRANT USAGE ON DATABASE &lt;YOUR_DATA_DB_NAME&gt; to APPLICATION &lt;CHOSEN APP NAME&gt;;  
+GRANT USAGE ON SCHEMA &lt;YOUR_DATA_SCHEMA_NAME&gt; to APPLICATION &lt;CHOSEN APP NAME&gt;;  
+GRANT SELECT ON TABLE &lt;YOUR_TABLE_NAME&gt; TO APPLICATION &lt;CHOSEN APP NAME&gt;;
+
+</code></pre>
+<ul>
+<li><strong>YOUR_DB_NAME</strong> is the database name that contains your input table or view and will contain the IdentityQA output.</li>
+<li><strong>YOUR_SCHEMA_NAME</strong> is the database schema from the last argument that contains your input table or view and will contain the IdentityQA output.</li>
+<li><strong>YOUR_TABLE_NAME</strong> is the table/view that will serve as the input for the IdentityQA application.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Input Table" duration="3">
+        <p>In a worksheet, run the <strong>SET_INPUT_TABLE</strong> stored procedure, as follows. Be sure to include as many lines as you have identifiers in your source table.</p>
+<pre><code>CALL &lt;CHOSEN APP NAME&gt;.APP.SET_INPUT_TABLE(&#39;SOURCE_TABLE&#39;, [[&#39;&lt;SOURCE_COLUMN&gt;&#39;, &#39;&lt;IDENTIFIER_TYPE&gt;&#39;, &lt;IS_STABLE&gt;],
+                                                            [&#39;&lt;SOURCE_COLUMN&gt;&#39;, &#39;&lt;IDENTIFIER_TYPE&gt;&#39;, &lt;IS_STABLE&gt;],
+                                                            [&#39;&lt;SOURCE_COLUMN&gt;&#39;, &#39;&lt;IDENTIFIER_TYPE&gt;&#39;, &lt;IS_STABLE&gt;]]);
+
+</code></pre>
+<ul>
+<li><strong>SOURCE_TABLE</strong> is the table name you specified when setting up and granting usage to the app. This should be fully qualified, meaning it should be formatted like: ‘YOUR_DB_NAME.YOUR_SCHEMA_NAME.YOUR_TABLE_NAME&#39;</li>
+<li><strong>SOURCE_COLUMN</strong> is the column name that contains the identifier you are configuring.</li>
+<li><strong>IDENTIFIER_TYPE</strong> defines the type of identifier in the previous argument.  Examples of supported identifier types are: <ul>
+<li>email</li>
+<li>user_id</li>
+<li>phone_number</li>
+<li>custom_id</li>
+</ul>
+</li>
+</ul>
+<aside class="warning"><p>NOTE: email and/or phone_number identifiers must be included (and in this format) in order for some identifier validations to run.</p>
+</aside>
+<ul>
+<li><strong>IS_STABLE</strong> is a boolean field that tells us whether or not the identifier should be stable. A stable identifier is one that is unique, is 1:1 with a single profile, and cannot be shared across profiles. <ul>
+<li>If the identifier you&#39;re configuring is stable, put <strong>TRUE</strong> here. If it is not stable, put <strong>FALSE</strong>.</li>
+</ul>
+</li>
+</ul>
+<aside class="warning"><p>NOTE: By definition, you can only have one stable identifier.</p>
+</aside>
+<h2 is-upgraded><strong>EXAMPLE QUERY:</strong></h2>
+<pre><code>CALL SIMONIDQA.APP.SET_INPUT_TABLE(&#39;SIMONDATA_TEST.PUBLIC.IDENTITY&#39;, [[&#39;EMAIL&#39;, &#39;EMAIL&#39;, TRUE],
+                                                                      [&#39;CLIENT_ID&#39;, &#39;CUSTOM_ID&#39;, FALSE],
+                                                                      [&#39;PHONE_NUMBER&#39;, &#39;PHONE_NUMBER&#39;, FALSE]]);
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Constraints" duration="8">
+        <p>Once you&#39;ve configured your identifiers, you can set certain constraints (or assumptions) to validate. These constraints outline the relationships between two identifiers (i.e. 1:1 or 1:many) and identifier-specific limits (e.g. device_id can be shared across a maximum of 5 profiles).</p>
+<h2 is-upgraded><strong>SET_RELATIONSHIP_CONSTRAINT</strong></h2>
+<pre><code>CALL &lt;CHOSEN APP NAME&gt;.APP.SET_RELATIONSHIP_CONSTRAINT(&#39;&lt;RELATIONSHIP_TYPE&gt;&#39;, &#39;&lt;IDENTIFIER_1&gt;&#39;, &#39;&lt;IDENTIFIER_2&gt;&#39;);
+
+</code></pre>
+<ul>
+<li><strong>RELATIONSHIP_TYPE</strong> is the relationship between the identifiers in the next two arguments.  <strong>The only supported type today is ONE-TO-ONE.</strong></li>
+<li><strong>IDENTIFIER_1</strong> is the name of the first identifier for which you&#39;re validating the relationship type.</li>
+<li><strong>IDENTIFIER_2</strong> is the name of the second identifier for which you&#39;re validating the relationship type.</li>
+</ul>
+<h3 is-upgraded><strong>SET_RELATIONSHIP_CONSTRAINT EXAMPLE QUERY:</strong></h3>
+<p>The query below tells the application to validate whether or not <strong>user_id</strong> and <strong>email</strong> truly have a 1:1 relationship. If there are instances where the 1:1 relationship constraint is invalidated, the app flags them in the generated report.</p>
+<pre><code>CALL SIMONIDQA.APP.SET_RELATIONSHIP_CONSTRAINT(&#39;ONE-TO-ONE&#39;, &#39;CLIENT_ID&#39;, &#39;EMAIL&#39;);
+</code></pre>
+<h2 is-upgraded><strong>SET_UNIQUE_CONSTRAINT</strong></h2>
+<p>This constraint checks for the uniqueness of the values for a particular identifier.</p>
+<pre><code>CALL &lt;CHOSEN APP NAME&gt;.APP.SET_UNIQUE_CONSTRAINT(&#39;&lt;IDENTIFIER_NAME&gt;&#39;);
+
+</code></pre>
+<ul>
+<li><strong>IDENTIFIER_NAME</strong> is the name of the identifier for which you want to check the uniqueness.</li>
+</ul>
+<h3 is-upgraded><strong>SET_UNIQUE_CONSTRAINT EXAMPLE QUERY:</strong></h3>
+<pre><code>CALL SIMONIDQA.APP.SET_UNIQUE_CONSTRAINT(&#39;EMAIL&#39;);
+</code></pre>
+<aside class="warning"><p>NOTE: If you set a shared identifier limit, you should <em>not</em> run a uniqueness check on your stable identifier or else you&#39;ll get a false negative.  This is because if a non-stable identifier can be shared across profiles, there are inherently going to be multiple rows for a single stable identifier in your input table.</p>
+</aside>
+<h2 is-upgraded><strong>SET_SHARED_IDENTIFIER_LIMIT</strong></h2>
+<p>This constraint sets a maximum threshold for which a single identifier can be shared across different profiles.</p>
+<pre><code>CALL &lt;CHOSEN APP NAME&gt;.APP.SET_SHARED_IDENTIFIER_LIMIT(&#39;&lt;IDENTIFIER_NAME&gt;&#39;, &lt;THRESHOLD&gt;);
+
+</code></pre>
+<ul>
+<li><strong>IDENTIFIER_NAME</strong> is the name of the identifier for which you want to set a maximum threshold.</li>
+<li><strong>THRESHOLD</strong> is the maximum number of different profiles on which the IDENTIFIER_NAME in the previous argument can exist. This field should be an integer.</li>
+</ul>
+<h3 is-upgraded><strong>SET_SHARED_IDENTIFIER_LIMIT EXAMPLE QUERY:</strong></h3>
+<p>A customer may have a landline that they share with everyone in the household. Let&#39;s say the average number of people in a household is 3 and you believe your customer base tends to have landlines. You could set your shared identifier limit threshold to 3 to validate this assumption.</p>
+<pre><code>CALL SIMONIDQA.APP.SET_SHARED_IDENTIFIER_LIMIT(&#39;phone_number&#39;, 3);
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate Report" duration="5">
+        <h2 is-upgraded>Manual Inspection</h2>
+<p>Run the following command to generate your IdentityQA report!</p>
+<pre><code>CALL &lt;CHOSEN APP NAME&gt;.APP.generate_report();
+</code></pre>
+<p>The output will be available in the following tables in the <strong>REPORT</strong> schema within the <strong>SIMON_IDENTITY_QA</strong> application as well as on the <strong>Report</strong> page in the Streamlit. To query the tables directly in the REPORT schema within the application, you can run the following:</p>
+<pre><code>-- RUN THIS QUERY TO PULL THE TABLE NAMES SPECIFIC TO YOUR IDENTIFIERS
+SELECT * FROM &lt;CHOSEN APP NAME&gt;.REPORT.CARDINALITY_TABLES
+-- THEN RUN A SELECT * ON EACH OF THE TABLES GENERATED.  FOR EXAMPLE:
+SELECT * FROM &lt;CHOSEN APP NAME&gt;.REPORT.CARDINALITY_CHECK_USER_ID_EMAIL
+
+-- THE REST OF THESE QUERIES CAN BE RUN TO INSPECT OTHER RESULTS
+SELECT * FROM &lt;CHOSEN APP NAME&gt;.REPORT.IDENTIFIER_VALIDATION
+SELECT * FROM &lt;CHOSEN APP NAME&gt;.REPORT.INVALID_IDENTIFIERS
+SELECT * FROM &lt;CHOSEN APP NAME&gt;.REPORT.RELATIONSHIP_CONSTRAINTS_CHECKS
+SELECT * FROM &lt;CHOSEN APP NAME&gt;.REPORT.SHARED_IDENTIFIER_LIMIT_CHECKS
+SELECT * FROM &lt;CHOSEN APP NAME&gt;.REPORT.UNIQUE_CONSTRAINTS_CHECKS
+</code></pre>
+<h2 is-upgraded>Streamlit Report</h2>
+<p>To view your report in Streamlit, return to the app &amp; launch it in Streamlit. Steps below:</p>
+<ul>
+<li>If you&#39;re in a worksheet, click the <strong>back arrow</strong> in the top left corner of your screen to return to Snowsight.</li>
+<li>Click <strong>Apps</strong>. Make sure you&#39;re in the correct Snowflake role!</li>
+<li>Click the <strong>SIMON_IDENTITY_QA</strong> application to launch the Streamlit. The name of the app on this page should be what you named it upon installation.</li>
+<li>Select a warehouse in the upper righthand corner of the Streamlit if one is not chosen already.</li>
+<li>Your Streamlit will now load! It may take a little while depending on how many rows of data you ran through the application.</li>
+<li>Click on the <strong>Report</strong> page in the lefthand navigation of the Streamlit.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Interpreting the Report" duration="10">
+        <p>This is an example input table that we used to generate the report shown in screenshots below.</p>
+<p class="image-container"><img alt="input table" src="img/7fefe37b37c32b9a.png"></p>
+<aside class="warning"><p>NOTE: Additional screenshots in this section are from the Streamlit report.</p>
+</aside>
+<p>The top of the report shows you the name of the input table you configured as well as the total number of rows in said input table.</p>
+<p class="image-container"><img alt="report heading" src="img/e3c7e9b1375d4e51.png"></p>
+<h2 is-upgraded>Constraint Checks</h2>
+<p>Next, the report will show pass/fail statuses on the constraints you configured.</p>
+<p>As you can see in the screenshot below, the <strong>client_id</strong> &amp; <strong>email</strong> identifiers did not pass the 1:1 relationship check.  This tells you that the app found instances where an email or client_id had more than one of the other identifier.  Examples of these failures will be explored later.</p>
+<p class="image-container"><img alt="constraint checks" src="img/a00c826a4db73d6c.png"></p>
+<p>Additionally, the shared identifier limit check failed on <strong>phone_number</strong>.  This means that the app discovered instances where a single <strong>phone_number</strong> appears on more than 3 profiles, which violates the assumption that <strong>phone_number</strong> is shared at most across 3 profiles at any given time.</p>
+<h2 is-upgraded>Cardinality Checks</h2>
+<p>The next check is a high-cardinality test for each identifier in the input table compared to the stable identifier.  IdentityQA tests for cardinality because exceptionally high counts of any identifier per single stable identifier generally mean that there is an issue with the underlying data.  In the screenshot below, you can see that there are 10 profiles that have an abnormally high count of <strong>client_ids</strong> compared to the other 15 profiles in the sample.  This tells you that these emails may be fake, or maybe they&#39;re emails used for testing purposes and should be excluded from marketing.</p>
+<p>Your next step here should be to dive into these email addresses and determine why they might have so many <strong>client_ids</strong> associated with them and if they&#39;re valid profiles or not.</p>
+<p class="image-container"><img alt="cardinality analysis" src="img/1dafeb88687857cc.png"></p>
+<h2 is-upgraded>Identifier Validation</h2>
+<p>Next, the report shows <strong>email</strong> &amp; <strong>phone_number</strong> validations.  You can see in this example that out of the ~1M total records in the input table, ~30K emails are considered invalid and ~80K phone numbers are considered invalid.</p>
+<aside class="warning"><p>NOTE: &#34;Invalid&#34; in this case means that the email or phone number is missing one or more properties in order to be considered a &#34;valid&#34; identifier.  Example: emails with no &#34;@&#34; are flagged here, as well as phone numbers with letters in them or fewer/greater than 10 numbers.</p>
+<p><strong>We are not testing whether or not these emails or phone numbers belong to real people rather than bots.</strong></p>
+</aside>
+<p class="image-container"><img alt="invalid emails" src="img/198595b29fea72f.png"><img alt="invalid phone numbers" src="img/8cecea32dc22fd3d.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion &amp; Resources" duration="1">
+        <p>Congratulations!  You&#39;ve successfully QA&#39;d your customer identity model using Simon Data&#39;s Native Snowflake App, <strong>IdentityQA</strong>!  You now have the insight you need to be able to finetune &amp; improve your identity model.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to install &amp; use a Snowflake native app</li>
+<li>Whether or not the assumptions you&#39;ve made about your company&#39;s identity model are true</li>
+<li>% of invalid email addresses &amp; phone numbers in your identity table with examples of each for easy cleanup</li>
+<li>How to improve your identity model based on the native app&#39;s findings</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.simondata.com/developers/docs/identityqa" target="_blank">IdentityQA docs</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

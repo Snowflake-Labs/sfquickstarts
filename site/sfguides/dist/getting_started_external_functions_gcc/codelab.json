@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting_started_external_functions_gcc",
+  "duration": 33,
+  "title": "Getting Started With External Functions Using the Google Cloud Console",
+  "summary": "Getting Started With External Functions Using the Google Cloud Console",
+  "source": "getting_started_external_functions_gcc/getting_started_external_functions_gcc.md",
+  "theme": "",
+  "status": [
+    "archived"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations"
+  ],
+  "tags": [
+    "dataengineering",
+    "externalfunctions",
+    "gcc",
+    "gettingstarted",
+    "sql"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_external_functions_gcc"
+}

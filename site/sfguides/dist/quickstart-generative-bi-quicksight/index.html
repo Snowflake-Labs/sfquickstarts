@@ -1,0 +1,374 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build a Generative BI Dashboard with Amazon QuickSight and Amazon Q</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="quickstart-generative-bi-quicksight"
+                  title="Build a Generative BI Dashboard with Amazon QuickSight and Amazon Q"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>In this guide, We will build an end-to-end Generative BI dashboard using <a href="https://aws.amazon.com/quicksight/q/" target="_blank">Amazon Q in QuickSight</a>, with <a href="https://www.snowflake.com/en/" target="_blank">Snowflake AI &amp; Data Cloud</a> as the data source. We will use the  Sales dataset to explore sales trends, regional performance, and customer insights with the power of Natural Language Q&amp;A and Executive Summaries.</p>
+<p>This guide walks through:</p>
+<ul>
+<li>Preparing and loading data into Snowflake</li>
+<li>Connecting QuickSight to Snowflake</li>
+<li>Enabling Generative BI features with Amazon Q</li>
+<li>Building smart insights interactively</li>
+</ul>
+<p>This guide applies to any business domain where structured data and conversational analytics intersect.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Basic familiarity with Amazon QuickSight and Snowflake</li>
+<li>AWS account with QuickSight Enterprise enabled</li>
+<li>Snowflake account with access to a database, schema, and compute warehouse</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to load and clean real-world datasets into Snowflake</li>
+<li>How to connect Amazon QuickSight to Snowflake</li>
+<li>How to build smart visuals using Generative BI</li>
+<li>How to use Amazon Q for Natural Language Q&amp;A</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake Account. <a href="https://signup.snowflake.com/" target="_blank">Sign up for Snowflake Trial Account</a></li>
+<li>AWS QuickSight Enterprise enabled</li>
+<li>Kaggle Dataset</li>
+<li>Python 3.x with pandas (optional)</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Generative BI dashboard powered by Amazon Q and backed by Snowflake</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Data Loading" duration="0">
+        <h2 is-upgraded>Download the Dataset</h2>
+<ul>
+<li>Download the  Sales Data from Kaggle: Go to the <a href="https://www.kaggle.com/datasets/ishanshrivastava28/superstore-sales" target="_blank">Kaggle Dataset</a> page and download the CSV file.</li>
+</ul>
+<h2 is-upgraded>Create the Target Database Objects</h2>
+<ul>
+<li>Before you create the table, make sure to configure environment with the right role, warehouse, database, and schema. We can do this step-by-step as follows:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">-- Step 1: Use the ACCOUNTADMIN role (or any role with required privileges)
+USE ROLE ACCOUNTADMIN;
+
+-- Step 2: Create a virtual warehouse if not already created
+CREATE OR REPLACE WAREHOUSE demo_wh
+  WITH WAREHOUSE_SIZE = &#39;XSMALL&#39;
+  AUTO_SUSPEND = 60
+  AUTO_RESUME = TRUE;
+
+-- Step 3: Create a database to store your dataset
+CREATE OR REPLACE DATABASE demo_db;
+
+-- Step 4: Create a schema for organization (optional)
+CREATE OR REPLACE SCHEMA demo_db.sales_data;
+
+-- Step 5: Set your context
+USE WAREHOUSE demo_wh;
+USE DATABASE demo_db;
+USE SCHEMA sales_data;
+</code></pre>
+<ul>
+<li>Once your context is set, create the table to hold the cleaned data:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE TABLE sales_orders (
+    row_id INT,
+    order_id STRING,
+    order_date DATE,
+    ship_date DATE,
+    ship_mode STRING,
+    customer_id STRING,
+    customer_name STRING,
+    segment STRING,
+    country STRING,
+    city STRING,
+    state STRING,
+    postal_code STRING,
+    region STRING,
+    product_id STRING,
+    category STRING,
+    sub_category STRING,
+    product_name STRING,
+    sales FLOAT,
+    quantity INT,
+    discount FLOAT,
+    profit FLOAT
+);
+</code></pre>
+<h2 is-upgraded>Create a Named File Format (Optional)</h2>
+<ul>
+<li>You can explicitly define a CSV file format for reuse:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE FILE FORMAT csv_format
+  TYPE = &#39;CSV&#39;
+  FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39;
+  SKIP_HEADER = 1;
+</code></pre>
+<h2 is-upgraded>Create a Snowflake Stage</h2>
+<ul>
+<li>Stages allow you to load data into Snowflake from cloud storage (e.g., S3). For example:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">CREATE OR REPLACE STAGE demo_stage
+  URL = &#39;s3://your-bucket-name/path-to-folder/&#39;
+  STORAGE_INTEGRATION = your_integration_name;
+</code></pre>
+<ul>
+<li>If using internal stage, you can upload the file via Snowsight UI:</li>
+<li>Go to Data &gt; Stages</li>
+<li>Select your stage and click Upload File</li>
+<li>Upload superstore_sales.csv to the stage</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">COPY INTO sales_orders
+FROM @demo_stage/sales_orders.csv
+FILE_FORMAT = (TYPE = &#39;CSV&#39; FIELD_OPTIONALLY_ENCLOSED_BY=&#39;&#34;&#39; SKIP_HEADER=1);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect QuickSight to Snowflake" duration="0">
+        <ul>
+<li>In this step, you&#39;ll configure Amazon QuickSight and connect it to your Snowflake instance to build live or SPICE-imported dashboards.</li>
+</ul>
+<h2 is-upgraded>Collect Snowflake Connection Info</h2>
+<p>Gather the following connection details from your Snowflake admin or Snowsight:</p>
+<ul>
+<li>Account Identifier: (e.g., xy12345.us-east-1)</li>
+<li>Database: demo_db</li>
+<li>Schema: sales_data</li>
+<li>Warehouse: demo_wh</li>
+<li>Table: sales_orders</li>
+<li>Username &amp; Password: Snowflake login credentials with USAGE and SELECT privileges <img alt="Snowflake Connection Information" src="img/cb533291c7effe5f.png"></li>
+</ul>
+<h2 is-upgraded>Sign in to the AWS Console</h2>
+<p>Navigate to the AWS Console Search for QuickSight in the service search bar Choose Amazon QuickSight and click Sign in If you&#39;re using QuickSight for the first time:</p>
+<ul>
+<li>Choose your region (must match your Snowflake region if using SPICE)</li>
+</ul>
+<h2 is-upgraded>Create a Snowflake Data Source in QuickSight</h2>
+<p>From the QuickSight homepage, go to Manage data in the left panel Click New dataset &gt; Select Snowflake as the source Fill in the Snowflake connection form: <img alt="Quicksight Snowflake Connection" src="img/fffa97c835a9390e.png"></p>
+<ul>
+<li>Data source name: SnowflakeSalesOrders</li>
+<li>Account name: Enter your Snowflake account locator (e.g., xy12345.us-east-1)</li>
+<li>User name / Password: Use Snowflake credentials with SELECT access</li>
+<li>Warehouse: demo_wh</li>
+<li>Database: demo_db</li>
+<li>Schema: sales_data Click Validate connection and then Create data source</li>
+</ul>
+<h2 is-upgraded>Select and Import the Table</h2>
+<p>Select the sales_orders table from the schema browser Choose a data access mode:</p>
+<ul>
+<li>Direct Query: Fetches live data from Snowflake with each interaction <img alt="Import Table" src="img/540cfe24d20c23bb.png"></li>
+<li>Import to SPICE: Recommended for performance, especially for static datasets <img alt="Spice Enable" src="img/7f813227b18f7c2b.png"></li>
+<li>Click Visualize to begin building your dashboards</li>
+<li>Optional: QuickSight connects to Snowflake securely using JDBC. Use Secrets Manager or SSO for enhanced credential management.. You can enable SSO or use AWS Secrets Manager for managing credentials.</li>
+<li>QuickSight uses a secure JDBC connection with optional IAM-based credentials.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualization" duration="0">
+        <h2 is-upgraded>Build Core Visuals</h2>
+<p>Now that your Snowflake data is available in QuickSight, it&#39;s time to create a set of foundational visualizations. These visuals will help users analyze sales performance, regional trends, customer behavior, and product-level profitability.</p>
+<h2 is-upgraded>Step 1: Open the Analysis Editor</h2>
+<ul>
+<li>From the QuickSight home screen, go to Analyses</li>
+<li>Click New analysis</li>
+<li>Select your previously connected dataset (from Snowflake)</li>
+</ul>
+<h2 is-upgraded>Step 2: Create the Following Visuals</h2>
+<h3 is-upgraded>1. Sales by Region (Bar Chart)</h3>
+<ul>
+<li>Click Add → Add visual</li>
+<li>Select Vertical bar chart</li>
+<li>Drag region to X-axis</li>
+<li>Drag sales to Value</li>
+<li>Sort by descending sales <img alt="Sales by Region" src="img/b043f4c6fe3ab3c7.png"></li>
+</ul>
+<h3 is-upgraded>2. Monthly Profit Trend (Line Chart)</h3>
+<ul>
+<li>Click Add visual</li>
+<li>Select Line chart</li>
+<li>Drag order_date to X-axis and change the aggregation to Month</li>
+<li>Drag profit to Value</li>
+<li>Filter by recent year or region if desired <img alt="Profits by Date" src="img/257a418a5910ef0f.png"></li>
+</ul>
+<h3 is-upgraded>3. Category vs. Sub-Category Sales (Stacked Column Chart)</h3>
+<ul>
+<li>Click Add visual</li>
+<li>Select Stacked column chart</li>
+<li>Drag category to X-axis</li>
+<li>Drag sales to Value</li>
+<li>Drag sub_category to Group by <img alt="Sales by Category" src="img/f9ea1b9a80403c35.png"></li>
+</ul>
+<h3 is-upgraded>4. Sales by State (Map Visual)</h3>
+<ul>
+<li>Click Add visual → Select Map</li>
+<li>Drag state to Geospatial field</li>
+<li>Drag sales to Value <img alt="Sales by Region" src="img/fa135385264c9d1a.png"></li>
+</ul>
+<h2 is-upgraded>Step 3: Customize Appearance</h2>
+<ul>
+<li>Format currency fields (sales, profit) to show in appropriate currency format</li>
+<li>Adjust color palettes to align with your brand or data themes</li>
+<li>Rename visuals to user-friendly titles (e.g., &#34;Top Performing States&#34;)</li>
+<li>Once these base visuals are in place, you&#39;re ready to enrich them with AI-powered enhancements using Amazon Q.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable Generative BI with Amazon Q" duration="0">
+        <h2 is-upgraded>Create Visualization with Q</h2>
+<p>Select Q build visual icon</p>
+<p>Ask questions in natural english like:</p>
+<ul>
+<li>&#34;Show total profit in California&#34;</li>
+<li>&#34;Top 5 products by sales&#34;</li>
+<li>&#34;Monthly orders by region&#34; <img alt="Q Analysis" src="img/5988cd5953138c01.gif"></li>
+</ul>
+<h2 is-upgraded>Add Smart Widgets</h2>
+<p>Use Amazon Q to create these visuals:</p>
+<ul>
+<li>&#34;Sales and profit by category&#34;</li>
+<li>&#34;Products with negative profit&#34;</li>
+<li>&#34;Profit margin by customer segment&#34;</li>
+<li>&#34;Monthly order volume&#34;</li>
+<li>&#34;Most discounted items by category&#34; <img alt="Q widget" src="img/e79e3e787e604e3.gif"> Each NLP prompt results in an auto-generated visual you can refine and add to your dashboard.</li>
+</ul>
+<h2 is-upgraded>Generate Executive Summary</h2>
+<ul>
+<li>Click Publish Dashboard</li>
+</ul>
+<p>Amazon Q generates narrative insights for:</p>
+<ul>
+<li>Key trends</li>
+<li>Regional anomalies</li>
+<li>Top/worst performers</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean Up" duration="0">
+        <h2 is-upgraded>Snowflake Clean Up</h2>
+<p>If this was a test/demo environment:</p>
+<ul>
+<li>Drop demo tables:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">DROP TABLE IF EXISTS sales_orders;
+</code></pre>
+<ul>
+<li>Drop stages or file formats:</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">DROP STAGE IF EXISTS demo_stage;
+DROP FILE FORMAT IF EXISTS csv_format;
+</code></pre>
+<ul>
+<li>Drop schema and database (if not used elsewhere):</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">DROP SCHEMA IF EXISTS demo_db.sales_data;
+DROP DATABASE IF EXISTS demo_db;
+</code></pre>
+<h2 is-upgraded>AWS Clean Up Steps</h2>
+<ul>
+<li>Disable dashboards not in use</li>
+<li>Remove unused datasets from Manage Data</li>
+<li>Manage SPICE capacity under Manage QuickSight &gt; SPICE capacity</li>
+</ul>
+<h2 is-upgraded>Versioning &amp; Collaboration</h2>
+<ul>
+<li>Export the dashboard and share with teams</li>
+<li>Document data definitions and synonyms used in Q Topics</li>
+<li>Assign dataset permissions to relevant users or groups</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="0">
+        <p>You&#39;ve now built a powerful, AI-enabled dashboard that:</p>
+<ul>
+<li>Uses Snowflake for enterprise-grade data platform and querying</li>
+<li>Uses Amazon QuickSight for visual exploration</li>
+<li>Uses Amazon Q for Generative AI supported insights</li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to ingest and query data in Snowflake</li>
+<li>How to visualize live Snowflake data in QuickSight</li>
+<li>How to build dashboards using AI-generated content</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://docs.aws.amazon.com/quicksight/latest/user/quicksight-gen-bi.html" target="_blank">Amazon Q for QuickSight Documentation</a></li>
+<li><a href="https://www.kaggle.com/datasets/ishanshrivastava28/superstore-sales" target="_blank">Kaggle Dataset</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

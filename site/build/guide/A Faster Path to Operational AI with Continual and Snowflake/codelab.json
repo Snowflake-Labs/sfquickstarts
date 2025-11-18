@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:08-04:00",
+  "id": "A Faster Path to Operational AI with Continual and Snowflake",
+  "duration": 21,
+  "title": "A Faster Path to Operational AI with Continual and Snowflake",
+  "summary": "Build an operational, continually updating predictive model for customer churn with Snowflake and Continual",
+  "source": "a_faster_path_to_operational_ai_with_continual_and_snowflake/a_faster_path_to_operational_ai_with_continual_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "ai",
+    "apps\u0026collab:externalcollaboration",
+    "partner",
+    "ai-mlfunctions"
+  ],
+  "tags": [
+    "ai",
+    "ai-mlfunctions",
+    "apps\u0026collab:externalcollaboration",
+    "continual",
+    "partner",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "A Faster Path to Operational AI with Continual and Snowflake"
+}

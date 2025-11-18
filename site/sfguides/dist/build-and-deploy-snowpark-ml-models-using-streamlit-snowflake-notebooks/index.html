@@ -1,0 +1,243 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks"
+                  title="Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>In this quickstart, you will be introduced to ML Sidekick, a no-code app built using Streamlit in Snowflake, designed for building and deploying machine learning models in Snowflake. This application aids both seasoned data scientists and business users with no coding experience by simplifying the machine learning process and making it accessible to a broader audience.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake account login. If not, you will need to register for a <a href="https://signup.snowflake.com/" target="_blank">free trial account</a></li>
+<li>Install <a href="https://anaconda.com" target="_blank">Anaconda</a></li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to deploy streamlit in Snowflake app via jupyter notebook</li>
+<li>How to navigate the deployed app and utilize its features effectively which include: <ul class="checklist">
+<li>Selection and preprocessing of data to build machine learning models</li>
+<li>Train and evaluate machine learning models within the Snowflake environment</li>
+<li>Log models to Snowflake model registry</li>
+<li>Generate python code for the pipeline in form a notebook</li>
+<li>Explore/compare different versions of registered models or different models</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Streamlit in Snowflake application called ML_SIDEKICK which allows you to: <ul>
+<li>Create a streamlined pipeline that aids in data selection, preprocessing, model training, and performance evaluation.</li>
+<li>Register the created model to Snowflake model registry for easy versioning and comparison.</li>
+<li>Generate a Snowflake notebook that showcases the underlying Python code for further exploration and customization.</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="App creation and setting up the data in Snowflake" duration="7">
+        <h2 is-upgraded>Overview</h2>
+<p>You will use <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight.html#" target="_blank">Snowsight</a>, the Snowflake web interface, to:</p>
+<ul>
+<li>Create Snowflake objects (warehouse, database, schema, raw tables)</li>
+<li>Ingest data into raw tables</li>
+</ul>
+<h2 is-upgraded>Download datasets</h2>
+<ul>
+<li>You can download the required datasets from the <a href="https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/tree/main/data" target="_blank">GitHub repository</a></li>
+<li>Alternatively, you can download the datasets from from UC Irvine Dataset Repository <ul>
+<li><a href="https://archive.ics.uci.edu/dataset/1/abalone" target="_blank">Abalone dataset</a> - This dataset will be used for the regression model (target - Rings) Abalone.data needs to be converted into a csv for it to work</li>
+<li><a href="https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators" target="_blank">Diabetes dataset</a> - This dataset will be used for the classification model (target - Diabetes_binary).</li>
+<li>Please be sure to download the dataset with the name diabetes_binary_5050split_health_indicators_BRFSS2015.csv</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Creating Objects</h2>
+<ul>
+<li>Navigate to Worksheets, click &#34;+&#34; in the top-right corner to create a new Worksheet, and choose &#34;SQL Worksheet&#34;.</li>
+<li>Paste and run the SQL from (https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/blob/main/deploy_sis_app.sql) in the worksheet to create Snowflake objects (Streamlit in Snowflake application, warehouse, database, schema, raw tables).</li>
+</ul>
+<p>You will likely need a role with necessary <a href="https://docs.snowflake.com/en/sql-reference/sql/create-api-integration#access-control-requirements" target="_blank">CREATE INTEGRATION</a> and <a href="https://docs.snowflake.com/sql-reference/sql/create-git-repository#access-control-requirements" target="_blank">CREATE GIT REPOSITORY</a> privileges to create the Git integration and repository. If you do not have the necessary permissions, please reach out to your Snowflake administrator.</p>
+<h2 is-upgraded>Loading Data through Snowflake UI</h2>
+<ul>
+<li>Navigate to the Data button on the far left column and click on the Data button to open up the databases. Find the ML_SIDEKICK you just created using the SQL syntax above. <img src="img/88961dae21198378.png"></li>
+<li>Navigate to the one of the tables we created either Abalone or Diabetes and click on the &#34;Load Data&#34; button. <img src="img/278dfb2459615237.png"></li>
+<li>Follow along the prompts to select the warehouse we created to load the data into Snowflake.  (ML_SIDEKICK_LOAD_WH) <img src="img/9659cbd9b134a1c1.png"></li>
+<li>Find your abalone or diabetes dataset using the browse button and click the &#34;next&#34; button.  Follow the prompts to load the dataset. <img src="img/514d5833df347070.png"></li>
+<li>If your dataset has a header be sure to change the header portion in the file format section, and for the purposes of testing you can select the second option for what happens if you have an error while loading the dataset. <img src="img/8be1ad16b7703919.png"><img src="img/58495f94a8e3b1b6.png"></li>
+<li>Once the data is loaded, you can see the Data Preview as seen here. <img src="img/e5fe47d4eee4fae1.png"></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dataset selection" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>In this section, we will navigate the deployed app to select the dataset we would like to work with.</p>
+<h2 is-upgraded>Steps for selecting dataset</h2>
+<ol type="1">
+<li>Launch the app and click on &#34;Create Project&#34; to start the flow.<br><img src="img/62174180cd299525.png"></li>
+<li>Select &#34;ML Model&#34;. This would navigate you to the data selection section in the app. <img src="img/837237c40b4b88a7.png"></li>
+<li>Click on &#34;Data Selection&#34;. This would give you options of the available datasets in your Snowflake account. <img src="img/b2ad71959ad8a621.png"></li>
+<li>Select the appropriate database, schema and table as shown below. In this quickstart, we will go with the Abalone dataset that we previously loaded. However, we can also go through the same workflow for the Diabetes dataset. We can see a snapshot of the data we have selected come up on the right. Once we are satisfied with our selection, we can click on &#34;Next&#34; to begin pre-processing the data we have selected. <img src="img/d29536dbaa44aa9b.png"><img src="img/9beb916a9925fc3f.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Pre-processing data" duration="4">
+        <h2 is-upgraded>Overview</h2>
+<p>After dataset selection, we tackle data preprocessing—a critical step for model performance. Our app streamlines this process, automatically handling missing values, encoding categories, and scaling numbers. This ensures clean, consistent data primed for ML algorithms to extract patterns and make accurate predictions, all within the Snowflake environment. With just a few clicks, our data is transformed from raw to ML-ready, setting the stage for powerful model training.</p>
+<h2 is-upgraded>Steps for pre-processing selected dataset</h2>
+<ol type="1">
+<li>Optional - Click on the inspect icon as shown below. This brings up an exploratory data analysis pop up. <img src="img/88f07eccd502072b.png"></li>
+<li>Optional - In the pop up, we see different descriptive statistics for all the columns in our selected dataset. We can click on the cell next to any of the columns to a visualization for value distribution in that column. <img src="img/bd006d70985bc743.png"><img src="img/3386709674458b4a.png"></li>
+<li>After we are done going over our data analysis, we can select the features and target for our machine learning model and click on &#34;Add Step&#34;. <img src="img/ca1787968b4d4ba9.png"></li>
+<li>Add step allows us to pre-process any selected column to encode categorical columns or scale numeric values along with providing us the ability to impute missing values.  Below, we select one hot encoder for the &#34;SEX&#34; column which is categorical in nature. <img src="img/86bd79f8772a33ec.png"><img src="img/2476c05d2f83b69b.png"></li>
+<li>Optional - We can click on &#34;Generate Preview&#34; to see how the column got encoded. <img src="img/b9c4435ae096ba7.png"><img src="img/ecbf0e1986ec409b.png"><img src="img/404d4f85f9ed92ce.png"></li>
+<li>With our dataset pre-process, we can go to the next part of the flow which is training our machine learning model by clicking on the &#34;Next&#34; button. <img src="img/1a5e6af92a62fc51.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Train &amp; log machine learning model" duration="7">
+        <h2 is-upgraded>Overview</h2>
+<p>After prepping our data, we go on to training our machine learning model. In this section of the quickstart, we will train a regression model using prepped Abalone data with Rings as our target. Alternatively, you can also train a classification model using Diabetes data. We will see how easily we can train a machine learning model and register it to the Snowflake registry with this app.</p>
+<h2 is-upgraded>Steps to train machine learning model in Snowflake</h2>
+<ol type="1">
+<li>Select &#34;Regression&#34; as the model type. <img src="img/97886e0345095d42.png"></li>
+<li>Next select &#34;XGBRegressor&#34; as the model we would be training. Below you can see we have few other regression models available to train as well. In case of classification models, you will find XGBclassifier and Logistic Regression as available models. <img src="img/2f9a78f690c97563.png"></li>
+<li>Once you have the model type and model selected, click on &#34;Fit Model and Run Prediction(s)&#34; button. This would train our model, make predictions and also calculate performance metrics as we have &#34;Retrieve Model Metrics&#34; turned on. <img src="img/c93240caf9fd0140.png"></li>
+<li>Scroll down to view the performance metrics and feature importance. <img src="img/40f788c42c1d0f9d.png"></li>
+</ol>
+<h3 is-upgraded>Steps to register model to Snowflake registry</h3>
+<ol type="1">
+<li>Once we have our model trained, we can generate a jupyter notebook or Snowflake notebook along with registering the model to Snowflake Registry. <img src="img/9f5350a62ee84a9e.png"></li>
+<li>Click on &#34;Save Register&#34; and provide a name for the trained model to be registered with. <img src="img/7fba061bc145b9ec.png"></li>
+<li>Once the model is registered, a message appears with the confirmation. <img src="img/a92062db35981803.png"></li>
+<li>Optional - Navigate back to the homepage of the app.<br><img src="img/4de2bdca6953869b.png"></li>
+<li>Optional - Under Model Registry, the newly registered model should appear along with all the metadata. <img src="img/208dfe891f13145f.png"></li>
+<li>Optional - We can train another version for the model and save it to register as a new version by providing the same name when registering the model as seen below. <img src="img/516e5073d5e01143.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Generate notebook for the pipeline" duration="2">
+        <h2 is-upgraded>Overview</h2>
+<p>The ML Sidekick app automatically generates a jupyter notebook or Snowflake notebook that showcases the underlying Python code, making it easy to explore and customize the machine learning pipeline we went through so far. It enhances transparency, serves as an educational tool, and allows us to fine-tune models or adapt the code for future projects—all within the familiar Snowflake environment.</p>
+<h2 is-upgraded>Steps to generate notebook for pipeline</h2>
+<ol type="1">
+<li>Click &#34;Download Notebook&#34; once we have our model trained. Fill out the project name, database and schema where the Snowflake notebook would be stored. <img src="img/408c72cbafd6dd1b.png"></li>
+<li>Click on &#34;Download&#34; button to download jupyter notebook which provides runnable code to simulate the pipeline so far. <img src="img/efc5e4cb66f51737.png"></li>
+<li>Optional - You can create a Snowflake Notebook with the app if you want to run the code using Snowflake Notebooks.  Click on the &#34;Create Snowflake Notebook&#34; to do so.<br><img src="img/fc1400530ecb1779.png"></li>
+<li>Optional - To find your Snowflake Notebook, you will need to navigate to the Projects tab on the left and click on the &#34;Notebooks&#34; to find your Snowflake Notebook for the model you just created. <img src="img/b261c78833771ef0.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explore and compare registered models" duration="4">
+        <h2 is-upgraded>Overview</h2>
+<p>The ML Sidekick app offers another powerful feature that simplifies model management by facilitating automatic version control and streamlined model comparison. This means we can easily track different iterations of the models and evaluate their performance without any manual effort.</p>
+<h2 is-upgraded>Steps to explore &amp; compare two different registered models</h2>
+<ol type="1">
+<li>Select two models to compare as shown below. Make sure to create a second model similar to the one we created in the previous sections before. <img src="img/d271115335f70967.png"></li>
+<li>Once we have selected the models, we can explore the performance metrics for both along with their default version and available functions. <img src="img/db9620321224a5d9.png"></li>
+</ol>
+<h2 is-upgraded>Optional - Steps to explore &amp; compare two different versions of same model</h2>
+<ol type="1">
+<li>Select a model with multiple versions registered. <img src="img/df20c23c29b2c3cd.png"></li>
+<li>Select the versions that would be compared. <img src="img/57ab4e27b4fc6e53.png"></li>
+<li>Toggle to test tab to test both versions on sample data. <img src="img/546c8fbcd3605b.png"></li>
+<li>Select source for the test data and click &#34;Start Test&#34; <img src="img/b0c53e249b02e584.png"></li>
+<li>Once the testing is complete for both versions, performance metrics and prediction results pop up. <img src="img/ee662168596c27a6.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You have successfully deployed and utilized ML_SIDEKICK application to:</p>
+<ul>
+<li>Build an end-to-end machine learning pipeline that streamlines data selection, preprocessing, model training, and performance evaluation.</li>
+<li>Seamlessly register your trained model in the Snowflake Model Registry, facilitating version control and model comparison.</li>
+<li>Automatically generate a Snowflake notebook or jupyter notebook containing the underlying Python code, allowing for in-depth exploration and customization of your model.</li>
+</ul>
+<p>And you did all of it within the secure walls of Snowflake!</p>
+<h3 is-upgraded>What You Learned</h3>
+<ul>
+<li>How to create machine learning end to end pipeline using ML_SIDEKICK application.</li>
+</ul>
+<h3 is-upgraded>Related Resources</h3>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview" target="_blank">Documentation for Snowflake ML</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling" target="_blank">Documentation for Snowpark ML modeling</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview" target="_blank">Documentation for Snowflake Model Registry</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Documentation for Streamlit in Snowflake</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>How to Setup the Snowflake Auto-Grader</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="snowflake-auto-grader"
+                  title="How to Setup the Snowflake Auto-Grader"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="0">
+        <p>In this guide, you&#39;ll learn how to setup Snowflake&#39;s auto-grader.</p>
+<p>The auto-grader runs in your Snowflake account and can be used to check successful completion of tasks within a Snowflake account.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to setup the auto-grader</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the API integration" duration="2">
+        <p>In your Snowflake account, open a new SQL worksheet and run the following code:</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+
+create or replace api integration dora_api_integration 
+api_provider = aws_api_gateway 
+api_aws_role_arn = &#39;arn:aws:iam::321463406630:role/snowflakeLearnerAssumedRole&#39; 
+enabled = true 
+api_allowed_prefixes = (&#39;https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora&#39;);
+</code></pre>
+<p>This code will create an API integration in your Snowflake account under the <code>ACCOUNTADMIN</code> role. To confirm that the integration was created, you can run the following:</p>
+<pre><code language="language-sql" class="language-sql">show integrations;
+</code></pre>
+<p>If the integration was successfully created, you should see output similar to the following:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p><strong>name</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>type</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>category</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>enabled</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>comment</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>created_on</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>_API_INTEGRATION</p>
+</td><td colspan="1" rowspan="1"><p>EXTERNAL_API</p>
+</td><td colspan="1" rowspan="1"><p>API</p>
+</td><td colspan="2" rowspan="1"><p>true</p>
+</td><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1"><p>2023-02-03 12:36:22.470 -0700</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the 
+grader function" duration="2">
+        <p>Next, create the <code>grader</code> function. This function will be used for validating the successful completion of lab steps in your account.</p>
+<p>Run the following code in a new SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+
+create database util_db;
+
+create or replace external function util_db.public.grader(        
+ step varchar     
+ , passed boolean     
+ , actual integer     
+ , expected integer    
+ , description varchar) 
+ returns variant 
+ api_integration = dora_api_integration 
+ context_headers = (current_timestamp,current_account, current_statement, current_account_name) 
+ as &#39;https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/grader&#39;  
+;  
+</code></pre>
+<p>The <code>grader</code> function will be located in the <code>UTIL_DB.PUBLIC</code> schema in your account. If you don&#39;t see the function, refresh the objects in the <strong>Databases</strong> section of your account. In addition, ensure you are using the <code>ACCOUNTADMIN</code> role.</p>
+<p class="image-container"><img alt="refresh picker" src="img/3dc9513b2013bd5c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Confirm that the auto-grader is provisioned correctly" duration="1">
+        <p>To confirm that the auto-grader is functioning as intended, open a new SQL worksheet and run the following code:</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+use database util_db;
+use schema public;
+
+select grader(step, (actual = expected), actual, expected, description) as graded_results from (SELECT
+ &#39;AUTO_GRADER_IS_WORKING&#39; as step
+ ,(select 123) as actual
+ ,123 as expected
+ ,&#39;The Snowflake auto-grader has been successfully set up in your account!&#39; as description
+);
+</code></pre>
+<p>If the auto-grader is correctly provisioned, you should see a <strong>GRADED_RESULTS</strong> column with several pieces of information, including a checkbox and a message <code>"description": "The Snowflake auto-grader has been successfully set up in your account!"</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the 
+greeting function" duration="2">
+        <p>Next, you&#39;ll create the <code>greeting</code> function. This function will link your Snowflake account to our badging system. If you don&#39;t complete this step, you&#39;ll risk not receiving your badge.</p>
+<p>Run the following code in new SQL worksheet:</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+
+use database util_db;
+
+create or replace external function util_db.public.greeting(
+      email varchar
+    , firstname varchar
+    , middlename varchar
+    , lastname varchar)
+returns variant
+api_integration = dora_api_integration
+context_headers = (current_timestamp, current_account, current_statement, current_account_name) 
+as &#39;https://awy6hshxy4.execute-api.us-west-2.amazonaws.com/dev/edu_dora/greeting&#39;
+; 
+</code></pre>
+<p>The <code>greeting</code> function will be located in the <code>UTIL_DB.PUBLIC</code> schema in your account. If you don&#39;t see the function, please refresh the objects in the <strong>Databases</strong> section of your account. In addition, ensure you are using the <code>ACCOUNTADMIN</code> role.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Register your name and email" duration="1">
+        <p>Next, you&#39;ll need to register your name and email. You&#39;ll do this by running the <code>greeting</code> function with your name and email. This information will be used to issue your badge. Here are some important rules to follow PRIOR to running the SQL below:</p>
+<ul>
+<li>Do <strong>not</strong> use all capital letters.</li>
+<li>Do <strong>not</strong> use all lowercase letters.</li>
+<li>Do <strong>not</strong> use CamelCase – put spaces between your words if there are spaces between the words in your name.</li>
+<li>You must enter both a first and last name. Middle names are optional. Single letters do not count as names.</li>
+<li>You can use accents or letters from any language.</li>
+<li>You can use as many words as you want. For example, you can have a 3-word first name, a 3-word middle name and a 3-word last name! But please ensure there are spaces between the words in your name.</li>
+</ul>
+<p>Ensure that you follow these rules when running the SQL below in a new worksheet:</p>
+<pre><code language="language-sql" class="language-sql">use role accountadmin;
+use database util_db;
+
+-- Replace &lt;email&gt; with your email address
+-- Replace &lt;first name&gt; &lt;middle name&gt; &lt;last name&gt; with your names
+select util_db.public.greeting(&lt;email&gt;, &lt;first name&gt;, &lt;middle name&gt;, &lt;last name&gt;);
+
+-- select util_db.public.greeting(&#39;my@email.com&#39;, &#39;Snowflake&#39;, &#39;The&#39;, &#39;Bear&#39;);
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>That&#39;s it! You should now have the auto-grader correctly provisioned in your account.</p>
+<p>Resources:</p>
+<ul>
+<li><a href="https://learn.snowflake.com/news" target="_blank">Snowflake Auto-Grader</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

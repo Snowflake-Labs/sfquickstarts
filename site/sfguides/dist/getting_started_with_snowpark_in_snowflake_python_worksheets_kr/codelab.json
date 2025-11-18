@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_snowpark_in_snowflake_python_worksheets_kr",
+  "duration": 33,
+  "title": "Snowflake Python 워크시트에서 Snowpark 시작하기",
+  "summary": "Snowflake Python 워크시트에서 Snowpark 시작하기",
+  "source": "getting_started_with_snowpark_in_snowflake_python_worksheets_kr/getting_started_with_snowpark_in_snowflake_python_worksheets_kr.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "featured",
+    "getting-started",
+    "data-engineering",
+    "app-development"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "kr",
+    "pythonworksheets",
+    "snowparkpython",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_snowpark_in_snowflake_python_worksheets_kr"
+}

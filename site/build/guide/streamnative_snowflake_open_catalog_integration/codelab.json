@@ -1,0 +1,33 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "streamnative_snowflake_open_catalog_integration",
+  "duration": 160,
+  "title": "Cost-Effective Data Streaming in Apache Iceberg™ Format and Snowflake Open Catalog Integration with StreamNative",
+  "summary": "Use StreamNative to build a cost-effective Streaming Augmented Lakehouse, streaming Kafka messages directly to object storage in Iceberg format an connect to Snowflake Open Catalog.",
+  "source": "streamnative_snowflake_open_catalog_integration/streamnative_snowflake_open_catalog_integration.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations",
+    "devops",
+    "architecture-patterns",
+    "datagovernance"
+  ],
+  "tags": [
+    "datastreaming",
+    "gettingstarted",
+    "iceberg",
+    "kafka",
+    "opencatalog",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "streamnative_snowflake_open_catalog_integration"
+}

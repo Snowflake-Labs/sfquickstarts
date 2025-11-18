@@ -1,0 +1,332 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Audio Sentiment Analysis using Snowflake Notebooks</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks"
+                  title="Getting Started with Audio Sentiment Analysis using Snowflake Notebooks"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>In this quickstart, you&#39;ll learn how to build an end-to-end application that analyzes audio files for emotional tone and sentiment using <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks on Container Runtime</a>. The application combines audio processing, speech recognition, and sentiment analysis to create comprehensive insights from audio data.</p>
+<h2 is-upgraded>What is Container Runtime?</h2>
+<p>Snowflake Notebooks on Container Runtime enable advanced data science and machine learning workflows directly within Snowflake. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can process audio, perform speech recognition, and execute sentiment analysis while seamlessly running SQL queries. <strong><em>NOTE: This feature is currently in Public Preview.</em></strong></p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Container Runtime</a>.</p>
+<h2 is-upgraded>What is wav2vec2?</h2>
+<p>Wav2vec2 is a state-of-the-art framework for self-supervised learning of speech representations. Developed by Facebook AI, it&#39;s specifically designed for speech recognition tasks but has been adapted for various audio analysis tasks including emotion recognition. The model we use in this guide, &#34;ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition&#34;, is fine-tuned for detecting emotions in speech, capable of identifying emotions like happiness, sadness, anger, and neutral tones from audio input.</p>
+<p>Learn more about <a href="https://huggingface.co/facebook/wav2vec2-base" target="_blank">wav2vec2</a>.</p>
+<h2 is-upgraded>What is Snowflake Cortex?</h2>
+<p>Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance. In this guide, we use Cortex&#39;s sentiment analysis capabilities to analyze the emotional content of transcribed speech.</p>
+<p>Learn more about <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview" target="_blank">Snowflake Cortex</a>.</p>
+<h2 is-upgraded>What is Whisper?</h2>
+<p>OpenAI&#39;s Whisper is an open-source automatic speech recognition (ASR) model designed for high-quality transcription and translation of spoken language. Trained on diverse multilingual data, it handles various languages, accents, and challenging audio conditions like background noise. Whisper supports transcription, language detection, and translation to English, making it versatile for applications such as subtitles, accessibility tools, and voice interfaces.</p>
+<p>Learn more about <a href="https://openai.com/research/whisper" target="_blank">Whisper</a>.</p>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Setting up audio processing in <a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a> using PyTorch and Hugging Face</li>
+<li>Extracting emotional tone from audio using wav2vec2</li>
+<li>Transcribing audio with Whisper model</li>
+<li>Performing sentiment analysis using <a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex AI</a></li>
+<li>Comparing emotional tone with sentiment scores</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>A full-stack application that enables users to:</p>
+<ul>
+<li>Process audio files for emotional tone analysis</li>
+<li>Generate text transcripts from audio</li>
+<li>Analyze sentiment in transcribed text</li>
+<li>Compare emotional tone with sentiment scores</li>
+<li>View comprehensive analysis results</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake account (non-trial) with: <ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages" target="_blank">Anaconda Packages</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex" target="_blank">Cortex Functions</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup Workspace" duration="10">
+        <p><strong>Step 1.</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks/blob/main/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom.</p>
+<p><strong>Step 2.</strong> In Snowsight, switch your user role to <code>AUDIO_CONTAINER_RUNTIME_ROLE</code>.</p>
+<p><strong>Step 3.</strong> Click on <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks/blob/main/sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks.ipynb" target="_blank">sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooksipynb</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</p>
+<p><strong>Step 4.</strong> In Snowsight:</p>
+<ul>
+<li>On the left hand navigation menu, click on <strong>Projects » Notebooks</strong></li>
+<li>On the top right, click on <strong>Notebook</strong> down arrow and select <strong>Import .ipynb file</strong> from the dropdown menu</li>
+<li>Select <em>sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks.ipynb</em>* file you downloaded in the step above</li>
+<li>In the Create Notebook popup: <ul>
+<li>For Notebook location, select <code>AUDIO_SENTIMENT_DB</code> and <code>AUDIO_SCHEMA</code></li>
+<li>For SQL warehouse, select <code>AUDIO_WH_S</code></li>
+<li>For Python environment, select <code>Run on container</code></li>
+<li>For Runtime, select <code>GPU Runtime</code></li>
+<li>For Compute pool, select <code>GPU_POOL</code></li>
+</ul>
+</li>
+<li>Click on <strong>Create</strong> button</li>
+</ul>
+<p><strong>Step 5.</strong> Open Notebook</p>
+<ul>
+<li>Click in the three dots at the very top-right corner and select <code>Notebook settings</code> » <code>External access</code></li>
+<li>Turn on <strong>ALLOW_ALL_ACCESS_INTEGRATION</strong> and <strong>HUGGINGFACE_ACCESS_INTEGRATION</strong></li>
+<li>Click on <strong>Save</strong> button</li>
+<li>Click on <strong>Start</strong> button on top right</li>
+</ul>
+<aside class="special"><p> NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from <strong>Starting</strong> to <strong>Active</strong>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Audio File Requirements" duration="0">
+        <h2 is-upgraded>Supported Audio Formats</h2>
+<ul>
+<li>WAV (recommended)</li>
+<li>MP3</li>
+<li>FLAC</li>
+<li>OGG</li>
+<li>M4A</li>
+</ul>
+<h2 is-upgraded>Audio Specifications</h2>
+<p>For best results, your audio files should have:</p>
+<ul>
+<li>Sample rate: 16kHz or higher</li>
+<li>Bit depth: 16-bit or higher</li>
+<li>Channels: Mono (stereo will be converted to mono)</li>
+<li>File size: Up to 25MB</li>
+</ul>
+<h2 is-upgraded>Best Practices</h2>
+<p>For optimal analysis:</p>
+<ul>
+<li>Use clear recordings with minimal background noise</li>
+<li>Ensure speech is clearly audible</li>
+<li>Avoid multiple speakers talking simultaneously</li>
+<li>Record in a quiet environment</li>
+<li>Use lossless formats (WAV/FLAC) when possible</li>
+</ul>
+<h2 is-upgraded>Common Use Cases</h2>
+<p>This system works well for analyzing:</p>
+<ul>
+<li>Customer service calls</li>
+<li>Meeting recordings</li>
+<li>Voice messages</li>
+<li>Interview recordings</li>
+<li>Support interactions</li>
+<li>Training materials</li>
+</ul>
+<aside class="special"><p> TIP: If your audio files don&#39;t meet these specifications, consider using audio processing tools like ffmpeg to convert them to the recommended format before analysis.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Notebook" duration="15">
+        <aside class="warning"><p> PREREQUISITE: Successful completion of steps outlined under <strong>Setup</strong>.</p>
+</aside>
+<p>Here&#39;s the walkthrough of the notebook cells and their functions:</p>
+<p><strong>Cell 1: Package Installation</strong></p>
+<ul>
+<li>Installs required packages: <ul>
+<li><code>torch</code>: For deep learning and neural network operations</li>
+<li><code>librosa</code>: For loading and manipulating audio files</li>
+<li><code>transformers</code>: For accessing pre-trained models</li>
+</ul>
+</li>
+</ul>
+<p><strong>Cell 2: Environment Setup</strong></p>
+<ul>
+<li>Imports required Python libraries</li>
+<li>Sets up Snowflake session</li>
+<li>Configures stage name and device (GPU/CPU)</li>
+<li>Initializes connection to Snowflake services</li>
+</ul>
+<p><strong>Cell 3: Audio Processing Configuration</strong></p>
+<ul>
+<li>Sets up the main processing function that: <ol type="1">
+<li>Loads audio files from Snowflake stage</li>
+<li>Analyzes emotional tone using wav2vec2 model</li>
+<li>Transcribes audio using Whisper model</li>
+<li>Performs sentiment analysis on transcripts</li>
+<li>Compares emotional tone with sentiment scores</li>
+</ol>
+</li>
+</ul>
+<p>Key components:</p>
+<ul>
+<li>Audio classification pipeline using <code>ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition</code></li>
+<li>Speech to text with <code>whisper</code></li>
+<li>Sentiment analysis using <code>Snowflake Cortex</code></li>
+</ul>
+<p><strong>Cell 4: Process Files</strong></p>
+<ul>
+<li>Sets random seed for reproducibility</li>
+<li>Initializes audio classification and speech recognition pipelines</li>
+<li>Processes each audio file to: <ul>
+<li>Extract emotional tone</li>
+<li>Generate transcript</li>
+<li>Analyze sentiment</li>
+<li>Compare tone and sentiment</li>
+</ul>
+</li>
+<li>Creates a DataFrame with results</li>
+</ul>
+<p>Example output:</p>
+<pre><code>                    File    Emotion  Emotion_Score                                          Transcript  Sentiment_Score Tone_Sentiment_Match
+0  customer_call1.wav      happy         0.892    Thank you so much for your help today! You&#39;ve...            0.8            Match
+1  customer_call2.wav      angry         0.945    I&#39;ve been waiting for hours and nobody has...             -0.7            Match
+2  customer_call3.wav    neutral         0.756    I would like to inquire about the status...              0.1          Unknown
+3  customer_call4.wav       happy         0.834    This service has exceeded my expectations...              0.9            Match
+</code></pre>
+<aside class="special"><p> The DataFrame shows the complete analysis for each audio file, including the detected emotion, confidence scores, and whether the emotional tone matches the sentiment of the transcribed text.</p>
+</aside>
+<p>The notebook outputs results showing the file name, detected emotion, emotion confidence score, transcript, sentiment score, and whether the tone matches the sentiment analysis.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Understanding Results" duration="10">
+        <p>The analysis provides multiple metrics that work together to give a comprehensive view of the audio:</p>
+<h2 is-upgraded>Sentiment Analysis</h2>
+<ul>
+<li>Sentiment Score Range: [-1 to 1] <ul>
+<li>Negative values indicate negative sentiment</li>
+<li>Positive values indicate positive sentiment</li>
+<li>Values near 0 indicate neutral sentiment</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Emotional Classification</h2>
+<ul>
+<li>Emotion Score: [0 to 1] <ul>
+<li>Represents the confidence level of the emotional classification</li>
+<li>Higher values indicate stronger confidence in the detected emotion</li>
+<li>Primary emotions detected: happy, angry, neutral, sad</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>Tone-Sentiment Matching</h2>
+<p>The system compares emotional tone with sentiment scores to verify consistency:</p>
+<ul>
+<li>Happy emotion should correspond with positive sentiment (&gt; 0) <ul>
+<li>Match example: Happy emotion (0.85) with sentiment score (0.6)</li>
+<li>Mismatch example: Happy emotion (0.75) with sentiment score (-0.2)</li>
+</ul>
+</li>
+<li>Angry emotion should correspond with negative sentiment (&lt; 0) <ul>
+<li>Match example: Angry emotion (0.92) with sentiment score (-0.7)</li>
+<li>Mismatch example: Angry emotion (0.88) with sentiment score (0.3)</li>
+</ul>
+</li>
+</ul>
+<p>The ‘Tone_Sentiment_Match&#39; field in the results indicates:</p>
+<ul>
+<li>&#34;Match&#34;: Emotion and sentiment align (e.g., happy with positive sentiment)</li>
+<li>&#34;Do Not Match&#34;: Emotion and sentiment conflict (e.g., angry with positive sentiment)</li>
+<li>&#34;Unknown&#34;: For neutral or other emotional states</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="5">
+        <p>Congratulations! You&#39;ve successfully built an end-to-end audio analysis application in Snowflake that combines emotional tone detection, speech recognition, and sentiment analysis using Container Runtime for ML.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to set up Container Runtime in Snowflake Notebooks</li>
+<li>How to implement audio processing using PyTorch and Hugging Face with <a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a></li>
+<li>How to use pre-trained models for emotion recognition and speech-to-text</li>
+<li>How to perform sentiment analysis using <a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex</a></li>
+<li>How to compare and analyze multiple aspects of audio communication</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<p>Webpages:</p>
+<ul>
+<li><a href="https://www.snowflake.com/en/data-cloud/snowflake-ml/" target="_blank">Snowflake ML</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex AI</a></li>
+</ul>
+<p>Documentation:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Snowflake Notebooks on Container Runtime Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/guides-overview-ai-features" target="_blank">Cortex AI Documentation</a></li>
+<li><a href="https://pytorch.org/audio/stable/index.html" target="_blank">PyTorch Audio Processing Guide</a></li>
+</ul>
+<p>Sample Code &amp; Guides:</p>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Container Runtime Best Practices</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview" target="_blank">External Access Setup Guide</a></li>
+<li><a href="https://huggingface.co/docs/transformers/index" target="_blank">Hugging Face Transformers Documentation</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index" target="_blank">Snowpark Python Guide</a></li>
+</ul>
+<p>Related Quickstarts:</p>
+<ul>
+<li><a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4" target="_blank">Getting Started with Snowflake Notebook Container Runtime</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0" target="_blank">Train an XGBoost Model with GPUs using Snowflake Notebooks</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html" target="_blank">Scale Embeddings with Snowflake Notebooks on Container Runtime</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0" target="_blank">Getting Started with Running Distributed PyTorch Models on Snowflake</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html" target="_blank">Defect Detection Using Distributed PyTorch With Snowflake Notebooks</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

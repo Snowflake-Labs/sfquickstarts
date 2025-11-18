@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "google_analytics_4_template_setup",
+  "duration": 45,
+  "title": "Getting Started with Google Analytics 4 (GA4) Using Snowflake and Sigma",
+  "summary": "This QuickStart provides instructions on how to set up Sigma’s Google Analytics 4 template.",
+  "source": "google_analytics_4_template/google_analytics_4_template.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "partners",
+    "featured",
+    "partner-integrations"
+  ],
+  "tags": [
+    "gettingstarted",
+    "partners",
+    "web"
+  ],
+  "feedback": "https://github.com/sigmacomputing/sigmaquickstarts/issues",
+  "url": "google_analytics_4_template_setup"
+}

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "orchestration-framework-running-multiple-containerized-jobs-parallel",
+  "duration": 20,
+  "title": "Building Orchestration Framework for Running Containerized Jobs in Parallel",
+  "summary": "Building custom orchestration framework for running containerized jobs in parallel",
+  "source": "orchestration-framework-running-multiple-containerized-jobs-parallel/orchestration-framework-running-multiple-containerized-jobs-parallel.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "containers",
+    "dataengineering",
+    "kubernetes",
+    "orchestrationframework",
+    "snowparkcontainerservices",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "orchestration-framework-running-multiple-containerized-jobs-parallel"
+}

@@ -1,0 +1,32 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:09-04:00",
+  "id": "build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks",
+  "duration": 28,
+  "title": "Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science",
+    "data-science-\u0026-ml",
+    "app-development"
+  ],
+  "tags": [
+    "dataapplications",
+    "datascience",
+    "machinelearning",
+    "notebook",
+    "snowpark",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks"
+}

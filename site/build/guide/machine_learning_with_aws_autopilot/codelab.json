@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "machine_learning_with_aws_autopilot",
+  "duration": 35,
+  "title": "Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning with SQL",
+  "authors": "Snowflake",
+  "summary": "Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning with SQL",
+  "source": "machine_learning_with_aws_autopilot/machine_learning_with_aws_autopilot.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "data-science-\u0026-ml",
+    "partner-integrations"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "machine_learning_with_aws_autopilot"
+}

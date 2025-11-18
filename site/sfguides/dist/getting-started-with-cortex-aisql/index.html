@@ -1,0 +1,195 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Cortex AISQL</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-cortex-aisql"
+                  title="Getting Started with Cortex AISQL"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p>Cortex AISQL reimagines SQL into an AI query language for multimodal data, bringing powerful AI capabilities directly into Snowflake&#39;s SQL engine. It enables users to build scalable AI pipelines across text, images, and audio <em>(coming soon)</em> using familiar SQL commands. With native support for multimodal data through a new FILE datatype, Cortex AISQL seamlessly integrates AI operators with traditional SQL primitives like AI_FILTER and AGGREGATE, allowing analysts to process diverse data types more efficiently and cost-effectively while maintaining enterprise-grade security and governance.</p>
+<h2 is-upgraded>What is Cortex AISQL?</h2>
+<p>Cortex AISQL bridges the traditional divide between structured and unstructured data analysis, eliminating the need for separate tools and specialized skills.</p>
+<p>It delivers three key benefits:</p>
+<ul>
+<li>Simplicity through familiar SQL syntax that transforms any analyst into an AI engineer without complex coding</li>
+<li>High-performance processing through deep integration with Snowflake&#39;s query engine, offering 30%+ faster query runtime</li>
+<li>Cost efficiency with up to 60% savings compared to traditional AI implementations</li>
+</ul>
+<p>By unifying all data types in a single platform with zero setup required, Cortex AISQL democratizes AI-powered analytics across the enterprise.</p>
+<p class="image-container"><img alt="Cortex AISQL" src="img/f65e99c9c8dbf752.png"></p>
+<h2 is-upgraded>Use Cases</h2>
+<p>Cortex AISQL benefits organizations across industries dealing with diverse data types including:</p>
+<ul>
+<li>Financial services: Automate corporate action processing by filtering news feeds and joining with internal holdings</li>
+<li>Retail and e-commerce: Detect product quality issues by analyzing customer reviews and identifying concerning patterns</li>
+<li>Healthcare: Accelerate medical research by bridging unstructured clinical notes, transcripts and images with structured patient records</li>
+<li>Legal: Streamline contract analysis and compliance monitoring</li>
+<li>Media: Optimize content and target advertising through multimodal data analysis</li>
+</ul>
+<p>Business analysts can extract insights without AI expertise, data engineers can build simpler pipelines, and data scientists can create richer feature sets, all using familiar SQL.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a> with ACCOUNTADMIN role</li>
+</ul>
+<h2 is-upgraded>What You Will Learn</h2>
+<p>You&#39;ll learn how to use powerful operators of Cortex AISQL to analyze multimodal data within Snowflake using natural language.</p>
+<ul>
+<li>AI_COMPLETE: Generate AI-powered text completions or descriptions for various inputs including text and images</li>
+<li>AI_FILTER: Semantic filtering</li>
+<li>AI_AGG: Aggregate insights across multiple rows</li>
+<li>AI_CLASSIFY: Text and image classification</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>Snowflake Notebook that helps you get started with using Cortex AISQL with multimodal data</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="10">
+        <p><strong>Step 1.</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/setup.sql" target="_blank">setup.sql</a> to execute all statements in order from top to bottom.</p>
+<p><strong>Step 2.</strong> Download sample <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/tree/main/data/images" target="_blank">images files</a> and use Snowsight » Data » Add Data » Load files into a Stage to upload them to <code>@DASH_DB.DASH_SCHEMA.DASH_IMAGE_FILES</code> stage created in step 1.</p>
+<p><strong>Step 3.</strong> In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a> and open <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/images.sql" target="_blank">images.sql</a> to execute all statements in order from top to bottom.</p>
+<p><strong>Step 4.</strong> Click on <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/cortex_aisql.ipynb" target="_blank">cortex_aisql.ipynb</a> to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)</p>
+<p><strong>Step 5.</strong> In Snowsight:</p>
+<ul>
+<li>On the left hand navigation menu, click on <strong>Projects</strong> » <strong>Notebooks</strong></li>
+<li>On the top right, click on <strong>Notebook</strong> down arrow and select <strong>Import .ipynb file</strong> from the dropdown menu</li>
+<li>Select <strong>cortex_aisql.ipynb</strong> file you downloaded in the step above</li>
+<li>In the Create Notebook popup <ul>
+<li>For Notebook location, select <code>DASH_DB</code> and <code>DASH_SCHEMA</code></li>
+<li>For Python environment, select <code>Run on warehouse</code></li>
+<li>For Query warehouse, select <code>DASH_WH_S</code></li>
+<li>For Notebook warehouse, select default <code>SYSTEM$STREAMLIT_NOTEBOOK_WH</code></li>
+<li>Click on <strong>Create</strong> button</li>
+</ul>
+</li>
+</ul>
+<p><strong>Step 6.</strong> Open Notebook</p>
+<ul>
+<li>Click on <strong>Start</strong> button on top right</li>
+</ul>
+<aside class="special"><p> NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from <strong>Starting</strong> to <strong>Active</strong>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Notebook" duration="15">
+        <aside class="warning"><p> PREREQUISITE: Successful completion of steps outlined under <strong>Setup</strong>.</p>
+</aside>
+<p>Here&#39;s the code walkthrough of the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/cortex_aisql.ipynb" target="_blank">cortex_aisql.ipynb</a> notebook that you downloaded and imported into your Snowflake account.</p>
+<p>Once the status changes from <strong>Starting</strong> to <strong>Active</strong>, run through all the cells from top to bottom.</p>
+<p>Cell <strong>Import_Libraries</strong></p>
+<p>Import libraries required for running cells in the notebook.</p>
+<p>Cell <strong>AI_COMPLETE</strong></p>
+<p>Identify customer issues across text and image data using <a href="https://docs.snowflake.com/en/sql-reference/functions/ai_complete" target="_blank">AI_COMPLETE()</a> and see how the SQL operators work seamlessly across all modalities.</p>
+<ul>
+<li>Text: Emails</li>
+<li>Images: Screenshots</li>
+</ul>
+<p>Cell <strong>Preview_Data</strong></p>
+<p>Notice that native FILE datatype allows for consolidating all data formats into one table.</p>
+<p><strong>AI_FILTER</strong></p>
+<p>Semantically &#34;JOIN&#34; customer issues with existing solutions using JOIN ... ON <a href="https://docs.snowflake.com/en/sql-reference/functions/ai_filter" target="_blank">AI_FILTER()</a>.</p>
+<p><strong>AI_AGG</strong></p>
+<p>Get aggregated insights across multiple rows using <a href="https://docs.snowflake.com/en/sql-reference/functions/ai_agg" target="_blank">AI_AGG()</a>.</p>
+<p><strong>AI_CLASSIFY</strong></p>
+<p>Classification of labels that can be used in downstream applications using <a href="https://docs.snowflake.com/en/sql-reference/functions/ai_classify" target="_blank">AI_CLASSIFY()</a>. For example, to train ML models.</p>
+<h2 is-upgraded>Optional</h2>
+<p>If you&#39;d like to see images displayed in the Notebook as part of the consolidated data in <strong>Preview_Data</strong> cell, follow these instructions.</p>
+<p><strong>Step 1</strong>. In a SQL worksheet, execute the following statement to create a Snowflake managed internal stage to store the sample python files.</p>
+<pre><code language="language-sql" class="language-sql"> create or replace stage DASH_PY_FILES encryption = (TYPE = &#39;SNOWFLAKE_SSE&#39;) directory = ( ENABLE = true );
+</code></pre>
+<p><strong>Step 2.</strong> Use <a href="(https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage)" target="_blank">Snowsight</a> to upload <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/snowbooks_extras.py" target="_blank">snowbooks_extras.py</a> on stage <strong>DASH_PY_FILES</strong>.</p>
+<p><strong>Step 3.</strong> Reopen existing <strong>cortex_aisql.ipynb</strong> Notebook, and on the top right click on <strong>Packages</strong> » <strong>State Packages</strong> and enter <strong>@DASH_DB.DASH_SCHEMA.DASH_PY_FILES/snowbooks_extras.py</strong> and then click on <strong>Import</strong>.</p>
+<p class="image-container"><img alt="Add package" src="img/e8c118d196f1a65c.png"></p>
+<p><strong>Step 4.</strong> If the session is <strong>Active</strong>, click on it to end the current session. Otherwise, click on <strong>Start</strong> to start a new session which will also update the packages list and include our custom package <strong>snowbooks_extras</strong>.</p>
+<aside class="special"><p> NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from <strong>Starting</strong> to <strong>Active</strong>.</p>
+</aside>
+<p><strong>Step 5.</strong> Add <code>import snowbooks_extras</code> to the libraries list under <strong>Import_Libraries</strong> and run the cell.</p>
+<p><strong>Step 6.</strong> Now if you run <strong>Preview_Data</strong> cell, you will see images displayed in <strong>INPUT_FILE</strong> column as shown below.</p>
+<p>Before importing <code>snowbooks_extras</code></p>
+<p class="image-container"><img alt="Data without images" src="img/d228ca6e983e5d14.png"></p>
+<p>After importing <code>snowbooks_extras</code> – you will need to click twice (not exactly a double-click though :)) to see the enlarged image as shown.</p>
+<p class="image-container"><img alt="Data with images" src="img/c32091a9dc0a70d2.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully created a Snowflake Notebook that helps you get started with using Cortex AISQL with multimodal data.</p>
+<h2 is-upgraded>What You Learned</h2>
+<p>You&#39;ve learned how to use powerful operators of Cortex AISQL to analyze multimodal data within Snowflake using natural language.</p>
+<ul>
+<li>AI_COMPLETE: Generate AI-powered text completions or descriptions for various inputs including text and images</li>
+<li>AI_FILTER: Semantic filtering</li>
+<li>AI_AGG: Aggregate insights across multiple rows</li>
+<li>AI_CLASSIFY: Text and image classification</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql" target="_blank">GitHub Repo</a></li>
+<li><a href="https://www.snowflake.com/en/data-cloud/cortex/" target="_blank">Snowflake Cortex AI</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

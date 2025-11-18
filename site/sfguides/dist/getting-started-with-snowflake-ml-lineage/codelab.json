@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:13-04:00",
+  "id": "getting-started-with-snowflake-ml-lineage",
+  "duration": 7,
+  "title": "Getting Started with Snowflake ML Lineage",
+  "summary": "This is a sample Snowflake Guide",
+  "source": "getting-started-with-snowflake-ml-lineage/getting-started-with-snowflake-ml-lineage.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-science-\u0026-ml"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting-started-with-snowflake-ml-lineage"
+}

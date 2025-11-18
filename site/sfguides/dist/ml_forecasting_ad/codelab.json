@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "ml_forecasting_ad",
+  "duration": 65,
+  "title": "Getting Started with Snowflake ML Functions: Anomaly Detection \u0026 Forecasting",
+  "summary": "Getting started with Anomaly Detection \u0026 Forecasting ML Functions",
+  "source": "mlpf_forecasting_ad/mlpf_forecasting_ad.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "datascience",
+    "gettingstarted",
+    "mlfunctions",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "ml_forecasting_ad"
+}

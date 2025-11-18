@@ -1,0 +1,233 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with AutoML, OpenFE and AutoGluon</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-automl-openfe-and-autogluon"
+                  title="Getting Started with AutoML, OpenFE and AutoGluon"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>This guide demonstrates how to use <a href="https://openfe-document.readthedocs.io/en/latest/" target="_blank">OpenFE</a>, an open-source package, that can automatically generate features and save them into the Snowflake <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Feature Store</a>. These features can then be used to train a model, potentially improving its accuracy. This process can save data scientists valuable time compared to creating features manually.</p>
+<p>The workflow for this tutorial is shown in the following diagram.</p>
+<p class="image-container"><img alt="workflow" src="img/9d576ba22a625a3d.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity Snowpark Container Services</li>
+<li>General machine learning concepts</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to create features based on data insights</li>
+<li>Techniques for training models using the Feature Store</li>
+<li>Deploying models built using open source or Snowflake.ML packages</li>
+<li>Different ways to call a model</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>Access to a <a href="https://signup.snowflake.com/" target="_blank">Snowflake account</a></li>
+<li>Basic familiarity with SQL and Python</li>
+<li>Access to download <code>.ipynb</code> files from <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon/tree/main/notebooks" target="_blank">getting-started-with-automl-openfe-and-autogluon</a> Git Repo</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A set of features based on data insights</li>
+<li>Skills for training a model using derived features saved in Feature Store</li>
+<li>The basics of deploying the model as a service</li>
+<li>Fundamental concepts for inference the model</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Data" duration="5">
+        <p>We will use the Boston Housing dataset, which was created from US Census data in the late 1970s to predict the median home value.</p>
+<p>This is a small dataset with only 506 rows and is used for demonstration purposes to show how features can be created.</p>
+<p>Download the <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon/blob/main/data/Boston.csv" target="_blank">csv file</a> and save it locally, as we will use the Snowflake Snowsight UI to upload the file.</p>
+<p>Navigate to the <strong>Create</strong> -&gt; <strong>Table</strong> -&gt; <strong>From File</strong> in the UI <img alt="DataImport_Nav" src="img/7d474ac0a758bc56.png"></p>
+<p>Select the csv file for import, this is the recently released update to the Snowflake import, click the <strong>load</strong> button and the data will be loaded into the specified table.</p>
+<p class="image-container"><img alt="DataImport_Edit_Schema" src="img/f01e48773584953.png"></p>
+<p>My table is called DEMO_BOSTON_HOUSING and you can look at the imported data:</p>
+<pre><code language="language-SQL" class="language-SQL">select * from DEMO_BOSTON_HOUSING;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Download the OpenFE Notebook" duration="5">
+        <p>Now that we have the data, we can use the example <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon/blob/main/notebooks/BOSTON%20OPENFE%20FINAL.ipynb" target="_blank">OpenFE Notebook</a> to create features.</p>
+<p>This notebook executes as a <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks" target="_blank">Snowflake Container Notebook</a> so it is secure and has access to the data we just uploaded.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running the Notebook" duration="20">
+        <p>If you are not familiar with Snowflake Container Notebooks, <a href="https://quickstarts.snowflake.com/guide/notebook-container-runtime/#0" target="_blank">this</a> quickstart provides a great starting point.</p>
+<p>Our notebook will need External Access Integration, and this does require AccountAdmin to set up, so that the OpenFE package can be downloaded.</p>
+<p>Once running, we can import the Notebook, we shouldn&#39;t need to modify much of the code, the first few cells contain variables for this purpose.</p>
+<p><img alt="Import Notebook" src="img/446f6e1b5abc7739.png"> Click in the Plus sign in the Notebooks panel in Snowsight to import.</p>
+<p>Step through each cell and execute until you reach Cell 12 <code>Create the sql for feature store</code> this is where we start to save the features that OpenFE created into the Feature Store.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Examine the Results" duration="10">
+        <p>In the Snowflake Feature Store, a feature view has now been created !</p>
+<p>Navigate to the <strong>AI &amp; ML</strong> -&gt; <strong>Features</strong> within Snowsight, you will see the Feature View that the Notebook created.</p>
+<p class="image-container"><img alt="Feature View" src="img/b64531d83e30c7f8.png"></p>
+<p>Notice the name of the Notebook that created this view is in the description, this was set up in one of the first few cells, you can modify that to maybe include the user who executed the Notebook.</p>
+<p>Click on the <code>Boston_OpenFE_View</code>, this will show the features created and the textual explanation of the feature.</p>
+<p class="image-container"><img alt="Features Created" src="img/9a3bbd692aa1b5b5.png"></p>
+<p>We can use Lineage to see where this derived feature came from, by clicking <strong>Lineage</strong> -&gt; <strong>Upstream</strong></p>
+<p><img alt="Lineage" src="img/d7b3c7f42feea70.png"> This shows (in a simple example) that it came from the <code>Demo_Boston_Housing</code> table we created earlier.</p>
+<p>So we are able to quickly see that the feature came from a specific table and how it was created.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Decision Time" duration="5">
+        <p>Now that the features have been saved into the Feature Store, any machine learning tools can be used, so we have a few options!</p>
+<p>We could use an Open Source package to train a model and many packages are available to do this, an example Notebook using <a href="https://auto.gluon.ai/dev/index.html#" target="_blank">AutoGluon</a> is <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon/blob/main/notebooks/BOSTON%20AUTOGLUON.ipynb" target="_blank">available</a> from the Git Repo.</p>
+<p>We could also use the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling" target="_blank">Snowflake.ML</a> package, which is integrated into the Snowflake environment and we provide an <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon/blob/main/notebooks/BOSTON%20SNOWFLAKEML%20XGBoost.ipynb" target="_blank">example</a> notebook in the Git Repo.</p>
+<p>Either option will result in a model being created and registered in the <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview" target="_blank">Model Registry</a>.</p>
+<p>For this tutorial, I&#39;m going to use the Snowflake.ML package to train the model.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Train a Model" duration="20">
+        <p>Using the Git Repo links from the <a href="#decision-time" target="_blank">Decision Time</a> section above, retrieve the Notebook you have chosen and upload into Snowflake Container Services. In a similar approach to the OpenFE notebook the first few cells have parameters for training that you might want to modify.</p>
+<p>Execute each cell until you reach the <code>Model Registry</code> section in the notebook. Here we define the name of the model, we also have set <strong>enable_monitoring</strong> to <strong>False</strong>, as a timestamp is not one of the features, but if you would like to monitor the model, an excellent overview can be found <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-observability" target="_blank">here</a>.</p>
+<p>Once the model is registered, it can be referenced using the version tag <code>LAST</code> and after you have created a few models, you will find this really helpful to be able to always get the latest model or reference a specific version.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy the Model" duration="20">
+        <p>Using the Snowsight UI <strong>AI &amp; ML</strong> -&gt; <strong>Model</strong>, click on the Model that was registered (Boston_Model_Snowflake) the functions to call the model will be shown:</p>
+<p class="image-container"><img alt="Model_Functions" src="img/e7f1b53ebace1843.png"></p>
+<p>When the log_model API was called, the <a href="https://docs.snowflake.com/en/sql-reference/classes/classification/methods/predict" target="_blank">Predict</a> and <a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-explainability" target="_blank">Explain</a> functions were created. We can use these functions to get a prediction or explain the features that had the most impact on the prediction, refer to the links for details about the function calling arguments and background on the techniques used to explain the prediction.</p>
+<p>The models and functions can also be shown using SQL:</p>
+<pre><code language="language-SQL" class="language-SQL">SELECT
+    *
+    FROM your-database.INFORMATION_SCHEMA.MODEL_VERSIONS
+    where model_name like &#39;%BOSTON_MODEL%&#39;; 
+</code></pre>
+<p>If you would like to call the functions then jump ahead to the <a href="#invoke-the-model-invoke_the_model" target="_blank">Invoke the Model</a> section, otherwise we can deploy the model using a <a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services</a> that would allow either a Snowflake.ML or Open Source model to be called as an endpoint or directly in SQL.</p>
+<p>Review the cell labeled <code>spcs deployment details</code>, this defines the instance family (number of cpu&#39;s / gpu&#39;s and memory) and the number of instances, the compute pool is then created and the service created. Notice on the create_service call, <strong>ingress_enabled</strong> is set to <strong>True</strong>, so this endpoint will be exposed to the internet, however a valid token will be required to access the endpoint.</p>
+<p>If you are not familiar with Snowflake OAuth, <a href="https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview" target="_blank">here</a> is an excellent overview.</p>
+<p>Creating the compute pool and building the service is a one time operation and it will take several minutes (maybe 20) but the notebook output will keep you updated on progress.</p>
+<p>Once the model is deployed as a service, the service endpoint will be shown.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Invoke the Model" duration="10">
+        <p>When the model was trained if an Open Source package was downloaded and installed, then you will need to deploy that model as a service (see <a href="#deploy-the-model" target="_blank">Deploy the Model</a>)</p>
+<p>If you jumped ahead and want to call the function, you can use the <a href="#deploy-the-model" target="_blank">generated</a> SQL or Python from earlier.</p>
+<p>The Notebook cell <code>make</code> predictions using model deployed to SPCS, shows how to invoke the function, but what about an external request (remember we set <strong>ingress_enabled=True</strong>) the Notebook <a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon/blob/main/notebooks/Remote_SPCS_CALL.ipynb" target="_blank">Remote_SPCS_Call</a></p>
+<p>Using an external call requires <a href="https://docs.snowflake.com/en/developer-guide/snowflake-rest-api/authentication" target="_blank">authentication</a> to set up but once this is done calling the model is easy and secure.</p>
+<p>The Notebook has two examples, one using the Python requests HTTP library and the other using the Snowpark package</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Clean-up" duration="5">
+        <p>If the model was deployed as a service, then the compute pool and service will automatically suspend, but you can also issue a SQL call as well:</p>
+<pre><code language="language-SQL" class="language-SQL">alter compute pool INFERENCE_CP suspend;
+alter service INFERENCE_SERVICE suspend;
+</code></pre>
+<p>Suspending the resources will enable them to be started again, but if you do not want them you can also drop them:</p>
+<pre><code language="language-SQL" class="language-SQL">drop service INFERENCE_SERVICE;
+drop compute pool INFERENCE_CP;
+</code></pre>
+<p>The data that was imported at the beginning of the tutorial can also be deleted using a drop on the table, use this SQL to find the table names.</p>
+<pre><code language="language-SQL" class="language-SQL">show tables like &#39;%DEMO_BOSTON_HOUSING%&#39;;
+</code></pre>
+<p>The model can be dropped from the model registry:</p>
+<pre><code language="language-SQL" class="language-SQL">drop model BOSTON_MODEL;
+</code></pre>
+<p>Features that we created in the beginning can also be dropped, clicking on the <strong>action</strong> button (3 dots) on the FeatureView in the Snowsight is the quickest way.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>You have done it, <strong>congratulations</strong>!</p>
+<p>This tutorial went through a workflow creating features from data, saving them into the Feature Store and then using the new features to train a open source and Snowflake.ML model.</p>
+<p>Lastly the model was deployed within Snowflake and we showed how to call the model for inference.</p>
+<p>All of these steps executed within Snowflake !</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to create features and save them into the Feature Store</li>
+<li>Using Open Source and Snowflake.ML packages to train a model</li>
+<li>How to deploy a model within Snowflake</li>
+<li>Invoking a model to get an inference</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon" target="_blank">Git Repository</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview" target="_blank">Feature Store</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview" target="_blank">Snowpark Container Services</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview" target="_blank">Model Registry</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

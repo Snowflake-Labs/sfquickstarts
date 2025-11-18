@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_alation",
+  "duration": 52,
+  "title": "Learn How Alation Powers Data Intelligence on Snowflake",
+  "summary": "This guide is used to help with the installation of the Alation Data Intelligence Platform. The walk-through consists of being able to find \u0026 trust data in your organization, how to actively govern data, and how Alation can help with when migrating data to Snowflake.",
+  "source": "getting_started_with_alation/getting_started_with_alation.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "partner-integrations",
+    "marketing"
+  ],
+  "tags": [
+    "alation",
+    "datacatalog",
+    "dataengineering",
+    "datagovernance",
+    "dataintelligence",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_alation"
+}

@@ -1,0 +1,277 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Build Agentic Application with Anthropic In Snowflake</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="build-agentic-application-in-snowflake"
+                  title="Build Agentic Application with Anthropic In Snowflake"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="4">
+        <p>In this guide, you&#39;ll learn how to build a Data Agent using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.</p>
+<p>We&#39;ll use a custom dataset focused on bikes and skis. This dataset is intentionally artificial, ensuring that no external LLM has prior knowledge of it. This gives us a clean and controlled environment to test and evaluate our data agent. By the end of the session, you&#39;ll have a working AI-powered agent capable of understanding and retrieving insights across diverse data types — all securely within Snowflake.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to setup your environment using Git integration and Snowflake Notebooks</li>
+<li>How to work with semantic models and setup Cortex Analyst for structured data</li>
+<li>How to setup Cortext Search for unstructured data like PDFs and images</li>
+<li>How to use Cortex Agents REST API that uses these tools in a Streamlit application</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<p>A Data Agent packaged in a Streamlit application that can intelligently respond to questions by reasoning over both structured and unstructured data.</p>
+<h2 is-upgraded>What You Will Need</h2>
+<ul>
+<li>A Snowflake account as described specifically in <a href="https://quickstarts.snowflake.com/guide/build-agentic-application-in-snowflake/index.html?index=..%2F..index#1" target="_blank">Step 2 <strong>Snowflake Trial Account</strong></a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Snowflake Trial Account" duration="5">
+        <p>To complete this lab, you&#39;ll need to create a Snowflake account.</p>
+<ol type="1">
+<li>Click on this link to create a <a href="https://bit.ly/devdaybootcamp2025" target="_blank">free trial account</a>.</li>
+<li>Complete the first page of the form on the page.</li>
+<li>On the next section of the form, be sure to set the Snowflake edition to <strong>Enterprise (Most popular)</strong>).</li>
+<li>Select <strong>AWS – Amazon Web Services</strong> as the cloud provider.</li>
+<li>Select <strong>US West (Oregon)</strong> as the region.</li>
+<li>Complete the rest of the form and click <strong>Get started</strong>.</li>
+</ol>
+<p class="image-container"><img alt="trial" src="img/4acbd0c1b2b2a791.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p>In Snowsight, <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file" target="_blank">create a SQL Worksheet</a>. Then, copy/paste the following statements and execute them from top to bottom.</p>
+<pre><code language="language-sql" class="language-sql">CREATE or replace DATABASE DASH_CORTEX_AGENTS_SUMMIT;
+
+CREATE OR REPLACE API INTEGRATION git_api_integration
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = (&#39;https://github.com/Snowflake-Labs/&#39;)
+  ENABLED = TRUE;
+
+CREATE OR REPLACE GIT REPOSITORY git_repo
+    api_integration = git_api_integration
+    origin = &#39;https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai&#39;;
+
+-- Make sure we get the latest files
+ALTER GIT REPOSITORY git_repo FETCH;
+
+-- Setup stage for  Docs
+create or replace stage docs ENCRYPTION = (TYPE = &#39;SNOWFLAKE_SSE&#39;) DIRECTORY = ( ENABLE = true );
+
+-- Copy the docs for bikes
+COPY FILES
+    INTO @docs/
+    FROM @DASH_CORTEX_AGENTS_SUMMIT.PUBLIC.git_repo/branches/main/docs/;
+
+ALTER STAGE docs REFRESH;
+</code></pre>
+<aside class="special"><p> IMPORTANT NOTE: As a result of this integration, all the PDFs and image files we are going to be using would have been copied into your Snowflake account.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Snowflake Notebook" duration="30">
+        <p>We will use Snowflake Notebook to setup the tools that will be used by Snowflake Cortex Agents.</p>
+<p>Let&#39;s get started!</p>
+<p>On the left hand navigation menu, select Databases <strong>DASH_CORTEX_AGENTS_SUMMIT</strong> » <strong>PUBLIC</strong> » <strong>Git Repositories</strong> » <strong>GIT REPO</strong> and select <code>setup_tools.ipynb</code> Notebook that is already available in your Snowflake account as shown below.</p>
+<p class="image-container"><img alt="image" src="img/bf6802fe90f1b54c.png"></p>
+<p>Give it a name and select other options including <strong>DASH_CORTEX_AGENTS_SUMMIT</strong> and <strong>PUBLIC</strong> for location and <strong>Run on warehouse</strong> for Python environment as shown below.</p>
+<p class="image-container"><img alt="image" src="img/70ac63f2683e0eba.png"></p>
+<aside class="special"><p> IMPORTANT NOTE: Run through all the cells in the Snowflake Notebook before proceeding.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Explore Semantic Model" duration="0">
+        <p>The <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec" target="_blank">semantic model</a> maps business terminology to the structured data and adds contextual meaning. It allows <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a> to generate the correct SQL for a question asked in natural language.</p>
+<h2 is-upgraded>Open the semantic model</h2>
+<p>On the left hand navigation menu, click on <strong>AI &amp; ML</strong> » <strong>Studio</strong> and select <strong>Cortex Analyst</strong></p>
+<p class="image-container"><img alt="image" src="img/8c1fb62fc5691b67.png"></p>
+<p>Select the existing <code>semantic.yaml</code> file located in <strong>DASH_CORTEX_AGENTS_SUMMIT</strong> » <strong>PUBLIC</strong> » <strong>SEMANTIC_FILES</strong> as shown below.</p>
+<p class="image-container"><img alt="image" src="img/3e4c03694953bf3.png"></p>
+<h2 is-upgraded>Test the semantic model</h2>
+<p>Let&#39;s ask these analytical questions to test the semantic file:</p>
+<ul>
+<li><strong>What is the average revenue per transaction per sales channel?</strong></li>
+<li><strong>What products are often bought by the same customers?</strong></li>
+</ul>
+<h2 is-upgraded>Cortex Analyst and Cortex Search Integration</h2>
+<p>Using Cortex Analyst integration with Cortex Search, we can improve the retrieval of possible values of a column without listing them all in the semantic model file. Let&#39;s try it as example for the ARTICLE NAMES.</p>
+<p>Click on <strong>DIM_ARTICLE -&gt; Dimensions</strong> and edit <strong>ARTICLE_NAME</strong>. Here you will see that some sample values have been provided.</p>
+<p class="image-container"><img alt="image" src="img/748e5bde43bd9f73.png"></p>
+<p>Let&#39;s see what happens if we ask the following question:</p>
+<ul>
+<li><strong>What are the total sales for the carvers?</strong></li>
+</ul>
+<p>At this point, you may see this response:</p>
+<p class="image-container"><img alt="image" src="img/d1cc8a712df9d34f.png"></p>
+<p>Now let&#39;s see what happens when we integrate the <strong>ARTICLE_NAME</strong> dimension with the Cortex Search Service we created in the Notebook (<strong>_ARTICLE_NAME_SEARCH</strong>). If you haven&#39;t run it already in the Notebook, execute this in the same SQL worksheet as you opened/created before:</p>
+<pre><code language="language-SQL" class="language-SQL">CREATE OR REPLACE CORTEX SEARCH SERVICE _ARTICLE_NAME_SEARCH
+  ON ARTICLE_NAME
+  WAREHOUSE = COMPUTE_WH
+  TARGET_LAG = &#39;1 hour&#39;
+  EMBEDDING_MODEL = &#39;snowflake-arctic-embed-l-v2.0&#39;
+AS (
+  SELECT
+      DISTINCT ARTICLE_NAME
+  FROM DIM_ARTICLE
+);
+</code></pre>
+<p>Back in the Semantic model UI:</p>
+<ol type="1">
+<li>Remove the sample values provided</li>
+<li>Click on <strong>+ Search Service</strong> and add <strong>_ARTICLE_NAME_SEARCH</strong></li>
+</ol>
+<p>It should look like this:</p>
+<p class="image-container"><img alt="image" src="img/4e42baf6efbe8f84.png"></p>
+<p>Click on <strong>Save</strong>, also save your semantic file (top right) and ask the same question again:</p>
+<ul>
+<li><strong>What are the total sales for the carvers?</strong></li>
+</ul>
+<p>Notice that now Cortex Analyst is able to provide the right answer because of the Cortex Search integration, we asked for &#34;Carvers&#34; but found that the correct article to ask about is &#34;Carver Skis&#34;:</p>
+<p class="image-container"><img alt="image" src="img/1a0dc69699ac4e2f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit Application" duration="10">
+        <p>Now that we have the tools ready, we can create a Streamlit app that puts it all together using <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents API</a> API.</p>
+<p>We are going to leverage the code from <a href="https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai/blob/main/streamlit_app.py" target="_blank">streamlit_app.py</a></p>
+<p>On the left hand navigation menu, click on <strong>Projects</strong> » <strong>Streamlit</strong> » <strong>Streamlit App</strong> on the top right and select <strong>Create from repository</strong> as shown below.</p>
+<p class="image-container"><img alt="image" src="img/1baca2e7366e9083.png"></p>
+<p>Under <strong>File location in repository</strong> click on <strong>Select main file</strong></p>
+<p class="image-container"><img alt="image" src="img/1355f78a1946d6c.png"></p>
+<p>Select the <strong>streamlit_app.py</strong> file located in <strong>DASH_CORTEX_AGENTS_SUMMIT</strong> » <strong>PUBLIC</strong> » <strong>Git Repositories</strong> » <strong>GIT REPO</strong> and click on <strong>Select file</strong>.</p>
+<p class="image-container"><img alt="image" src="img/520780029733b0b0.png"></p>
+<p>Give it a name and select other options including <strong>DASH_CORTEX_AGENTS_SUMMIT</strong> and <strong>PUBLIC</strong> for location and <strong>Run on warehouse</strong> for Python environment as shown below.</p>
+<p class="image-container"><img alt="image" src="img/adf40dc8abb32a7c.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Application" duration="10">
+        <p>Open the Streamlit app and let&#39;s check it out.</p>
+<h2 is-upgraded>Unstructured Data</h2>
+<p>These are questions where the answers can be found in the PDF documents.</p>
+<ul>
+<li><strong>What is the guarantee of the premium bike?</strong> or <strong>What is the warranty on the premium bike?</strong></li>
+</ul>
+<p class="image-container"><img alt="image" src="img/86e0dd561e12fa68.png"></p>
+<p>The code contains a <em>display_citations()</em> function as an example to show what pieces of information the Cortex Agent used to answer the question. In this case, we can see how it cites the warranty information extracted from the PDF file.</p>
+<p>Let&#39;s try these other questions.</p>
+<ul>
+<li><strong>What is the length of the carver skis?</strong></li>
+</ul>
+<p class="image-container"><img alt="image" src="img/e8aa9292654f9b5c.png"></p>
+<p>Since we have processed images, the extracted descriptions can also be used by Cortex Agents to answer questions. Here&#39;s one example:</p>
+<ul>
+<li><strong>Is there any brand in the frame of the downhill bike?</strong></li>
+</ul>
+<p class="image-container"><img alt="image" src="img/7fc0b72000a2191.png"></p>
+<p>Fell free to explore the PDF documents and image files to ask your own questions.</p>
+<h2 is-upgraded>Structured Data</h2>
+<p>These are analytical questions where the answers can be found in structured data stored in Snowflake tables.</p>
+<ul>
+<li><strong>How many carvers are we selling per year in the North region?</strong></li>
+</ul>
+<p>Notice that for this query, all 3 tables are used. Also note that the Cortex Search integration in the semantic model understands that the article name is &#34;Carver Skis&#34;.</p>
+<p class="image-container"><img alt="image" src="img/b96d2b6d93be630f.png"></p>
+<p>Let&#39;s try these other questions.</p>
+<ul>
+<li><strong>How many infant bikes are we selling per month?</strong></li>
+<li><strong>What are the top 5 customers buying the carvers?</strong></li>
+</ul>
+<h2 is-upgraded>Cortex Agents</h2>
+<p>When calling the <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a> API, we define the tools the Agent can use in that call. You can read the simple <a href="https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai/blob/main/streamlit_app.py" target="_blank">Streamlit App</a> you set up to understand the basics before trying to create something more elaborat and complex.</p>
+<p>We define the <strong>API_ENDPOINT</strong> for the agent, and how to access the different tools its going to use. In this lab, we have two Cortex Search services to retrieve information from PDFs about bikes and skis, and one Cortex Analyst service to retrieve analytical information from Snowflake tables. The Cortex Search services were created in the Notebook and the Cortex Analyst uses the semantic model we verified earlier.</p>
+<p class="image-container"><img alt="image" src="img/e7cd63396ae3664f.png"></p>
+<p>All of these services are added to the payload sent to the Cortex Agents API. We also provide the model we want to use to build the final response, the tools to be used, and any specific instructions for generating the response.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve learned how to securely build data agents and agentic application in Snowflake.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to setup your environment using Git integration and Snowflake Notebooks</li>
+<li>How to work with semantic models and setup Cortex Analyst for structured data</li>
+<li>How to setup Cortext Search for unstructured data like PDFs and images</li>
+<li>How to use Cortex Agents REST API that uses these tools in a Streamlit application</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai" target="_blank">GitHub repo</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents" target="_blank">Cortex Agents</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst" target="_blank">Cortex Analyst</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank">Cortex Search</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_slack/index.html" target="_blank">Integrate Cortex Agents with Slack</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_microsoft_teams/index.html" target="_blank">Integrate Cortex Agents with Microsoft Teams</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/integrate-snowflake-cortex-agents-with-zoom/index.html" target="_blank">Integrate Cortex Agents with Zoom</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_agents_api_and_react/index.html" target="_blank">Integrate Cortex Agents with React</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

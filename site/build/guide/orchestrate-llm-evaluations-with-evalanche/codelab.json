@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "orchestrate-llm-evaluations-with-evalanche",
+  "duration": 12,
+  "title": "Orchestrate LLM Evaluations in Snowflake with Evalanche",
+  "summary": "Orchestrate LLM Evaluations in Snowflake with Evalanche",
+  "source": "orchestrate-llm-evaluations-with-evalanche/orchestrate-llm-evaluations-with-evalanche.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-science-\u0026-ai"
+  ],
+  "tags": [
+    "ai",
+    "cortexai",
+    "llm",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "orchestrate-llm-evaluations-with-evalanche"
+}

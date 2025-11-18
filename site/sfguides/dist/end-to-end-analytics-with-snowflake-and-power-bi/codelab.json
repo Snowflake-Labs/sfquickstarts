@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:12-04:00",
+  "id": "end-to-end-analytics-with-snowflake-and-power-bi",
+  "duration": 75,
+  "title": "End-to-End Analytics with Snowflake and Power BI",
+  "summary": "Building end-to-end analytical solutions with Snowflake and Power BI",
+  "source": "end-to-end-analytics-with-snowflake-and-power-bi/end-to-end-analytics-with-snowflake-and-power-bi.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "powerbi",
+    "tastybytes",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "end-to-end-analytics-with-snowflake-and-power-bi"
+}

@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:14-04:00",
+  "id": "getting_started_with_microsoft_purview_and_snowflake",
+  "duration": 45,
+  "title": "Getting Started with Microsoft Purview and Snowflake",
+  "summary": "This is a Quickstart for using Snowflake with Microsoft Purview",
+  "source": "getting_started_with_microsoft_purview_and_snowflake/getting_started_with_microsoft_purview_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-governance",
+    "microsoft"
+  ],
+  "tags": [
+    "azure",
+    "datagovernance",
+    "gettingstarted",
+    "microsoft",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_microsoft_purview_and_snowflake"
+}

@@ -1,0 +1,29 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "intro_to_data_engineering_python",
+  "duration": 22,
+  "title": "Intro to Data Engineering using Python in Snowflake",
+  "summary": "Through this quickstart guide, you will explore Data engineering in Snowflake using Python",
+  "source": "intro_to_data_engineering_in_python/Intro to Data Engineering using Python in Snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started"
+  ],
+  "tags": [
+    "dataengineering",
+    "gettingstarted",
+    "pandas",
+    "python",
+    "snowpark",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "intro_to_data_engineering_python"
+}

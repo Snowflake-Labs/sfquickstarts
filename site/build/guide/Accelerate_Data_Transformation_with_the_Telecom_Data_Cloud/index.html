@@ -1,0 +1,678 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Accelerate Data Transformation with the Telecom Data Cloud and Informatica</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud"
+                  title="Accelerate Data Transformation with the Telecom Data Cloud and Informatica"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>This quickstart will guide you through the steps to use the Informatica Intelligent Cloud Services Accelerator for Snowflake to create an Informatica Intelligent Data Management Cloud (IDMC) organization, which provides free data processing of up to one billion records per month.  You will then learn how to build a data integration mapping and mapping task or data pipeline using Informatica&#39;s Data Integration.</p>
+<p>The Informatica IDMC provides complete, comprehensive cloud-native and AI-powered data management capabilities, including data catalog, data integration, API and application integration, data prep, data quality, master data management, and a data marketplace, on a foundation of governance and privacy. Informatica IDMC is powered by our AI and machine learning (ML) engine, CLAIRE, optimized for intelligence and automation, and is built on a modern, elastic, serverless microservices stack that connects data consumers to the data sources they need. It enables you to intelligently discover and understand all the data within and outside the enterprise, access and ingest all types of data wherever and whenever you want, curate and prepare data in a self-service fashion so that it is fit for use, and deliver an authoritative and trusted single view of all your data. Informatica IDMC is the single and most complete platform you will ever need for cloud-native data management.</p>
+<p>IDMC Data Integration allows you to load source data from databases, applications, and data files in the cloud or on-premises into Snowflake. Data Integration supports many transformations that can be used to transform and enrich the source data. In addition, pushdown optimization (PDO) can be utilized for some transformations and functions to take advantage of Snowflake compute resources for data processing.</p>
+<p>In this lab, you will create a mapping to read two delimited files (loyalty and mobile traffic) from S3, join the files, perform an aggregation to create a count and total, and write the results into a new table in Snowflake. Then in the mapping task, you will turn on pushdown optimization to enable the processing to occur in Snowflake.</p>
+<p>JSON (JavaScript Object Notation) is a text-based data format commonly used between servers and web applications and web-connected devices.  Because it is text-based, it is readable by both humans and machines.  JSON semi-structured data can be stored in Snowflake variant column alongside relational data.  In IDMC, the hierarchy parser transformation parses and transforms hierarchy data to relational data.</p>
+<p>In this lab, you will also use additinal traffic informations data to create a hierarchical schema, then use it in a mapping to parse and transform the JSON weather forecast data, join them, add an expression to convert the temperature, and then write the data to a new table.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with Snowflake</li>
+<li>Familiarity with data integration (ETL) concepts</li>
+<li>Familiarity with AWS S3</li>
+<li>Familiarity with hiearchical data</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>By the end of this guide, you&#39;ll learn:</p>
+<ul>
+<li>How to create an IDMC organization from Snowflake Partner Connect</li>
+<li>How to view the Snowflake connection configuration in IDMC</li>
+<li>How to configure an S3 connection.</li>
+<li>How to build a data integration mapping to read S3 files and load into Snowflake.</li>
+<li>How to turn on Pushdown Optimization (PDO) or ELT in a mapping task to use Snowflake&#39;s warehouse to process the data integration mapping.</li>
+<li>How to verify PDO is successfully enabled.</li>
+<li>How to configure a hierarchical schema</li>
+<li>How to build a data integration mapping to flatten JSON data into relational data</li>
+<li>All of the above without writing a single line of code.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account with access to the ACCOUNTADMIN role</li>
+<li>An email address for IDMC registration</li>
+<li>Configured Snowflake connection in IDMC org if your org will not be registered from Partner Connect.  <a href="https://docs.informatica.com/integration-cloud/data-integration-connectors/current-version/snowflake-data-cloud-connector/connections-for-snowflake-data-cloud/snowflake-data-cloud-connection-properties/standard-authentication.html" target="_blank">Documentation on how to create a Snowflake connection</a></li>
+<li>AWS S3 bucket access and credential</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>An Informatica Data Management Cloud organization</li>
+<li>An S3 connection</li>
+<li>A data integration mapping to load S3 files into Snowflake</li>
+<li>A mapping task to use PDO for processing the data integration mapping</li>
+<li>A hierarchical schema</li>
+<li>A data integration mapping to parse JSON weather data and flatten it.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare Your Lab Environment" duration="5">
+        <p><img alt="Warning" src="img/cc3d4de308e1ed36.png"> <br><br> If you already have an Informatica Data Management Cloud (IDMC) account make sure to log off and close the browser.</p>
+<p>If you haven&#39;t already, register for a <a href="https://trial.snowflake.com" target="_blank">Snowflake free 30-day trial</a>, right click to open in new tab avoiding to change current lab page.  You can also use an existing Snowflake account <strong>as long as you have ACCOUNTADMIN access in that account</strong>.</p>
+<p>Please select a region which is physically closest to you, and select the Enterprise edition (that is the default choice) so you can leverage some advanced capabilities that are not available in the Standard Edition.</p>
+<p>After registering, you will receive an email with an activation link and your Snowflake account URL. Bookmark this URL for easy, future access. After activation, you will create a user name and password. Write down these credentials.</p>
+<p>Resize your browser window, so that you can view this guide and your web browser side-by-side and follow the lab instructions. If possible, use a secondary display dedicated to the lab guide.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create the IDMC Organization" duration="3">
+        <h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Login to <strong>Snowflake Snowsight</strong>.</li>
+<li>Switch role to <strong>ACCOUNTADMIN</strong>.</li>
+<li>Click <strong>Admin &gt; Partner Connect</strong>.</li>
+<li>Search for <strong>Informatica</strong>.</li>
+<li>Click <strong>Informatica</strong> tile.</li>
+<li>Be sure to select <strong>Informatica</strong> and NOT <strong>Informatica Data Loader</strong> (this allows ingest data with a wizard-based approach without transformations) <img alt="PartnerConnect" src="img/cf3cc91e75f34c8a.png"></li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<ol type="1">
+<li>Note the objects that will be created in Snowflake.</li>
+<li>Click <strong>Connect</strong>.<br><img alt="Connect" src="img/10bb5babcf91243c.png"></li>
+</ol>
+<h2 is-upgraded>Step 3</h2>
+<ol type="1">
+<li>Click <strong>Activate</strong>.<br><img alt="Activate" src="img/c8d3e4980a88e9c8.png"></li>
+</ol>
+<h2 is-upgraded>Step 4</h2>
+<ol type="1">
+<li>Fill in the Informatica registration form.</li>
+<li><strong>Uncheck</strong> Use my email address as my username box (this will prenvent account failure creation if you already have an IDMC account)</li>
+<li>Select <strong>Europe</strong> for your Data Center.</li>
+<li>Click <strong>Submit</strong>.<br><img alt="Register" src="img/6710c1abee69be33.png"></li>
+<li>Upon successful registration, you will receive an email with the subject line: <strong>Thanks for signing up for the Informatica Intelligent Cloud Services Accelerator for Snowflake</strong>. <img alt="Email" src="img/aa8007281f2a7958.png"></li>
+</ol>
+<h2 is-upgraded>Step 5</h2>
+<ol type="1">
+<li>Please read through Knowledge Base materials and demo recording for more information.</li>
+<li>From below page, click the <strong>region</strong> you selected in step 4 to go to the <strong>Login</strong> page. <img alt="Workshop" src="img/5fcb7ec6bc017aa9.png"></li>
+</ol>
+<h2 is-upgraded>Step 6</h2>
+<ol type="1">
+<li>Enter your <strong>username</strong> and <strong>password</strong>.</li>
+<li>Click <strong>Log In</strong>.<br><img alt="Login" src="img/a89aca26a8904a3c.png"></li>
+</ol>
+<h2 is-upgraded>Step 7</h2>
+<ol type="1">
+<li>The first time logging in, you will be prompted to enter a security <strong>question</strong> and <strong>answer</strong>.  Fill them in.</li>
+<li>Click <strong>Log In</strong>.<br><img alt="SecurityQ" src="img/2e17e7bfc34b146c.png"></li>
+<li>The Sample Use-Cases walkthrough page shows up.  Click &#34;Don&#39;t show this again&#34;. <img alt="Walkthrough" src="img/7e9f364fde94aff5.png"></li>
+<li>To re-visit the Sample Use-Cases walkthrough page, click <strong>?</strong> at the top right and choose <strong>Walkthroughs</strong>.  Feel free to go through the sample use-cases walkthrough at your convenience. <img alt="OpenWalkthrough" src="img/c17138d9f23125fe.png"></li>
+<li>In the next section, we will look at the Snowflake connection that was created by the registration process.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Review the Snowflake Connection" duration="2">
+        <p>The Snowflake connection is automatically configured in the IDMC organization when you create the organization through Snowflake Partner Connect.  Let&#39;s take a look at the connection.</p>
+<h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Click <strong>Administrator</strong> in the service selector page. <img alt="Administrator" src="img/b64dd5f3fd1e6f6c.png"></li>
+<li>Click <strong>Connections</strong> on the left panel. <img alt="Connections" src="img/6825363fe1963fc9.png"></li>
+<li>Click the Snowflake connection that was created by the registration process.  Your connection name will have Snowflake followed by your Snowflake account name.</li>
+<li>Following is a screenshot of a Snowflake connection.  Note the properties i.e. Snowflake objects under the <strong>Connection Section</strong>. <img alt="SnowflakeConnection" src="img/eb45bed289c3c82d.png"></li>
+<li>Click <strong>Test Connection</strong> button and you should see a successful test notification.</li>
+<li>In the next section, we will review the Snowflake objects that were created by Partner Connect.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Review the Snowflake Objects" duration="2">
+        <p>As described in Step 2 of <strong>Create IDMC Organization</strong> section, a set of Snowflake objects were created.  Those objects are Database, Warehouse, System User, and System Role.</p>
+<p>Let&#39;s take a look at those objects.</p>
+<h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Go to <strong>Worksheets</strong> in Snowflake, create a new worksheet and perform the following queries. <img alt="Worksheet_Creation" src="img/ca7d6fb719407557.png"> Note : You will have several SQL statements in the worksheet, position your cursor on the query to execute.</li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<ol type="1">
+<li>Run the following query to show the database object.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">show databases like &#39;PC_INF%&#39;;
+</code></pre>
+<p class="image-container"><img alt="Database" src="img/cc3d29f139ad2522.png"></p>
+<ol type="1" start="2">
+<li>Run the following query to show the warehouse object.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">show warehouses like &#39;PC_INF%&#39;;
+</code></pre>
+<p class="image-container"><img alt="Warehouse" src="img/6ffdb6df0cd54c05.png"></p>
+<ol type="1" start="3">
+<li>Run the following query to show the user object.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">show users like &#39;PC_INF%&#39;;
+</code></pre>
+<p class="image-container"><img alt="User" src="img/4a6b463c56260996.png"></p>
+<ol type="1" start="4">
+<li>Run the following query to show the role object.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">show roles like &#39;PC_INF%&#39;;
+</code></pre>
+<p class="image-container"><img alt="Role" src="img/f309d2a8a8bdf84b.png"></p>
+<ol type="1" start="5">
+<li>Now we&#39;re ready to start building our data integration pipeline.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure an AWS S3 connection" duration="5">
+        <p>An AWS S3 connection is required to access and read an AWS S3 bucket.  Follow configuration steps below to create the S3 connection.</p>
+<p>Note that the S3 connection requires that the S3 objects be encrypted.  If you are doing this lab live, you will be given an Access Key and Secret Key to use.  Alternatively, you can download the files at the end of this page and load them to your own S3 bucket.</p>
+<h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Click <strong>Connections</strong> on the left panel.</li>
+<li>Click <strong>New Connection</strong> button to create a new connection. <img alt="NewConnection" src="img/13407cc27bcc8504.png"></li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<ol type="1">
+<li>Enter <strong>S3</strong> in the Connection Name field.</li>
+<li>Select <strong>Amazon S3 v2</strong> from the Type dropdown field.</li>
+<li>Select <strong>Informatica Cloud Hosted Agent</strong> from the Runtime Environment dropdown field.</li>
+<li>Enter your access key in the Access Key field.</li>
+<li>Enter your secret key in the Secret Key field.</li>
+<li>Enter S3 bucket name <strong>dataforingestion-eu</strong> in the Folder Path field.</li>
+<li>Select your bucket&#39;s region from the Region Name dropdown field.</li>
+<li>Click <strong>Test Connection</strong> button.  If the configuration is correct, the page should display <strong>The test for this connection was successful.</strong></li>
+<li>Click <strong>Save</strong> button. <img alt="S3Connection" src="img/dd26b68953e56574.png"> Reference: <a href="https://docs.informatica.com/integration-cloud/cloud-data-integration-connectors/current-version/amazon-s3-v2-connector/amazon-s3-v2-connections/amazon-s3-v2-connection-properties.html" target="_blank">AWS S3 V2 Connector Documentation</a></li>
+<li>You should have an AWS S3 and Snowflake connections configured. <img alt="S3andSnowflake" src="img/18cba6628c1ed8dc.png"></li>
+</ol>
+<h2 is-upgraded>Step 3 (Alternative method for using your own S3 bucket)</h2>
+<ol type="1">
+<li>Click to download the following files.<br><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_informatica_Telco/telco_info.csv" target="_blank"><paper-button class="colored" raised>telco_info.csv</paper-button></a><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_informatica_Telco/loyalty_customers.csv" target="_blank"><paper-button class="colored" raised>loyalty_customers.csv</paper-button></a><a href="https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_informatica_Telco/additional_telco_info.json" target="_blank"><paper-button class="colored" raised>additional_telco_info.json</paper-button></a></li>
+<li>This action is optional and not needed for this lab. The only purpose is if you want to use the files using own bucket later.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Project Folder" duration="2">
+        <h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Click the Service Selector at the top left, then select <strong>Data Integration</strong> service. <img alt="ServiceSelector" src="img/20a121d73f8f751b.png"></li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<p>Let&#39;s create a project to store our mapping or assets.</p>
+<ol type="1">
+<li>Click <strong>Explore</strong> on the left panel.</li>
+<li>Click <strong>New Project</strong> to create a new project. <img alt="NewProject" src="img/69c4f8b5a70c592d.png"></li>
+<li>Enter <strong>Hands-on Lab</strong> in the Name field.</li>
+<li>Click <strong>Save</strong>.<br><img alt="Save" src="img/2c5eaca7ae96e745.png"></li>
+<li>Click <strong>Hands-on Lab</strong> project. <img alt="HandsonLab" src="img/c0a97c7685fcc6f8.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Load Data from AWS S3 into Snowflake using Pushdown Optimization (ELT)" duration="25">
+        <p>IDMC Data Integration allows you to load source data from databases, applications, and data files in the cloud or on-premises into Snowflake.  Data Integration supports many transformations that can be used to transform and enrich the source data.  In addition, pushdown optimization (PDO) can be utilized for some transformations and functions to take advantage of Snowflake compute resources for data processing.</p>
+<p>In this lab, you will create a mapping to read two delimited files (loyalty_customer and telco_info) from S3, join the files, perform an aggregation to create a count and total, and write the results into a new table in Snowflake.  Then in the mapping task, you will turn on pushdown optimization to enable the processing to occur in Snowflake.</p>
+<h2 is-upgraded>Step 1</h2>
+<p>Create a new mapping</p>
+<ol type="1">
+<li>Click <strong>New...</strong></li>
+<li>Click <strong>Mappings</strong></li>
+<li>Select <strong>Mapping</strong></li>
+<li>Click <strong>Create <br></strong><img alt="NewMapping" src="img/aba25d40e1690c8e.png"></li>
+<li>Under properties, enter <strong>m_S3_into_Snowflake_pushdown</strong> in Name field.</li>
+<li>Ensure that Location is <strong>Hands-on Lab</strong>. If not, click <strong>Browse</strong> and select it. <img alt="Mapping" src="img/db940f852d2f16c2.png"></li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<p>Let&#39;s configure customers loyalty data source from S3.</p>
+<ol type="1">
+<li>Click the <strong>Source</strong> transform in the mapping canvas to assign its properties.</li>
+<li>In the General tab, enter <strong>src_S3_Customers_Loyalty</strong> in the Name field.<br><img alt="src1" src="img/83b366383da98ae5.png"></li>
+<li>In the Source tab, select <strong>S3</strong> in the Connection dropdown field.</li>
+<li>Click <strong>Select</strong> to select a source file. <img alt="srcS3Orders" src="img/4e0c6ebf6a359115.png"></li>
+<li>Click on <strong>dataforingestion-eu</strong> S3 bucket.</li>
+<li>From the results on the right, select <strong>loyalty_customers.csv</strong> file.</li>
+<li>Click <strong>OK</strong>. <br><img alt="srcS3Orders2" src="img/3b2315fb1469b33e.png"></li>
+<li>Click Format dropdown field and select <strong>Flat</strong>.</li>
+<li>Click <strong>Formatting Options</strong>. <img alt="srcS3OrdersFormat" src="img/d4a0fd2f7ad34c25.png"></li>
+<li>Enter a <strong>semicolon</strong> character in the delimiter field, remove <strong>double-quote</strong> for the Qualifier. <img alt="srcS3CustLoyaltyFormat1" src="img/627f5de3138859f3.png"></li>
+<li>Click <strong>Data Preview</strong> to view the first 10 records.</li>
+<li>Records should be separated by fields. <img alt="srcS3CustLoyaltyFormat2" src="img/dd1638c4b48cb848.png"></li>
+<li>Click <strong>OK</strong>.</li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 3</h2>
+<p>Now we will add the Lineitem file as another data source.  The steps are the same as the above Orders data source.</p>
+<ol type="1">
+<li>From the transformation palette, drag <strong>Source</strong> transform and drop in the mapping canvas. <img alt="srcS3newSource" src="img/aa6ce54600e75cb3.png"></li>
+<li>Let&#39;s assign its properties.</li>
+<li>In the General tab, enter <strong>src_S3_Telco_Info</strong> in the Name field.</li>
+<li>In the Source tab, select <strong>S3</strong> in the Connection dropdown field.</li>
+<li>Click <strong>Select</strong> to select a source file.</li>
+<li>Click on <strong>dataforingestion-eu</strong> S3 bucket.</li>
+<li>From the results on the right, select <strong>telco_info.csv</strong> file.</li>
+<li>Click <strong>OK</strong>.</li>
+<li>Click Format dropdown field and select <strong>Flat</strong>.</li>
+<li>Click <strong>Formatting Options</strong>.</li>
+<li>Enter a <strong>semicolon</strong> character in the delimiter field, remove <strong>double-quote</strong> for the Qualifier.</li>
+<li>Click <strong>Data Preview</strong> to view the first 10 records.</li>
+<li>Records should be separated by fields.</li>
+<li>Click <strong>OK</strong>.</li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 4</h2>
+<p>Let&#39;s join the two data sources.</p>
+<ol type="1">
+<li>From the transformation palette, drag the <strong>Joiner</strong> transform and drop it over the line between the src_S3_Customers_Loyalty source and target transforms.  The Joiner should now be linked to the Orders and target.  If not, manually link them.</li>
+<li>Click align icon to align transformations in the mapping canvas. <img alt="joinertx" src="img/d95255d31c449370.png"></li>
+<li>Click the plus icon above the Joiner to expand.</li>
+<li>Link <strong>src_S3_Telco_Info</strong> to the Detail of Joiner transform. <img alt="joinerdetail" src="img/c40452db51c7479b.png"></li>
+<li>Let&#39;s assign the Joiner properties.</li>
+<li>In the General tab, enter <strong>jnr_sources</strong> in the Name field.</li>
+<li>In the Join Condition tab, click the plus icon to add a new condition.</li>
+<li>Select <strong>PHONE_NUMBER</strong> for Master and <strong>MSISDN</strong> for Detail. <img alt="joinercondition" src="img/fef37e8ebc7c0a89.png"></li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 5</h2>
+<p>Let&#39;s add an expession transformation and add an new port.</p>
+<ol type="1">
+<li>From the transformation palette, drag the <strong>Expression</strong> transform and drop it over the line between the jnr_sources source target transforms.</li>
+<li>Click align icon to align transformations in the mapping canvas. <img alt="expnameadd" src="img/7dd41abf24dba72d.png"></li>
+<li>In the General tab, enter <strong>exp_add_port</strong> in the Name field. <img alt="expname" src="img/e4ddbb3a339d3d76.png"></li>
+<li>Go to <strong>expression</strong> under General and click + icon on right to add Output Field</li>
+<li>Add the following field: <br>	<strong>o_grpby<br></strong><img alt="expportdefintion" src="img/1ad2e78f49f72b0b.png"></li>
+<li>Click <strong>Configure</strong> and enter the following in the Expression field. <img alt="expportdefintion" src="img/577b2cca15c2bc3a.png"></li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">SUBSTR(EVENT_DATE,1,10)
+</code></pre>
+<ol type="1" start="7">
+<li>Click <strong>OK <br></strong><img alt="expfinal" src="img/57c7f49884954e6.png">.</li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 6</h2>
+<p>Now we will count the number of event types per day per phone number.</p>
+<ol type="1">
+<li>From the transformation palette, select <strong>Aggregator</strong> transformation, drag and drop between the exp_add_port and Target in mapping canvas window.</li>
+<li>Click align icon to align transformations in the mapping canvas. <img alt="aggr" src="img/292cfcb9f39f2763.png"></li>
+<li>Let&#39;s assign the properties.</li>
+<li>In the General tab, enter <strong>agg_by_date</strong> in the Name field.</li>
+<li>In the Group By tab, click the plus icon to add new fields.</li>
+<li>Add the following fields: <br>	<strong>o_grpby<br>	PHONE_NUMBER</strong></li>
+<li>When completed, the Group By tab properties should look like this: <img alt="groupby" src="img/b36e64aee6f096d.png"></li>
+<li>In the Aggregate tab, click the plus icon to add a new field.</li>
+<li>Enter <strong>o_count</strong> in the Name field.</li>
+<li>Select <strong>integer</strong> in the Type dropdown field.</li>
+<li>Enter <strong>10</strong> in the Precision field.</li>
+<li>Enter <strong>0</strong> in the Scale field.</li>
+<li>Click <strong>OK</strong>.</li>
+<li>Click <strong>Configure</strong> to configure the expression.</li>
+<li>Enter <strong>count(EVENT_DTTM)</strong> in the Expression field. This function will count the number of event types per day per number.</li>
+<li>Enter the following in the Expression field.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">count(EVENT_DTTM)
+</code></pre>
+<ol type="1" start="17">
+<li>Click <strong>Validate</strong>.</li>
+<li>Click <strong>OK</strong>.</li>
+<li>When completed, your Expression tab properties should look like this: <img alt="groupbycomplete" src="img/dd10e472cbe0e8be.png"></li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 7</h2>
+<p>Lastly the target table is going to be in Snowflake.</p>
+<ol type="1">
+<li>Click <strong>Target</strong> to set a target properties.</li>
+<li>In the General tab, enter <strong>tgt_Snowflake</strong> in the Name field.</li>
+<li>In the Incoming Fields tab, select Named Fields <img alt="target" src="img/b1f1f63ce875da08.png"></li>
+<li>Select below fields : <br>	<strong>o_count<br>	o_grpby<br>	PHONE_NUMBER</strong><img alt="target" src="img/d50450b4667f7e7b.png"></li>
+<li>Go to <strong>Rename Fields</strong> tab and rename fields as below <br> 	Rename <strong>o_count</strong> as <strong>C_TOTAL<br></strong>    Rename <strong>o_grpby</strong> as <strong>C_DATE</strong><img alt="targetrenamedfields" src="img/d6fb616bb79de77a.png"></li>
+<li>Click <strong>OK</strong></li>
+<li>When completed, the Incoming Fields tab should look like this: <img alt="targetfields" src="img/c08349e5078689b9.png"></li>
+<li>In the target tab, select <strong>snowflake</strong> connection and click <strong>Select</strong> to select target table. <img alt="targetcomplete" src="img/56dbd05498919b00.png"></li>
+<li>Select <strong>Create New at Runtime</strong> for Target Object.</li>
+<li>Enter <strong>T_TELCO_AGG</strong> in Object Name field.</li>
+<li>Enter <strong>TABLE</strong> in the TableType field.</li>
+<li>Enter <strong>PC_INFORMATICA_DB/PUBLIC</strong> in Path field. <img alt="targettable" src="img/1abc407566bf31ec.png"></li>
+<li>The Target Fields tab should look like this: <img alt="targetfields" src="img/815344e767a43666.png"></li>
+<li>The Field Mapping tab should look like this: <img alt="targetcomplete" src="img/f1659d4f144a2af3.png"></li>
+<li>Run the mapping by selecting your mapping and click <strong>run</strong> button on top right <img alt="runmapping" src="img/e52479e3b19b1d9e.png"></li>
+<li>Click <strong>My Jobs</strong> to monitor the job execution. <br><img alt="myjobs1" src="img/41b09e3801eaa998.png"></li>
+<li>The monitor tab should look like this : <img alt="myjobs2" src="img/edabaf78aff5947c.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Pushdown Optimization and Execute the Mapping Task" duration="10">
+        <p>Let&#39;s configure Pushdown Optimization (PDO) in the Mapping Task and execute it.</p>
+<h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Click <strong>Save</strong> to save and validate the mapping.</li>
+<li>Click 3 dots icon to create a <strong>Mapping task</strong> from the mapping <br><img alt="mct" src="img/1b43ddce76c8b596.png"><br></li>
+<li>Select <strong>New Mapping Task<br></strong><img alt="mctnew" src="img/879c133c872e2706.png"></li>
+<li>In the New mapping task window, enter <strong>mct_S3_into_Snowflake_pushdown</strong> in the Name field.</li>
+<li>Select <strong>Hands-on Lab</strong> for Location.</li>
+<li>Select <strong>Informatica Cloud Hosted Agent</strong> for Runtime Environment.</li>
+<li>Click <strong>Next</strong>. <br><img alt="mctdef" src="img/c66e0ba47ed8218a.png"></li>
+<li>Scroll down to the Pushdown Optimization section.</li>
+<li>Select <strong>Full</strong> from the Pushdown Optimization dropdown list.</li>
+<li>Click <strong>Finish</strong>. <br><img alt="mct" src="img/944d6fb8d4451ce7.png"></li>
+<li>Click <strong>Run</strong> to execute the mapping task. <img alt="mctrun" src="img/9e0c47ef9eea801b.png"></li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<p>View job execution progress.</p>
+<ol type="1">
+<li>Click <strong>My Jobs</strong> to monitor the job execution. <br><img alt="job" src="img/d424efc335caf973.png"></li>
+<li>Click <strong>Refresh</strong> icon when the Updates available message appears.</li>
+<li>When the job is completed, make sure Status is <strong>Success</strong>. <img alt="success" src="img/a8bc7a2a14aea852.png"></li>
+<li>Drill down to the completed job by clicking the instance name.  Then click Download Session Log to view the log.<br><img alt="download" src="img/375f8fc3dbb97149.png"></li>
+<li>In the log you will see a message indicating that Pushdown Optimization is successfully enabled. <img alt="pdosuccess" src="img/ebe2ca124a1c8a4f.png"></li>
+<li>You will also see an INSERT SQL statement that Informatica generated for execution in Snowflake.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">INSERT INTO &#34;PC_INFORMATICA_DB&#34;.&#34;PUBLIC&#34;.&#34;T_TELCO_AGG&#34;(&#34;C_TOTAL&#34;,&#34;C_DATE&#34;,&#34;PHONE_NUMBER&#34;)     SELECT t5.t5c4::NUMBER(18,0),            t5.t5c3,            t5.PHONE_NUMBER     FROM (         SELECT T_T3.PHONE_NUMBER,                SUBSTR(T_T1.EVENT_DATE, 1, 10)::VARCHAR(10),                T_T3.PHONE_NUMBER as c0,                SUBSTR(T_T1.EVENT_DATE, 1, 10)::VARCHAR(10) as c1,                COUNT(T_T1.EVENT_DTTM)::NUMBER(10,0)         FROM (             SELECT T_T0.&#34;LOOKUP_ID&#34;::VARCHAR(256),                    T_T0.&#34;HOME_NETWORK_TAP_CODE&#34;::VARCHAR(256),                    T_T0.&#34;SERVING_NETWORK_TAP_CODE&#34;::VARCHAR(256),                    T_T0.&#34;IMSI_PREFIX&#34;::VARCHAR(256),                    T_T0.&#34;IMEI_PREFIX&#34;::VARCHAR(256),                    T_T0.&#34;HOME_NETWORK_NAME&#34;::VARCHAR(256),                    T_T0.&#34;HOME_NETWORK_COUNTRY&#34;::VARCHAR(256),                    T_T0.&#34;BID_SERVING_NETWORK&#34;::VARCHAR(256),                    T_T0.&#34;BID_DESCRIPTION&#34;::VARCHAR(256),                    T_T0.&#34;SERVICE_CATEGORY&#34;::VARCHAR(256),                    T_T0.&#34;CALL_EVENT_DESCRIPTION&#34;::VARCHAR(256),                    T_T0.&#34;ORIG_ID&#34;::VARCHAR(256),                    T_T0.&#34;EVENT_DATE&#34;::VARCHAR(256),                    T_T0.&#34;IMSI_SUFFIX&#34;::VARCHAR(256),                    T_T0.&#34;IMEI_SUFFIX&#34;::VARCHAR(256),                    T_T0.&#34;LOCATION_AREA_CODE&#34;::VARCHAR(256),                    T_T0.&#34;CELL_ID&#34;::VARCHAR(256),                    T_T0.&#34;CHARGED_UNITS&#34;::VARCHAR(256),                    T_T0.&#34;MSISDN&#34;::VARCHAR(256),                    T_T0.&#34;EVENT_DTTM&#34;::VARCHAR(256)             FROM &#34;PC_INFORMATICA_DB&#34;.&#34;PUBLIC&#34;.&#34;T_TELCO_AGG_1672851099992_261294f8-6d21-4275-aba1-cd32e54534da&#34;              AS T_T0)              AS T_T1(LOOKUP_ID, HOME_NETWORK_TAP_CODE, SERVING_NETWORK_TAP_CODE, IMSI_PREFIX, IMEI_PREFIX, HOME_NETWORK_NAME, HOME_NETWORK_COUNTRY, BID_SERVING_NETWORK, BID_DESCRIPTION, SERVICE_CATEGORY, CALL_EVENT_DESCRIPTION, ORIG_ID, EVENT_DATE, IMSI_SUFFIX, IMEI_SUFFIX, LOCATION_AREA_CODE, CELL_ID, CHARGED_UNITS, MSISDN, EVENT_DTTM)         Join (             SELECT T_T2.&#34;ID&#34;::VARCHAR(256),                    T_T2.&#34;FIRST_NAME&#34;::VARCHAR(256),                    T_T2.&#34;LAST_NAME&#34;::VARCHAR(256),                    T_T2.&#34;EMAIL&#34;::VARCHAR(256),                    T_T2.&#34;GENDER&#34;::VARCHAR(256),                    T_T2.&#34;STATUS&#34;::VARCHAR(256),                    T_T2.&#34;ADDRESS&#34;::VARCHAR(256),                    T_T2.&#34;PHONE_NUMBER&#34;::VARCHAR(256),                    T_T2.&#34;POINTS&#34;::VARCHAR(256)             FROM &#34;PC_INFORMATICA_DB&#34;.&#34;PUBLIC&#34;.&#34;T_TELCO_AGG_1672851099885_f3e780ff-b0db-423f-98fc-c86871635698&#34;              AS T_T2)              AS T_T3(ID, FIRST_NAME, LAST_NAME, EMAIL, GENDER, STATUS, ADDRESS, PHONE_NUMBER, POINTS)          ON T_T3.PHONE_NUMBER = T_T1.MSISDN         GROUP BY 1, 2)      AS t5(PHONE_NUMBER, t5c1, PHONE_NUMBER0, t5c3, t5c4) ]
+</code></pre>
+<h2 is-upgraded>Step 3</h2>
+<ol type="1">
+<li>In Snowflake Snowsight, you should see 438485 rows inserted in the <strong>T_TELCO_AGG</strong> table. <img alt="snowflake" src="img/ded2c0a12a75e87c.png"></li>
+<li>Click</li>
+<li>You can also view the Informatica-generated INSERT statement that was executed in the Snowflake query history.</li>
+<li>Click Home button <img alt="snowhomeButton" src="img/3395c13260232b42.png"> <br></li>
+<li>Go to Activity –&gt; <strong>Query History and selecting</strong>, select &#34;All&#34; or &#34;PC_INFORMATICA_USER&#34; as user. <img alt="snowflakehistory1" src="img/ac4e7a8e303cdabe.png"> <br><img alt="snowflakehistory2" src="img/bd0d2e92dbad773.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Transform Semi-Structured JSON Data" duration="3">
+        <h2 is-upgraded>Step 1</h2>
+<p>JSON (JavaScript Object Notation) is a text-based data format commonly used between servers and web applications and web-connected devices.  Because it is text-based, it is readable by both humans and machines.  JSON semi-structured data can be stored in Snowflake variant column alongside relational data.  In IDMC, the hierarchy parser transformation parses and transforms hierarchy data to relational data.</p>
+<p>In this section, we&#39;ll load some JSON-formatted telco data into the PC_INFORMATICA_DB database.  You will then use it to create a hierarchical schema, then use it in a mapping to parse and transform, join them, add an expression to convert the timestamp, then write to a new table.</p>
+<p>For this step we will use standard Snowflake SQL commands to create a table with a Snowflake <strong>VARIANT</strong> column.</p>
+<ol type="1">
+<li>In Snowflake <strong>Snowsight</strong>, execute all of the following SQL statements.</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">-- Set the correct ROLE, WAREHOUSE, and SCHEMA
+use role PC_INFORMATICA_ROLE;
+use warehouse PC_INFORMATICA_WH;
+use schema PC_INFORMATICA_DB.PUBLIC;
+
+-- Create the table
+create or replace table pc_informatica_db.public.T_VHOL_JSON (
+  v variant);
+
+copy into T_VHOL_JSON
+	  from s3://snowflake-corp-se-workshop/VHOL_Snowflake_informatica_Telco/additional_telco_info.json
+	  FILE_FORMAT = ( TYPE = JSON);
+	  
+</code></pre>
+<p class="image-container"><img alt="copytable" src="img/ab19ccb3af1875b1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Hierarchical Schema" duration="15">
+        <h2 is-upgraded>Step 1</h2>
+<p>Copy JSON data from the Snowflake table and save it locally in your computer.</p>
+<ol type="1">
+<li>Go to Worksheets, execute the following query:</li>
+</ol>
+<pre><code language="language-SQL" class="language-SQL">select * from pc_informatica_db.public.T_VHOL_JSON;
+</code></pre>
+<ol type="1" start="2">
+<li>Click data in column V in the result panel.</li>
+<li>Click Copy icon. <img alt="daily14total" src="img/f5589396d0a2fb65.png"></li>
+<li>Save the copied JSON data in a text file locally on your computer and name it <strong>additional_data.json</strong>.</li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<p>Create a Hierarchical Schema in IDMC.</p>
+<ol type="1">
+<li>In IDMC, go to <strong>Data Integration</strong> service.</li>
+<li>Click <strong>New</strong>.</li>
+<li>Click <strong>Components</strong>.</li>
+<li>Select <strong>Hierarchical Schema</strong> and click <strong>Create</strong>. <img alt="Hschema" src="img/ebeca52ccfa4287e.png"></li>
+<li>Enter <strong>hs_vhol_data</strong> in the Name field.</li>
+<li>Select <strong>Hands-on Lab</strong> in the Location field if not already filled in.</li>
+<li>Click <strong>Upload</strong>. <img alt="upload" src="img/96bbaceb6b7257a8.png"></li>
+<li>Click <strong>Choose File</strong> and select the JSON file you saved in Step 1 above.</li>
+<li>Click <strong>Validate</strong> and you should see <strong>&#34;JSON Sample is Valid&#34;</strong> message.</li>
+<li>Click <strong>OK</strong>. <img alt="upload" src="img/376d176e6817b39d.png"></li>
+<li>Click Save. <img alt="save" src="img/51d13160c0a09386.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a Mapping to Read Hierarchical Data" duration="15">
+        <p>Create a mapping to read from the t_vhol_json table, use hierarchy parser to parse the JSON data.</p>
+<h2 is-upgraded>Step 1</h2>
+<ol type="1">
+<li>Click <strong>New</strong></li>
+<li>Click <strong>Mappings</strong>.</li>
+<li>Select <strong>Mapping</strong>.</li>
+<li>Click <strong>Create</strong>.</li>
+<li>Under properties, enter <strong>m_parse_json_data</strong> in Name field.</li>
+<li>Ensure Location is <strong>Hands-on Lab</strong>. If not, click <strong>Browse</strong> and select it. <img alt="newmapping" src="img/b371552fcdd63531.png"></li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<p>Let&#39;s configure the data source from Snowflake.</p>
+<ol type="1">
+<li>Click <strong>Source</strong> transform in the mapping canvas to assign its properties.</li>
+<li>In General tab, enter <strong>src_vhol_json</strong> in the Name field.</li>
+<li>In Source tab, select Snowflake_[account name] in the Connection dropdown field.</li>
+<li>Click Select <strong>T_VHOL_JSON</strong> to select the source table/object.</li>
+<li>In Select Source Object window, scroll down to find <strong>PC_INFORMATICA_DB</strong> and click it.  Then click <strong>PUBLIC</strong> schema.</li>
+<li>Select <strong>T_VHOL_JSON</strong> in the tables list on the right pane.</li>
+<li>Click <strong>OK</strong>. <img alt="newmapping" src="img/c1e4b539fe531dba.png"></li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 3</h2>
+<p>Add HierarchyParser transform and configure it.</p>
+<ol type="1">
+<li>Drag and drop <strong>Hierarchy Parser</strong> transform on to the canvas. <img alt="Hparser" src="img/f9b0cb66e3fe61bf.png"></li>
+<li>In General tab, enter <strong>hp_parse_JSON</strong> in the Name field.</li>
+<li>In Input Settings tab, click Select and select the <strong>hs_vhol_data</strong> hierarchical schema.  Click <strong>OK</strong>. <img alt="Hparserjson" src="img/31bd2b5feed6c879.png"></li>
+<li>Select the link from <strong>src_vhol_json</strong> to <strong>Target</strong> and click delete icon.</li>
+<li>Link <strong>src_vhol_json</strong> to <strong>hp_parse_JSON</strong>.<br><img alt="link" src="img/5bfc91d38889af30.png"></li>
+<li>Select the hp_parse_JSON transformation, then, in Input Field Selection tab, drag and drop <strong>V</strong> field from Incoming Fields to Input field in Hierarchical Schema Input Fields <img alt="drop" src="img/daae18dd0b562a73.png"></li>
+<li>In Field Mapping tab, expand root element by clicking the triangle icon or expand/contract icon.</li>
+<li>Click rootArray and select <strong>Map all descendants</strong><img alt="drop1" src="img/c41072fee0f301c8.png"></li>
+<li>you should see <img alt="drop2" src="img/47965e49b2d825ab.png"></li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 4</h2>
+<p>Add a Joiner transform to link root and data relational field groups and configure it.</p>
+<ol type="1">
+<li>Drag and drop <strong>Joiner</strong> transform on the canvas.</li>
+<li>In the General tab, enter <strong>jnr_hierarchical_data</strong> in the Name field.</li>
+<li>Link <strong>hp_parse_JSON</strong> to the <strong>Master</strong> in Joiner transform.</li>
+<li>Select Output Group window appears.  Select <strong>root</strong> and click <strong>OK</strong>. <img alt="root" src="img/bbdd92316fae396a.png"></li>
+<li>Link <strong>hp_parse_JSON</strong> again but this time to the <strong>Detail</strong> in Joiner transform.</li>
+<li>Select <strong>data</strong> in Output Group and click <strong>OK</strong>. <img alt="data" src="img/fcf1ddb6867a683.png"></li>
+<li>In Join Condition tab, click add icon.</li>
+<li>Select <strong>PK_root (bigint)</strong> in Master column and <strong>FK_root (bigint)</strong> in the Detail. <img alt="condition" src="img/830aaf5f273e4fc5.png"></li>
+<li>In Advanced tab, select <strong>Sorted Input</strong>. <img alt="sort" src="img/3b7c286569c1fbc.png"></li>
+<li>Click <strong>Save</strong> to save work in progress.</li>
+</ol>
+<h2 is-upgraded>Step 5</h2>
+<p>Finally, let&#39;s configure the Target.</p>
+<ol type="1">
+<li>Link <strong>jnr_hierarchical_data</strong> to Target.</li>
+<li>In the General tab, enter <strong>tgt_Snowflake_Telco_Info</strong> in the Name field.</li>
+<li>In the Incoming Fields tab, change All Fields to <strong>Named Fields</strong> by clicking on that field.</li>
+<li>Then click <strong>Configure</strong> to select fields.  Select the fields that were created in the <strong>jnr_hierarchical_data</strong> expression transform. <img alt="targetincomingfields" src="img/4a661b85ded2c978.png"></li>
+<li>Go to Rename Fields tab and rename selected fields <img alt="targetrenamingfields" src="img/435b488163177387.png"></li>
+<li>In the Target tab, select <strong>Snowflake</strong> connection.</li>
+<li>Click <strong>Select</strong> to select a table.</li>
+<li>In the Target Object window, check <strong>Create New at Runtime</strong>.</li>
+<li>Enter <strong>T_TELCO_INFO</strong> in Object Name field.</li>
+<li>Enter <strong>TABLE</strong> in TableType.</li>
+<li>Enter <strong>PC_INFORMATICA_DB/PUBLIC</strong> in Path.</li>
+<li>Click <strong>OK</strong>. <img alt="target" src="img/ba950555bc11da09.png"><img alt="field mapping" src="img/474b8fd98aa1b903.png"></li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and Execute a Mapping Task" duration="5">
+        <h2 is-upgraded>Step 1</h2>
+<p>Let&#39;s configure a Mapping Task and execute it.</p>
+<ol type="1">
+<li>Click 3 dots to create Mapping task from the mapping</li>
+<li>Select <strong>New Mapping Task<br></strong><img alt="newmct" src="img/b815925b21694dfd.png"> <br></li>
+<li>In the New mapping task window, enter <strong>mct_parse_json_data</strong> in the Name field.</li>
+<li>Select <strong>Hands-on Lab</strong> for Location.</li>
+<li>Select <strong>Informatica Cloud Hosted Agent</strong> for Runtime Environment.</li>
+<li>Click <strong>Finish</strong>. <img alt="newmct" src="img/ac083be2fdb783e6.png"></li>
+<li>Click Run to execute the mapping task.</li>
+</ol>
+<h2 is-upgraded>Step 2</h2>
+<p>Validate job execution result.</p>
+<ol type="1">
+<li>Click <strong>My Jobs</strong> to monitor the job execution.</li>
+<li>Click <strong>Refresh</strong> icon when Updates available message appears.</li>
+<li>When the job is completed, make sure the Status is <strong>Success</strong>.</li>
+<li><strong>140</strong> rows were processed. <img alt="864rows" src="img/90d45e8c341a560a.png"></li>
+<li>In the Snowflake table preview, there are 140 rows as well.  Notice that the columns label are in the order as configured in the Expression transform. <img alt="864rowsinSF" src="img/8dc37221bed339bd.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Optional -  Create a Mapping to load additional data into aggragate table" duration="15">
+        <p>Optionally you can load data T_TELCO_INFO into T_TELCO_AGG and review results.</p>
+<h2 is-upgraded>Steps</h2>
+<ol type="1">
+<li>Click <strong>New</strong></li>
+<li>Click <strong>Mappings</strong>.</li>
+<li>Select <strong>Mapping</strong>.</li>
+<li>Click <strong>Create</strong>.</li>
+<li>Under properties, enter <strong>m_add_data_to_aggregate</strong> in Name field.</li>
+<li>Ensure Location is <strong>Hands-on Lab</strong>. If not, click <strong>Browse</strong> and select it.</li>
+<li>Click the <strong>Source</strong> transform in the mapping canvas to assign its properties.</li>
+<li>In the General tab, enter <strong>src_telco_info</strong> in the Name field</li>
+<li>In the Source tab, select <strong>snowflake</strong> connection and <strong>T_TELCO_INFO</strong> as Object</li>
+<li>From the transformation palette, drag the <strong>Expression</strong> transform and drop it over the line between the jnr_sources source target transforms.</li>
+<li>Click align icon to align transformations in the mapping canvas.</li>
+<li>In the General tab, enter <strong>exp_add_port</strong> in the Name field.</li>
+<li>Go to expression and click + icon on right as an Output Field</li>
+<li>Add the following field <strong>o_grpby</strong></li>
+<li>Enter the following in the Expression field <strong>SUBSTR(EVENT_DTTM,1,10)</strong></li>
+<li>From the transformation palette, select <strong>Aggregator</strong> transformation, drag and drop between the exp_add_port and Target in mapping canvas window..</li>
+<li>In the General tab, enter <strong>agg_by_date</strong> in the Name field.</li>
+<li>In the Group By tab, click the plus icon to add new fields.</li>
+<li>Add the following fields: <br>	<strong>o_grpby<br>	MSISDN</strong></li>
+<li>In the Aggregate tab, click the plus icon to add a new field.</li>
+<li>Enter <strong>o_count</strong> in the Name field.</li>
+<li>Select <strong>integer</strong> in the Type dropdown field.</li>
+<li>Enter <strong>10</strong> in the Precision field.</li>
+<li>Enter <strong>0</strong> in the Scale field.</li>
+<li>Click <strong>OK</strong>.</li>
+<li>Click <strong>Configure</strong> to configure the expression.</li>
+<li>Enter <strong>count(EVENT_DTTM)</strong> in the Expression field. This function will count the number of event types per day per number.</li>
+<li>Click <strong>Target</strong> to set a target properties.</li>
+<li>In the General tab, enter <strong>tgt_agg_snowflake</strong> in the Name field.</li>
+<li>select the <strong>snowflake</strong> connection in the target</li>
+<li>Select <strong>Existing</strong> for Target Object.</li>
+<li>Select <strong>PC_INFORMATICA_DB/PUBLIC/T_TELCO_AGG</strong> in Object Name field. <img alt="targettableExisting" src="img/5e8aa5493e73a5e9.png"></li>
+<li>The Target Fields tab should look like this: <img alt="targetfields" src="img/3668b0d6482f8ea9.png"></li>
+<li>The Field Mapping tab should look like this: <img alt="targetcomplete" src="img/f1659d4f144a2af3.png"></li>
+<li>Create a mapping task <strong>mct_add_data_to_aggregate</strong>  and <strong>run</strong> it.</li>
+<li>The  mapping task  should look like this: <img alt="mctfinal" src="img/61ab09cac9a5d2b2.png"></li>
+<li>In Snowflake Snowsight, you should see now 438619 rows  in the <strong>T_TELCO_AGG</strong> table. <img alt="snowfinal" src="img/1cd53057e0a2a1a9.png"></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p><strong>Congratulations! You have successfully completed these Labs</strong></p>
+<p>In this guide, you learned how to create a free IDMC organization, use Pushdown Optimization/ELT to load and transform mobile traffic and customer loyalty data from S3 files into Snowflake, and how to transform JSON data using Hierarchy Parser transformation. You can utilize your new IDMC org to load data from various data sources into Snowflake and perform data transformations using Data Integration service. With this free IDMC org, you can load 1 billion records per month for free</p>
+<h2 is-upgraded>What we&#39;ve covered in this guide</h2>
+<ul>
+<li>Create an IDMC org via Snowflake Partner Connect</li>
+<li>Review Snowflake connection in IDMC</li>
+<li>Review Snowflake objects created by the registration process</li>
+<li>Configure AWS S3 connection</li>
+<li>Create a Project folder</li>
+<li>Create a data integration mapping to load S3 files into Snowflake</li>
+<li>Configure Pushdown Optimization</li>
+<li>View mapping job result</li>
+<li>Confirm Pushdown Optimization is activated</li>
+<li>View result in Snowflake</li>
+<li>Create JSON schema in Data Integration service</li>
+<li>Use Hierarchy Parser transformation</li>
+<li>Create a data integration mapping to load transform JSON hierarchical data into relational format</li>
+<li>Create a mapping task</li>
+<li>View mapping job result</li>
+<li>View result in Snowflake</li>
+</ul>
+<h2 is-upgraded>Continue learning and check out these guides</h2>
+<p><a href="https://docs.informatica.com/integration-cloud/cloud-data-integration/current-version/introduction/introducing-informatica-cloud--data-integration/data-integration.html" target="_blank">Documentation: Informatica Data Integration</a></p>
+<p><a href="https://docs.informatica.com/integration-cloud/cloud-data-integration/current-version/data-integration-connections/connection-properties/snowflake-data-cloud-connection-properties.html" target="_blank">Documentation: Snowflake connector</a></p>
+<p><a href="https://marketplace.informatica.com/listings/cloud/connectors/snowflake_elastic_data_warehouse.html" target="_blank">Landing page for Informatica Intelligent Cloud Services Accelerator for Snowflake</a></p>
+<p><a href="https://docs.informatica.com/integration-cloud/cloud-platform/h2l/1423-informatica-intelligent-cloud-services-for-snowflake-accele/frequently-asked-questions/frequently-asked-questions.html" target="_blank">FAQ for Snowflake Accelerator</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

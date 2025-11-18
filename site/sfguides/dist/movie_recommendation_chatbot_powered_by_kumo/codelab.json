@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:16-04:00",
+  "id": "movie_recommendation_chatbot_powered_by_kumo",
+  "duration": 55,
+  "title": "Personalized Movie Recommendation Chatbot Powered by Kumo in Snowflake Native App",
+  "summary": "This guide will provide step-by-step details for building a personalized movie recommendation chatbot using Kumo in a Snowflake Native App, CortexAI and Streamlit.",
+  "source": "movie_recommendation_chatbot_powered_by_kumo/movie_recommendation_chatbot_powered_by_kumo.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "data-science",
+    "data-engineer",
+    "partner-integrations"
+  ],
+  "tags": [
+    "cortex",
+    "dataengineering",
+    "datascience",
+    "gettingstarted",
+    "machinelearning",
+    "snowparkcontainerservices",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "movie_recommendation_chatbot_powered_by_kumo"
+}

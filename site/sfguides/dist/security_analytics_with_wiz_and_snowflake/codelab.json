@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:17-04:00",
+  "id": "security_analytics_with_wiz_and_snowflake",
+  "duration": 28,
+  "title": "Security Analytics with Wiz and Snowflake",
+  "summary": "learn about the Wiz and Snowflake integration for analyzing Wiz data in Snowflake",
+  "source": "security_analytics_with_wiz_and_snowflake/security_analytics_with_wiz_and_snowflake.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cybersecurity",
+    "solution-examples",
+    "partner-integrations"
+  ],
+  "tags": [
+    "gettingstarted",
+    "security",
+    "securitydatalake",
+    "web",
+    "wiz"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "security_analytics_with_wiz_and_snowflake"
+}

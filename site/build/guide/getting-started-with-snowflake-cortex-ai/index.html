@@ -1,0 +1,365 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started With Snowflake Cortex AI</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting-started-with-snowflake-cortex-ai"
+                  title="Getting Started With Snowflake Cortex AI"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p>Getting started with AI on enterprise data can seem overwhelming, between getting familiar with LLMs, how to perform custom prompt engineering, and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex AI.</p>
+<p>In this guide, we will go through various flows and show you the fastest and easiest way to get started with Snowflake Cortex AI.</p>
+<h2 is-upgraded>What is Snowflake Cortex AI?</h2>
+<p>Snowflake offers two broad categories of powerful, intelligent features based on Artificial Intelligence (AI) and Machine Learning (ML). These features can help you do more with your data in less time than ever before.</p>
+<p>Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.</p>
+<p>Learn more about <a href="https://www.snowflake.com/en/product/features/cortex/" target="_blank">Snowflake Cortex AI</a>.</p>
+<h2 is-upgraded>What You Will Learn</h2>
+<ul>
+<li>How to use Snowflake Cortex AI for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and task-specific LLM functions to perform operations like translate, sentiment scoring, etc</li>
+<li>How to fine-tune an LLM in Snowflake</li>
+<li>How to build a Streamlit application and a Snowflake Notebook that uses Snowflake Cortex AI capabilities in Snowflake</li>
+</ul>
+<h2 is-upgraded>What You Will Build</h2>
+<ul>
+<li>An interactive Streamlit application and a Snowflake Notebook that uses Snowflake Cortex AI capabilities – both running securely in Snowflake.</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake</a> account in a region where your choice of LLMs are <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability" target="_blank">available</a>.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup" duration="5">
+        <p>Prior to GenAI, a lot of the information was buried in text format and therefore going underutilized for root cause analysis due to complexities in implementing natural language processing. But with Snowflake Cortex AI it&#39;s as easy as writing a SQL statement!</p>
+<p>In this guide, we&#39;ll utilize synthetic call transcripts data, mimicking text sources commonly overlooked by organizations, including customer calls/chats, surveys, interviews, and other text data generated in marketing and sales teams.</p>
+<h2 is-upgraded>Create Table and Load Data</h2>
+<p>In a new SQL worksheet, run the following statements to set up your environment. This will:</p>
+<ul>
+<li>Create a database, schema, and warehouse</li>
+<li>Create a table</li>
+<li>Load sample data from an Amazon S3 bucket</li>
+</ul>
+<pre><code language="language-sql" class="language-sql">USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE IF NOT EXISTS DASH_DB;
+CREATE SCHEMA IF NOT EXISTS DASH_SCHEMA;
+CREATE WAREHOUSE IF NOT EXISTS DASH_XS_WH WAREHOUSE_SIZE=XSMALL;
+
+USE DASH_DB.DASH_SCHEMA;
+USE WAREHOUSE DASH_XS_WH;
+
+CREATE or REPLACE file format csvformat
+  SKIP_HEADER = 1
+  FIELD_OPTIONALLY_ENCLOSED_BY = &#39;&#34;&#39;
+  type = &#39;CSV&#39;;
+
+CREATE or REPLACE stage call_transcripts_data_stage
+  file_format = csvformat
+  url = &#39;s3://sfquickstarts/misc/call_transcripts/&#39;;
+
+CREATE or REPLACE table CALL_TRANSCRIPTS ( 
+  date_created date,
+  language varchar(60),
+  country varchar(60),
+  product varchar(60),
+  category varchar(60),
+  damage_type varchar(90),
+  transcript varchar
+) COMMENT = &#39;{&#34;origin&#34;:&#34;sf_sit-is&#34;, &#34;name&#34;:&#34;aiml_notebooks_cortex_ai&#34;, &#34;version&#34;:{&#34;major&#34;:1, &#34;minor&#34;:0}, &#34;attributes&#34;:{&#34;is_quickstart&#34;:1, &#34;source&#34;:&#34;sql&#34;}}&#39;;
+
+COPY into CALL_TRANSCRIPTS
+  from @call_transcripts_data_stage;
+</code></pre>
+<aside class="special"><p> IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Task Specific LLM Functions" duration="5">
+        <p>Given the data in <code>CALL_TRANSCRIPTS</code> table, let&#39;s see how we can use task specific LLMs functions in Snowflake Cortex. It offers access to industry-leading AI models, without requiring any knowledge of how the AI models work, how to deploy LLMs, or how to manage GPU infrastructure.</p>
+<p>Run the following statements in the same or a new SQL worksheet.</p>
+<h2 is-upgraded>Translate</h2>
+<p>Using Snowflake Cortex function <strong>snowflake.cortex.translate</strong> we can easily translate any text from one language to another. Let&#39;s see how easy it is to use this function.</p>
+<pre><code language="language-sql" class="language-sql">select snowflake.cortex.translate(&#39;wie geht es dir heute?&#39;,&#39;de_DE&#39;,&#39;en_XX&#39;);
+</code></pre>
+<p>Executing the above SQL should generate <strong><em>&#34;How are you today?&#34;</em></strong></p>
+<h3 is-upgraded>Batch mode</h3>
+<p>Now let&#39;s see how you can translate call transcripts from German to English in batch mode using just SQL.</p>
+<pre><code language="language-sql" class="language-sql">select transcript,snowflake.cortex.translate(transcript,&#39;de_DE&#39;,&#39;en_XX&#39;) from call_transcripts where language = &#39;German&#39;;
+</code></pre>
+<p>See the list of <a href="https://docs.snowflake.com/en/sql-reference/functions/translate-snowflake-cortex#usage-notes" target="_blank">supported languages</a>.</p>
+<h2 is-upgraded>Sentiment Score</h2>
+<p>Now let&#39;s see how we can use <strong>snowflake.cortex.sentiment</strong> function to generate sentiment scores on call transcripts.</p>
+<p><em>Note: Score is between -1 and 1; -1 = most negative, 1 = positive, 0 = neutral</em></p>
+<pre><code language="language-sql" class="language-sql">select transcript, snowflake.cortex.sentiment(transcript) from call_transcripts where language = &#39;English&#39;;
+</code></pre>
+<h2 is-upgraded>Summarize</h2>
+<p>Now that we know how to translate call transcripts in English, it would be great to have the model pull out the most important details from each transcript so we don&#39;t have to read the whole thing. Let&#39;s see how <strong>snowflake.cortex.summarize</strong> function can do this and try it on one record.</p>
+<pre><code language="language-sql" class="language-sql">select transcript,snowflake.cortex.summarize(transcript) as summary from call_transcripts where language = &#39;English&#39; limit 1;
+</code></pre>
+<h3 is-upgraded>Summary with tokens count</h3>
+<pre><code language="language-sql" class="language-sql">select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.cortex.count_tokens(&#39;summarize&#39;,transcript) as number_of_tokens from call_transcripts where language = &#39;English&#39; limit 1;
+</code></pre>
+<aside class="special"><p> NOTE: Snowflake Cortex LLM functions incur compute cost based on the number of tokens processed. Refer to the <a href="https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations" target="_blank">documentation</a> for more details on each function&#39;s cost in credits per million tokens.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prompt Engineering" duration="5">
+        <p>Being able to pull out the summary is good, but it would be great if we specifically pull out the product name, what part of the product was defective, and limit the summary to 200 words.</p>
+<p>Let&#39;s see how we can accomplish this using the <strong>snowflake.cortex.complete</strong> function.</p>
+<pre><code language="language-sql" class="language-sql">ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = &#39;ANY_REGION&#39;;
+
+SET prompt = 
+&#39;### 
+Summarize this transcript in less than 200 words. 
+Put the product name, defect and summary in JSON format. 
+###&#39;;
+
+select snowflake.cortex.complete(&#39;claude-4-sonnet&#39;,concat(&#39;[INST]&#39;,$prompt,transcript,&#39;[/INST]&#39;)) as summary
+from call_transcripts where language = &#39;English&#39; limit 1;
+</code></pre>
+<p>Here we&#39;re selecting the Claude 4 model and giving it a prompt telling it how to customize the output. Sample response:</p>
+<pre><code language="language-json" class="language-json">{
+    &#34;product&#34;: &#34;XtremeX helmets&#34;,
+    &#34;defect&#34;: &#34;Broken buckles that won&#39;t secure the helmet properly&#34;,
+    &#34;summary&#34;: &#34;Jessica Turner from Mountain Ski Adventures contacted customer service regarding a recent order (order #68910) of XtremeX helmets. Upon inspection, they discovered that 10 helmets had broken buckles that wouldn&#39;t secure properly. The customer service agent apologized for the inconvenience and offered either a refund or replacement. Jessica requested replacements since they still needed the helmets for their customers. The agent processed a replacement order for 10 new XtremeX helmets with functioning buckles, which will be expedited and should arrive within 3-5 business days. The issue was resolved satisfactorily with the customer expressing appreciation for the assistance.&#34;
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Streamlit Application" duration="10">
+        <p>To put it all together, let&#39;s create a Streamlit application in Snowflake.</p>
+<h2 is-upgraded>Setup</h2>
+<p><strong>Step 1.</strong> Click on <strong>Streamlit</strong> on the left navigation menu</p>
+<p><strong>Step 2.</strong> Click on <strong>+ Streamlit App</strong> on the top right</p>
+<p><strong>Step 3.</strong> Enter <strong>App name</strong></p>
+<p><strong>Step 4.</strong> Select <strong>App location</strong> (DASH_DB and DASH_SCHEMA) and <strong>App warehouse</strong> (DASH_XS_WH)</p>
+<p><strong>Step 5.</strong> Select <strong>Run on warehouse</strong> for <strong>Runtime</strong>.</p>
+<p><strong>Step 6.</strong> Click on <strong>Create</strong></p>
+<ul>
+<li>At this point, you will be provided code for an example Streamlit application</li>
+</ul>
+<p><strong>Step 7.</strong> Replace the entire sample application code on the left with the following code snippet.</p>
+<pre><code language="language-python" class="language-python">import streamlit as st
+from snowflake.snowpark.context import get_active_session
+
+st.set_page_config(layout=&#39;wide&#39;)
+session = get_active_session()
+
+def summarize():
+    with st.container():
+        st.header(&#34;JSON Summary With Snowflake Cortex AI&#34;)
+        entered_text = st.text_area(&#34;Enter text&#34;,label_visibility=&#34;hidden&#34;,height=400,placeholder=&#39;Enter text. For example, a call transcript.&#39;)
+        btn_summarize = st.button(&#34;Summarize&#34;,type=&#34;primary&#34;)
+        if entered_text and btn_summarize:
+            entered_text = entered_text.replace(&#34;&#39;&#34;, &#34;\\&#39;&#34;)
+            prompt = f&#34;Summarize this transcript in less than 200 words. Put the product name, defect if any, and summary in JSON format: {entered_text}&#34;
+            cortex_prompt = &#34;&#39;[INST] &#34; + prompt + &#34; [/INST]&#39;&#34;
+            cortex_response = session.sql(f&#34;select snowflake.cortex.complete(&#39;claude-4-sonnet&#39;, {cortex_prompt}) as response&#34;).to_pandas().iloc[0][&#39;RESPONSE&#39;]
+            st.write(cortex_response)
+
+def translate():
+    supported_languages = {&#39;German&#39;:&#39;de&#39;,&#39;French&#39;:&#39;fr&#39;,&#39;Korean&#39;:&#39;ko&#39;,&#39;Portuguese&#39;:&#39;pt&#39;,&#39;English&#39;:&#39;en&#39;,&#39;Italian&#39;:&#39;it&#39;,&#39;Russian&#39;:&#39;ru&#39;,&#39;Swedish&#39;:&#39;sv&#39;,&#39;Spanish&#39;:&#39;es&#39;,&#39;Japanese&#39;:&#39;ja&#39;,&#39;Polish&#39;:&#39;pl&#39;}
+    with st.container():
+        st.header(&#34;Translate With Snowflake Cortex AI&#34;)
+        col1,col2 = st.columns(2)
+        with col1:
+            from_language = st.selectbox(&#39;From&#39;,dict(sorted(supported_languages.items())))
+        with col2:
+            to_language = st.selectbox(&#39;To&#39;,dict(sorted(supported_languages.items())))
+        entered_text = st.text_area(&#34;Enter text&#34;,label_visibility=&#34;hidden&#34;,height=300,placeholder=&#39;Enter text. For example, a call transcript.&#39;)
+        btn_translate = st.button(&#34;Translate&#34;,type=&#34;primary&#34;)
+        if entered_text and btn_translate:
+          entered_text = entered_text.replace(&#34;&#39;&#34;, &#34;\\&#39;&#34;)
+          cortex_response = session.sql(f&#34;select snowflake.cortex.translate(&#39;{entered_text}&#39;,&#39;{supported_languages[from_language]}&#39;,&#39;{supported_languages[to_language]}&#39;) as response&#34;).to_pandas().iloc[0][&#39;RESPONSE&#39;]
+          st.write(cortex_response)
+
+def sentiment_analysis():
+    with st.container():
+        st.header(&#34;Sentiment Analysis With Snowflake Cortex AI&#34;)
+        entered_text = st.text_area(&#34;Enter text&#34;,label_visibility=&#34;hidden&#34;,height=400,placeholder=&#39;Enter text. For example, a call transcript.&#39;)
+        btn_sentiment = st.button(&#34;Sentiment Score&#34;,type=&#34;primary&#34;)
+        if entered_text and btn_sentiment:
+          entered_text = entered_text.replace(&#34;&#39;&#34;, &#34;\\&#39;&#34;)
+          cortex_response = session.sql(f&#34;select snowflake.cortex.sentiment(&#39;{entered_text}&#39;) as sentiment&#34;).to_pandas().iloc[0][&#39;SENTIMENT&#39;]
+          st.text(f&#34;Sentiment score: {cortex_response}&#34;)
+          st.caption(&#34;Note: Score is between -1 and 1; -1 = Most negative, 1 = Positive, 0 = Neutral&#34;)  
+
+page_names_to_funcs = {
+    &#34;JSON Summary&#34;: summarize,
+    &#34;Translate&#34;: translate,
+    &#34;Sentiment Analysis&#34;: sentiment_analysis,
+}
+
+selected_page = st.sidebar.selectbox(&#34;Select&#34;, page_names_to_funcs.keys())
+page_names_to_funcs[selected_page]()
+</code></pre>
+<h2 is-upgraded>Run</h2>
+<p>To run the application, click on <strong>Run</strong> located at the top right corner. If all goes well, you should see the application running as shown below.</p>
+<h3 is-upgraded>Sample Transcript</h3>
+<p>Copy and paste the following sample transcript for JSON Summary, Translate, and Sentiment Analysis:</p>
+<pre><code language="language-sh" class="language-sh">Customer: Hello!
+Agent: Hello! I hope you&#39;re having a great day. To best assist you, can you please share your first and last name and the company you&#39;re calling from?
+Customer: Sure, I&#39;m Michael Green from SnowSolutions.
+Agent: Thanks, Michael! What can I help you with today?
+Customer: We recently ordered several DryProof670 jackets for our store, but when we opened the package, we noticed that half of the jackets have broken zippers. We need to replace them quickly to ensure we have sufficient stock for our customers. Our order number is 60877.
+Agent: I apologize for the inconvenience, Michael. Let me look into your order. It might take me a moment.
+Customer: Thank you.
+</code></pre>
+<h2 is-upgraded>Update LLM</h2>
+<p>Let&#39;s try using one of the <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability" target="_blank">other supported LLMs in Snowflake</a> with <code>snowflake.cortex.complete</code> function and see how it might perform given the same prompt/instructions.</p>
+<ol type="1">
+<li>On line 16, or, search for <code>claude-4-sonnet</code> in the Streamlit app code and repalce it with <code>llama3.1-70b</code>. <em>Note: If that model is not available in your region, pick another one that you can use.</em></li>
+<li>Click on <strong>Run</strong> at the top right.</li>
+<li>Select <strong>JSON Summary</strong> from the sidebar menu.</li>
+<li>Copy-paste the same sample transcript from above and click on <strong>Summarize</strong> button.</li>
+</ol>
+<p>This is also a good way to quickly and easily compare how different LLMs might perform given the same prompt/instructions.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="End-to-End Application" duration="14">
+        <p>For an end-to-end application experience with Snowflake Cortex AI using SQL and Python APIs, download this <a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Getting%20Started%20With%20Snowflake%20Cortex%20AI%20in%20Snowflake%20Notebooks/dash_snowflake_cortex_ai_101_notebook_app.ipynb" target="_blank">.ipynb</a> and <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import" target="_blank">import</a> it in your Snowflake account.</p>
+<aside class="special"><p> NOTE: Before running the cells in the notebook, make sure of the prerequisites listed below.</p>
+</aside>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Install packages <code>snowflake</code>, <code>snowflake-ml-python</code>, <code>streamlit</code>. Learn how to <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-import-packages#import-packages-from-anaconda" target="_blank">install packages</a>.</li>
+<li>For Fine-tuning, you must be using a Snowflake account in <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning" target="_blank">supported regions</a>.</li>
+</ul>
+<h2 is-upgraded>Table of Contents</h2>
+<ul>
+<li>Task-Specific LLM Functions <ul>
+<li>Translate</li>
+<li>Sentiment Score</li>
+<li>Summarize</li>
+</ul>
+</li>
+<li>Prompt Engineering</li>
+<li>Guardrails</li>
+<li>Compute Cost and Credits <ul>
+<li>Count Tokens</li>
+<li>Track Credit Consumption <ul>
+<li>Credit Consumption by Functions and LLMs</li>
+<li>Credit Consumption by Queries</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Use Case <ul>
+<li>Automatic Ticket Categorization Using LLM <ul>
+<li>Load Data</li>
+<li>Preview Support Tickets</li>
+<li>Define Categorization Prompt</li>
+<li>Use Larger LLM</li>
+<li>Compare Larger and Smaller LLM Outputs</li>
+</ul>
+</li>
+<li>Fine-Tune <ul>
+<li>Generate Dataset to Fine-Tune Smaller LLM</li>
+<li>Split Data – Training and Evaluation</li>
+<li>Fine-Tune Options: SQL or Snowflake AI &amp; ML Studio</li>
+<li>Fine-Tune Using SQL <ul>
+<li>Fine-Tuning Status</li>
+</ul>
+</li>
+<li>Inference Using Fine-Tuned LLM</li>
+<li>Compare Token Credits</li>
+</ul>
+</li>
+<li>Streamlit Application <ul>
+<li>Auto-Generate Custom Emails and Text Messages</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion And Resources" duration="1">
+        <p>Congratulations! You&#39;ve successfully completed the Getting Started with Snowflake Cortex AI quickstart guide.</p>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to use Snowflake Cortex AI for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and task-specific LLM functions to perform operations like translate, sentiment scoring, etc</li>
+<li>How to fine-tune an LLM in Snowflake</li>
+<li>How to build a Streamlit application and a Snowflake Notebook that uses Snowflake Cortex AI capabilities in Snowflake</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Getting%20Started%20With%20Snowflake%20Cortex%20AI%20in%20Snowflake%20Notebooks/dash_snowflake_cortex_ai_101_notebook_app.ipynb" target="_blank">Snowflake Cortex AI: End-to-End Application Notebook</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview" target="_blank">Snowflake Cortex AI: Overview</a></li>
+<li><a href="https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions" target="_blank">Snowflake Cortex AI: Functions</a></li>
+<li><a href="https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations" target="_blank">Snowflake Cortex AI: Functions Cost Considerations</a></li>
+<li><a href="https://docs.snowflake.com/en/guides-overview-ml-functions" target="_blank">Snowflake Cortex AI: ML Functions</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

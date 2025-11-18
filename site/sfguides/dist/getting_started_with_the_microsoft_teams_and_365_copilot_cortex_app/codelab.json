@@ -1,0 +1,41 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:15-04:00",
+  "id": "getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app",
+  "duration": 36,
+  "title": "Getting Started with The Microsoft Teams and 365 Copilot Cortex App",
+  "summary": "This is a quickstart showing users how use the Microsoft Teams and 365 Copilot Cortex App",
+  "source": "getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "ai",
+    "cortex",
+    "microsoft",
+    "azure",
+    "agents",
+    "copilot",
+    "teams",
+    "search",
+    "analyst"
+  ],
+  "tags": [
+    "agents",
+    "ai",
+    "analyst",
+    "chatbot",
+    "copilot",
+    "cortex",
+    "microsoft",
+    "search",
+    "teams",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app"
+}

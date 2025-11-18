@@ -1,0 +1,231 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Fivetran - Automate Salesforce Insights: Source, Target, Transformations, Dashboard...NO CODE</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="modern_data_stack_with_fivetran_snowflake_salesforce"
+                  title="Fivetran - Automate Salesforce Insights: Source, Target, Transformations, Dashboard...NO CODE"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="3">
+        <p>Your sales are the driving factor for your company.  Your Salesforce data is a wealth of information just waiting to be tapped.  Salesforce is an incredible product and an industry leader.  But what happens when you exhaust all options within Salesforce reporting?  Moreover, what happens when you want to cross reference your Salesforce data with ad campaign or live event data from 2, 3, 10, or more data sources as well as custom data sources?</p>
+<p>These data consolidation, centralization, curation, and analytics processes &#34;used&#34; to be daunting, complex, expensive, and time consuming.  But not anymore.  Thanks to Snowflake and Fivetran!</p>
+<p>Fivetran will replicate all of your data from Salesforce, and all of your other data sources for your project, easily into Snowflake via a reliable, fast, secure, SaaS-based, automated, and no-code data replication solution with built-in transformation flexibility.  <a href="https://www.fivetran.com/connectors" target="_blank">Fivetran&#39;s 300+ data source connectors</a> (that&#39;s right 300+...we are just working with Salesforce today) allow you to seamlessly create all of your data replication processes in minutes versus weeks or months.  And in this lab, we are going to work together to see how easy and fast data replication with Fivetran and Snowflake can be.  So let&#39;s get started!</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Existing Snowflake account, or a <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">new Snowflake trial account</a>, with <code>ACCOUNTADMIN</code> role.  If setting up a new trial account, ensure to select the &#34;Enterprise&#34; edition when prompted to gain access to more Snowflake features!</li>
+<li><a href="https://developer.salesforce.com/signup" target="_blank">Salesforce development account</a>.  Setting up a Salesforce developer account is free and takes about 3-5 minutes.  If you currently have a Salesforce account and wish to use that account for this lab...even better!</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll learn in the lab</h2>
+<ul>
+<li>How to leverage Snowflake Partner Connect to create a Fivetran account</li>
+<li>How to create/configure a Fivetran Salesforce connector</li>
+<li>How to use Fivetran&#39;s Quickstart Data Models to transform the raw data into analytics models</li>
+<li>How to setup a Snowflake Dashboard to harness the Fivetran prebuilt Salesforce data models</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll need</h2>
+<ul>
+<li>All you&#39;ll need is a modern browser like Chrome</li>
+</ul>
+<h2 is-upgraded>What you&#39;ll build</h2>
+<ul>
+<li>A <code>NO-CODE</code> Salesforce data pipeline powered by Fivetran and Snowflake</li>
+<li>Prebuilt, ready-to-query data models: <ul>
+<li>Via Fivetran, no-code, Quickstart Data Models powered by dbt Core (no installs or account needed)</li>
+<li>Transformed by Snowflake&#39;s massive parallel processing (MPP) engine</li>
+</ul>
+</li>
+<li>A Snowflake dashboard giving immediate insights into your Salesforce data</li>
+</ul>
+<p>All in less than 40 minutes!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accounts - Snowflake and Fivetran" duration="10">
+        <p>The outcome of this step is to:</p>
+<ul>
+<li>Have a Snowflake account with all the objects needed for Fivetran to ingest data (account, user, role, warehouse, database)</li>
+<li>Have a Fivetran account with a Snowflake destination setup ready to receive data</li>
+</ul>
+<p>The easiest option to get started with Fivetran and Snowflake is to use Snowflake Partner Connect.  Partner connect allows you to quickly create a Fivetran trial account and configures the default Snowflake destination within Fivetran in one easy step.</p>
+<h2 is-upgraded>Partner Connect</h2>
+<p>Ensure you are in the Snowflake UI as an <code>ACCOUNTADMIN</code>.  Expand <code>Admin</code>, click <code>Partner Connect</code>, under <code>Data Integration</code> click the Fivetran tile. <img alt="Partner Connect" src="img/d39395a8f413da5f.png"></p>
+<p>Once the tile is clicked you will be presented with the Fivetran configuration screen below.  Click the <code>Connect</code> button. <img alt="Partner Connect Fivetran Configuration" src="img/3edeaa9ce33fc2e6.png"></p>
+<p>Click <code>Activate</code>.  You will be prompted to enter a Fivetran password.  Record this password.  This will be your password into the Fivetran UI.  That&#39;s it!  That will create the free 14 day Fivetran trial account, build your default Snowflake destination within Fivetran, and configure the Snowflake objects needed to ingest data via Fivetran.<br><img alt="Partner Connect Fivetran Configuration" src="img/d98a80bd1af89b71.png"></p>
+<h2 is-upgraded>Non-Partner Connect Only</h2>
+<aside class="warning"><p> In the case where you are unable to use partner connect because of an existing linked account, you can create a <a href="https://fivetran.com/signup" target="_blank">Fivetran trial account here</a>.  Post Fivetran account creation, you simply follow <a href="https://fivetran.com/docs/destinations/snowflake/setup-guide" target="_blank">these instructions</a> to setup your Snowflake destination in Fivetran and Snowflake.  Then you may continue to the next step.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure the Fivetran Salesforce Connector" duration="8">
+        <p>Ok, let&#39;s get our data from Salesforce into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.</p>
+<p>Click <code>Explore/Add Connectors</code>: <img alt="Fivetran Connector 1" src="img/9c3f2b3db5cd7539.png"></p>
+<p>Click the <code>Salesforce</code> connector and then click <code>Continue Setup</code>: <img alt="Fivetran Connector 3" src="img/2138e81671d19a8d.png"></p>
+<p>Leave the <code>Destination schema</code> as <code>salesforce</code> and click <code>Authorize</code>.  This will start the authentication process for Salesforce.  If you are already signed in to Salesforce in the browser, this will take the current authorization token of your sign in.  If you are not currently signed in, you will be presented with the Salesforce sign in page.  Simply enter your credentials to sign in to Salesforce.  Upon sign in, you will be redirected back to the Fivetran configuration UI. <img alt="Fivetran Connector 4" src="img/ae9fc083b2b13bb2.png"></p>
+<p>You will see that the authentication is successful.  Click <code>Save & Test</code>. <img alt="Fivetran Connector 5" src="img/289f9a61fa56d70a.png"></p>
+<p>Fivetran will validate the authentication token to ensure Fivetran can call the Salesforce API.  Click <code>Continue</code>. <img alt="Fivetran Connector 6" src="img/60963fb7502ab39a.png"></p>
+<p>Next you will select the tables to replicate.  Salesforce contains over 900 tables.  Let&#39;s only select the ones we need here today.  Click the <code>minus</code> sign twice which will deselect all tables. <img alt="Fivetran Connector 7" src="img/cd470585bdfdd671.png"></p>
+<p>Then let&#39;s make this easy and use the filter textbox to only find and select the tables we want to replicate.  Below is the list of tables we want to select (please be sure to choose the exact name).  Note that once you select a table and begin a new filter, the selected table(s) stay checked...even though the selected tables may go out of view.  Repeat the search and select process for each table below until all are selected.</p>
+<ul>
+<li>Account</li>
+<li>Contact</li>
+<li>Event</li>
+<li>Lead</li>
+<li>Opportunity</li>
+<li>OpportunityLineItem</li>
+<li>Order</li>
+<li>Product2</li>
+<li>Task</li>
+<li>User</li>
+<li>UserRole <img alt="Fivetran Connector 8" src="img/c68cf7a2fc4c12b2.png"></li>
+</ul>
+<p>When done with all of the above adds, click the filter icon and check the <code>Only show selected tables</code> checkbox. <img alt="Fivetran Connector 9" src="img/1d2c46c758b68cd9.png"></p>
+<p>The filtered view should be as shown below.  If so, click <code>Save & Continue</code>. <img alt="Fivetran Connector 10" src="img/5cb663b3e17d7b64.png"></p>
+<p>Leave the schema changes setting as <code>Allow All</code>.  Click <code>Continue</code>. <img alt="Fivetran Connector 11" src="img/96d6268274f13b2a.png"></p>
+<p>With that, we are ready to go!  Let&#39;s sync data.  Click <code>Start Initial Sync</code>.  And let Fivetran seamlessly replicate your data into Snowflake.  This should only take a minute or two at most.  Now, let&#39;s move on to transformations! <img alt="Fivetran Connector 12" src="img/a4b4277bf1ca9379.png"></p>
+<aside class="special"><p> This is the power of Fivetran SaaS.  No allocating resources.  No development.  Fully automated data replication...a production data pipeline in a few steps!</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Fivetran Quickstart Transformations" duration="5">
+        <p>Fivetran is going to replicate your Salesforce data into a fully normalized Snowflake schema.  Now to make the data easier to query for our dashboard/use cases, let&#39;s transform it.  Fivetran gives you the ability, and is ever expanding, to utilize dbt Core data modeling to further curate your data with NO CODE!  These transformations are called Fivetran <a href="https://fivetran.com/docs/transformations/dbt/quickstart" target="_blank">Quickstart Data Models</a>.  Let&#39;s configure these now.</p>
+<p>From the Fivetran UI, click <code>Transformations</code> in the left navbar.  Then in the <code>Quickstart</code> section, click <code>Get Started</code>. <img alt="Fivetran Transform 1" src="img/7747d9aaedae81c2.png"></p>
+<p>In the configuration page, for <code>Source Type</code> choose <code>Salesforce</code>.  Source Type represents the type of connector used.  In our case, we created a Salesforce connector.  For <code>Connector</code>, choose your Salesforce connector. If you left the schema names the same in the configuration, your connector will also be named <code>salesforce</code>.  ‘Connector&#39; here represents the name/schema name given to your Salesforce connector during the connector configuration. <img alt="Fivetran Transform 2" src="img/eacd85490cdfbc25.png"></p>
+<p>Scroll down on the configuration screen and under <code>Set Schedule</code> select <code>Fully integrated</code>, then click <code>Save</code>. <img alt="Fivetran Transform 3" src="img/cfb902c6257d542b.png"></p>
+<p>The transformations are now configured and will show a status of <code>Pending</code>. <img alt="Fivetran Transform 4" src="img/5d698614453d57.png"></p>
+<p>The adding of transformations to your connector will signal the connector to perform a resync.  You may click on the <code>Connectors</code> section on the left navbar, then open your connector to watch it execute a resync.  When the resync completes, Fivetran will start the transformation jobs and change the status to <code>Running</code>.  Like the data replication, this should only take a minute or two to complete. <img alt="Fivetran Transform 6" src="img/ce94d4eb6f21e22f.png"></p>
+<p>Once the transformations complete, you will see new objects in the Snowflake database.  The objects prefixed with ‘SALESFORCE__&#39; are models ready to query to assist us in our use cases and dashboard.  Objects prefixed with ‘STG_&#39; are staging objects used to build the final models and are rebuilt upon every transformation run.  (The below Snowflake images display the objects built by the Quickstart Data Models...no further action needed on these tables/views!) <img alt="Fivetran Transform 8" src="img/a5d58c18cd58bc76.png"></p>
+<p>In the Fivetran UI, you can view the lineage for any of the transformation jobs just by clicking the transformation job from the Transformations UI (<code>salesforce__sales_snapshot</code> shown below). <img alt="Fivetran Transform 9" src="img/1ba85ecb8e22c34d.png"></p>
+<h2 is-upgraded>Recap</h2>
+<aside class="special"><p> You can see that with Fivetran Quickstart Data Models, there is no code, no git, and no deployments!  This ‘T&#39; in ‘ELT&#39; is a great value-add and a great way to start you on your transformations journey.  The open source for these transformations can be found in the <a href="https://hub.getdbt.com/" target="_blank">dbt Package Hub</a>.  One item to note here.  <a href="https://www.getdbt.com/" target="_blank">dbt Labs</a> creates push-down SQL which runs inside Snowflake.  Fivetran&#39;s implementation of this logic incurs no costs on the Fivetran side; transformation jobs are free.  But each time a transformation is executed and data is manipulated, there will be a Snowflake warehouse running consuming Snowflake credits.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Build Insights Via Snowflake Dashboard" duration="10">
+        <p>Now that our models are built and ready to query, let&#39;s build some insights into your data!  For the purposes of this lab, we will build a four tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.</p>
+<h2 is-upgraded>Snowflake Dashboard</h2>
+<p>Click the <code>Dashboards</code> item in the left navbar.  This will display the Dashboard UI.  Click <code>+ Dashboard</code> in the upper right to begin the dashboard creation process. <img alt="Fivetran Dashboard 1" src="img/849c48e309ca9d47.png"></p>
+<p>Next give your dashboard a name and click <code>Create Dashboard</code>. <img alt="Fivetran Dashboard 2" src="img/c594d7bf1e514a40.png"></p>
+<p>Then it&#39;s time to start building tiles.  See the image below.  Ensure to set the role to <code>sysadmin</code> and the warehouse to <code>pc_fivetran_wh</code>.  Click the <code>+ New Tile</code> to get started with the first dashboard tile. <img alt="Fivetran Dashboard 3" src="img/29c33eecd75a988.png"></p>
+<h2 is-upgraded>Tiles in Snowflake</h2>
+<p>Tiles represent dashboard objects, and each tile represents a separate execution of SQL and visualization in the dashboard.  Below is the process that can be followed for all tiles in this lab:</p>
+<ol type="1">
+<li>After the <code>New Tile</code> or <code>New Tile from Worksheet</code> buttons are selected, a tile worksheet will be displayed like the ones below.</li>
+<li>Copy and paste the SQL for each tile into the SQL section in the tile worksheet.</li>
+<li>Click the <code>Run</code> button and ensure you are receiving results.  Always use a full path in SQL for database.schema.table/view.</li>
+<li>Set tile name and enable the chart display by clicking the <code>Chart</code> button (except where a table is to be rendered like Tile #4).</li>
+<li>To get the tiles to look like the ones in this lab, simply apply the metadata in the <code>Chart Type</code> section (except for Tile #4) on the right side of the UI to match the image in each tile section below.</li>
+</ol>
+<p>Once all the tiles are created, you may move them around on the dashboard to your liking.</p>
+<h2 is-upgraded>Tile 1: Stage Counts by Month - Heatgrid</h2>
+<pre><code>select stage_name, close_date, amount 
+from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced
+</code></pre>
+<p class="image-container"><img alt="Fivetran Dashboard 4" src="img/19d5aeb2c1acf124.png"></p>
+<h2 is-upgraded>Tile 2: Opportunities Won by Amount - Bar</h2>
+<pre><code>select sum(amount) as account_amount, account_name, count(*) as num_won 
+from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced 
+where is_won = true group by account_name order by 1
+</code></pre>
+<p class="image-container"><img alt="Fivetran Dashboard 5" src="img/53303b9e472b580f.png"></p>
+<h2 is-upgraded>Tile 3: Average Days to Close - Score</h2>
+<pre><code>select round(avg(days_to_close),1) 
+from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced
+</code></pre>
+<p class="image-container"><img alt="Fivetran Dashboard 6" src="img/e6bd4ab64f347bfd.png"></p>
+<h2 is-upgraded>Tile 4: Top 5 Performers - Table</h2>
+<pre><code>select top 5 owner_name as &#34;Owner&#34;, avg_bookings_amount as &#34;Avg Booking Amt&#34;, round(avg_days_to_close,1) as &#34;Avg Days to Close&#34;, 
+total_pipeline_amount as &#34;Total Pipeline&#34; 
+from pc_fivetran_db.salesforce.salesforce__owner_performance 
+where total_pipeline_amount is not null 
+order by total_pipeline_amount desc
+</code></pre>
+<p class="image-container"><img alt="Fivetran Dashboard 7" src="img/94d16dba1de8d654.png"></p>
+<h2 is-upgraded>Final Dashboard</h2>
+<p>Here is the example dashboard giving insights to the data for your use cases in minutes! <img alt="Fivetran Dashboard 8" src="img/c5accbd343e3bbcc.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <p>The lab demonstrates the power, flexibility, reliability, and speed to insights by performing ELT with no code!</p>
+<p>Here&#39;s what we did:</p>
+<ul>
+<li>Created a production-ready data pipeline from Salesforce to Snowflake via Fivetran in a few clicks!</li>
+<li>Utilized Fivetran&#39;s Quickstart Data Models to curate the data within Snowflake for easy consumption!</li>
+<li>Designed and built a Snowflake dashboard to give us valuable insights into our Salesforce data!</li>
+<li>All in less than 40 minutes!</li>
+<li>But don&#39;t stop here.  Take this lab to the next level by adding more tiles and building more insights on your own!</li>
+</ul>
+<h2 is-upgraded>Snowflake</h2>
+<p>See what other customers are <a href="https://www.snowflake.com/en/why-snowflake/customers/" target="_blank">doing with Snowflake</a> and how Snowflake is the cloud data platform for your <a href="https://snowflake.com" target="_blank">data workloads</a>!</p>
+<h2 is-upgraded>Fivetran</h2>
+<p>See why <a href="https://fivetran.com" target="_blank">Fivetran</a> is the ultimate automated data movement platform for any <a href="https://www.fivetran.com/connectors" target="_blank">data source</a> and why Fivetran is a <a href="https://www.snowflake.com/partners/technology-partners/" target="_blank">Snowflake Elite Partner</a> and Snowflake Data Integration Partner of the year!</p>
+<p>Fivetran&#39;s mission is to &#34;Make data as accessible and reliable as electricity!&#34;  <a href="https://go.fivetran.com/demo" target="_blank">Let us show you how we do it!</a></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

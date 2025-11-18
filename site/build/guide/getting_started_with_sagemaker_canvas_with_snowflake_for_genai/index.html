@@ -1,0 +1,215 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Getting Started with Amazon Sagemaker Canvas and Snowflake for Generative AI Use Cases</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_sagemaker_canvas_with_snowflake_for_genai"
+                  title="Getting Started with Amazon Sagemaker Canvas and Snowflake for Generative AI Use Cases"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Overview" duration="10">
+        <p>Amazon SageMaker is a fully managed machine learning service. With SageMaker, data scientists and developers can quickly and easily build and train machine learning models, and then directly deploy them into a production-ready hosted environment. It provides an integrated Jupyter authoring notebook instance for easy access to your data sources for exploration and analysis, so you don&#39;t have to manage servers.</p>
+<p>Amazon SageMaker Canvas is a visual interface that simplifies the process of building, training, and deploying machine learning models. It allows users to construct and manage machine learning workflows through a drag-and-drop interface, making it easier to create and iterate on machine learning models without writing extensive code.</p>
+<p>Additionally, Canvas now has native integrations with AWS Generative AI services like Sagemaker Jumpstart and Bedrock.</p>
+<p>This quickstart is designed to serve as an introduction for using Snowflake with Canvas and Generative AI services.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Familiarity with <a href="https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0" target="_blank">Snowflake</a> and a Snowflake account</li>
+<li>Familiarity with SageMaker and an AWS account</li>
+<li>Familiarity with Canvas and a Canvas Service available in Sagemaker</li>
+<li>Active Bedrock service</li>
+</ul>
+<h2 is-upgraded>You&#39;ll Learn</h2>
+<ul>
+<li>How to get started with Sagemaker Canvas</li>
+<li>Using Snowflake with Sagemaker Canvas</li>
+<li>Using Generative AI with Snowflake data in Canvas</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A free <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">Snowflake Account</a></li>
+<li><a href="https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/" target="_blank">AWS Account</a></li>
+<li>The AWS account should be a sandbox account with open network policies or you you should <a href="https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html" target="_blank">create a VPC</a> in the same region as the Snowflake account</li>
+<li>In the VPC <a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html" target="_blank">create subnets</a> in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<p>You will build a Canvas flow that leverages Snowflake data and AWS Generative AI capabilities</p>
+<ul>
+<li>Connect to Snowflake data from Canvas</li>
+<li>Build a Canvas data flow</li>
+<li>Utilize Generative AI capabilities in Sagemaker Canvas using chat with your data</li>
+</ul>
+<p>The end-to-end workflow will look like this: <img src="img/5f3e994c7fef418e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use Case" duration="5">
+        <p>In this use case you will build a binary model based on the ‘Loan Fraud Prediction&#39; dataset from Kaggle and <a href="https://catalog.us-east-1.prod.workshops.aws/workshops/80ba0ea5-7cf9-4b8c-9d3f-1cd988b6c071/en-US/1-use-cases/4-finserv" target="_blank">AWS</a>. Also, Important to note that you can always supplement your data with Snowflake Marketplace data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Snowflake Environment" duration="5">
+        <p>The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.</p>
+<pre><code language="language-sql" class="language-sql">--create database and warehouse
+use role accountadmin;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE=&#39;X-SMALL&#39;;
+CREATE OR REPLACE DATABASE CANVAS_DB;
+
+--create stage
+USE DATABASE CANVAS_DB;
+CREATE OR REPLACE STAGE LOAN
+URL=&#39;s3://loan-data-snowflake-qs/&#39;
+FILE_FORMAT = (TYPE = &#39;csv&#39;);
+
+--create loan_one table
+CREATE OR REPLACE TABLE LOAN_ONE
+  (ID NUMBER,
+   LOAN_STATUS STRING,
+   LOAN_AMOUNT NUMBER,
+   FUNDED_AMOUNT_BY_INVESTORS NUMBER,
+   LOAN_TERM NUMBER,
+   INTEREST_RATE NUMBER,
+   INSTALLMENT NUMBER,
+   GRADE STRING,
+   SUB_GRADE STRING,
+   VERIFICATION_STATUS STRING,
+   ISSUED_ON DATE,
+   PURPOSE STRING,
+   DTI NUMBER,
+   INQUIRIES_LAST_SIX_MONTHS NUMBER,
+   OPEN_CREDIT_LINES NUMBER,
+   DEROGATORY_PUBLIC_RECORDS NUMBER,
+   REVOLVING_LINE_UTILIZATION_RATE NUMBER,
+   TOTAL_CREDIT_LINES NUMBER);
+
+COPY INTO LOAN_ONE FROM @LOAN/loans-part-1.csv
+  FILE_FORMAT=(TYPE = &#39;csv&#39; FIELD_DELIMITER = &#39;,&#39; SKIP_HEADER = 1);
+
+select top 10 * from LOAN_ONE;
+
+--Create loand_two table
+CREATE OR REPLACE TABLE LOAN_TWO
+  (ID NUMBER,
+   EMPLOYMENT_LENGTH NUMBER,
+   EMPLOYER_TITLE STRING,
+   HOME_OWNERSHIP STRING,
+   ANNUAL_INCOME INT);
+
+COPY INTO LOAN_TWO FROM @LOAN/loans-part-2.csv
+  FILE_FORMAT=(TYPE = &#39;csv&#39; SKIP_HEADER = 1);
+
+select top 10 * from LOAN_TWO;
+</code></pre>
+<p>What you have done here is copied over two files from an open S3 bucket and created two new tables inside of a new database in Snowflake. We will access these tables from Canvas to explore them with Generative AI capabilities.</p>
+<p>Your Snowflake environment should look like this: <img src="img/ad37c6c529b2ef9a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set Up Sagemaker Canvas" duration="10">
+        <p>Open up your Sagemaker Canvas application and click on the datasets blade (this is changing to the Data Preparation blade soon) on the left side then click create in the upper left and select a tabular dataset then name the dataset &#34;loan-data&#34; and click create. <img src="img/1fa91f809eae4675.png"></p>
+<p>Navigate to the Data Source menu at the top left and select Snowflake as the data source you will then populate your Snowflake AccountID and utilize username and password to connect to Snowflake. The connection should look similar to this. <img src="img/a8ef4c7678881b9c.png"></p>
+<p>Note: We used a simple username and password to authenticate, but users may want to consider additional options to such as Oauth which is supported by Canvas to Snowflake <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-setting-up-oauth.html" target="_blank">Canvas Oauth</a></p>
+<p>Canvas has this great interface with the Snowflake connection where you can perform joins and transformations on your Snowflake data pushing down the compute and preparing the dataset for analysis.</p>
+<p>Go ahead and selection the &#34;HOL_WH&#34; warehouse from the Warehouse dropdown then find the LOAN_ONE and LOAN_TWO tables in CANVAS_DB.PUBLIC and drag and drop them into the workspace. Canvas will recognize that the tables will be joined on the ID field. For transformations this all that we will be doing in this lab, but you can check out <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/canvas-prepare-data.html" target="_blank">this link</a> to learn about all of the data prep functionality inside of Canvas. Additionally, you scroll down to the preview and look at the exploratory capabilities in Canvas</p>
+<p>Your workspace should look something like this:</p>
+<p class="image-container"><img src="img/81b77b00c26d80c8.png"></p>
+<p>Click on &#34;Create Dataset&#34; and now you&#39;ve created a Canvas dataset!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Talking to your data" duration="10">
+        <p>Before chatting with data you will want to make sure that you have access to Anthropic models through the Bedrock service. Head to the Bedrock service and select &#34;Model Access&#34;, then check to make sure that you have access to the Anthropic models. You can request access if you don&#39;t have access. The chat with data functionality uses Anthropic models via Bedrock so expect standard Bedrock charges to apply when using chat with data. <img src="img/a5df41d0d39be999.png"></p>
+<p>&#34;Chat with data&#34; is part of the Canvas data flow experience which allows users to analyze and prepare their data with a no code experience and create an easy to understand flow that tracks the lineage of the analysis and preparation steps. To start a data flow you have to first access your data.</p>
+<p>In the Dataset (or Data Preparation) blade you will now click on the dataset that you just created and click crate a data flow at the top of the screen and name it &#34;chat-flow&#34; then click create. <img src="img/9ff779f8c1142d28.png"></p>
+<p>Now, lets walk through some prompts. Select &#34;chat with data&#34; at the top and in the prompt type &#34;what is the average employment length&#34; and hit enter. It should take several seconds, but you should get 5.09 years. Notice that you didn&#39;t have to use the exact field name that&#39;s in the data.</p>
+<p>Let&#39;s try do some aggregations by some other parameter. Type &#34;what is the average loan amount by purpose&#34;, it looks like small business loans are the largest on average.</p>
+<p>Now let&#39;s try producing some plots, type &#34;plot interest rate against loan amount&#34; and now you can see a plot that you can download along with the code that was used to produce it! <img src="img/2ece2646f6ecd5f1.png"></p>
+<p>Let&#39;s produce a time series plot by typing &#34;plot the monthly loan amount&#34;. You should produce a plot that looks like this: <img src="img/5aec0e8bc34ecde.png"></p>
+<p>You can see how valuable chat with data is for doing some exploratory analysis very quickly or you can produce formal analyses using plain text and download many of the artifacts.</p>
+<p>Lastly, let&#39;s type &#34;can you detect anomalies in the data&#34; and after several seconds you will get a prompt to add this analysis. Click &#34;add to analysis&#34; and after ~1 minute it will be added to the analysis. Now click on the data flow in the breadcrumbs at the top and click into the Data Quality and Insights Report that has been added to the data flow. You can see the new insights report complete with anomaly detection that has been added to your data flow! <img src="img/420e7f50e4bfee55.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Additional Considerations" duration="5">
+        <p>This quickstart is just that, a quick way to get you started with using Canvas with Chat with Data with Snowflake. We encourage users to continue to explore using their Snowflake with Canvas and the many ways that Canvas allows users to leverage Generative AI services easily with their data.</p>
+<p>Also, worth mentioning that at the time this quickstart was written Canvas is just rolling out all of its Generative AI capabilities, there will be more to come in addition to &#34;chat with your data&#34; so be on the lookout for additional functionality.</p>
+<h2 is-upgraded>What We covered</h2>
+<ul>
+<li>Connecting to Snowflake data from Sagemaker Canvas</li>
+<li>Build a Canvas dataset and data flow</li>
+<li>Utilizing Generative AI functionality in Canvas with Snowflake data to generate insights</li>
+</ul>
+<h2 is-upgraded>Additional Considerations</h2>
+<ul>
+<li>There are some great blogs on Medium regarding Snowpark, SageMaker and using Snowflake with AWS.</li>
+<li><a href="https://aws.amazon.com/sagemaker/canvas/" target="_blank">Sagemaker Canvas</a></li>
+<li><a href="https://aws.amazon.com/financial-services/partner-solutions/snowflake/" target="_blank">AWS and Snowflake</a></li>
+<li><a href="https://medium.com/snowflake/using-snowpark-for-python-with-amazon-sagemaker-44ec7fdb4381" target="_blank">Snowpark for python with SageMaker</a></li>
+<li><a href="https://aws.amazon.com/about-aws/whats-new/2023/06/amazon-sagemaker-data-wrangler-direct-connection-snowflake-data/" target="_blank">Snowflake and Direct Data Integration</a></li>
+</ul>
+<p>If you have any questions, reach out to your Snowflake account team!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:18-04:00",
+  "id": "table-size-growth",
+  "duration": 45,
+  "title": "Monitor Table Size Growth in Snowflake Notebooks",
+  "summary": "Learn how to monitor and analyze table storage growth trends in Snowflake Notebooks.",
+  "source": "table-size-growth/table-size-growth.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "audit",
+    "streamlit",
+    "notebooks",
+    "snowflake",
+    "featured"
+  ],
+  "tags": [
+    "notebooks",
+    "snowflake",
+    "sql",
+    "storagemonitoring",
+    "streamlit",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "table-size-growth"
+}

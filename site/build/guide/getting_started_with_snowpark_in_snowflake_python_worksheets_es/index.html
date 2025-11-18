@@ -1,0 +1,243 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Introducción a Snowpark con las hojas de trabajo de Snowflake para Python</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="getting_started_with_snowpark_in_snowflake_python_worksheets_es"
+                  title="Introducción a Snowpark con las hojas de trabajo de Snowflake para Python"
+                  environment="web"
+                  feedback-link="https://github.com/Snowflake-Labs/sfguides/issues">
+    
+      <google-codelab-step label="Descripción general" duration="5">
+        <p>Tras completar esta guía, serás capaz de probar Snowpark para Python desde la UI de Snowflake. Además, comprenderás mejor cómo llevar a cabo tareas esenciales de ingeniería de datos con Snowpark en una hoja de trabajo de Snowflake para Python.</p>
+<h2 is-upgraded>¿Qué es Snowpark?</h2>
+<p>El conjunto de bibliotecas y tiempos de ejecución de Snowflake para implementar y procesar de forma segura código que no sea SQL, como Python, Java o Scala.</p>
+<p><strong>Bibliotecas conocidas del cliente</strong>: Snowpark ofrece una programación completamente integrada de estilo DataFrame y API compatibles con OSS para los lenguajes que los profesionales de los datos prefieran. También incluye la Snowpark ML API para conseguir un modelado de ML (en vista previa pública) y unas operaciones de ML (en vista previa privada) más eficientes.</p>
+<p><strong>Estructuras de tiempo de ejecución flexibles</strong>: Snowpark proporciona constructos de tiempo de ejecución flexibles que permiten a los usuarios introducir y ejecutar la lógica personalizada. Los desarrolladores pueden crear flujos de datos, modelos de ML y aplicaciones de datos sin problemas gracias a las UDF y mediante procedimientos almacenados.</p>
+<p>Obtén más información sobre <a href="https://www.snowflake.com/es/data-cloud/snowpark/" target="_blank">Snowpark</a>.</p>
+<p class="image-container"><img alt="Snowpark" src="img/9f7d4fd72f4d8a3f.png"></p>
+<h2 is-upgraded>¿Qué son las hojas de trabajo de Python?</h2>
+<p>Las hojas de trabajo de Python son un nuevo tipo de hojas de trabajo en Snowsight que te ayudan a empezar a usar Snowpark más rápido. Los usuarios pueden desarrollar flujos de datos, modelos de ML y aplicaciones directamente en Snowflake, sin necesidad de entornos de desarrollo integrado (integrated development environment, IDE) (es decir, UI de desarrollo) adicionales para poner en marcha, configurar ni mantener Python. Estas hojas de trabajo también se pueden convertir en procedimientos para programar tus aplicaciones de Snowpark.</p>
+<h2 is-upgraded>Descubrirás</h2>
+<ul>
+<li>Cómo cargar datos de tablas de Snowflake en DataFrames de Snowpark</li>
+<li>Cómo realizar análisis de datos de exploración en DataFrames de Snowpark</li>
+<li>Cómo dinamizar y unir datos de varias tablas con DataFrames de Snowpark</li>
+<li>Cómo guardar datos transformados en una tabla de Snowflake</li>
+<li>Cómo implementar una hoja de trabajo de Python como un procedimiento almacenado</li>
+</ul>
+<h2 is-upgraded>Cosas que podrás crear</h2>
+<p>Un conjunto de datos preparado que se podrá utilizar en aplicaciones y análisis posteriores. Por ejemplo, para entrenar un modelo de ML.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introducción" duration="10">
+        <h2 is-upgraded>Creación de una cuenta de prueba de Snowflake</h2>
+<p>Haz clic en este <a href="https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets" target="_blank">enlace</a> (que te llevará a la página de configuración de la prueba <strong>Introducción a Snowpark con las hojas de trabajo de Snowflake para Python</strong>) y regístrate para obtener una prueba gratuita de 30 días. Te recomendamos que selecciones la región más cercana a ti y que utilices la edición más popular, Enterprise, aunque cualquier edición es compatible con este laboratorio.</p>
+<h2 is-upgraded>Inicio de sesión y configuración del laboratorio</h2>
+<p>Inicia sesión en tu cuenta de Snowflake. Para acceder a este laboratorio y configurar los datos y el código de muestra, debes hacer clic en el siguiente enlace.</p>
+<aside class="special"><p> IMPORTANTE: Debes tener rol ACCOUNTADMIN para realizar la configuración del laboratorio que se describe a continuación. Nota: Si has creado una nueva cuenta de prueba, tendrás el rol ACCOUNTADMIN de forma predeterminada.</p>
+</aside>
+<p><a href="https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets" target="_blank"><paper-button class="colored" raised>Configuración del entorno de laboratorio</paper-button></a></p>
+<p>El botón que aparece más arriba te redirigirá a la página de la prueba <strong>Introducción a Snowpark con las hojas de trabajo de Snowflake para Python</strong> que te pedirá que hagas clic en <strong>Setup Lab</strong> para configurar el laboratorio. Te llevará menos de un minuto y te proporcionará una configuración con datos y códigos Python de muestra con explicaciones.</p>
+<p>==================================================================================================</p>
+<p class="image-container"><img alt="Implementación" src="img/243c2ac72aba4fe.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Carga de datos de tablas de Snowflake en DataFrames de Snowpark" duration="3">
+        <p>En primer lugar, vamos a importar la biblioteca de Snowpark para Python.</p>
+<pre><code language="language-python" class="language-python"># Import Snowpark for Python
+import snowflake.snowpark as snowpark 
+</code></pre>
+<h2 is-upgraded>Carga de datos de gastos e ingresos agregados de una campaña</h2>
+<p>La tabla de gastos de campaña contiene los datos de los clics en anuncios que se han agregado para mostrar los gastos diarios en diferentes canales de publicidad digital como buscadores, redes sociales, correo electrónico y vídeos. La tabla de ingresos contiene datos de diez años.</p>
+<p>En este ejemplo, vamos a utilizar el siguiente código para cargar datos de las tablas <strong><em>campaign_spend</em></strong> y <strong><em>monthly_revenue</em></strong>.</p>
+<pre><code language="language-python" class="language-python">snow_df_spend = session.table(&#39;campaign_spend&#39;)
+snow_df_revenue = session.table(&#39;monthly_revenue&#39;)
+</code></pre>
+<p>A continuación te mostramos otras formas de cargar los datos en DataFrames de Snowpark:</p>
+<ul>
+<li>session.sql(&#34;select col1, col2... from tableName&#34;)</li>
+<li>session.read.options({&#34;field_delimiter&#34;: &#34;,&#34;, &#34;skip_header&#34;: 1}).schema(user_schema).csv(&#34;@mystage/testCSV.csv&#34;)</li>
+<li>session.read.parquet(&#34;@stageName/path/to/file&#34;)</li>
+<li>session.create_dataframe([1,2,3], schema=[&#34;col1&#34;])</li>
+</ul>
+<p>Consejo: Obtén más información sobre <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/dataframe.html" target="_blank">DataFrames de Snowpark</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Transformaciones de datos" duration="10">
+        <p>En esta sección vamos a realizar un conjunto de transformaciones, como agregaciones y uniones de dos DataFrames.</p>
+<p>En primer lugar, vamos a importar todas las funciones que necesitaremos.</p>
+<pre><code language="language-python" class="language-python">from snowflake.snowpark.functions import month,year,col,sum
+</code></pre>
+<h2 is-upgraded>Gastos totales por año y mes en todos los canales</h2>
+<p>Vamos a transformar los datos para poder ver el <strong>coste total por año o mes y por canal</strong> con las funciones de DataFrame de Snowpark <strong><em>group_by()</em></strong> y <strong><em>agg()</em></strong>.</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_per_channel = snow_df_spend.group_by(year(&#39;DATE&#39;), month(&#39;DATE&#39;),&#39;CHANNEL&#39;).agg(sum(&#39;TOTAL_COST&#39;).as_(&#39;TOTAL_COST&#39;)).with_column_renamed(&#39;&#34;YEAR(DATE)&#34;&#39;,&#34;YEAR&#34;).with_column_renamed(&#39;&#34;MONTH(DATE)&#34;&#39;,&#34;MONTH&#34;).sort(&#39;YEAR&#39;,&#39;MONTH&#39;)
+</code></pre>
+<p>Consejo: Consulta la lista completa de <a href="https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/functions.html" target="_blank">funciones</a>.</p>
+<p>Para ver el resultado de esta transformación, podemos utilizar la función <strong><em>show()</em></strong> de DataFrame de Snowpark, que escribirá el resultado en la pestaña <strong>Output</strong>.</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Spend per Year and Month For All Channels&#34;)
+snow_df_spend_per_channel.show()
+</code></pre>
+<h2 is-upgraded>Gastos totales en todos los canales</h2>
+<p>Continuemos con la transformación de los datos de los gastos de la campaña para hacer que cada fila represente el coste total en todos los canales por año o mes usando las funciones <strong><em>pivot()</em></strong> y <strong><em>sum()</em></strong> de DataFrame de Snowpark.</p>
+<p>Esta transformación nos permitirá unir esta tabla con la de ingresos y tener en una sola tabla nuestras funciones de entrada y variables de destino para entrenar los modelos.</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_per_month = snow_df_spend_per_channel.pivot(&#39;CHANNEL&#39;,[&#39;search_engine&#39;,&#39;social_media&#39;,&#39;video&#39;,&#39;email&#39;]).sum(&#39;TOTAL_COST&#39;).sort(&#39;YEAR&#39;,&#39;MONTH&#39;)
+snow_df_spend_per_month = snow_df_spend_per_month.select(
+    col(&#34;YEAR&#34;),
+    col(&#34;MONTH&#34;),
+    col(&#34;&#39;search_engine&#39;&#34;).as_(&#34;SEARCH_ENGINE&#34;),
+    col(&#34;&#39;social_media&#39;&#34;).as_(&#34;SOCIAL_MEDIA&#34;),
+    col(&#34;&#39;video&#39;&#34;).as_(&#34;VIDEO&#34;),
+    col(&#34;&#39;email&#39;&#34;).as_(&#34;EMAIL&#34;)
+)
+</code></pre>
+<p>Para ver el resultado de esta transformación, podemos utilizar la función <strong><em>show()</em></strong> de DataFrame de Snowpark, que escribirá el resultado en la pestaña <strong>Output</strong>.</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Spend Across All Channels&#34;)
+snow_df_spend_per_month.show()
+</code></pre>
+<h2 is-upgraded>Datos de ingresos totales por año y mes</h2>
+<p>Ahora, con las funciones <strong><em>group_by()</em></strong> y <strong><em>agg()</em></strong> vamos a transformar los datos de ingresos en ingresos por año o mes.</p>
+<pre><code language="language-python" class="language-python">snow_df_revenue_per_month = snow_df_revenue.group_by(&#39;YEAR&#39;,&#39;MONTH&#39;).agg(sum(&#39;REVENUE&#39;)).sort(&#39;YEAR&#39;,&#39;MONTH&#39;).with_column_renamed(&#39;SUM(REVENUE)&#39;,&#39;REVENUE&#39;)
+</code></pre>
+<p>Para ver el resultado de esta transformación, podemos utilizar la función <strong><em>show()</em></strong> de DataFrame de Snowpark, que escribirá el resultado en la pestaña <strong>Output</strong>.</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Revenue per Year and Month&#34;)
+snow_df_revenue_per_month.show()
+</code></pre>
+<h2 is-upgraded>Unión de los gastos e ingresos totales por año y mes en todos los canales</h2>
+<p>A continuación, vamos a unir los datos de los ingresos con los datos de gastos de la campaña ya transformados para que podamos cargar nuestras funciones de entrada (como los costes por canal) y variables de destino (por ejemplo, los ingresos) en una única tabla y continuar así con el análisis y el entrenamiento de modelos.</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_and_revenue_per_month = snow_df_spend_per_month.join(snow_df_revenue_per_month, [&#34;YEAR&#34;,&#34;MONTH&#34;])
+</code></pre>
+<p>Para ver el resultado de esta transformación, podemos utilizar la función <strong><em>show()</em></strong> de DataFrame de Snowpark, que escribirá el resultado en la pestaña <strong>Output</strong>.</p>
+<pre><code language="language-python" class="language-python">print(&#34;Total Spend and Revenue per Year and Month Across All Channels&#34;)
+snow_df_spend_and_revenue_per_month.show()
+</code></pre>
+<h2 is-upgraded>Análisis de consultas y planes con Explain</h2>
+<p>Gracias a Snowpark, podemos ver cómodamente la consulta de DataFrame y el plan de ejecución con la función de DataFrame de Snowpark <strong><em>explain()</em></strong>.</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_and_revenue_per_month.explain()
+</code></pre>
+<p>Podemos ver el resultado de la sentencia anterior en la pestaña <strong>Output</strong>.</p>
+<h2 is-upgraded>Pestaña Output</h2>
+<p>Este es el aspecto que debería tener la pestaña <strong>Output</strong> tras haber ejecutado la hoja de trabajo.</p>
+<p class="image-container"><img alt="Hoja de trabajo" src="img/ac0cf51f6ca475ed.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Guardar de datos transformados" duration="1">
+        <p>Vamos a guardar los datos transformados en una tabla de Snowflake <strong><em>SPEND_AND_REVENUE_PER_MONTH</em></strong> y así podremos utilizarla para continuar con el análisis y el entrenamiento de un modelo.</p>
+<pre><code language="language-python" class="language-python">snow_df_spend_and_revenue_per_month.write.mode(&#39;overwrite&#39;).save_as_table(&#39;SPEND_AND_REVENUE_PER_MONTH&#39;)
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualización y devolución de datos transformados" duration="1">
+        <p>Uno de los valores que ha devuelto una hoja de trabajo de Python es de tipo y configuración <strong><em>Table()</em></strong> que, en nuestro caso, nos permitirá visualizar y devolver los datos transformados como un DataFrame de Snowpark.</p>
+<pre><code language="language-python" class="language-python">return snow_df_spend_and_revenue_per_month
+</code></pre>
+<p>Podemos ver el resultado de la sentencia anterior en la pestaña <strong>Results</strong>, tal y como se muestra a continuación.</p>
+<h2 is-upgraded>Pestaña Results</h2>
+<p>Este es el aspecto que debería tener la pestaña <strong>Results</strong> tras haber ejecutado la hoja de trabajo.</p>
+<p class="image-container"><img alt="Hoja de trabajo" src="img/ac0cf51f6ca475ed.gif"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implementación como un procedimiento almacenado" duration="2">
+        <p>De manera opcional, también puedes implementar esta hoja de trabajo como un procedimiento almacenado de Python para poder, por ejemplo, programarlo usando <a href="https://docs.snowflake.com/en/user-guide/tasks-intro" target="_blank">Snowflake Tasks</a>. Para ello, haz clic en el botón <strong>Deploy</strong> en la parte superior derecha y sigue las instrucciones que se muestran a continuación.</p>
+<p class="image-container"><img alt="Implementación" src="img/451aa8ae3ac38799.png"></p>
+<p>==================================================================================================</p>
+<p class="image-container"><img alt="Implementación" src="img/4d0b09c660902d51.png"></p>
+<h2 is-upgraded>Visualización de procedimientos almacenados</h2>
+<p>Cuando se hayan implementado, podrás ver los detalles de los procedimientos almacenados en <strong>Data » Databases » SNOWPARK_DEMO_SCHEMA » Procedures</strong>.</p>
+<p class="image-container"><img alt="Implementación" src="img/7127631efb64d195.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusiones y recursos" duration="0">
+        <p>¡Enhorabuena! Has realizado las tareas de ingeniería de datos con Snowpark y las hojas de trabajo de Snowflake para Python.</p>
+<p>Nos encantaría conocer tu opinión sobre esta quickstart guide. Puedes enviárnosla a través de este <a href="https://docs.google.com/forms/d/e/1FAIpQLScpCO4ekMB9kitQ6stQZ1NLqZf3VqbQfDrf7yRIwMQjty57_g/viewform?usp=sf_link" target="_blank">formulario</a>.</p>
+<h2 is-upgraded>Qué has aprendido</h2>
+<ul>
+<li>Cómo cargar datos de tablas de Snowflake en DataFrames de Snowpark</li>
+<li>Cómo realizar análisis de datos de exploración en DataFrames de Snowpark</li>
+<li>Cómo dinamizar y unir datos de varias tablas con DataFrames de Snowpark</li>
+<li>Cómo guardar datos transformados en una tabla de Snowflake</li>
+<li>Cómo implementar una hoja de trabajo de Python como un procedimiento almacenado</li>
+</ul>
+<h2 is-upgraded>Siguientes pasos</h2>
+<p>Si quieres aprender a procesar datos de forma incremental, a organizar flujos de datos con Snowflake Tasks e implementarlos a través de un flujo de integración y desarrollo continuos (continuous integration/continuous development, CI/CD) o si quieres aprender a usar la nueva herramienta de interfaz de línea de comandos (command-line interface, CLI) de Snowflake para desarrolladores, así como su extensión de Visual Studio Code, continúa tu aventura y adéntrate en <a href="https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html" target="_blank">Flujos de ingeniería de datos con Snowpark para Python</a>.</p>
+<h2 is-upgraded>Recursos relacionados</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets" target="_blank">Guía para desarrolladores de hojas de trabajo para Python</a></li>
+<li><a href="/guide/getting_started_with_dataengineering_ml_using_snowpark_python_es/index.html" target="_blank">Introducción a la ingeniería de datos y al ML con Snowpark para Python</a></li>
+<li><a href="https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html" target="_blank">Avanzado: Guía de ML de Snowpark para Python</a></li>
+<li><a href="https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md" target="_blank">Demos de Snowpark para Python</a></li>
+<li><a href="https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html" target="_blank">Guía de Snowpark para Python para desarrolladores</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

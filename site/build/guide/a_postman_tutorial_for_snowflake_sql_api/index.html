@@ -1,0 +1,293 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>A Postman Tutorial for the Snowflake SQL API</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="a_postman_tutorial_for_snowflake_sql_api"
+                  title="A Postman Tutorial for the Snowflake SQL API"
+                  environment="web"
+                  feedback-link="https://github.com/loopDelicious/sfquickstarts">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>The <a href="https://docs.snowflake.com/en/developer-guide/sql-api/index.html" target="_blank">Snowflake SQL API</a> is a REST API that you can use to access and update data in a Snowflake database. You can use this API to execute <a href="https://docs.snowflake.com/en/sql-reference/constructs.html" target="_blank">standard queries</a> and statements.</p>
+<p>This getting started guide will walk through the basics of executing a SQL statement with the Snowflake SQL API and constructing an API workflow in Postman.</p>
+<p class="image-container"><img alt="logos" src="img/53f09a741b26eb33.png"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>A Snowflake Account with an accessible warehouse, database, schema, and role</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">Install SnowSQL</a> 1.2.17 or higher</li>
+<li>Working <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication" target="_blank">Key-Pair authentication</a></li>
+<li><a href="https://identity.getpostman.com/signup" target="_blank">Sign up</a> for a free Postman account, and then <a href="https://go.postman.co/" target="_blank">sign in</a>.</li>
+<li><a href="https://www.postman.com/downloads/postman-agent/" target="_blank">Download and install</a> the Postman desktop agent, which will enable you to use the web version of Postman</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>Authorize the Snowflake SQL API</li>
+<li>Perform simple queries</li>
+<li>Use variables in Postman to store data</li>
+<li>Generate code to replicate API calls for your own applications</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A <a href="https://postman.com/" target="_blank">Postman</a> Account</li>
+<li><a href="https://docs.snowflake.com/en/user-guide/snowsql-install-config.html" target="_blank">SnowSQL</a> Installed</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>A Postman Collection with an API workflow</li>
+</ul>
+<p class="image-container"><img alt="Automate an API workflow" src="img/8544efd0e01ec452.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Fork the sample collection" duration="2">
+        <h2 is-upgraded>Fork the collection</h2>
+<p>In Postman, <a href="https://learning.postman.com/docs/collaborating-in-postman/version-control/#forking-postman-entities" target="_blank">fork</a> the following collection to your own workspace.</p>
+<aside class="warning"><p><a href="https://www.postman.com/devrel/workspace/snowflake-build/collection/13191452-d6d009f2-8cd0-48ee-9b5a-989ad77fd403" target="_blank">Get Started with Snowflake in Postman</a></p>
+</aside>
+<ul>
+<li>Select the collection in the sidebar.</li>
+<li>In the overview tab that appears, select the <strong>Fork</strong> icon in the upper right. <img alt="fork icon" src="img/be8dcd853068cb05.png"></li>
+<li>Enter a label for your fork, and select a workspace to save it to.</li>
+<li>Select <strong>Fork Collection</strong>. <img alt="fork label" src="img/70c8fe6a947b1d1b.png"></li>
+</ul>
+<p>Postman creates your fork in the selected workspace. You can now update this version of the collection as you wish. If you optionally chose to watch the collection, you can pull changes to your own collection when the main collection is updated.</p>
+<p>For each folder and request, review the companion documentation in the context bar to the right.</p>
+<p class="image-container"><img alt="collection documentation" src="img/7a7f91d4a0e0f442.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introducing the API" duration="5">
+        <p>Select the sample collection in the sidebar, and update the <code>baseUrl</code> collection variable under the <strong>Variables</strong> tab with your version of the following URL, replacing <code>*account_locator*</code> with the account locator for your own Snowflake account:</p>
+<pre><code>https://*account_locator*.snowflakecomputing.com/api/v2
+</code></pre>
+<aside class="warning"><p>Note that the account locator might include additional segments for your region and cloud provider. See <a href="https://docs.snowflake.com/en/user-guide/intro-regions.html#label-region-ids" target="_blank">Specifying Region Information in Your Account Hostname</a> for details.</p>
+</aside>
+<p>In Postman, your <code>baseUrl</code> should look like this.</p>
+<p class="image-container"><img alt="baseUrl collection variable" src="img/14a494bbc9f1b733.png"></p>
+<p>Now let&#39;s break down the parts of the API before we begin using it. You can follow along more closely by inspecting each request within the <code>Quickstart</code> folder.</p>
+<p>The API consists of the <code>/api/v2/statements/</code> resource and provides the following endpoints:</p>
+<ul>
+<li><code>/api/v2/statements</code>: You&#39;ll use this endpoint to <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements" target="_blank">submit a SQL statement for execution</a>.</li>
+<li><code>/api/v2/statements/&#123;&#123;statementHandle}}</code>: You&#39;ll use this endpoint to <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#get-api-v2-statements-statementhandle" target="_blank">check the status of the execution of a statement</a>.</li>
+<li><code>/api/v2/statements/&#123;&#123;statementHandle}}/cancel</code>: You&#39;ll use this endpoint to <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements-statementhandle-cancel" target="_blank">cancel the execution of a statement</a>.</li>
+</ul>
+<p>In the steps to come, you shall use all these endpoints to familiarize yourself with the API.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Authorize API requests" duration="5">
+        <p>When you send a request, the request must include authorization information. There are two options for providing authorization: OAuth and JWT key pair authorization. You can use whichever one you have previously implemented or whichever one you are most comfortable with. This example will be detailing authorization with <a href="https://jwt.io/" target="_blank">JWT</a>.</p>
+<p>If you haven&#39;t done so already, make sure you have <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth.html#configuring-key-pair-authentication" target="_blank">key pair authentication</a> working with Snowflake already.</p>
+<p>You can test to make sure you can successfully connect to Snowflake Key Pairs using the following command in your terminal:</p>
+<pre><code>$ snowsql -a &lt;account&gt; -u &lt;user&gt; --private-key-path &lt;path to private key&gt;
+</code></pre>
+<aside class="warning"><p>If you&#39;d rather authenticate with OAuth, please visit our documentation on authenticating with <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#using-oauth" target="_blank">OAuth</a>.</p>
+</aside>
+<p>After you&#39;ve verified you can connect to Snowflake using key-pair authentication, you&#39;ll need to generate a JWT token. This JWT token is time limited token which has been signed with your key and Snowflake will know that you authorized this token to be used to authenticate as you for the SQL API.</p>
+<pre><code>$ snowsql -a &lt;account&gt; -u &lt;user&gt; --private-key-path &lt;path to private key&gt; --generate-jwt
+&lt;returns JWT token&gt;
+</code></pre>
+<p>Here is an example of what that might look like in your terminal.</p>
+<p class="image-container"><img alt="generate JWT token" src="img/9cb38e47c52e523c.png"></p>
+<p>You&#39;ll need the JWT token generated to use the Snowflake SQL API. The following headers need be set in each API request that you send within your application code:</p>
+<ul>
+<li><code>Authorization: Bearer &#123;&#123;token}}</code> where <code>&#123;&#123;token}}</code> is the generated JWT token from SnowSQL</li>
+<li><code>X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT</code></li>
+</ul>
+<p>In Postman, once again select the sample collection. Under the <strong>Authorization</strong> tab, notice the authorization method is set to <code>Bearer Token</code> so that Postman will automatically add an <code>Authorization</code> header formatted properly with the variable <code>&#123;&#123;token}}</code> to each request within this collection.</p>
+<p class="image-container"><img alt="authorization helper" src="img/cda410babf910387.png"></p>
+<p>Let&#39;s update our <code>token</code> variable value next. Tab over to the <strong>Variables</strong> tab, and update the <code>token</code> variable with the JWT token generated with the previous SnowSQL command, and save your changes.</p>
+<p class="image-container"><img alt="current value variables" src="img/6e26ec4f8dc134fa.png"></p>
+<aside class="warning"><p>⚠️ If you are working in a team or public workspace, you can keep the data private by pasting the token under the CURRENT VALUE only when working in a team or public workspace. You can also work privately in a personal workspace. If you are working in a team or public workspace and you want to share this data with others, persist values under INITIAL VALUE. Read <a href="https://learning.postman.com/docs/sending-requests/variables/#sharing-and-persisting-data" target="_blank">the docs about sharing and persisting data in Postman</a>.</p>
+</aside>
+<p>Once you set up these authorization details for the collection, select one of the API requests. The <strong>Authorization</strong> tab indicates the request inherits the authorization method that we just set up for the collection.</p>
+<p class="image-container"><img alt="inherit authorization method" src="img/6ce47ef59ebfce5c.png"></p>
+<p>Under the <strong>Headers</strong> tab of the request, find the <code>Authorization</code> key. You may need to expand the auto-generated headers. Hover over the <code>Bearer &#123;&#123;token}}</code> to see how Postman is updating the header with your credentials saved in a variable.</p>
+<p class="image-container"><img alt="authorization header" src="img/8b0b2040196fddef.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Assign a Unique Request ID to Resubmit Requests" duration="3">
+        <p>In some cases, it might not be clear if Snowflake executed the SQL statement in an API request (e.g. due to a network error or a timeout). You might choose to resubmit the same request to Snowflake again in case Snowflake did not execute the statement.</p>
+<p>If Snowflake already executed the statement in the initial request and you resubmit the request again, the statement is executed twice. For some types of requests, repeatedly executing the same statement can have unintended consequences (e.g. inserting duplicate data into a table).</p>
+<p>To prevent Snowflake from executing the same statement twice when you resubmit a request, you can use a request ID to distinguish your request from other requests. Suppose you specify the same request ID in the initial request and in the resubmitted request. In that case, Snowflake does not execute the statement again if the statement has already executed successfully.</p>
+<p>To specify a request ID, generate a <a href="https://en.wikipedia.org/wiki/Universally_unique_identifier" target="_blank">universally unique identifier (UUID)</a> and include this identifier in the <code>requestId</code> query parameter:</p>
+<pre><code>POST /api/v2/statements?requestId=&#123;&#123;uuid}} HTTP/1.1
+</code></pre>
+<p>In Postman, select the first <code>POST</code> request in the <code>Quickstart</code> folder. Then select the <strong>Pre-request Scripts</strong> tab that contains JavaScript to execute before the primary API request. On row 2, the code randomly generates a unique identifier and saves the data to a variable called <code>uuid</code>.</p>
+<p class="image-container"><img alt="generate random uuid" src="img/c49a17d4bb3b5230.png"></p>
+<p>This data can then be used in the primary request as a query parameter variable for a unique request ID. If Snowflake fails to process a request, you can submit the same request again with the same request ID. Using the same request ID indicates to the server that you are submitting the same request again. This data can also be used in subsequent requests, like the next <code>GET</code> request in the folder to check the status of the execution of your statement.</p>
+<p>Under the first <code>POST</code> request in the <code>Quickstart</code> folder, look under the <strong>Tests</strong> tab to see similar code to parse the <code>statementHandle</code> from the anticipated server response, and save that data as a variable to be used in subsequent requests.</p>
+<p class="image-container"><img alt="statement handle" src="img/7a04afcb35c90d81.png"></p>
+<p>Now that you have been introduced to authorization and unique request IDs, let&#39;s submit a request to execute a SQL statement.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Submit a Request to Execute a SQL Statement" duration="3">
+        <p>To submit a SQL statement for execution, send a <code>POST</code> request to the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements" target="_blank"><code>/api/v2/statements/</code></a> endpoint:</p>
+<pre><code>POST /api/v2/statements?requestId=&lt;UUID&gt; HTTP/1.1
+Authorization: Bearer &lt;jwt_token&gt;
+Content-Type: application/json
+Accept: application/json
+User-Agent: myApplication/1.0
+X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
+
+(request body)
+</code></pre>
+<p>In Postman, select the first <code>POST</code> request in the <code>Quickstart</code> folder. Review the various elements of the request, including request URL, parameters, authorization method, headers, and request body.</p>
+<p>In the request URL, you can set query parameters to:</p>
+<ul>
+<li>Execute the statement asynchronously: <code>async=true</code></li>
+</ul>
+<p>For the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#body-of-the-post-request-to-api-v2-statements" target="_blank">body of the request</a>, set the following fields:</p>
+<ul>
+<li>The <code>statement</code> field specifies the SQL statement to execute.</li>
+<li>To set a timeout for the statement execution, set the <code>timeout</code> field to the maximum number of seconds to wait. If the <code>timeout</code> field is not set, the timeout specified by the <a href="https://docs.snowflake.com/en/sql-reference/parameters.html#label-statement-timeout-in-seconds" target="_blank">STATEMENT_TIMEOUT_IN_SECONDS</a> parameter is used.</li>
+<li>To specify the warehouse, database, schema, and role to use, set the <code>warehouse</code>, <code>database</code>, <code>schema</code>, and <code>role</code> fields.</li>
+</ul>
+<p class="image-container"><img alt="request body" src="img/ed1e37ede8fb041.png"></p>
+<aside class="warning"><p>Note: the values in these fields are case-sensitive.</p>
+</aside>
+<p>In Postman, <strong>Send</strong> the API request. If the statement was executed successfully, Snowflake returns the HTTP response code 200 and the first results in a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset" target="_blank">ResultSet</a> object. Review the server response on the bottom.</p>
+<p class="image-container"><img alt="response body" src="img/762de4d1f0e3380a.png"></p>
+<p>Select the collection, and tab over to <strong>Variables</strong> to verify that your <code>uuid</code> and <code>statementHandle</code> are stored as variables.</p>
+<p class="image-container"><img alt="set variables" src="img/451a75d1c0105046.png"></p>
+<p>Now let&#39;s check the status of the execution of the statement.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Check the Status of the Execution of the Statement" duration="1">
+        <p>When you submit a SQL statement for execution, Snowflake returns a 202 response code if the execution of the statement has not yet been completed or if you submitted an asynchronous query.</p>
+<p>In the body of the response, Snowflake includes a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#querystatus" target="_blank">QueryStatus</a> object. The <code>statementStatusUrl</code> field in this object specifies the URL to the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#get-api-v2-statements-statementhandle" target="_blank"><code>/api/v2/statements/&#123;&#123;statementHandle}}endpoint</code></a> that you can use to check the execution status:</p>
+<pre><code>{
+&#34;code&#34;: &#34;333334&#34;,
+&#34;message&#34;: &#34;Asynchronous execution in progress. Use provided query id to perform query monitoring and management.&#34;,
+&#34;statementHandle&#34;: &#34;01a89ea6-0000-d838-0002-fce60001c006&#34;,
+&#34;statementStatusUrl&#34;: &#34;/api/v2/statements/01a89ea6-0000-d838-0002-fce60001c006&#34;
+}
+</code></pre>
+<p class="image-container"><img alt="statement status URL" src="img/2bfdb948fdd4bb2c.png"></p>
+<p>As illustrated by the URL above, in requests to check the status of a statement and cancel the execution of a statement, you specify the statement handle (a unique identifier for the statement) as a path parameter in order to identify the statement to use.</p>
+<p>Note that the <code>QueryStatus</code> object also provides the statement handle as a separate value in the <code>statementHandle</code> field.</p>
+<p>To check the status of the execution of the statement, send a GET request using this URL:</p>
+<pre><code>GET /api/v2/statements/&#123;&#123;statementHandle}}
+</code></pre>
+<p>For example, the following request checks the execution status of the statement with the handle <code>01a89ea6-0000-d838-0002-fce60001c006</code>:</p>
+<p class="image-container"><img alt="query by statement handle" src="img/c121c7951f7b6b4.png"></p>
+<p>In Postman, select the <code>GET</code> request in the <code>Quickstart</code> folder. Under the <strong>Params</strong> tab, hover over the <code>uuid</code> and <code>statementHandle</code> variables to ensure you are submitting the same unique request ID and statement handle from the previous API call. Then <strong>Send</strong> the API request.</p>
+<p class="image-container"><img alt="check status of query" src="img/ae2df1c7ca13c568.png"></p>
+<p>If the statement has finished executing successfully, Snowflake returns the HTTP response code 200 and the first results in a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#resultset" target="_blank">ResultSet</a> object. However, if an error occurred when executing the statement, Snowflake returns the HTTP response code 422 with a <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#queryfailurestatus" target="_blank">QueryFailureStatus</a> object.</p>
+<h2 is-upgraded>Cancel the Execution of a SQL Statement</h2>
+<p>To cancel the execution of a statement, send a POST request to the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#cancelling-the-execution-of-a-sql-statement" target="_blank">cancel endpoint</a>.</p>
+<pre><code>POST /api/v2/statements/&#123;&#123;statementHandle}}/cancel
+</code></pre>
+<p>In the next step, let&#39;s walk through an example of automating an API workflow.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Automate an API workflow" duration="3">
+        <h2 is-upgraded>Walk through an API workflow in Postman</h2>
+<p>In Postman, the folder <code>Polling</code> contains an example workflow of a long-running query and periodically checking if the process is completed.</p>
+<p>The first request contains a long-running SQL query intended to take 20 seconds in duration. The second request checks if the query is completed, and will continue to check the status. Once a server response indicates the query is complete, the third request then runs, to simulate a notification about the query completion.</p>
+<p>For each request, review the data under the following tabs to better understand how each API call works.</p>
+<ul>
+<li>Params</li>
+<li>Body</li>
+<li>Pre-request Scripts</li>
+<li>Tests</li>
+</ul>
+<p>Step through each call, as we did in the previous sections, and click <strong>Send</strong> to observe the response from the server. You can manually check the status of the long-running query by repeatedly sending the <code>Checks the status</code> API request and inspecting the response.</p>
+<p class="image-container"><img alt="Automate an API workflow" src="img/8544efd0e01ec452.png"></p>
+<p>Or you can automate the checking and <a href="https://learning.postman.com/docs/running-collections/running-collections-overview/" target="_blank">run the folder</a> in its entirety.</p>
+<p class="image-container"><img alt="run API requests manually" src="img/db7b42259b798a7b.png"></p>
+<p class="image-container"><img alt="automate API workflow" src="img/89a8dfbd2a8f004c.png"></p>
+<h2 is-upgraded>Generate code snippets for your application</h2>
+<p>Once you have your API workflow running the way you want, you can <a href="https://learning.postman.com/docs/running-collections/scheduling-collection-runs/" target="_blank">schedule it to run periodically on Postman servers</a>. Or you can replicate the API calls to run from your own applications and integrations.</p>
+<p>Update the SQL statement and parameters to your liking, and then find the <code>Code</code> icon on the right context bar. Postman generates <a href="https://learning.postman.com/docs/sending-requests/generate-code-snippets/#generating-code-snippets-in-postman" target="_blank">code snippets</a> to replicate the API requests. Select from several frameworks and languages, and then copy and paste the code into your own applications.</p>
+<p class="image-container"><img alt="generate code samples" src="img/f4da36613f6f3259.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Next Steps" duration="1">
+        <p>This tutorial was a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the <a href="https://docs.snowflake.com/en/developer-guide/sql-api/reference.html" target="_blank">Snowflake SQL API Reference</a> and the <a href="https://www.postman.com/snowflake/workspace/snowflake-public-workspace/overview" target="_blank">Snowflake public workspace in Postman</a>.</p>
+<p>If you want more hands-on learning, check out <a href="https://quickstarts.snowflake.com/guide/getting_started_snowflake_sql_api/index.html" target="_blank">this in-depth lab</a> to dig deeper into the Snowflake SQL API, and learn about the following topics:</p>
+<ul>
+<li>Using bind variables in a statement</li>
+<li>Retriving and getting metadata about the result</li>
+<li>Iterating and retrieving result partitions</li>
+</ul>
+<p>If you&#39;ve completed this lab using the Snowflake free trial, continue exploring what Snowflake can help you accomplish. There are several ways Snowflake can help you with this:</p>
+<ul>
+<li>At the very top of the UI, click on the &#34;Partner Connect&#34; icon to get access to trial/free ETL and BI tools to help you analyze your data with Snowflake</li>
+<li>Read the &#34;<a href="https://www.snowflake.com/test-driving-snowflake-the-definitive-guide-to-maximizing-your-free-trial/" target="_blank">Definitive Guide to Maximizing Your Free Trial</a>&#34;</li>
+<li>Attend a Snowflake virtual or in-person <a href="https://www.snowflake.com/about/webinars/" target="_blank">event</a> to learn more about our capabilities and how customers use us</li>
+<li>Contact <a href="https://www.snowflake.com/free-trial-contact-sales/" target="_blank">Sales</a> to learn more</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

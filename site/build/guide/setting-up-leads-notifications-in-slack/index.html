@@ -1,0 +1,614 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Setting Up Leads Notifications in Slack</title>
+
+  
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5Q8R2G');</script>
+  
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-08H27EW14N"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-08H27EW14N');
+</script>
+
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q8R2G"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  
+  <google-codelab-analytics gaid="UA-41491190-9"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="setting-up-leads-notifications-in-slack"
+                  title="Setting Up Leads Notifications in Slack"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>This guide is designed for users who wish to automate the export of lead events from the Snowflake Marketplace and use them in an external system. As a practical example, we will demonstrate how to send new lead information as a Slack message using webhooks.</p>
+<p>Throughout this process, we will leverage JavaScript procedures to properly format messages and serve as a solid starting point for further self-exploration.</p>
+<p>By the end of this guide, you should be familiar with Snowflake listing events and you will learn ways how to integrate them with external services.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Snowflake Account with the ability to create a Database, Notification, Serverless Task, Execute Task, and access to the <code>LISTING_EVENTS_DAILY</code> view in the <code>DATA_SHARING_USAGE</code> schema</li>
+<li>Intermediate knowledge of Snowflake to execute queries and understand the underlying data structure.</li>
+<li>Basic knowledge of <code>json</code> to understand the structure of the data being sent to the webhook.</li>
+<li>Basic knowledge of JavaScript.</li>
+</ul>
+<h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<ul class="checklist">
+<li>How to analyze Snowflake Marketplace lead events</li>
+<li>How to export lead data using Notifications</li>
+<li>How to send a Slack message using webhooks</li>
+<li>How to automate the process using Snowflake Tasks</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Need</h2>
+<ul>
+<li>A Snowflake account <a href="https://signup.snowflake.com/?utm_cta=quickstarts_" target="_blank">trial account</a> or access to an existing account with access to: <ul>
+<li><code>LISTING_EVENTS_DAILY</code> view in the <code>DATA_SHARING_USAGE</code> schema for getting new leads data</li>
+<li><code>CREATE INTEGRATION</code> privilege on Account. For notification creation.</li>
+</ul>
+</li>
+<li>Slack Account with the ability to create a new channel and add a webhook integration.</li>
+</ul>
+<h2 is-upgraded>What You&#39;ll Build</h2>
+<ul>
+<li>Serverless Task that runs every day and sends a message to Slack with the new leads from the Snowflake Marketplace.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introduction To LISTING_EVENTS_DAILY view" duration="2">
+        <p>To retrieve lead information, we will need to use the <code>LISTING_EVENTS_DAILY</code> view in the <code>DATA_SHARING_USAGE</code> schema. It lets you query the daily history of consumer activity on listings for the Snowflake Marketplace and data exchanges.</p>
+<h2 is-upgraded>Event Attributes of Interest</h2>
+<p>Each event has a set of attributes that we will focus on, specifically those related to leads. The relevant attributes are:</p>
+<p>Lead Data:</p>
+<ul>
+<li><code>CONSUMER_EMAIL</code> - Email address for the consumer account (if available).</li>
+<li><code>CONSUMER_METADATA</code> - Other information included by the consumer when the event happened, such as their name or the reason for using a free email address.</li>
+<li><code>CONSUMER_ACCOUNT_NAME</code> - Name of the consumer account.</li>
+<li><code>CONSUMER_ORGANIZATION</code> - Organization name of the consumer account.</li>
+</ul>
+<p>Lead Tiering:</p>
+<ul>
+<li><code>LISTING_NAME</code> - Identifier of the listing.</li>
+<li><code>LISTING_DISPLAY_NAME</code> - Display name of the listing.</li>
+</ul>
+<p>Attributes that will help us set up automation:</p>
+<ul>
+<li><code>LISTING_GLOBAL_NAME</code> - Global name of the listing. Unique for each listing and is used to create the listing URL.</li>
+<li><code>EVENT_DATE</code> - Date of the event.</li>
+<li><code>EVENT_TYPE</code> - Type of event</li>
+</ul>
+<p>We need to determine which events are considered significant. <code>EVENT_TYPE</code> attribute will be the suitable attribute for filtering. In this document, the following values are proposed for this attribute:</p>
+<ul>
+<li><code>GET</code> - Consumer creates a database for a free listing, or installs a Snowflake Native App.</li>
+<li><code>REQUEST</code> - Consumer requests a limited trial listing or a free listing in a region where the data is not yet available.</li>
+<li><code>TRIAL</code> - Consumer creates a trial database or installs a trial Snowflake Native App.</li>
+<li><code>PURCHASE</code> - Consumer agrees to be invoiced when paid data in a paid listing is queried.</li>
+<li><code>CANCEL PURCHASE</code> - Consumer decides to stop using the paid data in a paid listing.</li>
+</ul>
+<p>The full list of events, along with descriptions, can be found here: <a href="https://docs.snowflake.com/en/sql-reference/data-sharing-usage/listing-events-daily" target="_blank">Snowflake Events Documentation</a>.</p>
+<p>As a result, we can build the following query:</p>
+<pre><code language="language-snowflake" class="language-snowflake">SELECT
+    event_date,
+    event_type,
+    listing_global_name,
+    listing_display_name,
+    consumer_account_name,
+    consumer_organization,
+    consumer_name,
+    CONSUMER_EMAIL,
+    CONSUMER_METADATA:first_name as CONSUMER_FIRST_NAME,
+    CONSUMER_METADATA:last_name as CONSUMER_LAST_NAME,
+FROM
+    snowflake.data_sharing_usage.listing_events_daily
+WHERE
+    event_type IN (&#39;PURCHASE&#39;, &#39;CANCEL PURCHASE&#39;, &#39;GET&#39;, &#39;REQUEST&#39;, &#39;TRIAL&#39;);
+</code></pre>
+<aside class="special"><p><strong>Note:</strong> we applied dereferencing here by creating a separate alias for the customer&#39;s first name and last name. This will make it easier for us to format the proper message later.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create new Notification Integration" duration="10">
+        <p>The next step is to create a <code>NOTIFICATION INTEGRATION</code>. This document is based on official documentation for setting this up: <a href="https://docs.snowflake.com/en/sql-reference/sql/create-notification-integration-webhooks" target="_blank">Snowflake Notification Integration Documentation</a>.</p>
+<p>Create a Slack webhook using a <a href="https://api.slack.com/messaging/webhooks" target="_blank">guide</a>.</p>
+<ul>
+<li>As output, you need a webhook URL: <code>https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX</code></li>
+<li>the webhook URL contains the secret <code>T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX</code> we should protect for this purpose, we will place it in a separate <code>SECRET</code> object</li>
+</ul>
+<p>Let&#39;s create a new database to store all newly created objects.</p>
+<pre><code language="language-snowflake" class="language-snowflake">CREATE DATABASE LEADS_NOTIFICATIONS;
+</code></pre>
+<p>Execute the following statement to create a <code>SECRET</code> object for the secret T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX that appears in the URL</p>
+<pre><code language="language-snowflake" class="language-snowflake">CREATE OR REPLACE SECRET my_slack_webhook_secret
+  TYPE = GENERIC_STRING
+  SECRET_STRING = &#39;T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX&#39;;
+</code></pre>
+<p>Execute the following statement to create a notification integration for this webhook:</p>
+<pre><code language="language-snowflake" class="language-snowflake">CREATE OR REPLACE NOTIFICATION INTEGRATION my_slack_webhook_int
+  TYPE=WEBHOOK
+  ENABLED=TRUE
+  WEBHOOK_URL=&#39;https://hooks.slack.com/services/SNOWFLAKE_WEBHOOK_SECRET&#39;
+  WEBHOOK_SECRET=my_secrets_db.my_secrets_schema.my_slack_webhook_secret
+  WEBHOOK_BODY_TEMPLATE=&#39;{&#34;text&#34;: &#34;SNOWFLAKE_WEBHOOK_MESSAGE&#34;}&#39;
+  WEBHOOK_HEADERS=(&#39;Content-Type&#39;=&#39;application/json&#39;);
+</code></pre>
+<p>You can test the functionality of this notification by executing the following code:</p>
+<pre><code language="language-snowflake" class="language-snowflake">CALL SYSTEM$SEND_SNOWFLAKE_NOTIFICATION(
+  SNOWFLAKE.NOTIFICATION.TEXT_PLAIN(
+    SNOWFLAKE.NOTIFICATION.SANITIZE_WEBHOOK_CONTENT(&#39;my message&#39;)
+  ),
+  SNOWFLAKE.NOTIFICATION.INTEGRATION(&#39;my_slack_webhook_int&#39;)
+);
+</code></pre>
+<p>As a result, the notification should be added to the sending queue and shortly after, Slack should notify us about the new message.</p>
+<p class="image-container"><img alt="Slack screen with new new message" src="img/bd7514bb5f259c40.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sending Only New Events" duration="15">
+        <p>Since we plan to trigger our integration daily, we need to ensure that the same event is not sent twice. To achieve this, I suggest creating a table to track the leads that have already been sent. This table will serve as a log to keep a record of all sent events, allowing us to check for duplicates and prevent sending the same event multiple times.</p>
+<pre><code language="language-snowflake" class="language-snowflake">CREATE TABLE IF NOT EXISTS leads_notification_history
+(
+    notification_time TIMESTAMP_TZ,
+    event_id          STRING
+);
+</code></pre>
+<p>The <code>event_id</code> will be a combination of the following fields:  <code>event_date</code>, <code>event_type</code>, <code>listing_global_name</code>, <code>consumer_account_name</code>, and <code>consumer_organization</code>. We will store the sent leads in this table. In the next part, we will create a procedure that will add sent events to this table.</p>
+<p>With this in place, we can also enhance the original query for return events whose <code>event_id</code> is not found in the <code>leads_notification_history</code> table as follows:</p>
+<pre><code language="language-snowflake" class="language-snowflake">SELECT
+    event_date,
+    event_type,
+    listing_global_name,
+    listing_display_name,
+    consumer_account_name,
+    consumer_organization,
+    consumer_name,
+    CONSUMER_EMAIL,
+    CONSUMER_METADATA:first_name as CONSUMER_FIRST_NAME,
+        CONSUMER_METADATA:last_name as CONSUMER_LAST_NAME,
+FROM
+    snowflake.data_sharing_usage.listing_events_daily
+WHERE
+    CONCAT(event_date, event_type, listing_global_name, consumer_account_name, consumer_organization) NOT IN (
+        SELECT
+            event_id
+        FROM
+            leads_notification_history
+        WHERE
+            notification_time &gt;= DATEADD(&#39;day&#39;, -4, CURRENT_DATE())
+    )
+  AND event_type IN (&#39;PURCHASE&#39;, &#39;CANCEL PURCHASE&#39;, &#39;GET&#39;, &#39;REQUEST&#39;, &#39;TRIAL&#39;)
+  AND exchange_name = &#39;SNOWFLAKE_DATA_MARKETPLACE&#39;
+  AND event_date &gt;= DATEADD(&#39;day&#39;, -2, CURRENT_DATE())
+ORDER BY
+    event_date DESC;
+</code></pre>
+<p>Two new conditions in this query are worth noting:</p>
+<ul>
+<li><code>exchange_name</code>: This limits the query to the official Snowflake Marketplace.</li>
+<li><code>event_date</code>: Restricts the query to the last two days. These two days are a safe assumption if we plan to run the query once a day, adding a buffer in case the query is not run at the exact same time daily.</li>
+</ul>
+<aside class="special"><p><strong>Note:</strong> You can also use other fields if, e.g. If you do not want to send multiple leads with the same email use only the <code>CONSUMER_EMAIL</code> field. However, remember to also change this in the rest of the code.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Parsing events in JavaScript" duration="5">
+        <p>Since we assume these steps will be performed quite frequently, I recommend creating an appropriate procedure right away. We decided to write it in <strong>JavaScript</strong>, but the choice of programming language is not essential.</p>
+<p>First, we&#39;ll create an empty procedure definition:</p>
+<pre><code language="language-snowflake" class="language-snowflake">create or replace procedure get_events_and_send_notification_for_new_leads()
+    returns VARCHAR
+    language javascript
+as
+$$
+// Enter javascript code here
+$$;
+</code></pre>
+<p>In the next part, we will write individual JavaScript functions that will later be incorporated into this procedure.</p>
+<p>You can run It by executing the following query:</p>
+<pre><code language="language-snowflake" class="language-snowflake">CALL get_events_and_send_notification_for_new_leads();
+</code></pre>
+<p>Result:</p>
+<pre><code>get_events_and_send_notification_for_new_leads
+SUCCESS
+</code></pre>
+<p>Now, let&#39;s go through some necessary functions.</p>
+<h2 is-upgraded>Execute SQL Util</h2>
+<p>I prepared a useful helper function to avoid code duplication and make it easier to execute SQL commands from JavaScript. This function will be used in other functions later on.</p>
+<pre><code language="language-javascript" class="language-javascript">function exec(cmd, binds) {
+    return snowflake.execute({
+		sqlText: cmd,
+		binds: binds
+	});
+}
+</code></pre>
+<h2 is-upgraded>Find new events</h2>
+<p>This function contains the SQL query we prepared earlier. It fetches new lead events that have yet to be processed.</p>
+<pre><code language="language-javascript" class="language-javascript">function findNewEvents() {
+    return exec(`
+        SELECT
+           event_date,
+           event_type,
+           listing_global_name,
+           listing_display_name,
+           consumer_account_name,
+           consumer_organization,
+           consumer_name,
+           CONSUMER_EMAIL,
+           CONSUMER_METADATA:first_name as CONSUMER_FIRST_NAME,
+           CONSUMER_METADATA:last_name as CONSUMER_LAST_NAME,
+        FROM
+            snowflake.data_sharing_usage.listing_events_daily
+        WHERE
+            CONCAT( event_date, event_type, listing_global_name, consumer_account_name, consumer_organization) NOT IN (
+                    SELECT
+                        event_id
+                    FROM
+                        leads_notification_history
+                    WHERE
+                        notification_time &gt;= DATEADD(&#39;day&#39;, -4, CURRENT_DATE())
+            )
+            AND event_type IN (&#39;PURCHASE&#39;, &#39;CANCEL PURCHASE&#39;, &#39;GET&#39;, &#39;REQUEST&#39;, &#39;TRIAL&#39;)
+            AND exchange_name = &#39;SNOWFLAKE_DATA_MARKETPLACE&#39;
+            AND event_date &gt;= DATEADD(&#39;day&#39;, -2, CURRENT_DATE())
+        ORDER BY
+        event_date DESC;`
+    );
+}
+</code></pre>
+<p>Since we are only interested in new events, the query filters data from the last two days using the condition:</p>
+<pre><code language="language-snowflake" class="language-snowflake">AND event_date &gt;= DATEADD(&#39;day&#39;, -2, CURRENT_DATE())
+</code></pre>
+<p>However, it might be useful to temporarily include historical events for testing purposes. To achieve this, you can remove the date condition so that older events are also considered during testing.</p>
+<h2 is-upgraded>Processing Lead</h2>
+<p>Here&#39;s how you can implement a function to process leads. This part will vary depending on the requirements of the system to which you want to send it.</p>
+<pre><code language="language-javascript" class="language-javascript">function build_json_payload(eventsResultSet) {
+    let company_name = eventsResultSet.getColumnValue(&#34;CONSUMER_NAME&#34;);
+    let organization_name = eventsResultSet.getColumnValue(&#34;CONSUMER_ORGANIZATION&#34;);
+    let listing_name = eventsResultSet.getColumnValue(&#34;LISTING_DISPLAY_NAME&#34;);
+    let listing_global_id = eventsResultSet.getColumnValue(&#34;LISTING_GLOBAL_NAME&#34;);
+    let account_name = eventsResultSet.getColumnValue(&#34;CONSUMER_ACCOUNT_NAME&#34;);
+    let consumer_email = eventsResultSet.getColumnValue(&#34;CONSUMER_EMAIL&#34;);
+    let consumer_firstName = eventsResultSet.getColumnValue(&#34;CONSUMER_FIRST_NAME&#34;);
+    let consumer_lastName = eventsResultSet.getColumnValue(&#34;CONSUMER_LAST_NAME&#34;);
+    let payload = {
+        &#34;listing_display_name&#34;: listing_name,
+        &#34;organization_name&#34;: organization_name,
+        &#34;account_name&#34;: account_name,
+        &#34;listing_global_id&#34;: listing_global_id,
+        &#34;consumer_email&#34;: consumer_email,
+        &#34;consumer_firstName&#34;: consumer_firstName,
+        &#34;consumer_lastName&#34;: consumer_lastName,
+        &#34;company_name&#34;: company_name
+    }
+    return Object.entries(payload)
+        .map(([key, value]) =&gt; `${key} - ${value}`)
+        .join(&#34; &#34;);
+}
+</code></pre>
+<aside class="special"><p><strong>Note:</strong> Integration with Slack requires a message in text form. If you are considering integrating with another system this function is a perfect start for preparing proper payload.</p>
+</aside>
+<p>To integrate this into your overall process, you can call the <code>build_json_payload</code> function after fetching and processing new leads. E.g.:</p>
+<pre><code language="language-javascript" class="language-javascript">let resultSet = findNewEvents();
+const results = [];
+while (resultSet.next()) {
+ results.push(build_json_payload(resultSet))
+}
+return results;
+</code></pre>
+<aside class="special"><p><strong>Note:</strong>  At this point we decided to process messages one by one using a while loop. If you plan to integrate with a system that allows you to accept multiple leads at once, you will need to modify this part and accordingly update <code>build_json_payload</code> to support multiple values.</p>
+</aside>
+<pre><code language="language-javascript" class="language-javascript">let resultSet = findNewEvents();
+const results = [];
+while (resultSet.next()) {
+ results.push(resultSet)
+}
+return build_json_payload(results);
+</code></pre>
+<h2 is-upgraded>Sending the Notification</h2>
+<p>The <code>sendNotification</code> function is responsible for sending the JSON payload to the pre-configured notification integration. The function uses Snowflake&#39;s <code>system$send_snowflake_notification</code> to send the payload to the specified integration. Here&#39;s the complete code:</p>
+<pre><code language="language-javascript" class="language-javascript">function sendNotification(payload) {
+    exec(`call system$send_snowflake_notification(
+        SNOWFLAKE.NOTIFICATION.APPLICATION_JSON(?),
+        SNOWFLAKE.NOTIFICATION.INTEGRATION(&#39;my_slack_webhook_int&#39;))`,
+        [payload]);
+}
+</code></pre>
+<p>The function takes a single argument, <code>payload</code>, which is the JSON object that contains the details of the new lead (built by the <code>build_json_payload</code> function).</p>
+<p><code>SNOWFLAKE.NOTIFICATION.INTEGRATION('my_slack_webhook_int')</code> specifies the notification integration that you set up earlier (in this case, <code>my_slack_webhook_int</code>).</p>
+<h2 is-upgraded>Updating processed leads table</h2>
+<p>Once new leads have been processed and notifications sent, we need to save them in the <code>leads_notification_history</code> table to prevent them from being sent again. Here&#39;s the function that inserts the processed leads into this history table:</p>
+<pre><code language="language-javascript" class="language-javascript">function insertSentEventsToHistory(eventsResultSet) {
+      let event_date = eventsResultSet.getColumnValue(&#34;EVENT_DATE&#34;);
+      let event_type = eventsResultSet.getColumnValue(&#34;EVENT_TYPE&#34;);
+      let listing_global_name = eventsResultSet.getColumnValue(&#34;LISTING_GLOBAL_NAME&#34;);
+      let consumer_account_name = eventsResultSet.getColumnValue(&#34;CONSUMER_ACCOUNT_NAME&#34;);
+      let consumer_organization = eventsResultSet.getColumnValue(&#34;CONSUMER_ORGANIZATION&#34;);
+          
+      exec(`
+        INSERT INTO
+          leads_notification_history (notification_time, event_id)
+        SELECT
+          CURRENT_TIMESTAMP(), CONCAT(TO_DATE(:1), :2, :3, :4, :5);
+        `, [event_date.toISOString(), event_type, listing_global_name, consumer_account_name, consumer_organization]);
+    }
+</code></pre>
+<h2 is-upgraded>Procedure Logic</h2>
+<p>Below is a concept of how procedure <code>get_events_and_send_notification_for_new_leads</code> could look like:</p>
+<pre><code language="language-javascript" class="language-javascript">let resultSet = findNewEvents();
+if (resultSet.getRowCount() == 0) {
+    return &#34;SUCCESS: No new data for new leads, skip execution&#34;;
+}
+
+let sentNotificationsCount = 0;
+
+while (resultSet.next()) {
+    try {
+        // Build payload for current lead and send notification
+        let payload = build_json_payload(resultSet);
+
+        // Send notification with the built payload
+        sendNotification(payload);
+
+        // Insert the processed lead into the history table
+        insertSentEventsToHistory(resultSet);
+
+        // Increment the counter of successfully sent notifications
+        sentNotificationsCount++;
+    } catch (err) {
+        // Return the error if any issues occur during the process
+        return `ERROR: ${err}`;
+    }
+}
+
+// Return the final result based on the count of sent notifications
+if (sentNotificationsCount == 0) {
+    return &#34;FAILURE: No notifications sent&#34;;
+} else {
+    return `SUCCESS: New Leads Processed and Notified: ${sentNotificationsCount}`;
+}
+</code></pre>
+<h2 is-upgraded>Final Code</h2>
+<p>Here&#39;s the final implementation of the procedure <code>get_events_and_send_notification_for_new_leads</code>, incorporating all the previous functions you&#39;ve built:</p>
+<pre><code language="language-snowflake" class="language-snowflake">create or replace procedure get_events_and_send_notification_for_new_leads()
+    returns VARCHAR
+    language javascript
+as
+$$
+    let resultSet = findNewEvents();
+    if (resultSet.getRowCount() == 0) {
+      return &#34;SUCCESS: No new data for new leads, skip execution&#34;;
+    }
+
+    let sentNotificationsCount = 0;
+
+    while (resultSet.next()) {
+      try {
+        // Build payload for current lead and send notification
+        let payload = build_json_payload(resultSet);
+        
+        // Send notification with the built payload
+        sendNotification(payload);
+
+        // Insert the processed lead into the history table
+        insertSentEventsToHistory(resultSet);
+
+        // Increment the counter of successfully sent notifications
+        sentNotificationsCount++;
+      } catch (err) {
+        // Return the error if any issues occur during the process
+        return `ERROR: ${err}`;
+      }
+    }
+
+    // Return the final result based on the count of sent notifications
+    if (sentNotificationsCount == 0) {
+        return &#34;FAILURE: No notifications sent&#34;;
+    } else {
+        return `SUCCESS: New Leads Processed and Notified: ${sentNotificationsCount}`;
+}
+
+    function findNewEvents() {
+      return exec(`
+        SELECT
+           event_date,
+           event_type,
+           listing_global_name,
+           listing_display_name,
+           consumer_account_name,
+           consumer_organization,
+           consumer_name,
+           CONSUMER_EMAIL,
+           CONSUMER_METADATA:first_name as CONSUMER_FIRST_NAME,
+           CONSUMER_METADATA:last_name as CONSUMER_LAST_NAME,
+        FROM
+            snowflake.data_sharing_usage.listing_events_daily
+        WHERE
+            TRUE
+            AND CONCAT(event_date, event_type, listing_global_name, consumer_account_name, consumer_organization) NOT IN (
+                SELECT
+                    event_id
+                FROM
+                    leads_notification_history
+                WHERE
+                    notification_time &gt;= DATEADD(&#39;day&#39;, -4, CURRENT_DATE())
+            )
+            AND event_type IN (&#39;PURCHASE&#39;, &#39;CANCEL PURCHASE&#39;, &#39;GET&#39;, &#39;REQUEST&#39;, &#39;TRIAL&#39;)
+            AND exchange_name = &#39;SNOWFLAKE_DATA_MARKETPLACE&#39;
+           -- AND event_date &gt;= DATEADD(&#39;day&#39;, -2, CURRENT_DATE())
+        ORDER BY
+            event_date DESC;`);
+    }
+
+function build_json_payload(eventsResultSet) {
+      let company_name = eventsResultSet.getColumnValue(&#34;CONSUMER_NAME&#34;);
+      let organization_name = eventsResultSet.getColumnValue(&#34;CONSUMER_ORGANIZATION&#34;);
+      let listing_name = eventsResultSet.getColumnValue(&#34;LISTING_DISPLAY_NAME&#34;);
+      let listing_global_id = eventsResultSet.getColumnValue(&#34;LISTING_GLOBAL_NAME&#34;);
+      let account_name = eventsResultSet.getColumnValue(&#34;CONSUMER_ACCOUNT_NAME&#34;);
+      let consumer_email = eventsResultSet.getColumnValue(&#34;CONSUMER_EMAIL&#34;);
+      let consumer_firstName = eventsResultSet.getColumnValue(&#34;CONSUMER_FIRST_NAME&#34;);
+      let consumer_lastName = eventsResultSet.getColumnValue(&#34;CONSUMER_LAST_NAME&#34;);
+    let payload = {
+        &#34;listing_display_name&#34;: listing_name,
+        &#34;organization_name&#34;: organization_name,
+        &#34;account_name&#34;: account_name,
+        &#34;listing_global_id&#34;: listing_global_id,
+        &#34;consumer_email&#34;: consumer_email,
+        &#34;consumer_firstName&#34;: consumer_firstName,
+        &#34;consumer_lastName&#34;: consumer_lastName,
+        &#34;company_name&#34;: company_name
+      }
+     
+      return Object.entries(payload)
+            .map(([key, value]) =&gt; `${key} - ${value}`)
+            .join(&#34; &#34;);
+      }
+
+    function sendNotification(payload) {
+        exec(`call system$send_snowflake_notification(
+        SNOWFLAKE.NOTIFICATION.APPLICATION_JSON(?),
+        SNOWFLAKE.NOTIFICATION.INTEGRATION(&#39;my_slack_webhook_int&#39;))`,
+          [payload]);
+    }
+
+    function insertSentEventsToHistory(eventsResultSet) {
+      let event_date = eventsResultSet.getColumnValue(&#34;EVENT_DATE&#34;);
+      let event_type = eventsResultSet.getColumnValue(&#34;EVENT_TYPE&#34;);
+      let listing_global_name = eventsResultSet.getColumnValue(&#34;LISTING_GLOBAL_NAME&#34;);
+      let consumer_account_name = eventsResultSet.getColumnValue(&#34;CONSUMER_ACCOUNT_NAME&#34;);
+      let consumer_organization = eventsResultSet.getColumnValue(&#34;CONSUMER_ORGANIZATION&#34;);
+          
+      exec(`
+        INSERT INTO
+          leads_notification_history (notification_time, notification_type, event_id)
+        SELECT
+          CURRENT_TIMESTAMP(), CONCAT(TO_DATE(:1), :2, :3, :4, :5);
+        `, [event_date.toISOString(), event_type, listing_global_name, consumer_account_name, consumer_organization]);
+    }
+    
+    function exec(cmd, binds) {
+      return snowflake.execute({
+        sqlText: cmd,
+        binds: binds
+      });
+    }
+$$;
+</code></pre>
+<p>You can execute the procedure by calling it:</p>
+<pre><code language="language-snowflake" class="language-snowflake">CALL get_events_and_send_notification_for_new_leads();
+</code></pre>
+<p>To check the status of notifications you can call:</p>
+<pre><code language="language-snowflake" class="language-snowflake">SELECT * FROM TABLE(INFORMATION_SCHEMA.NOTIFICATION_HISTORY());
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Automating Lead Notifications" duration="10">
+        <p>The solution described above enables easy lead processing and notifications but still requires manual execution. To streamline this, we can automate the process by creating a Snowflake Task. A task can be scheduled to automatically run the <code>get_events_and_send_notification_for_new_leads</code> procedure at specified intervals without manual intervention.</p>
+<p>Here&#39;s how you can create a Snowflake Task to automate the execution of the procedure.</p>
+<pre><code language="language-snowflake" class="language-snowflake">CREATE OR REPLACE TASK lead_notification_task
+    SCHEDULE = &#39;USING CRON 0 12 * * * UTC&#39; -- Runs daily at 12:00 UTC
+    SERVERLESS_TASK_MAX_STATEMENT_SIZE=&#39;MEDIUM&#39; 
+    COMMENT = &#39;Task to automate the sending of new lead notifications&#39;
+AS
+    CALL get_events_and_send_notification_for_new_leads();
+</code></pre>
+<p>Once the task is created, you need to <strong>activate</strong> it to start running on the specified schedule:</p>
+<pre><code language="language-snowflake" class="language-snowflake">ALTER TASK lead_notification_task RESUME;
+</code></pre>
+<p>To monitor the status of the task or check if it has run successfully, you can query the task history:</p>
+<pre><code language="language-snowflake" class="language-snowflake">SHOW TASKS LIKE &#39;LEAD_NOTIFICATION_TASK&#39;;
+</code></pre>
+<p>You can manually trigger a single run of a task:</p>
+<pre><code language="language-snowflake" class="language-snowflake">EXECUTE TASK LEAD_NOTIFICATION_TASK;
+</code></pre>
+<p>If you ever need to delete the task, you can do so with the following command:</p>
+<pre><code language="language-snowflake" class="language-snowflake">DROP TASK IF EXISTS LEAD_NOTIFICATION_TASK;
+</code></pre>
+<aside class="special"><p><strong>Note:</strong> Ensure that the task has the necessary access to both the database and the <code>leads_notification_history</code> table.</p>
+</aside>
+<p>For more details on how to create and manage tasks in Snowflake, you can visit the official documentation: <a href="https://docs.snowflake.com/en/sql-reference/sql/create-task" target="_blank">Snowflake Task Documentation</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Calculating the Cost of the Solution" duration="0">
+        <ul>
+<li>Warehouse Usage: The task uses the designated warehouse each time it runs. The cost will depend on how long the warehouse is active during each execution and its size.</li>
+<li>Storage Costs: The task processes leads, which are stored in the leads_notification_history table. The amount of data stored will depend on the number of leads and the data retention period.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion and Resources" duration="2">
+        <h2 is-upgraded>Conclusion</h2>
+<p>In this guide, we walked through the process of setting up a notification integration to send lead information from the Snowflake Marketplace to Slack. We used a JavaScript procedure to format the messages and created a task to automate the process. This solution can be easily customized to integrate with other systems or to process different types of events.</p>
+<h2 is-upgraded>Possible Improvements</h2>
+<p>Some additional steps that could further enhance this solution include:</p>
+<ul>
+<li><strong>Check whether the notification was sent</strong> and further mark the leads as sent based on this.</li>
+</ul>
+<h2 is-upgraded>What You Learned</h2>
+<ul>
+<li>How to analyze Snowflake Marketplace lead events</li>
+<li>How to export lead data using Notifications</li>
+<li>How to send a Slack message using webhooks</li>
+<li>How to automate the process using Snowflake Tasks</li>
+</ul>
+<h2 is-upgraded>Related Resources</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-notification-integration-webhooks" target="_blank">Snowflake Notification Integration Documentation</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/native-shim.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/prettify.js"></script>
+  <script src="https://quickstarts.snowflake.com/elements/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("2025084205");
+  </script>
+</body>
+</html>

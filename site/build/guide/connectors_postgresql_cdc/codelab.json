@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:10-04:00",
+  "id": "connectors_postgresql_cdc",
+  "duration": 67,
+  "title": "Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables",
+  "summary": "CDC Data from PostgreSQL to Snowflake",
+  "source": "connectors_postgresql_cdc/connectors_postgresql_cdc.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cdc",
+    "getting-started",
+    "connectors",
+    "dynamictables"
+  ],
+  "tags": [
+    "cdc",
+    "connectors",
+    "dynamictables",
+    "gettingstarted",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "connectors_postgresql_cdc"
+}

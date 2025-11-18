@@ -1,0 +1,35 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-07-30T23:28:19-04:00",
+  "id": "tealium-snowflake-integration",
+  "duration": 44,
+  "title": "Collect and Activate Customer Data Using Tealium and Snowpipe Streaming",
+  "summary": "This tutorial reviews the process for configuring inbound and outbound Snowflake integrations within Tealium Customer Data Hub",
+  "source": "tealium-snowflake-integration/tealium-snowflake-integration.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "getting-started",
+    "partner-integrations",
+    "marketing",
+    "architecture-patterns"
+  ],
+  "tags": [
+    "cdp",
+    "customerdataplatform",
+    "dataactivation",
+    "gettingstarted",
+    "real-time",
+    "snowpipestreaming",
+    "stagingtables",
+    "tealium",
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "tealium-snowflake-integration"
+}
