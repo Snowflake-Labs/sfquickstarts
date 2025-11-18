@@ -42,12 +42,10 @@ jobs:
           has_relevant_changes=false
           if [ -z "$quickstart_names" ]; then
             quickstart_names_json="[]"
-            quickstart_folders_json="[]"
             quickstart_name=""
             has_relevant_changes=false
           else
             objs='[]'
-            names_arr='[]'
             while IFS= read -r name; do
               [ -z "$name" ] && continue
               lang=""
@@ -78,15 +76,12 @@ jobs:
                 if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
               fi
               objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
-              names_arr=$(echo "$names_arr" | jq -c --arg name "$name" '. + [$name]')
             done <<< "$quickstart_names"
             quickstart_names_json="$objs"
-            quickstart_folders_json=$(echo "$names_arr" | jq -c .)
             quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
             has_relevant_changes=true
           fi
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
-          echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "has_relevant_changes=$has_relevant_changes" >> $GITHUB_OUTPUT
 
@@ -131,7 +126,6 @@ jobs:
           
           # Create single-item array for quickstart_names to match expected format
           qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
-          qfolders_array=$(jq -n --arg name "$qname" '[$name]')
           
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
@@ -141,8 +135,7 @@ jobs:
             --arg pr_num "${{ needs.publish.outputs.pr_number }}" \
             --arg qname "$qname" \
             --argjson qnames "$qnames_array" \
-            --argjson qfolders "$qfolders_array" \
-            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames}')
           
           echo "Payload:"
           echo "$payload" | jq .
