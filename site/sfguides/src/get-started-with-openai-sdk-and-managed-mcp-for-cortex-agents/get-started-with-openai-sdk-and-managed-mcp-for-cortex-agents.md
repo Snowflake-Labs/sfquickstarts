@@ -44,7 +44,7 @@ You'll build two complete applications that demonstrate external access patterns
 
 ### Download Project Files
 
-Download the [get-started-with-openai-sdk-and-managed-mcp-for-cortex-agents.zip](./resources/get-started-with-openai-sdk-and-managed-mcp-for-cortex-agents.zip) file which contains:
+Download the [get-started-with-openai-sdk-and-managed-mcp-for-cortex-agents.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/refs/heads/master/site/sfguides/src/get-started-with-openai-sdk-and-managed-mcp-for-cortex-agents/resources/get-started-with-openai-sdk-and-managed-mcp-for-cortex-agents.zip) file which contains:
 - `setup.sql` - Complete Snowflake environment setup
 - `mcp_setup.sql` - MCP server and OAuth configuration
 - `openai_sdk.py` - Streamlit chat application using OpenAI SDK

@@ -50,7 +50,7 @@ The first thing you will need to do is download the following .sql file that con
 <button>
 
   
-  [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/Snowflake_Datarobot_VHOL_guides.sql)
+  [Download .sql File](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/refs/heads/master/site/sfguides/src/automl-with-snowflake-and-datarobot/Snowflake_Datarobot_VHOL_guides.sql)
 </button>
 <br/><br/>
 
