@@ -119,11 +119,11 @@ Great! Now it’s time to set up dbt platform.
 
 6. You should be redirected to a dbt platform registration page. Fill out the form and make sure to save the password somewhere for login in the future.
 
-    ![dbt platform Registration](assets/dbt_Cloud_registration.png)
+    ![dbt platform Registration](assets/dbt_platform_registration.png)
 
 7. Click on `Complete Registration`. You should now be redirected to your dbt platform account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
 
-    ![dbt platform Home Page](assets/dbt_Cloud_home_page.png)
+    ![dbt platform Home Page](assets/dbt_platform_home_page.png)
 
 8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
 
