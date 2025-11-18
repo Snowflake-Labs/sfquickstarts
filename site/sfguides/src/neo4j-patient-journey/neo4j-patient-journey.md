@@ -41,9 +41,6 @@ Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze patients and different procedures that they undergo using graph analytics. 
 
-<img src="assets/datamodel.png" alt="image" width="400"/>
-
-
 Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/patient_journey/data), We are going to add two new tables:
 
 - One called `PROCEDURES` based on the Procedures.csv
@@ -237,10 +234,12 @@ Now we can use the `neo4j_viz` python package to create the actual visualization
 viz_graph.color_nodes(property='LABEL', override=True)  
 ```
 Next, we will use the "title" property to set captions. We created that column above as well:
+
 ```python
 for node in viz_graph.nodes:
     node.caption = str(node.properties["TITLE"])
 ```
+
 Let's see it all in action. You will notice that we are using the same projection syntax to create our visualization
 
 ```python
@@ -264,13 +263,11 @@ viz_graph = from_snowflake(
     }
 )
 
-##### specifying which column should be associated with colors. 
 viz_graph.color_nodes(property='LABEL', override=True)  
 
 for node in viz_graph.nodes:
     node.caption = str(node.properties["TITLE"])
     
-##### now we render
 html_object = viz_graph.render()
 
 import streamlit.components.v1 as components
