@@ -45,17 +45,61 @@ jobs:
             scripts/
           sparse-checkout-cone-mode: true
 
-      - name: Checkout PR head (untrusted) into ./pr
+      - name: Download changed files from PR (untrusted)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          path: pr
-          sparse-checkout: |
-            site/sfguides/src/
-          sparse-checkout-cone-mode: true
+        id: download
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          
+          # Fetch changed files from PR (excluding deleted files)
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+          
+          # Save files_json to a file for reuse in subsequent steps
+          echo "$files_json" > pr_files.json
+          
+          # Filter for:
+          # 1. Markdown files (.md) in site/sfguides/src/
+          # 2. Image files in assets folders
+          # 3. Exclude folders starting with _
+          changed_files=$(echo "$files_json" | jq -r '.[] 
+            | select(.status != "removed") 
+            | .filename 
+            | select(startswith("site/sfguides/src/")) 
+            | select(test("/_") | not)
+            | select(
+                endswith(".md") or
+                (test("/assets/.*\\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$"; "i"))
+              )')
+          
+          if [ -z "$changed_files" ]; then
+            echo "No changed files to download"
+            exit 0
+          fi
+          
+          # Download each changed file
+          head_repo="${{ github.event.pull_request.head.repo.full_name }}"
+          head_ref="${{ github.event.pull_request.head.ref }}"
+          
+          echo "Downloading changed files..."
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            
+            # Create directory structure
+            mkdir -p "pr/$(dirname "$file")"
+            
+            # Download raw file content
+            url="https://raw.githubusercontent.com/$head_repo/$head_ref/$file"
+            echo "Downloading: $file"
+            
+            if ! curl -sS -f -H "Authorization: Bearer $GITHUB_TOKEN" "$url" -o "pr/$file"; then
+              echo "Warning: Failed to download $file" >&2
+            fi
+          done <<< "$changed_files"
+          
+          echo "Download complete"
 
       - name: Setup Node.js
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -88,87 +132,91 @@ jobs:
       - name: Determine changed files in quickstarts (from PR)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          # Re-fetch files_json since checkout may have overwritten files_json.txt
-          pr_number=${{ github.event.pull_request.number }}
-          repo=${{ github.repository }}
-          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+          # Reuse files_json from previous step (already filtered for relevant, non-removed files)
+          files_json=$(cat pr_files.json)
           
-          md_files=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | select(endswith(".md"))' | sort -u)
-          if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
-
-          # Build quickstart names and languages like the legacy workflow
-          quickstart_names=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
-          if [ -z "$quickstart_names" ]; then
-            quickstart_names_json='[]'
-            quickstart_folders_json='[]'
-            quickstart_name=''
-          else
-            objs='[]'
-            names_arr='[]'
-            while IFS= read -r name; do
-              [ -z "$name" ] && continue
-              lang=""
-              md_file=""
-              # Prefer a markdown file that matches the folder name (from PR checkout)
-              candidate="pr/site/sfguides/src/$name/$name.md"
-              if [ -f "$candidate" ]; then
-                md_file="$candidate"
-              else
-                # Otherwise, pick the first .md containing a language: field in the first 50 lines
-                for f in $(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
-                  if sed -n '1,50p' "$f" | grep -qi -E '^[[:space:]]*language[[:space:]]*:'; then
-                    md_file="$f"; break
-                  fi
-                done
-                # As a fallback, choose the first non-README.md file
-                if [ -z "$md_file" ]; then
-                  for f in $(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
-                    [ "$(basename "$f")" = "README.md" ] && continue
-                    md_file="$f"; break
-                  done
-                fi
-                # Final fallback: any .md file if still empty
-                if [ -z "$md_file" ]; then
-                  md_file=$(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
-                fi
-              fi
-              if [ -n "$md_file" ] && [ -f "$md_file" ]; then
-                lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
-                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
-              fi
-              objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
-              names_arr=$(echo "$names_arr" | jq -c --arg name "$name" '. + [$name]')
-            done <<< "$quickstart_names"
-
-            quickstart_names_json="$objs"
-            quickstart_folders_json=$(echo "$names_arr" | jq -c .)
-            quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
+          # Extract markdown and all changed files (filtering already done in download step)
+          md_files=$(echo "$files_json" | jq -r '.[].filename | select(endswith(".md"))' | sort -u)
+          all_changed_files=$(echo "$files_json" | jq -r '.[].filename' | sort -u)
+          
+          # Prepare file arrays for output
+          if [ -z "$md_files" ]; then 
+            markdown_json='[]'
+            md_file_count=0
+          else 
+            markdown_json=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
+            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
           fi
-
-          # Get all changed files (not just markdown) for file size checking
-          # Only include files that will be checked out (site/sfguides/src/), excluding folders starting with _ and removed files
-          all_changed_files=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not)' | sort -u)
+          
           if [ -z "$all_changed_files" ]; then 
             all_changed_files_json='[]'
           else
             all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           fi
 
-          # Count markdown files
-          if [ -z "$md_files" ]; then
-            md_file_count=0
+          # Extract quickstart names from markdown files
+          quickstart_names=$(echo "$md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          
+          if [ -z "$quickstart_names" ]; then
+            quickstart_names_json='[]'
+            quickstart_name=''
           else
-            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
+            objs='[]'
+            
+            # For each quickstart, extract language from the primary markdown file
+            while IFS= read -r name; do
+              [ -z "$name" ] && continue
+              lang=""
+              md_file=""
+              
+              # Prefer a markdown file that matches the folder name
+              candidate="pr/site/sfguides/src/$name/$name.md"
+              if [ -f "$candidate" ]; then
+                md_file="$candidate"
+              else
+                # Pick the first changed .md file with a language field
+                for changed_file in $(echo "$md_files" | grep "^site/sfguides/src/$name/"); do
+                  changed_file_path="pr/$changed_file"
+                  if [ -f "$changed_file_path" ] && sed -n '1,50p' "$changed_file_path" | grep -qi -E '^[[:space:]]*language[[:space:]]*:'; then
+                    md_file="$changed_file_path"
+                    break
+                  fi
+                done
+                
+                # Fallback: first non-README.md file
+                if [ -z "$md_file" ]; then
+                  for changed_file in $(echo "$md_files" | grep "^site/sfguides/src/$name/"); do
+                    [ "$(basename "$changed_file")" = "README.md" ] && continue
+                    md_file="pr/$changed_file"
+                    break
+                  done
+                fi
+                
+                # Final fallback: any .md file
+                if [ -z "$md_file" ]; then
+                  first_changed=$(echo "$md_files" | grep "^site/sfguides/src/$name/" | head -n1)
+                  [ -n "$first_changed" ] && md_file="pr/$first_changed"
+                fi
+              fi
+              
+              # Extract language from the markdown file
+              if [ -n "$md_file" ] && [ -f "$md_file" ]; then
+                lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+              
+              objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
+            done <<< "$quickstart_names"
+
+            quickstart_names_json="$objs"
+            quickstart_name=$(echo "$quickstart_names" | head -n1)
           fi
 
-          echo "files_json=$files_arr" >> $GITHUB_OUTPUT
+          echo "markdown_json=$markdown_json" >> $GITHUB_OUTPUT
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
-          echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
           echo "md_file_count=$md_file_count" >> $GITHUB_OUTPUT
@@ -226,7 +274,7 @@ jobs:
         id: validate
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
         run: |
           node scripts/validate-profanity.js || {
@@ -239,7 +287,7 @@ jobs:
         id: validate_categories
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
         run: |
           node scripts/validate-categories.js || {
             echo "Category syntax validation failed. See 'categories-error.json' for details." >&2
@@ -251,7 +299,7 @@ jobs:
         id: validate_frontmatter
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
         run: |
           node scripts/validate-frontmatter.js || {
             echo "Frontmatter validation failed. See 'frontmatter-error.json' for details." >&2
@@ -425,8 +473,7 @@ jobs:
             --arg env "staging" \
             --arg qname '${{ steps.detect.outputs.quickstart_name }}' \
             --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
-            --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
-            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames}')
           echo "$payload" | jq .
           
           # Retry configuration
