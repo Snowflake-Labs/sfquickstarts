@@ -40,7 +40,7 @@ You can submit your own Guides to be published on Snowflake's website by submitt
    -- Please use hyphens,  no underscores <br>
    -- Ensure your folder uses lower case alphabets and "Hyphens (-)" and not "Underscores(_)" in folder name <br>
    -- Example: my-guide/my-guide.md <br>
-5. Start authoring in markdown format using the template housed under site -> sfguides/src -> _template -> markdown.template. Select the 'preview' button at the top left to see a preview of your guide.
+5. Start authoring in markdown format using the template housed under site -> sfguides/src -> _markdown-template -> markdown-template.md. Select the 'preview' button at the top left to see a preview of your guide.
    > Required fields: language, category tags, id, author name, status (leave this as published) <br>
    Optional Fields: summary, environments, feedback link, fork repo link, open in Snowflake
 6. To submit related assets with your guide, create an 'assets' subfolder under your existing guide folder.
@@ -98,7 +98,7 @@ Watch a demo [here](https://www.youtube.com/watch?v=yd9LXsvTSTU)
   6. Copy the template folder and rename it appropriately to create a new Guide: (e.g. `cp _markdown-template my-quickstart-name-here` in your terminal).
      or Browse to the Guide you wish to edit, click the directory and edit the existing files in the directory
  
-  7. Start authoring in markdown format using the template housed under site -> sfguides/src -> _markdown-template -> markdown-template.
+  7. Start authoring in markdown format using the template housed under site -> sfguides/src -> _markdown-template -> [markdown-template](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template.md).
   
   8. Make sure you select the appropriate content type, industries, language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags). You will not be able to merge your changes without this step!
 
