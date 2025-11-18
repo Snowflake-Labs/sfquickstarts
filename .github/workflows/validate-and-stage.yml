@@ -216,6 +216,15 @@ jobs:
             fi
           fi
 
+          # Print debug information
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "All changed files:"
+          echo "$all_changed_files"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Markdown files (for validation):"
+          echo "$markdown_json" | jq -r '.[]' 2>/dev/null || echo "$markdown_json"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
           echo "markdown_json=$markdown_json" >> $GITHUB_OUTPUT
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
