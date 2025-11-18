@@ -66,8 +66,8 @@ jobs:
           echo "$files_json" > pr_files.json
           
           # Filter for:
-          # 1. Markdown files (.md) in site/sfguides/src/ (excluding README.md)
-          # 2. Image files in assets folders
+          # 1. Markdown files (.md) in site/sfguides/src/ OUTSIDE of assets folders (excluding README.md)
+          # 2. Image files ONLY from inside assets folders (no other file types from assets)
           # 3. Exclude folders starting with _
           changed_files=$(echo "$files_json" | jq -r '.[] 
             | select(.status != "removed") 
@@ -75,7 +75,7 @@ jobs:
             | select(startswith("site/sfguides/src/")) 
             | select(test("/_") | not)
             | select(
-                (endswith(".md") and (test("/README\\.md$"; "i") | not)) or
+                (endswith(".md") and (test("/README\\.md$"; "i") | not) and (test("/assets/") | not)) or
                 (test("/assets/.*\\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$"; "i"))
               )')
           
