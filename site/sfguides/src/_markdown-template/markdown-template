@@ -1,39 +1,40 @@
-author: AUTHOR_NAME
-id: SFGUIDE-NAME
-language: 
+author: author first and last name
+id: markdown-template
+language: en
 summary: This is a sample Snowflake Template
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-status: Hidden 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
-author:  Kanwal Komail (github: kanwalzs)
+fork repo link: <optional but modify to link to your repo>
+open in snowflake: <optional but modify to link into the product>
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
 
-Please use [Snowflake Guide](#) as a guiding document for writing your own Snowflake Guide. <br>
+Please use [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides) as a guiding document for writing your own Snowflake Guide. <br>
 This example guide has elements that you will use when writing your own guides, including: formatting, code snippet highlighting, video links, inserting photos, and more. 
 
 It is important to include on the first page of your guide the following sections: 
 - Prerequisites, 
-- What you'll learn, 
-- What you'll need, and 
-- What you'll build. 
+- What you'll learn
+- What you'll need
+- What you'll build 
 
 Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+The rest of this Snowflake Guide explains the steps of writing your own guide with some basic layout information.  
+Detailed formatting options can be found in this [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides). 
 
 ### Prerequisites
 - Familiarity with Markdown syntax
 
 ### What You’ll Learn 
--  The format for a guide (the sections, the metadata and basic markdown)
-- how to include code snippets 
-- how to hyperlink items
-- ways to include images and videos
+- The format for a guide (the sections, the metadata and basic markdown)
+- How to include code snippets 
+- How to hyperlink items
+- Ways to include images and videos
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
@@ -51,21 +52,21 @@ The metadata contains all the information required for listing and publishing yo
 
 
 ```diff
-- REQUIRED
+- REQUIRED FIELDS
 ```
 
 - **id**: sample-separated-by-hyphens-not-underscores 
   - make sure to match the id here with the name of the file, all one word.
 - **language**: pick from list 
-  - pick the appropriate language from the list provided.  
+  - pick the appropriate language from the list provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags 
 - **categories**: Pick from the list
-  - select from the complete list of categories 1, 2 and 3 prrovided.  Please DO NOT create new categories.
+  - select from the complete list of categories provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags.  Please DO NOT create new categories.
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
   `Published` - implies the guide is active<br>
-  `Hidden` - implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.<br>
-  `Archived` - imlplies the sfguide is out of date and deprecated and no longer available.
-- **authors**: Author Full Name (+ author GitHub account)
-  - Indicate the author(s) of this specific sfguide.  Including the GitHub Account login helps us notify you of any changes requested in the future.
+  `Archived` - implies the sfguide is out of date and deprecated and no longer available.
+- **authors**: Author Full Name 
+  - Indicate the author(s) of this specific sfguide.  
+
 
 ```diff
 - OPTIONAL
@@ -75,15 +76,16 @@ The metadata contains all the information required for listing and publishing yo
   - **environments**: web 
   - `web` is default. If this will be published for a specific event or  conference, include it here.
   - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
+  - **fork repo link**: add your repo link here for GitHub
+  - **open in snowflake**: add deeplinks straight into the product or to a template within Snowflake.
 
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
 
 
 <!-- ------------------------ -->
 ## Creating Sections
 
-A single sfguide consists of multiple steps or sections. These sections are defined in Markdown using Header tags.  Header 2 tag is `##`, Header 3 tag is `###` and so forth. 
+A single sfguide consists of multiple steps or sections. 
+These sections are defined in Markdown using Header tags.  Header 2 tag is `##`, Header 3 tag is `###` and so forth. 
 
 ```markdown
 ## Step 1 Title as H2 tag
@@ -93,10 +95,10 @@ All the content for the step goes here.
 ## Step 2 Title as H2 tag
 
 ### Subheader goes here as H3 tag.
+
+
 ```
-
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+>Please avoid going beyond H4 #### as it will not render on the page correctly!
 
 <!-- ------------------------ -->
 ## Headers and Subheaders
@@ -124,7 +126,11 @@ Please use the guide to add elements to your markdown within this template.  <p>
 
 
 <!-- ------------------------ -->
-## Languages and Category Tags 
+## Adding Appropriate Tags 
+
+**Content Type & Industries Tags** 
+- Pick the appropriate content type that applies to your Guide. This helps with filtering content on the website.
+- If relevant, please pick industry tags as well so content is reflected appropriately on the website.
 
 - Languages
 Guides are available in various languages for the regions.
@@ -139,7 +145,7 @@ specific language tags must be added to the document to ensure the regional page
 - DO NOT create new tags if you don't see them in the list.  
 
 
-A complete list of the language and category tags is available in [Get Started with Guides](#)
+A complete list of the language and category tags is available here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags
 
 
 
@@ -155,8 +161,14 @@ Use this link to [submit your videos](https://www.wrike.com/frontend/requestform
 Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
 
 ### Images
-Ensure your images are not too large.
-Recommended sizes, naming convention and folder location details are covered in the guide. 
+Image Guidelines: 
+- Naming convention should be all lower case and include underscores (no hyphens)
+- No special characters 
+- File size should be less than 1MB. Gifs may be larger, however, should be optimized to prevent reduction of page load times
+- Image file name should align to the name in .md file (this is case sensitive) 
+- All images should be added to the 'assets' subfolder for your guide (please do not create additional subfolders within the 'assets' subfolder)
+- No full resolution images; these should be optimized for web (recommended: tinypng) 
+- Do no use HTML code for adding images
 
 
 
@@ -179,3 +191,4 @@ If you want to learn more about Snowflake Guide formatting, checkout the officia
 ### EXAMPLES:
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
 * **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
+* **Simple Hands-on Guide**: [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
