@@ -146,18 +146,9 @@ jobs:
           # Read the list of downloaded files from previous step
           downloaded_files=$(cat downloaded_files.txt)
           
-          # Extract markdown and all downloaded files
+          # Extract markdown files from downloaded files
           md_files=$(echo "$downloaded_files" | grep '\.md$' || true)
           all_changed_files="$downloaded_files"
-          
-          # Prepare file arrays for output
-          if [ -z "$md_files" ]; then 
-            markdown_json='[]'
-            md_file_count=0
-          else 
-            markdown_json=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
-            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
-          fi
           
           if [ -z "$all_changed_files" ]; then 
             all_changed_files_json='[]'
@@ -171,10 +162,13 @@ jobs:
           if [ -z "$quickstart_names" ]; then
             quickstart_names_json='[]'
             quickstart_name=''
+            markdown_json='[]'
+            md_file_count=0
           else
             objs='[]'
+            selected_md_files=()
             
-            # For each quickstart, extract language from the markdown file
+            # For each quickstart, select only the first matching markdown file for validation
             # Note: 99%+ of quickstarts have exactly 1 markdown file (README.md excluded)
             while IFS= read -r name; do
               [ -z "$name" ] && continue
@@ -182,23 +176,27 @@ jobs:
               md_file=""
               
               # Prefer a markdown file that matches the folder name (e.g., quickstart-name/quickstart-name.md)
-              candidate="pr/site/sfguides/src/$name/$name.md"
-              if [ -f "$candidate" ]; then
+              candidate="site/sfguides/src/$name/$name.md"
+              if echo "$md_files" | grep -q "^$candidate$"; then
                 md_file="$candidate"
               else
                 # Fallback: use the first (and likely only) markdown file in this quickstart
-                first_changed=$(echo "$md_files" | grep "^site/sfguides/src/$name/" | head -n1)
-                [ -n "$first_changed" ] && md_file="pr/$first_changed"
+                md_file=$(echo "$md_files" | grep "^site/sfguides/src/$name/" | head -n1)
               fi
               
-              # Extract language from the markdown file
-              if [ -n "$md_file" ] && [ -f "$md_file" ]; then
-                lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
-                # Only process if language field was found
-                if [ -n "$lang" ]; then
-                  lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-                  if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                  if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              # Add to selected files list for validation
+              if [ -n "$md_file" ]; then
+                selected_md_files+=("$md_file")
+                
+                # Extract language from the markdown file
+                if [ -f "pr/$md_file" ]; then
+                  lang=$(sed -n '1,50p' "pr/$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+                  # Only process if language field was found
+                  if [ -n "$lang" ]; then
+                    lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                    if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                    if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                  fi
                 fi
               fi
               
@@ -207,6 +205,15 @@ jobs:
 
             quickstart_names_json="$objs"
             quickstart_name=$(echo "$quickstart_names" | head -n1)
+            
+            # Build markdown_json with only selected files (first per folder)
+            if [ ${#selected_md_files[@]} -eq 0 ]; then
+              markdown_json='[]'
+              md_file_count=0
+            else
+              markdown_json=$(printf '%s\n' "${selected_md_files[@]}" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
+              md_file_count=${#selected_md_files[@]}
+            fi
           fi
 
           echo "markdown_json=$markdown_json" >> $GITHUB_OUTPUT
