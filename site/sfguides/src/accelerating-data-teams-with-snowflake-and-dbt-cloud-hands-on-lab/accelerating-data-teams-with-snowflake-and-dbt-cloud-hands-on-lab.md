@@ -955,15 +955,15 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
 1. Before getting started, let’s make sure that we’ve committed all of our work to our feature branch. If you still have work to commit you’ll be able to click the `Commit and push` button, provide a message, and then click `Commit` again. 
 
-2. Once all of your work is committed, the git workflow button will now appear as `Merge to main`. Click `Merge to main` and the merge process will automatically run in the background. 
+2. Once all of your work is committed, the git workflow button will now appear as `Merge this branch to main`. Click `Merge this branch to main` and the merge process will automatically run in the background. 
 
-    ![Merge to Main](assets/dbt_Cloud_merge_to_main.png)<br><br>
+    ![Merge to Main](assets/dbt_platform_merge_to_main.png)<br><br>
 
     When it’s completed you should see the button read `Create branch` and the branch you’re currently looking at will become `main`. 
 
 3. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
 
-4. Click on the Deploy tab in the top bar and then click `Environments`. 
+4. Click on the Orchestration tab in the side bar and then click `Environments`. 
 
     You should see two environments listed and you’ll want to click on the `Deployment` environment to open it up and then `Settings` in the upper right hand corner to modify it.<br><br>
 
@@ -973,13 +973,13 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
     The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we’ve been using as the schema for our development environment. Let’s update the schema to create a new schema specifically for our production environment. 
 
-    Click `Edit` in the upper right hand corner to allow you to modify the existing field values. Scroll down to the `schema` field in the `Deployment Credentials` section and update the schema name to `production`. Be sure to click `Save` in the upper right hand corner after you’ve made the change.
+    Click `Edit` in the upper right hand corner to allow you to modify the existing field values. Select the snowflake default connection. Set Auth method as `Username and password`. Provide the username and password of your snowflake account. Scroll down to the `schema` field in the `Deployment Credentials` section and update the schema name to `production`. Be sure to click `Save` in the upper right hand corner after you’ve made the change.
 
-    ![Deployment Schema Update](assets/dbt_Cloud_deployment_schema_update.png)
+    ![Deployment Schema Update](assets/dbt_platform_deployment_schema_update.png)
 
     By updating the schema for our production environment to `production`, it ensures that our deployment job for this environment will build our dbt models in the `production` schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
 
-5. Now let’s switch over to our production job. Click on the deploy tab again and then select `Jobs`. You should see an existing and pre-configured `Partner Connect Trial Job`. Similar to the environment, click on the job, then select `Settings` to modify it. Let’s take a look at the job to understand it before making changes. <br><br>
+5. Now let’s switch over to our production job. Click on the Orchestration tab again and then select `Jobs`. You should see an existing and pre-configured `Partner Connect Trial Job`. Similar to the environment, click on the job, then select `Settings` to modify it. Let’s take a look at the job to understand it before making changes. <br><br>
 
     The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
 
