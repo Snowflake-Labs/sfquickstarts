@@ -15,6 +15,11 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
+    outputs:
+      has_relevant_changes: ${{ steps.check_relevant.outputs.has_relevant_changes }}
+      quickstart_names_json: ${{ steps.detect.outputs.quickstart_names_json }}
+      all_validations_passed: ${{ steps.validation_check.outputs.all_passed }}
+      md_file_count: ${{ steps.detect.outputs.md_file_count }}
       
     steps:
       - name: Check for relevant changes (early exit)
@@ -61,7 +66,7 @@ jobs:
           echo "$files_json" > pr_files.json
           
           # Filter for:
-          # 1. Markdown files (.md) in site/sfguides/src/
+          # 1. Markdown files (.md) in site/sfguides/src/ (excluding README.md)
           # 2. Image files in assets folders
           # 3. Exclude folders starting with _
           changed_files=$(echo "$files_json" | jq -r '.[] 
@@ -70,7 +75,7 @@ jobs:
             | select(startswith("site/sfguides/src/")) 
             | select(test("/_") | not)
             | select(
-                endswith(".md") or
+                (endswith(".md") and (test("/README\\.md$"; "i") | not)) or
                 (test("/assets/.*\\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$"; "i"))
               )')
           
@@ -164,48 +169,32 @@ jobs:
           else
             objs='[]'
             
-            # For each quickstart, extract language from the primary markdown file
+            # For each quickstart, extract language from the markdown file
+            # Note: 99%+ of quickstarts have exactly 1 markdown file (README.md excluded)
             while IFS= read -r name; do
               [ -z "$name" ] && continue
               lang=""
               md_file=""
               
-              # Prefer a markdown file that matches the folder name
+              # Prefer a markdown file that matches the folder name (e.g., quickstart-name/quickstart-name.md)
               candidate="pr/site/sfguides/src/$name/$name.md"
               if [ -f "$candidate" ]; then
                 md_file="$candidate"
               else
-                # Pick the first changed .md file with a language field
-                for changed_file in $(echo "$md_files" | grep "^site/sfguides/src/$name/"); do
-                  changed_file_path="pr/$changed_file"
-                  if [ -f "$changed_file_path" ] && sed -n '1,50p' "$changed_file_path" | grep -qi -E '^[[:space:]]*language[[:space:]]*:'; then
-                    md_file="$changed_file_path"
-                    break
-                  fi
-                done
-                
-                # Fallback: first non-README.md file
-                if [ -z "$md_file" ]; then
-                  for changed_file in $(echo "$md_files" | grep "^site/sfguides/src/$name/"); do
-                    [ "$(basename "$changed_file")" = "README.md" ] && continue
-                    md_file="pr/$changed_file"
-                    break
-                  done
-                fi
-                
-                # Final fallback: any .md file
-                if [ -z "$md_file" ]; then
-                  first_changed=$(echo "$md_files" | grep "^site/sfguides/src/$name/" | head -n1)
-                  [ -n "$first_changed" ] && md_file="pr/$first_changed"
-                fi
+                # Fallback: use the first (and likely only) markdown file in this quickstart
+                first_changed=$(echo "$md_files" | grep "^site/sfguides/src/$name/" | head -n1)
+                [ -n "$first_changed" ] && md_file="pr/$first_changed"
               fi
               
               # Extract language from the markdown file
               if [ -n "$md_file" ] && [ -f "$md_file" ]; then
                 lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
-                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                # Only process if language field was found
+                if [ -n "$lang" ]; then
+                  lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                  if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                  if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                fi
               fi
               
               objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
@@ -446,53 +435,102 @@ jobs:
             frontmatter-error.json
           if-no-files-found: ignore
 
-      - name: Fail workflow if validation failed
+      - name: Check validation results and fail if needed
+        id: validation_check
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         run: |
           # Check if any validation step failed
+          all_passed=true
           if [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
              [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_language.outcome }}" == "failure" ]; then
-            echo "Validation failed. See PR comment for details."
+            all_passed=false
+          fi
+          
+          # Set output for matrix job to use
+          echo "all_passed=$all_passed" >> $GITHUB_OUTPUT
+          echo "All validations passed: $all_passed"
+          
+          # Fail workflow if validations failed
+          if [ "$all_passed" == "false" ]; then
+            echo "❌ Validation failed. See PR comment for details."
             exit 1
           fi
 
-      - name: Call Workato staging webhook
-        id: call_webhook
-        continue-on-error: true
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 7
+  call_staging_webhooks:
+    needs: validate_and_stage
+    # Only call webhooks if validations passed, there are relevant changes, and less than 7 markdown files modified
+    if: |
+      needs.validate_and_stage.outputs.has_relevant_changes == 'true' && 
+      needs.validate_and_stage.outputs.all_validations_passed == 'true' &&
+      needs.validate_and_stage.outputs.md_file_count < 7
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    permissions:
+      contents: read
+      pull-requests: write
+    strategy:
+      matrix:
+        quickstart: ${{ fromJson(needs.validate_and_stage.outputs.quickstart_names_json) }}
+      max-parallel: 1  # Process 1 at a time for rate limit purposes
+      fail-fast: false  # Continue processing others even if one fails
+    
+    steps:
+      - name: Call Workato staging webhook for ${{ matrix.quickstart.name }}
+        id: call_webhook_matrix
         env:
-          WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
+          WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_SINGLE_FILE_URL }}
         run: |
+          if [ -z "$WORKATO_STAGING_WEBHOOK_URL" ]; then
+            echo "❌ WORKATO_STAGING_WEBHOOK_URL is not set"
+            exit 1
+          fi
+          
+          qname="${{ matrix.quickstart.name }}"
+          qlang="${{ matrix.quickstart.language }}"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📦 Processing quickstart: $qname"
+          echo "🌐 Language: $qlang"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Create single-item array for backward compatibility with Workato
+          qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
+          
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
             --arg pr '${{ github.event.pull_request.number }}' \
             --arg sha '${{ github.event.pull_request.head.sha }}' \
             --arg env "staging" \
-            --arg qname '${{ steps.detect.outputs.quickstart_name }}' \
-            --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
+            --arg qname "$qname" \
+            --argjson qnames "$qnames_array" \
             '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames}')
+          
+          echo "Payload:"
           echo "$payload" | jq .
           
           # Retry configuration
           max_retries=3
           retry_count=0
           base_delay=10
-          error_message=""
           
           while [ $retry_count -le $max_retries ]; do
             if [ $retry_count -gt 0 ]; then
-              echo "Retry attempt $retry_count of $max_retries..."
+              echo "🔄 Retry attempt $retry_count of $max_retries..."
             else
-              echo "Triggering webhook..."
+              echo "📡 Triggering webhook..."
             fi
             
-            response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2) || {
+            response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              --data-raw "$payload" \
+              --max-time 10 \
+              --connect-timeout 5) || {
               exit_code=$?
-              error_message="Connection failed with curl exit code: $exit_code"
-              echo "❌ Webhook call failed with exit code: $exit_code"
+              echo "❌ Connection failed (curl exit code: $exit_code)"
               
               if [ $retry_count -lt $max_retries ]; then
                 retry_count=$((retry_count + 1))
@@ -501,93 +539,64 @@ jobs:
                 sleep $delay
                 continue
               else
-                echo "❌ Max retries reached. Giving up."
-                echo "error_message=$error_message" >> $GITHUB_OUTPUT
-                exit $exit_code
+                echo "❌ Max retries reached"
+                exit 1
               fi
             }
             
             http_code=$(echo "$response" | tail -n1)
             response_body=$(echo "$response" | sed '$d')
-            echo "HTTP Status Code: $http_code"
-            echo "Response body:"
+            
+            echo "HTTP Status: $http_code"
+            echo "Response:"
             echo "$response_body" | jq . 2>/dev/null || echo "$response_body"
             
             if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-              echo "✅ Webhook call succeeded. Please wait a few minutes for the staging environment to produce a preview URL."
-              break
-            else
-              # Check if it's a rate limit error
-              if echo "$response_body" | grep -q "Rate limit reached"; then
-                error_message="Rate limit error - HTTP $http_code: $response_body"
-                echo "⚠️ Rate limit error detected: $http_code"
-                
-                if [ $retry_count -lt $max_retries ]; then
-                  retry_count=$((retry_count + 1))
-                  delay=$((base_delay * retry_count))
-                  echo "⏳ Waiting ${delay}s before retry..."
-                  sleep $delay
-                  continue
-                else
-                  echo "❌ Max retries reached. Rate limit still in effect."
-                  echo "error_message=$error_message" >> $GITHUB_OUTPUT
-                  echo "http_code=$http_code" >> $GITHUB_OUTPUT
-                  echo "response_body=$response_body" >> $GITHUB_OUTPUT
-                  exit 1
-                fi
-              elif [ $retry_count -lt $max_retries ]; then
-                # Other non-2xx error - retry
-                error_message="HTTP $http_code: $response_body"
-                echo "⚠️ Webhook returned non-2xx status code: $http_code"
+              echo "✅ Webhook succeeded for: $qname"
+              # Wait 2 minutes after processing to avoid rate limits for next item
+              echo "⏳ Waiting 2 minutes before next webhook..."
+              sleep 120
+              exit 0
+            fi
+            
+            # Rate limit handling
+            if echo "$response_body" | grep -qi "rate limit"; then
+              if [ $retry_count -lt $max_retries ]; then
                 retry_count=$((retry_count + 1))
-                delay=$((base_delay * retry_count))
-                echo "⏳ Waiting ${delay}s before retry..."
+                delay=$((base_delay * retry_count * 2))  # Longer delay for rate limits
+                echo "⚠️ Rate limit detected. Waiting ${delay}s..."
                 sleep $delay
                 continue
-              else
-                echo "❌ Max retries reached. Last status code: $http_code"
-                error_message="HTTP $http_code: $response_body"
-                echo "error_message=$error_message" >> $GITHUB_OUTPUT
-                echo "http_code=$http_code" >> $GITHUB_OUTPUT
-                echo "response_body=$response_body" >> $GITHUB_OUTPUT
-                exit 1
               fi
+            elif [ $retry_count -lt $max_retries ]; then
+              retry_count=$((retry_count + 1))
+              delay=$((base_delay * retry_count))
+              echo "⚠️ HTTP $http_code. Waiting ${delay}s before retry..."
+              sleep $delay
+              continue
             fi
+            
+            echo "❌ Failed after $max_retries retries"
+            exit 1
           done
 
-      - name: Comment PR on webhook failure
-        if: steps.call_webhook.outcome == 'failure'
+
+      - name: Report webhook failure to PR
+        if: failure()
         uses: actions/github-script@v7
-        env:
-          ERROR_MESSAGE: ${{ steps.call_webhook.outputs.error_message }}
-          HTTP_CODE: ${{ steps.call_webhook.outputs.http_code }}
-          RESPONSE_BODY: ${{ steps.call_webhook.outputs.response_body }}
         with:
           script: |
-            const errorMessage = process.env.ERROR_MESSAGE || 'No error details available';
-            const httpCode = process.env.HTTP_CODE || 'N/A';
-            const responseBody = process.env.RESPONSE_BODY || 'No response body';
+            const qname = '${{ matrix.quickstart.name }}';
+            const body = `## ⚠️ Staging Webhook Failed for \`${qname}\`
             
-            // Build error details section
-            let errorDetails = '### Error Details\n\n';
-            if (httpCode !== 'N/A') {
-              errorDetails += `**HTTP Status Code**: ${httpCode}\n\n`;
-            }
-            errorDetails += `**Error**: ${errorMessage}\n\n`;
-            if (responseBody !== 'No response body') {
-              errorDetails += `**Response**:\n\`\`\`\n${responseBody}\n\`\`\`\n\n`;
-            }
+            The staging webhook call failed for quickstart **${qname}** after multiple retry attempts.
             
-            const body = `## ⚠️ Staging Webhook Failed
-            
-            The webhook call to the staging environment failed after multiple retry attempts.
-            
-            ${errorDetails}
-          
             ### Next Steps
-            - If the issue is due to rate limiting, wait a few minutes and try re-running the workflow 
-            - If the issue persists, contact the devrel team for assistance
-
+            - Check the [workflow logs](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details
+            - If due to rate limiting, wait a few minutes and re-run the failed job
+            - Contact the devrel team if the issue persists
+            `;
+            
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
