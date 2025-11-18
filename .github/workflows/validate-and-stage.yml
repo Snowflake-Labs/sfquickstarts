@@ -81,8 +81,13 @@ jobs:
           
           if [ -z "$changed_files" ]; then
             echo "No changed files to download"
+            # Save empty list for next step
+            echo "" > downloaded_files.txt
             exit 0
           fi
+          
+          # Save the list of downloaded files for use in subsequent steps
+          echo "$changed_files" > downloaded_files.txt
           
           # Download each changed file
           head_repo="${{ github.event.pull_request.head.repo.full_name }}"
@@ -138,12 +143,12 @@ jobs:
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
         run: |
-          # Reuse files_json from previous step (already filtered for relevant, non-removed files)
-          files_json=$(cat pr_files.json)
+          # Read the list of downloaded files from previous step
+          downloaded_files=$(cat downloaded_files.txt)
           
-          # Extract markdown and all changed files (filtering already done in download step)
-          md_files=$(echo "$files_json" | jq -r '.[].filename | select(endswith(".md"))' | sort -u)
-          all_changed_files=$(echo "$files_json" | jq -r '.[].filename' | sort -u)
+          # Extract markdown and all downloaded files
+          md_files=$(echo "$downloaded_files" | grep '\.md$' || true)
+          all_changed_files="$downloaded_files"
           
           # Prepare file arrays for output
           if [ -z "$md_files" ]; then 
