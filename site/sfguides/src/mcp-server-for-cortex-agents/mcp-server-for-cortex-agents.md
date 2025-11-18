@@ -151,7 +151,7 @@ Launch the Claude for Desktop app.
 
 Now our Cortex Agents MCP server is available for use by Claude. We can see it by clicking on the tools icon, and toggle it on and off.
 
-![mcp tool in claude](./images/cortex_agents_mcp_tool.png)
+![mcp tool in claude](assets/cortex_agents_mcp_tool.png)
 
 Then, run a query. If the query calls your MCP server, you will see the name of the tool used directly below your query in the Claude desktop app.
 
@@ -159,11 +159,11 @@ Because we're connected to Cortex Agents, we can ask questions about both unstru
 
 Unstructured data:
 
-![cortex agents mcp unstructured](./images/mcp_cortex_agents_unstructured.gif)
+![cortex agents mcp unstructured](https://github.com/Snowflake-Labs/sfquickstarts/blob/979cae86e37f12ed86b2c398c39d385a85a61466/site/sfguides/src/mcp-server-for-cortex-agents/large_images/mcp_cortex_agents_structured.gif)
 
 Structured data:
 
-![cortex agents mcp unstructured](./images/mcp_cortex_agents_structured.gif)
+![cortex agents mcp unstructured](https://github.com/Snowflake-Labs/sfquickstarts/blob/979cae86e37f12ed86b2c398c39d385a85a61466/site/sfguides/src/mcp-server-for-cortex-agents/large_images/mcp_cortex_agents_structured.gif)
 
 What’s happening under the hood
 When you ask a question:
