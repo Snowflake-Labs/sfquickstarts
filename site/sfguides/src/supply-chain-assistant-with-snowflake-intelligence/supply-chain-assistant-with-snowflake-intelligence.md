@@ -6,6 +6,7 @@ summary: Build an intelligent supply chain assistant using Snowflake Intelligenc
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-supply-chain-assistant-with-snowflake-intelligence
 
 # Supply Chain Assistant for Inventory Optimization with Snowflake Intelligence
 
@@ -118,6 +119,9 @@ Learn more about [Snowflake Intelligence](https://docs.snowflake.com/en/user-gui
 <!-- ------------------------ -->
 
 ## Setup Database and Load Data
+
+> aside positive
+> **Note:** All SQL scripts, semantic models, and PDF files referenced in this quickstart can be accessed by clicking the **Fork Repo** button at the top of this page. This will take you to the GitHub repository containing all necessary files for this tutorial.
 
 In this step, you'll create the complete supply chain database infrastructure with all necessary tables, stages, and sample data.
 
