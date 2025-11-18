@@ -42,20 +42,31 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 This creates a comprehensive data warehouse supporting cross-functional analytics across Sales, Marketing, Finance, and HR domains.
 
-**Dimension Tables (13)**
-    product_category_dim, product_dim, vendor_dim, customer_dim
-    account_dim, department_dim, region_dim, sales_rep_dim
-    campaign_dim, channel_dim, employee_dim, job_dim, location_dim
-**Fact Tables (4)**
-    sales_fact - Sales transactions with amounts and units (12,000 records)
-    finance_transactions - Financial transactions across departments
-    marketing_campaign_fact - Campaign performance metrics with product targeting
-    hr_employee_fact - Employee data with salary and attrition (5,640 records)
+**Dimension Tables (13):**
+- `product_category_dim`
+- `product_dim`
+- `vendor_dim`
+- `customer_dim`
+- `account_dim`
+-  `department_dim`
+-  `region_dim`
+-  `sales_rep_dim`
+- `campaign_dim`
+- `channel_dim`
+-  `employee_dim`
+-  `job_dim`
+-  `location_dim`
+    
+**Fact Tables (4):**
+- `sales_fact` - Sales transactions with amounts and units (12,000 records)
+- `finance_transactions` - Financial transactions across departments
+- `marketing_campaign_fact` - Campaign performance metrics with product targeting
+- `hr_employee_fact` - Employee data with salary and attrition (5,640 records)
 
-**Salesforce CRM Tables (3)**
-    sf_accounts - Customer accounts linked to customer_dim (1,000 records)
-    sf_opportunities - Sales pipeline and revenue data (25,000 records)
-    sf_contacts - Contact records with campaign attribution (37,563 records)
+**Salesforce CRM Tables (3):**
+- `sf_accounts` - Customer accounts linked to customer_dim (1,000 records)
+- `sf_opportunities` - Sales pipeline and revenue data (25,000 records)
+- `sf_contacts` - Contact records with campaign attribution (37,563 records)
 
 
 ```
