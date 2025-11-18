@@ -266,47 +266,14 @@ If you don't still have it open, open up your ```snowflake-devops-demo``` job an
 
 And here are the values to use for each parameter (please adjust as appropriate):
 
-<table>
-    <thead>
-        <tr>
-            <th>Parameter type</th>
-            <th>Parameter name</th>
-            <th>Parameter value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_ACCOUNT</td>
-            <td>xy12345.east-us-2.azure</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_USERNAME</td>
-            <td>DEMO_USER</td>
-        </tr>
-        <tr>
-            <td>Password Parameter</td>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>*****</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_ROLE</td>
-            <td>DEMO_ROLE</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_DATABASE</td>
-            <td>DEMO_DB</td>
-        </tr>
-    </tbody>
-</table>
+| Parameter type | Parameter name | Parameter value |
+|----------------|----------------|-----------------|
+| String Parameter | SF_ACCOUNT | xy12345.east-us-2.azure |
+| String Parameter | SF_USERNAME | DEMO_USER |
+| Password Parameter | SNOWFLAKE_PASSWORD | ***** |
+| String Parameter | SF_ROLE | DEMO_ROLE |
+| String Parameter | SF_WAREHOUSE | DEMO_WH |
+| String Parameter | SF_DATABASE | DEMO_DB |
 
 Please note the slight difference in naming convention with the password parameter (it starts with "SNOWFLAKE\_" instead of "SF\_" like the others), that is intentional. schemachange expects to find the password in an OS-level environment variable named ```SNOWFLAKE_PASSWORD```.
 

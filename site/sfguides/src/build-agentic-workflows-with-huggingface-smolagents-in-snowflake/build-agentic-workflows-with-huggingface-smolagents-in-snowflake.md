@@ -104,13 +104,13 @@ Here we create instances of **HfApiModel**, **ToolCallingAgent**, and **CodeAgen
 
 Here we use the instance of **CodeAgent** created in step / cell above and perform a web search using built-in tool (DuckDuckGoSearchTool) given the prompt `Top 5 announcements at Snowflake Summit 2024 in JSON format. Only return the JSON formatted output as the response and nothing else.`. If all goes well, you should see output similar to the following:
 
-![Search Result 1](search_1.png)
+![Search Result 1](assets/search_1.png)
 
 **Cell 4** 
 
 Here we use the same instance of **CodeAgent** and perform a web search using prompt `Top 5 blog articles on AI. Include blog title and link to the article. Return the response in a Pandas dataframe and nothing else.`. If all goes well, you should see output similar to the following:
 
-![Search Result 2](search_2.png)
+![Search Result 2](assets/search_2.png)
 
 **Cell 5** 
 
@@ -122,7 +122,7 @@ Here we create a new instance of **CodeAgent** and provide the three tools creat
 
 If all goes well, you should see the output similar to the following:
 
-![Search Result 3](search_3.png)
+![Search Result 3](assets/search_3.png)
 
 ---
 

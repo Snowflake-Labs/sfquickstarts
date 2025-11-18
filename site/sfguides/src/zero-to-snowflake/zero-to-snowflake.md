@@ -31,7 +31,7 @@ Our mission is to provide unique, high-quality food options in a convenient and 
  - An Enterprise or Business Critical Snowflake Account
  - If you do not have a Snowflake Account, please [sign up for a Free 30 Day Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=6tNBra0z&_fsi=6tNBra0z). When signing up, please make sure to select  Enterprise edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions?_fsi=6tNBra0z&_fsi=6tNBra0z).
  - After registering, you will receive an email with an activation link and your Snowflake Account URL.
- - **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a Workspace SQL file:** 
+- **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a [Workspace](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) SQL file:** 
 
 ```sql
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
@@ -60,19 +60,19 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
 ### **Overview**
 
-In this Quickstart, we will use Snowflake Workspaces to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL file for the setup and each vignette. This will keep our code organized and easy to manage.
+In this Quickstart, we will use [Snowflake Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL file for the setup and each vignette. This will keep our code organized and easy to manage.
 
 Let's walk through how to create your first SQL file, add the necessary setup code, and run it.
 
-### **Step 1 \- Create Your Setup SQL File**
+### **Step 1 - Create Your Setup SQL File**
 
 First, we need a place to put our setup script.
 
-1. **Navigate to Workspaces:** In the left-hand navigation menu of the Snowflake UI, click on **Projects** » **Workspaces**. This is the central hub for all your SQL files.  
-2. **Create a New SQL File:** Find and click the **+ Add New** button in the top-left corner of the Workspaces area, then select **SQL File**. This will generate a new, blank SQL file.  
+1. **Navigate to [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides):** In the left-hand navigation menu of the Snowflake UI, click on **Projects** » **[Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)**. This is the central hub for all your SQL files.  
+2. **Create a New SQL File:** Find and click the **+ Add New** button in the top-left corner of the [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) area, then select **SQL File**. This will generate a new, blank SQL file.  
 3. **Rename the SQL File:** Your new SQL file will have a name based on the timestamp it was created. Give it a descriptive name like **Zero To Snowflake - Setup**.
 
-### **Step 2 \- Add and Run the Setup Script**
+### **Step 2 - Add and Run the Setup Script**
 
 Now that you have your SQL file, it's time to add the setup SQL and execute it.
 
@@ -89,7 +89,7 @@ The process you just completed for creating a new SQL file is the exact same wor
 For each new vignette, you will:
 
 1. Create a **new** SQL file.  
-2. Give it a descriptive name (e.g., Vignette 1 \- Getting Started with Snowflake).  
+2. Give it a descriptive name (e.g., Vignette 1 - Getting Started with Snowflake).  
 3. Copy and paste the SQL script for that specific vignette.
 4. Each SQL file has all of the necessary instructions and commands to follow along.
 
@@ -142,7 +142,7 @@ USE ROLE accountadmin;
 
 ### Step 2 - Creating a Warehouse
 
-Let's create our first warehouse\! This command creates a new X-Small warehouse that will initially be suspended.
+Let's create our first warehouse! This command creates a new X-Small warehouse that will initially be suspended.
 
 ```sql
 CREATE OR REPLACE WAREHOUSE my_wh
@@ -290,7 +290,7 @@ GROUP BY make
 ORDER BY make ASC;
 ```
 
-Did you notice anything odd about the results from the last query? We can see a data quality issue: 'Ford' and 'Ford\_' are being treated as separate manufacturers. Let's easily fix this with a simple `UPDATE` statement.
+Did you notice anything odd about the results from the last query? We can see a data quality issue: 'Ford' and 'Ford_' are being treated as separate manufacturers. Let's easily fix this with a simple `UPDATE` statement.
 
 ```sql
 UPDATE raw_pos.truck_dev
@@ -320,7 +320,7 @@ DROP TABLE raw_pos.truck_details;
 
 ### Step 6 - Data Recovery with UNDROP
 
-Oh no\! We accidentally dropped the production `truck_details` table. Luckily, Snowflake's Time Travel feature allows us to recover it instantly. The `UNDROP` command restores dropped objects.
+Oh no! We accidentally dropped the production `truck_details` table. Luckily, Snowflake's Time Travel feature allows us to recover it instantly. The `UNDROP` command restores dropped objects.
 
 ### Step 7 - Verify the Drop
 
@@ -375,7 +375,7 @@ CREATE OR REPLACE RESOURCE MONITOR my_resource_monitor
              ON 100 PERCENT DO SUSPEND_IMMEDIATE;
 ```
 
-<!-- \![assets/create\_rm.png](assets/create\_rm.png) -->
+<!-- ![assets/create_rm.png](assets/create_rm.png) -->
 
 ### Step 2 - Applying the Resource Monitor
 
@@ -424,11 +424,11 @@ Navigate to **Admin** » **Cost Management** » **Budgets**.
 Configuring a budget is done through the Snowsight UI.
 
 1.  Make sure your account role is set to `ACCOUNTADMIN`. You can change this in the bottom left corner.
-2.  Click on the **MY\_BUDGET** budget we created.
+2.  Click on the **MY_BUDGET** budget we created.
 3.  Click **Budget Details** to open the Budget details panel, then click **Edit** in the Budget Details panel on the right.
 4.  Set the **Spending Limit** to `100`.
 5.  Enter a verified notification email address.
-6.  Click **+ Tags & Resources** and add the **TB\_101.ANALYTICS** schema and the **TB\_DE\_WH** warehouse to be monitored.
+6.  Click **+ Tags & Resources** and add the **TB_101.ANALYTICS** schema and the **TB_DE_WH** warehouse to be monitored.
 7.  Click **Save Changes**.
 ![assets/vignette-1/edit_budget.png](assets/vignette-1/edit_budget.png)
 
@@ -739,7 +739,7 @@ Finally, let's visualize our pipeline's Directed Acyclic Graph, or DAG. The DAG 
 To access the DAG in Snowsight:
 
 1.  Navigate to **Data** » **Database**.
-2.  In the database object explorer, expand your database **TB\_101** and the schema **HARMONIZED**.
+2.  In the database object explorer, expand your database **TB_101** and the schema **HARMONIZED**.
 3.  Click on **Dynamic Tables**.
 4.  Select any of the dynamic tables you created (e.g., `INGREDIENT_USAGE_BY_TRUCK`).
 5.  Click on the **Graph** tab in the main window.
@@ -799,17 +799,17 @@ Let's begin by connecting directly to customer review data within Cortex Playgro
 **Navigation steps:**
 
 1.  Navigate to **AI & ML → Studio → Cortex Playground**.
-2.  Select **Role: TB\_DEV** and **Warehouse: TB\_DEV\_WH**.
+2.  Select **Role: TB_DEV** and **Warehouse: TB_DEV_WH**.
 3.  Click "**+Connect your data**" in the prompt box.
 4.  Select data source:
       * **Database: TB_101**
       * **Schema: HARMONIZED**
-      * **Table: TRUCK\_REVIEWS\_V**
+      * **Table: TRUCK_REVIEWS_V**
 5.  Click **Let's go**
 6.  Select text column: **REVIEW**
-7.  Select filter column: **TRUCK\_BRAND\_NAME**
+7.  Select filter column: **TRUCK_BRAND_NAME**
 8.  Click **Done**.
-9.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. There are multiple reviews available for each truck brand. For instance, you can select "**Better Of Bread**" to narrow down the reviews. If "**Better Of Bread**" isn't available, please choose any other truck brand from the dropdown and proceed with one of its reviews.
+9.  In the system prompt box, apply a filter using the **TRUCK_BRAND_NAME** dropdown. There are multiple reviews available for each truck brand. For instance, you can select "**Better Of Bread**" to narrow down the reviews. If "**Better Of Bread**" isn't available, please choose any other truck brand from the dropdown and proceed with one of its reviews.
 
 ![assets/vignette-3/cortex-playground-connect.gif](assets/vignette-3/cortex-playground-connect.gif)
 
@@ -849,11 +849,11 @@ We want to observe how adjusting parameters, especially "**temperature**," affec
           * Set **Max-tokens** to **200**. This just keeps the responses from getting too long.
       * **Right Panel:**
           * Set **Temperature** to **0.8**. This should make the model's answers a bit more creative and varied.
-          * Set **top\_p** to **0.8**. This is another setting that helps encourage a wider range of words in the response.
+          * Set **top_p** to **0.8**. This is another setting that helps encourage a wider range of words in the response.
           * Set **Max-tokens** to **200**. Again, keeping the length in check.
 4.  Finally, use the exact same strategic prompt you used in Step 2.
 
-Give that a try and see how the responses differ\! It's pretty cool to see how these small tweaks can change the AI's "personality."
+Give that a try and see how the responses differ! It's pretty cool to see how these small tweaks can change the AI's "personality."
 
 ![assets/vignette-3/cortex-playground-model-setting.gif](assets/vignette-3/cortex-playground-model-setting.gif)
 
@@ -866,7 +866,7 @@ Notice how adjusting the temperature parameter fundamentally changes the analyti
   * **Temperature 0.1:** Produces deterministic, focused output. Ideal for structured, consistent analysis and standardized reporting.
   * **Temperature 0.8:** Results in diverse, varied output. Perfect for generating explanatory insights or exploring less obvious connections.
 
-While temperature influences token choice, **top\_p** (set to 0.8 on the right) restricts possible tokens. **max\_tokens** simply sets the maximum response length; be mindful small values can truncate results. This gives you precise control over AI creativity versus consistency, letting you match the AI’s behavior to your analytical objectives.
+While temperature influences token choice, **top_p** (set to 0.8 on the right) restricts possible tokens. **max_tokens** simply sets the maximum response length; be mindful small values can truncate results. This gives you precise control over AI creativity versus consistency, letting you match the AI’s behavior to your analytical objectives.
 
 Now that we’ve mastered model selection and parameter optimization, let's examine the technology foundation that makes this experimentation possible. Understanding this will help us transition from playground testing to production deployment.
 
@@ -876,19 +876,19 @@ In this section, let's explore the core technology that takes your AI insights f
 
 #### The Foundation: SQL at Its Core
 
-Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action\! You can run it directly in a Workspace SQL file, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
+Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action! You can run it directly in a [Workspace](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) SQL file, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
 
 ![assets/vignette-3/cortex-playground-view-code.png](assets/vignette-3/cortex-playground-view-code.png)
 
 #### The SNOWFLAKE.CORTEX.COMPLETE Function
 
-Behind every prompt you've run, the **SNOWFLAKE.CORTEX.COMPLETE** function is hard at work. This is Snowflake Cortex's powerful function providing direct access to industry-leading large language models for text completion. The Cortex Playground simply offers an intuitive interface to test and compare these models before you embed them directly into your SQL. (Heads up: this will evolve to AI\_COMPLETE in future releases.)
+Behind every prompt you've run, the **SNOWFLAKE.CORTEX.COMPLETE** function is hard at work. This is Snowflake Cortex's powerful function providing direct access to industry-leading large language models for text completion. The Cortex Playground simply offers an intuitive interface to test and compare these models before you embed them directly into your SQL. (Heads up: this will evolve to AI_COMPLETE in future releases.)
 
 This seamless integration means your AI experimentation directly translates into production-ready workflows within Snowflake.
 
 ### Conclusion
 
-The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT\_ANSWER()**, and **AI\_SUMMARIZE\_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
+The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT_ANSWER()**, and **AI_SUMMARIZE_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
 
 ## AISQL Functions
 
@@ -1170,29 +1170,41 @@ This opens the search service configuration interface, where you’ll define how
 
 ### Step 2 - Configure the Search Service
 
-In the initial configuration screen, enter:
+In the **New service** configuration screen:
 
-* **Role**: `TB_DEV`
-* **Warehouse**: `TB_DEV_WH`
-* **Database**: `TB_101`
-* **Schema**: `HARMONIZED`
-* **Name**: `customer_feedback_intelligence`
-
-Click **Next: Select data**.
-
+1. Select **Database** and **Schema**:
+   * Choose **TB_101** from the Databases dropdown
+   * Choose **HARMONIZED** from the Schemas dropdown
+2. Enter the **Service name**: `customer_feedback_intelligence`
+3. Click the **Next** button at the bottom right to proceed.
 
 ![assets/vignette-3/cortex-search-new-service.png](assets/vignette-3/cortex-search-new-service.png)
 
 
 ### Step 3 - Connect to Review Data
 
-This wizard will guide you through several configuration screens:
+The wizard will now guide you through several configuration screens. Follow these steps:
 
-* **Select data**: Choose `TRUCK_REVIEWS_V`
-* **Select search column**: Choose `REVIEW` (the text column to search)
-* **Select attributes**: Choose columns for filtering (`TRUCK_BRAND_NAME`, `PRIMARY_CITY`, `REVIEW_ID`)
-* **Select columns**: choose other columns to include in the result like `DATE`, `LANGUAGE`, etc.
-* **Configure indexing**: Accept the default
+1. **Select data screen:**
+   * From the Views dropdown, select `TRUCK_REVIEWS_V`
+   * Click **Next**
+
+2. **Select search column screen:**
+   * Choose `REVIEW` (this is the text column that will be semantically searched)
+   * Click **Next**
+
+3. **Select attributes screen:**
+   * Select columns for filtering results: `TRUCK_BRAND_NAME`, `PRIMARY_CITY`, `REVIEW_ID`
+   * Click **Next**
+
+4. **Select columns screen:**
+   * Choose other columns to include in search results such as `DATE`, `LANGUAGE`, etc.
+   * Click **Next**
+
+5. **Configure indexing screen:**
+   * **Warehouse**: Select `COMPUTE_WH` from the dropdown
+   * Accept the other default settings
+   * Click **Create** to build the search service
 
 ![assets/vignette-3/cortex-search-walkthrough.gif](assets/vignette-3/cortex-search-walkthrough.gif)
 
@@ -2365,7 +2377,7 @@ When the app first loads, you'll see a sample app on the right pane and the app'
 
 ### Overview
 
-Congratulations\! You have successfully completed the entire Tasty Bytes - Zero to Snowflake journey.
+Congratulations! You have successfully completed the entire Tasty Bytes - Zero to Snowflake journey.
 
 You have now built and configured warehouses, cloned and transformed data, recovered a dropped table with Time Travel, and built an automated data pipeline for semi-structured data. You've also unlocked insights using AI by generating analysis with simple AISQL functions and accelerating your workflow with Snowflake Copilot. Furthermore, you have implemented a robust governance framework with roles and policies and seamlessly enriched your own data with live datasets from the Snowflake Marketplace.
 
