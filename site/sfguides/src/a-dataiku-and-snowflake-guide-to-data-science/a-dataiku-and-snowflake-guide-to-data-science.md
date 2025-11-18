@@ -8,7 +8,6 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # A Dataiku and Snowflake Introduction to Data Science
-<!-- ------------------------ -->
 
 ## Overview
 
