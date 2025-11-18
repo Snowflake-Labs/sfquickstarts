@@ -349,11 +349,11 @@ viz_graph = from_snowflake(
 )
  
 
-# specifying which column should be associated with captions
+##### specifying which column should be associated with captions
 for node in viz_graph.nodes:
     node.caption = str(node.properties["STATION_NAME"])
     
-# now we render
+###### now we render
 html_object = viz_graph.render()
 
 import streamlit.components.v1 as components
