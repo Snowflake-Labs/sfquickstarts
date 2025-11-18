@@ -1,0 +1,345 @@
+================================================================================
+GITHUB ACTIONS WORKFLOWS FOR DCM
+================================================================================
+
+This document describes the GitHub Actions workflows used for managing DCM 
+(Data Change Management) deployments across non-production and production 
+environments.
+
+OVERVIEW
+--------
+
+The workflows implement a CI/CD pipeline with the following steps:
+1. dev_plan.yml - Validate PR to dev branch
+2. dev_deploy.yml - Deploy to non-prod on dev merge
+3. prod_plan.yml - Validate PR to main branch
+4. prod_deploy.yml - Deploy to prod on main merge
+5. sync_main_to_dev.yml - Sync main back to develop
+
+================================================================================
+
+1. DEV_PLAN.YML
+---------------
+
+Purpose: Validates PR to develop branch
+
+Workflow Configuration:
+
+name: Run DCM PLAN on PR to dev branch 
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [opened, synchronize, reopened]
+
+jobs:
+  for_nonprod_dcm_plan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4 # Checks out your repository code
+    - name: Set up Python
+      uses: actions/setup-python@v5 # Sets up a specific Python version
+      with:
+        python-version: '3.12'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip # Upgrades pip
+        pip install snowflake-cli
+    - name: Get Private Key File
+      run: |
+        echo "${{ secrets.SNOW_PRIVATE_KEY }}" | base64 --decode > ${{ github.workspace }}/snowflake_private_key.p8
+        chmod 600 ${{ github.workspace }}/snowflake_private_key.p8 # Set appropriate permissions
+    - name: Configure Snowflake Connection
+      run: |
+        snow connection add \
+          --connection-name cicd_connection \
+          --account <account-name> \
+          --host <host> \
+          --user <user> \
+          --warehouse <warehouse> \
+          --database DCM --schema DCM \
+          --role <cicd user role> \
+          --authenticator SNOWFLAKE_JWT \
+          --private-key-file ${{ github.workspace }}/snowflake_private_key.p8 \
+          --no-interactive --default
+    - name: Create DCM Project if not exists 
+      run: |
+       cd ./data_project && snow dcm create --if-not-exists proj1
+    - name: Execute PLAN with config non prod 
+      run: |
+        cd ./data_project && snow dcm plan DCM.DCM.PROJ1 --configuration="non_prod"
+
+Key Features:
+- Triggers on PR creation, updates to develop branch
+- Executes DCM PLAN against non-prod environment
+- Validates changes before allowing merge
+
+================================================================================
+
+2. DEV_DEPLOY.YML
+-----------------
+
+Purpose: Deploys changes to non-prod when PR is merged to develop
+
+Workflow Configuration:
+
+name: Run DCM DEPLOY on merging to dev branch
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [closed]
+jobs:
+  for_nonprod_dcm_deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4 
+    - name: Set up Python
+      uses: actions/setup-python@v5 
+      with:
+        python-version: '3.12' 
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install snowflake-cli
+    - name: Get Private Key File
+      run: |
+        echo "${{ secrets.SNOW_PRIVATE_KEY }}" | base64 --decode > ${{ github.workspace }}/snowflake_private_key.p8
+        chmod 600 ${{ github.workspace }}/snowflake_private_key.p8
+    - name: Configure Snowflake Connection
+      run: |
+        snow connection add \
+          --connection-name cicd_connection \
+          --account <account> \
+          --host <host> \
+          --user <user> \
+          --warehouse <warehouse> \
+          --database DCM --schema DCM \
+          --role <cicd user role> \
+          --authenticator SNOWFLAKE_JWT \
+          --private-key-file ${{ github.workspace }}/snowflake_private_key.p8 \
+          --no-interactive --default
+    - name: Create DCM Project if not exists 
+      run: |
+       cd ./data_project && snow dcm create --if-not-exists proj1
+        
+    - name: Execute PLAN with config non prod 
+      run: |
+        cd ./data_project && snow dcm plan DCM.DCM.PROJ1 --configuration="non_prod"
+
+    - name: Execute deploy with config non prod
+      run: |
+        cd ./data_project && snow dcm deploy DCM.DCM.PROJ1 --configuration="non_prod"
+
+Key Features:
+- Triggers on PR merge to develop branch
+- Executes both PLAN and DEPLOY for safety
+- Applies changes to non-prod Snowflake database
+
+================================================================================
+
+3. PROD_PLAN.YML
+----------------
+
+Purpose: Validates PR to main branch
+
+Workflow Configuration:
+
+name: Run DCM DEPLOY on merging to main branch
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+jobs:
+  for_prod_dcm_deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4 # Checks out your repository code
+    - name: Set up Python
+      uses: actions/setup-python@v5 
+      with:
+        python-version: '3.12' 
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip # Upgrades pip
+        pip install snowflake-cli
+    - name: Get Private Key File
+      run: |
+        echo "${{ secrets.SNOW_PRIVATE_KEY }}" | base64 --decode > ${{ github.workspace }}/snowflake_private_key.p8
+        chmod 600 ${{ github.workspace }}/snowflake_private_key.p8 
+    - name: Configure Snowflake Connection
+      run: |
+        snow connection add \
+          --connection-name cicd_connection \
+          --account <account> \
+          --host <host> \
+          --user <user> \
+          --warehouse <warehouse> \
+          --database DCM --schema DCM \
+          --role <cicd user role> \
+          --authenticator SNOWFLAKE_JWT \
+          --private-key-file ${{ github.workspace }}/snowflake_private_key.p8 \
+          --no-interactive --default
+        
+    - name: Create DCM Project if not exists 
+      run: |
+        cd ./data_project && snow dcm create --if-not-exists proj1
+        
+    - name: Execute PLAN with config PROD 
+      run: |
+        cd ./data_project && snow dcm plan DCM.DCM.PROJ1 --configuration="prod"
+
+Key Features:
+- Triggers on PR creation on main branch
+- Executes DCM PLAN against prod environment
+
+================================================================================
+
+4. PROD_DEPLOY.YML
+------------------
+
+Purpose: Deploys changes to production when PR is merged to main
+
+Workflow Configuration:
+
+name: Run DCM DEPLOY on merging to main branch
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+jobs:
+  for_prod_dcm_deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4 # Checks out your repository code
+    - name: Set up Python
+      uses: actions/setup-python@v5 
+      with:
+        python-version: '3.12' 
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip # Upgrades pip
+        pip install snowflake-cli
+    - name: Get Private Key File
+      run: |
+        echo "${{ secrets.SNOW_PRIVATE_KEY }}" | base64 --decode > ${{ github.workspace }}/snowflake_private_key.p8
+        chmod 600 ${{ github.workspace }}/snowflake_private_key.p8 
+    - name: Configure Snowflake Connection
+      run: |
+        snow connection add \
+          --connection-name cicd_connection \
+          --account <account> \
+          --host <account> \
+          --user <user> \
+          --warehouse <warehouse> \
+          --database DCM --schema DCM \
+          --role <cicd user role> \
+          --authenticator SNOWFLAKE_JWT \
+          --private-key-file ${{ github.workspace }}/snowflake_private_key.p8 \
+          --no-interactive --default
+        
+    - name: Create DCM Project if not exists 
+      run: |
+        cd ./data_project && snow dcm create --if-not-exists proj1
+        
+    - name: Execute PLAN with config PROD 
+      run: |
+        cd ./data_project && snow dcm plan DCM.DCM.PROJ1 --configuration="prod"
+
+    - name: Execute deploy with config prod
+      run: |
+        cd ./data_project && snow dcm deploy DCM.DCM.PROJ1 --configuration="prod"
+
+Key Features:
+- Triggers on PR merge to main branch
+- Requires PR to be actually merged (merged == true)
+- Executes both PLAN and DEPLOY for production
+- Applies changes to production Snowflake database
+
+================================================================================
+
+5. SYNC_MAIN_TO_DEV.YML
+-----------------------
+
+Purpose: Syncs main branch back to develop after production deployment
+
+Workflow Configuration:
+
+name: Sync main into develop
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge main into develop
+        run: |
+          # Switch to the develop branch
+          git checkout develop
+
+          # Pull the latest changes for develop to avoid conflicts
+          git pull origin develop
+
+          # Rebase the develop branch on top of the main branch
+          git rebase main
+
+          # Force push the changes because rebase rewrites history
+          git push --force-with-lease origin develop
+
+Key Features:
+- Triggers automatically on push to main branch
+- Syncs main changes back to develop branch
+- Uses rebase strategy to maintain clean history
+- Uses --force-with-lease for safer force push
+- Automated by github-actions bot
+
+================================================================================
+
+WORKFLOW SUMMARY
+----------------
+
+Step | Workflow              | Trigger           | Action     | Environment
+-----|----------------------|-------------------|------------|-------------
+2    | dev_plan.yml         | PR to develop     | DCM PLAN   | Non-Prod
+3    | dev_deploy.yml       | Merge to develop  | DCM DEPLOY | Non-Prod
+4    | prod_plan.yml        | PR to main        | DCM PLAN   | Prod
+5    | prod_deploy.yml      | Merge to main     | DCM DEPLOY | Prod
+6    | sync_main_to_dev.yml | Push to main      | Git Sync   | N/A
+
+REQUIRED SECRETS
+----------------
+
+The following GitHub secret must be configured in your repository:
+
+- SNOW_PRIVATE_KEY: Base64-encoded Snowflake private key for JWT authentication
+
+CONFIGURATION NOTES
+-------------------
+
+1. Environment Separation: Non-prod uses non_prod configuration, production 
+   uses prod configuration
+   
+2. Safety Checks: PLAN always runs before DEPLOY to validate changes
+
+3. Branch Sync: Automatic sync keeps develop up-to-date with main after 
+   releases
+
+================================================================================
+

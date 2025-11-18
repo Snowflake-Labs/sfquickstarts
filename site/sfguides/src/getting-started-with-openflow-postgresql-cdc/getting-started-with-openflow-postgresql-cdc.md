@@ -530,7 +530,7 @@ Now we'll set up all required Snowflake objects for the CDC pipeline. This inclu
 
 #### Execute the Setup Script
 
-Open Workspaces in Snowsight (**Projects** → **Workspaces**), copy paste the `sql/1.snowflake_setup.sql` script and execute it.
+Open [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) in Snowsight (**Projects** → **Workspaces**), copy paste the `sql/1.snowflake_setup.sql` script and execute it.
 
 > **IMPORTANT:** Before running the script, update line 64 with your PostgreSQL endpoint:
 >

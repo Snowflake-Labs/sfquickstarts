@@ -36,7 +36,8 @@ jobs:
           fi
           
           # Filter to quickstart folders under site/sfguides/src whose names do not start with an underscore
-          quickstart_names=$(echo "$changed_files" | grep '^site/sfguides/src/' | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          # Also exclude any files inside directories starting with underscore
+          quickstart_names=$(echo "$changed_files" | grep '^site/sfguides/src/' | grep -v '/_' | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
           
           has_relevant_changes=false
           if [ -z "$quickstart_names" ]; then
