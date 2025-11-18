@@ -264,13 +264,13 @@ viz_graph = from_snowflake(
     }
 )
 
-# specifying which column should be associated with colors. 
+##### specifying which column should be associated with colors. 
 viz_graph.color_nodes(property='LABEL', override=True)  
 
 for node in viz_graph.nodes:
     node.caption = str(node.properties["TITLE"])
     
-# now we render
+##### now we render
 html_object = viz_graph.render()
 
 import streamlit.components.v1 as components

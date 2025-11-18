@@ -360,6 +360,7 @@ import streamlit.components.v1 as components
 
 components.html(html_object.data, height=600)
 ```
+![image](assets/viz.png)
 
 ##  Conclusions And Resources
 
