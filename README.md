@@ -78,6 +78,7 @@ All PRs have automated checks run against them. The checks assess for the follow
 7. Update the name and optionally add a description to your request. Create the pull request.
     > Note: It is recommended to create a draft pull request, run all your checks, then mark as ready for review, so we know it's ready to merge immediately.
 
+Watch a demo [here](https://www.youtube.com/watch?v=yd9LXsvTSTU)
 
 ### OPTIONAL: Local Environment Setup and Updates
 
@@ -99,26 +100,12 @@ All PRs have automated checks run against them. The checks assess for the follow
  
   7. Start authoring in markdown format using the template housed under site -> sfguides/src -> _template -> markdown.template.
   
-  8. Make sure you select the appropriate content type, industries, language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags)). You will not be able to merge your changes without this step!
-
-***Submitting Your Pull Request for Local Environment Changes***
-
-   1. Create a  **draft PR** pull request against sfquickstarts/master from your fork, using <your-branch-name>.
-      > NOTE: Start in **Draft mode** for your pull request, run all your checks, then mark as ready for review, so we know it's ready to merge immediately!
-   
-   2. GitHub will run validation for basic formatting, image sizes less than 1MB, required fields, tags, and language. If there are errors, you will be notified to correct them.
-      > A staging link will be generated for you and automatically commented in the PR -- use this to verify that your guide looks as expected! 
-   
-   3. Once validation passes, request review from @sfc-gh-kkomail. Note that the DevRel team has a 24 business hours SLA for approving PRs. Please do not post in #devrel to notify the team of submissions or send DMs unless the 24 hours have passed. Please note there will be delays during US holidays.  
-   
-   4. The devrel team will make sure your branch is up to date with master, and then merge it in. 
-   
-   5. Expect content to appear/update on snowflake.com/en/developers/guides within 30 minutes of your PR being merged in. 
+  8. Make sure you select the appropriate content type, industries, language and category tags from [the list in this Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags). You will not be able to merge your changes without this step!
 
 
 ### Best Practices  
  
-- Review [Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/)) to learn more about about the specifics.  It will give you details on formatting, layout, and requirements. 
+- Review [Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/) to learn more about about the specifics.  It will give you details on formatting, layout, and requirements. 
   
 - Guidance for labeling flow of the guide: Overview, Prerequisites, What You Will Build, What You Will Learn, What You Learned, Conclusion, Resources (e.g., links, docs, blogs, videos)
 
