@@ -65,8 +65,7 @@ It's also important to remember that by the time a reader has completed a Guide,
 
 ### Related Resources
 - [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
-- [Learn the GitHub Flow](https://guides.github.com/introduction/flow/)
-- [Learn How to Fork a project on GitHub](https://guides.github.com/activities/forking/)
+- Other relevant links to blogs, other guides, announcements etc. go here
 
 
 
