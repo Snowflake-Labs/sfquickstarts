@@ -1,10 +1,10 @@
-author: author name
+author: author first and last name
 id: markdown-template
 language: en
 summary: This is a sample Snowflake Template
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-status: 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: <optional but modify to link to your repo>
 open in snowflake: <optional but modify to link into the product>
@@ -18,23 +18,23 @@ This example guide has elements that you will use when writing your own guides, 
 
 It is important to include on the first page of your guide the following sections: 
 - Prerequisites, 
-- What you'll learn, 
-- What you'll need, and 
-- What you'll build. 
+- What you'll learn
+- What you'll need
+- What you'll build 
 
 Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
 
 The rest of this Snowflake Guide explains the steps of writing your own guide with some basic layout information.  
-Detailed formatting options can be found in this [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides) . 
+Detailed formatting options can be found in this [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides). 
 
 ### Prerequisites
 - Familiarity with Markdown syntax
 
 ### What You’ll Learn 
--  The format for a guide (the sections, the metadata and basic markdown)
-- how to include code snippets 
-- how to hyperlink items
-- ways to include images and videos
+- The format for a guide (the sections, the metadata and basic markdown)
+- How to include code snippets 
+- How to hyperlink items
+- Ways to include images and videos
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
@@ -52,19 +52,19 @@ The metadata contains all the information required for listing and publishing yo
 
 
 ```diff
-- REQUIRED
+- REQUIRED FIELDS
 ```
 
 - **id**: sample-separated-by-hyphens-not-underscores 
   - make sure to match the id here with the name of the file, all one word.
 - **language**: pick from list 
-  - pick the appropriate language from the list provided.  
+  - pick the appropriate language from the list provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags 
 - **categories**: Pick from the list
-  - select from the complete list of categories prrovided in [the Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides/).  Please DO NOT create new categories.
+  - select from the complete list of categories provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags.  Please DO NOT create new categories.
 - **status**: (`Published`, `Archived`, `Hidden`)<br>
   `Published` - implies the guide is active<br>
   `Archived` - implies the sfguide is out of date and deprecated and no longer available.
-- **authors**: Author Full Name (+ author GitHub account)
+- **authors**: Author Full Name 
   - Indicate the author(s) of this specific sfguide.  
 
 
@@ -145,7 +145,7 @@ specific language tags must be added to the document to ensure the regional page
 - DO NOT create new tags if you don't see them in the list.  
 
 
-A complete list of the language and category tags is available in [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides) 
+A complete list of the language and category tags is available here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags
 
 
 
@@ -161,8 +161,14 @@ Use this link to [submit your videos](https://www.wrike.com/frontend/requestform
 Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
 
 ### Images
-Ensure your images are not too large.
-Recommended sizes, naming convention and folder location details are covered in the guide. 
+Image Guidelines: 
+- Naming convention should be all lower case and include underscores (no hyphens)
+- No special characters 
+- File size should be less than 1MB. Gifs may be larger, however, should be optimized to prevent reduction of page load times
+- Image file name should align to the name in .md file (this is case sensitive) 
+- All images should be added to the 'assets' subfolder for your guide (please do not create additional subfolders within the 'assets' subfolder)
+- No full resolution images; these should be optimized for web (recommended: tinypng) 
+- Do no use HTML code for adding images
 
 
 
