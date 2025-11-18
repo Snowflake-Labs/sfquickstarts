@@ -130,15 +130,15 @@ Great! Now it’s time to set up dbt platform.
 <!-- ------------------------ -->
 ## IDE Walkthrough
 
-1. Now that our dbt platform account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the `Develop` button in the upper left hand corner of the screen.<br>
+1. Now that our dbt platform account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the `Studio` button in the upper left hand corner of the screen.<br>
 
-    ![Develop Button](assets/dbt_Cloud_develop_button.png)
+    ![Develop Button](assets/dbt_platform_studio_button.png)
 
-2. When the IDE is done loading, click on the green `initialize dbt project` button in the upper left hand corner of the screen. The initialization process creates a dbt project in the file tree on the left hand side of the screen with all of the core dbt files and folders needed.<br>
+2. When the IDE is done loading, click on the black `Initialize dbt project` button in the upper left hand corner of the screen. The initialization process creates a dbt project in the file tree on the left hand side of the screen with all of the core dbt files and folders needed.<br>
 
 3. After the initialization is finished, you should see a new folder structure in the left hand sidebar. As we move through the workshop we’ll be sure to touch on a few key files and folders that we’ll work with to build out our project.
 
-4. Next click `commit and push` in the upper left hand corner to commit the new files and folders from the initialize step. We always want our commit messages to be relevant to the work we’re committing, so be sure to provide a message like `initialize project` and click `Commit Changes` in the pop-up window.
+4. Next click `Commit to new branch` in the upper left hand corner to commit the new files and folders from the initialize step. We always want our commit messages to be relevant to the work we’re committing, so be sure to provide a message like `initialize project` and click `Commit Changes` in the pop-up window.
 
 5. [Committing](https://www.atlassian.com/git/tutorials/saving-changes/git-commit) your work here will save it to the managed git repository that was created during the Partner Connect signup. This initial commit is the only commit that will be made directly to our `main` branch and from here on out we’ll be doing all of our work on a development branch. This allows us to keep our development work separate from our production code. 
 
