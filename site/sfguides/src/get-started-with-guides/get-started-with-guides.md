@@ -158,7 +158,7 @@ All the content for the step goes here.
 
 This section covers the basic markdown formatting options that you will need for your QuickStart. 
 
-Look at the [markdown source for this sfguide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+Look at the [markdown source for this sfguide](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 > **Ctrl+Click** (Windows/Linux) or **Cmd+Click** (macOS) to open links in a new tab.  This is useful when following along instructions in a guide.
 
 #### Things to Keep in Mind
