@@ -317,38 +317,39 @@ jobs:
             exit 0
           fi
 
-      - name: Validate no non-markdown files outside assets
+      - name: Check for non-markdown files outside assets (helpful message)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
-        id: validate_file_types
-        continue-on-error: true
+        id: check_file_types
         run: |
-          # Define error message once
-          ERROR_MESSAGE="Only markdown files (.md) are allowed in the root of quickstart folders. Other file types should be placed in the /assets folder."
+          # Define message once
+          INFO_MESSAGE="Only markdown files (.md) are typically placed in the root of quickstart folders. Other file types should be placed in the /assets folder for better organization."
           
           # Read downloaded files
           downloaded_files=$(cat downloaded_files.txt)
           
           if [ -z "$downloaded_files" ]; then
-            echo "No files to validate"
+            echo "No files to check"
             exit 0
           fi
           
           # Find non-markdown files outside of assets folder (in root of quickstart folders)
           # Pattern: site/sfguides/src/{folder}/{filename} where filename is not .md and path doesn't contain /assets/
-          invalid_files=$(echo "$downloaded_files" | grep '^site/sfguides/src/[^/]\+/[^/]\+$' | grep -v '\.md$' || true)
+          non_md_files=$(echo "$downloaded_files" | grep '^site/sfguides/src/[^/]\+/[^/]\+$' | grep -v '\.md$' || true)
           
-          if [ -n "$invalid_files" ]; then
-            echo "❌ Error: Non-markdown files found outside assets folder:" >&2
-            echo "$invalid_files" >&2
+          if [ -n "$non_md_files" ]; then
+            echo "💡 Info: Non-markdown files found outside assets folder:"
+            echo "$non_md_files"
             
-            # Build error JSON
-            files_array=$(echo "$invalid_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
-            jq -n --argjson files "$files_array" --arg msg "$ERROR_MESSAGE" '{type:"invalid_file_types", message:$msg, files:$files}' > invalid-file-types-error.json
-            exit 1
+            # Build info JSON
+            files_array=$(echo "$non_md_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+            jq -n --argjson files "$files_array" --arg msg "$INFO_MESSAGE" '{type:"non_markdown_root", message:$msg, files:$files}' > non-markdown-root-info.json
+            echo "Info file created for PR comment"
           else
-            echo "✅ File type validation passed"
-            exit 0
+            echo "✅ All files in root are markdown files"
           fi
+          
+          # Always exit 0 - this is informational, not an error
+          exit 0
 
       - name: Check for non-image files in assets folder (warning)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -553,7 +554,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.validate_single_markdown.outcome == 'failure' || steps.validate_file_types.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         uses: actions/github-script@v7
         env:
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
@@ -585,21 +586,7 @@ jobs:
               } catch {}
             }
             
-            // 3. Invalid file types
-            if (fs.existsSync('invalid-file-types-error.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('invalid-file-types-error.json','utf8'));
-                if (data && data.type === 'invalid_file_types') {
-                  const files = Array.isArray(data.files) ? data.files : [];
-                  if (files.length) {
-                    const fileList = files.map(f => `- \`${f}\``).join('\n');
-                    sections.push(`### 🚫 Invalid File Types Detected\n\n${data.message}\n\n${fileList}`);
-                  }
-                }
-              } catch {}
-            }
-            
-            // 4. Language validation
+            // 3. Language validation
             if (fs.existsSync('validation-error.json')) {
               try {
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
@@ -610,7 +597,7 @@ jobs:
               } catch {}
             }
             
-            // 5. Categories validation
+            // 4. Categories validation
             if (fs.existsSync('categories-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('categories-error.json','utf8'));
@@ -624,7 +611,7 @@ jobs:
               } catch {}
             }
             
-            // 6. Frontmatter validation
+            // 5. Frontmatter validation
             if (fs.existsSync('frontmatter-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('frontmatter-error.json','utf8'));
@@ -638,7 +625,7 @@ jobs:
               } catch {}
             }
             
-            // 7. Profanity validation
+            // 6. Profanity validation
             if (fs.existsSync('profanity-report.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('profanity-report.json','utf8'));
@@ -693,6 +680,20 @@ jobs:
               } catch {}
             }
             
+            // 2. Non-markdown files in root folder
+            if (fs.existsSync('non-markdown-root-info.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('non-markdown-root-info.json','utf8'));
+                if (data && data.type === 'non_markdown_root') {
+                  const files = Array.isArray(data.files) ? data.files : [];
+                  if (files.length) {
+                    const fileList = files.map(f => `- \`${f}\``).join('\n');
+                    warnings.push(`### 💡 Non-Markdown Files in Quickstart Root\n\n${data.message}\n\n${fileList}`);
+                  }
+                }
+              } catch {}
+            }
+            
             // Post warning comment if any warnings exist
             if (warnings.length > 0) {
               const body = `## 💡 Helpful Information\n\n${warnings.join('\n\n---\n\n')}\n\nThese are informational messages and will not block your PR from being merged.`;
@@ -716,7 +717,7 @@ jobs:
             categories-error.json
             frontmatter-error.json
             multiple-md-error.json
-            invalid-file-types-error.json
+            non-markdown-root-info.json
             non-image-assets-warning.json
           if-no-files-found: ignore
 
@@ -727,7 +728,6 @@ jobs:
           # Check if any validation step failed
           all_passed=true
           if [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
-             [ "${{ steps.validate_file_types.outcome }}" == "failure" ] || \
              [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
              [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
