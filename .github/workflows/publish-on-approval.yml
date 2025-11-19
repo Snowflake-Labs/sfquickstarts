@@ -22,25 +22,48 @@ jobs:
       - name: Determine changed quickstart folders
         id: detect
         run: |
-          # Get changed files from the push
-          # For push events, compare the before and after commits
+          # Get all changed files from the push
           before_commit="${{ github.event.before }}"
           after_commit="${{ github.sha }}"
           
           # Handle first push to branch (no before commit)
           if [ "$before_commit" = "0000000000000000000000000000000000000000" ]; then
             # First push - check HEAD against previous commit
-            changed_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
+            all_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
           else
-            changed_files=$(git diff --name-only "$before_commit" "$after_commit")
+            all_files=$(git diff --name-only "$before_commit" "$after_commit")
           fi
+          
+          # Filter for changed files (excluding deleted files and folders starting with _)
+          # Similar to validate-and-stage which uses: select(.status != "removed")
+          changed_files=""
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            
+            # Skip if file doesn't exist (i.e., was deleted)
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            
+            # Skip files in folders starting with underscore
+            if [[ "$file" =~ /_ ]]; then
+              continue
+            fi
+            
+            # Skip if not under site/sfguides/src/
+            if [[ ! "$file" =~ ^site/sfguides/src/ ]]; then
+              continue
+            fi
+            
+            changed_files="${changed_files}${file}"$'\n'
+          done <<< "$all_files"
           
           # Filter to only relevant files:
           # 1. Markdown files in root of quickstart directories (not in subdirectories)
           # 2. Image files in root of /assets/ folders (not in subdirectories)
           # Pattern for markdown in root: site/sfguides/src/{folder}/{filename}.md
           # Pattern for images in assets root: site/sfguides/src/{folder}/assets/{filename}.{image_ext}
-          relevant_files=$(echo "$changed_files" | grep -E '^site/sfguides/src/[^/]+/([^/]+\.md|assets/[^/]+\.(jpg|jpeg|png|gif|svg|webp|bmp|ico))$' | grep -v '/_' || true)
+          relevant_files=$(echo "$changed_files" | grep -E '^site/sfguides/src/[^/]+/([^/]+\.md|assets/[^/]+\.(jpg|jpeg|png|gif|svg|webp|bmp|ico))$' || true)
           
           # Extract quickstart names from relevant files only
           quickstart_names=$(echo "$relevant_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
