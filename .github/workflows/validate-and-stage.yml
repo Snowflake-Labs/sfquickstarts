@@ -280,7 +280,7 @@ jobs:
             exit 0
           fi
 
-      - name: Check for non-markdown files outside assets (helpful message)
+      - name: Check for non-markdown files outside assets (informational)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: check_file_types
         run: |
@@ -314,12 +314,12 @@ jobs:
           # Always exit 0 - this is informational, not an error
           exit 0
 
-      - name: Check for non-image files in assets folder (warning)
+      - name: Check for non-image files in assets folder (informational)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: check_assets_files
         run: |
           # Define warning message once
-          WARNING_MESSAGE="Non-image files found in /assets folders will NOT be uploaded to snowflake.com. You must [link to them directly using permanent GitHub links](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files)."
+          WARNING_MESSAGE="Non-image files found in /assets folders will **NOT** be uploaded to snowflake.com. If you are referencing them in your guide, you should link to them directly (e.g. [using permanent GitHub links](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files))."
           
           # Read downloaded files
           downloaded_files=$(cat downloaded_files.txt)
@@ -333,7 +333,7 @@ jobs:
           non_image_assets=$(echo "$downloaded_files" | grep '/assets/' | grep -v -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
           
           if [ -n "$non_image_assets" ]; then
-            echo "⚠️  Warning: Non-image files found in assets folder:"
+            echo "💡 Info: Non-image files found in assets folder:"
             echo "$non_image_assets"
             
             # Build warning JSON
@@ -347,7 +347,7 @@ jobs:
           # Always exit 0 - this is a warning, not an error
           exit 0
 
-      - name: Check for large files in assets
+      - name: Check for large files in assets (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: check_large_files
         continue-on-error: true
@@ -398,7 +398,7 @@ jobs:
             exit 0
           fi
 
-      - name: Validate abusive words in markdown
+      - name: Validate abusive words in markdown (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate
         continue-on-error: true
@@ -416,7 +416,7 @@ jobs:
             exit 1
           }
 
-      - name: Validate categories syntax in markdown
+      - name: Validate categories syntax in markdown (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_categories
         continue-on-error: true
@@ -433,7 +433,7 @@ jobs:
             exit 1
           }
 
-      - name: Validate frontmatter id and path
+      - name: Validate frontmatter id and path (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_frontmatter
         continue-on-error: true
@@ -450,7 +450,7 @@ jobs:
             exit 1
           }
 
-      - name: Validate language tags
+      - name: Validate language tags (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_language
         continue-on-error: true
@@ -624,7 +624,7 @@ jobs:
               });
             }
 
-      - name: Comment PR with warnings (always)
+      - name: Comment PR with informational messages (when present)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         uses: actions/github-script@v7
         with:
