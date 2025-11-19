@@ -65,34 +65,24 @@ jobs:
           # Save files_json to a file for reuse in subsequent steps
           echo "$files_json" > pr_files.json
           
-          # Filter for:
-          # 1. Markdown files (.md) in site/sfguides/src/ OUTSIDE of assets folders (excluding README.md)
-          # 2. Image files ONLY from inside assets folders (no other file types from assets)
-          # 3. Exclude folders starting with _
+          # Filter for changed files (excluding folders starting with _)
           changed_files=$(echo "$files_json" | jq -r '.[] 
             | select(.status != "removed") 
             | .filename 
             | select(startswith("site/sfguides/src/")) 
-            | select(test("/_") | not)
-            | select(
-                (endswith(".md") and (test("/README\\.md$"; "i") | not) and (test("/assets/") | not)) or
-                (test("/assets/.*\\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$"; "i"))
-              )')
+            | select(test("/_") | not)')
           
+          # Early exit if no files to download
           if [ -z "$changed_files" ]; then
-            echo "No changed files to download"
-            # Save empty list for next step
+            echo "No relevant files to download for validation"
             echo "" > downloaded_files.txt
             exit 0
           fi
           
-          # Save the list of downloaded files for use in subsequent steps
-          echo "$changed_files" > downloaded_files.txt
-          
           head_repo="${{ github.event.pull_request.head.repo.full_name }}"
           head_ref="${{ github.event.pull_request.head.ref }}"
           
-          # Download changed files
+          # Download all changed files
           echo "Downloading changed files..."
           while IFS= read -r file; do
             [ -z "$file" ] && continue
@@ -109,13 +99,17 @@ jobs:
             fi
           done <<< "$changed_files"
           
-          # Extract quickstart folders that have markdown changes
-          quickstart_folders=$(echo "$changed_files" | grep '\.md$' | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          # Save changed files to list
+          echo "$changed_files" > downloaded_files.txt
           
-          # For each modified quickstart folder, download ALL markdown files (not just changed ones)
+          # Extract folders that have changes
+          modified_folders=$(echo "$changed_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          
+          # Download ALL markdown files from modified folders (even if not changed)
           # This allows us to validate that each folder has only one markdown file
-          if [ -n "$quickstart_folders" ]; then
-            echo "Downloading all markdown files from modified folders for validation..."
+          if [ -n "$modified_folders" ]; then
+            echo "Downloading all markdown files from modified folders..."
+            
             while IFS= read -r folder; do
               [ -z "$folder" ] && continue
               
@@ -141,13 +135,16 @@ jobs:
                 
                 # Download the file
                 url="https://raw.githubusercontent.com/$head_repo/$head_ref/$file_path"
-                echo "Downloading additional file for validation: $file_path"
+                echo "Downloading additional markdown: $file_path"
                 
-                if ! curl -sS -f -H "Authorization: Bearer $GITHUB_TOKEN" "$url" -o "pr/$file_path"; then
+                if curl -sS -f -H "Authorization: Bearer $GITHUB_TOKEN" "$url" -o "pr/$file_path"; then
+                  # Add to downloaded files list
+                  echo "$file_path" >> downloaded_files.txt
+                else
                   echo "Warning: Failed to download $file_path" >&2
                 fi
               done <<< "$folder_files"
-            done <<< "$quickstart_folders"
+            done <<< "$modified_folders"
           fi
           
           echo "Download complete"
