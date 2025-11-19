@@ -74,18 +74,6 @@ Extract the zip file to your preferred location.
 - ✅ Create semantic view for Cortex Analyst
 - ✅ Setup role with permissions
 
-### Verify Setup
-
-After running the script, verify the setup completed successfully:
-
-```sql
--- Should show: ✅ SETUP COMPLETE!
--- Check if all objects were created
-SHOW TABLES IN SCHEMA SALES_INTELLIGENCE.DATA;
-SHOW CORTEX SEARCH SERVICES IN SCHEMA SALES_INTELLIGENCE.DATA;
-SHOW SEMANTIC VIEWS IN SCHEMA SALES_INTELLIGENCE.DATA;
-```
-
 <!-- ------------------------ -->
 ## Create Cortex Agent via UI
 
@@ -115,11 +103,6 @@ Before setting up the MCP server, create the Cortex Agent through Snowsight's UI
 - Click **+ Tool** → Select **Cortex Analyst**  
 - **Semantic Model:** `SALES_INTELLIGENCE.DATA.SALES_METRICS_SEMANTIC_VIEW`
 - **Description:** `Answer questions about sales metrics and performance`
-
-**Tool 3 - SQL:**
-- Click **+ Tool** → Select **SQL**
-- **Query:** `SELECT * FROM SALES_INTELLIGENCE.DATA.SALES_METRICS LIMIT 10`
-- **Description:** `Execute SQL queries on sales data`
 
 4. Click **Create Agent**
 
@@ -157,7 +140,7 @@ Now that your Cortex Agent is created, set up the MCP server to expose it extern
 
 ### Save OAuth Credentials
 
-After running the script, you'll see output from `SYSTEM$SHOW_OAUTH_CLIENT_SECRETS`:
+After running the script, you'll see output from `SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('SALES_MCP_OAUTH');`:
 
 ```json
 {
@@ -169,28 +152,10 @@ After running the script, you'll see output from `SYSTEM$SHOW_OAUTH_CLIENT_SECRE
 > aside positive
 > **CRITICAL:** Copy and save both the `OAUTH_CLIENT_ID` and `OAUTH_CLIENT_SECRET` - you'll need these for the agent.py application and cannot retrieve them later!
 
-### Verify MCP Server
-
-Check that your MCP server was created successfully:
-
-```sql
--- View the MCP server
-SHOW MCP SERVERS IN SCHEMA SALES_INTELLIGENCE.DATA;
-
--- Describe the configuration
-DESCRIBE MCP SERVER SALES_INTELLIGENCE_MCP;
-
--- Verify OAuth integration
-DESC SECURITY INTEGRATION SALES_MCP_OAUTH;
-```
-
 <!-- ------------------------ -->
-## Generate Access Token
+## Generate Programmatic Access Token
 
-
-### Create Personal Access Token
-
-You'll need a Personal Access Token (PAT) for both applications.
+You'll need a Programmatic Access Token (PAT) for both applications.
 
 1. In Snowsight, navigate to Profile → Settings → Authentication
 2. Click **Generate new token**
