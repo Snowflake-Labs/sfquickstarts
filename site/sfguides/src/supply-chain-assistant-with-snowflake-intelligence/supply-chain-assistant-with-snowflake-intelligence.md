@@ -458,7 +458,7 @@ Ask these questions in sequence to replicate the scenario above:
 5. *"Draft an executive summary email with this analysis, our options, and a recommendation."*
 
 > aside negative
-> **Note:** Sending emails requires proper email integration and verified email addresses. The WEB_SEARCH and WEB_SCRAPE tools require external integration access, which is not available on trial accounts.
+> **Note:** Sending emails requires a verified email addresses. The WEB_SEARCH and WEB_SCRAPE tools require external integration access, which is not available on trial accounts.
 
 ### Additional Questions to Explore
 
@@ -531,4 +531,4 @@ As your organization's needs grow, you can evolve from a single agent with multi
 
 Access the complete code, scripts, and files for this quickstart:
 
-* [Supply Chain Assistant GitHub Repository](#)
+* [Supply Chain Assistant GitHub Repository](https://github.com/Snowflake-Labs/sfguide-supply-chain-assistant-with-snowflake-intelligence)
