@@ -112,10 +112,10 @@ The integration of NVIDIA's cuML and cuDF libraries into Snowflake ML offers a p
 ### Related Resources
 
 Ready for more? After you complete this quickstart, you can try one of the following additional examples:
-- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://www.snowflake.com/en/developers/guides/notebook-container-runtime/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://www.snowflake.com/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
 
 Learn more about Snowflake ML:
 - [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
