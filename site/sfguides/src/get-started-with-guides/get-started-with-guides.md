@@ -455,6 +455,9 @@ create new tags if you don't see them in the list.
 | Retail & Consumer Goods | snowflake-site:taxonomy/industry/retail-and-cpg |
 | Sports | snowflake-site:taxonomy/industry/sports |
 | Telecom | snowflake-site:taxonomy/industry/telecom |
+| Transportation | snowflake-site:taxonomy/industry/transportation |
+| Travel and Hospitality | snowflake-site:taxonomy/industry/travel-and-hospitality |
+
 
 
 <!-- ------------------------ -->
