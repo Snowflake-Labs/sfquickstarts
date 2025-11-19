@@ -528,7 +528,7 @@ jobs:
             const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
             if (largeFiles.length > 0) {
               const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
-              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`);
+              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nPlease either reduce the file size(s) before merging, or move the file(s) into a folder beginning with an underscore (e.g., _large_files/). Note that your file will NOT be uploaded to snowflake.com if it is larger than 1MB, and you will have to link to it directly. `);
             }
             
             // 2. Multiple markdown files
