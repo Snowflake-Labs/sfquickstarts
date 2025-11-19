@@ -17,7 +17,7 @@ jobs:
       pull-requests: write
     outputs:
       has_relevant_changes: ${{ steps.check_relevant.outputs.has_relevant_changes }}
-      quickstart_names_json: ${{ steps.detect.outputs.quickstart_names_json }}
+      quickstart_names_json: ${{ steps.prepare_webhooks.outputs.quickstart_names_json }}
       all_validations_passed: ${{ steps.validation_check.outputs.all_passed }}
       md_file_count: ${{ steps.detect.outputs.md_file_count }}
       
@@ -213,45 +213,10 @@ jobs:
           if [ -z "$changed_md_files" ]; then
             changed_markdown_json='[]'
             md_file_count=0
-            quickstart_names_json='[]'
-            quickstart_name=''
           else
             # Build changed_markdown_json with only changed markdown files (for validations)
             changed_markdown_json=$(printf '%s\n' "$changed_md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
             md_file_count=$(echo "$changed_md_files" | wc -l | tr -d ' ')
-            
-            # Extract quickstart names and languages for webhook
-            quickstart_names=$(echo "$changed_md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
-            objs='[]'
-            
-            while IFS= read -r name; do
-              [ -z "$name" ] && continue
-              
-              lang=""
-              # Prefer a markdown file that matches the folder name
-              candidate="site/sfguides/src/$name/$name.md"
-              if echo "$changed_md_files" | grep -q "^$candidate$"; then
-                md_file="$candidate"
-              else
-                # Fallback: use the first markdown file in this quickstart
-                md_file=$(echo "$changed_md_files" | grep "^site/sfguides/src/$name/" | head -n1)
-              fi
-              
-              # Extract language from the markdown file
-              if [ -n "$md_file" ] && [ -f "pr/$md_file" ]; then
-                lang=$(sed -n '1,50p' "pr/$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
-                if [ -n "$lang" ]; then
-                  lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-                  if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                  if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                fi
-              fi
-              
-              objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
-            done <<< "$quickstart_names"
-
-            quickstart_names_json="$objs"
-            quickstart_name=$(echo "$quickstart_names" | head -n1)
           fi
 
           # Print debug information
@@ -264,8 +229,6 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           echo "changed_markdown_json=$changed_markdown_json" >> $GITHUB_OUTPUT
-          echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
-          echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
           echo "md_file_count=$md_file_count" >> $GITHUB_OUTPUT
 
@@ -745,6 +708,64 @@ jobs:
             echo "❌ Validation failed. See PR comment for details."
             exit 1
           fi
+
+      - name: Prepare webhook data
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.validation_check.outputs.all_passed == 'true'
+        id: prepare_webhooks
+        env:
+          CHANGED_MARKDOWN_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
+        run: |
+          # Use the already-computed changed markdown files from detect step (with pr/ prefix)
+          changed_md_files=$(echo "$CHANGED_MARKDOWN_JSON" | jq -r '.[]')
+          
+          if [ -z "$changed_md_files" ]; then
+            echo "No changed markdown files for webhooks"
+            echo "quickstart_names_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Extract quickstart names from paths (handles pr/ prefix)
+          quickstart_names=$(echo "$changed_md_files" | sed -E 's|^pr/site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          objs='[]'
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Preparing webhook data for quickstarts:"
+          echo "$quickstart_names"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          while IFS= read -r name; do
+            [ -z "$name" ] && continue
+            
+            lang=""
+            # Prefer a markdown file that matches the folder name
+            candidate="pr/site/sfguides/src/$name/$name.md"
+            if echo "$changed_md_files" | grep -q "^$candidate$"; then
+              md_file="$candidate"
+            else
+              # Fallback: use the first markdown file in this quickstart
+              md_file=$(echo "$changed_md_files" | grep "^pr/site/sfguides/src/$name/" | head -n1)
+            fi
+            
+            # Extract language from the markdown file
+            if [ -n "$md_file" ] && [ -f "$md_file" ]; then
+              lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+              if [ -n "$lang" ]; then
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+            fi
+            
+            echo "  - $name (language: ${lang:-not specified})"
+            objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
+          done <<< "$quickstart_names"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Webhook data prepared:"
+          echo "$objs" | jq '.'
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          echo "quickstart_names_json=$objs" >> $GITHUB_OUTPUT
 
   call_staging_webhooks:
     needs: validate_and_stage
