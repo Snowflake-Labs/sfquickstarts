@@ -99,7 +99,8 @@ jobs:
             fi
           done <<< "$changed_files"
           
-          # Save changed files to list
+          # Save changed files to separate lists
+          echo "$changed_files" > changed_files.txt
           echo "$changed_files" > downloaded_files.txt
           
           # Extract folders that have changes
@@ -181,20 +182,26 @@ jobs:
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
         run: |
-          # Read the list of downloaded files from previous step
+          # Read the list of changed files (modified in PR)
+          changed_files=$(cat changed_files.txt)
+          
+          # Read the list of all downloaded files (changed + additional markdown files)
           downloaded_files=$(cat downloaded_files.txt)
           
-          # Filter out non-image files from assets folders
+          # Filter out non-image files from assets folders for changed files
           # Keep: markdown files outside assets, image files from assets
           # Exclude: non-image files from assets (like .md, .txt, etc.)
-          all_changed_files=$(echo "$downloaded_files" | grep -v '/assets/' || true)
-          assets_images=$(echo "$downloaded_files" | grep '/assets/' | grep -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
+          all_changed_files=$(echo "$changed_files" | grep -v '/assets/' || true)
+          assets_images=$(echo "$changed_files" | grep '/assets/' | grep -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
           if [ -n "$assets_images" ]; then
             all_changed_files=$(printf '%s\n%s\n' "$all_changed_files" "$assets_images")
           fi
           
-          # Extract markdown files (already excluded from assets by filter above)
-          md_files=$(echo "$all_changed_files" | grep '\.md$' || true)
+          # Extract changed markdown files (for validation)
+          changed_md_files=$(echo "$all_changed_files" | grep '\.md$' || true)
+          
+          # Extract all downloaded markdown files (for multiple markdown check)
+          all_md_files=$(echo "$downloaded_files" | grep '\.md$' | grep -v '/assets/' || true)
           
           if [ -z "$all_changed_files" ]; then 
             all_changed_files_json='[]'
@@ -202,19 +209,19 @@ jobs:
             all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           fi
 
-          # Prepare markdown files for validation
-          if [ -z "$md_files" ]; then
+          # Prepare markdown files for validation (only changed)
+          if [ -z "$changed_md_files" ]; then
             markdown_json='[]'
             md_file_count=0
             quickstart_names_json='[]'
             quickstart_name=''
           else
-            # Build markdown_json with all downloaded markdown files
-            markdown_json=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
-            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
+            # Build markdown_json with only changed markdown files (for validations)
+            markdown_json=$(printf '%s\n' "$changed_md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
+            md_file_count=$(echo "$changed_md_files" | wc -l | tr -d ' ')
             
             # Extract quickstart names and languages for webhook
-            quickstart_names=$(echo "$md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+            quickstart_names=$(echo "$changed_md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
             objs='[]'
             
             while IFS= read -r name; do
@@ -223,11 +230,11 @@ jobs:
               lang=""
               # Prefer a markdown file that matches the folder name
               candidate="site/sfguides/src/$name/$name.md"
-              if echo "$md_files" | grep -q "^$candidate$"; then
+              if echo "$changed_md_files" | grep -q "^$candidate$"; then
                 md_file="$candidate"
               else
                 # Fallback: use the first markdown file in this quickstart
-                md_file=$(echo "$md_files" | grep "^site/sfguides/src/$name/" | head -n1)
+                md_file=$(echo "$changed_md_files" | grep "^site/sfguides/src/$name/" | head -n1)
               fi
               
               # Extract language from the markdown file
@@ -270,9 +277,9 @@ jobs:
           # Define error message once
           ERROR_MESSAGE="Each quickstart folder should contain only one markdown file in the root. Did you mean to add this additional .md file to the /assets folder?"
           
-          # Extract quickstart folders that have markdown changes
+          # Extract all downloaded markdown files (including unchanged ones for thorough validation)
           downloaded_files=$(cat downloaded_files.txt)
-          md_files=$(echo "$downloaded_files" | grep '\.md$' || true)
+          md_files=$(echo "$downloaded_files" | grep '\.md$' | grep -v '/assets/' || true)
           
           if [ -z "$md_files" ]; then
             echo "No markdown files to validate"
