@@ -239,8 +239,21 @@ for (statement 1; statement 2; statement 3) {
 
 CODE:
 ```
-> Adding an Info Box:
-> Pick the messages above and use this code.  This will appear as an info box.
+> [!NOTE]
+> This is an informational aside.
+
+> [!TIP]
+> A positive or helpful note.
+
+> [!IMPORTANT]
+> Something you shouldn’t overlook.
+
+> [!WARNING]
+> A cautionary message.
+
+> [!CAUTION]
+> A serious negative or danger message.
+
 ```
 
 
@@ -470,15 +483,30 @@ You can also use the Google Docs feature of saving to Markdown, however please r
 <!-- ------------------------ -->
 ## Submitting Your Guide
 
-The process to submit your Guide has been simplified. 
 
-- Create a Fork for the main repo and begin writing and formatting your guide.
 
-- Once you are done with the content creation process for your guide, create a Pull Request in GitHub and submit.
+**The process to submit your Guide has been simplified**
 
-- The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them **before** submitting the PR.
+- Create a Fork for the main repo and begin writing and formatting your guide (top right of webpage, `fork` button)
+  > If you have already forked the repository, you can go to your branch and select 'sync fork' to update the repository
 
-- Please correct any errors and try submitting the PR again.  If all looks ok, the PR comes to DevRel team for approval.  
+- In your fork, select the 'site' folder on the home page -> Then select the 'sfguides/src' folder and navigate to the folder for your guide.
+
+- Once you are done with the content creation process or editing of your guide, create a Pull Request in GitHub and submit.
+
+- The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them in a comment on GitHub **before** submitting the PR.
+
+
+**Please Note:** 
+All PRs have automated checks run against them. The checks assess for the following (please confirm these are met prior to submission): 
+1. Categories are applied from the [approved list](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags)
+
+2. ID criteria (second line in template): id must exist, id must be separated by dashes, id must be lowercase, id must match the markdown file name (without .md extension), id must match the immediate folder name the file is in
+
+3. Language tag must be populated (see [here](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags) for the list)
+
+
+- Correct any errors and try submitting the PR again.  If all looks ok, the PR comes to DevRel team for approval.  
  At this point, a staging URL is generated in GitHub that can be reviewed.
 
 - The DevRel team will approve the PR to publish it to www.snowflake.com/en/developers/guides page.
