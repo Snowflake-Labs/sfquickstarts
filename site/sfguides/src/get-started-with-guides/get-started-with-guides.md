@@ -16,7 +16,7 @@ The following sections explain the various headings of a guide that are required
 
 Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).
+
 
 Previously, we had Quickstarts and Solutions which are now combined into a single page for "Guides" at [www.snowflake.com/en/developers/guides](https://www.snowflake.com/en/developers/guides/) page.  Going forward, we encourage users to think along creating **logged out experiences**  or **topic pages.** A few examples of these pages are:
 
@@ -46,29 +46,47 @@ Previously, we had Quickstarts and Solutions which are now combined into a singl
 - Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
 
+### Layout Basics
 
-### Conclusion & Next Steps
+At a minimum, the Guide should include the following headings and subheadings:
 
-The Conclusion and Next Steps section is one of the most important parts of a guide. This last section helps to sum up all the information the reader has gone through, and in many ways should read like a [TLDR summary](https://www.howtogeek.com/435266/what-does-tldr-mean-and-how-do-you-use-it/#post-435266:~:text=How%20Do%20You%20Use%20TLDR%3F,you%E2%80%99re%20the%20author%20or%20commenter.%20Using). 
+```
+## Overview
+It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build.
+Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial;
+this means that actual code needs to be included (not just pseudo-code or concepts).
 
-There are three main sub-headers in a Conclusion step:
+### Prerequisites
+Include the basic requirements to get started in this subtopic
 
-1. a general conclusion paragraph 
-2. "What We've Covered" section with a bulleted list of things
-3. "Related Resources" with links to various other resources, other guides, docs, videos, GitHub source code, etc.
+### What You'll Learn
+Include what the end user will learn in this subtopic
 
-It's also important to remember that by the time a reader has completed a Guide, the goal is that they have actually built something! Guides teach through hands-on examples -- not just explaining concepts.
+### What You'll Build
+Include what the end user will build with the Guide in this subtopic
 
-### What We've Covered
-- Creating steps and setting duration
-- Adding code snippets
-- Embedding images and videos
-- Importing other markdown files
 
-### Related Resources
-- [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
-- Other relevant links to blogs, other guides, announcements etc. go here
 
+## Hands-on topics
+Cover the main components as H2s that appear on the right column menu.
+
+
+
+## Conclusion & Resources
+
+This last section helps to sum up all the information the reader has gone through. 
+
+By the time a reader has completed a Guide, the goal is that they have actually built something!
+Guides teach through hands-on examples -- not just explaining concepts.
+
+
+### What you Learned
+Re-iterate what the users learned with this Guide
+
+### Resource Links
+Add any links that can be helpful to the readers.
+
+```
 
 
 <!-- ------------------------ -->
@@ -117,15 +135,15 @@ These steps are defined in Markdown using Header 2 tag `##`.
 Sub-steps will use a Header 3 tag `###` and so forth.  Please avoid going beyond H4 `####`.
 
 ```markdown
-## Step 1 Title
+## Step 1 Title (H2)
 
 All the content for the step goes here.
 
-## Step 2 Title
+## Step 2 Title  (H2)
 
 All the content for the step goes here.
 
-### Subheading for Step 2
+### Subheading for Step 2 (H3)
 
   **This text will be bold.**
   __This text will also be bold.__
@@ -474,6 +492,8 @@ The process to submit your Guide has been simplified.
 ## Conclusion and Resources
 
 Congratulations!  You should now be able to create, format and submit a guide. 
+
+
 
 ### What We've Covered
 - The basic components of a Guide
