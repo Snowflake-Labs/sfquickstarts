@@ -350,6 +350,39 @@ jobs:
             exit 0
           fi
 
+      - name: Check for non-image files in assets folder (warning)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_assets_files
+        run: |
+          # Define warning message once
+          WARNING_MESSAGE="Non-image files found in /assets folders will NOT be uploaded to snowflake.com. You must [link to them directly using permanent GitHub links](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files)."
+          
+          # Read downloaded files
+          downloaded_files=$(cat downloaded_files.txt)
+          
+          if [ -z "$downloaded_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          # Find non-image files in assets folders
+          non_image_assets=$(echo "$downloaded_files" | grep '/assets/' | grep -v -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
+          
+          if [ -n "$non_image_assets" ]; then
+            echo "⚠️  Warning: Non-image files found in assets folder:"
+            echo "$non_image_assets"
+            
+            # Build warning JSON
+            files_array=$(echo "$non_image_assets" | jq -R -s -c 'split("\n") | map(select(length>0))')
+            jq -n --argjson files "$files_array" --arg msg "$WARNING_MESSAGE" '{type:"non_image_assets", message:$msg, files:$files}' > non-image-assets-warning.json
+            echo "Warning file created for PR comment"
+          else
+            echo "✅ No non-image files in assets folders"
+          fi
+          
+          # Always exit 0 - this is a warning, not an error
+          exit 0
+
       - name: Check for large files
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: check_large_files
@@ -535,7 +568,7 @@ jobs:
             const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
             if (largeFiles.length > 0) {
               const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
-              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nYou have two options: \n 1. Reduce the file size(s) before merging (best for images). or \n 2. Move your file(s) into a folder beginning with an underscore (e.g., _large_files/). Note that in this case, your file will NOT be uploaded to snowflake.com, and you will have to [link to it directly](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files). `);
+              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nYou have two options: \n 1. Reduce the file size(s) before merging (best for images); or \n 2. Move your file(s) into a folder beginning with an underscore (e.g., `_large_files/`). Note that in this case, your file will NOT be uploaded to snowflake.com, and you will have to [link to it directly](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files). `);
             }
             
             // 2. Multiple markdown files
@@ -638,6 +671,40 @@ jobs:
               });
             }
 
+      - name: Comment PR with warnings (always)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const warnings = [];
+            
+            // Check for non-image files in assets folders
+            if (fs.existsSync('non-image-assets-warning.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('non-image-assets-warning.json','utf8'));
+                if (data && data.type === 'non_image_assets') {
+                  const files = Array.isArray(data.files) ? data.files : [];
+                  if (files.length) {
+                    const fileList = files.map(f => `- \`${f}\``).join('\n');
+                    warnings.push(`### 💡 Non-Image Files in Assets Folder\n\n${data.message}\n\n${fileList}`);
+                  }
+                }
+              } catch {}
+            }
+            
+            // Post warning comment if any warnings exist
+            if (warnings.length > 0) {
+              const body = `## 💡 Helpful Information\n\n${warnings.join('\n\n---\n\n')}\n\nThese are informational messages and will not block your PR from being merged.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body
+              });
+            }
+
       - name: Upload validation artifacts
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         uses: actions/upload-artifact@v4
@@ -650,6 +717,7 @@ jobs:
             frontmatter-error.json
             multiple-md-error.json
             invalid-file-types-error.json
+            non-image-assets-warning.json
           if-no-files-found: ignore
 
       - name: Check validation results and fail if needed
