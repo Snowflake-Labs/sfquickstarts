@@ -211,13 +211,13 @@ jobs:
 
           # Prepare markdown files for validation (only changed)
           if [ -z "$changed_md_files" ]; then
-            markdown_json='[]'
+            changed_markdown_json='[]'
             md_file_count=0
             quickstart_names_json='[]'
             quickstart_name=''
           else
-            # Build markdown_json with only changed markdown files (for validations)
-            markdown_json=$(printf '%s\n' "$changed_md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
+            # Build changed_markdown_json with only changed markdown files (for validations)
+            changed_markdown_json=$(printf '%s\n' "$changed_md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
             md_file_count=$(echo "$changed_md_files" | wc -l | tr -d ' ')
             
             # Extract quickstart names and languages for webhook
@@ -259,11 +259,11 @@ jobs:
           echo "All changed files:"
           echo "$all_changed_files"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "Markdown files (for validation):"
-          echo "$markdown_json" | jq -r '.[]' 2>/dev/null || echo "$markdown_json"
+          echo "Changed markdown files (for validation):"
+          echo "$changed_markdown_json" | jq -r '.[]' 2>/dev/null || echo "$changed_markdown_json"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
-          echo "markdown_json=$markdown_json" >> $GITHUB_OUTPUT
+          echo "changed_markdown_json=$changed_markdown_json" >> $GITHUB_OUTPUT
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
@@ -437,7 +437,7 @@ jobs:
         id: validate
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
         run: |
           node scripts/validate-profanity.js || {
@@ -455,7 +455,7 @@ jobs:
         id: validate_categories
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
           node scripts/validate-categories.js || {
             # Strip 'pr/' prefix from file paths in error output for cleaner display
@@ -472,7 +472,7 @@ jobs:
         id: validate_frontmatter
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.markdown_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
           node scripts/validate-frontmatter.js || {
             # Strip 'pr/' prefix from file paths in error output for cleaner display
@@ -489,7 +489,7 @@ jobs:
         id: validate_language
         continue-on-error: true
         env:
-          MARKDOWN_JSON: ${{ steps.detect.outputs.markdown_json }}
+          MARKDOWN_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
           # Validate languages in individual markdown files
           markdown_files="$MARKDOWN_JSON"
@@ -696,7 +696,7 @@ jobs:
             
             // Post warning comment if any warnings exist
             if (warnings.length > 0) {
-              const body = `## 💡 Helpful Information\n\n${warnings.join('\n\n---\n\n')}\n\nThese are informational messages and will not block your PR from being merged.`;
+              const body = `## 👋 Helpful Information\n\n${warnings.join('\n\n---\n\n')}\n\nThese are informational messages and will not block your PR from being merged.`;
               
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
