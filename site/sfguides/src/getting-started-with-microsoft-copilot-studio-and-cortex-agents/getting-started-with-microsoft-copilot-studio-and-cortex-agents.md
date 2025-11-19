@@ -282,6 +282,8 @@ Use the **Snowflake SQL Commands** to create the security integration, role and 
 
 Keep the **Snowflake power platform connection info** to reference when you connect from Copilot Studio to Snowflake.
 
+*If you already have a security integration for something like PowerBI you will have to [alter the security integration](https://docs.snowflake.com/en/sql-reference/sql/alter-security-integration-oauth-external) by adding the new audience url and mapping name, mapping attribute must remain 'login_name'.*
+
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
 

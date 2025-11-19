@@ -1173,7 +1173,7 @@ For 61% of addresses we were able to do reverse geocoding that matches reference
 
 In this lab, you have learned how to perform geocoding and reverse geocoding using free datasets and open-source tools. While this approach may not provide the highest possible accuracy, it offers a cost-effective solution for processing large datasets where some degree of inaccuracy is acceptable. It's important to mention that Worldwide Address Data that has more than 500M addresses  for the whole world is one of many free datasets that you can get from Snowflake Marketplace and use for geocoding use cases. There are others, which you might consider for your use cases, here are just some examples:
 - [Overture Maps - Addresses](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9NQ/carto-overture-maps-addresses) - if you mainly need to geocode addresses in North America, another good option would be to use this dataset that has more than 200M addresses.
-- [US Addresses & PO](https://app.snowflake.com/marketplace/listing/GZTSZAS2KIA/cybersyn-us-addresses-poi) - has more than 150M rows can be used as a source of information around locations of Points of Interests.
+- [Snowflake Public Data](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255) - includes a Global Government, Demographics & Geospatial database, with US addresses and POIs.
 - [French National Addresses](https://app.snowflake.com/marketplace/listing/GZT1ZQXT8U/atos-french-national-addresses) - contains about 26M addresses in France.
 - [Dutch Addresses & Buildings Registration (BAG)](https://app.snowflake.com/marketplace/listing/GZ1M7Z62O2A/tensing-dutch-addresses-buildings-registration-bag) - includes Dutch Addresses.
 
