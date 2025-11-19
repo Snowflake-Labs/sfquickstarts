@@ -354,7 +354,7 @@ jobs:
         env:
           CHANGED_FILES_JSON: ${{ steps.detect.outputs.all_changed_files_json }}
         run: |
-          # Check only files in assets folders (since non-markdown files outside assets are informational only)
+          # Check only image files in assets folders
           large_files=()
           changed_files=$(echo "$CHANGED_FILES_JSON" | jq -r '.[]')
           
@@ -363,11 +363,11 @@ jobs:
             exit 0
           fi
           
-          # Filter for only files in /assets/ folders
-          assets_files=$(echo "$changed_files" | grep '/assets/' || true)
+          # Filter for only image files in /assets/ folders
+          assets_images=$(echo "$changed_files" | grep '/assets/' | grep -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
           
-          if [ -z "$assets_files" ]; then
-            echo "No assets files to check"
+          if [ -z "$assets_images" ]; then
+            echo "No image files in assets to check"
             echo "large_files_json=[]" >> $GITHUB_OUTPUT
             exit 0
           fi
@@ -383,7 +383,7 @@ jobs:
                 large_files+=("$file")
               fi
             fi
-          done <<< "$assets_files"
+          done <<< "$assets_images"
           
           if [ ${#large_files[@]} -gt 0 ]; then
             echo "Large files found:"
