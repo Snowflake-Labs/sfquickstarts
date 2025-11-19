@@ -35,9 +35,23 @@ jobs:
             changed_files=$(git diff --name-only "$before_commit" "$after_commit")
           fi
           
-          # Filter to quickstart folders under site/sfguides/src whose names do not start with an underscore
-          # Also exclude any files inside directories starting with underscore
-          quickstart_names=$(echo "$changed_files" | grep '^site/sfguides/src/' | grep -v '/_' | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          # Filter to only relevant files:
+          # 1. Markdown files in root of quickstart directories (not in subdirectories)
+          # 2. Image files in root of /assets/ folders (not in subdirectories)
+          # Pattern for markdown in root: site/sfguides/src/{folder}/{filename}.md
+          # Pattern for images in assets root: site/sfguides/src/{folder}/assets/{filename}.{image_ext}
+          relevant_files=$(echo "$changed_files" | grep -E '^site/sfguides/src/[^/]+/([^/]+\.md|assets/[^/]+\.(jpg|jpeg|png|gif|svg|webp|bmp|ico))$' | grep -v '/_' || true)
+          
+          # Extract quickstart names from relevant files only
+          quickstart_names=$(echo "$relevant_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Relevant files changed (markdown in root + images in assets):"
+          echo "$relevant_files"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Quickstart folders to publish:"
+          echo "$quickstart_names"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           has_relevant_changes=false
           if [ -z "$quickstart_names" ]; then

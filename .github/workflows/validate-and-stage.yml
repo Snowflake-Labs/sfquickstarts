@@ -347,14 +347,14 @@ jobs:
           # Always exit 0 - this is a warning, not an error
           exit 0
 
-      - name: Check for large files
+      - name: Check for large files in assets
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: check_large_files
         continue-on-error: true
         env:
           CHANGED_FILES_JSON: ${{ steps.detect.outputs.all_changed_files_json }}
         run: |
-          # Check only files that were changed in the PR
+          # Check only files in assets folders (since non-markdown files outside assets are informational only)
           large_files=()
           changed_files=$(echo "$CHANGED_FILES_JSON" | jq -r '.[]')
           
@@ -363,14 +363,17 @@ jobs:
             exit 0
           fi
           
+          # Filter for only files in /assets/ folders
+          assets_files=$(echo "$changed_files" | grep '/assets/' || true)
+          
+          if [ -z "$assets_files" ]; then
+            echo "No assets files to check"
+            echo "large_files_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-            
-            # Skip files in folders starting with _ (e.g., _archived)
-            if [[ "$file" =~ ^site/sfguides/src/_ ]]; then
-              echo "Skipping $file (in excluded directory)"
-              continue
-            fi
             
             file_path="pr/$file"
             
@@ -380,7 +383,7 @@ jobs:
                 large_files+=("$file")
               fi
             fi
-          done <<< "$changed_files"
+          done <<< "$assets_files"
           
           if [ ${#large_files[@]} -gt 0 ]; then
             echo "Large files found:"
