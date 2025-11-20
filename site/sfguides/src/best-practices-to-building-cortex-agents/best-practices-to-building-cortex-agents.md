@@ -323,7 +323,7 @@ While instructions set the agent's identity and scope, tool descriptions directl
 3.  **Error prevention**: Whether the agent avoids misusing tools or making invalid calls.
 4.  **Consistency**: Whether the agent behaves predictably across similar questions.
 
-### Start with a clear, specific tool name
+### Step 1: Start with a clear, specific tool name
 
 Tool names are loaded into the agent's context and influence selection.
 
@@ -340,7 +340,7 @@ Tip: Combine a *domain* (“Customer”, “Sales”) with a *function* (“Anal
 ❌ BAD: "Search" or "Docs"
 ```
 
-### Write a purpose-driven tool description
+### Step 2: Write a purpose-driven tool description
 
 A strong description tells the agent:
 
@@ -385,7 +385,7 @@ Name: ConsumptionTool
 Description: Gets consumption data.
 ```
 
-### Be explicit about tool inputs
+### Step 3: Be explicit about tool inputs
 
 **This is where most tool descriptions fail.** Ambiguous inputs to your tools lead to incorrect tool calls and errors, whether Cortex Analyst, Cortex Search, or custom tools.
 
