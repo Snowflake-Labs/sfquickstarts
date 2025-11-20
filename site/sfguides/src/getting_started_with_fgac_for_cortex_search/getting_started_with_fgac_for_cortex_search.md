@@ -6,28 +6,25 @@ categories: snowflake-site:taxonomy/product/ai
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Cortex, Data Engineering
+tags: AI, Conversational Assistants, Cortex Search
 
 # Getting Started with Fine Grained Access Control (FGAC) for RAGs (Cortex Search)
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Retrieval-Augmented Generation (RAG) promises to unlock unprecedented value from enterprise data. The vast majority (80-90%) of corporate knowledge is trapped in unstructured documents, emails, and messages, often containing sensitive PII, IP, and financial data with inconsistent access controls. Deploying AI models without robust governance exposes this sensitive data, creating severe risks of data breaches, regulatory non-compliance, and loss of intellectual property.
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
+For businesses to adopt AI safely, applications must be "permissions-aware." This is not an optional feature but a foundational requirement. AI systems must respect and enforce the existing security and access permissions of every user at the moment of retrieval. An AI, like any employee, must only be allowed to "see" and surface data that the user querying it is already authorized to access. You can see our documentation on RBAC for Cortex Agents [here](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents#access-control-requirements).
 
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+In this guide, you will build a secure RAG pipeline (using Cortex Search) that leverages Snowflake's in-built governance features to enforce document-level access control. Specifically, we will create a RAG that has Fine Grained Access Control (FGAC), where the user will have responses tailored to the documents that they have access to. You will see how Snowflake's features are truly differential, and make developing, securing and distribution AI apps safe and simple. 
+
 
 ### Prerequisites
-- Familiarity with Markdown syntax
+- Access to an account that can use Snowpark Container Services (non trial accounts).
 
 ### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+- How to build a RAG chatbot in Streamlit in Snowflake (SiS) with Fine Grained Access Control (FGAC).
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
@@ -36,11 +33,133 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - [GoLang](https://golang.org/doc/install) Installed
 
 ### What You’ll Build 
-- A Snowflake Guide
+- A RAG chatbot in in Streamlit in Snowflake (SiS) with Fine Grained Access Control (FGAC) powered by Cortex Search.
 
 <!-- ------------------------ -->
-## Metadata Configuration
+## Setup
 Duration: 2
+
+# Clone Repository
+
+Open up your terminal or command line and clone the repository here
+
+# Snowflake Setup
+
+Open a SQL Worksheet and run through the following code to set up the neccessary objects and permissions in Snowflake.
+
+```SQL
+USE ROLE ACCOUNTADMIN;
+CREATE ROLE IF NOT EXISTS RAG_RLS_OWNER;
+
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE RAG_RLS_OWNER;
+GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE RAG_RLS_OWNER;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE RAG_RLS_OWNER;
+
+SET USERNAME = (SELECT CURRENT_USER());
+SELECT $USERNAME;
+GRANT ROLE RAG_RLS_OWNER to USER identifier($USERNAME);
+
+---
+
+USE ROLE RAG_RLS_OWNER;
+
+CREATE COMPUTE POOL IF NOT EXISTS RAG_STREAMLIT
+    MIN_NODES = 1
+    MAX_NODES = 1
+    INSTANCE_FAMILY = CPU_X64_XS;
+
+CREATE WAREHOUSE IF NOT EXISTS RAG_WH
+  WAREHOUSE_TYPE = STANDARD
+  WAREHOUSE_SIZE = XSMALL;
+
+CREATE DATABASE IF NOT EXISTS RAG_RLS_DB;
+USE DATABASE RAG_RLS_DB;
+CREATE SCHEMA IF NOT EXISTS RAG_RLS_DB.RAG_RLS_SCHEMA;
+USE SCHEMA RAG_RLS_SCHEMA;
+
+-- CREATE OR REPLACE STAGE SPECS DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE='SNOWFLAKE_SSE');
+CREATE OR REPLACE STAGE SOURCE_DOCUMENTS DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE='SNOWFLAKE_SSE');
+```
+
+# Upload Documents
+
+Upload the documents in the Documents folder in the cloned repo to the SOURCE_DOCUMENTS stage we just created. You can do this through the Snowsight UI. Thie instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) or below.
+
+In the navigation menu, select Ingestion » Add Data.
+
+On the Add Data page, select Load files into a Stage.
+![Load File Menu](assets/load_file_menu.png)
+
+Then upload the files from Documents folder in the cloned repository from the previous step. Be sure to select the RAG_RLS_DB database, the RAG_RLS_SCHEMA schema and the SOURCE_DOCUMENTS stage.
+![Upload Modal](assets/upload_modal.png)
+
+
+Once you have uploaded them, run the following SQL from your SQL Worksheet to check if the files have been uploaded successfully.
+
+```SQL
+LS @SOURCE_DOCUMENTS;
+```
+
+# Prepare Data for RAG
+
+In this section, we use Snowflake's helper functions to prepare the unstructured documents and set up the Cortex Search Service. 
+
+The functions below simplify the process of creating a RAG in to only a few steps. Specifically, we are using the following unique Snowflake features:
+- AISQL (AI_PARSE_DOCUMENT):
+- SPLIT_TEXT_RECURSIVE_CHARACTER:
+
+Note that we are adding an attribute column that we will dynamically filter on.
+
+Run the following SQL in a SQL worksheet
+
+```SQL
+USE SCHEMA RAG_RLS_DB.RAG_RLS_SCHEMA;
+
+CREATE OR REPLACE TABLE documents_table AS
+  (SELECT TO_FILE('@source_documents', RELATIVE_PATH) AS docs, 
+    RELATIVE_PATH as RELATIVE_PATH
+    FROM DIRECTORY(@source_documents));
+
+CREATE OR REPLACE TABLE EXTRACTED_TEXT_TABLE AS (
+    SELECT  RELATIVE_PATH, 
+            AI_PARSE_DOCUMENT(docs, {'mode': 'OCR'}):content::VARCHAR AS EXTRACTED_TEXT,
+            CASE
+                WHEN RELATIVE_PATH ILIKE '%ski%' THEN 'SKI'
+                WHEN RELATIVE_PATH ILIKE '%bike%' OR RELATIVE_PATH ILIKE '%bicycle%' THEN 'BICYCLES'
+                ELSE 'Other' -- Default category for files that don't match
+            END AS product_department
+            FROM documents_table
+            );
+
+
+CREATE OR REPLACE TABLE CHUNKED_TABLE AS (
+        SELECT
+            e.*,
+            c.value::VARCHAR AS chunk
+        FROM EXTRACTED_TEXT_TABLE e,
+        LATERAL FLATTEN(
+            INPUT => snowflake.cortex.split_text_recursive_character(
+                EXTRACTED_TEXT,
+                'none',
+                2000,
+                300
+            )
+        ) c
+    );
+
+SELECT * FROM CHUNKED_TABLE;
+
+--- Create Cortex Search Service
+
+CREATE OR REPLACE CORTEX SEARCH SERVICE rag_rls_cortex_search_service
+  ON chunk
+  ATTRIBUTES product_department
+  WAREHOUSE = RAG_WH
+  TARGET_LAG = '1 hour'
+  INITIALIZE = ON_SCHEDULE
+AS SELECT * FROM RAG_RLS_DB.RAG_RLS_SCHEMA.CHUNKED_TABLE;
+```
+
 
 It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
 
