@@ -3,7 +3,7 @@ name: Validate markdown and stage
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited, ready_for_review]
-    branches: [master, github-actions]
+    branches: [master]
 
 jobs:
   validate_and_stage:
@@ -15,6 +15,11 @@ jobs:
       contents: read
       issues: write
       pull-requests: write
+    outputs:
+      has_relevant_changes: ${{ steps.check_relevant.outputs.has_relevant_changes }}
+      quickstart_names_json: ${{ steps.prepare_webhooks.outputs.quickstart_names_json }}
+      all_validations_passed: ${{ steps.validation_check.outputs.all_passed }}
+      md_file_count: ${{ steps.detect.outputs.md_file_count }}
       
     steps:
       - name: Check for relevant changes (early exit)
@@ -45,17 +50,105 @@ jobs:
             scripts/
           sparse-checkout-cone-mode: true
 
-      - name: Checkout PR head (untrusted) into ./pr
+      - name: Download changed files from PR (untrusted)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          path: pr
-          sparse-checkout: |
-            site/sfguides/src/
-          sparse-checkout-cone-mode: true
+        id: download
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          
+          # Fetch changed files from PR (excluding deleted files)
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+          
+          # Save files_json to a file for reuse in subsequent steps
+          echo "$files_json" > pr_files.json
+          
+          # Filter for changed files (excluding folders starting with _)
+          changed_files=$(echo "$files_json" | jq -r '.[] 
+            | select(.status != "removed") 
+            | .filename 
+            | select(startswith("site/sfguides/src/")) 
+            | select(test("/_") | not)')
+          
+          # Early exit if no files to download
+          if [ -z "$changed_files" ]; then
+            echo "No relevant files to download for validation"
+            echo "" > downloaded_files.txt
+            exit 0
+          fi
+          
+          head_repo="${{ github.event.pull_request.head.repo.full_name }}"
+          head_ref="${{ github.event.pull_request.head.ref }}"
+          
+          # Download all changed files
+          echo "Downloading changed files..."
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            
+            # Create directory structure
+            mkdir -p "pr/$(dirname "$file")"
+            
+            # Download raw file content
+            url="https://raw.githubusercontent.com/$head_repo/$head_ref/$file"
+            echo "Downloading: $file"
+            
+            if ! curl -sS -f -H "Authorization: Bearer $GITHUB_TOKEN" "$url" -o "pr/$file"; then
+              echo "Warning: Failed to download $file" >&2
+            fi
+          done <<< "$changed_files"
+          
+          # Save changed files to separate lists
+          echo "$changed_files" > changed_files.txt
+          echo "$changed_files" > downloaded_files.txt
+          
+          # Extract folders that have changes
+          modified_folders=$(echo "$changed_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          
+          # Download ALL markdown files from modified folders (even if not changed)
+          # This allows us to validate that each folder has only one markdown file
+          if [ -n "$modified_folders" ]; then
+            echo "Downloading all markdown files from modified folders..."
+            
+            while IFS= read -r folder; do
+              [ -z "$folder" ] && continue
+              
+              # Use GitHub API to list all files in the folder
+              folder_path="site/sfguides/src/$folder"
+              tree_url="https://api.github.com/repos/$head_repo/contents/$folder_path?ref=$head_ref"
+              
+              # Get all .md files in the folder (excluding README.md)
+              folder_files=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "$tree_url" | jq -r '.[] | select(.type=="file") | select(.name | endswith(".md")) | select(.name | test("^README\\.md$"; "i") | not) | .name')
+              
+              while IFS= read -r filename; do
+                [ -z "$filename" ] && continue
+                
+                file_path="$folder_path/$filename"
+                
+                # Skip if already downloaded
+                if [ -f "pr/$file_path" ]; then
+                  continue
+                fi
+                
+                # Create directory structure
+                mkdir -p "pr/$folder_path"
+                
+                # Download the file
+                url="https://raw.githubusercontent.com/$head_repo/$head_ref/$file_path"
+                echo "Downloading additional markdown: $file_path"
+                
+                if curl -sS -f -H "Authorization: Bearer $GITHUB_TOKEN" "$url" -o "pr/$file_path"; then
+                  # Add to downloaded files list
+                  echo "$file_path" >> downloaded_files.txt
+                else
+                  echo "Warning: Failed to download $file_path" >&2
+                fi
+              done <<< "$folder_files"
+            done <<< "$modified_folders"
+          fi
+          
+          echo "Download complete"
 
       - name: Setup Node.js
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -88,99 +181,180 @@ jobs:
       - name: Determine changed files in quickstarts (from PR)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          # Re-fetch files_json since checkout may have overwritten files_json.txt
-          pr_number=${{ github.event.pull_request.number }}
-          repo=${{ github.repository }}
-          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+          # Read the list of changed files (modified in PR)
+          changed_files=$(cat changed_files.txt)
           
-          md_files=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | select(endswith(".md"))' | sort -u)
-          if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
-
-          # Build quickstart names and languages like the legacy workflow
-          quickstart_names=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
-          if [ -z "$quickstart_names" ]; then
-            quickstart_names_json='[]'
-            quickstart_folders_json='[]'
-            quickstart_name=''
-          else
-            objs='[]'
-            names_arr='[]'
-            while IFS= read -r name; do
-              [ -z "$name" ] && continue
-              lang=""
-              md_file=""
-              # Prefer a markdown file that matches the folder name (from PR checkout)
-              candidate="pr/site/sfguides/src/$name/$name.md"
-              if [ -f "$candidate" ]; then
-                md_file="$candidate"
-              else
-                # Otherwise, pick the first .md containing a language: field in the first 50 lines
-                for f in $(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
-                  if sed -n '1,50p' "$f" | grep -qi -E '^[[:space:]]*language[[:space:]]*:'; then
-                    md_file="$f"; break
-                  fi
-                done
-                # As a fallback, choose the first non-README.md file
-                if [ -z "$md_file" ]; then
-                  for f in $(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
-                    [ "$(basename "$f")" = "README.md" ] && continue
-                    md_file="$f"; break
-                  done
-                fi
-                # Final fallback: any .md file if still empty
-                if [ -z "$md_file" ]; then
-                  md_file=$(ls -1 "pr/site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
-                fi
-              fi
-              if [ -n "$md_file" ] && [ -f "$md_file" ]; then
-                lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
-                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
-                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
-                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
-              fi
-              objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
-              names_arr=$(echo "$names_arr" | jq -c --arg name "$name" '. + [$name]')
-            done <<< "$quickstart_names"
-
-            quickstart_names_json="$objs"
-            quickstart_folders_json=$(echo "$names_arr" | jq -c .)
-            quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
+          # Read the list of all downloaded files (changed + additional markdown files)
+          downloaded_files=$(cat downloaded_files.txt)
+          
+          # Filter out non-image files from assets folders for changed files
+          # Keep: markdown files outside assets, image files from assets
+          # Exclude: non-image files from assets (like .md, .txt, etc.)
+          all_changed_files=$(echo "$changed_files" | grep -v '/assets/' || true)
+          assets_images=$(echo "$changed_files" | grep '/assets/' | grep -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
+          if [ -n "$assets_images" ]; then
+            all_changed_files=$(printf '%s\n%s\n' "$all_changed_files" "$assets_images")
           fi
-
-          # Get all changed files (not just markdown) for file size checking
-          # Only include files that will be checked out (site/sfguides/src/), excluding folders starting with _ and removed files
-          all_changed_files=$(echo "$files_json" | jq -r '.[] | select(.status != "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not)' | sort -u)
+          
+          # Extract changed markdown files (for validation)
+          changed_md_files=$(echo "$all_changed_files" | grep '\.md$' || true)
+          
+          # Extract all downloaded markdown files (for multiple markdown check)
+          all_md_files=$(echo "$downloaded_files" | grep '\.md$' | grep -v '/assets/' || true)
+          
           if [ -z "$all_changed_files" ]; then 
             all_changed_files_json='[]'
           else
             all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           fi
 
-          # Count markdown files
-          if [ -z "$md_files" ]; then
+          # Prepare markdown files for validation (only changed)
+          if [ -z "$changed_md_files" ]; then
+            changed_markdown_json='[]'
             md_file_count=0
           else
-            md_file_count=$(echo "$md_files" | wc -l | tr -d ' ')
+            # Build changed_markdown_json with only changed markdown files (for validations)
+            changed_markdown_json=$(printf '%s\n' "$changed_md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
+            md_file_count=$(echo "$changed_md_files" | wc -l | tr -d ' ')
           fi
 
-          echo "files_json=$files_arr" >> $GITHUB_OUTPUT
-          echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
-          echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
-          echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
+          # Print debug information
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "All changed files:"
+          echo "$all_changed_files"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Changed markdown files (for validation):"
+          echo "$changed_markdown_json" | jq -r '.[]' 2>/dev/null || echo "$changed_markdown_json"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          echo "changed_markdown_json=$changed_markdown_json" >> $GITHUB_OUTPUT
           echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
           echo "md_file_count=$md_file_count" >> $GITHUB_OUTPUT
 
-      - name: Check for large files
+      - name: Validate single markdown file per folder
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate_single_markdown
+        continue-on-error: true
+        run: |
+          # Define error message once
+          ERROR_MESSAGE="Each quickstart folder should contain only one markdown file in the root. Did you mean to add this additional .md file to the /assets folder?"
+          
+          # Extract all downloaded markdown files (including unchanged ones for thorough validation)
+          downloaded_files=$(cat downloaded_files.txt)
+          md_files=$(echo "$downloaded_files" | grep '\.md$' | grep -v '/assets/' || true)
+          
+          if [ -z "$md_files" ]; then
+            echo "No markdown files to validate"
+            exit 0
+          fi
+          
+          quickstart_folders=$(echo "$md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          multiple_files_errors='[]'
+          
+          # For each folder with markdown changes, check if multiple markdown files exist
+          while IFS= read -r folder; do
+            [ -z "$folder" ] && continue
+            
+            # Get ALL markdown files in this quickstart folder
+            folder_md_files=$(find "pr/site/sfguides/src/$folder" -maxdepth 1 -type f -name "*.md" 2>/dev/null | sed 's|^pr/||' || echo "")
+            file_count=$(echo "$folder_md_files" | grep -c '^' || echo 0)
+            
+            # Check if more than one markdown file exists
+            if [ "$file_count" -gt 1 ]; then
+              # Convert files to JSON array
+              files_array=$(echo "$folder_md_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+              multiple_files_errors=$(echo "$multiple_files_errors" | jq -c --arg folder "$folder" --argjson files "$files_array" '. + [{folder:$folder, files:$files}]')
+            fi
+          done <<< "$quickstart_folders"
+          
+          # Check if any folders have multiple markdown files
+          error_count=$(echo "$multiple_files_errors" | jq 'length')
+          if [ "$error_count" -ne 0 ]; then
+            echo "❌ Error: Multiple markdown files found in the following folders:" >&2
+            echo "$multiple_files_errors" | jq -r '.[] | "  - \(.folder): \(.files | length) files - \(.files | join(", "))"' >&2
+            jq -n --argjson errors "$multiple_files_errors" --arg msg "$ERROR_MESSAGE" '{type:"multiple_markdown_files", message:$msg, errors:$errors}' > multiple-md-error.json
+            exit 1
+          else
+            echo "✅ Single markdown file validation passed"
+            exit 0
+          fi
+
+      - name: Check for non-markdown files outside assets (informational)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_file_types
+        run: |
+          # Define message once
+          INFO_MESSAGE="Only markdown files (.md) are typically placed in the root of quickstart folders. Other file types should be placed in the /assets folder for better organization."
+          
+          # Read downloaded files
+          downloaded_files=$(cat downloaded_files.txt)
+          
+          if [ -z "$downloaded_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          # Find non-markdown files outside of assets folder (in root of quickstart folders)
+          # Pattern: site/sfguides/src/{folder}/{filename} where filename is not .md and path doesn't contain /assets/
+          non_md_files=$(echo "$downloaded_files" | grep '^site/sfguides/src/[^/]\+/[^/]\+$' | grep -v '\.md$' || true)
+          
+          if [ -n "$non_md_files" ]; then
+            echo "💡 Info: Non-markdown files found outside assets folder:"
+            echo "$non_md_files"
+            
+            # Build info JSON
+            files_array=$(echo "$non_md_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+            jq -n --argjson files "$files_array" --arg msg "$INFO_MESSAGE" '{type:"non_markdown_root", message:$msg, files:$files}' > non-markdown-root-info.json
+            echo "Info file created for PR comment"
+          else
+            echo "✅ All files in root are markdown files"
+          fi
+          
+          # Always exit 0 - this is informational, not an error
+          exit 0
+
+      - name: Check for non-image files in assets folder (informational)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_assets_files
+        run: |
+          # Define warning message once
+          WARNING_MESSAGE="Non-image files found in /assets folders will **NOT** be uploaded to snowflake.com. If you are referencing them in your guide, you should link to them directly (e.g. [using permanent GitHub links](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files))."
+          
+          # Read downloaded files
+          downloaded_files=$(cat downloaded_files.txt)
+          
+          if [ -z "$downloaded_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          # Find non-image files in assets folders
+          non_image_assets=$(echo "$downloaded_files" | grep '/assets/' | grep -v -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
+          
+          if [ -n "$non_image_assets" ]; then
+            echo "💡 Info: Non-image files found in assets folder:"
+            echo "$non_image_assets"
+            
+            # Build warning JSON
+            files_array=$(echo "$non_image_assets" | jq -R -s -c 'split("\n") | map(select(length>0))')
+            jq -n --argjson files "$files_array" --arg msg "$WARNING_MESSAGE" '{type:"non_image_assets", message:$msg, files:$files}' > non-image-assets-warning.json
+            echo "Warning file created for PR comment"
+          else
+            echo "✅ No non-image files in assets folders"
+          fi
+          
+          # Always exit 0 - this is a warning, not an error
+          exit 0
+
+      - name: Check for large files in assets (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: check_large_files
         continue-on-error: true
         env:
           CHANGED_FILES_JSON: ${{ steps.detect.outputs.all_changed_files_json }}
         run: |
-          # Check only files that were changed in the PR
+          # Check only image files in assets folders
           large_files=()
           changed_files=$(echo "$CHANGED_FILES_JSON" | jq -r '.[]')
           
@@ -189,14 +363,17 @@ jobs:
             exit 0
           fi
           
+          # Filter for only image files in /assets/ folders
+          assets_images=$(echo "$changed_files" | grep '/assets/' | grep -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
+          
+          if [ -z "$assets_images" ]; then
+            echo "No image files in assets to check"
+            echo "large_files_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-            
-            # Skip files in folders starting with _ (e.g., _archived)
-            if [[ "$file" =~ ^site/sfguides/src/_ ]]; then
-              echo "Skipping $file (in excluded directory)"
-              continue
-            fi
             
             file_path="pr/$file"
             
@@ -206,7 +383,7 @@ jobs:
                 large_files+=("$file")
               fi
             fi
-          done <<< "$changed_files"
+          done <<< "$assets_images"
           
           if [ ${#large_files[@]} -gt 0 ]; then
             echo "Large files found:"
@@ -221,74 +398,121 @@ jobs:
             exit 0
           fi
 
-      - name: Validate abusive words in markdown
+      - name: Validate abusive words in markdown (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
         run: |
           node scripts/validate-profanity.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f profanity-report.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' profanity-report.json > profanity-report.tmp.json
+              mv profanity-report.tmp.json profanity-report.json
+            fi
             echo "Abusive words detected. See 'profanity-report.json' for details." >&2
             exit 1
           }
 
-      - name: Validate categories syntax in markdown
+      - name: Validate categories syntax in markdown (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_categories
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
           node scripts/validate-categories.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f categories-error.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' categories-error.json > categories-error.tmp.json
+              mv categories-error.tmp.json categories-error.json
+            fi
             echo "Category syntax validation failed. See 'categories-error.json' for details." >&2
             exit 1
           }
 
-      - name: Validate frontmatter id and path
+      - name: Validate frontmatter id and path (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_frontmatter
         continue-on-error: true
         env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
           node scripts/validate-frontmatter.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f frontmatter-error.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' frontmatter-error.json > frontmatter-error.tmp.json
+              mv frontmatter-error.tmp.json frontmatter-error.json
+            fi
             echo "Frontmatter validation failed. See 'frontmatter-error.json' for details." >&2
             exit 1
           }
 
-      - name: Validate language tags
+      - name: Validate language tags (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate_language
         continue-on-error: true
         env:
-          QUICKSTART_NAMES_JSON: ${{ steps.detect.outputs.quickstart_names_json }}
+          MARKDOWN_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
-          # Validate languages are in allowed set
-          objs="$QUICKSTART_NAMES_JSON"
-          if [ -z "$objs" ] || [ "$objs" = "[]" ]; then
-            echo "No quickstarts to validate"
+          # Validate languages in individual markdown files
+          markdown_files="$MARKDOWN_JSON"
+          if [ -z "$markdown_files" ] || [ "$markdown_files" = "[]" ]; then
+            echo "No markdown files to validate"
             exit 0
           fi
           
-          # Filter to only include objects with invalid languages
-          invalid_objs=$(echo "$objs" | jq '[ .[]
-            | select(
-              if type=="object" and (.language|type)=="string"
-              then (.language | ascii_downcase) as $l
-              | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l)) == null
-              else true
-              end
-            )
-          ]')
+          allowed_languages=("en" "es" "it" "fr" "de" "ja" "ko" "pt_br")
+          invalid_files='[]'
           
-          invalid_count=$(echo "$invalid_objs" | jq 'length')
+          # Loop through each markdown file
+          while IFS= read -r file_path; do
+            [ -z "$file_path" ] && continue
+            
+            # Extract language from file
+            lang=""
+            if [ -f "$file_path" ]; then
+              lang=$(sed -n '1,50p' "$file_path" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+              if [ -n "$lang" ]; then
+                # Trim and remove quotes
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+            fi
+            
+            # Check if language is valid
+            lang_lower=$(echo "$lang" | tr '[:upper:]' '[:lower:]')
+            is_valid=false
+            
+            if [ -n "$lang_lower" ]; then
+              for allowed in "${allowed_languages[@]}"; do
+                if [ "$lang_lower" = "$allowed" ]; then
+                  is_valid=true
+                  break
+                fi
+              done
+            fi
+            
+            # Add to invalid list if not valid
+            if [ "$is_valid" = false ]; then
+              invalid_files=$(echo "$invalid_files" | jq -c --arg file "$file_path" --arg lang "$lang" '. + [{file:$file, language:$lang}]')
+            fi
+          done < <(echo "$markdown_files" | jq -r '.[]')
+          
+          invalid_count=$(echo "$invalid_files" | jq 'length')
           
           if [ "$invalid_count" -ne 0 ]; then
             echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
-            echo "$invalid_objs" | jq . >&2
-            jq -n --argjson objs "$invalid_objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
+            echo "$invalid_files" | jq . >&2
+            jq -n --argjson files "$invalid_files" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, files:$files}' > validation-error.json
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f validation-error.json ]; then
+              jq '.files |= map(.file |= sub("^pr/"; ""))' validation-error.json > validation-error.tmp.json
+              mv validation-error.tmp.json validation-error.json
+            fi
             exit 1
           else
             echo "Language validation passed"
@@ -296,7 +520,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         uses: actions/github-script@v7
         env:
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
@@ -311,21 +535,35 @@ jobs:
             const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
             if (largeFiles.length > 0) {
               const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
-              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nPlease reduce the file size(s) before merging.`);
+              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nYou have two options: \n 1. Reduce the file size(s) before merging (best for images); or \n 2. Move your file(s) into a folder beginning with an underscore (e.g., \`_large_files/\`). Note that in this case, your file will NOT be uploaded to snowflake.com, and you will have to [link to it directly](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files). `);
             }
             
-            // 2. Language validation
+            // 2. Multiple markdown files
+            if (fs.existsSync('multiple-md-error.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('multiple-md-error.json','utf8'));
+                if (data && data.type === 'multiple_markdown_files') {
+                  const errors = Array.isArray(data.errors) ? data.errors : [];
+                  if (errors.length) {
+                    const lines = errors.map(err => `- **${err.folder}** (${err.files.length} files):\n${err.files.map(f => `  - \`${f}\``).join('\n')}`);
+                    sections.push(`### 📄 Multiple Markdown Files Detected\n\n${data.message}\n\n${lines.join('\n\n')}`);
+                  }
+                }
+              } catch {}
+            }
+            
+            // 3. Language validation
             if (fs.existsSync('validation-error.json')) {
               try {
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
                 if (v && v.type === 'language') {
-                  const items = Array.isArray(v.objects) ? v.objects.map(o => `- ${o.name}: "${o.language || ''}"`).join('\n') : '';
+                  const items = Array.isArray(v.files) ? v.files.map(f => `- \`${f.file}\`: "${f.language || ''}"`).join('\n') : '';
                   sections.push(`### 🌐 Language Validation Failed\n\n${v.message || 'Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br'}\n\n${items}`);
                 }
               } catch {}
             }
             
-            // 3. Categories validation
+            // 4. Categories validation
             if (fs.existsSync('categories-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('categories-error.json','utf8'));
@@ -339,7 +577,7 @@ jobs:
               } catch {}
             }
             
-            // 4. Frontmatter validation
+            // 5. Frontmatter validation
             if (fs.existsSync('frontmatter-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('frontmatter-error.json','utf8'));
@@ -353,7 +591,7 @@ jobs:
               } catch {}
             }
             
-            // 5. Profanity validation
+            // 6. Profanity validation
             if (fs.existsSync('profanity-report.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('profanity-report.json','utf8'));
@@ -386,6 +624,54 @@ jobs:
               });
             }
 
+      - name: Comment PR with informational messages (when present)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const warnings = [];
+            
+            // Check for non-image files in assets folders
+            if (fs.existsSync('non-image-assets-warning.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('non-image-assets-warning.json','utf8'));
+                if (data && data.type === 'non_image_assets') {
+                  const files = Array.isArray(data.files) ? data.files : [];
+                  if (files.length) {
+                    const fileList = files.map(f => `- \`${f}\``).join('\n');
+                    warnings.push(`### 💡 Non-Image Files in Assets Folder\n\n${data.message}\n\n${fileList}`);
+                  }
+                }
+              } catch {}
+            }
+            
+            // 2. Non-markdown files in root folder
+            if (fs.existsSync('non-markdown-root-info.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('non-markdown-root-info.json','utf8'));
+                if (data && data.type === 'non_markdown_root') {
+                  const files = Array.isArray(data.files) ? data.files : [];
+                  if (files.length) {
+                    const fileList = files.map(f => `- \`${f}\``).join('\n');
+                    warnings.push(`### 💡 Non-Markdown Files in Quickstart Root\n\n${data.message}\n\n${fileList}`);
+                  }
+                }
+              } catch {}
+            }
+            
+            // Post warning comment if any warnings exist
+            if (warnings.length > 0) {
+              const body = `## 👋 Helpful Information\n\n${warnings.join('\n\n---\n\n')}\n\nThese are informational messages and will not block your PR from being merged.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body
+              });
+            }
+
       - name: Upload validation artifacts
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         uses: actions/upload-artifact@v4
@@ -396,56 +682,166 @@ jobs:
             validation-error.json
             categories-error.json
             frontmatter-error.json
+            multiple-md-error.json
+            non-markdown-root-info.json
+            non-image-assets-warning.json
           if-no-files-found: ignore
 
-      - name: Fail workflow if validation failed
+      - name: Check validation results and fail if needed
+        id: validation_check
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
         run: |
           # Check if any validation step failed
-          if [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
+          all_passed=true
+          if [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
+             [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
              [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_language.outcome }}" == "failure" ]; then
-            echo "Validation failed. See PR comment for details."
+            all_passed=false
+          fi
+          
+          # Set output for matrix job to use
+          echo "all_passed=$all_passed" >> $GITHUB_OUTPUT
+          echo "All validations passed: $all_passed"
+          
+          # Fail workflow if validations failed
+          if [ "$all_passed" == "false" ]; then
+            echo "❌ Validation failed. See PR comment for details."
             exit 1
           fi
 
-      - name: Call Workato staging webhook
-        id: call_webhook
-        continue-on-error: true
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.detect.outputs.md_file_count < 7
+      - name: Prepare webhook data
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.validation_check.outputs.all_passed == 'true'
+        id: prepare_webhooks
         env:
-          WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
+          CHANGED_MARKDOWN_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
+          # Use the already-computed changed markdown files from detect step (with pr/ prefix)
+          changed_md_files=$(echo "$CHANGED_MARKDOWN_JSON" | jq -r '.[]')
+          
+          if [ -z "$changed_md_files" ]; then
+            echo "No changed markdown files for webhooks"
+            echo "quickstart_names_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Extract quickstart names from paths (handles pr/ prefix)
+          quickstart_names=$(echo "$changed_md_files" | sed -E 's|^pr/site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          objs='[]'
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Preparing webhook data for quickstarts:"
+          echo "$quickstart_names"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          while IFS= read -r name; do
+            [ -z "$name" ] && continue
+            
+            lang=""
+            # Prefer a markdown file that matches the folder name
+            candidate="pr/site/sfguides/src/$name/$name.md"
+            if echo "$changed_md_files" | grep -q "^$candidate$"; then
+              md_file="$candidate"
+            else
+              # Fallback: use the first markdown file in this quickstart
+              md_file=$(echo "$changed_md_files" | grep "^pr/site/sfguides/src/$name/" | head -n1)
+            fi
+            
+            # Extract language from the markdown file
+            if [ -n "$md_file" ] && [ -f "$md_file" ]; then
+              lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+              if [ -n "$lang" ]; then
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+            fi
+            
+            echo "  - $name (language: ${lang:-not specified})"
+            objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
+          done <<< "$quickstart_names"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Webhook data prepared:"
+          echo "$objs" | jq '.'
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          echo "quickstart_names_json=$objs" >> $GITHUB_OUTPUT
+
+  call_staging_webhooks:
+    needs: validate_and_stage
+    # Only call webhooks if validations passed, there are relevant changes, and less than 7 markdown files modified
+    if: |
+      needs.validate_and_stage.outputs.has_relevant_changes == 'true' && 
+      needs.validate_and_stage.outputs.all_validations_passed == 'true' &&
+      needs.validate_and_stage.outputs.md_file_count < 7
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    permissions:
+      contents: read
+      pull-requests: write
+    strategy:
+      matrix:
+        quickstart: ${{ fromJson(needs.validate_and_stage.outputs.quickstart_names_json) }}
+      max-parallel: 1  # Process 1 at a time for rate limit purposes
+      fail-fast: false  # Continue processing others even if one fails
+    
+    steps:
+      - name: Call Workato staging webhook for ${{ matrix.quickstart.name }}
+        id: call_webhook_matrix
+        env:
+          WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_SINGLE_FILE_URL }}
+        run: |
+          if [ -z "$WORKATO_STAGING_WEBHOOK_URL" ]; then
+            echo "❌ WORKATO_STAGING_WEBHOOK_URL is not set"
+            exit 1
+          fi
+          
+          qname="${{ matrix.quickstart.name }}"
+          qlang="${{ matrix.quickstart.language }}"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📦 Processing quickstart: $qname"
+          echo "🌐 Language: $qlang"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Create single-item array for backward compatibility with Workato
+          qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
+          
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
             --arg pr '${{ github.event.pull_request.number }}' \
             --arg sha '${{ github.event.pull_request.head.sha }}' \
             --arg env "staging" \
-            --arg qname '${{ steps.detect.outputs.quickstart_name }}' \
-            --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
-            --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
-            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+            --arg qname "$qname" \
+            --argjson qnames "$qnames_array" \
+            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames}')
+          
+          echo "Payload:"
           echo "$payload" | jq .
           
           # Retry configuration
           max_retries=3
           retry_count=0
           base_delay=10
-          error_message=""
           
           while [ $retry_count -le $max_retries ]; do
             if [ $retry_count -gt 0 ]; then
-              echo "Retry attempt $retry_count of $max_retries..."
+              echo "🔄 Retry attempt $retry_count of $max_retries..."
             else
-              echo "Triggering webhook..."
+              echo "📡 Triggering webhook..."
             fi
             
-            response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload" --max-time 5 --connect-timeout 2) || {
+            response=$(curl -s -w "\n%{http_code}" -X POST "$WORKATO_STAGING_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              --data-raw "$payload" \
+              --max-time 10 \
+              --connect-timeout 5) || {
               exit_code=$?
-              error_message="Connection failed with curl exit code: $exit_code"
-              echo "❌ Webhook call failed with exit code: $exit_code"
+              echo "❌ Connection failed (curl exit code: $exit_code)"
               
               if [ $retry_count -lt $max_retries ]; then
                 retry_count=$((retry_count + 1))
@@ -454,93 +850,64 @@ jobs:
                 sleep $delay
                 continue
               else
-                echo "❌ Max retries reached. Giving up."
-                echo "error_message=$error_message" >> $GITHUB_OUTPUT
-                exit $exit_code
+                echo "❌ Max retries reached"
+                exit 1
               fi
             }
             
             http_code=$(echo "$response" | tail -n1)
             response_body=$(echo "$response" | sed '$d')
-            echo "HTTP Status Code: $http_code"
-            echo "Response body:"
+            
+            echo "HTTP Status: $http_code"
+            echo "Response:"
             echo "$response_body" | jq . 2>/dev/null || echo "$response_body"
             
             if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-              echo "✅ Webhook call succeeded. Please wait a few minutes for the staging environment to produce a preview URL."
-              break
-            else
-              # Check if it's a rate limit error
-              if echo "$response_body" | grep -q "Rate limit reached"; then
-                error_message="Rate limit error - HTTP $http_code: $response_body"
-                echo "⚠️ Rate limit error detected: $http_code"
-                
-                if [ $retry_count -lt $max_retries ]; then
-                  retry_count=$((retry_count + 1))
-                  delay=$((base_delay * retry_count))
-                  echo "⏳ Waiting ${delay}s before retry..."
-                  sleep $delay
-                  continue
-                else
-                  echo "❌ Max retries reached. Rate limit still in effect."
-                  echo "error_message=$error_message" >> $GITHUB_OUTPUT
-                  echo "http_code=$http_code" >> $GITHUB_OUTPUT
-                  echo "response_body=$response_body" >> $GITHUB_OUTPUT
-                  exit 1
-                fi
-              elif [ $retry_count -lt $max_retries ]; then
-                # Other non-2xx error - retry
-                error_message="HTTP $http_code: $response_body"
-                echo "⚠️ Webhook returned non-2xx status code: $http_code"
+              echo "✅ Webhook succeeded for: $qname"
+              # Wait 2 minutes after processing to avoid rate limits for next item
+              echo "⏳ Waiting 2 minutes before next webhook..."
+              sleep 120
+              exit 0
+            fi
+            
+            # Rate limit handling
+            if echo "$response_body" | grep -qi "rate limit"; then
+              if [ $retry_count -lt $max_retries ]; then
                 retry_count=$((retry_count + 1))
-                delay=$((base_delay * retry_count))
-                echo "⏳ Waiting ${delay}s before retry..."
+                delay=$((base_delay * retry_count * 2))  # Longer delay for rate limits
+                echo "⚠️ Rate limit detected. Waiting ${delay}s..."
                 sleep $delay
                 continue
-              else
-                echo "❌ Max retries reached. Last status code: $http_code"
-                error_message="HTTP $http_code: $response_body"
-                echo "error_message=$error_message" >> $GITHUB_OUTPUT
-                echo "http_code=$http_code" >> $GITHUB_OUTPUT
-                echo "response_body=$response_body" >> $GITHUB_OUTPUT
-                exit 1
               fi
+            elif [ $retry_count -lt $max_retries ]; then
+              retry_count=$((retry_count + 1))
+              delay=$((base_delay * retry_count))
+              echo "⚠️ HTTP $http_code. Waiting ${delay}s before retry..."
+              sleep $delay
+              continue
             fi
+            
+            echo "❌ Failed after $max_retries retries"
+            exit 1
           done
 
-      - name: Comment PR on webhook failure
-        if: steps.call_webhook.outcome == 'failure'
+
+      - name: Report webhook failure to PR
+        if: failure()
         uses: actions/github-script@v7
-        env:
-          ERROR_MESSAGE: ${{ steps.call_webhook.outputs.error_message }}
-          HTTP_CODE: ${{ steps.call_webhook.outputs.http_code }}
-          RESPONSE_BODY: ${{ steps.call_webhook.outputs.response_body }}
         with:
           script: |
-            const errorMessage = process.env.ERROR_MESSAGE || 'No error details available';
-            const httpCode = process.env.HTTP_CODE || 'N/A';
-            const responseBody = process.env.RESPONSE_BODY || 'No response body';
+            const qname = '${{ matrix.quickstart.name }}';
+            const body = `## ⚠️ Staging Webhook Failed for \`${qname}\`
             
-            // Build error details section
-            let errorDetails = '### Error Details\n\n';
-            if (httpCode !== 'N/A') {
-              errorDetails += `**HTTP Status Code**: ${httpCode}\n\n`;
-            }
-            errorDetails += `**Error**: ${errorMessage}\n\n`;
-            if (responseBody !== 'No response body') {
-              errorDetails += `**Response**:\n\`\`\`\n${responseBody}\n\`\`\`\n\n`;
-            }
+            The staging webhook call failed for quickstart **${qname}** after multiple retry attempts.
             
-            const body = `## ⚠️ Staging Webhook Failed
-            
-            The webhook call to the staging environment failed after multiple retry attempts.
-            
-            ${errorDetails}
-          
             ### Next Steps
-            - If the issue is due to rate limiting, wait a few minutes and try re-running the workflow 
-            - If the issue persists, contact the devrel team for assistance
-
+            - Check the [workflow logs](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details
+            - If due to rate limiting, wait a few minutes and re-run the failed job
+            - Contact the devrel team if the issue persists
+            `;
+            
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
