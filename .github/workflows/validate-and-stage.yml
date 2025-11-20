@@ -150,6 +150,80 @@ jobs:
           
           echo "Download complete"
 
+      - name: Check for renamed folders (blocking)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_renamed_folders
+        continue-on-error: true
+        run: |
+          # Check if any top-level folders inside site/sfguides/src (not starting with _) have been renamed
+          # Only checks the immediate child directory of /src/, ignoring nested subdirectories
+          files_json=$(cat pr_files.json)
+          
+          # Find renamed files
+          renamed_files=$(echo "$files_json" | jq -r '.[] | select(.status == "renamed") | "\(.previous_filename)|\(.filename)"')
+          
+          if [ -z "$renamed_files" ]; then
+            echo "✅ No renamed files detected"
+            exit 0
+          fi
+          
+          echo "Checking for top-level guide folder renames..."
+          renamed_folders='[]'
+          seen_renames=()
+          
+          while IFS='|' read -r old_path new_path; do
+            [ -z "$old_path" ] || [ -z "$new_path" ] && continue
+            
+            # Extract only the first-level directory after site/sfguides/src/
+            # Pattern: site/sfguides/src/{folder}/...
+            if [[ "$old_path" =~ ^site/sfguides/src/([^/]+)/ ]] && [[ "$new_path" =~ ^site/sfguides/src/([^/]+)/ ]]; then
+              old_folder="${BASH_REMATCH[1]}"
+              
+              [[ "$new_path" =~ ^site/sfguides/src/([^/]+)/ ]]
+              new_folder="${BASH_REMATCH[1]}"
+              
+              # Check if the top-level folder name changed
+              if [ "$old_folder" != "$new_folder" ]; then
+                # Only allow renames if the ORIGINAL folder name started with underscore
+                # This prevents renaming public quickstart folders while allowing renames of private/hidden folders
+                if [[ "$old_folder" =~ ^_ ]]; then
+                  # Original folder started with _, rename is allowed
+                  echo "ℹ️  Underscore folder rename (allowed): $old_folder → $new_folder"
+                else
+                  # Original folder did NOT start with _, rename is blocked
+                  # Avoid duplicate entries for the same folder rename
+                  rename_key="${old_folder}→${new_folder}"
+                  if [[ ! " ${seen_renames[@]} " =~ " ${rename_key} " ]]; then
+                    echo "❌ Top-level folder rename detected: $old_folder → $new_folder"
+                    renamed_folders=$(echo "$renamed_folders" | jq -c --arg old "$old_folder" --arg new "$new_folder" --arg file "$old_path → $new_path" '. + [{old_folder:$old, new_folder:$new, example_file:$file}]')
+                    seen_renames+=("$rename_key")
+                  fi
+                fi
+              fi
+            fi
+          done <<< "$renamed_files"
+          
+          # Check if any folder renames found
+          rename_count=$(echo "$renamed_folders" | jq 'length')
+          if [ "$rename_count" -ne 0 ]; then
+            echo "" >&2
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
+            echo "❌ ERROR: Guide rename(s) detected" >&2
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
+            echo "$renamed_folders" | jq -r '.[] | "  - \(.old_folder) → \(.new_folder)"' >&2
+            echo "" >&2
+            echo "Renaming guide URLs is not supported." >&2
+            echo "Please revert the name change." >&2
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
+            
+            # Save error details for PR comment
+            jq -n --argjson renames "$renamed_folders" '{type:"folder_rename", message:"Renaming guide URLs is not currently supported. Please revert the name change.", renames:$renames}' > folder-rename-error.json
+            exit 1
+          else
+            echo "✅ No top-level guide folder renames detected"
+            exit 0
+          fi
+
       - name: Setup Node.js
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         uses: actions/setup-node@v4
@@ -520,7 +594,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_renamed_folders.outcome == 'failure' || steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         uses: actions/github-script@v7
         env:
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
@@ -531,14 +605,28 @@ jobs:
             
             // Collect all validation failures
             
-            // 1. Large files
+            // 1. Folder renames
+            if (fs.existsSync('folder-rename-error.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('folder-rename-error.json','utf8'));
+                if (data && data.type === 'folder_rename') {
+                  const renames = Array.isArray(data.renames) ? data.renames : [];
+                  if (renames.length) {
+                    const renameList = renames.map(r => `- \`${r.old_folder}\` → \`${r.new_folder}\``).join('\n');
+                    sections.push(`### 📁 Folder Rename Detected\n\n${data.message}\n\n${renameList}`);
+                  }
+                }
+              } catch {}
+            }
+            
+            // 2. Large files
             const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
             if (largeFiles.length > 0) {
               const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
               sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nYou have two options: \n 1. Reduce the file size(s) before merging (best for images); or \n 2. Move your file(s) into a folder beginning with an underscore (e.g., \`_large_files/\`). Note that in this case, your file will NOT be uploaded to snowflake.com, and you will have to [link to it directly](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files). `);
             }
             
-            // 2. Multiple markdown files
+            // 3. Multiple markdown files
             if (fs.existsSync('multiple-md-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('multiple-md-error.json','utf8'));
@@ -552,7 +640,7 @@ jobs:
               } catch {}
             }
             
-            // 3. Language validation
+            // 4. Language validation
             if (fs.existsSync('validation-error.json')) {
               try {
                 const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
@@ -563,7 +651,7 @@ jobs:
               } catch {}
             }
             
-            // 4. Categories validation
+            // 5. Categories validation
             if (fs.existsSync('categories-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('categories-error.json','utf8'));
@@ -577,7 +665,7 @@ jobs:
               } catch {}
             }
             
-            // 5. Frontmatter validation
+            // 6. Frontmatter validation
             if (fs.existsSync('frontmatter-error.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('frontmatter-error.json','utf8'));
@@ -591,7 +679,7 @@ jobs:
               } catch {}
             }
             
-            // 6. Profanity validation
+            // 7. Profanity validation
             if (fs.existsSync('profanity-report.json')) {
               try {
                 const data = JSON.parse(fs.readFileSync('profanity-report.json','utf8'));
@@ -685,6 +773,7 @@ jobs:
             multiple-md-error.json
             non-markdown-root-info.json
             non-image-assets-warning.json
+            folder-rename-error.json
           if-no-files-found: ignore
 
       - name: Check validation results and fail if needed
@@ -693,7 +782,8 @@ jobs:
         run: |
           # Check if any validation step failed
           all_passed=true
-          if [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
+          if [ "${{ steps.check_renamed_folders.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
              [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
              [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
