@@ -257,11 +257,11 @@ We have created a notebook you can use to get started building the streaming dat
 
 Login to Snowsight, click on the bottom left to get the Navigation Menu and Switch Role to STREAMING_INGEST.
 
-![Switch Role](SwitchRole.png)
+![Switch Role](assets/SwitchRole.png)
 
 Click on the +, Notebook, and Import .ipynb File.
 
-![Import .ipynb](ImportNotebook.png)
+![Import .ipynb](assets/ImportNotebook.png)
 
 Name the notebook transformation_notebook, select the db STREAMING_INGEST and the schema STREAMING_INGEST.
 
@@ -271,11 +271,11 @@ This will run everything on one warehouse to keep it as efficient as possible.
 
 Click Create.
 
-![Create Notebook](CreateNotebook.png)
+![Create Notebook](assets/CreateNotebook.png)
 
 Add the Snowflake.Core package which is required by this notebook.
 
-![Create Notebook](ImportSnowflake.Core.png)
+![Create Notebook](assets/ImportSnowflake.Core.png)
 
 Follow the Notebook cells to build the data pipeline objects.
 
@@ -287,17 +287,17 @@ A Streamlit Application will be created to demonstrate how the data prepared pre
 
 To create a new Streamlit Application Click on +, Streamlit App, and New Streamlit App.
 
-![Create Streamlit 1](CreateStreamlit.png)
+![Create Streamlit 1](assets/CreateStreamlit.png)
 
 Choose the App title STREAMING_INGEST, App location in STREAMING_INGEST database and STREAMING_INGEST schema, and run on the warehouse STREAMING_INGEST.
 
-![Create Streamlit 2](CreateStreamlit2.png)
+![Create Streamlit 2](assets/CreateStreamlit2.png)
 
 Add the Package plotly and pandas.
 
-![Import Plotly](ImportPlotly.png)
+![Import Plotly](assets/ImportPlotly.png)
 
-![Import Pandas](ImportPandas.png)
+![Import Pandas](assets/ImportPandas.png)
 
 Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
 

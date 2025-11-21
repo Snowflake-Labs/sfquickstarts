@@ -266,8 +266,8 @@ The resulting JSON will be parsed into a structured table called `video_analysis
 Follow these steps in the `VIDEO ANALYSIS` section of `run.sql`:
 1. (Optional) Dun the `DROP SERVICE IF EXISTS` command if you are executing the Job repeatedly to clean up previous runs
 2. Run the `EXECUTE JOB SERVICE` command to run the Job
-  - Replace the `&lt;image&gt;:&lt;version&gt;` section with the image path from the previous step
-  - Replace `&lt;your_hf_token&gt;` with you Hugging Face token to download the model
+  - Replace the `<image>:<version>` section with the image path from the previous step
+  - Replace `<your_hf_token>` with you Hugging Face token to download the model
   - The exact meeting the model will analyze have already been preset when you set the `$meeting_id` and `$meeting_part` SQL variables earlier
   - The command is configured to run asynchronously, so it should complete within a few seconds, however the underlying Job may take 10+ minutes to complete.
     - To monitor the Job status and progress, use the **Jobs** tab of the  **Services & jobs** area in Snowsight 
