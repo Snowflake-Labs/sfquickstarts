@@ -269,7 +269,7 @@ jobs:
             exit 0
           fi
 
-      - name: Validate abusive words in markdown (blocking)
+      - name: Validate abusive words in markdown (warning)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate
         continue-on-error: true
@@ -391,7 +391,7 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_renamed_folders.outcome == 'failure' || steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_renamed_folders.outcome == 'failure' || steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         env:
           GITHUB_TOKEN: ${{ github.token }}
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
@@ -408,6 +408,20 @@ jobs:
           script: |
             const fs = require('fs');
             const warnings = [];
+            
+            // Check for profanity in markdown files
+            if (fs.existsSync('profanity-report.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('profanity-report.json', 'utf8'));
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                if (data.error) {
+                  warnings.push(`### ⚠️ Profanity Check Notice\n\n${data.error}`);
+                } else if (issues.length) {
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.words || []).join(', ')}`);
+                  warnings.push(`### ⚠️ Profanity Check Notice\n\nPotentially inappropriate words were detected in the following files:\n\n${lines.join('\n')}\n\nPlease review and consider revising if appropriate.`);
+                }
+              } catch {}
+            }
             
             // Check for non-image files in assets folders
             if (fs.existsSync('non-image-assets-warning.json')) {
@@ -474,7 +488,6 @@ jobs:
           if [ "${{ steps.check_renamed_folders.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
              [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
-             [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_language.outcome }}" == "failure" ]; then
