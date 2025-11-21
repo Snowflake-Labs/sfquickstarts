@@ -52,17 +52,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Implementing a Pipeline for Database Change Management",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/a-guide-to-implementing-a-pipeline-for-database-change-management/",
-      "summary": "Implementing a Pipeline for Database Change Management",
-      "lastUpdatedAt": "2025-11-05"
-    },
-    {
       "title": "A Guide to Kipi Marketing Mix Modelling and Analytics App",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -152,7 +141,7 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab",
+      "title": "Accelerating Data Teams with Snowflake and dbt platform Hands On Lab",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
         "snowflake-site:taxonomy/solution-center/certification/partner-solution",
@@ -162,8 +151,8 @@
       ],
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/accelerating-data-teams-with-snowflake-and-dbt-cloud-hands-on-lab/",
-      "summary": "Build a dbt project and data pipeline with dbt Cloud and Snowflake",
-      "lastUpdatedAt": "2025-11-13"
+      "summary": "Build a dbt project and data pipeline with dbt platform and Snowflake",
+      "lastUpdatedAt": "2025-11-18"
     },
     {
       "title": "Advanced Guide to Snowflake Feature Store",
@@ -443,12 +432,12 @@
       "lastUpdatedAt": "2025-10-25"
     },
     {
-      "title": "Best Practices to Building Cortex Agents",
+      "title": "Best Practices for Building Cortex Agents",
       "categories": [],
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/",
       "summary": "",
-      "lastUpdatedAt": "2025-11-13"
+      "lastUpdatedAt": "2025-11-20"
     },
     {
       "title": "Build a Bioinformatics Solubility Dashboard in Snowflake",
@@ -1141,17 +1130,6 @@
       "lastUpdatedAt": "2025-11-12"
     },
     {
-      "title": "Cortex AI Demo Framework",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/cortex-ai-demo-framework/",
-      "summary": "Cortex AI Demo Framework - Build sophisticated Cortex-powered demos in ~5 minutes",
-      "lastUpdatedAt": "2025-11-13"
-    },
-    {
       "title": "Sentiment Analysis Using Snowflake Cortex AI on Iceberg Tables",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -1415,18 +1393,6 @@
       "lastUpdatedAt": "2025-11-12"
     },
     {
-      "title": "Ingenieria de Datos con Snowpark y visualización con Streamlit",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering",
-        "snowflake-site:taxonomy/snowflake-feature/transformation"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/data-engineering-snowpark-streamlit-inegi/",
-      "summary": "End-to-End from local to cloud using Snowapark Python Streamlit",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Streaming Data Integration with Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -1559,19 +1525,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Data Mapping in Snowflake Native Apps using Streamlit",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/build",
-        "snowflake-site:taxonomy/snowflake-feature/native-apps"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/data-mapping-in-native-apps/",
-      "summary": "This guide will provide step-by-step details for building a data mapping requirement in Snowflake Native Apps and Streamlit",
-      "lastUpdatedAt": "2025-11-02"
-    },
-    {
       "title": "Data Modeling With Snowflake + SqlDBM",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -1592,41 +1545,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-products-data-mesh-dbt-cloud/",
       "summary": "Build Data Products and a Data Mesh with dbt platform",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Snowflake 및 Dataiku로 데이터 과학 가속화",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/data-science-with-dataiku-kr/",
-      "summary": "Snowflake 및 Dataiku로 데이터 과학 가속화",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Accelerating Data Teams with dbt Cloud & Snowflake",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/external-collaboration"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/data-teams-with-dbt-cloud/",
-      "summary": "Build your data pipeline with dbt Cloud & Snowflake",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Accelerating Data Teams with dbt Core & Snowflake",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/external-collaboration"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/data-teams-with-dbt-core/",
-      "summary": "Build your data pipeline with dbt Core & Snowflake",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -1687,19 +1605,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/",
       "summary": "Perform multiclass defect detection on PCB images using distributed PyTorch training across multiple nodes and workers within a Snowflake Notebook. This guide utilizes a pre-trained Faster R-CNN model with ResNet50 as the backbone from PyTorch, fine-tuned for the task. The trained model is logged in the Snowpark Model Registry for future use. Additionally, a Streamlit app is developed to enable real-time defect detection on new images, making inference accessible and user-friendly",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/ai",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/snowflake-feature/snowpark-container-services"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/deploy-finetune-os-llama2-in-snowpark-container-services/",
-      "summary": "Through this quickstart guide, you will explore Snowpark Container Services",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -1927,19 +1832,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "End to End Machine learning with Snowflake and Dataiku",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
-        "snowflake-site:taxonomy/product/ai",
-        "snowflake-site:taxonomy/product/applications-and-collaboration"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/end-to-end-machine-learning-with-dataiku/",
-      "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Build an End-to-End ML Workflow in Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -2018,19 +1910,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Exploratory Data Analysis with Snowflake and Deepnote",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/product/applications-and-collaboration"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/exploratory-data-analysis-with-snowflake-and-deepnote/",
-      "summary": "Deepnote's SQL + Python notebook, along with their suite of low-code tools, allow for rapid data exploration of the Snowflake warehouse.",
-      "lastUpdatedAt": "2025-11-03"
-    },
-    {
       "title": "Extract Attributes from DICOM Files using Snowpark for Python and Java",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -2094,30 +1973,6 @@
       "url": "https://www.snowflake.com/en/developers/guides/financial-services-asset-management/",
       "summary": "Build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations.",
       "lastUpdatedAt": "2025-11-03"
-    },
-    {
-      "title": "Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/finding-fraudulent-communities-with-neo4j/",
-      "summary": "How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/industry/healthcare-and-life-sciences",
-        "snowflake-site:taxonomy/product/analytics"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/finding-similar-patients/",
-      "summary": "How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake",
-      "lastUpdatedAt": "2025-11-01"
     },
     {
       "title": "Fine-Tuning an LLM in Snowpark Container Services with AutoTrain",
@@ -2198,19 +2053,6 @@
       "url": "https://www.snowflake.com/en/developers/guides/from-dev-to-production-why-ml-teams-are-migrating-to-snowflake/",
       "summary": "Build a complete ML lifecycle in Snowflake from development to production with call center quality analysis",
       "lastUpdatedAt": "2025-11-19"
-    },
-    {
-      "title": "Frosty: Build an LLM Chatbot in Streamlit on your Snowflake Data",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants",
-        "snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/frosty-llm-chatbot-on-streamlit-snowflake/",
-      "summary": "This guide provides the instructions for writing an LLM chatbot in Streamlit on your Snowflake data.",
-      "lastUpdatedAt": "2025-11-01"
     },
     {
       "title": "Gain Insights From Unstructured Data using Snowflake Cortex",
@@ -2316,16 +2158,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Snowflake Guide Basics",
-      "categories": [
-        "quickstart"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/get-started-with-guides/",
-      "summary": "This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.",
-      "lastUpdatedAt": "2025-11-17"
-    },
-    {
       "title": "Get Started with OpenAI SDK and Managed MCP for Cortex Agents",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -2411,18 +2243,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Getting Started with Keboola",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
-        "snowflake-site:taxonomy/product/platform"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-keboola/",
-      "summary": "Getting Started With Keboola",
-      "lastUpdatedAt": "2025-11-02"
-    },
-    {
       "title": "Getting Started with the Snowflake Python API",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -2433,28 +2253,6 @@
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-snowflake-python-api/",
       "summary": "Learn how to get started with Snowflake's Python API to manage Snowflake objects and tasks.",
       "lastUpdatedAt": "2025-10-25"
-    },
-    {
-      "title": "Getting Started With Snowflake SQL API",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-snowflake-sql-api/",
-      "summary": "Getting Started With Snowflake SQL API",
-      "lastUpdatedAt": "2025-11-02"
-    },
-    {
-      "title": "Snowflake SQL API 시작하기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-snowflake-sql-api-kr/",
-      "summary": "Snowflake SQL API 시작하기",
-      "lastUpdatedAt": "2025-11-01"
     },
     {
       "title": "Machine Learning with Snowpark Python: Credit Card Approval Prediction",
@@ -2481,18 +2279,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-thoughtspot/",
       "summary": "Build an interactive react app with ThoughtSpot and Snowflake",
-      "lastUpdatedAt": "2025-11-12"
-    },
-    {
-      "title": "ThoughtSpot 및 Snowflake로 ReactJS 앱 구축",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/build"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-thoughtspot-kr/",
-      "summary": "ThoughtSpot 및 Snowflake로 대화형 React 앱 구축",
       "lastUpdatedAt": "2025-11-12"
     },
     {
@@ -2591,18 +2377,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Getting Started with Azure OpenAI and Snowflake",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/product/applications-and-collaboration"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-azure-openai-and-snowflake/",
-      "summary": "This is a quickstart for using Snowflake with Azure OpenAI and AzureML",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Getting Started with Azure OpenAI, Streamlit and Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -2692,18 +2466,6 @@
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/",
       "summary": "Through this quickstart guide, you will learn how to use Cortex Analyst to provide natural-language query interfaces to structured data in Snowflake using GenAI",
       "lastUpdatedAt": "2025-11-03"
-    },
-    {
-      "title": "Getting Started with Cortex Analyst in Snowflake",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/ai",
-        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst-in-snowflake/",
-      "summary": "Through this quickstart guide, you will learn how to use Cortex Analyst to provide natural-language query interfaces to structured data in Snowflake.",
-      "lastUpdatedAt": "2025-11-01"
     },
     {
       "title": "Getting Started with Cortex Search and Microsoft Fabric",
@@ -2912,19 +2674,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "지리 공간 데이터 활용기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/analytics",
-        "snowflake-site:taxonomy/snowflake-feature/interactive-analytics",
-        "snowflake-site:taxonomy/snowflake-feature/geospatial"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-geospatial-geography-kr/",
-      "summary": "지리 공간 데이터 활용기",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Getting started with GraphRAG and RelationalAI",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -2998,17 +2747,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-llamaparse-and-cortex-search/",
       "summary": "Parse Documents with LlamaParse and Search with Cortex",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Getting Started with LLMOps using Snowflake Cortex and TruLens",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/ai"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-llmops-using-snowflake-cortex-and-trulens/",
-      "summary": "This is a guide for getting started with LLMOps using Snowflake Cortex and TruLens.",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -3239,17 +2977,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Python 시작하기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-python-kr/",
-      "summary": "Python 시작하기",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Getting Started with Running Distributed PyTorch Models on Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -3452,18 +3179,6 @@
       "lastUpdatedAt": "2025-11-03"
     },
     {
-      "title": "Snowflake 시작하기 - 제로부터 Snowflake까지",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-kr/",
-      "summary": "This is a broad introduction of Snowflake and covers how to login, run queries, and load data.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Getting Started with Snowflake Managed MCP Server and Bedrock AgentCore",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -3542,18 +3257,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-dataframe-api/",
       "summary": "Learn how to get started with Jupyter Notebooks on Snowpark and use the DataFrame API.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Snowpark 및 DataFrame API 시작하기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-dataframe-api-kr/",
-      "summary": "Snowpark에서 Jupyter Notebook을 시작하고 DataFrame API를 사용하는 방법을 알아보십시오.",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -3679,28 +3382,6 @@
       "lastUpdatedAt": "2025-11-03"
     },
     {
-      "title": "Snowpark 시작하기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-kr/",
-      "summary": "이 가이드는 Snowpark를 사용하여 단순한 예시 설정을 위한 기본 지침을 제공합니다.",
-      "lastUpdatedAt": "2025-11-12"
-    },
-    {
-      "title": "Getting Started with Snowpark Python",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python/",
-      "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Getting Started with Snowpark for Python with Scikit-learn",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -3738,17 +3419,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Snowpipe 시작하기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpipe-kr/",
-      "summary": "이 가이드는 Snowpipe를 시작하는 데 도움이 됩니다.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Getting Started with Snowpipe Streaming and Amazon MSK",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -3779,16 +3449,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowsql/",
       "summary": "Getting Started with SnowSQL",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "SnowSQL 시작하기",
-      "categories": [
-        "undefined"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowsql-kr/",
-      "summary": "SnowSQL 시작하기",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -3898,17 +3558,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Time Travel 시작하기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-time-travel-kr/",
-      "summary": "Time Travel을 사용하여 이전 데이터베이스 상태를 쿼리하고 데이터를 복구합니다.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Getting Started with Tool Use on Cortex and Anthropic Claude",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -3954,17 +3603,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-user-defined-sql-functions/",
       "summary": "Guide to getting started with user-defined SQL functions",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "사용자 정의 SQL 함수 시작하기",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-user-defined-sql-functions-kr/",
-      "summary": "사용자 정의 SQL 함수 시작하기 가이드",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -4440,19 +4078,6 @@
       "lastUpdatedAt": "2025-11-02"
     },
     {
-      "title": "Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning with SQL",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/build"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/machine-learning-with-aws-autopilot/",
-      "summary": "Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning with SQL",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Machine Learning with Snowpark Python",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4465,18 +4090,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/industry/manufacturing",
-        "snowflake-site:taxonomy/product/analytics"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/managing-risk-in-manufacturing/",
-      "summary": "How to manage risk in manufacturing using Neo4j Graph Analytics for Snowflake",
-      "lastUpdatedAt": "2025-10-25"
-    },
-    {
       "title": "Many Model Inference in Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4485,30 +4098,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/many-model-inference-in-snowflake/",
       "summary": "Easily run inference on many models in Snowflake",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Marketing Data Foundation Starter Guide",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/build"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/marketing-data-foundation-starter/",
-      "summary": "Marketing Data Foundation Starter Guide",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Marketing Data Foundation Starter V2 Guide",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/marketing-data-foundation-starter-v2/",
-      "summary": "Marketing Data Foundation V2",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -4598,18 +4187,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Machine Learning with Snowpark and Apache Airflow",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/ml-with-snowpark-and-apache-airflow/",
-      "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-02"
-    },
-    {
       "title": "Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4690,6 +4267,54 @@
       "url": "https://www.snowflake.com/en/developers/guides/native-app-chairlift/",
       "summary": "This Snowflake Native App demonstrates how a chairlift manufacturer can build a native app to provide chairlift customers with analytics on purchased chairlifts by using sensor data collected from the chairlifts owned by the customer.",
       "lastUpdatedAt": "2025-11-01"
+    },
+    {
+      "title": "Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics",
+      "categories": [
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/business-intelligence",
+        "snowflake-site:taxonomy/industry/financial-services"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/neo4j-fraud/",
+      "summary": "How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake",
+      "lastUpdatedAt": "2025-11-17"
+    },
+    {
+      "title": "Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics",
+      "categories": [
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/business-intelligence",
+        "snowflake-site:taxonomy/industry/manufacturing"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/neo4j-manufacturing/",
+      "summary": "How to manage risk in manufacturing using Neo4j Graph Analytics for Snowflake",
+      "lastUpdatedAt": "2025-11-18"
+    },
+    {
+      "title": "Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics",
+      "categories": [
+        "snowflake-site:taxonomy/industry/healthcare-and-life-sciences",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/business-intelligence"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/neo4j-patient-journey/",
+      "summary": "How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake",
+      "lastUpdatedAt": "2025-11-19"
+    },
+    {
+      "title": "Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics",
+      "categories": [
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/business-intelligence",
+        "snowflake-site:taxonomy/industry/public-sector"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/neo4j-subways/",
+      "summary": "How to model subway disruptions using dijsktra in Neo4j Graph Analytics for Snowflake",
+      "lastUpdatedAt": "2025-11-18"
     },
     {
       "title": "Getting Started with Snowflake Notebook Container Runtime",
@@ -4939,17 +4564,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "리소스 최적화: 청구 메트릭",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/resource-optimization-billing-metrics-kr/",
-      "summary": "이 가이드는 고객이 과도한 소비가 발생하는 영역을 확인하는 데 도움이 될 수 있는 청구 메트릭을 모니터링하는 것과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Resource Optimization: Performance",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4959,16 +4573,6 @@
       "url": "https://www.snowflake.com/en/developers/guides/resource-optimization-performance-optimization/",
       "summary": "This guide can be used to help customers setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.",
       "lastUpdatedAt": "2025-11-02"
-    },
-    {
-      "title": "리소스 최적화: 성능",
-      "categories": [
-        "undefined"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/resource-optimization-performance-optimization-kr/",
-      "summary": "이 가이드는 고객이 다양한 요인으로 인한 낮은 성능이 과도한 소비를 초래할 수도 있는 영역을 확인하는 것과 관계된 쿼리를 설정 맟 실행하는 데 도움을 주기 위해 사용할 수 있습니다.",
-      "lastUpdatedAt": "2025-11-01"
     },
     {
       "title": "Resource Optimization: Setup & Configuration",
@@ -4982,17 +4586,6 @@
       "lastUpdatedAt": "2025-11-02"
     },
     {
-      "title": "리소스 최적화: 설정 및 구성",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/resource-optimization-setup-kr/",
-      "summary": "이 가이드는 고객이 쿼리는 과도한 소비를 초래할 수도 있는 특정 설정 및 구성 항목과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Resource Optimization: Usage Monitoring",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -5001,17 +4594,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/resource-optimization-usage-monitoring/",
       "summary": "This guide can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Resource Optimization: Usage Monitoring",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/resource-optimization-usage-monitoring-kr/",
-      "summary": "이 가이드는 고객이 과도한 소비를 초래할 수도 있는 사용량을 모니터링하는 것과 관계된 쿼리를 설정 및 실행하는 데 도움을 주기 위해 사용할 수 있습니다.",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -5138,31 +4720,6 @@
       "lastUpdatedAt": "2025-11-17"
     },
     {
-      "title": "Seamless Machine Learning Workflows with Snowpark & Deepnote",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
-        "snowflake-site:taxonomy/product/ai",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/seamless-ml-workflows-with-snowpark-and-deepnote/",
-      "summary": "Prototype your ML models in Deepnote's collaborative, multi-language notebook. Then, use Snowpark to productionize models without moving your data out of the warehouse or changing your code.",
-      "lastUpdatedAt": "2025-11-02"
-    },
-    {
-      "title": "Secure Your Organization with Security Analytics Using Snowflake and Sigma",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/secure-your-organization-with-security-analytics-using-snowflake-and-sigma/",
-      "summary": "Learn how to monitor your Snowflake security posture using Sigma",
-      "lastUpdatedAt": "2025-11-02"
-    },
-    {
       "title": "Security Analytics with Wiz and Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -5236,16 +4793,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Snowflake Guide Template",
-      "categories": [
-        "quickstart"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/sfguide-name/",
-      "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-12"
-    },
-    {
       "title": "Snowflake Public Data - SEC Tarrif Sentiment",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -5281,17 +4828,6 @@
       "url": "https://www.snowflake.com/en/developers/guides/snow-bear-leveraging-cortex-for-advanced-analytics/",
       "summary": "Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics",
       "lastUpdatedAt": "2025-11-13"
-    },
-    {
-      "title": "How to Setup the Snowflake Auto-Grader",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/snowflake-auto-grader/",
-      "summary": "In this guide, you'll set up Snowflake's Auto-Grader.",
-      "lastUpdatedAt": "2025-11-01"
     },
     {
       "title": "Build and Secure Multi-Tenant Data Applications with Snowflake and Sigma",
@@ -5517,20 +5053,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Getting Started with Sundeck OpsCenter",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/build",
-        "snowflake-site:taxonomy/snowflake-feature/external-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/native-apps"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/sundeck-opscenter/",
-      "summary": "This Guide shows you how to quickly get started with Sundeck OpsCenter on Snowflake, a free Native App which providing a range of tools to better understand, manage, and alert on Snowflake activity and spend.",
-      "lastUpdatedAt": "2025-11-02"
-    },
-    {
       "title": "Suppress existing customers from a Youtube campaign with Hightouch and Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -5590,17 +5112,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-extracting-insights-with-docai/",
       "summary": "Walkthrough extracting data from PDF Inspection Reports using Document AI",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "An Introduction to Tasty Bytes",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction/",
-      "summary": "This is the Tasty Bytes Introduction and Data Foundation Quickstart guide",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -5669,17 +5180,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-ptbr/",
       "summary": "Este é o quickstart guide “Introdução à Tasty Bytes e base de dados“",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Price Optimization Using Snowflake Notebooks and Streamlit in Snowflake",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-price-optimization-using-snowflake-notebooks-and-streamlit/",
-      "summary": "Price Optimization Using Snowflake Notebooks and Streamlit",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -5780,17 +5280,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Tasty Bytes - Zero to Snowflake - Collaboration",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration/",
-      "summary": "Tasty Bytes - Zero to Snowflake - Collaboration Quickstart",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Tasty Bytes - De cero a Snowflake - Colaboración",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -5857,51 +5346,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Tasty Bytes - Zero to Snowflake - Cost Management",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-cost-management/",
-      "summary": "Tasty Bytes - Zero to Snowflake - Cost Management Quickstart",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Tasty Bytes - Zero to Snowflake - Geospatial",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/analytics",
-        "snowflake-site:taxonomy/snowflake-feature/business-intelligence"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-geospatial/",
-      "summary": "Tasty Bytes - Zero to Snowflake - Geospatial Quickstart",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-governance-with-horizon/",
-      "summary": "Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Tasty Bytes - Zero to Snowflake - Semi-Structured Data",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data/",
-      "summary": "Tasty Bytes - Zero to Snowflake - Semi-Structured Data Quickstart",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Tasty Bytes - De cero a Snowflake - Datos semiestructurados",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -5965,19 +5409,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ptbr/",
       "summary": "Quickstart Tasty Bytes: do zero ao Snowflake - dados semiestruturados",
-      "lastUpdatedAt": "2025-11-03"
-    },
-    {
-      "title": "Tasty Bytes - Zero to Snowflake - Transformation",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform",
-        "snowflake-site:taxonomy/product/data-engineering",
-        "snowflake-site:taxonomy/snowflake-feature/transformation"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation/",
-      "summary": "Tasty Bytes - Zero to Snowflake - Transformation Quickstart",
       "lastUpdatedAt": "2025-11-03"
     },
     {
@@ -6197,18 +5628,6 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
-      "title": "Building an application on Snowflake with data from Snowflake Marketplace",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/applications-and-collaboration",
-        "snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/vhol-data-marketplace-app/",
-      "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
       "title": "Building a Real-Time Data Vault in Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -6255,18 +5674,6 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/vhol-snowflake-salesforce-tcrm/",
       "summary": "This lab will walk you through how to use Snowflake, Salesforce and Tableau CRM to integrate data, and deliver Customer 360.",
-      "lastUpdatedAt": "2025-11-01"
-    },
-    {
-      "title": "Getting Started with Snowpipe Streaming and Amazon MSK",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering",
-        "snowflake-site:taxonomy/snowflake-feature/transformation"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/vhol-snowpipe-streaming-msk/",
-      "summary": "This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK).",
       "lastUpdatedAt": "2025-11-01"
     },
     {
@@ -6372,7 +5779,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework-performance/",
       "summary": "Optimizing performance on Snowflake is crucial for efficient data analysis.",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-21"
     },
     {
       "title": "Reliability",
