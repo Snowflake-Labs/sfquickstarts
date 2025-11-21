@@ -180,7 +180,6 @@ Code for hyperlinking:
 
 [![Link Title](Link URL)
 
-```
 
 ### Adding Videos
 
