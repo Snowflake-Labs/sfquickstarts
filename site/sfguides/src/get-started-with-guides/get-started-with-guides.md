@@ -367,13 +367,8 @@ For any callouts within the content you can use the following code options: [!NO
 
 If you have an existing word document that needs to be converted to markdown format, you can do that using Pandoc.  You will use the **GitHub Flavored Markdown (GFM)**.
 
-```
 To convert a Word document (.docx) to Markdown using Pandoc:
 
-brew install pandoc
-pandoc -f docx -t markdown -o output.md input.docx
-
-```
 
 You can also use the Google Docs feature of saving to Markdown, however **please review your markdown before submission as some formatting options can be different.** In some instances Google Docs may add additional spacing during conversion that will cause markdown errors. 
 
