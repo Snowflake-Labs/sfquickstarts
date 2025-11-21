@@ -9,19 +9,16 @@ This README explains how to generate the quickstart manifest consumed by other t
 ## Generate the manifest (from repo root)
 
 ```bash
-cd "/Users/kanwal.komailsnowflake.com/Documents/GitHub/sfquickstarts_main"
+cd "$(git rev-parse --show-toplevel)"
 
-# Preferred: canonical script name
-python3 site/sfguides/SCRIPTS/generate_quickstart_manifest.py
-
-# Alternate: same logic, alternate filename
-python3 "site/sfguides/SCRIPTS/manifest generator.py"
+# Run the generator
+python3 "scripts/manifest generator.py"
 ```
 
 This writes:
 
 ```
-site/sfguides/src/quickstart-manifest.json
+site/sfguides/src/_shared_assets/quickstart-manifest.json
 ```
 
 ## What the script does
@@ -29,20 +26,21 @@ site/sfguides/src/quickstart-manifest.json
 - Parses top-of-file front matter (`summary`, `categories`, optional `duration`)
 - Extracts first `#` H1 if present (fallbacks to folder name)
 - Uses `git log -1 --format=%cs` to populate `lastUpdatedAt`
-- Emits JSON at `site/sfguides/src/quickstart-manifest.json` with:
+- Skips folders starting with `_` or `.`, and guides with `status: hidden`
+- Emits JSON at `site/sfguides/src/_shared_assets/quickstart-manifest.json` with:
   - `title`, `categories`, `contentType`, `url`, `summary`, `lastUpdatedAt`, and optional `duration`
 
 ## Verify output
 
 ```bash
 # Basic check
-ls -lh site/sfguides/src/quickstart-manifest.json
+ls -lh site/sfguides/src/_shared_assets/quickstart-manifest.json
 
 # Count entries (titles)
-grep -c '\"title\":' site/sfguides/src/quickstart-manifest.json
+grep -c '\"title\":' site/sfguides/src/_shared_assets/quickstart-manifest.json
 
 # Quick peek
-head -n 40 site/sfguides/src/quickstart-manifest.json
+head -n 40 site/sfguides/src/_shared_assets/quickstart-manifest.json
 ```
 
 ## Troubleshooting
@@ -57,5 +55,4 @@ head -n 40 site/sfguides/src/quickstart-manifest.json
 - Re-running the script overwrites `quickstart-manifest.json`.
 - The URL for each entry is built from the folder name after `/src/`:
   `https://www.snowflake.com/en/developers/guides/<folder-name>/`.
-*** End Patch```} />
-
+ 
