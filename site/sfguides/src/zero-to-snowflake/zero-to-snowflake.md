@@ -55,8 +55,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
   - A robust data governance framework with roles and policies.
   - Enriched analytical views combining first- and third-party data.
 
-## **Setup**
-
+## Setup
 
 ### **Overview**
 
