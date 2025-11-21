@@ -163,7 +163,14 @@ jobs:
           seen_renames=()
           
           # Method 1: Check for explicit file renames (status == "renamed")
+          echo "DEBUG Method 1: Sample of renamed files JSON:"
+          echo "$files_json" | jq '.[] | select(.status == "renamed") | {filename: .filename, previous_filename: .previous_filename, status: .status}' | head -30
+          
           renamed_files=$(echo "$files_json" | jq -r '.[] | select(.status == "renamed") | "\(.previous_filename)|\(.filename)"')
+          
+          echo "DEBUG Method 1: Renamed files with previous_filename:"
+          echo "$renamed_files" | head -10
+          echo "DEBUG Method 1: Count of renamed file pairs: $(echo "$renamed_files" | grep -c . || echo 0)"
           
           if [ -n "$renamed_files" ]; then
             echo "Checking explicitly renamed files for folder renames..."
