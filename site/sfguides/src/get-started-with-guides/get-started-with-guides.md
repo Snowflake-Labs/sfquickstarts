@@ -178,7 +178,7 @@ Sample URL: ![puppy](https://github.com/Snowflake-Labs/sfquickstarts/blob/master
 ```
 Code for hyperlinking:
 
-[![Link Title](Link URL)
+![Link Title](Link URL)
 
 
 ### Adding Videos
