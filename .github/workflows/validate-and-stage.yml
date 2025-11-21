@@ -178,6 +178,8 @@ jobs:
             while IFS='|' read -r old_path new_path; do
               [ -z "$old_path" ] || [ -z "$new_path" ] && continue
               
+              echo "DEBUG: Processing rename: $old_path -> $new_path"
+              
               # Extract only the first-level directory after site/sfguides/src/
               # Pattern: site/sfguides/src/{folder}/...
               if [[ "$old_path" =~ ^site/sfguides/src/([^/]+)/ ]] && [[ "$new_path" =~ ^site/sfguides/src/([^/]+)/ ]]; then
@@ -186,8 +188,11 @@ jobs:
                 [[ "$new_path" =~ ^site/sfguides/src/([^/]+)/ ]]
                 new_folder="${BASH_REMATCH[1]}"
                 
+                echo "DEBUG: Extracted folders: '$old_folder' -> '$new_folder'"
+                
                 # Check if the top-level folder name changed
                 if [ "$old_folder" != "$new_folder" ]; then
+                  echo "DEBUG: Folder names differ!"
                   # Only allow renames if the ORIGINAL folder name started with underscore
                   if [[ "$old_folder" =~ ^_ ]]; then
                     echo "ℹ️  Underscore folder rename (allowed): $old_folder → $new_folder"
