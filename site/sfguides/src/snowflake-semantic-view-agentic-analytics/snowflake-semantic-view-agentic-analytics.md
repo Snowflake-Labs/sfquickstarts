@@ -1,6 +1,6 @@
-author: Chanin Nantasenamat
+author: Chanin Nantasenamat, Josh Klahr
 id: snowflake-semantic-view-agentic-analytics
-categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/solution-center/certification/quickstart
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 summary: Learn how to build business-friendly semantic views over an enterprise data warehouse and enable cross-functional, AI-powered natural language querying using Snowflake Cortex Analyst and Snowflake Intelligence Agents.
 environments: web
