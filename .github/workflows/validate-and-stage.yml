@@ -208,12 +208,18 @@ jobs:
           # Get all added files from site/sfguides/src/ (excluding _ folders)
           added_files=$(echo "$files_json" | jq -r '.[] | select(.status == "added") | .filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)')
           
+          echo "DEBUG: Removed files count: $(echo "$removed_files" | grep -c . || echo 0)"
+          echo "DEBUG: Added files count: $(echo "$added_files" | grep -c . || echo 0)"
+          
           if [ -n "$removed_files" ] && [ -n "$added_files" ]; then
             # Extract unique folder names from removed files
             removed_folders=$(echo "$removed_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
             
             # Extract unique folder names from added files
             added_folders=$(echo "$added_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+            
+            echo "DEBUG: Removed folders: $removed_folders"
+            echo "DEBUG: Added folders: $added_folders"
             
             # Check if any removed folder has all its files removed AND similar files added to a new folder
             while IFS= read -r removed_folder; do
@@ -249,6 +255,7 @@ jobs:
                 # If at least 50% of removed files match added files, consider it a folder rename
                 if [ "$total_removed" -gt 0 ] && [ "$matching_files" -gt 0 ]; then
                   match_percentage=$((matching_files * 100 / total_removed))
+                  echo "DEBUG: Comparing $removed_folder → $added_folder: $matching_files/$total_removed files match ($match_percentage%)"
                   
                   if [ "$match_percentage" -ge 50 ]; then
                     # Check if original folder started with underscore
@@ -264,6 +271,8 @@ jobs:
                 fi
               done <<< "$added_folders"
             done <<< "$removed_folders"
+          else
+            echo "DEBUG: Skipping removed+added check (removed_files empty: $([ -z "$removed_files" ] && echo yes || echo no), added_files empty: $([ -z "$added_files" ] && echo yes || echo no))"
           fi
           
           # Check if any folder renames found
