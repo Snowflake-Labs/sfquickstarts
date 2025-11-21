@@ -163,22 +163,13 @@ jobs:
           seen_renames=()
           
           # Method 1: Check for explicit file renames (status == "renamed")
-          echo "DEBUG Method 1: Sample of renamed files JSON:"
-          echo "$files_json" | jq '.[] | select(.status == "renamed") | {filename: .filename, previous_filename: .previous_filename, status: .status}' | head -30
-          
           renamed_files=$(echo "$files_json" | jq -r '.[] | select(.status == "renamed") | "\(.previous_filename)|\(.filename)"')
           
-          echo "DEBUG Method 1: Renamed files with previous_filename:"
-          echo "$renamed_files" | head -10
-          echo "DEBUG Method 1: Count of renamed file pairs: $(echo "$renamed_files" | grep -c . || echo 0)"
-          
           if [ -n "$renamed_files" ]; then
-            echo "Checking explicitly renamed files for folder renames..."
+            echo "Checking for renamed files..."
             
             while IFS='|' read -r old_path new_path; do
               [ -z "$old_path" ] || [ -z "$new_path" ] && continue
-              
-              echo "DEBUG: Processing rename: $old_path -> $new_path"
               
               # Extract only the first-level directory after site/sfguides/src/
               # Pattern: site/sfguides/src/{folder}/...
@@ -194,12 +185,9 @@ jobs:
               else
                 continue
               fi
-                
-              echo "DEBUG: Extracted folders: '$old_folder' -> '$new_folder'"
               
               # Check if the top-level folder name changed
               if [ "$old_folder" != "$new_folder" ]; then
-                echo "DEBUG: Folder names differ!"
                 # Only allow renames if the ORIGINAL folder name started with underscore
                 if [[ "$old_folder" =~ ^_ ]]; then
                   echo "ℹ️  Underscore folder rename (allowed): $old_folder → $new_folder"
@@ -218,19 +206,7 @@ jobs:
           
           # Method 2: Check for directory renames via removed + added pattern
           # Git doesn't always detect directory renames, so files may show as removed + added
-          echo "Checking for directory renames via removed/added pattern..."
-          
-          # Debug: Show all files and their statuses
-          echo "DEBUG: All files in PR:"
-          echo "$files_json" | jq -r '.[] | "\(.status): \(.filename)"' | head -20
-          
-          # Debug: Show all removed files (any path)
-          echo "DEBUG: All removed files:"
-          echo "$files_json" | jq -r '.[] | select(.status == "removed") | .filename' | head -20
-          
-          # Debug: Show all added files (any path)
-          echo "DEBUG: All added files:"
-          echo "$files_json" | jq -r '.[] | select(.status == "added") | .filename' | head -20
+          echo "Checking for removed/added file patterns..."
           
           # Get all removed files from site/sfguides/src/ (excluding _ folders)
           removed_files=$(echo "$files_json" | jq -r '.[] | select(.status == "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)')
@@ -238,18 +214,12 @@ jobs:
           # Get all added files from site/sfguides/src/ (excluding _ folders)
           added_files=$(echo "$files_json" | jq -r '.[] | select(.status == "added") | .filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)')
           
-          echo "DEBUG: Removed files count: $(echo "$removed_files" | grep -c . || echo 0)"
-          echo "DEBUG: Added files count: $(echo "$added_files" | grep -c . || echo 0)"
-          
           if [ -n "$removed_files" ] && [ -n "$added_files" ]; then
             # Extract unique folder names from removed files
             removed_folders=$(echo "$removed_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
             
             # Extract unique folder names from added files
             added_folders=$(echo "$added_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
-            
-            echo "DEBUG: Removed folders: $removed_folders"
-            echo "DEBUG: Added folders: $added_folders"
             
             # Check if any removed folder has all its files removed AND similar files added to a new folder
             while IFS= read -r removed_folder; do
@@ -285,7 +255,6 @@ jobs:
                 # If at least 50% of removed files match added files, consider it a folder rename
                 if [ "$total_removed" -gt 0 ] && [ "$matching_files" -gt 0 ]; then
                   match_percentage=$((matching_files * 100 / total_removed))
-                  echo "DEBUG: Comparing $removed_folder → $added_folder: $matching_files/$total_removed files match ($match_percentage%)"
                   
                   if [ "$match_percentage" -ge 50 ]; then
                     # Check if original folder started with underscore
@@ -301,8 +270,6 @@ jobs:
                 fi
               done <<< "$added_folders"
             done <<< "$removed_folders"
-          else
-            echo "DEBUG: Skipping removed+added check (removed_files empty: $([ -z "$removed_files" ] && echo yes || echo no), added_files empty: $([ -z "$added_files" ] && echo yes || echo no))"
           fi
           
           # Check if any folder renames found
