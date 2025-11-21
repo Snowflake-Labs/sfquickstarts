@@ -5,8 +5,8 @@ import subprocess
 from typing import Dict, List, Optional
 
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-SRC_DIR = os.path.join(REPO_ROOT, "src")
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SRC_DIR = os.path.join(REPO_ROOT, "site", "sfguides", "src")
 BASE_URL = "https://www.snowflake.com/en/developers/guides/"
 
 
@@ -105,6 +105,9 @@ def build_manifest() -> Dict[str, List[Dict[str, str]]]:
             continue
 
         meta = parse_front_matter(text)
+        # Skip hidden guides
+        if meta.get("status", "").strip().lower() == "hidden":
+            continue
         title = extract_title(text) or meta.get("title") or name.replace("-", " ").title()
         summary = meta.get("summary", "")
         categories = normalize_categories(meta.get("categories"))
@@ -131,7 +134,9 @@ def build_manifest() -> Dict[str, List[Dict[str, str]]]:
 
 def main() -> None:
     manifest = build_manifest()
-    out_path = os.path.join(SRC_DIR, "quickstart-manifest.json")
+    out_dir = os.path.join(SRC_DIR, "_shared_assets")
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, "quickstart-manifest.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
     print(f"Wrote {out_path} with {len(manifest.get('quickstartMetadata', []))} entries.")
