@@ -10,8 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Viewing Location Data on an Interactive Map
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
-
 Honeycomb Maps is a Snowflake Native App for building interactive map dashboards using data in Snowflake tables. As a native app, Honeycomb Maps runs completely inside Snowflake, keeping data secure by eliminating the need to extract or duplicate it.
 
 Honeycomb Maps provides a no-code interface for creating interactive, shareable, and data-driven maps directly within Snowflake. This ensures that location data never leaves the Snowflake environment, allowing for cutting-edge interactive maps while maintaining all of Snowflake's security, governance, and scalability benefits.
@@ -45,8 +43,6 @@ Let's get started with creating our first Honeycomb map!
 
 <!-- ------------------------ -->
 ## Install Honeycomb Maps 
-Duration: 5
-
 The first step is to install the Honeycomb Maps application from the Snowflake Marketplace.
 
 ### Access the Application Listing in the Snowflake Marketplace
@@ -177,8 +173,6 @@ You have now successfully installed Honeycomb Maps and are ready to create your 
 
 <!-- ------------------------ -->
 ## Create Your First Map
-Duration: 10
-
 Now that you have Honeycomb Maps installed, let's create your first map visualization.
 
 ### Create a new map
@@ -328,8 +322,6 @@ This interactive filter is especially useful for analyzing density and distribut
 
 <!-- ------------------------ -->
 ## Save and Share Your Map
-Duration: 5
-
 Once you're satisfied with your map, you can share it with others. Users will go through Snowflake SSO to access the map. The map will always show fresh data from Snowflake.
 
 ### Configure Map Settings
@@ -378,8 +370,6 @@ Congratulations! You've successfully created, customized, and shared an interact
 
 <!-- ------------------------ -->
 ## Next Steps and Advanced Features
-Duration: 5
-
 ![Advanced Maps](assets/advanced_features.png)
 
 Now that you've created your first map with Honeycomb Maps, here are some advanced features to explore:
@@ -417,8 +407,6 @@ Explore these advanced features to create even more powerful geographic visualiz
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
-
 Congratulations! You've successfully created an interactive map visualization using Honeycomb Maps. You've learned how to:
 
 - Install the Honeycomb Maps Snowflake Native App
