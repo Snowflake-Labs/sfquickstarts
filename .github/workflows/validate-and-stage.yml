@@ -202,6 +202,18 @@ jobs:
           # Git doesn't always detect directory renames, so files may show as removed + added
           echo "Checking for directory renames via removed/added pattern..."
           
+          # Debug: Show all files and their statuses
+          echo "DEBUG: All files in PR:"
+          echo "$files_json" | jq -r '.[] | "\(.status): \(.filename)"' | head -20
+          
+          # Debug: Show all removed files (any path)
+          echo "DEBUG: All removed files:"
+          echo "$files_json" | jq -r '.[] | select(.status == "removed") | .filename' | head -20
+          
+          # Debug: Show all added files (any path)
+          echo "DEBUG: All added files:"
+          echo "$files_json" | jq -r '.[] | select(.status == "added") | .filename' | head -20
+          
           # Get all removed files from site/sfguides/src/ (excluding _ folders)
           removed_files=$(echo "$files_json" | jq -r '.[] | select(.status == "removed") | .filename | select(startswith("site/sfguides/src/")) | select(test("^site/sfguides/src/_") | not)')
           
