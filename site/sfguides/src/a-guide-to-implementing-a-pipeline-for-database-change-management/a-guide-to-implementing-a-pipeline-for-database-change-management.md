@@ -36,7 +36,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 - We will be utilising the northwind database, git actions and snowflake to implement a pipeline to build and deploy dynamic tables. We aim to show a release/promotion process from bronze to the gold layer.
 - We will also be creating an isolated sandbox to allow developer to make changes before releasing into a shared environment. The release process will be done by leveraging github actions.
 
-<!-- ------------------------ -->
+<!--
 ## Metadata Configuration
 
 - **summary**: Implementing a Pipeline for Database Change Management
@@ -49,11 +49,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
 - **tags**: Getting Started, Getting Started, Data Engineering
 - **authors**: Meher Garda
-
----
-
-<!-- ------------------------ -->
-
+-->
 
 ## Setup Snowflake environment
 
