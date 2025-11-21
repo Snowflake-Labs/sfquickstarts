@@ -1,17 +1,16 @@
 author: 
 id: sfguide-name
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-status: Published 
+language: en
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
-
-hello
 
 The rest of this Snowflake Guide explains the steps of writing your own guide. 
 
@@ -117,19 +116,9 @@ for (statement 1; statement 2; statement 3) {
 </button>
 
 ### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
+| **The table header** | |
+|---------------------|-|
+| The table body | with two columns |
 
 ### Hyperlinking
 [Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
