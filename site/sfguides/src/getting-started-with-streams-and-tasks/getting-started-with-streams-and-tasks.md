@@ -5,7 +5,7 @@ summary: Learn how to use streams and tasks with Snowflake.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-authors: steven.maser@snowflake.com 
+authors: Steven Maser [Snowflake]
 
 # Getting Started with Streams & Tasks
 <!-- ------------------------ -->

@@ -22,31 +22,67 @@ jobs:
       - name: Determine changed quickstart folders
         id: detect
         run: |
-          # Get changed files from the push
-          # For push events, compare the before and after commits
+          # Get all changed files from the push
           before_commit="${{ github.event.before }}"
           after_commit="${{ github.sha }}"
           
           # Handle first push to branch (no before commit)
           if [ "$before_commit" = "0000000000000000000000000000000000000000" ]; then
             # First push - check HEAD against previous commit
-            changed_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
+            all_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
           else
-            changed_files=$(git diff --name-only "$before_commit" "$after_commit")
+            all_files=$(git diff --name-only "$before_commit" "$after_commit")
           fi
           
-          # Filter to quickstart folders under site/sfguides/src whose names do not start with an underscore
-          quickstart_names=$(echo "$changed_files" | grep '^site/sfguides/src/' | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          # Filter for changed files (excluding deleted files and folders starting with _)
+          # Similar to validate-and-stage which uses: select(.status != "removed")
+          changed_files=""
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            
+            # Skip if file doesn't exist (i.e., was deleted)
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            
+            # Skip files in folders starting with underscore
+            if [[ "$file" =~ /_ ]]; then
+              continue
+            fi
+            
+            # Skip if not under site/sfguides/src/
+            if [[ ! "$file" =~ ^site/sfguides/src/ ]]; then
+              continue
+            fi
+            
+            changed_files="${changed_files}${file}"$'\n'
+          done <<< "$all_files"
+          
+          # Filter to only relevant files:
+          # 1. Markdown files in root of quickstart directories (not in subdirectories)
+          # 2. Image files in root of /assets/ folders (not in subdirectories)
+          # Pattern for markdown in root: site/sfguides/src/{folder}/{filename}.md
+          # Pattern for images in assets root: site/sfguides/src/{folder}/assets/{filename}.{image_ext}
+          relevant_files=$(echo "$changed_files" | grep -E '^site/sfguides/src/[^/]+/([^/]+\.md|assets/[^/]+\.(jpg|jpeg|png|gif|svg|webp|bmp|ico))$' || true)
+          
+          # Extract quickstart names from relevant files only
+          quickstart_names=$(echo "$relevant_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Relevant files changed (markdown in root + images in assets):"
+          echo "$relevant_files"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Quickstart folders to publish:"
+          echo "$quickstart_names"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           has_relevant_changes=false
           if [ -z "$quickstart_names" ]; then
             quickstart_names_json="[]"
-            quickstart_folders_json="[]"
             quickstart_name=""
             has_relevant_changes=false
           else
             objs='[]'
-            names_arr='[]'
             while IFS= read -r name; do
               [ -z "$name" ] && continue
               lang=""
@@ -77,15 +113,12 @@ jobs:
                 if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
               fi
               objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
-              names_arr=$(echo "$names_arr" | jq -c --arg name "$name" '. + [$name]')
             done <<< "$quickstart_names"
             quickstart_names_json="$objs"
-            quickstart_folders_json=$(echo "$names_arr" | jq -c .)
             quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
             has_relevant_changes=true
           fi
           echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
-          echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
           echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
           echo "has_relevant_changes=$has_relevant_changes" >> $GITHUB_OUTPUT
 
@@ -130,7 +163,6 @@ jobs:
           
           # Create single-item array for quickstart_names to match expected format
           qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
-          qfolders_array=$(jq -n --arg name "$qname" '[$name]')
           
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
@@ -140,8 +172,7 @@ jobs:
             --arg pr_num "${{ needs.publish.outputs.pr_number }}" \
             --arg qname "$qname" \
             --argjson qnames "$qnames_array" \
-            --argjson qfolders "$qfolders_array" \
-            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames}')
           
           echo "Payload:"
           echo "$payload" | jq .

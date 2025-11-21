@@ -22,7 +22,7 @@ accessible at private endpoints that are only available within your enterprise's
 
 This approach ensures that your API cannot be attacked from the Internet and its data will remain highly secure.
 
-![Use Ockam to call private Custom APIs in Snowpark Container Services from anywhere in your enterprise.](./diagram.png)
+![Use Ockam to call private Custom APIs in Snowpark Container Services from anywhere in your enterprise.](assets/diagram.png)
 
 This API consists of reporting endpoints from data stored in Snowflake. After completing this guide, you will have built a custom API built with [Python Flask](https://flask.palletsprojects.com/).
 
