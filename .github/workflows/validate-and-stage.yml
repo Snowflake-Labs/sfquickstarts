@@ -3,7 +3,7 @@ name: Validate markdown and stage
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited, ready_for_review]
-    branches: [mast, github-actions]
+    branches: [master]
 
 jobs:
   validate_and_stage:
