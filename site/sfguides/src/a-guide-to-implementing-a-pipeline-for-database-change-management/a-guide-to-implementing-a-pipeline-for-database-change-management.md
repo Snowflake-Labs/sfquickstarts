@@ -9,7 +9,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
 # Implementing a Pipeline for Database Change Management
-<!-- ------------------------ -->
+
 ## Overview 
 
 In this guide we will walkthrough how to use Snowflake Data Change Management feature as part of a pipeline.
