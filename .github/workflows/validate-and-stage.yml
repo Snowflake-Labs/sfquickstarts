@@ -172,6 +172,9 @@ jobs:
             while IFS='|' read -r old_path new_path; do
               [ -z "$old_path" ] || [ -z "$new_path" ] && continue
               
+              # Skip if paths are identical (no actual rename)
+              [ "$old_path" = "$new_path" ] && continue
+              
               # Extract only the first-level directory after site/sfguides/src/
               # Pattern: site/sfguides/src/{folder}/...
               # Must extract old_folder BEFORE checking new_path to avoid BASH_REMATCH being overwritten
@@ -270,6 +273,9 @@ jobs:
           rename_count=$(echo "$all_renames_json" | jq 'length')
           if [ "$rename_count" -eq 0 ]; then
             echo "✅ No folder renames detected"
+          else
+            echo "Detected $rename_count unique folder rename(s):"
+            echo "$all_renames_json" | jq -r '.[] | "  \(.from) → \(.to)"'
           fi
           
           while IFS= read -r rename; do
