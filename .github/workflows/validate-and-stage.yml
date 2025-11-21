@@ -161,6 +161,7 @@ jobs:
           
           renamed_folders='[]'
           seen_renames=()
+          all_folder_renames='[]'
           
           # Method 1: Check for explicit file renames (status == "renamed")
           renamed_files=$(echo "$files_json" | jq -r '.[] | select(.status == "renamed") | "\(.previous_filename)|\(.filename)"')
@@ -188,17 +189,11 @@ jobs:
               
               # Check if the top-level folder name changed
               if [ "$old_folder" != "$new_folder" ]; then
-                # Only allow renames if the ORIGINAL folder name started with underscore
-                if [[ "$old_folder" =~ ^_ ]]; then
-                  echo "ℹ️  Underscore folder rename (allowed): $old_folder → $new_folder"
-                else
-                  # Original folder did NOT start with _, rename is blocked
-                  rename_key="${old_folder}→${new_folder}"
-                  if [[ ! " ${seen_renames[@]} " =~ " ${rename_key} " ]]; then
-                    echo "❌ Top-level folder rename detected: $old_folder → $new_folder"
-                    renamed_folders=$(echo "$renamed_folders" | jq -c --arg old "$old_folder" --arg new "$new_folder" --arg file "$old_path → $new_path" '. + [{old_folder:$old, new_folder:$new, example_file:$file}]')
-                    seen_renames+=("$rename_key")
-                  fi
+                # Track this rename (we'll check for round-trips later)
+                rename_key="${old_folder}→${new_folder}"
+                if [[ ! " ${seen_renames[@]} " =~ " ${rename_key} " ]]; then
+                  all_folder_renames=$(echo "$all_folder_renames" | jq -c --arg old "$old_folder" --arg new "$new_folder" '. + [{from:$old, to:$new}]')
+                  seen_renames+=("$rename_key")
                 fi
               fi
             done <<< "$renamed_files"
@@ -257,20 +252,53 @@ jobs:
                   match_percentage=$((matching_files * 100 / total_removed))
                   
                   if [ "$match_percentage" -ge 50 ]; then
-                    # Check if original folder started with underscore
-                    if [[ "$removed_folder" =~ ^_ ]]; then
-                      echo "ℹ️  Underscore folder rename (allowed): $removed_folder → $added_folder ($match_percentage% files match)"
-                    else
-                      echo "❌ Directory rename detected via removed+added pattern: $removed_folder → $added_folder ($match_percentage% files match)"
-                      example_file="site/sfguides/src/$removed_folder/[removed] → site/sfguides/src/$added_folder/[added]"
-                      renamed_folders=$(echo "$renamed_folders" | jq -c --arg old "$removed_folder" --arg new "$added_folder" --arg file "$example_file" '. + [{old_folder:$old, new_folder:$new, example_file:$file}]')
-                      seen_renames+=("$rename_key")
-                    fi
+                    # Track this rename (we'll check for round-trips later)
+                    all_folder_renames=$(echo "$all_folder_renames" | jq -c --arg old "$removed_folder" --arg new "$added_folder" '. + [{from:$old, to:$new}]')
+                    seen_renames+=("$rename_key")
                   fi
                 fi
               done <<< "$added_folders"
             done <<< "$removed_folders"
           fi
+          
+          # Analyze all detected renames and filter out round-trips
+          echo "Analyzing folder renames..."
+          
+          # Deduplicate renames (same rename may appear multiple times for different files)
+          all_renames_json=$(echo "$all_folder_renames" | jq 'unique_by({from: .from, to: .to})')
+          
+          rename_count=$(echo "$all_renames_json" | jq 'length')
+          if [ "$rename_count" -eq 0 ]; then
+            echo "✅ No folder renames detected"
+          fi
+          
+          while IFS= read -r rename; do
+            [ -z "$rename" ] && continue
+            
+            from=$(echo "$rename" | jq -r '.from')
+            to=$(echo "$rename" | jq -r '.to')
+            
+            # Check if there's a reverse rename (to → from)
+            reverse_exists=$(echo "$all_renames_json" | jq --arg from "$to" --arg to "$from" '[.[] | select(.from == $from and .to == $to)] | length')
+            
+            if [ "$reverse_exists" -gt 0 ]; then
+              echo "ℹ️  Round-trip rename detected (allowed): $from ↔ $to"
+              # This is a round-trip, skip it
+              continue
+            fi
+            
+            # Check if original folder started with underscore (allowed)
+            if [[ "$from" =~ ^_ ]]; then
+              echo "ℹ️  Underscore folder rename (allowed): $from → $to"
+              continue
+            fi
+            
+            # This is a real rename that should be blocked
+            echo "❌ Top-level folder rename detected: $from → $to"
+            example_file="site/sfguides/src/$from/... → site/sfguides/src/$to/..."
+            renamed_folders=$(echo "$renamed_folders" | jq -c --arg old "$from" --arg new "$to" --arg file "$example_file" '. + [{old_folder:$old, new_folder:$new, example_file:$file}]')
+            
+          done < <(echo "$all_renames_json" | jq -c '.[]')
           
           # Check if any folder renames found
           rename_count=$(echo "$renamed_folders" | jq 'length')
