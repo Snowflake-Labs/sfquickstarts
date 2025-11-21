@@ -789,7 +789,7 @@ Let’s take each of these files, and drop them into a single directory on our l
 
 It would be recommended to create a project directory. This can be called whatever you like, but as a suggestion for this lab, let’s go with **spark_adw_lab**. This means we would create a folder with the name spark_adw_lab, then create another folder in that directory called source_files (the path being something like **/your/accessible/directory/spark_adw_lab/source_files**). This isn’t required, but will help keep things organized. The SMA will scan any set of subdirectories as well, so you could add specific pipelines in a folder and notebooks in another.
 
-Note that in general, if you are extracting files that are being orchestrated by a specific tool, you may need to export them. If you are using notebooks as part of databricks or EMR, you can export those as .ipynb files just as the jupyter notebook we are going to run through the SMA today. 
+Note that in general, if you are extracting files that are being orchestrated by a specific tool, you may need to export them. If you are using notebooks in the Cloud elsewhere, you can export those as .ipynb files just as the jupyter notebook we are going to run through the SMA today. 
 
 **Access**
 
