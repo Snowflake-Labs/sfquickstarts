@@ -1427,13 +1427,13 @@ promotes cleaner query code, reducing complexity.
   are crucial for the query optimizer to estimate selectivity precisely,
   leading to more effective query plans.
 
-- **Enabling join rlimination:** The RELY property, when set for a
+- **Enabling join elimination:** The RELY property, when set for a
   Primary Key or Unique constraint, is a prerequisite for Snowflake's
   Join Elimination. This dynamically removes unnecessary joins,
   improving query performance, and relies on externally enforced
   uniqueness.
 
-- **Reduced fefensive voding:** External uniqueness enforcement
+- **Reduced defensive coding:** External uniqueness enforcement
   minimizes defensive SQL coding in downstream applications,
   streamlining development and enhancing application robustness.
 
@@ -1504,7 +1504,7 @@ not part of the final projections.
   multiple large tables, consider limited materializations using Dynamic
   Tables to boost query execution speed.
 
-#### Very vide tables
+#### Very wide tables
 
 Query compilation time in Snowflake can be affected by very wide tables
 (hundreds of columns). The optimizer processes more metadata at
