@@ -5,9 +5,9 @@ language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-authors: James Cha Earley
+authors: James Cha-Earley
 
-# From Dev to Production: Why ML team are migrating to Snowflake
+# From Dev to Production: Why ML teams are migrating to Snowflake
 
 ## Overview
 
