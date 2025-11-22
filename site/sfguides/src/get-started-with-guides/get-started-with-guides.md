@@ -187,6 +187,14 @@ Code for adding videos:
 [this video](https://www.youtube.com/watch?v=KmeiFXrZucE)
 ```
 
+#### Buttons
+
+<button>[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)</button>
+
+CODE:
+```
+<button>[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)</button>
+
 
 <!-- ------------------------ -->
 
