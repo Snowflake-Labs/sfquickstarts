@@ -445,7 +445,7 @@ Before finalizing the transfer, Maria asks, *"What type of weather events might 
 
 Now it's your turn to experience the Supply Chain Assistant! Follow Maria's journey by asking these questions in order, or explore on your own. Notice how the agent automatically determines which tool to use based on your question!
 
-![Alt text](assets/agent_screenshot.png)
+![Alt text](assets/Agent.gif)
 
 ### Following Maria's Scenario
 
