@@ -10,11 +10,13 @@ author:  Snowflake DevRel Team
 
 ## Components of a Guide
 
+The following sections explain the various headings of a guide that are required to keep the look and feel consistent.
+
 ### Overview 
 
-Please use [this markdown file](site/sfguides/src/_markdown-template/) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
+Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code or concepts).
+
 
 Previously, we had Quickstarts and Solutions which are now combined into a single page for "Guides" at [www.snowflake.com/en/developers/guides](https://www.snowflake.com/en/developers/guides/) page.  Going forward, we encourage users to think along creating **logged out experiences**  or **topic pages.** A few examples of these pages are:
 
@@ -44,30 +46,47 @@ Previously, we had Quickstarts and Solutions which are now combined into a singl
 - Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
 
+### Layout Basics
 
-### Conclusion & Next Steps
+At a minimum, the Guide should include the following headings and subheadings:
 
-The Conclusion and Next Steps section is one of the most important parts of a guide. This last section helps to sum up all the information the reader has gone through, and in many ways should read like a [TLDR summary](https://www.howtogeek.com/435266/what-does-tldr-mean-and-how-do-you-use-it/#post-435266:~:text=How%20Do%20You%20Use%20TLDR%3F,you%E2%80%99re%20the%20author%20or%20commenter.%20Using). 
+```
+## Overview
+It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build.
+Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial;
+this means that actual code needs to be included (not just pseudo-code or concepts).
 
-There are three main sub-headers in a Conclusion step:
+### Prerequisites
+Include the basic requirements to get started in this subtopic
 
-1. a general conclusion paragraph 
-2. "What We've Covered" section with a bulleted list of things
-3. "Related Resources" with links to various other resources, other guides, docs, videos, GitHub source code, etc.
+### What You'll Learn
+Include what the end user will learn in this subtopic
 
-It's also important to remember that by the time a reader has completed a Guide, the goal is that they have actually built something! Guides teach through hands-on examples -- not just explaining concepts.
+### What You'll Build
+Include what the end user will build with the Guide in this subtopic
 
-### What We've Covered
-- Creating steps and setting duration
-- Adding code snippets
-- Embedding images and videos
-- Importing other markdown files
 
-### Related Resources
-- [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
-- [Learn the GitHub Flow](https://guides.github.com/introduction/flow/)
-- [Learn How to Fork a project on GitHub](https://guides.github.com/activities/forking/)
 
+## Hands-on topics
+Cover the main components as H2s that appear on the right column menu.
+
+
+
+## Conclusion & Resources
+
+This last section helps to sum up all the information the reader has gone through. 
+
+By the time a reader has completed a Guide, the goal is that they have actually built something!
+Guides teach through hands-on examples -- not just explaining concepts.
+
+
+### What you Learned
+Re-iterate what the users learned with this Guide
+
+### Resource Links
+Add any links that can be helpful to the readers.
+
+```
 
 
 <!-- ------------------------ -->
@@ -116,15 +135,15 @@ These steps are defined in Markdown using Header 2 tag `##`.
 Sub-steps will use a Header 3 tag `###` and so forth.  Please avoid going beyond H4 `####`.
 
 ```markdown
-## Step 1 Title
+## Step 1 Title (H2)
 
 All the content for the step goes here.
 
-## Step 2 Title
+## Step 2 Title  (H2)
 
 All the content for the step goes here.
 
-### Subheading for Step 2
+### Subheading for Step 2 (H3)
 
   **This text will be bold.**
   __This text will also be bold.__
@@ -139,7 +158,8 @@ All the content for the step goes here.
 
 This section covers the basic markdown formatting options that you will need for your QuickStart. 
 
-Look at the [markdown source for this sfguide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+Look at the [markdown source for this sfguide](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+> **Ctrl+Click** (Windows/Linux) or **Cmd+Click** (macOS) to open links in a new tab.  This is useful when following along instructions in a guide.
 
 #### Things to Keep in Mind
 Sticking to these guidelines ensures that all Guides have a similar look and feel.  Keeping the document clean helps create a good end-user experience.
@@ -219,8 +239,21 @@ for (statement 1; statement 2; statement 3) {
 
 CODE:
 ```
-> Adding an Info Box:
-> Pick the messages above and use this code.  This will appear as an info box.
+> [!NOTE]
+> This is an informational aside.
+
+> [!TIP]
+> A positive or helpful note.
+
+> [!IMPORTANT]
+> Something you shouldn’t overlook.
+
+> [!WARNING]
+> A cautionary message.
+
+> [!CAUTION]
+> A serious negative or danger message.
+
 ```
 
 
@@ -257,7 +290,9 @@ CODE:
 
 
 #### Images
-![Puppy](assets/puppy.jpg)
+
+![](assets/puppy.jpg "Cute Puppy")
+
 
 Please DO NOT use HTML code for adding images. 
 Use this markdown format for images: 
@@ -404,7 +439,9 @@ create new tags if you don't see them in the list.
 | Serverless Tasks | snowflake-site:taxonomy/snowflake-feature/serverless-tasks |
 | Snowpark | snowflake-site:taxonomy/snowflake-feature/snowpark |
 | Snowpipe Streaming | snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming |
-
+| Snowflake Intelligence | snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence |
+| Data Lake | snowflake-site:taxonomy/snowflake-feature/data-lake |
+| Horizon | snowflake-site:taxonomy/snowflake-feature/horizon |
 
 ### Industries Category
 
@@ -418,6 +455,9 @@ create new tags if you don't see them in the list.
 | Retail & Consumer Goods | snowflake-site:taxonomy/industry/retail-and-cpg |
 | Sports | snowflake-site:taxonomy/industry/sports |
 | Telecom | snowflake-site:taxonomy/industry/telecom |
+| Transportation | snowflake-site:taxonomy/industry/transportation |
+| Travel and Hospitality | snowflake-site:taxonomy/industry/travel-and-hospitality |
+
 
 
 <!-- ------------------------ -->
@@ -446,15 +486,30 @@ You can also use the Google Docs feature of saving to Markdown, however please r
 <!-- ------------------------ -->
 ## Submitting Your Guide
 
-The process to submit your Guide has been simplified. 
 
-- Create a Fork for the main repo and begin writing and formatting your guide.
 
-- Once you are done with the content creation process for your guide, create a Pull Request in GitHub and submit.
+**The process to submit your Guide has been simplified**
 
-- The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them **before** submitting the PR.
+- Create a Fork for the main repo and begin writing and formatting your guide (top right of webpage, `fork` button)
+  > If you have already forked the repository, you can go to your branch and select 'sync fork' to update the repository
 
-- Please correct any errors and try submitting the PR again.  If all looks ok, the PR comes to DevRel team for approval.  
+- In your fork, select the 'site' folder on the home page -> Then select the 'sfguides/src' folder and navigate to the folder for your guide.
+
+- Once you are done with the content creation process or editing of your guide, create a Pull Request in GitHub and submit.
+
+- The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them in a comment on GitHub **before** submitting the PR.
+
+
+**Please Note:** 
+All PRs have automated checks run against them. The checks assess for the following (please confirm these are met prior to submission): 
+1. Categories are applied from the [approved list](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags)
+
+2. ID criteria (second line in template): id must exist, id must be separated by dashes, id must be lowercase, id must match the markdown file name (without .md extension), id must match the immediate folder name the file is in
+
+3. Language tag must be populated (see [here](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags) for the list)
+
+
+- Correct any errors and try submitting the PR again.  If all looks ok, the PR comes to DevRel team for approval.  
  At this point, a staging URL is generated in GitHub that can be reviewed.
 
 - The DevRel team will approve the PR to publish it to www.snowflake.com/en/developers/guides page.
@@ -469,6 +524,8 @@ The process to submit your Guide has been simplified.
 
 Congratulations!  You should now be able to create, format and submit a guide. 
 
+
+
 ### What We've Covered
 - The basic components of a Guide
 - Metadata configuration to include 
@@ -481,8 +538,9 @@ Congratulations!  You should now be able to create, format and submit a guide.
 - [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
 - [Learn the GitHub Flow](https://guides.github.com/introduction/flow/)
 - [Learn How to Fork a project on GitHub](https://guides.github.com/activities/forking/)
-- [Markdown template that can be used](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template).
-- [Submit a Repository Request](https://docs.google.com/forms/d/1AQ0SOMi0-kAHHluEx9HJDDUctwisHqrSVWo-wvfDMwU/edit#responses) to obtain a repo  in Snowflake Labs GitHub.
+- Video on [How to Fork a Repo](https://youtu.be/ePRJHFXU6n4)
+- [Markdown template that can be used](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template).
+- Video on [How to Edit a Guide](https://youtu.be/yd9LXsvTSTU)
 
 ### EXAMPLES:
 
