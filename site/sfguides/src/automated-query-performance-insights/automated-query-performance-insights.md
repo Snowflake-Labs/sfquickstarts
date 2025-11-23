@@ -58,7 +58,7 @@ ORDER BY total_elapsed_time desc
 LIMIT 50;
 ```
 
-> aside positive
+> 
 > IMPORTANT:
 > - Replace '<your_warehouse_name>' with your actual warehouse name.
 > - Adjust the DATEADD function to analyze different time periods

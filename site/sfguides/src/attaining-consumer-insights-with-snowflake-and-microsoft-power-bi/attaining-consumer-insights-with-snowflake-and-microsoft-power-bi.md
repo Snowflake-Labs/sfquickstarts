@@ -58,7 +58,7 @@ Perform optimization techniques to speed report/dashboard responsiveness
 
 #### Download and install the latest version of [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) (Optional).
 
-> aside positive
+> 
 > 
 >  \*\*Consider This: \*\*
 Resize your browser windows so you can view this lab guide and your web browser side-by-side to more easily follow the lab instructions. If possible, even better is to use a secondary display dedicated to the lab guide. It is also advisable to open a second browser window so you are able to view the Snowflake UI and Azure Portal side by side.
@@ -71,7 +71,7 @@ Resize your browser windows so you can view this lab guide and your web browser 
 ## The Snowflake User Interface
 
 
-> aside negative
+> 
 > 
 >  **About the screen captures, sample code, and environment**
 Screen captures in this lab depict examples and results that may vary slightly from what you see when you complete the exercises.
@@ -122,7 +122,7 @@ At the top left of the default worksheet, to the right of the worksheet tab, cli
 
 ![worksheets tab navigation](assets/3UIStory_8.png)
 
-> aside negative
+> 
 > 
 >  **Worksheets vs the UI**
 Many of the configurations for this lab will be executed via the pre-written SQL within this worksheet to save time. These configurations could also be done via the UI in a less technical manner, but would take more time.
@@ -135,7 +135,7 @@ Clicking on your username in the top right of the UI allows you to change your p
 
 ![user preferences dropdown](assets/3UIStory_10.png)
 
-> aside negative
+> 
 > 
 >  **SYSADMIN**
 The `SYSADMIN` (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account.

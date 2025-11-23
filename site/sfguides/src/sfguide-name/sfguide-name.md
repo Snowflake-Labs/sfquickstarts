@@ -100,12 +100,12 @@ for (statement 1; statement 2; statement 3) {
 ```
 
 ### Info Boxes
-> aside positive
+> 
 > 
 >  This will appear in a positive info box.
 
 
-> aside negative
+> 
 > 
 >  This will appear in a negative info box.
 

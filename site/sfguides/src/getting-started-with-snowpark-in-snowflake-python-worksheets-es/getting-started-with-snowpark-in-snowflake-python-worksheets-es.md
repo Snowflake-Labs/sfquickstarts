@@ -54,7 +54,7 @@ Haz clic en este [enlace](https://signup.snowflake.com/?lab=getStartedWithSnowpa
 
 Inicia sesión en tu cuenta de Snowflake. Para acceder a este laboratorio y configurar los datos y el código de muestra, debes hacer clic en el siguiente enlace.
 
-> aside positive IMPORTANTE: Debes tener rol ACCOUNTADMIN para realizar la configuración del laboratorio que se describe a continuación. Nota: Si has creado una nueva cuenta de prueba, tendrás el rol ACCOUNTADMIN de forma predeterminada.
+> 
 
 <button>[Configuración del entorno de laboratorio](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 

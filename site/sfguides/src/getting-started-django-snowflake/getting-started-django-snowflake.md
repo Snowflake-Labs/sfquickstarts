@@ -134,7 +134,7 @@ This configuration allows us to connect to Snowflake using `django-snowflake`. W
 That's it! You don't have to run any additional commands to connect to Snowflake. If you've successfully connected, your terminal will display a message like "System check identified no issues (0 silenced).". If the connection was unsuccessful, your terminal will output the associated errors, which you can then troubleshoot.
 
 
-> aside negative
+> 
 > 
 > **Important**
 >
@@ -263,7 +263,7 @@ Finally, let's specify that `trip_id` should be used as the primary key for the 
 trip_id = models.BigAutoField(blank=True, primary_key=True)
 ```
 
-> aside negative
+> 
 > 
 > **Important**
 >
@@ -336,7 +336,7 @@ Save the file and reload the admin page in your browser. If successful, you shou
 
 ![BrowseDataAdmin](assets/getting-started-django-snowflake-img-4.png)
 
-> aside negative
+> 
 > 
 > **Note**
 >

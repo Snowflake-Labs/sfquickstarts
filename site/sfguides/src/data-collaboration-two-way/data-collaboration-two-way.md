@@ -345,7 +345,7 @@ The first step is to set up the python environment to develop our model. To do t
 }
 ```
 
-> aside negative
+> 
 > 
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
 

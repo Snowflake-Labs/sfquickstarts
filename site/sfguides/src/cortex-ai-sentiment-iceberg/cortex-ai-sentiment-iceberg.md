@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 This guide is designed to help you learn how to bring artificial intelligence (AI) to open data lakehouses with Snowflake Cortex AI and Iceberg Tables.
 
-> aside positive
+> 
 > 
 >  [Snowflake Cortex AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) is now generally available.
 >  [Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg) are now generally available.

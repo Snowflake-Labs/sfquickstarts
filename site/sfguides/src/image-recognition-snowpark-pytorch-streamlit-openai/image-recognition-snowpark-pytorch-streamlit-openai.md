@@ -92,7 +92,7 @@ pip install openai
 
 ### Option 1
 
-> aside positive
+> 
 > For an end-to-end setup experience using Snowflake Notebooks, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec_Setup_Notebook.ipynb) file and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account.
 
 ### Option 2

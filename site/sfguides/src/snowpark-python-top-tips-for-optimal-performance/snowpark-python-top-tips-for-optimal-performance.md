@@ -176,7 +176,7 @@ It is important to note:
 
 ### Cleanup
 
-> aside positive
+> 
 > If you did not complete all test cases in the notebook, please ensure you cleaned up the environment by executing the final code block so that all other labs will function properly
 
 ## Lab 2 (Vectorised UDTFs) - Overview
@@ -304,7 +304,7 @@ The metrics we've gathered provide comprehensive insights into the performance o
 
 ### Cleanup
 
-> aside positive
+> 
 > If you did not complete all test cases in the notebook, please ensure you cleaned up the environment by executing the final code block so that all other labs will function properly
 
 

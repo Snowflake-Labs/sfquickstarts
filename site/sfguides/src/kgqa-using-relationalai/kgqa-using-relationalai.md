@@ -55,7 +55,7 @@ In our case, we will utilize RelationalAI’s Native App to construct an executa
 ### What You will Build
 - A Question Answering System on Knowledge Graphs using RelationalAI and Snowflake Cortex AI
 
-> aside positive
+> 
 > **_NOTE:_**  If you haven't already done so, please [refer to the documentation](https://relational.ai/docs/native_app/installation) to install RelationalAI as a Snowflake native app.
 
 <!-- ------------------------ -->

@@ -69,7 +69,7 @@ Fine-tuning can be a rather complex process. To alleviate much of this complexit
 <!-- ------------------------ -->
 ## Setup Environment
 
-> aside positive
+> 
 > IMPORTANT: The Snowflake environment setup that follows is similar to the setup in [Quickstart: Intro to Snowpark Container Services](/en/developers/guides/intro-to-snowpark-container-services/). However, here we have added an additional statement at the end to create a GPU-powered compute pool. You only need to complete the Setup Environment section.
 
 Run the following SQL commands in [`00_snowflake_setup.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/00_snowflake_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the role, database, warehouse, and stages that we need to get started:
@@ -140,7 +140,7 @@ AUTO_RESUME = true;
 - The [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool) is the set of compute resources on which our services will run
 - The [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository) is the location in Snowflake where we will push our Docker images so that our services can use them
 
-> aside positive
+> 
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
@@ -283,7 +283,7 @@ In a Snowsight SQL Worksheet or SnowSQL, run the below SQL commands to create a 
   SECRET_STRING='<YOUR_HF_TOKEN>';
 ```
 
-> aside positive
+> 
 > 
 >  IMPORTANT: Some models, such as llama2, require prior authorization to access. See HuggingFace's corresponding model card to verify.
 
@@ -338,7 +338,7 @@ Lastly, save the file and push to Snowflake stage `SPECS` using one of the below
 
 Finally, we will start the Snowpark Container Service. Run the following SQL commands in [`03_start_service.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/03_start_service.sql) using the Snowflake VSCode Extension OR in a SQL worksheet. 
 
-> aside positive
+> 
 > 
 >  NOTE: The below SERVICE is tagged with a comment. This comment helps Snowflake capture usage trends that could lead to code improvements (performance, cost optimization, or functionality). As part of our continual improvement of all of our frameworks and accelerators, we review who and how our customers are leveraging these tools.  While our tagging of objects and sessions is meant to provide improvements back to our customers, we also understand that not all of our customers will maintain this tagging. 
 
