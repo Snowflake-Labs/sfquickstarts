@@ -95,7 +95,7 @@ GRANT ALL ON ALL SCHEMAS IN DATABASE dbt_hol_dev   TO ROLE dbt_dev_role;
 GRANT ALL ON ALL SCHEMAS IN DATABASE dbt_hol_prod  TO ROLE dbt_prod_role;
 ```
 
-[!NOTE]
+>[!NOTE]
 TEST ABC 123
 
 As result of these steps, we should have:
