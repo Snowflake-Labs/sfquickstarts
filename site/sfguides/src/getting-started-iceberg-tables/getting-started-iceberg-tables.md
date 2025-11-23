@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 This guide is designed to help you understand the capabilities included in Snowflake’s support for Apache Iceberg. Iceberg Tables, now generally available, bring Snowflake’s easy platform management and great performance to data stored externally in the open source Apache Iceberg format.
 
-> aside positive
+> 
 > 
 >  Iceberg Tables are now generally available.
 
@@ -451,7 +451,7 @@ For a deeper dive on Snowpark for data engineering pipelines, try [this quicksta
 
 Iceberg Tables can be securely shared with consumers either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
 
-> aside negative
+> 
 > 
 >  Cross-cloud and cross-region sharing of Iceberg Tables is not currently supported. The provider’s external volume, Snowflake account, and consumer’s Snowflake account must all be in the same cloud region.
 

@@ -62,7 +62,7 @@ Please note that starting and using Kumo as a Snowflake native app will incur me
 * A valid Kumo account installed as a [native Snowflake app](https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo)  
 * Snowflake’s TPC-DS sample dataset from [https://docs.snowflake.com/en/user-guide/sample-data](https://docs.snowflake.com/en/user-guide/sample-data)
 
-> aside positive
+> 
 > NOTE:  If you haven’t already done so, please [follow these instructions](https://docs.kumo.ai/docs/installing-kumo-on-spcs) to install Kumo as a native Snowflake app. 
 
 ## Setting Up Data in Snowflake
@@ -136,7 +136,7 @@ After logging in to the Kumo app UI with your Snowflake credentials, click on `C
 
 In the `Snowflake Connector` modal window, provide a unique `Name` for your connector, as well as your `Account Identifier`, `User`, and `Password`.
 
-> aside positive
+> 
 > NOTE: You can identify your `Account Identifier` by analyzing the URL of your Kumo app: ![img](assets/image32.png)
 
 Input the following values for the remaining fields:

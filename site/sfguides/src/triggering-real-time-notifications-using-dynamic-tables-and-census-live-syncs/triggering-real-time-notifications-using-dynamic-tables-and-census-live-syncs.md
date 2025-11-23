@@ -122,7 +122,7 @@ Each platform will have a slightly different process for configuring the connect
 - [Google Ads](https://docs.getcensus.com/destinations/available-destinations/google-ads)
 - [Google Sheets](https://docs.getcensus.com/sources/available-sources/google-sheets#create-a-google-sheets-connection)
 
-> aside negative
+> 
 >
 > Send, replace, and upload and swap mirror destinations are not supported by Live Syncs.
 
@@ -177,7 +177,7 @@ Insert the data you wish to sync into your table.
 
 ![](assets/QS13.png)
 
-> aside positive
+> 
 > 
 > Selecting “Map records” as a sync behavior will keep records in sync between the source and destination, while selecting “Activate events” can be used to trigger actions in the destination when new records are added to the source.
 

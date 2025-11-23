@@ -138,7 +138,7 @@ ORDER BY t.truck_id;
 
 ![assets/4.2.1.truck.png](assets/4.2.1.truck.png) ![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
->aside positive Si un usuario repite una consulta que ya se ha ejecutado y los datos en las tablas no se han modificado desde la última vez que se ejecutó, el resultado de la consulta será el mismo. En lugar de volver a ejecutar la consulta, Snowflake simplemente devuelve el mismo resultado que había devuelto previamente. 
+> 
 >         
 >De esta forma, se reduce sustancialmente el tiempo de consulta, ya que Snowflake evita que se ejecute de nuevo la consulta y, en su lugar, recupera el resultado directamente de la caché.
 >
@@ -225,7 +225,7 @@ Parece que hemos metido la pata con el cálculo de la columna `truck_age`. Está
 ### Descripción general
 Aunque hayamos cometido un error, Snowflake cuenta con muchas funciones que nos pueden ayudar a solucionarlo. El proceso que vamos a seguir utiliza el historial de consultas, las variables de SQL y Time Travel para volver a dejar nuestra tabla `truck_dev` tal y como estaba antes de ejecutar la sentencia incorrecta de actualización.
 
->aside positive Time Travel permite acceder a los datos históricos (es decir, los datos modificados o eliminados) de cualquier momento de un periodo definido.
+> 
 >
 
 ### Paso 1: utilizar el historial de consultas
@@ -275,7 +275,7 @@ BEFORE(STATEMENT => $query_id);
 ![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 En la lista que aparece a continuación puedes ver otras opciones disponibles de Time Travel.
->aside positive **AT:** la palabra clave AT especifica que la solicitud incluye cualquier cambio hecho por una sentencia o una transacción cuya marca de tiempo sea igual a la del parámetro especificado.
+> 
 >
 >**BEFORE:** la palabra clave BEFORE especifica que la solicitud se refiere a un punto inmediatamente anterior al parámetro especificado.
 >

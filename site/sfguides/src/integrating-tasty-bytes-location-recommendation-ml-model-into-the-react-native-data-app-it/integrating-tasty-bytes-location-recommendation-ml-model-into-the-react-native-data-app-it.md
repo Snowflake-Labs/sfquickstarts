@@ -61,7 +61,7 @@ Tasty Bytes gestisce food truck in molte città di tutto il mondo e ogni food tr
 
 ![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
->aside positive
+> 
 SafeGraph è un’azienda globale di dati geospaziali che offre dati su qualsiasi località nel mondo. Clienti come Esri, Tripadvisor, Mapbox e Sysco utilizzano i dati di SafeGraph per comprendere meglio i propri clienti, creare nuovi prodotti e prendere decisioni migliori per il proprio business.
 >
 

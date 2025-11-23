@@ -437,7 +437,7 @@ Access the application on the local address [http://127.0.0.1:5000](http://127.0
 
 You can now login using one of the users created earlier, e.g. `first_user` with password `hybrid@123`.
 
-> aside negative
+> 
 >
 > Note that the user and password management shown in this application is not something you would use in real application, it is simply put in place here to provide a mechanism to change between users in the application. The passwords are for instance stored in plain text in the database and also sent unencrypted or secured between browser and server. This part of the solution is simply to provide a means of switching between different users, and owners of different lists of Tasks in the application
 
@@ -516,7 +516,7 @@ class Controller:
         return items_all
 ```
 
-> aside positive
+> 
 >
 > The application does not use any Object Relationship Mapper frameworks (like SQL Alchemy), it simply defines and manages the data retrieval and mapping to model classes directly, but it would be fully possible to add for instance SQL Alchemy here to take care of mapping data to objects.
 
@@ -556,7 +556,7 @@ def getSession() -> Session:
 
 The parameteters, like the account name, user name and password are picked up from the `.env` file here and used to connect.
 
-> aside positive
+> 
 >
 > This file actually contains more code that is not used specifically here, but it could be used when creating a connection when running the same aplication on Snowopark Container Service - i.e. hosting this application directly on Snowflake. It also shows how a SQL Alchemy connection URI can be constructued, although also not used in this guide.
 
@@ -821,7 +821,7 @@ CREATE OR REPLACE HYBRID TABLE "TASK" (
 
 Instead of using a `AUTOINCREMENT` for the `id` primary key column, we create a separate [SEQUENCY](https://docs.snowflake.com/en/user-guide/querying-sequences) to provide the default value. This means that we can also access the next value in that Sequence as a separate statement and remember that id and use it for the insert into the related table `TASK_LABEL`.
 
-> aside negative
+> 
 >
 > While `AUTOINCREMENT` allows Snowflake to generate a unique and new identifier for newly created items, there is no way to retreive that identifier without running the risk of getting the wrong identifier in a scenario where multiple concurrent users are writing data to the application.
 

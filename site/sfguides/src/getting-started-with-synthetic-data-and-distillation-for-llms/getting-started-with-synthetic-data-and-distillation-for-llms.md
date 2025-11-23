@@ -56,7 +56,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 
 - A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex AI is available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
 - A Snowflake user created with ACCOUNTADMIN permissions. This user will be used to get things setup in Snowflake.
-> aside positive
+> 
 > Note: Cortex Fine-tuning is not available in Snowflake Free Trial accounts. Use your own accounts or reach out to your account representative to use this in your account.
 
 
@@ -67,7 +67,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 
 Let's create a fresh database for this guide. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to get started.
 
-> aside positive
+> 
 > IMPORTANT:
 >
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -112,7 +112,7 @@ INSERT INTO support_ticket_category (category) VALUES
 
 In this step we prompt the LLM to generate 25 synthetic examples of customer support tickets for every category.
 
-> aside positive
+> 
 > NOTE: Snowflake offers a derived model that uses the SwiftKV library to optimize inference. This optimization enables Snowflake to offer model at 75% off than the 405B base model. To try the more cost effective option you can use Snowflake-Llama-3.1-405 as the model name.
 
 ```sql

@@ -127,7 +127,7 @@ At this point, your chart should look very close to the final result shared abov
 You should end up with a dashboard that has a single tile, like so:
 ![Final state of first tile](assets/firstTile_final.png)
 
-> aside positive
+> 
 > 
 > As an FYI, the black bars appearing in these screen shots are there to block out information specific to the testing area where these screens came from. 
 

@@ -79,7 +79,7 @@ In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/
 ### Step 6
 Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication) and assign the public key to your user in Snowflake and store/save/copy the private key file (**_.p8_**) in your cloned app folder.
 
-> aside negative
+> 
 > IMPORTANT: If you use different names for objects created in the above steps, be sure to update scripts and code in the following sections accordingly.
 
 ## Setup Zoom
@@ -138,7 +138,7 @@ In a new terminal window, run `ngrok http 5000`.
 
 * Copy the forwarding URL and set it for **ZOOM_REDIRECT_URI** in your `.env` file
 
-> aside positive
+> 
 > NOTE: It is important to keep `ngork` running all the way through until you are done implementing this guide. If for some reason you need to restart `ngork`, you will need to update the forwarding URL in **sub-steps 3, 7, 8** in this section and also **ZOOM_REDIRECT_URI** in your `.env` file.
 
 ### Step 5
@@ -207,7 +207,7 @@ In the same cloned repo *sfguide-integrate-snowflake-cortex-agents-with-zoom* fo
 ./zoom_bot.sh
 ```
 
-> aside negative
+> 
 > NOTE: If you get this error `Caused by SSLError(SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...,` try adding *<locator.region>* to SNOWFLAKE_ACCOUNT in your `.env` file. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 ### Step 2
