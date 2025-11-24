@@ -2,7 +2,7 @@
 # the repo. Unless a later match takes precedence,
 # these users will be requested for
 # review when someone opens a pull request.
-*       @sfc-gh-kkomail @sfc-gh-annafilippova @sfc-gh-ridasafdar
+# *       @sfc-gh-kkomail @sfc-gh-annafilippova @sfc-gh-ridasafdar
 
 
 # Used in Northstar Workshops
