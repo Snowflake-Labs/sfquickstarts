@@ -36,7 +36,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/a-dataiku-and-snowflake-guide-to-data-science/",
       "summary": "This is an introduction to Dataiku and Snowflake",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "A Faster Path to Operational AI with Continual and Snowflake",
@@ -75,7 +75,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/a-no-code-approach-to-machine-learning-with-snowflake-and-dataiku/",
       "summary": "This is an introduction to Dataiku and Snowflake",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "A Postman Tutorial for the Snowflake SQL API",
@@ -87,7 +87,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/a-postman-tutorial-for-snowflake-sql-api/",
       "summary": "Explore the Snowflake SQL API with Postman",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "End-to-End Entity Resolution with Snowflake Cortex AI",
@@ -138,7 +138,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/accelerate-your-graphql-development-on-snowflake-with-hasura/",
       "summary": "Instantly Build GraphQL APIs on Your Snowflake Data with Hasura",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Accelerating Data Teams with Snowflake and dbt platform Hands On Lab",
@@ -165,7 +165,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/advanced-guide-to-snowflake-feature-store/",
       "summary": "Learn how to get started and use Snowflake Feature Store to manage features and deploy models into production",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification",
@@ -222,7 +222,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/ai-video-search-with-snowflake-and-twelvelabs/",
       "summary": "This guide outlines the process for creating a video search and summarization workflow in Snowflake Notebook on Container Runtime.",
-      "lastUpdatedAt": "2025-11-04"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Running Apache Airflow on SPCS",
@@ -254,7 +254,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/altr-get-started/",
       "summary": "",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Analyze Data with Python using Posit Workbench and Snowflake",
@@ -265,7 +265,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/analyze-data-with-python-using-posit-workbench-and-snowflake/",
       "summary": "Analyze Data with Python using Posit Workbench and Snowflake",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Analyze Data with R using Posit Workbench and Snowflake",
@@ -355,7 +355,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/attaining-consumer-insights-with-snowflake-and-microsoft-power-bi/",
       "summary": "In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Analyze Query Performance in Snowflake Notebooks",
@@ -366,7 +366,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/automated-query-performance-insights/",
       "summary": "Learn how to analyze query performance in Snowflake using SQL queries to identify bottlenecks and optimize execution times.",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build Interactive Query Performance App in Snowflake Notebooks",
@@ -391,7 +391,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/automating-document-processing-workflows-with-document-ai/",
       "summary": "This guide will provide step-by-step details for automating document processing workflows with Document AI",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Accelerating Machine Learning with Snowflake and DataRobot",
@@ -536,7 +536,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-data-app-and-run-it-on-snowpark-container-services/",
       "summary": "Build a Data App and run it on Snowpark Container Services",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build a Data App with Snowflake",
@@ -548,7 +548,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-data-app-with-snowflake/",
       "summary": "A guide to building and running a data application powered by Snowflake and Node.js",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build a Data Application with Hybrid Tables",
@@ -560,7 +560,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-data-application-with-hybrid-tables/",
       "summary": "Build a data application using Snowflake Hybrid Tables for transactional processing",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build a Snowflake Native App with Snowpark Container Services",
@@ -574,7 +574,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-native-app-with-spcs/",
       "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build a private Custom API in Python and Flask using Ockam",
@@ -586,7 +586,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-private-custom-api-in-python/",
       "summary": "A guide to building and running a custom private API Powered by Snowflake, Ockam, and Python/Flask",
-      "lastUpdatedAt": "2025-11-17"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build a Streaming Data Pipeine in Python",
@@ -610,7 +610,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-visual-idea-generator-with-text-to-image-models/",
       "summary": "A guide to building a visual concept/idea generator from unstructured data powered by Text2Image LLM models and Streamlit.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build Agentic Application with Anthropic In Snowflake",
@@ -623,7 +623,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-agentic-application-in-snowflake/",
       "summary": "In this hands-on lab, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.",
-      "lastUpdatedAt": "2025-11-09"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build Agentic Workflows with Hugging Face Smolagents in Snowflake",
@@ -635,7 +635,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-agentic-workflows-with-huggingface-smolagents-in-snowflake/",
       "summary": "This guide outlines the process for creating agentic workflow in Snowflake Notebook on Container Runtime.",
-      "lastUpdatedAt": "2025-11-17"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build an Ad Tag in Python on AWS",
@@ -676,7 +676,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-collaborative-filtering-recommender-system-with-relationalai-and-snowflake/",
       "summary": "This guide shows how to use RelationalAI and Snowflake to create a recommender system.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Visual AI Models with LandingLens on Snowflake",
@@ -703,7 +703,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-customer-facing-applications-using-sigma-and-snowflake/",
       "summary": "This guide will lead you through the process of connecting Sigma to a Snowflake environment and building an application that leverages the data in Snowflake. This guide additionally highlights unique end user capabilities when Sigma is embedded in an application.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-24"
     },
     {
       "title": "Build and Evaluate RAG with LangChain and Snowflake",
@@ -728,7 +728,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-genai-inpainting-and-hybridtable-app-in-snowpark-container-services/",
       "summary": "Through this quickstart guide, you will explore GenAI inpainting and Hybrid tables with everything running within a Streamlit app in Snowpark Container Services",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Building ML Models to Crack the Code of Customer Conversions",
@@ -741,7 +741,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-ml-models-for-customer-conversions/",
       "summary": "This hands-on lab will guide you through building a custom machine learning model to predict customer purchase likelihood by analyzing the complex relationship between website experience metrics and product reviews.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build Rag Based Equipment Maintenance App Using Snowflake Cortex",
@@ -756,7 +756,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-rag-based-equipment-maintenance-app-using-snowflake-cortex/",
       "summary": "Build Rag Based Equipment Maintenance App Using Snowflake Cortex",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build a Unified Customer 360 Database using Amperity and Snowflake",
@@ -810,7 +810,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/building-a-sports-prediction-model-with-snowpark-ml/",
       "summary": "Building a Sports Prediction Model with Snowpark ML",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Building an Automated ELT Workflow in Snowflake with Openflow",
@@ -994,7 +994,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/coherent-spark-connector/",
       "summary": "Use business logic from Excel in Snowflake with Coherent Spark",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Collibra Data Governance with Snowflake",
@@ -1023,7 +1023,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/community-detection-using-relationalai/",
       "summary": "This guide shows how to use RelationalAI and Snowflake to create a social graph and detect customer communities from retail transaction data.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Compare and Evaluate Chunking Strategies",
@@ -1142,7 +1142,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/cortex-ai-sentiment-iceberg/",
       "summary": "This is a guide for applying artificial intelligence on an Iceberg open data lakehouse",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Create a Route Optimization and Vehicle Route Plan Simulator",
@@ -1168,7 +1168,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/create-ai-agents-on-snowflake-with-lang-ai/",
       "summary": "Through this quickstart guide, you will set up an AI Agent running on Snowflake to set up recurring data analysis for your business teams.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Credit Card Fraud Detection using Snowflake ML Functions",
@@ -1271,7 +1271,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-apps-summit-lab-it/",
       "summary": "questo è un esempio di guida di Snowflake",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowflakeマーケットプレイス、Snowpark、Streamlitによるデータアプリケーションの構築",
@@ -1294,7 +1294,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-apps-summit-lab-kr/",
       "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started With Model Sharing Using Native Apps",
@@ -1318,7 +1318,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-collaboration-two-way/",
       "summary": "This is a Snowflake Guide on how to use Snowflake's Data Collaboration features to share an enrich data.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Deploying Pipelines with Snowflake and dbt labs",
@@ -1368,7 +1368,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python-it/",
       "summary": "Questa guida fornisce indicazioni dettagliate per creare pipeline di data engineering con Snowpark Python",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowpark Pythonによるデータエンジニアリングパイプライン",
@@ -1379,7 +1379,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python-ja/",
       "summary": "このガイドでは、Snowpark Pythonカテゴリーを使用してデータエンジニアリングパイプラインを構築する方法について詳細に説明します。",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowpark Python을 사용한 데이터 엔지니어링 파이프라인",
@@ -1390,7 +1390,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-engineering-pipelines-with-snowpark-python-kr/",
       "summary": "This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Streaming Data Integration with Snowflake",
@@ -1473,7 +1473,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-engineering-with-notebooks/",
       "summary": "This guide will provide step-by-step details for building data engineering pipelines with Snowflake Notebooks",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Data Engineering with Snowpark Python and dbt",
@@ -1497,7 +1497,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-engineering-with-snowpark-python-intro/",
       "summary": "This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "End-to-End Data Harmonization with Snowflake Cortex AI",
@@ -1545,7 +1545,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-products-data-mesh-dbt-cloud/",
       "summary": "Build Data Products and a Data Mesh with dbt platform",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Cloud-native Database Modeling with SqlDBM",
@@ -1581,7 +1581,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/dcdf-incremental-processing/",
       "summary": "Getting Started with DCDF Data Architecture Incremental Processing/Logical Partitions",
-      "lastUpdatedAt": "2025-11-02"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build Declarative Pipelines using Snowflake Dynamic Iceberg Tables",
@@ -1618,7 +1618,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/deploying-custom-models-to-snowflake-model-registry/",
       "summary": "Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Deploying Models from AzureML and Sagemaker to Snowpark ML",
@@ -1710,7 +1710,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/devops-dcm-dlsync-github/",
       "summary": "This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging DLSync and GitHub",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "DevOps: Database Change Management with schemachange and Azure DevOps",
@@ -1721,7 +1721,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/devops-dcm-schemachange-azure-devops/",
       "summary": "This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Azure DevOps",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "DevOps: Database Change Management with schemachange and GitHub",
@@ -1732,7 +1732,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/devops-dcm-schemachange-github/",
       "summary": "This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and GitHub",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "DevOps: Database Change Management with schemachange and Jenkins",
@@ -1743,7 +1743,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/devops-dcm-schemachange-jenkins/",
       "summary": "This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Jenkins",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "DevOps: Database Change Management with Terraform and GitHub",
@@ -1754,7 +1754,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/devops-dcm-terraform-github/",
       "summary": "This quickstart will provide step-by-step details for getting started with DevOps on Snowflake by leveraging Terraform and GitHub",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Document AI Invoice Reconciliation",
@@ -1817,7 +1817,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/e2emigration-sql-and-data/",
       "summary": "End-to-End Migration to Snowflake: SQL Code Conversion and Data Migration",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "End-to-End Analytics with Snowflake and Power BI",
@@ -1829,7 +1829,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/end-to-end-analytics-with-snowflake-and-power-bi/",
       "summary": "Building end-to-end analytical solutions with Snowflake and Power BI",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build an End-to-End ML Workflow in Snowflake",
@@ -1843,7 +1843,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/end-to-end-ml-workflow/",
       "summary": "Learn how to build an end-to-end machine learning workflow in Snowflake, from feature engineering to model deployment and monitoring.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "End to End Model Development with Hex and Snowpark",
@@ -1869,7 +1869,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/end-to-end-nlp-and-ml-using-snowpark-python-and-streamlit-sentiments-analysis/",
       "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "End-to-End Migration to Snowflake in Action: Data and Pipelines",
@@ -1881,7 +1881,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/end2endmigration/",
       "summary": "End to End SQLServer Migration",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Enhancing Customer Experiences using Cortex Fine Tuning",
@@ -1931,7 +1931,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/extracting-insights-from-multimodal-customer-service-data/",
       "summary": "Snowflake Cortex AI SQL: Extracting Insights from Multimodal Customer Service Data",
-      "lastUpdatedAt": "2025-11-04"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Extracting Insights from Video with Multimodal AI Analysis",
@@ -1984,7 +1984,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/fine-tune-an-llm-in-snowpark-container-services-with-autotrain/",
       "summary": "Fine-Tuning an LLM in Snowpark Container Services with AutoTrain",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Serverless LLM Fine-tuning using Snowflake Cortex AI",
@@ -1999,7 +1999,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/finetuning-llm-using-snowflake-cortex-ai/",
       "summary": "This guide provides the instructions for fine-tuning large language models using Snowflake Cortex AI.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build Your First Machine Learning Project",
@@ -2027,7 +2027,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/fivetran-vineyard-assistant-chatbot/",
       "summary": "Build a RAG-based GenAI Streamlit application with Fivetran and Snowflake using structured data.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap",
@@ -2077,7 +2077,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/geo-analysis-geometry/",
       "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Geospatial Analytics for Telecom with Snowflake and Carto",
@@ -2091,7 +2091,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/geo-analysis-telecom/",
       "summary": "Geospatial Analysis for Telecom with Snowflake and Carto",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Geospatial Analytics, AI and ML using Snowflake",
@@ -2103,7 +2103,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/geo-for-machine-learning/",
       "summary": "Cortex, Geospatial and Streamlit features for Machine Learning use cases",
-      "lastUpdatedAt": "2025-11-14"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Performance Optimization Techniques for Geospatial queries",
@@ -2115,7 +2115,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/geo-performance/",
       "summary": "Performance optimization techniques for Geo",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Geocoding Address Data with Mapbox",
@@ -2141,7 +2141,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/geospatial-analytics-with-snowflake-and-carto-ny/",
       "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Cortex Knowledge Extensions on Snowflake Marketplace",
@@ -2204,7 +2204,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-django-snowflake/",
       "summary": "How to get started with Snowflake as a backend for Django.",
-      "lastUpdatedAt": "2025-10-25"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started With External Functions on AWS",
@@ -2216,7 +2216,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-external-functions-aws/",
       "summary": "Getting Started With External Functions on AWS",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started With External Functions on Azure",
@@ -2240,7 +2240,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-iceberg-tables/",
       "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with the Snowflake Python API",
@@ -2252,7 +2252,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-snowflake-python-api/",
       "summary": "Learn how to get started with Snowflake's Python API to manage Snowflake objects and tasks.",
-      "lastUpdatedAt": "2025-10-25"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Machine Learning with Snowpark Python: Credit Card Approval Prediction",
@@ -2267,7 +2267,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-snowpark-machine-learning/",
       "summary": "Machine Learning with Snowpark Python for Credit Card Approval Prediction",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build a ReactJS app with ThoughtSpot and Snowflake",
@@ -2338,7 +2338,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-anthropic-on-snowflake-cortex/",
       "summary": "Getting Started with Anthropic on Snowflake Cortex",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Audio Sentiment Analysis using Snowflake Notebooks",
@@ -2351,7 +2351,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks/",
       "summary": "Getting Started with Audio Sentiment Analysis using Snowflake Notebooks",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with AutoML, OpenFE and AutoGluon",
@@ -2524,7 +2524,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-es/",
       "summary": "Introducción a la ingeniería de datos y al ML con Snowpark para Python",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Premiers pas avec le Data Engineering et le Machine Learning à l’aide de Snowpark for Python",
@@ -2536,7 +2536,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-fr/",
       "summary": "Premiers pas avec le Data Engineering et le Machine Learning à l’aide de Snowpark for Python",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Guida introduttiva al data engineering e al machine learning con Snowpark per Python",
@@ -2548,7 +2548,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-it/",
       "summary": "Getting Started with Data Engineering and ML using Snowpark for Python",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowpark for Pythonを使用したデータエンジニアリングとMLの入門",
@@ -2572,7 +2572,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-kr/",
       "summary": "Getting Started with Data Engineering and ML using Snowpark for Python",
-      "lastUpdatedAt": "2025-11-10"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Introdução à engenharia de dados e ML com Snowpark para Python",
@@ -2584,7 +2584,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-dataengineering-ml-using-snowpark-python-ptr/",
       "summary": "Introdução à engenharia de dados e ML com Snowpark para Python",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Distributed Multi-Node and Multi GPU Audio Transcription with Snowflake ML Container Runtime",
@@ -2658,7 +2658,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-generative-ai-snowflake-external-functions/",
       "summary": "Getting Started with Generative AI in Snowflake and Streamlit",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Geospatial - Geography",
@@ -2671,7 +2671,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-geospatial-geography/",
       "summary": "Getting Started with Geospatial - Geography",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting started with GraphRAG and RelationalAI",
@@ -2684,7 +2684,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-graphrag-and-relationalai/",
       "summary": "This is a sample Snowflake Guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Horizon for Data Governance in Snowflake",
@@ -2698,7 +2698,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-horizon-for-data-governance-in-snowflake/",
       "summary": "This guide is used to demonstrate the capabilities of Horizon for Data Governance. The walk-through consists of being able to ingest and monitor data pipelines in your organization, how to actively govern data including lineage and masking, and how Horizon can help with monitoring data in Snowflake using Snowsight.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Hybrid Tables",
@@ -2810,7 +2810,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-multimodal-analysis-on-snowflake-cortex/",
       "summary": "Getting Started with Multimodal Analysis on Snowflake Cortex",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake Native Apps",
@@ -2823,7 +2823,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-native-apps/",
       "summary": "Follow this tutorial to get up and running with your first Snowflake Native Application",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with OCR and RAG with Snowflake Notebooks",
@@ -2831,7 +2831,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-ocr-and-rag-with-snowflake-notebooks/",
       "summary": "",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake Openflow for Change Data Capture from SQL Server",
@@ -2923,7 +2923,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-pii/",
       "summary": "Learn how to process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization",
@@ -3038,7 +3038,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake/",
       "summary": "This is a broad introduction of Snowflake and covers how to login, run queries, and load data.",
-      "lastUpdatedAt": "2025-11-10"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake Cortex Agents API and React",
@@ -3049,7 +3049,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-agents-api-and-react/",
       "summary": "Getting Started with Snowflake Agents API and React",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake and [Amazon Data Firehose](https://aws.amazon.com/firehose/) (ADF)",
@@ -3085,7 +3085,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cli/",
       "summary": "Getting Started with Snowflake CLI",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "A Data-Driven Methodology for Choosing a Snowflake Clustering Key",
@@ -3108,7 +3108,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-cortex-ai/",
       "summary": "This guide provides the instructions for getting started with Snowflake Cortex AI.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake ML Forecasting and Classification",
@@ -3132,7 +3132,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-devops/",
       "summary": "Getting Started with Snowflake DevOps",
-      "lastUpdatedAt": "2025-11-12"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake Intelligence",
@@ -3257,7 +3257,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-dataframe-api/",
       "summary": "Learn how to get started with Jupyter Notebooks on Snowpark and use the DataFrame API.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowpark for Machine Learning on SageMaker",
@@ -3306,7 +3306,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets/",
       "summary": "Getting Started with Data Engineering and ML using Snowpark for Python",
-      "lastUpdatedAt": "2025-11-02"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Introducción a Snowpark con las hojas de trabajo de Snowflake para Python",
@@ -3318,7 +3318,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-es/",
       "summary": "Introducción a la ingeniería de datos y al ML con Snowpark para Python",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake",
@@ -3330,7 +3330,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-in-snowflake-python-worksheets-fr/",
       "summary": "Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Guida introduttiva all’uso di Snowpark nei fogli di lavoro Snowflake Python",
@@ -3393,7 +3393,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-python-scikit/",
       "summary": "Getting Started with Snowpark for Python with Scikit-learn",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started With Snowpark Scala",
@@ -3484,7 +3484,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-synthetic-data-and-distillation-for-llms/",
       "summary": "This guide provides the instructions for creating custom LLMs with synthetic data and distillation using Snowflake Cortex AI.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake Task Graphs",
@@ -3544,7 +3544,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks/",
       "summary": "Getting Started with Time Series Analytics for IoT in Snowflake",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Time Travel",
@@ -3603,7 +3603,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-user-defined-sql-functions/",
       "summary": "Guide to getting started with user-defined SQL functions",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Google Analytics 4 (GA4) Using Snowflake and Sigma",
@@ -3739,7 +3739,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-performance-optimization-primer/",
       "summary": "Follow this primer to learn about basic hybrid table performance optimization techniques",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "A Image Recognition App in Snowflake using Snowpark Python, PyTorch, Streamlit and OpenAI",
@@ -3753,7 +3753,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/image-recognition-snowpark-pytorch-streamlit-openai/",
       "summary": "This guide provides the instructions for writing image recognition applications in Snowflake using Snowpark for Python, PyTorch, Streamlit and OpenAI.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Improving ad performance with Facebook's Conversion API (CAPI), using Hightouch and Snowflake.",
@@ -3800,7 +3800,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-microsoft-teams/",
       "summary": "This guide outlines the process for integrating Snowflake Cortex Agents with Microsoft Teams.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Cortex Agents and Slack",
@@ -3813,7 +3813,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-slack/",
       "summary": "This guide outlines the process for integrating Snowflake Cortex Agents with Slack.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Cortex Agents and Zoom",
@@ -3826,7 +3826,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-zoom/",
       "summary": "This guide outlines the process for integrating Snowflake Cortex Agents with Zoom Team Chat.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Using Fluentd to Send Log Files to Snowflake for Security and Observability Analytics",
@@ -3837,7 +3837,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/integrating-fluentd-with-snowflake/",
       "summary": "Walkthrough of using Fluentd to send system event logs to Snowflake as a part of a SIEM or log analysis workload",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native",
@@ -3849,7 +3849,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/integrating-tasty-bytes-location-recommendation-ml-model-into-the-react-native-data-app-it/",
       "summary": "Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合",
@@ -3885,7 +3885,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/internal-marketplace-intra-org-sharing/",
       "summary": "INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Intro to Data Engineering using Python in Snowflake",
@@ -3998,7 +3998,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/kgqa-using-relationalai/",
       "summary": "This guide shows how to use RelationalAI and Snowflake to create a system that lets a user ask and answer natural language questions on a custom knowledge graph.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Lead Scoring with ML-Powered Classification",
@@ -4037,7 +4037,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/leveraging-kumo-for-smarter-recommendations/",
       "summary": "This guide will provide step-by-step details for generating product recommendations and performing customer LTV calculation using Kumo in a Snowflake Native App",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Identity Resolution and Transcoding with LiveRamp and Snowflake",
@@ -4051,7 +4051,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/liveramp-identity-and-translation-quickstart/",
       "summary": "Identity Resolution and Transcoding with LiveRamp and Snowflake",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "LLM Assisted Medical Coding Extraction for Healthcare in Snowflake",
@@ -4075,7 +4075,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/load-integrate-data-matillion-data-productivity-cloud/",
       "summary": "Load and Integrate data from multiple sources using the Matillion Data Productivity Cloud",
-      "lastUpdatedAt": "2025-11-02"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Machine Learning with Snowpark Python",
@@ -4125,7 +4125,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/mcp-server-for-cortex-agents/",
       "summary": "This guide outlines the process for building an MCP Server for Cortex Agents.",
-      "lastUpdatedAt": "2025-11-17"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Medical Images Classification using PyTorch in Snowflake",
@@ -4155,7 +4155,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/mendix-data-loader/",
       "summary": "Guide on how to use the Mendix Data Loader to ingest data from Mendix applications via a published OData service.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Building an MFA Audit System with Streamlit in Snowflake Notebooks",
@@ -4168,7 +4168,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/mfa-audit/",
       "summary": "Learn how to build a Streamlit app in Snowflake Notebooks to audit and monitor Multi-Factor Authentication (MFA) status of users, with automated email notifications for non-compliant users.",
-      "lastUpdatedAt": "2025-11-04"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started with Snowflake ML Functions: Anomaly Detection & Forecasting",
@@ -4184,7 +4184,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/ml-forecasting-ad/",
       "summary": "Getting started with Anomaly Detection & Forecasting ML Functions",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics",
@@ -4207,7 +4207,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/modern-data-stack-with-fivetran-snowflake-salesforce/",
       "summary": "Lab to demonstrate the ease of use to ingest data from Salesforce to Snowflake through Fivetran with insights dashboard from dbt models.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Intro to Lakehouse Analytics on Snowflake",
@@ -4266,7 +4266,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/native-app-chairlift/",
       "summary": "This Snowflake Native App demonstrates how a chairlift manufacturer can build a native app to provide chairlift customers with analytics on purchased chairlifts by using sensor data collected from the chairlifts owned by the customer.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics",
@@ -4302,7 +4302,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/neo4j-patient-journey/",
       "summary": "How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake",
-      "lastUpdatedAt": "2025-11-19"
+      "lastUpdatedAt": "2025-11-20"
     },
     {
       "title": "Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics",
@@ -4460,7 +4460,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/process-modin-dataframe-with-cortex/",
       "summary": "Learn how to process data using Modin DataFrames with Snowflake Cortex AI capabilities for text classification, translation, sentiment analysis, and more.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Getting Started - Processing HL7 FHIR Messages with Snowflake",
@@ -4494,7 +4494,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/prompt-engineering-and-llm-evaluation/",
       "summary": "This guide provides instructions to perform prompt engineering on your LLM models and to build a streamlit app for evaluating LLM responses using human feedback",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tokenization in Snowflake Using Python UDFs (Python Camouflage)",
@@ -4741,7 +4741,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/security-dashboards-for-snowflake/",
       "summary": "Walkthrough of creating security dashboards for Snowflake based on Snowflake audit and config data",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce",
@@ -4765,7 +4765,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/servicenow-to-snowflake-connector/",
       "summary": "Step-by-step to set up Servicenow connector",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Setting up Snowflake Environments in Vertex AI",
@@ -4790,7 +4790,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/sf-esri-arcgis-locationservice/",
       "summary": "Calculate ISOChrone or ServiceArea using ArcGIS Location Services (API), natively in Snowflake.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowflake Public Data - SEC Tarrif Sentiment",
@@ -4827,7 +4827,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/snow-bear-leveraging-cortex-for-advanced-analytics/",
       "summary": "Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics",
-      "lastUpdatedAt": "2025-11-13"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Build and Secure Multi-Tenant Data Applications with Snowflake and Sigma",
@@ -4910,7 +4910,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/",
       "summary": "Learn how to create and query Snowflake Semantic Views to enhance AI-powered Business Intelligence and conversational analytics with a consistent, database-native semantic layer.",
-      "lastUpdatedAt": "2025-10-25"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "setup for AI-powered enrichment",
@@ -4948,7 +4948,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/",
       "summary": "Snowpark Python: Top Three Tips for Optimal Performance",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowpark Python: Top Tips for Optimal Performance",
@@ -4961,7 +4961,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/snowpark-python-top-tips-for-optimal-performance/",
       "summary": "Snowpark Python: Key Tips for Optimal Performance",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowplow Digital Analytics with Snowflake",
@@ -4974,7 +4974,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/snowplow-web-analytics/",
       "summary": "Set up real-time event tracking and analytics using Snowplow and Snowflake",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Data Quality Testing with Soda",
@@ -5025,7 +5025,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/streamlit-dashboard/",
       "summary": "Learn how to create an interactive YouTube analytics dashboard using Streamlit within Snowflake Notebooks. This guide covers data generation, visualization, and user interaction to effectively communicate your data insights.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Snowflake Open Catalog Integration with StreamNative and Data Streaming in Apache Iceberg",
@@ -5039,7 +5039,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/streamnative-snowflake-open-catalog-integration/",
       "summary": "Use StreamNative to build a cost-effective Streaming Augmented Lakehouse, streaming Kafka messages directly to object storage in Iceberg format an connect to Snowflake Open Catalog.",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "StreamSets' Transformer for Snowflake: Hands on Lab",
@@ -5112,7 +5112,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-extracting-insights-with-docai/",
       "summary": "Walkthrough extracting data from PDF Inspection Reports using Document AI",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Introducción a Tasty Bytes",
@@ -5123,7 +5123,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-es/",
       "summary": "Esta es la introducción a la quickstart guide de base de datos de Tasty Bytes",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Présentation de Tasty Bytes",
@@ -5134,7 +5134,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-fr/",
       "summary": "Présentation de Tasty Bytes",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Introduzione a Tasty Bytes",
@@ -5145,7 +5145,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-it/",
       "summary": "This is the Tasty Bytes Introduction and Data Foundation Quickstart guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytesの紹介",
@@ -5156,7 +5156,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-ja/",
       "summary": "これはTasty Bytesの紹介とデータ基盤クイックスタートガイドです。",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes 소개",
@@ -5167,7 +5167,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-kr/",
       "summary": "This is the Tasty Bytes Introduction and Data Foundation Quickstart guide",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Introdução à Tasty Bytes",
@@ -5180,7 +5180,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-introduction-ptbr/",
       "summary": "Este é o quickstart guide “Introdução à Tasty Bytes e base de dados“",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - RAG Chatbot Using Cortex and Streamlit",
@@ -5204,7 +5204,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/",
       "summary": "Tasty Bytes - Snowpark 101 for Data Science Quickstart",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes – Snowpark 101 pour la Data Science",
@@ -5215,7 +5215,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-fr/",
       "summary": "Tasty Bytes – Snowpark 101 pour la Data Science",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - Introduzione a Snowpark per la data science",
@@ -5227,7 +5227,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-it/",
       "summary": "Quickstart Tasty Bytes - Introduzione a Snowpark per la data science",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - データサイエンスのためのSnowpark入門",
@@ -5252,7 +5252,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-kr/",
       "summary": "Tasty Bytes - Snowpark 101 for Data Science Quickstart",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes: introdução ao Snowpark para ciência de dados",
@@ -5264,7 +5264,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-ptbr/",
       "summary": "Tasty Bytes: introdução ao Snowpark para ciência de dados",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - Working with Iceberg Tables",
@@ -5288,7 +5288,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-es/",
       "summary": "Tasty Bytes - De cero a Snowflake - Colaboración",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes – Débuter avec Snowflake – Collaboration",
@@ -5299,7 +5299,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-fr/",
       "summary": "Tasty Bytes – Débuter avec Snowflake – Collaboration",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - Da zero a Snowflake - Collaborazione",
@@ -5310,7 +5310,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-it/",
       "summary": "Quickstart Tasty Bytes - Da zero a Snowflake - Collaborazione",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - ゼロからのSnowflake - コラボレーション",
@@ -5321,7 +5321,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-ja/",
       "summary": "Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタート",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - 제로부터 Snowflake까지 - 협업",
@@ -5332,7 +5332,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-kr/",
       "summary": "Tasty Bytes - Zero to Snowflake - Collaboration Quickstart",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes: do zero ao Snowflake - colaboração",
@@ -5343,7 +5343,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration-ptbr/",
       "summary": "Quickstart Tasty Bytes: do zero ao Snowflake - colaboração",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - De cero a Snowflake - Datos semiestructurados",
@@ -5376,7 +5376,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-it/",
       "summary": "Quickstart Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati categorie: Tasty-Bytes, Guida-introduttiva, In-evidenza",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - ゼロからのSnowflake - 半構造化データ",
@@ -5387,7 +5387,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ja/",
       "summary": "Tasty Bytes - ゼロからのSnowflake - 半構造化データクックスタート",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - 제로부터 Snowflake까지 - 반정형 데이터",
@@ -5398,7 +5398,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-kr/",
       "summary": "Tasty Bytes - Zero to Snowflake - Semi-Structured Data Quickstart",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes: do zero ao Snowflake - dados semiestruturados",
@@ -5409,7 +5409,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ptbr/",
       "summary": "Quickstart Tasty Bytes: do zero ao Snowflake - dados semiestruturados",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - De cero a Snowflake - Transformación",
@@ -5421,7 +5421,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-es/",
       "summary": "Tasty Bytes - De cero a Snowflake - Transformación",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes – Débuter avec Snowflake – Transformation",
@@ -5433,7 +5433,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-fr/",
       "summary": "Tasty Bytes – Débuter avec Snowflake – Transformation",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - Da zero a Snowflake - Trasformazione",
@@ -5445,7 +5445,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-it/",
       "summary": "Quickstart Tasty Bytes - Da zero a Snowflake - Trasformazione",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - ゼロからのSnowflake - 変換",
@@ -5457,7 +5457,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ja/",
       "summary": "Tasty Bytes - ゼロからのSnowflake - 変換クイックスタート",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes - 제로부터 Snowflake까지 - 변환",
@@ -5469,7 +5469,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-kr/",
       "summary": "Tasty Bytes - Zero to Snowflake - Transformation Quickstart",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tasty Bytes: do zero ao Snowflake - transformação",
@@ -5481,7 +5481,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ptbr/",
       "summary": "Quickstart Tasty Bytes: do zero ao Snowflake - transformação",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Collect and Activate Customer Data Using Tealium and Snowpipe Streaming",
@@ -5505,7 +5505,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/terraforming-snowflake/",
       "summary": "Learn how to manage Snowflake using Terraform",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Text Embedding As A Snowpark Python UDF",
@@ -5516,7 +5516,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/text-embedding-as-snowpark-python-udf/",
       "summary": "Text Embedding As A Snowpark Python UDF",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Tidymodel Prediction Workflows Inside Snowflake with Orbital",
@@ -5553,7 +5553,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/transform-your-data-with-coalesce/",
       "summary": "Accelerate Transformations with Coalesce and Snowflake",
-      "lastUpdatedAt": "2025-11-02"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "A Guide to Triggering Real-Time Notifications Using Dynamic Tables and Census Live Syncs",
@@ -5566,7 +5566,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/triggering-real-time-notifications-using-dynamic-tables-and-census-live-syncs/",
       "summary": "In this guide, you will learn how to set up a live sync between Census and Snowflake to move data to your activation platforms in real time.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Unlock Insights from Unstructured Data with Snowflake Cortex AI",
@@ -5577,7 +5577,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/unlock-insights-from-unstructured-data-with-snowflake-cortex-ai/",
       "summary": "Unlock Insights from Unstructured Data with Snowflake Cortex AI",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Geospatial Analysis of Precisely Datasets using Snowflake Notebooks and Streamlit",
@@ -5625,7 +5625,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/validate-your-customer-identity-model-with-identityqa/",
       "summary": "Use IdentityQA to validate your customer identity model",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Building a Real-Time Data Vault in Snowflake",
@@ -5648,7 +5648,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/vhol-fivetran/",
       "summary": "Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-22"
     },
     {
       "title": "Data-centric Approach to Machine Learning Using Snowflake and Amazon SageMaker Data Wrangler",
@@ -5689,7 +5689,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/viewing-location-data-on-an-interactive-map/",
       "summary": "This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-11-21"
     },
     {
       "title": "Visual Analytics Powered by Snowflake and Tableau",
@@ -5759,7 +5759,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework-cost-optimization-and-finops/",
       "summary": "The Cost Optimization Pillar focuses on integrating financial accountability and cost awareness throughout the cloud platform lifecycle.",
-      "lastUpdatedAt": "2025-11-04"
+      "lastUpdatedAt": "2025-11-24"
     },
     {
       "title": "Operational Excellence",
@@ -5837,7 +5837,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/zero-to-snowflake/",
       "summary": "Zero to Snowflake",
-      "lastUpdatedAt": "2025-11-14"
+      "lastUpdatedAt": "2025-11-22"
     }
   ]
 }
