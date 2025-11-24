@@ -43,7 +43,7 @@ You'll learn how to register entities and feature views, perform feature enginee
 <!-- ------------------------ -->
 ## Setup and Data Preparation
 
-This section covers environment setup, notebook upload, and loading the sample dataset for the feature store quickstart.
+This section covers environment setup, notebook upload, and loading the sample dataset for the feature store guide.
 
 ### Run the Setup Script
 
@@ -94,7 +94,7 @@ CREATE OR REPLACE WAREHOUSE FS_DEMO_WH
     AUTO_SUSPEND = 300
     AUTO_RESUME = TRUE
     INITIALLY_SUSPENDED = TRUE
-    COMMENT = 'Warehouse for Feature Store quickstart';
+    COMMENT = 'Warehouse for Feature Store demo';
 
 -- Create database and schema
 CREATE OR REPLACE DATABASE FEATURE_STORE_DEMO
@@ -185,7 +185,7 @@ The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
 
 ### Upload and Open Notebook
 
-Now that your environment is set up, import the quickstart notebook to Snowflake.
+Now that your environment is set up, import the guide notebook to Snowflake.
 
 ### Run the Notebook
 
@@ -597,9 +597,9 @@ print("Prediction from SPCS:", spcs_prediction)
 ```
 
 <!-- ------------------------ -->
-## Clean Up Quickstart Resources
+## Clean Up Guide Resources
 
-When you're finished with the quickstart, you can remove all created resources to avoid incurring costs.
+When you're finished with the guide, you can remove all created resources to avoid incurring costs.
 
 ### Run the Teardown Script
 
@@ -627,7 +627,7 @@ The teardown script will:
 - Drop the `FS_DEMO_ROLE`
 
 > NOTE:
-> This will permanently delete all data and resources created during the quickstart.
+> This will permanently delete all data and resources created during the guide.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
