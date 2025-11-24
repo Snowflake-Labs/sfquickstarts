@@ -2,12 +2,11 @@ author: Doris Lee, Dureti Shemsi
 language: en
 id: intro-to-online-feature-store-in-snowflake
 summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/dynamic-tables,snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake
-tags: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 
 # Introduction to Online Feature Store in Snowflake
 
@@ -124,6 +123,9 @@ GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES
 GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
 GRANT ALL PRIVILEGES ON FUTURE DYNAMIC TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
 GRANT ALL PRIVILEGES ON FUTURE STAGES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE FUNCTIONS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE IMAGE REPOSITORIES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE SERVICES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SECTION 3: NETWORK RULES AND EXTERNAL ACCESS FOR NOTEBOOKS
@@ -155,11 +157,10 @@ USE ROLE FS_DEMO_ROLE;
 
 -- Create compute pool for SPCS model serving
 CREATE COMPUTE POOL IF NOT EXISTS trip_eta_prediction_pool
-    MIN_NODES = 1
-    MAX_NODES = 1
-    INSTANCE_FAMILY = 'CPU_X64_M'
+    MIN_NODES = 3
+    MAX_NODES = 3
+    INSTANCE_FAMILY = 'CPU_X64_L'
     AUTO_RESUME = TRUE
-    AUTO_SUSPEND_SECS = 300
     COMMENT = 'Compute pool for taxi ETA prediction service';
 
 -- Grant usage on compute pool
@@ -188,7 +189,7 @@ Now that your environment is set up, import the demo notebook to Snowflake.
 
 ### Run the Notebook
 
-Download the notebook from [this link](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/notebooks/0_start_here.ipynb)
+[Download the notebook](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/notebooks/0_start_here.ipynb) from the GitHub repository.
 
 1. Change role to `FS_DEMO_ROLE`
 2. Navigate to **Projects** > **Notebooks** in Snowsight
@@ -587,6 +588,32 @@ spcs_prediction = latest_model.run(
 )
 print("Prediction from SPCS:", spcs_prediction)
 ```
+
+<!-- ------------------------ -->
+## Clean Up Demo Resources
+
+When you're finished with the demo, you can remove all created resources to avoid incurring costs.
+
+### Run the Teardown Script
+
+[Download the teardown script](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/scripts/teardown.sql) from the GitHub repository.
+
+1. Open Snowflake and navigate to **Projects** > **Workspaces**
+2. Create a new SQL file
+3. Copy and paste the teardown script
+4. Run the entire script as **ACCOUNTADMIN**
+
+The teardown script will:
+- Stop all running services
+- Drop the compute pool
+- Drop the external access integration
+- Drop the database (including all tables, views, and dynamic tables)
+- Drop the warehouse
+- Revoke all account-level permissions
+- Drop the `FS_DEMO_ROLE`
+
+> NOTE:
+> This will permanently delete all data and resources created during the demo.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
