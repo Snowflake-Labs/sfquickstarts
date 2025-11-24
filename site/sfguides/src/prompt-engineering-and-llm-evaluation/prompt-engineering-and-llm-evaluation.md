@@ -86,7 +86,7 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 Sign up for [Snowflake Free Trial](https://signup.snowflake.com/?utm_cta=quickstarts_) and create an account. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, streamlit app and more.
 
-> aside positive
+> 
 > IMPORTANT:
 >
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -223,7 +223,7 @@ SELECT *
 FROM PRODUCT;
 ```
 
-> aside positive
+> 
 > IMPORTANT:
 >
 > - If you used a different name for the database while getting weather data from the marketplace, be sure to update scripts and code in the following sections accordingly.

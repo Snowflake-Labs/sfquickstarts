@@ -132,7 +132,7 @@ Please follow the steps below to acquire this listing in your Snowflake Account.
 - Adjust Database name to:'TB_WEATHERSOURCE'
 - Grant access to: 'PUBLIC'
 
->aside positive
+> 
 >Weather Source is a leading provider of global weather and climate data and its OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries.
 >
 
@@ -260,7 +260,7 @@ $$
 $$;
 ```
 
->aside positive
+> 
 >When you create a UDF, you specify a handler whose code is written in one of the supported languages. Depending on the handler’s language, you can either include the handler source code in-line with the CREATE FUNCTION statement or reference the handler’s location from CREATE FUNCTION, where the handler is precompiled or source code on a stage.
 >
 

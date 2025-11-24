@@ -92,7 +92,7 @@ Per questo quickstart utilizzerai l’interfaccia web di Snowflake nota come Sno
 ### Panoramica
 Dopo avere completato correttamente la configurazione di Tasty Bytes, possiamo esplorare il database, i ruoli e i warehouse che abbiamo creato. 
 
->aside negative **Nota:** all’interno del foglio di lavoro *Tasty Bytes - Setup* che hai creato nella sezione precedente, scorri fino in fondo e copia, incolla ed esegui il codice SQL incluso in ciascuno dei seguenti passaggi.
+> 
 >
 
 ### Passaggio 1 - Esplorare il database Tasty Bytes

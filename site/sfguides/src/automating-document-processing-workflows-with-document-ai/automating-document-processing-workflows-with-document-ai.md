@@ -36,7 +36,7 @@ Additionally, you can create your own customized, fine-tuned Document AI model t
 ### What You’ll Build 
 You will use documents from the [Contract Understanding Atticus Dataset (CUAD) v1.](https://doi.org/10.5281/zenodo.4595826) in order to extract values and verifying that clauses exists in co-branding agreements. The QuickStart [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai) includes the documents we are going to use.
 
-> aside positive
+> 
 >
 > **Citation**  
 > The Atticus Project. (2021). Contract Understanding Atticus Dataset (CUAD) v1. https://doi.org/10.5281/zenodo.4595826
@@ -137,7 +137,7 @@ In Snowsight make sure you have changed the role to DOC_AI_QS_ROLE, you can see 
 
 ### Step 2: Upload documents
 In this step we wil upload example documents that we will use to ask value extraction questions against, so we can verify that the questionswork.  
-> aside positive
+> 
     >
     >The recommendation is to use at least 20 documents, but in this qucikstart we will only use 5 to speed up the review step.  
 1. Click on **Upload documents** to start the process of uploading documents  
@@ -169,7 +169,7 @@ In this step we will define the questions for extracting values and the name of 
 5. If a value is missing or for example it is a **No** for a value, you can verify if it is correct by searching for the term in the document  
 ![Search Icon](assets/search_icon.png)  
 ![Search term](assets/term_search.png)  
-> aside positive
+> 
     >
     >For some of the questions multiple answers might be correct.
 6. Step through all documents and verify the values and for the document **EdietsComInc_20001030_10QSB_EX-10.4_2606646_EX-10.4_Co-Branding Agreement.pdf** the **payment_terms** is not correct since it is a schedule, so it should be cleared which is done by clicking on **...** next to the value and choose **Clear answer**  

@@ -175,7 +175,7 @@ CALL SPARK_PUBLIC.EXECUTE_EXTERNAL_FUNCTIONS('SPARK_INTEG');
 
 ### 5. Identify the Spark folder to be synchronized.
 
-> aside negative
+> 
 > 
 > Connect to one folder only. Calling SETUP on another folder will erase the UDFs created from the old folder.
 
@@ -192,7 +192,7 @@ CALL SPARK_PUBLIC.SETUP('{SPARK_FOLDER}', '{SPARK_KEY}', 'SYNTHETICKEY', CURRENT
 
 ### Synchronize the folder regularly to maintain the updated services.
 
-> aside positive
+> 
 > 
 >  This command can be triggered multiple times to make sure Snowflake functions process data via the latest Spark models. Otherwise, the automatic synchronization mechanism built into this connector will update the Snowflake functions to the latest Spark service every 3 minutes.
 
@@ -202,7 +202,7 @@ CALL SPARK_PUBLIC.SYNC();
 
 ### Synchronize multiple versions of a single Spark service.
 
-> aside negative
+> 
 > 
 > The automatic synchronization mechanism mentioned before doesn't keep track of all versions available in Spark. The following command needs to be triggered manually to make sure all available versions are imported into the Snowflake environment.
 

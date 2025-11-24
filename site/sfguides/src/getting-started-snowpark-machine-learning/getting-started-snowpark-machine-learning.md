@@ -95,7 +95,7 @@ jupyter notebook
 ### Snowpark with your own Environment
 If you decide to bring your own Python environment, please make sure to install all of the required packages from the conda_env.yml
 
-> aside positive
+> 
 > There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
 > Please refer to the Snowpark documentation to solve this issue:
 > [Issue with running Snowpark Python on Apple M1 chips](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites)

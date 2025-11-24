@@ -62,7 +62,7 @@ Open a browser window and enter the URL of your Snowflake 30-day trial environme
 ## The Snowflake ​User Interface
 
 
-> aside negative
+> 
 > 
 >  **About the screenshots, sample code, and environment**
 Screenshots in this lab depict examples; results may vary slightly from what you see when you complete the exercises.
@@ -106,7 +106,7 @@ The bottom pane displays the results of queries and other operations. Also inclu
 
 The various panes on this page can be resized by adjusting their sliders. If you need more room in the worksheet, collapse the database objects browser in the left panel. Many of the screenshots in this guide keep this panel closed.
 
-> aside negative
+> 
 > 
 >  **Worksheets vs the UI**
 Most of the exercises in this lab are executed using pre-written SQL within this worksheet to save time. These tasks can also be done via the UI, but would require navigating back-and-forth between multiple UI tabs.
@@ -175,7 +175,7 @@ Clicking on your username in the bottom right of the UI allows you to change you
 
 ![user preferences dropdown](assets/3UIStory_14.png)
 
-> aside negative
+> 
 > 
 >  **SYSADMIN**
 The `SYSADMIN` (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account.
@@ -205,7 +205,7 @@ We are using company metadata developed from the Securities and Exchange Commiss
 
 <!-- victoria image of the CPG data -->
 
-> aside negative
+> 
 > 
 > **Free Datasets from Snowflake Public Data direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
 
@@ -239,7 +239,7 @@ Next, in the drop-down for the database, select the following context settings:
 
 ![context database settings](assets/Choose_Schema.png)
 
-> aside negative
+> 
 > 
 >  **Data Definition Language (DDL) operations are free!**
 All the DDL operations we have done so far do not require compute resources, so we can create all our objects for free.
@@ -264,7 +264,7 @@ exchange_code variant,
 permid_quote_id variant);
 ```
 
-> aside negative
+> 
 > 
 >  **Many Options to Run Commands.**
 SQL commands can be executed through the UI, via the **Worksheets** tab, using our SnowSQL command line tool, with a SQL editor of your choice via ODBC/JDBC, or through our other connectors (Python, Spark, etc.).
@@ -288,7 +288,7 @@ Click `COMPANY_METADATA` and the **Columns** tab to see the table structure you 
 
 We are working with structured, comma-delimited data that has already been staged in a public, external S3 bucket. Before we can use this data, we first need to create a _stage_ that specifies the location of our external bucket.
 
-> aside positive
+> 
 > 
 >  For this lab, we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
@@ -304,7 +304,7 @@ In the `Create Stage` dialog that opens, replace the following values in the SQL
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
 Also ensure you have removed 'credentials = (...)' statement which is not required. You can also comment it out like the picture below by using '--'. The create stage command should resemble the below picture or not include the 3rd line.
 
-> aside positive
+> 
 > 
 >  The S3 bucket for this lab is public so you can leave the credentials options in the statement empty. In a real-world scenario, the bucket used for an external stage would likely require key information.
 
@@ -371,7 +371,7 @@ Click the row of the `COMPUTE_WH` warehouse. Then click the **[...]** in the upp
 
 Click **Edit** to walk through the options of this warehouse and learn some of Snowflake's unique functionality.
 
-> aside positive
+> 
 > 
 >  If this account isn't using Snowflake Enterprise Edition (or higher), you will not see the **Mode** or **Clusters** options shown in the screenshot below. The multi-cluster warehouses feature is not used in this lab, but we will discuss it as a key capability of Snowflake.
 
@@ -385,7 +385,7 @@ Click **Edit** to walk through the options of this warehouse and learn some of S
 
 - Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources. Additionally, there is an option to change the Warehouse type from Standard to Snowpark-optimized. Snowpark-optmized warehouses provide 16x memory per node and are recommended for workloads that have large memory requirements such as ML training use cases using a stored procedure on a single virtual warehouse node. Leave this type as Standard
 
-> aside negative
+> 
 > 
 >  **Snowflake Compute vs Other Data Warehouses**
 Many of the virtual warehouse and compute capabilities we just covered, such as the ability to create, scale up, scale out, and auto-suspend/resume virtual warehouses are easy to use in Snowflake and can be done in seconds. For on-premise data warehouses, these capabilities are much more difficult, if not impossible, as they require significant physical hardware, over-provisioning of hardware for workload spikes, and significant configuration work, as well as additional challenges. Even other cloud-based data warehouses cannot scale up and out like Snowflake without significantly more configuration work and time.
@@ -478,7 +478,7 @@ Click the **Create Warehouse** button to create the warehouse.
 ## Loading Semi-Structured Data into Snowflake: JSONs
 
 
-> aside positive
+> 
 > 
 >  This section requires loading additional data and, therefore, provides a review of data loading while also introducing loading semi-structured data.
 
@@ -493,14 +493,14 @@ The JSON data consists of SEC filings provided by *Snowflake Public Data*, detai
 
 _(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with the semi-structured JSON file to learn how to load structured data into Snowflake.)_
 
-> aside negative
+> 
 > 
 >  **SEMI-STRUCTURED DATA**
 Snowflake can easily load and query semi-structured data such as JSON, Parquet, or Avro without transformation. This is a key Snowflake feature because an increasing amount of business-relevant data being generated today is semi-structured, and many traditional data warehouses cannot easily load and query such data. Snowflake makes it easy!
 
 ### Create a New Database and Table for the Data
 
-> aside positive
+> 
 > 
 >  **Executing Multiple Commands** Remember that you need to execute each command individually. However, you can execute them in sequence together by selecting all of the commands and then clicking the **Play/Run** button (or using the keyboard shortcut).
 
@@ -514,7 +514,7 @@ CREATE TABLE sec_filings_attributes (v variant);
 
 Note that Snowflake has a special data type called `VARIANT` that allows storing the entire JSON object as a single row and querying the object directly.
 
-> aside negative
+> 
 > 
 >  **Semi-Structured Data Magic**
 The `VARIANT` data type allows Snowflake to ingest semi-structured data without having to predefine the schema.
@@ -576,7 +576,7 @@ To close the display in the panel and display the query details again, click the
 
 Next, let's look at how Snowflake allows us to create a view and also query the JSON data directly using SQL.
 
-> aside negative
+> 
 > 
 >  **Views & Materialized Views**
 A view allows the result of a query to be accessed as if it were a table. Views can help present data to end users in a cleaner manner, limit what end users can view in a source table, and write more modular SQL.
@@ -676,7 +676,7 @@ Next:
 
 That's it! You have now successfully subscribed to the Snowflake Public Data (Free) from Snowflake Public Data, which is updated regularly with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
 
-> aside positive
+> 
 > 
 > To learn more about how to use the new worksheet interface, go to the [Snowsight Docs](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#using-snowsight).
 
@@ -687,7 +687,7 @@ That's it! You have now successfully subscribed to the Snowflake Public Data (Fr
 
 In the previous exercises, we loaded data into two tables using Snowflake's `COPY` bulk loader command and the `COMPUTE_WH` virtual warehouse. Now we are going to take on the role of the analytics users at our company who need to query data in those tables using the worksheet and the second warehouse `ANALYTICS_WH`.
 
-> aside negative
+> 
 > 
 >  **Real World Roles and Querying**
 Within a real company, analytics users would likely have a different role than `SYSADMIN`. To keep the lab simple, we are going to stay with the `SYSADMIN` role for this section. Additionally, querying would typically be done with a business intelligence product like Tableau, Looker, PowerBI, etc. For more advanced analytics, data science tools like Datarobot, Dataiku, AWS Sagemaker or many others can query Snowflake. Any technology that leverages JDBC/ODBC, Spark, Python, or any of the other supported programmatic interfaces can run analytics on the data in Snowflake. To keep this lab simple, all queries are being executed via the Snowflake worksheet.
@@ -731,7 +731,7 @@ WHERE ts.variable_name = 'Post-Market Close';
 
 ![post-market close query results](assets/6Query_3.png)
 
-> aside positive
+> 
 > 
 >  If you have defined a particular database in the worksheet and want to use a table from a different database, you must fully qualify the reference to the other table by providing its database and schema name.
 
@@ -781,7 +781,7 @@ Snowflake allows you to create clones, also known as "zero-copy clones" of table
 
 _A popular use case for zero-copy cloning is to clone a production environment for use by Development & Testing teams to test and experiment without adversely impacting the production environment and eliminating the need to set up and manage two separate environments._
 
-> aside negative
+> 
 > 
 >  **Zero-Copy Cloning**
 A massive benefit of zero-copy cloning is that the underlying data is not copied. Only the metadata and pointers to the underlying data change. Hence, clones are “zero-copy" and storage requirements are not doubled when the data is cloned. Most data warehouses cannot do this, but for Snowflake it is easy!
@@ -954,7 +954,7 @@ In this section, we will explore aspects of Snowflake's access control security 
 
 Continuing with the lab story, let's assume a junior DBA has joined our internal analytics team, and we want to create a new role for them with less privileges than the system-defined, default role of `SYSADMIN`.
 
-> aside negative
+> 
 > 
 >  **Role-Based Access Control**
 Snowflake offers very powerful and granular access control that dictates the objects and functionality a user can access, as well as the level of access they have. For more details, check out the [Snowflake documentation](https://docs.snowflake.com/user-guide/security-access-control-overview).
@@ -981,7 +981,7 @@ CREATE ROLE junior_dba;
 GRANT ROLE junior_dba TO USER YOUR_USERNAME_GOES_HERE;
 ```
 
-> aside positive
+> 
 > 
 >  If you try to perform this operation while in a role such as `SYSADMIN`, it would fail due to insufficient privileges. By default (and design), the `SYSADMIN` role cannot create new roles or users.
 
@@ -1036,7 +1036,7 @@ First, click the **Home** icon in the top left corner of the worksheet. Then, in
 
 ![switch UI role](assets/9Role_4.png)
 
-> aside negative
+> 
 > 
 >  **Roles in User Preference vs Worksheet**
 Why did we use the user preference menu to change the role instead of the worksheet? The UI session and each worksheet have their own separate roles. The UI session role controls the elements you can see and access in the UI, whereas the worksheet role controls only the objects and actions you can access within the role.
@@ -1081,7 +1081,7 @@ With secure data sharing:
 - Providers can establish revocable, fine-grained access to shares.
 - Data sharing is simple and safe, especially compared to older data sharing methods, which were often manual and insecure, such as transferring large `.csv` files across the internet.
 
-> aside positive
+> 
 > 
 >  **Cross-region & cross-cloud data sharing** To share data across regions or cloud platforms, you must set up replication. This is outside the scope of this lab, but more information is available in [this Snowflake article](/trending/what-is-data-replication).
 

@@ -77,7 +77,7 @@ LS @MULTIMODAL_ANALYSIS.MEDIA.AUDIO;
 
 You should see your uploaded files listed with their sizes.
 
-> aside positive
+> 
 > TIP: For best results, ensure your media files are:
 > **Images:**
 > - Clear and well-lit

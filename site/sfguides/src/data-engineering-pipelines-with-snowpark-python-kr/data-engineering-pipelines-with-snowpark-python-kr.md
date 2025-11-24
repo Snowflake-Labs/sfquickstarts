@@ -23,7 +23,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 마음의 준비를 하십시오!
 
-> aside negative
+> 
 > 
 > **참고** - 2023년 2월 1일 기준으로 [Snowflake Visual Studio Code 확장 프로그램](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) 및 [SnowCLI 도구](https://github.com/Snowflake-Labs/snowcli)는 아직 미리 보기 단계에 있습니다.
 
@@ -399,7 +399,7 @@ snow function execute -f "fahrenheit_to_celsius_udf(35)"
 
 [SnowCLI](https://github.com/Snowflake-Labs/snowcli) 도구는 개발자를 위한 명령줄 도구이며 명령줄에서 `snow`로 실행됩니다.
 
-> aside negative **참고** - SnowCLI 도구는 [SnowSQL](https://docs.snowflake.com/ko/user-guide/snowsql.html) 명령줄 도구와 다릅니다. SnowSQL 명령줄 도구는 SQL 쿼리를 실행하고 모든 DDL 및 DML 작업을 수행하기 위해 Snowflake와 연결하기 위한 클라이언트이며 명령줄에서 `snowsql`로 실행됩니다.
+> 
 
 SnowCLI는 다음 Snowflake 객체의 개발 및 배포를 간소화합니다.
 
@@ -418,7 +418,7 @@ SnowCLI는 다음 Snowflake 객체의 개발 및 배포를 간소화합니다.
 
 이렇게 하면 Python 애플리케이션을 해당하는 Snowflake 데이터베이스 객체로 만드는 것을 걱정하지 않고 개발 및 테스트할 수 있습니다.
 
-> aside negative
+> 
 > 
 > **참고** - 2023년 2월 1일 기준으로 SnowCLI 도구는 아직 미리 보기 단계에 있습니다.
 
@@ -824,7 +824,7 @@ GitHub Actions 워크플로우를 Snowflake 계정과 연결하려면 Snowflake 
 | SNOWSQL_WAREHOUSE | HOL_WH |
 | SNOWSQL_DATABASE | HOL_DB |
 
-> aside positive
+> 
 > 
 > **팁** - SNOWSQL_ACCOUNT에서 계정 이름을 만드는 방법에 대한 상세 정보는 [Snowflake Python 커넥터 설치 가이드](https://docs.snowflake.com/ko/user-guide/python-connector-install.html#step-2-verify-your-installation)의 계정 이름을 다룬 부분에서 확인하십시오.
 
@@ -832,7 +832,7 @@ GitHub Actions 워크플로우를 Snowflake 계정과 연결하려면 Snowflake 
 
 ![assets/github-actions-secrets.png](assets/github-actions-secrets.png)
 
-> aside positive
+> 
 > 
 > **팁** - 더 좋은 비밀 관리 솔루션을 원한다면 [GitHub Actions 환경](https://docs.github.com/en/actions/reference/environments)을 활용할 수 있습니다. 환경을 통해 비밀을 그룹으로 묶고 각 환경의 보호 규칙을 정의할 수 있습니다.
 

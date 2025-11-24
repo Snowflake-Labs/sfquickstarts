@@ -108,7 +108,7 @@ Each category includes detailed descriptions to ensure accurate AI classificatio
 
 After processing, query the transcription_results table to see all analyzed calls with transcriptions, translations, sentiments, categories, and summaries. The Notebook includes cleanup steps to drop temporary tables.
 
-> aside positive
+> 
 > TROUBLESHOOTING: If transcription quality is poor, check:
 > - Audio file quality and clarity
 > - Background noise levels
