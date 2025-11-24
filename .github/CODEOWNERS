@@ -2,11 +2,11 @@
 # the repo. Unless a later match takes precedence,
 # these users will be requested for
 # review when someone opens a pull request.
-*       @sfc-gh-kkomail @sfc-gh-annafilippova @rsafdar44
+# *       @sfc-gh-kkomail @sfc-gh-annafilippova @sfc-gh-ridasafdar
 
 
 # Used in Northstar Workshops
-site/sfguides/src/getting-started-with-snowpipe/ @northstar-workshop-reviewers
-site/sfguides/src/getting-started-with-cortex-analyst/ @northstar-workshop-reviewers
-site/sfguides/src/customer-reviews-analytics-using-snowflake-cortex/ @northstar-workshop-reviewers
-site/sfguides/src/snowflake-northstar-data-engineering/ @northstar-workshop-reviewers
+site/sfguides/src/getting-started-with-snowpipe/ @snowflake-labs/northstar-workshop-reviewers
+site/sfguides/src/getting-started-with-cortex-analyst/ @snowflake-labs/northstar-workshop-reviewers
+site/sfguides/src/customer-reviews-analytics-using-snowflake-cortex/ @snowflake-labs/northstar-workshop-reviewers
+site/sfguides/src/snowflake-northstar-data-engineering/ @snowflake-labs/northstar-workshop-reviewers
