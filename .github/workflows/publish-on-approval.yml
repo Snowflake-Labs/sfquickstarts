@@ -2,8 +2,7 @@ name: Publish to AEM on PR Approval (Prod)
 
 on:
   push:
-    branches: [master, manifest-cleanup]
-  workflow_dispatch:  # Allows manual triggering from GitHub UI
+    branches: [master]
 
 jobs:
   publish:
