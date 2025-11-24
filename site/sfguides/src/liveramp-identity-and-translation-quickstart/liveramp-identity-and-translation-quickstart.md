@@ -49,7 +49,7 @@ LiveRamp has a [video](https://www.youtube.com/watch?v=RN7k4TNyfaQ) describing a
 
 * LiveRamp will walk through the implementation and deliver keys that will be used in this Quickstart
 
-> aside positive
+> 
 > 
 >  \*\*Consider This: \*\*
 This Quickstart will focus on Personally Identifiable Information (PII) setup and resolution. Other identifiers are available and require slightly different configurations that are discussed [here](https://docs.liveramp.com/identity/en/perform-identity-resolution-in-snowflake.html)
@@ -129,7 +129,7 @@ You need to replace the following variable below
 * <output_table_name> - Table name only
 
 
-> aside positive
+> 
 > 
 >  \*\*Consider This: \*\*
 When executing PII it is recommended starting with a 2XL size warehouse
@@ -141,7 +141,7 @@ call lr_resolution_and_transcoding(
     <output_table_name>
 );
 ```
-> aside negative
+> 
 > 
 >  **Execution Note**
 This process will execute inside your warehouse, so do not kill this process
@@ -223,7 +223,7 @@ SELECT COUNT(RAMPID) FROM   identifier($final_output);
 
 * LiveRamp will walk through the implementation and deliver keys that will be used in this Quickstart
 
-> aside positive
+> 
 > 
 >  \*\*Consider This: \*\*
 This Quickstart will focus on Translation from one RampID to another RampID domain. Please reach out to LiveRamp for the correct domain for your translation use case.
@@ -299,7 +299,7 @@ You need to replace the following variable below
 * <output_table_name> - Table name only
 
 
-> aside positive
+> 
 > 
 >  \*\*Consider This: \*\*
 When executing Translation it is recommended starting with a Large size warehouse
@@ -311,7 +311,7 @@ call lr_resolution_and_transcoding(
     <output_table_name>
 );
 ```
-> aside negative
+> 
 > 
 >  **Execution Note**
 This process will execute inside your warehouse, so do not kill this process

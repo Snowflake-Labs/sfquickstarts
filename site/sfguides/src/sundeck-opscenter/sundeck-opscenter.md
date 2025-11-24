@@ -39,7 +39,7 @@ OpsCenter from Sundeck is a free Snowflake Native App which provides a suite of 
 <!-- ------------------------ -->
 ## Get the Native App
 
-> aside positive
+> 
 >
 > Note that your Snowflake Account may need to be enabled for Native Apps.  If you do not see the "Apps" tab in Snowsight, please contact Snowflake Support to enable Native Apps for your account.
 
@@ -81,7 +81,7 @@ Once you click "Get" on the listing page, you will be prompted to confirm the in
 
 Modify any optional settings, and click "Get" to begin the installation.
 
-> aside positive
+> 
 >
 > Note that the installation may take from 1 - 3 minutes.  Please don't navigate away from the page until the installation is complete.
 
@@ -193,7 +193,7 @@ There are 2 elements to an OpsCenter Probe:
 - **What to Check For**: This is the Probe Condition, which is a valid WHERE clause that can be applied to a query of the `INFORMATION_SCHEMA.QUERY_HISTORY()` table function.
 - **What to Do**: If the Probe Condition evaluates to `TRUE`, the Probe can send an alert (email), cancel the query, or both. 
 
-> aside positive
+> 
 >
 >Note that to sending email notificatons requires enabling additional OpsCenter features.  Please see section 8 of this Guide (Enable Notifications) for more information.
 
@@ -215,7 +215,7 @@ In this case, we want to monitor by runtime, so let's use the `EXECUTION_TIME` c
 
 We also need to add one more check in our condition, to ensure that our Probe does not cancel the OpsCenter app itself (which runs as a query in Snowflake).  We'll do this for now by excluding any Streamlit queries, using this clause `AND NOT (query_text ilike 'execute streamlit%')`.
 
-> aside positive
+> 
 >
 >Note that when provided as a Probe Condition, the WHERE clause does not include the keyword `WHERE`.
 
@@ -269,7 +269,7 @@ Once you have created one or more OpsCenter Labels, they can be used in the adva
 
 The dropdowns are fairly straightforward; each can contain muliple selections.  Multiple selections in "Include All" are `AND`ed together, meaning only queries which match all selected labels will be shown.  Multiple selections in "Include Any" are `OR`ed together, such that queries matching any of the selections are shown.  Selections in "Exclude Any" will be excluded from the results.
 
-> aside positive
+> 
 >
 > Note that it is possible to select a combination of Label filter conditions which are mutually exclusive, and result in no queries being displayed on the report.  If you end up with a blank report after modifying filter conditions, go back and clear one or more of the Label filters and try again.
 

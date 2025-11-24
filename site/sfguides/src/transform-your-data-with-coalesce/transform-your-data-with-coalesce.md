@@ -44,7 +44,7 @@ When you first sign in on a new account, you'll be presented with the **Projects
 
 Once you've done this you'll be presented with the **Build** interface.  This is where you'll spend most of your time creating nodes, building a graph with them, and transforming your data.  In Coalesce, each Node is a logical unit of work that represents a table, a view, or multiple Snowflake objects.  The other interface is the **Deploy** interface, which will be used to push your pipeline to other environments (QA, Production, etc.), including your graph and other metadata.
 
-> aside positive
+> 
 >
 > Note that on a brand new account, the **Problem Scanner** will show a few action items.  You can disregard those as most will be resolved by the end of this guide.
 
@@ -123,7 +123,7 @@ Now that you have a few **Source Nodes** on your graph, it's time to add a **Sta
 6.  Edit the **Transform** field in the **Mapping** grid by double clicking in the transform field of the `N_NAME` column.  Try a simple transform like `LOWER()` and the name of your column, or you can use the syntax `LOWER({{SRC}})`
 7.  Click **Run** again to transform the data
 
-> aside positive
+> 
 > Any [Snowflake SQL transform](https://docs.snowflake.com/en/sql-reference-functions.html) can be used to transform your data.
 
 ![Transformed Data](assets/transformed_data.png)
@@ -152,7 +152,7 @@ Now let's create a simple slowly changing dimension (Type 2) — an industry sta
 7.  Scroll down the options pane to **Change Tracking** and select columns `C_ADDRESS` and `C_PHONE`, clicking the arrow to move them to the right
 8. Now **Create** and **Run** the `DIM_CUSTOMER` node
 
-> aside positive
+> 
 > In the **Dimension Node**, if no **Change Tracking** columns are selected, the node will act as a Type 1 Dimension.  If **Change Tracking** columns are selected, it will act as a Type 2.
 
 You have now finished creating a Type 2 Dimension table.  Next we will make a Fact Table.

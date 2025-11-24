@@ -48,7 +48,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 
 - A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex is available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
 - A Snowflake user created with ACCOUNTADMIN permissions. This user will be used to get things setup in Snowflake.
-> aside positive
+> 
 > Note: Cortex Fine-tuning is not available in Snowflake Free Trial accounts. Use your own accounts or reach out to your account representative to use this in your account.
 
 - A GitHub account. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started. 

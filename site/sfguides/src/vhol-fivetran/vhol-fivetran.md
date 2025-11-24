@@ -244,7 +244,7 @@ There are three very important configuration files to be aware, all at the top l
 ![Fork repo - 4](assets/image24.png)  
 Various configuration settings are found in this file. Please see [dbt’s documentation](https://docs.getdbt.com/reference/dbt_project.yml) for more information on these settings.
 
-> aside positive
+> 
 > 
 >  **Did You Know?**  
 *******************************************************************************  
@@ -726,7 +726,7 @@ Now we need to configure three reports. These three reports will give us the raw
 
 For each report, we will use Configuration Type: Use Custom Report.
 
-> aside positive
+> 
 > 
 >  **Did You Know?**  
 *******************************************************************************  
@@ -805,7 +805,7 @@ Great! Now click **SAVE & TEST** to save your configuration.
 Click **CONTINUE** to see the next screen, where you can **Start Initial Sync** to start the data flowing!  
 ![Appendix III - 12](assets/image113.png)  
 
-> aside positive
+> 
 > 
 >  **Did You Know?**  
 *******************************************************************************  

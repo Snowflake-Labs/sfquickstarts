@@ -147,7 +147,7 @@ Snowflake 마켓플레이스는 혁신적인 비즈니스 솔루션을 지원하
 - 추가 역할에 부여 -> PUBLIC
 
 ![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
-> aside positive Weather Source는 선도적인 전 세계 날씨 및 기후 데이터 공급자입니다. 이 회사의 OnPoint Product Suite는 비즈니스가 여러 산업에 걸쳐 다양한 사용 사례에 대한 의미 있고 실행 가능한 인사이트를 빠르게 생성하는 데 필요한 날씨 및 기후 데이터를 제공합니다.
+> 
 
 ### 2단계 - 자사 및 서드 파티 데이터 조정
 
@@ -274,7 +274,7 @@ $$;
 
 ![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
-> aside positive UDF를 생성할 때 지원되는 언어 중 하나로 코드가 작성된 핸들러를 지정합니다. 핸들러의 언어에 따라 CREATE FUNCTION 문이 포함된 핸들러 소스 코드 인라인을 포함하거나 핸들러가 미리 컴파일되었거나 스테이지의 소스 코드인 경우에 CREATE FUNCTION에서 핸들러 위치를 참조할 수 있습니다.
+> 
 
 ### 2단계 - 뷰를 위한 SQL 생성
 

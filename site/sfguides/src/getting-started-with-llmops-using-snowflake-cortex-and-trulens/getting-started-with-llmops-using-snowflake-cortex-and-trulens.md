@@ -88,7 +88,7 @@ SNOWFLAKE_ROLE=ACCOUNTADMIN
 SNOWFLAKE_CORTEX_SEARCH_SERVICE=LLMOPS_CORTEX_SEARCH_SERVICE
 ```
 
-> aside positive
+> 
 > You will later create a cortex search service with the name ***LLMOPS_CORTEX_SEARCH_SERVICE***. You are welcome to set that now..
 
 Next create a new conda environment and install the packages required with the following commands in your terminal:
@@ -109,7 +109,7 @@ To open the jupyter notebook, you can follow the following steps:
 
 2) Open [snowflake_llmops_quickstart.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-llmops-using-snowflake-cortex-and-trulens/blob/main/snowflake_llmops_quickstart.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
-> aside positive
+> 
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***getting_started_llmops*** -- which is the name of the environment created in the previous step.
 
 ```python

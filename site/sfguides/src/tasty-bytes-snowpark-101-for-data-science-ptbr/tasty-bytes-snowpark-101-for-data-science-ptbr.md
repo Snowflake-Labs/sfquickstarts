@@ -67,7 +67,7 @@ A Tasty Bytes opera food trucks em várias cidades pelo mundo, e cada veículo p
 
 ![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
->aside positive A SafeGraph é uma empresa global que fornece dados geoespaciais de qualquer lugar do mundo. Clientes como Esri, Tripadvisor, Mapbox e Sysco usam dados da SafeGraph para entender melhor seus clientes, criar novos produtos e tomar decisões melhores para seus negócios.
+> 
 >
 ### Etapa 2 - Criar objetos, carregar dados e unir os dados
 - Navegue até Worksheets, clique em “+” no canto superior direito para criar uma nova planilha e selecione “SQL Worksheet”.
@@ -172,13 +172,13 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 ### Etapa 2 - Atualizar o arquivo de autorização
 - Atualize o arquivo [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) com suas credenciais do Snowflake. O notebook Python vai usar esse arquivo para acessar suas credenciais e conectar-se ao Snowflake.<br>
 ![assets/auth_file.png](assets/auth_file.png)
->aside positive    
+> 
 > Para o parâmetro `account`, use seu [identificador de conta](https://docs.snowflake.com/pt/user-guide/admin-account-identifier). Observe que o identificador de conta não inclui o sufixo snowflakecomputing.com.
 
 ### Etapa 3 - Criar um ambiente Python
->aside positive As instruções utilizam [Anaconda](https://www.anaconda.com/) para criação do ambiente Python. *(No entanto, você pode usar qualquer outro ambiente Python com Python 3.8, por exemplo, [virtualenv](https://virtualenv.pypa.io/en/latest/)*).
+> 
 
->aside negative **Apple M1**: há um problema conhecido com a execução do Snowpark Python em chips M1 da Apple devido ao manuseio da memória em pyOpenSSL. Consulte a [**documentação do Snowpark**](https://docs.snowflake.com/pt/developer-guide/snowpark/python/setup) para solucionar este problema.<br>
+> 
 
  **No terminal, execute o seguinte código para criar o ambiente Python e iniciar o notebook Jupyter:**<br>
 i. Crie um ambiente Python 3.8 chamado "py38_env_tb1" (tb1 = Tasty Bytes 1) usando pacotes (e versões) do canal Snowflake Anaconda. 

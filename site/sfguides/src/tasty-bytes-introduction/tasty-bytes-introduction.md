@@ -90,7 +90,7 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 ### Overview
 With the Tasty Bytes Setup successful, we can now explore the Database, Roles and Warehouses we created. 
 
->aside negative
+> 
 >**Note:** Within the *Tasty Bytes - Setup* worksheet you created in previous section, please scroll to the bottom and Copy, Paste and  Run the SQL included in each step below.
 >
 

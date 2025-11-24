@@ -10,24 +10,23 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Viewing Location Data on an Interactive Map
 <!-- ------------------------ -->
 ## Overview 
+Honeycomb Maps is a Snowflake Native App for building interactive map dashboards using data in Snowflake tables. As a native app, Honeycomb Maps runs completely inside Snowflake, keeping data secure by eliminating the need to extract or duplicate it.
 
-Honeycomb Maps is a Snowflake Native App that enables logistics and mobility companies to build interactive map dashboards directly using their data in Snowflake. As a native app, Honeycomb runs inside your Snowflake account, keeping your data secure by eliminating the need to extract or duplicate it.
-
-Honeycomb Maps provides a no-code interface for creating interactive, shareable, and data-driven maps directly within Snowflake. This ensures that your geospatial data never leaves your Snowflake environment, allowing for cutting-edge interactive maps while maintaining all of Snowflake's security, governance, and scalability benefits.
+Honeycomb Maps provides a no-code interface for creating interactive, shareable, and data-driven maps directly within Snowflake. This ensures that location data never leaves the Snowflake environment, allowing for cutting-edge interactive maps while maintaining all of Snowflake's security, governance, and scalability benefits.
 
 ![Honeycomb Maps Overview](assets/honeycomb_overview.png)
 
-In this quickstart guide, you'll learn how to use Honeycomb Maps to create an interactive visualization of geospatial data. You'll create a map showing pizza restaurants in New York City, add additional layers to visualize density, and create interactive components to filter the data.
+In this quickstart guide, you will learn how to use Honeycomb Maps to create an interactive visualization of geospatial data. You will create a map showing pizza restaurants in New York City, add additional layers to visualize density, and create interactive components to filter the data.
 
 ### Prerequisites
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account.
 - Permissions to install apps from Snowflake Marketplace (An ACCOUNTADMIN role will work)
 - Access to Snowflake's US_REAL_ESTATE sample database (available for free from Snowflake Marketplace) or your own geospatial data
 - Basic familiarity with SQL queries
 
 ### What You'll Learn 
 - How to install the Honeycomb Maps app from the Snowflake Marketplace
-- How to create a data source connection to your Snowflake data
+- How to access Snowflake tables from Honeycomb Maps
 - How to visualize point data on an interactive map
 - How to add a density heatmap layer using H3 cells
 - How to add interactive filters and metrics to the map
@@ -44,37 +43,42 @@ Let's get started with creating our first Honeycomb map!
 
 <!-- ------------------------ -->
 ## Install Honeycomb Maps 
-
 The first step is to install the Honeycomb Maps application from the Snowflake Marketplace.
 
-### Navigate to the Snowflake Marketplace
+### Access the Application Listing in the Snowflake Marketplace
 
-1. Log in to your Snowflake account
-2. Click on **Marketplace** in the left navigation menu
-3. Search for "Honeycomb" in the search bar
-4. Click on the **Honeycomb Data Explorer** or **Honeycomb Maps** tile
+The application listing is located at the following link: [https://app.snowflake.com/marketplace/listing/GZSYZTWLBH/honeycomb-maps-honeycomb-maps](https://app.snowflake.com/marketplace/listing/GZSYZTWLBH/honeycomb-maps-honeycomb-maps)
 
-![Marketplace Navigation](assets/marketplace_navigation.png)
+Alternatively, you can search for "Honeycomb Maps" within the Snowflake Marketplace
 
 ### Install the Application
 
-1. On the Honeycomb Data Explorer listing page, click the blue **Get** button.
+1. On the Honeycomb Maps listing page, click the blue **Get** button.
 2. A pop-up window will appear with additional details. You can use the default warehouse and default options.
 4. Click **Get** to start the installation.
-5. After a few seconds, the app will appear in the 'Apps' window.
+5. After a few seconds you should see that the app was succesfully installed, with an option to configure it.
+![App installation success](assets/app_installation_success_modal.png)
 
 ### Finish installation
-1. For the Honeycomb Maps app to function, you will need to grant it a series of permissions. The UI will show the permissions required. Click 'Grant' to grant these permissions to the application.
+1. For the Honeycomb Maps app to function, you will need to grant it a series of permissions. The UI will show the permissions required. 
+
+- Click 'Grant' to grant these permissions to the application.
+- Click 'Review' to review the configuration for accessing basemap tiles. This is required to show basemaps (streets, countries) under your data on maps. Click on 'Connect' to allow this configuration.
+
+![Activate configure Honeycomb Maps screen](assets/activate_configure_honeycomb_maps_screen.png)
+
 2. Click 'Activate'.
-3. The app will take 10-15 minutes to fully activate.
+3. The app will take 10-15 minutes to activate and become available to use. While we wait for this to complete, we will go get data from Snowflake Marketplace.
+
+![Activate waiting Honeycomb Maps screen](assets/activate_configure_honeycomb_maps_waiting.png)
 
 <!-- ------------------------ -->
 ## Get POI Data 
 ### Get the Data from Marketplace
-![Snowflake Real Estate Data Listing](assets/Snowflake_Public_Data_Free_Listing.png)
-Snowflake provides a free dataset of POI (Point of Interest) data across the United States. This dataset can be added your account through the Snowflake Marketplace. [Here is a link to the listing.](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) 
+![Snowflake Real Estate Data Listing](assets/snowflake_real_estate_data_listing.png)
+Snowflake provides a free dataset of POI (Point of Interest) data across the United States. This dataset can be added your account through the Snowflake Marketplace. Here is a link to the listing: [https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate](https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate). 
 
-1. Open Snowflake Marketplace and find the 'Snowflake Public Data (Free)' dataset provided by Snowflake
+1. Open Snowflake Marketplace and find the 'US Real Estate' dataset provided by Snowflake
 2. Click on 'Get' and follow the instructions to add this data to your account
 3. Once the data has been added, make sure that you can query the data successfully. Open up a new worksheet in Snowsight (Projects -> Worksheets -> '+') and run the following query:
 
@@ -82,112 +86,154 @@ Snowflake provides a free dataset of POI (Point of Interest) data across the Uni
 -- verify whether we can query the Snowflake POI data
 SELECT
     poi.poi_name,
+    poi.websites[0]::VARCHAR as website,
     addr.latitude,
     addr.longitude
-FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_index AS poi
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_addresses_relationships AS map
+FROM us_real_estate.cybersyn.point_of_interest_index AS poi
+JOIN us_real_estate.cybersyn.point_of_interest_addresses_relationships AS map
     ON (poi.poi_id = map.poi_id)
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.us_addresses AS addr
-    ON (map.address_id = addr.address_id)
-WHERE addr.city = 'New York'
-  AND addr.state = 'NY'
-  AND poi.category_main = 'Pizza Restaurant'
-LIMIT 10;
-```
- 
-4. The query above should run successfully and return 10 rows of data. If it does not, make sure that the role you are using has access to the 'US_REAL_ESTATE' database that was created when you added the data from Marketplace.
-
-![POI data Snowsight query](assets/POI_Query.png)
-
-5. For Honeycomb Maps to access this data, you need to grant the application the necessary privileges:
-
-```sql
--- Grant privileges on sample database to the Honeycomb application
-GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_PUBLIC_DATA_FREE TO APPLICATION HONEYCOMB_DATA_EXPLORER;
-```
-Execute this SQL command in a Snowflake worksheet to grant the Honeycomb app access to the sample data we'll be using. If you're using your own database, replace "SNOWFLAKE_PUBLIC_DATA_FREE" with your database name.
-
-### Launch the Application
-
-1. Navigate to **Apps** in the left navigation menu
-2. Find and click on **Honeycomb Data Explorer**
-3. The application will open in a new browser tab. For security reasons, you may need to log into Snowflake again.
-
-You have now successfully installed Honeycomb Maps and are ready to create your first interactive map!
-
-<!-- ------------------------ -->
-## Create Your First Map
-
-Now that you have Honeycomb Maps installed, let's create your first map visualization.
-
-### Start a New Project
-
-1. On the Honeycomb Maps start page, click on **Start with a blank map**
-
-![Snowflake Start Screen](assets/snowflake_start_screen.png)
-
-2. You'll see a blank map canvas. The next step will be to add data onto the map.
-
-![Blank Map Canvas](assets/blank_map_canvas.png)
-
-### Connect to Your Data
-
-Next, we'll connect to Snowflake data to visualize pizza restaurants in New York:
-
-1. Click on **Edit Map** in the bottom-right corner to open the configuration sidebar.
-2. Click on **Data Sources** in the side panel
-3. Click on **Add Data Source**
-4. Select **Snowflake** as the data source type
-5. Under **Rows to Fetch**, click on **Use Custom SQL**
-![Open SQL Editor](assets/open_sql_editor.png)
-
-6. Click on **Open SQL Editor**
-
-### Write Your Query
-
-In the SQL editor, enter the following query to fetch pizza restaurant locations:
-
-```sql
-SELECT
-    poi.poi_name,
-    poi.category_main,
-    poi.category_alternate,
-    addr.latitude,
-    addr.longitude,
-    addr.city,
-    addr.state,
-    addr.zip
-FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_index AS poi
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_addresses_relationships AS map
-    ON (poi.poi_id = map.poi_id)
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.us_addresses AS addr
+JOIN us_real_estate.cybersyn.us_addresses AS addr
     ON (map.address_id = addr.address_id)
 WHERE addr.city = 'New York'
   AND addr.state = 'NY'
   AND poi.category_main = 'Pizza Restaurant';
 ```
 
+> This demo focuses on Pizza Restaurants. However, by changing the 'poi.category_main' field, you can find data on many different types of businesses across the US. This can be very useful for finding lists of business customer prospects or for scouting the competitors in a new market.
+ 
+4. The query above should run successfully and return 10 rows of data. If it does not, make sure that the role you are using has access to the 'US_REAL_ESTATE' database that was created when you added the data from Marketplace.
+
+![POI data Snowsight query](assets/poi_data_snowsight_query.png)
+
+<!-- ------------------------ -->
+### Configure the Honeycomb Maps application
+1. Navigate to **Catalog** -> **Apps** in the Snowsight left navigation menu
+2. Click on **Honeycomb Maps**
+
+#### Configure Restricted Caller's Rights
+Honeycomb Maps uses the current user's identity to allow for querying data within Snowflake. This uses a Snowflake feature named [Restricted Caller's Rights (RCR)](https://docs.snowflake.com/en/developer-guide/restricted-callers-rights).
+
+Before users can query data in Honeycomb Maps, you must set up RCR. **Note: this can also be done using the SQL command below**
+
+##### Configure RCR using SQL 
+```sql
+// Your selected grants
+GRANT INHERITED CALLER USAGE ON ALL SCHEMAS IN DATABASE "US_REAL_ESTATE" TO APPLICATION "HONEYCOMB_MAPS";
+GRANT INHERITED CALLER SELECT ON ALL TABLES IN DATABASE "US_REAL_ESTATE" TO APPLICATION "HONEYCOMB_MAPS";
+GRANT INHERITED CALLER SELECT ON ALL EXTERNAL TABLES IN DATABASE "US_REAL_ESTATE" TO APPLICATION "HONEYCOMB_MAPS";
+GRANT INHERITED CALLER SELECT ON ALL VIEWS IN DATABASE "US_REAL_ESTATE" TO APPLICATION "HONEYCOMB_MAPS";
+
+// Grants required to use your selected grants
+GRANT CALLER USAGE ON DATABASE "US_REAL_ESTATE" TO APPLICATION "HONEYCOMB_MAPS";
+```
+
+##### Configure RCR with the Snowsight UI 
+1. Click on the 'Privileges' tab on the app page in Snowsight
+2. Scroll down to 'Restricted caller's rights'
+3. Click on 'Add Grants' and select which permissions users will be able to use with the Honeycomb Maps app. 
+
+We recommend granting `SELECT` rights on all tables and views. For this demo, the minimum permissions required are `USAGE` on the `US_REAL_ESTATE` database, `USAGE` on all schemas in the `US_REAL_ESTATE` database, and `SELECT` on all external tables, views, and tables in the `US_REAL_ESTATE` database.
+
+> Tip: RCR does not change the permissions that users already have. Instead, it allows the Honeycomb Maps app to utilize a subset of a user's existing permissions when then interact with the app. This makes it easy for users to start using Honeycomb Maps without compromising security.
+
+The Restricted Caller's Rights section in the 'Privileges' tab:
+![Configure restricted caller's rights tab](assets/configure_restricted_callers_rights_section.png)
+
+Selecting the `US_REAL_ESTATE` database:
+![Selecting database for RCR](assets/configure_rcr_select_database.png)
+
+Here are the minimum permissions required for this demo:
+![Review screen showing minimum permissions required](assets/configure_rcr_review_permissions.png)
+
+### Allow users to access the Honeycomb Maps Warehouse
+To allow users to access data within Honeycomb Maps, you must configure permissions for users to use the application's warehouse. To do this, run the following query:
+
+```sql
+GRANT CALLER USAGE ON WAREHOUSE honeycomb_maps_warehouse TO APPLICATION honeycomb_maps;
+```
+
+> Replace HONEYCOMB_MAPS with the application name you specified during installation if you used a different name. The warehouse will always be named by adding _WAREHOUSE to the application name.
+
+> Important: Honeycomb Maps will not function if the permission above is not configured.
+
+
+### Launch the Application
+
+1. Navigate to **Apps** in the left navigation menu
+2. Find and click on **Honeycomb Maps**
+3. If you are not taken directly to the application, click on 'Launch app'
+4. The application will open in a new browser tab. For security reasons, you may need to log into Snowflake again.
+5. You should see the following screen:
+
+![Honeycomb maps new install landing page](assets/honeycomb_maps_landing_page.png)
+
+_If you don't see the screen above, ensure that you ran the grant warehouse query in the previous step.
+
+You have now successfully installed Honeycomb Maps and are ready to create your first interactive map!
+
+<!-- ------------------------ -->
+## Create Your First Map
+Now that you have Honeycomb Maps installed, let's create your first map visualization.
+
+### Create a new map
+
+1. On the top left of the Honeycomb Maps home screen, click on '+ New Map'. Enter a name and description for this new map. 
+
+![Create new map ui](assets/create_new_map.png)
+
+2. Click on **Create New Map**. Then once it has been created successfully, click on **Open Map**.
+
+### Add the Pizza Data to the Map
+
+Next, we'll connect to Snowflake data to visualize pizza restaurants in New York:
+
+1. Click on **Edit Map** in the bottom-right corner to open the configuration sidebar.
+2. Click on **Add Data Source**. This will add a new Snowflake Query data source.
+3. Click on **Open SQL Editor** to edit the query for this data source.
+4. Paste this query into the SQL Editor *(it is similar to the query in the previous step, just with the LIMIT removed and more columns selected)*:
+
+```sql
+SELECT
+    poi.poi_name,
+    poi.category_main,
+    poi.category_alternate,
+    poi.websites[0]::VARCHAR as website,
+    addr.latitude,
+    addr.longitude,
+    addr.city,
+    addr.state,
+    addr.zip
+FROM us_real_estate.cybersyn.point_of_interest_index AS poi
+JOIN us_real_estate.cybersyn.point_of_interest_addresses_relationships AS map
+    ON (poi.poi_id = map.poi_id)
+JOIN us_real_estate.cybersyn.us_addresses AS addr
+    ON (map.address_id = addr.address_id)
+WHERE addr.city = 'New York'
+  AND addr.state = 'NY'
+  AND poi.category_main = 'Pizza Restaurant';
+```
+
+![Honeycomb Maps SQL editor interface](custom_sql_interface.png)
+
 This query joins several tables to find all pizza restaurants in New York City, retrieving their names, categories, and geographic coordinates.
 
 7. Click **Run** to test the query
-8. Verify that it returns the pizza restaurant data. Note: If you see an error, make sure that you have granted Honeycomb access to the database that you are trying to query (see the previous step).
-![Successful Query](assets/custom_sql_interface.png)
+8. Verify that it returns the pizza restaurant data (it should return around 3200 rows). Note: If you see an error, make sure that you have configured restricted caller's rights correctly (previous step).
+
 9. Click **Save and Close**
 
-A point layer will be automatically added to your map, showing the location of each pizza restaurant.
+A point layer will be automatically added to your map, showing the location of each pizza restaurant. Scroll to zoom into New York City.
 
 ![Initial Point Layer](assets/initial_point_layer.png)
 
-10. You can scroll to zoom into New York City
-
 ### Customize Point Styling
 
-Let's improve the appearance of our points:
+Let's improve the appearance of the pizza locations on the map:
 
 1. Click on **Map Layers** in the sidebar
 2. Click on the automatically created **Point Layer**
-3. Change the label to "Pizza Locations"
-4. Adjust the point color by clicking on 'Colors' and then the color selector
+3. Change the label to "Pizza Locations". You will notice that the label on the Legend on the left-hand side changes automatically.
+4. You can edit the size of the points in the 'Appearance' section, and the color of the points in the 'Colors' section.
 
 ### Enable Tooltips
 
@@ -195,38 +241,19 @@ Tooltips allow users to see information about each restaurant when hovering over
 
 1. With your Point Layer selected, click on **Tooltip Settings**
 2. Toggle **Enable Tooltips** to On
-3. Select **POI_NAME** as a field to show in the tooltip
-4. You can now hover over points on the map to see restaurant names
+3. Select **POI_NAME** and **WEBSITE** as fields to show in the tooltip
+4. You can now hover over points on the map to see restaurant names and websites.
 
 ![Tooltip Configuration](assets/tooltip_configuration.png)
 
 Your map now displays all pizza restaurants with customized styling and tooltips!
 
 <!-- ------------------------ -->
-## Add Title and Legend
-
-Now let's enhance our map by adding a label and legend to the map
-
-### Add a Title 
-
-1. Click on **Components** in the sidebar
-2. Click on **Add Component**
-3. Keep the first component as a **Title Card** on the left-hand side
-4. Enter "Pizza Restaurants in New York City" as the title
-5. Add "Data from Snowflake" as a subtitle
-
-### Add a Legend
-6. Click **Add Component** again
-7. Change the component type to **Legend**
-8. Under "Component Location," select "right side" to move the legend to the right side of the map
-
-![Title and Legend](assets/title_legend.png)
-
-
-<!-- ------------------------ -->
 ## Add a Density Layer
 
-Now, let's add a layer to show the density of pizza restaurants using hexagonal H3 cells:
+Now, let's add a layer to show the density of pizza restaurants using hexagonal H3 cells. H3 is a hexagon-based spatial index that allows us to group points into hexagon cells and generate metrics and heatmaps for each cell.
+
+If a dataset contains latitude and longitude points, Honeycomb Maps will generate the corresponding H3 cells automatically. Honeycomb Maps also supports H3 cells from Snowflake tables (using [Snowflake's H3 functions](https://docs.snowflake.com/en/sql-reference/functions/h3_latlng_to_cell)). 
 
 1. Click on **Map Layers** in the sidebar
 2. Click on **Add Map Layer**
@@ -236,7 +263,7 @@ Now, let's add a layer to show the density of pizza restaurants using hexagonal 
 6. Set **Resolution Mode** to **Fixed resolution**
 7. Set H3 resolution to 8 (this controls the size of the hexagons)
 8. Under **Measure Field**, select "honeycomb_generated_id"
-9. Set **Aggregation Type** to "count"
+9. Set **Aggregation Type** to "Count"
 
 This creates a hexagon grid where each cell is colored based on the number of pizza restaurants it contains.
 
@@ -246,23 +273,30 @@ This creates a hexagon grid where each cell is colored based on the number of pi
 
 <!-- ------------------------ -->
 ## Add Interactive Components
+Components are user interface elements that sit on top of the map, on the left or right side. They include titles, different types of filters and non-location data displays like metrics and charts. Components allow for automatic cross-filtering - a filter may affect map layers and metrics.   
+
 ### Add a Metric Component
 
 Let's add a component that shows the total number of pizza restaurants:
 
 1. Click on **Components** in the sidebar
 2. Click on **Add Component**
-3. Change the component type to **Big Number**
+3. Change the component type to **Big Number**. The Big Number component type is used to show calculated metrics.
 4. Set "Total Restaurants" as the title
 5. Select the single data source under **Data Source**
 6. Under **Measure Field**, select "honeycomb_generated_id"
 7. Set **Aggregation Type** to "Count"
 
-Your component now shows the total number of pizza restaurants on the map. It should be close to 2,484 if you are using the Snowflake POI data.
+Your component now shows the total number of pizza restaurants on the map. It should be close to 3256 if you are using the Snowflake POI data.
 
-Let's add an interactive polygon filter that lets users examine the number of restaurants in specific areas.
+![Big Number Component](assets/big_number_component.png)
+
+Next, we will add an interactive polygon filter that lets users examine the number of restaurants in specific areas.
 
 ### Add a Polygon Filter
+Polygon filters allow users to filter the data for specific areas - and these areas can come from drawing on the map, from uploading a GeoJSON file, or from another data source.
+
+For this demo, we'll create a polygon filter that allows users to draw on the map, which will then filter both data layers and the 'Total Restaurants' metric.
 
 1. Click on **Components** in the sidebar
 2. Click on **Add Component**
@@ -270,8 +304,6 @@ Let's add an interactive polygon filter that lets users examine the number of re
 4. Set "Area Filter" as the title
 5. Under **Polygon Input Methods**, keep "Allow Drawing on Map" selected
 6. Under **Elements to Filter**, select all checkboxes (Pizza Locations, Pizza Density, and Total Restaurants)
-
-![Polygon Filter Configuration](assets/polygon_filter_config.png)
 
 ### Use the Polygon Filter
 
@@ -290,53 +322,55 @@ This interactive filter is especially useful for analyzing density and distribut
 
 <!-- ------------------------ -->
 ## Save and Share Your Map
-
-Once you're satisfied with your map, let's save it and learn how to share it with others.
+Once you're satisfied with your map, you can share it with others. Users will go through Snowflake SSO to access the map. The map will always show fresh data from Snowflake.
 
 ### Configure Map Settings
+The settings menu lets you configure light/dark mode, set the initial map view (where the map starts when it is loaded), and whether to save the filters along with the map.
 
 1. Click on **Settings** in the sidebar
 2. Adjust the map view to show all of New York City
 3. Click **Set to Current View** to save this as the default view
 4. Decide whether to save active filters with the map by toggling **Save Active Filters**
 
-![Map Settings](assets/map_settings.png)
-
-### Save Your Map
-
-1. Click on **Save/Load Map** at the top of the sidebar
-2. Enter "NYC Pizza Overview" as the name for your map
-3. Click **Save**
-
-Your map is now saved to Snowflake and will be accessible to others who have access to the Honeycomb tool in your organization.
-
 ### Share Your Map
+Maps created in Honeycomb Maps are private by default - however they can be easily shared with fine-grained permissions. 
 
-You can share your map with colleagues in two ways:
+#### Managing access to the Honeycomb Maps application
+Honeycomb Maps uses application roles to manage access and permissions. Three roles: `HONEYCOMB_APP_ADMIN`, `HONEYCOMB_APP_EDITOR` and `HONEYCOMB_APP_VIEWER` each give a different set of permissions.
 
-1. **Editable Link**:
-   - This allows recipients to customize the map and save their changes
-   - Good for collaborative analysis
+To allow a user to access the application and create maps, grant them the `HONEYCOMB_APP_EDITOR` role
 
-2. **Read-only Link**:
-   - This removes the 'Edit Map' sidebar, limiting viewers to only interacting with the map
-   - Ideal for presenting finalized insights
-   - Users can still utilize filter components that have been added to the map
+```sql
+-- For a specific user
+GRANT APPLICATION ROLE honeycomb_app_editor TO USER <example_user>;
 
-To share either link type:
-1. Click on **Share** in the top navigation bar
-2. Choose either **Copy Editable Link** or **Copy Read-only Link**
-3. Share the link with your colleagues via email or your preferred communication tool. For security reasons, they will need to sign into Snowflake to view the map.
+-- For an existing snowflake role
+GRANT APPLICATION ROLE honeycomb_app_editor TO ROLE <example_role>;
+```
 
-![Share Options](assets/share_options.png)
+For users that only need to view maps, you can grant them the `HONEYCOMB_APP_VIEWER` application role. 
+
+Roles can also be configured through the Snowsight UI, from within the application management page (only visible to administrators).
+![Snowsight interface for controlling access to the application](assets/access_management_ui.png)
+
+#### Sharing maps
+The user who creates a map becomes the map owner. By default maps are only available to the owner, however, they can be shared with others. When they are shared, they can be shared with 'edit' or 'view' permissions. If a map is shared with 'view' permissions, then other users who open the map will not be able to access the 'Edit Map' sidebar. However, map viewers can still interact with filters.
+
+Honeycomb Maps enforces data permissions on the underlying map data sources. In order to view data on a map in Honeycomb Maps, the user must have select permissions to the underlying data table. This is enforced by Snowflake using [Restricted Caller's Rights](https://docs.snowflake.com/en/developer-guide/restricted-callers-rights).
+
+To share a map, go to the Honeycomb Maps homepage, and click on the elipsis (three dots) button on the right-hand side. Select 'Control sharing'.
+
+![Honeycomb Maps control sharing dropdown UI](assets/control_sharing_menu.png)
+
+Maps can be shared with 'All users' or with specific named users. For a map to be shared with a named user, they must have logged into the Honeycomb Maps application at least once before. Maps can be shared with either 'Edit' (can change the map configuration) or 'View' (can only view the existing map) permissions.
+
+![Honeycomb Maps sharing dialog ui](assets/access_management_map_sharing_dialog.png)
 
 Congratulations! You've successfully created, customized, and shared an interactive map visualization using Honeycomb Maps.
 
 <!-- ------------------------ -->
 ## Next Steps and Advanced Features
-
 ![Advanced Maps](assets/advanced_features.png)
-
 
 Now that you've created your first map with Honeycomb Maps, here are some advanced features to explore:
 
@@ -365,21 +399,21 @@ In this demo we only showed a basic polygon filter, however, Honeycomb supports 
 - When a map loads, it will always pull fresh data from Snowflake tables by running the query defined in 'Data Sources'
 - For the best performance, keep these queries fast or consider using materialized views
 
-### Enforced SSO
-- Honeycomb comes with SSO integrated with Snowflake out-of-the-box. This makes it easy for others to securely access the maps you create, and limits the risk of accidentally making sensitive data public
+### Featured Maps
+- Users with the `HONEYCOMB_APP_ADMIN` role can set specific maps as 'Featured'. Featured maps are prominently shown on the Honeycomb Maps homepage when users open the app. This is a great way to highlight curated maps to new users within your organization.
+![Honeycomb Maps UI showing a featured map](assets/featured_maps.png)
 
 Explore these advanced features to create even more powerful geographic visualizations and gain deeper insights from your location data!
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-
 Congratulations! You've successfully created an interactive map visualization using Honeycomb Maps. You've learned how to:
 
 - Install the Honeycomb Maps Snowflake Native App
 - Connect to and visualize your Snowflake data on a map
 - Add multiple visualization layers including points and density hexagons
 - Create interactive components like tooltips and filters
-- Save and share your map with others
+- Share your map with others
 
 ![Honeycomb Maps Overview](assets/honeycomb_overview.png)
 
@@ -389,21 +423,15 @@ To continue your journey with Honeycomb Maps:
 
 - Visit the official [Honeycomb Maps documentation](https://docs.honeycombmaps.com) for comprehensive guides and tutorials
 - Learn more about Honeycomb Maps capabilities on the [product page](https://www.honeycombmaps.com/product/snowflake)
-- Apply these techniques to your own geospatial data
-- Reach out to the Honeycomb team at hello@honeycombmaps.com for questions and assistance
+- Create maps with your own location data
+- Reach out to the Honeycomb team at support@honeycombmaps.com for questions and assistance
 
 With Honeycomb Maps, you now have a powerful tool to visualize and analyze location data directly within your Snowflake environment, allowing you to gain insights while maintaining Snowflake's security, governance, and scalability. Honeycomb Maps enables you to:
 
 - Create beautiful, interactive maps with your Snowflake data
 - Share insights with stakeholders through intuitive visualizations
-- Reduce data warehouse load by handling map interactions on the client-side
+- Reduce data warehouse load by handling map interactions on the client side
 - Avoid data movement with the Snowflake Native App architecture
 - Leverage Snowflake's security and governance model
 
 **Happy mapping!**
-
-###Resources
-- [Download Refernce Architecture](https://drive.google.com/file/d/1NuDVwb4MgjFabjwHM8-6aaPJwTnjxJZb/view?usp=sharing)
-- [Read Engineering Blog](https://www.honeycombmaps.com/blog/announcing-honeycomb-for-snowflake-high-performance-high-security)
-- [Read Medium Blog](https://medium.com/snowflake/building-interactive-map-dashboards-with-snowflake-and-honeycomb-dae2e2b2801a)
-- [Watch the Demo](https://youtu.be/hDbIRELQ_Kk?list=TLGG6VBsYYOwqukyNDA5MjAyNQ)

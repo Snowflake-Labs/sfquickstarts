@@ -283,7 +283,7 @@ snow sql -q "SELECT r_value FROM my_table LIMIT 10" -x --account=<account_name> 
 
 In the example above, we establish a temporary connection to Snowflake and execute the `SELECT r_value FROM my_table LIMIT 10` SQL statement.
 
-> aside negative
+> 
 > 
 > **Note:** If your account does not allow password authentication, use proper authentication using `--authenticator`.
 
@@ -884,7 +884,7 @@ snow streamlit get-url streamlit_app --database=streamlit_example --open
 <!-- ------------------------ -->
 ## Working with Snowpark Container Services 
 
-> aside negative
+> 
 > 
 > **Note:** Snowpark Container Services is currently in Public Preview in select AWS [regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=g3LX4YOG&_fsi=g3LX4YOG#available-regions). In addition, trial accounts do not support Snowpark Container Services. Reach out to your Snowflake account team to enable your account for Snowpark Container Services.
 

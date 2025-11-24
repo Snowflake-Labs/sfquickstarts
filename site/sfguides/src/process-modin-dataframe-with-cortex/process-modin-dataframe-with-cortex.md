@@ -120,7 +120,7 @@ Once loaded, your DataFrame will feature three key columns, ready for the forthc
 - `description`: Product description
 - `price`: Product price
 
-> aside positive
+> 
 > IMPORTANT:
 > - Make sure your Snowflake role has the necessary permissions to create stages and access external data
 > - The path to the CSV file is relative to the stage you created

@@ -536,7 +536,7 @@ COPY INTO raw_pos.menu_staging
 FROM @raw_pos.menu_stage;
 ```
 
-> aside positive
+> 
 > **[COPY INTO TABLE](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table)**: This powerful command loads data from a staged file into a Snowflake table. It is the primary method for bulk data ingestion.
 
 ### Semi-Structured Data
@@ -577,7 +577,7 @@ FROM
     LATERAL FLATTEN(INPUT => m.menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients::ARRAY) i;
 ```
 
-> aside positive
+> 
 > **[Semi-Structured Data Types](https://docs.snowflake.com/en/sql-reference/data-types-semistructured)**: Snowflake's VARIANT, OBJECT, and ARRAY types allow you to store and query semi-structured data directly, without needing to define a rigid schema upfront.
 
 ### Dynamic Tables
@@ -610,7 +610,7 @@ FROM (
 );
 ```
 
-> aside positive
+> 
 > **[Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)**: Dynamic Tables automatically refresh as their underlying source data changes, simplifying ELT pipelines and ensuring data freshness without manual intervention or complex scheduling.
 
 #### Step 2 - Testing the Automatic Refresh
@@ -1637,7 +1637,7 @@ Within this vignette, we will explore some of the powerful governance features w
 
 Snowflake's security model is built on a framework of Role-based Access Control (RBAC) and Discretionary Access Control (DAC). Access privileges are assigned to roles, which are then assigned to users. This creates a powerful and flexible hierarchy for securing objects.
 
-> aside positive
+> 
 > **[Access Control Overview](https://docs.snowflake.com/en/user-guide/security-access-control-overview)**: To learn more about the key concepts of access control in Snowflake, including securable objects, roles, privileges, and users.
 
 #### Step 1 - Set Context and View Existing Roles
@@ -1744,7 +1744,7 @@ Looking at the query results, it's clear this table contains a lot of Personally
 
 A key first step in data governance is identifying and classifying sensitive data. Snowflake Horizon's auto-tagging capability can automatically discover sensitive information by monitoring columns in your schemas. We can then use these tags to apply security policies.
 
-> aside positive
+> 
 > **[Automatic Classification](https://docs.snowflake.com/en/user-guide/classify-auto)**: Learn how Snowflake can automatically classify sensitive data based on a schedule, simplifying governance at scale.
 
 #### Step 1 - Create PII Tag and Grant Privileges
@@ -1820,7 +1820,7 @@ Notice that columns identified as PII now have our custom `governance.pii` tag a
 
 Now that our sensitive columns are tagged, we can use Dynamic Data Masking to protect them. A masking policy is a schema-level object that determines whether a user sees the original data or a masked version at query time. We can apply these policies directly to our `pii` tag.
 
-> aside positive
+> 
 > **[Column-level Security](https://docs.snowflake.com/en/user-guide/security-column-intro)**: Column-level Security includes Dynamic Data Masking and External Tokenization to protect sensitive data.
 
 #### Step 1 - Create Masking Policies
@@ -1880,7 +1880,7 @@ SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 
 In addition to masking columns, Snowflake allows you to filter which rows are visible to a user with Row Access Policies. The policy evaluates each row against rules you define, often based on the user's role or other session attributes.
 
-> aside positive
+> 
 > **[Row-level Security](https://docs.snowflake.com/en/user-guide/security-row-intro)**: Row Access Policies determine which rows are visible in a query result, enabling fine-grained access control.
 
 #### Step 1 - Create a Policy Mapping Table
@@ -1940,7 +1940,7 @@ The result set should now only contain rows where the `country` is 'United State
 
 Data governance isn't just about security; it's also about trust and reliability. Snowflake helps maintain data integrity with Data Metric Functions (DMFs). You can use system-defined DMFs or create your own to run automated quality checks on your tables.
 
-> aside positive
+> 
 > **[Data Quality Monitoring](https://docs.snowflake.com/en/user-guide/data-quality-intro)**: Learn how to ensure data consistency and reliability using built-in and custom Data Metric Functions.
 
 #### Step 1 - Use System DMFs
@@ -2012,7 +2012,7 @@ ALTER TABLE raw_pos.order_detail
 
 The Trust Center provides a centralized dashboard for monitoring security risks across your entire Snowflake account. It uses scheduled scanners to check for issues like missing Multi-Factor Authentication (MFA), over-privileged roles, or inactive users, and then provides recommended actions.
 
-> aside positive
+> 
 > **[Trust Center Overview](https://docs.snowflake.com/en/user-guide/trust-center/overview)**: The Trust Center enables automatic checks to evaluate and monitor security risks on your account.
 
 #### Step 1 - Grant Privileges and Navigate to the Trust Center
@@ -2091,7 +2091,7 @@ In this vignette, we will explore how Snowflake facilitates seamless data collab
 
 One of our analysts wants to see how weather impacts food truck sales. To do this, they'll use the Snowflake Marketplace to get live weather data from Weather Source, which can then be joined directly with our own sales data. The Marketplace allows us to access live, ready-to-query data from third-party providers without any data duplication or ETL.
 
-> aside positive
+> 
 > **[Introduction to the Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/data-sharing-intro)**: The Marketplace provides a centralized hub to discover and access a wide variety of third-party data, applications, and AI products.
 
 #### Step 1 - Set Initial Context
