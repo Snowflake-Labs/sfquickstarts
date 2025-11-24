@@ -111,7 +111,7 @@ Feel free to give it a shot by running the last couple cells of the notebook.
 
 If you don't plan to use the warehouse, database, schema, stage, or UDFs we've defined in this Quickstart, now might be a good time to do some deletion. Below are the SQL commands to wipe out everything we've built so far.
 
-> aside positive
+> 
 > 
 >  If you're excited to do part two, it might be handy to hold off on deleting our files and instead come back to this interlude section later when you're sure you don't want any of the files/UDFs/etc.
 
@@ -184,7 +184,7 @@ To do this, we can simply set the `_sf_max_batch_size` attribute of our handler 
 embed._sf_max_batch_size = 32  # type: ignore
 ```
 
-> aside positive
+> 
 >
 > If you have a really slow model and want to limit to batch size of one, you could also switch out to a non-vectorized UDF.
 

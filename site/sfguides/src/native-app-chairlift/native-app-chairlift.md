@@ -41,7 +41,7 @@ Let's get started!
 
 ### What You’ll Need
 
-> aside negative
+> 
 > 
 > **Important**
 > Native Apps are currently only  available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.
@@ -550,7 +550,7 @@ snow app version create develop
 
 This command will create the first (new) version of the native app using the source code files that you uploaded earlier.
 
-> aside positive
+> 
 > 
 >  **PATCH VERSIONS** Do not run the command below. It is included here to demonstrate how you can add a patch version of a native app.
 
@@ -593,7 +593,7 @@ With the application installed, you can now run the app in your Snowflake accoun
 
 When running the app for the first time, you'll be prompted to create bindings. The bindings link references defined in the manifest file to corresponding objects in the Snowflake account. These bindings ensure that the application can run as intended. You'll also be prompted to grant the application privileges to execute a task based on a toggle within the app's user interface. For more information, see the **first_time_setup.py** and **references.py** files in the **ui/** folder within the repo.
 
-> aside negative
+> 
 > 
 >  **NOTE** Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to **ORGADMIN**, then navigate to "**Admin** -> **Billing & Terms**". Click **Enable** and then acknowledge and continue in the ensuing modal. If, when navigating back to the app as **CHAIRLIFT_ADMIN**, you are again prompted to accept the terms, refresh your browser.
 
@@ -627,7 +627,7 @@ To run the app as an app admin, switch your role to **CHAIRLIFT_ADMIN**, and nav
 
 In this Quickstart, the **Configuration** tab is included to demonstrate how different roles in an account may be granted different privileges within the app. In practice, the app admin (or other roles) may have access to other areas or functionality of the app.
 
-> aside negative
+> 
 > 
 >  **AVOID PROLONGED CREDIT CONSUMPTION** Enabling warning generation via the checkbox will call a warning generation task every 60 seconds. **To avoid prolonged credit consumption, be sure to disable the warning generation task by unchecking the checkbox.**
 <!-- ------------------------ -->

@@ -132,7 +132,7 @@ These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfg
 }
 ```
 
-> aside negative
+> 
 > 
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
 
@@ -143,7 +143,7 @@ During this step we will train a PyCaret model and save it to local disc.
 
 * Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/1_train_pycaret_model.ipynb)
 
-> aside negative
+> 
 > 
 > **Note:** PyCaret can not currently run directly, i.e you can not use it with import, in a Snowflkae Notebook so make sure you use an external notbook enviroment such as Visual Studio Code or Jupyter.
 

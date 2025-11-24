@@ -125,7 +125,7 @@ WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN
 
 In our result set we can see the high-level descriptions of what these Snowflake System Defined Roles have privileges to do. 
 
->aside positive
+> 
 >**Note:** For additional details on these, please the [Snowflake System Defined Roles](https://docs.snowflake.com/en/user-guide/security-access-control-overview#system-defined-roles) documentation.
 >
 
@@ -161,7 +161,7 @@ GRANT OPERATE, USAGE ON WAREHOUSE tb_dev_wh TO ROLE tb_test_role;
 ```
 
 For more on Snowflake Warehouse Privilege Grants please see below:
->aside positive
+> 
 >**MODIFY:** Enables altering any properties of a warehouse, including changing its size.
 > 
 >**MONITOR:** Enables viewing current and past queries executed on a warehouse as well as usage statistics on that warehouse.
@@ -184,7 +184,7 @@ GRANT USAGE ON ALL SCHEMAS IN DATABASE tb_101 TO ROLE tb_test_role;
 ```
 
 For more on Snowflake Database and Schema Grants please see below:
->aside positive
+> 
 > **MODIFY:** Enables altering any settings of a database.
 >
 > **MONITOR:** Enables performing the DESCRIBE command on the database.
@@ -206,7 +206,7 @@ GRANT SELECT ON ALL VIEWS IN SCHEMA tb_101.analytics TO ROLE tb_test_role;
 ```
 
 For more on Snowflake View and Table Privilege Grants please see below:
-> aside positive
+> 
 > **SELECT:** Enables executing a SELECT statement on a table/view. Note that this privilege is sufficient to query a view.
 >
 > **INSERT:** Enables executing an INSERT command on a table.
@@ -270,7 +270,7 @@ SAMPLE (1000 ROWS);
 
 **Woah!!** there is a lot of PII we need to take care before our users can touch this data. Luckily we can use Snowflakes native Tag-Based Masking functionality to do just this.
 
-> aside positive
+> 
 > A [Tag-based Masking Policy](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies) combines the object tagging and masking policy features to allow a masking policy to be set on a tag using an ALTER TAG command. When the data type in the masking policy signature and the data type of the column match, the tagged column is automatically protected by the conditions in the masking policy.
 >
 
@@ -304,7 +304,7 @@ CREATE OR REPLACE TAG tags.tasty_pii
     COMMENT = 'Tag for PII, allowed values are: NAME, PHONE_NUMBER, EMAIL, BIRTHDAY';
 ```
 
->aside positive
+> 
 >Tags enable data stewards to track sensitive data for compliance, discovery, protection, and resource usage use cases through either a centralized or decentralized data governance management approach.
 >
 
@@ -460,7 +460,7 @@ feature that can handle this at scale called [Row Access Policies](https://docs.
 
 For our use case, we will leverage the mapping table approach.
 
->aside positive
+> 
 > Snowflake supports row-level security through the use of Row Access Policies to determine which rows to return in the query result. The row access policy can be relatively simple to allow one particular role to view rows, or be more complex to include a mapping table in the policy definition to determine access to rows in the query result.
 >
 
@@ -565,7 +565,7 @@ Just as expected, our Governance features are seen downstream despite only havin
 
 For Tasty Bytes and the Test role we have created, let's test an Aggregation Policy ut against our Raw Order Header table.
 
-> aside positive
+> 
 >
 > An **Aggregation Policy** is a schema-level object that controls what type of query can access data from a table or view. When an aggregation policy is applied to a table, queries against that table must aggregate data into groups of a minimum size in order to return results, thereby preventing a query from returning information from an individual record.
 >
@@ -652,7 +652,7 @@ ORDER BY order_total DESC;
 ![assets/agg_2.png](assets/agg_2.png)
 
 
-> aside positive
+> 
 > Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
 >
 
@@ -680,7 +680,7 @@ CREATE OR REPLACE PROJECTION POLICY governance.tasty_customer_test_projection_po
 ```
 
 
-> aside positive
+> 
 > A projection policy is a first-class, schema-level object that defines whether a column can be projected in the output of a SQL query result. A column with a projection policy assigned to it is said to be projection constrained.
 >
 
@@ -875,7 +875,7 @@ For Tasty Bytes, Access History is particularly important for Compliance, Auditi
 
 Within this step, we will walk through leveraging Access History to find when the last time our Raw data was read from and written to.
 
-> aside negative
+> 
 > Access History latency is up to 3 hours. If you have just recently setupb the Tasty Bytes environment, some of the queries below may not have results. 
 >
 
@@ -936,7 +936,7 @@ ORDER BY number_of_queries DESC;
 
 ![assets/ah_3.png](assets/ah_3.png)
 
-> aside positive
+> 
 > **Direct Objects Accessed:** Data objects directly named in the query explicitly.
 > **Base Objects Accessed:** Base data objects required to execute a query.
 >

@@ -125,7 +125,7 @@ Sigue los pasos y el vídeo que se muestran a continuación para conseguir esta 
 
 ![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 
->aside positive Weather Source es un destacado proveedor de datos meteorológicos y climáticos mundiales, y su conjunto de productos OnPoint proporciona a las empresas los datos meteorológicos y climáticos necesarios para generar rápidamente información práctica y útil en un amplio abanico de casos de uso en distintos sectores.
+> 
 >
 
 ### Paso 2: armonizar los datos propios y de terceros
@@ -249,7 +249,7 @@ $$;
 
 ![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
->aside positive Cuando crees una función definida por el usuario (user-defined function, UDF), tendrás que especificar un controlador cuyo código se escriba en uno de los lenguajes compatibles. En función del lenguaje del controlador, podrás incluir el código fuente del controlador en línea mediante la sentencia CREATE FUNCTION o hacer referencia a la ubicación del controlador desde CREATE FUNCTION, donde el controlador esté precompilado o el código fuente esté en una fase.
+> 
 >
 
 ### Paso 2: crear el SQL para nuestra vista

@@ -112,7 +112,7 @@ SHOW COLUMNS IN raw_pos.menu;
 
 Looking at our result set, we see the `menu_item_health_metrics_obj` is a [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured) Data Type.
 
->aside positive
+> 
 >For data that is mostly regular and uses only data types that are native to the semi-structured format you are using (e.g. strings and integers for JSON format), the storage requirements and query performance for operations on relational data and data in a VARIANT column is very similar.
 >
 
@@ -155,7 +155,7 @@ ORDER BY menu_item_id;
 
 ![assets/dot_flatten.png](assets/dot_flatten.png)
 
->aside positive
+> 
 > **Flatten:** is a table function that takes a VARIANT, OBJECT, or ARRAY column and produces a lateral view. Flatten can be used to convert semi-structured data to a relational representation.
 >
 >**Lateral Join:** Unlike the output of a non-lateral join, the output from a lateral join includes only the rows generated from the inline view. The rows on the left-hand side do not need to be joined to the right hand side because the rows on the left-hand side have already been taken into account by being passed into the inline view. 
@@ -267,7 +267,7 @@ SELECT
 FROM harmonized.menu_v;
 ```
 
-> aside positive
+> 
 > **Exclude:** specifies the columns that should be excluded from the results of a SELECT * statement.
 > **Rename:** specifies the column aliases that should be used in the results of a SELECT * statement.
 >
@@ -351,7 +351,7 @@ ORDER BY ARRAY_SIZE(overlapping_ingredients) DESC; -- order by largest number of
 
 ![assets/array_funcs.png](assets/array_funcs.png)
 
-> aside positive
+> 
 > **Array_intersection:** Returns an array that contains the matching elements in the two input arrays.
 > **Arrays_overlap:** Compares whether two arrays have at least one element in common
 > **Array_size:** Returns the size of the input array

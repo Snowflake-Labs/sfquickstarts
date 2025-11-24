@@ -60,7 +60,7 @@ Once the tile is clicked you will be presented with the Fivetran configuration s
 ![Partner Connect Fivetran Configuration](assets/sfdc/s_0030.png)
 
 ### Non-Partner Connect Only
-> aside negative
+> 
 > In the case where you are unable to use partner connect because of an existing linked account, you can create a [Fivetran trial account here](https://fivetran.com/signup).  Post Fivetran account creation, you simply follow [these instructions](https://fivetran.com/docs/destinations/snowflake/setup-guide) to setup your Snowflake destination in Fivetran and Snowflake.  Then you may continue to the next step.
 >
 
@@ -112,7 +112,7 @@ Leave the schema changes setting as `Allow All`.  Click `Continue`.
 With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`.  And let Fivetran seamlessly replicate your data into Snowflake.  This should only take a minute or two at most.  Now, let's move on to transformations!
 ![Fivetran Connector 12](assets/connector/c_0120.png)
 
-> aside positive
+> 
 > This is the power of Fivetran SaaS.  No allocating resources.  No development.  Fully automated data replication...a production data pipeline in a few steps!
 >
 ## Configure Fivetran Quickstart Transformations
@@ -141,7 +141,7 @@ In the Fivetran UI, you can view the lineage for any of the transformation jobs 
 ![Fivetran Transform 9](assets/transforms/t_0090.png)
 
 ### Recap
-> aside positive
+> 
 > You can see that with Fivetran Quickstart Data Models, there is no code, no git, and no deployments!  This 'T' in 'ELT' is a great value-add and a great way to start you on your transformations journey.  The open source for these transformations can be found in the [dbt Package Hub](https://hub.getdbt.com/).  One item to note here.  [dbt Labs](https://www.getdbt.com/) creates push-down SQL which runs inside Snowflake.  Fivetran's implementation of this logic incurs no costs on the Fivetran side; transformation jobs are free.  But each time a transformation is executed and data is manipulated, there will be a Snowflake warehouse running consuming Snowflake credits.
 >
 

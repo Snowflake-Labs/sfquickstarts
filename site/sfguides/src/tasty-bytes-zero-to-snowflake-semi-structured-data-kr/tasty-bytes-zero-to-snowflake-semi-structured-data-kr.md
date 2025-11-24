@@ -140,7 +140,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 
 결과 세트에서는 `menu_item_health_metrics_obj`가 [VARIANT](https://docs.snowflake.com/ko/sql-reference/data-types-semistructured) 데이터 유형임을 확인할 수 있습니다.
 
-> aside positive 대부분이 일반적이고 사용 중인 반정형 형식의 기본 데이터 유형만 사용하는 데이터의 경우(예: JSON 형식의 경우 문자열 및 정수), VARIANT 열의 관계형 데이터 및 데이터 작업에 대한 스토리지 요구 사항 및 쿼리 성능은 매우 유사합니다.
+> 
 
 ### 3단계 - 점표기법을 사용하여 반정형 데이터 순회
 
@@ -180,7 +180,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 
 다운스트림 사용자가 `menu_item_health_metrics_obj` 열에서 요구하는 데이터를 추가적으로 추출하려면 요청받은 첫 번째 `ingredient` 배열을 제공하기 위해 방금 탐색한 점표기법 기능과 Snowflakes [FLATTEN](https://docs.snowflake.com/ko/sql-reference/functions/flatten) 함수 및 [LATERAL JOIN](https://docs.snowflake.com/ko/sql-reference/constructs/join-lateral) 기능을 활용하는 다음 쿼리를 실행하십시오.
 
-> aside positive **평면화:** VARIANT, OBJECT 또는 ARRAY 열을 사용하는 테이블 함수이며 래터럴 뷰를 생성합니다. 평면화는 반정형 데이터를 관계형 표현으로 변환하는 데 사용할 수 있습니다.
+> 
 > 
 > **래터럴 조인:** 래터럴이 아닌 조인의 출력과 달리, 래터럴 조인의 출력에는 인라인 뷰에서 생성된 행만 포함됩니다. 왼쪽의 행은 오른쪽과 결합될 필요가 없습니다. 왼쪽의 행은 인라인 뷰로 전달되어 이미 고려되었기 때문입니다.
 
@@ -251,7 +251,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 이 쿼리에서는 조정 스키마에서 [CREATE VIEW](https://docs.snowflake.com/ko/sql-reference/sql/create-view)를 사용하여 반정형 처리 로직과 추가 열을 테이블로 캡슐화합니다.
 
-> aside positive 뷰를 사용하면 이것이 테이블인 것처럼 쿼리 결과에 액세스할 수 있습니다.  뷰는 데이터 결합, 분리 및 보호 등의 다양한 용도로 사용됩니다.
+> 
 
 ```
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.menu_v
@@ -288,7 +288,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 또한, 쿼리 또는 뷰 정의의 복잡성을 줄여 SQL 개발자의 삶을 훨씬 더 쉽게 만들 수 있는 [SELECT * EXCLUDE 및 RENAME](https://docs.snowflake.com/ko/sql-reference/sql/select#parameters) 매개변수를 활용합니다.
 
-> aside positive **제외:** 모든 열(SELECT \* 또는 SELECT table_name.\*)을 선택할 때 EXCLUDE는 결과에서 제외해야 하는 열을 지정합니다.
+> 
 > 
 > **이름 바꾸기:** 모든 열(SELECT \* 또는 SELECT table_name.\*)을 선택할 때 결과에 사용해야 하는 열 별칭을 지정합니다.
 
