@@ -1,0 +1,12 @@
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+# these users will be requested for
+# review when someone opens a pull request.
+*       @sfc-gh-kkomail @sfc-gh-annafilippova @rsafdar44
+
+
+# Used in Northstar Workshops
+site/sfguides/src/getting-started-with-snowpipe/ @northstar-workshop-reviewers
+site/sfguides/src/getting-started-with-cortex-analyst/ @northstar-workshop-reviewers
+site/sfguides/src/customer-reviews-analytics-using-snowflake-cortex/ @northstar-workshop-reviewers
+site/sfguides/src/snowflake-northstar-data-engineering/ @northstar-workshop-reviewers
