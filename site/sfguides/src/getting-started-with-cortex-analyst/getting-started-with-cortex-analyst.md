@@ -60,11 +60,11 @@ When the script has finished running, you should see:
 |Table rows: Revenue days|730|
 
 
-> aside negative
->
-> If you see `SQL compilation error: Database 'CORTEX_ANALYST_DEMO' does not exist or not authorized.`, then you probably clicked *Run* instead of *Run All*. *Run* just runs one statement, but we need to run the whole script.
->
-> Look for the dropdown next to the *Run* button, click it, then click *Run All*.
+<aside class="negative">
+<strong>NOTE:</strong><br> If you see `SQL compilation error: Database 'CORTEX_ANALYST_DEMO' does not exist or not authorized.`, then you probably clicked *Run* instead of *Run All*. *Run* just runs one statement, but we need to run the whole script.
+
+Look for the dropdown next to the *Run* button, click it, then click *Run All*.
+<aside>
 
 <!-- ------------------------ -->
 ## Switch Role
@@ -280,9 +280,9 @@ verified_queries:
     verified_by: Jane
 ```
 
-> aside positive
->
-> Eventually you'll want to create a semantic view for your own data. Snowsight has a number of tools to help you, and you can [get started here](https://docs.snowflake.com/en/user-guide/views-semantic/ui).
+<aside class="positive">
+<strong>NOTE:</strong><br> Eventually you'll want to create a semantic view for your own data. Snowsight has a number of tools to help you, and you can [get started here](https://docs.snowflake.com/en/user-guide/views-semantic/ui).
+<aside>
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
