@@ -92,7 +92,7 @@ To begin, acquire the SafeGraph listing by following the steps below within Snow
 - Grant access to: 'PUBLIC'
 
 
->aside positive
+> 
 >SafeGraph’s Places data provides detailed information about physical places. Our data is fresh, cleaned and provided in a format that empowers the user. With POI data for countries around the world, you can gain insights about any location that a person can visit aside from private residences. 
 >
 
@@ -157,7 +157,7 @@ JOIN tb_safegraph.public.frostbyte_tb_safegraph_s cpg
 ```
 
 
->aside negative
+> 
 > **Note:** For demonstration purposes the SafeGraph listing already has the Tasty Bytes *location_id's* included within. In a real-world scenario the mapping would leverage public [Placekeys](https://www.placekey.io/) which [SafeGraph is a founding partner of](https://www.safegraph.com/blogs/safegraph-joins-placekey-initiative-as-a-founding-partner).
 >
 
@@ -173,7 +173,7 @@ Latitude and Longitude are two building block POI metrics we now have access to 
 
 Please execute the next two queries to re-assume to `tb_data_engineer` role and create our Geography Point leveraging the [ST_MAKEPOINT/ST_POINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) function.
 
->aside positive
+> 
 > **ST_MAKEPOINT/ST_POINT:** Constructs a GEOGRAPHY object that represents a point with the specified longitude and latitude.
 >
 
@@ -207,7 +207,7 @@ Starting with our Geographic Point, we can now begin to dive into some of the po
 
 Let's first start with calculating the distances in Miles and Kilometers between those top selling locations we generated previously by executing our next query which leverages the [ST_DISTANCE](https://docs.snowflake.com/en/sql-reference/functions/st_distance) function.
 
->aside positive
+> 
 >**ST_DISTANCE:** Returns the minimum geodesic distance between two GEOGRAPHY or the minimum Euclidean distance between two GEOMETRY objects.
 >
 
@@ -253,7 +253,7 @@ Please execute the next query which will take the building blocks from the previ
 
 Within this query we will see the usage of [ST_NPOINTS](https://docs.snowflake.com/en/sql-reference/functions/st_npoints), [ST_COLLECT](https://docs.snowflake.com/en/sql-reference/functions/st_collect), [ST_ENVELOPE](https://docs.snowflake.com/en/sql-reference/functions/st_envelope) and [ST_AREA](https://docs.snowflake.com/en/sql-reference/functions/st_area).
 
->aside positive
+> 
 >**ST_NPOINTS/ST_NUMPOINTS:** Returns the number of points in a GEOGRAPHY or GEOGRAPHY object.
 >
 >**ST_COLLECT:** This function combines all the GEOGRAPHY objects in a column into one GEOGRAPHY object.
@@ -290,7 +290,7 @@ Look at how much we accomplished within a single SQL query, but we can't stop ye
 ### Step 2 - Finding our Top Selling Locations Center Point
 Now that we have collected geographic information about where our Trucks sell the most in Paris.  Please execute the next query which will utilize [ST_CENTROID](https://docs.snowflake.com/en/sql-reference/functions/st_centroid) to find the top selling center point.
 
->aside positive
+> 
 >**ST_CENTROID:** Returns the Point representing the geometric center of a GEOGRAPHY or GEOMETRY object.
 >
 
@@ -389,7 +389,7 @@ WHERE location_name = 'Musee du Louvre';
 
 ![assets/h3_louvre.png](assets/h3_louvre.png)
 
->aside positive
+> 
 > **Resolution 4** = 288 thousand hexagons covering the globe
 > **Resolution 8** = 92 billion hexagons covering the globe
 > **Resolution 12** = 1.6 billion hexagons covering the globe
@@ -445,7 +445,7 @@ ORDER BY total_sales_usd DESC;
 ### Step 4 - H3_GRID_DISTANCE
 To conclude, in the next query we will see if our two Top Selling Resolution 6 Hexagons border each other using H3_GRID_DISTANCE(https://docs.snowflake.com/en/sql-reference/functions/h3_grid_distance).
 
->aside positive
+> 
 > A neighbor cell is one step away and two cells with one hexagon between them are two steps apart.
 >
 

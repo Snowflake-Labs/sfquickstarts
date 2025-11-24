@@ -22,7 +22,7 @@ Snowpark Pythonの機能を活用してデータエンジニアリングパイ�
 ![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 では、準備をはじめましょう。
 
-> aside negative
+> 
 > 
 > **注意** - 2023年2月1日現在、[Snowflake Visual Studio Code拡張機能](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)と[SnowCLIツール](https://github.com/Snowflake-Labs/snowcli)は両方ともまだプレビュー中です。
 
@@ -410,7 +410,7 @@ SnowCLIは、次のSnowflakeオブジェクトの開発と展開を簡素化し�
 
 これにより、対応するSnowflakeデータベースオブジェクトでラップすることを心配せずに、Pythonアプリケーションを開発してテストすることもできるようになります。
 
-> aside negative
+> 
 > 
 > **注意** - 2023年2月1日現在、SnowCLIツールはまだプレビュー中です。
 
@@ -808,14 +808,14 @@ GitHubアクションワークフローがSnowflakeアカウントに接続で�
 | SNOWSQL_ROLE | HOL_ROLE |
 | SNOWSQL_WAREHOUSE | HOL_WH |
 | SNOWSQL_DATABASE | HOL_DB |
-> aside positive
+> 
 > 
 > **ヒント** - SNOWSQL_ACCOUNTのアカウント名の構成方法の詳細については、「[Snowflake Pythonコネクターインストールガイド](https://docs.snowflake.com/ja/user-guide/python-connector-install.html#step-2-verify-your-installation)」にあるアカウント名の説明を参照してください。
 
 すべてのシークレットの追加が完了すると、ページは次のようになります。
 
 ![assets/github-actions-secrets.png](assets/github-actions-secrets.png)
-> aside positive
+> 
 > 
 > **ヒント** - シークレットを管理するためのさらに優れたソリューションとして、[GitHubアクション環境](https://docs.github.com/en/actions/reference/environments)を活用できます。この環境では、シークレットをグループ化し、環境ごとに保護ルールを定義できます。
 

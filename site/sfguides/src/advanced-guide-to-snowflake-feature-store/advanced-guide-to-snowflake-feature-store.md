@@ -26,7 +26,7 @@ Here is a summary of what you will be able to learn in each step by following th
 The diagram below provides an overview of what we will be building in this Guide.
 ![Snowpark](assets/quickstart_pipeline.png)
 
-> aside negative
+> 
 > __Note__:  Snowflake Feature Store uses Snowflake Enterprise Edition features and therefore requires Enterprise Edition or higher.
 
 In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
@@ -209,10 +209,10 @@ And connect to the database using:
 session = Session.builder.configs(connection_parameters).create()
 ```
 
-> aside negative
+> 
 > __Note__: For the **account** parameter above, specify your **account identifier** and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, [refer to the documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html).  
 
-> aside negative
+> 
 > __Note_: Initially, before you have executed the Setup Notebook below, you will need to use pre-existing objects (database, schema, warehouse) you have access to in your account. Once we have setup the Database environment with the Notebook below you can update `connection.json` with the objects created. 
 
 <!-- ------------------------ -->
@@ -248,12 +248,12 @@ Within your Jupyter session you should see the Notebook file (`Step01_TPCXAI_UC0
 You will need to do the same for the other Notebooks used in this Guide
 
 Step through the Notebook running the cells to setup the Database environment.
-> aside negative
+> 
 > __Note:__ Pay particular attention to the third code cell, and make any adjustments needed for your account/environment and user. See below:
 
 ![Snowpark](assets/setup_adjustment_cell.png)
 
-> aside negative
+> 
 > __Note:__ If you are lacking specific elevated privileges needed for some of the operations, you may encounter issues executing some of the steps.  You will need to work with an Account administrator to resolve these.
 
 Once you have successfully executed the Notebook, you can check in Snowsight that your environment has been created.  The Database viewer should look something like this:
@@ -264,7 +264,7 @@ You will find a similar hierarchy under the TPCXAI_SF0001_QUICKSTART_INC
 
 We can see that a number of Streams & Tasks have been created that are running frequently to incrementally add new data into your __TPCXAI_SF0001_QUICKSTART_INC__ database tables.  We can check that these are running by looking at Snowsight Task History under Monitoring on the left-hand side.  Once it has been running for a while it should something like this.
 
-> aside negative
+> 
 > __Note:__ If you have only just created the Tasks you will see less execution history.
 
 ![Snowpark](assets/task_history.png)
@@ -275,7 +275,7 @@ You can drill into the Task details from the Data viewer.  For example:
 
 You can see that the Tasks are set to execute every minute if new data is available.  Feel free to reduce the frequency should you want to, although you will then need to wait longer to observe changes in FeatureViews when you create them in the Guide.
 
-> aside negative
+> 
 > __Note:__ If you are going to leave these running for any length of time, assuming you are completing the Guide over a few days. You should also `SUSPEND` the Tasks to minimise costs.  You can `RESUME` them when you want to restart, and they will pick up where they left off, loading any additional data for the interim period.  You can do this via the Elipsis in the top-right corner, or programmatically with SQL if you prefer.
 
 
@@ -299,10 +299,10 @@ With our database established, we are now ready to get started on Feature Engine
 
 You can step through the Notebook to create Feature Engineering Pipeline, Feature-Store & Model-Registry, interact with the Feature Store and train a model using Snowpark ML.  We will describe some of the key steps in the Notebook below.
 
-> aside negative
+> 
 > __Note:__ You can now adjust your ***connection.json*** file, to reflect the database, schema and warehouse that you have created in the prior Step.
 
-> aside negative
+> 
 > __Note:__ As before , pay particular attention to the third code cell, and make any adjustments needed for your account/environment and user. See below:
 
 ![Snowpark](assets/setup_adjustment_cell.png)

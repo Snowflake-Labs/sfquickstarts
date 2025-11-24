@@ -44,7 +44,7 @@ LLM Functions: SQL and Python functions that leverage large language models (LLM
 
 ML Functions: SQL functions that perform predictive analysis using machine learning to help you gain insights into your structured data and accelerate everyday analytics.
 
-> aside negative
+> 
 > IMPORTANT: Some of CORTEX's functions and features used in this quickstart are in PrPr and or PuPr.  Please reach out to your account team for enablement.  [Availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_ga=2.5151286.405859672.1709568467-277021311.1701887324&_gac=1.124754680.1707955750.Cj0KCQiA5rGuBhCnARIsAN11vgRLWfK6RIoIEqcZ7cFas8qwN4yCoL0q9nttp5UEmSocnPmhdBG57fgaAjqNEALw_wcB&_fsi=j2b82Wl3#availability).
 
 ![Snowpark](assets/cortex.png)
@@ -89,7 +89,7 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 - **UDF**: User defined function
 - **UDTF**: User defined table function
 
-> aside positive
+> 
 > IMPORTANT: Before proceeding, make sure you have the correct access to CORTEX as described [here](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#required-privileges).
 
 <!-- ------------------------ -->
@@ -100,7 +100,7 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, setup Snowflake internal stages, and load repair manuals.
 
-> aside positive
+> 
 > IMPORTANT:
 >
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -718,7 +718,7 @@ You can now ask any question you like of the LLM in regards to fixing the Otto 1
 
 ## Cleanup
 
-> aside negative
+> 
 > IMPORTANT:
 >
 > - If you have created other solutions in your LLM database, do not DROP it.  You will lose those solutions.

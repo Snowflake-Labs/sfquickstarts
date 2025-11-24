@@ -15,7 +15,7 @@ Use this quickstart lab to configure and understand the Snowflake Connector for 
 
 ![now](assets/first.png)
 
-> aside positive
+> 
 > Note: This quickstart assumes you do not have a ServiceNow® account, so it guides you through the steps of creating a developer account. Of course, if you do have a Servicenow® account, please feel free to try it out, with the caveat that, at the time of this writing, the connector is in public preview and therefore the [preview terms](/legal/preview-terms-of-service/) apply. 
 ### Prerequisites
 - ServiceNow® account with administrator's rights.
@@ -139,10 +139,10 @@ Check out [Configuring the Snowflake Connector for ServiceNow®](https://other-d
 
 Select **Configure**. It can take a few minutes for the configuration process to complete, and you will be moved to the next step.
 
-> aside negative
+> 
 > Watch out!!! The created warehouse is created as a **Large** and with a auto suspension after 10 minutes. So this means, if you set to refresh every hour, the Large warehouse (8 credits/hour) will wake up for a minimum of 10 minutes every hour.  For this lab, you don't need all the power! Go to Admin -> Warehouses -> SERVICENOW_WAREHOUSE -> ... > Edit, and change this to an XSMALL, and the auto timeout to one minute. In a real-life use case, a Large warehouse size is often needed.
 
-> aside positive
+> 
 > Absolutely attach a resource monitor to the SERVICENOW_WAREHOUSE. Go to Admin->Resource Monitors->+ Resource Monitor, and create a warehouse resource monitor:
 ![resource monitor](assets/monitor.png)
 
@@ -161,7 +161,7 @@ To verify the connection, select the three dots [...] and **View Details**. At t
 
 ![authenticated](assets/authenticated.png)
 
-> aside negative
+> 
 > If you are having issues, perhaps the Client secret wasn't copied. Unlock the password field and copy and paste the text.
 
 ## Configure deletions sync
@@ -178,7 +178,7 @@ When it's done, please select **Define data to sync** to select tables for the i
 
 ## Select ServiceNow® Tables
 
-> aside negative
+> 
 > A couple of things to be aware of:
 > - The connector can only ingest tables with **sys_id** columns present.
 > - ServiceNow® views are not supported. Instead of ingesting these views, you should synchronize all tables for the underlying view and join the synchronized tables in Snowflake.
@@ -205,7 +205,7 @@ You receive a message indicating success. It appears once at least one table has
 
 ![success](assets/success.png)
 
-> aside negative
+> 
 > Don't stop the ingest too quickly. Make sure the views are built in the destination database first.
 
 ## Connector Monitoring
@@ -252,7 +252,7 @@ Check out the tables that the connector has created under the destination schema
 
 - A view named table_name__view that contains the data in flattened form, where the view contains a column for each column in the original table and a row for each record that is present in the original table.
 
-> aside negative
+> 
 > Warning! After you start the connector, it takes for the views to be created. The creation of the views relies on data in the ServiceNow® sys_db_object, sys_dictionary and sys_glide_object tables. The connector loads metadata from these ServiceNow® tables after you enable any table for synchronization. It can take some time for the connector to load this metadata. Do not stop the warehouse during this time!
 
 - A view named table_name__view_with_deleted that contains the same data as table_name__view as well as rows for records that have been deleted in ServiceNow®.
@@ -317,7 +317,7 @@ GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_monitor_role;
 
 During this lab, we're only ingesting the data, so it makes sense to stop the ingestion after that initial load. However, in an operational environment, you would keep it running.
 
-> aside negative
+> 
 > If you do not stop the connector, it will wake up the virtual warehouse at the specified time interval and consume credits.
 
 

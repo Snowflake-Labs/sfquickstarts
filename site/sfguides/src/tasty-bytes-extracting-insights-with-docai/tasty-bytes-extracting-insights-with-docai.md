@@ -172,7 +172,7 @@ From here please enter the following set of Values and Questions one by one that
 - **FOOD_PROPER_TEMP:** Was the Food received at the proper temperature (Y or N)?
 - **VEHICLE_RUNS_WELL:** Did the Vehicle run and was it in well maintained condition?
 
-> aside positive
+> 
 > For demonstration purposes, we are only extracting 5 values however please feel free to add more.
 > 
 > Please see [Question optimization for extracting information with Document AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/optimizing-questions) for best practices.

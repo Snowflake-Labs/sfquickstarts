@@ -46,7 +46,7 @@ cd sfguide-snowpark-python-top-three-tips-for-optimal-performance
 
 #### Snowpark Python via Anaconda
 
-> aside positive
+> 
 > IMPORTANT:
 > - If you are using a machine wth Apple M1 chip, follow [these instructions](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
@@ -235,7 +235,7 @@ Your Python code must operate efficiently on batch of rows
 
 ### Cleanup
 
-> aside positive
+> 
 > If you did not complete all test cases in the notebook, please ensure you cleaned up the environment by executing the final code block so that all other labs will function properly
 
 
