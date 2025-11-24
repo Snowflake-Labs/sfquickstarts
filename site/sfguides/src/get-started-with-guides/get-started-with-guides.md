@@ -12,6 +12,8 @@ author:  Snowflake DevRel Team
 
 The following sections explain the various headings of a guide that are required to keep the look and feel consistent.
 
+Your guide will reside in this [sfguides/src folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src)
+
 ### Overview 
 
 Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
@@ -109,7 +111,7 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
   - **open in snowflake**: add a link to the product as a deeplink or a template link
 
 
-You can see the source metadata at the top of the markdown for this guide [here](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/get-started-with-guides/get-started-with-guides.md) for reference.
+You can see the source metadata at the top of the markdown for this guide [here](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/get-started-with-guides) for reference.
 
 
 
