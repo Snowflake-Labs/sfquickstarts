@@ -43,7 +43,7 @@ You'll learn how to register entities and feature views, perform feature enginee
 <!-- ------------------------ -->
 ## Setup and Data Preparation
 
-This section covers environment setup, notebook upload, and loading the sample dataset for the feature store demo.
+This section covers environment setup, notebook upload, and loading the sample dataset for the feature store quickstart.
 
 ### Run the Setup Script
 
@@ -94,7 +94,7 @@ CREATE OR REPLACE WAREHOUSE FS_DEMO_WH
     AUTO_SUSPEND = 300
     AUTO_RESUME = TRUE
     INITIALLY_SUSPENDED = TRUE
-    COMMENT = 'Warehouse for Feature Store demo';
+    COMMENT = 'Warehouse for Feature Store quickstart';
 
 -- Create database and schema
 CREATE OR REPLACE DATABASE FEATURE_STORE_DEMO
@@ -185,16 +185,23 @@ The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
 
 ### Upload and Open Notebook
 
-Now that your environment is set up, import the demo notebook to Snowflake.
+Now that your environment is set up, import the quickstart notebook to Snowflake.
 
 ### Run the Notebook
 
-[Download the notebook](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/notebooks/0_start_here.ipynb) from the GitHub repository.
+Download the notebook file to your local machine:
+
+1. Click this link: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/notebooks/0_start_here.ipynb)
+2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
+3. Save the `.ipynb` file to your computer
+
+Now import the notebook into Snowflake:
 
 1. Change role to `FS_DEMO_ROLE`
 2. Navigate to **Projects** > **Notebooks** in Snowsight
 3. Click **Import .ipynb** from the **+ Notebook** dropdown
-4. Create a new notebook with the following settings:
+4. Select the downloaded `0_start_here.ipynb` file from your computer
+5. Create a new notebook with the following settings:
    - **Notebook Location**: `FEATURE_STORE_DEMO`, `TAXI_FEATURES`
    - **Run On**: Container
    - **Warehouse**: `FS_DEMO_WH`
@@ -590,18 +597,25 @@ print("Prediction from SPCS:", spcs_prediction)
 ```
 
 <!-- ------------------------ -->
-## Clean Up Demo Resources
+## Clean Up Quickstart Resources
 
-When you're finished with the demo, you can remove all created resources to avoid incurring costs.
+When you're finished with the quickstart, you can remove all created resources to avoid incurring costs.
 
 ### Run the Teardown Script
 
-[Download the teardown script](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/scripts/teardown.sql) from the GitHub repository.
+Download the teardown script to your local machine:
+
+1. Click this link: [teardown.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/scripts/teardown.sql)
+2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
+3. Save the `.sql` file to your computer
+
+Now run the teardown script in Snowflake:
 
 1. Open Snowflake and navigate to **Projects** > **Workspaces**
 2. Create a new SQL file
-3. Copy and paste the teardown script
-4. Run the entire script as **ACCOUNTADMIN**
+3. Open the downloaded `teardown.sql` file and copy all its contents
+4. Paste the script into your Snowflake SQL file
+5. Run the entire script as **ACCOUNTADMIN**
 
 The teardown script will:
 - Stop all running services
@@ -613,7 +627,7 @@ The teardown script will:
 - Drop the `FS_DEMO_ROLE`
 
 > NOTE:
-> This will permanently delete all data and resources created during the demo.
+> This will permanently delete all data and resources created during the quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
