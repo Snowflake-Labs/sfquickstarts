@@ -98,7 +98,7 @@ USE DATABASE tb_101;
 ### Step 2 - Creating and Configuring a Warehouse
 Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to meet compute needs or scaling out to meet concurrency needs. 
 
-> aside positive
+> 
 > A virtual warehouse, often referred to simply as a “warehouse”, is a cluster of compute resources in Snowflake.
 >
 
@@ -118,7 +118,7 @@ COMMENT = 'test warehouse for tasty bytes'
 ```
 
 Based on the query we ran, please see the details below on what each configuration handles within our [CREATE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse) statement.
-> aside positive
+> 
 >**Warehouse Type**: Warehouses are required for queries, as well as all DML operations, including loading data into tables. Snowflake supports Standard (most-common) or Snowpark-optimized Warehouse Types.
 >
 >**Warehouse Size**: Size specifies the amount of compute resources available per cluster in a warehouse. Snowflake supports X-Small through 6X-Large sizes.
@@ -238,7 +238,7 @@ Once executed we will receive another `Statement executed successfully.` result.
 ALTER WAREHOUSE tb_test_wh SET statement_timeout_in_seconds = 1800;
 ```
 
->aside positive
+> 
 > **[STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds):** Timeout in **seconds** for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.
 >
 
@@ -253,7 +253,7 @@ Once executed we will receive another `Statement executed successfully.` result.
 ALTER WAREHOUSE tb_test_wh SET statement_queued_timeout_in_seconds = 600;
 ```
 
->aside positive
+> 
 > **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
 >
 
@@ -279,7 +279,7 @@ USE ROLE accountadmin;
 ALTER ACCOUNT SET statement_timeout_in_seconds = 18000; -- 18000 seconds = 5 hours
 ```
 
->aside positive
+> 
 > **[STATEMENT_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-timeout-in-seconds):** Timeout in **seconds** for statements. Statements are automatically canceled if they run for longer; if set to zero, max value (604800) is enforced.
 >
 
@@ -292,7 +292,7 @@ Since this parameter is also in seconds we will set it equal to 3600 ([1 hour x 
 ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
 ```
 
->aside positive
+> 
 > **[STATEMENT_QUEUED_TIMEOUT_IN_SECONDS](https://docs.snowflake.com/en/sql-reference/parameters#statement-queued-timeout-in-seconds):** Timeout in **seconds** for queued statements. Statements will automatically be canceled if they are queued on a warehouse for longer than this amount of time; disabled if set to zero.
 >
 
@@ -308,7 +308,7 @@ This will also allow Admins to monitor credit consumption and trigger Warehouse 
 
 Within this step we will create our Resource Monitor using SQL but these can also be deployed and monitored in Snowsight by navigating to [Admin -> Cost Management](https://docs.snowflake.com/en/user-guide/cost-exploring-overall#overview-of-account-level-costs).
 
-> aside positive
+> 
 > A resource monitor can be used to monitor credit usage by virtual warehouses and the cloud services needed to support those warehouses. 
 > 
 
@@ -329,7 +329,7 @@ WITH
 ![assets/create_rm.png](assets/create_rm.png) 
 
 For additional detail on what each configuration handles in our statement above please see below:
-> aside positive
+> 
 > **Credit Quota**: Credit quota specifies the number of Snowflake credits allocated to the monitor for the specified frequency interval. Any number can be specified.
 >
 > **Frequency**: The interval at which the used credits reset relative to the specified start date.

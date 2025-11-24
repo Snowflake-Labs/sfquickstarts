@@ -75,7 +75,7 @@ Tasty Bytes는 전 세계 도시에서 푸드 트럭을 운영합니다. 각 트
 
 ![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
-> aside positive SafeGraph는 전 세계 모든 장소에 대한 모든 데이터를 제공하는 전 세계적인 지리 공간 데이터 회사입니다. Esri, Tripadvisor, Mapbox 및 Sysco와 같은 고객은 SafeGraph 데이터를 사용하여 고객을 더 잘 이해하고, 신제품을 만들고, 비즈니스를 위한 더 나은 결정을 내립니다.
+> 
 
 ### 2단계 - 객체 생성, 데이터 로드 및 데이터 결합
 
@@ -186,14 +186,14 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 
 - Snowflake 계정 자격 증명으로 [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) 파일을 업데이트합니다. Python 노트북은 이 파일을 사용하여 자격 증명에 액세스하고 Snowflake와 연결합니다.<br> ![assets/auth_file.png](assets/auth_file.png)
 
-> aside positive  
+> 
 `account` 매개변수에는 [계정 식별자](https://docs.snowflake.com/ko/user-guide/admin-account-identifier)를 사용합니다. 계정 식별자에는 snowflakecomputing.com 접미사가 포함되지 않습니다.
 
 ### 3단계- Python 환경 생성
 
-> aside positive 이러한 지침은 Python 환경을 생성하기 위해 [Anaconda](https://www.anaconda.com/)를 사용합니다. 하지만 *Python 3.8을 포함한 다른 모든 Python 환경(예: [virtualenv](https://virtualenv.pypa.io/en/latest/))을 사용할 수 있습니다.*
+> 
 
-> aside negative **Apple M1**: pyOpenSSL의 메모리 처리로 인해 Apple M1 칩에서 Snowpark Python 실행과 관련해 알려진 이슈가 있습니다. 이 이슈를 해결하려면 [**Snowpark 설명서**](https://docs.snowflake.com/ko/developer-guide/snowpark/python/setup.html)를 참조하십시오.<br>
+> 
 
 **터미널에서 다음을 실행하여 Python 환경을 구축하고 Jupyter Notebook을 시작합니다.**<br> 1. Snowflake Anaconda 채널의 패키지(및 버전)을 사용하여 ‘py38_env_tb1’(tb1 = Tasty Bytes 1)라는 Python 3.8 환경을 생성합니다.
 

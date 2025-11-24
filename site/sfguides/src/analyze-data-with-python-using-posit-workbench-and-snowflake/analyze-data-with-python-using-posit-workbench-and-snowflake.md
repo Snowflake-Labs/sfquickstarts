@@ -220,7 +220,7 @@ You can learn more about these extensions here: [Shiny extension](https://shiny.
 
 4. In a terminal, **activate the virtual environment** by running `source .venv/bin/activate`.
 
-> aside negative
+> 
 >
 > If you don't already see a terminal open, open the Command Palette (`Ctrl/Cmd+Shift+P`), then select `Terminal: Create New Terminal` to open one.
 
@@ -441,7 +441,7 @@ heart_failure_filtered = (
 )
 ```
 
-> aside positive
+> 
 >
 > By default, Ibis is in _deferred mode_ and lazily evaluates table expressions. To more easily interact with your tables and see the results of your code, you can turn on _interactive code_. In [interactive mode](https://ibis-project.org/how-to/configure/basics#interactive-mode), expressions are executed when printed to the console. Turn on interactive mode with `ibis.options.interactive = True`.
 

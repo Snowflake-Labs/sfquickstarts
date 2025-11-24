@@ -100,7 +100,7 @@ Here are the requirements for this Quickstart Guide:
 
 In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a Snowflake account.
 
-> aside negative
+> 
 > 
 > **You must use a Snowflake Enterprise account.** Snowflake Standard Edition is not sufficient, due to usage of Snowflake Enterprise features.
 
@@ -113,7 +113,7 @@ Here are the requirements for this Quickstart Guide:
 
 In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a dbt platform account. Live webinar attendees should use this workshop signup page[https://cloud.getdbt.com/workshop] and the passcode provided by your instructor. For others, we recommend using Snowflake Partner Connect.
 
-> aside negative
+> 
 > 
 > **You should use a dbt platform Enterprise account.** It is possible to complete most of the steps with other editions of dbt platform, but some steps require Enterprise.
 
@@ -203,7 +203,7 @@ The **finance team** is an operational team. Finance team members are accustomed
 
 ### Provision Snowflake and dbt platform the setup
 
-> aside negative
+> 
 > 
 > dbt platform Enterprise is required to create more than one project in an account. If you do not have a dbt platform Enterprise account and wish to try this, [please contact dbt Labs](https://www.getdbt.com/contact).
 
@@ -735,7 +735,7 @@ In this penultimate step, you will now set up dbt platform to build the finance 
 
 ### Setup the project
 
-> aside negative
+> 
 > 
 > ⚠️ This section requires a dbt platform Enterprise account.
 > 

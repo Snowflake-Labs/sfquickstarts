@@ -25,7 +25,7 @@ Snowpark Container Services are fully integrated with both Snowflake features an
 
 For more information on these objects, check out [this blog](https://medium.com/snowflake/snowpark-container-services-a-tech-primer-99ff2ca8e741) along with the Snowpark Container Services [documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview).
 
-> aside negative
+> 
 > NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.
 
 ### What you will learn 
@@ -198,7 +198,7 @@ If the compute pool DASH_GPU3 is **not** in IDLE or ACTIVE state, run the follow
 alter compute pool DASH_GPU3 resume;
 ```
 
-> aside positive
+> 
 > NOTE: Before proceeding, make sure the compute pool DASH_GPU3 is in IDLE or ACTIVE state.
 
 To create the service, run the following commands in a SQL worksheet:
@@ -224,7 +224,7 @@ from (select parse_json(system$get_service_status('llm_service'))) t,
 lateral flatten(input => t.$1) v;
 ```
 
-> aside positive
+> 
 > NOTE: Before proceeding, make sure the service is in READY state.
 
 ### Access LLM Service
@@ -239,13 +239,13 @@ show endpoints in service llm_service;
 
 Copy the endpoint URL, and paste it in your browser. At this point, you will be asked to login. Use your Snowflake username and password, after which you should see JupyterLab running, all inside of Snowflake in SPCS!
 
-> aside positive
+> 
 > NOTE: To access the service, the user logging in must have `DASH_SPCS` role AND their default role cannot be `ACCOUNTADMIN`, `SECURITYADMIN`, or `ORGADMIN`.
 
 <!-- ------------------------ -->
 ## Deploy Llama 2 in SPCS
 
-> aside negative
+> 
 > NOTE: Registering and deploying models in Snowpark Containter Services is currently in Private Preview.
 
 Recall that in our `Dockerfile` we copied over three Notebooks along with two data (.csv) files, so they should be available to you in JupyterLab as shown below.
@@ -258,7 +258,7 @@ Here's a quick overview of the three notebooks.
 
 2) **llm-notebook-with-fine-tune-all-rows.ipynb**: In most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. This notebook illustrates that--while all the code is exactly the same as in *llm-notebook-with-fine-tune.ipynb* the only difference between the two is that in this notebook, the entire dataset was used to fine-tune the Llama 2 model vs in *llm-notebook-with-fine-tune.ipynb* the same model is fine-tuned using only 100 rows. And the improved model is evident in the inference results -- refer to the `output` vs `predicted` dataframe columns of the evaluation dataset in both notebooks. 
 
-> aside positive
+> 
 > NOTE: Fine-tuning the model on a larger dataset compared to 100 rows in our case will take much longer so just be mindful of that.
 
 Let's get started!
@@ -423,7 +423,7 @@ Here we are referencing our fine-tuned weights and using the Hugging Face token 
 
 #### Log and Deploy fine-tuned Llama 2 model using Model Registry
 
-> aside positive
+> 
 > NOTE: Logging and deploying fine-tuned model with our setup may take ~15mins.
 
 If all goes well, you should see cell output similar to the following:
@@ -470,7 +470,7 @@ Here's what the inference output looks like:
 
 As noted earlier, in most cases, fine-tuning or training a model with a larger dataset usually results in a better, more accurate model. In our case, the improved model is evident in the inference results seen in **llm-notebook-with-fine-tune-pre-run-all-rows.ipynb** notebook where the model was fine-tuned on the entire dataset compared to only 100 rows. 
 
-> aside positive
+> 
 > NOTE: Fine-tuning the model on a larger dataset compared to 100 rows will take much longer so just be mindful of that.
 
 Here's what the inference output looks like when the model is fine-tuned on the entire dataset.
@@ -482,7 +482,7 @@ Here's what the inference output looks like when the model is fine-tuned on the 
 
 To cleanup resources and remove all of the objects you created during this QuickStart, run the following commands in a SQL worksheet. This will ensure that you don't incur any unnecessary costs specifically associated with this QuickStart guide. 
 
-> aside positive
+> 
 > NOTE: Snowpark Container Services bills credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing.
 
 ```sql

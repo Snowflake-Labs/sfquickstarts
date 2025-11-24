@@ -32,7 +32,7 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 - GitHub Codespaces -or- Ability to install and run software on your computer
 
 
-> aside positive
+> 
 > **Snowpark Container Services availability**
 > 
 >  Snowpark Container Services is currently available across a [range of cloud providers and regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
@@ -78,7 +78,7 @@ Without the router part of the frontend service, CORS would actually prevent the
 ### Overview
 In this part of the lab we'll set up our Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our Tasty Bytes Food Truck orders data into our ORDERS table and run a few queries to get familiar with the data.
 
-> aside negative
+> 
 >
 > The sample data for the quickstart that we load will only cover the dates between 2022-01-01 to 2022-10-31. Don't be alarmed if a query on a data later or earlier than that returns an empty response
 
@@ -620,7 +620,7 @@ Currently there is no authentication of the user calling this endpoint. We will 
 
 In the earlier guide [Build a Data App with Snowflake](/en/developers/guides/build-a-data-app-with-snowflake/) authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provided user name and password, and the service looked that up in the database (the `USERS` table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client's browser, even if the code is served from the frontend service, so calls to the API are coming from the end users' browsers, not from the internal service hosting the frontend.
 
-> aside positive
+> 
 >
 > While React.js mainly relies on Client-Side Rendering, other frontend frameworks may rely on Server-Side Rendering, which changes this a little bit. CSR is very lightweight and makes it easy for the frontend service to serve static content to the end users, so for this solution it works well.
 
@@ -832,7 +832,7 @@ There are two areas that is updated here to allow it to run in the new environme
 
 The routing is something that changes somewhat significantly from the original solution. Instead of adding a CORS directive to the backend (e.g. allowing calls from another origin), we introduce a router service that takes calls from the public endpoint and _routes_ them to either the frontend service, or the backend service, allowing us to maintain a single public endpoint.
 
-> aside negative
+> 
 >
 > The frontend service and backend service are here hosted as two separate services, with a router bundled together with the frontend. For this simple application that may not be a necessary requirement to fulfill, but in a more complex and demanding application, it would be a good approach to separate the frontend and backend as they would have different non-functional requirements.
 
@@ -917,7 +917,7 @@ The frontend code itself needs fewer changes to adapt to the new environment. Pr
 
 ![Tasty App UI](./assets/tasty-app-ui.png)
 
-> aside negative
+> 
 >
 > The original React code is actually built on older package dependencies. In order to keep this guide as similar to the original guide no changes to the React framework have been introduced, only minor changes are done as part of this guide. There are many ways to update the general React code to later standards, but this guide will focus on the core parts of connecting the services,
 
@@ -1485,7 +1485,7 @@ From a terminal, we can now also remove the built images:
 docker image prune --all
 ```
 
-> aside negative
+> 
 >
 > Warning, the above removes _all_ unused Docker images. If you have other Docker images that you don't want to remove, then manually remove the images created in this guide using `docker image rm <IMAGE NAME>`.
 

@@ -47,7 +47,7 @@ Head to the SQL API by navigating to your version of the following URL, replacin
 https://*account_locator*.snowflakecomputing.com/api/v2
 ```
 
-> aside negative
+> 
 > 
 >  Note that the account locator might include additional segments for your region and cloud provider. See [Specifying Region Information in Your Account Hostname](https://docs.snowflake.com/en/user-guide/intro-regions.html#label-region-ids) for details.
 
@@ -59,7 +59,7 @@ Now let's break down the parts of the API before we begin using it. The API cons
 
 In the steps to come, you shall use all these endpoints to familiarize yourself with the API. 
 
-> aside positive
+> 
 > 
 >  You can use development tools and libraries for REST APIs (e.g., Postman) to send requests and handle responses.
 
@@ -100,7 +100,7 @@ You can test to make sure you can successfully connect to Snowflake Key Pairs us
 $ snowsql -a <account> -u <user> --private-key-path <path to private key>
 ```
 
-> aside negative
+> 
 > 
 >  If you'd rather authenticate with OAuth, please visit our documentation on authenticating with [OAuth](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#using-oauth). 
 
@@ -156,7 +156,7 @@ For the [body of the request](https://docs.snowflake.com/en/developer-guide/sql-
 
 - To specify the warehouse, database, schema, and role to use, set the `warehouse`, `database`, `schema`, and `role` fields.
 
-> aside negative
+> 
 > 
 >  Note: the values in these fields are case-sensitive.
 
@@ -221,7 +221,7 @@ The following table specifies the values of the `type` field that you can use to
 
 - Each cell specifies the type of value that you can use with a binding type to insert data into a column of a particular Snowflake data type.
 
-> aside negative
+> 
 > 
 >  If the cell for a binding type and Snowflake data type is empty, you cannot use the specified binding type to insert data into a column of that Snowflake data type.
 
