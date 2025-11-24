@@ -51,13 +51,13 @@ If this is the first time you are logging into the Snowflake UI, you will be pro
 
 Click `Sign-in` and you will be prompted for your username and password.
 
-> aside positive
+> 
 >  If this is not the first time you are logging into the Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your username and password (or another authentication mechanism).
 
 ### Increase Your Account Permission
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.
 
-> aside positive
+> 
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
 ![assets/geo_analysis_geometry_2.png](assets/geo_analysis_geometry_2.png)
@@ -124,7 +124,7 @@ These are the parameters you need to provide:
 - **Account**: Hostname for your account. One way to get it is to check the Snowflake activation email, which contains the account_name within the URL ( <account_name>.snowflakecomputing.com ). Just enter what's on the account_name, i.e ok36557.us-east-2.aws
 - **Warehouse (optional)**: Default warehouse that will run your queries. Use MY_WH.
 
-> aside negative
+> 
 >  Use MY_WH or the name of the data warehouse you created in the previous step otherwise some queries will fail because CARTO won't know which warehouse to run them against.
 
 - **Database (optional)**. Default database to run your queries. Use GEOLAB.
@@ -146,7 +146,7 @@ The first step in the guide is to acquire geospatial data sets that you can free
 
 * Once in the listing, click the big blue `Get` button
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 ![assets/geo_analysis_geometry_5.png](assets/geo_analysis_geometry_5.png)
@@ -161,7 +161,7 @@ Similarly to the above dataset, search and get the `Netherlands Open Map Data - 
 
 ![assets/geo_analysis_geometry_23.png](assets/geo_analysis_geometry_23.png)
 
-> aside negative
+> 
 >  After clicking "Get" you may see a message saying "Getting Data Ready. This will take at least 10 minutes.". In this case simply continue this quickstart and come back to this step when you start using this dataset.
 
 ### Install CARTO Analytics Toolbox from the Snowflake Marketplace
@@ -354,7 +354,7 @@ FROM table(py_load_geodata(build_scoped_file_url(@stageshp, 'nl_areas.zip'), 'nl
 ```
 This query fails with the error: *Geometry validation failed: Geometry has invalid self-intersections. A self-intersection point was found at (559963, 5.71069e+06)*. 
 
-> aside negative
+> 
 >  The constructor function determines if the shape is valid according to the [Open Geospatial Consortium’s Simple Feature Access / Common Architecture](https://www.ogc.org/standards/sfa) standard. If the shape is invalid, the function reports an error and does not create the GEOMETRY object. That is what happened in our example.
 
 To fix this you can allow the ingestion of invalid shapes by setting the corresponding parameter to True. Let's run the SELECT statement again, but update the query to see how many shapes are invalid. Run the following query:
@@ -383,7 +383,7 @@ ORDER BY is_valid ASC;
 
 ![assets/geo_analysis_geometry_15.png](assets/geo_analysis_geometry_15.png)
 
-> aside negative
+> 
 >  Using ST_BUFFER with some small positive or negative value for the distance *sometimes* can help to fix invalid shapes. However, you should remember that the unit of measurement for the distance parameter in the ST_BUFFER will be the same as your data. Therefore, if your data utilizes lon/lat values, the distance's units will also be degrees.
 
 Now all shapes are valid and the data is ready to be ingested. One additional thing you should do is to set SRID, since otherwise it will be set to 0. This dataset is in the reference system [WGS 72 / UTM zone 31N](https://epsg.io/32231), so it makes sense to add the SRID=32231 to the constructor function.
@@ -662,7 +662,7 @@ FROM geolab.geography.nl_municipalities_coverage;
 
 Now imagine you want to calculate what percentage of highways in the Netherlands are covered by the LTE network. To get the number, you can employ the `Netherlands Open Map Data` dataset that has NL motorways.
 
-> aside negative
+> 
 >  At this point you need to use Open Street Map data for the Netherlands. If you had to skip importing this table because the data was not ready please go back to that step. The data should be available by now.
 
 Run the following query in your Snowflake worksheet:
@@ -730,7 +730,7 @@ SELECT h3,
 FROM geolab.geography.nl_lte_coverage_h3;
 ```
 
-> aside positive
+> 
 >  Note that you don’t have a `GEOGRAPHY` on this query. This is because CARTO has native support of H3 and can show the H3 geography representation on the browser without the need to store and move the geography from the database to the browser. 
 
 As you create an H3 layer you will need to configure the layer type from the query console:
@@ -825,7 +825,7 @@ Once you have your second layer on the map, you can click on it to style it and 
 
 ![assets/geo_analysis_geometry_37.gif](assets/geo_analysis_geometry_37.gif)
 
-> aside positive
+> 
 >  You may feel that these last several queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!
 
 ## Conclusion

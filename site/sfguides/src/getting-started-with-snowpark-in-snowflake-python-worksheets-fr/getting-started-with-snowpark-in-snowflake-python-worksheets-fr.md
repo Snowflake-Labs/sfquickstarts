@@ -54,7 +54,7 @@ Inscrivez-vous et profitez d’un essai gratuit de 30 jours en cliquant [ici](h
 
 Connectez-vous à votre compte Snowflake. Pour accéder à cet atelier et configurer des exemples de données et de code, assurez-vous de cliquer sur le lien suivant.
 
-> aside positive IMPORTANT : vous devez disposer du rôle ACCOUNTADMIN afin de procéder à la configuration de l’atelier décrite ci-dessous. Remarque : si vous avez créé un nouveau compte d’essai, vous disposez automatiquement du rôle ACCOUNTADMIN.
+> 
 
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 

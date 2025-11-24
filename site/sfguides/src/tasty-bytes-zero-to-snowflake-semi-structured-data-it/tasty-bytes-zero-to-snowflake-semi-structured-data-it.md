@@ -110,7 +110,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 
 Esaminando il set di risultati, vediamo che i dati in `menu_item_health_metrics_obj` sono di tipo [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured).
 
->aside positive
+> 
 Per dati generalmente regolari che utilizzano solo tipi di dati nativi del formato semi-strutturato in uso (ad es. string e integer per il formato JSON), i requisiti di storage e le prestazioni delle query per le operazioni sui dati relazionali e sui dati in una colonna VARIANT sono molto simili.
 >
 
@@ -148,7 +148,7 @@ In questa sezione elaboreremo ulteriormente i dati semi-strutturati per soddisfa
 ### Passaggio 1 - Introduzione all’appiattimento laterale
 Per estrarre dalla colonna `menu_item_health_metrics_obj` i dati richiesti dagli utenti a valle, esegui la prossima query, che utilizza la funzionalità di notazione punto che abbiamo appena visto insieme alle funzioni [FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten) e [LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral) di Snowflake per fornirci il primo array `ingredient` che ci è stato richiesto.
 
->aside positive
+> 
 **Flatten:** una funzione per tabelle che produce una vista laterale a partire da una colonna VARIANT, OBJECT o ARRAY. La funzione Flatten può essere utilizzata per convertire dati semi-strutturati in una rappresentazione relazionale.
 >
 >**Lateral Join:** a differenza dell’output di un join non laterale, l’output di un join laterale include solo le righe generate dalla vista in linea. Non è necessario fare il join delle righe sul lato sinistro con quelle sul lato destro, poiché le righe sul lato sinistro sono già state incluse passandole alla vista in linea. 
@@ -216,7 +216,7 @@ Partendo dalla stessa query con cui abbiamo concluso la sezione precedente, eseg
 
 In questa query utilizziamo [CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view) nello schema armonizzato per incapsulare la logica di elaborazione dei dati semi-strutturati e le colonne aggiuntive in una tabella.
 
->aside positive
+> 
 Una vista consente di accedere al risultato di una query come se fosse una tabella. Le viste possono essere utilizzate per vari scopi, tra cui combinare, separare e proteggere i dati. 
 >
 
@@ -254,7 +254,7 @@ In questa query vediamo alcune nuove funzioni che non abbiamo ancora trattato. P
 
 Utilizziamo inoltre i parametri [SELECT * EXCLUDE e RENAME](https://docs.snowflake.com/en/sql-reference/sql/select#parameters), che possono facilitare molto il compito degli sviluppatori SQL riducendo la complessità della definizione di una query o di una vista.
 
->aside positive
+> 
 **Exclude:** quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.\*), specifica le colonne da escludere dai risultati.
 >
 > **Rename:** quando si selezionano tutte le colonne (SELECT * o SELECT nome_tabella.\*), specifica gli alias delle colonne da utilizzare nei risultati.

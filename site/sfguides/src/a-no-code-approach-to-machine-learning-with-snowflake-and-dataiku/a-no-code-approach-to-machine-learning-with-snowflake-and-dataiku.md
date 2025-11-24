@@ -48,7 +48,7 @@ The exercises in this lab will walk you through the steps to:
 
 If you haven't already, [register for a Snowflake free 30-day trial](https://trial.snowflake.com/) The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
 
-> aside negative
+> 
 > 
 >  **Note**: Please ensure that you use the **same email address** for both your Snowflake and Dataiku sign up
 
@@ -62,7 +62,7 @@ If you haven't already, [register for a Snowflake free 30-day trial](https://tri
 
 After activation, you will create a ```username```and ```password```. Write down these credentials. **Bookmark this URL for easy, future access**.
 
-> aside negative
+> 
 > 
 >  **About the screen captures, sample code, and environment:** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
 
@@ -96,7 +96,7 @@ At the top right of the page, confirm that your current role is `ACCOUNTADMIN`, 
 
 ![img](assets/PC3.png)
 
-> aside negative
+> 
 > Depending on which screen you are on you may not see the full menu as above but hovering over 
 > the Data Products (Cloud) icon will show the options
 
@@ -113,7 +113,7 @@ This is to show that a Data Science team working on Dataiku and by extension on 
 1. Click `Connect`
 2. You will get a pop-ip which tells you your partner account has been created. Click on `Activate`
 
-> aside negative
+> 
 > 
 >  **Informational Note:** <br> If you are using a different Snowflake account than the one created 
 > at the start, you may get a screen asking for your email details. Click on ‘Go to Preferences’ and 
@@ -165,7 +165,7 @@ Upon clicking on the activation link, please briefly review the Terms of Service
 <br>
 This is the Cloud administration console where you can perform tasks such as inviting other users to collaborate, add plugin extensions, install industry solutions to accelerate projects as well as access community and academy resources to help your learning journey. 
 
->aside negative
+> 
 >**NOTE:** It may take several minutes for your instance to Dataiku to start up the first time,
 > during this time you will not be able to add the extension as described below.
 > You can always come back to this task later if time doesn't allow now
@@ -339,7 +339,7 @@ Here is the project we are going to build along with some annotations to help yo
 
 * Whatever screen you are currently in you can always return to the main **Flow** by clicking the **Flow** symbol from the top menu (also clicking the project name will take you back to the main Project page).
 
->aside positive
+> 
 > You can refer back to this completed project screenshot if you want to check your progress through the lab.
 
 * `Double click` into the `LOAN_REQUESTS_KNOWN_SF` dataset. This is our dataset of historical loan applications, a number of attributes about them, and whether the loan was paid back or defaulted (the DEFAULTED column - 1.0 = default, 0.0 = paid back).

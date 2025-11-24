@@ -38,7 +38,7 @@ In this guide, we'll be walking through all the steps you'll need to go through 
 <!-- ------------------------ -->
 ## Prepare Your Environment
 
-> aside positive
+> 
 > 
 > Please make sure you have downloaded the following [git repo](https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml).
 
@@ -101,7 +101,7 @@ To load the notebooks in Hex, please follow [these instructions](https://learn.h
 <!-- ------------------------ -->
 ## Ingesting the Data into Tables
 
-> aside positive
+> 
 > 
 > Please make sure you have downloaded the following [git repo](https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml).
 
@@ -117,7 +117,7 @@ At the end of this step, you should see 3 new tables in the `EURO_2024` database
 <!-- ------------------------ -->
 ## Feature Engineering
 
-> aside positive
+> 
 > 
 > Please make sure you have downloaded the following [git repo](https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml).
 
@@ -132,7 +132,7 @@ In this notebook you will be executing various feature engineering steps to buil
 <!-- ------------------------ -->
 ## Model Operations
 
-> aside positive
+> 
 > 
 > Please make sure you have downloaded the following [git repo](https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml).
 
@@ -148,7 +148,7 @@ In this notebook you will be using Snowpark ML and Snowflake Model Registry to p
 <!-- ------------------------ -->
 ## Creating Stored Procedures and UDTFs
 
-> aside positive
+> 
 > 
 > Please make sure you have downloaded the following [git repo](https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml).
 
@@ -168,7 +168,7 @@ At the end of this step, we will have a model, and all the functions and procedu
 <!-- ------------------------ -->
 ## Simulating the Euro 2024 Tournament
 
-> aside positive
+> 
 > 
 > Please make sure you have downloaded the following [git repo](https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml).
 

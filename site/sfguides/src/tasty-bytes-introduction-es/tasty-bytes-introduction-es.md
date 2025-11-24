@@ -92,7 +92,7 @@ En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsi
 ### Descripción general
 Ahora que ya hemos completado la configuración de Tasty Bytes, podemos explorar la base de datos, los roles y los almacenes que hemos creado. 
 
->aside negative **Nota:** En la hoja de trabajo *Tasty Bytes - Setup* que has creado en la sección anterior, desplázate hasta el final. Ahí, copia, pega y ejecuta el SQL incluido en cada uno de los pasos siguientes.
+> 
 >
 
 ### Paso 1: explorar los conceptos esenciales de Tasty Bytes

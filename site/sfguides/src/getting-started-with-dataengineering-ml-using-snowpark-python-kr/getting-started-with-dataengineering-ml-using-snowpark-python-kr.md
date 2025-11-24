@@ -64,7 +64,7 @@ Streamlit은 개발자가 데이터 애플리케이션을 빠르고 쉽게 작�
 - Snowflake 계정([ORGADMIN이 활성화한 Anaconda 패키지](https://docs.snowflake.com/ko/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) 포함) Snowflake 계정이 없다면 [무료 평가판 계정](https://signup.snowflake.com/?utm_cta=quickstarts_)을 위해 등록할 수 있습니다.
 - Snowflake 계정 로그인(ACCOUNTADMIN 역할 포함) 환경에 이 역할이 있다면 이를 사용해도 됩니다. 이 역할이 없다면 1) 무료 평가판을 위해 등록하거나, 2) 데이터베이스, 스키마, 테이블, 스테이지, 작업, 사용자 정의 함수 및 저장 프로시저를 생성할 수 있는 다른 역할을 사용하거나, 3) 언급된 객체를 생성할 수 있는 기존 데이터베이스 및 스키마를 사용해야 합니다.
 
-> aside positive 중요: 계속하기 전에 [여기](https://docs.snowflake.com/ko/developer-guide/udf/python/udf-python-packages#getting-started)에서 설명한 대로 ORGADMIN이 활성화한 Anaconda 패키지가 포함된 Snowflake 계정을 보유하고 있는지 확인하십시오.
+> 
 
 <!-- ------------------------ -->
 ## 설정 환경
@@ -74,7 +74,7 @@ Streamlit은 개발자가 데이터 애플리케이션을 빠르고 쉽게 작�
 
 테이블을 생성하고, Amazon S3에서 데이터를 로드하고, Snowflake 내부 스테이지를 설정하기 위해 자격 증명을 사용하여 [Snowsight](https://docs.snowflake.com/ko/user-guide/ui-snowsight.html#)에 로그인합니다.
 
-> aside positive 중요:
+> 
 > 
 > - 이 섹션에서 생성한 객체에 다른 이름을 사용한다면 다음 섹션에서 이에 맞춰 스크립트를 업데이트하고 코딩해야 합니다.
 > 
@@ -166,7 +166,7 @@ CREATE OR REPLACE STAGE dash_udfs;
 
 선택적으로 객체를 생성하고 AWS S3에서 데이터를 로드하기 위해 Snowsight에서 [setup.sql](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/setup.sql)을 열고 모든 SQL 문을 실행할 수 있습니다.
 
-> aside positive 중요: 이 섹션에서 생성한 객체에 다른 이름을 사용한다면 다음 섹션에서 이에 맞춰 스크립트를 업데이트하고 코딩해야 합니다.
+> 
 
 <!-- ------------------------ -->
 ## 시작하기
@@ -194,7 +194,7 @@ git clone git@github.com:Snowflake-Labs/sfguide-getting-started-dataengineering-
 
 **데이터 엔지니어링** 및 **머신러닝** 단계를 완료하려면 모든 것을 로컬에서 설치(옵션 1)하거나 아래에서 설명하는 대로 Hex를 사용(옵션 2)해야 합니다.
 
-> aside positive 중요: **Streamlit 애플리케이션**을 실행하려면 Python 환경을 생성하고 **로컬 설치**에서 설명하는 대로 로컬에서 Snowpark for Python과 다른 라이브러리를 설치해야 합니다.
+> 
 
 #### 옵션 1 -- 로컬 설치
 
@@ -250,13 +250,13 @@ pip install snowflake-ml-python
 }
 ```
 
-> aside negative 참고: 위 **계정** 매개변수에는 **계정 식별자**를 지정하고 snowflakecomputing.com 도메인 이름을 포함시키지 않습니다. 연결을 생성할 때 Snowflake가 이 값을 자동으로 추가합니다. 이에 대한 상세 정보는 [설명서를 참조하십시오](https://docs.snowflake.com/ko/user-guide/admin-account-identifier.html).
+> 
 
 #### 옵션 2 -- Hex 사용
 
 기존 [Hex](https://app.hex.tech/login) 계정을 사용하거나 [30일 무료 평가판 계정을 생성](https://app.hex.tech/signup/quickstart-30)하기로 결정했다면 Snowpark for Python이 내장되어 있기에 Python 환경을 생성하고 노트북을 사용하여 로컬에서 Snowpark for Python과 다른 라이브러리를 설치할 필요가 없습니다. 이렇게 하면 이 Quickstart 가이드의 **데이터 엔지니어링** 및 **머신러닝** 단계를 Hex에서 바로 완료할 수 있습니다. (Hex에서 데이터 엔지니어링 및 머신러닝 노트북을 로드하는 것에 대한 세부 정보는 각 단계를 참조하십시오.)
 
-> aside positive 중요: **Streamlit 애플리케이션**을 실행하려면 Python 환경을 생성하고 위 **로컬 설치**에서 설명하는 대로 로컬에서 Snowpark for Python과 다른 라이브러리를 설치해야 합니다.
+> 
 
 <!-- ------------------------ -->
 ## 데이터 엔지니어링
@@ -278,7 +278,7 @@ pip install snowflake-ml-python
 
 2) 열고 [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)의 셀을 통해 실행합니다.
 
-> aside positive 중요: Jupyter 노트북에서 (Python) 커널이 ***snowpark-de-ml***--로 설정되어 있는지 확인합니다. 이는 **GitHub 리포지토리 복제** 단계에서 생성된 환경 이름입니다.
+> 
 
 ### Hex의 데이터 엔지니어링 노트북
 
@@ -290,7 +290,7 @@ pip install snowflake-ml-python
 
 ![HEX Data Connection](assets/hex_data_connection.png)
 
-> aside negative 참고: 작업 영역에 있는 프로젝트와 사용자를 위해 공유 데이터 연결을 생성할 수도 있습니다. 상세 정보는 [설명서](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections)를 참조하십시오.
+> 
 
 3) 노트북에서 다음 코드 조각을
 
@@ -402,7 +402,7 @@ monthly_revenue_data_pipeline_task = """
 session.sql(monthly_revenue_data_pipeline_task).collect()
 ```
 
-> aside negative 참고: 위 ***monthly_revenue_data_pipeline_task***에서 **AFTER campaign_spend_data_pipeline_task** 절은 이를 종속 작업으로 만듭니다.
+> 
 
 #### 작업 시작
 
@@ -440,7 +440,7 @@ session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
 ## 머신러닝
 
 
-> aside negative 사전 필요 조건 및 지식: [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)에서 설명한 데이터 엔지니어링 단계를 성공적을 완료해야 합니다.
+> 
 
 아래에 링크가 연결된 노트북은 다음 머신러닝 작업을 다룹니다.
 
@@ -464,7 +464,7 @@ session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
 
 2) 열고 [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb)를 통해 실행합니다.
 
-> aside positive 중요: Jupyter 노트북에서 (Python) 커널이 ***snowpark-de-ml*** --로 설정되어 있는지 확인합니다. 이는 **GitHub 리포지토리 복제** 단계에서 생성된 환경 이름입니다.
+> 
 
 ### Hex의 머신러닝 노트북
 
@@ -476,7 +476,7 @@ session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
 
 ![HEX Data Connection](assets/hex_data_connection.png)
 
-> aside negative 참고: 작업 영역에 있는 프로젝트와 사용자를 위해 공유 데이터 연결을 생성할 수도 있습니다. 상세 정보는 [설명서](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections)를 참조하십시오.
+> 
 
 3) 노트북에서 다음 코드 조각을
 
@@ -518,7 +518,7 @@ streamlit run Snowpark_Streamlit_Revenue_Prediction.py
 
 계정에서 SiS가 활성화되어 있다면 컴퓨터의 로컬 대신 Snowsight에서 애플리케이션을 실행하기 위해 다음 단계를 따릅니다.
 
-> aside negative 중요: 2023년 6월 기준으로 SiS는 비공개 미리 보기 단계에 있습니다.***
+> 
 
 1) 왼쪽 탐색 메뉴에서 **Streamlit Apps**를 클릭합니다
 2) 오른쪽 상단에서 **+ Streamlit App**을 클릭합니다

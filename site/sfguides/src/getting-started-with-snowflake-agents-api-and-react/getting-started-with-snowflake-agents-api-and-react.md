@@ -105,7 +105,7 @@ SNOWFLAKE_RSA_KEY=<your_private_rsa_key>
 SNOWFLAKE_RSA_PASSPHRASE=<your_passphrase>
 ```
 
-> aside negative
+> 
 >
 > NOTE: For help with setting your-account-identifier, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier?_fsi=LnJgA8TM).
 

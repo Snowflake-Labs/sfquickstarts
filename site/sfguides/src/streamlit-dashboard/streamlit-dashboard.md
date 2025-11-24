@@ -44,7 +44,7 @@ To install these libraries, you can click on the Packages drop-down found at the
 
 ![image](assets/img02.jpeg)
 
-> aside positive
+> 
 > IMPORTANT:
 > It should be noted that after adding packages, this will create the `environment.yml` file that encodes instruction for installing prerequisite libraries to run the notebook.
 

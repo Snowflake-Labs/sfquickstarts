@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 The Snowflake Native App Framework is a fantastic way for Snowflake application providers to distribute proprietary functionality to their customers, partners and to the wider Snowflake Marketplace. As a provider you can be assured that your code and data (if included) is secure and that the consumers of your application can take advantage of the functionality but not see the details of the implementation. As a consumer of an application you can be assured that the provider via the application is not able to see or operate on any data in your account unless you explicitly allow them access.
 
-> aside negative
+> 
 > 
 > **Note** - As of 23/10/2023, the [Snowflake Native App Framework](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about) is in public preview in all non-government AWS regions.
 
@@ -61,7 +61,7 @@ The application provides a user interface which allows the consumer of the appli
 
 The first solution is not really what we want to be doing because the consumer will potentially have to create objects on their Snowflake instance just to satisfy the application's requirements, so this Quickstart will deliver the second solution.
 
-> aside positive
+> 
 > 
 > **Note** - The following steps explain how to create the app using the **Snowflake CLI**, as this option presents as a faster, more straightforward way to build Native Apps. You can also accomplish it by manually creating the folder structure and executing the SQL commands in Snowsight, but this alternative is out of the scope for this Quickstart. Remember to have the latest CLI version installed.
 
@@ -138,7 +138,7 @@ To do the enhancement of the IP addresses we will use a dataset called DB11 from
 
 The first thing you need to do is create a new database which will serve as the lookup database for the application, following that, it is necessary to create a table, a file format, and a stage. That way we can upload our files to the **stage**, using the **file format** and after that loading that staged data into the **table**.
 
-> aside positive
+> 
 > 
 > **Note** - This setup SQL commands are performed by the **prepare_data.sh** file created previously, you can complete it with the code below:
 
@@ -214,7 +214,7 @@ We now have the referenced database setup in the provider account so we are read
 <!-- ------------------------ -->
 ## Provider Setup
 
-> aside positive
+> 
 > 
 > **Note** - You will need to replace the content in the **setup_package_script.sql** file with the following code. The **{{ package_name }}** directive, allows the application to use whatever name the app package has, according to the user's system username, as a code variable.
 
@@ -249,7 +249,7 @@ Every Snowflake Native App is required to have a manifest file.  The manifest fi
 
 The named stage in this example is going to be created when we execute the **snow app run** command.
 
-> aside positive
+> 
 >
 > **Note** - The **manifest.yml** file you created should be replaced with this code:
 
@@ -285,7 +285,7 @@ Most setup scripts are called either **setup.sql** or **setup_script.sql** but t
 If the application role is permissioned onto an object then the object will be visible in Snowsight after the application is installed (permissions allowing).
 If the application role is not granted permissions onto an object then you will not see the object in Snowsight.  The application itself can still use the objects regardless.
 
-> aside positive
+> 
 >
 > **Note** - Go ahead and replace your **setup_script.sql** file with the following code:
 
@@ -397,7 +397,7 @@ $$
 $$; 
 ```
 
-> aside positive
+> 
 > 
 > **Note** - In the setup script we defined a stored procedure labeled **ENRICHIP.enrich_ip_data**.  In the body we make calls to **REFERENCE(tabletouse)**.  This reference was defined in the manifest file and it is the table to which the consumer has granted us permissions.  Because, as the application producer, we have no way of knowing that ahead of time, the Snowflake Native App framework adds this facility and will resolve the references once permissions have been granted.
 
@@ -417,7 +417,7 @@ Once we have the streamlit UI built we can then finish off the build of the appl
 
 The code for the streamlit looks like this.  There will be other ways of doing this, but this is one way. 
 
-> aside positive
+> 
 >
 > **Note** - Add this code to your **enricher_dash.py** file.
 
@@ -504,7 +504,7 @@ Click on the link that appeared in your console output.
 
 Click **Add** and navigate to the table we just created and select it:
 
-> aside positive
+> 
 > 
 > **Note** - You may at this point be asked to specify a warehouse, because assigning permissions requires a warehouse.
 
@@ -546,7 +546,7 @@ snow app teardown
 
 We have covered a lot of ground in this Quickstart.  We have covered the building blocks of almost every Snowflake Native App you will ever build.  Sure some will be more complicated but the way you structure them will be very similar to what you have covered here.
 
-> aside positive
+> 
 > 
 > **Note** - In [this repository](https://github.com/snowflakedb/native-apps-examples/tree/main/data-mapping) you can find all this code with the instructions to execute it.
 
