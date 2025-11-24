@@ -179,7 +179,7 @@ Code for adding images:
 Code for hyperlinking:
 
 ```
-![Link Title](Link URL)
+[Link Title](Link URL)
 ```
 
 
