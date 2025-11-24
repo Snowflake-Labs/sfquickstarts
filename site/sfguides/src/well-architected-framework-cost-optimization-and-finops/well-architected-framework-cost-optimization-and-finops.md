@@ -656,9 +656,9 @@ approach can be used to track meaningful cost metrics.
   (FinOps platforms) offer easier setup and more out-of-the-box
   Snowflake cost optimization insights.
 
-- **Leverage Snowflake Assistant:** This capability leverages Snowflake
-  Intelligence to allow users to query cost and usage data in
-  ACCOUNT_USAGE views using natural language.
+- **Leverage Cortex Code (In Preview):** This AI Assistant capability 
+allows users to query cost and usage data in ACCOUNT_USAGE views using 
+natural language natively in the Snowsight UI.
 
 #### Investigate anomalous consumption activity
 
