@@ -224,8 +224,11 @@ jobs:
           done
 
   update-manifest:
-    needs: publish
-    if: needs.publish.outputs.has_relevant_changes == 'true'
+    needs: [publish, call-webhooks]
+    if: |
+      always() &&
+      needs.publish.outputs.has_relevant_changes == 'true' &&
+      needs.call-webhooks.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
