@@ -14,7 +14,7 @@ authors: Victoria Warner (Cybersyn)
 ## Overview
 
 
-Welcome to Snowflake! This entry-level guide, designed for database and data warehouse administrators and architects, will help you navigate the Snowflake interface and introduce you to some of our core capabilities. [Sign up for a free 30-day trial of Snowflake](https://trial.snowflake.com) and follow along with this lab. Once we cover the basics, you'll be ready to start processing your own data and diving into Snowflake's more advanced features!
+Welcome to Snowflake! This entry-level guide, designed for database and data warehouse administrators and architects, will help you navigate the Snowflake interface and introduce you to some of our core capabilities. <a href="https://trial.snowflake.com">Sign up for a free 30-day trial of Snowflake</a> and follow along with this lab. Once we cover the basics, you'll be ready to start processing your own data and diving into Snowflake's more advanced features!
 
 ### Free Virtual Hands-on Lab
 This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab. [Sign up for the VHOL today](/virtual-hands-on-lab/).
