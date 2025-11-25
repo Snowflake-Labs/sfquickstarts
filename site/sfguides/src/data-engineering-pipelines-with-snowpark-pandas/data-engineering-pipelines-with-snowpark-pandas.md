@@ -38,7 +38,6 @@ Learn more about [Snowpark Pandas API](https://docs.snowflake.com/en/developer-g
 
 ### Prerequisites
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
     >
     >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake)
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).

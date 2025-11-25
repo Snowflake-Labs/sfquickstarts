@@ -27,7 +27,6 @@ Additionally, you can create your own customized, fine-tuned Document AI model t
 
 ### Prerequisites
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
     >
     >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai)
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
