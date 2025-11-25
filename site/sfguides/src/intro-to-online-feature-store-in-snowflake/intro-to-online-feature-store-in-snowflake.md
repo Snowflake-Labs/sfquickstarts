@@ -2,12 +2,11 @@ author: Doris Lee, Dureti Shemsi
 language: en
 id: intro-to-online-feature-store-in-snowflake
 summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/dynamic-tables,snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake
-tags: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 
 # Introduction to Online Feature Store in Snowflake
 
@@ -44,7 +43,7 @@ You'll learn how to register entities and feature views, perform feature enginee
 <!-- ------------------------ -->
 ## Setup and Data Preparation
 
-This section covers environment setup, notebook upload, and loading the sample dataset for the feature store demo.
+This section covers environment setup, notebook upload, and loading the sample dataset for the feature store guide.
 
 ### Run the Setup Script
 
@@ -124,6 +123,9 @@ GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES
 GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
 GRANT ALL PRIVILEGES ON FUTURE DYNAMIC TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
 GRANT ALL PRIVILEGES ON FUTURE STAGES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE FUNCTIONS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE IMAGE REPOSITORIES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE SERVICES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SECTION 3: NETWORK RULES AND EXTERNAL ACCESS FOR NOTEBOOKS
@@ -155,11 +157,10 @@ USE ROLE FS_DEMO_ROLE;
 
 -- Create compute pool for SPCS model serving
 CREATE COMPUTE POOL IF NOT EXISTS trip_eta_prediction_pool
-    MIN_NODES = 1
-    MAX_NODES = 1
-    INSTANCE_FAMILY = 'CPU_X64_M'
+    MIN_NODES = 3
+    MAX_NODES = 3
+    INSTANCE_FAMILY = 'CPU_X64_L'
     AUTO_RESUME = TRUE
-    AUTO_SUSPEND_SECS = 300
     COMMENT = 'Compute pool for taxi ETA prediction service';
 
 -- Grant usage on compute pool
@@ -184,16 +185,23 @@ The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
 
 ### Upload and Open Notebook
 
-Now that your environment is set up, import the demo notebook to Snowflake.
+Now that your environment is set up, import the guide notebook to Snowflake.
 
 ### Run the Notebook
 
-Download the notebook from [this link](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/notebooks/0_start_here.ipynb)
+Download the notebook file to your local machine:
+
+1. Click this link: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/notebooks/0_start_here.ipynb)
+2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
+3. Save the `.ipynb` file to your computer
+
+Now import the notebook into Snowflake:
 
 1. Change role to `FS_DEMO_ROLE`
 2. Navigate to **Projects** > **Notebooks** in Snowsight
 3. Click **Import .ipynb** from the **+ Notebook** dropdown
-4. Create a new notebook with the following settings:
+4. Select the downloaded `0_start_here.ipynb` file from your computer
+5. Create a new notebook with the following settings:
    - **Notebook Location**: `FEATURE_STORE_DEMO`, `TAXI_FEATURES`
    - **Run On**: Container
    - **Warehouse**: `FS_DEMO_WH`
@@ -587,6 +595,39 @@ spcs_prediction = latest_model.run(
 )
 print("Prediction from SPCS:", spcs_prediction)
 ```
+
+<!-- ------------------------ -->
+## Clean Up Guide Resources
+
+When you're finished with the guide, you can remove all created resources to avoid incurring costs.
+
+### Run the Teardown Script
+
+Download the teardown script to your local machine:
+
+1. Click this link: [teardown.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake/blob/main/scripts/teardown.sql)
+2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
+3. Save the `.sql` file to your computer
+
+Now run the teardown script in Snowflake:
+
+1. Open Snowflake and navigate to **Projects** > **Workspaces**
+2. Create a new SQL file
+3. Open the downloaded `teardown.sql` file and copy all its contents
+4. Paste the script into your Snowflake SQL file
+5. Run the entire script as **ACCOUNTADMIN**
+
+The teardown script will:
+- Stop all running services
+- Drop the compute pool
+- Drop the external access integration
+- Drop the database (including all tables, views, and dynamic tables)
+- Drop the warehouse
+- Revoke all account-level permissions
+- Drop the `FS_DEMO_ROLE`
+
+> NOTE:
+> This will permanently delete all data and resources created during the guide.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources

@@ -142,7 +142,7 @@ Give it a name `Sales_conversation_search`, Give it a description `Cortex Search
 
 ![Agent Setup step 7](assets/add-orchestration.png)
 
-**Step 8.** Click on access to ensure `SALES_INTELLIGENCE_RL` has access. This is where we control which role has access to run this agent. Click on Save
+**Step 8.** Click on access to ensure `SALES_INTELLIGENCE_ROLE` has access. This is where we control which role has access to run this agent. Click on Save
 
 ![Agent Setup step 8](assets/add-access.png)
 
@@ -165,7 +165,7 @@ Let's run the streamlit and call the API locally:
 **Step 1.** To authenticate to the API, let's create a Personal Access Token. 
 * In Snowsight, click on your profile (bottom left corner) » Settings » Authentication
 * Under `Programmatic access tokens`, click `Generate new token`
-* Select `Single Role` and select `sales_intelligence_rl`
+* Select `Single Role` and select `sales_intelligence_role`
 * Copy and save the token for later (you will not be able to see it again)
 
 **Step 2.** Clone the repo: `git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-cortex-agents.git`
