@@ -35,7 +35,6 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 - A sample use case that involves points-of-interest in New York City.
 
 > 
-> 
 >  The Marketplace data used in this QuickStart changes from time-to-time, and as such, your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
 <!-- ------------------------ -->
