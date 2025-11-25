@@ -126,7 +126,7 @@ SHOW VIEWS;
 
 ![image](assets/show-views.png)
 
-> aside positive
+> 
 > IMPORTANT:
 > - Ensure you have the `ACCOUNTADMIN` role to create semantic views
 > - Verify that all views are created successfully before proceeding to the next step

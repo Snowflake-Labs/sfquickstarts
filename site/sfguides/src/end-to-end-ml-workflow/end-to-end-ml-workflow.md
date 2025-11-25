@@ -180,7 +180,7 @@ except:
     df.show(5)
 ```
 
-> aside positive
+> 
 > IMPORTANT:
 > - Make sure your Snowflake account has the necessary privileges to create tables and execute ML operations
 > - Ensure your warehouse is properly sized for ML workloads

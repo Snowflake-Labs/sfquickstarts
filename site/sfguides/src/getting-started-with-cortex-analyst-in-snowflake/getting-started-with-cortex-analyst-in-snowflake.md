@@ -45,7 +45,7 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment
 
-> aside positive
+> 
 >
 > MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake).
 
@@ -102,7 +102,7 @@ CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_
 <!-- ------------------------ -->
 ## Ingest Revenue Data and Semantic Model YAML
 
-> aside positive
+> 
 >
 > MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake).
 

@@ -120,7 +120,7 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 
 Tasty Bytes 설정이 성공적으로 완료되면 이제 생성한 데이터베이스, 역할 및 웨어하우스를 탐색할 수 있습니다.
 
-> aside negative **참고:** 이전 섹션에서 생성한 *Tasty Bytes - Setup* 워크시트 내에서 하단까지 스크롤하여 아래에 있는 각 단계에 포함된 SQL을 복사하고, 붙여넣고, 실행하십시오.
+> 
 
 ### 1단계 - Tasty Bytes 데이터베이스 탐색
 

@@ -34,7 +34,6 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 ### What You’ll Build 
 - A sample use case that involves points-of-interest in New York City.
 
-> aside negative
 > 
 >  The Marketplace data used in this QuickStart changes from time-to-time, and as such, your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
@@ -51,7 +50,7 @@ If this is the first time you are logging into the new Preview Snowflake UI, you
 
 Click `Sign-in` and you will be prompted for your user name and password.
 
-> aside positive
+> 
 > 
 >  If this is not the first time you are logging into the new Preview Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).
 
@@ -59,7 +58,7 @@ Click `Sign-in` and you will be prompted for your user name and password.
 
 The new Preview Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings. 
 
-> aside positive
+> 
 > 
 >  
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
@@ -90,7 +89,7 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 
 - Once in the listing, click the big blue `Get Data` button
 
-> aside negative
+> 
 > 
 >  On the `Get Data` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get Data` screen.
 
@@ -203,7 +202,7 @@ POINT(-74.0266511 40.6346599)
 POLYGON((-74.339971 43.0631175,-74.3397734 43.0631363,-74.3397902 43.0632306,-74.3399878 43.0632117,-74.339971 43.0631175))
 ```
 
-> aside positive
+> 
 > 
 >  You will use several different geospatial object types in this guide, and the guide will explain them more in later sections as you use them.
 
@@ -232,7 +231,7 @@ Now that you understand the different output formats, you can create new files f
 
 In this step we're going to use Snowflake's [COPY into location](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html) feature to take the output of a query and create a file in your local [user stage](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html#user-stages). Because your output format is set to WKB, the geospatial column in that table will be represented in the WKB format in the new files.
 
-> aside negative
+> 
 > 
 >  The WKB format is being chosen here for its simplicity within a file. Since WKB is a single alpha-numeric string with no delimiters, spaces, or other difficult characters, it is excellent for storing geospatial data in a file. That doesn't mean other formats are to be avoided in real world use cases, but WKB will make your work easier in this guide.
 
@@ -326,7 +325,7 @@ from @~/osm_ny_shop_electronics_points.csv
 (file_format => 'geocsv');
 ```
 
-> aside negative
+> 
 > 
 >  Notice in `ST_MAKEPOINT` that the longitude column is listed first. Despite the common verbal phrase "lat long," you always put longitude before latitude to represent a geospatial POINT object in Snowflake.
 
@@ -345,7 +344,7 @@ copy into electronics_points from (
 ```
 
 You should see all rows loaded successfully into the table with 0 errors seen.
-> aside positive
+> 
 > 
 > ositive
 : In the 'all' file load statement, you didn't have to specify a query to load the file because when you have a column in a file that is already in a Snowflake supported geospatial format, and load that value into a `GEOGRAPHY` typed column, Snowflake automatically does the geospatial construction for you. In the 'points' file, however, you must use a transform query to construct two discrete columns into a single `GEOGRAPHY` column using a geospatial constructor function.
@@ -362,7 +361,7 @@ select * from electronics_points;
 
 Now that you have the basic understand of how the `GEOGRAPHY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to run some geospatial queries to answer some questions.
 
-> aside positive
+> 
 > 
 >  It's worth noting here that the scenario in the next three sections is more akin to what a person would do with a map application on their mobile phone, rather than how geospatial data would be used in fictional business setting. This was chosen intentionally to make this guide and these queries more relatable to the person doing the guide, rather than trying to create a realistic business scenario that is relatable to all industries, since geospatial data is used very differently across industries.
 
@@ -389,7 +388,7 @@ select to_geography('POINT(-73.986226 40.755702)');
 
 Notice there is no `from` clause in this query, which allows you to construct a `GEOGRAPHY` object in a simple `select` statement.
 
-> aside negative
+> 
 > 
 >  `POINT(-73.986226 40.755702)` is already a geography object in WKT format, so there was no real need to convert it again, but it was important to show the most basic way to use `TO_GEOGRAPHY` to construct a simple geography object.
 
@@ -493,7 +492,7 @@ The next thing you need to do is convert that `MULTIPOINT` object into a `LINEST
 ```
 select st_makeline(st_collect(coordinates),to_geography('POINT(-73.986226 40.755702)'))
 ```
-> aside positive
+> 
 > 
 > ositive
 : You may be wondering why your current position point was added as an additional point in the line when you already included it as the first point in the `MULTIPOINT` collection above? Stay tuned for why you need this later, but logically it makes sense that you plan to go back to your New York City apartment at the end of your shopping trip.
@@ -568,7 +567,7 @@ as length_meters from locations;
 
 Wow! Almost 2120 meters!
 
-> aside negative
+> 
 > 
 >  It is correct to note that this distance represents a path based on how a bird would fly, rather than how a human would navigate the streets. The point of this exercise is not to generate walking directions, but rather to give you a feel of the various things you can parse, construct, and calculate with geospatial data and functions in Snowflake.
 
@@ -615,10 +614,10 @@ order by 6 limit 1;
 If you note in the result of each query, the first query found a different liquor store closer to Best Buy, whereas the second query returned the same coffee shop from your original search, so you've optimized as much as you can. 
 
 Negative
-> aside positive
 > 
 > 
-> aside positive
+> 
+> 
 > 
 >  If you're feeling adventurous, go read about other possible relationship functions that could be used in the join for this scenario [here](https://docs.snowflake.com/en/sql-reference/functions-geospatial.html).
 
@@ -698,11 +697,11 @@ Nice! 1537 meters, which is a savings of about 583 meters, or a third of a mile.
 <!-- ------------------------ -->
 
 ## Additional Calculations and Constructors
-> aside positive
+> 
 > 
 > he `LINESTRING` object that was created in the previous section looks like a nice, clean, four-sided polygon. As it turns out, a `POLYGON` is another geospatial object type that you can construct and work with. Where you can think of a `LINESTRING` as a border of a shape, a `POLYGON` is the filled version of the shape itself. The key thing about a `POLYGON` is that it must end at its beginning, where a `LINESTRING` does not need to return to the starting point.
 
-> aside positive
+> 
 > 
 >  Remember in a previous section when you added your Times Square Apartment location to both the beginning and the end of the `LINESTRING`? In addition to the logical explanation of returning home after your shopping trip, that point was duplicated at the beginning and end so you can construct a `POLYGON` in this section!
 
@@ -916,7 +915,7 @@ Copy the result cell from the above query and paste it into geojson.io. You shou
 
 ![polygon-full-image](assets/playground_polygon_full.png)
 
-> aside positive
+> 
 > 
 >  You may feel that these last few queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!
 

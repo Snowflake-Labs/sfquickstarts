@@ -119,14 +119,14 @@ CALL <CHOSEN APP NAME>.APP.SET_INPUT_TABLE('SOURCE_TABLE', [['<SOURCE_COLUMN>', 
     - phone_number
     - custom_id
 
-> aside negative
+> 
 >
 > NOTE: email and/or phone_number identifiers must be included (and in this format) in order for some identifier validations to run.
 
 - **IS_STABLE** is a boolean field that tells us whether or not the identifier should be stable. A stable identifier is one that is unique, is 1:1 with a single profile, and cannot be shared across profiles.
     - If the identifier you’re configuring is stable, put **TRUE** here. If it is not stable, put **FALSE**.
 
-> aside negative
+> 
 > 
 > NOTE: By definition, you can only have one stable identifier.
 
@@ -181,7 +181,7 @@ CALL <CHOSEN APP NAME>.APP.SET_UNIQUE_CONSTRAINT('<IDENTIFIER_NAME>');
 ```
 CALL SIMONIDQA.APP.SET_UNIQUE_CONSTRAINT('EMAIL');
 ```
-> aside negative
+> 
 > 
 > NOTE: If you set a shared identifier limit, you should _not_ run a uniqueness check on your stable identifier or else you'll get a false negative.  This is because if a non-stable identifier can be shared across profiles, there are inherently going to be multiple rows for a single stable identifier in your input table.
 
@@ -255,7 +255,7 @@ This is an example input table that we used to generate the report shown in scre
 
 ![input table](assets/input_table.png)
 
-> aside negative
+> 
 >
 > NOTE: Additional screenshots in this section are from the Streamlit report.
 
@@ -285,7 +285,7 @@ Your next step here should be to dive into these email addresses and determine w
 
 Next, the report shows **email** & **phone_number** validations.  You can see in this example that out of the ~1M total records in the input table, ~30K emails are considered invalid and ~80K phone numbers are considered invalid.  
 
-> aside negative
+> 
 > 
 > NOTE: “Invalid” in this case means that the email or phone number is missing one or more properties in order to be considered a “valid” identifier.  Example: emails with no “@” are flagged here, as well as phone numbers with letters in them or fewer/greater than 10 numbers.
 > 

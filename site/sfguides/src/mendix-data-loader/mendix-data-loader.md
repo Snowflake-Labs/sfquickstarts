@@ -36,7 +36,7 @@ In this tutorial you will learn how to ingest data from a Mendix application. In
 
 If you already have a Mendix application and just want to connect to that application you can skip to step 3.
 
-> aside positive
+> 
 > IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 
 <!-- ------------------------ -->

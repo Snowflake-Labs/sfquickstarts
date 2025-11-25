@@ -55,13 +55,13 @@ If this is the first time you are logging into the Snowflake UI, you will be pro
 
 Click `Sign-in` and you will be prompted for your username and password.
 
-> aside positive
+
 >  If this is not the first time you are logging into the Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).
 
 ### Increase Your Account Permission
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.
 
-> aside positive
+
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
 ![assets/geo_ml_1.png](assets/geo_ml_1.png)
@@ -98,10 +98,10 @@ ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 ## Geospatial 101
 
 
-> aside negative
+> 
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
-> aside positive
+> 
 >  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
 
 ### 1. Overview
@@ -122,7 +122,7 @@ For this lab oyu will use [Overture Maps - Places](https://app.snowflake.com/mar
 
 On the Get Data screen, keep the default database name OVERTURE_MAPS__PLACES, as all of the future instructions will assume this name for the database.
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 
@@ -354,10 +354,10 @@ Congratulations! You have completed this introductory quickstart. You learn basi
 
 ## Energy grids analysis using GEOMETRY
 
-> aside negative
+> 
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
-> aside positive
+> 
 >  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
 
 #### Overview
@@ -810,10 +810,10 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 ## Geocoding and Reverse Geocoding
 
 
-> aside negative
+> 
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
-> aside positive
+> 
 >  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
 
 In this lab, we will demonstrate how to perform geocoding and reverse geocoding using datasets and applications from the Marketplace. You will learn how to:
@@ -833,7 +833,7 @@ For this project you will use a dataset with locations of restaurants and cafes 
 * Find and click the `CARTO Academy - Data for tutorials` tile
 * Once in the listing, click the big blue `Get` button
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 ![assets/geo_ml_10.png](assets/geo_ml_10.png)
@@ -1183,7 +1183,7 @@ There is a high chance that datasets focused on particular counties have richer 
 ## Forecasting time series on a map
 
 
-> aside negative
+> 
 >  Before starting with this lab, complete preparation steps from `Setup your account` page.
 
 In this lab, we aim to show you how to predict the number of trips in the coming hours in each area of New York. To accomplish this, you will ingest the raw data and then aggregate it by hour and region. For simplicity, you will use [Discrete Global Grid H3](https://www.uber.com/en-DE/blog/h3/). The result will be an hourly time series, each representing the count of trips originating from distinct areas. Before running prediction and visualizing results, you will enrich data with third-party signals, such as information about holidays and offline sports events.
@@ -1203,7 +1203,7 @@ The New York Taxi and Limousine Commission (TLC) has provided detailed, anonymiz
 * Find and click the `CARTO Academy - Data for tutorials` tile
 * Once in the listing, click the big blue `Get` button
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 ![assets/geo_ml_10.png](assets/geo_ml_10.png)
@@ -1669,16 +1669,16 @@ The worst predictions are for hexagons corresponding to LaGuardia Airport (`882a
 
 You have information about public and school holidays and sports events among our features. Perhaps adding information about other local events, such as festivals, could improve the overall quality of the model.
 
-> aside positive
+> 
 >  The code from this quickstart can be reused for other industries, such as food delivery, micro-mobility, retail, finance, etc. You might need to use different time intervals, third-party datasets, or quality metrics, but the idea and toolkit stay the same.
 
 ## Customer Reviews Sentiment Analysis
 
 
-> aside negative
+> 
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
-> aside positive
+> 
 >  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
 
 This lab will show you how to inject AI into your spatial analysis using Cortex Large Language Model (LLM) Functions to help you take your product and marketing strategy to the next level. Specifically, you’re going to build a data application that gives food delivery companies the ability to explore the sentiments of customers in the Greater Bay Area. To do this, you use the Cortex LLM Complete Function to classify customer sentiment and extract the underlying reasons for that sentiment from a customer review. Then you use the Discrete [Global Grid H3](https://www.uber.com/en-DE/blog/h3/) for visualizing and exploring spatial data. 
@@ -2031,16 +2031,16 @@ If you look at all H3 cells where food quality was high, the average sentiment s
 
 You can also analyze what areas are getting higher scores for each of the categories and how it correlates with the overall sentiment scores for restaurants in each area.
 
-> aside positive
+> 
 >  The code from this quickstart can be reused for other industries, such as urban mobility, retail, finance, etc. Basically, any industry that involves providing a service with geo components and customer reviews.
 
 ## Processing unstructured geospatial data
 
 
-> aside negative
+> 
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
-> aside positive
+> 
 >  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
 
 In this quickstart guide, we will show you how to read geospatial data from unstructured sources such as GeoTiffs and Shapefiles to prepare features for a machine learning model using Snowflake and popular Python geospatial libraries.
@@ -2078,7 +2078,7 @@ For this lab, you will also use a native application called [SedonaSnow](https:/
 * Search for `SedonaSnow` in the search bar.
 * Once in the listing, click the big blue `Get` button.
 
-> aside negative 
+> 
 >  On the `Get` screen, you may be prompted to complete your user profile if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue Save button. You will be returned to the `Get` screen.
 
 ![assets/geo_ml_22.png](assets/geo_ml_22.png)
@@ -2982,14 +2982,14 @@ For this project you will use an Overture Maps [Divisions](https://app.snowflake
 - Search for `Overture Maps - Divisions` in the search bar
 - Once in the listing, click the big blue `Get` button
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 ![assets/geo_ml_28.png](assets/geo_ml_28.png)
 
 Similarly you need to find and install [Overture Maps - Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and [Overture Maps - Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets.
 
-> aside positive
+> 
 >  These datasets include information on administrative divisions, transportation routes, and points of interest. The [Overture Maps Schema Reference](https://docs.overturemaps.org/schema/reference/) is an excellent resource to understand the structure and details of each dataset.
 
 ### Installing Dekart.xyz
@@ -3006,7 +3006,7 @@ As a first step you will install the Marketplace listing:
 
 ![assets/geo_ml_29.png](assets/geo_ml_29.png)
 
-> aside negative
+> 
 >  Note: When trial end you won't be automatically swithched to Subscription-based usage. If you decide to continue using Dekart, you would need to manually enable subscription.
 
 Follow the installation instructions as displayed in the Snowsight interface.
