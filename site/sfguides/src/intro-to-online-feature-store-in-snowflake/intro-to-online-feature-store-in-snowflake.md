@@ -31,7 +31,7 @@ You'll learn how to register entities and feature views, perform feature enginee
 - How to make real-time predictions using online features
 
 ### What You'll Need
-- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides) account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
 - Basic understanding of Snowpark and Snowflake ML
 
 ### What You'll Build

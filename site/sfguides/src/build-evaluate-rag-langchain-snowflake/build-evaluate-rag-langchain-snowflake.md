@@ -30,7 +30,7 @@ A complete RAG application that can answer questions about sales conversations b
 
 ### What You'll Need
 
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A Snowflake account with Cortex features enabled
 - Valid Snowflake credentials
 - Python 3.8+

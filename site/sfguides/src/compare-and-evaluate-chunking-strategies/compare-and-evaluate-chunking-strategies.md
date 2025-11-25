@@ -36,7 +36,7 @@ A complete RAG application that can answer questions about SEC 10-K filings, wit
 
 ### What You'll Need
 
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic familiarity with SQL and Python
 - Understanding of RAG concepts
 

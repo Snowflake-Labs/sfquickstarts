@@ -34,7 +34,7 @@ Through this quickstart guide, you will build and deploy three intelligent Corte
 ### What You'll Need
 
 - [SFGuide GitHub Repository Files](https://github.com/Snowflake-Labs/sfguide-building-audiences-with-snowflake-cortex/tree/main) including SQL setup script and three semantic model YAML files
-- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides) account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
 
 ### What You'll Build
 

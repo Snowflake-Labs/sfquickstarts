@@ -48,7 +48,7 @@ This Quickstart showcases the complete Cortex AI Demo Framework with:
 ### Prerequisites
 - Familiarity with Python and SQL
 - Familiarity with Streamlit applications
-- Go to the [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_) sign-up page and register for a free account
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) sign-up page and register for a free account
 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment  

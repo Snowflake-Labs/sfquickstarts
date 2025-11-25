@@ -30,7 +30,7 @@ This quickstart is intended to help tie together all the components of Snowflake
 
 ### What You'll Need:
 
-- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts).
+- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - A Snowflake account login with the `ACCOUNTADMIN` role, or a custom role with privileges to:
   - Set account-level parameters (`ALTER ACCOUNT`)
   - View and query event tables (`SELECT` on `SNOWFLAKE.TELEMETRY.*`)

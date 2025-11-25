@@ -26,7 +26,7 @@ Tasty Bytesの組織について学んだ後、Tasty Bytes基盤のデータモ�
 ### 前提条件
 - サポートされているSnowflake[ブラウザ](https://docs.snowflake.com/ja/user-guide/setup#browser-requirements)
 - エンタープライズまたはビジネスクリティカルなSnowflakeアカウント
-  - Snowflakeアカウントをお持ちでない場合は、[**30日間の無料トライアルアカウントに登録してください**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_&_l=ja)。サインアップする際は、必ず**エンタープライズ**エディションを選択してください。[Snowflakeクラウド/リージョン](https://docs.snowflake.com/en/user-guide/intro-regions)は、どれを選択しても構いません。
+  - Snowflakeアカウントをお持ちでない場合は、[**30日間の無料トライアルアカウントに登録してください**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides&_l=ja)。サインアップする際は、必ず**エンタープライズ**エディションを選択してください。[Snowflakeクラウド/リージョン](https://docs.snowflake.com/en/user-guide/intro-regions)は、どれを選択しても構いません。
   - 登録後、アクティベーションリンクとSnowflakeアカウントURLが記載されたメールが届きます。
   - ![assets/choose_edition.png](assets/choose_edition.png)
 

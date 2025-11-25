@@ -44,7 +44,7 @@ Ask complex questions of all your data, analyze and get insights instantly with 
 Download the [Git repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence-and-cke). This is how you get the necessary source code and data to complete this quickstart.
 
 
-* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides) with the ACCOUNTADMIN role.
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with the ACCOUNTADMIN role.
 
 ### What You Will Learn
 

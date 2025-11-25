@@ -29,7 +29,7 @@ MCP Server on Snowflake simplifies the application architecture and eliminates t
 
 ### Prerequisites
 
-* Access to a Snowflake account with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_).
+* Access to a Snowflake account with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 * Access to [Cursor](https://cursor.com/).
 
 ### What You Will Learn

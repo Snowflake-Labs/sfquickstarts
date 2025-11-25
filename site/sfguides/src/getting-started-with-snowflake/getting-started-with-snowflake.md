@@ -46,7 +46,7 @@ Check out Snowflake Public Data's [Snowflake Public Data (Free)](https://app.sno
 ## Prepare Your Lab Environment
 
 
-If you haven't already, register for a [Snowflake free 30-day trial](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides). This lab assumes you are using a new Snowflake account created by registering for a trial.
+If you haven't already, register for a [Snowflake free 30-day trial](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). This lab assumes you are using a new Snowflake account created by registering for a trial.
 
 The Snowflake edition (Standard, Enterprise, Business Critical, etc.), cloud provider (AWS, Azure, GCP), and Region (US East, EU, etc.) you use for this lab, do not matter. However, we suggest you select the region that is physically closest to you and Enterprise, our most popular offering, as your Snowflake edition.
 
