@@ -47,7 +47,6 @@ This quickstart will focus on building a custom ML workflow using the following 
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
 - A Snowflake Account. Sign up for a 30-day [free trial](https://signup.snowflake.com/) account, if required.
