@@ -51,7 +51,7 @@ This guide assumes you have:
 
 *In the first part of this guide, you'll learn how to create these.*
 
-- [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) free account 
+- [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_) free account 
 - [Saturn Cloud](https://saturncloud.io/) free account
 
 
@@ -70,7 +70,7 @@ First, we'll go over how to create your Snowflake and Saturn Cloud accounts.
 
 ### 1. Create a Free Snowflake Account
 
-Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_). The free trial account works fine for this guide. Follow the prompts to activate your account via email.
+Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_). The free trial account works fine for this guide. Follow the prompts to activate your account via email.
 
 ### 2. Create a Free Saturn Cloud Account
 
