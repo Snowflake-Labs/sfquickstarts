@@ -31,7 +31,7 @@ By the end of this guide, you should be familiar with Snowflake listing events a
 
 
 ### What You’ll Need
-- A Snowflake account [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_) or access to an existing account with access to:
+- A Snowflake account [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) or access to an existing account with access to:
   - `LISTING_EVENTS_DAILY` view in the `DATA_SHARING_USAGE` schema for getting new leads data
   - `CREATE INTEGRATION` privilege on Account. For notification creation.
 - Slack Account with the ability to create a new channel and add a webhook integration.

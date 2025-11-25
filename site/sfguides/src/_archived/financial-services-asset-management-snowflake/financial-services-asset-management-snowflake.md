@@ -36,7 +36,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
 ### Prerequisites
-- Snowflake Account or [Trial Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_) with accountadmin privileges.  
+- Snowflake Account or [Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with accountadmin privileges.  
 
 ### You'll learn how to
 - Query free stock market history data instantly with zero learning curve and time

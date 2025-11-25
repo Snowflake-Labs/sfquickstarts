@@ -44,7 +44,7 @@ Additionally, Improvado offers a custom Marketing Data Governance solution to en
 
 
 ### Prerequisites
-- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides) Account
+- A [Snowflake](https://signup.snowflake.com/) Account
 - Access to an Improvado instance. Please reach out to our Sales and [Book a demo](https://improvado.io/register/talk-to-an-expert)
 
 ### What you’ll learn

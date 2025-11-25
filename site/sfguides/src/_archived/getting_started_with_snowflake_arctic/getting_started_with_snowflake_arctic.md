@@ -51,7 +51,7 @@ An interactive Streamlit application running in Snowflake.
 
 ### Prerequisites
 
-- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_) account in a region where Snowflake Cortex and Arctic are available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex and Arctic are available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
 
 <!-- ------------------------ -->
 ## Setup

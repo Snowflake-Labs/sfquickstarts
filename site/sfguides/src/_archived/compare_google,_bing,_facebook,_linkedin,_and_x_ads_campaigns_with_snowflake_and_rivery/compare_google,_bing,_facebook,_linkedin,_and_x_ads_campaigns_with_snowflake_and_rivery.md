@@ -24,7 +24,7 @@ Using Rivery’s no-code integrations to all of those sources and a template wor
 In this lab, Marketing Analysts, BI Developers, and Data Engineers will learn how easily they can build a complete paid Ads performance analytics solution with Rivery and Snowflake.
 
 ### Prerequisites
-- Access to an existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides), with `SYSADMIN` role.
+- Access to an existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/), with `SYSADMIN` role.
 - OPTIONAL: User accounts to access Google Ads, Bing Ads, Facebook Ads, LinkedIn Ads, and X Ads. Since walking through this lab is quick and we assume you may not have these accounts handy while doing the lab, we provide you with sample data to run through the lab steps. You can always repeat the same steps with the real accounts of those sources.  
 
 

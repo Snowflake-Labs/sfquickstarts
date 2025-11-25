@@ -34,7 +34,7 @@ Here is a description of the features:
 - Using DataRobot AI Production capabilities and Snowpark to simplify the deployment and monitoring processes within the Snowflake environment
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=quickstarts_) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab). Be advised to configure it to be 'Enterprise' and on AWS.
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab). Be advised to configure it to be 'Enterprise' and on AWS.
 
 - Download the following notebook that we will work on most of the lab
 <button>
