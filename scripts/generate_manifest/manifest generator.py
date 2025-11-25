@@ -5,7 +5,25 @@ import subprocess
 from typing import Dict, List, Optional
 
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+def find_repo_root() -> str:
+    """
+    Find the repository root by searching for .git directory.
+    Falls back to relative path from script location if not found.
+    """
+    # Start from the script's directory
+    current = os.path.abspath(os.path.dirname(__file__))
+    
+    # Walk up the directory tree looking for .git
+    while current != os.path.dirname(current):  # Stop at filesystem root
+        if os.path.exists(os.path.join(current, ".git")):
+            return current
+        current = os.path.dirname(current)
+    
+    # Fallback: assume script is in scripts/generate_manifest/ subdirectory
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+
+REPO_ROOT = find_repo_root()
 SRC_DIR = os.path.join(REPO_ROOT, "site", "sfguides", "src")
 BASE_URL = "https://www.snowflake.com/en/developers/guides/"
 
@@ -91,23 +109,36 @@ def normalize_categories(raw_cat: Optional[str]) -> List[str]:
 
 def build_manifest() -> Dict[str, List[Dict[str, str]]]:
     entries: List[Dict[str, str]] = []
-    for name in sorted(os.listdir(SRC_DIR)):
-        if name.startswith(".") or name.startswith("_"):
-            continue
+    skipped = []
+    
+    # Get list of all directories to process
+    all_names = sorted(os.listdir(SRC_DIR))
+    directories = [name for name in all_names 
+                   if not name.startswith(".") and not name.startswith("_") 
+                   and os.path.isdir(os.path.join(SRC_DIR, name))]
+    
+    total = len(directories)
+    print(f"\nProcessing {total} quickstart directories...\n")
+    
+    for idx, name in enumerate(directories, 1):
         folder = os.path.join(SRC_DIR, name)
-        if not os.path.isdir(folder):
-            continue
+        
         md_path = find_md_file(folder)
         if not md_path:
+            skipped.append((name, "no markdown file"))
             continue
+        
         text = read_text(md_path)
         if not text:
+            skipped.append((name, "empty file"))
             continue
 
         meta = parse_front_matter(text)
         # Skip hidden guides
         if meta.get("status", "").strip().lower() == "hidden":
+            skipped.append((name, "hidden status"))
             continue
+            
         title = extract_title(text) or meta.get("title") or name.replace("-", " ").title()
         summary = meta.get("summary", "")
         categories = normalize_categories(meta.get("categories"))
@@ -129,17 +160,47 @@ def build_manifest() -> Dict[str, List[Dict[str, str]]]:
             entry["duration"] = duration
 
         entries.append(entry)
+        
+        # Print progress every 10 quickstarts
+        if idx % 10 == 0 or idx == total:
+            print(f"Progress: {idx}/{total} processed")
+    
+    # Print skipped directories if any
+    if skipped:
+        print(f"\nSkipped {len(skipped)} director{'y' if len(skipped) == 1 else 'ies'}:")
+        for name, reason in skipped[:10]:  # Show first 10
+            print(f"  - {name} ({reason})")
+        if len(skipped) > 10:
+            print(f"  ... and {len(skipped) - 10} more")
+    
     return {"quickstartMetadata": entries}
 
 
 def main() -> None:
+    if not os.path.exists(SRC_DIR):
+        print(f"Error: Source directory not found: {SRC_DIR}")
+        print(f"Repository root: {REPO_ROOT}")
+        print("Make sure you're running this script from within the sfquickstarts repository.")
+        return
+    
+    print(f"Repository root: {REPO_ROOT}")
+    print(f"Source directory: {SRC_DIR}")
+    
     manifest = build_manifest()
+    
+    # Create output directory if it doesn't exist
     out_dir = os.path.join(SRC_DIR, "_shared_assets")
     os.makedirs(out_dir, exist_ok=True)
+    
     out_path = os.path.join(out_dir, "quickstart-manifest.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
-    print(f"Wrote {out_path} with {len(manifest.get('quickstartMetadata', []))} entries.")
+    
+    entry_count = len(manifest.get('quickstartMetadata', []))
+    print(f"\n{'='*60}")
+    print(f"✓ Successfully wrote {entry_count} quickstarts to manifest")
+    print(f"✓ Output: {out_path}")
+    print(f"{'='*60}")
 
 
 if __name__ == "__main__":
