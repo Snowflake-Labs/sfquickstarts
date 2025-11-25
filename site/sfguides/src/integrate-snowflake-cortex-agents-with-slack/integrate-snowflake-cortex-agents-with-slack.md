@@ -144,7 +144,7 @@ Note that you can create multiple agents for various use cases and/or business t
 
 ### Create Agent
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-agents-slack) 
+* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-agents-slack&utm_cta=developer-guides-deeplink) 
 * On the top right, click on **Create agent**
      - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Select **Create this agent for Snowflake Intelligence**

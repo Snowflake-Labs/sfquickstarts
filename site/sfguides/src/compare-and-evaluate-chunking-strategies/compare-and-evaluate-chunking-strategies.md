@@ -587,7 +587,7 @@ These metrics will help us understand how well each RAG version performs:
 
 Finally, let's view the results of our runs by opening the evaluations page:
 
-[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-compare-and-evaluate-chunking-strategies)
+[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-compare-and-evaluate-chunking-strategies&utm_cta=developer-guides-deeplink)
 
 In the dashboard, you can:
 

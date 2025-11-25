@@ -47,7 +47,7 @@ This section covers environment setup, notebook upload, and loading the sample d
 
 ### Run the Setup Script
 
-1. Open Snowflake and navigate to [**Projects** > **Workspaces**](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)
+1. Open Snowflake and navigate to [**Projects** > **Workspaces**](https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=intro-to-online-feature-store-in-snowflake&utm_cta=developer-guides-deeplink)
 2. Create a new SQL file
 3. Copy and paste the following setup script
 4. Run the entire script as **ACCOUNTADMIN**
