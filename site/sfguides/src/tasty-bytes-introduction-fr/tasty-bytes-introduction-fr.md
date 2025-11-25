@@ -92,7 +92,7 @@ Pour ce guide Quickstart, vous allez utiliser l’interface Web Snowflake appel�
 ### Présentation
 Une fois la configuration de Tasty Bytes terminée, nous pouvons explorer la base de données, les rôles et les entrepôts que nous avons créés. 
 
->aside negative **Remarque :** dans la feuille de calcul *Tasty Bytes – Configuration* que vous avez créée dans la section précédente, faites défiler la page jusqu’en bas, puis copiez, collez et exécutez la commande SQL incluse dans chaque étape ci-dessous.
+> 
 >
 
 ### Étape 1 – Explorer la base de données Tasty Bytes

@@ -81,7 +81,7 @@ dependencies:
 
 4) From the root folder, create conda environment by running below command.
 
-> aside positive
+> 
 > IMPORTANT:
 > - If you are using a machine wth Apple M1 chip, follow [these instructons](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
@@ -94,7 +94,7 @@ conda activate snowpark_scikit_learn
 
 6) Update [config.py](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/config.py) with your Snowflake account details and credentials.
 
-> aside negative
+> 
 > Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
 ---
@@ -125,7 +125,7 @@ To get started, follow these steps:
 
 2) Open and run through the cells in [1_snowpark_housing_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/1_snowpark_housing_data_ingest.ipynb)
 
-> aside positive
+> 
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark_scikit_learn***-- which is the name of the environment created in **Clone GitHub Repository** step.
 
 <!-- ------------------------ -->
@@ -148,7 +148,7 @@ To get started, follow these steps:
 
 2) Open and run through the cells in [2_data_exploration_transformation.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/2_data_exploration_transformation.ipynb)
 
-> aside positive
+> 
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark_scikit_learn***-- which is the name of the environment created in **Clone GitHub Repository** step.
 
 <!-- ------------------------ -->
@@ -156,7 +156,7 @@ To get started, follow these steps:
 ## Machine Learning using Scikit learn
 
 
-> aside negative
+> 
 > PREREQUISITE: Successful completion of previous steps
 
 The Notebook linked below covers the following machine learning tasks.
@@ -183,7 +183,7 @@ To get started, follow these steps:
 
 2) Open and run through the [3_snowpark_end_to_end_ml.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn/blob/main/3_snowpark_end_to_end_ml.ipynb)
 
-> aside positive
+> 
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark_scikit_learn*** -- which is the name of the environment created in **Clone GitHub Repository** step.
 
 

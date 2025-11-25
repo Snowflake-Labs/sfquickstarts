@@ -36,7 +36,7 @@ In this tutorial, you will learn how to use [Hasura Cloud](https://cloud.hasura.
 
 ## Create a Cloud Account
 
-> aside positive
+> 
 > If you are an existing Hasura Cloud user, sign in to your account and proceed to **Create a Project**.
 
 Navigate to <button>[Hasura Cloud](https://cloud.hasura.io/signup)</button> and click on the **Sign Up With Email** link.
@@ -53,7 +53,7 @@ Check your inbox for a verifcation email to confirm your account. If you did not
 
 ## Create a Project
 
-> aside positive
+> 
 > If you are new to Hasura Cloud, a free tier project has automatically been deployed for you in *AWS us-west-1*. If you require a different region or cloud provider, continue with this step, otherwise proceed to **Configure a Project**.
 
 In the Hasura Cloud dashboard, click on the **New Project** button.
@@ -69,10 +69,10 @@ Select **Free** from the pricing plans, pick an **AWS** region from the drop-dow
 
 ## Configure a Project
 
-> aside positive
+> 
 > Each Hasura Cloud project is automatically assigned a dynamic name and corresponding DNS hostname. If you want to change your project name, continue with this step, otherwise proced to **Create a Sample Database**.
 
-> aside negative
+> 
 > Users on free tier projects are not allowed to change regions. If you want to change regions without upgrading to a paid tier project, create a new project in the desired AWS region.
 
 Click on the ![gear-icon](assets/gear_icon.png) icon for the project you want to configure.
@@ -123,7 +123,7 @@ Enter **music** as the database name, followed by your JDBC connection string.
 
   ![connect-database](assets/connect_database.png)
 
-> aside negative
+> 
 > Special characters in the JDBC connection string must be URL encoded.
 
 The Snowflake JDBC connection string uses the following format:
@@ -135,11 +135,11 @@ Example:
   jdbc:snowflake://RLTEPEF-LKR90823.snowflakecomputing.com/?user=hasura&password=Hasura%2123&warehouse=compute_wh&db=music&schema=public
 ```
 
-> aside positive
+> 
 > For more information on Snowflake's JDBC Driver Connection String, please visit the Hasura [documentation](https://docs.snowflake.com/developer-guide/jdbc/jdbc-configure#jdbc-driver-connection-string).
 
 
-> aside positive
+> 
 > **Using Environment Variables**
 > 
 > Setting the connection string as an environment viariable is a security best practice to prevent any secret information from being exposed in your instance's metadata. For more information on using an environment variable to connect to your Snowflake database, please visit the Hasura [documentation](https://docs.snowflake.com/developer-guide/jdbc/jdbc-configure#jdbc-driver-connection-string).
@@ -171,7 +171,7 @@ You are now able to query for all related data (i.e. nested query).
 
 ## GraphQL Queries
 
-> aside negative
+> 
 > Hasura support for Snowflake is currently limited to GraphQL read-only queries, relationships, and permissions.
 
 Click on the **API** button in the navigation bar. In the GraphiQL Explorer, paste the **AllArtists** query to retrieve the `name` and `id` of all artists.
@@ -232,7 +232,7 @@ Execute the query and now the results are filtered for albums belong to the arti
 
   ![artistalbums-query](assets/artistalbums_query.png)
 
-> aside positive
+> 
 > For more information on GraphQL queries, please visit the Hasura documentation [website](https://hasura.io/docs/latest/queries/quickstart/).
 
 

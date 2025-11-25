@@ -53,7 +53,7 @@ After the script has successfully executed, you will see a LANG_AI_DEMO database
 
 The tables created by the script already include the required fields to create AI Agents:
 
-> aside positive
+> 
 > 
 >- **id:** The id of the document (ticket, survey, etc.)
 >- **text:** The unstructured text to be analyzed
@@ -67,7 +67,7 @@ You may include additional columns that may be used by the AI Agent to aggregate
 <!-- ------------------------ -->
 ## Installing the application
 
-> aside positive
+> 
 > NOTE: This guide shows the steps needed to install the app via the user interface. If you prefer to install it using SQL scripts, please follow this [guide](https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
 
 
@@ -163,7 +163,7 @@ Click "Create Agent" to start the analysis. The AI Agent will process your data 
 
 ## Reviewing the Insights of Your AI Agent
 
-> aside positive
+> 
 > Automate insight delivery to Slack! For instructions on setting up the Slack integration, please check this [guide](https://help.lang.ai/en/articles/9950927-connecting-the-slack-integration).
 
 ### Navigate Your Agent Insights

@@ -25,7 +25,7 @@ This quickstart will cover a lot of ground. By the end of this guide, you will h
 
 The data pipeline used as an example in this quickstart makes use of data available on the Snowflake marketplace to come up with the perfect spot for a family vacation. Let's get started!
 
-> aside negative
+> 
 > Note: The Git integration, Create-or-Alter and Jinja templating are still in preview.
 
 ### Prerequisites
@@ -206,11 +206,11 @@ The job of the first task “vacation_spots_update” is joining the views creat
 
 In this step, we will run through the commands in the Python file `steps/04_orchestrate_jobs.sql`. Open the file in VS Code and **add your email address to the three placeholders**. Then execute the file by clicking on on “Execute All Statements” to run all the commands sequentially.
 
-> aside negative
+> 
 > Note: The Snowflake Cortex LLM functions are currently not available in all regions. Check the [docs](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability) to verify your region is supported. If not, it is up to you to pick your favorite vacation spot from the results.
 
 
-> aside positive
+> 
 > Tip: The query used in the “email_notification” task selects suitable places for a summer vacation. If you are running the pipeline in the colder months, it might not return any results. In that case, adapt the filters and off you go on your winter vacation! You might want to add snowfall days to your weather metrics.
 
 ### Declarative Create-or-Alter Command
@@ -230,7 +230,7 @@ create or alter table vacation_spots (
 ) data_retention_time_in_days = 1;
 ```
 
-> aside negative
+> 
 > Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
 
 ### Verify Pipeline Completion
@@ -259,7 +259,7 @@ Declarative definitions are concise, idempotent and easy to understand as we don
 
 This is where the [CREATE OR ALTER](https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table) command shines. It allows us to have one single source of truth for the current state of the object. Potential rollbacks are super easy to do thanks to the straightforward integration with version control tools such as Git. Just apply an older version of the CREATE OR ALTER. This makes CREATE OR ALTER a great choice to manage data pipelines.
 
-> aside negative
+> 
 > Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
 
 ### Adding a new Data Source to the Pipeline
@@ -447,7 +447,7 @@ In GitHub, click on the “Settings” tab near the top of the page. From the Se
 | SNOWFLAKE_USER | myusername |
 | SNOWFLAKE_PRIVATE_KEY | contents of private key file (follow [this guide](https://docs.snowflake.com/en/user-guide/key-pair-auth) to setup key-pair auth) |
 
-> aside positive
+> 
 > Note: For more details on how to structure the account name in SNOWFLAKE_ACCOUNT secret, see the account name discussion in the [Snowflake Python Connector install guide](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-api#usage-notes-for-the-account-parameter-for-the-connect-method).
 
 When you're finished adding all the secrets, the page should look like this:

@@ -62,7 +62,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 In the same SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html), and [stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html)
 
-> aside positive
+> 
 > IMPORTANT:
 > 
 > If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.

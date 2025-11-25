@@ -92,7 +92,7 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ``` 
 ![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
-> aside positive **Zero Copy Cloning**: cria uma cópia de um banco de dados, esquema ou tabela. Um instantâneo dos dados existentes no objeto original é criado junto ao clone e disponibilizado ao objeto clonado. O objeto clonado é editável e independente do original. Ou seja, as alterações feitas no original ou no clone são independentes. 
+> 
 >
 
 ### Etapa 2 - Clicar em Next -->
@@ -138,7 +138,7 @@ ORDER BY t.truck_id;
 
 ![assets/4.2.1.truck.png](assets/4.2.1.truck.png) ![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
->aside positive Se um usuário repetir uma consulta que já tenha sido executada, e os dados na(s) tabela(s) não mudaram desde a última vez que a consulta foi executada, então o resultado da consulta será o mesmo. Em vez de executar a consulta novamente, o Snowflake simplesmente retorna o mesmo resultado de antes. 
+> 
 >         
 >Isso pode reduzir bastante o tempo de consulta, pois o Snowflake ignora a execução da consulta e, em vez disso, recupera o resultado diretamente do cache.
 >
@@ -223,7 +223,7 @@ Parece que erramos o cálculo de `truck_age` e fizemos uma divisão, em vez de u
 ### Visão geral
 Apesar do nosso erro, o Snowflake conta com muitos recursos que podem nos ajudar. O processo que aplicaremos vai usar o histórico de consultas, as variáveis SQL e o Time Travel para reverter a tabela `truck_dev` ao estágio anterior antes da instrução de atualização incorreta.
 
->aside positive O Time Travel permite acessar dados históricos (ou seja, dados que foram alterados ou excluídos) em qualquer momento de um determinado período.
+> 
 >
 
 ### Etapa 1 - Usar o histórico de consultas
@@ -272,7 +272,7 @@ BEFORE(STATEMENT => $query_id);
 ![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 Consulte a lista abaixo para ver demais opções de instruções Time-Travel disponíveis.
->aside positive **AT:** a palavra-chave AT especifica que a solicitação inclui quaisquer alterações feitas por uma instrução ou transação com um carimbo de data/hora igual ao parâmetro especificado.
+> 
 >
 >**BEFORE:** a palavra-chave BEFORE especifica que a solicitação se refere a um momento imediatamente anterior ao parâmetro especificado.
 >

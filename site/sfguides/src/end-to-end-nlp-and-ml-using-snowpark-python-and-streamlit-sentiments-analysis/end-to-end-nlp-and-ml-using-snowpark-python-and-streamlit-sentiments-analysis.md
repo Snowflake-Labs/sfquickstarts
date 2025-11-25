@@ -77,7 +77,7 @@ Update the Snowflake connexion file: connection.json
  }
 ```
 
->aside positive    
+> 
 > For the `account` parameter, use your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Note that the account identifier does not include the snowflakecomputing.com suffix.
 
 ### Activate Python environment using conda

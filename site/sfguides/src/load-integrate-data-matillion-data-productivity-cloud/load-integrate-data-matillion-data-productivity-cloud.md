@@ -139,7 +139,7 @@ Complete the properties of the new Fixed Flow by setting:
 | ORDERS |
 | ORDER_ITEMS |
 
-> aside negative
+> 
 >
 >  Be careful with the exact names here, making sure they are in uppercase exactly as shown. Copy-and-paste is best.
 
@@ -147,7 +147,7 @@ After you have completed the properties, the border of the component should chan
 
 Open the **Sample data** panel at the bottom of the screen, and press the `Sample data` button to view the data. Check that three rows appear.
 
-> aside positive
+> 
 >
 >  You can use the Sample data panel with almost all transformation components. It's a great way to keep in touch with the data while you are developing a transformation pipeline
 
@@ -184,7 +184,7 @@ In the Matillion pipeline designer interface, create a new pipeline - the same a
 
 Now you can start to add components to the canvas. 
 
-> aside positive
+> 
 > 
 >  Every Orchestration pipeline must have a [Start](https://docs.matillion.com/data-productivity-cloud/designer/docs/start/) component. One is added automatically whenever you create a new Orchestration pipeline.
 
@@ -207,7 +207,7 @@ Iteration loops require a variable to loop over. Open the variables panel on the
 - Set the Behavior to `Copied`, which means that any loops using it will be able to run in parallel. This is known as concurrent iteration.
 - Add a default value of `ITEMS`
 
-> aside positive
+> 
 > 
 >  It's good practice to give every variable a default value. Choose a default that helps components validate cleanly.
 
@@ -250,7 +250,7 @@ Select the Excel Query and set its properties:
 - SQL Query: `SELECT * FROM ${worksheet_name}`
 - Target Table: `GW_${worksheet_name}`
 
-> aside positive
+> 
 > 
 >  Notice how the variable is used in the settings. During the extract phase, it defines the source worksheet name. During the load phase it defines part of the Snowflake table name.
 
@@ -267,7 +267,7 @@ Find and drag two new components onto the canvas:
 - A [Create Table](https://docs.matillion.com/data-productivity-cloud/designer/docs/create-table/), linked to the `Start`, and followed by:
 - An [S3 Load](https://docs.matillion.com/data-productivity-cloud/designer/docs/s3-load/) component
 
-> aside positive
+> 
 > 
 >  **Azure** or **GCP** users:
 >  Instead of an S3 Load, use a [Data Transfer](https://docs.matillion.com/data-productivity-cloud/designer/docs/data-transfer/) component first to copy the source file into your own cloud storage.
@@ -305,7 +305,7 @@ Now the `GW_CUSTOMER_ACCOUNTS` table exists, you can load data into it. Adjust t
 - Load Columns: `DATA_VALUE`
 - File Type: `JSON`
 
-> aside positive
+> 
 > 
 >  **Azure** or **GCP** users: adjust the cloud storage location settings to wherever you made the Data Transfer copy the file
 
@@ -338,7 +338,7 @@ In the new component:
 
 Run a data sample against this component and check that the data has been flattened and relationalized. You should see 10,000 records, each with a `customer_rid` identifier and an `account_name` string.
 
-> aside positive
+> 
 > 
 >  This transformation work is happening entirely **inside** Snowflake, which means it's very fast, efficient and cost-effective. If you're curious, open the SQL tab next to the component properties to see how it works.
 
@@ -351,7 +351,7 @@ At this stage four tables have been extracted and loaded: `GW_ORDERS`, `GW_ITEMS
 
 ![Greenwave ERD](assets/Greenwave-ERD.png)
 
-> aside positive
+> 
 > 
 >  Notice that, in reality, the data was originally siloed and relatively inaccessible. Not only physically separated, but in the case of the customer data, in a difficult-to-read semi-structured format too.
 
@@ -384,7 +384,7 @@ Repeat for `GW_ORDER_ITEMS`, naming it `ORDER_ITEM` with these conversions:
 
 Now for the data integration, find and drag on a [Join](https://docs.matillion.com/data-productivity-cloud/designer/docs/join/) component. Link all **four** inputs to it, and configure it as follows:
 
-> aside negative
+> 
 >
 >  It's important to complete the properties top downwards, as some of them cascade onto others further down the list
 
@@ -454,7 +454,7 @@ You can use the Matillion Designer Copilot to help with this, telling it to aggr
 
 The Copilot should add an [Aggregate](https://docs.matillion.com/data-productivity-cloud/designer/docs/aggregate/) component attached to the Calculator, with the specified groupings and aggregations. Sample the data from this Aggregate component to verify that the number of rows is smaller, and the profit and revenue are being summed.
 
-> aside positive
+> 
 > 
 >  The Matillion Designer Copilot uses generative AI, so the results are not always identical and deterministic. If you don't immediately get the configuration you need, just delete the component it created, adjust the prompt, and retry 
 

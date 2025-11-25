@@ -42,7 +42,7 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 - A community detection analysis to find which food truck customers frequently eat together
 - A visualization of this data
 
-> aside positive
+> 
 > NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions [here](https://relational.ai/docs/native_app/installation)
 
 <!-- ------------------------ -->

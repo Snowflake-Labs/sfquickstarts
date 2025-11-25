@@ -135,7 +135,7 @@ We'll use Snowplow BDP to run the standard data models in Snowflake.
 
 ![alt text](assets/model_connection.png)
 
-> aside negative
+> 
 > 
 > If you've already set up a warehouse connection for loading data, you will still need to create a new connection specifically for data modeling. This is required since data models often require different users, roles, and permissions to manage how data is accessed and processed.
 
@@ -176,7 +176,7 @@ Steps:
 - **Add Modules**: Snowplow offers additional modules for Consent Reporting, Core Web Vitals, etc.
 - **User Mapping**: Utilize the User Mapping Module for advanced session stitching.
 
-> aside positive
+> 
 > 
 > **Gains**: Deploying the Unified Digital Model simplifies your data landscape. With standardized tables and fields, your team can focus on generating insights rather than spending time and engineering resources wrangling data. Visit [Unified documentation](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-models/dbt-unified-data-model/) for further customization 
 

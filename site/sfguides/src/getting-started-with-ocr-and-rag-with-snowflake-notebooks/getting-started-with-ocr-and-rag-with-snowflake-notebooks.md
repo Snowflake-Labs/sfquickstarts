@@ -73,7 +73,7 @@ ls @images_to_ocr;
 
 You should see your uploaded files listed with their sizes.
 
-> aside positive
+> 
 > TIP: For best OCR results, ensure your images are:
 > - Clear and well-lit
 > - Text is oriented correctly
@@ -214,7 +214,7 @@ FROM
     TABLE(IMAGE_TEXT(build_scoped_file_url(@ocr_rag.images_to_ocr, relative_path))) AS ocr_result;
 ```
 
-> aside positive
+> 
 > TROUBLESHOOTING: If OCR results are poor, check:
 > - Image quality and resolution
 > - Text orientation

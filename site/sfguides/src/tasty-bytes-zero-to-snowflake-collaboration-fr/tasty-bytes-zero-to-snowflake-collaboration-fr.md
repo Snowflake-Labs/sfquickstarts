@@ -125,7 +125,7 @@ Depuis votre compte Snowflake, suivez les étapes et la vidéo ci-dessous pour a
 
 ![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 
->aside positive Weather Source est l’un des principaux fournisseurs de données météorologiques et climatiques mondiales. Sa suite de produits OnPoint fournit aux entreprises les données météorologiques et climatiques dont elles ont besoin pour générer rapidement des informations utiles et exploitables pour un large éventail de cas d’usage dans de nombreux secteurs d’activité.
+> 
 >
 
 ### Étape 2 – Harmoniser des données internes et tierces
@@ -249,7 +249,7 @@ $$;
 
 ![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
->aside positive Lorsque vous créez une UDF, vous spécifiez un gestionnaire dont le code est écrit dans l’un des langages pris en charge. Selon le langage du gestionnaire, vous pouvez soit inclure le code source du gestionnaire en ligne avec l’instruction CREATE FUNCTION, soit faire référence à l’emplacement du gestionnaire à partir de CREATE FUNCTION, où le gestionnaire est précompilé ou le code source est sur une zone de préparation.
+> 
 >
 
 ### Étape 2 – Créer une fonction SQL pour une vue

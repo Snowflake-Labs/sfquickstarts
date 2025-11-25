@@ -92,7 +92,7 @@ Neste quickstart, você usará a interface da web do Snowflake, conhecida como S
 ### Visão geral
 Após configurar a Tasty Bytes com sucesso, podemos agora explorar o banco de dados, as funções e os armazenamentos que criamos. 
 
->aside negative **Observação:** dentro da planilha *Tasty Bytes - Setup* criada na seção anterior, vá até a parte inferior, copie, cole e execute o SQL incluído em cada etapa abaixo.
+> 
 >
 
 ### Etapa 1 - Explorar o banco de dados Tasty Bytes
