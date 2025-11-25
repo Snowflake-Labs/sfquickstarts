@@ -9,7 +9,6 @@ feedback link: https://github.com/loopDelicious/sfquickstarts
 
 # A Postman Tutorial for the Snowflake SQL API
 
-<!-- ------------------------ -->
 
 ## Overview
 

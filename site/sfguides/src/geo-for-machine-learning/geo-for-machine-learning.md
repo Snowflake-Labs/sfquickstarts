@@ -55,13 +55,13 @@ If this is the first time you are logging into the Snowflake UI, you will be pro
 
 Click `Sign-in` and you will be prompted for your username and password.
 
-> 
+
 >  If this is not the first time you are logging into the Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).
 
 ### Increase Your Account Permission
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.
 
-> 
+
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
 ![assets/geo_ml_1.png](assets/geo_ml_1.png)

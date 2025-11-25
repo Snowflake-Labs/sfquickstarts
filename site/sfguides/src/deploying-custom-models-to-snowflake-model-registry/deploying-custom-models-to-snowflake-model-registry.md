@@ -48,7 +48,6 @@ This quickstart will focus on
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry)
 - [Anaconda](https://www.anaconda.com/) installed

@@ -969,7 +969,6 @@ ORDER BY order_total DESC;
 
 
 -What are the total order amounts by company and job?
- >aside negative
  >Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
  ````
 SELECT 
@@ -1275,7 +1274,6 @@ ORDER BY number_of_queries DESC;
 >Direct Objects Accessed: Data objects directly named in the query explicitly.
 Base Objects Accessed: Base data objects required to execute a query.
  
- >aside negative
  > Clean up (Optional).
  >Create a new worksheet named 99_lab_teardown. Copy and paste the entire Teardown Script at [ 99-lab-teardown.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/99-lab-teardown.sql) 
 <!-- ------------------------ -->
