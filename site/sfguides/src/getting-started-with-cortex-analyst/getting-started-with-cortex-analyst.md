@@ -4,12 +4,12 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Through this quickstart guide, you will learn how to use Cortex Analyst to provide natural-language query interfaces to structured data in Snowflake using GenAI
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Cortex Analyst: Augment BI with AI
 <!-- ------------------------ -->
-## Overview 
+## Overview
 
 Through this quickstart guide, you will explore how to get started with [Cortex Analyst](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst), which is a fully managed service in Snowflake that provides a conversational interface to interact with structured data in Snowflake.
 
@@ -20,11 +20,11 @@ Cortex Analyst is a fully managed service in [Cortex AI](/en/data-cloud/cortex) 
 ![cortex analyst gif](./assets/cortex.png)
 
 ### Why use Cortex Analyst?
-Historically, business users have primarily relied on BI dashboards and reports to answer their data questions. However, these resources often lack the flexibility needed, leaving users dependent on overburdened data analysts for updates or answers, which can take days. Cortex Analyst disrupts this cycle by providing a natural language interface with high text-to-SQL accuracy. With Cortex Analyst organizations can streamline the development of intuitive, conversational applications that can enable business users to ask questions using natural language and receive more accurate answers in near real time
+Historically, business users have primarily relied on BI dashboards and reports to answer their data questions. However, these resources often lack the flexibility needed, leaving users dependent on overburdened data analysts for updates or answers, which can take days. Cortex Analyst disrupts this cycle by providing a natural language interface with high text-to-SQL accuracy. With Cortex Analyst organizations can streamline the development of intuitive, conversational applications that can enable business users to ask questions using natural language and receive more accurate answers in near real time.
 
 This quickstart will focus on getting started with Cortex Analyst, teaching the mechanics of how to interact with the Cortex Analyst service and how to define the Semantic Model definitions that enhance the precision of results from this conversational interface over your Snowflake data.
 
-### What you will learn 
+### What you will learn
 - How to construct and configure a Semantic Model for your data
 - How to call the Cortex Analyst REST API to use your Semantic Model to enable natural-language question-asking on top of your structured data in Snowflake via Streamlit in Snowflake (SiS) application
 - How to integrate Cortex Analyst with Cortex Search to enhance SQL queries generated
@@ -32,14 +32,10 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 - How to enable multi-turn conversations
 
 ### Prerequisites
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-  
-    >
-    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst)
-- (Optional) [Python >= 3.9, <= 3.11 installed](https://www.python.org/downloads/) to run the OSS Semantic Model Generator
+
 - A [Snowflake account login](https://signup.snowflake.com/) with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
 
-### What You’ll Build 
+### What You’ll Build
 - A Semantic Model over sample financial data
 - A Streamlit in Snowflake (SiS) app with a conversational interface to Cortex Analyst
 
@@ -48,232 +44,70 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
 
+Create a blank SQL worksheet by navigating to *Projects -> Workspaces -> + Add New -> SQL File*. Call it `create_snowflake_objects.sql`. Copy the contents of [**create_snowflake_objects.sql**](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/create_snowflake_objects.sql) into your new file. Then click *Run All*.
 
->
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst).
+When the script has finished running, you should see:
 
-Open up the [create_snowflake_objects.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/create_snowflake_objects.sql) file in a SQL worksheet in Snowsight.
-
-Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
-
-```SQL
-/*--
-• Database, schema, warehouse, and stage creation
---*/
-
-USE ROLE SECURITYADMIN;
-
-CREATE ROLE cortex_user_role;
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE cortex_user_role;
-
-GRANT ROLE cortex_user_role TO USER <user>;
-
-USE ROLE sysadmin;
-
--- Create demo database
-CREATE OR REPLACE DATABASE cortex_analyst_demo;
-
--- Create schema
-CREATE OR REPLACE SCHEMA cortex_analyst_demo.revenue_timeseries;
-
--- Create warehouse
-CREATE OR REPLACE WAREHOUSE cortex_analyst_wh
-    WAREHOUSE_SIZE = 'large'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'Warehouse for Cortex Analyst demo';
-
-GRANT USAGE ON WAREHOUSE cortex_analyst_wh TO ROLE cortex_user_role;
-GRANT OPERATE ON WAREHOUSE cortex_analyst_wh TO ROLE cortex_user_role;
-
-GRANT OWNERSHIP ON SCHEMA cortex_analyst_demo.revenue_timeseries TO ROLE cortex_user_role;
-GRANT OWNERSHIP ON DATABASE cortex_analyst_demo TO ROLE cortex_user_role;
+|TYPE|CREATED_OBJECT|
+|---|---|
+|Git Repository|GETTING_STARTED_WITH_CORTEX_ANALYST|
+|Search Service|PRODUCT_LINE_SEARCH_SERVICE|
+|Table|DAILY_REVENUE|
+|Table|PRODUCT_DIM|
+|Table|REGION_DIM|
+|Table rows: Products|5|
+|Table rows: Regions|25|
+|Table rows: Revenue days|730|
 
 
-USE ROLE cortex_user_role;
+<aside class="negative">
+<strong>NOTE:</strong><br> If you see `SQL compilation error: Database 'CORTEX_ANALYST_DEMO' does not exist or not authorized.`, then you probably clicked *Run* instead of *Run All*. *Run* just runs one statement, but we need to run the whole script.
 
--- Use the created warehouse
-USE WAREHOUSE cortex_analyst_wh;
-
-USE DATABASE cortex_analyst_demo;
-USE SCHEMA cortex_analyst_demo.revenue_timeseries;
-
--- Create stage for raw data
-CREATE OR REPLACE STAGE raw_data DIRECTORY = (ENABLE = TRUE);
-
-/*--
-• Fact and Dimension Table Creation
---*/
-
--- Fact table: daily_revenue
-CREATE OR REPLACE TABLE cortex_analyst_demo.revenue_timeseries.daily_revenue (
-    date DATE,
-    revenue FLOAT,
-    cogs FLOAT,
-    forecasted_revenue FLOAT,
-    product_id INT,
-    region_id INT
-);
-
--- Dimension table: product_dim
-CREATE OR REPLACE TABLE cortex_analyst_demo.revenue_timeseries.product_dim (
-    product_id INT,
-    product_line VARCHAR(16777216)
-);
-
--- Dimension table: region_dim
-CREATE OR REPLACE TABLE cortex_analyst_demo.revenue_timeseries.region_dim (
-    region_id INT,
-    sales_region VARCHAR(16777216),
-    state VARCHAR(16777216)
-);
-```
-
-These can also be found in the [**create_snowflake_objects.sql**](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/create_snowflake_objects.sql) file.
+Look for the dropdown next to the *Run* button, click it, then click *Run All*.
+<aside>
 
 <!-- ------------------------ -->
-## Ingest the Revenue Data and Semantic Model YAML
+## Switch Role
 
+The setup script has created a new role called `CORTEX_USER_ROLE`. You'll need to switch from `ACCOUNTADMIN` to `CORTEX_USER_ROLE` by clicking on your user icon in the bottom-right, selecting *Switch Role* and choosing `CORTEX_USER_ROLE`.
 
->
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst).
+![switch_role](./assets/switch_role.png)
 
-There are three data files and one YAML file included in the [Git Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst) that you should have cloned:
-- [daily_revenue.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue.csv)
-- [region.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/region.csv)
-- [product.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/product.csv)
-- [revenue_timeseries.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml)
+The setup script creates:
 
-You will now upload these files to your Snowflake account and ingest the data files into the tables created in the previous step.
+- The database, schema and role you'll need
+- A connection to the demo GitHub repo, giving you access to the source code in Snowsight
+- Some demo data tables and copies rows in from our sample CSV files
+- A Cortex search service, that allows you and the chatbot to search product names intelligently
 
-To upload the data files:
-- Navigate to the Data tab in Snowsight, and select **Add Data**
-- On the Add Data page, select **Load files into a stage**
-- Select the four files that you want to upload (listed above)
-- Select **CORTEX_ANALYST_DEMO** as Database, **REVENUE_TIMESERIES** as Schema, and **RAW_DATA** as Stage
-- Click Upload
-
-Let's go check that the files were successfully uploaded to the stage. In the Snowsight UI:
-- Select **Data >> Databases**
-- Select the **CORTEX_ANALYST_DEMO** database and **REVENUE_TIMESERIES** Schema that contain the stage
-- Select Stages and select the **RAW_DATA** stage
-- If prompted, select **Enable Directory Table** and the CORTEX_ANALYST_WH to refresh the directory table
-
-You should see the four files listed in the stage:
-![staged files](./assets/staged_files.png)
-
-Now, let's load the raw CSV data into the tables. Go back to your Snowflake SQL worksheet and run the following [load_data.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/load_data.sql) code to load data into the tables:
-
-```sql
-/*--
-• looad data into tables
---*/
-
-USE ROLE CORTEX_USER_ROLE;
-USE DATABASE CORTEX_ANALYST_DEMO;
-USE SCHEMA CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES;
-USE WAREHOUSE CORTEX_ANALYST_WH;
-
-COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE
-FROM @raw_data
-FILES = ('daily_revenue.csv')
-FILE_FORMAT = (
-    TYPE=CSV,
-    SKIP_HEADER=1,
-    FIELD_DELIMITER=',',
-    TRIM_SPACE=FALSE,
-    FIELD_OPTIONALLY_ENCLOSED_BY=NONE,
-    REPLACE_INVALID_CHARACTERS=TRUE,
-    DATE_FORMAT=AUTO,
-    TIME_FORMAT=AUTO,
-    TIMESTAMP_FORMAT=AUTO
-    EMPTY_FIELD_AS_NULL = FALSE
-    error_on_column_count_mismatch=false
-)
-
-ON_ERROR=CONTINUE
-FORCE = TRUE ;
-
-
-
-COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.PRODUCT_DIM
-FROM @raw_data
-FILES = ('product.csv')
-FILE_FORMAT = (
-    TYPE=CSV,
-    SKIP_HEADER=1,
-    FIELD_DELIMITER=',',
-    TRIM_SPACE=FALSE,
-    FIELD_OPTIONALLY_ENCLOSED_BY=NONE,
-    REPLACE_INVALID_CHARACTERS=TRUE,
-    DATE_FORMAT=AUTO,
-    TIME_FORMAT=AUTO,
-    TIMESTAMP_FORMAT=AUTO
-    EMPTY_FIELD_AS_NULL = FALSE
-    error_on_column_count_mismatch=false
-)
-
-ON_ERROR=CONTINUE
-FORCE = TRUE ;
-
-
-
-COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.REGION_DIM
-FROM @raw_data
-FILES = ('region.csv')
-FILE_FORMAT = (
-    TYPE=CSV,
-    SKIP_HEADER=1,
-    FIELD_DELIMITER=',',
-    TRIM_SPACE=FALSE,
-    FIELD_OPTIONALLY_ENCLOSED_BY=NONE,
-    REPLACE_INVALID_CHARACTERS=TRUE,
-    DATE_FORMAT=AUTO,
-    TIME_FORMAT=AUTO,
-    TIMESTAMP_FORMAT=AUTO
-    EMPTY_FIELD_AS_NULL = FALSE
-    error_on_column_count_mismatch=false
-)
-
-ON_ERROR=CONTINUE
-FORCE = TRUE ;
-```
-<!-- ------------------------ -->
-## Integrate Cortex Search
-
-Now, you will integrate Cortex Search as a way to improve literal string searches to help Cortex Analyst generate more accurate SQL queries. Writing the correct SQL query to answer a question sometimes requires knowing exact literal values to filter on. Since those values can’t always be extracted directly from the question, a search of some kind may be needed.
-
-Go back to your Snowflake SQL worksheet and run the following [cortex_search_create.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_search_create.sql) code to load data into the tables:
-
-```sql
-USE DATABASE cortex_analyst_demo;
-USE SCHEMA revenue_timeseries;
-use ROLE cortex_user_role;
-
-  CREATE OR REPLACE CORTEX SEARCH SERVICE product_line_search_service
-  ON product_dimension
-  WAREHOUSE = cortex_analyst_wh
-  TARGET_LAG = '1 hour'
-  AS (
-      SELECT DISTINCT product_line AS product_dimension FROM product_dim
-  );
-```
+Feel free to explore the setup script and learn from it in your own time. For now, let's keep building.
 
 <!-- ------------------------ -->
 ## Create a Streamlit Conversational App
 
-Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit in Snowflake application:
+Now, you will create a demo chat application to call the Cortex Analyst API and
+ask natural-language questions over our structured revenue datasets. You
+already have the source code available, because the setup script created a
+connection to GitHub. To turn it into a running app:
 
-- Go to the Streamlit page in Snowsight, and click `+ Streamlit App`, and fill it in with the below details and click create:
-![create streamlit](./assets/streamlit_create.png)
-- Open up the [cortex_analyst_sis_demo_app.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_analyst_sis_demo_app.py) file in your preferred local code editor
-- Copy and paste the SiS app code into the Streamlit editor
-![edit streamlit](./assets/streamlit_editor.png)
-- Click `Run` and begin asking questions!
+- Go to *Projects -> Streamlit*
 
-Take note of the `get_analyst_response` function that is defined in this Python code. This is the function that takes our chat input prompt and history, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified `revenue_timeseries.yaml` Semantic Model). 
+- Find the *+Streamlit App* button, click the dropdown and select *Create from Repository*
+
+- Enter the *App Title*, *App Location* and *App Warehouse* as shown:
+
+![assets/create_streamlit_app](./assets/create_streamlit_app.png)
+
+- Find *File location in repository* and click *Select main file*.
+
+- Click *Select Database -> CORTEX_ANALYST_DEMO -> GETTING_STARTED_WITH_CORTEX_ANALYST -> cortex_analyst_sis_demo_app.py*:
+
+![assets/create_streamlit_app_main](./assets/create_streamlit_app_main.png)
+
+
+After a few moments you should see the running app. You're ready to start asking questions!
+
+Once you've explored the chat interface, take a look at the python code. In particular, take note of the `get_analyst_response` function. This is the function that takes our chat input prompt and history, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified `revenue_timeseries.yaml` Semantic Model).
 
 ```python
 def get_analyst_response(messages: List[Dict]) -> Tuple[Dict, Optional[str]]:
@@ -325,8 +159,6 @@ Message: ```{parsed_content['message']}```
         return parsed_content, error_msg
 ```
 
-You can now begin asking natural language questions about the revenue data in the chat interface (e.g. "What questions can I ask?")
-
 <!-- ------------------------ -->
 ## Semantic Model Details
 
@@ -337,34 +169,34 @@ The [Semantic Model](https://docs.snowflake.com/en/user-guide/snowflake-cortex/c
 - Logical Columns which are one of `dimensions`, `time_dimensions`, or `measures`
 - Relationships that exist between tables to allow for JOINS
 
-Logical Tables are relatively straightforward- these are tables or views within a database. That's it! Pretty simple
+Logical Tables are relatively straightforward - these are tables or views within a database. That's it! Pretty simple
 
 Logical Columns get a bit more complicated; a logical column can reference an underlying physical column in a table, or it can be a expression containing one or more physical columns. So, for example, in the [`revenue_timeseries.yaml`](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml), we have a simple logical column `daily_revenue` that is a physical column. In the `daily_revenue` measure definition, you'll notice that we provide a description, as well as synonyms, data_type, and a default_aggregation, but no `expr` parameter. This is because `revenue` is simply a physical column in the `daily_revenue` table:
 
 ```yaml
 measures:
-    - name: daily_revenue
-        expr: revenue
-        description: total revenue for the given day
-        synonyms: ["sales", "income"]
-        default_aggregation: sum
-        data_type: number
+  - name: daily_revenue
+    expr: revenue
+    description: total revenue for the given day
+    synonyms: ["sales", "income"]
+    default_aggregation: sum
+    data_type: number
 ```
 
 In contrast, we define a different measure `daily_profit` which is not in fact a physical column, but rather an expression of the difference between the `revenue` and `cogs` physical columns:
 
 ```yaml
-- name: daily_profit
+  - name: daily_profit
     description: profit is the difference between revenue and expenses.
     expr: revenue - cogs
     data_type: number
-``` 
+```
 In the semantic model, `time_dimensions` specifically capture temporal features of the data, and `dimensions` are not quantitative fields (e.g. quantitative fields are `measures`, while categorical fields are `dimensions`).
 
 An example `time_dimension`:
 ```yaml
 time_dimensions:
-    - name: date
+  - name: date
     expr: date
     description: date with measures of revenue, COGS, and forecasted revenue for each product line
     unique: false
@@ -374,17 +206,17 @@ time_dimensions:
 An example `dimension`:
 ```yaml
 dimensions:
-    - name: product_line
+  - name: product_line
     expr: product_line
-    description: product line associated with it's own slice of revenue
+    description: product line associated with its own slice of revenue
     unique: false
     data_type: varchar
     sample_values:
-        - Electronics
-        - Clothing
-        - Home Appliances
-        - Toys
-        - Books
+      - Electronics
+      - Clothing
+      - Home Appliances
+      - Toys
+      - Books
 ```
 
 An example `relationship`:
@@ -410,7 +242,7 @@ When generating the semantic model, think from the end user perspective:
 - We recommend not exceeding 3-5 tables, 10-20 columns each table to start.
 
 Some additional items that’ll significantly improve model performance:
-- Capture more difficult or more business-specific queries into expressions and verified queries (please use the Chat tab within streamlit admin app to add verified queries)
+- Capture more difficult or more business-specific queries into expressions and verified queries (please use the Chat tab within Streamlit admin app to add verified queries)
   - Verified queries will be provided as few-shot example for model to draw inspiration from, hence significantly improve performance
   - If any organization specific logic cannot be captured via other spec items, we recommend you to add to verified queries.
 - Start with a simple and small scope, gradually expanding. YAML building is an iterative process.
@@ -426,9 +258,10 @@ In addition to the previously discussed Semantic Model information, the [Cortex 
 Verified queries ultimately are specified in the `verified_queries` section of the semantic model, e.g.:
 ```yaml
 verified_queries:
-name: "lowest revenue each month"
+  - name: "lowest revenue each month"
     question: "For each month, what was the lowest daily revenue and on what date did that lowest revenue occur?"
-    sql: "WITH monthly_min_revenue AS (
+    sql: |
+        WITH monthly_min_revenue AS (
         SELECT
           DATE_TRUNC('MONTH', date) AS month,
           MIN(daily_revenue) AS min_revenue
@@ -442,25 +275,14 @@ name: "lowest revenue each month"
           dr.date AS min_revenue_date
         FROM monthly_min_revenue AS mmr JOIN daily_revenue AS dr
           ON mmr.month = DATE_TRUNC('MONTH', dr.date) AND mmr.min_revenue = dr.daily_revenue
-        ORDER BY mmr.month DESC NULLS LAST"
+        ORDER BY mmr.month DESC NULLS LAST
     verified_at: 1715187400
     verified_by: Jane
 ```
 
-While verified queries can be added directly to the Semantic Model, Snowflake also provides an OSS Streamlit application to help add verified queries to your model. 
-
-![vqr app](./assets/vqr_app.png)
-
-To install and use this app:
-1. Clone the [semantic-model-generator repository](https://github.com/Snowflake-Labs/semantic-model-generator). Follow the setup instructions in the [repo’s README](https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/README.md) to provide your credentials. Then follow the instructions in the [admin_app README](https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/admin_apps/README.md) to install dependencies and start the app.
-2. Once the app is running, enter the database, schema, and stage location of your semantic model YAML file in the empty fields. The YAML appears in an interactive editor on the left side of the window.
-3. On the right side of the window, ask a question in the chat interface to generate a SQL query.
-4. Inspect the generated query and the results it produces. If it worked as you expected, select the **Save as verified query** button below the assistant answer to add the query to your semantic model.
-5. If generated query is incorrect, select the **Edit** button and modify the query, then run the modified query and see if it produces the intended results. Continue modifying and testing the query until it works the way you want it to. Finally, select **Save as verified query** to save the query to your semantic model.
-6. Select the **Save** button in the bottom left of the window to update the semantic model, then go back to step 2 if you want to add more queries.
-7. When you’re satisfied with the queries you’ve added, select the **Upload** button and enter a file name for your new YAML file, then select **Submit Upload**.
-
-Modify your SiS application code to point at the new Semantic Model YAML file location, and use Cortex Analyst as before!
+<aside class="positive">
+<strong>NOTE:</strong><br> Eventually you'll want to create a semantic view for your own data. Snowsight has a number of tools to help you, and you can [get started here](https://docs.snowflake.com/en/user-guide/views-semantic/ui).
+<aside>
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -477,7 +299,6 @@ For more information, check out the resources below:
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst)
 - [Cortex Analyst docs](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Analyst examples](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/cortex-analyst)
-- [Semantic Model Generator](https://github.com/Snowflake-Labs/semantic-model-generator)
 - [Watch the Demo](https://youtu.be/eat-J-roEU8?list=TLGGeG7BOVuJNYUyMjA5MjAyNQ)
 
 <!-- ------------------------ -->
