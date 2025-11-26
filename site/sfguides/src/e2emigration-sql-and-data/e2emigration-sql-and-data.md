@@ -27,7 +27,7 @@ Want to migrate to Snowflake in less than 90 minutes? Come to this hands-on lab.
 
 - [SnowConvert](/en/migrate-to-the-cloud/snowconvert-ai/) Installed
 - [VSCode](https://code.visualstudio.com/download) and [Snowflake Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) Installed
-- [Snowflake Account](https://signup.snowflake.com/).
+- [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 ### Scenario
 

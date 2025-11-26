@@ -29,7 +29,7 @@ Streamlit *(acquisito da Snowflake a marzo 2022)* è una libreria Python che con
 ### Prerequisiti
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installato
 - [Anaconda](https://www.anaconda.com/) installato
-- Account Snowflake con i [pacchetti Anaconda abilitati da ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Se non hai un account Snowflake, puoi registrarti per una [prova gratuita](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- Account Snowflake con i [pacchetti Anaconda abilitati da ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Se non hai un account Snowflake, puoi registrarti per una [prova gratuita](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Un login per l’account Snowflake con il ruolo ACCOUNTADMIN. In caso contrario, dovrai registrarti per una prova gratuita oppure utilizzare un ruolo diverso con la capacità di creare database, schemi, tabelle, stage, User Defined Function e stored procedure. 
 
 ### Cosa realizzerai 

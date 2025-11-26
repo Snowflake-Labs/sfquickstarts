@@ -43,7 +43,7 @@ This guide covers:
 
 ### Prerequisites
 - A [GitHub](https://github.com/) Account to access the [GIT REPO](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/tree/main)
-- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC) or use a different role.
+- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&_fsi=OuImfiWC&_fsi=OuImfiWC&utm_cta=developer-guides) or use a different role.
 
 ### What You Will Build
 

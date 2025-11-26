@@ -52,7 +52,7 @@ pandas is the go-to data processing library for millions worldwide, including co
 
 ### Pre-requisites
 
-* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 <!-- ------------------------ -->
 ## Setup

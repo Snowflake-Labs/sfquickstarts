@@ -60,7 +60,7 @@ Streamlit est un framework d’application [open source](https://github.com/stre
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) doit être installé.
 - [Python 3.9](https://www.python.org/downloads/) doit être installé.
   - Remarque : vous allez créer un environnement Python avec la version 3.9 lors de l’étape **Premiers pas**.
-- Vous devez posséder un compte Snowflake comprenant des [packages Anaconda activés par ORGADMIN](https://docs.snowflake.com/fr/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si vous n’avez pas de compte Snowflake, vous pouvez créer un [compte d’essai gratuit](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- Vous devez posséder un compte Snowflake comprenant des [packages Anaconda activés par ORGADMIN](https://docs.snowflake.com/fr/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si vous n’avez pas de compte Snowflake, vous pouvez créer un [compte d’essai gratuit](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Vous devez vous connecter à un compte Snowflake avec le rôle ACCOUNTADMIN. Si ce rôle est disponible dans votre environnement, vous pouvez choisir de l’utiliser. Sinon, vous devrez 1) créer un compte d’essai gratuit, 2) utiliser un autre rôle capable de créer une base de données, un schéma, des tables, des zones de préparation, des tâches, des fonctions définies par l’utilisateur et des procédures stockées OU 3) utiliser une base de données et un schéma existants dans lesquels vous pouvez créer les objets mentionnés.
 
 > 

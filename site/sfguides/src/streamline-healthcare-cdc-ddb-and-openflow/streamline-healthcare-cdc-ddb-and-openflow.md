@@ -41,7 +41,7 @@ Below is a schematic diagram of the demo. The CDC events in DynamoDB are capture
 Before proceeding with the quickstart, ensure you have:
 
 1. **Snowflake and AWS Account Access**
-   - A Snowflake account in one of the AWS commercial [regions](https://docs.snowflake.com/en/user-guide/intro-regions#label-na-general-regions). If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstart-insurance-claims-dynamodb-openflow-cdc).
+   - A Snowflake account in one of the AWS commercial [regions](https://docs.snowflake.com/en/user-guide/intro-regions#label-na-general-regions). If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
    - An AWS account with permissions to create the required resources using [Cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
    - Access to the AWS Management Console and [AWS CLI](https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-configure.html) configured with required credentials.
    - A Snowflake account with permissions to run queries and create [Openflow](/en/product/features/openflow/) objects

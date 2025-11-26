@@ -50,7 +50,7 @@ LlamaParse comes equipped with the following features:
 ### What You Will Need
 
 * A LlamaCloud API key ([get one here](https://docs.cloud.llamaindex.ai/api_key))
-* A Snowflake account ([sign up here](https://signup.snowflake.com/))
+* A Snowflake account ([sign up here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))
 * Python **3.10+**
 * Required Python packages: `llama-cloud`, `snowflake-snowpark-python`, `snowflake-ml-python`, `pandas`
 
@@ -59,7 +59,7 @@ LlamaParse comes equipped with the following features:
 ## Setup
 
 
-Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.cloud.llamaindex.ai/api_key) and a [Snowflake account](https://signup.snowflake.com/).
+Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.cloud.llamaindex.ai/api_key) and a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 Once you have signed up for a Snowflake account, create database and warehouse using the following SQL statements:
 

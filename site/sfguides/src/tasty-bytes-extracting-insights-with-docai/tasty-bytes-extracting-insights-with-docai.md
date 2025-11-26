@@ -23,7 +23,7 @@ Within this Quickstart, we will walk through how to train and leverage a Documen
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - A Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/?utm_cta=quickstarts_). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
     
 ### What You Will Learn 

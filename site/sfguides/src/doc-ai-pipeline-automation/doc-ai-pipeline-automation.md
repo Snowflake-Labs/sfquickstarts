@@ -21,7 +21,7 @@ The pipeline ensures that documents meet business expectations through pre-proce
 
 ### Prerequisites
 - Familiarity with SQL and Python
-- A <a href=https://signup.snowflake.com/>Snowflake account</a>. If you do not have a Snowflake account, you can register for a free trial account.
+- A <a href=https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides>Snowflake account</a>. If you do not have a Snowflake account, you can register for a free trial account.
 - A Snowflake account login with a role that has the ability to create role, database, schema, tables, stages and assign permissions. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Learn 

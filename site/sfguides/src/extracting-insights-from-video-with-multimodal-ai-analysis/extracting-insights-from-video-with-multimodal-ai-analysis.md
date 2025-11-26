@@ -21,7 +21,7 @@ In this Quickstart, we will employ all three techniques to analyze meeting video
 ### Preqrequisites
 
 * Basic understanding of Snowflake and containers.
-* A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+* A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * Installation of [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 * [Docker Desktop](https://www.docker.com/get-started/)

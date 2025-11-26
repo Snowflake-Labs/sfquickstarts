@@ -31,7 +31,7 @@ The Snowflake Python API allows you to manage Snowflake using Python. Using the 
 
 ### What You’ll Need
 
-- A Snowflake account ([trial](https://signup.snowflake.com/?utm_cta=quickstarts_), or otherwise)
+- A Snowflake account ([trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), or otherwise)
 - A code editor that supports Jupyter notebooks, or ability to run notebooks in your browser using `jupyter notebook`
 
 ### What You’ll Build

@@ -27,7 +27,7 @@ The Snowflake Native App Framework is a powerful way for application providers t
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
 - [VSCode](https://code.visualstudio.com/download) Installed
-- A [Snowflake Account](https://signup.snowflake.com/)
+- A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 
 ### What You’ll Build 

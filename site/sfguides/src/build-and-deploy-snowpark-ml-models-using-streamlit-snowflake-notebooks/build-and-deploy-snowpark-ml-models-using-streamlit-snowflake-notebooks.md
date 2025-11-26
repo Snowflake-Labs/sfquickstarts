@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 In this quickstart, you will be introduced to ML Sidekick, a no-code app built using Streamlit in Snowflake, designed for building and deploying machine learning models in Snowflake. This application aids both seasoned data scientists and business users with no coding experience by simplifying the machine learning process and making it accessible to a broader audience.
 
 ### Prerequisites
-- A Snowflake account login. If not, you will need to register for a [free trial account](https://signup.snowflake.com/)
+- A Snowflake account login. If not, you will need to register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Install [Anaconda](https://anaconda.com)
 
 ### What You’ll Learn 

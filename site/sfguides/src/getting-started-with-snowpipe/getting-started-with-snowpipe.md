@@ -27,7 +27,7 @@ Let's look into how Snowpipe can be configured for continual loading. Then, we c
 - Next steps with database automation
 
 ### What You’ll Need 
-- Create a [Snowflake account](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en) with an **ACCOUNTADMIN** role
+- Create a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowpipe&utm_cta=developer-guides) with an **ACCOUNTADMIN** role
 - AWS [Account](https://aws.amazon.com/free/?sc_icampaign=acq_aws_takeover-1st-visit-free-tier&sc_ichannel=ha&sc_icontent=awssm-evergreen-1st-visit&sc_iplace=hero&trk=ha_awssm-evergreen-1st-visit&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc) with access to a Snowflake supported [region](https://docs.snowflake.com/en/user-guide/intro-regions.html)
 
 ### What You’ll Build 
@@ -40,7 +40,7 @@ After ensuring the prerequisites detailed in this section, jump into the queuein
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
-1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=hol&utm_campaign=northstar-hols-2025)
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-west-2&utm_campaign=northstar-hols-2025&utm_cta=developer-guides)
 
 2. Start the account creation by completing the first page of the form on the page
 

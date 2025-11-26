@@ -25,7 +25,7 @@ This article will show you how to identify large tables, analyze query patterns,
 An interactive notebook that helps monitor table storage growth and analyze query patterns using Snowflake's account usage views and Streamlit widgets.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic knowledge of SQL and Python
 - Familiarity with Snowflake Notebooks
 

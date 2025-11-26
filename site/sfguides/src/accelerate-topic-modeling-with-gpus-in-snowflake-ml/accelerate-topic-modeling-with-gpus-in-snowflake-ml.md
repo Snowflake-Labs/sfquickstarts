@@ -27,7 +27,7 @@ This guide will walk you through how to leverage this native integration in Snow
 You will build and execute a topic modeling pipeline that processes 500,000 book reviews in under a minute using GPU-accelerated libraries.
 
 ### Prerequisites
-- Access to a Snowflake account. Sign up for a [30-day free trial account](https://signup.snowflake.com/).
+- Access to a Snowflake account. Sign up for a [30-day free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Basic understanding of Python and machine learning concepts
 
 

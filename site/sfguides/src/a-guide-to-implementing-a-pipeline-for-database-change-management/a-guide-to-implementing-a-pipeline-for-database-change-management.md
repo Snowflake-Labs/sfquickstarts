@@ -26,7 +26,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account
-- A [Snowflake](https://signup.snowflake.com/) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account
 - [Git cli](https://git-scm.com/downloads/mac) Installed
 - [Snowflake cli](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) Installed
 - Python (>= 3.11) Installed

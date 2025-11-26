@@ -29,7 +29,7 @@ MCP Server on Snowflake simplifies the application architecture and eliminates t
 
 ### Prerequisites
 
-* Access to a Snowflake account with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* Access to a Snowflake account with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 * Access to [Cursor](https://cursor.com/).
 
 ### What You Will Learn
@@ -59,7 +59,7 @@ Create a [Personal Access Token (PAT)](https://docs.snowflake.com/en/user-guide/
 
 This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server) 
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Search**</a> 
 * On the top right, click on **Create**
     - Role and Warehouse: **ACCOUNTADMIN** | **DASH_WH_S**
     - Database and Schema: **DASH_MCP_DB.DATA**
@@ -74,7 +74,7 @@ This tool allows the agent to search and retrieve information from unstructured 
 
 This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Analyst**](https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server)
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a>
 * On the top right, click on **Create new** down arrow and select **Upload your YAML file** 
 * Upload [FINANCIAL_SERVICES_ANALYTICS.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/FINANCIAL_SERVICES_ANALYTICS.yaml) | Select database, schema, and stage: **DASH_MCP_DB.DATA** >> **SEMANTIC_MODELS** 
 * On the top right, click on **Save** 

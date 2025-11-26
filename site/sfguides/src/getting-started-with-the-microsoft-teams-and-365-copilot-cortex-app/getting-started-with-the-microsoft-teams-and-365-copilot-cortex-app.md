@@ -27,7 +27,7 @@ In this use cases we will build two data sources, one with structured sales data
 Snowflake Cortex has proven to be a best-in-class platform for building GenAI services (Search and Analyst) and agents with your data and now customers can seamlessly connect to Cortex Agents in Microsoft Teams and M365 Copilots alongside all of their Microsoft GenAI experiences.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) and a Snowflake account
+- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and a Snowflake account
 - A Microsoft Teams account or M365 Copilot (with administrator privileges if following that section)
 
 ### What You’ll Learn
@@ -51,7 +51,7 @@ The authentication and user flow goes like this:
 ...
 
 ### What You’ll Need
-- [Snowflake account](https://signup.snowflake.com/) 
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
 - A Microsoft Teams account or M365 Copilot (with administrator privileges if following that section)
 
 ### What You'll Build

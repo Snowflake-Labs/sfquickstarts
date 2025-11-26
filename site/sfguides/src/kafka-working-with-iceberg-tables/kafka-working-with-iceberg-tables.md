@@ -17,7 +17,7 @@ This guide provides a comprehensive walkthrough for establishing a local data st
 ### Prerequisites
 Before proceeding, ensure you have the following:
 
-- A [Snowflake account](https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_campaign=ap-in-en-brand-cloud-phrase&utm_content=go-rsa-evg-ss-free-trial&utm_term=c-g-snowflake%20computing-p&_bt=591408722054&_bk=snowflake%20computing&_bm=p&_bn=g&_bg=133380613608&gclsrc=aw.ds&gad_source=1&gclid=EAIaIQobChMI7fjZvc6ljAMVy-gWBR3CORZMEAAYASAAEgLvMvD_BwE)
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=ap-in-en-brand-cloud-phrase&utm_content=go-rsa-evg-ss-free-trial&utm_term=c-g-snowflake%20computing-p&_bt=591408722054&_bk=snowflake%20computing&_bm=p&_bn=g&_bg=133380613608&gclsrc=aw.ds&gad_source=1&gclid=EAIaIQobChMI7fjZvc6ljAMVy-gWBR3CORZMEAAYASAAEgLvMvD_BwE&utm_cta=developer-guides)
 - Visual Studio Code (VSCode) installed.
 - Cloud Provider Amazon S3 or Azure Blob storage to write with the iceberg files.
 

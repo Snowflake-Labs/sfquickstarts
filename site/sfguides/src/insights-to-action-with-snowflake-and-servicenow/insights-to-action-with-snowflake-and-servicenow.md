@@ -38,7 +38,7 @@ Familiarity with SQL and REST API
 
 ### What You’ll Need 
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account 
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account 
 - A [ServiceNow](https://developer.servicenow.com/dev.do) Personal Developer Instance. 
 - To create a REST API trigger, you’ll need to enable the Integration Hub Enterprise Pack Plugin as outlined in this [link](https://developer.servicenow.com/dev.do#!/learn/learning-plans/washingtondc/servicenow_application_developer/app_store_learnv2_rest_washingtondc_exercise_activate_integrationhub)
 

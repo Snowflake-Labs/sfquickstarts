@@ -32,7 +32,7 @@ In this quickstart you will setting OneLake as a Catalog Linked Database in Snow
 - You will build a fully interoperable, open lakehouse by integrating Snowflake with Microsoft OneLake. You will get sample data in Fabric, create an external volume, set up OneLake as an Catalog Linked Database in Snowflake, and create Iceberg tables in OneLake. The end result is a seamless data architecture where Snowflake can manage and query data stored in the open formats of OneLake.
 
 ### What You will Need 
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/get-started/fabric-trial)  
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network.
 

@@ -27,7 +27,7 @@ In this guide, you will build a small directed acyclic graph (DAG) in Coalesce u
 - Optional completion of the foundational Coalesce Quickstart [Accelerating Transformations with Coalesce and Snowflake](/en/developers/guides/transform-your-data-with-coalesce/)
 
 ### What You’ll Need 
-- A Snowflake account [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) or access to an existing account with `ACCOUNT ADMIN` privileges 
+- A Snowflake account [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) or access to an existing account with `ACCOUNT ADMIN` privileges 
 - A Coalesce account (either a trial account created via [Snowflake Partner Connect](https://coalesce.io/product-technology/launch-coalesce-from-snowflake-partner-connect/), or access to an existing account)
 - A git account (optional)
 - Google Chrome browser (recommended)
@@ -47,7 +47,7 @@ Complete the steps in this section to prepare your Coalesce environment. Please 
 
 ### Step 1: Set Up Your Snowflake Trial Account
 
-1. Fill out the Snowflake trial account form [here](https://signup.snowflake.com/?utm_cta=quickstarts_). Use an email address that is not associated with an existing Snowflake account. 
+1. Fill out the Snowflake trial account form [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Use an email address that is not associated with an existing Snowflake account. 
 
 2. When signing up for your Snowflake account, select the region that is physically closest to you and choose Enterprise as your Snowflake edition. Please note that the Snowflake edition, cloud provider, and region used when following this guide do not matter. 
 

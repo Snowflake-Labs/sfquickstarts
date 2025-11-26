@@ -26,7 +26,7 @@ An interactive dashboard featuring:
 - Summary statistics for task execution states
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic familiarity with SQL and Python
 - Understanding of Snowflake tasks and scheduled queries
 

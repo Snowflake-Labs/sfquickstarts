@@ -33,7 +33,7 @@ Snowflake의 지리 공간 쿼리 기능은 지리 공간 오브젝트를 대상
 ### 필요한 것
 
 - 지원되는 Snowflake [브라우저](https://docs.snowflake.com/en/user-guide/setup.html)
-- [Snowflake 평가판](https://signup.snowflake.com/?utm_cta=quickstarts_) 등록
+- [Snowflake 평가판](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 등록
   - 또는 `ACCOUNTADMIN` 역할이나 `IMPORT SHARE` 권한을 가진 기존 Snowflake 계정에 대한 액세스 보유
 - [geojson.io](https://geojson.io) 또는 [WKT Playground](https://clydedacruz.github.io/openstreetmap-wkt-playground/) 웹 사이트에 대한 액세스
 

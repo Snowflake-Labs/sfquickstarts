@@ -47,7 +47,7 @@ Please note that in the demo, we are not demonstrating the visualization aspect.
 
 To participate in the virtual hands-on lab, attendees need the following resources.
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` access
 - An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
 - Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. Please refer
 to this [AWS document](https://docs.aws.amazon.com/whitepapers/latest/amazon-msk-migration-guide/amazon-managed-streaming-for-apache-kafka-amazon-msk.html) for the MSK networking topology)

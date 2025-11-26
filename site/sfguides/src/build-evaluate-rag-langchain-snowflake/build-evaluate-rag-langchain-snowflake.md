@@ -30,7 +30,7 @@ A complete RAG application that can answer questions about sales conversations b
 
 ### What You'll Need
 
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A Snowflake account with Cortex features enabled
 - Valid Snowflake credentials
 - Python 3.8+
@@ -291,7 +291,7 @@ These metrics will help us understand:
 
 ### Viewing Evaluation Results
 
-You can view the evaluation results in Snowflake's AI Observability UI: [Open in Snowflake AI Observability](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/SALES_INTELLIGENCE/schemas/DATA/applications/SALES_ASSISTANCE_RAG?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-and-evaluate-rag-with-langchain-and-snowflake)
+You can view the evaluation results in Snowflake's AI Observability UI: <a href="https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/SALES_INTELLIGENCE/schemas/DATA/applications/SALES_ASSISTANCE_RAG?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-and-evaluate-rag-with-langchain-and-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Open in Snowflake AI Observability</a>
 
 1. Navigate to the Snowflake AI Observability page
 2. Filter by your app_name, app_version, and run_name

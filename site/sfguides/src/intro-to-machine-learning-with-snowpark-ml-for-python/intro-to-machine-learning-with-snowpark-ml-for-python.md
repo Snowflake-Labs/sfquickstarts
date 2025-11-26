@@ -49,7 +49,7 @@ This quickstart will focus on building a custom ML workflow using the following 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
-- A Snowflake Account. Sign up for a 30-day [free trial](https://signup.snowflake.com/) account, if required.
+- A Snowflake Account. Sign up for a 30-day [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account, if required.
 
 ### What You’ll Build 
 - A set of Snowflake Notebook on Container Runtime:
@@ -63,7 +63,7 @@ This quickstart will focus on building a custom ML workflow using the following 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
 
-To get started using Snowflake Notebooks, first login to Snowsight and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql) in a SQL worksheet. Sign up for a 30-day [free trial](https://signup.snowflake.com/) account, if required. This will connect to the git repo where all the Snowflake Notebooks are stored and create them for you in your Snowflake environment.
+To get started using Snowflake Notebooks, first login to Snowsight and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql) in a SQL worksheet. Sign up for a 30-day [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account, if required. This will connect to the git repo where all the Snowflake Notebooks are stored and create them for you in your Snowflake environment.
 
 ```sql
 USE ROLE ACCOUNTADMIN;

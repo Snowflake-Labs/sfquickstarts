@@ -44,7 +44,7 @@ In Apache Spark™ version 3.4, the Apache Spark community introduced Spark Conn
 
 ### Prerequisites
 
-* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 <!-- ------------------------ -->
 ## Run PySpark Code
@@ -55,7 +55,7 @@ During this step you will learn how to run PySpark code on Snowflake to:
 * Connect to the Snowpark Connect server
 * Create nested table structures in PySpark and write to Snowflake
 
-Sign up for a [Snowflake Free Trial](https://signup.snowflake.com/) account and login to Snowflake home page. 
+Sign up for a [Snowflake Free Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account and login to Snowflake home page. 
 
 Download the `ipynb` from [this git repository](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/snowparkconnect_demo.ipynb).
 

@@ -26,7 +26,7 @@ Snowpark로 데이터를 처리하고, 단순한 ML 모델을 개발하고, Snow
 
 ### 사전 필요 조건 및 지식
 
-* ACCOUNTADMIN 역할 액세스 또는 Snowflake 평가판 계정([https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_))
+* ACCOUNTADMIN 역할 액세스 또는 Snowflake 평가판 계정([https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))
 * SQL, 데이터베이스 개념 및 객체에 대한 기본 지식
 * Python 사용 경험  (랩을 위한 모든 코드는 제공됩니다.)
 * 컴퓨터에서 소프트웨어를 설치 및 실행할 능력

@@ -32,7 +32,7 @@ You’ll learn how to set it up and explore all the key features the app has to 
 ![architecture](assets/2_1.png)
 
 ### Prerequisites
-- Access to Snowflake's Native Apps on marketplace. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_). You may need to contact Snowflake Support to enable this for a trial account.
+- Access to Snowflake's Native Apps on marketplace. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). You may need to contact Snowflake Support to enable this for a trial account.
 - `ACCOUNTADMIN` role in your Snowflake account is required to install the application.
 
 <!-- ------------------------ -->

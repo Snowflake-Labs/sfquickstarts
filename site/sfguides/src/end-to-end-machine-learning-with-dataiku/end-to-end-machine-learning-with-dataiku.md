@@ -1343,7 +1343,7 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 
 **To enable the anaconda libraries on snowflake account**
 
-1.Create a new trial account on https://signup.snowflake.com
+1.Create a new trial account on [https://signup.snowflake.com](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 2.Login
 

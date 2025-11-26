@@ -37,7 +37,7 @@ By the end of this lab you will have an **end-to-end streaming Time Series Analy
 ### What You'll Need
 
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
-- [Sign-up for a Snowflake Trial](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) OR have access to an existing Snowflake account with the ACCOUNTADMIN role. Select the Enterprise edition, AWS as a cloud provider.
+- [Sign-up for a Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=developer-guides) OR have access to an existing Snowflake account with the ACCOUNTADMIN role. Select the Enterprise edition, AWS as a cloud provider.
 - Access to a **personal [GitHub](https://github.com/signup) account** to fork the quickstart repo and create [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). Codespaces offer a hosted development environment. GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 or 4 node environment, which should be enough to work through this lab.
 
 > 

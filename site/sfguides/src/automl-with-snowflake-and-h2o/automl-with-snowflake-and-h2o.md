@@ -34,7 +34,7 @@ We will use Snowflake and Driverless AI to:
 
 ### Prerequisites
 
-* A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab)
+* A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab)
 * A [H2O](https://www.h2o.ai/try-driverless-ai/) trial license key
 * [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) installed (Snowflake's CLI tool)
 * Past experience running and executing queries in Snowflake

@@ -31,7 +31,7 @@ This quickstart is designed to serve as an introduction for using Snowflake with
 - Using Generative AI with Snowflake data in Canvas
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
 - The AWS account should be a sandbox account with open network policies or you you should [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the same region as the Snowflake account
 - In the VPC [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic

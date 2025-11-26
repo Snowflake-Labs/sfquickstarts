@@ -29,7 +29,7 @@ Will they buy? This hands-on lab will guide you through building a custom machin
 - How to create dynamic visualizations to communicate insights to stakeholders
 
 ### Prerequisites
-- A Snowflake Account. [Sign up for a 30-day free trial account](https://signup.snowflake.com/), make sure to select AWS WEST
+- A Snowflake Account. [Sign up for a 30-day free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), make sure to select AWS WEST
 - Familiarity with Python and ML concepts
 
 ## Setup Environment

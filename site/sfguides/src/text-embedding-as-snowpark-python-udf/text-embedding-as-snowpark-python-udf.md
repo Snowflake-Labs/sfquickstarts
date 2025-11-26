@@ -33,7 +33,7 @@ You will learn how to install a premade text embedding Python UDF into your Snow
 ### What You’ll Need
 
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda).
-  - If you do not have a Snowflake account, or your account does not have Anaconda Packages enabled, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+  - If you do not have a Snowflake account, or your account does not have Anaconda Packages enabled, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - A Snowflake account login with ACCOUNTADMIN role.
   - If you do not have this role in your environment, you may register for a free trial.
   - Alternatively, it is possible to

@@ -27,7 +27,7 @@ In this quickstart, you'll learn how to leverage Snowflake Cortex's AI capabilit
 - How to implement the complete tool use lifecycle from request to response
 
 ### Prerequisites
-- A [Snowflake account](https://signup.snowflake.com/)
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A [WeatherAPI account](https://www.weatherapi.com/signup.aspx) and API key
 - Account must have these features enabled:
   - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)

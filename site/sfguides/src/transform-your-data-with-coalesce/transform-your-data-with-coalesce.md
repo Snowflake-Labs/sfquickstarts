@@ -30,7 +30,7 @@ This guide will help you quickly get started with Coalesce, connecting your data
 ### What You’ll Need 
 - If you haven't yet signed up for a Coalesce account, you can do so [here](https://coalesce.io/start-free/).
 - Make sure you're using Google's Chrome browser, as other browsers are not officially supported.
-- Have your Snowflake login information handy. Don’t have a Snowflake account yet or not ready to connect your company’s Snowflake to Coalesce? Sign up for a free trial [here](https://signup.snowflake.com/?utm_cta=quickstarts_) and use Snowflake’s provided sample data.
+- Have your Snowflake login information handy. Don’t have a Snowflake account yet or not ready to connect your company’s Snowflake to Coalesce? Sign up for a free trial [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and use Snowflake’s provided sample data.
 ### What You’ll Build 
 - A small data mart containing dimension and fact tables using native Snowflake SQL
 

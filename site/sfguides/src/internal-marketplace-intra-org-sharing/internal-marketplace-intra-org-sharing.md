@@ -64,7 +64,7 @@ For Steps 2 through 7 you can download [scripts here](https://github.com/Snowfla
 
 ### Step 1: Create a Snowflake trial account
 
-Sign up for a trial account [here](https://signup.snowflake.com/)
+Sign up for a trial account [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 - Choose a Cloud and Region. We recommend choosing one of these regions where this Quickstart and the very latest features have been tested:
   - **Microsoft Azure:** North Europe (Ireland), Central US (Iowa), Canada Central (Toronto)
