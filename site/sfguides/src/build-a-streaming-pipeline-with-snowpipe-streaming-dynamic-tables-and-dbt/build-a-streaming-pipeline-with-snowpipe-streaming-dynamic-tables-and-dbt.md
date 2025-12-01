@@ -16,9 +16,7 @@ This guide teaches you to build a production-grade streaming data pipeline that 
 
 The pipeline follows modern data engineering best practices with a three-step transformation architecture (Landing → Transformed → Analytics) implemented through Dynamic Tables deployed via dbt Projects, providing you with clean, tested, and documented data transformations.
 
-```
 <img src="./assets/diagram.png" alt="drawing" width="1000"/>
-```
 
 ### Use Case - Streaming IoT Analytics Pipeline
 
@@ -32,6 +30,7 @@ Real-time 5-minute windows detect pollution spikes immediately for rapid public 
 - Familiarity with Snowflake
 - Familiarity with Python
 - Familiarity with dbt
+- Familiarity with version control, CI/CD and 
 
 ### What You’ll Learn 
 - How to ingest streaming data in near-realtime into Snowflake with [Snowpipe Streaming: High-Performance Architecture](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-high-performance-overview)
@@ -60,7 +59,7 @@ Real-time 5-minute windows detect pollution spikes immediately for rapid public 
 
 <!-- ------------------------ -->
 ## Setup Github
-Duration: 2
+Duration: 15
 
 ### About
 
@@ -70,48 +69,71 @@ You are required to have a Github account to perform the steps in this quickstar
 
 ### Fork the Quickstart Repository
 
-The Git repository for this quickstart can be found here: [Build a Streaming Data Pipeline with Snowpipe Streaming](https://github.com/Snowflake-Labs/build-a-streaming-data-pipeline-with-snowpipe-streaming). Click the "Fork" button to create your own copy of the repository.
+The Git repository for this quickstart can be found here: [Build a Streaming Data Pipeline with Snowpipe Streaming](https://github.com/Snowflake-Labs/build-a-streaming-data-pipeline-with-snowpipe-streaming). Click the "Fork" button to create your own copy of the repository. Leave the `Copy the main branch only` tickbox ticked.
 
 Save the URL for future steps.
 
-```
 <img src="./assets/fork_repo.png" alt="drawing" width="800"/>
+
+Clone the repository into your local environment.
+
+### Create a Github Personal Access Token
+
+It is recommended that you configure a personal access token on Github. This will allow you to commit changes from Workspaces directly to the remote repository.
+
+Follow the [instructions on Github's website](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) to generate a personal access token (classic).
+
+Once you have obtained your token, create a `SECRETS` object in Snowflake, within your personal database:
+
+```sql
+USE DATABASE USER$<YOUR-USER-NAME>;
+USE SCHEMA PUBLIC;
+
+CREATE SECRET GIT_PAT
+TYPE = PASSWORD
+USERNAME = '<your-github-username>'
+PASSWORD = '<your-pat>'
+COMMENT = 'Github PAT';
 ```
 
+### Enable GitHub Actions
+
+By default, forked repositories disable GitHub Actions workflows. We will need to enable it in order to run CI/CD pipelines.
+
+In GitHub, navigate to Actions >> Click "I understand my workflows, go ahead and enable them".
+
+<img src="./assets/enable_workflows.png" alt="drawing" width="800"/>
+
+
 <!-- ------------------------ -->
-## Setup Environment
+## Setup Snowflake Environment
 Duration: 10
 
 We will set up a Snowflake demo environment where all demo assets will be stored, as well as necessary Users and RBAC configuration.
 
 ### Create Streaming Service User
 
-The Python Snowpipe Streaming SDK requires a user configured with Key-pair authentication. Run the following commands in your terminal to generate the keys:
+The Python Snowpipe Streaming SDK requires a user configured with Key-pair authentication. Run the following commands in your local terminal while in the directory of the cloned repository to generate the keys:
 
 ```sh
+# Ensure you are on the root folder of the cloned repository
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
 ```
 
-Run the following command to generate the SQL to set the public key on the streaming user. Copy the output into your clipboard.
+Run the following command to generate the SQL to set the public key on the streaming user. Save the output for the next step.
 
 ```sh
 PUBK=$(cat ./rsa_key.pub | grep -v KEY- | tr -d '\012')
 echo "ALTER USER STREAMING_INGEST_SVC_USER SET RSA_PUBLIC_KEY='$PUBK';"
 ``` 
 
-Run the following SQL in Snowflake to create the service user:
+Run the following SQL in Snowflake to create the service user, ensure you replace the last `ALTER USER` query with the output from the previous block:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 
 CREATE OR REPLACE USER STREAMING_INGEST_SVC_USER TYPE=SERVICE;
-
--- Configure Authentication Policy (optional, but recommended for explicit control)
-CREATE OR REPLACE AUTHENTICATION POLICY STREAMING_USER_AUTH_POLICY
-  AUTHENTICATION_METHODS = ('KEYPAIR')
-  CLIENT_TYPES = ('SNOWSQL', 'DRIVERS');
-ALTER USER STREAMING_INGEST_SVC_USER SET AUTHENTICATION POLICY STREAMING_USER_AUTH_POLICY;
 
 -- Substitute the below with the copied output from the previous code snippet:
 ALTER USER STREAMING_INGEST_SVC_USER SET RSA_PUBLIC_KEY='MII...'
@@ -142,8 +164,11 @@ The script installs the following:
   - Database role `DB_INGEST` is granted to Role `STREAMING_INGEST_ROLE`
   - `STREAMING_INGEST_ROLE` to be granted to the streaming ingest service user
   - `STREAMING_TRANSFORM_ROLE` to be granted to the human user running the script
+- An Authentication Policy attached to the streaming ingest service user that locks down how the user can authenticate to Snowflake. 
 
 ### Create a PIPE with In-Flight Transformation
+
+Run this [set-up script](https://github.com/Snowflake-Labs/build-a-streaming-data-pipeline-with-snowpipe-streaming/blob/main/snowflake_setup/snowflake_pipe_setup.sql) in Snowflake to create the PIPE object with in-flight transformation that extracts elements from the payload and casts them into individual columns.
 
 A key feature of Snowpipe Streaming v2 is the ability to perform stateless in-flight transformations of the data. Common use cases include casting elements in semi-structured data into separate columns, type transformations and manipulation of text fields including regex. The [Documentation](https://docs.snowflake.com/en/user-guide/data-load-transform#supported-functions) contains a list of supported functions for COPY transformations. 
 
@@ -151,9 +176,7 @@ Transformation is included in the ingestion cost - allowing you to perform trans
 
 > aside negative
 > 
-> It's crucial to weigh the trade-offs between transforming data in-flight versus transforming post For instance, if the payload schema changes frequently, transforming data in-flight may result in frequent errors or undesirable output, thus often require careful management of schema evolution upstream. Often in such scenarios, a more flexible strategy may be to land the streaming payload into a single VARIANT column and handle schema evolution downstream within Snowflake, which simplifies operational management.
-
-Run this [set-up script](https://github.com/Snowflake-Labs/build-a-streaming-data-pipeline-with-snowpipe-streaming/blob/main/snowflake_setup/snowflake_pipe_setup.sql) in Snowflake to create the PIPE object with in-flight transformation that extracts elements from the payload and casts them into individual columns.
+> It's crucial to weigh the trade-offs between transforming data in-flight versus transforming post-ingest. For instance, if the payload schema changes frequently, in-flight transformation may result in frequent errors or undesirable output, thus often require careful management of schema evolution upstream. Often in such scenarios, a more flexible strategy may be to land the streaming payload into a single VARIANT column and handle schema evolution downstream within Snowflake, which simplifies operational management.
 
 ### Clustering
 
@@ -165,6 +188,7 @@ Run the following SQL to grant the roles to the newly created users:
 
 ```sql
 GRANT ROLE STREAMING_INGEST_ROLE TO USER STREAMING_INGEST_SVC_USER;
+GRANT ROLE STREAMING_TRANSFORM_ROLE TO USER STREAMING_TRANSFORM_SVC_USER;
 ALTER USER STREAMING_INGEST_SVC_USER SET DEFAULT_ROLE=STREAMING_INGEST_ROLE;
 
 --Grant dev role to current user
@@ -198,11 +222,13 @@ pip install snowpipe-streaming
 
 Connection and authentication settings for the Streaming Client is saved in a `profile.json` file.
 
-Run the following command in your terminal to generate a private key with newline characters escaped:
+Run the following command in your terminal to get a formatted private key with newline characters escaped:
 
 ```sh
 sed 's/$/\\n/' rsa_key.p8 | tr -d '\n'
 ```
+
+Save t
 
 Create a new file profile.json in the stream_simulator_app folder:
 
@@ -215,7 +241,7 @@ Edit `profile.json` with the following:
 
 ```sh
 {
-    "user": "STREAMING_INGEST_USER",
+    "user": "STREAMING_INGEST_SVC_USER",
     "account": "<your_account_identifier>",
     "url": "https://<your_account_identifier>.snowflakecomputing.com:443",
     "private_key": "<your_formatted_private_key>"
@@ -223,8 +249,8 @@ Edit `profile.json` with the following:
 ```
 
 Replace the placeholders:
-- <your_account_identifier>: Your Snowflake account identifier (for example, xy12345).
-- <your_formatted_private_key>: The output from the sed command executed above. Example format: -----BEGIN PRIVATE KEY-----\n-----END PRIVATE KEY-----.
+- `<your_account_identifier>`: Your Snowflake account identifier (for example, xy12345). See [Documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier) for more details.
+- `<your_formatted_private_key>`: The output from the sed command executed above. Example format: -----BEGIN PRIVATE KEY-----\n-----END PRIVATE KEY-----.
 
 
 <!-- ------------------------ -->
@@ -352,7 +378,7 @@ Records sent: 200 | Rate: 1.02 records/sec | Last sensor: SYDN007 | Area: 2
 ## Query Streaming Data
 Duration: 2
 
-Set up for Snowpipe Streaming: High-Performance Architecture is now complete! You should see data immediately in the `LANDING.SENSOR_READINGS` table:
+Data ingestion with Snowpipe Streaming: High-Performance Architecture is now complete! You should see data immediately in the `LANDING.SENSOR_READINGS` table. Run the query below to generate a count:
 
 ```sql
 SELECT COUNT(*) FROM STREAMING_DATA_PIPELINE_PROD.LANDING.SENSOR_READINGS;
@@ -425,10 +451,26 @@ GROUP BY slm.sensor_location_name;
 
 ### Use Case - Near-realtime monitoring
 
-While the query above gives us a useful snapshot for the given query time, it is important to continually monitor particulate matter levels throughout the day in order to act as quickly levels whenever levels of pollution exceed safe levels. In the next steps, we will create Dynamic Tables that can calculate rolling averages in near-realtime that enables agencies and engineers to quickly monitor and respond to changes in air pollution levels.
+While the query above gives us a useful snapshot for the given query time, it is important to continually monitor particulate matter levels throughout the day in order to act as quickly levels whenever levels of pollution exceed safe levels. In the next steps, we will create Dynamic Tables in a new dev environment that will calculate rolling averages in near-realtime that enables agencies and engineers to quickly monitor and respond to changes in air pollution levels.
 
 <!-- ------------------------ -->
-## Setup Workspace
+## Create Dev Branch
+Duration: 2
+
+We will first develop our project in a developmental branch. 
+
+In your terminal, navigate to your cloned folder and execute the following script:
+
+```sh
+git checkout -b dev
+git push --set-upstream origin dev
+```
+
+Alternatively, you can also create a new branch in GitHub. In your GitHub repo page on the main Code tab, click "Branch" to the right of the branch selector to bring up a list of branches. Click "New branch" on the list of branches and specify a name for your branch. Leave the sources at its default values (this should be your forked repo and the `main` branch).
+
+
+<!-- ------------------------ -->
+## Setup Dev Workspace
 Duration: 5
 
 We will now set up your personal Workspace. This is a user interface that allows you to work with dbt project files and directories. You can build, test and deploy your dbt projects that are stored in your personal database (`USER$<YOUR_USER_NAME>`), which is isolated from other user's projetcs and cannot be accessed by other users. You can also define and store your personal credentials (via the [SECRETS](https://docs.snowflake.com/en/sql-reference/sql/create-secret) object) within your personal database.
@@ -437,13 +479,13 @@ We will now set up your personal Workspace. This is a user interface that allows
 
 1. In Snowsight UI, Navigate to Projects >> Workspaces
 2. Under the Workspaces dropdown, expand the list of Workspaces and select Create Workspace From Git Repository:
-```
+
 <img src="./assets/workspace_dropdown.png" alt="drawing" width="600"/>
-```
+
 3. Fill in the following details:
-```
+
 <img src="./assets/git_workspace.png" alt="drawing" width="600"/>
-```
+
 - **Repository URL**: URL of the git repository
 - **Workspace name**: Your name for the workspace
 - **API integration**: Name of the API integration created in the Snowflake setup (`STREAMING_DEMO_GIT_API_INTEGRATION`)
@@ -451,6 +493,14 @@ We will now set up your personal Workspace. This is a user interface that allows
 If your repo is public, click "Public Repository" then click Create.
 
 If you have set your Github repo to private, you will need to create a `SECRET` object containing your Github personal access token. Follow the steps on the [Github documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) to create a personal access token (classic). As this is a token that is specific to your own Github user, we recommend storing this in your personal database.
+
+### Create Dev Branch
+
+There are many methods of creating a new branch in the git repo, but for this Quickstart we will create a new branch directly from the Workspace UI. From the Workspace side panel, click the "Changes" tab, click on the branch selector, and select "+ New". Type "dev" as the new branch name, and click "Create".
+
+<img src="./assets/workspace_branch.png" alt="drawing" width="600"/>
+
+Note that this will automatically create the branch in the remote repository. 
 
 ### Select Profile
 
@@ -493,9 +543,9 @@ Run tests on only data sources on this project by:
 1. In the top panel of your Workspace, select `Test` from the list of dbt operations.
 2. Select the dropdown next to the play button, untick the `Execute with defaults` tickbox and enter `--select "source:*"` in the Additional Flags textbox.
 3. Click `Test` to execute the dbt test
-```
+
 <img src="./assets/workspace_test.png" alt="drawing" width="800"/>
-```
+
 If the tests ran correctly, you should see an output in the bottom "Output" panel similar to the below:
 
 ```sh
@@ -531,15 +581,13 @@ The dbt project already contains all configuration and models for you to process
 
 All models in this project have been configured to materialize as Dynamic Tables. 
 
-This can be configured at each model file (within the `{{ config() }}` header), but as all outputs are Dynamic Tables, it has been set at the project level within the `dbt_project.yml` file:
+This can be configured at each model file (within the `{{ config() }}` header), but as all outputs are Dynamic Tables, it has been set at the project level within the [dbt_project.yml file](https://github.com/Snowflake-Labs/build-a-streaming-data-pipeline-with-snowpipe-streaming/blob/main/dbt_project.yml)
 
-(TODO: Fix up dbt_project.yml with new definitions and paste it here)
-
-See [dbt documentation for the Snowflake adapter support](https://docs.getdbt.com/reference/resource-configs/snowflake-configs#dynamic-tables) for further details on currently available parameters.
+See [dbt documentation for the Snowflake adapter support](https://docs.getdbt.com/reference/resource-configs/snowflake-configs#dynamic-tables) for further details on currently available parameters for Dynamic Tables on dbt-core.
 
 ### Build dbt Project
 
-We will now build out all models and tests with a single dbt command - `build`. This command will run all models, tests, snapshots and seeds. See [documentation] for further details.
+We will now build out all models and tests with a single dbt command - `build`. This command will run all models, tests, snapshots and seeds. See [dbt documentation](https://docs.getdbt.com/reference/commands/build) for further details.
 
 1. In the top panel of your Workspace, select `Build` from the list of dbt operations.
 2. Click the play button immediately to the right.
@@ -588,9 +636,9 @@ execute dbt project from workspace USER$.PUBLIC.build-a-streaming-data-pipeline-
 
 ```
 
-### dbt Model Description
+### dbt Dynamic Table Model Descriptions
 
-The models in `ANALYTICS` contains four complementary models that provide comprehensive sensor monitoring capabilities across different time horizons. The sensor_latest_readings model serves as a real-time dashboard table, capturing the most recent status of each IoT sensor with current environmental readings (temperature, humidity, pressure) and air quality measurements (PM2.5, PM10, NH3, CO, CO2, SO2, O3), along with intelligent status classification that marks sensors as ACTIVE, DELAYED, or OFFLINE based on their last communication time, and quality assessment that flags readings as NORMAL, INCOMPLETE, or ANOMALY based on sensor completeness and environmental thresholds. This table is perfect for operations teams monitoring sensor network health, environmental agencies tracking real-time air quality conditions, or facility managers ensuring HVAC systems respond to current environmental conditions.
+The models in `ANALYTICS` contains four Dynamic Table models that calculate statistical aggregations of environmental readings across different time horizons. The `sensor_latest_readings` model serves as a near-realtime live status, capturing the most recent status of each IoT sensor with current environmental readings (temperature, humidity, pressure) and air quality measurements (PM2.5, PM10, NH3, CO, CO2, SO2, O3). 
 
 The three rolling window models (sensor_rolling_5min, sensor_rolling_1hour, and sensor_rolling_1day) provide time-series analytics by calculating statistical aggregations (average, minimum, maximum, range, and standard deviation) for temperature, humidity, and pressure measurements over their respective time windows. 
 
@@ -602,11 +650,11 @@ The three rolling window models (sensor_rolling_5min, sensor_rolling_1hour, and 
 
 dbt macros are reusable pieces of Jinja code that generate SQL dynamically, enabling you to write DRY (Don't Repeat Yourself) transformations and reduce code duplication across your models. This project leverages two key macros to efficiently generate the rolling window analytics:
 
-**`rolling_sensor_metrics` Macro**
+**`rolling_sensor_metrics`**
 The `rolling_sensor_metrics` macro is the primary macro that generates comprehensive time-series analytics for sensor data. It accepts two parameters: `window_interval` (e.g., "5 minutes", "1 hour", "1 day") and `window_label` (e.g., "5min", "1hour", "1day"). The macro creates rolling window calculations for temperature, humidity, and pressure measurements, computing statistical aggregations including average, minimum, maximum, and standard deviation over the specified time window. It also handles window timing metadata such as start/end times and record counts, making it easy to create consistent analytics across different time horizons with a single macro call.
 
-**`window_calculation` Macro**
-The `window_calculation` macro is a utility macro that standardizes individual window function generation. It takes four parameters: `agg_func` (aggregation function like 'avg', 'min', 'max'), `measure_col_name` (column name like 'temperature_c'), `window_interval`, and `window_label`. This macro eliminates repetitive window function syntax by generating standardized SQL window functions with consistent partitioning and ordering logic. By using this macro, the `rolling_sensor_metrics` macro reduces code duplication by approximately 75% and ensures all window calculations follow the same pattern for maintainability and consistency.
+**`window_calculation`**
+The `window_calculation` macro is a utility macro that standardizes individual window function generation. It takes four parameters: `agg_func` (aggregation function like 'avg', 'min', 'max'), `measure_col_name` (column name like 'temperature_c'), `window_interval`, and `window_label`. This macro eliminates repetitive window function syntax by generating standardized SQL window functions with consistent partitioning and ordering logic. 
 
 <!-- ------------------------ -->
 ## Deploy dbt Project
@@ -620,13 +668,13 @@ The dbt Project you have run thus far is stored in your personal database. We wi
 2. Click "Deploy dbt project"
 3. Select databases `STREAMING_DATA_PIPELINE_PROD` and schema `PROJECTS`
 4. Specify a name (e.g. `ENVIRO_READINGS_DBT_PROJECT`)
-5. Click Deploy
-```
+5. Click Deploy 
+
 <img src="./assets/deploy_dbt.png" alt="drawing" width="600"/>
-```
+
 ### Continuous testing with Tasks
 
-All models in this project are deployed as Dynamic Tables, thus it is not necessary to schedule dbt runs for models. However, you may still benefit from running test frequently to monitor for data quality.
+All models in this project are deployed as Dynamic Tables, thus it is not necessary to schedule regular runs in order to incrementally process new records streamed into the landing layer. However, you may still benefit from running tests frequently to monitor for data quality.
 
 To create a schedule to perform a continuously scheduled dbt test:
 
@@ -638,9 +686,14 @@ To create a schedule to perform a continuously scheduled dbt test:
 6. Under 'Select profile', select `prod`
 7. Leave 'Additional flags' blank
 8. Click create
-```
+
 <img src="./assets/schedule_dbt_test.png" alt="drawing" width="600"/>
-```
+
+<!-- ------------------------ -->
+## Create Dev Environment
+Duration: 5
+
+Now with the initial set
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -664,8 +717,7 @@ This foundation can be extended to support additional use cases such as predicti
 - How to implement in-flight transformations and clustering during data ingestion for improved performance
 - How to create and manage dbt Projects using Snowflake Workspaces with Git integration
 - How to configure and deploy Dynamic Tables that automatically refresh with streaming data
-- How to implement a layered data architecture (Landing, Transformed, Analytics) following modern data engineering patterns
-- How to build comprehensive data quality testing and monitoring with dbt
+- How to build data quality testing and monitoring with dbt
 - How to create time-series analytics with rolling window calculations for IoT sensor data
 - How to deploy and schedule dbt projects for continuous data quality monitoring
 
@@ -678,3 +730,7 @@ This foundation can be extended to support additional use cases such as predicti
 - [Snowpipe Streaming Python SDK Reference](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-sdk-python/reference/latest/index)
 - [dbt Dynamic Tables Configuration](https://docs.getdbt.com/reference/resource-configs/snowflake-configs#dynamic-tables)
 - [Snowflake Time Series Analytics Best Practices](https://docs.snowflake.com/en/user-guide/querying-time-series-data)
+
+
+- Set up transform service user
+- 
