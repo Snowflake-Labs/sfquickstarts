@@ -1,17 +1,16 @@
 author: Kala Govindarajan
 id: credit-card-fraud-detection-using-snowflake-ml
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/financial-operations, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Build a Credit card fraud detection app that leverages Snowflake ML to train a binary classification model to detect if a transaction is fraudulent or not
-categories: Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake ML Function, Data Science, Feature Store, Machine Learning
 
 # Credit Card Fraud Detection using Snowflake ML Functions
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 1
 
 ### Overview
 In this Quickstart guide, we will train a model using Snowflake ML Functions for Credit card fraud detection. Fraud Detection involves a range of methods and techniques aimed at preventing fraudulent purchases, both online and in-store. The goal is to verify the legitimacy of the transaction and ensure that the true cardholder is involved. Depending on the detection techniques used one may address questions about the cardholder's identity and intentions either in real-time or after the transaction has occurred. Thus, credit card fraud detection serves as both a preventative measure against payment fraud and a method for investigating past transactions. We will be walking through a use case where the ML Capabilities of the Snowflake Data Cloud will be leveraged for investigating the past transactions.
@@ -34,7 +33,6 @@ How to render a map and plot in the Streamlit app
 
 ## Setup Snowflake
 <!-- ------------------------ -->
-Duration: 5
 
 You will use  Snowsight, the Snowflake web interface, to only create an initial database and schema that needs to be a prerequisite for Notebooks. And then we will be carrying the rest of the execution within Snowflake Notebooks.
 
@@ -75,7 +73,7 @@ Follow the same steps( b-e ) for the 2_cc_fraud detection notebook.
 ## Data Preparation and Feature Engineering
 The end to end architecture involving all the stages is given below. 
 
-<img src="assets/architecture.png"/>
+![assets/architecture.png](assets/architecture.png)
 
 ### Initial data setup and Feature Engineering - 1_CC_FINS_SETUP.ipynb
 Now that you have uploaded the notebooks let us start running each of them. The first notebook 1_cc_fins_setup contains the logic for the initial data loading and Feature Engineering. Synthetically generated data has been uploaded to a public S3 bucket and this is loaded into a Snowflake External Stage. 
@@ -84,11 +82,11 @@ This effectively detects fraudulent transactions by helping the model train and 
 Using the Feature Store we will generate customer related features like how many transactions  a customer does, along with average dollars spent in a week, monthly and yearly basis. 
 
 A sample output from the engineered features dataset related to Customer is seen below.
-<img src="assets/Customerfeatures.png"/>
+![assets/Customerfeatures.png](assets/Customerfeatures.png)
 
 Similarly the features related to Transaction data is generated that includes clicks, time elapsed before a transaction,cumulative logins, pages visited and the location such transaction originates from.A sample output from the engineered features dataset related to Transactions is seen below.
 
-<img src="assets/Transactionfeatures.png"/>
+![assets/Transactionfeatures.png](assets/Transactionfeatures.png)
 
 
 
@@ -105,7 +103,7 @@ Then use the resulting schema-level classification model object’s PREDICT meth
 SELECT *,CC_FINS_DB.ANALYTICS.fraud_classification_model!PREDICT(INPUT_DATA => object_construct(*)) as predictions
 from fraud_classification_val_view;
 ```
-<img src="assets/fraudpredictions.png"/>
+![assets/fraudpredictions.png](assets/fraudpredictions.png)
 
 These metrics have been used to determine the overall model performance: 
 - show_evaluation_metrics() : 
@@ -131,7 +129,7 @@ At this stage of the project, we have completed building out our end to end pipe
 - Fraud_Detection.py and environment.yml are at the top level
 
 
-<img src="assets/frauddetectionstage.png"/>
+![assets/frauddetectionstage.png](assets/frauddetectionstage.png)
 
 **Step 2**. - Create the Streamlit App
 Run the code below in a Snowsight worksheet to build the Streamlit app.
@@ -148,7 +146,7 @@ QUERY_WAREHOUSE = 'CC_FINS_WH';
 From Snowsight, ensure you are using the SYSADMIN role or the custom role with necessary privileges.
 Under Projects, click Streamlit -> Click and open the FRAUDDETECTION_APP from the list of apps
 
-<img src="assets/FRAUDDETECTIONAPP.png"/>
+![assets/FRAUDDETECTIONAPP.png](assets/FRAUDDETECTIONAPP.png)
 
 **Step 4**. - Running the Fraud Detection App
 The new transaction types that need to be detected are displayed at the top. Click on “Predict Fraudulent Transactions”. For the sake of simplicity, in this vignette the validation dataset (which was not used for training) is injected for detecting the transaction type.
@@ -172,6 +170,11 @@ If you want to learn more about Snowflake ML Functions, check out the quickstart
 
 - #### [Getting Started with Snowflake Feature Store](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_feature_store/index.html?index=..%2F..index#0)
 
-- #### [Getting Started with Snowflake ML Forecasting and Classification](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cortex-ml-forecasting-and-classification/index.html?index=..%2F..index#0)
+- #### [Getting Started with Snowflake ML Forecasting and Classification](/en/developers/guides/getting-started-with-snowflake-cortex-ml-forecasting-and-classification/)
   
-- #### [Lead Scoring with ML-Powered Classification](https://quickstarts.snowflake.com/guide/lead_scoring_with_ml_powered_classification/index.html?index=..%2F..index#0)
+- #### [Lead Scoring with ML-Powered Classification](/en/developers/guides/lead-scoring-with-ml-powered-classification/)
+
+- [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-credit-card-fraud-detection-using-snowflakeml/tree/main)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/09/Fraud-Detection-Reference-Architecture.pdf)
+- [Read the Blog](https://medium.com/@kala.govindarajan/unveiling-fraud-in-digital-payments-with-snowflake-ml-functions-9bedb66132dd)
+- [Watch the Demo](https://youtu.be/whrKbadNTXw?list=TLGGtKppesFpkucyMjA5MjAyNQ)

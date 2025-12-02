@@ -1,18 +1,17 @@
 author: Swathi Jasti
 id: optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis
-categories: Getting-Started, Streamlit, Data-Science-&-Ai, app-development, GenAI, Cortex, Cortex Analyst
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Apps, GenAI, Cortex, Cortex Analyst, Streamlit
 
 # Optimizing Network Operations with Snowflake Cortex AI
 
 ## Overview
-Duration: 1
 
-<img src="assets/network_operations_banner.png"/>
+![assets/network_operations_banner.png](assets/network_operations_banner.png)
 
 This quickstart helps you develop a streamlit application utilizes cell tower data, support ticket call transcripts, and customer loyalty insights to optimize network operations with Cortex AI. It helps network teams prioritize which cell towers to address when resolving issues and includes a Cortex Analyst chatbot for querying and interacting with the network data.
 
@@ -34,7 +33,6 @@ This quickstart helps you develop a streamlit application utilizes cell tower da
 - A chatbot that enables intuitive interaction with cell tower data
 
 ## Setup Environment
-Duration: 5
 
 In the Snowsight, Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
@@ -43,22 +41,20 @@ Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-optimizing
 The above scripts creates sentiment scores for call transcripts using CORTEX SENTIMENT function which will then be used in the Streamlit App. 
 
 ## Ingest the Semantic Model YAML
-Duration: 2
 
 In the Snowsight, Navigate to Data, click on Databases.
 
 - Search for the database TELCO_NETWORK_OPTIMIZATION_PROD and click on it
 - Expand RAW schema in the database
 - Click on Data stage which was created as part of the SQL script
-- Download the [Semantic Model File](https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/blob/main/streamlit/model/semantic_mode.yaml) and upload to the stage.
+- Download the [Semantic Model File](https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/blob/main/streamlit/model/semantic_model.yaml) and upload to the stage.
 - Once done, it should look like below
 
-<img src="assets/model_upload.png"/>
+![assets/model_upload.png](assets/model_upload.png)
 
 This semantic model file will then be used by the Cortex Analyst Chatbot in the Streamlit App.
 
 ## Streamlit App
-Duration: 10
 
 To run the Streamlit Application,
 
@@ -80,7 +76,7 @@ The Streamlit App has two pages: Cell Tower Metrics and Cortex Analyst Chatbot.
 ### Cell Tower Metrics
 The process of analyzing cell tower performance begins with viewing a visual map that displays the performance of individual cell towers, allowing for the analysis of their failure and success rates. The map automatically highlights the most problematic cells, enabling quick identification. By clicking on a failing cell, users can access detailed metrics, including selection and grid cell success and failure rates. For each cell, additional insights are provided, such as failure rates, customer loyalty status by cell, and sentiment scores derived from call transcripts. These insights empower network engineers to make informed decisions about which cells to prioritize for maintenance. Furthermore, Cortex AI leverages this data to recommend the cells that should be addressed first, considering failure rates, loyalty status, and sentiment scores, to optimize network operations effectively.
 
-<img src="assets/Architecture.png"/>
+![assets/Architecture.png](assets/Architecture.png)
 
 ### Cortex Analyst Chatbot
 The chatbot allows you to ask any questions related to cell tower data using natural language. It retrieves insights directly from the table and provides responses in natural language, making the interaction intuitive and user-friendly. Some sample questions you can ask Chatbot:
@@ -91,7 +87,6 @@ The chatbot allows you to ask any questions related to cell tower data using nat
 - For the top 10 cells congested, list the 10 most impacted MSISDN.
 
 ## Conclusion And Resources
-Duration: 1
 
 ### What You Learned
 - How to optimize network operations using Cortex AI

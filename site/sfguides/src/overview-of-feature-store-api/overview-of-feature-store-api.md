@@ -1,22 +1,21 @@
 author: Charlie Hammond
 id: overview-of-feature-store-api
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: This guide goes through different features of the Snowflake feature Store API.
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science 
 
 # Getting Started with Snowflake Feature Store API
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
-The Snowflake Feature Store is a native solution that data scientists and ML engineers can use to create, maintain, and use features in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
+The Snowflake Feature Store is a native solution that data scientists and ML engineers can use to create, maintain, and use features in [Snowflake ML](/en/data-cloud/snowflake-ml/).
 
 A Feature Store lets you standardize ML features in a single managed and governed repository. Having commonly-used features defined centrally in a Feature Store can help reduce redundancy and duplication of data and effort, improving the productivity of data science teams. By improving consistency in how features are extracted from raw data, a Feature Store can also help improve the robustness of production ML pipelines.
 
-This is part 2 of a 3-part introduction quickstart series to Snowflake Feature Store (check out part 1 [here](https://quickstarts.snowflake.com/guide/intro-to-feature-store/index.html#0) and part 3 [here](https://quickstarts.snowflake.com/guide/develop-and-manage-ml-models-with-feature-store-and-model-registry/index.html?index=..%2F..index#0)). This quickstart provides an overview of Feature Store APIs. It demonstrates how to manage Feature Store, Feature Views, Feature Entities and how to retrieve features and generate training datasets etc. The goal is to provide a quick walkthrough of the most common APIs. For a full list of APIs, please refer to API Reference page.
+This is part 2 of a 3-part introduction quickstart series to Snowflake Feature Store (check out part 1 [here](/en/developers/guides/intro-to-feature-store/) and part 3 [here](/en/developers/guides/develop-and-manage-ml-models-with-feature-store-and-model-registry/)). This quickstart provides an overview of Feature Store APIs. It demonstrates how to manage Feature Store, Feature Views, Feature Entities and how to retrieve features and generate training datasets etc. The goal is to provide a quick walkthrough of the most common APIs. For a full list of APIs, please refer to API Reference page.
 
 ![feature-store-overview](assets/snowflake-feature-store.png)
 
@@ -33,7 +32,6 @@ This is part 2 of a 3-part introduction quickstart series to Snowflake Feature S
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -63,7 +61,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FS_API_DATABASE TO ROLE FS_API_ROLE C
 
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 10
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-overview-of-feature-store-api/blob/main/notebooks/0_start_here.ipynb)
 - Change role to FS_API_ROLE
@@ -81,7 +78,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 The Snowflake Feature Store is a native tool that empowers data scientists and ML engineers to efficiently create, manage, and utilize ML features in their workflows. By centralizing commonly-used features in a governed repository, the Feature Store reduces redundancy and duplication, enhancing the productivity of data science teams. This centralization also improves consistency in feature extraction, leading to more robust production ML pipelines.
 
@@ -93,12 +89,12 @@ This Quickstart offered a hands-on introduction to the Feature Store APIs, cover
 - How to generate training data using Feature Store API
 
 ### Related Quickstarts
-- Part 1: [Introduction to Snowflake Feature Store with Snowflake Notebooks](https://quickstarts.snowflake.com/guide/intro-to-feature-store/index.html#0)
-- Part 3: [Develop and Manage ML Models with Feature Store and Model Registry](https://quickstarts.snowflake.com/guide/develop-and-manage-ml-models-with-feature-store-and-model-registry/index.html?index=..%2F..index#0)
+- Part 1: [Introduction to Snowflake Feature Store with Snowflake Notebooks](/en/developers/guides/intro-to-feature-store/)
+- Part 3: [Develop and Manage ML Models with Feature Store and Model Registry](/en/developers/guides/develop-and-manage-ml-models-with-feature-store-and-model-registry/)
 
 ### Related Resources
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Entities](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities)
 - [Feature Views](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views)
 - [Datasets](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/modeling#generating-datasets-for-training)
-- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
