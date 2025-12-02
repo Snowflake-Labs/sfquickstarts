@@ -1,6 +1,6 @@
-author: Snowflake Solutions Engineering
+author: Becky O'Connor and Colm Moynihan
 id: build-ai-assistant-fsi-cortex-intelligence
-summary: Build an AI Assistant for Financial Services using Cortex AI, Snowflake Intelligence, and Document AI
+summary: Build an AI-powered Stock Selection Agent for Financial Services using Snowflake's AISQL functions, Document AI, Cortex Search, and Snowflake Intelligence. Process unstructured data from analyst reports, earnings calls, and financial documents to create intelligent conversational agents.
 categories: data-science,solution-examples,cortex,ai-ml,financial-services
 environments: web
 status: Published
