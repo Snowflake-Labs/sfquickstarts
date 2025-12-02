@@ -1551,7 +1551,7 @@ Finally, you deployed and explored the Snowflake Intelligence Agent—the "One T
 
 ### Resources
 
-- **Repository**: [GitHub - FSI Cortex Assistant](https://app.dataops.live/snowflake/hands-on-labs/build-an-ai-assistant-for-fsi-using-aisql-and-snowflake-intelligence.git)
+- **Repository**: [GitHub - FSI Cortex Assistant](https://github.com/Snowflake-Labs/sfguide-Build-an-AI-Assistant-for-FSI-with-AISQL-and-Snowflake-Intelligence)
 - **Documentation**: See DEPLOYMENT_README.md in repository
 - **Homepage Portal**: Interactive lab guide included
 - **Pre-Configured Hands on Lab**: Contact your representative to arrange a hands on lab event with this content pre configured.
@@ -1562,7 +1562,7 @@ Finally, you deployed and explored the Snowflake Intelligence Agent—the "One T
 
 ### Related Resources
 
-- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
+- [Snowflake AI and ML Features](https://docs.snowflake.com/guides-overview-ai-features)
 - [Snowflake Intelligence Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
-- [DataOps.live Platform](https://dataops.live)
-
+- [Snowflake Public Paid Data](https://app.snowflake.com/marketplace/listing/GZTSZ290BUXPL/snowflake-public-data-products-snowflake-public-data-paid)
+-[Snowflake for Financial Services](https://www.snowflake.com/en/solutions/industries/financial-services/)
