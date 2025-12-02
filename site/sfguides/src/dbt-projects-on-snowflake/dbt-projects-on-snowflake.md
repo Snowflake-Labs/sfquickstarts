@@ -153,18 +153,6 @@ We will keep the values in profiles.yml unchanged.
 
 ![profiles](assets/profiles.png)
 
-### dbt deps
-
-Let's start by running `dbt deps` to pull in the dbt_utils package. The dbt_utils package contains several usefull test that we have built into the project. 
-
-From the dbt toolbar, you get dropdowns for the project, target, and command. Clicking the play button will run the relevant command. You can also click the down arrow to override the arguments. 
-
-1. From the toolbar, select dev and deps. 
-2. Click the dropdown arrow and enter `dbt_access_integration`. This [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) has already been configured for you. 
-3. Click the Deps button.
-
-![dbt-deps](assets/dbt-deps.png)
-
 ### dbt compile
 
 We will now run `dbt compile`. From the dropdown, click compile and run it. 
@@ -183,11 +171,52 @@ You can also view the DAG to see how models interact with one another. Click DAG
 
 Let's now run the project to pull data through our pipeline. From the dbt toolbar, select run from the dropdown, and click the play button. Once this completes, we have data in our marts tables!
 
-### dbt test
+### Optional - dbt deps
 
-Open tasty_bytes_dbt_demo/models/staging/__sources.yml to view data tests we have created. There are several common tests included, including ones from dbt_utils. On line 219, we have defined a maximum allowed value for order_amount. This is to flag abnormally large orders. 
+Note: dbt deps requires an [External Access Integration](https://docs.snowflake.com/en/developer-guide/external-network-access/creating-using-external-network-access) which is not supported in Snowflake trial accounts.
 
-Let's first run dbt tests to confirm the data meets our requirements. From the toolbar, select test, and click the play button. 
+First we need to create the External Access Integration to download the dbt_utils package we will use for testing. Run the following in a new SQL worksheet or workspace. 
+
+```sql
+USE ROLE accountadmin;
+
+CREATE OR REPLACE NETWORK RULE tasty_bytes_dbt_db.public.dbt_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('hub.getdbt.com', 'codeload.github.com');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dbt_access_integration
+  ALLOWED_NETWORK_RULES = (tasty_bytes_dbt_db.public.dbt_network_rule)
+  ENABLED = true;
+```
+
+Next, return to your dbt project uncomment out packages.yml. This will pull in two packages, `dbt_utils` and `dbt_semantic_view`.
+
+```yml
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 1.3.0 
+  - package: Snowflake-Labs/dbt_semantic_view
+    version: 1.0.3
+```
+
+Now we'll run `dbt deps` to pull in the dbt_utils package. The dbt_utils package contains several usefull test that we have built into the project. 
+
+From the dbt toolbar, you get dropdowns for the project, target, and command. Clicking the play button will run the relevant command. You can also click the down arrow to override the arguments. 
+
+1. From the toolbar, select dev and deps. 
+2. Click the dropdown arrow and enter `dbt_access_integration`. This [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) has already been configured for you. 
+3. Click the Deps button.
+
+![dbt-deps](assets/dbt-deps.png)
+
+### Optional - dbt test
+
+Note: this step requires dbt deps (above).
+
+Let's now open tasty_bytes_dbt_demo/models/staging/__sources.yml to view data tests we have created. There are several common tests included, including ones from dbt_utils. On line 219, we have defined a maximum allowed value for order_amount. This is to flag abnormally large orders. Uncomment this code to run the test. 
+
+Finally, let's run dbt tests to confirm the data meets our requirements. From the toolbar, select test, and click the play button. 
 
 Oh no! There's an error with one of our tests. It looks like there is a test that doesn't quite look right. Let's update line 219 of `tasty_bytes_dbt_demo/models/staging/__sources.yml to be 10000 instead of 10. That should fix it. 
 
@@ -196,6 +225,57 @@ Oh no! There's an error with one of our tests. It looks like there is a test tha
             min_value: 0
             max_value: 10000
             inclusive: true
+```
+
+### Optional - Build a Semantic View 
+
+Note: this step requires dbt deps (above).
+
+The [dbt_semantic_view package](https://docs.snowflake.com/en/user-guide/views-semantic/best-practices-dev#integration-with-dbt-projects) allows you to build [semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) from dbt models! Semantic views allow you to define business metrics and model business entities and their relationships. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications. Building semantic views in dbt allows you reference them from downstream dbt models or other places in Snowflake like [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst).
+
+To get started, save the following code in a new model saved to `models/semantic_views/order_analytics.sql` in your project. Then run `dbt run` to build the view. 
+
+```sql
+{{ config(materialized='semantic_view') }}
+
+TABLES(
+  order_header AS {{ ref('raw_pos_order_header') }} PRIMARY KEY (order_id),
+  order_detail AS {{ ref('raw_pos_order_detail') }} PRIMARY KEY (order_detail_id),
+  menu AS {{ ref('raw_pos_menu') }} PRIMARY KEY (menu_item_id),
+  truck AS {{ ref('raw_pos_truck') }} PRIMARY KEY (truck_id),
+  location AS {{ ref('raw_pos_location') }} PRIMARY KEY (location_id)
+)
+RELATIONSHIPS (
+  OrderToDetail AS order_detail(order_id) REFERENCES order_header(order_id),
+  DetailToMenu AS order_detail(menu_item_id) REFERENCES menu(menu_item_id),
+  OrderToTruck AS order_header(truck_id) REFERENCES truck(truck_id),
+  OrderToLocation AS order_header(location_id) REFERENCES location(location_id)
+)
+FACTS (
+  order_detail.quantity AS quantity,
+  order_detail.price AS price,
+  order_header.order_amount AS order_amount,
+  order_header.order_total AS order_total
+)
+DIMENSIONS (
+  order_header.order_ts AS order_ts,
+  order_header.order_channel AS order_channel,
+  menu.menu_item_name AS menu_item_name,
+  menu.item_category AS item_category,
+  menu.truck_brand_name AS truck_brand_name,
+  truck.primary_city AS primary_city,
+  truck.country AS country,
+  truck.ev_flag AS ev_flag,
+  location.city AS city,
+  location.region AS region
+)
+METRICS (
+  order_detail.total_revenue AS SUM(order_detail.price),
+  order_detail.total_quantity AS SUM(order_detail.quantity),
+  order_header.avg_order_value AS AVG(order_header.order_total),
+  order_header.max_order_total AS MAX(order_header.order_total)
+)
+COMMENT = 'Semantic view for order analytics'
 ```
 
 ### Deploy dbt Project
@@ -241,6 +321,8 @@ Let's create tasks to regularly run and test our dbt project.
 #### Complex Tasks and Alerts
 
 We can create more complex task structure with the script below. It creates a task DAG and alerts us when there is a test failure. Copy the script below <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">into a new SQL file</a> and run the commands one by one. Note the alert will fail unless you have verified your email. To verify your email, click on the user icon in the bottom left of the screen > profile > enter your email > click the link in your email.  
+
+Note: This script assumes you have added dbt tests.
 
 ```sql
 USE WAREHOUSE tasty_bytes_dbt_wh;
@@ -347,3 +429,4 @@ If you want to learn more about dbt Projects on Snowflake, check out the [offici
 - [dbt Projects on Snowflake Documentation](https://docs.snowflake.com/user-guide/data-engineering/dbt-projects-on-snowflake)
 - [GitHub Repository: getting-started-with-dbt-on-snowflake](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake)
 - [dbt Core Documentation](https://docs.getdbt.com/)
+- [Semantic View Blog](https://www.snowflake.com/en/engineering-blog/dbt-semantic-view-package/)
