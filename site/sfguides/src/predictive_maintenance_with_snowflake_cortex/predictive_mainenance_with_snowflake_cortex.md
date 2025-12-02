@@ -1,5 +1,5 @@
 summary: End-to-end Predictive Maintenance Solution with Snowflake
-id: predictive_maintenance_with_snowflake_cortex
+id: predictive-maintenance-with-snowflake-cortex
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/solution-center/certification/certified-solution
 language: en
 environments: web
