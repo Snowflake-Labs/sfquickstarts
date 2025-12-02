@@ -139,7 +139,7 @@ This quickstart deploys a **complete multi-modal AI platform** combining:
 
 ### System Architecture
 
-![System Architecture](general/lab_intro.png)
+<img src="general/lab_intro.png" alt="System Architecture" width="900"/>
 
 ### Key Technologies
 
@@ -197,7 +197,7 @@ USE SCHEMA GIT_REPOS;
 -- Create API integration for GitHub
 CREATE OR REPLACE API INTEGRATION git_api_integration
     API_PROVIDER = git_https_api
-    API_ALLOWED_PREFIXES = ('https://github.com/sfc-gh-boconnor/')
+    API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs/')
     ENABLED = TRUE;
 
 -- Grant usage on API integration
@@ -227,9 +227,9 @@ SELECT 'Git integration ready!' AS status,
 Now will create a workspace from the github repository
 
 1. Create a Workspace from Github repository
-   ![Create Workspace from GitHub](general/create_workspace_github.png)
+   <img src="general/create_workspace_github.png" alt="Create Workspace from GitHub" width="250"/>
 2. When Prompted, populate the following screen
-![Git Repository URL](general/git_repository_url.png)
+<img src="general/git_repository_url.png" alt="Git Repository URL" width="500"/>
 Use the following URL in the Repository URL field:
 
 https://github.com/Snowflake-Labs/sfguide-Build-an-AI-Assistant-for-FSI-with-AISQL-and-Snowflake-Intelligence.git
@@ -410,7 +410,7 @@ Before diving into the notebooks, let's explore the **AI & ML Studio** - your on
 
 Navigate to the **AI & ML** section in the Snowflake navigation bar.
 
-![AI & ML Studio](playground/ai_ml_studio.png)
+<img src="playground/ai_ml_studio.png" alt="AI & ML Studio" width="900"/>
 
 ### Features You'll Explore
 
@@ -445,7 +445,7 @@ The model will suggest various factors to consider:
 - Industry trends
 - Risk factors
 
-![Cortex Playground Example](playground/cortex_playground_example.png)
+<img src="playground/cortex_playground_example.png" alt="Cortex Playground Example" width="900"/>
 
 **Key insight**: Notice how the model doesn't make a direct recommendation - this demonstrates responsible AI. All the information suggested (analyst reports, earnings calls, financial metrics) is available in the datasets you'll be working with in this lab.
 
@@ -455,14 +455,14 @@ The model will suggest various factors to consider:
 
 Now let's explore how to extract text and data from documents. The Document Processing Playground provides a UI for testing **AI_EXTRACT** and **AI_PARSE_DOCUMENT** functions.
 
-![Document Processing Playground](playground/document_processing_playground.png)
+<img src="playground/document_processing_playground.png" alt="Document Processing Playground" width="900"/>
 
 #### Step 1: Upload Documents from Stage
 
 1. Click **Document Processing Playground** in the AI & ML Studio
 2. Click **Add from stage**
 
-![Add from Stage Dialog](playground/add_from_stage.png)
+<img src="playground/add_from_stage.png" alt="Add from Stage Dialog" width="500"/>
 
 3. Select the following:
    - **Database**: `ACCELERATE_AI_IN_FSI`
@@ -470,7 +470,7 @@ Now let's explore how to extract text and data from documents. The Document Proc
    - **Stage**: `ANALYST_REPORTS` (contains analyst report PDFs)
 4. Choose 1-3 analyst report PDF documents
 
-![Select Documents](playground/select_documents.png)
+<img src="playground/select_documents.png" alt="Select Documents" width="500"/>
 
 5. Click **Open playground**
 
@@ -478,7 +478,7 @@ Now let's explore how to extract text and data from documents. The Document Proc
 
 Once your document is loaded, you'll see three tabs: **Extraction**, **Markdown**, and **Text**.
 
-![Playground Interface](playground/playground_interface.png)
+<img src="playground/playground_interface.png" alt="Playground Interface" width="900"/>
 
 The **Extraction** tab is where you can ask questions to pull specific information from the document.
 
@@ -498,7 +498,7 @@ The **Extraction** tab is where you can ask questions to pull specific informati
 
 After entering each question, click **Add Prompt** to see the extracted results.
 
-![Extraction Results](playground/extraction_results.png)
+<img src="playground/extraction_results.png" alt="Extraction Results" width="900"/>
 
 #### Step 3: View Different Document Formats
 
@@ -516,7 +516,7 @@ Once you've asked at least one question, the playground automatically generates 
 
 1. Click **Code Snippets** in the top right corner
 
-![Code Snippets Button](playground/code_snippets.png)
+<img src="playground/code_snippets.png" alt="Code Snippets Button" width="500"/>
 
 2. Review the generated SQL using AI_EXTRACT and AI_PARSE_DOCUMENT functions
 3. Click **Workspaces** to open the code in a new worksheet
@@ -546,13 +546,13 @@ Let's extract structured tables from financial reports:
 1. Close the playground and reopen Document Processing Playground
 2. Within the same schema, select the stage **FINANCIAL_REPORTS**
 
-![Financial Reports Stage](playground/financial_reports_stage.png)
+<img src="playground/financial_reports_stage.png" alt="Financial Reports Stage" width="500"/>
 
 3. Select 1-2 financial report PDFs
 4. Open the playground
 5. In the prompt area, select **Extract table**
 
-![Extract Table Option](playground/extract_table.png)
+<img src="playground/extract_table.png" alt="Extract Table Option" width="900"/>
 
 **Configure table extraction:**
 
@@ -563,12 +563,12 @@ Let's extract structured tables from financial reports:
   - `Current Year` - Current year amount (let AI determine which column)
   - `Previous Year` - Previous year amount (let AI determine which column)
 
-![Table Extraction Setup](playground/table_extraction_setup.png)
+<img src="playground/table_extraction_setup.png" alt="Table Extraction Setup" width="500"/>
 
 **Why dynamic column names?**  
 Notice we used "Current Year" and "Previous Year" instead of specific years like "2024" and "2023". AI_EXTRACT uses the LLM to intelligently map these generic descriptions to the actual column headers in the document, making the extraction work across different documents with different year labels.
 
-![Table Extraction Results](playground/table_extraction_results.png)
+<img src="playground/table_extraction_results.png" alt="Table Extraction Results" width="900"/>
 
 **Why This Matters:**
 These document processing capabilities are essential for the notebooks you'll run next. Understanding AI_EXTRACT and AI_PARSE_DOCUMENT helps you appreciate how the notebooks process financial reports, analyst documents, and unstructured data at scale.
@@ -882,7 +882,7 @@ Before running Notebook 5, you need to get the **Snowflake Public Data (Paid)** 
 4. Click on the listing and then click **Get**
 5. Accept the terms and the data will be available as a shared database
 
-![Snowflake Public Data Marketplace Listing](marketplace/snowflake_public_data.png)
+<img src="marketplace/snowflake_public_data.png" alt="Snowflake Public Data Marketplace Listing" width="900"/>
 
 > **💡 Tip**: This dataset includes 90+ sources of public domain data including stock prices that the notebook uses for visualization and analysis. The 60-day trial is free.
 
@@ -905,7 +905,7 @@ The notebook explores marketplace data and shows how to:
 
 After completing the notebook, let's explore the semantic views that power the agent.
 
-![Cortex Analyst UI](analyst/cortex_analyst_ui.png)
+<img src="analyst/cortex_analyst_ui.png" alt="Cortex Analyst UI" width="900"/>
 
 #### Step 1: Navigate to Cortex Analyst
 
@@ -916,13 +916,13 @@ You'll see **2 semantic views** that have been set up:
 - **Snowflake Analysts View** - Snowflake-specific data (analyst reports, earnings calls, stock prices)
 - **Company Data 8 Core Featured Tickers** - Data across all 11 companies
 
-![Semantic Views](analyst/semantic_views.png)
+<img src="analyst/semantic_views.png" alt="Semantic Views" width="250"/>
 
 #### Step 2: Explore Snowflake Analysts View
 
 Click on **Snowflake Analysts View** to see its structure:
 
-![Snowflake Analysts View Structure](analyst/snowflake_analysts_view.png)
+<img src="analyst/snowflake_analysts_view.png" alt="Snowflake Analysts View Structure" width="900"/>
 
 **Logical Tables**:
 - ANALYST_REPORTS - 30 analyst reports with ratings and summaries
@@ -941,13 +941,13 @@ Each field has:
 - Synonyms for natural language variations
 - Sample values for context
 
-![Field Structure](analyst/field_structure.png)
+<img src="analyst/field_structure.png" alt="Field Structure" width="900"/>
 
 #### Step 3: Explore Company Data View
 
 Click on **Company Data 8 Core Featured Tickers**:
 
-![Company Data View](analyst/company_data_view.png)
+<img src="analyst/company_data_view.png" alt="Company Data View" width="900"/>
 
 **Key Features**:
 - **Relationships**: 4 relationships defined, all pointing to INFOGRAPHICS_FOR_SEARCH table
@@ -957,14 +957,14 @@ Click on **Company Data 8 Core Featured Tickers**:
 **Relationship Example**:
 - `TRANSCRIPTS_TO_COMPANY_INFO`: Links transcripts to company info via TICKER field
 
-![Relationships Diagram](analyst/relationships.png)
+<img src="analyst/relationships.png" alt="Relationships Diagram" width="500"/>
 
 **Why Relationships Matter**:  
 They allow Cortex Analyst to automatically join tables when answering complex questions like "Show me sentiment from earnings calls for companies with negative free cash flow"
 
 Looking at the Infographics for Search table, you'll notice where the primary key is defined.
 
-![Primary Key Definition](analyst/primary_key.png)
+<img src="analyst/primary_key.png" alt="Primary Key Definition" width="900"/>
 
 #### Step 4: Understanding Cortex Search Integration
 
@@ -1102,7 +1102,7 @@ Duration: 20
 
 The **One Ticker** agent is your AI-powered financial analyst assistant that combines multiple data sources, search capabilities, and analytical tools to provide comprehensive insights about stocks and companies.
 
-![Snowflake Intelligence Agent](agent/snowflake_intelligence_agent.png)
+<img src="agent/snowflake_intelligence_agent.png" alt="Snowflake Intelligence Agent" width="500"/>
 
 **What the Agent Can Do**:
 - 📊 Analyze company financial data and performance metrics
