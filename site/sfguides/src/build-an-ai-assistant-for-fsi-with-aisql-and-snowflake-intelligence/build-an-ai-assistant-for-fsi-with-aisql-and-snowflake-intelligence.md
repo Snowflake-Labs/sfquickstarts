@@ -188,9 +188,10 @@ Duration: 10
 
 #### Step 2a: Create Git Integration (One-Time Setup)
 
-1. In **Snowsight**, click the **"+ Create"** button (top right)
-2. Select **SQL Worksheet**
-3. Copy and paste this script:
+1. In **Snowsight**, click on **Projects**
+2. Select **Workspaces**
+3. Add new **SQL file**
+4. Copy and paste this script:
 
 ```sql
 -- Setup Git Integration (one-time)
@@ -239,35 +240,37 @@ SELECT 'Git integration ready!' AS status,
 
 Now will create a workspace from the github repository
 
-1. Create a Workspace from Github repository
-   `<img src="assets/images/general/create_workspace_github.png" alt="Create Workspace from GitHub" width="250"/>`
+1. Create a Workspace from Github repository by clicking on My Workspace, then select the option **From Git repository**
+  
+   <img src="assets/images/general/create_workspace_github.png" alt="Create Workspace from GitHub" width="250"/>
+
 2. When Prompted, populate the following screen
-   `<img src="assets/images/general/git_repository_url.png" alt="Git Repository URL" width="500"/>`
-   Use the following URL in the Repository URL field:
-
+    <img src="image/build-an-ai-assistant-for-fsi-with-aisql-and-snowflake-intelligence/1764717705866.png" alt="Git Repository URL" width="500"/>
+    Use the following URL in the **Repository URL** field:
+  
+```text    
 https://github.com/Snowflake-Labs/sfguide-Build-an-AI-Assistant-for-FSI-with-AISQL-and-Snowflake-Intelligence.git
-
+```
 3. Press **Create**
 
 **You should see the repository file structure:**
 
 ```
-├── README.md
-├── quickstart.md
-├── LICENSE
+├── README.md                   
+├── LICENSE                     
+├── .gitignore
 └── assets/
-    ├── sql/                  ← Deployment scripts (START HERE)
-    ├── data/                 ← CSV/Parquet files
-    ├── documents/            ← PDFs, images, audio
-    ├── Notebooks/            ← Jupyter notebooks
-    ├── Streamlit/            ← Streamlit app
-    ├── native_app_snowmail/  ← SnowMail native app
-    ├── semantic_models/      ← Cortex Analyst YAML files
-    └── images/               ← Screenshots for quickstart
+    ├── sql/                    ← Deployment scripts (START HERE)
+    ├── data/                   ← CSV/Parquet files
+    ├── documents/              ← PDFs, images, audio
+    ├── Notebooks/              ← Snowflake notebooks
+    ├── Streamlit/              ← StockOne application
+    ├── native_app_snowmail/    ← SnowMail Native App
+    └── semantic_models/        ← YAML definitions
 ```
 
 1. **Navigate to `assets/sql/`** - This is where the deployment scripts are
-2. You'll see 10 SQL files (00-08 + 05b)
+2. You'll see SQL files numbered 01-08 (plus optional 05b for GPU)
 
 ✅ **You're now ready to deploy!**
 
