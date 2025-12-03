@@ -1,0 +1,12 @@
+ SELECT snowflake.cortex.complete(
+  'llama-3-7b',
+  PARSE_JSON('[
+    {"role": "system", "content": "You are a support triage assistant. For each incoming support ticket, classify the issue category, urgency (Low, Medium, High), and recommend the best team to handle it."},
+    {"role": "user", "content": "Customer reports they cannot access their account after multiple password resets."},
+    {"role": "assistant", "content": "Category: Account Access\nUrgency: High\nAssign To: Tier 1 Support"},
+    {"role": "user", "content": "User reports slow internet speeds when using our VPN service."},
+    {"role": "assistant", "content": "Category: Network Performance\nUrgency: Medium\nAssign To: Network Support Team"},
+    {"role": "user", "content": "New ticket: Application crashes when uploading files larger than 10MB."},
+    {"role": "assistant", "content": ""}
+  ]')
+) AS triage_response;
