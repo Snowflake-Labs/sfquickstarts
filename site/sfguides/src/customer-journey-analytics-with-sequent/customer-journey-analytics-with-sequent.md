@@ -1,4 +1,4 @@
-author: Luke Ambrosetti, Yannis Marigo, Dureti Shemsi
+author: Yannis Marigo, Luke Ambrosetti, Dureti Shemsi
 id: customer-journey-analytics-with-sequent
 language: en
 summary: Build a comprehensive customer journey analytics platform within Snowflake that combines path analysis, multi-touch attribution, behavioral segmentation, and predictive modeling to transform complex event sequences into actionable insights.
