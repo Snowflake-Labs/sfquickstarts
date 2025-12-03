@@ -116,42 +116,57 @@ This pattern works for many AISQL use cases: summarizing feedback, classifying t
 
 
 
-Fine-tuning Llama models (e.g., Llama 3.1 8B/70B) on customer support data can dramatically improve response quality, tone, and accuracy.
+# Fine-tuning Llama models (e.g., Llama 3.1 8B/70B) on customer support data can dramatically improve response quality, tone, and accuracy.
 
 Best Practices for Fine-Tuning Llama on Snowflake
-Start with a curated dataset
+1. Start with a curated dataset
 
-Collect historical support tickets, agent responses, and approved answers.
+2. Collect historical support tickets, agent responses, and approved answers.
 
-Structure as a prompt-completion pair:
+3. Structure as a prompt-completion pair:
 
 json
 {"prompt": "Customer: How do I reset my password?", "completion": "To reset your password, go to Settings > Account > Reset Password. If you don’t see that option, contact support@company.com."}
 Use Snowflake tables to store and version this dataset; apply masking and access controls as needed.​​
 
-Choose the right Llama variant
+4. Choose the right Llama variant
 
-For most support use cases, llama3.1-8b or llama3.1-70b is ideal: good balance of reasoning, latency, and cost.​
+5. For most support use cases, llama3.1-8b or llama3.1-70b is ideal: good balance of reasoning, latency, and cost.​
 
-Use snowflake-llama-3.3-70b if you want the cost/performance benefits of SwiftKV.​
+6. Use snowflake-llama-3.3-70b if you want the cost/performance benefits of SwiftKV.​
 
-Use parameter-efficient fine-tuning (PEFT)
+7. Use parameter-efficient fine-tuning (PEFT)
 
-Apply LoRA (Low-Rank Adaptation) to fine-tune only a small fraction of parameters, reducing GPU cost and time.​​
+8. Apply LoRA (Low-Rank Adaptation) to fine-tune only a small fraction of parameters, reducing GPU cost and time.​​ In Snowflake, this can be done via Snowpark ML or by integrating with external fine-tuning platforms (e.g., Hugging Face, Predibase) that pull data from Snowflake.​​
 
-In Snowflake, this can be done via Snowpark ML or by integrating with external fine-tuning platforms (e.g., Hugging Face, Predibase) that pull data from Snowflake.​​
+9. Add guardrails and safety
 
-Add guardrails and safety
+10. Use Cortex Guard (Llama Guard 3) to filter unsafe or harmful responses in production.​
 
-Use Cortex Guard (Llama Guard 3) to filter unsafe or harmful responses in production.​
+11. Add a post-processing step (e.g., a stored procedure) to validate responses against a list of approved answers or policies.​​
 
-Add a post-processing step (e.g., a stored procedure) to validate responses against a list of approved answers or policies.​​
+12. Evaluate and iterate
 
-Evaluate and iterate
+13. Define metrics: accuracy, response length, hallucination rate, and customer satisfaction (CSAT).​​
 
-Define metrics: accuracy, response length, hallucination rate, and customer satisfaction (CSAT).​​
+14. Use A/B testing in Snowflake to compare the fine-tuned Llama model against the base model or a human baseline.​
 
-Use A/B testing in Snowflake to compare the fine-tuned Llama model against the base model or a human baseline.​
+
+ 
+Few-shot prompting involves providing the model with a small number of example input-output pairs (prompts and completions) to teach it the desired behavior during fine-tuning. In Snowflake Cortex fine-tuning, you prepare a training dataset of examples reflecting the relevant task. During fine-tuning, the model learns to map new ticket texts to categories, understanding these categories from the few-shot samples. To prepare the fine-tuning data on Snowflake, you structure this as prompt-completion pairs in a table and use the Snowflake Cortex fine-tuning function.​​
+
+Chain-of-thought prompting involves including intermediate reasoning steps in the training examples, leading the model to generate explanations or stepwise reasoning before the final answer. This helps improve performance on complex tasks requiring logical inference.
+Example: SQL Query Generation with Intermediate Reasoning
+By fine-tuning the model on these examples with reasoning steps, it learns to generate not just answers but the reasoning process, which can improve accuracy and explainability.
+
+Reference both prompt recipes in the repo. 
+
+Example: Customer Support Ticket Categorization
+Collect a table of support tickets with columns: prompt (ticket text), and completion (category label or response).
+Use 100-500 example pairs representing correct categorizations.
+
+Reference the Repo for sample code recipe. 
+
 
 ## Example Customer Support Recipe
 python
