@@ -1,12 +1,21 @@
-Optimizing Open Source Llama on Snowflake Cookbook 
+author: Anika Shahi
+id: optimizing-llama-snowflake-cookbook
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
+summary: Optimizing LLama on Snowflake - A Guide to Performance, Cost, Agents Best Practices
+environments: web
+status: Published 
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+# Optimizing Open Source Llama on Snowflake Cookbook 
 
-Table of Contents
+## Overview
+
 1. Why Open Source Llama Models?
 
 2. How Llama Models Can Be Used on Snowflake
 
-3. AISQL with Llama: A Use Case
+3. AISQL with Llama
 
 4. Fine-Tuning Llama Models – Best Practices & Customer Support Recipe
 
@@ -20,12 +29,15 @@ Table of Contents
 
 9. Working with Snowflake Intelligence and Cortex Knowledge Extensions
 
+### What You Will Learn
+- How to optimize llama models usage on Snowflake
+- Cost considerations and tools for using llama models
+- Performance optimizations for Llama models on the Snowflake platform
+- Agentic Best Practices with llama models 
+- Extensibility with Llama open source models
 
 
-1. Why Open Source Llama Models?
-
-
-
+## Why Choose Open Source Llama? 
 
 Open source Llama models (from Meta) are a strategic choice for enterprises because they provide:
 
@@ -39,7 +51,8 @@ Cost efficiency at scale – Snowflake’s optimized Llama variants (e.g., snowf
 
 For Snowflake customers, this means you can run high-quality, open LLMs securely on your governed data platform, combining the flexibility of open source with the performance and governance of the Snowflake AI Data Cloud.​
 
-2. How Llama Can Be Used on Snowflake
+
+ ## How Llama Can Be Used on Snowflake
 
 
 
@@ -65,8 +78,8 @@ Built-in functions like AI_COUNT_TOKENS and AI_COMPLETE make it easy to prototyp
 
 
 
+## AISQL with Llama: Use Case 
 
-3. AISQL with Llama – A Use Case
 Use Case: Aggregating Insights from Customer Support Tickets
 
 Imagine a support team that wants to quickly understand common themes across thousands of tickets without writing complex SQL or Python.
@@ -98,8 +111,7 @@ Results can be materialized into a table and exposed via Streamlit or BI tools f
 This pattern works for many AISQL use cases: summarizing feedback, classifying tickets, extracting entities, or translating multilingual support content.​
 
 
-
-4. Fine-Tuning with Best Practices for Llama Recipes – Focus on Customer Support
+## Fine-Tuning with Best Practices for Llama Recipes – Focus on Customer Support
 
 
 
@@ -141,26 +153,26 @@ Define metrics: accuracy, response length, hallucination rate, and customer sati
 
 Use A/B testing in Snowflake to compare the fine-tuned Llama model against the base model or a human baseline.​
 
-Example Customer Support Recipe
+## Example Customer Support Recipe
 python
-# Pseudocode: Fine-tuning Llama 3.1 8B for support
+ Pseudocode: Fine-tuning Llama 3.1 8B for support
 from snowflake.snowpark import Session
 from transformers import AutoModelForCausalLM, TrainingArguments, Trainer
 from peft import LoraConfig, get_peft_model
 
-# 1. Load support data from Snowflake
+1. Load support data from Snowflake
 session = Session.builder.configs(...).create()
 support_data = session.table("support.finetune_dataset").to_pandas()
 
-# 2. Prepare prompt-completion pairs
-#    Format: "Customer: {question}\nAgent: {answer}"
+2. Prepare prompt-completion pairs
+   Format: "Customer: {question}\nAgent: {answer}"
 
-# 3. Load base Llama model and apply LoRA
+3. Load base Llama model and apply LoRA
 model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3.1-8B")
 lora_config = LoraConfig(r=8, lora_alpha=16, target_modules=["q_proj", "v_proj"], lora_dropout=0.1)
 model = get_peft_model(model, lora_config)
 
-# 4. Train with Hugging Face Trainer
+4. Train with Hugging Face Trainer
 training_args = TrainingArguments(
     output_dir="./support-llama",
     per_device_train_batch_size=4,
@@ -171,31 +183,63 @@ training_args = TrainingArguments(
 trainer = Trainer(model=model, args=training_args, train_dataset=support_data)
 trainer.train()
 
-# 5. Push fine-tuned model to Snowflake (as a containerized UDF or Cortex Agent)
-#    Then call it via AI_COMPLETE or Cortex Agent API
+5. Push fine-tuned model to Snowflake (as a containerized UDF or Cortex Agent)
+    Then call it via AI_COMPLETE or Cortex Agent API
 This recipe can be adapted for any domain (e.g., HR, finance, sales) by changing the training data and prompt templates.​​
 
-5. Performance Optimizations on Snowflake Platform
+# LLama Performance Optimizations Built on Snowflake Platform
+
+Snowflake and Llama integration offers a comprehensive set of inference optimization methods for performance aimed at enabling real-time, high-throughput, and efficient large language model (LLM) inference, especially for massive models like Llama 3.1 70B and Llama 3.1 405B. T
+
+These are the key inference optimization techniques:
+1. FP8 ZeroQuant and Mixed Precision
+   - Uses hardware-agnostic FP8 (8-bit floating point) quantization to reduce memory usage and accelerate computation without significant loss in model accuracy.
+   - Mixed precision enables more efficient GPU utilization, balancing speed and precision.
+2. Tensor and Pipeline Parallelism
+   - Optimized implementation of tensor parallelism allows large model weights to be split across multiple GPUs efficiently.
+   - Pipeline parallelism improves throughput by dividing the model into stages for concurrent processing.
+3. Single-Node and Multi-Node Scalability
+   - Supports efficient inference on a single GPU node with high throughput and low latency.
+   - Scales seamlessly to multi-node setups to handle larger models and longer context windows (up to 128K tokens).
+4. Low Latency and High Throughput
+   - Achieves up to 3x lower end-to-end latency and 1.4x higher token throughput compared to baseline implementations.
+   - Time to first token (TTFT) can be below 750 ms, and inter-token latency (ITL) can be under 70 ms, crucial for real-time interactive applications.
+5. Optimized KV Cache Management
+   - Manages key-value (KV) caches efficiently, crucial for supporting large context windows which grow memory demands linearly with context length.
+6. SwiftKV Integration
+   - Snowflake’s open-source SwiftKV optimizes the key-value cache generation stage, which is the most compute-intensive part in LLM inference, boosting throughput by up to 50%.
+   - This technology helps lower power and compute costs for inference workloads significantly.
+7. ZeRO and LoRA for Fine-Tuning
+   - ZeRO-3 inspired sharding and CPU offloading combined with Low-Rank Adaptation (LoRA) allow fine-tuning and inference with reduced GPU memory load.
+
+
+# Performance Benefits and Use Cases
+Supports real-time use cases requiring low latency responses and high throughput for cost-efficient deployment.
+Enables handling long sequences efficiently, important for tasks requiring extensive context understanding.
+Flexible to run on both legacy hardware (NVIDIA A100) and modern hardware (NVIDIA H100).
+Integrations are accessible via Snowflake Cortex AI platform, enabling enterprises to deploy Llama models efficiently.
+In summary, the Snowflake-Llama integration leverages advanced quantization, parallelism, cache optimization (SwiftKV), and fine-tuning memory management techniques to deliver highly efficient, scalable, and low-latency inference for large Llama models—optimizing both performance and cost for enterprise AI workloads.
+
 
 
 
 To get the best performance from Llama models on Snowflake, follow these platform-specific optimizations:
 
-Use the right warehouse size
+- Use the right warehouse size
 
-For Cortex AI functions (e.g., AI_COMPLETE, AI_AGG), use a warehouse no larger than MEDIUM; larger warehouses do not improve LLM throughput and only increase cost.​
+- For Cortex AI functions (e.g., AI_COMPLETE, AI_AGG), use a warehouse no larger than MEDIUM; larger warehouses do not improve LLM throughput and only increase cost.​
 
-For custom Llama UDFs in Snowpark, size the warehouse based on batch size and concurrency needs, and use auto-suspend to avoid idle costs.​​
+- For custom Llama UDFs in Snowpark, size the warehouse based on batch size and concurrency needs, and use auto-suspend to avoid idle costs.​​
 
-Batch and pipeline calls
+- Batch and pipeline calls
 
-Process many rows in a single query (e.g., SELECT AI_COMPLETE(...) FROM large_table) to maximize throughput.​
+- Process many rows in a single query (e.g., SELECT AI_COMPLETE(...) FROM large_table) to maximize throughput.​
 
-For interactive apps, use the Cortex REST APIs (Complete, Embed, Agents) instead of SQL functions to reduce latency.​
+- For interactive apps, use the Cortex REST APIs (Complete, Embed, Agents) instead of SQL functions to reduce latency.​
 
-Leverage SwiftKV-optimized models
+- Leverage SwiftKV-optimized models
 
-Prefer snowflake-llama-3.3-70b and snowflake-llama-3.1-405b over vanilla Llama models; they are optimized for higher throughput and lower latency on Snowflake.​
+- Prefer snowflake-llama-3.3-70b and snowflake-llama-3.1-405b over vanilla Llama models; they are optimized for higher throughput and lower latency on Snowflake.​
 
 SwiftKV reduces computational overhead during prompt processing, allowing prefill tokens to skip up to half the model’s layers with minimal accuracy loss.​
 
@@ -214,54 +258,135 @@ These optimizations ensure that Llama-based workloads are fast, scalable, and co
 6. Cost Optimization, Governance, and Prompt Caching
 Running Llama models at scale requires careful cost and governance controls.
 
-Cost Optimization
-Choose the right model
 
-Use smaller models (e.g., llama3.1-8b, mistral-7b) for simple tasks (summarization, classification) and reserve larger models (e.g., llama3.1-70b, llama3.1-405b) for complex reasoning.​
+# Practical Performance Best Practices for Llama Models on Snowflake 
 
-Compare cost/quality trade-offs using benchmarks (e.g., MMLU, HumanEval, GSM8K) and real-world use cases.​
-
-Track and monitor usage
+- Choose the right model
+- Use smaller models (e.g., llama3.1-8b, mistral-7b) for simple tasks (summarization, classification) and reserve larger models (e.g., llama3.1-70b, llama3.1-405b) for complex reasoning.​
+- Compare cost/quality trade-offs using benchmarks (e.g., MMLU, HumanEval, GSM8K) and real-world use cases.​
+- Track and monitor usage
 
 Use SNOWFLAKE.ACCOUNT_USAGE.CORTEX_FUNCTIONS_USAGE_HISTORY and CORTEX_FUNCTIONS_QUERY_USAGE_HISTORY to see per-function, per-model credit and token consumption.​
 
-Set up alerts and budgets for AI services to avoid unexpected spend.​
+- Set up alerts and budgets for AI services to avoid unexpected spend.​
 
-Apply FinOps practices
+- Apply FinOps practices
 
-Tag queries and workloads by team, project, or use case to allocate costs accurately.​
+- Tag queries and workloads by team, project, or use case to allocate costs accurately.​
 
-Regularly review and retire unused models, stages, and Cortex Search services to reduce idle costs.​
+- Regularly review and retire unused models, stages, and Cortex Search services to reduce idle costs.​
 
-Governance and Access Control
-Control model access
-
+# Governance and Access Control
+- Control model access
 Use the account-level CORTEX_MODELS_ALLOWLIST to restrict which models can be used (e.g., allow only llama3.1-70b and snowflake-llama-3.3-70b).​
 
-Use RBAC on model objects in SNOWFLAKE.MODELS to grant fine-grained access to specific roles (e.g., GRANT APPLICATION ROLE CORTEX-MODEL-ROLE-LLAMA3.1-70B TO ROLE support_analyst).​
+- Use RBAC on model objects in SNOWFLAKE.MODELS to grant fine-grained access to specific roles (e.g., GRANT APPLICATION ROLE CORTEX-MODEL-ROLE-LLAMA3.1-70B TO ROLE support_analyst).​
 
-Secure data and prompts
+# Secure data and prompts
 
 Ensure that all media files (documents, audio) are stored in encrypted stages with directory tables enabled.​
 
 Use masking policies and row access policies to protect PII in prompts and responses.​
 
-Prompt Caching (Conceptual)
+# Prompt Caching (Conceptual)
 While Snowflake does not yet have a built-in LLM prompt cache, you can simulate caching patterns:
 
-Cache frequent prompts in a table
+- Cache frequent prompts in a table
 
-Store common prompts and their responses in a table (e.g., support.prompt_cache) with a TTL.
+- Store common prompts and their responses in a table (e.g., support.prompt_cache) with a TTL.
 
-Before calling AI_COMPLETE, check if the prompt exists and is fresh; if so, return the cached response.​
+- Before calling AI_COMPLETE, check if the prompt exists and is fresh; if so, return the cached response.​
 
-Use deterministic prompts
+- Use deterministic prompts
 
-For idempotent tasks (e.g., summarizing a fixed set of tickets), use a deterministic prompt template and key (e.g., ticket_ids + prompt_template_hash) to enable easy caching.​
+- For idempotent tasks (e.g., summarizing a fixed set of tickets), use a deterministic prompt template and key (e.g., ticket_ids + prompt_template_hash) to enable easy caching.​
 
-This approach reduces redundant LLM calls and lowers cost, especially for high-frequency, low-variability prompts.​
+- This approach reduces redundant LLM calls and lowers cost, especially for high-frequency, low-variability prompts.​
 
-7. Explainability
+#Performance Benefits of Llama Models 
+
+The Llama models provide industry-leading performance on Snowflake’s optimized stack:
+- Llama 3.1 405B achieves 3x lower latency and 1.4x higher throughput than baseline, delivering rapid token generation with a time to first token under 750 ms.
+- Llama 4 Maverick, with 17 billion active parameters, combines state-of-the-art textual and image understanding, support for 12 languages, and high-speed creative content generation.
+- Llama 4 Scout features an unprecedented context window of 10 million tokens, enabling complex tasks like multi-document summarization and extensive personalized reasoning.
+- These performance gains empower real-time applications ranging from chatbots to AI-powered data agents, all within Snowflake’s environment.
+
+# Cost Considerations and Tools 
+
+Using open-source Llama models on Snowflake enables business-savvy users and advanced data science teams to maintain data gravity, simplify MLOps, and operate with robust, engineering-grade cost controls. The platform combines optimized Llama variants with native governance features, allowing you to reason about spend in the same way you already manage warehouses and other Snowflake workloads.
+
+Cost benefits of Llama on Snowflake
+Running Llama directly on Snowflake means inference is billed as Snowflake credits, eliminating separate LLM infrastructure, data egress, and cross‑cloud integration overhead. Open source Llama families typically have lower effective price per token than many proprietary models, and Snowflake provides tuned configurations (for example, Llama 3.x and 4 variants) that are optimized for throughput and cost efficiency.​
+
+From a FinOps perspective, Llama on Snowflake lets you:
+
+1. Attribute AI spend to the same cost centers as your analytical workloads.​
+
+2. Trade off model size vs. throughput and latency with clear, credit‑based pricing.​
+
+3. Consolidate security and governance (no separate vector DBs, ETL pipelines, or hosting).
+
+
+Provisioned throughput for predictable spend
+
+Provisioned throughput in Cortex lets you reserve Llama inference capacity in discrete units over a fixed term, instead of paying only on a best‑effort, on‑demand basis. You size provisioned throughput units to your expected tokens per second or requests per minute and receive predictable performance and a stable monthly cost envelope.
+
+Features Available: 
+Use historical token logs and load testing to estimate peak TPS/RPS and select an appropriate provisioned tier.​
+
+Put experimentation and low-volume workloads on demand while routing critical production traffic (for example, customer-facing Llama endpoints) to provisioned capacity.​
+
+Combine provisioned throughput with autoscaling warehouses handling retrieval and pre/post‑processing, so both LLM and SQL compute scale in a controlled way.
+
+Resource monitors track credit consumption at account or warehouse level and can trigger notifications or automatically suspend warehouses when defined thresholds are reached. For Llama, this means the warehouses that power ETL, feature engineering, vectorization, and RAG retrieval are all protected against runaway jobs.​
+
+Budgets let you define monthly credit limits for groups of resources and are refreshed multiple times a day, supporting proactive rather than reactive cost management. Combined with tag‑based budgets, you can create dedicated “AI” or “Llama” budgets that automatically aggregate all tagged resources into a single cost view, including serverless features.​
+
+A practical pattern is:
+
+Assign each Llama‑backed product or team its own budget.​
+
+Use resource monitors to guard individual warehouses, and budgets to cap the aggregate envelope.​
+
+Alert at multiple thresholds (for example, 50%, 80%, 100%) so owners can throttle traffic, switch to a smaller Llama variant, or adjust prompts before overspend.
+
+
+Cost allocation tags and Cortex LLM functions
+Object tags and query tags are the backbone of cost attribution in Snowflake. By defining a small, consistent tag taxonomy (such as environment, product, cost_center, and owner), you can classify warehouses, compute pools, databases, and even users or roles involved in Llama workloads.​
+
+As Cortex LLM functions add support for cost allocation tags, each Llama call can carry the same tagging semantics. In practice, that enables:​
+
+Per‑feature or per‑tenant cost breakdowns using query tags or application‑level tags on LLM function calls.​
+
+Seamless aggregation of Llama spend into tag‑based budgets and dashboards with no manual resource enumeration.​
+
+Cleaner separation of dev, staging, and prod costs when those are expressed as tags and roles.​
+
+For example, an app that routes user queries to a Cortex LLM function using Llama can include a query tag like “product=assistant, tenant_id=1234” so that every token consumed is attributable to that specific customer.
+
+Prompt caching and key‑value caching exploit the fact that large parts of Llama prompts are stable across calls (system messages, shared documents, instructions). When this context is cached, subsequent calls pay only for the new tokens, which can dramatically reduce costs for chat, support copilots, and RAG workloads where context changes slowly.​
+
+Advanced design tips:
+
+Factor prompts into stable and volatile segments, keeping instructions and long‑lived documents unchanged so they benefit from caching.​
+
+Use smaller Llama variants or specialized distilled models for high-volume, low-complexity tasks, and reserve larger variants for complex reasoning or low-volume, high-value paths.​
+
+Monitor token distribution (prompt vs. completion) to identify where restructuring prompts or truncating context yields the biggest marginal savings.
+
+# Practical Cost Workflow for Data Scientists
+
+Prototype with on‑demand Cortex LLM functions using Llama, logging query tags for experiment tracking and cost visibility.​
+
+Analyze token usage and latency to determine the optimal model size, caching strategy, and whether provisioned throughput is warranted.​
+
+Once patterns stabilize, allocate provisioned throughput for the core Llama endpoints, size warehouses for retrieval and pre- and post-processing, and attach resource monitors.​
+
+Apply object and query tags representing the environment, product, and cost center, and wire these into tag-based budgets dedicated to Llama workloads.​
+
+Continuously optimize prompts and routing logic (for example, small Llama vs. large) using observability data to drive down cost per successful outcome, not just cost per token.​
+
+# Explainability
 
    
 Explainability is critical for trust, debugging, and compliance in Llama-based applications.
@@ -272,27 +397,26 @@ Snowflake Model Registry supports Shapley-based explainability for traditional M
 
 Use model.explain(input_data) to get feature attributions and understand why a model made a particular prediction.​
 
-For Llama-based AISQL and agents
-
+Llama-based AISQL and agents
 While Llama models themselves are not directly explainable in Snowflake, you can:
 
-Log prompts, model names, and responses in an audit table for traceability.​
+- Log prompts, model names, and responses in an audit table for traceability.​
 
-Use structured outputs (e.g., JSON with confidence scores) and post-process them to highlight key factors.​
+- Use structured outputs (e.g., JSON with confidence scores) and post-process them to highlight key factors.​
 
-For Cortex Analyst, the generated SQL and semantic model provide a clear “reasoning trace” that can be reviewed and audited.​
+- For Cortex Analyst, the generated SQL and semantic model provide a clear “reasoning trace” that can be reviewed and audited.​
 
-Best practices for explainability
+# Best Practices for Explainability
 
-Always log the full context (prompt, model, parameters, timestamp) for every LLM call.​
+1. Always log the full context (prompt, model, parameters, timestamp) for every LLM call.​
 
-For customer-facing apps, provide a “show reasoning” option that displays the retrieved documents (from Cortex Search) and the final prompt sent to the LLM.​
+2. For customer-facing apps, provide a “show reasoning” option that displays the retrieved documents (from Cortex Search) and the final prompt sent to the LLM.​
 
-Use human-in-the-loop review for high-stakes decisions (e.g., support escalations, financial advice) to validate and explain LLM outputs.​
+3. Use human-in-the-loop review for high-stakes decisions (e.g., support escalations, financial advice) to validate and explain LLM outputs.​
 
-This layered approach ensures that Llama applications are transparent, auditable, and aligned with enterprise AI governance standards.​
+4. This layered approach ensures that Llama applications are transparent, auditable, and aligned with enterprise AI governance standards.​
 
-8. Interoperability with MCP and Partner Tooling
+# Interoperability with MCP and Partner Tooling
 
 
 Model Context Protocol (MCP) enables Llama-based agents to securely interact with Snowflake and partner tools.
@@ -333,7 +457,7 @@ Agentic frameworks (LangChain, LlamaIndex) that use MCP to call Snowflake tools.
 
 This interoperability lets you build modular, secure, agentic applications where Llama models orchestrate actions across Snowflake and external systems.​
 
-9. Working with Snowflake Intelligence and Cortex Knowledge Extensions
+# Working with Snowflake Intelligence and Cortex Knowledge Extensions
 Snowflake Intelligence and Cortex Knowledge Extensions (CKEs) extend Llama-based apps with governed, up-to-date knowledge.
 
 Snowflake Intelligence
@@ -356,7 +480,7 @@ A provider creates a Cortex Search Service on a table of documents and shares it
 
 A consumer uses Snowflake Intelligence, Cortex Agent, or a custom app to query the CKE; the LLM reasons over the retrieved content to generate answers with citations.​​
 
-Best practices for CKEs and Intelligence
+# Best practices for CKEs and Intelligence
 
 For customer support:
 
