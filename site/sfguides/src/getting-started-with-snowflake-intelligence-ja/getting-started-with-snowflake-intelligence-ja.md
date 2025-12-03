@@ -73,7 +73,7 @@ Snowflake Intelligence の構成要素（エージェント）を作成する方
 
 * Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a> を選択します
 * 右上の **Create new** のドロップダウン矢印をクリックし、**Upload your YAML file** を選択します
-* [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence-ja/blob/main/marketing_campaigns.yaml) をアップロード | データベース、スキーマ、ステージを選択: **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** 
+* [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence-ja/blob/main/marketing_campaigns.yaml) をアップロード | データベース、スキーマ、ステージを選択: **DB_SI_JP.RETAIL** >> **SEMANTIC_MODELS** 
 * 右上の **Save** をクリックします 
 
 ### Cortex Search
@@ -82,14 +82,14 @@ Snowflake Intelligence の構成要素（エージェント）を作成する方
 
 * Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Search**</a> を選択します
 * 右上の **Create** をクリックします
-    - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **DASH_WH_SI**
-    - Database and Schema: **DASH_DB_SI.RETAIL**
+    - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **WH_SI_JP**
+    - Database and Schema: **DB_SI_JP.RETAIL**
     - Name: Support_Cases
     - Select data to be indexed: SUPPORT_CASES テーブルを選択
     - Select a search column: TRANSCRIPT を選択
     - Select attribute column(s): TITLE、PRODUCT を選択 
     - Select columns to include in the service: すべて選択
-    - Configure your Search Service: デフォルト値を維持しますが、"Warehouse for indexing" には **DASH_WH_SI** を選択します（DASH_WH_SI が利用できない場合は COMPUTE_WH を選択）
+    - Configure your Search Service: デフォルト値を維持しますが、"Warehouse for indexing" には **WH_SI_JP** を選択します（WH_SI_JP が利用できない場合は COMPUTE_WH を選択）
 
 #### オプション: Cortex AISQL を使用したサポートケースの活用
 
@@ -100,7 +100,7 @@ Snowflake Intelligence の構成要素（エージェント）を作成する方
 ```sql
 -- Use AI_AGG to aggregate support cases summary and insert into a new table AGGREGATED_SUPPORT_CASES_SUMMARY
 
-use database DASH_DB_SI;
+use database DB_SI_JP;
 use schema RETAIL;
 
 create or replace table AGGREGATED_SUPPORT_CASES_SUMMARY as
@@ -114,7 +114,7 @@ create or replace cortex search service AGGREGATED_SUPPORT_CASES
 on summary 
 attributes
   summary 
-warehouse = dash_wh_si 
+warehouse = WH_SI_JP 
 embedding_model = 'snowflake-arctic-embed-m-v1.5' 
 target_lag = '1 hour' 
 initialize=on_schedule 
@@ -156,18 +156,18 @@ as (
 * Tools
   - **Cortex Analyst**
     - **+ Add** をクリック
-        - Add: Semantic model file **DASH_DB_SI.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
+        - Add: Semantic model file **DB_SI_JP.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
         - Name: Sales_And_Marketing_Data
 
-        - Description: *DASH_DB_SI.RETAIL スキーマの Sales and Marketing Data モデルは、マーケティングキャンペーン、商品情報、売上データ、ソーシャルメディアエンゲージメントを接続することで、小売ビジネスのパフォーマンスの全体像を提供します。このモデルは、クリックとインプレッションを通じてマーケティングキャンペーンの効果を追跡することを可能にし、異なる地域の実際の売上パフォーマンスとリンクします。ソーシャルメディアエンゲージメントは、インフルエンサーの活動とメンションを通じて監視され、すべてのデータは商品カテゴリーとIDを通じて接続されます。テーブル間の時間的な整合性により、時間経過に伴うマーケティングの売上パフォーマンスとソーシャルメディアエンゲージメントへの影響を包括的に分析できます。*
+        - Description: *DB_SI_JP.RETAIL スキーマの Sales and Marketing Data モデルは、マーケティングキャンペーン、商品情報、売上データ、ソーシャルメディアエンゲージメントを接続することで、小売ビジネスのパフォーマンスの全体像を提供します。このモデルは、クリックとインプレッションを通じてマーケティングキャンペーンの効果を追跡することを可能にし、異なる地域の実際の売上パフォーマンスとリンクします。ソーシャルメディアエンゲージメントは、インフルエンサーの活動とメンションを通じて監視され、すべてのデータは商品カテゴリーとIDを通じて接続されます。テーブル間の時間的な整合性により、時間経過に伴うマーケティングの売上パフォーマンスとソーシャルメディアエンゲージメントへの影響を包括的に分析できます。*
 
-        - Warehouse: **DASH_WH_SI**
+        - Warehouse: **WH_SI_JP**
         - Query timeout (seconds): 60
 
   - **Cortex Search Services**
     - **+ Add** をクリック
 
-        - Search service: **DASH_DB_SI.RETAIL** >> **Support_Cases**
+        - Search service: **DB_SI_JP.RETAIL** >> **Support_Cases**
         - ID column: ID
         - Title column: TITLE
         - Name: Support_Cases
@@ -178,10 +178,10 @@ as (
     - **+ Add** をクリック
 
       - Resource type: procedure
-      - Database & Schema: **DASH_DB_SI.RETAIL**
-      - Custom tool identifier: **DASH_DB_SI.RETAIL.SEND_EMAIL()**
+      - Database & Schema: **DB_SI_JP.RETAIL**
+      - Custom tool identifier: **DB_SI_JP.RETAIL.SEND_EMAIL()**
       - Name: Send_Email
-      - Warehouse: **DASH_WH_SI**
+      - Warehouse: **WH_SI_JP**
       - Parameter: body
         - Description: *これには HTML 構文を使用してください。取得したコンテンツが Markdown の場合は、HTML に変換してください。body が提供されていない場合は、最後の質問を要約し、それをメールのコンテンツとして使用してください。*
       - Parameter: recipient_email
@@ -204,7 +204,7 @@ as (
 
 > 前提条件: **セットアップ** で説明されている手順が正常に完了していること。
 
-<a href="https://ai.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Intelligence</a> を開き、正しいアカウントにサインインしていることを確認してください。不明な場合は、左下の名前をクリック >> **Sign out** をクリックしてサインアウトし、再度サインインしてください。また、ロールが **SNOWFLAKE_INTELLIGENCE_ADMIN** に設定され、ウェアハウスが **DASH_WH_SI** に設定され、エージェントが Sales//AI に設定されていることを確認してください。
+<a href="https://ai.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Intelligence</a> を開き、正しいアカウントにサインインしていることを確認してください。不明な場合は、左下の名前をクリック >> **Sign out** をクリックしてサインアウトし、再度サインインしてください。また、ロールが **SNOWFLAKE_INTELLIGENCE_ADMIN** に設定され、ウェアハウスが **WH_SI_JP** に設定され、エージェントが Sales//AI に設定されていることを確認してください。
 
 それでは、以下の質問をしてみましょう。
 
