@@ -226,6 +226,13 @@ These are the key inference optimization techniques:
    - This technology helps lower power and compute costs for inference workloads significantly.
 7. ZeRO and LoRA for Fine-Tuning
    - ZeRO-3 inspired sharding and CPU offloading combined with Low-Rank Adaptation (LoRA) allow fine-tuning and inference with reduced GPU memory load.
+     
+
+With Llama + SwiftKV, we achieved:
+- Up to 75% reduction in LLM inference costs on Cortex AI by optimizing KV cache generation.
+- Improved throughput and reduced latency by reusing hidden states and minimizing redundant computations.
+- Maintained accuracy with minimal loss through model rewiring and fine-tuning.
+- Enabled significant cost savings and performance gains in production environments, including up to 2x higher throughput on high-end GPUs without sacrificing output quality.
 
 
 # Performance Benefits and Use Cases
