@@ -55,3 +55,11 @@ This solution serves as a comprehensive foundation for various wealth management
   * **Compliance and Risk Monitoring**: Identify clients with risk concentrations, portfolios exceeding stated risk tolerance, or those requiring periodic reviews to maintain compliance with fiduciary standards.
   * **New Client Onboarding**: Leverage historical research and market insights to quickly develop investment strategies aligned with new client goals, risk profiles, and preferences.
   * **High-Touch Relationship Management**: Track interaction frequency with high-net-worth clients and surface priority alerts to ensure consistent, proactive client engagement.
+
+## Get Started
+
+Ready to transform your wealth management practice with AI-powered insights? This solution includes everything you need to get up and running quickly.
+
+**[Run the Demo on GitHub →](https://github.com/Snowflake-Labs/sfguide-financial-advisor-for-asset-management)**
+
+The repository contains complete setup scripts, sample financial research documents, semantic model definitions, and step-by-step instructions for configuring Snowflake Intelligence with Cortex Analyst and Cortex Search services.
