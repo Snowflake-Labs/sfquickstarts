@@ -318,15 +318,44 @@ In this app, we are following recommended best practice of using explicit filter
 
 Only the RLS_OWNER Role, which owns both the streamlit app and the Cortex Search Service, has the ability to use the Cortex Search Service, and modify any of the code within the streamlit app. Both the SKI and BICYCLE roles only have access to viwing and using the Streamlit app.
 
+Here is a walkthrough of some of the key functionality in the streamlit python code:
+
+The following block reads the credentials of the owner of the container the app is running on. This is ture whether this is Streamlit in Snowflake (SiS) running on containers, or if you were to push your own app to SPCS. Snowflake will provide this OAuth token at the location (/snowflake/session/token). More information can be found in our documentation [here](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/additional-considerations-services-jobs#connecting-with-a-snowflake-provided-oauth-token).
+
+```python
+def get_system_token():
+    """
+    Reads the container's system token.
+    """
+    try:
+        with open("/snowflake/session/token", "r") as f:
+            return f.read().strip()
+    except Exception:
+        return None
+```
+
+The code below creates two sessions. One is the owner session to utilise Cortex Search (which is not exposed to the user). The other creates the visitor session to obtain the attributes of the user logging in.
+
+We do this by obtaining the ingress_user_token from the HTTP headers.
+
+```python
+headers = st.context.headers or {}
+ingress_user_token = headers.get("Sf-Context-Current-User-Token")
+ingress_user = headers.get("Sf-Context-Current-User")
+```
+
+Once we have obtained the header information, we can initialize bothe the sessions in the initialize_sessions function.
+
+The next key part of the functionality is how we apply the filters to the Cortex Search service. As previously mentioned, the Cortex Search Service runs with Owners Rights, so we need to utilise the Owners session in backend code (so it is not exposed to the visiting user). Similarly, we need to provide a filter on the Cortex Search service that cannot be tampered with. We use the Snowflake generated headers and calling the Context Function CURRENT_ROLE() to do this. 
+
+```python
+current_role = get_current_role_from_session(current_session)
 
 
+```
 
+Clean up code
 
- we are obtaining the current role of the visiting user via HTTP headers upon login. We use this logic to pass this on as a filter on the backend to the Cortex Search Service. the visiting user is intentionally never granted access to the Cortex Serach Service itself, but rather the backend code utilises the Cortex Search ervice with Owners Rights, and passes back the relevant information via filters based on User Attributes in back end code.
-
-The second is debug mode, which will show some extra information including which chuncks have been retrieved.
-
-Select Visitor Mode and Debug Mode. Deslect "Use Chat History" for now.
 
 <!-- ------------------------ -->
 ## Clean Up
