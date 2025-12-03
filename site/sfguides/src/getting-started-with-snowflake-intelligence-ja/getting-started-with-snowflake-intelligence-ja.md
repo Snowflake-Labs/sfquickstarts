@@ -1,5 +1,5 @@
-id: getting-started-with-snowflake-intelligence
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+id: getting-started-with-snowflake-intelligence-ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
 language: ja
 summary: このガイドでは、Snowflake Intelligence の導入方法について説明します。
 environments: web
@@ -84,7 +84,7 @@ Snowflake Intelligence の構成要素（エージェント）を作成する方
 * 右上の **Create** をクリックします
     - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **WH_SI_JP**
     - Database and Schema: **DB_SI_JP.RETAIL**
-    - Name: Support_Cases
+    - Service Name: Support_Cases
     - Select data to be indexed: SUPPORT_CASES テーブルを選択
     - Select a search column: TRANSCRIPT を選択
     - Select attribute column(s): TITLE、PRODUCT を選択 
@@ -156,7 +156,7 @@ as (
 * Tools
   - **Cortex Analyst**
     - **+ Add** をクリック
-        - Add: Semantic model file **DB_SI_JP.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
+        - Semantic model fileを選択: **DB_SI_JP.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
         - Name: Sales_And_Marketing_Data
 
         - Description: *DB_SI_JP.RETAIL スキーマの Sales and Marketing Data モデルは、マーケティングキャンペーン、商品情報、売上データ、ソーシャルメディアエンゲージメントを接続することで、小売ビジネスのパフォーマンスの全体像を提供します。このモデルは、クリックとインプレッションを通じてマーケティングキャンペーンの効果を追跡することを可能にし、異なる地域の実際の売上パフォーマンスとリンクします。ソーシャルメディアエンゲージメントは、インフルエンサーの活動とメンションを通じて監視され、すべてのデータは商品カテゴリーとIDを通じて接続されます。テーブル間の時間的な整合性により、時間経過に伴うマーケティングの売上パフォーマンスとソーシャルメディアエンゲージメントへの影響を包括的に分析できます。*
