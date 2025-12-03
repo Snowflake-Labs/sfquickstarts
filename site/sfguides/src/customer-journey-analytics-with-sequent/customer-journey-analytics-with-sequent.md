@@ -91,8 +91,6 @@ This solution serves as a comprehensive foundation for customer analytics across
 
 **AI-Augmented Insights**: Snowflake Cortex LLM integration transforms complex analytical outputs into natural language explanations, strategic recommendations, and actionable next steps.
 
-**Production-Ready Deployment**: Single SQL script setup with Git-based Streamlit deployment enables enterprise rollout in minutes, not months.
-
 ## Resources
 
 - [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent) — Source code, setup scripts, and documentation
