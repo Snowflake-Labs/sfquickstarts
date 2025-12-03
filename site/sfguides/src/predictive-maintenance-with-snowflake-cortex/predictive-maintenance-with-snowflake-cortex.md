@@ -87,6 +87,6 @@ By implementing this pragmatic, data-first approach to predictive maintenance, y
 | **📉 Reduce Unplanned Downtime** | Anticipate failures with high accuracy by providing AI models with complete operational context. |
 | **💰 Lower Maintenance Costs** | Eliminate unnecessary calendar-based maintenance and costly false-positive interventions. |
 | **⚡ Improve OEE** | Maximize Overall Equipment Effectiveness by addressing the root causes of micro-stoppages and performance loss. |
-| **🧠 Build Trust & Upskill Teams** | Empower engineers with tools that make their jobs easier, institutionalizing knowledge and augmenting their expertise with data-driven insights. |
+| **🧠 Build Trust & Upskill Teams** | Empower users across your organization with tools that make their jobs easier, institutionalizing knowledge and augmenting their expertise with data-driven insights. |
 
 Interested in learning more? Head to the linked repo to build in your Snowflake account today!
