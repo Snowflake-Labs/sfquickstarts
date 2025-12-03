@@ -81,23 +81,23 @@ This solution leverages Snowflake Intelligence and Cortex AI capabilities to cre
 
 ### What is Snowflake Cortex?
 
-![Alt Text](assets/cortex_image.png)
+![Alt Text](assets/cortex-image.png)
 
 Snowflake Cortex provides fully managed Generative AI capabilities that run securely within your Snowflake environment and governance boundary. Key features include:
 
 **Cortex Analyst** - Enables business users to ask questions about structured data in natural language. It uses a semantic model to understand your data and generates accurate SQL queries automatically.
 
-![Alt Text](assets/building_the_semantic_layer.png)
+![Alt Text](assets/building-the-semantic-layer.png)
 
 The semantic model definitions you create are automatically translated into SQL code that powers the natural language queries. For example, defining business concepts like "Low Inventory" and "Excess Inventory" in the semantic model results in precise SQL WHERE clauses:
 
-![Semantic View Code](assets/semantic_view_code.png)
+![Semantic View Code](assets/semantic-view-code.png)
 
 **Cortex Search** - Provides easy-to-use semantic search over unstructured data. It handles document chunking, embedding generation, and retrieval, making it simple to implement RAG (Retrieval Augmented Generation) patterns.
 
 **Cortex Agents** - Orchestrates multiple AI capabilities (like Analyst and Search) to intelligently route user queries to the appropriate service and synthesize responses.
 
-![Alt Text](assets/what_is_cortex_agent.png)
+![Alt Text](assets/what-is-cortex-agent.png)
 
 Learn more about [Snowflake Cortex](https://www.snowflake.com/en/product/features/cortex/).
 
@@ -112,7 +112,7 @@ Snowflake Intelligence is a unified experience for building and deploying AI age
 
 Here's what Snowflake Intelligence looks like in action for supply chain operations. Users can ask natural language questions about their data, and the agent automatically generates SQL queries, executes them, and returns results:
 
-![Snowflake Intelligence on Supply Chain](assets/si_on_supply_chain.png)
+![Snowflake Intelligence on Supply Chain](assets/si-on-supply-chain.png)
 
 Learn more about [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence).
 
@@ -127,7 +127,7 @@ In this step, you'll create the complete supply chain database infrastructure wi
 
 The database will model a multi-tier supply chain network with suppliers, manufacturing plants, and customers. The demo considers key operational factors including inventory levels, demand, safety stock, lead times with variability, and costs. The intelligent assistant will help answer critical questions like "When do I order more material vs. transfer from another facility?"
 
-![Supply Chain Network Demo](assets/supply_chain_network_demo.png)
+![Supply Chain Network Demo](assets/supply-chain-network-demo.png)
 
 1. Navigate to **Projects > Workspaces** to create a new private workspace in Snowsight
 2. Add a new SQL file to your workspace
@@ -154,7 +154,7 @@ The database schema models a complete supply chain network with:
 
 Here's the complete Entity Relationship Diagram (ERD) showing all tables and their relationships:
 
-![Supply Chain ERD](assets/supply_chain_assistant_erd.png)
+![Supply Chain ERD](assets/supply-chain-assistant-erd.png)
 
 <!-- ------------------------ -->
 
@@ -281,7 +281,7 @@ Now that you have your semantic models and search service created, you can combi
 6. **Display name** Supply Chain Agent
 7. Once created, navigate to **Tools** tab
 
-![Create Agent](assets/create_agent.png)
+![Create Agent](assets/create-agent.png)
 
 ### Add First Cortex Analyst Tool - Supply Chain Data
 
@@ -311,7 +311,7 @@ Now that you have your semantic models and search service created, you can combi
    * **Warehouse:** Select **Custom** radio button then choose `SUPPLY_CHAIN_ASSISTANT_WH`
 3. Click **Save**
 
-![Add Analyst Tool](assets/add_analyst_tool.png)
+![Add Analyst Tool](assets/add-analyst-tool.png)
 
 ### Add Cortex Search Tool
 
@@ -326,7 +326,7 @@ Now that you have your semantic models and search service created, you can combi
    * **Title Column:** `TITLE`
 3. Click **Save**
 
-![Add Search Tool](assets/add_cortex_search_tool.png)
+![Add Search Tool](assets/add-cortex-search-tool.png)
 
 ### Add Custom Tools
 
@@ -374,7 +374,7 @@ For each of the following custom tools, click **+ Add** next to **Custom Tool**,
 * **Warehouse:** `SUPPLY_CHAIN_ASSISTANT_WH`
 * **Description:** *"Send emails to recipients with HTML formatted content."*
 
-![Add Custom Tool](assets/add_custom_tool.png)
+![Add Custom Tool](assets/add-custom-tool.png)
 
 ### Save and Access Your Agent
 
@@ -384,7 +384,7 @@ For each of the following custom tools, click **+ Add** next to **Custom Tool**,
 4. Select your **Supply_Chain_Agent** from the dropdown
 5. Start asking questions!
 
-![Agent Overview](assets/agent_tools.png)
+![Agent Overview](assets/agent-tools.png)
 <!-- ------------------------ -->
 
 ## User Personas
@@ -437,7 +437,7 @@ Before finalizing the transfer, Maria asks, *"What type of weather events might 
 
 **As Leo (The Data Steward)**, I previously defined business logic like "critical low inventory" in the semantic model YAML file and added verified queries for cost comparisons, so the agent understands our business rules and Maria can trust the answers.
 
-![Low Inventory Definitions](assets/definitions_used.png)
+![Low Inventory Definitions](assets/definitions-used.png)
 
 <!-- ------------------------ -->
 
@@ -445,7 +445,7 @@ Before finalizing the transfer, Maria asks, *"What type of weather events might 
 
 Now it's your turn to experience the Supply Chain Assistant! Follow Maria's journey by asking these questions in order, or explore on your own. Notice how the agent automatically determines which tool to use based on your question!
 
-![Alt text](assets/agent_screenshot.png)
+![Alt text](assets/agent-screenshot.png)
 
 ### Following Maria's Scenario
 
@@ -505,7 +505,7 @@ Your Supply Chain Assistant now includes:
 
 As your organization's needs grow, you can evolve from a single agent with multiple tools to a multi-agent architecture where a primary orchestrator agent coordinates with specialized domain agents. This architecture enables better scalability, domain expertise, and independent development of agents for different business functions:
 
-![Multi-Agent Architecture](assets/multi_agent_architecture.png)
+![Multi-Agent Architecture](assets/multi-agent-architecture.png)
 
 #### You can extend this solution further by:
 
