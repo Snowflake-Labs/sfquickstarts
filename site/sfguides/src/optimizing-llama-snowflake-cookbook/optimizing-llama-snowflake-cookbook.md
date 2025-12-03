@@ -408,6 +408,69 @@ Apply object and query tags representing the environment, product, and cost cent
 
 Continuously optimize prompts and routing logic (for example, small Llama vs. large) using observability data to drive down cost per successful outcome, not just cost per token.​
 
+## Model Selection Criteria for LLama Models on Snowflake Platform
+
+Model selection for Llama on Snowflake should be driven by a clear mapping between task complexity, latency/throughput constraints, cost envelope, and the platform primitives Snowflake gives you for governance and optimization. This guide focuses on how an experienced data scientist can pick the right Llama variant and deployment pattern on Snowflake, with example use cases and the technical rationale behind each decision.​
+
+Core selection dimensions
+When choosing between Llama sizes (for example, 8B, 70B, 405B and distilled variants) on Snowflake, prioritize:
+
+Task complexity and reasoning depth: complex multi-step reasoning, long-context synthesis, or nuanced code generation benefit more from larger Llama models (70B–405B), while simpler classification, extraction, and templated generation can be served well by smaller models.​
+
+Latency and throughput: high QPS or interactive UIs often require smaller or optimized Llama variants, potentially under provisioned throughput to guarantee low p95 latency, whereas batch analytics can tolerate slower large models.​
+
+Context window and modality: use long-context Llama (for example, large-context 3.1/4 series) and vision-capable variants where the use case involves multi-document reasoning, large logs, or images.​
+
+Cost and hardware footprint: larger Llama models drive higher credit consumption; Snowflake’s optimized and distilled Llama variants are designed to deliver near-frontier quality with significantly lower inference cost.​
+
+A practical rule of thumb is to start with the smallest model that can meet your acceptance criteria on held-out tasks, and only step up to a larger Llama when you see clear accuracy or reliability gaps that matter to the business.​
+
+Example use case: RAG knowledge assistant
+For an internal RAG assistant over enterprise documentation and tickets, the model must handle long contexts, disambiguate subtle domain terms, and follow safety/guardrails. In Snowflake, you would typically:​​
+
+Start with a mid-to-large Llama (for example, 70B or an optimized large-context variant) exposed via Cortex LLM functions for serverless inference, because this tier balances strong reasoning with manageable cost.​
+
+Use provisioned throughput for production traffic so you can guarantee latency and avoid noisy neighbor effects, sized from observed peak tokens per second and request concurrency.​​
+
+Apply prompt caching for stable system prompts (instructions, policies) and shared reference documents, so repeated queries reuse cached context and reduce input-token cost.​
+
+Technical justification: long-context Llama variants on Snowflake exploit platform-level optimizations (like efficient KV caching and inference stack tuning) to support 100k+ token windows while keeping response times and cost acceptable compared with naïvely hosting a frontier model yourself. This makes them an excellent fit for RAG where context quality and adherence to guardrails matter more than raw tokens per second.​​
+
+Example use case: structured extraction and classification
+For invoice parsing, PII detection, or ticket triage, you often have: clear schemas, limited input length, and strong tolerance for distilled or smaller models as long as accuracy thresholds are met. In Snowflake, the recommended pattern is:​
+
+Use small to mid-size Llama models (for example, 8B or pruned/pruned-distilled variants) and fine-tune them on a few thousand labeled examples stored in Snowflake tables, leveraging synthetic data and distillation where needed.​
+
+Deploy the tuned model through Cortex LLM functions or Snowpark Container Services, depending on whether you need custom weights or are using a managed fine-tuned endpoint.​
+
+Run extraction pipelines on warehouses governed by resource monitors, with budgets and cost allocation tags scoped to the owning team or product.​
+
+Technical justification: for schema-bound tasks, fine-tuned smaller Llama models can achieve performance comparable to larger general-purpose models at a fraction of the inference cost and latency. Snowflake’s support for synthetic data and distillation allows you to leverage a very large Llama (for example, 405B) as a teacher once, then serve nearly all traffic from a smaller student model.​
+
+Example use case: code generation and analytics copilot
+For SQL or Python copilots embedded in BI or notebooks, human latency expectations are tight, and quality must be high enough to minimize post-editing time. Recommended approach:​​
+
+Use a mid-to-large Llama variant tuned or specialized for code and tool use, often exposed via Cortex AI functions so it can call Snowflake-native tools (for example, running queries, inspecting schemas).​
+
+Combine provisioned throughput with prompt caching for session-level context (current query history, schema descriptions) to balance responsiveness and cost.​​
+
+Route non-critical or bulk code generation (for example, unit test expansion, boilerplate comments) to a smaller Llama model if your experimentation shows minimal quality differences.​
+
+Technical justification: tool-using and code-generation tasks benefit from advanced reasoning and planning, where larger Llama models show measurable uplifts in correctness and fewer hallucinations. However, careful separation of “critical path” vs. “nice-to-have” generations lets you use a mixture-of-models strategy to avoid paying large-model prices for every token.​
+
+Cost, governance, and selection criteria on Snowflake
+Model selection on Snowflake is tightly coupled with its cost-governance stack:
+
+Provisioned throughput: choose larger Llama models for workloads where you can justify reserved capacity, then allocate provisioned units to hit your latency SLOs at known peak load; for spiky or exploratory usage, keep to smaller models on on-demand usage.​
+
+Resource monitors and budgets: for each Llama tier in production, attach resource monitors to the supporting warehouses and define AI-specific budgets; if a large Llama tier repeatedly drives budget alerts, that is a signal to downshift to a smaller or distilled variant.​
+
+Cost allocation tags: tag warehouses, compute pools, and LLM functions by model_name, environment, product, and cost_center so you can compute cost per use case and per model family; models that fail cost-per-outcome targets (for example, cost per resolved ticket) should be candidates for replacement.​
+
+Prompt caching: treat cache hit rate and average prompt tokens per request as first-class selection metrics; for workloads with high cache locality, you can tolerate a larger Llama because the marginal cost per interaction is lower.​
+
+A rigorous selection process should iterate between offline evaluation (accuracy, calibration, safety benchmarks) and online metrics (task success rate, latency, cost per outcome) across multiple Llama sizes. On Snowflake, the presence of built-in cost governance and optimized Llama variants makes it feasible to systematically test and then lock in the smallest model that meets your product and cost SLOs for each use case.
+
 # Explainability
 
    
