@@ -13,9 +13,9 @@ tags: Getting Started, AI, Machine Learning, Data Science, Snowpark, Streamlit, 
 
 ## Overview
 
-This guide delivers a comprehensive customer journey analytics platform that transforms how organizations understand and optimize customer behavior. By integrating path analysis, attribution modeling, behavioral segmentation, and predictive analytics within Snowflake, it enables analysts and marketers to uncover actionable insights from complex event sequences in seconds.
+This solution delivers a comprehensive customer journey analytics platform that transforms how organizations understand and optimize customer behavior. By integrating path analysis, attribution modeling, behavioral segmentation, and predictive analytics within Snowflake, it enables analysts and marketers to uncover actionable insights from complex event sequences in seconds.
 
-The guide demonstrates how organizations across industries can modernize their customer analytics by centralizing all behavioral data, ML-powered attribution, and AI-driven insights on a unified platform.
+The solution demonstrates how organizations across industries can modernize their customer analytics by centralizing all behavioral data, ML-powered attribution, and AI-driven insights on a unified platform.
 
 ## Key Features
 
@@ -33,7 +33,7 @@ The guide demonstrates how organizations across industries can modernize their c
 
 ## How It Works
 
-This guide leverages Snowflake's native compute and AI capabilities to create a seamless, end-to-end customer analytics platform without external infrastructure.
+This solution leverages Snowflake's native compute and AI capabilities to create a seamless, end-to-end customer analytics platform without external infrastructure.
 
 **Data Foundation**: Customer events, timestamps, attributes, and conversion flags are stored as structured data in Snowflake tables. The setup script generates 5 industry-specific datasets (Retail, Financial Services, Hospitality, Gaming, Food Delivery) with realistic event sequences representing ~100K customer journeys each.
 
@@ -47,7 +47,7 @@ This guide leverages Snowflake's native compute and AI capabilities to create a 
 
 ## Business Impact
 
-This guide helps organizations across industries transition from fragmented, manual customer analysis to an integrated, AI-driven behavioral intelligence platform, resulting in:
+This solution helps organizations across industries transition from fragmented, manual customer analysis to an integrated, AI-driven behavioral intelligence platform, resulting in:
 
 **Enhanced Customer Understanding**: Analysts gain complete visibility into how customers navigate touchpoints, which interactions drive conversions, and what behavioral patterns predict outcomes—enabling truly data-driven customer strategies.
 
@@ -63,7 +63,7 @@ This guide helps organizations across industries transition from fragmented, man
 
 ## Use Cases and Applications
 
-This guide serves as a comprehensive foundation for customer analytics across multiple industries:
+This solution serves as a comprehensive foundation for customer analytics across multiple industries:
 
 **E-Commerce Conversion Optimization**: Analyze the paths customers take from landing page to purchase, identify abandonment points, and discover which product browsing sequences lead to higher cart values. Attribution modeling reveals whether email campaigns, social ads, or organic search drive the most valuable conversions.
 
@@ -80,3 +80,31 @@ This guide serves as a comprehensive foundation for customer analytics across mu
 **Healthcare Patient Engagement**: Track patient interactions across appointment scheduling, portal usage, and care touchpoints to identify patterns associated with treatment adherence and positive outcomes. Segment patients for personalized communication strategies.
 
 **Manufacturing Process Analytics**: Apply journey analytics to machine events and IoT data to understand equipment behavior patterns, predict maintenance needs, and optimize production workflows based on sequential event analysis.
+
+## Technical Highlights
+
+**Zero Data Movement Architecture**: All analytics—from Markov Chain transition matrices to Shapley Value permutations—execute entirely within Snowflake. No data extraction, no external compute, no security exposure.
+
+**Server-Side ML at Scale**: Snowpark-optimized warehouses handle Event2Vec embedding training, Random Forest/Naive Bayes model fitting, and clustering algorithms on millions of journeys without client-side memory constraints.
+
+**Real-Time Interactive Analysis**: Sub-second response times for path visualizations and attribution calculations through intelligent caching and stored procedure optimization.
+
+**AI-Augmented Insights**: Snowflake Cortex LLM integration transforms complex analytical outputs into natural language explanations, strategic recommendations, and actionable next steps.
+
+**Production-Ready Deployment**: Single SQL script setup with Git-based Streamlit deployment enables enterprise rollout in minutes, not months.
+
+## Resources
+
+- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent) — Source code, setup scripts, and documentation
+- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) — Learn about AI/ML capabilities in Snowflake
+- [Snowpark ML Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview) — Build and deploy ML models natively
+- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) — Create interactive data applications
+
+## Get Started
+
+Ready to transform your customer analytics? Deploy this solution in minutes:
+
+1. **[Clone the Repository](https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent)** — Get the complete source code and setup scripts
+2. **Run `setup.sql`** — Creates the database, sample datasets, and stored procedures
+3. **Run `deploy_streamlit.sql`** — Deploys the Sequent application to your Snowflake account
+4. **Start Exploring** — Open Sequent from Snowsight and start analyzing customer journeys
