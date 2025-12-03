@@ -246,7 +246,9 @@ Now will create a workspace from the github repository
    <img src="assets/images/general/create_workspace_github.png" alt="Create Workspace from GitHub" width="250"/>
 
 2. When Prompted, populate the following screen
+   
     <img src="image/build-an-ai-assistant-for-fsi-with-aisql-and-snowflake-intelligence/1764717705866.png" alt="Git Repository URL" width="500"/>
+
     Use the following URL in the **Repository URL** field:
   
 ```text    
