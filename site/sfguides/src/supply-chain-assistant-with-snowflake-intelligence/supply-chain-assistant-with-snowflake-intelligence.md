@@ -77,7 +77,7 @@ This solution leverages Snowflake Intelligence and Cortex AI capabilities to cre
 
 <!-- ------------------------ -->
 
-## Snowflake Cortex and Intelligence Overview
+## Snowflake Cortex and Intelligence
 
 ### What is Snowflake Cortex?
 
@@ -120,7 +120,7 @@ Learn more about [Snowflake Intelligence](https://docs.snowflake.com/en/user-gui
 
 ## Setup Database and Load Data
 
-> aside positive
+
 > **Note:** All SQL scripts, semantic models, and PDF files referenced in this quickstart can be accessed by clicking the **Fork Repo** button at the top of this page. This will take you to the GitHub repository containing all necessary files for this tutorial.
 
 In this step, you'll create the complete supply chain database infrastructure with all necessary tables, stages, and sample data.
@@ -158,7 +158,7 @@ Here's the complete Entity Relationship Diagram (ERD) showing all tables and the
 
 <!-- ------------------------ -->
 
-## Upload Documents and Semantic Models
+## Upload Documents and Models
 
 Within the first step, all objects have been created in `SUPPLY_CHAIN_ASSISTANT_DB.ENTITIES` database/schema. Now you'll upload the necessary files to the internal stages.
 
@@ -265,7 +265,7 @@ The search service will begin indexing your parsed PDF content and will be ready
 
 <!-- ------------------------ -->
 
-## Build Your Snowflake Intelligence Agent
+## Build Snowflake Intelligence Agent
 
 Now that you have your semantic models and search service created, you can combine them into an intelligent agent using Snowflake Intelligence. The agent will intelligently route user questions to the appropriate tool based on the nature of the query.
 
@@ -423,7 +423,7 @@ We are building for three core user archetypes involved in supply chain operatio
 
 <!-- ------------------------ -->
 
-## Walking Through a Real-World Scenario
+## A Real-World Scenario
 
 **As Maria (The Operator)**, I want to ask, *"Where do I have critical low inventory levels?"* and instantly see the most critical plants, so I can immediately know where to focus.
 
@@ -441,7 +441,7 @@ Before finalizing the transfer, Maria asks, *"What type of weather events might 
 
 <!-- ------------------------ -->
 
-## Test Your Agent with Example Questions
+## Test Agent with Questions
 
 Now it's your turn to experience the Supply Chain Assistant! Follow Maria's journey by asking these questions in order, or explore on your own. Notice how the agent automatically determines which tool to use based on your question!
 
