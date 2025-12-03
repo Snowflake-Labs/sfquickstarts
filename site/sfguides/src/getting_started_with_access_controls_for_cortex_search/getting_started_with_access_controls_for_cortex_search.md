@@ -173,7 +173,7 @@ CREATE OR REPLACE TABLE EXTRACTED_TEXT_TABLE AS (
             AI_PARSE_DOCUMENT(docs, {'mode': 'OCR'}):content::VARCHAR AS EXTRACTED_TEXT,
             CASE
                 WHEN RELATIVE_PATH ILIKE '%ski%' THEN 'SKI'
-                WHEN RELATIVE_PATH ILIKE '%bike%' OR RELATIVE_PATH ILIKE '%bicycle%' THEN 'BICYCLES'
+                WHEN RELATIVE_PATH ILIKE '%bike%' OR RELATIVE_PATH ILIKE '%bicycle%' THEN 'BICYCLE'
                 ELSE 'Other'
             END AS product_department
             FROM documents_table
@@ -259,14 +259,10 @@ CREATE OR REPLACE STREAMLIT rag_access_control_app
 ALTER STREAMLIT rag_access_control_app ADD LIVE VERSION FROM LAST;
 ```
 
-# Test App as Owner
-Navigate to Projects > Streamlit in the left navigation menu. You should now see RAG_ACCESS_CONTROL_APP. Click to open the app.
+# Open App as Owner
+Navigate to Projects > Streamlit in the left navigation menu. You should now see RAG_ACCESS_CONTROL_APP. Click to open the app. Make sure you have assumed the role RAG_OWNER (you can check this by clicking over your initials in the bottom left of the screen) 
 
-You should now see the streamlit UI. Check it is working (as the Owner of the app) by typing in the question:
-
-"Tell me about the TD Ski Bootz"
-
-You should see a response generated based on the context it recieved from our unstructured documents.
+You should now see the streamlit UI. If you type a question, it will not respond with a helpful answer since the filters applied do not allow the owner role to see the underlying data via the app. Since the owner role owns the Cortex Search Service, it could however query the service directly outside of the app. If this were to be implemented, this role would not be granted to users that needed access controls applied to them. 
 
 # Share Streamlit App
 
@@ -275,6 +271,8 @@ We now want to test this functionality as different users with differnet permiss
 ![Grant Streamlit Access](assets/grant_streamlit_access.png)
 
 Select the 'Copy Link' button. Then Sign Out as the current user. You can find this button in the bottom left of the screen.
+
+Next sign out as the current user. You can find this by cliking your initials icon in the bottom left of the UI.
 
 # Test App as different users
 
@@ -286,7 +284,7 @@ First, lets see if we can see any information on bicycles. We should not, since 
 
 Ask "Tell me about the Mondracer bike"
 
-You should see that the app responded that it did not have any relevant information. Similarly the "Context Documents" in the left navigation menu should be empty.
+You should see that the app responded that it did not have any relevant information. Similarly the "Context Documents" in the left navigation menu (with Debug Mode on) should be empty.
 
 Now lets ask a question which should return results.
 
@@ -294,7 +292,19 @@ Ask "Tell me about the TD Ski Bootz"
 
 You should see a response and also relevant chunks being returned to answer the question.
 
-You can now test this for "bicycle_user" by logging out and logging back in.
+You can now test this for "bicycle_user" by logging out and logging back in as bicycle_user.
+
+When logged in as bicycle_user, ask:
+
+"Tell me about the Mondracer bike"
+
+You should see a response. 
+
+Next ask:
+
+"Tell me about the TD Ski Bootz".
+
+You should not see a response that references source documents.
 
 <!-- ------------------------ -->
 ## Understanding the Streamlit Code
@@ -307,6 +317,8 @@ Cortex Search Services runs with Owners rights by design. This is to ensure that
 In this app, we are following recommended best practice of using explicit filters on the client-side query to filter for access controls. These filters are based on user attributes that are obtained from the Authentication flow from logging in to Snowflake.
 
 Only the RLS_OWNER Role, which owns both the streamlit app and the Cortex Search Service, has the ability to use the Cortex Search Service, and modify any of the code within the streamlit app. Both the SKI and BICYCLE roles only have access to viwing and using the Streamlit app.
+
+
 
 
 
