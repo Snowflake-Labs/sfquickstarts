@@ -25,7 +25,7 @@ Ensuite, nous allons configurer le modèle de données de base de Tasty Bytes, 
 ### Conditions préalables
 - Un [navigateur](https://docs.snowflake.com/fr/user-guide/setup#browser-requirements) Snowflake pris en charge
 - Un compte Snowflake Enterprise ou Business Critical
-    - Si vous n’avez pas de compte Snowflake, [**créez un compte d’essai gratuit de 30 jours**](https://signup.snowflake.com/). Lors de votre inscription, assurez-vous de sélectionner l’édition **Enterprise**. Vous pouvez sélectionner [le cloud/la région Snowflake](https://docs.snowflake.com/fr/user-guide/intro-regions) de votre choix.
+    - Si vous n’avez pas de compte Snowflake, [**créez un compte d’essai gratuit de 30 jours**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Lors de votre inscription, assurez-vous de sélectionner l’édition **Enterprise**. Vous pouvez sélectionner [le cloud/la région Snowflake](https://docs.snowflake.com/fr/user-guide/intro-regions) de votre choix.
     - Une fois inscrit, vous recevrez un e-mail avec un lien d’activation et une URL pour accéder à votre compte Snowflake.
     - ![assets/choose_edition.png](assets/choose_edition.png)
     

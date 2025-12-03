@@ -26,7 +26,7 @@ For many organizations using MongoDB to store critical information such as their
 Given this need, we'll use Rivery's platform to rapidly build a data pipeline to continuously migrate data from MongoDB to Snowflake. The primary method demonstrated in this quickstart is using MongoDB Change Streams - the MongoDB capability that powers CDC for MongoDB. If you'd like to move MongoDB data to Snowflake using SQL-based extractions, that option is possible as well and will be pointed out where applicable.
 
 ### Prerequisites:
--   Access to a [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+-   Access to a [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 -   Access to a MongoDB database. You can either:
 	-   Use a [MongoDB trial](https://www.mongodb.com/docs/cloud-manager/tutorial/getting-started/)
 	-   Use your own MongoDB database

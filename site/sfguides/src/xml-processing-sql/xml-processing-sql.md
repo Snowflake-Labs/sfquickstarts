@@ -15,7 +15,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 This quickstart guides users from financial services through processing XML data using Snowflake's SQL XML functions, specifically focusing on XML validation, parsing, element retrieval, and generation. It uses a trial XML dataset from the Snowflake Marketplace, "CMBS Schedule AL - XML", to demonstrate these techniques through SQL commands and Snowflake Notebooks. Users learn to leverage SQL XML functions like [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml) to transform XML data for applications such as asset valuation, risk analysis, and regulatory reporting within the Snowflake environment.
 
 ### Prerequisites
-- Access to a [Snowflake Account](https://signup.snowflake.com)
+- Access to a [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Privileges necessary to create a user, database, and virtual warehouse in Snowflake
 - Intermediate knowledge of SQL
 - Access to create and run [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)

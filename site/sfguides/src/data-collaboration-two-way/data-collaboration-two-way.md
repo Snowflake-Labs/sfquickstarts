@@ -23,7 +23,7 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.10](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.10 in the **Consumer Account - Create Model** step
-- Snowflake accounts with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- Snowflake accounts with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Snowflake accounts with the Snowflake Marketplace T&C's accepted. This will allow you to create Listings.
 - A Snowflake account login with a role that has the ability to create Listings, Databases, Schemas, Tables, Stages, User-Defined Functions, and Stored Procedures. If not, you will need to register for free trials or use a different role.
 - The [Snowpark ML](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) package installed
@@ -36,7 +36,7 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 - How to automate the process using Streams and Tasks  
 
 ### What You’ll Need 
-- Two [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Accounts in the same cloud and region
+- Two [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Accounts in the same cloud and region
 - Complete the prerequisites above
 
 ### What You’ll Build 
@@ -87,7 +87,7 @@ Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dan
 <!-- ------------------------ -->
 ## Set up
 
-Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account.
+Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Follow the prompts to create a Snowflake Account.
 
 Repeat the process above. Be sure to select the same cloud and region as the first account your created. Although it is possible to share across clouds and regions, this guide will not cover this scenario.
 

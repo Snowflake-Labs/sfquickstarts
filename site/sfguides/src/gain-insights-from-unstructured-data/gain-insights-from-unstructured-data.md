@@ -58,7 +58,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 ### Creating Objects, Loading Data, and Joining Data
 1. Download the [setup.sql](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/setup.sql) file
-2. Open it in [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) in Snowflake
+2. Open it in <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=gain-insights-from-unstructured-data&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a> in Snowflake
 3. Paste the contents of setup.sql or upload and run the file
 4. The script will create:
    - create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view

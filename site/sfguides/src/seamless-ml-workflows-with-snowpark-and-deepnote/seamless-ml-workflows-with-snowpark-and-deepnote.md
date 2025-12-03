@@ -70,7 +70,7 @@ Join us in this guide where we develop a churn prediction model using Scikit-lea
 ### What You’ll Need
 
 - A free [Deepnote account](https://deepnote.com/sign-up?utm_source=ML_workflows_with_snowpark_&_deepnote&utm_medium=snowpark_quickstart).
-- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_) with admin access and [3rd party packages enabled](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with admin access and [3rd party packages enabled](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html).
 - The telecommunications parquet data file [here](https://drive.google.com/file/d/1ZIBz1hibyEv8DNBJj12vk52XRmCuK3q0/view?usp=share_link).
 
 <!-- ------------------------ -->

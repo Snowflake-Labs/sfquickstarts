@@ -19,7 +19,7 @@ Honeycomb Maps provides a no-code interface for creating interactive, shareable,
 In this quickstart guide, you will learn how to use Honeycomb Maps to create an interactive visualization of geospatial data. You will create a map showing pizza restaurants in New York City, add additional layers to visualize density, and create interactive components to filter the data.
 
 ### Prerequisites
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account.
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account.
 - Permissions to install apps from Snowflake Marketplace (An ACCOUNTADMIN role will work)
 - Access to Snowflake's US_REAL_ESTATE sample database (available for free from Snowflake Marketplace) or your own geospatial data
 - Basic familiarity with SQL queries

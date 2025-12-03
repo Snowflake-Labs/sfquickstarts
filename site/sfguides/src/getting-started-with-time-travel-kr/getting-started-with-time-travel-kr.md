@@ -33,7 +33,7 @@ Snowflake 웹 콘솔에서 시작하여 데이터 보존을 구성하고 과거 
 
 ### 필요한 것
 
-- [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) 계정
+- [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 계정
 
 ### 구축할 것
 
@@ -47,7 +47,7 @@ Snowflake 웹 콘솔에서 시작하여 데이터 보존을 구성하고 과거 
 
 ### Snowflake 계정 생성
 
-Snowflake는 무료로 Snowflake 서비스를 이용해 볼 수 있도록 [평가판 계정](https://signup.snowflake.com/?utm_cta=quickstarts_)을 제공합니다. **Standard** 계정은 Time Travel 데이터 보존이 1일 동안 가능하며 **Enterprise** 계정은 90일의 데이터 보존이 가능합니다. **Enterprise** 계정은 이 자습서에서 일부 명령을 연습하는 데 필요합니다.
+Snowflake는 무료로 Snowflake 서비스를 이용해 볼 수 있도록 [평가판 계정](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)을 제공합니다. **Standard** 계정은 Time Travel 데이터 보존이 1일 동안 가능하며 **Enterprise** 계정은 90일의 데이터 보존이 가능합니다. **Enterprise** 계정은 이 자습서에서 일부 명령을 연습하는 데 필요합니다.
 
 ### Snowflake의 웹 콘솔 액세스
 

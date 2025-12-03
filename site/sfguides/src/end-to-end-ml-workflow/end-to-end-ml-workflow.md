@@ -34,7 +34,7 @@ You'll build a complete mortgage lending prediction system that:
 5. Provides model explanations using SHAP values
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN access.  Sign up for a 30-day free trial account, if required.
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access.  Sign up for a 30-day free trial account, if required.
 - Basic understanding of Python and machine learning concepts
 
 <!-- ------------------------ -->

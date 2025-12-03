@@ -33,7 +33,7 @@ This guide applies to any business domain where structured data and conversation
 - How to use Amazon Q for Natural Language Q&A
 
 ### What You’ll Need 
-- A Snowflake Account. [Sign up for Snowflake Trial Account](https://signup.snowflake.com/)
+- A Snowflake Account. [Sign up for Snowflake Trial Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - AWS QuickSight Enterprise enabled
 - Kaggle Dataset
 - Python 3.x with pandas (optional)

@@ -32,7 +32,7 @@ Microsoft Fabric is a unified analytics platform that integrates various data se
 - Using Fabric Notebooks to explore data
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/get-started/fabric-trial)
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network
 

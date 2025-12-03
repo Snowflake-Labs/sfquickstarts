@@ -35,7 +35,7 @@ You'll build two complete applications that demonstrate external access patterns
 
 ### Prerequisites
 
-- [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN role
 - Python 3.11 or higher installed
 - Basic knowledge of SQL and Python
 

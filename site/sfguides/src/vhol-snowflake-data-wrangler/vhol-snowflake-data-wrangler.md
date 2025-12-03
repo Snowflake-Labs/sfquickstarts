@@ -41,7 +41,7 @@ From within SageMaker Studio we will then retrieve the data using Data Wrangler,
 
 To participate in the virtual hands-on lab, attendees need the following:
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_cta=quickstarts_) **ACCOUNTADMIN** access
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) **ACCOUNTADMIN** access
 - An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with **admin access**
 - In the AWS account [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html) in the **same region** as the Snowflake account
 - In the VPC [create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html) in a few AZs with an internet gateway to allow egress traffic to the internet by using a routing table and security group for outbound traffic

@@ -26,7 +26,7 @@ By the end of this guide, you'll have built a complete analytics pipeline that e
 A customer review analytics dashboard that processes unstructured text data and visualizes sentiment trends across products and time periods.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
 

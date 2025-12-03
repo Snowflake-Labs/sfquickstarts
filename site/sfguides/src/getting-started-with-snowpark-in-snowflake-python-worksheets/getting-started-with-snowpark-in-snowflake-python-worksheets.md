@@ -48,7 +48,7 @@ A prepared dataset that can be used in downstream analysis and applications. For
 
 ### Create a Snowflake Trial Account
 
-Sign up for a free, 30-day trial by following this [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (which will land you back into the trial setup page titled **Getting Started with Snowpark in Snowflake Python Worksheets**). We recommend the region closest to you. We recommend the most popular edition, Enterprise, but any edition will work for this lab.
+Sign up for a free, 30-day trial by following this [link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides) (which will land you back into the trial setup page titled **Getting Started with Snowpark in Snowflake Python Worksheets**). We recommend the region closest to you. We recommend the most popular edition, Enterprise, but any edition will work for this lab.
 
 ### Login and Setup Lab
 

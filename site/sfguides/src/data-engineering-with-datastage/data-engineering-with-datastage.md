@@ -19,7 +19,7 @@ IBM DataStage is a world-class data integration tool that helps users build trus
 
 ### Prerequisites
 - Access to an [IBM CP4DaaS account](https://dataplatform.cloud.ibm.com/registration/stepone?utm_medium=Exinfluencer&utm_source=Exinfluencer&utm_content=CPDWW&utm_term=30AE5&utm_id=PRODUCT1ENCTA1&context=cpdaas&apps=cos%2Cdatastage&regions=us-south%2Ceu-de&S_PKG=ov80049&cm_mmca1=10000665&cm_mmca2=000000TF) (or free trial)
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_) (or free trial)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (or free trial)
 
 ### What You'll Learn
 - How to start working with DataStage 

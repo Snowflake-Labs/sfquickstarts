@@ -58,7 +58,7 @@ An end to end Data Engineering pipeline which does the following:
 
 ### Prerequisites
 
-* Access to a [Snowflake account](https://signup.snowflake.com/)
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * Basic Python programming experience 
 * Access to external databases (MySQL) or ability to set up sample data. You can download the sample data used for this demo from here.
 * Basic understandig of Snowflake tasks.

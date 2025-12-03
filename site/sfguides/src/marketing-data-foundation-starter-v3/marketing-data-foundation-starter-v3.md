@@ -48,7 +48,7 @@ This demo consists of a native application that provides a framework to easily u
 - A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
 ### Prerequisites
-- Go to the [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
+- Go to the [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 - A Snowflake Role with access to create Compute Pools, create Warehouses and Databases.
 - A [GitHub](https://github.com/) Account.
 - [VSCode](https://code.visualstudio.com/download) Installed.

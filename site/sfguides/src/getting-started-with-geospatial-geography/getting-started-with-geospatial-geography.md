@@ -27,7 +27,7 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 ### What You’ll Need 
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
-- Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
   - OR, have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 - Access to the [geojson.io](https://geojson.io) or [WKT Playground](https://clydedacruz.github.io/openstreetmap-wkt-playground/) website
 

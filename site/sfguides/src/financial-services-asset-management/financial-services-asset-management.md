@@ -39,7 +39,7 @@ This is powered by four SQL Worksheets and a Python Function:
 
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/) (a free trial on Standard Edition will suffice)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (a free trial on Standard Edition will suffice)
 
 <!-- ------------------------ -->
 ## Setup

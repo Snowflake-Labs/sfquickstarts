@@ -60,7 +60,7 @@ Streamlit es un marco de aplicación de lenguaje Python puro [de código abierto
 - [Git](https://git-scm.com/book/es/v2/Inicio---Sobre-el-Control-de-Versiones-Instalaci%C3%B3n-de-Git) debe estar instalado.
 - [Python 3.9](https://www.python.org/downloads/) debe estar instalado.
   - Ten en cuenta que vas a crear un entorno Python con la versión 3.9 en el paso **Introducción**.
-- Debes disponer de una cuenta de Snowflake con [paquetes de Anaconda habilitados por ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si no tienes una, puedes registrarte para obtener una [cuenta de prueba gratuita](https://signup.snowflake.com/).
+- Debes disponer de una cuenta de Snowflake con [paquetes de Anaconda habilitados por ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si no tienes una, puedes registrarte para obtener una [cuenta de prueba gratuita](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Debes iniciar sesión en una cuenta de Snowflake con rol ACCOUNTADMIN. Si tienes este rol en tu entorno, selecciónalo para usarlo. En el caso contrario, deberás: 1) registrarte para obtener una prueba gratuita; 2) utilizar un rol diferente que permita crear bases de datos, esquemas, tablas, fases, tareas, funciones definidas por el usuario y procedimientos almacenados, o 3) utilizar una base de datos y un esquema existentes en los que puedas crear los objetos mencionados.
 
 > 

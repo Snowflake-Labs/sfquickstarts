@@ -26,7 +26,7 @@ By the end of this guide, you will learn to work with:
 
 > NOTE
 >
-> Please note that Openflow on SPCS is not available on Snowflake's free [trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
+> Please note that Openflow on SPCS is not available on Snowflake's free [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
 
 ### What is Snowflake Openflow?
 
@@ -65,7 +65,7 @@ A Snowflake account with Snowflake Openflow and Snowpark Container Services acce
 
 > NOTE
 >
-> Please note that Openflow on SPCS is not available on Snowflake's free [trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
+> Please note that Openflow on SPCS is not available on Snowflake's free [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
 
 <!------------------>
 

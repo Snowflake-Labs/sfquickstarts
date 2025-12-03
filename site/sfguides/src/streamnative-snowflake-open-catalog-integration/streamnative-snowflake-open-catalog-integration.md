@@ -30,7 +30,7 @@ StreamNative also supports ingesting data into Snowflake using **Snowpipe or Sno
 - A StreamNative account available at [streamnative.io](https://www.streamnative.io). Your account will come with $200 in free credits, sufficient for following this tutorial. No credit card is necessary.
 - AWS Account for deploying the StreamNative BYOC Ursa Cluster. BYOC clusters are deployed into your cloud provider. These resources will incur AWS charges that are not covered by StreamNative.
 - Permissions to create policies, roles, and s3 buckets in AWS, as well as apply the StreamNative Terraform [vendor access module](https://docs.streamnative.io/docs/byoc-aws-access).
-- Access to [Snowflake account](https://signup.snowflake.com/) and ability to create a Snowflake Open Catalog account.
+- Access to [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and ability to create a Snowflake Open Catalog account.
 - Environment for executing Terraform modules and Java code.
 
 Apache&reg;, Apache Iceberg&trade;, and Apache Kafka&reg; are either registered trademarks or trademarks of Apache Software Foundation in the United States and/or other countries.

@@ -25,7 +25,7 @@ Al termine di questo quickstart avrai implementato l’ambiente base necessario 
 ### Prerequisiti
 - Un [browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements) supportato da Snowflake
 - Un account Snowflake Enterprise o Business Critical
-    - Se non hai un account Snowflake, [**richiedi la tua prova gratuita di 30 giorni**](https://signup.snowflake.com/). Al momento della registrazione, assicurati di selezionare **Enterprise** Edition. Puoi scegliere qualsiasi [cloud o regione di Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - Se non hai un account Snowflake, [**richiedi la tua prova gratuita di 30 giorni**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Al momento della registrazione, assicurati di selezionare **Enterprise** Edition. Puoi scegliere qualsiasi [cloud o regione di Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
     - Al termine della registrazione, riceverai un’email con un link per l’attivazione e l’URL del tuo account Snowflake.
     - ![assets/choose_edition.png](assets/choose_edition.png)
     

@@ -48,7 +48,7 @@ Un conjunto de datos preparado que se podrá utilizar en aplicaciones y análisi
 
 ### Creación de una cuenta de prueba de Snowflake
 
-Haz clic en este [enlace](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (que te llevará a la página de configuración de la prueba **Introducción a Snowpark con las hojas de trabajo de Snowflake para Python**) y regístrate para obtener una prueba gratuita de 30 días. Te recomendamos que selecciones la región más cercana a ti y que utilices la edición más popular, Enterprise, aunque cualquier edición es compatible con este laboratorio.
+Haz clic en este [enlace](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides) (que te llevará a la página de configuración de la prueba **Introducción a Snowpark con las hojas de trabajo de Snowflake para Python**) y regístrate para obtener una prueba gratuita de 30 días. Te recomendamos que selecciones la región más cercana a ti y que utilices la edición más popular, Enterprise, aunque cualquier edición es compatible con este laboratorio.
 
 ### Inicio de sesión y configuración del laboratorio
 

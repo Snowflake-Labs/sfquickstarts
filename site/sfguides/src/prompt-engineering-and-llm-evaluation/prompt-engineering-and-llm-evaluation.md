@@ -73,7 +73,7 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 ### Prerequisites
 
-- A **Snowflake account** with ACCOUNTADMIN role access - [Sign-in or create a free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A **Snowflake account** with ACCOUNTADMIN role access - [Sign-in or create a free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - **Anaconda Terms & Conditions accepted**. See Getting Started section in [Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started).
 - **GitHub account** - If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 - A **OpenAI account** or API key to another language model - [Sign-in or create an account](https://openai.com/)
@@ -84,7 +84,7 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 ## Set up Snowflake
 
 
-Sign up for [Snowflake Free Trial](https://signup.snowflake.com/?utm_cta=quickstarts_) and create an account. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, streamlit app and more.
+Sign up for [Snowflake Free Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and create an account. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, streamlit app and more.
 
 > 
 > IMPORTANT:

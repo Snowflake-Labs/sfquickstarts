@@ -222,45 +222,45 @@ jobs:
             fi
           done
 
-  update-manifest:
-    needs: [publish, call-webhooks]
-    if: |
-      always() &&
-      needs.publish.outputs.has_relevant_changes == 'true' &&
-      needs.call-webhooks.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            site/sfguides/src/*/*.md
-            site/sfguides/src/_shared_assets
-            scripts/generate_manifest
-          sparse-checkout-cone-mode: false
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Generate manifest
-        run: |
-          echo "Running manifest generator..."
-          python scripts/generate_manifest/manifest\ generator.py
-          
-      - name: Commit and push manifest if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          if git diff --quiet site/sfguides/src/_shared_assets/quickstart-manifest.json; then
-            echo "No changes to manifest file"
-          else
-            echo "Manifest file has changes, committing..."
-            git add site/sfguides/src/_shared_assets/quickstart-manifest.json
-            git commit -m "chore: update quickstart manifest [skip ci]"
-            git push
-          fi
+# update-manifest:
+#   needs: [publish, call-webhooks]
+#   if: |
+#     always() &&
+#     needs.publish.outputs.has_relevant_changes == 'true' &&
+#     needs.call-webhooks.result == 'success'
+#   runs-on: ubuntu-latest
+#   permissions:
+#     contents: write
+#   steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v4
+#       with:
+#         sparse-checkout: |
+#           site/sfguides/src/*/*.md
+#           site/sfguides/src/_shared_assets
+#           scripts/generate_manifest
+#         sparse-checkout-cone-mode: false
+#
+#     - name: Set up Python
+#       uses: actions/setup-python@v5
+#       with:
+#         python-version: '3.x'
+#
+#     - name: Generate manifest
+#       run: |
+#         echo "Running manifest generator..."
+#         python scripts/generate_manifest/manifest\ generator.py
+#         
+#     - name: Commit and push manifest if changed
+#       run: |
+#         git config user.name "github-actions[bot]"
+#         git config user.email "github-actions[bot]@users.noreply.github.com"
+#         
+#         if git diff --quiet site/sfguides/src/_shared_assets/quickstart-manifest.json; then
+#           echo "No changes to manifest file"
+#         else
+#           echo "Manifest file has changes, committing..."
+#           git add site/sfguides/src/_shared_assets/quickstart-manifest.json
+#           git commit -m "chore: update quickstart manifest [skip ci]"
+#           git push
+#         fi

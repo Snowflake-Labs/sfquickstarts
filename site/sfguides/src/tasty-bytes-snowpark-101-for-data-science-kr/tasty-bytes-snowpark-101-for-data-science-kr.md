@@ -35,7 +35,7 @@ Streamlit*(2022년 3월에 Snowflake에서 인수)*은 사용자 정의 웹 앱�
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 설치
 - [Anaconda](https://www.anaconda.com/) 설치
-- Snowflake 계정([ORGADMIN이 활성화한 Anaconda 패키지](https://docs.snowflake.com/ko/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) 포함) Snowflake 계정이 없다면 [무료 평가판 계정](https://signup.snowflake.com/?utm_cta=quickstarts_)을 위해 등록할 수 있습니다.
+- Snowflake 계정([ORGADMIN이 활성화한 Anaconda 패키지](https://docs.snowflake.com/ko/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) 포함) Snowflake 계정이 없다면 [무료 평가판 계정](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)을 위해 등록할 수 있습니다.
 - Snowflake 계정 로그인(ACCOUNTADMIN 역할 포함) 계정이 없다면 무료 평가판을 위해 등록하거나 데이터베이스, 스키마, 테이블, 스테이지, 사용자 정의 함수 및 저장 프로시저를 생성할 수 있는 다른 역할을 사용해야 합니다.
 
 ### 구축할 것

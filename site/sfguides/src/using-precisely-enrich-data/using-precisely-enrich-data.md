@@ -48,7 +48,7 @@ In this quickstart, we will use Snowflake’s tools to:
 ### Prerequisites
 
 - Download the Notebook and Streamlit code from our git repo [here](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit)
-- [Signup](https://signup.snowflake.com/) for free trial of Snowflake in `a region of your choice`.
+- [Signup](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) for free trial of Snowflake in `a region of your choice`.
 
 ![alt text](assets/I001.png)
 

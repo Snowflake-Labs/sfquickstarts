@@ -130,13 +130,13 @@ cd sfguide-getting-started-openflow-unstructured-data-pipeline
 
 For executing SQL scripts directly in Snowsight, you can import this repository into [Snowflake Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git):
 
-1. Sign in to Snowsight and navigate to [**Projects** → **Workspaces**](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)
+1. Sign in to Snowsight and navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-openflow-unstructured-data-pipeline&utm_cta=developer-guides-deeplink" class="_deeplink">**Projects** → **Workspaces**</a>
 2. Select **From Git repository**
 3. Paste the repository URL: `https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline`
 4. Configure your API integration and credentials
 5. Execute SQL scripts directly in Snowsight without leaving your browser
 
-> **IMPORTANT:** You still need to **clone or download the repository locally** to access the `sample-data/google-drive-docs/` files for uploading to Google Drive. The Git integration in [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) provides access to SQL scripts but not binary document files (PDF, DOCX, PPTX, JPG) needed for the demo.
+> **IMPORTANT:** You still need to **clone or download the repository locally** to access the `sample-data/google-drive-docs/` files for uploading to Google Drive. The Git integration in <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-openflow-unstructured-data-pipeline&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a> provides access to SQL scripts but not binary document files (PDF, DOCX, PPTX, JPG) needed for the demo.
 
 Learn more about [integrating Workspaces with Git](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git).
 
@@ -150,7 +150,7 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-Open [Snowflake Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) and run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html), and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role.html).
+Open <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-openflow-unstructured-data-pipeline&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Workspaces</a> and run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html), and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role.html).
 
 ```sql
 -- Create role and warehouse
@@ -975,7 +975,7 @@ GRANT CREATE AGENT ON SCHEMA snowflake_intelligence.agents TO ROLE FESTIVAL_DEMO
 
 1. Sign in to Snowsight
 2. **Switch to `FESTIVAL_DEMO_ROLE`** using the role selector in the top-right corner
-3. Navigate directly to Agents: [Create Snowflake Intelligence Agent](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents)
+3. Navigate directly to Agents: <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents&utm_cta=developer-guides-deeplink" class="_deeplink">Create Snowflake Intelligence Agent</a>
 4. Select **"Create agent"**
 
 ![Agent Creation Interface](assets/si_agent_create.png)
@@ -1091,7 +1091,7 @@ Focus on actionable insights and business value in your responses.
 
 #### Getting Started with Queries
 
-1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/sfdevrel/sfdevrel_enterprise/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-snowflake-intelligence-chat)
+1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/sfdevrel/sfdevrel_enterprise/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-snowflake-intelligence-chat)
 2. Select your agent `FESTIVAL_DOC_INTELLIGENCE` from the dropdown
 
    ![Choose Agent](assets/si_chat_choose_agent.png)

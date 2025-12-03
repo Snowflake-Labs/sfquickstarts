@@ -30,7 +30,7 @@ Let's get started!
 
 ### What You’ll Need 
 
-- A Snowflake account ([trial](https://signup.snowflake.com/developers), or otherwise)
+- A Snowflake account ([trial](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), or otherwise)
 - A code editor
 - A terminal
 - git
@@ -69,7 +69,7 @@ If you don't see the success message, you can troubleshoot errors using Django's
 <!-- ------------------------ -->
 ## Create a database in Snowflake
 
-Let's create a database in Snowflake that we can connect to the Django app. If you don't already have a Snowflake account, now's a good time to create one by registering for a [free 30-day trial](https://signup.snowflake.com/developers).
+Let's create a database in Snowflake that we can connect to the Django app. If you don't already have a Snowflake account, now's a good time to create one by registering for a [free 30-day trial](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 In Snowflake, navigate to the "Databases" subsection within the "Data" section of the sidebar. At the top right, click the button to create a new database. Name the database "DJANGO_DB".  We'll connect this database to the Django application in a later step.
 

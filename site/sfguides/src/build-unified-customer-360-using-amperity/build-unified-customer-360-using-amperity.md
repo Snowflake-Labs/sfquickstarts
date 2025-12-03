@@ -27,7 +27,7 @@ In this quickstart we will walk through the basic steps to turn raw data into a 
 
 ### Prerequisites
 
-- Access to a Snowflake account with the ability to set up secure data sharing. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- Access to a Snowflake account with the ability to set up secure data sharing. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Access to an Amperity account
 - Basic experience with Snowflake
 

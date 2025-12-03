@@ -33,7 +33,7 @@ Matillion is the data pipeline platform that brings push-down ELT and AI to Snow
 - A web browser
 - An email address
 - Access to a [Matillion account](https://hub.matillion.com/) (or free trial, set up in the next step of this lab)
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_) (or free trial, automatically created when you sign up for a free Matillion trial)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (or free trial, automatically created when you sign up for a free Matillion trial)
 
 <!-- ------------------------ -->
 ## Create your Matillion and Snowflake accounts

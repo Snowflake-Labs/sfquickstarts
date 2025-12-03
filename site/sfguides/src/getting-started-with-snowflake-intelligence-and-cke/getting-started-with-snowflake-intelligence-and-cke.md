@@ -44,7 +44,7 @@ Ask complex questions of all your data, analyze and get insights instantly with 
 Download the [Git repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence-and-cke). This is how you get the necessary source code and data to complete this quickstart.
 
 
-* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=guide&utm_medium=gettingstartedwithsi) with the ACCOUNTADMIN role.
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with the ACCOUNTADMIN role.
 
 ### What You Will Learn
 
@@ -81,7 +81,7 @@ An agent is an intelligent entity within Snowflake Intelligence that acts on beh
 
 Note that you can create multiple agents for various use cases and/or business teams in your organization. 
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si-and-cke)
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si-and-cke&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Agents**</a>
 * On the top right, click on **Create agent**
      - Select **Create this agent for Snowflake Intelligence**
      - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
@@ -143,7 +143,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Your Agent is now deployed and connected to the external documentation! Open [Snowflake Intelligence](https://ai.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si-and-cke) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN** and your agent should be set to Snowflake_Documentation. 
+Your Agent is now deployed and connected to the external documentation! Open <a href="https://ai.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si-and-cke&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Intelligence</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN** and your agent should be set to Snowflake_Documentation. 
 
 Now, let's ask the following questions.
 

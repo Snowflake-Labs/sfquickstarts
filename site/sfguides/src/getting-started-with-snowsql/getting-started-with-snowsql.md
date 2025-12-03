@@ -41,7 +41,7 @@ First, you’ll get a Snowflake account and get comfortable navigating in the we
 
 ### Create a Snowflake Account
 
-Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 ### Access Snowflake’s Web Console
 

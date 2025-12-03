@@ -22,7 +22,7 @@ Please Contact MediaWallah if additional time or trial runs are needed.
 Enrichment results are returned in four tables.
 
 ### Prerequisites
-* [Snowflake Account](https://signup.snowflake.com/)
+* [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * The provider must accept the Snowflake Marketplace Provider Terms of Service.
 * The consumer must accept the Snowflake Marketplace Consumer Terms of Service.
 * The consumer must be able to operate ACCOUNTADMIN, SECURITYADMIN roles.

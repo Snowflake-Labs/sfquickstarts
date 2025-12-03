@@ -55,7 +55,7 @@ By completing this guide you will create predictive models and features using Ru
 - [Python 3.10](https://www.python.org/downloads/) installed
 - A RudderStack account, if you do not have an account you can crate a [free account](https://app.rudderstack.com/signup?type=freetrial)
 - Predictions access. Once you set up your RudderStack account, [reach out to our support team](mailto:support@rudderstack.com?subject=I%20would%20like%20access%20to%20your%20Predictions%20feature) to request access to our Predictions feature.
-- A Snowflake account, if you do not have an account you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A Snowflake account, if you do not have an account you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 <!-- ------------------------ -->

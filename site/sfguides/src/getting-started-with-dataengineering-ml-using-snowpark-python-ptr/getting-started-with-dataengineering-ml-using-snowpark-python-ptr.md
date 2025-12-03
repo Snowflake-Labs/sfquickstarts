@@ -60,7 +60,7 @@ Este quickstart é voltado para a API Snowpark ML Modeling, que expande a engenh
 - Ter o [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) instalado.
 - Ter o [Python 3.9](https://www.python.org/downloads/) instalado.
   - Você vai criar um ambiente Python com a versão 3.9 na etapa **Introdução**.
-- Uma conta Snowflake com [pacotes Anaconda habilitados pelo ORGADMIN](https://docs.snowflake.com/pt/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). Caso você não possua uma conta Snowflake, inscreva-se em uma [conta de avaliação gratuita](https://signup.snowflake.com/?lang=pt-br).
+- Uma conta Snowflake com [pacotes Anaconda habilitados pelo ORGADMIN](https://docs.snowflake.com/pt/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). Caso você não possua uma conta Snowflake, inscreva-se em uma [conta de avaliação gratuita](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lang=pt-br&utm_cta=developer-guides).
 - Um login da conta Snowflake com a função ACCOUNTADMIN. Se você tiver essa função no seu ambiente, pode optar por usá-la. Caso contrário, será necessário: 
 1) Inscrever-se em uma avaliação gratuita; 
 2) Usar uma função diferente capaz de criar banco de dados, esquema, tabelas, estágios, tarefas, funções definidas pelo usuário e procedimentos armazenados; OU 

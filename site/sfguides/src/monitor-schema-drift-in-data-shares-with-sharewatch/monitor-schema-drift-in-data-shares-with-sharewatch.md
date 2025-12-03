@@ -31,7 +31,7 @@ Share Watch has 2 sections
 2) Monitoring section - Shows the status of schema drift on databases mounted from shares based on the monitors set up in the Configuration section.
 
 ### Prerequisites
-- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) [Register for a free trial](https://signup.snowflake.com/), 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, streamlit, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) [Register for a free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, streamlit, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 - One or more data shares set up from Marketplace or Private Listings ([here's a guide for setting up shares](https://www.youtube.com/watch?v=4ksdOBT1HCw))
 - An email address to which schema drift notifications will be sent.
 - Github access to download [install scripts](https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/tree/main)

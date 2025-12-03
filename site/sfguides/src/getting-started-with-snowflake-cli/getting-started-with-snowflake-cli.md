@@ -20,7 +20,7 @@ Snowflake CLI is a command-line interface designed for developers building apps 
 - [Video: Introduction to Snowflake](https://www.youtube.com/watch?v=gGPKYGN0VQM)
 - [Video: Snowflake Data Loading Basics](https://youtu.be/htLsbrJDUqk?si=vfTjL6JaCdEFdiSG)
 - Basic knowledge of Snowflake concepts
-- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 ### What You’ll Learn
 - How to install Snowflake CLI
@@ -39,7 +39,7 @@ First, you’ll install the Snowflake CLI, and later you'll configure it to conn
 
 ### Create a Snowflake Account
 
-You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
+You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 ### Access Snowflake’s Web Interface
 
