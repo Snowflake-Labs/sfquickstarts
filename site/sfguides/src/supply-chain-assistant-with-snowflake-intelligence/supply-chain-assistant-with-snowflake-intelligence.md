@@ -1,16 +1,17 @@
-author: Reid Lewis, Cameron Shimmin
+authors: Reid Lewis, Cameron Shimmin
 id: supply-chain-assistant-with-snowflake-intelligence
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search
 language: en
 summary: Build an intelligent supply chain assistant using Snowflake Intelligence and Cortex AI capabilities to help operations managers make data-driven inventory management decisions.
-environments: web
 status: Published
+environments: web
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-supply-chain-assistant-with-snowflake-intelligence
 
+
 # Supply Chain Assistant for Inventory Optimization with Snowflake Intelligence
 
-<!-- ------------------------ -->
+
 
 ## Overview
 
