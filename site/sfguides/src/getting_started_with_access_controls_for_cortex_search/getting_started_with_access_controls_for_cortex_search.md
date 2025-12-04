@@ -173,7 +173,7 @@ The functions below simplify the process of creating a RAG into only a few steps
 - Cortex AI Functions (AI_PARSE_DOCUMENT):
 - SPLIT_TEXT_RECURSIVE_CHARACTER:
 
-Note that we are adding an attribute column that we will filter on later to make sure that users only see the correct documents.
+Note that we are adding an attribute column that we will filter on later to make sure that users only see the correct documents. We are using the file names, but you could also use [AI_CLASSIFY](https://docs.snowflake.com/en/sql-reference/functions/ai_classify) as part of your pipeline.
 
 Run the following SQL in a SQL worksheet
 
