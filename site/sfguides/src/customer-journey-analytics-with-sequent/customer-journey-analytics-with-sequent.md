@@ -1,15 +1,18 @@
-author: Luke Ambrosetti, Yannis Marigo, Dureti Shemsi
+author: Yannis Marigo, Luke Ambrosetti, Dureti Shemsi
 id: customer-journey-analytics-with-sequent
 language: en
 summary: Build a comprehensive customer journey analytics platform within Snowflake that combines path analysis, multi-touch attribution, behavioral segmentation, and predictive modeling to transform complex event sequences into actionable insights.
-categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/industry/travel-and-hospitality, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/solution-center/certification/certified-solution
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/industry/travel-and-hospitality, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent
-tags: Getting Started, AI, Machine Learning, Data Science, Snowpark, Streamlit, Customer Analytics, Marketing, Attribution, Behavioral Analytics
+
+
 
 # Customer Journey Analytics with Sequent™
+
+![Sequent](assets/Sequent.png)
 
 ## Overview
 
@@ -91,18 +94,18 @@ This solution serves as a comprehensive foundation for customer analytics across
 
 **AI-Augmented Insights**: Snowflake Cortex LLM integration transforms complex analytical outputs into natural language explanations, strategic recommendations, and actionable next steps.
 
-## Resources
-
-- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent) — Source code, setup scripts, and documentation
-- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) — Learn about AI/ML capabilities in Snowflake
-- [Snowpark ML Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview) — Build and deploy ML models natively
-- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) — Create interactive data applications
 
 ## Get Started
 
 Ready to transform your customer analytics? Deploy this solution in minutes:
 
-1. **[Clone the Repository](https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent)** — Get the complete source code and setup scripts
+1. **[Github Repository](https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent)** — Get the complete source code and setup scripts
 2. **Run `setup.sql`** — Creates the database, sample datasets, and stored procedures
 3. **Run `deploy_streamlit.sql`** — Deploys the Sequent application to your Snowflake account
 4. **Start Exploring** — Open Sequent from Snowsight and start analyzing customer journeys
+
+## Resources
+
+- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) — Learn about AI/ML capabilities in Snowflake
+- [Snowpark ML Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview) — Build and deploy ML models natively
+- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) — Create interactive data applications
