@@ -1,11 +1,12 @@
 author: Marie Coolsaet
-id: hpo_with_experiment_tracking
+id: hpo-with-experiment-tracking
 summary: Learn how to combine distributed hyperparameter optimization with experiment tracking in Snowflake to build scalable, reproducible ML workflows.
-categories: data-science, Getting-Started
+categories: snowflake-site:taxonomy/snowflake-feature/ai-ml,snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions,snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Machine Learning, Hyperparameter Optimization, Experiment Tracking, XGBoost, SPCS
+language: en
 
 # Distributed Hyperparameter Optimization with Experiment Tracking in Snowflake
 <!-- ------------------------ -->
@@ -45,7 +46,7 @@ Together, these tools let you move from one-off experiments to scalable, reprodu
 - An XGBoost classification model optimized for wine quality prediction
 - A tracked experiment with logged parameters, metrics, and models
 
-<button>[Download Notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/hpo_with_experiment_tracking/assets/hpo_example.ipynb)</button>
+<button>[Download Notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/hpo-with-experiment-tracking/assets/hpo_example.ipynb)</button>
 
 <!-- ------------------------ -->
 ## Setup and Data Loading
