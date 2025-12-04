@@ -10,6 +10,8 @@ fork repo link: https://github.com/Snowflake-Labs/-getting-started-with-predicti
 
 # AI-Powered Predictive Maintenance on Snowflake
 
+## Overview
+
 Manufacturing leaders, from plant strategists to reliability analysts, are finding that expensive predictive maintenance initiatives often fail to deliver ROI because they lack operational context. When financial risk data, OEE metrics, and real-time sensor telemetry exist in silos, teams are forced into a cycle of reactive "firefighting" rather than proactive optimization. This operational blindness leads to high rates of false positives, wasted maintenance budgets, and an inability to accurately predict the remaining useful life of critical assets.
 
 The Snowflake predictive maintenance solution addresses this by moving beyond simple prediction-first models to build a robust, enterprise-grade data foundation using Snowflake's Medallion Architecture along with powerful AI. By centralizing data from assets across multiple facilities, organizations can unify real-time monitoring with financial analysis. This intelligence is delivered through a deployed Streamlit application, serving as a real-time command center for fleet operations, alert triage, and executive insights. Furthermore, by leveraging Snowflake Intelligence, teams can interact with a custom AI agent to uncover root causes and predict failures through natural language, transforming maintenance from a cost center into a strategic advantage that maximizes uptime.
