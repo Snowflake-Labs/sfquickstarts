@@ -8,7 +8,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: AI, Conversational Assistants, Cortex Search
 
-# Getting Started with access controls for RAGs (Cortex Search)
+# Getting Started with Access Controls for RAGs (Cortex Search)
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -31,7 +31,7 @@ In this guide, you will build a secure RAG pipeline (using Cortex Search) that e
 - Ability to create new users and roles in Snowflake
 
 ### What You’ll Build 
-- A RAG chatbot in in Streamlit in Snowflake (SiS) with access controls, powered by Cortex Search.
+- A RAG chatbot built with Streamlit in Snowflake (SiS) with access controls, powered by Cortex Search.
 
 <!-- ------------------------ -->
 ## Use Case 
@@ -41,7 +41,7 @@ In this guide, we are going to play the role of a chain of sporting goods stores
 
 Most importantly, we only want the Ski department to query information on source documents that are related to ski equipment. Similarly we want the Bicycle department to only query information from the PDF documents related to bicycles.
 
-To do this, we are going to create a RAG pipeline utilising Snowflake features (including [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)), and utilize Streamlit in Snowflake (SiS) running on Snowpark Container Services (SPCS) to expose this functionality to users from both the Ski and Bicycle department.
+To do this, we are going to create a RAG pipeline utilizing Snowflake features (including [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)), and utilize Streamlit in Snowflake (SiS) running on Snowpark Container Services (SPCS) to expose this functionality to users from both the Ski and Bicycle department.
 
 <!-- ------------------------ -->
 ## Setup
@@ -150,23 +150,19 @@ CREATE OR REPLACE STAGE SOURCE_DOCUMENTS DIRECTORY = (ENABLE = TRUE) ENCRYPTION 
 ### Upload Documents
 Duration: 5
 
-Upload the documents in the unzipped Documents.zip folder [here](assets/Documents.zip) to the SOURCE_DOCUMENTS stage we just created. You can do this through the Snowsight UI. The instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) or below.
+Upload the documents in the unzipped Documents.zip folder [here](assets/Documents.zip) to the SOURCE_DOCUMENTS stage we just created. You can do this through the Snowsight UI. The instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) 
 
-In the navigation menu, select Ingestion » Add Data.
+Be sure to select the RAG_DB database, the RAG_SCHEMA schema and the SOURCE_DOCUMENTS stage. These source documents are the PDFs on both the Bicycle and Ski equipment products in one directory. See the screenshot below
 
-On the Add Data page, select Load files into a Stage.
-![Load File Menu](assets/load_file_menu.png)
-
-Then upload the files from Documents folder in the cloned repository from the previous step. Be sure to select the RAG_DB database, the RAG_SCHEMA schema and the SOURCE_DOCUMENTS stage.
-![Upload Modal](assets/upload_modal.png)
-
-These source documents are the PDFs on both the Bicycle and Ski equipment products in one directory.
+![Upload Files](assets/load_file_menu.png)
 
 Once you have uploaded them, run the following SQL from your SQL Worksheet to check if the files have been uploaded successfully.
 
 ```SQL
 LS @SOURCE_DOCUMENTS;
 ```
+
+You should see the 4 files loaded in the stage.
 
 ## Prepare Data for RAG
 Duration: 20
@@ -177,7 +173,7 @@ The functions below simplify the process of creating a RAG into only a few steps
 - Cortex AI Functions (AI_PARSE_DOCUMENT):
 - SPLIT_TEXT_RECURSIVE_CHARACTER:
 
-Note that we are adding an attribute column that we will dynamically filter on.
+Note that we are adding an attribute column that we will filter on later to make sure that users only see the correct documents.
 
 Run the following SQL in a SQL worksheet
 
@@ -217,10 +213,10 @@ CREATE OR REPLACE TABLE CHUNKED_TABLE AS (
         ) c
     );
 
+-- Test chunked table
 SELECT * FROM CHUNKED_TABLE;
 
---- Create Cortex Search Service
-
+-- Create Cortex Search Service
 CREATE OR REPLACE CORTEX SEARCH SERVICE rag_cortex_search_service
   ON chunk
   ATTRIBUTES product_department
@@ -266,7 +262,9 @@ Duration: 10
 
 The next step is to create a UI that can use these objects and present them to our business users in a safe and secure way. We are going to use Streamlit in Snowflake on a Container Runtime to make this simple. Since this is an internal application, we can leverage Snowflake's authentication and authorization mechanisms to ensure the app is "aware" of who is trying to access the data, and only return information from the documents they have access to.
 
-Upload the streamlit python file and corresponding assets by downloading and unzipping the [streamlit_assets.zip](assets/streamlit_assets.zip) and uploading to the STREAMLIT_UI stage. Follow similar steps to how you uploaded the source documents. The instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage). Be sure to select the RAG_DB database, the RAG_SCHEMA schema and the STREAMLIT_UI stage.
+Upload the streamlit python file and corresponding assets by downloading and unzipping the [streamlit_assets.zip](assets/streamlit_assets.zip) and uploading to the STREAMLIT_UI stage. Follow similar steps to how you uploaded the source documents. The instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage). Be sure to select the RAG_DB database, the RAG_SCHEMA schema and the STREAMLIT_UI stage. See the screenshot below:
+
+![Upload Streamlit Files](assets/upload_streamlit_files.png)
 
 Next, run the following SQL to create the Streamlit app.
 
@@ -287,7 +285,13 @@ Duration: 5
 
 Navigate to Projects > Streamlit in the left navigation menu. You should now see RAG_ACCESS_CONTROL_APP. Click to open the app. Make sure you have assumed the role RAG_OWNER (you can check this by clicking over your initials in the bottom left of the screen).
 
-You should now see the streamlit UI. If you type a question, it will not respond with a helpful answer since the filters applied do not allow the owner role to see the underlying data via the app. Since the owner role owns the Cortex Search Service, it could however query the service directly outside of the app. If this were to be implemented, this role would not be granted to users that needed access controls applied to them. 
+You should now see the streamlit UI. See screenshot below:
+
+![Streamlit Home Page](assets/streamlit_home_page.png)
+
+If you type a question, it will not respond with a helpful answer since the filters applied do not allow the owner role to see the underlying data via the app. Since the owner role owns the Cortex Search Service, it could however query the service directly outside of the app. If this were to be implemented, this role would not be granted to users that needed access controls applied to them.
+
+![No Documents](assets/no_documents.png)
 
 ## Share Streamlit App
 Duration: 5
@@ -313,11 +317,15 @@ Ask "Tell me about the Mondracer bike"
 
 You should see that the app responded that it did not have any relevant information. Similarly the "Context Documents" in the left navigation menu (with Debug Mode on) should be empty.
 
+![No Documents with Debug](assets/no_documents_2.png)
+
 Now lets ask a question which should return results.
 
 Ask "Tell me about the TD Ski Bootz"
 
 You should see a response and also relevant chunks being returned to answer the question.
+
+![Ski Response](assets/ski_response.png)
 
 You can now test this for "bicycle_user" by logging out and logging back in as bicycle_user.
 
@@ -327,11 +335,15 @@ When logged in as bicycle_user, ask:
 
 You should see a response. 
 
+![Bicycle Response](assets/bicycle_response.png)
+
 Next ask:
 
 "Tell me about the TD Ski Bootz".
 
 You should not see a response that references source documents.
+
+![Bicycle No Response](assets/bicycle_no_response.png)
 
 <!-- ------------------------ -->
 ## Understanding the Streamlit Code
@@ -339,9 +351,9 @@ Duration: 10
 
 The Streamlit code contains the logic that allows us to safely use the Cortex Search Service and return only the relevant information to the authenticated user.
 
-Cortex Search Services runs with Owner's rights by design. This is to ensure that it runs with the same security model as other Snowflake objects that run with owner's rights and keeps the service performant for real world use cases. More information on this model can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#querying-with-owner-s-rights).
+Cortex Search Services runs with Owner's Rights by design. This is to ensure that it runs with the same security model as other Snowflake objects that run with Owner's Rights and keeps the service performant for real world use cases. More information on this model can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#querying-with-owner-s-rights).
 
-In this app, we are following recommended best practice of using explicit filters on the client-side query to filter for access controls. These filters are based on user attributes that are obtained from the Authentication flow from logging in to Snowflake.
+In this app, we are following recommended best practice of using explicit filters on the client-side query to filter for access controls. These filters are based on user attributes that are obtained from the authentication flow from logging in to Snowflake.
 
 Only the RAG_OWNER Role, which owns both the streamlit app and the Cortex Search Service, has the ability to use the Cortex Search Service, and modify any of the code within the streamlit app. Both the SKI and BICYCLE roles only have access to viewing and using the Streamlit app.
 
@@ -397,7 +409,7 @@ This same design could be utilized for application architectures other than stre
 ## Clean Up
 Duration: 5
 
-Run the following SQL to clean up.
+Log in as the RLS Owner user, and run the following SQL to clean up.
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
@@ -421,7 +433,7 @@ Duration: 5
 
 Congratulations! You have successfully built and deployed a secure, permissions-aware Retrieval-Augmented Generation (RAG) application entirely within Snowflake.
 
-By combining **Cortex Search** with **Streamlit in Snowflake (on Container Runtime)**, you demonstrated how to move beyond generic chatbots to enterprise-ready solutions that respect existing data governance policies. You utilized Snowflake's native Role-Based Access Control (RBAC) to dynamically filter search results, ensuring that users (like our Ski and Bicycle representatives) only interact with data they are authorized to see.
+By combining **Cortex Search** with **Streamlit in Snowflake (on Container Runtime)**, you demonstrated how to move beyond generic chatbots to enterprise-ready solutions that respect existing data governance policies. You utilized Snowflake's native access control (RBAC) to dynamically filter search results, ensuring that users (like our Ski and Bicycle representatives) only interact with data they are authorized to see.
 
 ### What You Learned
 - **Data Preparation for RAG:** How to use `AI_PARSE_DOCUMENT` to extract text from unstructured files (PDFs) and `SPLIT_TEXT_RECURSIVE_CHARACTER` to chunk data for indexing.
