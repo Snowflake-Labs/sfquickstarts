@@ -148,6 +148,7 @@ CREATE OR REPLACE STAGE SOURCE_DOCUMENTS DIRECTORY = (ENABLE = TRUE) ENCRYPTION 
 ```
 
 ### Upload Documents
+Duration: 5
 
 Upload the documents in the unzipped Documents.zip folder [here](assets/Documents.zip) to the SOURCE_DOCUMENTS stage we just created. You can do this through the Snowsight UI. The instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) or below.
 
@@ -167,7 +168,8 @@ Once you have uploaded them, run the following SQL from your SQL Worksheet to ch
 LS @SOURCE_DOCUMENTS;
 ```
 
-# Prepare Data for RAG
+## Prepare Data for RAG
+Duration: 20
 
 In this section, we use Snowflake's helper functions to prepare the unstructured documents and set up the Cortex Search Service. 
 
@@ -187,6 +189,7 @@ CREATE OR REPLACE TABLE documents_table AS
     RELATIVE_PATH as RELATIVE_PATH
     FROM DIRECTORY(@source_documents));
 
+-- Use Cortex AI function to parse PDF. Create identifier column so we can filter based on user attribute
 CREATE OR REPLACE TABLE EXTRACTED_TEXT_TABLE AS (
     SELECT  RELATIVE_PATH, 
             AI_PARSE_DOCUMENT(docs, {'mode': 'OCR'}):content::VARCHAR AS EXTRACTED_TEXT,
@@ -198,7 +201,7 @@ CREATE OR REPLACE TABLE EXTRACTED_TEXT_TABLE AS (
             FROM documents_table
             );
 
-
+-- Chunk parsed document for RAG
 CREATE OR REPLACE TABLE CHUNKED_TABLE AS (
         SELECT
             e.*,
@@ -258,7 +261,8 @@ SELECT PARSE_JSON(
 )['results'] as results;
 ```
 
-# Prepare Streamlit App
+## Prepare Streamlit App
+Duration: 10
 
 The next step is to create a UI that can use these objects and present them to our business users in a safe and secure way. We are going to use Streamlit in Snowflake on a Container Runtime to make this simple. Since this is an internal application, we can leverage Snowflake's authentication and authorization mechanisms to ensure the app is "aware" of who is trying to access the data, and only return information from the documents they have access to.
 
@@ -268,22 +272,25 @@ Next, run the following SQL to create the Streamlit app.
 
 ```SQL
 CREATE OR REPLACE STREAMLIT rag_access_control_app
- FROM '@rag_db.rag_schema.streamlit_ui/'
- MAIN_FILE = 'rag_access_control_streamlit_ui.py'
- RUNTIME_NAME = 'SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'
- COMPUTE_POOL = RAG_STREAMLIT
- QUERY_WAREHOUSE = RAG_WH
- EXTERNAL_ACCESS_INTEGRATIONS = (pypi_access_integration);
+  FROM '@rag_db.rag_schema.streamlit_ui/'
+  MAIN_FILE = 'rag_access_control_streamlit_ui.py'
+  RUNTIME_NAME = 'SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'
+  COMPUTE_POOL = RAG_STREAMLIT
+  QUERY_WAREHOUSE = RAG_WH
+  EXTERNAL_ACCESS_INTEGRATIONS = (pypi_access_integration);
 
 ALTER STREAMLIT rag_access_control_app ADD LIVE VERSION FROM LAST;
 ```
 
-# Open App as Owner
+## Open App as Owner
+Duration: 5
+
 Navigate to Projects > Streamlit in the left navigation menu. You should now see RAG_ACCESS_CONTROL_APP. Click to open the app. Make sure you have assumed the role RAG_OWNER (you can check this by clicking over your initials in the bottom left of the screen).
 
 You should now see the streamlit UI. If you type a question, it will not respond with a helpful answer since the filters applied do not allow the owner role to see the underlying data via the app. Since the owner role owns the Cortex Search Service, it could however query the service directly outside of the app. If this were to be implemented, this role would not be granted to users that needed access controls applied to them. 
 
-# Share Streamlit App
+## Share Streamlit App
+Duration: 5
 
 We now want to test this functionality as different users with different permissions. First we need to grant access to other roles to this app. In the top right of the page, click the "Share" button. In the modal, grant access to "SKI" and "BICYCLE" roles as "View Only".
 
@@ -293,7 +300,8 @@ Select the 'Copy Link' button. Then Sign Out as the current user. You can find t
 
 Next sign out as the current user. You can find this by clicking your initials icon in the bottom left of the UI.
 
-# Test App as different users
+## Test App as Different Users
+Duration: 15
 
 Paste the copied link from the previous section into the browser. It should then prompt you to login. We are going to test the app experience as the 'Ski' user. Type in ski_user in the Username field, and the initial password you created as part of the initial set up. N.B. if you have a MFA enforcement policy set up (highly recommended), you will be prompted to complete those steps upon initial sign-in.
 
@@ -327,7 +335,7 @@ You should not see a response that references source documents.
 
 <!-- ------------------------ -->
 ## Understanding the Streamlit Code
-Duration: 1
+Duration: 10
 
 The Streamlit code contains the logic that allows us to safely use the Cortex Search Service and return only the relevant information to the authenticated user.
 
@@ -387,7 +395,7 @@ This same design could be utilized for application architectures other than stre
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 1
+Duration: 5
 
 Run the following SQL to clean up.
 
@@ -409,7 +417,7 @@ DROP EXTERNAL ACCESS INTEGRATION pypi_access_integration;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
+Duration: 5
 
 Congratulations! You have successfully built and deployed a secure, permissions-aware Retrieval-Augmented Generation (RAG) application entirely within Snowflake.
 
