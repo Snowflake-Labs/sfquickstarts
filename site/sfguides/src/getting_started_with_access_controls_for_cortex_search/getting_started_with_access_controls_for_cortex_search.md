@@ -445,4 +445,5 @@ By combining **Cortex Search** with **Streamlit in Snowflake (on Container Runti
 - [Documentation: Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Documentation: Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Documentation: Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+- [Openflow Connectors with Access Controls](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/sharepoint/setup#query-the-cortex-search-service)
 - [Guide Source Code on GitHub](https://github.com/Snowflake-Labs/sfguides)
