@@ -41,7 +41,7 @@ In this guide, we are going to play the role of a chain of sporting goods stores
 
 Most importantly, we only want the Ski department to query information on source documents that are related to ski equipment. Similarly we want the Bicycle department to only query information from the PDF documents related to bicycles.
 
-To do this, we are going to create a RAG pipeline utilising Snowflake features (including Cortex Search Service), and utilize Streamlit in Snowflake (SiS) running on Snowpark Container Services (SPCS) to expose this functionality to users from both the Ski and Bicycle department.
+To do this, we are going to create a RAG pipeline utilising Snowflake features (including [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)), and utilize Streamlit in Snowflake (SiS) running on Snowpark Container Services (SPCS) to expose this functionality to users from both the Ski and Bicycle department.
 
 <!-- ------------------------ -->
 ## Setup
