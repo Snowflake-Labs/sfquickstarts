@@ -1,7 +1,7 @@
 author: Tim Buchhorn
 id: sfguide-getting-started-with-access-controls-for-cortex-search
 language: en
-summary: This guide walks you thorough creating an internal chatbot application that controls access to unstructured documents based on user based attributes
+summary: This guide walks you through creating an internal chatbot application that controls access to unstructured documents based on user-based attributes
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance, snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
 status: Hidden 
@@ -11,13 +11,13 @@ tags: AI, Conversational Assistants, Cortex Search
 # Getting Started with access controls for RAGs (Cortex Search)
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 5
 
 Retrieval-Augmented Generation (RAG) promises to unlock unprecedented value from enterprise data. The vast majority (80-90%) of corporate knowledge is trapped in unstructured documents, emails, and messages, often containing sensitive PII, IP, and financial data with inconsistent access controls. Deploying AI models without robust governance exposes this sensitive data, creating severe risks of data breaches, regulatory non-compliance, and loss of intellectual property.
 
-For businesses to adopt AI safely, applications must be "permissions-aware." This is not an optional feature but a foundational requirement. AI systems must respect and enforce the existing security and access permissions of every user at the moment of retrieval. An employee, must only be allowed to "see" and surface data that the user querying it is already authorized to access.
+For businesses to adopt AI safely, applications must be "permissions-aware." This is not an optional feature but a foundational requirement. AI systems must respect and enforce the existing security and access permissions of every user at the moment of retrieval. An employee must only be allowed to "see" and surface data that the user querying it is already authorized to access.
 
-In this guide, you will build a secure RAG pipeline (using Cortex Search) that enforces document-level access control. Specifically, we will create a RAG that utilises user attributes (such as their role) and pass this on as a filter condition to the cortex search service on the backend of a client facing application.
+In this guide, you will build a secure RAG pipeline (using Cortex Search) that enforces document-level access control. Specifically, we will create a RAG that utilises user attributes (such as their role) and pass this on as a filter condition to the cortex search service on the backend of a client-facing application.
 
 
 ### Prerequisites
@@ -34,12 +34,22 @@ In this guide, you will build a secure RAG pipeline (using Cortex Search) that e
 - A RAG chatbot in in Streamlit in Snowflake (SiS) with access controls, powered by Cortex Search.
 
 <!-- ------------------------ -->
+## Use Case 
+Duration: 5
+
+In this guide, we are going to play the role of a chain of sporting goods stores. We have product information on ski equipment, and bicycles. We want to help our customer service teams be able to query information on our products that currently exists in unstructured documents (PDFs).
+
+Most importantly, we only want the Ski department to query information on source documents that are related to ski equipment. Similarly we want the Bicycle department to only query information from the PDF documents related to bicycles.
+
+To do this, we are going to create a RAG pipeline utilising Snowflake features (including Cortex Search Service), and utilize Streamlit in Snowflake (SiS) running on Snowpark Container Services (SPCS) to expose this functionality to users from both the Ski and Bicycle department.
+
+<!-- ------------------------ -->
 ## Setup
-Duration: 2
+Duration: 10
 
 ### Snowflake Setup
 
-Open a SQL Worksheet and run through the following code to set up the neccessary objects and permissions in Snowflake.
+Open a SQL Worksheet and run through the following code to set up the necessary objects and permissions in Snowflake.
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
@@ -47,7 +57,7 @@ CREATE ROLE IF NOT EXISTS RAG_OWNER;
 CREATE ROLE IF NOT EXISTS SKI;
 CREATE ROLE IF NOT EXISTS BICYCLE;
 
--- Create the users to test access controls. It is stringly recommended that MFA is enabled for these users
+-- Create the users to test access controls. It is strongly recommended that MFA is enabled for these users
 CREATE OR REPLACE USER bicycle_user
     PASSWORD             = '<enter initial password>'
     LOGIN_NAME           = 'bicycle_user'
@@ -78,7 +88,7 @@ SET USERNAME = (SELECT CURRENT_USER());
 SELECT $USERNAME;
 GRANT ROLE RAG_OWNER to USER identifier($USERNAME);
 
----
+-- Create compute
 
 USE ROLE RAG_OWNER;
 
@@ -91,10 +101,14 @@ CREATE WAREHOUSE IF NOT EXISTS RAG_WH
   WAREHOUSE_TYPE = STANDARD
   WAREHOUSE_SIZE = XSMALL;
 
+--- Create database and schema
+
 CREATE DATABASE IF NOT EXISTS RAG_DB;
 USE DATABASE RAG_DB;
 CREATE SCHEMA IF NOT EXISTS RAG_DB.RAG_SCHEMA;
 USE SCHEMA RAG_SCHEMA;
+
+--- Create network rule and apply it in External Access Integration
 
 CREATE OR REPLACE NETWORK RULE pypi_network_rule
  MODE = EGRESS
@@ -106,6 +120,8 @@ USE ROLE ACCOUNTADMIN;
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION pypi_access_integration
  ALLOWED_NETWORK_RULES = (pypi_network_rule)
  ENABLED = true;
+
+-- Grant necessary privileges
 
 GRANT USAGE ON INTEGRATION pypi_access_integration TO ROLE RAG_OWNER;
 
@@ -122,6 +138,8 @@ GRANT USAGE ON SCHEMA RAG_DB.RAG_SCHEMA TO ROLE BICYCLE;
 
 GRANT USAGE ON DATABASE RAG_DB TO ROLE SKI;
 GRANT USAGE ON SCHEMA RAG_DB.RAG_SCHEMA TO ROLE SKI;
+
+-- Create stages for streamlit source code and source documentation
 
 USE ROLE RAG_OWNER;
 
@@ -141,6 +159,7 @@ On the Add Data page, select Load files into a Stage.
 Then upload the files from Documents folder in the cloned repository from the previous step. Be sure to select the RAG_DB database, the RAG_SCHEMA schema and the SOURCE_DOCUMENTS stage.
 ![Upload Modal](assets/upload_modal.png)
 
+These source documents are the PDFs on both the Bicycle and Ski equipment products in one directory.
 
 Once you have uploaded them, run the following SQL from your SQL Worksheet to check if the files have been uploaded successfully.
 
@@ -152,7 +171,7 @@ LS @SOURCE_DOCUMENTS;
 
 In this section, we use Snowflake's helper functions to prepare the unstructured documents and set up the Cortex Search Service. 
 
-The functions below simplify the process of creating a RAG in to only a few steps. Specifically, we are using the following unique Snowflake features:
+The functions below simplify the process of creating a RAG into only a few steps. Specifically, we are using the following unique Snowflake features:
 - Cortex AI Functions (AI_PARSE_DOCUMENT):
 - SPLIT_TEXT_RECURSIVE_CHARACTER:
 
@@ -214,7 +233,7 @@ The Cortex Search Service may take a few minutes to set up. Once it has complete
 DESC CORTEX SEARCH SERVICE rag_cortex_search_service;
 ```
 
-Next, we will alter it to return a "scoring profile" which allows us to provide thresholds for the relevency of returned documents
+Next, we will alter it to return a "scoring profile" which allows us to provide thresholds for the relevancy of returned documents
 
 ```SQL
 ALTER CORTEX SEARCH SERVICE RAG_DB.RAG_SCHEMA.rag_cortex_search_service
@@ -243,7 +262,7 @@ SELECT PARSE_JSON(
 
 The next step is to create a UI that can use these objects and present them to our business users in a safe and secure way. We are going to use Streamlit in Snowflake on a Container Runtime to make this simple. Since this is an internal application, we can leverage Snowflake's authentication and authorization mechanisms to ensure the app is "aware" of who is trying to access the data, and only return information from the documents they have access to.
 
-Upload the streamlit python file and corresponding assets by downloading and unzipping the  ![streamlit_assets.zip](assets/streamlit_assets.zip) and uploading to the STREAMLIT_UI stage. Follow similar steps to how you uploaded the source documents. The instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage). Be sure to select the RAG_DB database, the RAG_SCHEMA schema and the STREAMLIT_UI stage.
+Upload the streamlit python file and corresponding assets by downloading and unzipping the [streamlit_assets.zip](assets/streamlit_assets.zip) and uploading to the STREAMLIT_UI stage. Follow similar steps to how you uploaded the source documents. The instructions on how to do this can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage). Be sure to select the RAG_DB database, the RAG_SCHEMA schema and the STREAMLIT_UI stage.
 
 Next, run the following SQL to create the Streamlit app.
 
@@ -260,19 +279,19 @@ ALTER STREAMLIT rag_access_control_app ADD LIVE VERSION FROM LAST;
 ```
 
 # Open App as Owner
-Navigate to Projects > Streamlit in the left navigation menu. You should now see RAG_ACCESS_CONTROL_APP. Click to open the app. Make sure you have assumed the role RAG_OWNER (you can check this by clicking over your initials in the bottom left of the screen) 
+Navigate to Projects > Streamlit in the left navigation menu. You should now see RAG_ACCESS_CONTROL_APP. Click to open the app. Make sure you have assumed the role RAG_OWNER (you can check this by clicking over your initials in the bottom left of the screen).
 
 You should now see the streamlit UI. If you type a question, it will not respond with a helpful answer since the filters applied do not allow the owner role to see the underlying data via the app. Since the owner role owns the Cortex Search Service, it could however query the service directly outside of the app. If this were to be implemented, this role would not be granted to users that needed access controls applied to them. 
 
 # Share Streamlit App
 
-We now want to test this functionality as different users with differnet permissions. First we need to grant access to other roles to this app. In the top right of the page, click the "Share" button. In the modal, grant access to "SKI" and "BICYCLE" roles as "View Only".
+We now want to test this functionality as different users with different permissions. First we need to grant access to other roles to this app. In the top right of the page, click the "Share" button. In the modal, grant access to "SKI" and "BICYCLE" roles as "View Only".
 
 ![Grant Streamlit Access](assets/grant_streamlit_access.png)
 
 Select the 'Copy Link' button. Then Sign Out as the current user. You can find this button in the bottom left of the screen.
 
-Next sign out as the current user. You can find this by cliking your initials icon in the bottom left of the UI.
+Next sign out as the current user. You can find this by clicking your initials icon in the bottom left of the UI.
 
 # Test App as different users
 
@@ -280,7 +299,7 @@ Paste the copied link from the previous section into the browser. It should then
 
 You should see the streamlit app load in the UI.
 
-First, lets see if we can see any information on bicycles. We should not, since the filter on the back end should only return chuncks from documents related to skis.
+First, lets see if we can see any information on bicycles. We should not, since the filter on the backend should only return chunks from documents related to skis.
 
 Ask "Tell me about the Mondracer bike"
 
@@ -312,15 +331,15 @@ Duration: 1
 
 The Streamlit code contains the logic that allows us to safely use the Cortex Search Service and return only the relevant information to the authenticated user.
 
-Cortex Search Services runs with Owners rights by design. This is to ensure that it runs with the same security model as other Snowflake objects that run with owner's rights and keeps the service performant for real world use cases. More information on this model can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#querying-with-owner-s-rights).
+Cortex Search Services runs with Owner's rights by design. This is to ensure that it runs with the same security model as other Snowflake objects that run with owner's rights and keeps the service performant for real world use cases. More information on this model can be found in our documentation [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#querying-with-owner-s-rights).
 
 In this app, we are following recommended best practice of using explicit filters on the client-side query to filter for access controls. These filters are based on user attributes that are obtained from the Authentication flow from logging in to Snowflake.
 
-Only the RLS_OWNER Role, which owns both the streamlit app and the Cortex Search Service, has the ability to use the Cortex Search Service, and modify any of the code within the streamlit app. Both the SKI and BICYCLE roles only have access to viwing and using the Streamlit app.
+Only the RAG_OWNER Role, which owns both the streamlit app and the Cortex Search Service, has the ability to use the Cortex Search Service, and modify any of the code within the streamlit app. Both the SKI and BICYCLE roles only have access to viewing and using the Streamlit app.
 
 Here is a walkthrough of some of the key functionality in the streamlit python code:
 
-The following block reads the credentials of the owner of the container the app is running on. This is ture whether this is Streamlit in Snowflake (SiS) running on containers, or if you were to push your own app to SPCS. Snowflake will provide this OAuth token at the location (/snowflake/session/token). More information can be found in our documentation [here](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/additional-considerations-services-jobs#connecting-with-a-snowflake-provided-oauth-token).
+The following block reads the credentials of the owner of the container the app is running on. This is true whether this is Streamlit in Snowflake (SiS) running on containers, or if you were to push your own app to SPCS. Snowflake will provide this OAuth token at the location (/snowflake/session/token). More information can be found in our documentation [here](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/additional-considerations-services-jobs#connecting-with-a-snowflake-provided-oauth-token).
 
 ```python
 def get_system_token():
@@ -344,17 +363,26 @@ ingress_user_token = headers.get("Sf-Context-Current-User-Token")
 ingress_user = headers.get("Sf-Context-Current-User")
 ```
 
-Once we have obtained the header information, we can initialize bothe the sessions in the initialize_sessions function.
+Once we have obtained the header information, we can initialize both the sessions in the initialize_sessions function.
 
-The next key part of the functionality is how we apply the filters to the Cortex Search service. As previously mentioned, the Cortex Search Service runs with Owners Rights, so we need to utilise the Owners session in backend code (so it is not exposed to the visiting user). Similarly, we need to provide a filter on the Cortex Search service that cannot be tampered with. We use the Snowflake generated headers and calling the Context Function CURRENT_ROLE() to do this. 
+The next key part of the functionality is how we apply the filters to the Cortex Search service. As previously mentioned, the Cortex Search Service runs with Owner's Rights, so we need to utilise the Owner's session in backend code (so it is not exposed to the visiting user). Similarly, we need to provide a filter on the Cortex Search service that cannot be tampered with. We use the Snowflake generated headers and calling the Context Function CURRENT_ROLE() to do this. 
 
 ```python
 current_role = get_current_role_from_session(current_session)
 
-
+filter_condition = {"@eq": {"product_department": current_role}}
+context_documents = cortex_search_service.search(
+    query,
+    columns=["CHUNK"],
+    filter=filter_condition,
+    scoring_profile=scoring_profile,
+)
+filter_applied = f"product_department @eq '{current_role}' (server-validated)"
 ```
 
-Clean up code
+This way we are able to expose the RAG functionality to the authenticated user, without providing access to all indexed source documents.
+
+This same design could be utilized for application architectures other than streamlit. You would similarly pass an identifier along with the [Cortex Search API request](https://docs.snowflake.com/developer-guide/snowflake-rest-api/reference/cortex-search-service#post--api-v2-databases-database-schemas-schema-cortex-search-services-service_name-query) from the backend.
 
 
 <!-- ------------------------ -->
@@ -365,16 +393,17 @@ Run the following SQL to clean up.
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
-DROP ROLE RAG_RLS_OWNER;
+DROP ROLE RAG_OWNER;
 DROP ROLE SKI;
 DROP ROLE BICYCLE;
 
 DROP USER bicycle_user;
 DROP USER ski_user;
 
+ALTER COMPUTE POOL RAG_STREAMLIT STOP ALL;
 DROP COMPUTE POOL RAG_STREAMLIT;
 DROP WAREHOUSE RAG_WH;
-DROP DATABASE RAG_RLS_DB CASCADE;
+DROP DATABASE RAG_DB CASCADE;
 DROP EXTERNAL ACCESS INTEGRATION pypi_access_integration;
 ```
 
@@ -382,16 +411,18 @@ DROP EXTERNAL ACCESS INTEGRATION pypi_access_integration;
 ## Conclusion And Resources
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Congratulations! You have successfully built and deployed a secure, permissions-aware Retrieval-Augmented Generation (RAG) application entirely within Snowflake.
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+By combining **Cortex Search** with **Streamlit in Snowflake (on Container Runtime)**, you demonstrated how to move beyond generic chatbots to enterprise-ready solutions that respect existing data governance policies. You utilized Snowflake's native Role-Based Access Control (RBAC) to dynamically filter search results, ensuring that users (like our Ski and Bicycle representatives) only interact with data they are authorized to see.
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- **Data Preparation for RAG:** How to use `AI_PARSE_DOCUMENT` to extract text from unstructured files (PDFs) and `SPLIT_TEXT_RECURSIVE_CHARACTER` to chunk data for indexing.
+- **Cortex Search Configuration:** How to configure a Cortex Search Service with specific `ATTRIBUTES` to enable metadata filtering.
+- **Streamlit on SPCS:** How to deploy a Streamlit app using the Container Runtime to leverage specific python versions and libraries.
+- **Secure Filtering Pattern:** How to implement a pattern that captures the authenticated user's role and applies a server-validated filter to the Cortex Search query, effectively implementing Row-Level Security for your RAG pipeline.
 
 ### Related Resources
-- <link to github code repo>
-- <link to documentation>
+- [Documentation: Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+- [Documentation: Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+- [Documentation: Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+- [Guide Source Code on GitHub](https://github.com/Snowflake-Labs/sfguides)
