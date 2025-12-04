@@ -1,0 +1,266 @@
+name: Publish to AEM on PR Approval (Prod)
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      has_relevant_changes: ${{ steps.detect.outputs.has_relevant_changes }}
+      quickstart_names_json: ${{ steps.detect.outputs.quickstart_names_json }}
+      pr_number: ${{ steps.pr.outputs.number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Determine changed quickstart folders
+        id: detect
+        run: |
+          # Get all changed files from the push
+          before_commit="${{ github.event.before }}"
+          after_commit="${{ github.sha }}"
+          
+          # Handle first push to branch (no before commit)
+          if [ "$before_commit" = "0000000000000000000000000000000000000000" ]; then
+            # First push - check HEAD against previous commit
+            all_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
+          else
+            all_files=$(git diff --name-only "$before_commit" "$after_commit")
+          fi
+          
+          # Filter for changed files (excluding deleted files and folders starting with _)
+          # Similar to validate-and-stage which uses: select(.status != "removed")
+          changed_files=""
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            
+            # Skip if file doesn't exist (i.e., was deleted)
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            
+            # Skip files in folders starting with underscore
+            if [[ "$file" =~ /_ ]]; then
+              continue
+            fi
+            
+            # Skip if not under site/sfguides/src/
+            if [[ ! "$file" =~ ^site/sfguides/src/ ]]; then
+              continue
+            fi
+            
+            changed_files="${changed_files}${file}"$'\n'
+          done <<< "$all_files"
+          
+          # Filter to only relevant files:
+          # 1. Markdown files in root of quickstart directories (not in subdirectories)
+          # 2. Image files in root of /assets/ folders (not in subdirectories)
+          # Pattern for markdown in root: site/sfguides/src/{folder}/{filename}.md
+          # Pattern for images in assets root: site/sfguides/src/{folder}/assets/{filename}.{image_ext}
+          relevant_files=$(echo "$changed_files" | grep -E '^site/sfguides/src/[^/]+/([^/]+\.md|assets/[^/]+\.(jpg|jpeg|png|gif|svg|webp|bmp|ico))$' || true)
+          
+          # Extract quickstart names from relevant files only
+          quickstart_names=$(echo "$relevant_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | grep -v '^_' | sort -u)
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Relevant files changed (markdown in root + images in assets):"
+          echo "$relevant_files"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Quickstart folders to publish:"
+          echo "$quickstart_names"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          has_relevant_changes=false
+          if [ -z "$quickstart_names" ]; then
+            quickstart_names_json="[]"
+            quickstart_name=""
+            has_relevant_changes=false
+          else
+            objs='[]'
+            while IFS= read -r name; do
+              [ -z "$name" ] && continue
+              lang=""
+              md_file=""
+              candidate="site/sfguides/src/$name/$name.md"
+              if [ -f "$candidate" ]; then
+                md_file="$candidate"
+              else
+                for f in $(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
+                  if sed -n '1,50p' "$f" | grep -qi -E '^[[:space:]]*language[[:space:]]*:'; then
+                    md_file="$f"; break
+                  fi
+                done
+                if [ -z "$md_file" ]; then
+                  for f in $(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | sort); do
+                    [ "$(basename "$f")" = "README.md" ] && continue
+                    md_file="$f"; break
+                  done
+                fi
+                if [ -z "$md_file" ]; then
+                  md_file=$(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
+                fi
+              fi
+              if [ -n "$md_file" ] && [ -f "$md_file" ]; then
+                lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+              objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
+            done <<< "$quickstart_names"
+            quickstart_names_json="$objs"
+            quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
+            has_relevant_changes=true
+          fi
+          echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
+          echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
+          echo "has_relevant_changes=$has_relevant_changes" >> $GITHUB_OUTPUT
+
+      - name: Get PR number from commit
+        id: pr
+        run: |
+          pr_number=$(gh pr list --search "${{ github.sha }}" --state merged --json number --jq '.[0].number // ""')
+          echo "number=$pr_number" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  call-webhooks:
+    needs: publish
+    if: needs.publish.outputs.has_relevant_changes == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        quickstart: ${{ fromJson(needs.publish.outputs.quickstart_names_json) }}
+      max-parallel: 1  # Sequential execution to avoid rate limits
+      fail-fast: false  # Continue processing other quickstarts even if one fails
+    steps:
+      - name: Call Workato production webhook for ${{ matrix.quickstart.name }}
+        env:
+          WORKATO_PROD_WEBHOOK_URL: ${{ secrets.WORKATO_PROD_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WORKATO_PROD_WEBHOOK_URL" ]; then
+            echo "WORKATO_PROD_WEBHOOK_URL is not set. Cannot call production webhook." >&2
+            exit 1
+          fi
+          
+          qname="${{ matrix.quickstart.name }}"
+          qlang="${{ matrix.quickstart.language }}"
+          
+          echo "======================================"
+          echo "Processing quickstart: $qname"
+          echo "Language: $qlang"
+          echo "======================================"
+          
+          # Create single-item array for quickstart_names to match expected format
+          qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
+          
+          payload=$(jq -n \
+            --arg repo "$GITHUB_REPOSITORY" \
+            --arg sha "$GITHUB_SHA" \
+            --arg ref "$GITHUB_REF" \
+            --arg env "prod" \
+            --arg pr_num "${{ needs.publish.outputs.pr_number }}" \
+            --arg qname "$qname" \
+            --argjson qnames "$qnames_array" \
+            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames}')
+          
+          echo "Payload:"
+          echo "$payload" | jq .
+          
+          max_retries=3
+          retry_count=0
+          wait_time=60
+          
+          while [ $retry_count -lt $max_retries ]; do
+            response=$(curl -sS -w "\n%{http_code}" -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
+            http_code=$(echo "$response" | tail -n1)
+            response_body=$(echo "$response" | sed '$d')
+            
+            echo "Response:"
+            echo "$response_body" | cat
+            echo "HTTP Status: $http_code"
+            
+            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+              echo "✓ Webhook call successful (HTTP $http_code)"
+              echo "Waiting 150 seconds before processing next quickstart..."
+              sleep 150
+              exit 0
+            fi
+            
+            if echo "$response_body" | grep -qi "Rate limit reached: 6000 requests per 5m0s"; then
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "⚠ Rate limit reached. Waiting 5 minutes before retry $retry_count/$max_retries..."
+                sleep 300
+              else
+                echo "✗ Rate limit reached. Max retries exceeded." >&2
+                exit 1
+              fi
+            elif [ "$http_code" -ge 500 ]; then
+              retry_count=$((retry_count + 1))
+              if [ $retry_count -lt $max_retries ]; then
+                echo "⚠ Server error (HTTP $http_code). Waiting ${wait_time}s before retry $retry_count/$max_retries..."
+                sleep $wait_time
+                wait_time=$((wait_time * 2))
+              else
+                echo "✗ Server error (HTTP $http_code). Max retries exceeded." >&2
+                exit 1
+              fi
+            else
+              echo "✗ Webhook call failed with HTTP $http_code" >&2
+              exit 1
+            fi
+          done
+
+# update-manifest:
+#   needs: [publish, call-webhooks]
+#   if: |
+#     always() &&
+#     needs.publish.outputs.has_relevant_changes == 'true' &&
+#     needs.call-webhooks.result == 'success'
+#   runs-on: ubuntu-latest
+#   permissions:
+#     contents: write
+#   steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v4
+#       with:
+#         sparse-checkout: |
+#           site/sfguides/src/*/*.md
+#           site/sfguides/src/_shared_assets
+#           scripts/generate_manifest
+#         sparse-checkout-cone-mode: false
+#
+#     - name: Set up Python
+#       uses: actions/setup-python@v5
+#       with:
+#         python-version: '3.x'
+#
+#     - name: Generate manifest
+#       run: |
+#         echo "Running manifest generator..."
+#         python scripts/generate_manifest/manifest\ generator.py
+#         
+#     - name: Commit and push manifest if changed
+#       run: |
+#         git config user.name "github-actions[bot]"
+#         git config user.email "github-actions[bot]@users.noreply.github.com"
+#         
+#         if git diff --quiet site/sfguides/src/_shared_assets/quickstart-manifest.json; then
+#           echo "No changes to manifest file"
+#         else
+#           echo "Manifest file has changes, committing..."
+#           git add site/sfguides/src/_shared_assets/quickstart-manifest.json
+#           git commit -m "chore: update quickstart manifest [skip ci]"
+#           git push
+#         fi

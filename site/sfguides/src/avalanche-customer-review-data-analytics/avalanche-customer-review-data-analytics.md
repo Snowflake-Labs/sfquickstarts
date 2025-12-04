@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: avalanche-customer-review-data-analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: Learn how to process and analyze customer review data using Snowflake's data processing capabilities and visualization tools. This guide demonstrates how to extract insights from unstructured text data through sentiment analysis and visualization.
-categories: getting-started, analytics, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Analytics, Sentiment Analysis, Snowflake, Streamlit, Cortex, LLM, Data Visualization
 
-# Build a Customer Review Analytics Dashboard with Snowflake and Streamlit
+# Build a Customer Review Analytics Dashboard with Snowflake Cortex and Streamlit
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this tutorial, you'll learn how to process and analyze customer review data using an LLM-powered data processing workflow with Snowflake Cortex followed by building a dashboard. Briefly, you'll work with the Avalanche dataset, which contains customer reviews for a hypothetical winter sports gear company, and transform unstructured text data into actionable insights through sentiment analysis and data visualization.
 
@@ -27,21 +26,17 @@ By the end of this guide, you'll have built a complete analytics pipeline that e
 A customer review analytics dashboard that processes unstructured text data and visualizes sentiment trends across products and time periods.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
-### Download the Notebook
-
-Firstly, to follow along with this quickstart, you can click on [Avalanche-Customer-Review-Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb) to download the Notebook from GitHub.
-
-Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
 
 ### Create the database and schema
+
+Firstly, retrieve [setup.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/setup.sql) to follow along our creation of the Avalanche database, schema and table.
 
 Secondly, let's create the Avalanche database and schema by running the following in a SQL worksheet:
 ```sql
@@ -59,7 +54,7 @@ CREATE STAGE IF NOT EXISTS avalanche_db.avalanche_schema.customer_reviews
 ```
 
 You should see a confirmation message after a stage has been created succesfully:
-![image](assets/create-stage.PNG)
+![image](assets/create-stage.png)
 
 ### Upload data to stage
 Fourthly, download the Avalanche customer review data, which is comprised of customer reviews for a hypothetical winter sports gear company. The customer review data is in DOCX format and can is available as [customer_reviews_docx.zip](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/customer_reviews_docx.zip).
@@ -72,11 +67,11 @@ Then, in the top-right hand corner click on the blue "+ Files" button. Followed 
 
 You'll see a modal pop-up where you can upload the 100 DOCX files:
 
-![image](assets/upload-stage.PNG)
+![image](assets/upload-stage.png)
 
 Afterwards, you'll see the files listed in the main panel. Also make note of the previously mentioned hierarchical list of the database, schema and stage that we navigated through:
 
-![image](assets/upload-files.PNG)
+![image](assets/upload-files.png)
 
 
 ### List contents of a stage
@@ -85,17 +80,23 @@ Finally, we can verify that the files have been uploaded successfully to the sta
 Next, enter the following in a SQL worksheet:
 
 ```sql
- `ls @avalanche_db.avalanche_schema.customer_reviews`
+ ls @avalanche_db.avalanche_schema.customer_reviews
 ```
 
 This should yield the following results output:
 
-![image](assets/list-stage.PNG)
+![image](assets/list-stage.png)
 
+### Download the Notebook
+
+Finally, before proceeding further to the next step, you can click on [Avalanche-Customer-Review-Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb) to download the Notebook from GitHub.
+
+Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
 
 <!-- ------------------------ -->
 ## Retrieving Customer Review Data
-Duration: 10
+
+Open up the [Avalanche-Customer-Review-Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb) notebook as downloaded in the previous step to follow along this step onwards.
 
 ### Extracting Data from DOCX Files
 
@@ -128,24 +129,26 @@ This query does the following:
 The `PARSE_DOCUMENT` function is particularly useful for extracting text from various document formats, including DOCX, PDF, and others. The "layout" mode preserves the document's structure, making it easier to extract specific sections.
 
 Running the above query should yield the following table output: 
-![image](assets/sql1.PNG)
+
+![image](assets/sql1.png)
 
 <!-- ------------------------ -->
 ## Reshaping the Data
-Duration: 15
 
 ### Structuring the Extracted Content
 
-Now that we have the raw content from the DOCX files, we need to reshape it into a more structured format. We'll use regular expressions to extract specific information such as product name, date, and the customer review text.
+Now that we have the raw content from the .DOCX files, we need to reshape it into a more structured format. We'll use regular expressions to extract specific information such as product name, date, and the customer review text.
+
+👀 NOTE: Depends on the output from [this step](#retrieving-customer-review-data)
 
 ```sql
 -- Extract PRODUCT name, DATE, and CUSTOMER_REVIEW from the LAYOUT column
 SELECT 
   filename,
-  REGEXP_SUBSTR(layout, 'Product: (.*?) Date:', 1, 1, 'e') as product,
+  REGEXP_SUBSTR(layout, 'Product: (.*)', 1, 1, 'e', 1) as product,
   REGEXP_SUBSTR(layout, 'Date: (202[0-9]-[0-9]{2}-[0-9]{2})', 1, 1, 'e') as date,
-  REGEXP_SUBSTR(layout, '## Customer Review\n([\\s\\S]*?)$', 1, 1, 'es') as customer_review
-FROM previous_query_result;
+  REGEXP_SUBSTR(layout, '## Customer Review\\n\\n(.*)', 1, 1, 'e', 1) as customer_review
+FROM table(result_scan(last_query_id())); -- assuming you ran last query from Section 3
 ```
 
 This query uses `REGEXP_SUBSTR` to extract:
@@ -155,8 +158,38 @@ This query uses `REGEXP_SUBSTR` to extract:
 
 The regular expression patterns are designed to match the specific structure of the documents, extracting only the relevant information. This transformation converts unstructured text into a structured format that's easier to analyze.
 
+You can also combine this query into one combined query using [Snowflake's Flow Operator](https://docs.snowflake.com/en/sql-reference/operators-flow)
+
+It should look something like this
+
+**‼️ Please note, this is an alternate implementaiton on above code.**
+
+```sql
+WITH files AS (
+  SELECT 
+    REPLACE(REGEXP_SUBSTR(file_url, '[^/]+$'), '%2e', '.') as filename
+  FROM DIRECTORY('@avalanche_db.avalanche_schema.customer_reviews')
+  WHERE filename LIKE '%.docx'
+)
+SELECT 
+  filename,
+  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
+    @avalanche_db.avalanche_schema.customer_reviews,
+    filename,
+    {'mode': 'layout'}
+  ):content AS layout
+FROM files
+->> --Flow Operator
+SELECT 
+  filename,
+  REGEXP_SUBSTR(layout, 'Product: (.*)', 1, 1, 'e', 1) as product,
+  REGEXP_SUBSTR(layout, 'Date: (202[0-9]-[0-9]{2}-[0-9]{2})', 1, 1, 'e') as date,
+  REGEXP_SUBSTR(layout, '## Customer Review\\n\\n(.*)', 1, 1, 'e', 1) as customer_review
+FROM $1;
+```
 The result table should look like the following:
-![image](assets/sql2.PNG)
+
+![image](assets/sql2.png)
 
 ### Applying AI on the Data with Cortex
 
@@ -188,7 +221,8 @@ This query:
 The sentiment score is a numerical value that indicates the overall sentiment of the review, with positive values indicating positive sentiment and negative values indicating negative sentiment.
 
 Results from the query is shown below:
-![image](assets/sql3.PNG)
+
+![image](assets/sql3.png)
 
 ### Converting SQL Results to a Pandas DataFrame
 
@@ -200,11 +234,10 @@ df = sql_result.to_pandas()
 
 This conversion allows us to use Python's data visualization libraries to create interactive charts and graphs.
 
-![image](assets/df.PNG)
+![image](assets/df.png)
 
 <!-- ------------------------ -->
 ## Create Visualizations
-Duration: 20
 
 ### Build Interactive Charts with Streamlit and Altair
 
@@ -250,7 +283,7 @@ This chart:
 - Includes tooltips that show the product name and date when hovering over a bar
 - Rotates date labels for better readability
 
-![image](assets/py_bar.PNG)
+![image](assets/py_bar.png)
 
 ### Calculate Product Sentiment Scores
 
@@ -291,7 +324,7 @@ This chart:
 - Uses the same color scheme as the previous chart
 - Includes tooltips that show the product name and average sentiment score
 
-![image](assets/py_product_sentiment.PNG)
+![image](assets/py_product_sentiment.png)
 
 ### Add Download Button
 
@@ -309,12 +342,11 @@ st.download_button(
 
 This button allows users to download a CSV file containing the product name, date, summary, and sentiment score for each review.
 
-![image](assets/py_download.PNG)
+![image](assets/py_download.png)
 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an end-to-end workflow for creation of a customer review analytics dashboard that processes unstructured text data and finally visualizes sentiment trends. This pipeline demonstrates how to leverage Snowflake's data processing capabilities and Cortex LLM functions to process and extract valuable insights from customer feedback.
 
@@ -328,6 +360,9 @@ By analyzing sentiment across products and time periods, businesses can identify
 - Built a complete analytics pipeline for customer review data
 
 ### Related Resources
+
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb?_fsi=QzKQ5lY6&_fsi=QzKQ5lY6&_fsi=9zGgF6Cf)
+- [Read Medium Blog](https://medium.com/snowflake/towards-building-a-customer-review-analytics-dashboard-with-snowflake-and-streamlit-3decdde91567)
 
 Documentation:
 - [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document)
