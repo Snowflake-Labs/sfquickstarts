@@ -158,7 +158,7 @@ This interactive 3D visualization provides spatial context to the data, mapping 
 Forget complex SQL queries. Use natural language to ask questions that span your structured operational data and unstructured documents. [Snowflake Intelligence](https://www.snowflake.com/en/product/snowflake-intelligence/) acts as a secure orchestration layer that understands your specific business semantics, enabling governed agents to reason across your entire data estate.
 
 * **Maintenance Application**: In this solution, it serves as an "always-on" reliability expert that fuses IT and OT contexts. When an engineer asks a question, the agent autonomously correlates real-time sensor readings (structured data) with historical work orders and OEM PDF manuals (unstructured data) to diagnose issues faster and more accurately.
-* **Example Query**: "Show me all past bearing failures on P-500 pumps and the relevant repair procedures from the OEM manual." 
+* **Example Query**: "Give me the total financial impact of unplanned downtimes last month?" 
 * **Strategic Value**: This effectively democratizes data access, allowing frontline staff to make decisions based on the complete history of an asset without needing to know database schemas or switch between disparate software tools.
 
 ![Snowflake Intelligence](assets/si-pdm.png)
