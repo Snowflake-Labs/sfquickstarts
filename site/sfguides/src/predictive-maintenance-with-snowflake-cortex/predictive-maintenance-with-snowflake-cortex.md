@@ -91,7 +91,7 @@ This solution unifies high-velocity **IoT sensor telemetry** (vibration, tempera
 
 ## Solution Overview
 
-### 1. 🏗️ Robust, Scalable Data Foundation (Medallion Architecture)
+### 1. Robust, Scalable Data Foundation (Medallion Architecture)
 
 Built on Snowflake's proven architecture, the solution ensures your data is unified, clean, and ready for analytics.
 
@@ -99,7 +99,7 @@ Built on Snowflake's proven architecture, the solution ensures your data is unif
 * **Curated Models (Silver):** Cleanse, validate, and connect isolated sensor readings to specific assets, work orders, and facilities.
 * **Analytics-Ready (Gold):** Create specialized views specifically tailored for machine learning models and business intelligence dashboards.
 
-### 2. 🖥️ Interactive Command Center (Streamlit)
+### 2. Interactive Command Center (Streamlit)
 
 This application serves as the "Single Pane of Glass" for the entire manufacturing operation, moving users from reactive firefighting to proactive, data-driven strategy.
 
@@ -153,11 +153,8 @@ This interactive 3D visualization provides spatial context to the data, mapping 
     * Key Value: Democratizing Data Access. It bridges the gap between complex database schemas and frontline workers. A technician can ask, "What maintenance procedures do you have access to?" or "Show me the failure history for this pump," without needing to know SQL or navigate complex menus.
     * Unified Context: As seen in the sidebar, the agent has access to a comprehensive semantic view that combines Maintenance Work Order Types (Preventive, Predictive, Emergency), Activity Data (downtime hours, labor costs), and Planning Inputs (Health Scores, RUL). This allows it to answer complex questions that require cross-referencing live sensor data with historical maintenance logs and financial constraints.
 
-### 3. 🗣️ Talk to Your Data with AI (Snowflake Intelligence)
+### 3. Talk to Your Data with AI (Snowflake Intelligence)
 
-Here is the expanded description for the Snowflake Intelligence section. It adds the high-level definition and connects it directly to the predictive maintenance workflow.
-
-3. 🗣️ Talk to Your Data with AI (Snowflake Intelligence)
 Forget complex SQL queries. Use natural language to ask questions that span your structured operational data and unstructured documents. [Snowflake Intelligence](https://www.snowflake.com/en/product/snowflake-intelligence/) acts as a secure orchestration layer that understands your specific business semantics, enabling governed agents to reason across your entire data estate.
 
 * **Maintenance Application**: In this solution, it serves as an "always-on" reliability expert that fuses IT and OT contexts. When an engineer asks a question, the agent autonomously correlates real-time sensor readings (structured data) with historical work orders and OEM PDF manuals (unstructured data) to diagnose issues faster and more accurately.
