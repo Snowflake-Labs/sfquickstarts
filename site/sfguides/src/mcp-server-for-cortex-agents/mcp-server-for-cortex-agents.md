@@ -3,7 +3,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This guide outlines the process for building an MCP Server for Cortex Agents.
 environments: web
-status: Published
+status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Josh Reini
 
