@@ -1,13 +1,12 @@
+author: Yannis Marigo, Luke Ambrosetti, Dureti Shemsi
 id: customer-journey-analytics-with-sequent
 language: en
 summary: Build a comprehensive customer journey analytics platform within Snowflake that combines path analysis, multi-touch attribution, behavioral segmentation, and predictive modeling to transform complex event sequences into actionable insights.
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/industry/travel-and-hospitality, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
-authors: Yannis Marigo, Luke Ambrosetti, Dureti Shemsi
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-customer-journey-analytics-with-sequent
-
 
 
 
