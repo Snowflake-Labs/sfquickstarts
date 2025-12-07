@@ -12,8 +12,7 @@ feedback_link: https://github.com/Snowflake-Labs/sfguides/issues
 # Multi-Agent RAG with Gen2 Warehouses and Cortex
 
 ## Overview
-Duration: 3
-
+Duration: 3+ Hours
 The AI landscape is full of demos and one-off pipelines, but building production-grade Retrieval-Augmented Generation (RAG) systems introduces real engineering constraints.
 
 In this quickstart, you'll build a Snowflake-centric multi-agent RAG system that:
@@ -50,7 +49,7 @@ User Query → Coordinator Agent → 6 Specialized Agents:
 - Production-scale performance (<5s)
 
 ## Prerequisites
-Duration: 2
+Duration: 2 Hours
 
 - Snowflake account with ACCOUNTADMIN access
 - Cortex LLM Functions enabled
@@ -58,7 +57,7 @@ Duration: 2
 - External vector database (Pinecone/Weaviate/Milvus) account
 
 ## Setup Environment
-Duration: 5
+Duration: 5 Hours
 
 ### Create Database and Schema
 
@@ -107,7 +106,7 @@ INSERT INTO PATIENT_VISITS VALUES
 ```
 
 ## Document Ingestion & Embedding
-Duration: 8
+Duration: 8 Hours
 
 ### Semantic Chunking Function
 
@@ -243,7 +242,7 @@ $$;
 ```
 
 ## Agent 1: Document Retriever
-Duration: 6
+Duration: 6 hours
 
 ### Create Document Retriever Agent
 
@@ -277,7 +276,7 @@ $$;
 ```
 
 ## Agent 2: SQL Generator
-Duration: 6
+Duration: 6 Hours
 
 ### Create SQL Generation Agent
 
@@ -324,7 +323,7 @@ $$;
 ```
 
 ## Agent 3: Metrics Calculator
-Duration: 5
+Duration: 5 hours
 
 ### Advanced Metrics Agent
 
@@ -362,7 +361,7 @@ $$;
 ```
 
 ## Agent 4: Chart Generator
-Duration: 4
+Duration: 4 Hours
 
 ### Visualization Data Agent
 
@@ -411,7 +410,7 @@ $$;
 ```
 
 ## Agent 5: Semantic Model Agent
-Duration: 6
+Duration: 6 Hours
 
 ### Business Logic Layer
 
@@ -475,7 +474,7 @@ $$;
 ```
 
 ## Agent 6: Response Synthesizer
-Duration: 7
+Duration: 7 Hours
 
 ### Coordinator Agent
 
@@ -551,7 +550,7 @@ $$;
 ```
 
 ## Testing the Multi-Agent System
-Duration: 5
+Duration: 5 Hours
 
 ### Sample Query
 
@@ -572,7 +571,7 @@ SELECT * FROM TABLE(
 - With readmission risk analysis
 
 ## Performance Optimization
-Duration: 4
+Duration: 4 Hours
 
 ### Gen2 Warehouse Benefits
 
@@ -607,7 +606,7 @@ ORDER BY execution_time DESC;
 | Full pipeline            | 12.5s    | 7.8s      | 38%         |
 
 ## Production Deployment
-Duration: 3
+Duration: 3 Hours
 
 ### API Wrapper
 
@@ -665,7 +664,7 @@ ORDER BY hour DESC;
 ```
 
 ## Troubleshooting
-Duration: 3
+Duration: 3 Hours
 
 ### Common Issues
 
@@ -691,7 +690,7 @@ WHERE similarity > 0.6  -- Lower threshold
 ```
 
 ## Conclusion
-Duration: 2
+Duration: 2 Hours
 
 ### What You Built
 
