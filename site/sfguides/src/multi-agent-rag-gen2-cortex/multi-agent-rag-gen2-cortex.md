@@ -14,6 +14,7 @@ feedback_link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 Duration: 3+ Hours
+
 The AI landscape is full of demos and one-off pipelines, but building production-grade Retrieval-Augmented Generation (RAG) systems introduces real engineering constraints.
 
 In this quickstart, you'll build a Snowflake-centric multi-agent RAG system that:
