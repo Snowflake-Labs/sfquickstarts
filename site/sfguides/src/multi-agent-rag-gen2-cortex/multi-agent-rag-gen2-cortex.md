@@ -1,5 +1,6 @@
 ---
 author: Rohith Thiruvalluru
+linkedin: https://www.linkedin.com/in/rohiththiruvalluru/
 id: multi-agent-rag-gen2-cortex
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/build
 language: en
@@ -49,7 +50,7 @@ User Query → Coordinator Agent → 6 Specialized Agents:
 - Production-scale performance (<5s)
 
 ## Prerequisites
-Duration: 2 Hours
+Duration: 0.5 Hours
 
 - Snowflake account with ACCOUNTADMIN access
 - Cortex LLM Functions enabled
@@ -57,7 +58,7 @@ Duration: 2 Hours
 - External vector database (Pinecone/Weaviate/Milvus) account
 
 ## Setup Environment
-Duration: 5 Hours
+Duration: 0.75 Hours
 
 ### Create Database and Schema
 
@@ -106,7 +107,7 @@ INSERT INTO PATIENT_VISITS VALUES
 ```
 
 ## Document Ingestion & Embedding
-Duration: 8 Hours
+Duration: 2 Hours
 
 ### Semantic Chunking Function
 
@@ -242,7 +243,7 @@ $$;
 ```
 
 ## Agent 1: Document Retriever
-Duration: 6 hours
+Duration: 1.5 hours
 
 ### Create Document Retriever Agent
 
@@ -276,7 +277,7 @@ $$;
 ```
 
 ## Agent 2: SQL Generator
-Duration: 6 Hours
+Duration: 1.5 Hours
 
 ### Create SQL Generation Agent
 
@@ -323,7 +324,7 @@ $$;
 ```
 
 ## Agent 3: Metrics Calculator
-Duration: 5 hours
+Duration: 1 hours
 
 ### Advanced Metrics Agent
 
@@ -361,7 +362,7 @@ $$;
 ```
 
 ## Agent 4: Chart Generator
-Duration: 4 Hours
+Duration: 0.75 Hours
 
 ### Visualization Data Agent
 
@@ -410,7 +411,7 @@ $$;
 ```
 
 ## Agent 5: Semantic Model Agent
-Duration: 6 Hours
+Duration: 1.5 Hours
 
 ### Business Logic Layer
 
@@ -474,7 +475,7 @@ $$;
 ```
 
 ## Agent 6: Response Synthesizer
-Duration: 7 Hours
+Duration: 2 Hours
 
 ### Coordinator Agent
 
@@ -550,7 +551,7 @@ $$;
 ```
 
 ## Testing the Multi-Agent System
-Duration: 5 Hours
+Duration: 1 Hours
 
 ### Sample Query
 
@@ -571,7 +572,7 @@ SELECT * FROM TABLE(
 - With readmission risk analysis
 
 ## Performance Optimization
-Duration: 4 Hours
+Duration: 1.5 Hours
 
 ### Gen2 Warehouse Benefits
 
@@ -606,7 +607,7 @@ ORDER BY execution_time DESC;
 | Full pipeline            | 12.5s    | 7.8s      | 38%         |
 
 ## Production Deployment
-Duration: 3 Hours
+Duration: 1 Hours
 
 ### API Wrapper
 
@@ -664,7 +665,7 @@ ORDER BY hour DESC;
 ```
 
 ## Troubleshooting
-Duration: 3 Hours
+Duration: 0.5 Hours
 
 ### Common Issues
 
@@ -690,7 +691,7 @@ WHERE similarity > 0.6  -- Lower threshold
 ```
 
 ## Conclusion
-Duration: 2 Hours
+Duration: 0.25 Hours
 
 ### What You Built
 
