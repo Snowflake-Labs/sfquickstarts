@@ -13,7 +13,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-customer-journey-analy
 
 # Customer Journey Analytics with Sequent™
 
-![Sequent](assets/sequent.png)
+![Sequent](assets/Sequent.png)
 
 ## Overview
 
