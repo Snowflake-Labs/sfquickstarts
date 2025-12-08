@@ -18,7 +18,7 @@ These data consolidation, centralization, curation, and analytics processes "use
 Fivetran will replicate all of your data from Salesforce, and all of your other data sources for your project, easily into Snowflake via a reliable, fast, secure, SaaS-based, automated, and no-code data replication solution with built-in transformation flexibility.  [Fivetran’s 300+ data source connectors](https://www.fivetran.com/connectors) (that's right 300+...we are just working with Salesforce today) allow you to seamlessly create all of your data replication processes in minutes versus weeks or months.  And in this lab, we are going to work together to see how easy and fast data replication with Fivetran and Snowflake can be.  So let’s get started!
 
 ### Prerequisites
-- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_), with `ACCOUNTADMIN` role.  If setting up a new trial account, ensure to select the "Enterprise" edition when prompted to gain access to more Snowflake features!
+- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), with `ACCOUNTADMIN` role.  If setting up a new trial account, ensure to select the "Enterprise" edition when prompted to gain access to more Snowflake features!
 - [Salesforce development account](https://developer.salesforce.com/signup).  Setting up a Salesforce developer account is free and takes about 3-5 minutes.  If you currently have a Salesforce account and wish to use that account for this lab...even better!
 
 ### What you'll learn in the lab
@@ -60,7 +60,7 @@ Once the tile is clicked you will be presented with the Fivetran configuration s
 ![Partner Connect Fivetran Configuration](assets/sfdc/s_0030.png)
 
 ### Non-Partner Connect Only
-> aside negative
+> 
 > In the case where you are unable to use partner connect because of an existing linked account, you can create a [Fivetran trial account here](https://fivetran.com/signup).  Post Fivetran account creation, you simply follow [these instructions](https://fivetran.com/docs/destinations/snowflake/setup-guide) to setup your Snowflake destination in Fivetran and Snowflake.  Then you may continue to the next step.
 >
 
@@ -112,7 +112,7 @@ Leave the schema changes setting as `Allow All`.  Click `Continue`.
 With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`.  And let Fivetran seamlessly replicate your data into Snowflake.  This should only take a minute or two at most.  Now, let's move on to transformations!
 ![Fivetran Connector 12](assets/connector/c_0120.png)
 
-> aside positive
+> 
 > This is the power of Fivetran SaaS.  No allocating resources.  No development.  Fully automated data replication...a production data pipeline in a few steps!
 >
 ## Configure Fivetran Quickstart Transformations
@@ -141,7 +141,7 @@ In the Fivetran UI, you can view the lineage for any of the transformation jobs 
 ![Fivetran Transform 9](assets/transforms/t_0090.png)
 
 ### Recap
-> aside positive
+> 
 > You can see that with Fivetran Quickstart Data Models, there is no code, no git, and no deployments!  This 'T' in 'ELT' is a great value-add and a great way to start you on your transformations journey.  The open source for these transformations can be found in the [dbt Package Hub](https://hub.getdbt.com/).  One item to note here.  [dbt Labs](https://www.getdbt.com/) creates push-down SQL which runs inside Snowflake.  Fivetran's implementation of this logic incurs no costs on the Fivetran side; transformation jobs are free.  But each time a transformation is executed and data is manipulated, there will be a Snowflake warehouse running consuming Snowflake credits.
 >
 

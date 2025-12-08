@@ -42,7 +42,7 @@ The following tutorial highlights these benefits and lets you experience Snowpar
 
 This [repo](https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter) is structured in multiple parts. Each part has a notebook with specific focus areas. All notebooks in this series require a Jupyter Notebook environment with a Scala kernel.  
 
-All notebooks will be fully self contained, meaning that all you need for processing and analyzing datasets is a Snowflake account.  If you do not have a Snowflake account, you can sign up for a [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_). It doesn't even require a credit card.
+All notebooks will be fully self contained, meaning that all you need for processing and analyzing datasets is a Snowflake account.  If you do not have a Snowflake account, you can sign up for a [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). It doesn't even require a credit card.
 
 
 - Use of the [Snowflake free 30-day trial environment](https://trial.snowflake.com)
@@ -107,11 +107,11 @@ The following instructions show how to build a Notebook server using a Docker co
 
 8. Start a browser session (Safari, Chrome, ...). Paste the line with the local host address (127.0.0.1) printed in **your shell window** into the browser status bar and update the port (8888) to **your port** in case you have changed the port in the step above.
 
-> aside positive
+> 
 > 
 >   Once you have completed this step, you can move on to the Setup Credentials Section.
 
-> aside negative
+> 
 > 
 >   Stopping your Docker lab environment
     
@@ -147,7 +147,7 @@ In case you can't install docker on your local machine you could run the tutoria
 
         unzip SageMaker/<filename> -d SageMaker/
 
-> aside positive
+> 
 > 
 >   After you have set up either your docker or your cloud based notebook environment you can proceed to the next section.
 
@@ -164,7 +164,7 @@ To create a Snowflake session, we need to authenticate to the Snowflake instance
 
 Then, update your credentials in that file and they will be saved on your local machine. Even better would be to switch from user/password authentication to [private key authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth.html#key-pair-authentication-key-pair-rotation).
 
-> aside positive
+> 
 > 
 >   Put your key pair files into the same directory or update the location in your credentials file.
 
@@ -178,7 +178,7 @@ Then, update your credentials in that file and they will be saved on your local 
 - Double click the **credential.txt** file to open and edit it in the Jupyter environment
 - Update the file to your Snowflake environment connection parameters
 
-> aside positive
+> 
 > 
 >   You can comment out parameters by putting a # at the beginning of the line.
 
@@ -203,7 +203,7 @@ Navigate to the folder snowparklab/notebook/part1 and Double click on the part1.
 
 ![Import Credentials](assets/part1_run_step_1.png)
 
-> aside positive
+> 
 > 
 >   **Return here once you have finished the first notebook.**
 
@@ -230,7 +230,7 @@ Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.
 
 ![Run Cells](assets/part2_run_step_1.png)
 
-> aside positive
+> 
 > 
 >   **Return here once you have finished the second notebook.**
 
@@ -254,7 +254,7 @@ Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.
 
 ![Run Cells](assets/part3_run_step_1.png)
 
-> aside positive
+> 
 > 
 >   **Return here once you have finished the third notebook so you can read the conclusion & Next steps, and complete the guide.**
 

@@ -26,7 +26,7 @@ DevOps is concerned with automating the development, release and maintenance of 
 
 This quickstart will focus primarily on automated release management for Snowflake by leveraging the GitHub Actions service from GitHub for the CI/CD and Terraform for the Database Change Management. Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this quickstart to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 
-> aside positive
+> 
 > 
 >  **Tip** - For a more complete introduction to using Terraform with Snowflake, please check out our related quickstart [Terraforming Snowflake](/en/developers/guides/terraforming-snowflake/).
 
@@ -103,7 +103,7 @@ While Terraform began as an IaC tool it has expanded and taken on many additiona
 
 Please note that this CZI Provider for Snowflake is a community-developed Provider, not an official Snowflake offering. It comes with no support or warranty.
 
-> aside negative
+> 
 > 
 >  **REALLY IMPORTANT** - **Do not use this provider to manage your Snowflake tables.** Currently the CZI Snowflake Provider drops and re-creates a table each time you make changes to it. So when using Terraform with Snowflake use it to create/manage the account level objects (warehouses, roles, integrations, databases, schemas, etc.) and then use a separate DCM tool for most objects within the database schema (tables, views, stored procedures, etc.).
 
@@ -138,39 +138,14 @@ On the second page, where it asks for the "Workspace Name" enter `gh-actions-dem
 ### Setup Environment Variables
 In order for Terraform Cloud to be able to connect to your Snowflake account you'll need to store the settings in Environment variables. Fortunately, Terraform Cloud makes this easy. From your new workspace homepage click on the "Variables" tab. Then for each variable listed below click on "+ Add variable" button (under the "Environment Variables" section) and enter the name given below along with the appropriate value (adjusting as appropriate).
 
-<table>
-    <thead>
-        <tr>
-            <th>Variable key</th>
-            <th>Variable value</th>
-            <th>Sensitive?</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWFLAKE_ACCOUNT</td>
-            <td>xy12345</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_REGION</td>
-            <td>east-us-2.azure</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_USER</td>
-            <td>DEMO_USER</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>*****</td>
-            <td>Yes</td>
-        </tr>
-    </tbody>
-</table>
+| Variable key | Variable value | Sensitive? |
+|--------------|----------------|------------|
+| SNOWFLAKE_ACCOUNT | xy12345 | No |
+| SNOWFLAKE_REGION | east-us-2.azure | No |
+| SNOWFLAKE_USER | DEMO_USER | No |
+| SNOWFLAKE_PASSWORD | ***** | Yes |
 
-> aside positive
+> 
 > 
 >  **Tip** - For more details on the supported arguments please check out the [CZI Terraform Provider for Snowflake documentation](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest/docs).
 
@@ -194,7 +169,7 @@ From the repository, click on the "Settings" tab near the top of the page. From 
 
 Click on the "New repository secret" button near the top right of the page. For the secret "Name" enter `TF_API_TOKEN` and for the "Value" enter the API token value you saved from the previous step.
 
-> aside positive
+> 
 > 
 >  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
@@ -253,7 +228,7 @@ A few things to point out from the YAML pipeline definition:
 - Please note that if you are re-using an existing GitHub repository it might retain the old `master` branch naming. If so, please update the YAML above (see the `on:` section).
 - We’re using the default GitHub-hosted Linux agent to execute the pipeline.
 
-> aside positive
+> 
 > 
 >  **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page and the [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions).
 

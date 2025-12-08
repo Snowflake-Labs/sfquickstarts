@@ -25,7 +25,7 @@ Elaborerai i dati con Snowpark, svilupperai un semplice modello ML e creerai una
 
 ### Prerequisiti
 
-* Accesso con il ruolo ACCOUNTADMIN in Snowflake o un account di prova Snowflake: [https://signup.snowflake.com/](https://signup.snowflake.com/)
+* Accesso con il ruolo ACCOUNTADMIN in Snowflake o un account di prova Snowflake: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * Conoscenza di base di SQL, dei concetti di database e degli oggetti
 * Familiarità con Python. Tutto il codice necessario viene fornito durante il workshop.
 * La possibilità di installare ed eseguire software sul tuo computer
@@ -53,7 +53,7 @@ Elaborerai i dati con Snowpark, svilupperai un semplice modello ML e creerai una
 1. Installa conda per gestire un ambiente separato eseguendo il comando pip install conda. NOTA: in alternativa puoi utilizzare [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 2. Apri il Terminale o il prompt dei comandi
 
-> aside positive 
+> 
 IMPORTANTE: se usi un computer con chip Apple M1, segui [queste istruzioni](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) per creare l’ambiente virtuale e installare Snowpark Python invece della procedura descritta qui.
 
 3. Crea l’ambiente eseguendo `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`

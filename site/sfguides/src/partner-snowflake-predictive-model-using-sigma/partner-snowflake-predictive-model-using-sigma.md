@@ -40,7 +40,7 @@ In this lab you will be creating a machine learning-driven price prediction tool
 ### Prerequisites
 Thanks for signing up for Snowflake & Sigma’s Hands-On Lab, “Develop a Predictive Model Using Snowflake and Sigma”. To ensure that you can follow along during the lab, please complete the work outlined below prior to the start of the lab. 
 
-1: Sign up for a Snowflake Trial - You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the ACCOUNTADMIN role for some steps below.
+1: Sign up for a Snowflake Trial - You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the ACCOUNTADMIN role for some steps below.
 
 
 2: Accept Anaconda Terms - Follow [these instructions](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-setup#label-notebooks-anaconda-terms) to accept the Anaconda Terms to import Python libraries in Snowflake. (For this lab, you will need to import the [snowflake-ml-python](https://pypi.org/project/snowflake-ml-python/) package in a Snowflake Notebook.)

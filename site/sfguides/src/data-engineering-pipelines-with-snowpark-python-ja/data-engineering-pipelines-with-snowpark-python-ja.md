@@ -22,7 +22,7 @@ Snowpark Pythonの機能を活用してデータエンジニアリングパイ�
 ![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 では、準備をはじめましょう。
 
-> aside negative
+> 
 > 
 > **注意** - 2023年2月1日現在、[Snowflake Visual Studio Code拡張機能](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)と[SnowCLIツール](https://github.com/Snowflake-Labs/snowcli)は両方ともまだプレビュー中です。
 
@@ -221,7 +221,7 @@ Snowflakeの非常に便利な機能の1つに、作業したいステージの�
 
 ### COPYによるデータの取り込み
 
-データをSnowflakeテーブルにロードするために、DataFrameに対して`copy_into_table()`メソッドを使用します。このメソッドは、推論されたスキーマ（存在しない場合）を使用してSnowflakeでターゲットテーブルを作成し、高度に最適化されたSnowflake `COPY INTO &lt;table&gt;`[コマンド](https://docs.snowflake.com/ja/sql-reference/sql/copy-into-table.html)を呼び出します。コードスニペットは次のとおりです。
+データをSnowflakeテーブルにロードするために、DataFrameに対して`copy_into_table()`メソッドを使用します。このメソッドは、推論されたスキーマ（存在しない場合）を使用してSnowflakeでターゲットテーブルを作成し、高度に最適化されたSnowflake `COPY INTO <table>`[コマンド](https://docs.snowflake.com/ja/sql-reference/sql/copy-into-table.html)を呼び出します。コードスニペットは次のとおりです。
 
 ```python
     df.copy_into_table("{}".format(tname))
@@ -410,7 +410,7 @@ SnowCLIは、次のSnowflakeオブジェクトの開発と展開を簡素化し�
 
 これにより、対応するSnowflakeデータベースオブジェクトでラップすることを心配せずに、Pythonアプリケーションを開発してテストすることもできるようになります。
 
-> aside negative
+> 
 > 
 > **注意** - 2023年2月1日現在、SnowCLIツールはまだプレビュー中です。
 
@@ -800,48 +800,22 @@ GitHubアクションワークフローがSnowflakeアカウントに接続で�
 
 レポジトリから、ページ上部付近にある「`Settings`」タブをクリックします。「設定」ページで「`Secrets and variables`」をクリックし、左側のナビゲーションで「`Actions`」タブをクリックします。`Actions`シークレットが選択されているはずです。以下の各シークレットについて、右上にある「`New repository secret`」をクリックし、下記の名前と適切な値（必要に応じて調整）を入力します。
 
-<table>
-    <thead>
-        <tr>
-            <th>シークレット名</th>
-            <th>シークレット値</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWSQL_ACCOUNT</td>
-            <td>myaccount</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_USER</td>
-            <td>myusername</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_PWD</td>
-            <td>mypassword</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_ROLE</td>
-            <td>HOL_ROLE</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_WAREHOUSE</td>
-            <td>HOL_WH</td>
-        </tr>
-        <tr>
-            <td>SNOWSQL_DATABASE</td>
-            <td>HOL_DB</td>
-        </tr>
-    </tbody>
-</table>
-> aside positive
+| シークレット名 | シークレット値 |
+|----------------|----------------|
+| SNOWSQL_ACCOUNT | myaccount |
+| SNOWSQL_USER | myusername |
+| SNOWSQL_PWD | mypassword |
+| SNOWSQL_ROLE | HOL_ROLE |
+| SNOWSQL_WAREHOUSE | HOL_WH |
+| SNOWSQL_DATABASE | HOL_DB |
+> 
 > 
 > **ヒント** - SNOWSQL_ACCOUNTのアカウント名の構成方法の詳細については、「[Snowflake Pythonコネクターインストールガイド](https://docs.snowflake.com/ja/user-guide/python-connector-install.html#step-2-verify-your-installation)」にあるアカウント名の説明を参照してください。
 
 すべてのシークレットの追加が完了すると、ページは次のようになります。
 
 ![assets/github-actions-secrets.png](assets/github-actions-secrets.png)
-> aside positive
+> 
 > 
 > **ヒント** - シークレットを管理するためのさらに優れたソリューションとして、[GitHubアクション環境](https://docs.github.com/en/actions/reference/environments)を活用できます。この環境では、シークレットをグループ化し、環境ごとに保護ルールを定義できます。
 

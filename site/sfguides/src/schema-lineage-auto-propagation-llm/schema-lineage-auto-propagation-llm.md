@@ -22,7 +22,7 @@ Schema changes in upstream tables, like new fields from sources like Salesforce,
 A powerful solution for automated schema propagation that combines Snowflake’s processing capabilities with the intelligence of LLMs, enabling end-to-end lineage management. By the end of this guide, you’ll have a framework that detects schema changes in upstream tables and ensures their propagation downstream with AI precision.
 
 ### What You’ll Need
-- A [Snowflake](https://signup.snowflake.com/) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account
 - Streamlit in Snowflake 
 
 ### What You’ll Learn
@@ -45,7 +45,7 @@ This solution leverages the intelligence of LLMs to dynamically analyze and resp
 5. **Automated Propagation Workflow**: Utilizes a directed graph traversal algorithm (DFS) to ensure the orderly propagation of changes across the entire data pipeline.
 
 ### Architecture Diagram
-![](images/flowchart.png)
+![](assets/flowchart.png)
 
 ---
 
@@ -268,7 +268,7 @@ ALTER TASK schema_change_monitor RESUME;
 In this part, simulate a schema change in the upstream table by adding a new column. This change will automatically be detected and logged, triggering downstream updates.
 
 Currently, the unaltered upstream table looks like this: 
-![](images/streamlit0.png)
+![](assets/streamlit0.png)
 
 ```sql
 -- Alter table to add a new column
@@ -692,23 +692,23 @@ if selected_source_object != 'Select Table':
 ### User Guide
 
 1. **Initialize the Application**: Launch the Streamlit in Snowflake app in your Snowsight UI. Select `cortex_llm_etl` as the database and `schema_evolution` as your schema. Copy and past the streamlit code after clicking on `edit` button.
-![](images/streamlit1.png)
+![](assets/streamlit1.png)
 
 2. **Select a Table to Review**: Use the dropdown to select the upstream table where schema changes have been detected. It will take some time for Snowflake's lineage to run based on the complexity of your medallion structure. 
-![](images/streamlit2.png)
+![](assets/streamlit2.png)
 
 3. **View Lineage Path**: Click “Show Lineage Path” to view all downstream tables affected by changes in the selected table.
-![](images/streamlit3.png)
+![](assets/streamlit3.png)
 
 4. **Propagation Options**:
 
 - Auto-Propagate: Automatically applies all changes through the lineage using Depth First Search Technique (DFS).
 - Manual Propagation: Allows for a step-by-step review and approval of changes for each downstream table.
-![](images/streamlit4.png)
+![](assets/streamlit4.png)
 
 5. **Preview and Apply Changes**: When in manual mode, click "Preview Changes" to view the LLM-suggested DDL updates. Once satisfied, click “Apply Changes” to finalize them.
-![](images/streamlit5.png)
-![](images/streamlit6.png)
+![](assets/streamlit5.png)
+![](assets/streamlit6.png)
 
 6. **Monitor Propagation**: The system tracks each step, providing success or error messages to keep users informed.
 
@@ -725,7 +725,7 @@ To verify the propagated schema changes directly in Snowflake, you can query eac
 2. Run a simple `SELECT *` query on the downstream tables to view the updated structures and ensure consistency across the lineage.
 3. Optionally, review any new columns or data transformations to confirm that the changes align with the desired schema modifications.
 
-![](images/streamlit7.png)
+![](assets/streamlit7.png)
 
 
 This verification step provides confidence that the lineage propagation was executed accurately.

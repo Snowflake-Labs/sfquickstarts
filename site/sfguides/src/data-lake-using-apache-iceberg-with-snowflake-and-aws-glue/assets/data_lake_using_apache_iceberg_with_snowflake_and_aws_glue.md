@@ -31,7 +31,7 @@ For this guide we will use a Financial Services use case where Insurance data is
 - How to create Snowflake [Managed](https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-snowflake-as-the-catalog) and [Unmanaged](https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-aws-glue-as-the-catalog) Iceberg Tables  
 
 ### What You’ll Need 
-- A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
+- A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
 - An [AWS Account](https://aws.amazon.com/free/) with `Administartor Access`
 
 ### What You’ll Build 

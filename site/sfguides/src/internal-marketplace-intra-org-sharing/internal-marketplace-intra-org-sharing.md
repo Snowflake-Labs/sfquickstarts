@@ -64,7 +64,7 @@ For Steps 2 through 7 you can download [scripts here](https://github.com/Snowfla
 
 ### Step 1: Create a Snowflake trial account
 
-Sign up for a trial account [here](https://signup.snowflake.com/)
+Sign up for a trial account [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 - Choose a Cloud and Region. We recommend choosing one of these regions where this Quickstart and the very latest features have been tested:
   - **Microsoft Azure:** North Europe (Ireland), Central US (Iowa), Canada Central (Toronto)
@@ -149,14 +149,14 @@ GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_ro
 GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
 
-> aside negative
+> 
 > IMPORTANT: You **may** receive an email asking for verification of your email address, if you have not done so before. Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
 
 While waiting for the email, you can go ahead and run the following parts.
 
 Now, run the following commands to create the next two accounts that you need. 
 
-> aside negative
+> 
 > IMPORTANT: For the commands below, you **have to use the same worksheet** as above, as the variables created are reused (email_var, firstname_var, lastname_var, and pwd_var).
 
 ```sql
@@ -318,7 +318,7 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
 3. Click on **“Untitled Listing”** and give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
 
-> aside positive
+> 
 > IMPORTANT: some code later in this lab will reference the listing by the name **Order Insights**. 
 
 ![](assets/publish01_title.png)

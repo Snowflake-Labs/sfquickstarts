@@ -41,7 +41,7 @@ Now that you have the introduction to Horizon and our personas, lets get started
 - How to create a Horizon dashboard in Snowsight to monitor your data and policies
 
 ### - What You’ll Need 
-- A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
+- A trial [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
 <!-- ------------------------ -->
 ## Setup
 
@@ -292,7 +292,7 @@ Before we begin, the Snowflake Access Control Framework is based on:
 - Discretionary Access Control (DAC): Each object has an owner, who can in turn 
     grant access to that object.
 
-> aside negative
+> 
 >The key concepts to understanding access control in Snowflake are:
 >- Securable Object: An entity to which access can be granted. Unless allowed by a 
     grant, access is denied. Securable Objects are owned by a Role (as opposed to a User)
@@ -314,7 +314,7 @@ In Summary:
 
 
 ### System Defined Roles and Privileges
-> aside positive
+> 
  >Before beginning to deploy Role Based Access Control (RBAC) for Horizon HOL,
  let's first take a look at the Snowflake System Defined Roles and their privileges
 
@@ -354,7 +354,7 @@ WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN
           and manage users and roles.
 4. **USERADMIN**: Role that is dedicated to user and role management only.
 5. **SYSADMIN**: Role that has privileges to create warehouses and databases in an account.
-> aside negative
+> 
 >If, as recommended, you create a role hierarchy that ultimately assigns all custom roles to the SYSADMIN role, this role also has the ability to grant privileges on warehouses, databases, and other objects to other roles.
 6. PUBLIC: Pseudo-role that is automatically granted to every user and every role in your account. The PUBLIC role can own securable objects, just like any other role; however, the objects owned by the role are available to every other user and role in your account.
 
@@ -386,7 +386,7 @@ Next we will grant only OPERATE and USAGE privileges to our Test Role
 GRANT OPERATE, USAGE ON WAREHOUSE HRZN_WH TO ROLE HRZN_DATA_ANALYST;
 ```
 
-> aside positive
+> 
 >**Snowflake Warehouse Privilege Grants**
 >1. MODIFY: Enables altering any properties of a warehouse, including changing its size.
 >2. MONITOR: Enables viewing current and past queries executed on a warehouse as well as usage statistics on that warehouse.
@@ -400,7 +400,7 @@ Now we will grant USAGE on our Database and all Schemas within it
 GRANT USAGE ON DATABASE HRZN_DB TO ROLE HRZN_DATA_ANALYST;
 GRANT USAGE ON ALL SCHEMAS IN DATABASE HRZN_DB TO ROLE HRZN_DATA_ANALYST;
 ```
-> aside positive
+> 
 > **Snowflake Database and Schema Grants**
 >1. MODIFY: Enables altering any settings of a database.
 >2. MONITOR: Enables performing the DESCRIBE command on the database.
@@ -412,7 +412,7 @@ We are going to test Data Governance features as our Test Role, so let's ensure 
 GRANT SELECT ON ALL TABLES IN SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_ANALYST;
 GRANT SELECT ON ALL VIEWS IN SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_ANALYST;
 ```
-> aside positive
+> 
 >**Snowflake View and Table Privilege Grants**
 >1. SELECT: Enables executing a SELECT statement on a table/view.
 >2. INSERT: Enables executing an INSERT command on a table. 
@@ -489,7 +489,7 @@ Before we can apply our DMF's to the table, we must first set the Data Metric Sc
 ```
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER SET DATA_METRIC_SCHEDULE = '5 minute'; 
 ```
-> aside negative
+> 
 >Data Metric Schedule specifies the schedule for running Data Metric Functions
 for tables and can leverage MINUTE, USING CRON or TRIGGER_ON_CHANGES
 
@@ -515,7 +515,7 @@ The results our Data Metric Functions are written to an Event table, let's start
 
 For ease of use, a flattened View is also provided so let's take a look at this as well
 
-> aside negative
+> 
 >This view will not work in a trial account.
 ```
 SELECT 
@@ -533,7 +533,7 @@ ORDER BY change_commit_time DESC;
 
  With the Data Quality metrics being logged every time our table changes we will be able to monitor the counts as new data flows in and existing e-mail updates are run.
 
-> aside negative
+> 
 >In a production scenario a logical next step would be to configure alerts to notify you when changes to data quality occur. By combining the DMF and alert functionality, you can have consistent threshold notifications for data quality on the tables that you measure. 
 
 
@@ -544,7 +544,7 @@ ORDER BY change_commit_time DESC;
 
 In today's world of data management, it is common to have policies and procedures that range from data quality and retention to personal data protection. A Data Governor within an organization defines and applies data policies. Here we will explore Horizon features such as **universal search** that makes it easier to find Account objects,Snowflake Marketplace listings, relevant Snowflake Documentation and Snowflake Community Knowledge Base articles.
 
-> aside negative
+> 
 >
 >Note: Universal Search understands your query and information about your database objects and can find objects with names that differ from your search terms.
 >Even if you misspell or type only part of your search term, you can still see
@@ -605,7 +605,7 @@ USE SCHEMA HRZN_SCH;
 (https://docs.snowflake.com/en/user-guide/governance-classify-using#using-sf-web-interface-to-classify-tables-in-a-schema)
 
 #### Autoclassification for Sensitive information
->aside negative
+> 
 >OPTIONAL: You can perform classification through the UI as well.
 --Databases -> HRZN_DB -> HRZN_SCH --> Click "..." -> Classify and Tag Sensitive Data
 
@@ -623,7 +623,7 @@ FROM TABLE(
     'table'
 ));
 ````
->aside negative
+> 
 >OPTIONAL You can perform classification through the UI as well.
 --Databases -> HRZN_DB -> HRZN_SCH --> Click "..." -> Classify and Tag Sensitive Data
 
@@ -657,12 +657,12 @@ select CREDITCARD from HRZN_DB.HRZN_SCH.CUSTOMER where CREDITCARD regexp '^3[4-7
 
 CALL SYSTEM$CLASSIFY('HRZN_DB.HRZN_SCH.CUSTOMER',{'auto_tag': true, 'custom_classifiers': ['HRZN_DB.CLASSIFIERS.CREDITCARD']});
 ````
->aside negative
+> 
 >Note: This statement shows if a column is classified as a particular tag
 ````
 Select SYSTEM$GET_TAG('snowflake.core.semantic_category','HRZN_DB.HRZN_SCH.CUSTOMER.CREDITCARD','column');
 ````
->aside positive
+> 
 >
  Moving forward as Schemas or Tables are created and updated we can use this exact process of Automatic and Custom Classification to maintain a strong governance posture and build rich semantic-layer metadata.
 
@@ -702,7 +702,7 @@ alter table HRZN_DB.HRZN_SCH.customer modify last_name set tag HRZN_DB.TAG_SCHEM
 ````
 
 Query account usage view to check tags and reference
->aside negative
+> 
 >Note: The following VIEWs have a latency of about 20 min after creating TAG objects before they will be able to display data.
 ````
 select * from snowflake.account_usage.tag_references where tag_name ='CONFIDENTIAL' ;
@@ -839,7 +839,7 @@ USE ROLE HRZN_DATA_GOVERNOR;
 SELECT * FROM HRZN_DB.TAG_SCHEMA.ROW_POLICY_MAP; 
 ````
 
->aside negative
+> 
 >Note: Snowflake supports row-level security through the use of Row Access Policies to determine which rows to return in the query result. The row access policy can be relatively simple to allow one particular role to view rows, or be more complex to include a mapping table in the policy definition to determine access to rows in the query result.
 ````
 CREATE OR REPLACE ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_STATE_RESTRICTIONS
@@ -880,7 +880,7 @@ SELECT FIRST_NAME, STREET_ADDRESS, STATE, OPTIN, PHONE_NUMBER, EMAIL, JOB, COMPA
  For the Data User role we have created, let's test an Aggregation Policy out against our Raw Order Header table.
 
 
->aside positive
+> 
 > An Aggregation Policy is a schema-level object that controls what type of query can access data from a table or view. When an aggregation policy is applied to a table, queries against that table must aggregate data into groups of a minimum size in order to return results,thereby preventing a query from returning information from an individual record.
 
 
@@ -969,7 +969,6 @@ ORDER BY order_total DESC;
 
 
 -What are the total order amounts by company and job?
- >aside negative
  >Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
  ````
 SELECT 
@@ -1003,7 +1002,7 @@ ORDER BY order_total DESC;
 #### Projection Policies
 Within this step, we will cover another Privacy Policy framework provided by Snowflake Horizon this time diving into Projection Policies which in short will prevent queries from using a SELECT statement to project values from a column.
 
->aside positive
+> 
 > A projection policy is a first-class, schema-level object that defines whether a column can be projected in the output of a SQL query result. A column with a projection policy assigned to it is said to be projection constrained.
 
 
@@ -1074,7 +1073,7 @@ read and when, as well as what statements have performed a write operations. Acc
 Within this step, we will walk through leveraging Access History to find when the last time our Raw data was read from and written to. 
 In Snowsight create a new worksheet and rename it 3_Governor_Admin. Copy and paste each code block below and execute. You can also find the entire Data Governor Admin Script at [ 3-Data-governor-Admin.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/3-Data-governor-Admin.sql) 
 
->aside positive
+> 
 >Note: Access History latency is up to 3 hours.  So, some of the queries below may not have results right away. 
 ````
 USE ROLE HRZN_IT_ADMIN;
@@ -1271,11 +1270,10 @@ WHERE 1=1
 GROUP BY object_name
 ORDER BY number_of_queries DESC;
 ````
->aside positive
+> 
 >Direct Objects Accessed: Data objects directly named in the query explicitly.
 Base Objects Accessed: Base data objects required to execute a query.
  
- >aside negative
  > Clean up (Optional).
  >Create a new worksheet named 99_lab_teardown. Copy and paste the entire Teardown Script at [ 99-lab-teardown.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/99-lab-teardown.sql) 
 <!-- ------------------------ -->

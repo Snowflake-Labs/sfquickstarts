@@ -37,10 +37,10 @@ By the end of this lab you will have an **end-to-end streaming Time Series Analy
 ### What You'll Need
 
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
-- [Sign-up for a Snowflake Trial](https://signup.snowflake.com/?lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks) OR have access to an existing Snowflake account with the ACCOUNTADMIN role. Select the Enterprise edition, AWS as a cloud provider.
+- [Sign-up for a Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks&utm_cta=developer-guides) OR have access to an existing Snowflake account with the ACCOUNTADMIN role. Select the Enterprise edition, AWS as a cloud provider.
 - Access to a **personal [GitHub](https://github.com/signup) account** to fork the quickstart repo and create [GitHub Codespaces](https://docs.github.com/en/codespaces/overview). Codespaces offer a hosted development environment. GitHub offers [free Codespace hours each month](https://github.com/features/codespaces) when using a 2 or 4 node environment, which should be enough to work through this lab.
 
-> aside negative
+> 
 > 
 > It is recommended to use a personal GitHub account which will have permissions to deploy a GitHub Codespace.
 >
@@ -78,21 +78,21 @@ Now create the GitHub Codespace.
 
 ![assets/labsetup_createcodespace.png](assets/labsetup_createcodespace.png)
 
-> aside negative
+> 
 >
 > If you are seeing the message **Codespace access limited**, you may be logged into Github with an organization account. Please [Sign up to GitHub](https://github.com/signup) using a personal account and retry the **Lab Setup**.
 >
 
 ![assets/labsetup_codespace_limited.png](assets/labsetup_codespace_limited.png)
 
-> aside positive
+> 
 > 
 > This will open a new browser window and begin **Setting up your codespace**. The Github Codespace deployment will take several minutes to set up the entire environment for this lab.
 >
 
 ![assets/labsetup_setupcodespace.png](assets/labsetup_setupcodespace.png)
 
-> aside negative
+> 
 >
 > **Please wait** for the **postCreateCommand** to run. It may take 5-10 mins to fully deploy.
 >
@@ -110,7 +110,7 @@ Once complete you should see a hosted web-based version of **VS Code Integrated 
 
 **The Github Codespace deployment will contain all the resources needed to complete the lab**.
 
-> aside negative
+> 
 >
 > If you do not see the **Snowflake VS Code Extension** try **Refreshing** your browser window.
 >
@@ -196,7 +196,7 @@ WHERE AL.VALUE:type::VARCHAR = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 
 ![assets/labsetup_snowsignin.png](assets/labsetup_snowsignin.png)
 
-> aside positive
+> 
 >
 > **The VS Code Snowflake Extension** should now be connected to your Snowflake. **Once connected**, it will show a `Sign Out` button along with **Databases** and **Applications** in the `OBJECT EXPLORER` section.
 
@@ -209,7 +209,7 @@ WHERE AL.VALUE:type::VARCHAR = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 
 ![assets/labsetup_worksheet1.png](assets/labsetup_worksheet1.png)
 
-> aside negative
+> 
 >
 > We'll need to update the **setup worksheet** with your **PUBLIC KEY** to be used during the initial Snowflake setup.
 
@@ -219,7 +219,7 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 
 **Copy** the **PUBLIC KEY** value from the `keys/rsa_key.pub` file. This will be needed in the setup worksheet.
 
-> aside negative
+> 
 >
 > Only the **PUBLIC KEY** value is required, which is the section **between**
 >
@@ -229,7 +229,7 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 
 ![assets/labsetup_publickey.png](assets/labsetup_publickey.png)
 
-> aside negative
+> 
 > 
 > The **GitHub Codespace** may prompt to access the clipboard in **VSCode**, select **Allow** if prompted.
 >
@@ -247,13 +247,13 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 **NOTE:** The pasted **PUBLIC KEY** can show on multiple lines and will work.
 
 
-> aside positive
+> 
 > 
 > **NO NEED TO RUN** anything just yet, this is just setup, this worksheet will be run in the next section.
 >
 > The **Snowflake setup** is complete, and The Lab environment is configured!
 
-> aside negative
+> 
 > 
 > ### Lab Troubleshooting
 >
@@ -297,7 +297,7 @@ This includes:
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1_setup.sql`
 
-> aside positive
+> 
 > 
 > #### INFO: Snowflake VS Code Extension
 >
@@ -326,7 +326,7 @@ In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1
 
 ![assets/labsetup_vscodeextension_runall.png](assets/labsetup_vscodeextension_runall.png)
 
-> aside negative
+> 
 > 
 > This section will run using the **ACCOUNTADMIN** role and login setup via **Snowflake VS Code Extension** connection.
 > 
@@ -419,12 +419,12 @@ GRANT CREATE NOTEBOOK ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESE
 /*##### SNOWFLAKE SETUP SCRIPT #####*/
 ```
 
-> aside positive
+> 
 > 
 > The Snowflake foundation objects have now been deployed, and we can continue on to set up a **Snowpipe Streaming Ingestion**.
 >
 
-> aside negative
+> 
 > 
 > ### Troubleshooting
 >
@@ -494,7 +494,7 @@ The IoT data will be streamed into Snowflake in a similar [schema format as Kafk
 - **RECORD_CONTENT** - This contains the Kafka message.
 - **RECORD_METADATA** - This contains metadata about the message, for example, the topic from which the message was read.
 
-> aside negative
+> 
 > 
 > There are **EXTERNAL ACTIVITY** sections in the worksheet, which will be executed within the **GitHub Codespace** terminal. Details in the next steps.
 >
@@ -515,7 +515,7 @@ The Ingest Client SDK is configured with a secure JDBC connection to Snowflake, 
 
 Now that a staging table is available to stream time series data. We can look at setting up a streaming connection channel with a Java Snowpipe Streaming client. The simulator Java application is available in the `iotstream` folder of the lab, and can be run via a terminal with a Java runtime.
 
-> aside positive
+> 
 > 
 > The lab environment has been set up with a **Java Runtime** to execute the Java Snowpipe Streaming client application.
 >
@@ -538,7 +538,7 @@ cd iotstream
 ./Test.sh
 ```
 
-> aside positive
+> 
 > 
 > If **successful**, it will return:
 > `** Successfully Connected, Test complete! **`
@@ -582,12 +582,12 @@ The simulated **IoT dataset contains six sensor devices** at various frequencies
 ./Run_MAX.sh
 ```
 
-> aside negative
+> 
 > 
 > Depending on the **speed of the machine** running the Java streaming client application, and the **network connectivity**, this may take a minute to load.
 >
 
-> aside positive
+> 
 > 
 > #### INFO: Java Streaming Client Application
 >
@@ -647,12 +647,12 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 }
 ```
 
-> aside positive
+> 
 > 
 > Data has now been **streamed into Snowflake**, and we can now look at modeling the data for analytics.
 >
 
-> aside negative
+> 
 > 
 > ### Troubleshooting
 >
@@ -780,7 +780,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 ##############################*/
 ```
 
-> aside positive
+> 
 > 
 > #### INFO: Dynamic Table TARGET_LAG Parameter
 >
@@ -814,7 +814,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 ![assets/model_dynamictables_readings_preview.png](assets/model_dynamictables_readings_preview.png)
 
-> aside positive
+> 
 > 
 > Data is now being **transformed in Snowflake** using **Dynamic Tables**.
 >
@@ -865,12 +865,12 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 ##############################*/
 ```
 
-> aside positive
+> 
 > 
 > Data is now **modeled in Snowflake** and available in the **ANALYTICS** schema, and we can now proceed to analyze the data using Snowflake time series functions.
 >
 
-> aside negative
+> 
 > 
 > ### Troubleshooting
 >
@@ -934,7 +934,7 @@ The following query profiles will be covered in this section.
 
 4. **Copy** the contents of the worksheet to **clipboard**, and paste it into the newly created **Worksheet in Snowsight**
 
-> aside positive
+> 
 > 
 > #### INFO: Snowsight Worksheet Query Statement Execution
 >
@@ -1068,7 +1068,7 @@ ORDER BY TAGNAME, FREQUENCY DESC;
 
 ![assets/analysis_query_relativefrequency.png](assets/analysis_query_relativefrequency.png)
 
-> aside positive
+> 
 > 
 > #### INFO: Query Result Data Contract
 >
@@ -1264,7 +1264,7 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-> aside positive
+> 
 > 
 > #### INFO: Snowsight Statistics
 >
@@ -1277,7 +1277,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 ![assets/analysis_query_windowrowsbetween.png](assets/analysis_query_windowrowsbetween.png)
 
-> aside negative
+> 
 > 
 > Now assume a scenario, where there are **time gaps or missing data** received from a sensor. Such as a sensor that sends roughly every 5 seconds and experiences a fault.
 >
@@ -1303,7 +1303,7 @@ over a specific time frame to detect trends and patterns in the data.
 
 #### NOTE: At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview. We have included it in the lab content for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be released in your region just yet, it is targeted to be Public Preview soon. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
 
-> aside positive
+> 
 > 
 > This is where **RANGE BETWEEN** can be used with intervals of time that can be added or subtracted from timestamps.
 >
@@ -1560,7 +1560,7 @@ CREATE OR REPLACE SNOWFLAKE.ML.FORECAST HOL_TIMESERIES_FORECAST(
 );
 ```
 
-> aside negative
+> 
 > 
 > **Training the Time Series Forecast model** may take 2-3 minutes in this case. Indicative training times available at [Training on Multi-Series Data](https://docs.snowflake.com/user-guide/snowflake-cortex/ml-functions/forecasting#training-on-multi-series-data).
 >
@@ -1656,7 +1656,7 @@ For more information, please review [How to use Snowflake Copilot](https://docs.
 
 ![assets/analysis_query_copilot.png](assets/analysis_query_copilot.png)
 
-> aside negative
+> 
 > 
 > If **Snowflake Copilot** is in the process of indexing objects, results will return **"We are in the process of indexing the tables and views in the selected database and schema. Please try again later."**.
 >
@@ -1669,7 +1669,7 @@ For more information, please review [How to use Snowflake Copilot](https://docs.
 
 ![assets/analysis_query_copilot_hourlybin.png](assets/analysis_query_copilot_hourlybin.png)
 
-> aside negative
+> 
 > 
 > ### Troubleshooting
 >
@@ -1734,7 +1734,7 @@ The **LTTB** algorithm **reduces the number of visual data points in a time seri
 
 The following functions and procedures have been deployed.
 
-> aside positive
+> 
 > 
 > #### INFO: SQL INTERPOLATE Table Function
 >
@@ -1852,7 +1852,7 @@ FROM
 $$;
 ```
 
-> aside positive
+> 
 > 
 > #### INFO: SQL INTERPOLATE Procedure
 >
@@ -1898,7 +1898,7 @@ END;
 $$;
 ```
 
-> aside positive
+> 
 > 
 > #### INFO: Python Largest Triangle Three Buckets (LTTB) Function
 >
@@ -2156,12 +2156,12 @@ ORDER BY TAGNAME, TIMESTAMP;
 ![assets/function_chart_lttb_downsampled.png](assets/function_chart_lttb_downsampled.png)
 
 
-> aside positive
+> 
 > 
 > You have now built your own **Time Series Analysis** functions and procedures, these can be called within applications working with time series data. We can now look at deploying a Time Series application.
 >
 
-> aside negative
+> 
 > 
 > ### Troubleshooting
 >
@@ -2190,7 +2190,7 @@ After completing the analysis of the time series data that was streamed into Sno
 
 ![assets/streamlit_overview.png](assets/streamlit_overview.png)
 
-> aside positive
+> 
 > 
 > #### INFO: Streamlit
 > **Streamlit** is an open-source Python library that makes it easy to **create web applications for machine learning, data analysis, and visualization**. **[Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)** helps developers securely build, deploy, and share **Streamlit apps on Snowflake’s data cloud platform**, without moving data or application code to an external system.
@@ -2230,12 +2230,12 @@ $ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --proje
 /*##### STREAMLIT SCRIPT #####*/
 ```
 
-> aside negative
+> 
 > 
 > There are **EXTERNAL ACTIVITY** sections in the worksheet, this will be covered in the next step.
 >
 
-> aside positive
+> 
 > 
 > #### INFO: Pre-Built Streamlit Application
 >
@@ -2268,14 +2268,14 @@ conda activate hol-timeseries
 snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project "streamlit" --connection="hol-timeseries-streamlit"
 ```
 
-> aside negative
+> 
 > 
 > The **GitHub Codespace** may prompt to access the clipboard in **VSCode**, select **Allow** if prompted.
 >
 
 ![assets/streamlit_codespace_paste.png](assets/streamlit_codespace_paste.png)
 
-> aside positive
+> 
 > 
 > #### INFO: Streamlit Deploy with Snowflake CLI
 >
@@ -2301,7 +2301,7 @@ Once the Streamlit application is successfully deployed, Snowflake CLI will disp
 
 ![assets/streamlit_open.png](assets/streamlit_open.png)
 
-> aside positive
+> 
 > 
 > #### INFO: Launch Streamlit Apps inside Snowflake
 >
@@ -2366,7 +2366,7 @@ Open the **Streamlit Application**:
 
 ![assets/streamlit_query_filter.png](assets/streamlit_query_filter.png)
 
-> aside positive
+> 
 > 
 > **Streamlit** will automatically refresh the page after making filter selections.
 >
@@ -2393,7 +2393,7 @@ Open the **Streamlit Application**:
 
     - The **Tag Data** table will now show the **Start** timestamp for each minute interval.
 
-> aside positive
+> 
 > 
 > #### INFO: Tag Data Schema
 >
@@ -2429,7 +2429,7 @@ cd iotstream
 ./Run_Slooow.sh
 ```
 
-> aside positive
+> 
 > 
 > If there are no errors, IoT data will now be **streaming into Snowflake**, and the **Dynamic Tables** will start to update.
 >
@@ -2448,12 +2448,12 @@ cd iotstream
 
 ![assets/streamlit_query_stream.png](assets/streamlit_query_stream.png)
 
-> aside positive
+> 
 > 
 > You have now successfully deployed a **Time Series Application** using Streamlit in Snowflake. This will allow end users easy access to visualize time series data as well as run their own **Time Series Analysis** on all Time Series data available in Snowflake.
 >
 
-> aside negative
+> 
 > 
 > ### Troubleshooting
 >
@@ -2602,7 +2602,7 @@ DROP USER USER_HOL_TIMESERIES;
 
 ![assets/cleanup_codespace.png](assets/cleanup_codespace.png)
 
-> aside negative
+> 
 > 
 > ### Troubleshooting
 >
@@ -2626,7 +2626,7 @@ DROP USER USER_HOL_TIMESERIES;
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-> aside positive
+> 
 > 
 > ### Congratulations!
 >

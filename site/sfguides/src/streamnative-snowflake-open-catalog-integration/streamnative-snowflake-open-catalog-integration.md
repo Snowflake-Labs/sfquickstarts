@@ -30,7 +30,7 @@ StreamNative also supports ingesting data into Snowflake using **Snowpipe or Sno
 - A StreamNative account available at [streamnative.io](https://www.streamnative.io). Your account will come with $200 in free credits, sufficient for following this tutorial. No credit card is necessary.
 - AWS Account for deploying the StreamNative BYOC Ursa Cluster. BYOC clusters are deployed into your cloud provider. These resources will incur AWS charges that are not covered by StreamNative.
 - Permissions to create policies, roles, and s3 buckets in AWS, as well as apply the StreamNative Terraform [vendor access module](https://docs.streamnative.io/docs/byoc-aws-access).
-- Access to [Snowflake account](https://signup.snowflake.com/) and ability to create a Snowflake Open Catalog account.
+- Access to [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and ability to create a Snowflake Open Catalog account.
 - Environment for executing Terraform modules and Java code.
 
 Apache&reg;, Apache Iceberg&trade;, and Apache Kafka&reg; are either registered trademarks or trademarks of Apache Software Foundation in the United States and/or other countries.
@@ -59,7 +59,7 @@ Configure the Snowflake Open Catalog Account.
 * Region: region to place the Snowflake Open Catalog Account
 * Edition: any
 
-> aside positive
+> 
 >
 > IMPORTANT: The Snowflake Open Catalog Account, s3 bucket, and StreamNative BYOC Ursa Cluster should be in the same region. Snowflake Open Catalog doesn’t support cross-region buckets. To avoid costs associated with cross-region traffic, we highly recommend your s3 bucket and StreamNative BYOC Ursa Cluster are in the same region.
 
@@ -84,7 +84,7 @@ If you need the **Account URL** of your Snowflake Open Catalog Account in the fu
 ### Setup storage bucket with permissions for StreamNative
 
 Next we must choose the bucket location for the backend of our StreamNative BYOC Ursa Cluster and grant access to StreamNative Cloud. You have two choices to setup a s3 storage bucket for the StreamNative Ursa Cluster backend. This is where data will be stored in Iceberg format and accessed by Snowflake Open Catalog and Snowflake AI Data Cloud.
-> aside positive
+> 
 > 
 > IMPORTANT: The Snowflake Open Catalog Account, s3 bucket, and StreamNative BYOC Ursa Cluster should be in the same region. Snowflake Open Catalog doesn’t support cross-region buckets. To avoid costs associated with cross-region traffic, we highly recommend your s3 bucket and StreamNative BYOC Ursa Cluster are in the same region.
 
@@ -381,7 +381,7 @@ s3://<your-cloud-environment-id>/<your-cluster-id>/compaction
 e.g.
 s3://aws-usw2-test-rni68-tiered-storage-snc/o-naa2l-c-vo06zqe-ursa/compaction
 ```
-> aside positive
+> 
 > 
 > IMPORTANT : If you are using the StreamNative provided bucket, do not close the browser while creating the catalog. This will cause StreamNative to create a new cluster id. Once a catalog is created in Snowflake Open Catalog, the base location and additional locations cannot be changed. If the cluster id changes, you would need to create a new catalog.
 

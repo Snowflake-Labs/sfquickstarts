@@ -202,7 +202,7 @@ One very helpful feature in Snowflake is the ability to infer the schema of file
 ```
 
 ### Data Ingestion with COPY
-In order to load the data into a Snowflake table we will use the `copy_into_table()` method on a DataFrame. This method will create the target table in Snowflake using the inferred schema (if it doesn't exist), and then call the highly optimized Snowflake [`COPY INTO &lt;table&gt;` Command](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html). Here is the code snippet:
+In order to load the data into a Snowflake table we will use the `copy_into_table()` method on a DataFrame. This method will create the target table in Snowflake using the inferred schema (if it doesn't exist), and then call the highly optimized Snowflake [`COPY INTO <table>` Command](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html). Here is the code snippet:
 
 ```python
     df.copy_into_table("{}".format(tname))
@@ -758,40 +758,14 @@ In order for your GitHub Actions workflow to be able to connect to your Snowflak
 
 From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
 
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWFLAKE_ACCOUNT</td>
-            <td>myaccount</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_USER</td>
-            <td>myusername</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>mypassword</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_ROLE</td>
-            <td>HOL_ROLE</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_WAREHOUSE</td>
-            <td>HOL_WH</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_DATABASE</td>
-            <td>HOL_DB</td>
-        </tr>
-    </tbody>
-</table>
+| Secret name | Secret value |
+|-------------|--------------|
+| SNOWFLAKE_ACCOUNT | myaccount |
+| SNOWFLAKE_USER | myusername |
+| SNOWFLAKE_PASSWORD | mypassword |
+| SNOWFLAKE_ROLE | HOL_ROLE |
+| SNOWFLAKE_WAREHOUSE | HOL_WH |
+| SNOWFLAKE_DATABASE | HOL_DB |
 
 
 >  **Tip** - For more details on how to structure the account name in SNOWFLAKE_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).

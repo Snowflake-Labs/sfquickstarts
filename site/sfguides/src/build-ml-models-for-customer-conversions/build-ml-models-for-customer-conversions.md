@@ -29,7 +29,7 @@ Will they buy? This hands-on lab will guide you through building a custom machin
 - How to create dynamic visualizations to communicate insights to stakeholders
 
 ### Prerequisites
-- A Snowflake Account. [Sign up for a 30-day free trial account](https://signup.snowflake.com/), make sure to select AWS WEST
+- A Snowflake Account. [Sign up for a 30-day free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), make sure to select AWS WEST
 - Familiarity with Python and ML concepts
 
 ## Setup Environment
@@ -57,7 +57,7 @@ Before diving into Ray and distributed processing, let's set up our environment 
 
 The setup script creates the necessary database, schema, tables, and loads sample data for our analysis.
 
-> aside negative
+> 
 > `CREATE COMPUTE POOL` step is expected to fail on trial accounts 
 
 ### Import the Notebook
@@ -193,7 +193,7 @@ Run the model's explain function on input data and review the generated explanat
 
 ## Create Automated ML Pipeline
 
->aside negative
+> 
 > **Note** You will not be able to do these next steps of the Notebook on a Trial Account
 
 Now we'll set up an automated workflow using ML Jobs to run remote code, and Snowflake's DAG framework to process new reviews and retrain models.

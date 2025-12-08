@@ -31,7 +31,7 @@ In this tutorial, we will walk you through the different ways you can enrich you
 
 ### Prerequisites
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account, if required.
 - Access to download `.ipynb` file from [Snowflake notebooks demo repo](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main)
 - Please add the `matplotlib` and `plotly` package from the package picker on the top right. We will be using these packages in the notebook.
 
@@ -275,7 +275,7 @@ alt.Chart(df).mark_bar().encode(
 ## Conclusion And Resources
 
 
-Congratulations! You've successfully completed the Visual Data Stories with Snowflake Notebooks quickstart guide. [Try out Notebooks](https://signup.snowflake.com/?utm_cta=quickstarts_) yourself to build your own data narrative!
+Congratulations! You've successfully completed the Visual Data Stories with Snowflake Notebooks quickstart guide. [Try out Notebooks](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) yourself to build your own data narrative!
 
 ### What You Learned
 

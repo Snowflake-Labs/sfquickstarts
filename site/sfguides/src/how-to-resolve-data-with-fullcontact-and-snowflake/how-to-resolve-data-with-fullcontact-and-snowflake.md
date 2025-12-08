@@ -25,7 +25,7 @@ To see a more in depth example with other sample datasets, make sure to check ou
 ### What You’ll Need
 - Familiarity with Snowflake SQL
 - Agreed to the [Snowflake Consumer Terms of Service](<https://other-docs.snowflake.com/en/collaboration/consumer-becoming>) for the Marketplace
-- [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` role
+- [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` role
 - [FullContact Trial Account](https://platform.fullcontact.com/register/offer/snowresolve)
 
 ### What You’ll Build

@@ -138,11 +138,17 @@ Create and configure API integration based on the specific Snowflake native appl
 
 **Spark Connector (UATUS)**
 
-<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (UATUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>arn:aws:iam::533606394992:role/Snowflake-WASM-Server-Invoker</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com</td></tr></tbody></table>
+| Parameters | Configuration for Spark Connector (UATUS) |
+|------------|-------------------------------------------|
+| `<AWS_ARN>` | arn:aws:iam::53360639****:role/Snowflake-WASM-Server-Invoker |
+| `<SPARK_PROXY>` | https://ymeen1pkt6.execute-api.us-east-1.amazonaws.com |
 
 **Spark Connector (PRODUS)**
 
-<table><thead><tr><th width="198">Parameters</th><th>Configuration for Spark Connector (PRODUS)</th></tr></thead><tbody><tr><td><code>&#x3C;AWS_ARN></code></td><td>(<em>Coming soon...</em>)</td></tr><tr><td><code>&#x3C;SPARK_PROXY></code></td><td>(<em>Coming soon...</em>)</td></tr></tbody></table>
+| Parameters | Configuration for Spark Connector (PRODUS) |
+|------------|--------------------------------------------|
+| `<AWS_ARN>` | (*Coming soon...*) |
+| `<SPARK_PROXY>` | (*Coming soon...*) |
 
 
 
@@ -169,7 +175,7 @@ CALL SPARK_PUBLIC.EXECUTE_EXTERNAL_FUNCTIONS('SPARK_INTEG');
 
 ### 5. Identify the Spark folder to be synchronized.
 
-> aside negative
+> 
 > 
 > Connect to one folder only. Calling SETUP on another folder will erase the UDFs created from the old folder.
 
@@ -186,7 +192,7 @@ CALL SPARK_PUBLIC.SETUP('{SPARK_FOLDER}', '{SPARK_KEY}', 'SYNTHETICKEY', CURRENT
 
 ### Synchronize the folder regularly to maintain the updated services.
 
-> aside positive
+> 
 > 
 >  This command can be triggered multiple times to make sure Snowflake functions process data via the latest Spark models. Otherwise, the automatic synchronization mechanism built into this connector will update the Snowflake functions to the latest Spark service every 3 minutes.
 
@@ -196,7 +202,7 @@ CALL SPARK_PUBLIC.SYNC();
 
 ### Synchronize multiple versions of a single Spark service.
 
-> aside negative
+> 
 > 
 > The automatic synchronization mechanism mentioned before doesn't keep track of all versions available in Spark. The following command needs to be triggered manually to make sure all available versions are imported into the Snowflake environment.
 

@@ -19,7 +19,7 @@ Snowflake Cortex Agents orchestrate across both structured and unstructured data
 
 The Microsoft Teams and  M365 Copilot app is an AI-powered productivity assistant integrated into Microsoft Teams and Microsoft M365 Services (Word, Excel, Outlook, etc.). It's part of Microsoft’s broader Copilot ecosystem, which embeds generative AI into everyday work apps and can connect to services like Snowflake Cortex Agents.
 
-CURRENTLY THIS IS ONLY AVAILABLE FOR SNOWFLAKE ACCOUNTS DEPLOYED IN AZURE US EAST 2
+CURRENTLY THIS IS AVAILABLE IN ALL SNOWFLAKE PUBLIC CLOUDS AND REGIONS
 
 ### Use Case
 In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
@@ -27,7 +27,7 @@ In this use cases we will build two data sources, one with structured sales data
 Snowflake Cortex has proven to be a best-in-class platform for building GenAI services (Search and Analyst) and agents with your data and now customers can seamlessly connect to Cortex Agents in Microsoft Teams and M365 Copilots alongside all of their Microsoft GenAI experiences.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) and a Snowflake account
+- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and a Snowflake account
 - A Microsoft Teams account or M365 Copilot (with administrator privileges if following that section)
 
 ### What You’ll Learn
@@ -51,7 +51,7 @@ The authentication and user flow goes like this:
 ...
 
 ### What You’ll Need
-- [Snowflake account](https://signup.snowflake.com/) 
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
 - A Microsoft Teams account or M365 Copilot (with administrator privileges if following that section)
 
 ### What You'll Build
@@ -299,11 +299,11 @@ And you are now ready to go! You can continue asking questions like:
 
 The Snowflake Cortex Teams and M365 App now supports the below functionality. Users are encouraged to expand on this use case to explore its complete functionality
 
-:busts_in_silhouette: Multi-Agent Support: Users can now use and switch between multiple agents across multiple Snowflake accounts.
+- Multi-Agent Support: Users can now use and switch between multiple agents across multiple Snowflake accounts.
 
-:left_speech_bubble: Multi-Turn Conversations: Stateful conversations are now supported via the new Threads API, providing a genuine chatbot experience.
+- Multi-Turn Conversations: Stateful conversations are now supported via the new Threads API, providing a genuine chatbot experience.
 
-:brain: Improved Reasoning & UX: Agents now use a multi-step “Reasoning Path” for tools, and the UI shows “thinking” traces and status updates.
+- Improved Reasoning & UX: Agents now use a multi-step “Reasoning Path” for tools, and the UI shows “thinking” traces and status updates.
 <!-- ------------------------ -->
 ## Conclusion and Resources
 

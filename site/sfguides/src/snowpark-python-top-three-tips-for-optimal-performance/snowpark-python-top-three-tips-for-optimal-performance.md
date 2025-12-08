@@ -28,7 +28,7 @@ In this quickstart, you will learn how to make optimized decisions when using Sn
 
 ### What You’ll Need 
 
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 
@@ -46,7 +46,7 @@ cd sfguide-snowpark-python-top-three-tips-for-optimal-performance
 
 #### Snowpark Python via Anaconda
 
-> aside positive
+> 
 > IMPORTANT:
 > - If you are using a machine wth Apple M1 chip, follow [these instructions](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
 
@@ -235,7 +235,7 @@ Your Python code must operate efficiently on batch of rows
 
 ### Cleanup
 
-> aside positive
+> 
 > If you did not complete all test cases in the notebook, please ensure you cleaned up the environment by executing the final code block so that all other labs will function properly
 
 

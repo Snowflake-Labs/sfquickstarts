@@ -1,7 +1,7 @@
 author: Chanin Nantasenamat
 id: getting-started-with-interactive-tables
 summary: This guide demonstrates how to set up and use Snowflake's Interactive Warehouses and Tables to achieve sub-second query performance.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
 environments: web
 status: Published
@@ -34,7 +34,7 @@ Here's how interactive warehouses and tables fits in for a typical data analytic
 You will build a complete, functioning interactive data environment in Snowflake, including a dedicated Interactive Warehouse and an Interactive Table populated with data. You will also create a Python-based performance test that executes queries against both your new interactive setup and a standard configuration, culminating in a comparative bar chart that visually proves the latency improvements.
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic knowledge of SQL and Python.
 - Familiarity with data warehousing and performance concepts.
 - A Snowflake role with privileges to create warehouses and tables (*i.e.*, `SYSADMIN` is used in the notebook).

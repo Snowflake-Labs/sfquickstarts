@@ -60,13 +60,13 @@ Este quickstart é voltado para a API Snowpark ML Modeling, que expande a engenh
 - Ter o [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) instalado.
 - Ter o [Python 3.9](https://www.python.org/downloads/) instalado.
   - Você vai criar um ambiente Python com a versão 3.9 na etapa **Introdução**.
-- Uma conta Snowflake com [pacotes Anaconda habilitados pelo ORGADMIN](https://docs.snowflake.com/pt/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). Caso você não possua uma conta Snowflake, inscreva-se em uma [conta de avaliação gratuita](https://signup.snowflake.com/?lang=pt-br).
+- Uma conta Snowflake com [pacotes Anaconda habilitados pelo ORGADMIN](https://docs.snowflake.com/pt/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). Caso você não possua uma conta Snowflake, inscreva-se em uma [conta de avaliação gratuita](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lang=pt-br&utm_cta=developer-guides).
 - Um login da conta Snowflake com a função ACCOUNTADMIN. Se você tiver essa função no seu ambiente, pode optar por usá-la. Caso contrário, será necessário: 
 1) Inscrever-se em uma avaliação gratuita; 
 2) Usar uma função diferente capaz de criar banco de dados, esquema, tabelas, estágios, tarefas, funções definidas pelo usuário e procedimentos armazenados; OU 
 3) Usar um banco de dados e esquema existentes onde você possa criar os objetos mencionados.
 
-> aside positive IMPORTANTE: antes de continuar, é preciso ter uma conta Snowflake com pacotes Anaconda habilitados pelo ORGADMIN como descrito [aqui](https://docs.snowflake.com/pt/developer-guide/udf/python/udf-python-packages#getting-started).
+> 
 
 <!-- ------------------------ -->
 ## Configuração do ambiente
@@ -76,7 +76,7 @@ Este quickstart é voltado para a API Snowpark ML Modeling, que expande a engenh
 
 Acesse o [Snowsight](https://docs.snowflake.com/pt/user-guide/ui-snowsight.html#) com suas credenciais para criar tabelas, carregar dados do Amazon S3 e configurar estágios internos do Snowflake.
 
-> aside positive IMPORTANTE:
+> 
 >
 > - Se você usar nomes diferentes para os objetos criados nesta seção, atualize os scripts e o código nas seções a seguir conforme necessário.
 >
@@ -168,7 +168,7 @@ CREATE OR REPLACE STAGE dash_udfs;
 
 Se preferir, você pode abrir o [setup.sql](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/setup.sql) no Snowsight e executar todas as instruções SQL para criar os objetos e carregar os dados do AWS S3.
 
-> aside positive IMPORTANTE: se você usar nomes diferentes para os objetos criados nesta seção, atualize os scripts e o código nas seções a seguir conforme necessário.
+> 
 
 <!-- ------------------------ -->
 ## Introdução
@@ -196,7 +196,7 @@ git clone git@github.com:Snowflake-Labs/sfguide-getting-started-dataengineering-
 
 Para concluir as etapas de **Engenharia de dados** e **Aprendizado de máquina**, você pode instalar tudo localmente (opção 1) ou usar o Hex (opção 2) como descrito a seguir.
 
-> aside positive IMPORTANTE: para executar a **aplicação Streamlit**, você terá que criar um ambiente Python e instalar o Snowpark para Python junto a outras bibliotecas localmente, como descrito em **Instalação local**.
+> 
 
 #### Opção 1 – Instalação local
 
@@ -252,13 +252,13 @@ Aqui temos um ***connection.json*** de amostra baseado nos nomes de objeto menci
 }
 ```
 
-> aside negative Observação: no parâmetro **account** acima, especifique seu **identificador de conta**, sem incluir o domínio snowflakecomputing.com. O Snowflake o acrescenta automaticamente ao criar a conexão. Para obter mais informações, [consulte a documentação](https://docs.snowflake.com/pt/user-guide/admin-account-identifier).
+> 
 
 #### Opção 2 – Utilização do Hex
 
 Caso opte por usar sua conta [Hex](https://app.hex.tech/login) ou [criar uma conta de avaliação gratuita de 30 dias](https://app.hex.tech/signup/quickstart-30), então o Snowpark para Python já estará integrado, eliminando a necessidade de criar um ambiente Python e instalar o Snowpark para Python junto das demais bibliotecas no seu notebook. Com isso, você poderá concluir as etapas de **Engenharia de dados** e **Aprendizado de máquina** deste quickstart guide direto no Hex. Consulte as respectivas etapas para obter mais detalhes sobre o carregamento de notebooks de engenharia de dados e aprendizado de máquina no Hex.
 
-> aside positive IMPORTANTE: para executar a **aplicação Streamlit**, você terá que criar um ambiente Python e instalar o Snowpark para Python junto a outras bibliotecas localmente, conforme descrito acima em **Instalação local**.
+> 
 
 <!-- ------------------------ -->
 ## Engenharia de dados
@@ -280,7 +280,7 @@ Para começar, siga estas etapas:
 
 2) Abra e execute as células em [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
 
-> aside positive IMPORTANTE: verifique se o kernel (Python) do notebok Jupyter está definido como ***snowpark-de-ml***, que é o mesmo nome do ambiente criado na etapa **Clonagem do repositório do GitHub**.
+> 
 
 ### Notebook de engenharia de dados no Hex
 
@@ -292,7 +292,7 @@ Caso opte por usar sua conta do [Hex](https://app.hex.tech/login) ou [criar uma 
 
 ![Conexão de dados do HEX](assets/hex_data_connection.png)
 
-> aside negative Observação: também é possível criar conexões compartilhadas de dados com projetos e usuários no seu espaço de trabalho. Par obter mais informações, consulte a [documentação](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+> 
 
 3) Substitua o próximo snippet de código no notebook.
 
@@ -404,7 +404,7 @@ monthly_revenue_data_pipeline_task = """
 session.sql(monthly_revenue_data_pipeline_task).collect() 
 ```
 
-> aside negative Observação: em ***monthly_revenue_data_pipeline_task*** acima, observe a cláusula **AFTER campaign_spend_data_pipeline_task** que faz dela uma tarefa dependente.
+> 
 
 #### Iniciar tarefas
 
@@ -442,7 +442,7 @@ Também é possível habilitar notificações por push para um serviço de mensa
 ## Aprendizado de máquina
 
 
-> aside negative PRÉ-REQUISITO: concluir as etapas descritas em [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
+> 
 
 O notebook do link abaixo aborda as seguintes tarefas de aprendizado de máquina.
 
@@ -466,7 +466,7 @@ Para começar, siga estas etapas:
 
 2) Abra e execute o [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb)
 
-> aside positive IMPORTANTE: verifique se o kernel (Python) do notebok Jupyter está definido como ***snowpark-de-ml***, que é o mesmo nome do ambiente criado na etapa **Clonagem do repositório do GitHub**.
+> 
 
 ### Notebook de aprendizado de máquina no Hex
 
@@ -478,7 +478,7 @@ Caso opte por usar sua conta do [Hex](https://app.hex.tech/login) ou [criar uma 
 
 ![Conexão de dados do HEX](assets/hex_data_connection.png)
 
-> aside negative Observação: também é possível criar conexões compartilhadas de dados com projetos e usuários no seu espaço de trabalho. Par obter mais informações, consulte a [documentação](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+> 
 
 3) Substitua o próximo snippet de código no notebook.
 
@@ -520,7 +520,7 @@ Se tudo correr bem, deve surgir uma janela de navegador com a aplicação carreg
 
 Caso você tenha o SiS habilitado em sua conta, siga estas etapas para executar a aplicação no Snowsight, em vez de localmente em sua máquina.
 
-> aside negative IMPORTANTE: o SiS está em versão preliminar privada em junho de 2023.\*\**
+> 
 
   1) Clique em **Streamlit Apps** no menu de navegação à esquerda. 
 2) Clique em **\+ Streamlit App** no canto superior direito. 

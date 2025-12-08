@@ -29,7 +29,7 @@ Streamlit *(acquisito da Snowflake a marzo 2022)* è una libreria Python che con
 ### Prerequisiti
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installato
 - [Anaconda](https://www.anaconda.com/) installato
-- Account Snowflake con i [pacchetti Anaconda abilitati da ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Se non hai un account Snowflake, puoi registrarti per una [prova gratuita](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- Account Snowflake con i [pacchetti Anaconda abilitati da ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Se non hai un account Snowflake, puoi registrarti per una [prova gratuita](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Un login per l’account Snowflake con il ruolo ACCOUNTADMIN. In caso contrario, dovrai registrarti per una prova gratuita oppure utilizzare un ruolo diverso con la capacità di creare database, schemi, tabelle, stage, User Defined Function e stored procedure. 
 
 ### Cosa realizzerai 
@@ -67,7 +67,7 @@ Tasty Bytes gestisce food truck in molte città di tutto il mondo e ogni food tr
 
 ![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
->aside positive
+> 
 SafeGraph è un’azienda globale di dati geospaziali che offre dati su qualsiasi località nel mondo. Clienti come Esri, Tripadvisor, Mapbox e Sysco utilizzano i dati di SafeGraph per comprendere meglio i propri clienti, creare nuovi prodotti e prendere decisioni migliori per il proprio business.
 >
 ### Passaggio 2 - Creare oggetti, caricare i dati e unire i dati
@@ -174,14 +174,14 @@ $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-f
 ### Passaggio 2 - Aggiornare il file di autorizzazione
 - Aggiorna il file [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) con le credenziali del tuo account Snowflake. Il notebook Python utilizzerà questo file per accedere alle tue credenziali e connettersi a Snowflake.<br>
 ![assets/auth_file.png](assets/auth_file.png)
->aside positive    
+> 
 > Per il parametro `account`, usa il tuo [ID account](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Nota che l’ID account non include il suffisso snowflakecomputing.com.
 
 ### Passaggio 3 - Creare l’ambiente Python
->aside positive
+> 
 Queste istruzioni utilizzano [Anaconda](https://www.anaconda.com/) per creare l’ambiente Python. *Tuttavia, puoi usare qualsiasi altro ambiente Python con Python 3.8, ad esempio [virtualenv](https://virtualenv.pypa.io/en/latest/)*.
 
->aside negative
+> 
 **Apple M1**: l’esecuzione di Snowpark Python sui chip Apple M1 presenta un problema noto, dovuto alla gestione della memoria in pyOpenSSL. Per risolvere questo problema, consulta la [**documentazione di Snowpark**](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html).<br>
 
  **Dal Terminale, esegui i seguenti comandi per creare l’ambiente Python e lanciare il notebook Jupyter:**<br>

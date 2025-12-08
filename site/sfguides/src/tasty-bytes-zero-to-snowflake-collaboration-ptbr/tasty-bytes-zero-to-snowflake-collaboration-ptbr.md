@@ -113,7 +113,7 @@ Siga as etapas e o vídeo abaixo para adquirir a oferta na sua conta Snowflake.
 
 ![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 
->aside positive A Weather Source é uma fornecedora líder global de dados de meteorologia, e seu OnPoint Product Suite oferece às empresas os dados meteorológicos necessários para geração de insights relevantes e úteis para diversos casos de uso em diversos setores.
+> 
 >
 
 ### Etapa 2 - Harmonizar os dados próprios e de terceiros
@@ -237,7 +237,7 @@ $$;
 
 ![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
->aside positive Ao criar uma função definida pelo usuário (user-defined function, UDF), você especifica um manipulador cujo código é escrito em uma das linguagens compatíveis. De acordo com a linguagem do manipulador, você pode incluir o código fonte dele em linha com a instrução CREATE FUNCTION ou fazer referência à localização do manipulador a partir de CREATE FUNCTION, onde o manipulador é pré-compilado ou o código fonte é extraído de um estágio.
+> 
 >
 
 ### Etapa 2 - Criar o SQL para nosso modo de exibição

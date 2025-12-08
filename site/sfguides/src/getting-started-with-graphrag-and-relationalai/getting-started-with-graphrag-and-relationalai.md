@@ -30,7 +30,7 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 - How to use the graph to answer user questions
 
 ### What you will need
-- A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) on AWS in the US East (N. Virginia) region or the US West (Oregon) region
+- A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) on AWS in the US East (N. Virginia) region or the US West (Oregon) region
 - Basic knowledge of using a Snowflake SQL Worksheet
 - [Snowflake privileges](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges) on your user to install a Native Application
 - Snowflake account privileges to create databases and schemas in your Snowflake account
@@ -44,7 +44,7 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 - A semantically similar retrieval pipeline of a user question against the community summaries
 - A LLM-based question answering pipeline grounded on the community summaries
 
-> aside positive
+> 
 > NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions [here](https://relational.ai/docs/native_app/installation)
 
 <!-- ------------------------ -->
@@ -52,7 +52,7 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 
 We shall proceed with creating the Snowflake artifacts required for this guide.
 
-> aside positive
+> 
 > 
 > Steps (3) and (4) exist for educational purposes, the Snowflake application can be installed by executing this [SQL script](https://github.com/RelationalAI/graphrag/tree/main/getting-started/sql/script.sql).
 
@@ -734,11 +734,11 @@ With all our Snowflake artifacts in place, we are now ready to extract the entit
 
 As mentioned, we shall call the entrypoint UDF `CREATE_NODES_EDGES_STREAMS_SOURCES` to extract the entities and relations from the corpus, storing the output in the `nodes` and `edges` tables:
 
-> aside positive
+> 
 > 
 > The parameter value `llama3-70b` is the name of the Snowflake Cortex LLM that we will use.
 
-> aside negative
+> 
 > 
 > Occasionally, you may encounter the error message:
 >
@@ -750,7 +750,7 @@ As mentioned, we shall call the entrypoint UDF `CREATE_NODES_EDGES_STREAMS_SOURC
 CALL CREATE_NODES_EDGES_STREAMS_SOURCES('llama3-70b');
 ```
 
-> aside positive
+> 
 > 
 > Expect this process to take a few minutes to complete.
 
@@ -846,7 +846,7 @@ rai engines:create
 - When prompted for the engine size, select an engine size from the list of options e.g. `HighMem|S`. Note that a small size engine is more than enough for this guide.
 - When prompted for the engine pool, select a pool from the list of options e.g. `M_ENGINES`.
 
-> aside positive
+> 
 > 
 >  Creating the engine may take a few minutes to complete. The CLI will notify you when the engine is ready.
 
@@ -862,11 +862,11 @@ rai imports:stream --source graph_rag.graph_rag.nodes --model graph_rag
 rai imports:stream --source graph_rag.graph_rag.edges --model graph_rag
 ```
 
-> aside positive
+> 
 > 
 > **IMPORTANT** An import stream utilizes change data capture to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute.
 
-> aside positive
+> 
 > 
 >  The `rai imports:stream` command may take a few minutes to complete. The streams are ready only after issuing the command:
 >

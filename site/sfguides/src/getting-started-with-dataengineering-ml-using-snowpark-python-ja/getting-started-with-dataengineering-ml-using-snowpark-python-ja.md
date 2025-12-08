@@ -62,7 +62,7 @@ Streamlitは、開発者がデータアプリケーションをすばやく簡�
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)がインストールされていること
 - [Python 3.9](https://www.python.org/downloads/)がインストールされていること
   - **開始**ステップでは、Python環境をPython 3.9で作成することに注意してください。
-- [ORGADMINによって有効化されたAnacondaパッケージ](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)を持つSnowflakeアカウント。Snowflakeアカウントをお持ちでない場合は、[無料トライアルアカウント](https://signup.snowflake.com/?utm_cta=quickstarts_)に登録できます。
+- [ORGADMINによって有効化されたAnacondaパッケージ](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)を持つSnowflakeアカウント。Snowflakeアカウントをお持ちでない場合は、[無料トライアルアカウント](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)に登録できます。
 - アカウント管理者の役割を持つSnowflakeアカウントのログイン。環境にこの役割がある場合は、それを使用できます。それ以外の場合は、1）無料トライアルに登録する、2）データベース、スキーマ、テーブル、ステージ、タスク、ユーザー定義関数、ストアドプロシージャを作成できる別の役割を使用する、または3）上記のオブジェクトを作成できる既存のデータベースとスキーマを使用する必要があります。
 
 > 重要：続行する前に、[こちら](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started)で説明されているように、ORGADMINによってAnacondaパッケージが有効化されているSnowflakeアカウントがあることを確認してください。

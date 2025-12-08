@@ -2,18 +2,18 @@ authors: Bobby Birstock, Amy Chen
 id: accelerating-data-teams-with-snowflake-and-dbt-cloud-hands-on-lab
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
 language: en
-summary: Build a dbt project and data pipeline with dbt Cloud and Snowflake
+summary: Build a dbt project and data pipeline with dbt platform and Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab
+# Accelerating Data Teams with Snowflake and dbt platform Hands On Lab
 <!-- ------------------------ -->
 ## Overview 
 
 Modern businesses need modern data strategies built on platforms that support agility, growth, and operational efficiency.
 
-[Snowflake](https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_content=go-eta-ld-free-trial&utm_term=c-g-snowflake-e&utm_campaign=na-en-Branded&_bt=470247374327&_bk=snowflake&_bm=e&_bn=g&_bg=64805047909&gclid=Cj0KCQjw18WKBhCUARIsAFiW7JwA-C_HmNQzG_OFKhM1Hn9vlW6EAs-9mveiMXychVbbK34lh4vGfHsaAv4NEALw_wcB&gclsrc=aw.ds) is the Data Cloud that enables you to build data-intensive applications without operational burden, so you can focus on data and analytics instead of infrastructure management.
+[Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=go-eta-ld-free-trial&utm_term=c-g-snowflake-e&utm_campaign=na-en-Branded&_bt=470247374327&_bk=snowflake&_bm=e&_bn=g&_bg=64805047909&gclid=Cj0KCQjw18WKBhCUARIsAFiW7JwA-C_HmNQzG_OFKhM1Hn9vlW6EAs-9mveiMXychVbbK34lh4vGfHsaAv4NEALw_wcB&gclsrc=aw.ds&utm_cta=developer-guides) is the Data Cloud that enables you to build data-intensive applications without operational burden, so you can focus on data and analytics instead of infrastructure management.
 
 [dbt](https://www.getdbt.com/) is a transformation workflow that lets teams quickly and collaboratively deploy analytics code following software engineering best practices like modularity, portability, CI/CD, and documentation. Now anyone who knows SQL can build production-grade data pipelines. It transforms data in the warehouse leveraging cloud data platforms like Snowflake.
 
@@ -23,9 +23,9 @@ Let's get started.
 
 ### What You'll Use During the Lab
 
-* A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account with ACCOUNTADMIN access
+* A trial [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account with ACCOUNTADMIN access
 
-* A [dbt Cloud](https://www.getdbt.com/signup/) account
+* A [dbt platform](https://www.getdbt.com/signup/) account
 
 ### What You'll Learn
 
@@ -55,20 +55,20 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 <!-- ------------------------ -->
 ## Let's Get Started With Snowflake
 
-To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
+To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
 Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
 
 
 For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
 
-The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `Worksheets` tab click the blue `Worksheet` button in the upper right hand corner of the page to create a new worksheet. 
+The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `New Project` botton click the `SQL File` button to create a query. 
 
-![Snowflake Create Worksheet](assets/snowflake_create_worksheet.png)
+![Snowflake Create SQL file](assets/Snowflake_create_SQL_file.png)
 
-Once there, click `Databases` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
+Once there, at the bottom left corner you will see `Database Explore` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
 
 
-![Snowflake Sample Data Database](assets/snowflake_sample_data_database.png)<br>
+![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
 
     If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
 
@@ -80,7 +80,7 @@ Once there, click `Databases` and you should see a database called `Snowflake_Sa
 
 Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html).
 
-![Snowflake TPCH SF1](assets/snowflake_tpch_sf1.png)
+![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
 
 Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
 
@@ -91,74 +91,74 @@ select *
 ```
 
 You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
-Great! Now it’s time to set up dbt Cloud.
+Great! Now it’s time to set up dbt platform.
 
 <!-- ------------------------ -->
-## Launching dbt Cloud via Partner Connect
+## Launching dbt platform via Partner Connect
 
 
-1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
+1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt platform account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
 2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which located within the `Admin` section. <br>
 
-    ![Open Partner Connect](assets/snowflake_open_partner_connect.png)<br>
+    ![Open Partner Connect](assets/Snowflake_open_partner_connect.png)<br>
 
     Check to make sure your role is set as the ACCOUNTADMIN role. If you're using the classic console, the Partner Connect button will be in the top bar just right of center.
 
 3. Find the dbt tile by typing `dbt` into the `Search Partner Connect` search bar. Click on the dbt tile.
 
-    ![Search Partner Connect](assets/snowflake_search_partner_connect.png)
+    ![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
 
-4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
+4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.
 
-    ![Connect Partner Connect](assets/snowflake_connect_partner_connect.png)
+    ![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
 
 5. When you see the popup that says `Your partner account has been created`, click on `Activate`.
 
-    ![Activate Partner Connect](assets/snowflake_activate_partner_connect.png)
+    ![Activate Partner Connect](assets/Snowflake_activate_partner_connect.png)
 
-6. You should be redirected to a dbt Cloud registration page. Fill out the form and make sure to save the password somewhere for login in the future.
+6. You should be redirected to a dbt platform registration page. Fill out the form and make sure to save the password somewhere for login in the future.
 
-    ![dbt Cloud Registration](assets/dbt_cloud_registration.png)
+    ![dbt platform Registration](assets/dbt_platform_registration.png)
 
-7. Click on `Complete Registration`. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
+7. Click on `Complete Registration`. You should now be redirected to your dbt platform account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
 
-    ![dbt Cloud Home Page](assets/dbt_cloud_home_page.png)
+    ![dbt platform Home Page](assets/dbt_platform_home_page.png)
 
 8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
 
 <!-- ------------------------ -->
 ## IDE Walkthrough
 
-1. Now that our dbt Cloud account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the `Develop` button in the upper left hand corner of the screen.<br>
+1. Now that our dbt platform account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the `Studio` button in the upper left hand corner of the screen.<br>
 
-    ![Develop Button](assets/dbt_cloud_develop_button.png)
+    ![Develop Button](assets/dbt_platform_studio_button.png)
 
-2. When the IDE is done loading, click on the green `initialize dbt project` button in the upper left hand corner of the screen. The initialization process creates a dbt project in the file tree on the left hand side of the screen with all of the core dbt files and folders needed.<br>
+2. When the IDE is done loading, click on the black `Initialize dbt project` button in the upper left hand corner of the screen. The initialization process creates a dbt project in the file tree on the left hand side of the screen with all of the core dbt files and folders needed.<br>
 
 3. After the initialization is finished, you should see a new folder structure in the left hand sidebar. As we move through the workshop we’ll be sure to touch on a few key files and folders that we’ll work with to build out our project.
 
-4. Next click `commit and push` in the upper left hand corner to commit the new files and folders from the initialize step. We always want our commit messages to be relevant to the work we’re committing, so be sure to provide a message like `initialize project` and click `Commit Changes` in the pop-up window.
+4. Next click `Commit to new branch` in the upper left hand corner to commit the new files and folders from the initialize step. We always want our commit messages to be relevant to the work we’re committing, so be sure to provide a message like `initialize project` and click `Commit Changes` in the pop-up window.
 
 5. [Committing](https://www.atlassian.com/git/tutorials/saving-changes/git-commit) your work here will save it to the managed git repository that was created during the Partner Connect signup. This initial commit is the only commit that will be made directly to our `main` branch and from here on out we’ll be doing all of our work on a development branch. This allows us to keep our development work separate from our production code. 
 
-6. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, a SQL runner, and a CLI with git version control all baked into one package. This allows you to focus on editing your SQL files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The git workflow in dbt Cloud allows both git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
+6. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, a SQL runner, and a CLI with git version control all baked into one package. This allows you to focus on editing your SQL files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The git workflow in dbt platform allows both git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
 
-    ![IDE Overview](assets/dbt_cloud_ide_overview.png)
+    ![IDE Overview](assets/dbt_Cloud_IDE_overview.png)
 
 7. Let’s run our first dbt models! Two example models are included in your dbt project in the `models/examples` folder that we can use to illustrate how to run dbt at the command line.<br> 
 
     Type in `dbt run` into the command line at the bottom of the screen and hit `Enter` on your keyboard. When the run bar expands you’ll be able to see the results of the run, where you should see the run complete successfully.<br>
 
-    ![First Run Results](assets/dbt_cloud_first_run_results.png)
+    ![First Run Results](assets/dbt_Cloud_first_run_results.png)
 
     The run results allow you to see the code that dbt compiles and sends to Snowflake for execution. To view the logs for this run, click one of the model tabs and then click `details`. If you scroll down a bit you’ll be able to see the compiled code and how dbt interacts with Snowflake. Given that this run took place in our development environment, the models were created in your development schema, structured as your first initial and last name.
 
-    ![First Run Details](assets/dbt_cloud_first_run_details.png)
+    ![First Run Details](assets/dbt_Cloud_first_run_details.png)
 
 8. Now let’s switch over to Snowflake to confirm that the objects were actually created. Click on the 3 dots above your database objects and then click `Refresh`. Expand the `PC_DBT_DB` database and you should see your development schema. Click on the schema, then click `tables` and `views`. Now you should be able to see `MY_FIRST_DBT_MODEL` as a table and `MY_SECOND_DBT_MODEL` as a view.
 
-![Example Models](assets/snowflake_example_models.png)
+![Example Models](assets/Snowflake_example_models.png)
 
 9. While we’re in our worksheet, we’re going to create a new warehouse that we’ll be using in our dbt project. Copy and paste the following series of commands and run them in order within your Snowflake worksheet. 
 
@@ -178,11 +178,11 @@ Great! Now it’s time to set up dbt Cloud.
 
 ### Configuring the dbt_project.yml 
 
-1. To get started with development for our project, we’ll need to create a new git branch for our work. Clicking on the green `create branch` button in the upper left hand corner of the screen will bring up a window to name your branch. We’ll call our branch `snowflake_workshop`. After entering in the name click `Submit`. 
+1. To get started with development for our project, we’ll need to create a new git branch for our work. Clicking on the `create branch` button in the upper left hand corner of the screen will bring up a window to name your branch. We’ll call our branch `snowflake_workshop`. After entering in the name click `Submit`. 
 
 2. The first piece of development we’ll do on the project is to update the `dbt_project.yml` file. This is the file that dbt looks for to recognize that the file directory we’re working in is a dbt project. 
 
-    ![dbt_project.yml Location](assets/dbt_cloud_dbt_project_yaml_location.png)<br>
+    ![dbt_project.yml Location](assets/dbt_Cloud_dbt_project_yaml_location.png)<br>
 
     Click on the file to open it and replace all of the existing contents with the following code. When you’re done, save the file using the `save` button in the upper right hand corner of the screen. 
 
@@ -193,8 +193,8 @@ config-version: 2
 
 profile: 'default'
 
-source-paths: ["models"]
-analysis-paths: ["analysis"]
+model-paths: ["models"]
+analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
@@ -203,16 +203,16 @@ snapshot-paths: ["snapshots"]
 target-path: "target"  
 clean-targets:         
     - "target"
-    - "dbt_modules"
+    - "dbt_packages"
 
 models:
   snowflake_workshop:
     staging:
-      materialized: view
-      snowflake_warehouse: pc_dbt_wh
+      +materialized: view
+      +snowflake_warehouse: pc_dbt_wh
     marts:
-      materialized: table
-      snowflake_warehouse: pc_dbt_wh_large
+      +materialized: table
+      +snowflake_warehouse: pc_dbt_wh_large
 ```
 <br>
     The key configurations to point out in the file with relation to the work that we’re going to do are in the models section. Here we are defining configurations at the folder level that we want applied to all of the models within that folder. Specifically we are demonstrating:
@@ -246,15 +246,15 @@ dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guide
 
 * In your file tree take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `Create Folder`. We’re going to add two new folders to the file path, `staging` and `tpch` (in that order) by typing `staging/tpch` into the file path. Make sure you’re not including additional folder names and click `Create`. <br>
 
-    ![New Folder](assets/dbt_cloud_new_folder.png)<br>
+    ![New Folder](assets/dbt_Cloud_new_folder.png)<br>
 
-    ![Staging TPCH Create Folder](assets/dbt_cloud_models_staging_tpch_folder_create.png)
+    ![Staging TPCH Create Folder](assets/dbt_Cloud_models_staging_tpch_folder_create.png)
 
 * If you click into your `models` directory now, you should see the new `staging` folder nested within `models` and the `tpch` folder nested within `staging`.
 
 2. We are going to create our final two folders the same way. Take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `Create Folder`. This time in the popup window you’re going to enter in the following file path: `marts/core`. Here we’re creating a `marts` folder within `models` and then a `core` folder within `marts`. Your folder tree should look like this when it’s all said and done:<br>
 
-    ![File Tree](assets/dbt_cloud_models_marts_core_folder_file_tree.png)
+    ![File Tree](assets/dbt_Cloud_models_marts_core_folder_file_tree.png)
 
 ### Packages
 
@@ -271,9 +271,9 @@ We won’t be writing our own macros in this workshop but we do recommend checki
 
 1. We’re going to add the `dbt_utils` package to our project. There are a couple of places throughout the workshop that we’ll be using macros from the `dbt_utils` package to help us write DRY code. To install the package, first create a new file within your home directory (same level as your `dbt_project.yml` file) and call it `packages.yml`. <br>
 
-    ![Home Directory New File](assets/dbt_cloud_home_directory_new_file.png)<br>
+    ![Home Directory New File](assets/dbt_Cloud_home_directory_new_file.png)<br>
 
-    ![Create packages.yml](assets/dbt_cloud_packages_yml_create.png)
+    ![Create packages.yml](assets/dbt_Cloud_packages_yml_create.png)
 
     Then copy and paste the following code into it and click save: 
 
@@ -422,7 +422,7 @@ Here we have renaming similar to what we did in the first staging model, as well
 
 Let’s take a second to discuss the [source function](https://docs.getdbt.com/docs/building-a-dbt-project/using-sources) we’re using in the first cte of each of our staging models to refer to our raw data sources. 
 
-![Source Function](assets/dbt_cloud_source_function.png)
+![Source Function](assets/dbt_Cloud_source_function.png)
 
 There are a number of reasons why the source function is used instead of a hardcoded database reference, but one reason to highlight here is that it creates a dependency between our source database object and our staging models. This is going to be really important when we take a look at our data lineage later on in the workshop. Defining sources and referring to them with the source function also allows you to test and document those sources as you can with any other model in your project that you build on top of your sources. Also, if your source changes database or schema, you only have to update it in your `tpch_sources.yml` file rather than updating all of the models it might be used in.
 
@@ -432,13 +432,13 @@ Now that the staging models are built and saved, it’s time to create the model
 
 Your run should complete successfully and you should see green checkmarks next to all of your models in the run results.
 
-![Staging Models Results](assets/dbt_cloud_dbt_run_staging_models.png)
+![Staging Models Results](assets/dbt_Cloud_dbt_run_staging_models.png)
 
 An important concept to note here is that when you rerun the example models the output will be exactly the same as it was after the first run. This is an example of an [idempotent](https://docs.getdbt.com/terms/idempotent) process, which means that the output of the process is the same after each execution of the process, no matter how many times the process is executed. Similar to the example models, if you were to rerun the staging models we just built, the output would be the same as the first run. One of the key tenets of dbt is to maintain idempotent workflows.
 
 Let’s take a quick look in Snowflake, refresh database objects, open our development schema, and confirm that the new models are there. If you can see them then we’re good to go! 
 
-![Check Staging Models](assets/snowflake_check_staging_models.png)
+![Check Staging Models](assets/Snowflake_check_staging_models.png)
 
 Before we move onto the next section be sure to commit your new models to your git branch. Click the `Commit and push` button and give your commit a message like `sources and staging` before moving on. 
 
@@ -494,7 +494,7 @@ Although our TPC-H dataset isn’t changing and in this case is rather small, we
 
     Once the seed successfully builds, pop over to your Snowflake account and refresh your database objects. When you open your development schema and look at the tables in it, you should now see the `nations` table. 
 
-    ![Nations Table](assets/snowflake_nations_table.png)<br>
+    ![Nations Table](assets/Snowflake_nations_table.png)<br>
 
     To confirm that the data in the table matches the CSV, run the following command and do a quick check of the output:
 
@@ -552,11 +552,11 @@ Although our TPC-H dataset isn’t changing and in this case is rather small, we
 
     Once it’s complete, click on the model name in the run window, then click `details`, and then scroll down to be able to see the specifics about what query was run in Snowflake during this first go round. <br><br>
 
-    ![stg_tpch_nations Results](assets/dbt_cloud_stg_tpch_nations_results.png)<br><br>
+    ![stg_tpch_nations Results](assets/dbt_Cloud_stg_tpch_nations_results.png)<br><br>
 
     One of the first things to notice in the results is that dbt is running this model as an incremental, as shown by the second line: <br><br>
 
-    ![Incremental Model Start](assets/dbt_cloud_incremental_model_start.png)<br><br>
+    ![Incremental Model Start](assets/dbt_Cloud_incremental_model_start.png)<br><br>
 
     If we look back at the code, we’ll notice that the config block at the top of the model applies the defined configs to this model only and the first thing we’re saying is that we want to materialize it as an incremental model. However, the DDL ran as a regular dbt table materialization. This is because the first time an incremental model is executed, there is no existing database object in Snowflake so it needs to create the table first. We will see the model executed as a true incremental run when we run the model again.
 
@@ -564,7 +564,7 @@ Although our TPC-H dataset isn’t changing and in this case is rather small, we
 
     The rest of the model in this run is very straightforward. dbt is creating the model as a table and we are selecting everything from the `nations` seed that we uploaded, performing some light renaming, and returning those values. <br><br>
 
-    ![Incremental Model First Run](assets/dbt_cloud_incremental_model_first_run.png)<br><br>
+    ![Incremental Model First Run](assets/dbt_Cloud_incremental_model_first_run.png)<br><br>
 
     While that’s it for our run details, our code also contains an `is_incremental` macro at the bottom of the query. The macro is set to run on any incremental run of the model based on the specific core conditionals. Given that this first run of the incremental model is not an incremental run, `is_incremental = false` and dbt does not compile the `where` clause defined within the macro, which is confirmed by our run details. For our next run, `is_incremental` will be true, the macro will be compiled, and we’ll be able to see the `where` clause in action.
       
@@ -621,7 +621,7 @@ Although our TPC-H dataset isn’t changing and in this case is rather small, we
 
     The first thing to notice is that instead of creating a table to start, dbt compiles the code necessary to create a temporary table with the contents of our model *including* the where clause in the `is_incremental` macro. The where clause is filtering rows based on the `last_updated_date` and it will only include records where the `last_updated_date` is greater than the max date in the current results of the model. All of our new and updated rows with a `last_updated_date = 2022-05-09` are returned and stored in our temp table at this stage in the process.<br><br>
 
-    ![Incremental Model Second Run](assets/dbt_cloud_incremental_model_second_run.png)<br><br>
+    ![Incremental Model Second Run](assets/dbt_Cloud_incremental_model_second_run.png)<br><br>
 
     The next piece of compiled code is a `merge` statement that merges the results of the temp table with the existing `stg_tpch_nations` table in your warehouse, using the `nation_key` as the uniqueness constraint to join on. It defines the existing `stg_tpch_nations` table as the target table and the temp table created in the first part of the process as the source table to join with the target table. <br><br>
 
@@ -629,7 +629,7 @@ Although our TPC-H dataset isn’t changing and in this case is rather small, we
 
     For all of the rows where the `nation_key` in the temp table doesn’t exist yet in the target table, `notMatchedClause` is used to insert those rows into the target table. <br><br>
 
-    ![Incremental Model Merge](assets/dbt_cloud_incremental_model_merge.png)<br><br>
+    ![Incremental Model Merge](assets/dbt_Cloud_incremental_model_merge.png)<br><br>
 
 10. And that does it for our incremental model and associated seed. This example is a textbook use case of how you want to utilize seeds with dbt, as we had a small list stored in a CSV that changed *very* infrequently. 
 
@@ -784,11 +784,11 @@ Now let’s take a look at the detailed results of our `fct_orders` model so we 
 
 When we created our `dbt_project.yml` file we configured all models in the marts folder to run using the `pc_dbt_wh_large` warehouse, and we can see that in action towards the top of the log: 
 
-![Warehouse Details](assets/dbt_cloud_warehouse_details.png)
+![Warehouse Details](assets/dbt_Cloud_warehouse_details.png)
 
 There are also a couple pieces about the model itself to point out. The first is that dbt is wrapping our select statement in DDL for us and building the table in our development schema. The `materialized` config in our `dbt_project.yml` file is responsible for building this as a table, as opposed to the default view materialization. 
 
-![fct_orders DDL](assets/dbt_cloud_fct_orders_details_ddl.png)
+![fct_orders DDL](assets/dbt_Cloud_fct_orders_details_ddl.png)
 
 The other important point here is how the `ref` statements in each of the first two cte’s have been compiled to the appropriate database object. Here you can see that dbt has compiled the code to reference the `stg_tpch_orders` model and the `int_order_items` model in the development schema, given that we are building the model in our development environment. 
 
@@ -796,7 +796,7 @@ The other important point here is how the `ref` statements in each of the first 
 
 Now that we’ve completed building all of our models, we can see the lineage graph coming together. We’ll get another look at this when we pop into the docs site, but this is what you should be able to see by clicking on the lineage tab in the IDE with the `fct_orders` model tab open: 
 
-![Lineage Graph](assets/dbt_cloud_ide_lineage_graph.png)
+![Lineage Graph](assets/dbt_Cloud_IDE_lineage_graph.png)
 
 From left to right we have our sources (green nodes) leading into our staging models, our intermediate model, and then our final fact model. As was mentioned earlier, declaring sources in dbt and using the `ref` and `source` functions is what allows dbt to create these relations. This becomes very powerful as a project grows in size to include hundreds of models!
 
@@ -915,27 +915,27 @@ Speaking of which, let’s finally run our tests! You can enter the following co
 
 Similar to our model runs, the compiled code that is passed to Snowflake for each test is visible within the `Details` section of the test results. And from the looks of it, all of our tests passed! 
 
-![Test Results](assets/dbt_cloud_test_results.png)
+![Test Results](assets/dbt_Cloud_test_results.png)
 
 ### Documentation
 
 Let’s switch gears to take a look at the documentation that we created. The command to tell dbt to create our docs is `dbt docs generate`. Run that command and when it completes click on the book icon in the upper left hand corner of the IDE above the version control pane to launch your documentation. 
 
-![Docs Ready](assets/dbt_cloud_dbt_docs_ready.png)
+![Docs Ready](assets/dbt_platform_dbt_docs_ready.png)
 
 The documentation site will launch in a new tab. After that loads enter `fct_orders` into the top search bar and click on the top result to take you the documentation for that model. 
 
 When that loads you should be able to see our model level description, the column level descriptions we wrote in the YAML file, and the description that came from doc blocks. You should also be able to see references to the tests being run for the two columns with tests.
 
-![Docs Descriptions](assets/dbt_cloud_docs_descriptions.png)
+![Docs Descriptions](assets/dbt_Cloud_docs_descriptions.png)
 
 If you scroll down a bit farther you’ll be able to see information about the relationships this model has with other models as well. Clicking on the bubble in the bottom right hand corner opens up a preview of the lineage graph and clicking on the expand button in the upper right hand corner takes you to the full view. 
 
-![Docs Lineage Bubble](assets/dbt_cloud_docs_lineage_bubble.png)
+![Docs Lineage Bubble](assets/dbt_Cloud_docs_lineage_bubble.png)
 
-![Docs Expand Lineage](assets/dbt_cloud_docs_expand_lineage.png)
+![Docs Expand Lineage](assets/dbt_Cloud_docs_expand_lineage.png)
 
-![Docs Full Lineage](assets/dbt_cloud_docs_full_lineage.png)
+![Docs Full Lineage](assets/dbt_Cloud_docs_full_lineage.png)
 
 This is the end result of using the `ref` function throughout your project to reference your models as it allows dbt to build dependencies and lineage. The lineage graph is a powerful feature that gets more powerful as your project gets bigger and allows you to have much more informed architecture discussions as your project continues to grow.
 
@@ -945,7 +945,7 @@ Let’s commit our work for the section. Click the `Commit and push` button and 
 
 ## Deployment
 
-Before we jump into deploying our code, let’s have a quick primer on environments. Up to this point all of the work we’ve done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we’ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch allows us to separate our code from what other coworkers are building, as well as code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of git branch and Snowflake database objects form our environment. 
+Before we jump into deploying our code, let’s have a quick primer on environments. Up to this point all of the work we’ve done in the dbt platform IDE has been in our development environment, with code committed to a feature branch and the models we’ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch allows us to separate our code from what other coworkers are building, as well as code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of git branch and Snowflake database objects form our environment. 
 
 Now that we’ve completed testing and documenting our work, we’re ready to deploy our code from our development environment to our production environment and this involves two steps: 
 
@@ -955,31 +955,31 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
 1. Before getting started, let’s make sure that we’ve committed all of our work to our feature branch. If you still have work to commit you’ll be able to click the `Commit and push` button, provide a message, and then click `Commit` again. 
 
-2. Once all of your work is committed, the git workflow button will now appear as `Merge to main`. Click `Merge to main` and the merge process will automatically run in the background. 
+2. Once all of your work is committed, the git workflow button will now appear as `Merge this branch to main`. Click `Merge this branch to main` and the merge process will automatically run in the background. 
 
-    ![Merge to Main](assets/dbt_cloud_merge_to_main.png)<br><br>
+    ![Merge to Main](assets/dbt_platform_merge_to_main.png)<br><br>
 
     When it’s completed you should see the button read `Create branch` and the branch you’re currently looking at will become `main`. 
 
 3. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
 
-4. Click on the Deploy tab in the top bar and then click `Environments`. 
+4. Click on the Orchestration tab in the side bar and then click `Environments`. 
 
     You should see two environments listed and you’ll want to click on the `Deployment` environment to open it up and then `Settings` in the upper right hand corner to modify it.<br><br>
 
     Before making any changes, let’s touch on what is defined within this environment.
 
-    The Snowflake connection shows the credentials that dbt Cloud is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so.
+    The Snowflake connection shows the credentials that dbt platform is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so.
 
     The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we’ve been using as the schema for our development environment. Let’s update the schema to create a new schema specifically for our production environment. 
 
-    Click `Edit` in the upper right hand corner to allow you to modify the existing field values. Scroll down to the `schema` field in the `Deployment Credentials` section and update the schema name to `production`. Be sure to click `Save` in the upper right hand corner after you’ve made the change.
+    Click `Edit` in the upper right hand corner to allow you to modify the existing field values. Select the snowflake default connection. Set Auth method as `Username and password`. Provide the username and password of your snowflake account. Scroll down to the `schema` field in the `Deployment Credentials` section and update the schema name to `production`. Be sure to click `Save` in the upper right hand corner after you’ve made the change.
 
-    ![Deployment Schema Update](assets/dbt_cloud_deployment_schema_update.png)
+    ![Deployment Schema Update](assets/dbt_platform_deployment_schema_update.png)
 
     By updating the schema for our production environment to `production`, it ensures that our deployment job for this environment will build our dbt models in the `production` schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
 
-5. Now let’s switch over to our production job. Click on the deploy tab again and then select `Jobs`. You should see an existing and pre-configured `Partner Connect Trial Job`. Similar to the environment, click on the job, then select `Settings` to modify it. Let’s take a look at the job to understand it before making changes. <br><br>
+5. Now let’s switch over to our production job. Click on the Orchestration tab again and then select `Jobs`. You should see an existing and pre-configured `Partner Connect Trial Job`. Similar to the environment, click on the job, then select `Settings` to modify it. Let’s take a look at the job to understand it before making changes. <br><br>
 
     The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
 
@@ -993,21 +993,21 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
 6. Now let’s go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you’ll be able to click `Run now` to kick off the job. <br><br>
 
-    ![Job Run](assets/dbt_cloud_job_run.png)<br><br>
+    ![Job Run](assets/dbt_Cloud_job_run.png)<br><br>
 
     Once the run starts you’ll be able to click on the run itself and see all of the details about the run, including all of the commands that dbt runs and all of the models and tests run within each step. And if you click into the details of the `dbt run` step, you’ll see that the DDL has been updated to create your models in the `production` schema. 
 
     When it finishes you’ll notice that the job experienced an error, which is weird considering that there weren’t any issues when we ran our jobs and tests earlier. Looking more closely we can see there’s an issue in the test step and we want to click into that step to expand the logs and see what’s going on.<br><br>
 
-    ![Example Test Failure](assets/dbt_cloud_example_test_failure.png)<br><br>
+    ![Example Test Failure](assets/dbt_Cloud_example_test_failure.png)<br><br>
 
     One of the tests from our example models failed! That was a bit unexpected, but in looking at all of the logs again we can see that the models we created were built successfully in Snowflake and the tests for those models passed. At this point, we can move forward and fix the failing example test another day. 
 
-    While this process is great for your scheduling and running your dbt jobs, we recognize that transformation jobs don’t live in a silo for many data teams. It’s not uncommon for a data team to have a data process occurring outside of dbt that has to happen prior to a dbt job running, or for there to be a data process that needs to be triggered after a dbt job finishes. In these sorts of cases, we recommend using our [API](https://docs.getdbt.com/dbt-cloud/api-v2) with a third party orchestration tool to orchestrate and manage these situations. There are also a number of blog posts and articles, including this [one](https://docs.getdbt.com/blog/dbt-airflow-spiritual-alignment), to help you think about the best way to manage this alongside dbt Cloud.
+    While this process is great for your scheduling and running your dbt jobs, we recognize that transformation jobs don’t live in a silo for many data teams. It’s not uncommon for a data team to have a data process occurring outside of dbt that has to happen prior to a dbt job running, or for there to be a data process that needs to be triggered after a dbt job finishes. In these sorts of cases, we recommend using our [API](https://docs.getdbt.com/dbt-cloud/api-v2) with a third party orchestration tool to orchestrate and manage these situations. There are also a number of blog posts and articles, including this [one](https://docs.getdbt.com/blog/dbt-airflow-spiritual-alignment), to help you think about the best way to manage this alongside dbt platform.
 
 7. Let’s go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the `production` schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed there. <br><br>
 
-    ![Production Schema](assets/snowflake_production_schema.png)
+    ![Production Schema](assets/Snowflake_production_schema.png)
 
 <!-- ------------------------ -->
 
@@ -1017,19 +1017,19 @@ With all of our data now live in our production environment courtesy of our prod
 
 1. On the left hand side of the screen click `Dashboards` and then click the blue `+ Dashboard` button in the upper right hand corner to create a new dashboard. Create a name for your dashboard in the popup window and then click `Create Dashboard`.<br><br>
 
-    ![Create Dashboard](assets/snowflake_dashboard_create.png)
+    ![Create Dashboard](assets/Snowflake_dashboard_create.png)
 
 2. In the new window, go to the upper right hand corner of the screen and click on the box with the role and warehouse options. Be sure to select the `PC_DBT_ROLE` and the `PC_DBT_WH` warehouse. <br><br>
 
-    ![Dashboard Role and Warehouse](assets/snowflake_dashboard_role_warehouse.png)<br><br>
+    ![Dashboard Role and Warehouse](assets/Snowflake_dashboard_role_warehouse.png)<br><br>
 
     Next, click `New Tile` in the center of the screen. Within the new tile screen, click the timestamp at the top-center of the screen and update the tile name to `Quarterly Sales`. <br><br> 
 
-    ![Rename Tile](assets/snowflake_tile_rename.png)<br><br>
+    ![Rename Tile](assets/Snowflake_tile_rename.png)<br><br>
 
     At the top of the editor, be sure that the database and schema is set to `PC_DBT_DB` and `PRODUCTION`.<br><br>
 
-    ![Database Schema](assets/snowflake_database_schema.png)<br><br>
+    ![Database Schema](assets/Snowflake_database_schema.png)<br><br>
 
     Then copy and paste the following code into the editor: <br><br>
 
@@ -1043,25 +1043,25 @@ With all of our data now live in our production environment courtesy of our prod
 
     Next, in the top left hand corner of the screen update the time period from `Last Day` to `All Time`. Finally, use the corresponding run query shortcut on your keyboard to run the code. The final output should look like this:<br><br>
 
-    ![Completed Query](assets/snowflake_completed_query.png)
+    ![Completed Query](assets/Snowflake_completed_query.png)
 
 3. Now let’s transform our results into a chart. Click the `chart` button in the middle of the screen to bring up the initial chart and options sidebar. <br><br>
 
-    ![Initial Chart](assets/snowflake_initial_chart.png)<br><br>
+    ![Initial Chart](assets/Snowflake_initial_chart.png)<br><br>
 
     Our query is aggregating the `net_item_sales_amount` and grouping by `order_date`, but at the moment we’re seeing every date in what has become a very busy line chart. Let’s transform this into a bar chart where the date is grouped by quarter.
 
     Start by clicking on the chart type and updating it to `Bar`. Then click `order_date` and select `quarter` as the bucketing. Finally, change the order direction from `descending` to `ascending`. <br><br>
 
-    ![Change to Bar Chart](assets/snowflake_change_to_bar_chart.png)<br><br>
+    ![Change to Bar Chart](assets/Snowflake_change_to_bar_chart.png)<br><br>
 
-    ![Change Bucketing](assets/snowflake_change_bucketing.png)<br><br>
+    ![Change Bucketing](assets/Snowflake_change_bucketing.png)<br><br>
 
-    ![Change Order Direction](assets/snowflake_change_order_direction.png)<br><br>
+    ![Change Order Direction](assets/Snowflake_change_order_direction.png)<br><br>
 
 4. With the tile completed, all you have to do now is click the `Return` button in the upper left hand corner of the tile and you’ll be taken to the dashboard with our tile at the top. <br><br>
 
-    ![Final Dashboard](assets/snowflake_final_dashboard.png)<br><br>
+    ![Final Dashboard](assets/Snowflake_final_dashboard.png)<br><br>
 
     Congrats! You've built the visualization the sales team was looking for and it looks like total sales remained very steady with the exception of the last quarter in 1998. We'll need to check in with them about that!
 
@@ -1071,7 +1071,7 @@ With all of our data now live in our production environment courtesy of our prod
 
 Congratulations on completing the lab!
 
-Today you learned how to use dbt and Snowflake to build data transformation pipelines for analytics. You're now ready to apply these fundamentals to your own data. We encourage you to continue with your free trial by loading your own sample or production data, and by continuing to dive into some of the more advanced functionality of dbt Cloud and Snowflake.
+Today you learned how to use dbt and Snowflake to build data transformation pipelines for analytics. You're now ready to apply these fundamentals to your own data. We encourage you to continue with your free trial by loading your own sample or production data, and by continuing to dive into some of the more advanced functionality of dbt platform and Snowflake.
 
 ### What We've Covered
 
@@ -1091,7 +1091,7 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 
 * To continue your dbt education, check out the [dbt Learn site](https://learn.getdbt.com/).
 
-* Contact the [dbt Cloud Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt Cloud for your team or organization.
+* Contact the [dbt platform Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt platform for your team or organization.
 
 *  [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/03/Data-Transformations-with-DBT-cloud-and-Snowflake.pdf)
 *  [Read the Blog](https://medium.com/snowflake/unlocking-reliable-data-and-team-efficiency-with-dbt-cloud-a-hands-on-experience-3d26da7f1bac)

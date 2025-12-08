@@ -26,7 +26,7 @@ Snowpark로 데이터를 처리하고, 단순한 ML 모델을 개발하고, Snow
 
 ### 사전 필요 조건 및 지식
 
-* ACCOUNTADMIN 역할 액세스 또는 Snowflake 평가판 계정([https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_))
+* ACCOUNTADMIN 역할 액세스 또는 Snowflake 평가판 계정([https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))
 * SQL, 데이터베이스 개념 및 객체에 대한 기본 지식
 * Python 사용 경험  (랩을 위한 모든 코드는 제공됩니다.)
 * 컴퓨터에서 소프트웨어를 설치 및 실행할 능력
@@ -53,7 +53,7 @@ Snowpark로 데이터를 처리하고, 단순한 ML 모델을 개발하고, Snow
 1. pip install conda를 실행하여 별도의 환경을 관리하기 위해 Conda를 설치합니다. 참고: 대신 [Miniconda](https://docs.conda.io/en/latest/miniconda.html)를 사용할 수도 있습니다.
 2. 터미널이나 명령 프롬프트를 엽니다.
 
-> aside positive 중요: Apple M1 칩이 탑재된 컴퓨터를 사용하고 있다면 아래에 설명된 내용을 따르는 대신 [이 지침](https://docs.snowflake.com/ko/developer-guide/snowpark/python/setup)에 따라 가상 환경을 생성하고 Snowpark Python을 설치합니다.
+> 
 
 3. `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.8`을 실행하여 환경을 생성합니다.
 4. `conda activate snowpark`를 실행하여 Conda 환경을 활성화합니다.

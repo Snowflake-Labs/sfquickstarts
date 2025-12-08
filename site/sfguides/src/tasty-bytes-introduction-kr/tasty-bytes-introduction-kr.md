@@ -29,7 +29,7 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 
 - 지원되는 Snowflake [브라우저](https://docs.snowflake.com/ko/user-guide/setup#browser-requirements)
 - 엔터프라이즈 또는 비즈니스 크리티컬 Snowflake 계정
-  - Snowflake 계정이 없다면 [**30일 무료 평가판 계정을 위해 등록하십시오**](https://signup.snowflake.com/?utm_cta=quickstarts_). 등록할 때 **엔터프라이즈** 에디션을 선택하셔야 합니다. 아무 [Snowflake 클라우드 또는 리전](https://docs.snowflake.com/ko/user-guide/intro-regions)을 선택하셔도 됩니다.
+  - Snowflake 계정이 없다면 [**30일 무료 평가판 계정을 위해 등록하십시오**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). 등록할 때 **엔터프라이즈** 에디션을 선택하셔야 합니다. 아무 [Snowflake 클라우드 또는 리전](https://docs.snowflake.com/ko/user-guide/intro-regions)을 선택하셔도 됩니다.
   - 등록한 후 활성화 링크와 Snowflake 계정 URL이 포함된 이메일이 전송됩니다.
   - ![assets/choose_edition.png](assets/choose_edition.png)
 
@@ -120,7 +120,7 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 
 Tasty Bytes 설정이 성공적으로 완료되면 이제 생성한 데이터베이스, 역할 및 웨어하우스를 탐색할 수 있습니다.
 
-> aside negative **참고:** 이전 섹션에서 생성한 *Tasty Bytes - Setup* 워크시트 내에서 하단까지 스크롤하여 아래에 있는 각 단계에 포함된 SQL을 복사하고, 붙여넣고, 실행하십시오.
+> 
 
 ### 1단계 - Tasty Bytes 데이터베이스 탐색
 

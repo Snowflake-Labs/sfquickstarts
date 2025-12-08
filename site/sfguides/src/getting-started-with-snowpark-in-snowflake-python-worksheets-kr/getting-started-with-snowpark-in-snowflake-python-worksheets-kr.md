@@ -49,7 +49,7 @@ Python 워크시트는 Snowpark를 더 빨리 시작할 수 있도록 돕는 Sno
 
 ### Snowflake 평가판 계정 생성
 
-이 [링크](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets)(**Snowflake Python 워크시트에서 Snowpark 시작하기**라는 제목의 평가판 설정 페이지와 연결되어 있음)를 사용하여 30일 무료 평가판을 위해 등록하십시오. 자신과 가장 가까운 리전을 권장합니다. 가장 인기 있는 에디션인 엔터프라이즈를 권장하지만, 이 랩에서는 모든 에디션을 사용할 수 있습니다.
+이 [링크](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides)(**Snowflake Python 워크시트에서 Snowpark 시작하기**라는 제목의 평가판 설정 페이지와 연결되어 있음)를 사용하여 30일 무료 평가판을 위해 등록하십시오. 자신과 가장 가까운 리전을 권장합니다. 가장 인기 있는 에디션인 엔터프라이즈를 권장하지만, 이 랩에서는 모든 에디션을 사용할 수 있습니다.
 
 ### 로그인 및 랩 설정
 

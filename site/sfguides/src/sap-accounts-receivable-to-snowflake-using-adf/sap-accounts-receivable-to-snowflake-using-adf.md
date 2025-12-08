@@ -46,7 +46,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 * Admin rights to an Azure trial account
 * [An SAP s- or p-user or linked Universal ID](https://blogs.sap.com/2020/01/17/creating-a-p-user-in-sap-cloud-platform-to-practise-sap-hana./) to log on to SAP's Cloud Appliance Library (cal.sap.com). 
 * A credit card to add billing information to the Azure account 
-* A Snowflake account with `ACCOUNTADMIN` access (you can get a [free Trial account here](https://signup.snowflake.com/?utm_cta=quickstarts_))
+* A Snowflake account with `ACCOUNTADMIN` access (you can get a [free Trial account here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))
 * Familiarity with Snowflake and Snowflake objects (eg. through the [Zero-To-Snowflake hands-on-lab](/en/developers/guides/getting-started-with-snowflake/))
 * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed on your local machine
 * [Tableau desktop](https://www.tableau.com/products/desktop/download) installed on your local machine (optional)
@@ -132,7 +132,7 @@ Check that you have Accounting >  Financial Accounting > Accounts Receivable in 
 </aside>
 
 ## Create & configure Snowflake
-1. Sign up for a Snowflake trial account at https://signup.snowflake.com/.
+1. Sign up for a Snowflake trial account at [https://signup.snowflake.com](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 1. Login to your Snowflake trial account.  
 ![Login Screen](./assets/login_screen.png)
 

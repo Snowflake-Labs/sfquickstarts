@@ -36,7 +36,7 @@ A complete RAG application that can answer questions about SEC 10-K filings, wit
 
 ### What You'll Need
 
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic familiarity with SQL and Python
 - Understanding of RAG concepts
 
@@ -587,7 +587,7 @@ These metrics will help us understand how well each RAG version performs:
 
 Finally, let's view the results of our runs by opening the evaluations page:
 
-[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-compare-and-evaluate-chunking-strategies)
+<a href="https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-compare-and-evaluate-chunking-strategies&utm_cta=developer-guides-deeplink" class="_deeplink">AI Observability Leaderboard</a>
 
 In the dashboard, you can:
 

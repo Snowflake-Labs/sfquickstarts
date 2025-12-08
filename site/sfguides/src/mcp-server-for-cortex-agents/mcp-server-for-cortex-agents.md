@@ -3,7 +3,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This guide outlines the process for building an MCP Server for Cortex Agents.
 environments: web
-status: Published
+status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Josh Reini
 
@@ -36,7 +36,7 @@ Then we’ll connect the server to an MCP host (Claude for Desktop):
 
 ### Prerequisites
 
-* A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/))
+* A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))
 * Cortex Analyst semantic model and Cortex Search service created, such as via this [quickstart](/en/developers/guides/getting-started-with-cortex-agents/)
 * A [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
 * Python **3.10+**  
@@ -151,7 +151,7 @@ Launch the Claude for Desktop app.
 
 Now our Cortex Agents MCP server is available for use by Claude. We can see it by clicking on the tools icon, and toggle it on and off.
 
-![mcp tool in claude](./images/cortex_agents_mcp_tool.png)
+![mcp tool in claude](assets/cortex_agents_mcp_tool.png)
 
 Then, run a query. If the query calls your MCP server, you will see the name of the tool used directly below your query in the Claude desktop app.
 
@@ -159,11 +159,11 @@ Because we're connected to Cortex Agents, we can ask questions about both unstru
 
 Unstructured data:
 
-![cortex agents mcp unstructured](./images/mcp_cortex_agents_unstructured.gif)
+![cortex agents mcp unstructured](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/979cae86e37f12ed86b2c398c39d385a85a61466/site/sfguides/src/mcp-server-for-cortex-agents/large_images/mcp_cortex_agents_unstructured.gif)
 
 Structured data:
 
-![cortex agents mcp unstructured](./images/mcp_cortex_agents_structured.gif)
+![cortex agents mcp unstructured](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/979cae86e37f12ed86b2c398c39d385a85a61466/site/sfguides/src/mcp-server-for-cortex-agents/large_images/mcp_cortex_agents_structured.gif)
 
 What’s happening under the hood
 When you ask a question:
@@ -187,7 +187,7 @@ Error: Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIF
 Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found: post https://xxxxx.snowflakecomputing.com:443/session/v1/login-request?request_id=b4e367d4-d8ac-48d3-8e44-96f42defa9c5&request_guid=4f63e07c-e42c-43b8-8f79-f6c577ee0d0e
 ```
 
-> aside negative
+> 
 > NOTE: If you get the above errors, make sure the SNOWFLAKE_ACCOUNT_URL and PAT variables in the **_.env_** file are set correctly. Account URLs including an underscore (`_`) may cause this issue, which can be fixed by changing the underscore to a hyphen (`-`). For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 ## (Optional) Customize Cortex Agents

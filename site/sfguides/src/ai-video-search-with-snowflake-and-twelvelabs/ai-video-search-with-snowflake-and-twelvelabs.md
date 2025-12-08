@@ -41,11 +41,11 @@ Learn more about [Whisper](https://openai.com/index/whisper/).
 
 ### Prerequisites
 
-* Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role.
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN role.
 * Access to a [Twelve Labs account and API key](https://www.twelvelabs.io/).
 * Access to video(s) uploaded to a publicly accessible URL.
 
-> aside positive
+> 
 > NOTE: In this guide, three sample videos have been provided.
 
 ### What You Will Learn
@@ -93,14 +93,14 @@ AI videos processing and search app using Twelve Labs, Whisper, Streamlit, and S
 * Click on **Save** button
 * Click on **Start** button on top right
 
-> aside positive
+> 
 > NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 <!-- ------------------------ -->
 ## Run Notebook
 
 
-> aside negative
+> 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
 Here's the code walkthrough of the [Gen_AI_Video_Search.ipynb](https://github.com/Snowflake-Labs/sfguide-ai-video-search-with-snowflake-and-twelveLabs/blob/main/Gen_AI_Video_Search.ipynb) notebook that you downloaded and imported into your Snowflake account.
@@ -174,7 +174,7 @@ In all of the following examples, notice the highlighted clip start and end time
 
 ---
 
-> aside positive
+> 
 > So AWESOME! Feel free to play around with different search texts, LLM models, and also try it out with your own videos.
 
 <!-- ------------------------ -->

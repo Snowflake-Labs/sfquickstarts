@@ -32,7 +32,7 @@ You will build a comprehensive end-to-end machine learning project for bear spec
 - **Data App**: Build a shareable Streamlit application for model deployment.
 
 ### Prerequisites
-- **Snowflake Account**: Access to a Snowflake account. Sign up for a [30-day free trial account](https://signup.snowflake.com/)
+- **Snowflake Account**: Access to a Snowflake account. Sign up for a [30-day free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - **Snowflake Notebooks**: Access to Snowflake's notebook environment.
 - **Database Permissions**: Ability to create tables, stages, and models.
 - **Compute Resources**: CPU compute pool access for model training.

@@ -34,7 +34,7 @@ A production-ready customer service analytics system that:
 - Identifies misalignments in customer data
 
 ### Prerequisites
-- [Snowflake account](https://signup.snowflake.com/) in a [supported region for Cortex functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability)
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) in a [supported region for Cortex functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability)
 - Account must have these features enabled:
   - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
   - [Cortex AI Functions](https://docs.snowflake.com/en/sql-reference/functions-ai)
@@ -108,7 +108,7 @@ Each category includes detailed descriptions to ensure accurate AI classificatio
 
 After processing, query the transcription_results table to see all analyzed calls with transcriptions, translations, sentiments, categories, and summaries. The Notebook includes cleanup steps to drop temporary tables.
 
-> aside positive
+> 
 > TROUBLESHOOTING: If transcription quality is poor, check:
 > - Audio file quality and clarity
 > - Background noise levels

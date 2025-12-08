@@ -83,7 +83,7 @@ Here is how it works:
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
-1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake)
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-west-2&utm_campaign=introtosnowflake&utm_cta=developer-guides)
 
 2. Start the account creation by completing the first page of the form on the page.
 

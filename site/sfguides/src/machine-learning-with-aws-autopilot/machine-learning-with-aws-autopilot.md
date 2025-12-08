@@ -25,7 +25,7 @@ In this quickstart we will explore an end-to-end example of building a scalable 
 <!-- ------------------------ -->
 ## Prerequisites 
 
-You need access to an AWS and a Snowflake account. If you do not already have access, follow the links for a [free AWS](https://aws.amazon.com/free/) and a [free Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account.
+You need access to an AWS and a Snowflake account. If you do not already have access, follow the links for a [free AWS](https://aws.amazon.com/free/) and a [free Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account.
 
 Next, clone the project's github repo. It includes all artifacts needed to create the AWS and Snowflake resources as well as the dataset we are going to analyze.
 

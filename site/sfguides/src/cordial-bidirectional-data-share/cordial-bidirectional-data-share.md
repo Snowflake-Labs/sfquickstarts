@@ -20,7 +20,7 @@ In this Quickstart, Cordial and Snowflake walk you through how to set up a bidir
 ![Snowflake to Cordial architecture](assets/SnowflakeArchitecture.png)
 
 ### Prerequisites
-- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A [Cordial account](https://cordial.com/)
 
 ### What You’ll Learn
@@ -75,45 +75,12 @@ Once you accept the Cordial data share and assign it to a new database in your S
 
 The following datasets are available from Cordial through a Secure Data Share. Data is refreshed multiple times per day, giving you direct access to customer data in near real-time.
 
-<table>
-  <tbody>
-    <tr>
-      <th>View
-      </th>
-      <th>Description
-      </th>
-    </tr>
-    <tr>
-      <td>
-        <code>contacts</code>
-      </td>
-      <td>Data specific to each contact such as name, address, etc. You can store string type (i.e. first name), number type (i.e. age), geo type (i.e. addresses), and array type (i.e. favorite colors). You can add as many attributes as needed to describe your contacts. Cart items are also stored with each contact and can contain information about a product such as SKU, description image, and much more.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>contactactivity</code> (<code>events</code>)
-      </td>
-      <td> Data related to a contact's activity or behavior. This can be message activity as well as website activity (browsed a page, added to cart), or external (IoT) activity.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>messagesends</code>
-      </td>
-      <td> Data specific to message sends, such as the channel used to send the message, whether the message is promotional or transactional, information about how and when the message was created, and more.
-      </td>
-    </tr>
-    <tr>
-      <td>
-<code>orders</code>
-      </td>
-      <td>
-        Data about a contact's order history.
-      </td>
-    </tr>
-  </tbody>
-</table>
+| View | Description |
+|------|-------------|
+| `contacts` | Data specific to each contact such as name, address, etc. You can store string type (i.e. first name), number type (i.e. age), geo type (i.e. addresses), and array type (i.e. favorite colors). You can add as many attributes as needed to describe your contacts. Cart items are also stored with each contact and can contain information about a product such as SKU, description image, and much more. |
+| `contactactivity` (`events`) | Data related to a contact's activity or behavior. This can be message activity as well as website activity (browsed a page, added to cart), or external (IoT) activity. |
+| `messagesends` | Data specific to message sends, such as the channel used to send the message, whether the message is promotional or transactional, information about how and when the message was created, and more. |
+| `orders` | Data about a contact's order history. |
 
 ### Example queries
 
@@ -136,37 +103,9 @@ WHERE
 ;
 ```
 
-<table>
-  <tbody>
-    <tr>
-      <th><code>grand_total_amount</code>
-      </th>
-      <th>
-        <code>average_total_amount</code>
-      </th>
-      <th>
-        <code>average_num_cart_items</code>
-      </th>
-      <th>
-        <code>total_carts</code>
-      </th>
-    </tr>
-    <tr>
-      <td>
-        41479622
-      </td>
-      <td>
-        1595370.077
-      </td>
-      <td>
-        13.961538
-      </td>
-      <td>
-        26
-      </td>
-    </tr>
-  </tbody>
-</table>
+| `grand_total_amount` | `average_total_amount` | `average_num_cart_items` | `total_carts` |
+|---------------------|----------------------|-------------------------|---------------|
+| 41479622 | 1595370.077 | 13.961538 | 26 |
 
 #### **<code>CONTACTACTIVITY</code>**
 
@@ -198,146 +137,15 @@ ORDER BY
   action_date
 ```
 
-<table>
-  <tbody>
-    <tr>
-      <th>
-        <code>action_date</code>
-      </th>
-      <th>
-        <code>message-sent</code>
-      </th>
-      <th>
-        <code>open</code>
-      </th>
-      <th>
-        <code>click</code>
-      </th>
-      <th>
-        <code>bounce</code>
-      </th>
-    </tr>
-    <tr>
-      <td>
-        2022-09-19
-      </td>
-      <td>
-        2749273
-      </td>
-      <td>
-        1080279
-      </td>
-      <td>
-        3015
-      </td>
-      <td>
-        2829
-      </td>
-    </tr>
-    <tr>
-      <td>
-        2022-09-20
-      </td>
-      <td>
-        2605236
-      </td>
-      <td>
-       1796475
-      </td>
-      <td>
-       7139
-      </td>
-      <td>
-        6229
-      </td>
-    </tr>
-    <tr>
-      <td>
-        2022-09-21
-      </td>
-      <td>
-        2738569
-      </td>
-      <td>
-        1884556
-      </td>
-      <td>
-        4742
-      </td>
-      <td>
-       2145
-      </td>
-    </tr>
-    <tr>
-      <td>
-        2022-09-22
-      </td>
-      <td>
-        3073
-      </td>
-      <td>
-        929171
-      </td>
-      <td>
-       1485
-      </td>
-      <td>
-        6047
-      </td>
-    </tr>
-    <tr>
-      <td>
-        2022-09-23
-      </td>
-      <td>
-        2810032
-      </td>
-      <td>
-       812085
-      </td>
-      <td>
-        2628
-      </td>
-      <td>
-        466
-      </td>
-    </tr>
-    <tr>
-      <td>
-        2022-09-24
-      </td>
-      <td>
-        2041732
-      </td>
-      <td>
-        1600629
-      </td>
-      <td>
-       4839
-      </td>
-      <td>
-        2258
-      </td>
-    </tr>
-    <tr>
-      <td>
-        2022-09-25
-      </td>
-      <td>
-       928
-      </td>
-      <td>
-        87
-      </td>
-      <td>
-        1
-      </td>
-      <td>
-        1
-      </td>
-    </tr>
-  </tbody>
-</table>
+| `action_date` | `message-sent` | `open` | `click` | `bounce` |
+|---------------|----------------|--------|--------|----------|
+| 2022-09-19 | 2749273 | 1080279 | 3015 | 2829 |
+| 2022-09-20 | 2605236 | 1796475 | 7139 | 6229 |
+| 2022-09-21 | 2738569 | 1884556 | 4742 | 2145 |
+| 2022-09-22 | 3073 | 929171 | 1485 | 6047 |
+| 2022-09-23 | 2810032 | 812085 | 2628 | 466 |
+| 2022-09-24 | 2041732 | 1600629 | 4839 | 2258 |
+| 2022-09-25 | 928 | 87 | 1 | 1 |
 
 <!-- ------------------------ -->
 ## Send Data from Snowflake to Cordial

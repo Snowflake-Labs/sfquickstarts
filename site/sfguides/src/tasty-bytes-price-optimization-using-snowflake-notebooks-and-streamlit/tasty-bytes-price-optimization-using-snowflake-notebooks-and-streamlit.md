@@ -28,7 +28,7 @@ We will implement price optimization for their diversified food-truck brands to 
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - A Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL
 
 

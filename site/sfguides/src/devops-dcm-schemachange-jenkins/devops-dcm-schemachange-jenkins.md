@@ -73,7 +73,7 @@ Unlike other complete SDLC tools, Jenkins does not include built-in support for 
 
 A Jenkins Pipeline "orchestrates long-running activities that can span multiple build agents. Suitable for building pipelines (formerly known as workflows) and/or organizing complex activities that do not easily fit in free-style job type" (from the "New item" page in Jenkins).
 
-> aside negative
+> 
 > 
 >  **Note** - For this guide we will use GitHub for our Git repo.
 
@@ -88,7 +88,7 @@ schemachange is a lightweight Python-based tool to manage all your Snowflake obj
 
 For more information about schemachange please see [the schemachange project page](https://github.com/Snowflake-Labs/schemachange).
 
-> aside negative
+> 
 > 
 >  **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
 
@@ -145,7 +145,7 @@ docker run -p 8080:8080 \
   jenkins
 ```
 
-> aside positive
+> 
 > 
 >  **Tip** - Please note that the initial admin password for your Jenkins installation will be printed out in the Docker output. So please copy it for use later in this step.
 
@@ -194,7 +194,7 @@ In this step we will create our first Jenkins Pipeline. A Jenkins Pipeline "orch
 
 Jenkins Pipelines are best defined through a proprietary file format known as a ```Jenkinsfile```. A ```Jenkinsfile``` is a text file that contains the definition of a Jenkins Pipeline and is checked into source control.
 
-> aside positive
+> 
 > 
 >  **Tip** - For more details on the ```Jenkinsfile``` format please see the [Using a Jenkinsfile](https://www.jenkins.io/doc/book/pipeline/jenkinsfile/) documentation.
 
@@ -252,7 +252,7 @@ If all is good, it should look like this screenshot:
 
 Click on the blue ```Save``` button to save these changes.
 
-> aside positive
+> 
 > 
 >  **Tip** - If you are using a private GitHub repository, then you would need to input your credentials to your GitHub repository. If not you can just leave the credentials as blank.
 
@@ -266,53 +266,20 @@ If you don't still have it open, open up your ```snowflake-devops-demo``` job an
 
 And here are the values to use for each parameter (please adjust as appropriate):
 
-<table>
-    <thead>
-        <tr>
-            <th>Parameter type</th>
-            <th>Parameter name</th>
-            <th>Parameter value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_ACCOUNT</td>
-            <td>xy12345.east-us-2.azure</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_USERNAME</td>
-            <td>DEMO_USER</td>
-        </tr>
-        <tr>
-            <td>Password Parameter</td>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>*****</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_ROLE</td>
-            <td>DEMO_ROLE</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-        </tr>
-        <tr>
-            <td>String Parameter</td>
-            <td>SF_DATABASE</td>
-            <td>DEMO_DB</td>
-        </tr>
-    </tbody>
-</table>
+| Parameter type | Parameter name | Parameter value |
+|----------------|----------------|-----------------|
+| String Parameter | SF_ACCOUNT | xy12345.east-us-2.azure |
+| String Parameter | SF_USERNAME | DEMO_USER |
+| Password Parameter | SNOWFLAKE_PASSWORD | ***** |
+| String Parameter | SF_ROLE | DEMO_ROLE |
+| String Parameter | SF_WAREHOUSE | DEMO_WH |
+| String Parameter | SF_DATABASE | DEMO_DB |
 
 Please note the slight difference in naming convention with the password parameter (it starts with "SNOWFLAKE\_" instead of "SF\_" like the others), that is intentional. schemachange expects to find the password in an OS-level environment variable named ```SNOWFLAKE_PASSWORD```.
 
 When you're finished don't forget to click on the blue ```Save``` button to save these changes.
 
-> aside positive
+> 
 > 
 >  **Tip** - While this simple getting started guide stores the parameters and passwords in Jenkins directly, please consider using an external vault like one of the following in a production scenario: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault. Each of these vaults (and others) are supported by Jenkins with a related plugin.
 
@@ -331,7 +298,7 @@ Verify that all the parameter values look correct and click on the blue ```Build
 
 To view the log output from the execution you can either hover over the stage shown in the screenshot above and click on the ```Logs``` icon. Or for more details on the build you can open the specific build number and then click on the ```Console Output``` in the left navigation bar.
 
-> aside negative
+> 
 > 
 >  **Note** - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn't reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
 
@@ -375,7 +342,7 @@ To view the log output from the execution you can either hover over the stage sh
 
 You can also confirm that the changes have been deployed to your Snowflake account by following the general instructions in Step 8 again (except this time you're looking for a new column in the ```HELLO_WORLD``` table).
 
-> aside negative
+> 
 > 
 >  **Note** - As we have deployed Jenkins on a localhost environment, we are not able to configure push and pull requests because it isn't reachable over the public Internet. However, if you choose to deploy in an instance where it is publicly accessible (say in AWS, Azure or GCP), you can follow this guide to configure a GitHub hook trigger for [GITScm] (https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
   

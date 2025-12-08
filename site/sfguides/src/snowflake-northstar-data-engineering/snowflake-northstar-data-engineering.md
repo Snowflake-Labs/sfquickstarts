@@ -49,7 +49,7 @@ We'll deliver a final data product using:
 - How to deliver an end data product using Streamlit in Snowflake
 
 ### What You’ll Need 
-- A free Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake)
+- A free Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-west-2&utm_campaign=introtosnowflake&utm_cta=developer-guides)
 - The companion GitHub repo that contains the code to complete this lab: [sfguide-snowflake-northstar-data-engineering](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering)
 
 ### What You’ll Build 
@@ -60,7 +60,7 @@ We'll deliver a final data product using:
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
-1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake)
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-west-2&utm_campaign=introtosnowflake&utm_cta=developer-guides)
 
 2. Start the account creation by completing the first page of the form on the page.
 

@@ -39,7 +39,7 @@ Snowflakeへようこそデータベースおよびデータウェアハウス�
 ## ラボ環境の準備
 
 
-まだ[Snowflakeの30日間無料トライアル](https://signup.snowflake.com/developers)に登録していない方は、登録してください。このラボの残りのセクションでは、トライアルに登録することによって作成した新しいSnowflakeアカウントの使用を前提としています。
+まだ[Snowflakeの30日間無料トライアル](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)に登録していない方は、登録してください。このラボの残りのセクションでは、トライアルに登録することによって作成した新しいSnowflakeアカウントの使用を前提としています。
 
 このラボで使用するSnowflakeエディション（標準、エンタープライズ、ビジネスクリティカルなど）、クラウドプロバイダー（AWS、Azure、GCP）、リージョン（米国東部、EUなど）は、どれでも構いません。ただし、物理的に最も近いリージョンを選択し、Snowflakeエディションとして最も人気のあるエンタープライズを選択することをお勧めします。
 

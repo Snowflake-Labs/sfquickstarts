@@ -31,7 +31,7 @@ The Snowflake Python API allows you to manage Snowflake using Python. Using the 
 
 ### What You’ll Need
 
-- A Snowflake account ([trial](https://signup.snowflake.com/?utm_cta=quickstarts_), or otherwise)
+- A Snowflake account ([trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), or otherwise)
 - A code editor that supports Jupyter notebooks, or ability to run notebooks in your browser using `jupyter notebook`
 
 ### What You’ll Build
@@ -43,7 +43,7 @@ The Snowflake Python API allows you to manage Snowflake using Python. Using the 
 ## Install the Snowflake Python API
 
 
-> aside negative
+> 
 >
 > **Important**
 > The Snowflake Python API is currently supported in Python versions 3.8, 3.9., and 3.10.
@@ -145,7 +145,7 @@ root = Root(session)
 
 For more information on various connection options/attributes, see [Connecting to Snowflake with the Snowflake Python API](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/snowflake-python-connecting-snowflake).
 
-> aside negative
+> 
 >
 > **NOTE**
 > The Snowflake Python API can establish a connection to Snowflake via a Snowpark session or a Python connector connection. In the example above, we opt for a Snowpark session.
@@ -183,7 +183,7 @@ from snowflake.core.task import StoredProcedureCall, Task
 from snowflake.core.task.dagv1 import DAGOperation, DAG, DAGTask
 ```
 
-> aside negative
+> 
 >
 > **Note**
 > Upon running this cell, you may be prompted to set your Python kernel. We activated a conda environment earlier, so we'll select conda as our Python kernel (i.e., something like `~/miniconda3/envs/<your conda env>/bin/python`).
@@ -243,7 +243,7 @@ Navigate back to the databases section of your Snowflake account. If successful,
 
 ![database](./assets/python_api_db.png)
 
-> aside negative
+> 
 >
 > **TIP**:
 > If you use VSCode, then install [Snowflake plugin](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) to explore all Snowflake objects from within your editor
@@ -713,7 +713,7 @@ session.close()
 ## Managing Snowpark Container Services
 
 
-> aside negative
+> 
 >
 > **Important**
 > At the time of writing, Snowpark Container Services is in Public Preview in select AWS regions. To use Snowpark Container Services, your Snowflake account must be in one of the select AWS regions. For more information, refer to [Snowpark Container Services – Available Regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).

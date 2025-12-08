@@ -37,7 +37,7 @@ Wouldn't it be great if you could generate these automatically and easily? Well,
 ### What You’ll Need
 
 - A [GitHub](https://github.com/) Account to access [this repository](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models).
-- A [Snowflake Account](https://signup.snowflake.com/) in a cloud region that supports [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
+- A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) in a cloud region that supports [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
 - Access to a role that will allow you to create new roles, databases, schemas, tables, stages, models, services, and create external access integrations.
 - Access or permission to create ["large" compute pools](https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool). Due to the GPU VRAM requirements for these models, you may need to contact your Snowflake representative to open access these larger compute pools.
 
@@ -63,7 +63,7 @@ Unfortunately, there is a lot of information across many sources. In these cases
 
 A number of large companies have implemented such programs and are seeing strong return on investment. One example of this is P&G described in a [Consumer Goods Technology article published Dec 3rd, 2024](https://consumergoods.com/pg-taps-ai-and-automation-faster-smarter-operations).
 
-> aside positive
+> 
 >
 > **From the article:** <br> ...Within content, P&G is using generative AI to generate concept ideas and then test copy against thousands of in-market copy. The automated process cuts down the testing timeline from several months to just a few days and reduces costs. Within the AI, it has created a scoring system for content it is about to launch. <br><br> “That is a very effective way to broaden the mindset of the team — not to write the concept but to give you concept ideas that you might not have thought of,” said CFO Andre Schulten...
 
@@ -123,7 +123,7 @@ ALTER COMPUTE POOL CONCEPT_GEN_POOL_L STOP ALL;
 ALTER COMPUTE POOL CONCEPT_GEN_POOL_L SUSPEND;
 ```
 
-> aside negative
+> 
 >
 > After you complete the demo and create a service. We recommend suspending the service after you are done. The running service will keep a compute pool Active as long as it is running.
 
@@ -286,7 +286,7 @@ VALUES
 <!-- ------------------------ -->
 ## Run Demo in Notebook
 
-> aside negative
+> 
 >
 > Basic familiarity with Snowflake Notebooks is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Quickstarts](/en/developers/guides/getting-started-with-snowflake-notebooks/)
 
@@ -403,7 +403,7 @@ This flow is what will guide our Streamlit application in the next section. Whil
 <!-- ------------------------ -->
 ## Create a Streamlit Application
 
-> aside negative
+> 
 >
 > Basic familiarity with Streamlit in Snowflake is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started) and [Quickstarts](/en/developers/guides/tasty-bytes-price-optimization-using-snowflake-notebooks-and-streamlit/)
 

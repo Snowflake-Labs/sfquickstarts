@@ -31,7 +31,7 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 ### What You’ll Need 
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
-- Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_) OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege. Pick the Enterprise edition to try
+- Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege. Pick the Enterprise edition to try
 - Search Optimization for Geospatial.
 - Sign-up for a [CARTO Trial](http://app.carto.com/signup) (OR have access to an existing CARTO account )
 
@@ -54,13 +54,13 @@ If this is the first time you are logging into the Snowflake UI, you will be pro
 
 Click `Sign-in` and you will be prompted for your user name and password.
 
-> aside positive
+> 
 >  If this is not the first time you are logging into the Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).
 
 ### Increase Your Account Permission
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.
 
-> aside positive
+> 
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
 ![assets/b9575209bfee61ca.png](assets/b9575209bfee61ca.png)
@@ -88,7 +88,7 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 
 - Once in the listing, click the big blue `Get` button
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 ![assets/get_data.png](assets/get_data.png)
@@ -146,7 +146,7 @@ These are the parameters you need to provide:
 - **Account**: Hostname for your account . One way to get it is to check the Snowflake activation email which contains the account_name within the URL ( <account_name>.snowflakecomputing.com ). Just enter what's on the account_name, i.e ok36557.us-east-2.aws
 - **Warehouse (optional)**: Default warehouse that will run your queries. Use MY_WH.
 
-> aside negative
+> 
 >  Use MY_WH or the name of the data warehouse you created in the previous step otherwise some queries will fail because CARTO won't know which warehouse to run them against.
 
 - **Database (optional)**. Default database to run your queries. Leave Blank.
@@ -259,7 +259,7 @@ POINT(-74.0266511 40.6346599)
 // An example of a POLYGON
 POLYGON((-74.339971 43.0631175,-74.3397734 43.0631363,-74.3397902 43.0632306,-74.3399878 43.0632117,-74.339971 43.0631175))
 ```
-> aside positive
+> 
 >  You will use several different geospatial object types in this guide, and the guide will explain them more in later sections as you use them.
 
 Lastly, look at WKB output. Run the following query:
@@ -285,7 +285,7 @@ Now that you understand the different output formats, you can create new files f
 
 In this step we're going to use Snowflake's [COPY into location](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html) feature to take the output of a query and create a file in your local [user stage](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html#user-stages). Because your output format is set to WKB, the geospatial column in that table will be represented in the WKB format in the new files.
 
-> aside negative
+> 
 >  The WKB format is being chosen here for its simplicity within a file. Since WKB is a single alpha-numeric string with no delimiters, spaces, or other difficult characters, it is excellent for storing geospatial data in a file. That doesn't mean other formats are to be avoided in real world use cases, but WKB will make your work easier in this guide.
 
 Make sure we're using the WKB output format by running this query again:
@@ -378,7 +378,7 @@ from @~/osm_ny_shop_electronics_points.csv
 (file_format => 'geocsv');
 ```
 
-> aside negative
+> 
 >  Notice in `ST_MAKEPOINT` that the longitude column is listed first. Despite the common verbal phrase "lat long," you always put longitude before latitude to represent a geospatial POINT object in Snowflake.
 
 Now create a table and load the ‘points' file into that table. Run these two queries.
@@ -397,7 +397,7 @@ copy into electronics_points from (
 
 You should see all rows loaded successfully into the table with 0 errors seen.
 
-> aside positive
+> 
 >  In the ‘all' file load statement, you didn't have to specify a query to load the file because when you have a column in a file that is already in a Snowflake supported geospatial format, and load that value into a `GEOGRAPHY` typed column, Snowflake automatically does the geospatial construction for you. In the ‘points' file, however, you must use a transform query to construct two discrete columns into a single `GEOGRAPHY` column using a geospatial constructor function.
 
 To conclude this section, you can query your recently loaded tables using the two queries below:
@@ -412,7 +412,7 @@ select * from electronics_points;
 
 Now that you have the basic understand of how the `GEOGRAPHY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to run and visualize geospatial queries to answer some questions.
 
-> aside positive
+> 
 >  It's worth noting here that the scenario in the next three sections is more akin to what a person would do with a map application on their mobile phone, rather than how geospatial data would be used in fictional business setting. This was chosen intentionally to make this guide and these queries more relatable to the person doing the guide, rather than trying to create a realistic business scenario that is relatable to all industries, since geospatial data is used very differently across industries.
 
 Before you begin the scenario, switch the active schema back to the shared database and make sure the output format is either GeoJSON or WKT, as you will be using another website (i.e CARTO) to visualize the query results. Which output you choose will be based on your personal preference - WKT is easier for the casual person to read, while GeoJSON is arguably more common. When querying from CARTO the default (`GEOJSON`) will be used so no need to worry about changing it from that context.
@@ -438,7 +438,7 @@ select to_geography('POINT(-73.986226 40.755702)');
 
 Notice there is no `from` clause in this query, which allows you to construct a `GEOGRAPHY` object in a simple `select` statement.
 
-> aside negative
+> 
 >  POINT(-73.986226 40.755702) is already a geography object in WKT format, so there was no real need to convert it again, but it was important to show the most basic way to use TO_GEOGRAPHY to construct a simple geography object.
 
 Now let's do the query in CARTO Builder to see where the point is.
@@ -461,14 +461,14 @@ Now let's do the query in CARTO Builder to see where the point is.
 select to_geography('POINT(-73.986226 40.755702)') as geom;
 ```
 
-> aside negative
+> 
 >  CARTO requires that the column containing geospatial data be named `geom` so that is why we add as geom in the query. If you don't do this it will fail.
 
 - Use the map zoom controls (+/- buttons) and click the zoom in )+) button until you can see the point better. You should see something like the screenshot below, though you may see more depending on your browser window size.
 
 ![assets/step6_4.png](assets/step6_4.png)
 
-> aside positive
+> 
 >  Feel free to use this as your SQL Editor for the next steps, you can delete and re-run the queries from the workshop here.
 
 The green dot represents the `POINT` object location. Now you know where you are!
@@ -565,7 +565,7 @@ order by 2 limit 1))
 Select st_makeline(st_collect(coordinates),to_geography('POINT(-73.986226 40.755702)')) as geom from locations;
 ```
 
-> aside positive
+> 
 >  You may be wondering why your current position point was added as an additional point in the line when you already included it as the first point in the MULTIPOINT collection above? Stay tuned for why you need this later, but logically it makes sense that you plan to go back to your New York City apartment at the end of your shopping trip.
 
 You should get this:
@@ -612,7 +612,7 @@ You can view non-geospatial parameters by adding a hover pop-up interaction. See
 
 Wow! Almost 2120 meters!
 
-> aside negative
+> 
 >  It is correct to note that this distance represents a path based on how a bird would fly, rather than how a human would navigate the streets. The point of this exercise is not to generate walking directions, but rather to give you a feel of the various things you can parse, construct, and calculate with geospatial data and functions in Snowflake. CARTO actually lets you to [calculate drive/walk routes within Snowflake with its Location Data Services module](https://docs.carto.com/analytics-toolbox-snowflake/examples/trade-areas-based-on-isolines/) if you're interested in a more accurate calculation.
 
 Now move to the next section to see how you can optimize your shopping trip.
@@ -632,7 +632,7 @@ You have been using two views in your queries so far: `v_osm_ny_shop_electronics
 
 Run the two queries below and create a new layer for each:
 
-> aside positive
+> 
 >  In order to create a new layer ( and keep the query done in the previous step) click on the blue `(+) Add source from` button, copy the query and click run. .
 
 First run:
@@ -663,17 +663,17 @@ where e.id = 1428036403 and fb.shop = 'coffee'
 order by 6 limit 1;
 ```
 
-> aside negative
+> 
 >  Make sure you style the result to make the point / lines bigger or more colorful so that you can see them.
 
 If you note in the result of each query, the first query found a different liquor store closer to Best Buy, whereas the second query returned the same coffee shop from your original search, so you've optimized as much as you can.
 
 ![assets/joins_2.png](assets/joins_2.png)
 
-> aside negative
+> 
 >  The id of the selected Best Buy was hard coded into the above queries to keep them easier to read and to keep you focused on the join clause of these queries, rather than introducing sub queries to dynamically calculate the nearest Best Buy. Those sub queries would have created longer queries that were harder to read.
 
-> aside positive
+> 
 >  If you're feeling adventurous, go read about other possible relationship functions that could be used in the join for this scenario [here](https://docs.snowflake.com/en/sql-reference/functions-geospatial.html).
 
 ### Calculate a New Linestring
@@ -757,7 +757,7 @@ Nice! 1537 meters, which is a savings of about 583 meters, or a third of a mile.
 
 The `LINESTRING` object that was created in the previous section looks like a nice, clean, four-sided polygon. As it turns out, a `POLYGON` is another geospatial object type that you can construct and work with. Where you can think of a `LINESTRING` as a border of a shape, a `POLYGON` is the filled version of the shape itself. The key thing about a `POLYGON` is that it must end at its beginning, where a `LINESTRING` does not need to return to the starting point.
 
-> aside positive
+> 
 >  Remember in a previous section when you added your Times Square Apartment location to both the beginning and the end of the LINESTRING? In addition to the logical explanation of returning home after your shopping trip, that point was duplicated at the beginning and end so you can construct a POLYGON in this section!
 
 ### Construct a Polygon
@@ -854,7 +854,7 @@ WHERE CITY = 'New York'
 
 ![assets/step9_1.png](assets/step9_1.png)
 
-> aside negative
+> 
 >  We are using a sample dataset included in the CARTO Analytics Toolbox named `starbucks_locations_usa`. You can find it under `PUBLIC`. So the full qualified name should be something like `CARTO.public.starbucks_locations_usa`.
 
 Now let' s aggregate using a spatial index. We are going to calculate how many Starbucks locations fall within each quadkey grid cell of resolution 15. This query adds two new columns to our dataset: geom, representing the boundary of each of the Quadkey grid cells where there's at least one Starbucks, and agg_total, containing the total number of locations that fall within each cell. Finally, we can visualize the result.

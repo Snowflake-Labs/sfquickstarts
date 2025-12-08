@@ -25,7 +25,7 @@ Snowparkでデータを処理し、Snowflakeで簡単なMLモデルを開発し�
 
 ### 前提条件
 
-* SnowflakeまたはSnowflakeトライアルアカウントでのアカウント管理者ロールアクセス：[https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_)
+* SnowflakeまたはSnowflakeトライアルアカウントでのアカウント管理者ロールアクセス：[https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * SQL、データベース構想、オブジェクトについての基本知識
 * Pythonに精通していること。  ラボ用のすべてのコードが提供されます。
 * コンピュータにソフトウェアをインストールして実行できること

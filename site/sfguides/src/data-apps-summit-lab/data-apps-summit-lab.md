@@ -27,7 +27,7 @@ You will process NOAA weather data with SQL, Snowpark, and develop a simple ML m
 
 ### Prerequisites
 
-* **ACCOUNTADMIN** role access in Snowflake or a Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_)
+* **ACCOUNTADMIN** role access in Snowflake or a Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * You'll need the companion repo for this lab: [sfguide-data-apps-summit-lab](https://github.com/Snowflake-Labs/sfguide-data-apps-summit-lab/)
 * Basic knowledge of SQL, database concepts, and objects
 * Familiarity with Python (all code is provided)
@@ -52,7 +52,7 @@ You will process NOAA weather data with SQL, Snowpark, and develop a simple ML m
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
-1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake)
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-west-2&utm_campaign=introtosnowflake&utm_cta=developer-guides)
 
 2. Start the account creation by completing the first page of the form on the page.
 

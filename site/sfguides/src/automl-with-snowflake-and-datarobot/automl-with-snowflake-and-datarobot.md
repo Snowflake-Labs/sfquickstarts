@@ -35,7 +35,7 @@ To showcase the full lifecycle of a deploying machine learning model, we will fi
 - Write results to Snowflake
 
 ### What You’ll Need
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab).
 
 ### What You’ll Build
 - Snowflake objects, including tables and warehouses, to scale and manage your data
@@ -50,7 +50,7 @@ The first thing you will need to do is download the following .sql file that con
 <button>
 
   
-  [Download .sql File](https://snowflake-workshop-lab.s3.amazonaws.com/Snowflake_Datarobot_VHOL_guides.sql)
+  [Download .sql File](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/refs/heads/master/site/sfguides/src/automl-with-snowflake-and-datarobot/Snowflake_Datarobot_VHOL_guides.sql)
 </button>
 <br/><br/>
 

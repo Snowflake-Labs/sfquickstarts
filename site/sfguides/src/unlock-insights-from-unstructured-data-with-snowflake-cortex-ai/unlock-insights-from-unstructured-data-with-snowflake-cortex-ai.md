@@ -17,7 +17,7 @@ This guide demonstrates how to create a Streamlit application running inside Sno
 It shows how to translate, summarize, classify text, generate emails, and even analyze images — all without deploying external infrastructure.
 
 ### Prerequisites
-- A Snowflake account. If you don’t have one, you can sign up for a free trial [here](https://signup.snowflake.com/).
+- A Snowflake account. If you don’t have one, you can sign up for a free trial [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - The ACCOUNTADMIN role to ensure you have full access for setup and configuration.
 
 ### What You’ll Learn
@@ -62,7 +62,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 In the same SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html), and [stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html)
 
-> aside positive
+> 
 > IMPORTANT:
 > 
 > If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.

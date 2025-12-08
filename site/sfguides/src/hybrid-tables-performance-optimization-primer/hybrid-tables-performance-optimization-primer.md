@@ -63,7 +63,7 @@ We will use table structures populated with synthetic data to create scenarios W
 create scenarios that do not perform well. Following the guide, you will then adjust the query and/or the 
 table structure to create an optimal query.
 
->aside positive
+> 
 > **NOTE:** Queries executed from Snowsight support an interactive development experience with rich statistics and metadata, 
 > such as runtime statistics about all query operators in the query profile. Queries executed in Snowsight 
 > will not perform with the lowest possible latency. Lowest latency is 
@@ -146,7 +146,7 @@ Now, click on the resulting query id (QID) on the Snowsight console. A new tab w
 
 The screen gives you basic information about the query.
 
->aside positive
+> 
 > **NOTE:** As this query was executed on Snowsight, compile and execution times will be longer than connected driver based queries.
 > Review [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) to learn more.
 >
@@ -428,7 +428,7 @@ retrieved from the order_header table improving latency and efficiency.
 
 ![assets/explore_83.png](assets/explore_83.png)
 
->aside positive
+> 
 > **NOTE:** Looking at the query in detail, you will notice that there is a cast to `TIMESTAMP_NTZ` for the `ORDER_TIMESTAMP`
 > predicate value. All types of timestamps are supported by hybrid tables, however, columns used in primary keys
 > or indexes are only supported as `TIMESTAMP_NTZ`. As an exercise, try the query without the cast and inspect

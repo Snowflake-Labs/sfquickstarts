@@ -21,7 +21,7 @@ Read on for a step-by-step guide on how to parse JSON and XML data in Snowflake 
 - Completion of the foundational Coalesce Quickstart [Accelerating Transformations with Coalesce and Snowflake](/en/developers/guides/transform-your-data-with-coalesce/)
 
 ### What You’ll Need 
-- A Snowflake account (either a [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) or access to an existing account)
+- A Snowflake account (either a [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) or access to an existing account)
 - A Coalesce account (either a trial account created via [Snowflake Partner Connect](https://coalesce.io/product-technology/launch-coalesce-from-snowflake-partner-connect/), or access to an existing account)
 - Google Chrome browser (recommended)
 

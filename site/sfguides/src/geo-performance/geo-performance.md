@@ -29,7 +29,7 @@ In this quickstart, you will learn how to improve performance of queries when us
 * Lab 5: H3 for speeding up queries with joins
 
 ### What You’ll Need
-* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
 
 ## Setup your Account
 
@@ -38,13 +38,13 @@ If this is the first time you are logging into the Snowflake UI, you will be pro
 
 Click `Sign-in` and you will be prompted for your user name and password.
 
-> aside positive
+> 
 >  If this is not the first time you are logging into the Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).
 
 ### Increase Your Account Permission
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.
 
-> aside positive
+> 
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
 ![assets/geo_performance_1.png](assets/geo_performance_1.png)
@@ -100,7 +100,7 @@ The best place to acquire this data is the Snowflake Marketplace!
 
 * Once in the listing, click the big blue `Get` button
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 ![assets/geo_performance_5.png](assets/geo_performance_5.png)
@@ -339,7 +339,7 @@ WHERE st_contains(to_geography('POLYGON((-74.14497384801507 40.596100847757526, 
 
 This query finished in about 40 seconds.
 
-> aside positive
+> 
 >  Note: if you want, you can use [this tool](https://clydedacruz.github.io/openstreetmap-wkt-playground/) to visualize the search area. You can put the search polygon from the query above and click Plot Shape.
 
 Now you'll do the same search using the query with SO enabled:
@@ -516,7 +516,7 @@ GROUP BY 1;
 ```
 
 This query completed in 40 seconds and returned 9985 rows. A different number of rows in the results of the first and second queries was caused by the fact that you did an H3-based aggregation to reduce the dataset size with trips. You can find the best balance of precision/performance for your particular use case by leveraging the size of aggregation cells. For instance, if you change the H3 resolution in the last query to 15, you will get results much closer to the first query. However, execution time will also increase.
-> aside negative
+> 
 >  Note: If you're interested, you can also experiment by running the above queries using an XSMALL warehouse. In this case, the first query would take around 35 minutes to complete, while the second one would finish in less than 3 minutes.
 
 ## Conclusion

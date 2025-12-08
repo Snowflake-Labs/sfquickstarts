@@ -26,7 +26,7 @@ Project Python Camouflage provides a basic framework for tokenization in Snowfla
 - How to install and use the Python Camouflage Python UDFs to run FF3 format-preserving encryption in a test setup in your Snowflake account
 
 ### What You’ll Need
-- A [Snowflake Enterprise Edition (or better) account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A [Snowflake Enterprise Edition (or better) account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - SnowSQL installed on your machine
 
 ### What You’ll Build
@@ -53,7 +53,7 @@ Let's get started!
 
 This QuickStart requires quite a few objects. Let's create those and grant the rights to them.
 
-> **Note:** Replace values in brackets (*e.g.* `&lt;REPLACEME&gt;`) with values appropriate to your own lab environment. Include the brackets.
+> **Note:** Replace values in brackets (*e.g.* `<REPLACEME>`) with values appropriate to your own lab environment. Include the brackets.
 
 ``` */
 ---  Create objects for use in the demo and grant the rights to them.
@@ -106,7 +106,7 @@ ls @python_libs; -- should be empty for now, gets "Query produced no results"
 
 With the stage ready, we can now upload the file. To do this, you will need to upload the FF3 Python library from the Mysto FPE Project (https://github.com/mysto/python-fpe). Clone the repository and zip up the contents of its `ff3` directory. Next, upload the zip file to the Snowflake Stage you created. See the outline of steps below, but note that they are best suited as an example for Linux or Mac systems. For Windows, adjust the settings as needed for correct results.
 
-> **Note:** Replace values in brackets (*e.g.* `&lt;REPLACEME&gt;`) with values appropriate to your own lab environment. Include the brackets.
+> **Note:** Replace values in brackets (*e.g.* `<REPLACEME>`) with values appropriate to your own lab environment. Include the brackets.
 
 ``` */
 --- Upload the FF3 Python library from here https://github.com/mysto/python-fpe

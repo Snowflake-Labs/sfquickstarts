@@ -37,7 +37,7 @@ An intelligent application that:
 
 ### Prerequisites
 
-- Snowflake account ([Sign up here](https://signup.snowflake.com/))  
+- Snowflake account ([Sign up here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))  
 - RSA key pair authentication setup ([Key Generation Instructions](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key))  
 - Knowledge of TypeScript/JavaScript  
 - Familiarity with React  
@@ -105,7 +105,7 @@ SNOWFLAKE_RSA_KEY=<your_private_rsa_key>
 SNOWFLAKE_RSA_PASSPHRASE=<your_passphrase>
 ```
 
-> aside negative
+> 
 >
 > NOTE: For help with setting your-account-identifier, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier?_fsi=LnJgA8TM).
 

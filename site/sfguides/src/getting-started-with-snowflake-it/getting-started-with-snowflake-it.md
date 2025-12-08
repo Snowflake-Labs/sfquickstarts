@@ -43,7 +43,7 @@ Questa guida a Snowflake è disponibile come Hands-On Lab virtuale gratuito tenu
 ## Preparare l’ambiente del workshop
 
 
-Se non l’hai ancora fatto, registrati per una [prova gratuita di 30 giorni di Snowflake](https://signup.snowflake.com/developers). Le sezioni successive di questo workshop presuppongono che tu stia utilizzando un nuovo account Snowflake creato al momento della registrazione per la prova gratuita.
+Se non l’hai ancora fatto, registrati per una [prova gratuita di 30 giorni di Snowflake](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Le sezioni successive di questo workshop presuppongono che tu stia utilizzando un nuovo account Snowflake creato al momento della registrazione per la prova gratuita.
 
 L’edizione di Snowflake (Standard, Enterprise, Business Critical, ecc.), il cloud provider (AWS, Azure, GCP) e la regione (US-East, EU, ecc.) che utilizzi per questo workshop sono irrilevanti. Tuttavia, ti consigliamo di selezionare la regione fisicamente più vicina a te e di scegliere Enterprise, il nostro prodotto più diffuso, come edizione di Snowflake.
 

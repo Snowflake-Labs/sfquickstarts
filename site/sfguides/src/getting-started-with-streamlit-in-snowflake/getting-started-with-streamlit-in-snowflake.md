@@ -30,7 +30,7 @@ An application on Streamlit within Snowflake that connects directly to a data li
 - How to create VegaLite charts in Streamlit
 
 ### Prerequisites
-A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - To ensure you can mount data from the Marketplace, login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges is required for this step). Keep this tab open during the session.
   - Click on the Billing on the left side panel
   - Click on Terms and Billing

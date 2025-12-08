@@ -24,7 +24,7 @@ Snowflake Cortex has proven to be a best-in-class platform for building GenAI se
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) and a Snowflake account
+- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and a Snowflake account
 - Familiarity with [Microsoft 365 Copilot Studio](https://www.microsoft.com/en-us/microsoft-365/copilot/) and an account along with access to the Azure Entra ID service for that tenant.
 
 ### What You’ll Learn
@@ -41,7 +41,7 @@ Snowflake Cortex has proven to be a best-in-class platform for building GenAI se
 6. (Optional and not covered in this quickstart) connect other MS Services to your Copilot
 
 ### What You’ll Need
-- [Snowflake account](https://signup.snowflake.com/) 
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
 - [MS 365 Account](https://www.microsoft.com/en-us/microsoft-365/copilot/)
 - Access to the Entra ID service the MS 365 tenant
 
@@ -281,6 +281,8 @@ Use the **Snowflake SQL Commands** to create the security integration, role and 
 ![](assets/createsecurityintegration.png)
 
 Keep the **Snowflake power platform connection info** to reference when you connect from Copilot Studio to Snowflake.
+
+*If you already have a security integration for something like PowerBI you will have to [alter the security integration](https://docs.snowflake.com/en/sql-reference/sql/alter-security-integration-oauth-external) by adding the new audience url and mapping name, mapping attribute must remain 'login_name'.*
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment

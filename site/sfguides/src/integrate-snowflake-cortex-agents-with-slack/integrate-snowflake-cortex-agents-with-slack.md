@@ -39,7 +39,7 @@ across projects.
 
 ### Prerequisites
 
-* A Snowflake account in one of these [regions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql#label-cortex-llm-availability). If you do not have an account, register for a [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* A Snowflake account in one of these [regions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql#label-cortex-llm-availability). If you do not have an account, register for a [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 * A Slack account with access to a workspace where you can install applications. **_NOTE_** _: Slack recommends using a workspace where you won’t disrupt real work getting done —_[ _you can create a new one for free_](https://slack.com/get-started#create) _._
 * Python version >= 3.8, < 3.13
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
 **Step 2:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/setup.sql) to execute all statements in order from top to bottom. This is to to create a database, schema, tables, and load data from AWS S3. And also to create Snowflake managed internal stages for store the semantic model specification file and PDF documents.
 
-> aside positive
+> 
 > NOTE: At this point, switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 **Step 3:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [the semantic model spec file](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/support_tickets_semantic_model.yaml) to the **DASH_AGENT_SLACK.DATA.SEMANTIC_MODELS** stage.
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
 **Step 6:** Create [Personal Access Token (PAT)](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) for **SNOWFLAKE_INTELLIGENCE_ADMIN** role and make a note/local copy of it. (You will need to paste it later in .env file.)
 
-> aside negative
+> 
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 ## Setup Environment
@@ -139,12 +139,12 @@ An agent is an intelligent entity within Snowflake Intelligence that acts on beh
 
 Note that you can create multiple agents for various use cases and/or business teams in your organization. 
 
-> aside positive
+> 
 > NOTE: At this point, switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 ### Create Agent
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-agents-slack) 
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-agents-slack&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Agents**</a> 
 * On the top right, click on **Create agent**
      - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Select **Create this agent for Snowflake Intelligence**
@@ -182,7 +182,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
-> aside positive
+> 
 > NOTE: On the top right corner, click on **Save** to save the newly updated **Support_AI** agent.
 
 ## Test Agent
@@ -235,7 +235,7 @@ If you see any errors, please double check all values set in **.env**. Common er
 
 If you get this error **Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...**, then try adding **locator.region** to **your-account-identifier**. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
-> aside negative
+> 
 > IMPORTANT: Before proceeding, please make sure you have successfully tested everything as described above.
 
 ## Run Application

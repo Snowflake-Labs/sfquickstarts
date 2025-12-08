@@ -30,7 +30,7 @@ To keep things simple, we’ll use a nicely manicured dataset to illustrate how 
 
 ### You’ll Need 
 - [Sign up for a Continual account](https://cloud.continual.ai/register?utm_campaign=Snowflake%20QuickStarts&utm_source=continual%20guide)
-- [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 ### You’ll Build 
 - An operational, continually updating customer churn ML model
@@ -38,7 +38,7 @@ To keep things simple, we’ll use a nicely manicured dataset to illustrate how 
 ## Prepare your lab environment
 ### Set up Snowflake
 
-Login using your unique credentials if you have a Snowflake account. If you don’t have a Snowflake account, visit https://signup.snowflake.com/ and sign up for a free 30-day trial environment.
+Login using your unique credentials if you have a Snowflake account. If you don't have a Snowflake account, visit [https://signup.snowflake.com](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and sign up for a free 30-day trial environment.
 ![new_trial](assets/1_start_snowflake_trial.png)
 
 For this example, you will only need the Standard edition on **AWS**. But you may want to select **Enterprise** to try out rad features like time travel, materialized views, or database failover. 

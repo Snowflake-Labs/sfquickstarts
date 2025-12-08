@@ -30,7 +30,7 @@ Braze CDI allows you to set up a direct connection from your data storage soluti
 - how to use the Braze CDI UI to create a connection to Snowflake 
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account 
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account 
 - A [Braze](https://www.braze.com/get-started) Account
 
 ### What You’ll Build 

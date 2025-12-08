@@ -96,7 +96,7 @@ schemachange is a lightweight Python-based tool to manage all your Snowflake obj
 
 For more information about schemachange please see [the schemachange project page](https://github.com/Snowflake-Labs/schemachange).
 
-> aside negative
+> 
 > 
 >  **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
 
@@ -125,42 +125,16 @@ Action Secrets in GitHub are used to securely store values/variables which will 
 
 From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
 
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SF_ACCOUNT</td>
-            <td>xy12345.east-us-2.azure</td>
-        </tr>
-        <tr>
-            <td>SF_USERNAME</td>
-            <td>DEMO_USER</td>
-        </tr>
-        <tr>
-            <td>SF_PASSWORD</td>
-            <td>*****</td>
-        </tr>
-        <tr>
-            <td>SF_ROLE</td>
-            <td>DEMO_ROLE</td>
-        </tr>
-        <tr>
-            <td>SF_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-        </tr>
-        <tr>
-            <td>SF_DATABASE</td>
-            <td>DEMO_DB</td>
-        </tr>
-    </tbody>
-</table>
+| Secret name | Secret value |
+|-------------|--------------|
+| SF_ACCOUNT | xy12345.east-us-2.azure |
+| SF_USERNAME | DEMO_USER |
+| SF_PASSWORD | ***** |
+| SF_ROLE | DEMO_ROLE |
+| SF_WAREHOUSE | DEMO_WH |
+| SF_DATABASE | DEMO_DB |
 
-> aside positive
+> 
 > 
 >  **Tip** - For more details on how to structure the account name in SF_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
 
@@ -168,7 +142,7 @@ When you’re finished adding all the secrets, the page should look like this:
 
 ![GitHub Actions Secrets after setup](assets/devops_dcm_schemachange_github-6.png)
 
-> aside positive
+> 
 > 
 >  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
@@ -177,7 +151,7 @@ When you’re finished adding all the secrets, the page should look like this:
 
 Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run schemachange and deploy changes to our Snowflake database.
 
-> aside positive
+> 
 > 
 >  **Tip** - For more details about Action Workflows and runs check out the [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions) page.
 
@@ -257,7 +231,7 @@ To view the details of a run, click on the name of specific run (you may have to
 
 ![GitHub Actions workflow run output](assets/devops_dcm_schemachange_github-8.png)
 
-> aside negative
+> 
 > 
 >  **Note** - You'll notice that GitHub will automatically redact any secret printed to the log. This is a bit unfortunate as the helpful output from schemachange will only show `***` instead of the actual values. I understand this for sensitive secrets, but for non-sensitive parameter values this is not ideal behaviour. For more details see [Encrypted secrets](https://docs.github.com/en/actions/reference/encrypted-secrets).
 

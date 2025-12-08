@@ -29,7 +29,7 @@ Here's an illustration of the overview of this bioinformatics project that you'l
 ![image](assets/diagram.png)
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic familiarity with SQL and Python
 - Understanding of fundamental data analysis concepts
 

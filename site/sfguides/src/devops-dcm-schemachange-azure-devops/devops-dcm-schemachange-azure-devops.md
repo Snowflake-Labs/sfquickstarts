@@ -83,82 +83,21 @@ Azure DevOps provides a complete, end-to-end set of software development tools t
 ### Azure DevOps History
 If you’ve worked with Microsoft products for a while you will know that over time product names evolve. The first version of what is today called Azure DevOps was released on March 17, 2006 as a component of the Visual Studio 2005 Team System under the name Team Foundation Server (TFS). Over the years it has been known by various names including Team Foundation Server (TFS), Visual Studio Online (VSO), Visual Studio Team Services (VSTS), and Azure DevOps. For fun, here is the history of product names from [Wikipedia’s Azure DevOps Server page](https://en.wikipedia.org/wiki/Azure_DevOps_Server#History):
 
-<table>
-    <thead>
-        <tr>
-            <th>Product name</th>
-            <th>Form</th>
-            <th>Release year</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Visual Studio 2005 Team System</td>
-            <td>On-premises</td>
-            <td>2006</td>
-        </tr>
-        <tr>
-            <td>Visual Studio Team System 2008</td>
-            <td>On-premises</td>
-            <td>2008</td>
-        </tr>
-        <tr>
-            <td>Team Foundation Server 2010</td>
-            <td>On-premises</td>
-            <td>2010</td>
-        </tr>
-        <tr>
-            <td>Team Foundation Service Preview</td>
-            <td>Cloud</td>
-            <td>2012</td>
-        </tr>
-        <tr>
-            <td>Team Foundation Server 2012</td>
-            <td>On-premises</td>
-            <td>2012</td>
-        </tr>
-        <tr>
-            <td>Visual Studio Online</td>
-            <td>Cloud</td>
-            <td>2013</td>
-        </tr>
-        <tr>
-            <td>Team Foundation Server 2013</td>
-            <td>On-premises</td>
-            <td>2013</td>
-        </tr>
-        <tr>
-            <td>Team Foundation Server 2015</td>
-            <td>On-premises</td>
-            <td>2015</td>
-        </tr>
-        <tr>
-            <td>Visual Studio Team Services</td>
-            <td>Cloud</td>
-            <td>2015</td>
-        </tr>
-        <tr>
-            <td>Team Foundation Server 2017</td>
-            <td>On-premises</td>
-            <td>2017</td>
-        </tr>
-        <tr>
-            <td>Team Foundation Server 2018</td>
-            <td>On-premises</td>
-            <td>2017</td>
-        </tr>
-        <tr>
-            <td>Azure DevOps Services</td>
-            <td>Cloud</td>
-            <td>2018</td>
-        </tr>
-        <tr>
-            <td>Azure DevOps Server 2019</td>
-            <td>On-premises</td>
-            <td>2019</td>
-        </tr>
-    </tbody>
-</table>
+| Product name | Form | Release year |
+|--------------|------|--------------|
+| Visual Studio 2005 Team System | On-premises | 2006 |
+| Visual Studio Team System 2008 | On-premises | 2008 |
+| Team Foundation Server 2010 | On-premises | 2010 |
+| Team Foundation Service Preview | Cloud | 2012 |
+| Team Foundation Server 2012 | On-premises | 2012 |
+| Visual Studio Online | Cloud | 2013 |
+| Team Foundation Server 2013 | On-premises | 2013 |
+| Team Foundation Server 2015 | On-premises | 2015 |
+| Visual Studio Team Services | Cloud | 2015 |
+| Team Foundation Server 2017 | On-premises | 2017 |
+| Team Foundation Server 2018 | On-premises | 2017 |
+| Azure DevOps Services | Cloud | 2018 |
+| Azure DevOps Server 2019 | On-premises | 2019 |
 
 This guide will be focused on the Azure Pipelines service.
 
@@ -173,7 +112,7 @@ schemachange is a lightweight Python-based tool to manage all your Snowflake obj
 
 For more information about schemachange please see [the schemachange project page](https://github.com/Snowflake-Labs/schemachange).
 
-> aside negative
+> 
 > 
 >  **Note** - schemachange is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
 
@@ -202,54 +141,17 @@ Libraries in the Azure Pipelines service are used to securely store variables an
 
 In the left navigation bar, click on `Pipelines` and then `Library`. On the Library page, the Variable groups tab should be selected. Click on the `+ Variable group` button. Name your variable group `demo-variables` and add the following variables to the group (adjusting the values as appropriate):
 
-<table>
-    <thead>
-        <tr>
-            <th>Variable name</th>
-            <th>Variable value</th>
-            <th>Secret?</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>PROJECT_FOLDER</td>
-            <td>$(System.DefaultWorkingDirectory)</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SF_ACCOUNT</td>
-            <td>xy12345.east-us-2.azure</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SF_USERNAME</td>
-            <td>DEMO_USER</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SF_PASSWORD</td>
-            <td>*****</td>
-            <td>Yes</td>
-        </tr>
-        <tr>
-            <td>SF_ROLE</td>
-            <td>DEMO_ROLE</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SF_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-            <td>No</td>
-        </tr>
-        <tr>
-            <td>SF_DATABASE</td>
-            <td>DEMO_DB</td>
-            <td>No</td>
-        </tr>
-    </tbody>
-</table>
+| Variable name | Variable value | Secret? |
+|--------------|----------------|---------|
+| PROJECT_FOLDER | $(System.DefaultWorkingDirectory) | No |
+| SF_ACCOUNT | xy12345.east-us-2.azure | No |
+| SF_USERNAME | DEMO_USER | No |
+| SF_PASSWORD | ***** | Yes |
+| SF_ROLE | DEMO_ROLE | No |
+| SF_WAREHOUSE | DEMO_WH | No |
+| SF_DATABASE | DEMO_DB | No |
 
-> aside positive
+> 
 > 
 >  **Tip** - For more details on how to structure the account name in SF_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
 
@@ -257,7 +159,7 @@ When you’re finished adding all the variables, don’t forget to click the `Sa
 
 ![Azure DevOps variable group](assets/devops_dcm_schemachange_azure_devops-5.png)
 
-> aside positive
+> 
 > 
 >  **Tip** - For an even better solution to managing your secrets, you can leverage Azure Key Vault. See [Link secrets from an Azure key vault](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml#link-secrets-from-an-azure-key-vault) for the details.
 
@@ -319,7 +221,7 @@ A few things to point out from the YAML pipeline definition:
 - We’re using the default Microsoft-hosted Linux agent pool to execute the pipeline.
 - The `env` section of the Bash task allows us to set environment variables which will be available to the Bash script. In particular, this allows us to securely pass secret values (like the Snowflake password) to applications/scripts running in the pipeline like schemachange.
 
-> aside negative
+> 
 > 
 >  **Note** - Under Pipelines in the left navigation bar you will see both `Pipelines` and `Releases`. In earlier versions of the service build and release pipelines were separate and were created graphically using a UI. While these [classic release pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/?view=azure-devops) can still be used, Azure DevOps is moving to a single pipeline definition using YAML.
 
