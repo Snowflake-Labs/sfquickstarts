@@ -1,0 +1,339 @@
+import re
+import json
+from typing import List, Dict
+
+# Sample product catalog (hardcoded for prototype; in real app, load from JSON or database)
+# Based on common medicines in India, with fictional prices, ratings, and availability for demo purposes.
+catalog = [
+    {
+        "id": 1,
+        "name": "Dolo 650 Tablet",
+        "brand": "Micro Labs",
+        "salt": "paracetamol",
+        "strength": "650mg",
+        "dosage_form": "tablet",
+        "pack_size": "15 tablets",
+        "price": 30.0,
+        "ratings": 4.5,
+        "indications": ["fever", "pain", "headache"],
+        "tags": ["otc", "pediatric"],
+        "rx": False,
+        "available_pincodes": ["110001", "400001", "560001", "600001"],
+        "delivery_sla": "Same day",
+        "stock": True
+    },
+    {
+        "id": 2,
+        "name": "Calpol 500 Tablet",
+        "brand": "GSK",
+        "salt": "paracetamol",
+        "strength": "500mg",
+        "dosage_form": "tablet",
+        "pack_size": "10 tablets",
+        "price": 20.0,
+        "ratings": 4.6,
+        "indications": ["fever", "pain"],
+        "tags": ["otc", "sugar-free"],
+        "rx": False,
+        "available_pincodes": ["110001", "560001", "700001"],
+        "delivery_sla": "1-2 days",
+        "stock": True
+    },
+    {
+        "id": 3,
+        "name": "Brufen 400 Tablet",
+        "brand": "Abbott",
+        "salt": "ibuprofen",
+        "strength": "400mg",
+        "dosage_form": "tablet",
+        "pack_size": "15 tablets",
+        "price": 25.0,
+        "ratings": 4.4,
+        "indications": ["pain", "inflammation", "fever"],
+        "tags": ["otc"],
+        "rx": False,
+        "available_pincodes": ["400001", "560001", "600001"],
+        "delivery_sla": "Same day",
+        "stock": True
+    },
+    {
+        "id": 4,
+        "name": "Amoxil 500 Capsule",
+        "brand": "GSK",
+        "salt": "amoxicillin",
+        "strength": "500mg",
+        "dosage_form": "capsule",
+        "pack_size": "10 capsules",
+        "price": 100.0,
+        "ratings": 4.7,
+        "indications": ["bacterial infection"],
+        "tags": ["antibiotic"],
+        "rx": True,
+        "available_pincodes": ["110001", "400001", "560001"],
+        "delivery_sla": "1-2 days",
+        "stock": True
+    },
+    {
+        "id": 5,
+        "name": "Glycomet 500 Tablet",
+        "brand": "USV",
+        "salt": "metformin",
+        "strength": "500mg",
+        "dosage_form": "tablet",
+        "pack_size": "10 tablets",
+        "price": 40.0,
+        "ratings": 4.5,
+        "indications": ["diabetes"],
+        "tags": ["rx", "sugar-free"],
+        "rx": True,
+        "available_pincodes": ["110001", "600001", "700001"],
+        "delivery_sla": "Same day",
+        "stock": True
+    },
+    {
+        "id": 6,
+        "name": "Omez 20 Capsule",
+        "brand": "Dr Reddy's",
+        "salt": "omeprazole",
+        "strength": "20mg",
+        "dosage_form": "capsule",
+        "pack_size": "15 capsules",
+        "price": 55.0,
+        "ratings": 4.6,
+        "indications": ["acidity", "heartburn", "ulcer"],
+        "tags": ["otc"],
+        "rx": False,
+        "available_pincodes": ["400001", "560001", "600001"],
+        "delivery_sla": "1-2 days",
+        "stock": True
+    },
+    {
+        "id": 7,
+        "name": "Cetzine 10 Tablet",
+        "brand": "GSK",
+        "salt": "cetirizine",
+        "strength": "10mg",
+        "dosage_form": "tablet",
+        "pack_size": "10 tablets",
+        "price": 20.0,
+        "ratings": 4.3,
+        "indications": ["allergy", "itching"],
+        "tags": ["otc", "pediatric"],
+        "rx": False,
+        "available_pincodes": ["110001", "400001", "700001"],
+        "delivery_sla": "Same day",
+        "stock": True
+    },
+    {
+        "id": 8,
+        "name": "Pantocid 40 Tablet",
+        "brand": "Sun Pharma",
+        "salt": "pantoprazole",
+        "strength": "40mg",
+        "dosage_form": "tablet",
+        "pack_size": "10 tablets",
+        "price": 150.0,
+        "ratings": 4.8,
+        "indications": ["acidity", "GERD"],
+        "tags": ["rx"],
+        "rx": True,
+        "available_pincodes": ["560001", "600001", "700001"],
+        "delivery_sla": "1-2 days",
+        "stock": True
+    },
+    {
+        "id": 9,
+        "name": "Calcirol Sachet",
+        "brand": "Cadila",
+        "salt": "cholecalciferol",
+        "strength": "60000 IU",
+        "dosage_form": "sachet",
+        "pack_size": "1 sachet",
+        "price": 35.0,
+        "ratings": 4.4,
+        "indications": ["vitamin D deficiency"],
+        "tags": ["supplement", "otc"],
+        "rx": False,
+        "available_pincodes": ["110001", "400001", "560001", "600001", "700001"],
+        "delivery_sla": "Same day",
+        "stock": True
+    },
+    {
+        "id": 10,
+        "name": "Supradyn Tablet",
+        "brand": "Bayer",
+        "salt": "multivitamin",
+        "strength": "various",
+        "dosage_form": "tablet",
+        "pack_size": "15 tablets",
+        "price": 50.0,
+        "ratings": 4.7,
+        "indications": ["vitamin deficiency", "general health"],
+        "tags": ["supplement", "otc", "sugar-free"],
+        "rx": False,
+        "available_pincodes": ["110001", "400001", "560001"],
+        "delivery_sla": "1-2 days",
+        "stock": True
+    },
+    {
+        "id": 11,
+        "name": "Ascoril Syrup",
+        "brand": "Glenmark",
+        "salt": "terbutaline + bromhexine + guaifenesin",
+        "strength": "various",
+        "dosage_form": "syrup",
+        "pack_size": "100ml",
+        "price": 120.0,
+        "ratings": 4.5,
+        "indications": ["cough", "bronchitis"],
+        "tags": ["otc", "pediatric"],
+        "rx": False,
+        "available_pincodes": ["400001", "600001", "700001"],
+        "delivery_sla": "Same day",
+        "stock": True
+    },
+    {
+        "id": 12,
+        "name": "Volini Gel",
+        "brand": "Sun Pharma",
+        "salt": "diclofenac",
+        "strength": "1% w/w",
+        "dosage_form": "gel",
+        "pack_size": "30g",
+        "price": 100.0,
+        "ratings": 4.6,
+        "indications": ["pain", "sprain"],
+        "tags": ["otc", "topical"],
+        "rx": False,
+        "available_pincodes": ["110001", "560001", "700001"],
+        "delivery_sla": "1-2 days",
+        "stock": True
+    },
+    # Add more if needed for diversity
+]
+
+def extract_keywords(text: str) -> List[str]:
+    """Simple keyword extraction from text."""
+    stop_words = {"i", "am", "the", "a", "an", "for", "to", "in", "on", "with", "this", "that", "is", "have", "need"}
+    text_lower = text.lower()
+    words = re.findall(r'\b\w+\b', text_lower)
+    keywords = [word for word in words if word not in stop_words and len(word) > 2]
+    return list(set(keywords))  # Unique keywords
+
+def find_substitutes(product: Dict, catalog: List[Dict]) -> List[Dict]:
+    """Find similar products if exact not available."""
+    substitutes = []
+    for other in catalog:
+        if other["id"] != product["id"] and other["salt"] == product["salt"]:
+            substitutes.append(other)
+    return substitutes
+
+def recommend_products(
+    query: str,
+    response: str,
+    pincode: str,
+    catalog: List[Dict],
+    num_recs: int = 10
+) -> List[Dict]:
+    """Recommend products based on conversation, handling nuances."""
+    # Combine query and response for keyword extraction
+    combined_text = query + " " + response
+    keywords = extract_keywords(combined_text)
+    
+    # Extract potential constraints (simple regex-based)
+    age_group = "adult" if "adult" in combined_text.lower() else ("pediatric" if "child" in combined_text.lower() or "pediatric" in combined_text.lower() else None)
+    sugar_free = "sugar-free" in combined_text.lower()
+    dosage_form_pref = re.search(r'(tablet|capsule|syrup|gel|injection)', combined_text.lower())
+    dosage_form_pref = dosage_form_pref.group(1) if dosage_form_pref else None
+    
+    candidates = []
+    for product in catalog:
+        # Base score on keyword matches in salt, indications, tags
+        score = 0.0
+        matches = []
+        
+        # Salt match
+        if any(kw in product["salt"].lower() for kw in keywords):
+            score += 2.0
+            matches.append("salt match")
+        
+        # Indications match
+        for ind in product["indications"]:
+            if any(kw in ind.lower() for kw in keywords):
+                score += 1.5
+                matches.append("indication match")
+        
+        # Tags match
+        if sugar_free and "sugar-free" in product["tags"]:
+            score += 1.0
+            matches.append("sugar-free")
+        if age_group == "pediatric" and "pediatric" in product["tags"]:
+            score += 1.0
+            matches.append("pediatric suitable")
+        
+        # Dosage form preference
+        if dosage_form_pref and dosage_form_pref in product["dosage_form"].lower():
+            score += 0.5
+            matches.append("preferred dosage form")
+        
+        # Availability check
+        available = pincode in product["available_pincodes"] and product["stock"]
+        if not available:
+            continue  # Skip if not available
+        
+        # Price factor (lower price higher score, normalized)
+        max_price = max(p["price"] for p in catalog)
+        price_score = (max_price - product["price"]) / max_price * 0.5
+        score += price_score
+        
+        # Ratings factor
+        score += product["ratings"] * 0.2
+        
+        if score > 0:
+            reason = f"Matches: {', '.join(matches)}. Available in your area with {product['delivery_sla']} delivery. Price: ₹{product['price']}, Ratings: {product['ratings']}"
+            candidates.append((product, score, reason))
+    
+    # Sort by score descending
+    candidates.sort(key=lambda x: x[1], reverse=True)
+    
+    # Diversity: Avoid too many from same brand or salt
+    diverse_recs = []
+    seen_brands = set()
+    seen_salts = set()
+    for prod, score, reason in candidates:
+        if len(diverse_recs) >= num_recs:
+            break
+        if prod["brand"] not in seen_brands and prod["salt"] not in seen_salts:
+            diverse_recs.append({"id": prod["id"], "score": round(score, 2), "reason": reason})
+            seen_brands.add(prod["brand"])
+            seen_salts.add(prod["salt"])
+        elif len(diverse_recs) < 5:  # Allow some duplicates if needed to reach min 5
+            diverse_recs.append({"id": prod["id"], "score": round(score, 2), "reason": reason})
+    
+    # If less than 5, add substitutes or note
+    if len(diverse_recs) < 5:
+        for prod, score, reason in candidates[len(diverse_recs):]:
+            if len(diverse_recs) >= 5:
+                break
+            diverse_recs.append({"id": prod["id"], "score": round(score, 2), "reason": reason + " (substitute)"})
+    
+    return diverse_recs
+
+def main():
+    """Prototype app entry point."""
+    print("Welcome to Smart Product Recommender Prototype!")
+    print("Enter the details below to get recommendations.\n")
+    
+    query = input("User Query (e.g., 'I have a headache and fever'): ")
+    response = input("Doctor/Assistant Response (e.g., 'Take paracetamol 500mg for pain relief'): ")
+    pincode = input("Pincode (e.g., '110001'): ")
+    
+    recommendations = recommend_products(query, response, pincode, catalog, num_recs=10)
+    
+    print("\nRecommended Products:")
+    print(json.dumps(recommendations, indent=4))
+    
+    # For contest demo, you can add more features like loading catalog from file, UI with tkinter, etc.
+
+if __name__ == "__main__":
+    main()
