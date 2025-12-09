@@ -2,7 +2,7 @@ name: Publish to AEM on PR Approval (Prod)
 
 on:
   push:
-    branches: [master]
+    branches: [master, github-actions-merge]
 
 jobs:
   publish:
