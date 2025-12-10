@@ -150,14 +150,14 @@ GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
 
 > 
-> IMPORTANT: You **may** receive an email asking for verification of your email address, if you have not done so before. Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
+> ‼️ IMPORTANT: You **may** receive an email asking for verification of your email address, if you have not done so before. Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
 
 While waiting for the email, you can go ahead and run the following parts.
 
 Now, run the following commands to create the next two accounts that you need. 
 
 > 
-> IMPORTANT: For the commands below, you **have to use the same worksheet** as above, as the variables created are reused (email_var, firstname_var, lastname_var, and pwd_var).
+> ‼️ IMPORTANT: For the commands below, you **have to use the same worksheet** as above, as the variables created are reused (email_var, firstname_var, lastname_var, and pwd_var).
 
 ```sql
 -- Run this code in your PRIMARY account
