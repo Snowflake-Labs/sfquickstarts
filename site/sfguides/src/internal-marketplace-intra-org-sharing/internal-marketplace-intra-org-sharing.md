@@ -1,4 +1,4 @@
-authors: Matthias Nicola, Henrik Nielsen
+<img width="1397" height="554" alt="image" src="https://github.com/user-attachments/assets/76e63341-28bf-40c4-a1df-376d1ceaf529" />authors: Matthias Nicola, Henrik Nielsen
 id: internal-marketplace-intra-org-sharing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/internal-marketplace
 language: en
@@ -311,21 +311,21 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
 ### Publishing Flow (Step 1 of 5): Listing Title and Ownership
 
-1. Navigate to the Provider Studio and click the blue **+Create Listing** button in the top right. 
+1. Navigate to the Provider Studio (click first on the Catalog menu item) and click the blue **+Create Listing** button in the top right. 
 2. Select **"Internal Marketplace"**.
 
-![IM](assets/publish09_providerstudio.png)
+![IM](assets/publish09_providerstudio_ni.png)
 
-3. Click on **“Untitled Listing”** and give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
+3. The wizard will start, requesting you to enter a name, giving your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
 
 > 
-> IMPORTANT: some code later in this lab will reference the listing by the name **Order Insights**. 
+> ‼️ IMPORTANT: some code later in this lab will reference the listing by the name **Order Insights**. 
 
-![](assets/publish01_title.png)
+![](assets/publish01_title_ni.png)
 
-4. Click on the **+Profile** button and select the **Sales** profile as the owner of this data product. 
+4. Click on the **+Profile** dropdown and select the **Sales** profile as the owner of this data product. 
 
-![](assets/publish02_profile.png)
+![](assets/publish02_profile_ni.png)
 
 - When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change this on a per listing basis if you want. 
 
@@ -334,9 +334,9 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 Now let's select the data objects that we want to share in this data product. 
 - Click on the blue **Add Data Product** button to open the object explorer. 
 
-- Then, click **+ Select**, navigate to the SF1 schema of the TPCH database, and select all tables except *Region* and *Part*. Also select the ORDER_SUMMARY view and the  function ORDERS_PER_CUSTOMER. Click **Done** and **Save**.
+- Then, click **+ Select**, navigate to the SF1 schema of the TPCH database, and select all tables except REGION and PART. Also select the ORDER_SUMMARY view and the  function ORDERS_PER_CUSTOMER. Click **Done** and **Save**.
 
-![](assets/publish03_objectselection.png)
+![](assets/publish03_objectselection_ni.png)
 
 ### Publishing Flow (Step 3 of 5): Configure Access Control and the Approval Process
 
@@ -355,7 +355,7 @@ As a result, every data consumer will need to request access to obtain approval 
 
 You could configure an external workflow engine for the request approval process. But for this lab we choose to **Manage requests in Snowflake**. The email address for notifications defaults to the one from the *Sales* profile but could be changed.
 
-![](assets/publish05_requestconfig.png)
+![](assets/publish05_requestconfig_ni.png)
 
 After you confirm the approval flow settings, Snowflake prompts you for one more configuration. Here is why: this listing is configured to be discoverable by the entire organization. What if you add another account to the organization but in a different cloud region? Then Snowflake would transparently perform incremental replication to that region to minimize egress cost. As the data provider you can choose the frequency of this replication.
 
@@ -377,7 +377,7 @@ Data products should be understandable and trustworthy for data consumers so let
   - **Time Range**: Amount of history data included.
   - **Timestamp Granularity**: The interval between data points. For example, "*Event-based*" if there is one record for each incoming order, or "*Daily*" if order volumes are aggregated by date, and so on.
   
-  ![](assets/publish07_metadata.png)
+  ![](assets/publish07_metadata_ni.png)
 
 
 - Add at least two **Usage examples** such as the following two queries.
@@ -404,11 +404,12 @@ Data products should be understandable and trustworthy for data consumers so let
 
 
 - Generate a **Data dictionary**. Snowflake will automatically compile column information and sample data for *all* objects in the data product.
+- Start by clicking the **Enable** button for the Data Preview, to allow viewers to view sample data from the listing.
 
     Select at least one (and up to 5) data objects and click **+Add to Featured**. These are the objects that consumers will see first in the dictionary.
     Suggestion: Select `customer`, `orders`, and `order_summary` to be featured.
 
-![](assets/publish08_datadictionary.png)
+![](assets/publish08_datadictionary_ni.png)
 
 ### Publishing Flow (Step 5 of 5): Publish your listing to the internal marketplace
 
@@ -416,11 +417,10 @@ Click the blue **Publish** button in the top right corner.
 
 Your data product is now live! You can see it when you navigate to the Internal Marketplace.
 
-- In the old UI, choose **Data Products** in the menu on the left, then **Marketplace**, then **Internal Marketplace** at the top.
-- In the new UI, choose **Catalog** in the menu on the left, then **Internal Marketplace** (see below).
+- Choose **Catalog** in the menu on the left, then **Internal Marketplace** (see below).
 - Use the *Provider* filter to show listings for specific domains only.
 
-![](assets/publish10_done_newui.png)
+![](assets/publish10_done_newui_2.png)
 
 ## Request and Grant Access
 
