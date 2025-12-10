@@ -1357,5 +1357,5 @@ snowpark-submit \
 - [CLI Examples](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-submit-examples)
 
 **Additional Resources:**
-- [Getting Started with Snowpark Connect](https://quickstarts.snowflake.com/guide/getting-started-with-snowpark-connect-for-apache-spark/)
+- [Getting Started with Snowpark Connect](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-connect-for-apache-spark/)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/)
