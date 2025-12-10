@@ -430,7 +430,7 @@ In this section you will request access to the new data product for the **Market
 ### Request Access
 
 - Open a new browser tab and log in to the `HOL_ACCOUNT1` a s the `marketing_admin` user.
-- Navigate to the Internal Marketplace
+- Navigate to the Internal Marketplace, by clicking on **Catalog** on the left in the menu.
 - Click on the **Order Insights** listing
 - Review all the listing elements from the data consumer point of view
 - Click on the blue **Request Access** button
@@ -450,7 +450,7 @@ Now let's also request access for the  **Supply chain** team.
 
 Let's switch back to the perspective of the data product owner to review and grant the access requests.
 - Log into your account `HOL_ACCOUNT1` as the `sales_admin` user.
-- Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
+- Navigate to the **Provider Studio** by clicking on **Data Sharing** in the menu, as shown in the screenshot below, and open the tab **Internal Requests**.
 - Click on each of the two requests to review the details and use the green **Grant** button to approve.
 
 ![](assets/raw02_newui.png)
