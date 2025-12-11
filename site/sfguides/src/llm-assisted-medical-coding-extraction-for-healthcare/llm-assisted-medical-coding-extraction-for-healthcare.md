@@ -6,6 +6,9 @@ summary: Clinical coding is the task of transforming medical records, usually pr
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-llm-assisted-medical-coding-extraction-for-healthcare-in-snowflake
+
+
 
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
