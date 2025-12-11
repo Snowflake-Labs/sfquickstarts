@@ -8,11 +8,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Machine Learning, Hyperparameter Optimization, Experiment Tracking, XGBoost, SPCS
 language: en
 
-# Distributed Hyperparameter Optimization with Experiment Tracking in Snowflake
+# Distributed Hyperparameter Optimization with Experiment Tracking
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
-
 This quickstart demonstrates how to combine two powerful Snowflake ML capabilities:
 
 - **Distributed Hyperparameter Optimization (HPO)** – Run model tuning in parallel on Snowpark Container Runtime  
@@ -49,8 +47,7 @@ Together, these tools let you move from one-off experiments to scalable, reprodu
 <button>[Download Notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/hpo-with-experiment-tracking/assets/hpo_example.ipynb)</button>
 
 <!-- ------------------------ -->
-## Setup and Data Loading
-Duration: 5
+## Setup and Data
 
 First, let's import the necessary libraries and set up our Snowflake session.
 
@@ -146,8 +143,7 @@ print(f"Test set: {X_test_scaled.shape[0]} samples")
 ```
 
 <!-- ------------------------ -->
-## Baseline Model with Experiment Tracking
-Duration: 5
+## Baseline Model
 
 Before running distributed HPO, let's train a baseline model and log it to Snowflake Experiment Tracking.
 
@@ -198,13 +194,8 @@ with exp.start_run(run_name="baseline_xgboost") as run:
         print(f"  {metric}: {value:.4f}")
 ```
 
-> aside positive
-> 
-> Snowflake supports autologging for certain ML frameworks, but this example uses explicit logging (`exp.log_params`, `exp.log_metrics`) to demonstrate a framework-agnostic approach. Explicit logging works with any ML library and gives you precise control over what gets logged.
-
 <!-- ------------------------ -->
-## Prepare Data Connectors for Distributed HPO
-Duration: 3
+## Data Connectors
 
 Convert pandas DataFrames to Snowflake DataConnectors for distributed processing.
 
@@ -223,8 +214,7 @@ print("Data connectors created successfully")
 ```
 
 <!-- ------------------------ -->
-## Define the Training Function
-Duration: 5
+## Training Function
 
 The training function will be executed for each HPO trial. It integrates both HPO and Experiment Tracking.
 
@@ -284,7 +274,6 @@ def train_function():
 
 <!-- ------------------------ -->
 ## Configure the Search Space
-Duration: 3
 
 Define the hyperparameter search space using Snowflake's sampling functions.
 
@@ -307,8 +296,7 @@ for param, space in search_space.items():
 ```
 
 <!-- ------------------------ -->
-## Run Distributed Hyperparameter Optimization
-Duration: 10
+## Run Distributed HPO
 
 Configure the tuner to maximize F1 score, run 50 trials with random search, and execute trials in parallel across available nodes.
 
@@ -358,13 +346,10 @@ finally:
     print("Cluster scaled back to 1 node")
 ```
 
-> aside negative
-> 
-> Remember to scale your cluster back down after HPO completes to avoid unnecessary compute costs.
+**Note:** Remember to scale your cluster back down after HPO completes to avoid unnecessary compute costs.
 
 <!-- ------------------------ -->
 ## Analyze Results
-Duration: 5
 
 Let's examine the best model found during hyperparameter optimization.
 
@@ -398,18 +383,13 @@ results.best_result
 ```
 
 <!-- ------------------------ -->
-## View Results in Snowsight
-Duration: 2
+## View in Snowsight
 
 All experiment runs are now available in the Snowflake UI:
 
 1. Navigate to **AI & ML → Experiments** in the left sidebar
 2. Find the `Wine_Quality_Classification_YYYYMMDD` experiment (with today's date)
 3. Compare runs, view metrics, and analyze results
-
-> aside positive
-> 
-> Each time you run this notebook on a different day, it creates a new dated experiment, allowing you to track model performance over time and across different data versions.
 
 The Snowsight UI provides:
 - Side-by-side run comparisons
@@ -419,7 +399,6 @@ The Snowsight UI provides:
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 2
 
 Congratulations! You've successfully built a distributed hyperparameter optimization pipeline with integrated experiment tracking in Snowflake.
 
