@@ -1,10 +1,10 @@
-author: Tim Buchhorn
+author: Tim Buchhorn (sfc-gh-tbuchhorn)
 id: sfguide-getting-started-with-access-controls-for-cortex-search
 language: en
 summary: This guide walks you through creating an internal chatbot application that controls access to unstructured documents based on user-based attributes
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance, snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: AI, Conversational Assistants, Cortex Search
 
@@ -21,13 +21,14 @@ In this guide, you will build a secure RAG pipeline (using Cortex Search) that e
 
 
 ### Prerequisites
-- Access to an account that can use Snowpark Container Services (non-trial accounts).
+- Access to an account that can create External Access Integrations (trial accounts are not able to).
+- Access to an elevated role (such as ACCOUNTADMIN) to create External Access Integrations, Roles and Users.
 
 ### What You’ll Learn 
 - How to build a RAG chatbot in Streamlit in Snowflake (SiS) with access controls.
 
 ### What You’ll Need 
-- A Snowflake account with the ability to create Compute Pools (SPCS). Trial accounts do not have this ability 
+- A Snowflake account with the ability to create Compute Pools (SPCS)
 - Ability to create new users and roles in Snowflake
 
 ### What You’ll Build 
@@ -222,7 +223,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE rag_cortex_search_service
   ATTRIBUTES product_department
   WAREHOUSE = RAG_WH
   TARGET_LAG = '1 hour'
-  INITIALIZE = ON_SCHEDULE
+  INITIALIZE = ON_CREATE
 AS SELECT * FROM RAG_DB.RAG_SCHEMA.CHUNKED_TABLE;
 ```
 
