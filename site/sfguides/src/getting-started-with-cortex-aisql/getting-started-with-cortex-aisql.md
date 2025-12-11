@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 Cortex AISQL reimagines SQL into an AI query language for multimodal data, bringing powerful AI capabilities directly into Snowflake's SQL engine. It enables users to build scalable AI pipelines across text, images, and audio using familiar SQL commands. 
 With native support for multimodal data through a new FILE datatype, Cortex AISQL seamlessly integrates AI operators with traditional SQL primitives like AI_FILTER and AGGREGATE, allowing analysts to process diverse data types more efficiently and cost-effectively while maintaining enterprise-grade security and governance.
@@ -45,7 +44,7 @@ Business analysts can extract insights without AI expertise, data engineers can 
 
 ### Prerequisites
 
-* Access to a Snowflake account in one of [these regions](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql?lang=de%2F) with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* Access to a Snowflake account in one of [these regions](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql?lang=de%2F) with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 *NOTE: Individual functions in the Cortex AISQL suite are Preview Features. Check the status of each function on its SQL reference page before using it in production. Functions not marked as preview features are generally available (GA) and can be used in production.*
 
@@ -66,7 +65,6 @@ Snowflake Notebook that helps you get started with using Cortex AISQL with multi
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10 
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -96,15 +94,14 @@ Duration: 10
 
 * Click on **Start** button on top right
 
-> aside positive
+
 > NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 <!-- ------------------------ -->
 ## Run Notebook
 
-Duration: 15
 
-> aside negative
+
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
 Here's the code walkthrough of the [cortex_aisql.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/cortex_aisql.ipynb) notebook that you downloaded and imported into your Snowflake account. *NOTE: Individual functions in the Cortex AISQL suite are Preview Features. Check the status of each function on its SQL reference page before using it in production. Functions not marked as preview features are generally available (GA) and can be used in production.*
@@ -161,19 +158,19 @@ If you'd like to see images displayed in the Notebook as part of the consolidate
 
 **Step 4.** If the session is **Active**, click on it to end the current session. Otherwise, click on **Start** to start a new session which will also update the packages list and include our custom package **snowbooks_extras**.
 
-> aside positive
+
 > NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 **Step 5.** Add `import snowbooks_extras` to the libraries list under **Import_Libraries** and run the cell.
 
 **Step 6.** Now if you run **Preview_Data** cell, you will see images displayed in **INPUT_FILE** column as shown below.
 
-> aside negative 
+
 > Before importing `snowbooks_extras` 
 
 ![Data without images](assets/df_without_img.png)
 
-> aside negative 
+ 
 > After importing `snowbooks_extras` -- you will need to click twice (not exactly a double-click though :)) to see the enlarged image as shown.
 
 ![Data with images](assets/df_with_img.png)
@@ -181,7 +178,6 @@ If you'd like to see images displayed in the Notebook as part of the consolidate
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created a Snowflake Notebook that helps you get started with using Cortex AISQL with multimodal data.
 
@@ -200,5 +196,5 @@ You've learned how to use powerful operators of Cortex AISQL to analyze multimod
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql)
 - [Cortex AISQL Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
 - [Download Reference Architecture](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-aisql/img/f65e99c9c8dbf752.png?_ga=2.50488033.970314110.1758562613-1806211272.1741193538&_gac=1.112796406.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
-- [Read the Blog](https://www.snowflake.com/en/blog/ai-sql-query-language/)
+- [Read the Blog](/en/blog/ai-sql-query-language/)
 

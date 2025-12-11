@@ -11,11 +11,10 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Getting started with AI on enterprise data can seem overwhelming, between getting familiar with LLMs, how to perform custom prompt engineering, and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex. 
 
-In this guide, we will go through two flows – for the first three examples we will not have to worry about prompt engineering and, as a bonus, another example where we will build a prompt for a custom task and see [Snowflake Arctic](https://www.snowflake.com/en/data-cloud/arctic/) in action!
+In this guide, we will go through two flows – for the first three examples we will not have to worry about prompt engineering and, as a bonus, another example where we will build a prompt for a custom task and see [Snowflake Arctic](/en/data-cloud/arctic/) in action!
 
 ### What is Snowflake Cortex?
 Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
@@ -38,7 +37,7 @@ Snowflake Arctic is a family of enterprise-grade models built by Snowflake. The 
 
 ![App](assets/snowflake_arctic_2.png)
 
-Learn more about [benchmarks and how Snowflake Arctic was built](https://www.snowflake.com/blog/arctic-open-efficient-foundation-language-models-snowflake/).
+Learn more about [benchmarks and how Snowflake Arctic was built](/blog/arctic-open-efficient-foundation-language-models-snowflake/).
 
 ### What You Will Learn
 
@@ -57,7 +56,6 @@ An interactive Streamlit application running in Snowflake.
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 Prior to GenAI, a lot of the information was buried in text format and therefore going underutilized for root cause analysis due to complexities in implementing natural language processing. But with Snowflake Cortex it’s as easy as writing a SQL statement! 
 
@@ -125,7 +123,6 @@ COPY into CALL_TRANSCRIPTS
 <!-- ------------------------ -->
 ## Snowflake Cortex
 
-Duration: 5
 
 Given the data in `call_transcripts` table, let’s see how we can use Snowflake Cortex. It offers access to industry-leading AI models, without requiring any knowledge of how the AI models work, how to deploy LLMs, or how to manage GPU infrastructure.
 
@@ -181,7 +178,6 @@ select transcript,snowflake.cortex.classify_text(transcript,['Refund','Exchange'
 <!-- ------------------------ -->
 ## Snowflake Arctic
 
-Duration: 5
 
 ### Prompt Engineering
 Being able to pull out the summary is good, but it would be great if we specifically pull out the product name, what part of the product was defective, and limit the summary to 200 words. 
@@ -212,7 +208,6 @@ Here we’re selecting the Snowflake Arctic model and giving it a prompt telling
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 9
 
 To put it all together, let's create a Streamlit application in Snowflake.
 
@@ -343,7 +338,6 @@ This is also a good way to quickly and easily compare how different LLMs might p
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed the Getting Started with Snowflake Arctic and Snowflake Cortex quickstart guide. 
 
@@ -360,9 +354,9 @@ Congratulations! You've successfully completed the Getting Started with Snowflak
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-arctic-and-snowflake-cortex)
 - [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex: LLM Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
-- [Snowflake Cortex: LLM Functions Cost Considerations](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations) and [Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf#page=9)
+- [Snowflake Cortex: LLM Functions Cost Considerations](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations) and [Consumption Table](/legal-files/CreditConsumptionTable.pdf#page=9)
 - [Snowflake Cortex: ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions)
 - [Snowflake Arctic: Hugging Face](https://huggingface.co/Snowflake/snowflake-arctic-instruct)
-- [Snowflake Arctic: Cookbooks](https://www.snowflake.com/en/data-cloud/arctic/cookbook/)
-- [Snowflake Arctic: Benchmarks](https://www.snowflake.com/blog/arctic-open-efficient-foundation-language-models-snowflake/)
+- [Snowflake Arctic: Cookbooks](/en/data-cloud/arctic/cookbook/)
+- [Snowflake Arctic: Benchmarks](/blog/arctic-open-efficient-foundation-language-models-snowflake/)
 - [Snowflake Arctic: GitHub repo](https://github.com/Snowflake-Labs/snowflake-arctic)

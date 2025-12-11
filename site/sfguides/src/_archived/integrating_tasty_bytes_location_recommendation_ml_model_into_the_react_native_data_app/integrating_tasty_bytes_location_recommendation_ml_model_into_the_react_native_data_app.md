@@ -10,8 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
-<img src="assets/tasty_bytes_header.png"/>
+![assets/tasty_bytes_header.png](assets/tasty_bytes_header.png)
 
 Snowflake has simplified the integration of Machine Learning models into Data Applications through its convenient features that allow for the deployment of ML models as Stored Procedures, User Defined Functions (UDF's), and User Defined Table Functions (UDTF's). Furthermore, Snowflake offers a SQL API, a RESTful API to facilitate querying the deployed ML models, enabling seamless integration between the application and the ML model.
 
@@ -40,7 +39,6 @@ In this tutorial, the application you are building helps fictitious food truck c
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 3
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
 - Access SafeGraph location data from the Snowflake Marketplace
@@ -62,7 +60,7 @@ Tasty Bytes operates food trucks in cities across the globe with each truck havi
   - Rename Database -> FROSTBYTE_SAFEGRAPH (all capital letters)
   - Grant to Additional Roles -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 >aside positive
 >SafeGraph is a global geospatial data company that offers any data on any place in the world. Customers like Esri, Tripadvisor, Mapbox, and Sysco use SafeGraph data to better understand their customers, create new products, and make better decisions for their business.
@@ -151,7 +149,6 @@ SELECT * FROM frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v;
 
 <!-- ------------------------ -->
 ## Create User for the Application
-Duration: 5
 
 To ensure robust security measures, it is essential to establish a dedicated user account for the application, separate from your personal account. This new account will be utilized for querying Snowflake. Following best security practices, the account will employ key-pair authentication and be granted restricted access within the Snowflake environment.
 
@@ -208,7 +205,6 @@ GRANT ROLE tasty_bytes_data_ml_app_demo TO USER data_ml_app_demo;
 
 <!-- ------------------------ -->
 ## Train and Deploy ML model in Snowflake
-Duration: 10
 
 ### Overview
 Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support this goal and maximize daily revenue across the fleet of trucks, the data science team needs to build an ML model to direct trucks to locations that are expected to have the highest sales on a given shift.
@@ -416,7 +412,6 @@ GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLO
 
 <!-- ------------------------ -->
 ## Fetching Data from ML Model using SQL API and Integrating into the Data Application
-Duration: 10
 
 The application you will be running is written in React Native. 
 
@@ -440,11 +435,10 @@ We are using Key Pair Authentication to authenticate with Snowflake using SQL AP
 2. This launches the app in Web Browser
 3. Upon Launch, You can see the InQueue Orders Screen,
 
-<img src="assets/Locations.png"/>
+![assets/Locations.png](assets/Locations.png)
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 1
 
 Navigate to Snowsight Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet". Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.
 
@@ -460,7 +454,6 @@ DROP ROLE tasty_bytes_data_ml_app_demo;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 ### Conclusion
 **You did it!** You have successfully completed the Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application Quickstart.
@@ -472,7 +465,7 @@ By doing so you have learned:
 - Integrated ML model into the Data App
 
 ### Next Steps
-To learn more about Location Recommendations ML model, Please refer to our [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science) quickstarts.
+To learn more about Location Recommendations ML model, Please refer to our [Tasty Bytes - Snowpark 101 for Data Science](/en/developers/guides/tasty-bytes-snowpark-101-for-data-science/) quickstarts.
 
 To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes - Quickstarts available to you.
 

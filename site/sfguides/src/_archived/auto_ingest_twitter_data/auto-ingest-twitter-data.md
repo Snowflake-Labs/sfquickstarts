@@ -8,7 +8,6 @@ Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 # Auto-Ingest Twitter Data into Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 In this guide, we’ll be walking you through how to auto-ingest streaming and event-driven data from Twitter into Snowflake using Snowpipe. While this guide is Twitter-specific, the lessons found within can be applied to any streaming or event-driven data source. All source code for this guide can be found on [GitHub](https://github.com/Snowflake-Labs/sfguide-twitter-auto-ingest). Let’s get going!
 
@@ -16,7 +15,7 @@ In this guide, we’ll be walking you through how to auto-ingest streaming and e
 - Familiarity with command-line navigation
 
 ### What You’ll Need
-- A [Snowflake](https://www.snowflake.com/) Account
+- A [Snowflake](/) Account
 - A Text Editor (such as [Visual Studio Code](https://code.visualstudio.com/))
 - [git](https://git-scm.com/downloads)
 - [Twitter Developer](https://developer.twitter.com/) account (free)
@@ -34,7 +33,6 @@ In this guide, we’ll be walking you through how to auto-ingest streaming and e
 
 <!-- ------------------------ -->
 ## Application Architecture 
-Duration: 5
 
 It's important to understand how the data flows within this application. This application consists of four main parts: 
 
@@ -49,7 +47,6 @@ It's important to understand how the data flows within this application. This ap
 
 <!-- ------------------------ -->
 ## Download the repository
-Duration: 5
 
 The demo can be found as a repository on Snowflake's GitHub. After installing git, you can clone the repository using your terminal. Open a terminal and run the following line to clone the repository to your local system. It'll download the repository in your home folder by default, so you may want to navigate to another folder if that's where you want the demo to be located.
 
@@ -66,7 +63,6 @@ cd sfguide-twitter-auto-ingest
 Now that you’re in the correct folder let’s begin adding the correct information for you.
 
 ## Install Dependencies and Environment
-Duration: 5
 
 ###Python dependencies
 
@@ -99,7 +95,6 @@ aws configure set aws_secret_access_key $AWS_Secret_Access_Key
 
 <!-- ------------------------ -->
 ## Add your AWS and Twitter keys
-Duration: 10
 
 There are two files you'll need to edit to specify your own credentials. The first file is `twitter_local.py`. Open the file with a text editor. The lines you need to edit start at line 30:
 
@@ -150,7 +145,6 @@ Make sure to save both files. With both of them modified, you have now successfu
 
 <!-- ------------------------ -->
 ## Run the application
-Duration: 5
 
 To run the application we run the following command:
 
@@ -171,7 +165,6 @@ These are all the tweets being pulled. Now that we can pull the tweets in let's 
 
 <!-- ------------------------ -->
 ## Configure Snowpipe in Snowflake
-Duration: 5
 
 First, you'll need to login to your Snowflake account. Then, load the `0_setup_twitter_snowpipe.sql` script. You can load a script into a Snowflake Worksheet via the three dots on the top right of the worksheet.
 
@@ -179,7 +172,6 @@ Within the SQL command interface, execute the script one statement at a time. If
 
 <!-- ------------------------ -->
 ## Configure Event Notifications
-Duration: 5
 
 Event notifications for your S3 bucket notify Snowpipe when new data is available to load. There are a variety of ways to configure event notifications in AWS S3. We have a section dedicated to the options [here](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3.html). 
 
@@ -192,7 +184,6 @@ Now Snowpipe with auto-ingest is operational!
 
 <!-- ------------------------ -->
 ## Stop your application
-Duration: 1
 
 The setup is now complete! You're good to go, but it's important to be cognizant of Twitter API rate limits. In order to not exceed Twitter API rate limits, you'll want to stop your python application.
 
@@ -201,7 +192,6 @@ To stop the python application type `CTRL + C` in the terminal your python appli
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Snowflake offers a lot of options for what you can do with this data once you've added it with Snowpipe. Check out our [Getting Started with Python](https://guides.snowflake.com/guide/getting_started_with_python/) guide to see how you can use Python to empower your interactions with your data. And of course, be sure to check out the full [documentation](https://docs.snowflake.com/en/index.html).
 

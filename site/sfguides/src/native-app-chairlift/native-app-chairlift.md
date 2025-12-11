@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Snowflake Native App to Analyze Chairlift Sensor Data
 <!-- ------------------------ -->
 ## Introduction
-Duration: 2
 
 In this Quickstart, you'll build a Snowflake Native Application that can analyze sensor data from chairlifts at different locations at a ski resort. Let's explore the scenario from the perspective of the application provider and an application consumer.
 
@@ -42,12 +41,12 @@ Let's get started!
 
 ### What You’ll Need
 
-> aside negative
+> 
 > 
 > **Important**
 > Native Apps are currently only  available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.
 
-- A Snowflake account ([trial](https://signup.snowflake.com/developers), or otherwise). See note above on AWS as cloud provider for the deployment.
+- A Snowflake account ([trial](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), or otherwise). See note above on AWS as cloud provider for the deployment.
 
 ### What You’ll Build 
 
@@ -55,7 +54,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Clone GitHub repository
-Duration: 2
 
 Start by cloning the following GitHub repository, which contains the code we'll need to build the app:
 
@@ -119,7 +117,6 @@ Here's an overview of the directories:
 
 <!-- ------------------------ -->
 ## The **app/** directory
-Duration: 4
 
 Let's take a deeper look at the **app/** directory for this app.
 
@@ -182,7 +179,6 @@ Here's an overview of what this folder contains:
 
 <!-- ------------------------ -->
 ## Test the App
-Duration: 3
 
 Let's take a deeper look at the files and directories related to testing this native app.
 
@@ -229,7 +225,6 @@ You should observe all the tests passing.
 
 <!-- ------------------------ -->
 ## Set up account roles
-Duration: 4
 
 Let's start building the app. You'll first need to configure certain roles and permissions within your Snowflake account. This will allow you to view the app as an app admin (for configuring the application after installation and/or dismissing sensor warnings), or as an app viewer (perhaps someone in charge of equipment maintenance at the resort keeps an eye on the condition of chairlifts).
 
@@ -274,7 +269,6 @@ grant usage on warehouse chairlift_wh to role chairlift_viewer;
 
 <!-- ------------------------ -->
 ## Prepare objects in account
-Duration: 5
 
 Next, you'll run some scripts to set up some databases, schemas, and tables needed by the app.
 
@@ -516,7 +510,6 @@ call populate_reading();
 
 <!-- ------------------------ -->
 ## Create application package and install application using Snowflake CLI
-Duration: 3
 
 With the environment created, we can now create the application package for the app. You'll run a command that creates this package and does a few key things:
 
@@ -542,7 +535,6 @@ Snowflake CLI project is configured using `snowflake.yml` file.
 
 <!-- ------------------------ -->
 ## Create the first version of the app
-Duration: 2
 
 Let's review what we've covered so far:
 
@@ -558,7 +550,7 @@ snow app version create develop
 
 This command will create the first (new) version of the native app using the source code files that you uploaded earlier.
 
-> aside positive
+> 
 > 
 >  **PATCH VERSIONS** Do not run the command below. It is included here to demonstrate how you can add a patch version of a native app.
 
@@ -572,7 +564,6 @@ This SQL command returns the new patch number, which will be used when installin
 
 <!-- ------------------------ -->
 ## Allow restricted application access to a secondary role
-Duration: 3
 
 Now that the source code has been uploaded into the application package and the application was installed, we can grant appropriate privileges to a secondary consumer role named **chairlift_viewer**. Note that the version and/or patch values may need to be updated to install the application using a different version or patch.
 
@@ -587,7 +578,6 @@ grant application role chairlift_app.app_viewer
 
 <!-- ------------------------ -->
 ## Set up the application
-Duration: 4
 
 With the application installed, you can now run the app in your Snowflake account!
 
@@ -603,7 +593,7 @@ With the application installed, you can now run the app in your Snowflake accoun
 
 When running the app for the first time, you'll be prompted to create bindings. The bindings link references defined in the manifest file to corresponding objects in the Snowflake account. These bindings ensure that the application can run as intended. You'll also be prompted to grant the application privileges to execute a task based on a toggle within the app's user interface. For more information, see the **first_time_setup.py** and **references.py** files in the **ui/** folder within the repo.
 
-> aside negative
+> 
 > 
 >  **NOTE** Before being able to run the app, you may be prompted to accept the Anaconda terms and conditions. Exit the app, set your role to **ORGADMIN**, then navigate to "**Admin** -> **Billing & Terms**". Click **Enable** and then acknowledge and continue in the ensuing modal. If, when navigating back to the app as **CHAIRLIFT_ADMIN**, you are again prompted to accept the terms, refresh your browser.
 
@@ -611,7 +601,6 @@ When running the app for the first time, you'll be prompted to create bindings. 
 
 <!-- ------------------------ -->
 ## Run the application
-Duration: 6
 
 You can run the app as an app admin or or app viewer. See the sections below for the differences between the two roles.
 
@@ -638,12 +627,11 @@ To run the app as an app admin, switch your role to **CHAIRLIFT_ADMIN**, and nav
 
 In this Quickstart, the **Configuration** tab is included to demonstrate how different roles in an account may be granted different privileges within the app. In practice, the app admin (or other roles) may have access to other areas or functionality of the app.
 
-> aside negative
+> 
 > 
 >  **AVOID PROLONGED CREDIT CONSUMPTION** Enabling warning generation via the checkbox will call a warning generation task every 60 seconds. **To avoid prolonged credit consumption, be sure to disable the warning generation task by unchecking the checkbox.**
 <!-- ------------------------ -->
 ## Clean up
-Duration: 1
 
 Let's clean up your Snowflake account. In the same terminal you opened before, execute the following command:
 
@@ -666,7 +654,6 @@ DROP ROLE chairlift_admin;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations! In just a few minutes, you built a Snowflake Native App that allows a consumer to generate maintenance-related insights based on raw sensor data from chairlifts they own at a ski resort. The app also grants select access to parts of the app depending on the Snowflake role selected.
 
@@ -679,8 +666,8 @@ Congratulations! In just a few minutes, you built a Snowflake Native App that al
 
 ### Related Resources
 
-- [Snowflake Native App Developer Toolkit](https://www.snowflake.com/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)
+- [Snowflake Native App Developer Toolkit](/snowflake-native-app-developer-toolkit/?utm_cta=na-us-en-eb-native-app-quickstart)
 - [Official Native App documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 - [Tutorial: Developing an Application with the Native Apps Framework](https://docs.snowflake.com/en/developer-guide/native-apps/tutorials/getting-started-tutorial)
 - [Snowflake Demos](https://developers.snowflake.com/demos)
-- [Getting Started with Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/)
+- [Getting Started with Native Apps](/en/developers/guides/getting-started-with-native-apps/)

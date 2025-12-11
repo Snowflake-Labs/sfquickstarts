@@ -12,23 +12,15 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 1
-
 In this guide, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 
 We'll use a custom dataset focused on bikes and skis. This dataset is intentionally artificial, ensuring that no external LLM has prior knowledge of it. This gives us a clean and controlled environment to test and evaluate our data agent. By the end of the session, you'll have a working AI-powered agent capable of understanding and retrieving insights across diverse data types — all securely within Snowflake.
 
-*NOTE: Snowflake Intelligence is in Public Preview as of August 2025*.
-
 ### What is Snowflake Intelligence? 
 
-Snowflake Intelligence is an agentic AI solution, enabling business users to directly and securely interact with their organization's structured and unstructured data using natural language. Snowflake Intelligence provides:
+Snowflake Intelligence is an Enterprise Intelligence Agent that provides every user with the ability to answer complex questions in natural language, and puts insights at every user’s fingertips. With a single question, you can get comprehensive insights across your business data. It moves beyond the “what” to the critical “why” with an always-available thought partner at their fingertips that can facilitate deep research and suggest solutions to previously difficult and time-consuming business problems.
 
-* Natural language interaction: Engage with data like a trusted colleague to securely access and analyze both structured and unstructured data to uncover trends and understand the "why" behind the "what."
-
-* Actionable intelligence: Go beyond just insights by configuring agents to perform tasks based on findings, such as sending notifications, updating records in other systems, or triggering workflows.
-
-* Enterprise-grade security and governance: Honors existing access controls and governance, unifies information from Snowflake and third-party applications for a holistic view, and provides transparency on how answers are derived and data lineage.
+Snowflake Intelligence removes the barriers to insights, enabling users to understand the cross-sections of their data and test assumptions with a shared understanding of the data needed to make impactful business decisions.
 
 ### What You Will Learn
 
@@ -43,11 +35,10 @@ A Data Agent that can intelligently respond to questions by reasoning over both 
 
 ### What You Will Need
 
-* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](https://quickstarts.snowflake.com/guide/build-agentic-application-in-snowflake/index.html?index=..%2F..index#1).
+* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](/en/developers/guides/build-agentic-application-in-snowflake/).
 
 <!-- ------------------------ -->
 ## Snowflake Trial Account
-Duration: 5
 
 To complete this lab, you'll need to create a Snowflake account.
 
@@ -68,7 +59,6 @@ To complete this lab, you'll need to create a Snowflake account.
 ## Setup 
 <!-- ------------------------ -->
 
-Duration: 3
 
 * Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai).
 
@@ -110,24 +100,22 @@ Stored Procedure:
   - send_email
 ```
 
-> aside positive
+> 
 > NOTE: Switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 ## Create Tools
 <!-- ------------------------ -->
 
-Duration: 30
 
 We will use Snowflake Notebook to setup the Cortex Analyst and Cortex Search tools that will be used by the data agent in Snowflake Intelligence.
 
 Let's get started!
 
-* Browse to [Databases](https://app.snowflake.com/_deeplink/#/data/databases?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) and select **DASH_CORTEX_AGENTS** » **DATA** » **Git Repositories** » **GIT REPO** and right click on `SETUP_TOOLS.ipynb`, then click on "..." and select **Create notebook**.
+* Browse to <a href="https://app.snowflake.com/_deeplink/#/data/databases?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Databases</a> and select **DASH_CORTEX_AGENTS** » **DATA** » **Git Repositories** » **GIT REPO** and right click on `SETUP_TOOLS.ipynb`, then click on "..." and select **Create notebook**.
 
 * Give it a name and select other options including **DASH_CORTEX_AGENTS** and **DATA** for location and **Run on warehouse** for Python environment.
-
-> aside negative
-> IMPORTANT NOTE: Run through all the cells in the Snowflake Notebook before proceeding.
+  
+IMPORTANT NOTE: Run through all the cells in the Snowflake Notebook before proceeding.
 
 ## Explore Semantic Model
 
@@ -135,7 +123,7 @@ The [semantic model](https://docs.snowflake.com/en/user-guide/snowflake-cortex/c
 
 ### Open the semantic model
 
-* On the left hand navigation menu, open [**AI & ML** >> **Cortex Analyst**](https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake)
+* On the left hand navigation menu, open <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a>
 
 * Click on the existing `semantic.yaml` file located in **DASH_CORTEX_AGENTS** » **DATA** » **SEMANTIC_FILES**.
 
@@ -176,8 +164,6 @@ Notice that Cortex Analyst is now able to provide the right answer because of th
 ## Snowflake Intelligence
 <!-- ------------------------ -->
 
-Duration: 20
-
 Now that we have the tools ready, we can create a Data Agent for Snowflake Intelligence.
 
 ### Create Agent
@@ -186,7 +172,7 @@ An agent is an intelligent entity within Snowflake Intelligence that acts on beh
 
 Note that you can create multiple agents for various use cases and/or business teams in your organization. 
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) 
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Agents**</a> 
 * On the top right, click on **Create agent**
      - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Select **Create this agent for Snowflake Intelligence**
@@ -243,12 +229,12 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
-> aside positive
+> 
 > NOTE: On the top right corner, click on **Save** to save the newly updated **Dash_AI** agent.
 
 ### Launch Snowflake Intelligence
 
-Open [Snowflake Intelligence](https://app.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
+Open <a href="https://app.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Intelligence</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 Now, let's ask the following questions.
 
@@ -266,7 +252,7 @@ Since we have processed images, the extracted descriptions can also be used by C
 
 #### - *Q. Is there any brand in the frame of the downhill bike?*
 
-> aside positive
+> 
 > Feel free to explore the PDF documents and images to ask other questions.
 
 ### Structured Data
@@ -283,13 +269,12 @@ Notice that all 3 tables are used to answer this question.
 
 #### - *Q. What are the top 5 customers buying the carvers?*
 
-> aside positive
+
 > Feel free to explore the semantic model to ask other questions.
 
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
 
 Congratulations! You've learned how to securely build data agents and agentic application in Snowflake.
 

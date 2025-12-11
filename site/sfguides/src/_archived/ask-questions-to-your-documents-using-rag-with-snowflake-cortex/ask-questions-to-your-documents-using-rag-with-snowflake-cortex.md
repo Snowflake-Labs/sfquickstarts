@@ -11,14 +11,13 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this quickstart we will show you how to quickly and securely build a document search assistant using vector embeddings in Cortex AI without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
 
 Along the way, we will also share tips on how you could turn what may seem like a prototype into a production pipeline by showing you how to automatically process new documents as they are uploaded as well as learn about relevant Snowflake functionality to consider for additional enhancements.
 
 > aside positive
-> NOTE: A new guide has been published that leverages Cortex Search (in Public Preview)--a fully managed service that automatically creates embeddings for your data and performs retrievals using a hybrid search engine including embeddings for semantic similarity and keyword search for lexical similarity. To learn more, [click here](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html).
+> NOTE: A new guide has been published that leverages Cortex Search (in Public Preview)--a fully managed service that automatically creates embeddings for your data and performs retrievals using a hybrid search engine including embeddings for semantic similarity and keyword search for lexical similarity. To learn more, [click here](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/).
 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s).
@@ -36,7 +35,7 @@ The final product includes an application that lets users test how the LLM respo
 ### What You Will Learn 
 - How to create functions that use Python libraries using [Snowpark](https://snowflake.com/snowpark)
 - How to generate embeddings, run semantic search and use LLMs using serverless functions in [Snowflake Cortex](https://snowflake.com/cortex)
-- How to build a front-end with Python using [Streamlit in Snowflake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/)
+- How to build a front-end with Python using [Streamlit in Snowflake](/en/data-cloud/overview/streamlit-in-snowflake/)
 - Optional: How to automate data processing pipelines using directory tables, [Streams](https://docs.snowflake.com/en/user-guide/streams-intro) and [Task](https://docs.snowflake.com/en/user-guide/tasks-intro)
 
 ### Prerequisites
@@ -48,7 +47,6 @@ The final product includes an application that lets users test how the LLM respo
 
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Functions
-Duration: 15
 
 In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs, the functions that will process (extract and chunk) those PDFs and the table that will hold the text embeddings. 
 
@@ -177,7 +175,6 @@ ls @docs;
 
 <!-- ------------------------ -->
 ## Build the Vector Store
-Duration: 15
 
 In this step we are going to leverage our document processing functions to prepare documents before turning the text into embeddings using Snowflake Cortex. These embeddings will be stored in a Snowflake Table using the new native VECTOR data type. 
 
@@ -253,7 +250,6 @@ After completing all the steps in this section you should see the following obje
 
 <!-- ------------------------ -->
 ## Build Chat UI and Chat (Retrieval and Generation) Logic
-Duration: 15
 
 To make it easy for anyone to ask questions against the vector store, let's create a fairly simple front-end using Streamlit. As part of the app, we will provide the end-user with a toggle that allows testing of LLM responses with and without access to the context to observe the differences.
 
@@ -497,7 +493,6 @@ num_chunks = 3
 
 <!-- ------------------------ -->
 ## Build a ChatBot UI that Remember Previous Conversations
-Duration: 15
 
 In the previous section we have created a simple interface where we can ask questions about our documents and select the LLM running within Snowflake Cortex to answer the question. We have seen that when no context from our documents is provided, we just get a general answer, versus a specific answer related to our documents when we use context from the PDFs. But what if we want to have a conversation sytle?
 
@@ -899,7 +894,6 @@ You can try with your own documents. You will notice different peformance depend
 
 <!-- ------------------------ -->
 ## Optional: Automatic Processing of New Documents
-Duration: 5
 
 We can use Snowflake features Streams and Task to automatically process new PDF files as they are added into Snowflake. 
 
@@ -966,7 +960,6 @@ alter task task_extract_chunk_vec_from_pdf suspend;
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
-Duration: 5
 
 Congratulations! You've successfully performed RAG using Snowflake Cortex and securely built a full-stack RAG application in Snowflake without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
 
@@ -982,13 +975,13 @@ Congratulations! You've successfully performed RAG using Snowflake Cortex and se
 ### Related Resources
 
 - [Docs: Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Blog: RAG explainer and how it works in Snowflake](https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex)
+- [Blog: RAG explainer and how it works in Snowflake](/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex)
 - [Blog: Customizing RAG framework components using Snowpark Container Services](https://medium.com/@jason.summer/developing-a-product-chatbot-with-airmiles-in-snowflake-6b197d3fc424)
 - [Docs: Snowflake Directory Tables](https://docs.snowflake.com/en/user-guide/data-load-dirtables)
 - [Docs: Creating User-Defined Table Functions](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
 - [Blog: Build a RAG-Based AI Application on SEC Filing Data Using Snowflake Cortex and Streamlit](https://medium.com/snowflake/retrieval-augmented-generation-rag-application-using-snowflake-cortex-and-streamlit-9cb261e81c2e)
 - [Fork Repo on GitHub](https://github.com/jeremyjgriffith/cortex-rag-application/)
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-Based-Application-on-SEC-Filing-Data-Using-Snowflake-Cortex.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-Based-Application-on-SEC-Filing-Data-Using-Snowflake-Cortex.pdf)
   
 ---
 

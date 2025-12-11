@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Fine-Tuning an LLM in Snowpark Container Services with AutoTrain
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 By completing this guide, you will fine-tune an open-source Large Language Model (LLM) in Snowpark Container Services using HuggingFace's AutoTrain-Advanced module. The result will be an LLM further trained to understand and describe raw product metadata in a specific format.
 
@@ -69,10 +68,9 @@ Fine-tuning can be a rather complex process. To alleviate much of this complexit
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 10
 
-> aside positive
-> IMPORTANT: The Snowflake environment setup that follows is similar to the setup in [Quickstart: Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html#1). However, here we have added an additional statement at the end to create a GPU-powered compute pool. You only need to complete the Setup Environment section.
+> 
+> IMPORTANT: The Snowflake environment setup that follows is similar to the setup in [Quickstart: Intro to Snowpark Container Services](/en/developers/guides/intro-to-snowpark-container-services/). However, here we have added an additional statement at the end to create a GPU-powered compute pool. You only need to complete the Setup Environment section.
 
 Run the following SQL commands in [`00_snowflake_setup.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/00_snowflake_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the role, database, warehouse, and stages that we need to get started:
 ```SQL
@@ -142,12 +140,11 @@ AUTO_RESUME = true;
 - The [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool) is the set of compute resources on which our services will run
 - The [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository) is the location in Snowflake where we will push our Docker images so that our services can use them
 
-> aside positive
+> 
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
 ## Training Data
-Duration: 5
 
 LLM fine-tuning (specifically, [Supervised Fine-Tuning / Generic Trainer](https://huggingface.co/docs/autotrain/llm_finetuning)) with AutoTrain-Advanced requires a csv file named `train.csv` containing a single column named `text`. 
 The format of the `text` column contents is flexible but should align with the intended purpose and API used to engage with the LLM. Furthermore, it may be necessary to manually align the content to the original format used in training the LLM. The below setup will create records that mirror the original format used in training Meta's Llama model series. 
@@ -211,9 +208,8 @@ Follow these steps to create the training data:
 
 <!-- ------------------------ -->
 ## Service Image & Specification
-Duration: 20
 
-Next, we will craft the below ingredients for the Snowpark Container Service. If unfamiliar with defining Snowpark Container Services, see the [Intro to Snowpark Container Service Quickstart](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html?index=..%2F..index#0) or [Snowpark Container Services tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials).
+Next, we will craft the below ingredients for the Snowpark Container Service. If unfamiliar with defining Snowpark Container Services, see the [Intro to Snowpark Container Service Quickstart](/en/developers/guides/intro-to-snowpark-container-services/) or [Snowpark Container Services tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials).
 
 - **Dockerfile**: Normal Dockerfile document containing all the necessary setup, installations, and commands to execute the solution as a containerized service.
 - **entrypoint.sh**: Script of commands to execute when the containerized service runs.
@@ -287,7 +283,7 @@ In a Snowsight SQL Worksheet or SnowSQL, run the below SQL commands to create a 
   SECRET_STRING='<YOUR_HF_TOKEN>';
 ```
 
-> aside positive
+> 
 > 
 >  IMPORTANT: Some models, such as llama2, require prior authorization to access. See HuggingFace's corresponding model card to verify.
 
@@ -339,11 +335,10 @@ Lastly, save the file and push to Snowflake stage `SPECS` using one of the below
 
 <!-- ------------------------ -->
 ## Container Service
-Duration: 3
 
 Finally, we will start the Snowpark Container Service. Run the following SQL commands in [`03_start_service.sql`](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain/blob/main/03_start_service.sql) using the Snowflake VSCode Extension OR in a SQL worksheet. 
 
-> aside positive
+> 
 > 
 >  NOTE: The below SERVICE is tagged with a comment. This comment helps Snowflake capture usage trends that could lead to code improvements (performance, cost optimization, or functionality). As part of our continual improvement of all of our frameworks and accelerators, we review who and how our customers are leveraging these tools.  While our tagging of objects and sessions is meant to provide improvements back to our customers, we also understand that not all of our customers will maintain this tagging. 
 
@@ -381,7 +376,6 @@ After logging in, visit `workspace/autotrain.err` in Jupyter to see progress. No
 
 <!-- ------------------------ -->
 ## LLM Prompting
-Duration: 3
 
 A Gradio chat interface can be served from the container service using JupyterLab. Within the Gradio interface, we can prompt the fine-tuned model (and the base foundational model) for quick validation. To access JupyterLab, execute `SHOW ENDPOINTS IN SERVICE AUTOTRAIN;` in a Snowsight SQL Worksheet or SnowSQL. Visit the URL listed with the `jupyter` endpoint. 
 
@@ -442,7 +436,6 @@ What is this offer:
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 If you no longer need the service and compute pool up and running, we can stop the service and suspend the compute pool so that we don't incur any cost. Snowpark Container Services bill credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing.
 
@@ -472,7 +465,6 @@ DROP ROLE CONTAINER_USER_ROLE;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You've successfully fine-tuned a Large Language Model to describe product offer metadata using Snowpark Container Services and HuggingFace's AutoTrain-Advanced module. And then you created a Gradio chat interface to evaluate the effectiveness of the fine-tuning.
 
@@ -487,6 +479,6 @@ Congratulations! You've successfully fine-tuned a Large Language Model to descri
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-fine-tuning-llms-with-spcs-huggingface-autotrain)
-- [Intro to Snowpark Container Services](https://quickstarts.snowflake.com/guide/intro_to_snowpark_container_services/index.html?index=..%2F..index#0)
-- [Build a Data App and run it on Snowpark Container Services](https://quickstarts.snowflake.com/guide/build_a_data_app_and_run_it_on_Snowpark_container_services/index.html?index=..%2F..index#0)
+- [Intro to Snowpark Container Services](/en/developers/guides/intro-to-snowpark-container-services/)
+- [Build a Data App and run it on Snowpark Container Services](/en/developers/guides/build-a-data-app-and-run-it-on-snowpark-container-services/)
 - [Snowflake Cortex Functions for LLMs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)

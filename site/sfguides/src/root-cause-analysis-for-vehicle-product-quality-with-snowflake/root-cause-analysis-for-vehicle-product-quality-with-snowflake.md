@@ -1,11 +1,11 @@
 author: Kala Govindarajan
 id: root-cause-analysis-for-vehicle-product-quality-with-snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
-language: en
 summary: 
+categories: Getting-Started,data-science-&-ml, solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Cortex, Data Science & Ai
 
 # Root Cause Analysis for Vehicle Product Quality with Snowflake
 <!-- ------------------------ -->
@@ -42,7 +42,7 @@ The Cross-region data sharing from Snowflake offers a robust solution to the mul
 - How to leverage Cortex AI to ask questions in Natural language against your data
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex and Arctic are available.
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account in a region where Snowflake Cortex and Arctic are available.
 - Access to the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.
 - Git installed.
 

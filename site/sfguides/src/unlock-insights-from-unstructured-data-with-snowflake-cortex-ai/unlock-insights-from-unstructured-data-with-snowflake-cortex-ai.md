@@ -1,5 +1,5 @@
 summary: Unlock Insights from Unstructured Data with Snowflake Cortex AI
-id: unlock_insights_from_unstructured_data_with_snowflake_cortex_ai
+id: unlock-insights-from-unstructured-data-with-snowflake-cortex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 environments: web
@@ -12,13 +12,12 @@ author: Sean Morris, Stephen Dickson
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This guide demonstrates how to create a Streamlit application running inside Snowflake that unlocks insights from unstructured data using **Snowflake Cortex AI**.  
 It shows how to translate, summarize, classify text, generate emails, and even analyze images — all without deploying external infrastructure.
 
 ### Prerequisites
-- A Snowflake account. If you don’t have one, you can sign up for a free trial [here](https://signup.snowflake.com/).
+- A Snowflake account. If you don’t have one, you can sign up for a free trial [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - The ACCOUNTADMIN role to ensure you have full access for setup and configuration.
 
 ### What You’ll Learn
@@ -38,7 +37,6 @@ A fully functioning **Streamlit app** inside Snowflake that:
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 ### Login to Snowsight
 
@@ -64,7 +62,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 In the same SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html), and [stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html)
 
-> aside positive
+> 
 > IMPORTANT:
 > 
 > If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -97,7 +95,6 @@ USE SCHEMA IDENTIFIER($var_schema_name);
 <!-- ------------------------ -->
 ## Build Streamlit Application
 
-Duration: 5
 
 Let's create a Streamlit application for interactive image analysis:
 
@@ -132,7 +129,6 @@ The application provides:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations! You’ve successfully built an end-to-end image analysis application using Snowflake Cortex AI models. This app showcases how to unlock value from unstructured data — including text and images - all within the Snowflake environment.
 

@@ -9,7 +9,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Cortex Knowledge Extensions on Snowflake Marketplace
 ## Overview 
-Duration: 1
 
 ### Overview
 
@@ -66,11 +65,10 @@ We'll build the application's front-end using Streamlit in Snowflake.
 
 <!-- ------------------------ -->
 ## Cortex Knowledge Extensions
-Duration: 2
 
 Cortex Knowledge Extensions (CKEs) allow publishers to bring their documents (e.g. news articles, market research reports, books, articles, etc.) to customers in their generative AI applications (e.g. chat interfaces, agentic platforms, etc.).
 
-CKEs are shared Cortex Search Services on the Snowflake Marketplace that integrate with Cortex generative AI applications following the [retrieval augmented generation (RAG) pattern](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html#0). 
+CKEs are shared Cortex Search Services on the Snowflake Marketplace that integrate with Cortex generative AI applications following the [retrieval augmented generation (RAG) pattern](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/). 
 
 Here is how it works:
 
@@ -82,11 +80,10 @@ Here is how it works:
 
 <!-- ------------------------ -->
 ## Open a Snowflake Trial Account
-Duration: 5
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
-1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake)
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-west-2&utm_campaign=introtosnowflake&utm_cta=developer-guides)
 
 2. Start the account creation by completing the first page of the form on the page.
 
@@ -104,7 +101,6 @@ If you choose a different cloud provider, or select a different region within AW
 
 <!-- ------------------------ -->
 ## Chatbot Architecture
-Duration: 2
 
 In a Cortex Knowledge Extension, a provider securely shares chunked data, along with other important data attributes - like the source of the data, as an example - which can be used in RAG chatbots. Although a consumer can use the data in the extension, the data is fully secure and remains proprietary to the publisher.
 
@@ -121,7 +117,6 @@ We're going to build a chatbot that allows you to ask questions of the official 
 Let's dive in!
 <!-- ------------------------ -->
 ## Cortex Knowledge Extension From Snowflake Marketplace
-Duration: 5
 
 Let's start by "loading" the relevant Cortex Knowledge Extension into our account. It turns out that "loading" is really the wrong word here. 
 
@@ -146,7 +141,6 @@ We're using Snowflake's unique agentic product sharing capability in Snowflake M
 
 <!-- ------------------------ -->
 ## Explore the extension
-Duration: 1
 
 
 Let's explore the extension to understand how it works.
@@ -184,7 +178,6 @@ select
 
 <!-- ------------------------ -->
 ## Create the Streamlit in Snowflake app
-Duration: 8
 
 Let's now build the chatbot using Streamlit in Snowflake.
 
@@ -228,7 +221,6 @@ On the left, you can configure more options for the app, like:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Conclusion
 

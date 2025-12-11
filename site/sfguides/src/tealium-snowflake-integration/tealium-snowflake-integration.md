@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![banner](assets/QuickstartHeader.png)
 
@@ -32,7 +31,7 @@ This quickstart guide will review the configuration of the Snowflake Data Source
 ### What You'll Need
 
 - Tealium Customer Data Hub (EventStream and/or AudienceStream) account
-- [Snowflake account](https://signup.snowflake.com/)
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
   - Appropriate privileges (covered individually in next steps)
 
 ### What You’ll Learn 
@@ -50,7 +49,6 @@ This quickstart guide will review the configuration of the Snowflake Data Source
 <!-- ------------------------ -->
 
 ## Snowflake Streaming Connector
-Duration: 6
 
 ### How It Works
 The Snowflake Streaming connector leverages the powerful Snowflake Snowpipe Streaming feature to enable near real-time importing of event and visitor data directly into Snowflake staging tables, enabling immediate availability for processing and analytics with data latency under 10 seconds. Send either the entire dataset or specific attributes to the staging table, ensuring customizable data integration tailored to business needs.
@@ -113,7 +111,6 @@ We recommend the following Snowflake table configurations for the Snowflake Stre
 <!-- ------------------------ -->
 
 ## Configuring a Snowflake Streaming Connector
-Duration: 12
 
 Within the Tealium Customer Data Hub, navigate to either the EventStream or AudienceStream Connector Marketplace and add a new connector. For more information and instructions on how to add a connector, see [About Connectors](https://docs.tealium.com/server-side/connectors/about/).
 
@@ -221,7 +218,6 @@ After the connector is configured and before data can be sent, the changes must 
 <!-- ------------------------ -->
 
 ## Snowflake Data Source
-Duration: 7
 
 ### How It Works
 Use the Snowflake data source to import bulk data from a Snowflake table or view at near real-time speeds. After you import your data, transform and map it to Tealium attributes and build better audiences for targeted activation.
@@ -322,7 +318,6 @@ If your Snowflake account has strict rules about which systems it accepts reques
 <!-- ------------------------ -->
 
 ## Configuring a Snowflake Data Source
-Duration: 16
 
 Take the following steps to pull up the Snowflake data source and begin the configuration process:
 1. In Tealium, go to **Sources > Data Sources**
@@ -455,7 +450,6 @@ There is a short delay while the logs are processed. You can view your exported 
 <!-- ------------------------ -->
 
 ## Conclusion and Resources
-Duration: 1
 
 ### What You Learned
 - How to configure Tealium's Snowflake Streaming connector in EventStream and AudienceStream
@@ -472,6 +466,6 @@ Reach out to your account representatives to learn more about unlocking the full
 - [Snowflake Data Source](https://docs.tealium.com/early-access/snowflake-data-source/about/)
 - [Tealium + Snowflake Better Together](https://tealium.com/technology-partner/better-together-tealium-snowflake/)
 
-- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Tealium-Ref-Architecture-1.pdf)
+- [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/Tealium-Ref-Architecture-1.pdf)
 - [Read the blog](https://medium.com/snowflake/how-tealiums-real-time-customer-data-capabilities-make-your-snowflake-data-more-complete-230863562a0e)
 - [Watch the Demo](https://youtu.be/VxmAdu6y1X0?list=TLGGSkiCxM9-jScyMDA5MjAyNQ)

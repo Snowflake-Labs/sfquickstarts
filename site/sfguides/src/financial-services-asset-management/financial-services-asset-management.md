@@ -4,14 +4,13 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations.
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Build a Financial Services Asset Management P&L Dashboard
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Data silos have been a significant problem in the Financial Services industry. During the Global Financial Crisis of 2008, firms without a Single Version of the Truth (SVOT) made multi-million dollar trading decisions without visibility into their risk, exposure, and the cascading impact of their positions. These data silos led to multi-billion dollar losses and bankruptcies.
 
@@ -40,11 +39,10 @@ This is powered by four SQL Worksheets and a Python Function:
 
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/) (a free trial on Standard Edition will suffice)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (a free trial on Standard Edition will suffice)
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Mount a Free Data Share
 
@@ -107,7 +105,6 @@ use warehouse finservam_devops_wh;
 
 <!-- ------------------------ -->
 ## Data Quality and Preparation
-Duration: 15
 
 ### Create the “Finserv 20 Data Quality” Worksheet
 
@@ -194,7 +191,6 @@ Run the entire worksheet to create the necessary tables and functions.
 
 <!-- ------------------------ -->
 ## Generate Dataset
-Duration: 20
 
 ### Create the Trades Worksheet
 
@@ -353,7 +349,6 @@ Run the entire worksheet. Note that generating 3 billion trades will take approx
 
 <!-- ------------------------ -->
 ## DevOps in Production
-Duration: 15
 
 ### Create the DevOps Worksheet
 
@@ -504,7 +499,6 @@ Run the entire worksheet to demonstrate these features.
 
 <!-- ------------------------ -->
 ## Creating Dashboard Filters
-Duration: 10
 
 Now we'll create filters for our dashboard:
 
@@ -558,7 +552,6 @@ When complete, you should have three custom filters plus the two Snowsight syste
 
 <!-- ------------------------ -->
 ## Building the Dashboard
-Duration: 15
 
 Now we'll create the dashboard with multiple tiles:
 
@@ -674,7 +667,6 @@ For extra credit: You can now drag and drop the tiles to arrange them as desired
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 5
 
 If you want to clean up all the objects created in this guide, you can create a new worksheet named "Finserv 90 reset" with the following SQL:
 
@@ -699,7 +691,6 @@ drop role if exists finservam_admin;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 3
 
 Congratulations! You've successfully built a Financial Services Asset Management demo in Snowflake that handles 3 billion synthetic trades while providing real-time cash and profit/loss calculations. You've learned how to scale compute resources up and down as needed, create interactive dashboards, and implement DevOps practices like zero-copy cloning and time travel.
 
@@ -724,5 +715,5 @@ Documentation:
 - [Snowsight Filters](https://docs.snowflake.com/en/user-guide/ui-snowsight-filters)
 
 Additional Reading:
-- [Snowflake for Asset Management](https://www.snowflake.com/en/solutions/industries/financial-services/asset-management/)
+- [Snowflake for Asset Management](/en/solutions/industries/financial-services/asset-management/)
 - [Asset Management With Snowflake: Real-Time Cash & PnL On 3 Billion Trades](https://youtu.be/HkrRXMHDd-E?si=nf0lAupIKK8HVMuM)

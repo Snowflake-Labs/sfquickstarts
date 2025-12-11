@@ -13,16 +13,15 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 3
 
-By completing this quickstart, you will learn how to easily transform raw data into an optimal format for analysis within Power BI. This quickstart will build upon [An Introduction to Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0) quickstart. We'll begin by profiling the data within Snowsight, followed by creating new roles and granting appropriate privileges for our fictitious global BI Analyst team. Next, we'll enrich our data with third party location data from the Snowflake Marketplace in a matter of minutes. From there, we'll transform our raw data into an optimal model for downstream analysis within Power BI. Next, we'll add column and row-level data protections to our data model. Lastly, we'll connect the provided Power BI template (.pbit) file to our Snowflake data model and analyze sales transactions live.
+By completing this quickstart, you will learn how to easily transform raw data into an optimal format for analysis within Power BI. This quickstart will build upon [An Introduction to Tasty Bytes](/en/developers/guides/tasty-bytes-introduction/) quickstart. We'll begin by profiling the data within Snowsight, followed by creating new roles and granting appropriate privileges for our fictitious global BI Analyst team. Next, we'll enrich our data with third party location data from the Snowflake Marketplace in a matter of minutes. From there, we'll transform our raw data into an optimal model for downstream analysis within Power BI. Next, we'll add column and row-level data protections to our data model. Lastly, we'll connect the provided Power BI template (.pbit) file to our Snowflake data model and analyze sales transactions live.
 
 
 ![Overview_Diagram](assets/Overview_Diagram1.jpg)
 
 ### Prerequisites
 
-- Completion of [An Introduction to Tasty Bytes quickstart](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0) as this will create the dataset and initial virtual warehouses needed for this guide
+- Completion of [An Introduction to Tasty Bytes quickstart](/en/developers/guides/tasty-bytes-introduction/) as this will create the dataset and initial virtual warehouses needed for this guide
 - Familiarity with Snowflake
 - Experience with Power BI
 
@@ -39,7 +38,7 @@ By completing this quickstart, you will learn how to easily transform raw data i
 
 ### What You’ll Need
 
-- [A Snowflake Account](https://signup.snowflake.com/). Sign up for a 30-day free trial account, if necessary.
+- [A Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Sign up for a 30-day free trial account, if necessary.
 - [Power BI Desktop](https://www.microsoft.com/en-us/download/details.aspx?id=58494)
 - The provided [Power BI Template File](https://github.com/Snowflake-Labs/sfguide-end-to-end-analytics-with-snowflake-and-power-bi/blob/main/Tasty%20Bytes%20Direct%20Query%20Quickstart.pbit) (Used in Section 6)
 - Access to a [Power BI Service Workspace](https://app.powerbi.com/) (optional)
@@ -54,13 +53,12 @@ By completing this quickstart, you will learn how to easily transform raw data i
 
 ## Reviewing the Dataset
 
-Duration: 10
 
 In this section, we'll review the Tasty Bytes dataset and use Snowsight to easily profile the data we'll be working with.
 
-> aside negative
+> 
 >
-> NOTE: You must complete [An Intro to Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0) quickstart first, to set up the dataset we'll be working with in this guide.
+> NOTE: You must complete [An Intro to Tasty Bytes](/en/developers/guides/tasty-bytes-introduction/) quickstart first, to set up the dataset we'll be working with in this guide.
 
 ### Setup
 
@@ -221,7 +219,7 @@ alter user tb_bi_analyst set network_policy = 'BI_ANALYST_NETWORK_POLICY';
 */
 ```
 
-> aside negative
+> 
 >
 > NOTE: We strongly recommend avoiding using password-based authentication and would encourage customers to leverage SSO via their IdP. However, for purposes of a quickstart tutorial, we will use a single user and multiple roles to simulate what different users would see under different contexts. You can view [Snowflake Security Overview and Best Practices here](https://community.snowflake.com/s/article/Snowflake-Security-Overview-and-Best-Practices).
 
@@ -299,17 +297,16 @@ Congrats! You have completed the data profiling section of this guide. Additiona
 
 ## Third Party Data from Snowflake Marketplace
 
-Duration: 10
 
 In this section, we'll provide an overview of the Snowflake Marketplace and leverage a free listing to enrich our Tasty Bytes dataset with a few mouse clicks.
 
-> aside positive
+> 
 >
 > This section is **optional**. However, if you're following along by using a Snowflake trial account, we highly encourage working through this section to get a feel for the Snowflake Marketplace and how easily it is to tap into third party datasets, connectors, and native applications. If you're working from your organization's Snowflake account, and you do not have the ability to get Marketplace listings yourself, no worries. You can still complete the rest of this guide.
 
 ### Snowflake Marketplace
 
-The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/) is a component of the Snowflake AI Data Cloud that allows consumers (e.g., you) to explore and access data products such as third party datasets, connectors, native applications, and more. You can browse the [Snowflake Marketplace here](https://app.snowflake.com/marketplace) without having to be logged into your Snowflake account.
+The [Snowflake Marketplace](/en/data-cloud/marketplace/) is a component of the Snowflake AI Data Cloud that allows consumers (e.g., you) to explore and access data products such as third party datasets, connectors, native applications, and more. You can browse the [Snowflake Marketplace here](https://app.snowflake.com/marketplace) without having to be logged into your Snowflake account.
 
 From our [Snowflake Documentation](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about), Marketplace consumers can do the following:
 
@@ -409,7 +406,6 @@ Congrats! You have completed the Snowflake Marketplace section of this guide. Yo
 
 ## Transforming Data with Dynamic Tables
 
-Duration: 20
 
 In this section, we'll cover two important topics in our end-to-end solution: **Star Schemas** and **Dynamic Tables**. We'll start by reviewing star schemas, how they're useful, and specifically, why they are important for Power BI semantic models. Then, we'll review Dynamic Tables and how they can be used to easily transform your data into a suitable format for downstream analytics. If you're already familiar with these topics, feel free to skip to the "Transforming our Tasty Bytes Data with Dynamic Tables" step in this section.
 
@@ -477,7 +473,7 @@ Dynamic Tables also provide the following benefits:
 - Create a new SQL worksheet in your folder called "3 - Create a Star Schema"
 - Copy and paste the script below and run in your newly created worksheet to create a simple star schema on top of our Tasty Bytes dataset
 
-> aside positive
+> 
 >
 > NOTE: The script below will create a mixture of regular tables and Dynamic Tables. Namely, the Date and Time dimension tables don't need to be refreshed regularly, so those will be a one time creation. The entire script should complete within 2–3 minutes.
 
@@ -882,7 +878,6 @@ Congrats, you have completed this section! You now should have a solid understan
 
 ## Protecting Sensitive Data with Snowflake Horizon
 
-Duration: 15
 
 In this final section within Snowflake, we'll leverage Snowflake Horizon features to protect our data before allowing downstream analysis within Power BI. Specifically, we'll review how we can tag our sensitive data, obfuscate sensitive fields at query time, and enforce row-level security, so users are only able to see what they're allowed to see.
 
@@ -1032,7 +1027,7 @@ Benefits of using dynamic data masking policies include:
 - **Reusability across thousands of fields** - policies can easily be reused across table columns. Notice, in our example, we are reusing the pii_name_tag across multiple columns.
 - **Ease of use** - data stewards can create a policy once, centrally maintain it, and reuse over and over again.
 
-> aside positive
+> 
 >
 > NOTE: For obfuscating or tokenizing data before loading it into Snowflake, please review [External Tokenization](https://docs.snowflake.com/en/user-guide/security-column-ext-token-intro)
 
@@ -1245,7 +1240,6 @@ Congrats! You have now added protections to your data. While this section only s
 
 ## Analyzing Snowflake Data from Power BI
 
-Duration: 15
 
 In this section, we'll leverage Power BI Desktop to connect to the data model we've developed in Snowflake. We'll review several key benefits of using Snowflake as your enterprise data platform to power your Power BI workloads. To keep things simple, a pre-built Power BI Template file can be downloaded here. Complete the steps below to connect the template file to your Snowflake account.
 
@@ -1254,7 +1248,7 @@ In this section, we'll leverage Power BI Desktop to connect to the data model we
 [Download the Power BI Template File](https://github.com/Snowflake-Labs/sfguide-end-to-end-analytics-with-snowflake-and-power-bi/blob/main/Tasty%20Bytes%20Direct%20Query%20Quickstart.pbit)
 </button>
 
-> aside positive
+> 
 >
 > The Power BI Template file (.pbit) is very similar to a normal Power BI Desktop file (.pbix), except it doesn't store any data. Instead, it contains metadata and connection information only. This file can be opened in Power BI Desktop as if it were a .pbix.
 
@@ -1274,7 +1268,7 @@ In this section, we'll leverage Power BI Desktop to connect to the data model we
 
 - Connect to Snowflake using the TB_BI_ANALYST user we created earlier this guide
 
-> aside negative
+> 
 >
 > Again, we highly recommend avoiding password based authentication in real-world settings. In fact, we encourage the use of [SSO to connect to Snowflake from Power BI](https://docs.snowflake.com/en/user-guide/oauth-powerbi). Password-based authentication is only used in this guide to focus on the developer content, as most users won't have the ability to implement SSO without the assistance of company security teams.
 
@@ -1286,7 +1280,7 @@ The semantic model we published is 100% DirectQuery mode. This means that Power 
 
 Navigate to the "model view" within Power BI Desktop. The model should look familiar because it's a visual representation of the same tables we created in section 4. Power BI makes it easy to focus on a subset of the overall semantic model. Click the various tabs at the bottom to view a single fact table, and its surrounding dimensions, at a time.
 
-> aside positive
+> 
 >
 > As you review the semantic model, notice that we have implemented many of the common best practices outlined in our blog post [Snowflake and Power BI: Best Practices and Recent Improvements](https://medium.com/snowflake/snowflake-and-power-bi-best-practices-and-recent-improvements-183e2d970c0c) to help us maximize performance.
 >
@@ -1313,7 +1307,7 @@ For reference:
 
 You can publish your work to the Power BI Service directly from Power BI Desktop using the "Publish" button on the Home ribbon. Alternatively, you can manually upload your .pbix file from your Power BI workspace. Once published, your single .pbix file will create two artifacts in your Power BI workspace: a "semantic model" and a "report". Open the "Settings" for your semantic model. This is where you will update your connection parameters, as well as use your TB_BI_ANALYST credentials to connect to Snowflake.
 
-> aside positive
+> 
 >
 > As a best practice, it is always best to perform your analysis within the Power BI Service. If you have access to the Power BI Service and are able to deploy the Power BI semantic model and report to a Workspace, please do so. If not, we can still perform the "Exploring Tasty Bytes data via Power BI" steps below from Power BI Desktop.
 
@@ -1376,7 +1370,6 @@ Congrats! You have completed the final section of this guide. In this section, w
 
 ## Conclusion and Resources
 
-Duration: 2
 
 Congratulations! You have completed the End-to-End Analytics with Snowflake and Power BI Quickstart!
 
@@ -1394,9 +1387,9 @@ Congratulations! You have completed the End-to-End Analytics with Snowflake and 
 - [Snowflake and Power BI: Best Practices and Recent Improvements](https://medium.com/snowflake/snowflake-and-power-bi-best-practices-and-recent-improvements-183e2d970c0c) (Blog)
 - [Exploring Snowflake Data Governance with Power BI](https://medium.com/snowflake/exploring-snowflake-data-governance-with-power-bi-50835f301cfc) (Blog)
 - [Understand Star Schema and the Importance for Power BI](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema) (Microsoft Documentation)
-- [Getting Started with Snowflake Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html?index=..%2F..index#0) (Snowflake Quickstart)
-- [Tasty Bytes - Zero to Snowflake - Collaboration](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/index.html?index=..%2F..index#0) (Snowflake Quickstart)
-- [Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index#0) (Snowflake Quickstart)
-- [Getting Started with Horizon for Data Governance in Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_horizon_for_data_governance_in_snowflake/index.html?index=..%2F..index#0) (Snowflake Quickstart)
+- [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/) (Snowflake Quickstart)
+- [Tasty Bytes - Zero to Snowflake - Collaboration](/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration/) (Snowflake Quickstart)
+- [Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon](/en/developers/guides/tasty-bytes-zero-to-snowflake-governance-with-horizon/) (Snowflake Quickstart)
+- [Getting Started with Horizon for Data Governance in Snowflake](/en/developers/guides/getting-started-with-horizon-for-data-governance-in-snowflake/) (Snowflake Quickstart)
 
 <!-- ------------------------ -->
