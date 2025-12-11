@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-10-22T11:35:44+11:00",
+  "id": "getting-started-with-snowflake-cortex-ai",
+  "duration": 45,
+  "title": "Getting Started With Snowflake Cortex AI",
+  "summary": "This guide provides the instructions for getting started with Snowflake Cortex AI.",
+  "source": "getting-started-with-snowflake-cortex-ai/getting-started-with-snowflake-cortex-ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "snowflake-site:taxonomy/solution-center/certification/quickstart",
+    "snowflake-site:taxonomy/product/ai",
+    "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+  ],
+  "tags": [
+    "web"
+  ],
+  "url": "getting-started-with-snowflake-cortex-ai"
+}

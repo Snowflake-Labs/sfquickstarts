@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-10-22T11:36:03+11:00",
+  "id": "unlock_insights_from_unstructured_data_with_snowflake_cortex_ai",
+  "duration": 20,
+  "title": "Unlock Insights from Unstructured Data with Snowflake Cortex AI",
+  "summary": "Unlock Insights from Unstructured Data with Snowflake Cortex AI",
+  "source": "unlock-insights-from-unstructured-data-with-snowflake-cortex-ai/unlock-insights-from-unstructured-data-with-snowflake-cortex-ai.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "snowflake-site:taxonomy/solution-center/certification/quickstart",
+    "snowflake-site:taxonomy/product/data-engineering"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "unlock_insights_from_unstructured_data_with_snowflake_cortex_ai"
+}

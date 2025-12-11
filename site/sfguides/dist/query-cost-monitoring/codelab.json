@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-10-22T11:35:55+11:00",
+  "id": "query-cost-monitoring",
+  "duration": 55,
+  "title": "Build a Query Cost Monitoring Tool with Snowflake and Streamlit",
+  "summary": "Learn how to build a Query Cost Monitoring tool using Snowflake, Streamlit, Pandas and Altair to analyze and visualize compute costs by individual queries.",
+  "source": "query-cost-monitoring/query-cost-monitoring.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "snowflake-site:taxonomy/solution-center/certification/quickstart",
+    "snowflake-site:taxonomy/product/platform"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "query-cost-monitoring"
+}

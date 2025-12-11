@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-10-22T11:35:37+11:00",
+  "id": "data_engineering_snowpark_streamlit_inegi",
+  "duration": 65,
+  "title": "Ingenieria de Datos con Snowpark y visualización con Streamlit",
+  "summary": "End-to-End from local to cloud using Snowapark Python Streamlit",
+  "source": "data_engineering_snowpark_streamlit_inegi/data_engineering_snowpark_streamlit_inegi.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "snowflake-site:taxonomy/solution-center/certification/quickstart",
+    "snowflake-site:taxonomy/product/data-engineering",
+    "snowflake-site:taxonomy/snowflake-feature/transformation"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "data_engineering_snowpark_streamlit_inegi"
+}

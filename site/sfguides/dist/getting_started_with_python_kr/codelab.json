@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-10-22T11:35:47+11:00",
+  "id": "getting_started_with_python_kr",
+  "duration": 28,
+  "title": "Python 시작하기",
+  "summary": "Python 시작하기",
+  "source": "getting_started_with_python_kr/getting_started_with_python_kr.md",
+  "theme": "",
+  "status": [
+    "hidden"
+  ],
+  "category": [
+    "snowflake-site:taxonomy/solution-center/certification/quickstart",
+    "snowflake-site:taxonomy/product/data-engineering"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_python_kr"
+}

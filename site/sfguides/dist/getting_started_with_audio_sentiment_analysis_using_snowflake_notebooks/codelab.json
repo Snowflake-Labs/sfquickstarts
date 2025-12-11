@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-10-22T11:35:46+11:00",
+  "id": "getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks",
+  "duration": 50,
+  "title": "Getting Started with Audio Sentiment Analysis using Snowflake Notebooks",
+  "summary": "Getting Started with Audio Sentiment Analysis using Snowflake Notebooks",
+  "source": "getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks/getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "snowflake-site:taxonomy/solution-center/certification/quickstart",
+    "snowflake-site:taxonomy/product/ai",
+    "snowflake-site:taxonomy/snowflake-feature/build",
+    "snowflake-site:taxonomy/snowflake-feature/ml-functions"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks"
+}

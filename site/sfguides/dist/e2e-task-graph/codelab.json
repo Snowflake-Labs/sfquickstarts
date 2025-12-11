@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "../../../claat/render/template.html",
+  "prefix": "https://quickstarts.snowflake.com/elements",
+  "mainga": "UA-41491190-9",
+  "updated": "2025-10-22T11:35:39+11:00",
+  "id": "e2e-task-graph",
+  "duration": 20,
+  "title": "Orchestrate ML Pipelines with ML Jobs and Task Graphs",
+  "summary": "Learn how to build an end-to-end machine learning pipeline using Snowflake Task Graphs and ML Jobs, including data preparation, model training, evaluation, and conditional promotion.",
+  "source": "e2e-task-graph/e2e-task-graph.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "snowflake-site:taxonomy/solution-center/certification/quickstart",
+    "snowflake-site:taxonomy/product/ai"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "url": "e2e-task-graph"
+}
