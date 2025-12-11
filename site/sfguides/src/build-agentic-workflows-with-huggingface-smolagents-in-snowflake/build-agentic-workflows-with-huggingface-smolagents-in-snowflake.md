@@ -35,7 +35,7 @@ Learn more about [Smolagents](https://github.com/huggingface/Smolagents).
 
 ### Prerequisites
 
-* Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN role
 * Access to a [Hugging Face account and HF token](https://huggingface.co/)
     * Log into your Hugging Face account and access your Hugging Face token by browsing to ***Settings -> Access Tokens -> New token***. Make note of this token – you will need to copy-paste it later on.
 

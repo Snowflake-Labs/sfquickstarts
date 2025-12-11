@@ -37,7 +37,7 @@ This quickstart is designed to service as an introduction to using AzureML with 
 - Defining User Defined Functions for distributed scoring of machine learning models
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [Azure Account](https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c)
 
 

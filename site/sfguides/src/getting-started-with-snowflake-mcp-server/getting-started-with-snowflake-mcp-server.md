@@ -29,7 +29,7 @@ MCP Server on Snowflake simplifies the application architecture and eliminates t
 
 ### Prerequisites
 
-* Access to a Snowflake account with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* Access to a Snowflake account with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 * Access to [Cursor](https://cursor.com/).
 
 ### What You Will Learn
@@ -51,15 +51,15 @@ A Snowflake MCP Server that intelligently responds to questions by reasoning ove
 
 * In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
-### Personal Access Token
+### Programmatic Access Token
 
-Create a [Personal Access Token (PAT)](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) **for your role** and make a note/local copy of it. (You will need to paste it later.)
+Create a [Programmatic Access Token (PAT)](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) **for your role** and make a note/local copy of it. (You will need to paste it later.)
 
 ### Cortex Search Service
 
 This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server) 
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Search**</a> 
 * On the top right, click on **Create**
     - Role and Warehouse: **ACCOUNTADMIN** | **DASH_WH_S**
     - Database and Schema: **DASH_MCP_DB.DATA**
@@ -74,7 +74,7 @@ This tool allows the agent to search and retrieve information from unstructured 
 
 This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Analyst**](https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server)
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a>
 * On the top right, click on **Create new** down arrow and select **Upload your YAML file** 
 * Upload [FINANCIAL_SERVICES_ANALYTICS.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/FINANCIAL_SERVICES_ANALYTICS.yaml) | Select database, schema, and stage: **DASH_MCP_DB.DATA** >> **SEMANTIC_MODELS** 
 * On the top right, click on **Save** 
@@ -106,6 +106,26 @@ tools:
     type: "SYSTEM_EXECUTE_SQL"
     description: "A tool to execute SQL queries against the connected Snowflake database."
     title: "SQL Execution Tool"
+  - name: "Send_Email"
+    identifier: "DASH_MCP_DB.DATA.SEND_EMAIL"
+    type: "GENERIC"
+    description: "A custom tool to send emails to user's verified email address."
+    title: "Send_Email"
+    config:
+      type: "procedure"
+      warehouse: "DASH_WH_S"
+      input_schema:
+        type: "object"
+        properties:
+          body:
+            description: "Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email."
+            type: "string"
+          recipient_email:
+            description: "If the email is not provided, send it to the current user's email address."
+            type: "string"
+          subject:
+            description: "If subject is not provided, use Snowflake Intelligence."
+            type: "string"
 $$;
 ```
 
@@ -231,7 +251,27 @@ Assuming you're able to see the tools under newly installed **Snowflake MCP Serv
 
 #### Q5. Which support categories would benefit most from automated responses based on transcript analysis?
 
-### Optional -- Agent Calling
+### Custom Tools
+
+You can also create functions and procedures that be add as custom tools to execute tasks like sending emails. This can be accomplished using `type: "GENERIC"` in the MCP server config.
+
+Let's try that out that in Cursor. Enter the following prompt...
+
+#### Send me an email with a summary of the analysis to YOUR-EMAIL-ADDRESS.
+
+Provided that you're entered your verified email address, you should see something like this.
+
+* Email Prompt in Cursor
+
+  ![MCP Server Email Prompt](assets/snowflake-mcp-server-email-prompt.png)
+
+  -----
+
+* Email
+
+  ![MCP Server Email](assets/snowflake-mcp-server-email.png)
+
+  ### Optional -- Agent Calling
 
 To see how you can call agent(s) that you have access to, follow these steps. 
 
@@ -259,6 +299,26 @@ tools:
     type: "SYSTEM_EXECUTE_SQL"
     description: "A tool to execute SQL queries against the connected Snowflake database."
     title: "SQL Execution Tool"
+  - name: "Send_Email"
+    identifier: "DASH_MCP_DB.DATA.SEND_EMAIL"
+    type: "GENERIC"
+    description: "A custom tool to send emails to user's verified email address."
+    title: "Send_Email"
+    config:
+      type: "procedure"
+      warehouse: "DASH_WH_S"
+      input_schema:
+        type: "object"
+        properties:
+          body:
+            description: "Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email."
+            type: "string"
+          recipient_email:
+            description: "If the email is not provided, send it to the current user's email address."
+            type: "string"
+          subject:
+            description: "If subject is not provided, use Snowflake Intelligence."
+            type: "string"
   - name: "Snowflake Documentation Agent"
     identifier: "SNOWFLAKE_INTELLIGENCE.AGENTS.SNOWFLAKE_DOCUMENTATION"
     type: "CORTEX_AGENT_RUN"

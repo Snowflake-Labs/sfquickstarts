@@ -26,7 +26,7 @@ In this Hands-on Lab, you'll learn how to build an Intelligent Sales Assistant t
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) and a Snowflake account
+- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and a Snowflake account
 - Familiarity with Azure [AI Foundry](https://azure.microsoft.com/en-us/products/ai-foundry) and capabilities 
 - Familiarity with azure cli
 
@@ -43,7 +43,7 @@ In this Hands-on Lab, you'll learn how to build an Intelligent Sales Assistant t
 4. After orchestrating services the agent will prepare an answer and return it to the user.
 
 ### What You’ll Need
-- [Snowflake account](https://signup.snowflake.com/) 
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
 - [Azure Trial Account](https://go.microsoft.com/fwlink/?linkid=2322223&clcid=0x409&icid=cloud-services)
 - An IDE like Visual Studio Code with Python 3.12 and [uv](https://docs.astral.sh/uv/)
 

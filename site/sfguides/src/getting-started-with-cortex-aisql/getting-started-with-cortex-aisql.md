@@ -44,7 +44,7 @@ Business analysts can extract insights without AI expertise, data engineers can 
 
 ### Prerequisites
 
-* Access to a Snowflake account in one of [these regions](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql?lang=de%2F) with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* Access to a Snowflake account in one of [these regions](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql?lang=de%2F) with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 *NOTE: Individual functions in the Cortex AISQL suite are Preview Features. Check the status of each function on its SQL reference page before using it in production. Functions not marked as preview features are generally available (GA) and can be used in production.*
 

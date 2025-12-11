@@ -33,7 +33,7 @@ Learn more about [Snowflake Cortex AI](/en/product/features/cortex/).
 
 ### Prerequisites
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where your choice of LLMs are [available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account in a region where your choice of LLMs are [available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
 
 <!-- ------------------------ -->
 ## Setup

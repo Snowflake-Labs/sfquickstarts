@@ -42,7 +42,7 @@ The following tutorial highlights these benefits and lets you experience Snowpar
 
 This [repo](https://github.com/Snowflake-Labs/sfguide_snowpark_on_jupyter) is structured in multiple parts. Each part has a notebook with specific focus areas. All notebooks in this series require a Jupyter Notebook environment with a Scala kernel.  
 
-All notebooks will be fully self contained, meaning that all you need for processing and analyzing datasets is a Snowflake account.  If you do not have a Snowflake account, you can sign up for a [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_). It doesn't even require a credit card.
+All notebooks will be fully self contained, meaning that all you need for processing and analyzing datasets is a Snowflake account.  If you do not have a Snowflake account, you can sign up for a [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). It doesn't even require a credit card.
 
 
 - Use of the [Snowflake free 30-day trial environment](https://trial.snowflake.com)

@@ -23,7 +23,7 @@ Learn how to create an interactive Multi-Factor Authentication (MFA) audit syste
 An interactive Streamlit application that displays user MFA status and sends formatted email reports to system administrators about users who haven't enabled MFA.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 ### Prerequisites
 - Access to Snowflake Notebooks

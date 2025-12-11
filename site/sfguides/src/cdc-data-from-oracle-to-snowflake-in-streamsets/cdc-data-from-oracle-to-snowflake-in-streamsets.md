@@ -24,7 +24,7 @@ Given this critical need, let's look at how StreamSets DataOps Platform can be u
   - Once a deployment has been successfully activated, the Data Collector
  engine must be up and running before you can create pipelines and
  run jobs
-- Access to [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account
+- Access to [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
 - Access to Oracle database
   - Check [versions of Oracle](https://docs.streamsets.com/portal/datacollector/4.0.x/help/datacollector/UserGuide/Installation/SupportedSystemVersions.html#concept_k4l_5ft_v4b) supported for CDC
   - Complete [Oracle CDC prerequisites](https://docs.streamsets.com/portal/datacollector/4.0.x/help/datacollector/UserGuide/Origins/OracleCDC.html#concept_xwg_33w_cx)

@@ -32,7 +32,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### 필요한 것
 
-- **ACCOUNTADMIN** 역할을 가진 [Snowflake 계정](https://signup.snowflake.com/?utm_cta=quickstarts_) 생성
+- **ACCOUNTADMIN** 역할을 가진 [Snowflake 계정](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 생성
 - Snowflake 지원 [지역](https://docs.snowflake.com/ko/user-guide/intro-regions.html)에 대한 액세스를 가진 AWS [계정](https://aws.amazon.com/free/?sc_icampaign=acq_aws_takeover-1st-visit-free-tier&sc_ichannel=ha&sc_icontent=awssm-evergreen-1st-visit&sc_iplace=hero&trk=ha_awssm-evergreen-1st-visit&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc)
 
 ### 구축할 것

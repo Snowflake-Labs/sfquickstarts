@@ -86,7 +86,7 @@ See details here for the [model](https://huggingface.co/openai/whisper-large-v3)
 
 ### Prerequisites
 
-* A Snowflake Account. Sign up for a 30-day [free trial account](https://signup.snowflake.com/), if required.
+* A Snowflake Account. Sign up for a 30-day [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), if required.
 
 * Foundational knowledge of Data Science workflows
 

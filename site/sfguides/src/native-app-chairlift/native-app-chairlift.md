@@ -46,7 +46,7 @@ Let's get started!
 > **Important**
 > Native Apps are currently only  available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.
 
-- A Snowflake account ([trial](https://signup.snowflake.com/developers), or otherwise). See note above on AWS as cloud provider for the deployment.
+- A Snowflake account ([trial](https://signup.snowflake.com/developers?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), or otherwise). See note above on AWS as cloud provider for the deployment.
 
 ### What You’ll Build 
 

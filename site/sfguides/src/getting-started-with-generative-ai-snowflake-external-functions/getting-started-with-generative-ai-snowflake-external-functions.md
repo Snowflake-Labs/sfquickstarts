@@ -45,7 +45,7 @@ Here are some key differences and similarities between the two implementations.
 
 ### Prerequisites
 
-* A Snowflake account - [Sign-in or create a free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+* A Snowflake account - [Sign-in or create a free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * A OpenAI account - [Sign-in or create an account](https://openai.com/)
   * [OpenAI API Key](https://platform.openai.com/account/api-keys)
 * AWS Account

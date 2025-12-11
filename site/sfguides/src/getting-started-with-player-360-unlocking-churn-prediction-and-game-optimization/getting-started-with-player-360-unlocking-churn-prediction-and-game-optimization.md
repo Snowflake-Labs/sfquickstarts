@@ -29,7 +29,7 @@ By aggregating these data streams in a unified system and leveraging Snowflake f
 
 
 ### Prerequisites
-- A non-trial Snowflake [Snowflake](https://signup.snowflake.com/)  account in a supported AWS commercial region.
+- A non-trial Snowflake [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)  account in a supported AWS commercial region.
 - A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the EXTERNAL ACCESS INTEGRATION).
 - Git installed.
 

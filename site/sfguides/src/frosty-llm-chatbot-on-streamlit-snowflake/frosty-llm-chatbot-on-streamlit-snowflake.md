@@ -35,7 +35,7 @@ OpenAI is the AI research and deployment company behind ChatGPT, GPT-4 (and its 
 The [Snowflake Marketplace](/en/data-cloud/marketplace/) provides users with access to a wide range of datasets from third-party data stewards, expanding the data available for transforming business processes and making decisions. Data providers can publish datasets and offer data analytics services to Snowflake customers. Customers can securely access shared datasets directly from their Snowflake accounts and receive automatic real-time updates.
 
 ### Prerequisites
-* Accountadmin role access in Snowflake or a [Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+* Accountadmin role access in Snowflake or a [Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * An API key for OpenAI or another Large Language Model
 * Basic knowledge of SQL, database concepts, and objects
 * Familiarity with Python (all code for the lab is provided)
@@ -92,7 +92,7 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 
 ### Log into Snowsight
 
-If you don't have a Snowflake account, sign up for a 30-day free trial [here](https://signup.snowflake.com/?utm_cta=quickstarts_).
+If you don't have a Snowflake account, sign up for a 30-day free trial [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 1. In a supported web browser, navigate to [https://app.snowflake.com](https://app.snowflake.com).
 2. Provide your account name or account URL. If you’ve previously signed in to Snowsight, you might see an account name that you can select.

@@ -18,14 +18,14 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 ### What You'll Learn
 - How to set up Snowflake Open Catalog
 - Creating and configuring external volumes for Apache Iceberg tables
-- Creating and managing Apache Iceberg tables in [Snowflake](https://signup.snowflake.com/)
+- Creating and managing Apache Iceberg tables in [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Syncing Iceberg tables with Snowflake Open Catalog
 - Querying Iceberg data from different engines
 
 ### What You'll Need
 - Access to an AWS account that you have full administrator permissions to (you can use/create your own personal AWS account). Note that this will incur only minimal charges with the steps followed in the HOL (less than $1 USD)
 - Access to a Snowflake account that you have ORGADMIN permissions to (you can use/create your own personal Snowflake account). Note that this will incur only minimal charges with the steps followed in the HOL (less than $5 USD)
-- Verify that all the resources ( S3 Bucket, [Snowflake account](https://signup.snowflake.com/), Snowflake Open Catalog account )  are in the same cloud and same region. **This quickstart uses AWS US West-2**
+- Verify that all the resources ( S3 Bucket, [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), Snowflake Open Catalog account )  are in the same cloud and same region. **This quickstart uses AWS US West-2**
 - VS Code (optional, for Spark integration)
 
 <!-- ------------------------ -->
@@ -34,7 +34,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 
 ### Set Up Snowflake Open Catalog
 
-- Sign in to your [Snowflake account](https://signup.snowflake.com/)
+- Sign in to your [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Change your active role to ORGADMIN
 - Click Admin -> Accounts
 - Click the dropdown arrow next to “+ Account” in the top right

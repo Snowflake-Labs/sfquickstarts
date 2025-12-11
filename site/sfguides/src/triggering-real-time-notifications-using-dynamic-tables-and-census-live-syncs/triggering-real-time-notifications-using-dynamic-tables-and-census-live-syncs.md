@@ -25,7 +25,7 @@ In this guide, you will learn how to set up a live sync between Census and Snowf
 
 ### Prerequisites
 - A Census workspace with a Snowflake advanced engine connection
-- A [Snowflake workspace](https://signup.snowflake.com/)
+- A [Snowflake workspace](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - An account with at least one [Census destination platform](https://www.getcensus.com/integrations?search=&integration-type=Destination&category=). If you don’t have an existing Census account, you can start a trial [here](https://app.getcensus.com/?_gl=1*mlyah6*_gcl_aw*R0NMLjE3MjQzMzg5MzkuQ2owS0NRand3NXUyQmhEZUFSSXNBTEJ1TG5QS3htaThKS216NlBpZlFoRTNDSGd5QmZoR21qN3lqRFU0ZmZ4NzlkdndLaU1MdzVDOFFINGFBbWVxRUFMd193Y0I.*_gcl_au*MTQzNDczNzM2LjE3MjIyMjQ2NDg.). If you don’t have access to your activation apps, we recommend Google Sheets as a beginner destination. 
 - **Either:** pre-existing connections between Census, Snowflake and your destination platform, OR the credentials to add connections between Census, Snowflake and your destination platform
 

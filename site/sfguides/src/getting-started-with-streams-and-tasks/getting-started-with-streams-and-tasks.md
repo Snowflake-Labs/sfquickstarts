@@ -37,7 +37,7 @@ While not covered in this exercise, one can use these building blocks to further
 ### What You’ll Need 
 To participate in the virtual hands-on lab, attendees need the following:
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks&utm_cta=quickstart-getstartedwithstreamsandtasks-en) with **ACCOUNTADMIN** access
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithStreamsAndTasks&utm_cta=developer-guides) with **ACCOUNTADMIN** access
 
 ### What You’ll Build 
 - A Snowflake database that contains all data and objects built in this lab
@@ -50,7 +50,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 ## Setting up Snowflake
 
 ### Login and Setup Lab
-Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithStreamsAndTasks&utm_cta=quickstart-getstartedwithstreamsandtasks-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:
+Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithStreamsAndTasks&utm_cta=developer-guides). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:
 
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithStreamsAndTasks)</button>
 

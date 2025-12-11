@@ -24,7 +24,7 @@ Base de datos (lista):
 - Data Visualization con Streamlit y Snowpark 
 
 ### Qué necesitas 
-- Cuenta Snowflake o [Cuenta Snowflake trial](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- Cuenta Snowflake o [Cuenta Snowflake trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Acceso a [GitHub](https://github.com/)  
 - [VSCode](https://code.visualstudio.com/download) con Jupyter Notebook
 - [Python](https://www.python.org/) (Python 3.8)

@@ -34,7 +34,7 @@ This guide is designed to help you learn how to bring artificial intelligence (A
 - How to automate CDC pipelines with Streams and Tasks
 
 ### What You’ll Need 
-- A Snowflake account with access to `ACCOUNTADMIN` role. A [free trial](https://signup.snowflake.com/) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for this lab. The account must be in one of these regions:
+- A Snowflake account with access to `ACCOUNTADMIN` role. A [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for this lab. The account must be in one of these regions:
     - AWS US West 2 (Oregon)
     - AWS US East 1 (N. Virginia)
     - AWS Europe Central 1 (Frankfurt)

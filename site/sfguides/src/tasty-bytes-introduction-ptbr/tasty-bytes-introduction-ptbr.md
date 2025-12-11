@@ -25,7 +25,7 @@ Ao finalizar este guia, você terá implementado os elementos básicos necessár
 ### Pré-requisitos
 - Um [navegador](https://docs.snowflake.com/pt/user-guide/setup#browser-requirements) compatível com Snowflake.
 - Conta Snowflake Enterprise ou Business Critical.
-    - Caso não possua uma conta Snowflake, [**inscreva-se para receber uma conta de avaliação gratuita de 30 dias**](https://signup.snowflake.com/?lang=pt-br). No ato da inscrição, escolha a opção **Enterprise**. É possível escolher qualquer [nuvem/região do Snowflake](https://docs.snowflake.com/pt/user-guide/intro-regions).
+    - Caso não possua uma conta Snowflake, [**inscreva-se para receber uma conta de avaliação gratuita de 30 dias**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lang=pt-br&utm_cta=developer-guides). No ato da inscrição, escolha a opção **Enterprise**. É possível escolher qualquer [nuvem/região do Snowflake](https://docs.snowflake.com/pt/user-guide/intro-regions).
     - Após a inscrição, você receberá um email com um link de ativação e a URL da sua conta Snowflake.
     - ![assets/choose_edition.png](assets/choose_edition.png)
     

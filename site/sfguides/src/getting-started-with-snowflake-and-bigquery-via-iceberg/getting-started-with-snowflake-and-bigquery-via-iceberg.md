@@ -34,7 +34,7 @@ There is often no one-size-fits-all approach to tackling complex business challe
 ![](assets/gcpicebergarch.png)
 
 ### What You’ll Need
-- [Snowflake account](https://signup.snowflake.com/) 
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
 - [Google Cloud account](https://cloud.google.com/free)
 
 ### What You'll Build

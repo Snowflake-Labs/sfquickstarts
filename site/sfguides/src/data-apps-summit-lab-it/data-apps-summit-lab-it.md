@@ -25,7 +25,7 @@ Elaborerai i dati con Snowpark, svilupperai un semplice modello ML e creerai una
 
 ### Prerequisiti
 
-* Accesso con il ruolo ACCOUNTADMIN in Snowflake o un account di prova Snowflake: [https://signup.snowflake.com/](https://signup.snowflake.com/)
+* Accesso con il ruolo ACCOUNTADMIN in Snowflake o un account di prova Snowflake: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * Conoscenza di base di SQL, dei concetti di database e degli oggetti
 * Familiarità con Python. Tutto il codice necessario viene fornito durante il workshop.
 * La possibilità di installare ed eseguire software sul tuo computer

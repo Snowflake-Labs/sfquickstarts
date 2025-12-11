@@ -47,7 +47,7 @@ A [catalog-linked database](https://docs.snowflake.com/en/user-guide/tables-iceb
 
 ### Prerequisites
 
-* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 <!-- ------------------------ -->
 ## Run Lakehouse Analtytics
@@ -55,7 +55,7 @@ A [catalog-linked database](https://docs.snowflake.com/en/user-guide/tables-iceb
 
 During this step you will learn how to run analytics on your lakehouse. 
 
-Sign up for a [Snowflake Free Trial](https://signup.snowflake.com/) account. Please select AWS as your cloud provider and Enterprise edition for Snowflake. Login to Snowflake home page.
+Sign up for a [Snowflake Free Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account. Please select AWS as your cloud provider and Enterprise edition for Snowflake. Login to Snowflake home page.
 
 The product reviews data is in AWS S3 bucket in Apache Iceberg table format, and is managed by AWS Glue catalog. Feel free to work with your own datasets from S3 and Glue catalog for this demo.
 

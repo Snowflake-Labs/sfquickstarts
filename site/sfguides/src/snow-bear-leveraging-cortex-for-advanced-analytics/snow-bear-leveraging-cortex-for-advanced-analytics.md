@@ -46,7 +46,7 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 ### Prerequisites
 - Familiarity with Python and SQL
 - Familiarity with Streamlit applications
-- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) sign-up page and register for a free account
 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment  
@@ -60,8 +60,8 @@ In this step, you'll create the Snowflake database objects and upload all necess
 > Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces). Workspaces will become the default SQL editor. Follow the instructions below that match your interface.
 
 **To use Workspaces:**
-1. In Snowsight, click `Projects`, then [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) in the left navigation
-2. Click `+ Add new` to create a new [Workspace](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)
+1. In Snowsight, click `Projects`, then <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=snow-bear-leveraging-cortex-for-advanced-analytics&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a> in the left navigation
+2. Click `+ Add new` to create a new <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=snow-bear-leveraging-cortex-for-advanced-analytics&utm_cta=developer-guides-deeplink" class="_deeplink">Workspace</a>
 3. Click `SQL File` to create a new SQL file
 4. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your SQL file, then run it
 

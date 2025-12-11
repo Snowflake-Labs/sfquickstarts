@@ -37,7 +37,7 @@ Wouldn't it be great if you could generate these automatically and easily? Well,
 ### What You’ll Need
 
 - A [GitHub](https://github.com/) Account to access [this repository](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models).
-- A [Snowflake Account](https://signup.snowflake.com/) in a cloud region that supports [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
+- A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) in a cloud region that supports [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
 - Access to a role that will allow you to create new roles, databases, schemas, tables, stages, models, services, and create external access integrations.
 - Access or permission to create ["large" compute pools](https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool). Due to the GPU VRAM requirements for these models, you may need to contact your Snowflake representative to open access these larger compute pools.
 

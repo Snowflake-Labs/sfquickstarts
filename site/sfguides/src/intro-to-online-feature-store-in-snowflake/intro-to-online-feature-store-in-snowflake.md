@@ -31,7 +31,7 @@ You'll learn how to register entities and feature views, perform feature enginee
 - How to make real-time predictions using online features
 
 ### What You'll Need
-- A [Snowflake](https://signup.snowflake.com/) account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
 - Basic understanding of Snowpark and Snowflake ML
 
 ### What You'll Build
@@ -47,7 +47,7 @@ This section covers environment setup, notebook upload, and loading the sample d
 
 ### Run the Setup Script
 
-1. Open Snowflake and navigate to [**Projects** > **Workspaces**](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides)
+1. Open Snowflake and navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=intro-to-online-feature-store-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">**Projects** > **Workspaces**</a>
 2. Create a new SQL file
 3. Copy and paste the following setup script
 4. Run the entire script as **ACCOUNTADMIN**

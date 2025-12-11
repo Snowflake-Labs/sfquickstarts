@@ -49,7 +49,7 @@ PythonワークシートはSnowsightの新しいタイプのワークシート�
 
 ### Snowflakeトライアルアカウントを作成する
 
-こちらの[リンク](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets)をクリックして、30日間の無料トライアルに登録します（「**Snowflake PythonワークシートによるSnowpark入門**」というタイトルのトライアル設定ページに戻ります）。最寄りの地域をお勧めします。最も一般的なエンタープライズエディションをお勧めしますが、このラボではどのエディションでも使用できます。
+こちらの[リンク](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides)をクリックして、30日間の無料トライアルに登録します（「**Snowflake PythonワークシートによるSnowpark入門**」というタイトルのトライアル設定ページに戻ります）。最寄りの地域をお勧めします。最も一般的なエンタープライズエディションをお勧めしますが、このラボではどのエディションでも使用できます。
 
 ### ラボにログインして設定する
 

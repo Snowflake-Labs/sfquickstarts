@@ -22,7 +22,7 @@ Schema changes in upstream tables, like new fields from sources like Salesforce,
 A powerful solution for automated schema propagation that combines Snowflake’s processing capabilities with the intelligence of LLMs, enabling end-to-end lineage management. By the end of this guide, you’ll have a framework that detects schema changes in upstream tables and ensures their propagation downstream with AI precision.
 
 ### What You’ll Need
-- A [Snowflake](https://signup.snowflake.com/) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account
 - Streamlit in Snowflake 
 
 ### What You’ll Learn

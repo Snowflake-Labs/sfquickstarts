@@ -5,7 +5,7 @@ summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in S
 author: ShenWang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-open in snowflake link: https://app.snowflake.com/_deeplink/#/agents
+open in snowflake link: https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=best-practices-to-building-cortex-agents&utm_cta=developer-guides-deeplink
 status: Published
 
 

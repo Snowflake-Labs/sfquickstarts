@@ -32,7 +32,7 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
-* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
 * Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account). Select the same region (continent) as for the Snowflake account.
 
 ### What You’ll Build
@@ -60,7 +60,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > 
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-![assets/geo_analysis_geometry_2.png](assets/geo_analysis_geometry_2.png)
+![assets/geo-analysis-geometry-2.png](assets/geo-analysis-geometry-2.png)
 
 ### Create a Virtual Warehouse
 
@@ -307,7 +307,7 @@ Then in the navigation menu, select Data > Databases, choose `GEOLAB.GEOMETRY`, 
 
 In the new Window, use the name stageshp and click `Create`.
 
-![assets/geo_analysis_geometry_10.png](assets/geo_analysis_geometry_10.png)
+![assets/geo-analysis-geometry-10.png](assets/geo-analysis-geometry-10.png)
 
 Then select the newly created Stage and click `+ Files` to upload a new file.
 

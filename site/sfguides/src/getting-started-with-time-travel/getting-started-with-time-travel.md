@@ -27,7 +27,7 @@ We’ll get started in the Snowflake web console, configure data retention, and 
 - Next options for data protection
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/?lab=getStartedWithTimeTravel&utm_cta=quickstart-getstartedwithtimetravel-en) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithTimeTravel&utm_cta=developer-guides) Account
 
 ### What You’ll Build 
 - Create database objects with Time Travel data retention
@@ -40,7 +40,7 @@ First things first, let’s get your Snowflake account and user permissions prim
 
 ### Create a Snowflake Account
 
-Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?lab=getStartedWithTimeTravel&utm_cta=quickstart-getstartedwithtimetravel-en). A **Standard**  account allows for one day of Time Travel data retention, and an **Enterprise** account allows for 90 days of data retention. An **Enterprise** account is necessary to practice some commands in this tutorial.
+Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithTimeTravel&utm_cta=developer-guides). A **Standard**  account allows for one day of Time Travel data retention, and an **Enterprise** account allows for 90 days of data retention. An **Enterprise** account is necessary to practice some commands in this tutorial.
 
 ### Login and Setup Lab
 Log into your Snowflake account. You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:

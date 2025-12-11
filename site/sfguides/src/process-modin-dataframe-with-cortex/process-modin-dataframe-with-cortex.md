@@ -34,7 +34,7 @@ This diagram illustrates the key components that make up Snowflake Cortex AI, sh
 A complete data processing pipeline that transforms product catalog data using AI capabilities and presents insights through an interactive dashboard.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic familiarity with Python and pandas
 
 <!-- ------------------------ -->

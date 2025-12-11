@@ -53,7 +53,7 @@ You will learn about the following Snowflake features in this Quickstart:
 You will need the following things before starting:
 
 - Snowflake
-  - **A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)**
+  - **A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)**
   - **A Snowflake user with ACCOUNTADMIN permissions**
   - **Anaconda Terms & Conditions accepted**. See [Using Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 - GitHub

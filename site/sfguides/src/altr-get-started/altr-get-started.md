@@ -17,7 +17,7 @@ This Quick Start Guide is intended for Data Owners and Data Stewards or any othe
 
 ### Prerequisites
 - A Snowflake Enterprise Edition account (or higher). 
-    - We recommend that you sign up for a free [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)
+    - We recommend that you sign up for a free [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - You need to be, or have access to, an ACCOUNTADMIN for your Snowflake instance. 
 
 

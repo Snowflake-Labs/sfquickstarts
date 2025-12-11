@@ -25,7 +25,7 @@ Al terminar esta quickstart guide, habrás implementado los conceptos esenciales
 ### Requisitos previos
 - Un [Navegador](https://docs.snowflake.com/en/user-guide/setup#browser-requirements) compatible con Snowflake.
 - Una cuenta de Snowflake Business Critical o Entreprise.
-    - Si no tienes una cuenta de Snowflake, [**regístrate para obtener una cuenta de prueba gratuita durante 30 días**](https://signup.snowflake.com/). Al iniciar sesión, asegúrate de seleccionar **Enterprise Edition**. Puedes elegir cualquier [nube o región de Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - Si no tienes una cuenta de Snowflake, [**regístrate para obtener una cuenta de prueba gratuita durante 30 días**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Al iniciar sesión, asegúrate de seleccionar **Enterprise Edition**. Puedes elegir cualquier [nube o región de Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
     - Después de registrarte, recibirás un correo electrónico con un enlace de activación y la URL de tu cuenta de Snowflake.
     - ![assets/choose_edition.png](assets/choose_edition.png)
     

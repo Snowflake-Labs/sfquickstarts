@@ -36,7 +36,7 @@ In this quickstart, we will build on the topics discussed in the webinar by load
 - Incremental processing and Logical Partitions
 
 ### What You Will Need 
-- A Snowflake Account or [Trial Account](signup.snowflake.com), any edition will do as the scripts will run on any edition.
+- A Snowflake Account or [Trial Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), any edition will do as the scripts will run on any edition.
 - Login to Snowflake account that has ACCOUNTADMIN role access (Note: Free Trial accounts provide this automatically)
 - [SnowSQL installed](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html)
 - Snowsight or Classic Ui will be used in these examples.  

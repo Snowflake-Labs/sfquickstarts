@@ -22,7 +22,7 @@ You can get more information [here](https://docs.snowflake.com/en/developer-guid
 The Prophet model is a time series forecasting tool developed by Facebook, designed to handle seasonality, holidays, and trend changes in data. It’s especially useful for business time series (like sales or traffic) and is robust to missing data and outliers.
 
 ### Prerequisites
-- Access to [snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role
+- Access to [snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN role
 
 ### What You’ll Learn 
 - How to build a time series forecasting model using Facebook Prophet

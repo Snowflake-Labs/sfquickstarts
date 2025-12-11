@@ -29,7 +29,7 @@ O Streamlit *(adquirido pela Snowflake em março de 2022)* é uma biblioteca Pyt
 ### Pré-requisitos
 - Ter o [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) instalado.
 - Ter o [Anaconda](https://www.anaconda.com/) instalado.
-- Uma conta Snowflake com [pacotes Anaconda habilitados pelo ORGADMIN](https://docs.snowflake.com/pt/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). Caso você não possua uma conta Snowflake, inscreva-se em uma [conta de avaliação gratuita](https://signup.snowflake.com/?lang=pt-br).
+- Uma conta Snowflake com [pacotes Anaconda habilitados pelo ORGADMIN](https://docs.snowflake.com/pt/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). Caso você não possua uma conta Snowflake, inscreva-se em uma [conta de avaliação gratuita](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lang=pt-br&utm_cta=developer-guides).
 - Um login da conta Snowflake com a função ACCOUNTADMIN. Caso você não tenha uma, será necessário se inscrever com uma conta de avaliação gratuita ou usar uma função diferente que possa criar bancos de dados, esquemas, tabelas, estágios, funções definidas por usuários e procedimentos armazenados. 
 
 ### O que será desenvolvido 

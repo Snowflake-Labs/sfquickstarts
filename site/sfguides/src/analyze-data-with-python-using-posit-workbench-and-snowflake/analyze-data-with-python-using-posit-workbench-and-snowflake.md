@@ -43,7 +43,7 @@ or look at the materials provided in the accompanying repository:
 
 ### Prerequisites
 
-- A [Snowflake account](https://signup.snowflake.com/) with appropriate access to databases and schemas.
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with appropriate access to databases and schemas.
 - A Posit Workbench license and the ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
 - Familiarity with Python.
 

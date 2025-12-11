@@ -29,7 +29,7 @@ Streamlit *(dont Snowflake a fait l’acquisition en mars 2022)* est une biblio
 ### Conditions préalables
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) doit être installé.
 - [Anaconda](https://www.anaconda.com/) doit être installé.
-- Vous devez posséder un compte Snowflake comprenant des [packages Anaconda activés par ORGADMIN](https://docs.snowflake.com/fr/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si vous n’avez pas de compte Snowflake, vous pouvez créer un [compte d’essai gratuit](https://signup.snowflake.com/).
+- Vous devez posséder un compte Snowflake comprenant des [packages Anaconda activés par ORGADMIN](https://docs.snowflake.com/fr/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si vous n’avez pas de compte Snowflake, vous pouvez créer un [compte d’essai gratuit](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Vous devez vous connecter à un compte Snowflake avec le rôle ACCOUNTADMIN. Sinon, vous devez créer un compte d’essai gratuit ou utiliser un autre rôle capable de créer une base de données, un schéma, des tables, des zones de préparation, des fonctions définies par l’utilisateur et des procédures stockées. 
 
 ### Vous allez créer : 

@@ -28,7 +28,7 @@ Streamlit is a Python library that makes it easy to create and share custom web 
 - How to **build a Streamlit app** to interact with the model
 
 ### Prerequisites
-- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a [free trial account](https://signup.snowflake.com/) or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
+- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
 
 ### What You Will Build 
 - **A sales forecast by location**<br>

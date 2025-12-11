@@ -3,7 +3,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This guide outlines the process for building an MCP Server for Cortex Agents.
 environments: web
-status: Published
+status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Josh Reini
 
@@ -36,7 +36,7 @@ Then we’ll connect the server to an MCP host (Claude for Desktop):
 
 ### Prerequisites
 
-* A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/))
+* A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))
 * Cortex Analyst semantic model and Cortex Search service created, such as via this [quickstart](/en/developers/guides/getting-started-with-cortex-agents/)
 * A [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
 * Python **3.10+**  

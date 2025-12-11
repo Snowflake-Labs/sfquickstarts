@@ -827,7 +827,7 @@ SHOW SEMANTIC VIEWS;
 
 Let's try a natural language query that uses our semantic view first.
 
-Let's open the [Marketing semantic view in Cortex Analyst](https://app.snowflake.com/_deeplink/#/cortex/analyst/databases/SV_VHOL_DB/schemas/VHOL_SCHEMA/semanticView/MARKETING_SEMANTIC_VIEW/edit) and ask a question like:
+Let's open the <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst/databases/SV_VHOL_DB/schemas/VHOL_SCHEMA/semanticView/MARKETING_SEMANTIC_VIEW/edit?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=snowflake-semantic-view-agentic-analytics&utm_cta=developer-guides-deeplink" class="_deeplink">Marketing semantic view in Cortex Analyst</a> and ask a question like:
 
 > *"Which marketing campaign names generated the most revenue in 2025? Show me marketing ROI and cost per lead by channel."*
 
@@ -860,7 +860,7 @@ ORDER BY total_revenue DESC
 
 ## AI-Assisted Semantic View Creation with Semantic View Autopilot (SVA)
 
-For the previous semantic views, you were provided a pre-created script. In this step, we will use the semantic view wizard and new auto pilot feature. To get started, you will want to [go to the Cortex Analyst home page](https://app.snowflake.com/_deeplink/#/cortex/analyst) and select "Create New Semantic View".
+For the previous semantic views, you were provided a pre-created script. In this step, we will use the semantic view wizard and new auto pilot feature. To get started, you will want to <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=snowflake-semantic-view-agentic-analytics&utm_cta=developer-guides-deeplink" class="_deeplink">go to the Cortex Analyst home page</a> and select "Create New Semantic View".
 
 - Select `SV_VHOL_DB.VHOL_SCHEMA` for the "Location to store" field
 - Name your semantic view `HR_SEMANTIC_VIEW`
@@ -1081,7 +1081,7 @@ In this section, we will run some SQL queries to generate a synthetic set of que
 
 Let's first generate those query histroy entries by running the SQL in the cell below.
 
-Check out the [Query History](https://app.snowflake.com/_deeplink/#/compute/history/) to see if they are running.
+Check out the <a href="https://app.snowflake.com/_deeplink/#/compute/history/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=snowflake-semantic-view-agentic-analytics&utm_cta=developer-guides-deeplink" class="_deeplink">Query History</a> to see if they are running.
 
 ### Generate Synthetic Query History for AI Enhancement
 
@@ -3230,7 +3230,7 @@ $$;
 ```
 
 ### Let's Go Talk to Our Data
-[Open the Snowflake Intelligence Agent](https://app.snowflake.com/_deeplink/#/agents/database/SV_VHOL_DB/schema/AGENTS/agent/AGENTIC_ANALYTICS_VHOL_CHATBOT/details)
+<a href="https://app.snowflake.com/_deeplink/#/agents/database/SV_VHOL_DB/schema/AGENTS/agent/AGENTIC_ANALYTICS_VHOL_CHATBOT/details?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=snowflake-semantic-view-agentic-analytics&utm_cta=developer-guides-deeplink" class="_deeplink">Open the Snowflake Intelligence Agent</a>
 
 Ask this question: 
 > *"For each of my campaign channels, can you tell me what products customers and up using if they were exposed to that campaign?"*

@@ -530,7 +530,7 @@ Now we'll set up all required Snowflake objects for the CDC pipeline. This inclu
 
 #### Execute the Setup Script
 
-Open [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_medium=developer-guides) in Snowsight (**Projects** → **Workspaces**), copy paste the `sql/1.snowflake_setup.sql` script and execute it.
+Open <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-openflow-postgresql-cdc&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a> in Snowsight (**Projects** → **Workspaces**), copy paste the `sql/1.snowflake_setup.sql` script and execute it.
 
 > **IMPORTANT:** Before running the script, update line 64 with your PostgreSQL endpoint:
 >
@@ -1173,7 +1173,7 @@ The semantic model defines your healthcare schema for the AI agent. It includes 
 
 Upload the semantic model to the stage using Snowsight:
 
-1. Navigate directly to **Ingestion** --> **Add Data**: [Load files into a Stage](https://app.snowflake.com/_deeplink/#/data/add-data?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-openflow-postgresql-cdc)
+1. Navigate directly to **Ingestion** --> **Add Data**: <a href="https://app.snowflake.com/_deeplink/#/data/add-data?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-openflow-postgresql-cdc&utm_cta=developer-guides-deeplink" class="_deeplink">Load files into a Stage</a>
 2. Select the database, schema, and stage:
    - **Database:** `QUICKSTART_PGCDC_DB`
    - **Schema:** `PUBLIC`
@@ -1193,7 +1193,7 @@ snow stage put semantic-models/healthcare_cdc_semantic_model.yaml @semantic_mode
   --overwrite
 ```
 
-Verify the upload via [Database Explorer](https://app.snowflake.com/_deeplink/#/data/databases/QUICKSTART_PGCDC_DB/schemas/PUBLIC/stage/SEMANTIC_MODELS?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-openflow-postgresql-cdc)
+Verify the upload via <a href="https://app.snowflake.com/_deeplink/#/data/databases/QUICKSTART_PGCDC_DB/schemas/PUBLIC/stage/SEMANTIC_MODELS?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-openflow-postgresql-cdc&utm_cta=developer-guides-deeplink" class="_deeplink">Database Explorer</a>
 
 ### Create the Agent
 
@@ -1203,7 +1203,7 @@ Verify the upload via [Database Explorer](https://app.snowflake.com/_deeplink/#/
 
 1. Sign in to Snowsight
 2. **Switch to `QUICKSTART_ROLE`** using the role selector in the top-right corner
-3. Navigate directly to Agents: [Create Snowflake Intelligence Agent](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents)
+3. Navigate directly to Agents: <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents&utm_cta=developer-guides-deeplink" class="_deeplink">Create Snowflake Intelligence Agent</a>
 4. Select **"Create agent"**
 
 ![Agent Creation Interface](assets/si_agent_create.png)

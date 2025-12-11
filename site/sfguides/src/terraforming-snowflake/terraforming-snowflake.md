@@ -45,7 +45,7 @@ This tutorial demonstrates how you can use Terraform to manage your Snowflake co
 - How to manage objects from code/source control
 
 ### What You’ll Need
-- A Snowflake account - create a [trial account](https://signup.snowflake.com/) if needed
+- A Snowflake account - create a [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) if needed
 - A [GitHub](https://github.com/) account
 - A [Git](https://github.com/git-guides/install-git) command-line client
 - A text editor of your choice

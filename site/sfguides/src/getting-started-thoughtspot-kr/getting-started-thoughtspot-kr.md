@@ -40,7 +40,7 @@ author: Thoughtspot
 
 ### Snowflake 무료 평가판 등록
 
-[Snowflake 무료 평가판 등록 페이지](https://signup.snowflake.com/?utm_source=tsquickstart)로 이동하여 필요한 세부 정보를 입력하고 Continue를 클릭합니다. 필수 단계에 따르고 활성화 링크를 위해 이메일을 확인합니다. 로그인한 후 Worksheets 아이콘을 클릭하고 + 태그를 클릭하여 새로운 워크시트를 생성합니다. 이름을 Snowflake+ThoughtSpot Tutorial로 지정합니다.
+[Snowflake 무료 평가판 등록 페이지](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)로 이동하여 필요한 세부 정보를 입력하고 Continue를 클릭합니다. 필수 단계에 따르고 활성화 링크를 위해 이메일을 확인합니다. 로그인한 후 Worksheets 아이콘을 클릭하고 + 태그를 클릭하여 새로운 워크시트를 생성합니다. 이름을 Snowflake+ThoughtSpot Tutorial로 지정합니다.
 
 워크시트는 데이터를 얻기 위해 SQL 문을 작성할 수 있는 공간입니다. 이를 사용하여 설정을 테스트할 수 있습니다. 우선 사용하고자 하는 데이터베이스와 스키마를 선택해야 합니다. Context 드롭다운을 클릭하고 다음 값을 선택합니다.
 

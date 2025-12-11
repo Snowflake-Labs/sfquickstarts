@@ -41,7 +41,7 @@ Learn more about [Whisper](https://openai.com/index/whisper/).
 
 ### Prerequisites
 
-* Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role.
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN role.
 * Access to a [Twelve Labs account and API key](https://www.twelvelabs.io/).
 * Access to video(s) uploaded to a publicly accessible URL.
 

@@ -48,7 +48,7 @@ Un data set elaborato che potrà essere utilizzato nelle analisi e nelle applica
 
 ### Creare un account di prova Snowflake
 
-Richiedi la prova gratuita di 30 giorni seguendo questo [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (che ti riporterà alla pagina di configurazione della prova gratuita **Guida introduttiva all’uso di Snowpark nei fogli di lavoro Snowflake Python**). Consigliamo di scegliere la regione più vicina a te. Consigliamo l’edizione più comune, Enterprise, ma per questo workshop è possibile utilizzare qualsiasi edizione.
+Richiedi la prova gratuita di 30 giorni seguendo questo [link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides) (che ti riporterà alla pagina di configurazione della prova gratuita **Guida introduttiva all’uso di Snowpark nei fogli di lavoro Snowflake Python**). Consigliamo di scegliere la regione più vicina a te. Consigliamo l’edizione più comune, Enterprise, ma per questo workshop è possibile utilizzare qualsiasi edizione.
 
 ### Effettuare il login e configurare il workshop
 

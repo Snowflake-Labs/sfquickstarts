@@ -30,7 +30,7 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 - How to use the graph to answer user questions
 
 ### What you will need
-- A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) on AWS in the US East (N. Virginia) region or the US West (Oregon) region
+- A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) on AWS in the US East (N. Virginia) region or the US West (Oregon) region
 - Basic knowledge of using a Snowflake SQL Worksheet
 - [Snowflake privileges](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges) on your user to install a Native Application
 - Snowflake account privileges to create databases and schemas in your Snowflake account
