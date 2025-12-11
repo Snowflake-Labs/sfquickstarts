@@ -6,6 +6,8 @@ summary: This guide will walk show you how to use Snowflake Notebooks with Conta
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime
+
 
 # Getting Started with Snowflake Notebook Container Runtime
 <!-- ------------------------ -->

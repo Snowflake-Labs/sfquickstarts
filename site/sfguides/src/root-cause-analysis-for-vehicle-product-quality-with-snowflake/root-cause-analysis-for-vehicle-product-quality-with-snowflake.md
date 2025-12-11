@@ -6,6 +6,8 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, Data Science & Ai
+fork repo link: https://github.com/Snowflake-Labs/sfguide-root-cause-analysis-for-vehicle-product-quality-with-snowflake
+
 
 # Root Cause Analysis for Vehicle Product Quality with Snowflake
 <!-- ------------------------ -->

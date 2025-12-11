@@ -6,6 +6,9 @@ summary: This guide give an overview of the key features of Snowflake Feature St
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-feature-store-using-snowflake-notebooks
+
+
 
 # Introduction to Snowflake Feature Store with Snowflake Notebooks
 <!-- ------------------------ -->
