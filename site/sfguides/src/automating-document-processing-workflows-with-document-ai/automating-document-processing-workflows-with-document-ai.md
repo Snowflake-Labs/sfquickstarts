@@ -8,12 +8,14 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Automating Document Processing Workflows With Document AI
-<!-- ------------------------ -->
+
+
+
 ## Overview 
 
 Through this quickstart guide, you will explore Document AI. You will set up your Snowflake environment, use Document AI to create a model to extract values from documents, create a document extraction pipline using the model and use streamlit to build a application to verify the extracted values.  
 
-### What is Document AI 
+### What is Document AI? 
 Document AI is a Snowflake machine learning feature that uses a large language model (LLM) to extract data from documents. With Document AI, you can prepare pipelines for continuous processing of new documents of a specific type, such as invoice or finance statement documents.
 
 Document AI uses a model that provides both zero-shot extraction and fine-tuning. Zero-shot means that the foundation model is trained on a large volume of various documents, so the model broadly understands the type of document being processed. In this way, it can locate and extract information specific to this document type, even if the model has never seen the document before.
