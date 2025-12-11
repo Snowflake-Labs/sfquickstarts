@@ -1,5 +1,5 @@
 author: Tim Buchhorn (sfc-gh-tbuchhorn)
-id: getting-started-with-access-controls-for-cortex-search
+id: sfguide-getting-started-with-access-controls-for-cortex-search
 language: en
 summary: This guide walks you through creating an internal chatbot application that controls access to unstructured documents based on user-based attributes
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance, snowflake-site:taxonomy/snowflake-feature/cortex-search
