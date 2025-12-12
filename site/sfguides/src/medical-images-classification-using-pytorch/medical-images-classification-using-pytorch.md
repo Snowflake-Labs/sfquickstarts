@@ -6,6 +6,8 @@ summary: Detect pneumonia in chest x-rays and show how to train a PyTorch image 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-medical-images-classification-using-pytorch
+
 
 # Medical Images Classification using PyTorch in Snowflake
 <!-- ------------------------ -->
@@ -199,4 +201,3 @@ You did it! By following these steps, you have integrated the PyTorch model with
 - [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/Medical-Image-ProcessingandAnalytics.pdf)
 - [Read the Blog](https://medium.com/snowflake/pytorch-model-to-detect-pneumonia-using-snowpark-container-service-and-snowflake-ml-features-e2f17a785f42)
 - [Watch the Demo](https://youtu.be/5UdOUSVe814?list=TLGGnNy70R3PJLsyNDA5MjAyNQ)
-

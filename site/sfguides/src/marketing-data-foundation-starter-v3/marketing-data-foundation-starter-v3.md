@@ -6,6 +6,8 @@ summary: Marketing Data Foundation Starter Guide V3
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3
+
 
 # Marketing Data Foundation Starter Guide V3
 <!-- ------------------------ -->

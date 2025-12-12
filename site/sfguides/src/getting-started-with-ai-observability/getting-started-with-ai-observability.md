@@ -6,6 +6,10 @@ summary: This is a guide for getting started with Snowflake AI Observability.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability
+
+
+
 
 # Getting Started with AI Observability
 
