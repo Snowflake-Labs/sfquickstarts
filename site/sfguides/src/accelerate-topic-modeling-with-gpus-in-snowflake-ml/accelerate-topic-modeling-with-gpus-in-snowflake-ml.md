@@ -92,7 +92,7 @@ This will create:
 
 Download the notebook file to your local machine:
 
-1. Click this link: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/accelerate-topic-modeling-with-gpus-in-snowflake-ml/notebooks/0_start_here.ipynb)
+1. Click this link: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/accelerate-topic-modeling-with-gpus-in-snowflake-ml/assets/notebooks/0_start_here.ipynb)
 2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
 3. Save the `.ipynb` file to your computer
 
@@ -179,7 +179,7 @@ topics, probs = topic_model.fit_transform(docs, embeddings)
 
 With just two initial lines of code, the entire topic modeling pipeline is accelerated, allowing for rapid iteration and analysis.
 
-You can proceed to the remainder of the [topic modeling notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/accelerate-topic-modeling-with-gpus-in-snowflake-ml/notebooks/0_start_here.ipynb).
+You can proceed to the remainder of the [topic modeling notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/accelerate-topic-modeling-with-gpus-in-snowflake-ml/assets/notebooks/0_start_here.ipynb).
 
 ![](assets/topic-modeling-screenshot.png)
 
