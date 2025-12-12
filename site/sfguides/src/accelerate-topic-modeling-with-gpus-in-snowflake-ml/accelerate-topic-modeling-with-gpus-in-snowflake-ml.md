@@ -110,18 +110,17 @@ After uploading, open the notebook and create a container service with GPU acces
 
 1. Click on the uploaded notebook file to open it
 2. Click the **Connect** button in the top toolbar
-3. Configure the container service:
-   - Select **Run on container**
-   - From the **Compute pool** dropdown, select `topic_modeling_gpu_pool`
-   - Under **External Access Integrations**, select `topic_modeling_eai`
-4. Click **Connect** to create and start the service
+3. In the **Connect your notebook** dialog, configure the service:
+   - Enter a **Service name** (e.g., `topic_modeling_service`)
+   - Under **External access integrations**, select `TOPIC_MODELING_EAI`
+   - Expand **Service settings** and configure:
+     - **Compute type**: Select **GPU**
+     - **Compute pool**: Select `TOPIC_MODELING_GPU_POOL`
+4. Click **Create and connect**
 
 ![](assets/create-service.gif)
 
 The notebook will connect to the GPU container runtime and be ready to run.
-
-> NOTE:
-> The `topic_modeling_eai` external access integration was created by the setup script and allows the notebook to install Python packages and access external APIs.
 
 ### Enabling GPU Acceleration Libraries
 
