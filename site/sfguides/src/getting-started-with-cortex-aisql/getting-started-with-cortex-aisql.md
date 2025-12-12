@@ -42,21 +42,6 @@ Cortex AI Functions benefits organizations across industries dealing with divers
 
 Business analysts can extract insights without AI expertise, data engineers can build simpler pipelines, and data scientists can create richer feature sets, all using familiar SQL.
 
-### Gemini 3 Pro and Gemini Flash 2.5 Support
-
-Snowflake Cortex AI natively supports Gemini 3 Pro and Gemini Flash 2.5 through Cortex AI Functions, running directly within your Snowflake environment. This means faster access to industry-leading AI, without moving or copying sensitive enterprise data. You can build generative and agentic AI applications directly where your governed data already lives. The result is a simpler architecture, lower cost, and higher trust in agentic AI applications. 
-
-The Gemini models are extensible to a variety of use cases, depending on your need:
-
-* **Gemini 3** excels at multi-modal reasoning, long-context analysis, advanced tool use and complex agentic workflows. It’s a powerful fit for Snowflake customers building production-grade AI agents that operate securely across structured, unstructured, and multimodal enterprise data. This makes it ideal for customers building enterprise-grade AI agents that must reason deeply over financial records, logs, product data, documents and more, securely at scale. Built on Google’s most intelligent Gemini generation to date, Gemini 3 Pro delivers state-of-the-art reasoning with unprecedented depth and nuance, significantly outperforming previous generations across major reasoning, math, multimodal and factual accuracy benchmarks, giving enterprises higher confidence in their most complex, business-critical use cases.   
-* **Gemini Flash 2.5** is optimized for speed and cost efficiency. It delivers high-quality results across tasks such as summarization, chat, data extraction and captioning, making it ideal for high-volume workloads that demand both performance and value.  Perfect for high-volume scenarios such as call summarization, invoice processing and rapid customer service interactions, without slowing down the service. 
-
-When combined with Gemini 3’s advanced reasoning, customers can move beyond basic Q&A to nuanced analysis, planning and decision support that better captures the real-world complexity of their businesses. For example, using the AI_COMPLETE function, users can leverage Gemini 3 Pro:
-
-```sql
- select AI_COMPLETE('gemini-3-pro', prompt('Summarize this issue shown in this screenshot in one concise sentence: {0}', img_file)) as summary from images;
-```
-
 ### Prerequisites
 
 * Access to a Snowflake account in one of [these regions](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql?lang=de%2F) with the ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
