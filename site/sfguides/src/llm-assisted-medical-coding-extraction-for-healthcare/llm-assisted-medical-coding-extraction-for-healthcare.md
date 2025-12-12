@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
 ## Overview 

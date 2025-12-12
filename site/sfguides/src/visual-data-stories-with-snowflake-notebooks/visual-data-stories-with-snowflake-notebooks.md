@@ -8,6 +8,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Vino Duraisamy, Doris Lee
 
 
+
 # A Guide to Visual Data Storytelling in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview

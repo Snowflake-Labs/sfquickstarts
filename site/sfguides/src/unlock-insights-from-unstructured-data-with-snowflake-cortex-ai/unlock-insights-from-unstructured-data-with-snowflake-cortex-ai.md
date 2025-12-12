@@ -8,6 +8,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: Sean Morris, Stephen Dickson
 [environment_name]: ai209
 
+
 # Unlock Insights from Unstructured Data with Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview

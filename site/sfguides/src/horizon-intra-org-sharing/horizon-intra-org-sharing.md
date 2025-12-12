@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 
+
 # Explore Cross-Cloud Sharing of Data and Applications with Private Listings
 <!-- ------------------------ -->
 ## Overview

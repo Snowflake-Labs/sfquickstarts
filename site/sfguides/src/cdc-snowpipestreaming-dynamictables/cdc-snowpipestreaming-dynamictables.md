@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: steven.maser@snowflake.com 
 
+
 # Snowpipe Streaming and Dynamic Tables for Real-Time Ingestion (CDC Use Case)
 <!-- ------------------------ -->
 ## Overview 

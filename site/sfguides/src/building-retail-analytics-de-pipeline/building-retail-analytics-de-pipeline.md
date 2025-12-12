@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Phani Raj
 
+
 # Build a Retail Analytics Data Engineering Pipeline with Snowflake
 <!-- ------------------------ -->
 

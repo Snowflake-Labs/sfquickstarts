@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build a Visual Concept/Idea Generator using a Text-to-Image AI Model
 <!-- ------------------------ -->
 ## Overview 

@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
 
 
+
 # Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization
 <!-- ------------------------ -->
 ## Overview

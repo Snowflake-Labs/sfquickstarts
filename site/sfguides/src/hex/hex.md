@@ -9,6 +9,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- contact info: gflomo [at] hex.tech --> 
 
+
 # Building and deploying a time series forecast with Hex + Snowflake
 
 <!-- ------------------------ -->

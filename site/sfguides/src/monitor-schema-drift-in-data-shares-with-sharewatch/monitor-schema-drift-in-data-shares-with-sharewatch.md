@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Monitor Schema Drift in Data Shares with Sharewatch
 <!-- ------------------------ -->
 ## Overview

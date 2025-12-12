@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # A Data-Driven Methodology for Choosing a Snowflake Clustering Key
 <!-- ------------------------ -->
 ## Overview 

@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Personalized Movie Recommendation Chatbot Powered by Kumo in Snowflake Native App
 <!-- ------------------------ -->
 ## Overview

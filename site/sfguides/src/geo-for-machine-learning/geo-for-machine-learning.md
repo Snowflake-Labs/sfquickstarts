@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Geospatial Analytics, AI and ML using Snowflake
 <!-- ----------------------------------------- -->
 ## Overview 

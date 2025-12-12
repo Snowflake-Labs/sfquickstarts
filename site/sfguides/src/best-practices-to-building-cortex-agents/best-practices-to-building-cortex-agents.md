@@ -9,6 +9,7 @@ open in snowflake link: https://app.snowflake.com/_deeplink/#/agents?utm_source=
 status: Published
 
 
+
 # Best Practices for Building Cortex Agents
 
 ### Overview

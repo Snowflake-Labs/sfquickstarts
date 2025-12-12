@@ -7,6 +7,7 @@ environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Cortex Analyst in Snowflake
 <!-- ------------------------ -->
 ## Overview 

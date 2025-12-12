@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Alex Engelmann
+
 # Accelerate Transformations with Coalesce and Snowflake
 <!-- ------------------------ -->
 ## Overview 

@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Creare una data application con il Marketplace Snowflake, Snowpark e Streamlit
 
 ## Panoramica

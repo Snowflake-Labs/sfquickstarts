@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake
 <!-- ------------------------ -->
 ## Overview 

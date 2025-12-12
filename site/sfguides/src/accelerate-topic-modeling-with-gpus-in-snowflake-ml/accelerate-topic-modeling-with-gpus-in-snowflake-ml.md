@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake, Machine Learning, Python, NVIDIA, GPU, scikit-learn, pandas
 
+
 # Accelerate Topic Modeling with GPUs in Snowflake ML
 ## Overview
 

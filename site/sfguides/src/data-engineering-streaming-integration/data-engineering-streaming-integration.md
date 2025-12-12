@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 author: Dmytro Yaroshenko
 
+
 # Streaming Data Integration with Snowflake
 <!-- ------------------------ -->
 ## Overview 

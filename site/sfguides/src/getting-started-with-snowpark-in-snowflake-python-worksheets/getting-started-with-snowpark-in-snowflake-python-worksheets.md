@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # Getting Started with Snowpark in Snowflake Python Worksheets and Notebooks
 <!-- ------------------------ -->
 ## Overview

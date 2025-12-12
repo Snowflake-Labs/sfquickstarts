@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Building ML Models to Crack the Code of Customer Conversions
 
 ## Overview 

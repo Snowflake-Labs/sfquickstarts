@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
 # Getting Started with Bedrock AgentCore Gateways and Cortex Agents
 <!-- ------------------------ -->
 ## Overview

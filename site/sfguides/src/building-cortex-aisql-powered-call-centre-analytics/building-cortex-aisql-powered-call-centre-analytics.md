@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 author: Phani Raj
 
+
 # Build Cortex AISQL Powered Call Center Analytics Solution
 <!-- ------------------------ -->
 

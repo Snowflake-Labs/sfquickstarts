@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Collect and Activate Customer Data Using Tealium and Snowpipe Streaming
 
 <!-- ------------------------ -->
