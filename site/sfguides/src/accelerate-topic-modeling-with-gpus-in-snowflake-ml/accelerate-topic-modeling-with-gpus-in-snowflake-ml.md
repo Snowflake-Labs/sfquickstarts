@@ -104,9 +104,9 @@ Now upload the notebook to Snowflake Workspaces:
 
 ![](assets/upload_notebook_file.png)
 
-### Create Container Service
+### Create Service
 
-After uploading, open the notebook and create a container service with GPU access:
+After uploading, open the notebook and create a service with GPU access:
 
 1. Click on the uploaded notebook file to open it
 2. Click the **Connect** button in the top toolbar
