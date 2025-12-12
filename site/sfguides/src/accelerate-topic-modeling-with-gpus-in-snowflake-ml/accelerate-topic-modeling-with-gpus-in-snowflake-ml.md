@@ -116,7 +116,7 @@ After uploading, open the notebook and create a container service with GPU acces
    - Under **External Access Integrations**, select `topic_modeling_eai`
 4. Click **Connect** to create and start the service
 
-![](assets/create_service.gif)
+![](assets/create-service.gif)
 
 The notebook will connect to the GPU container runtime and be ready to run.
 
