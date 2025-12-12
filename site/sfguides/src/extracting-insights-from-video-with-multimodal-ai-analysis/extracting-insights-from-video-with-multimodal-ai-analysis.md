@@ -6,6 +6,10 @@ summary: Extract images, transcribe audio, and analyze key moments from videos u
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis
+
+
+
 
 
 # Extracting Insights from Video with Multimodal AI Analysis
@@ -407,5 +411,3 @@ In this quickstart, you used Optical Character Recognition (OCR),  Automatic Spe
 - Snowpark Container Services [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - Snowflake Cortex AI [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
 - [Getting Started with Cortex Analyst Quickstart](/en/developers/guides/getting-started-with-cortex-analyst/)
-
-

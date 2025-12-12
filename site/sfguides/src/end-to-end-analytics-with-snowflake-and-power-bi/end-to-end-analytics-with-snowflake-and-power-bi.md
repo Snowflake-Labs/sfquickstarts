@@ -6,6 +6,10 @@ summary: Building end-to-end analytical solutions with Snowflake and Power BI
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-end-to-end-analytics-with-snowflake-and-power-bi
+
+
+
 
 
 # End-to-End Analytics with Snowflake and Power BI

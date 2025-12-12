@@ -6,6 +6,10 @@ environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Phani Raj
+fork repo link: https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline
+
+
+
 
 
 # Build a Retail Analytics Data Engineering Pipeline with Snowflake

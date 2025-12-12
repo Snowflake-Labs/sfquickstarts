@@ -6,6 +6,8 @@ summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Ana
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex
+
 
 
 # Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics

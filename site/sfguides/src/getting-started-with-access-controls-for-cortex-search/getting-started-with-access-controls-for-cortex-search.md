@@ -11,7 +11,6 @@ tags: AI, Conversational Assistants, Cortex Search
 # Getting Started with Access Controls for RAGs (Cortex Search)
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 Retrieval-Augmented Generation (RAG) promises to unlock unprecedented value from enterprise data. The vast majority (80-90%) of corporate knowledge is trapped in unstructured documents, emails, and messages, often containing sensitive PII, IP, and financial data with inconsistent access controls. Deploying AI models without robust governance exposes this sensitive data, creating severe risks of data breaches, regulatory non-compliance, and loss of intellectual property.
 

@@ -6,6 +6,9 @@ summary: This is a quickstart for using Amazon Q Business with Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex
+
+
 
 
 # Getting Started with Amazon Q Business and Cortex

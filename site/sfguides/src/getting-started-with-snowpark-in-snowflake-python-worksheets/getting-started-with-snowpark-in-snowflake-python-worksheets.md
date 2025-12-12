@@ -6,6 +6,10 @@ environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-in-snowflake-python-worksheets
+
+
+
 
 
 # Getting Started with Snowpark in Snowflake Python Worksheets and Notebooks

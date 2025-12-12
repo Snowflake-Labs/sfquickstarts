@@ -6,6 +6,8 @@ summary: This is a quickstart for using Cortex Agents and Amazon Q
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents
+
 
 
 
@@ -720,6 +722,4 @@ The OpenAPI schema defines the API endpoint, request and response format, and se
   }
 }
 ```
-
-
 

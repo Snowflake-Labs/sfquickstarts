@@ -6,6 +6,10 @@ environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Vino Duraisamy, Doris Lee
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebooks
+
+
+
 
 
 # A Getting Started Guide With Snowflake Notebooks
