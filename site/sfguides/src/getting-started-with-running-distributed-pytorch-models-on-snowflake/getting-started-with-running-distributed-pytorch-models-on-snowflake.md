@@ -6,6 +6,10 @@ summary: Getting Started with Running Distributed PyTorch Models on Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake
+
+
+
 
 # Getting Started with Running Distributed PyTorch Models on Snowflake
 

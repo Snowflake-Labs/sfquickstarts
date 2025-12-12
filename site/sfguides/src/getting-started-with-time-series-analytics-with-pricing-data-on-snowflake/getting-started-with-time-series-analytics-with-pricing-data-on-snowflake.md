@@ -6,6 +6,9 @@ summary: Getting Started with Time Series Analytics with Pricing Data on Snowfla
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-using-sql
+
+
 
 # Getting Started with Time Series Analytics with Pricing Data on Snowflake
 <!-- ------------------------ -->

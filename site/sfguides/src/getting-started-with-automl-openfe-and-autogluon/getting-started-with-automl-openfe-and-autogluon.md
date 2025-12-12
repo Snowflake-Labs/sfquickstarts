@@ -6,6 +6,10 @@ summary: Using OpenFE and AutoGluon to create features for machine learning in a
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-automl-openfe-and-autogluon
+
+
+
 
 # Getting Started with AutoML, OpenFE and AutoGluon
 <!-- ------------------------ -->

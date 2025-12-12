@@ -6,6 +6,10 @@ summary: Through this quickstart guide, you will learn how to deploy a custom mo
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables-tasty-bytes
+
+
+
 
 # Deploying Custom Models To Snowflake Model Registry
 <!-- ------------------------ -->
