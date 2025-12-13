@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-s
 
 
 
+
 # Getting Started with Snowpark in Snowflake Python Worksheets and Notebooks
 <!-- ------------------------ -->
 ## Overview

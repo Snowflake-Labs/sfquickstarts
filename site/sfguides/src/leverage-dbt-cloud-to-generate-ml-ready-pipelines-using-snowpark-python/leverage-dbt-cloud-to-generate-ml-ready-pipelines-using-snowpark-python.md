@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
 # Leverage dbt Cloud to Generate ML ready pipelines using Snowpark python
 <!-- ------------------------ -->
 ## Overview 

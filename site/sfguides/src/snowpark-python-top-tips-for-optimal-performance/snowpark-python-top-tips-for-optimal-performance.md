@@ -7,6 +7,7 @@ environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Snowpark Python: Top Tips for Optimal Performance
 <!-- ------------------------ -->
 ## Overview

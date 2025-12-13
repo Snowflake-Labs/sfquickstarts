@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Tasty Bytes - Introduzione a Snowpark per la data science
 <!-- ------------------------ -->
 ## Panoramica 

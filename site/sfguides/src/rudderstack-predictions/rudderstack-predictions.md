@@ -7,6 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: RudderStack
 
+
 # Build predictive features without MLOps using RudderStack and Snowflake
 <!-- ------------------------ -->
 ## Overview

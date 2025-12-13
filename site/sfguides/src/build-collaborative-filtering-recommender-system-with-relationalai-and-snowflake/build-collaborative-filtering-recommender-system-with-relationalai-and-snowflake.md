@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/rai-samples/issues
 
+
 # Recommender Systems with RelationalAI’s Snowflake Native App
 
 ## Overview 

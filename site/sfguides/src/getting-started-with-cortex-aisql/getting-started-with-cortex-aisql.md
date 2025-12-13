@@ -7,6 +7,8 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
+
 # Getting Started with Cortex AI Functions
 <!-- ------------------------ -->
 

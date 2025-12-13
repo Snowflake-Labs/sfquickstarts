@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # A Guide to Triggering Real-Time Notifications Using Dynamic Tables and Census Live Syncs
 
 ## Overview

@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
 # End-to-End Entity Resolution with Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview 

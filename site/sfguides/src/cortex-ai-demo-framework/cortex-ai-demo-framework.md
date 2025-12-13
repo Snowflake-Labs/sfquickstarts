@@ -12,6 +12,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-c
 
 
 
+
 # Cortex AI Demo Framework
 <!-- ------------------------ -->
 

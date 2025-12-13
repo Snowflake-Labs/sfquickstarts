@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Setting up Snowflake Environments in Vertex AI
 <!-- ------------------------ -->
 ## Overview 

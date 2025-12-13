@@ -6,6 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Snowflake入門 - ゼロからはじめるSnowflake
 
 <!-- ------------------------ -->

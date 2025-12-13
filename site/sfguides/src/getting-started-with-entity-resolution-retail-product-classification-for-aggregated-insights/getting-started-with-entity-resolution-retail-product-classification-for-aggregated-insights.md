@@ -6,6 +6,7 @@ summary: This application provides a centralized, AI-driven approach to match pr
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 # Getting Started with Entity Resolution: Retail Product Classification for Aggregated Insights
 <!-- --------------------------->
 ## Overview
