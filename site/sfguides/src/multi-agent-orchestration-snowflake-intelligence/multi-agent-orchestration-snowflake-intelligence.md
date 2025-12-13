@@ -173,7 +173,7 @@ Rule: Do not attempt to answer the question yourself. You must strictly invoke t
 
 Grant access to roles/users who need to use the Master Agent.
 
-# Usage
+## Usage
 
 ### Via Master Agent (Recommended)
 
@@ -239,7 +239,7 @@ https://<ACCOUNT>.snowflakecomputing.com/api/v2/databases/<DATABASE>/schemas/<SC
 - **Secret Management:** Never expose tokens in logs
 
 
-## References
+## Resources
 
 - [Snowflake Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)  
 - [External Access Integrations](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)  
