@@ -20,7 +20,7 @@ This pattern enables a hierarchical agent system where:
 - **Sub-agents** handle domain-specific tasks (multiple Cortex Agents, each cover one domain or use cases)
 - Communication happens via **custom tools** (UDFs)
 
-![Multi-agent orchestration in Snowflake intelligence](site/sfguides/src/multi-agent-orchestration-snowflake-intelligence/assets/multi-agent-orchestration-snowflake-intelligence.png)
+![Multi-agent orchestration in Snowflake intelligence](assets/multi-agent-orchestration-snowflake-intelligence.png)
 
 
 ## Prerequisites
@@ -169,7 +169,7 @@ Agent 2 (AGENT_2): Use this for questions regarding business performance, revenu
 Rule: Do not attempt to answer the question yourself. You must strictly invoke the appropriate tool to get the answer.
 ```
 
-## Step 8: Configure Access (Access Tab)
+### Step 8: Configure Access (Access Tab)
 
 Grant access to roles/users who need to use the Master Agent.
 
@@ -192,7 +192,7 @@ SELECT ASK_AGENT_2('Show me the report for Y');
 
 ## Examples:
 
-![Multi-agent chat](site/sfguides/src/multi-agent-orchestration-snowflake-intelligence/assets/multi-agent-chat.png)
+![Multi-agent chat](assets/multi-agent-chat.png)
 
 **Important notes:**
 
