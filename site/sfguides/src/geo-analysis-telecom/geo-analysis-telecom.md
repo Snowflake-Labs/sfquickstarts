@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Geospatial Analytics for Telecom with Snowflake and Carto
 <!-- ------------------------ -->
 ## Overview 

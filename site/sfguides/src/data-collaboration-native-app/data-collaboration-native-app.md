@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started With Model Sharing Using Native Apps
 <!-- ------------------------ -->
 ## Overview 

@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build a Lakehouse with Apache Iceberg and Snowflake Open Catalog
 <!-- ------------------------ -->
 ## Overview

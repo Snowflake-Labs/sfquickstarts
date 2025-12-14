@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # AI Video Search with Snowflake and Twelve Labs
 <!-- ------------------------ -->
 

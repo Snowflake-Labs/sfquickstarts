@@ -7,6 +7,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: James Sun
 
+
 # Getting Started with Snowpipe Streaming and Amazon MSK
 <!---------------------------->
 ## Overview

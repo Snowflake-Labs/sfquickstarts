@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Tokenization in Snowflake Using Python UDFs (Python Camouflage)
 <!-- ------------------------ -->
 ## Python Camouflage Overview

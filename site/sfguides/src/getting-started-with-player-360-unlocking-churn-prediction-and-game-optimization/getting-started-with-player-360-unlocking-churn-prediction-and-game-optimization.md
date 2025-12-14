@@ -6,6 +6,10 @@ summary: The Player 360 solution showcases how gaming companies can create a com
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization
+
+
+
 
 
 # Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization

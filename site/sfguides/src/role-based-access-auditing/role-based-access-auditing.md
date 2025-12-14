@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build Role-Based Access Audit Dashboards in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview

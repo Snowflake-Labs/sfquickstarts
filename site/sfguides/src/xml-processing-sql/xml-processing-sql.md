@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Modernize XML Processing for Financial Services with SQL XML Functions
 
 <!-- ------------------------ -->

@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build a Generative BI Dashboard with Amazon QuickSight and Amazon Q
 
 ## Overview

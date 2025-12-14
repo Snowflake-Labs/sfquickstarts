@@ -14,6 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
   }
 </style>
 
+
 #  Analyze Data with Python using Posit Workbench and Snowflake
 
 ## Overview

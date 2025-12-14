@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage
 
 <!-- ------------------------ -->

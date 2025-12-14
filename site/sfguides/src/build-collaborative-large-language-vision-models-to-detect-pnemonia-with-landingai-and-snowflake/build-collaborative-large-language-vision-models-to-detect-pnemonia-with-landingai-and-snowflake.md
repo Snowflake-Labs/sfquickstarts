@@ -6,6 +6,7 @@ summary: This guide shows how to use LandingLens and Snowflake to create a compu
 environments: web
 status: Published
 
+
 # Visual AI Models with LandingLens on Snowflake
 
 ## Overview

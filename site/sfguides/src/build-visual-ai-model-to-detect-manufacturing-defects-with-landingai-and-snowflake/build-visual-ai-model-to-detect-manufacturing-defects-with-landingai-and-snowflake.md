@@ -7,6 +7,7 @@ summary: This guide shows how to use LandingLens and Snowflake to create a compu
 environments: web
 status: Published
 
+
 # Use Visual AI Models to Detect Defects with LandingLens on Snowflake
 
 ## Overview

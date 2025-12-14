@@ -7,6 +7,7 @@ status: Pubblicato
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
 # Guida introduttiva a Snowflake - Da zero a Snowflake
 
 
