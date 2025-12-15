@@ -59,6 +59,7 @@ User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthe
 ```
 
 ### What You'll Learn
+
 - How to set up Snowflake Cortex Agents with specialized tools
 - How to create Cortex Search services for semantic search
 - How to build Semantic Views for Cortex Analyst text-to-SQL
@@ -67,19 +68,22 @@ User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthe
 
 ### What You'll Build
 A complete multi-agent customer intelligence system that:
+
 - Routes queries to specialized agents (Content, Data Analyst, Research)
 - Uses Cortex Search for semantic search across support tickets
 - Uses Cortex Analyst for natural language to SQL conversion
 - Uses custom AI UDFs for sentiment analysis and churn prediction
-- Evaluates responses using TruLens metrics
+- Evaluates responses using Agent Goal-Plan-Action alignment metrics via TruLens
 
 ### Prerequisites
+
 - [Snowflake Account](https://signup.snowflake.com/) with Cortex AI features enabled
 - Python 3.9+ installed locally
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
 - Basic familiarity with LangGraph and LangChain concepts (optional)
 
 ## Setup Git Integration
+
 Duration: 5
 
 The first step is to clone the repository into Snowflake using Git Integration. This gives you access to all the SQL scripts and demo data files.
