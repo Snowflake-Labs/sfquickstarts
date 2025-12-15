@@ -157,7 +157,7 @@ Now let's create and run your first agent evaluation.
 
 **3.** Click the **Evaluations** tab
 
-![Agent Evaluations Tab](assets/evaluations-tab.png)
+![Agent Evaluations Tab](assets/agent-evaluations-page.png)
 
 ### Step 2: Configure the Evaluation Run
 
@@ -168,6 +168,8 @@ Now let's create and run your first agent evaluation.
 **3.** Optionally add a description to document your evaluation purpose
 
 **4.** Click **Next**
+
+![Configure Evaluation Run](assets/new-evaluations-run.png)
 
 ### Step 3: Select or Create a Dataset
 
