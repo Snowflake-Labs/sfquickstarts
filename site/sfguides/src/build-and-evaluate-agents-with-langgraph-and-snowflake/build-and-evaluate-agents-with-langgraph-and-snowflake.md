@@ -1114,44 +1114,8 @@ metrics = [
 run.compute_metrics(metrics)
 ```
 
-## Run the Demo
-Duration: 10
-
-Now you can run the complete multi-agent system using LangGraph Studio or directly via Python.
-
-### Option 1: LangGraph Studio (Recommended)
-
-```bash
-# Install LangGraph CLI if not already installed
-pip install langgraph-cli
-
-# Start LangGraph Studio
-langgraph dev
-```
-
-This opens LangGraph Studio in your browser where you can:
-- Send queries to the multi-agent system
-- Visualize the execution flow
-- See which agents are called and their responses
-- View the supervisor's planning and synthesis
-
-### Option 2: Run via Jupyter Notebook
-
-Open the `build_and_evaluate_agents_with_langgraph_and_snowflake.ipynb` notebook and run all cells sequentially.
-
-### Test Queries
-
-Try these business scenarios to see the multi-agent system in action:
-
-| Query Type | Example | Expected Agent |
-|------------|---------|----------------|
-| **Content Analysis** | "Assess the churn risk for customers complaining about API issues." | CONTENT_AGENT → DATA_ANALYST_AGENT |
-| **Data Analytics** | "What's the average session duration for enterprise vs professional customers?" | DATA_ANALYST_AGENT |
-| **Strategic Research** | "What industries represent our best expansion opportunities?" | RESEARCH_AGENT |
-| **Churn Prediction** | "Which customers are most likely to churn in the next 30 days?" | DATA_ANALYST_AGENT |
-| **Support Analysis** | "What are the most common support issues for enterprise customers?" | CONTENT_AGENT |
-
 ## Conclusion and Resources
+
 Duration: 5
 
 Congratulations! You've successfully built a **multi-agent supervisor architecture** using LangGraph and Snowflake Cortex. This system demonstrates:
