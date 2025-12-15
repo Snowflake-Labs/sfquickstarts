@@ -18,11 +18,7 @@ Building AI agents is just the beginning—understanding how well they perform i
 
 This quickstart guides you through setting up and running evaluations on Cortex Agents, building evaluation datasets, and comparing agent configurations to optimize performance.
 
-:::info[Preview Feature — Private]
-
-Support for this feature is currently not in production and is available only to selected accounts.
-
-:::
+> **Preview Feature — Private**: Support for this feature is currently not in production and is available only to selected accounts.
 
 ### What is Cortex Agent Evaluations?
 
@@ -96,8 +92,6 @@ This script will create:
 - **Cortex Search Service**: On campaign content for semantic search capabilities
 - **Stored Procedure**: Custom agent tool for specialized operations
 - **Cortex Agents**: Pre-configured agents with the above services attached
-
-![Setup Complete](assets/setup-complete.png)
 
 <!-- ------------------------ -->
 
@@ -177,7 +171,7 @@ Now let's create and run your first agent evaluation.
 
 ### Step 3: Select or Create a Dataset
 
-**Option A: Use the Pre-built Dataset**
+#### Option A: Use the Pre-built Dataset**
 
 If you ran the setup script, you'll have a sample evaluation dataset ready:
 
@@ -185,7 +179,7 @@ If you ran the setup script, you'll have a sample evaluation dataset ready:
 - Choose `MARKETING_CAMPAIGNS_DB.PUBLIC.EVALS_TABLE` as your input table
 - Select `MARKETING_CAMPAIGNS_DB.PUBLIC.QUICKSTART_EVALSET` as your dataset destination
 
-**Option B: Create a New Dataset**
+#### Option B: Create a New Dataset**
 
 - Select **Create New Dataset**
 - Choose your input table containing queries and expected outputs
@@ -199,9 +193,9 @@ If you ran the setup script, you'll have a sample evaluation dataset ready:
 
 **2.** Enable the evaluation metrics you want to measure:
 
-   - ☑️ **Tool Selection Accuracy** - Reference the `EXPECTED_TOOLS` column
-   - ☑️ **Tool Execution Accuracy** - Reference the `EXPECTED_TOOLS` column
-   - ☑️ **Answer Correctness** - Reference the `EXPECTED_TOOLS` column
+- ☑️ **Tool Selection Accuracy** - Reference the `EXPECTED_TOOLS` column
+- ☑️ **Tool Execution Accuracy** - Reference the `EXPECTED_TOOLS` column
+- ☑️ **Answer Correctness** - Reference the `EXPECTED_TOOLS` column
 
 **3.** Click **Create Evaluation**
 
@@ -243,9 +237,9 @@ Common improvements to test:
 
 **3.** Follow the same steps as the first evaluation:
 
-   - Name your evaluation (e.g., "Improved Marketing Agent Eval")
-   - **Reuse the same dataset** you created in the previous evaluation
-   - Select the same metrics for an apples-to-apples comparison
+- Name your evaluation (e.g., "Improved Marketing Agent Eval")
+- **Reuse the same dataset** you created in the previous evaluation
+- Select the same metrics for an apples-to-apples comparison
 
 **4.** Click **Create Evaluation**
 
@@ -259,9 +253,9 @@ Once both evaluations complete, you can compare results:
 
 **3.** Investigate cases where added orchestration and response instructions led to:
 
-   - Higher tool selection accuracy
-   - Better tool execution accuracy
-   - More correct answers
+- Higher tool selection accuracy
+- Better tool execution accuracy
+- More correct answers
 
 ![Comparison Results](assets/comparison-results.png)
 
@@ -274,7 +268,7 @@ Once both evaluations complete, you can compare results:
 
 <!-- ------------------------ -->
 
-## Using the Evalset Generator App
+## Using the Evalset Generator Streamlit App
 
 Duration: 15
 
@@ -293,12 +287,18 @@ pip install -r requirements.txt
 Create a `.env` file in the repository root with your Snowflake credentials:
 
 ```bash
-SNOWFLAKE_ACCOUNT=<ACCOUNT_LOCATOR.ACCOUNT_REGION>
+SNOWFLAKE_ACCOUNT=<YOUR_ACCOUNT_ID>
 SNOWFLAKE_USER=<YOUR_USERNAME>
 SNOWFLAKE_USER_PASSWORD=<YOUR_PASSWORD>
 ```
 
-> **Note**: Replace `<ACCOUNT_LOCATOR.ACCOUNT_REGION>` with your account identifier (e.g., `ABC1234.us-west-2`)
+To get your Snowflake credentials:
+
+1. Click on your user profile in the bottom left
+2. Choose Connect a tool to Snowflake
+3. Copy the value for your Account identifier and pase it into the .env file.
+4. Copy the value for Login name and paste it into the SNOWFLAKE_USER .env file.
+5. Paste or type in your Snowflake password into the .env file.
 
 ### Launch the Application
 
@@ -348,10 +348,10 @@ The Evalset Generator helps you build evaluation datasets through four main work
 
 **3.** Review the automatically populated queries from historical agent interactions
 
-**4.** Add ground truth data:
+**4.** Add ground truth data including:
 
-   - Expected tool invocations
-   - Expected output responses
+- Expected tool invocations
+- Expected output responses
 
 **5.** Edit any queries or expectations as needed
 
@@ -365,19 +365,19 @@ Duration: 5
 
 ### Evaluation Dataset Design
 
-**Diverse Query Coverage**
+#### Diverse Query Coverage
 
 - Include queries across all expected use cases
 - Test edge cases and boundary conditions
 - Include queries that should trigger different tools
 
-**Ground Truth Quality**
+#### Ground Truth Quality
 
 - Ensure expected outputs are accurate and complete
 - Review tool invocation expectations carefully
 - Update ground truth as requirements evolve
 
-**Dataset Size**
+#### Dataset Size
 
 - Start with 20-50 representative queries
 - Expand coverage based on failure analysis
@@ -385,30 +385,30 @@ Duration: 5
 
 ### Iterative Improvement
 
-**1. Establish Baseline**
+#### 1. Establish Baseline
 
 - Run initial evaluation on your current agent
 - Document baseline metrics across all dimensions
 
-**2. Identify Weaknesses**
+#### 2. Identify Weaknesses
 
 - Analyze queries with low scores
 - Look for patterns in failures
 - Prioritize high-impact improvements
 
-**3. Make Targeted Changes**
+#### 3. Make Targeted Changes
 
 - Modify one aspect at a time
 - Update orchestration or response instructions
 - Adjust tool configurations as needed
 
-**4. Measure Impact**
+#### 4. Measure Impact
 
 - Re-run evaluation with same dataset
 - Compare metrics to baseline
 - Document what worked and what didn't
 
-**5. Iterate**
+#### 5. Iterate
 
 - Repeat the process with new improvements
 - Track progress over time
