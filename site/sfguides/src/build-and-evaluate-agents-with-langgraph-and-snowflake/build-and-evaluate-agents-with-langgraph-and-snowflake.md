@@ -1148,12 +1148,10 @@ Congratulations! You've successfully built a **multi-agent supervisor architectu
 
 ### Related Resources
 
+- [Developer Guide GitHub Repository](https://github.com/Snowflake-Labs/sfguide-build-and-evaluate-agents-with-snowflake-and-langgraph)
+- [LangChain Snowflake Integration](https://github.com/langchain-ai/langchain-snowflake)
 - [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
 - [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex)
 - [Cortex Agents Guide](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents)
-- [Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
-- [Cortex Analyst Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
-- [TruLens Documentation](https://www.trulens.org/docs/)
-- [LangChain Snowflake Integration](https://github.com/langchain-ai/langchain-snowflake)
-- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-build-and-evaluate-agents-with-snowflake-and-langgraph)
+- [TruLens Documentation](https://www.trulens.org/)
 
