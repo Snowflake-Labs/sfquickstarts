@@ -36,8 +36,8 @@ User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthe
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    SUPERVISOR (Claude)                           │
-│              Routes queries & synthesizes responses              │
+│                      SUPERVISOR (Planning)                       │
+│               Plans execution and routes queries                 │
 └─────────────────────────────────────────────────────────────────┘
                               │
            ┌──────────────────┼──────────────────┐
@@ -53,8 +53,14 @@ User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthe
            └──────────────────┼──────────────────┘
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                 Snowflake AI Tools                               │
+│                 Snowflake AI Tools                              │
 │     Cortex Search │ Cortex Analyst │ Custom AI UDFs             │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    SUPERVISOR (Synthesis)                        │
+│              Creates executive summary response                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
