@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Improving ad performance with Facebook's Conversion API (CAPI), using Hightouch and Snowflake.
 <!-- ------------------------ -->
 ## Overview 

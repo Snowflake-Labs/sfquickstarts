@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Victoria Warner (Cybersyn)
 
+
 # Getting Started with Snowflake
 
 <!-- ------------------------ -->

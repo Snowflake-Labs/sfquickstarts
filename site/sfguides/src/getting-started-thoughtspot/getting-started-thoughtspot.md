@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build a ReactJS app with ThoughtSpot and Snowflake
 
 ## Overview

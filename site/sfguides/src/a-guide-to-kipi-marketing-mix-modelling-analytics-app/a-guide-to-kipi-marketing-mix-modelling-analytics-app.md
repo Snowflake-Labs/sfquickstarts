@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # A Guide to Kipi Marketing Mix Modelling and Analytics App
 <!-- ------------------------ -->
 ## Overview 

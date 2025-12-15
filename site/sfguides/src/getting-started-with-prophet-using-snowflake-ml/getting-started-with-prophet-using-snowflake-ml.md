@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-p
 
 
 
+
 # Getting Started with Prophet Model using Snowflake ML
 <!-- ------------------------ -->
 ## Overview 

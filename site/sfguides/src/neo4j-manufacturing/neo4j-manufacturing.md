@@ -8,6 +8,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 language: en
 
 
+
 # Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics
 
 ## Overview

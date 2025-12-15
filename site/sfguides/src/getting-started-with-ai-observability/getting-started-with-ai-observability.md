@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-a
 
 
 
+
 # Getting Started with AI Observability
 
 ## Overview

@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # A Image Recognition App in Snowflake using Snowpark Python, PyTorch, Streamlit and OpenAI
 <!-- ------------------------ -->
 ## Overview

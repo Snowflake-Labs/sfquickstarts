@@ -9,6 +9,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch
 
 
+
 # Monitor Schema Drift in Data Shares with Sharewatch
 <!-- ------------------------ -->
 ## Overview

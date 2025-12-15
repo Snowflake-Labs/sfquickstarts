@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-building-retail-analyt
 
 
 
+
 # Build a Retail Analytics Data Engineering Pipeline with Snowflake
 <!-- ------------------------ -->
 
