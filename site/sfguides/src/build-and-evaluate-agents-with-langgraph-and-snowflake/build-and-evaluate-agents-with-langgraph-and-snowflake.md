@@ -1,5 +1,5 @@
 author: Josh Reini
-id: build-and-evaluate-agents-with-snowflake-and-langgraph
+id: build-and-evaluate-agents-with-langgraph-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Build and evaluate a multi-agent supervisor system using LangGraph and Snowflake Cortex Agents
