@@ -13,6 +13,7 @@ jobs:
       has_relevant_changes: ${{ steps.detect.outputs.has_relevant_changes }}
       quickstart_batches_json: ${{ steps.detect.outputs.quickstart_batches_json }}
       pr_number: ${{ steps.pr.outputs.number }}
+      all_changed_files_json: ${{ steps.detect.outputs.all_changed_files_json }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -110,6 +111,9 @@ jobs:
           fi
           echo "quickstart_batches_json=${quickstart_batches_json:-[]}" >> $GITHUB_OUTPUT
           echo "has_relevant_changes=$has_relevant_changes" >> $GITHUB_OUTPUT
+          # Output all changed files as JSON array for use in webhook payload
+          all_changed_files_json=$(echo "$changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+          echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
 
       - name: Get PR number from commit
         id: pr
@@ -138,6 +142,7 @@ jobs:
           WORKATO_PROD_WEBHOOK_URL: ${{ secrets.WORKATO_PROD_WEBHOOK_URL }}
           BATCH_JSON: ${{ toJson(matrix.batch) }}
           PR_NUMBER: ${{ needs.publish.outputs.pr_number }}
+          ALL_CHANGED_FILES_JSON: ${{ needs.publish.outputs.all_changed_files_json }}
         run: |
           if [ -z "$WORKATO_PROD_WEBHOOK_URL" ]; then
             echo "WORKATO_PROD_WEBHOOK_URL is not set. Cannot call production webhook." >&2
@@ -157,6 +162,9 @@ jobs:
             # Create single-item array for quickstart_names to match expected format
             qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
             
+            # Filter changed files to only those in this quickstart's directory
+            changed_files_for_qs=$(echo "$ALL_CHANGED_FILES_JSON" | jq -c --arg qname "$qname" '[.[] | select(startswith("site/sfguides/src/" + $qname + "/"))]')
+            
             payload=$(jq -n \
               --arg repo "$GITHUB_REPOSITORY" \
               --arg sha "$GITHUB_SHA" \
@@ -165,7 +173,8 @@ jobs:
               --arg pr_num "$PR_NUMBER" \
               --arg qname "$qname" \
               --argjson qnames "$qnames_array" \
-              '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames}')
+              --argjson changed_files "$changed_files_for_qs" \
+              '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames, changed_files:$changed_files}')
             
             echo "Payload:"
             echo "$payload" | jq .
