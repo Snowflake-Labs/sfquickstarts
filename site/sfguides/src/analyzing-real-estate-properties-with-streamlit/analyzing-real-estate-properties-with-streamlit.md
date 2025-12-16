@@ -8,8 +8,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Vinícius Oviedo
 
 
+
 # Analyzing real estate properties using Streamlit
-<!-- ------------------------ -->
+
+
+
 ## Overview 
 
 Analyzing residential properties for sale in Brazil (or any country) can be time-consuming. Usually, there are public reports that track real estate prices but no interactive data visualizations to compare assets across cities. That can be solved by creating an **"appreciation of residential properties"** app which combine Python programming, statistics and storytelling techniques to make data analysis more accessible!
