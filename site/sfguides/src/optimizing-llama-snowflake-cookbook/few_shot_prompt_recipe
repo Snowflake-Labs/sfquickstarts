@@ -1,0 +1,17 @@
+#few shot prompting
+# "Customer cannot reset password using the forgot password link."
+#"Category: Account Access Issue\nUrgency: High\nResponse: Please verify your email and try resetting your password again."
+#"Internet connection keeps dropping every few minutes, affecting video calls."
+#"Category: Network Issue\nUrgency: Medium\nResponse: Please restart your router and check for service outages in your area."
+#"Application crashes with error code 500 when uploading large files."
+#"Category: Application Bug\nUrgency: High\nResponse: Could you please provide the file size and error logs? We will check."
+
+
+-- Create the fine-tuning job pointing at your training data table
+SELECT snowflake.cortex.finetune(
+  'CREATE',
+  'MY_DB.MY_SCHEMA.CUSTOMER_SUPPORT_FINETUNED',
+  'llama3.1-8b',
+  'SELECT prompt, completion FROM MY_DB.MY_SCHEMA.CUSTOMER_SUPPORT_TRAINING',
+  NULL   -- optional validation data query here
+);

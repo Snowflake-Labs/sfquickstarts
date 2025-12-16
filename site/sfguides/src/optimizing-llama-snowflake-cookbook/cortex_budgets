@@ -1,0 +1,73 @@
+-- This script creates a stored procedure `mini_budget_on_cortex` to monitor
+-- Snowflake Cortex functions credit usage. This is a temporary solution until the native
+-- Snowflake Budget feature supports monitoring for Cortex services.
+--
+--
+-- The procedure checks usage for the current account and sends a notification
+-- if the usage exceeds a specified limit within a given billing period (day, week, or month).
+-- It also creates a task `run_mini_budget_on_cortex` to run the check every 30 minutes.
+
+
+CREATE OR REPLACE PROCEDURE mini_budget_on_cortex(
+    billing_period VARCHAR,
+    alert_limit FLOAT,
+    ni_name VARCHAR
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+AS
+$$
+DECLARE
+    start_of_period       DATE;
+    INVALID_PERIOD        EXCEPTION (-20001, 'Invalid billing_period specified. Must be DAY, WEEK, or MONTH.');
+    current_usage_credits FLOAT;
+    notification_body     VARCHAR;
+BEGIN
+    CASE UPPER(billing_period)
+        WHEN 'DAY' THEN
+            start_of_period := CURRENT_DATE();
+        WHEN 'WEEK' THEN
+            start_of_period := DATE_TRUNC('week', CURRENT_DATE());
+        WHEN 'MONTH' THEN
+            start_of_period := DATE_TRUNC('month', CURRENT_DATE());
+        ELSE
+            RAISE INVALID_PERIOD;
+    END CASE;
+
+    SELECT COALESCE(SUM(TOKEN_CREDITS), 0) INTO current_usage_credits
+    FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_FUNCTIONS_USAGE_HISTORY
+    WHERE START_TIME >= :start_of_period;
+
+    notification_body := 'Account: ' || CURRENT_ACCOUNT() || ' (' || CURRENT_REGION() || ')'
+                      || ' - Cortex functions credit usage in this ' || billing_period
+                      || ' = ' || current_usage_credits;
+    IF (current_usage_credits >= alert_limit) THEN
+        IF (ni_name IS NOT NULL AND TRIM(ni_name) <> '') THEN
+            CALL SYSTEM$SEND_SNOWFLAKE_NOTIFICATION(
+                '{"text/plain":"' || :notification_body || '"}',
+                '{"' || :ni_name || '": {}}'
+            );
+        END IF;
+    END IF;
+
+    RETURN notification_body;
+END;
+$$;
+
+
+-- Make sure the notification is sent to the correct Slack channel with a low limit.
+call mini_budget_on_cortex('MONTH', 10, 'MY_SLACK_NI');
+
+
+
+-- Create a task to run the procedure every 30 minutes.
+create or replace task run_mini_budget_on_cortex
+schedule = '30 minute'
+as
+call mini_budget_on_cortex('MONTH', 1000, 'MY_SLACK_NI');
+
+
+
+-- Make sure the task is running.
+alter task run_mini_budget_on_cortex resume;
+
