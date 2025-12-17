@@ -19,7 +19,7 @@ Snowflake Postgres is a fully-managed, enterprise-ready Postgres solution. It is
 
 ### Prerequisites
 - Snowflake account or trial
-- `SNOWFLAKE_ADMIN` role
+- `ACCOUNTADMIN` role or a role that has been granted `CREATE POSTGRES INSTANCE`
 - Local Postgres install or a Postgres graphical user interface
 
 
@@ -37,8 +37,6 @@ Snowflake Postgres is a fully-managed, enterprise-ready Postgres solution. It is
 ## Deploy a Postgres Instance
 
 You can deploy Postgres from the Snowsight UI or via SQL in a worksheet. Creating a Postgres instance from Snowsight is available from the + button at the top of the navigation menu or under the Manage section in the bottom left.
-
-Note that you need a `SNOWFLAKE_ADMIN` role to create and manage a Postgres cluster.
 
 Postgres instances need these things defined:
 
