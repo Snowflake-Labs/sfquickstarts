@@ -37,7 +37,7 @@ You can submit your own Guides to be published on Snowflake's website by submitt
 3. Click "Add file" --> "Create new file" 
 4. In the "Name your file" field, type your new folder name followed by a "/", then a file name inside it that ends in '.md'.
    -- Example: my-guide/my-guide.md <br>
-   > -- Please ensure both of these names match exactly (these are case sensitive) <br>
+   > -- Please ensure both of the folder name and the markdown file names match exactly (these are case sensitive) <br>
    -- Please use hyphens,  no underscores <br>
    -- Ensure your folder uses lower case alphabets and "Hyphens (-)" and not "Underscores(_)" in folder name <br>
 
@@ -45,8 +45,8 @@ You can submit your own Guides to be published on Snowflake's website by submitt
    > Required fields: language, category tags, id, author name, status (leave this as published) <br>
    Optional Fields: summary, environments, feedback link, fork repo link, open in Snowflake
    Commit your changes in a branch and name it.  Example:  Test-demo-branch
-6. To submit related assets with your guide, go into your branch (Test-demo-branch) that you just created in step 5.  
-
+6. To submit related assets with your guide, go into your branch (in our example: Test-demo-branch) that you just created in step 5.  
+**Separate Repos:** Instead of creating separate repos and requesting them to be public, your demo files and content can be placed in "/assets" folder where images are placed. Non image files can now be larger than 1MB as well.  :notebooks:Note: Please review the [OSS Policy](https://lift.snowflake.com/lift?id=kb_article&table=kb_knowledge&sysparm_article=KB0013458&searchTerm=open%20source%20policy) to ensure you are in accordance with guidelines for demo data. Separate repos created for demos that need to be made public, will need to go through legal reviews outlined in the policy before the request is made to DevRel.
 ![Go to Your Fork and Branch](site/sfguides/src/_shared_assets/your-fork-branch.png)
 
 
