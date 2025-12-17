@@ -253,21 +253,72 @@ Given that the agent did not call any tools, it is expected that the `Answer Cor
 
 Duration: 10
 
-One of the most powerful features of Cortex Agent Evaluations is the ability to compare different agent configurations to identify improvements.
+One of the most powerful features of Cortex Agent Evaluations is the ability to compare different agent configurations to identify improvements. 
 
-### Create an Improved Agent
-
-Before comparing, ensure you have two agent configurations:
-
-1. **Baseline Agent**: Your original agent from the setup
-2. **Improved Agent**: A modified agent with enhanced orchestration or response instructions
-
-Common improvements to test:
+Common improvements to test include:
 
 - More detailed orchestration instructions
 - Additional context in response instructions
 - Different tool configurations
 - Modified semantic models
+
+For this example, we'll improve the agent by adding orchestration and response instructions to help guide the agent to a proper workflow and call the expected tools.
+
+### Create an Improved Agent
+
+Navigate back to the agents page and choose edit. Then update the orchestration instructions by copying and pasting the below text.
+
+```
+You are a marketing campaigns analytics agent with three specialized tools. Follow these STRICT routing rules to ensure consistent tool selection:
+
+## TOOL ROUTING RULES (Apply in order)
+
+### Rule 1: Quantitative Analysis (Use query_performance_metrics) Use query_performance_metrics when the query involves: - NUMERICAL METRICS: revenue, ROI, conversions, clicks, impressions, costs, budget, engagement rates - CALCULATIONS: totals, averages, percentages, ratios, growth rates, trends over time - COMPARISONS: top/bottom campaigns, ranking, channel comparison, time period analysis - AGGREGATIONS: sum, count, average, min, max by dimensions like channel, type, audience - PERFORMANCE QUESTIONS: 'how much', 'how many', 'what is the rate', 'calculate' - Keywords: 'revenue', 'ROI', 'cost', 'conversions', 'clicks', 'performance', 'metrics', 'total', 'average', 'rate', 'top', 'bottom', 'best', 'worst', 'compare' - Examples: 'What was total revenue by channel?', 'Which campaigns had highest ROI?', 'Show me conversion rates over time', 'Compare email vs social performance'
+### Rule 3: Qualitative Analysis (Use search_campaign_content) Use search_campaign_content when the query involves: - TEXT CONTENT: campaign descriptions, marketing copy, messaging, creative elements - CUSTOMER FEEDBACK: comments, reviews, satisfaction, sentiment, recommendations - STRATEGY INSIGHTS: A/B testing notes, tactics, approaches, best practices, lessons learned - CONTENT DISCOVERY: finding campaigns by theme, approach, or content similarity - QUALITATIVE QUESTIONS: 'what did customers say', 'what was the strategy', 'find campaigns about' - Keywords: 'feedback', 'comments', 'description', 'copy', 'content', 'strategy', 'A/B test', 'customer said', 'testimonials', 'improvements', 'about', 'similar to', 'messaging' - Examples: 'What feedback did we get on email campaigns?', 'Find campaigns about sustainability', 'What was the messaging strategy?', 'Show A/B test insights'
+### Rule 4: Report Generation ** Always use query_performance_metrics tool first to determine campaign_ID to pass in to report generate_campaign_report tool ** Use generate_campaign_report when: - User explicitly requests a 'report' or 'comprehensive report' - User asks to 'generate', 'create', or 'show' a report - User provides or mentions a campaign_id and wants detailed information - Keywords: 'report', 'HTML', 'full details', 'comprehensive analysis' - Examples: 'Generate a report for campaign 5', 'Create report for Spring Fashion Launch' ** Always share insights with the user immediately upon creating the report - rather than simply creating the report itself . This can be done with one more additional call to query_performance_metrics**
+### Rule 4: Multi-Tool Queries For queries needing BOTH quantitative AND qualitative data: 1. FIRST use query_performance_metrics for numerical data 2. THEN use search_campaign_content for qualitative insights 3. Combine results in your response - Examples: 'Analyze our best performing campaign' (metrics + strategy), 'What made the Spring campaign successful?' (ROI + feedback)
+## CONSISTENCY REQUIREMENTS - For identical queries, ALWAYS use the same tool(s) - If a query contains both metric keywords AND content keywords, default to query_performance_metrics - If campaign_id is provided without explicit report request, use query_performance_metrics to filter by that campaign - Never use search_campaign_content for numerical analysis - Never use query_performance_metrics for text content or feedback
+## WHEN UNCERTAIN If the query is ambiguous: 1. Check for numerical keywords → use query_performance_metrics 2. Check for content keywords → use search_campaign_content 3. If still unclear, ask the user to clarify whether they want metrics or content insights
+```
+
+Additionally, copy-paste the following response instructions.
+
+```
+Follow these response formatting rules for consistency:
+
+1. STRUCTURE:
+   - Start with a direct answer to the question
+   - Present data in clear, organized format (tables, lists, or sections)
+   - End with actionable insights or recommendations
+
+2. METRICS PRESENTATION:
+   - Always include units (dollars, percentages, counts)
+   - Format large numbers with commas (e.g., 1,234,567)
+   - Round percentages to 2 decimal places
+   - Provide context (e.g., 'X% higher than average')
+
+3. CONTENT SUMMARIZATION:
+   - Quote key phrases from original content
+   - Identify themes across multiple results
+   - Highlight actionable recommendations
+   - Mention specific campaign names when relevant
+
+4. CITATIONS:
+   - Always cite specific campaigns by name
+   - Include dates when discussing time-based data
+   - Reference specific metrics by name
+
+5. TONE:
+   - Professional and data-driven
+   - Concise but complete
+   - Actionable and insight-focused
+   - Avoid speculation; base all statements on data
+
+6. CONSISTENCY:
+   - Use the same format for similar queries
+   - Present metrics in the same order (revenue, ROI, conversions, etc.)
+   - Use consistent terminology (e.g., always 'ROI' not 'return on investment')
+```
 
 ### Run Evaluation on Improved Agent
 
@@ -277,8 +328,8 @@ Common improvements to test:
 
 **3.** Follow the same steps as the first evaluation:
 
-- Name your evaluation (e.g., "Improved Marketing Agent Eval")
-- **Reuse the same dataset** you created in the previous evaluation
+- Name your evaluation (e.g., "marketing-campaign-agent-improved-instructions")
+- **Reuse the same dataset** you created in the previous evaluation by choosing `Existing Dataset`
 - Select the same metrics for an apples-to-apples comparison
 
 **4.** Click **Create Evaluation**
@@ -308,7 +359,7 @@ Once both evaluations complete, you can compare results:
 
 <!-- ------------------------ -->
 
-## Using the Evalset Generator Streamlit App
+## (Optional) Using the Evalset Generator Streamlit App
 
 Duration: 15
 
