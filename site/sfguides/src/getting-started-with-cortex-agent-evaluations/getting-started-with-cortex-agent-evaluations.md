@@ -20,6 +20,8 @@ This quickstart guides you through setting up and running evaluations on Cortex 
 
 > **Preview Feature — Private**: Support for this feature is currently not in production and is available only to selected accounts.
 
+If you are building external agents, such as in python or a framework like LangGraph, please check out [Getting Started with AI Observability](https://www.snowflake.com/en/developers/guides/getting-started-with-ai-observability/) instead. This guide is entirely focused on evaluation of Cortex Agents.
+
 ### What is Cortex Agent Evaluations?
 
 Cortex Agent Evaluations is a feature within Snowflake Cortex that enables you to systematically measure and improve your AI agents. It provides:
