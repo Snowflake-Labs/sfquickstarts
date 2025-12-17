@@ -88,11 +88,35 @@ cd sfguide-getting-started-with-cortex-agent-evaluations
 This script will create:
 
 - **MARKETING_CAMPAIGNS_DB**: A database containing sample marketing data
+- **AGENT_EVAL_ROLE**: A dedicated role with all permissions needed for agent evaluation
 - **Marketing data tables**: Campaign performance, feedback, and content data
 - **Semantic View**: For Cortex Analyst Service on campaign performance and feedback data
 - **Cortex Search Service**: On campaign content for semantic search capabilities
 - **Stored Procedure**: Custom agent tool for specialized operations
 - **Cortex Agents**: Pre-configured agents with the above services attached
+
+### Understanding the Role Configuration
+
+The setup script creates a new role called `AGENT_EVAL_ROLE` with all the necessary permissions for running agent evaluations. This includes:
+
+| Permission Type | Description |
+|-----------------|-------------|
+| Database/Schema Usage | Access to the `MARKETING_CAMPAIGNS_DB` database and `AGENTS` schema |
+| Database Roles | `SNOWFLAKE.CORTEX_USER` for Cortex features and `SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP` for accessing agent traces |
+| Dataset Creation | Ability to create datasets, file formats, tables, and stages |
+| Task Management | Create and execute tasks for scheduled evaluations |
+| Agent Monitoring | Monitor permissions on agents in the schema |
+| User Impersonation | Required for executing evaluation runs on behalf of users |
+| Git Integration | Create API integrations and Git repositories for loading sample data |
+| Service Creation | Create semantic views, Cortex Search services, procedures, and agents |
+
+The role is automatically granted to your current user, so you can switch to it after the setup completes:
+
+```sql
+USE ROLE AGENT_EVAL_ROLE;
+```
+
+> **Note**: The script starts with `ACCOUNTADMIN` to create the database and role, then switches to `AGENT_EVAL_ROLE` for all subsequent operations. This follows the principle of least privilege.
 
 <!-- ------------------------ -->
 
