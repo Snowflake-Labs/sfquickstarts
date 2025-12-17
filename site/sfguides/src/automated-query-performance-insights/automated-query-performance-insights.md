@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Analyze Query Performance in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
@@ -23,7 +24,7 @@ You'll learn how to leverage Snowflake's `ACCOUNT_USAGE` schema to analyze query
 A collection of analytical SQL queries that provide insights into query performance, warehouse utilization, and task execution patterns.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic SQL knowledge
 - Access to Snowflake's `ACCOUNT_USAGE` schema
 
@@ -58,7 +59,7 @@ ORDER BY total_elapsed_time desc
 LIMIT 50;
 ```
 
-> aside positive
+> 
 > IMPORTANT:
 > - Replace '<your_warehouse_name>' with your actual warehouse name.
 > - Adjust the DATEADD function to analyze different time periods

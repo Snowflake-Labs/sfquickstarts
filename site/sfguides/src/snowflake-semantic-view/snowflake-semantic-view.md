@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Snowflake Semantic View
 <!-- ------------------------ -->
 ## Overview
@@ -26,7 +27,7 @@ Snowflake addresses these challenges by introducing Semantic Views, a new schema
 You will build a foundational understanding and practical setup of a Snowflake semantic view, complete with data views and a defined semantic model, enabling simplified and consistent data querying for BI and AI applications using TPC-DS sample data.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
 - Access to `ACCOUNTADMIN` role is required for creating semantic views)
@@ -126,7 +127,7 @@ SHOW VIEWS;
 
 ![image](assets/show-views.png)
 
-> aside positive
+> 
 > IMPORTANT:
 > - Ensure you have the `ACCOUNTADMIN` role to create semantic views
 > - Verify that all views are created successfully before proceeding to the next step

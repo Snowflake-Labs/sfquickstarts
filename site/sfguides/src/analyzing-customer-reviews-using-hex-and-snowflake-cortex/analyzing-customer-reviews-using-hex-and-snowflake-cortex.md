@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Analyzing Customer Reviews With Hex and Snowflake Cortex
 
 <!-- ------------------------ -->
@@ -19,7 +20,7 @@ We will be exploring customer review data using Snowflake Cortex and Hex. Specif
 ### Prerequisites
 - Familiarity with basic Python and SQL 
 - Familiarity with data science notebooks
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account (if you are using an enterprise account through your organization, ensure that you have permissions to write data to a database).
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account (if you are using an enterprise account through your organization, ensure that you have permissions to write data to a database).
 
 ### What You Will Learn
 * How to leverage Snowflake's Cortex LMM functionality

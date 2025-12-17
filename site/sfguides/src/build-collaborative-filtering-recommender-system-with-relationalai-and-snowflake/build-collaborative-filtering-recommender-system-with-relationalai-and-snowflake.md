@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/rai-samples/issues
 
+
 # Recommender Systems with RelationalAI’s Snowflake Native App
 
 ## Overview 
@@ -29,14 +30,14 @@ In this quickstart, you'll learn how to:
 
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account
 - Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
 - The [RAI Recommendation Jupyter notebook](https://github.com/RelationalAI/rai-samples/tree/main/samples/recommender-system/collaborative_filtering.ipynb) used in this quickstart
 
 ### What You’ll Build 
 - A recommmender system on the 100k MovieLens database using Snowflake and RelationalAI
 
-> aside positive
+> 
 > NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions [here](https://relational.ai/docs/native_app/installation)
 
 <!-- ------------------------ -->
@@ -52,7 +53,7 @@ To prepare data needed for this tutorial, follow these steps:
 
 3. **Connect to Snowflake and Prepare Data**: Utilize the Snowflake extension to establish a connection to your Snowflake instance. Once connected, create tables and prepare your data directly from within VS Code by running the commands below:
 
-> aside positive
+> 
 > IMPORTANT:
 >
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -168,7 +169,7 @@ COPY INTO MOVIE_DETAILS
 
 By following these steps, you'll be ready to build and deploy your Recommender System using Snowflake seamlessly.
 
-> aside positive
+> 
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 The last step is to stream data from snowflake tables into RelationalAI model:
@@ -180,7 +181,7 @@ rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TRAIN --source RECOMMENDA
 - `--source`: This flag specifies the fully-qualified name of a Snowflake table or view.
 - `--model`: This flag specifies the name of the model to which the data in the Snowflake table or view is streamed.
 
-> aside positive
+> 
 > IMPORTANT: An import stream utilizes [change data capture](https://docs.snowflake.com/en/user-guide/streams)
 to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute. 
 <!-- ------------------------ -->
@@ -203,7 +204,7 @@ To get started, follow these steps:
 
 2) Open and run through the cells in [collaborative_filtering.ipynb](https://github.com/RelationalAI/rai-samples/blob/main/samples/recommender-system/collaborative_filtering.ipynb)
 
-> aside positive
+> 
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***rai_recsys***-- which is the name of the environment created in **Setup Environment** step.
 
 <!-- ------------------------ -->

@@ -6,6 +6,11 @@ summary: Getting Started with Running Distributed PyTorch Models on Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake
+
+
+
+
 
 # Getting Started with Running Distributed PyTorch Models on Snowflake
 
@@ -36,7 +41,7 @@ In addition, this end-to-end ML solution using [Snowflake ML](/en/data-cloud/sno
 
 ### Prerequisites
 - Privileges necessary to create a user, database, and warehouse in Snowflake
-- A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
+- A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account, if required. 
 - (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
 
 ### What You Will Learn

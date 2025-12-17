@@ -6,6 +6,11 @@ summary: Through this quickstart guide, you will learn how to deploy a custom mo
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables-tasty-bytes
+
+
+
+
 
 # Deploying Custom Models To Snowflake Model Registry
 <!-- ------------------------ -->
@@ -48,13 +53,12 @@ This quickstart will focus on
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry)
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.10](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.10 in the **Setup the Python Environment** step
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
@@ -132,7 +136,7 @@ These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfg
 }
 ```
 
-> aside negative
+> 
 > 
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
 
@@ -143,7 +147,7 @@ During this step we will train a PyCaret model and save it to local disc.
 
 * Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/1_train_pycaret_model.ipynb)
 
-> aside negative
+> 
 > 
 > **Note:** PyCaret can not currently run directly, i.e you can not use it with import, in a Snowflkae Notebook so make sure you use an external notbook enviroment such as Visual Studio Code or Jupyter.
 

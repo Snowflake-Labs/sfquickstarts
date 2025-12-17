@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Snowflake CLI
 <!-- ------------------------ -->
 ## Overview 
@@ -20,7 +21,7 @@ Snowflake CLI is a command-line interface designed for developers building apps 
 - [Video: Introduction to Snowflake](https://www.youtube.com/watch?v=gGPKYGN0VQM)
 - [Video: Snowflake Data Loading Basics](https://youtu.be/htLsbrJDUqk?si=vfTjL6JaCdEFdiSG)
 - Basic knowledge of Snowflake concepts
-- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 ### What You’ll Learn
 - How to install Snowflake CLI
@@ -39,7 +40,7 @@ First, you’ll install the Snowflake CLI, and later you'll configure it to conn
 
 ### Create a Snowflake Account
 
-You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
+You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 ### Access Snowflake’s Web Interface
 
@@ -283,7 +284,7 @@ snow sql -q "SELECT r_value FROM my_table LIMIT 10" -x --account=<account_name> 
 
 In the example above, we establish a temporary connection to Snowflake and execute the `SELECT r_value FROM my_table LIMIT 10` SQL statement.
 
-> aside negative
+> 
 > 
 > **Note:** If your account does not allow password authentication, use proper authentication using `--authenticator`.
 
@@ -884,7 +885,7 @@ snow streamlit get-url streamlit_app --database=streamlit_example --open
 <!-- ------------------------ -->
 ## Working with Snowpark Container Services 
 
-> aside negative
+> 
 > 
 > **Note:** Snowpark Container Services is currently in Public Preview in select AWS [regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=g3LX4YOG&_fsi=g3LX4YOG#available-regions). In addition, trial accounts do not support Snowpark Container Services. Reach out to your Snowflake account team to enable your account for Snowpark Container Services.
 

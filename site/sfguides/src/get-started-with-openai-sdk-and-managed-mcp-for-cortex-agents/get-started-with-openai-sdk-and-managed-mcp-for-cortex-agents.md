@@ -8,6 +8,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 language: en
 
 
+
 # Get Started with OpenAI SDK and Managed MCP for Cortex Agents
 <!-- ------------------------ -->
 ## Overview 
@@ -35,7 +36,7 @@ You'll build two complete applications that demonstrate external access patterns
 
 ### Prerequisites
 
-- [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role
+- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN role
 - Python 3.11 or higher installed
 - Basic knowledge of SQL and Python
 
@@ -63,7 +64,6 @@ Extract the zip file to your preferred location.
 3. Copy and paste the entire script into the worksheet
 4. Run all statements by clicking **Run All** at the top right
 
-> aside positive
 > This enables `CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'` so you can access GPT-5 and all models regardless of your region.
 
 **What the setup script does:**
@@ -106,7 +106,6 @@ Before setting up the MCP server, create the Cortex Agent through Snowsight's UI
 
 4. Click **Create Agent**
 
-> aside positive
 > The Cortex Agent combines all three tools into a single intelligent assistant that can search conversations, analyze metrics, and query data.
 
 ### Test Your Agent
@@ -149,7 +148,6 @@ After running the script, you'll see output from `SELECT SYSTEM$SHOW_OAUTH_CLIEN
 }
 ```
 
-> aside positive
 > **CRITICAL:** Copy and save both the `OAUTH_CLIENT_ID` and `OAUTH_CLIENT_SECRET` - you'll need these for the agent.py application and cannot retrieve them later!
 
 <!-- ------------------------ -->
@@ -162,7 +160,6 @@ You'll need a Programmatic Access Token (PAT) for both applications.
 3. Select **Single Role** → `SALES_INTELLIGENCE_ROLE`
 4. **Copy the token** (you won't be able to retrieve it later!)
 
-> aside positive
 > Store this token securely - you'll use it in both applications' configuration.
 
 <!-- ------------------------ -->
@@ -218,7 +215,6 @@ OAUTH_CLIENT_SECRET="Your Client Secret Here"
 MCP_SERVER_NAME=SALES_INTELLIGENCE_MCP
 ```
 
-> aside positive
 > This single `.env` file contains configuration for both applications.
 
 <!-- ------------------------ -->
@@ -267,7 +263,6 @@ Select from the dropdown menu:
 - `claude-sonnet-4-5` - Anthropic Claude Sonnet 4.5
 - `claude-4-sonnet` - Claude 4 Sonnet
 
-> aside positive
 > **Success!** You're using GPT-5 hosted in Snowflake via the standard OpenAI SDK.
 
 <!-- ------------------------ -->
@@ -319,7 +314,6 @@ The `agent.py` application demonstrates how to build a custom LangGraph agent th
 - Real-time streaming of agent responses
 - Error handling and troubleshooting
 
-> aside positive
 > The agent uses Snowflake Cortex (GPT-5) as its LLM, keeping all computation within Snowflake.
 
 ### Run the Agent
@@ -361,7 +355,6 @@ Who are the top performing sales reps and what conversations did they have?
 Show me all closed deals
 ```
 
-> aside positive
 > **Success!** You built a custom agent with OAuth 2.0 authentication using LangGraph and MCP.
 
 <!-- ------------------------ -->

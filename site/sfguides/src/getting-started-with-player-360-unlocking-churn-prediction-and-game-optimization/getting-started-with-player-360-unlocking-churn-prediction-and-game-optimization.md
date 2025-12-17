@@ -6,6 +6,10 @@ summary: The Player 360 solution showcases how gaming companies can create a com
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization
+
+
+
 
 
 # Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization
@@ -29,7 +33,7 @@ By aggregating these data streams in a unified system and leveraging Snowflake f
 
 
 ### Prerequisites
-- A non-trial Snowflake [Snowflake](https://signup.snowflake.com/)  account in a supported AWS commercial region.
+- A non-trial Snowflake [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)  account in a supported AWS commercial region.
 - A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the EXTERNAL ACCESS INTEGRATION).
 - Git installed.
 

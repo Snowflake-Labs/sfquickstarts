@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 authors: Jason West
 
+
 # Getting Started With User-Defined SQL Functions
 
 <!-- ------------------------ -->
@@ -45,7 +46,7 @@ If you are not familiar with the Snowflake User Interface, then please watch the
 
 ### What You’ll Need
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Trial Account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Trial Account
 
 ### What You’ll Build
 
@@ -58,7 +59,7 @@ If you are not familiar with the Snowflake User Interface, then please watch the
 
 ### Create a Snowflake Account
 
-Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to activate your account via email.
+Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Follow the prompts to activate your account via email.
 
 If you already have a Snowflake account, you can use it.  You just need a role with permission to create a database.
 
@@ -72,7 +73,7 @@ Log in to the [web interface](https://docs.snowflake.com/en/user-guide/connectin
 
 ### Changing your role
 
-> aside positive
+> 
 > 
 >  If you already have a Snowflake account, you can use a role with privildges to create a database.
 
@@ -100,7 +101,7 @@ Build your new database named `udf_db` with the command above.
 
 ![Snowflake_udf_CreateDB-image](assets/Snowflake_udf_CreateDB.png)
 
-> aside positive
+> 
 > 
 >  The **Results** should display a status message of **Database UDF_DB successfully created** .
 
@@ -114,7 +115,7 @@ Use the above command to whip up a schema called `udf_schema_public`.
 
 ![Snowflake_udf_CreateSchema-image](assets/Snowflake_udf_CreateSchema.png)
 
-> aside positive
+> 
 > 
 >  The **Results** should display a status message of **Schema UDF_SCHEMA_PUBLIC successfully created**.
 
@@ -131,7 +132,7 @@ Create a table named ‘sales’ and import the sales data with this command. Be
 
 ![Snowflake_udf_CreateTable-image](assets/Snowflake_udf_CreateTable.png)
 
-> aside positive
+> 
 > 
 >  The **Results** should display a status of **Table SALES successfully created** .
 
@@ -144,7 +145,7 @@ With the necessary database objects created, it’s time to move onto the main c
 
 With the database primed with sample sales data, we're _almost_ ready to try creating a scalar UDF. Before diving in, let’s first understand more about UDF naming conventions.
 
-> aside negative
+> 
 > 
 >  If the function name doesn't specify the database and schema(e.x. `udf_db.udf_schema_public.udf_name`) then it defaults to the active session. Since UDFs are database objects, it's better to follow their [naming conventions](https://docs.snowflake.com/en/sql-reference/udf-overview.html#naming-conventions-for-udfs). For this quick practice, we'll rely on our active session.
 

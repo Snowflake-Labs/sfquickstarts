@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues  
 
+
 # Building a YouTube Analytics Dashboard with Streamlit in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
@@ -28,7 +29,7 @@ The dashboard displays key metrics, such as subscriber growth, views, and engage
 ![image](assets/img01.jpeg)
 
 ### Prerequisites
-- Access to a Snowflake account (sign up for a [free trial account](https://signup.snowflake.com/)) with permissions to use Snowflake Notebooks
+- Access to a Snowflake account (sign up for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)) with permissions to use Snowflake Notebooks
 - Basic knowledge of Python programming
 - Familiarity with data manipulation using pandas
 
@@ -44,7 +45,7 @@ To install these libraries, you can click on the Packages drop-down found at the
 
 ![image](assets/img02.jpeg)
 
-> aside positive
+> 
 > IMPORTANT:
 > It should be noted that after adding packages, this will create the `environment.yml` file that encodes instruction for installing prerequisite libraries to run the notebook.
 

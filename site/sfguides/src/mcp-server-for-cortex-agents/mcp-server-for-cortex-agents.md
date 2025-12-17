@@ -3,7 +3,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This guide outlines the process for building an MCP Server for Cortex Agents.
 environments: web
-status: Published
+status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Josh Reini
 
@@ -36,7 +36,7 @@ Then we’ll connect the server to an MCP host (Claude for Desktop):
 
 ### Prerequisites
 
-* A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/))
+* A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides))
 * Cortex Analyst semantic model and Cortex Search service created, such as via this [quickstart](/en/developers/guides/getting-started-with-cortex-agents/)
 * A [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
 * Python **3.10+**  
@@ -187,7 +187,7 @@ Error: Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIF
 Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found: post https://xxxxx.snowflakecomputing.com:443/session/v1/login-request?request_id=b4e367d4-d8ac-48d3-8e44-96f42defa9c5&request_guid=4f63e07c-e42c-43b8-8f79-f6c577ee0d0e
 ```
 
-> aside negative
+> 
 > NOTE: If you get the above errors, make sure the SNOWFLAKE_ACCOUNT_URL and PAT variables in the **_.env_** file are set correctly. Account URLs including an underscore (`_`) may cause this issue, which can be fixed by changing the underscore to a hyphen (`-`). For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 ## (Optional) Customize Cortex Agents

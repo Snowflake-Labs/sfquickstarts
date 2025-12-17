@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Domo Marketing Attribution
 
 <!-- ------------------------ -->
@@ -28,7 +29,7 @@ For more advanced users, the platform offers powerful AI and automation tools. T
 ### Prerequisites:
 
 - Basic understanding of Snowflake
-- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - A Domo account and a basic understanding of Domo
 - Access to data
 

@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Building Geospatial Multi-Layer Apps with Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
@@ -71,7 +72,7 @@ The Lab consists of three notebooks and two Streamlit applications.
 
 
 ### Prerequisites
-- A Snowflake Account. Sign up [here](https://signup.snowflake.com/) for a free 30 day trial.
+- A Snowflake Account. Sign up [here](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) for a free 30 day trial.
 
  
 

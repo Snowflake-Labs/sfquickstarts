@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, NLP, Snowpark, Streamlit 
 
+
 # NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
 <!-- ------------------------ -->
 ## Overview 
@@ -28,7 +29,7 @@ This Quickstart will demonstrate how you can perform Natural Language Processing
 - Use Streamlit with Snowpark
 
 ### What You’ll Need 
-- A Snowflake Account with ACCOUNTADMIN role. If you don't have one, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A Snowflake Account with ACCOUNTADMIN role. If you don't have one, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed 
 - [Python 3.8](https://www.python.org/downloads/) installed 
 - [Conda](https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html) Installed
@@ -77,7 +78,7 @@ Update the Snowflake connexion file: connection.json
  }
 ```
 
->aside positive    
+> 
 > For the `account` parameter, use your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Note that the account identifier does not include the snowflakecomputing.com suffix.
 
 ### Activate Python environment using conda

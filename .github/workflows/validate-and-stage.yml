@@ -47,7 +47,7 @@ jobs:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.base.sha }}
           sparse-checkout: |
-            scripts/
+            scripts/validate-and-stage/
           sparse-checkout-cone-mode: true
 
       - name: Download changed files from PR (untrusted)
@@ -56,99 +56,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          pr_number=${{ github.event.pull_request.number }}
-          repo=${{ github.repository }}
-          
-          # Fetch changed files from PR (excluding deleted files)
-          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
-          
-          # Save files_json to a file for reuse in subsequent steps
-          echo "$files_json" > pr_files.json
-          
-          # Filter for changed files (excluding folders starting with _)
-          changed_files=$(echo "$files_json" | jq -r '.[] 
-            | select(.status != "removed") 
-            | .filename 
-            | select(startswith("site/sfguides/src/")) 
-            | select(test("/_") | not)')
-          
-          # Early exit if no files to download
-          if [ -z "$changed_files" ]; then
-            echo "No relevant files to download for validation"
-            echo "" > downloaded_files.txt
-            exit 0
-          fi
-          
-          head_repo="${{ github.event.pull_request.head.repo.full_name }}"
-          head_ref="${{ github.event.pull_request.head.ref }}"
-          
-          # Download all changed files
-          echo "Downloading changed files..."
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            
-            # Create directory structure
-            mkdir -p "pr/$(dirname "$file")"
-            
-            # Download raw file content
-            url="https://raw.githubusercontent.com/$head_repo/$head_ref/$file"
-            echo "Downloading: $file"
-            
-            if ! curl -sS -f -H "Authorization: Bearer $GITHUB_TOKEN" "$url" -o "pr/$file"; then
-              echo "Warning: Failed to download $file" >&2
-            fi
-          done <<< "$changed_files"
-          
-          # Save changed files to separate lists
-          echo "$changed_files" > changed_files.txt
-          echo "$changed_files" > downloaded_files.txt
-          
-          # Extract folders that have changes
-          modified_folders=$(echo "$changed_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
-          
-          # Download ALL markdown files from modified folders (even if not changed)
-          # This allows us to validate that each folder has only one markdown file
-          if [ -n "$modified_folders" ]; then
-            echo "Downloading all markdown files from modified folders..."
-            
-            while IFS= read -r folder; do
-              [ -z "$folder" ] && continue
-              
-              # Use GitHub API to list all files in the folder
-              folder_path="site/sfguides/src/$folder"
-              tree_url="https://api.github.com/repos/$head_repo/contents/$folder_path?ref=$head_ref"
-              
-              # Get all .md files in the folder (excluding README.md)
-              folder_files=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "$tree_url" | jq -r '.[] | select(.type=="file") | select(.name | endswith(".md")) | select(.name | test("^README\\.md$"; "i") | not) | .name')
-              
-              while IFS= read -r filename; do
-                [ -z "$filename" ] && continue
-                
-                file_path="$folder_path/$filename"
-                
-                # Skip if already downloaded
-                if [ -f "pr/$file_path" ]; then
-                  continue
-                fi
-                
-                # Create directory structure
-                mkdir -p "pr/$folder_path"
-                
-                # Download the file
-                url="https://raw.githubusercontent.com/$head_repo/$head_ref/$file_path"
-                echo "Downloading additional markdown: $file_path"
-                
-                if curl -sS -f -H "Authorization: Bearer $GITHUB_TOKEN" "$url" -o "pr/$file_path"; then
-                  # Add to downloaded files list
-                  echo "$file_path" >> downloaded_files.txt
-                else
-                  echo "Warning: Failed to download $file_path" >&2
-                fi
-              done <<< "$folder_files"
-            done <<< "$modified_folders"
-          fi
-          
-          echo "Download complete"
+          bash scripts/validate-and-stage/download-pr-files.sh \
+            "${{ github.repository }}" \
+            "${{ github.event.pull_request.number }}" \
+            "${{ github.event.pull_request.head.repo.full_name }}" \
+            "${{ github.event.pull_request.head.ref }}"
+
+      - name: Check for renamed folders (blocking)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_renamed_folders
+        continue-on-error: true
+        run: |
+          bash scripts/validate-and-stage/check-renamed-folders.sh pr_files.json
 
       - name: Setup Node.js
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -182,55 +101,7 @@ jobs:
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: detect
         run: |
-          # Read the list of changed files (modified in PR)
-          changed_files=$(cat changed_files.txt)
-          
-          # Read the list of all downloaded files (changed + additional markdown files)
-          downloaded_files=$(cat downloaded_files.txt)
-          
-          # Filter out non-image files from assets folders for changed files
-          # Keep: markdown files outside assets, image files from assets
-          # Exclude: non-image files from assets (like .md, .txt, etc.)
-          all_changed_files=$(echo "$changed_files" | grep -v '/assets/' || true)
-          assets_images=$(echo "$changed_files" | grep '/assets/' | grep -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
-          if [ -n "$assets_images" ]; then
-            all_changed_files=$(printf '%s\n%s\n' "$all_changed_files" "$assets_images")
-          fi
-          
-          # Extract changed markdown files (for validation)
-          changed_md_files=$(echo "$all_changed_files" | grep '\.md$' || true)
-          
-          # Extract all downloaded markdown files (for multiple markdown check)
-          all_md_files=$(echo "$downloaded_files" | grep '\.md$' | grep -v '/assets/' || true)
-          
-          if [ -z "$all_changed_files" ]; then 
-            all_changed_files_json='[]'
-          else
-            all_changed_files_json=$(printf '%s\n' "$all_changed_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
-          fi
-
-          # Prepare markdown files for validation (only changed)
-          if [ -z "$changed_md_files" ]; then
-            changed_markdown_json='[]'
-            md_file_count=0
-          else
-            # Build changed_markdown_json with only changed markdown files (for validations)
-            changed_markdown_json=$(printf '%s\n' "$changed_md_files" | awk '{print "pr/" $0}' | jq -R -s -c 'split("\n") | map(select(length>0))')
-            md_file_count=$(echo "$changed_md_files" | wc -l | tr -d ' ')
-          fi
-
-          # Print debug information
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "All changed files:"
-          echo "$all_changed_files"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "Changed markdown files (for validation):"
-          echo "$changed_markdown_json" | jq -r '.[]' 2>/dev/null || echo "$changed_markdown_json"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          
-          echo "changed_markdown_json=$changed_markdown_json" >> $GITHUB_OUTPUT
-          echo "all_changed_files_json=$all_changed_files_json" >> $GITHUB_OUTPUT
-          echo "md_file_count=$md_file_count" >> $GITHUB_OUTPUT
+          bash scripts/validate-and-stage/detect-changed-files.sh changed_files.txt downloaded_files.txt
 
       - name: Validate single markdown file per folder
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -398,7 +269,7 @@ jobs:
             exit 0
           fi
 
-      - name: Validate abusive words in markdown (blocking)
+      - name: Validate abusive words in markdown (warning)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
         id: validate
         continue-on-error: true
@@ -406,7 +277,7 @@ jobs:
           FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
           BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
         run: |
-          node scripts/validate-profanity.js || {
+          node scripts/validate-and-stage/validate-profanity.js || {
             # Strip 'pr/' prefix from file paths in error output for cleaner display
             if [ -f profanity-report.json ]; then
               jq '.issues |= map(.file |= sub("^pr/"; ""))' profanity-report.json > profanity-report.tmp.json
@@ -423,7 +294,7 @@ jobs:
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
-          node scripts/validate-categories.js || {
+          node scripts/validate-and-stage/validate-categories.js || {
             # Strip 'pr/' prefix from file paths in error output for cleaner display
             if [ -f categories-error.json ]; then
               jq '.issues |= map(.file |= sub("^pr/"; ""))' categories-error.json > categories-error.tmp.json
@@ -440,7 +311,7 @@ jobs:
         env:
           FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
         run: |
-          node scripts/validate-frontmatter.js || {
+          node scripts/validate-and-stage/validate-frontmatter.js || {
             # Strip 'pr/' prefix from file paths in error output for cleaner display
             if [ -f frontmatter-error.json ]; then
               jq '.issues |= map(.file |= sub("^pr/"; ""))' frontmatter-error.json > frontmatter-error.tmp.json
@@ -520,109 +391,15 @@ jobs:
           fi
 
       - name: Comment PR with validation findings (on failure)
-        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
-        uses: actions/github-script@v7
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_renamed_folders.outcome == 'failure' || steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
-        with:
-          script: |
-            const fs = require('fs');
-            const sections = [];
-            
-            // Collect all validation failures
-            
-            // 1. Large files
-            const largeFiles = JSON.parse(process.env.LARGE_FILES_JSON || '[]');
-            if (largeFiles.length > 0) {
-              const fileList = largeFiles.map(f => `- \`${f}\``).join('\n');
-              sections.push(`### 📦 Large Files Detected\n\nFiles larger than 1MB found:\n\n${fileList}\n\nYou have two options: \n 1. Reduce the file size(s) before merging (best for images); or \n 2. Move your file(s) into a folder beginning with an underscore (e.g., \`_large_files/\`). Note that in this case, your file will NOT be uploaded to snowflake.com, and you will have to [link to it directly](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files). `);
-            }
-            
-            // 2. Multiple markdown files
-            if (fs.existsSync('multiple-md-error.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('multiple-md-error.json','utf8'));
-                if (data && data.type === 'multiple_markdown_files') {
-                  const errors = Array.isArray(data.errors) ? data.errors : [];
-                  if (errors.length) {
-                    const lines = errors.map(err => `- **${err.folder}** (${err.files.length} files):\n${err.files.map(f => `  - \`${f}\``).join('\n')}`);
-                    sections.push(`### 📄 Multiple Markdown Files Detected\n\n${data.message}\n\n${lines.join('\n\n')}`);
-                  }
-                }
-              } catch {}
-            }
-            
-            // 3. Language validation
-            if (fs.existsSync('validation-error.json')) {
-              try {
-                const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
-                if (v && v.type === 'language') {
-                  const items = Array.isArray(v.files) ? v.files.map(f => `- \`${f.file}\`: "${f.language || ''}"`).join('\n') : '';
-                  sections.push(`### 🌐 Language Validation Failed\n\n${v.message || 'Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br'}\n\n${items}`);
-                }
-              } catch {}
-            }
-            
-            // 4. Categories validation
-            if (fs.existsSync('categories-error.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('categories-error.json','utf8'));
-                const issues = Array.isArray(data.issues) ? data.issues : [];
-                if (issues.length) {
-                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.invalid || []).join(', ')}`);
-                  sections.push(`### 🏷️ Category Syntax Validation Failed\n\nExpected categories like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`);
-                } else {
-                  sections.push(`### 🏷️ Category Syntax Validation Failed\n\nCategory syntax is invalid.`);
-                }
-              } catch {}
-            }
-            
-            // 5. Frontmatter validation
-            if (fs.existsSync('frontmatter-error.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('frontmatter-error.json','utf8'));
-                const issues = Array.isArray(data.issues) ? data.issues : [];
-                if (issues.length) {
-                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.errors || []).join('; ')}`);
-                  sections.push(`### 📄 Frontmatter Validation Failed\n\nFrontmatter id must be slugified and match file and folder.\n\n${lines.join('\n')}`);
-                } else {
-                  sections.push(`### 📄 Frontmatter Validation Failed\n\nFrontmatter id check failed.`);
-                }
-              } catch {}
-            }
-            
-            // 6. Profanity validation
-            if (fs.existsSync('profanity-report.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('profanity-report.json','utf8'));
-                const issues = Array.isArray(data.issues) ? data.issues : [];
-                if (data.error) {
-                  // Installation error
-                  sections.push(`### 🚫 Profanity Check Failed\n\n${data.error}`);
-                } else if (issues.length) {
-                  // Abusive words found
-                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.words || []).join(', ')}`);
-                  sections.push(`### 🚫 Profanity Check Failed\n\nAbusive words detected:\n\n${lines.join('\n')}`);
-                } else {
-                  // Empty issues array (shouldn't happen with refactored script, but handle gracefully)
-                  sections.push(`### 🚫 Profanity Check Failed\n\nProfanity check failed but no issues were listed.`);
-                }
-              } catch {
-                sections.push(`### 🚫 Profanity Check Failed\n\nProfanity check encountered an error.`);
-              }
-            }
-            
-            // Build aggregated comment
-            if (sections.length > 0) {
-              const body = `## ⚠️ Validation Failed\n\n${sections.join('\n\n---\n\n')}\n\nPlease fix the issues above before merging.`;
-              
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                body
-              });
-            }
+        run: |
+          node scripts/validate-and-stage/comment-pr-validation-failures.js \
+            "${{ github.repository_owner }}" \
+            "${{ github.event.repository.name }}" \
+            "${{ github.event.pull_request.number }}"
 
       - name: Comment PR with informational messages (when present)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
@@ -631,6 +408,20 @@ jobs:
           script: |
             const fs = require('fs');
             const warnings = [];
+            
+            // Check for profanity in markdown files
+            if (fs.existsSync('profanity-report.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('profanity-report.json', 'utf8'));
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                if (data.error) {
+                  warnings.push(`### ⚠️ Profanity Check Notice\n\n${data.error}`);
+                } else if (issues.length) {
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.words || []).join(', ')}`);
+                  warnings.push(`### ⚠️ Profanity Check Notice\n\nPotentially inappropriate words were detected in the following files:\n\n${lines.join('\n')}\n\nPlease review and consider revising if appropriate.`);
+                }
+              } catch {}
+            }
             
             // Check for non-image files in assets folders
             if (fs.existsSync('non-image-assets-warning.json')) {
@@ -685,6 +476,7 @@ jobs:
             multiple-md-error.json
             non-markdown-root-info.json
             non-image-assets-warning.json
+            folder-rename-error.json
           if-no-files-found: ignore
 
       - name: Check validation results and fail if needed
@@ -693,9 +485,9 @@ jobs:
         run: |
           # Check if any validation step failed
           all_passed=true
-          if [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
+          if [ "${{ steps.check_renamed_folders.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ] || \
              [ "${{ steps.check_large_files.outcome }}" == "failure" ] || \
-             [ "${{ steps.validate.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_categories.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ] || \
              [ "${{ steps.validate_language.outcome }}" == "failure" ]; then

@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting started with Search Optimization
 
 <!-- ------------------------ -->
@@ -31,7 +32,7 @@ A basic knowledge of how to run and monitor queries in the Snowflake Web UI.
 ### What You'll Need
 - A supported [browser](https://docs.snowflake.com/en/user-guide/setup.html)
 - A Snowflake account with the Enterprise Edition 
-  - Sign-up using [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_) 
+  - Sign-up using [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
   ***OR***
   - Get access to an existing Snowflake Enterprise Edition account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 

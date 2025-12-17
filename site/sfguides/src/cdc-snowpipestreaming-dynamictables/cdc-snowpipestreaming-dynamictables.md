@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: steven.maser@snowflake.com 
 
+
 # Snowpipe Streaming and Dynamic Tables for Real-Time Ingestion (CDC Use Case)
 <!-- ------------------------ -->
 ## Overview 
@@ -39,7 +40,7 @@ While not covered in this exercise, more Snowflake capabilities can further enri
 ### What You’ll Need 
 To complete this Quickstart, attendees need the following:
 
-- A [Snowflake Enterprise or Business Critical Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with **ACCOUNTADMIN** access or setup assistance
+- A [Snowflake Enterprise or Business Critical Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with **ACCOUNTADMIN** access or setup assistance
 - Be able to download a SQL and a Zip file
 - Be able to run "keytool" command on your desktop (a utility included with Java)
 - Be able to run a Java program from the command line on your desktop

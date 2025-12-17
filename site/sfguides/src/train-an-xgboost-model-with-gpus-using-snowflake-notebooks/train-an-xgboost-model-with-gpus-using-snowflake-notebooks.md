@@ -6,6 +6,9 @@ summary: This is a sample Snowflake Guide
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks
+
+
 
 # Train an XGBoost Model with GPUs using Snowflake Notebooks
 <!-- ------------------------ -->
@@ -16,7 +19,7 @@ In this quickstart, we'll explore how to easily harness the power of containers 
 This exercise will illustrate how Snowflake Notebooks lets you quickly tap into the GPU compute power you need to scalably build ML models using any open-source Python framework of choice. 
 
 ### Prerequisites
-- A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
+- A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account, if required. 
 - Foundational knowledge of Data Science workflows
 - For an intro to Snowflake Notebooks on Container Runtime, try this [quickstart](/en/developers/guides/notebook-container-runtime/) first
 

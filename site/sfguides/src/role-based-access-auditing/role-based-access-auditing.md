@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build Role-Based Access Audit Dashboards in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
@@ -29,7 +30,7 @@ Here are some common features for these two dashboards:
 - Real-time metric updates
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic understanding of SQL and Python
 - Familiarity with data visualization concepts
 

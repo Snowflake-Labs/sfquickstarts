@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Introduzione a Tasty Bytes
 <!-- ------------------------ -->
 
@@ -25,7 +26,7 @@ Al termine di questo quickstart avrai implementato l’ambiente base necessario 
 ### Prerequisiti
 - Un [browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements) supportato da Snowflake
 - Un account Snowflake Enterprise o Business Critical
-    - Se non hai un account Snowflake, [**richiedi la tua prova gratuita di 30 giorni**](https://signup.snowflake.com/). Al momento della registrazione, assicurati di selezionare **Enterprise** Edition. Puoi scegliere qualsiasi [cloud o regione di Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - Se non hai un account Snowflake, [**richiedi la tua prova gratuita di 30 giorni**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Al momento della registrazione, assicurati di selezionare **Enterprise** Edition. Puoi scegliere qualsiasi [cloud o regione di Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
     - Al termine della registrazione, riceverai un’email con un link per l’attivazione e l’URL del tuo account Snowflake.
     - ![assets/choose_edition.png](assets/choose_edition.png)
     
@@ -92,7 +93,7 @@ Per questo quickstart utilizzerai l’interfaccia web di Snowflake nota come Sno
 ### Panoramica
 Dopo avere completato correttamente la configurazione di Tasty Bytes, possiamo esplorare il database, i ruoli e i warehouse che abbiamo creato. 
 
->aside negative **Nota:** all’interno del foglio di lavoro *Tasty Bytes - Setup* che hai creato nella sezione precedente, scorri fino in fondo e copia, incolla ed esegui il codice SQL incluso in ciascuno dei seguenti passaggi.
+> 
 >
 
 ### Passaggio 1 - Esplorare il database Tasty Bytes

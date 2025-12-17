@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
+
 # Introducción a Snowpark con las hojas de trabajo de Snowflake para Python
 <!-- ------------------------ -->
 ## Descripción general
@@ -48,13 +49,13 @@ Un conjunto de datos preparado que se podrá utilizar en aplicaciones y análisi
 
 ### Creación de una cuenta de prueba de Snowflake
 
-Haz clic en este [enlace](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (que te llevará a la página de configuración de la prueba **Introducción a Snowpark con las hojas de trabajo de Snowflake para Python**) y regístrate para obtener una prueba gratuita de 30 días. Te recomendamos que selecciones la región más cercana a ti y que utilices la edición más popular, Enterprise, aunque cualquier edición es compatible con este laboratorio.
+Haz clic en este [enlace](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides) (que te llevará a la página de configuración de la prueba **Introducción a Snowpark con las hojas de trabajo de Snowflake para Python**) y regístrate para obtener una prueba gratuita de 30 días. Te recomendamos que selecciones la región más cercana a ti y que utilices la edición más popular, Enterprise, aunque cualquier edición es compatible con este laboratorio.
 
 ### Inicio de sesión y configuración del laboratorio
 
 Inicia sesión en tu cuenta de Snowflake. Para acceder a este laboratorio y configurar los datos y el código de muestra, debes hacer clic en el siguiente enlace.
 
-> aside positive IMPORTANTE: Debes tener rol ACCOUNTADMIN para realizar la configuración del laboratorio que se describe a continuación. Nota: Si has creado una nueva cuenta de prueba, tendrás el rol ACCOUNTADMIN de forma predeterminada.
+> 
 
 <button>[Configuración del entorno de laboratorio](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 

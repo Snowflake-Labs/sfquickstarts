@@ -6,6 +6,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Snowpark for Machine Learning on Vertex AI
 <!-- ------------------------ -->
 ## Overview 
@@ -31,7 +32,7 @@ This quickstart is designed to service as an introduction to using Vertex AI wit
 - Defining User Defined Functions for distributed scoring of machine learning models
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [Google Cloud Account](https://cloud.google.com/free?hl=en)
 
 

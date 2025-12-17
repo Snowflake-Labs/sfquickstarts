@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Tasty Bytes - Snowpark 101 for Data Science
 <!-- ------------------------ -->
 ## Overview 
@@ -28,7 +29,7 @@ Streamlit is a Python library that makes it easy to create and share custom web 
 - How to **build a Streamlit app** to interact with the model
 
 ### Prerequisites
-- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a [free trial account](https://signup.snowflake.com/) or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
+- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
 
 ### What You Will Build 
 - **A sales forecast by location**<br>
@@ -65,7 +66,7 @@ Tasty Bytes operates food trucks in cities across the globe with each truck havi
 
 ![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
->aside positive
+> 
 >SafeGraph is a global geospatial data company that offers any data on any place in the world. Customers like Esri, Tripadvisor, Mapbox, and Sysco use SafeGraph data to better understand their customers, create new products, and make better decisions for their business.
 >
 ### Step 2 - Creating Objects, Loading Data, and Joining Data

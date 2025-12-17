@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # Getting Started with Cortex Agents and Microsoft Teams
 <!-- ------------------------ -->
 
@@ -17,7 +18,7 @@ Cortex Agents simplify AI-powered data interactions via a REST API, combining hy
 
 In this guide, we will see how to integrate the Cortex Agents with Microsoft Teams.
 
-> aside positive
+> 
 > Also check out [Getting Started with The Microsoft Teams and M365 Copilot Cortex App](/en/developers/guides/getting-started-with-the-microsoft-teams-and-365-copilot-cortex-app/).
 
 ### Why Cortex Agents?
@@ -44,7 +45,7 @@ across projects.
 
 ### Prerequisites
 
-* A Snowflake account in one of these [regions](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability). If you do not have an account, register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* A Snowflake account in one of these [regions](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability). If you do not have an account, register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 * [Node.js](https://nodejs.org/) -- Supported versions: 18, 20
 * [Microsoft 365 Agents Toolkit for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.ms-teams-vscode-extension).
 
@@ -74,7 +75,7 @@ A conversationl interface using Cortex Agents REST API integrated with Microsoft
 
 **Step 6:** Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication) and assign the public key to your user in Snowflake and store/save/copy the private key file (**_.p8_**) in your cloned app folder.
 
-> aside negative
+> 
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 ## Setup Microsoft Teams
@@ -105,7 +106,7 @@ If all goes well, you will see an application that you can interact with in Team
 
 ![basic bot](assets/basic_bot.png)
 
-> aside positive
+> 
 > NOTE: Before proceeding, please make sure you have the boilerplate Microsoft Teams application running as shown above.
 
 ### Update Soucre Code Files
@@ -175,7 +176,7 @@ If you see any errors, please double check all values set in **env/.env.dev**. C
 
 If you get this error **Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...**, then try adding **locator.region** to **your-account-identifier**. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
-> aside negative
+> 
 > IMPORTANT: Before proceeding, please make sure you have successfully tested everything as described above.
 
 ## Run Application
@@ -246,7 +247,7 @@ This is the main handler that orchestrates the interaction between the user and 
 
 An instance of this class is constructed using parameters ***jwtGenerator, agentUrl, model, searchService, semanticModels*** and it has method ***_retrieveResponse()*** that calls the Cortex Agents REST API -- which inturn calls other class methods to parse the response.
 
-> aside positive
+> 
 > NOTE: In our case, we've set up and provided two semantic models to the Cortex Agents REST API via `tool_spec > type: "cortex_analyst_text_to_sql"`; one for extract insights from **SUPPORT_TICKETS** and another one from **SUPPLY_CHAIN** structured data sources. Similarly, you may set up additional sematic models as well as search services. 
 
 ```JavaScript

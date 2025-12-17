@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
+
 # Introdução ao Snowpark em planilhas Python para Snowflake
 <!-- ------------------------ -->
 ## Visão geral
@@ -48,7 +49,7 @@ Um conjunto de dados preparado que pode ser usado em análises e aplicações ma
 
 ### Criar uma conta de avaliação Snowflake
 
-Clique no [link](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) para obter uma conta de avaliação gratuita de 30 dias. Você acessará a página de configuração da avaliação intitulada **Introdução ao Snowpark em planilhas Python para Snowflake**. Recomendamos escolher a região mais próxima a você. Também recomendamos escolher a edição mais popular, Enterprise, mas qualquer uma funcionará para este laboratório.
+Clique no [link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides) para obter uma conta de avaliação gratuita de 30 dias. Você acessará a página de configuração da avaliação intitulada **Introdução ao Snowpark em planilhas Python para Snowflake**. Recomendamos escolher a região mais próxima a você. Também recomendamos escolher a edição mais popular, Enterprise, mas qualquer uma funcionará para este laboratório.
 
 ### Login e configuração do laboratório
 

@@ -7,6 +7,7 @@ environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Data Analysis and Churn Prediction Using Snowflake Notebooks
 <!-- ------------------------ -->
 
@@ -31,7 +32,7 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 - Familiarity with basic Python and SQL
 - Familiarity with training ML models
 - Familiarity with data science notebooks
-- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 
 <!-- ------------------------ -->
 ## Setting Up Snowflake Environment

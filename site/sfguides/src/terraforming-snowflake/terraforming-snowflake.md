@@ -7,14 +7,15 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Brad Culberson, Scott Winkler, François Vienneau Binette
 
+
 # Terraforming Snowflake
 
 ## Overview
 
-> aside negative
+> 
 > ⚠️ **Disclaimer**: You may have already been using the Provider in one of it's legacy version developed by the open source community. Major reworks came with v1.0.0 at the end of 2024, bringing us closer to the official and generally available v2.0.0 release. Not every Snowflake objects are available through the Provider, it's a work in progress. Refer to the [official documentation](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs) and check out the [project roadmap](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/ROADMAP.md) for more information.
 
-> aside positive
+> 
 > 
 >  **Tip** – This tutorial will work with the Provider version v1.0.0 and over.
 
@@ -45,7 +46,7 @@ This tutorial demonstrates how you can use Terraform to manage your Snowflake co
 - How to manage objects from code/source control
 
 ### What You’ll Need
-- A Snowflake account - create a [trial account](https://signup.snowflake.com/) if needed
+- A Snowflake account - create a [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) if needed
 - A [GitHub](https://github.com/) account
 - A [Git](https://github.com/git-guides/install-git) command-line client
 - A text editor of your choice
@@ -81,7 +82,7 @@ $ git remote add origin git@github.com:YOUR_GITHUB_USERNAME/sfguide-terraform-sa
 $ git push -u origin main
 ```
 
-> aside positive
+> 
 > 
 >  **Tip** – If the commands don't work, verify that you can connect to GitHub using your SSH key, and that your git config is correct for your account.
 
@@ -124,7 +125,7 @@ GRANT ROLE SECURITYADMIN TO USER TERRAFORM_SVC;
 ```
 
 
-> aside negative
+> 
 > 
 >  We grant the user `SYSADMIN` and `SECURITYADMIN` privileges to keep the lab simple. An important security best practice, however, is to limit all user accounts to least-privilege access. In a production environment, the public key should also be secured with a secrets management solution like HashiCorp Vault, Azure Key Vault, AWS Secrets Manager, etc.
 
@@ -197,7 +198,7 @@ resource "snowflake_warehouse" "tf_warehouse" {
 
 This is all the code needed to create these resources: a database and a XS virtual warehouse.
 
-> aside positive
+> 
 > 
 >  **Tip** – You can split objects creation in as many `.tf` files as necessary, no need to keep everything in `main.tf`. Split them in a way that makes logical sense for your own use.
 
@@ -420,7 +421,7 @@ resource "snowflake_grant_privileges_to_account_role" "grant_future_tables" {
 }
 ```
 
-> aside positive
+> 
 > 
 > **Tip** – When referencing other objects in the definition of a resource, it's recommend to use the fully qualified name (FQN). 
 > - In the case of an account-level object, such as a database, a role, etc., it would look like `snowflake_database.<database_name>.name` where `<database_name>` is the resource name of your database.
@@ -447,7 +448,7 @@ output "snowflake_svc_private_key" {
 
 The output will list all the actions Terraform would perform when applying the changes. Review them to make sure the appropriate activities will happen.
 
-> aside negative
+> 
 > 
 >  You will need to run `terraform init -upgrade` in order to use `tls_private_key` resource. Running the command will install [hashicorp/tls](https://registry.terraform.io/providers/hashicorp/tls/latest).
 

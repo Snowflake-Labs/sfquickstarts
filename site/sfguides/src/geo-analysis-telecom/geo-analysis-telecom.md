@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Geospatial Analytics for Telecom with Snowflake and Carto
 <!-- ------------------------ -->
 ## Overview 
@@ -32,7 +33,7 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
-* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
 * Sign-up for a  [CARTO Trial](http://app.carto.com/signup) (OR  have access to an existing CARTO account). Select the same region (continent) as for the Snowflake account.
 
 ### What You’ll Build
@@ -52,13 +53,13 @@ If this is the first time you are logging into the Snowflake UI, you will be pro
 
 Click `Sign-in` and you will be prompted for your user name and password.
 
-> aside positive
+> 
 >  If this is not the first time you are logging into the Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).
 
 ### Increase Your Account Permission
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.
 
-> aside positive
+> 
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
 ![assets/geo_sf_carto_telco_3.png](assets/geo_sf_carto_telco_3.png)
@@ -129,7 +130,7 @@ These are the parameters you need to provide:
 - **Account**: Hostname for your account . One way to get it is to check the Snowflake activation email which contains the account_name within the URL ( <account_name>.snowflakecomputing.com ). Just enter what's on the account_name, i.e ok36557.us-east-2.aws
 - **Warehouse (optional)**: Default warehouse that will run your queries. Use MY_WH.
 
-> aside negative
+> 
 >  Use MY_WH or the name of the data warehouse you created in the previous step otherwise some queries will fail because CARTO won't know which warehouse to run them against.
 
 - **Database (optional)**. Default database to run your queries. Use GEOLAB.
@@ -158,7 +159,7 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 
 * Once in the listing, click the big blue `Get` button
 
-> aside negative
+> 
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
 ![assets/geo_sf_carto_telco_8.png](assets/geo_sf_carto_telco_8.png)
@@ -352,7 +353,7 @@ select to_geography('POINT(-0.131034 51.526473)');
 Notice there is no `from` clause in this query, which allows you to construct a `GEOGRAPHY` object in a simple `select` statement.
 
 
-> aside negative
+> 
 >  POINT(-0.131034 51.526473) is already a geography object in WKT format, so there was no real need to convert it again, but it was important to show the most basic way to use TO_GEOGRAPHY to construct a simple geography object.
 
 Now let’s do the query in CARTO Builder to see where the point is.
@@ -377,7 +378,7 @@ Now let’s do the query in CARTO Builder to see where the point is.
 select to_geography('POINT(-0.131034 51.526473)') as geom;
 ```
 
-> aside negative
+> 
 >  CARTO requires that the column containing geospatial data be named geom so that is why we add it as geom in the query. If you don't do this it will fail. 
 
 * Use the map zoom controls (+/- buttons) and click the zoom in (+) button until you can see the point better. You should see something like the screenshot below, though you may see more depending on your browser window size. 
@@ -385,7 +386,7 @@ select to_geography('POINT(-0.131034 51.526473)') as geom;
 ![assets/geo_sf_carto_telco_22.png](assets/geo_sf_carto_telco_22.png)
 
 
-> aside positive
+> 
 >  Feel free to use this as your SQL Editor for the next steps, you can delete and re-run the queries from the workshop here. 
 
 The green dot represents the `POINT` object location. Now you know where you are!
@@ -603,7 +604,7 @@ Now that we have created our signal decay model, let’s visualize it on CARTO. 
 select h3, signal_strength from geolab.geography.uk_lte_coverage_h3;
 ```
 
-> aside positive
+> 
 >  Note that we don’t have a `GEOGRAPHY` on this query. This is because CARTO has native support of H3 and can show the H3 geography representation on the browser without the need to store and move the geography from the database to the browser. 
 
 As we create an H3 layer we will need to configure the layer type from the query console:
@@ -701,7 +702,7 @@ Once we have our second layer on the map, we can click on it to style it and sho
 
 ![assets/geo_sf_carto_telco_31.gif](assets/geo_sf_carto_telco_31.gif)
 
-> aside positive
+> 
 >  You may feel that these last several queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!
 
 ## Conclusion

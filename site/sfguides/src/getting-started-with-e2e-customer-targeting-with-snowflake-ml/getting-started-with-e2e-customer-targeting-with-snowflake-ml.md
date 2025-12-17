@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with End-to-End Customer Targeting Using Snowflake ML
 
 
@@ -24,7 +25,7 @@ You can get more information [here](https://github.com/Snowflake-Labs/sfguide-ge
 
 
 ### Prerequisites
--  Access to [snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role
+-  Access to [snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN role
 
 
 ### What You’ll Learn 

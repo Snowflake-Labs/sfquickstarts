@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # A Image Recognition App in Snowflake using Snowpark Python, PyTorch, Streamlit and OpenAI
 <!-- ------------------------ -->
 ## Overview
@@ -61,7 +62,7 @@ Two web-based image recognition applications in Streamlit. These applications ca
 
 ### Prerequisites
 
-- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
   - Login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges). Keep this tab open during the session.
     - Click on the **Billing** on the left side panel
     - Click on **Terms and Billing**
@@ -92,7 +93,7 @@ pip install openai
 
 ### Option 1
 
-> aside positive
+> 
 > For an end-to-end setup experience using Snowflake Notebooks, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec_Setup_Notebook.ipynb) file and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account.
 
 ### Option 2

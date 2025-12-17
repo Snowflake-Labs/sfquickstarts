@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Orchestrate ML Pipelines with ML Jobs and Task Graphs
 <!-- ------------------------ -->
 ## Overview
@@ -32,7 +33,7 @@ You'll build a complete, production-ready ML pipeline that:
 6. Performs cleanup operations
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Appropriate Snowflake role permissions (detailed in setup)
 - Basic familiarity with Python and machine learning concepts
 

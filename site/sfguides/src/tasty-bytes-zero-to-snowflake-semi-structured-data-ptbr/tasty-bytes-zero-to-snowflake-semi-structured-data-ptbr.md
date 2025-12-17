@@ -115,7 +115,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 
 Ao observar o conjunto de resultados, vamos notar que `menu_item_health_metrics_obj` é do tipo de dados [VARIANT](https://docs.snowflake.com/pt/sql-reference/data-types-semistructured).
 
->aside positive Para dados que são em sua maioria regulares e usam apenas tipos de dados nativos do formato semiestruturado que você está usando (por exemplo, cadeias de caracteres e inteiros no formato JSON), os requisitos de armazenamento e o desempenho de consulta para operações em dados relacionais e dados em uma coluna VARIANT são muito semelhantes.
+> 
 >
 
 ### Etapa 3 - Percorrer dados semiestruturados usando a notação de pontos
@@ -152,7 +152,7 @@ Nesta seção, vamos realizar um processamento adicional dos dados semiestrutura
 ### Etapa 1 - Introdução ao nivelamento lateral
 Para extrair da coluna `menu_item_health_metrics_obj` dados mais detalhados solicitados pelos usuários, execute a consulta a seguir. Ela usa a notação de pontos junto da função [FLATTEN](https://docs.snowflake.com/pt/sql-reference/functions/flatten) do Snowflake e o recurso [LATERAL JOIN](https://docs.snowflake.com/pt/sql-reference/constructs/join-lateral) para nos fornecer a primeira matriz `ingredient` solicitada.
 
->aside positive **Flatten:** é uma função de tabela que usa uma coluna VARIANT, OBJECT ou ARRAY para criar uma exibição lateral. Flatten pode ser usada para converter dados semiestruturados em uma representação relacional.
+> 
 >
 >**Lateral Join:** diferente do resultado de uma junção não lateral, o resultado de uma junção lateral inclui apenas as linhas geradas a partir da exibição em linha. Não é necessário unir as linhas do lado esquerdo às do lado direito, pois as linhas da esquerda já foram incluídas ao serem passadas para a exibição em linha. 
 >
@@ -219,7 +219,7 @@ Com base na consulta que encerrou a última seção, execute agora a próxima co
 
 Nessa consulta, usaremos [CREATE VIEW](https://docs.snowflake.com/pt/sql-reference/sql/create-view) em nosso esquema harmonizado para encapsular a lógica de processamento e colunas adicionais semiestruturadas como tabela.
 
->aside positive Um modo de exibição permite que o resultado de uma consulta seja acessado como se fosse uma tabela. As exibições têm muitas finalidades, incluindo combinação, separação e proteção de dados. 
+> 
 >
 
 ```
@@ -256,7 +256,7 @@ Nesta consulta, veremos algumas funções novas, ainda não abordadas. Primeiro 
 
 Também usaremos os parâmetros [SELECT * EXCLUDE e RENAME](https://docs.snowflake.com/pt/sql-reference/sql/select#parameters) que podem facilitar o trabalho dos desenvolvedores de SQL ao simplificar a definição de consultas e as exibições.
 
->aside positive **Exclude:** quando você seleciona todas as colunas (SELECT * ou SELECT table_name.\*), EXCLUDE especifica as colunas que devem ser excluídas dos resultados.
+> 
 >
 > **Rename:** ao selecionar todas as colunas (SELECT * ou SELECT table_name.\*), especifique os apelidos (alias) das colunas que devem ser usados nos resultados.
 >

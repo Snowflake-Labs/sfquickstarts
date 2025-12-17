@@ -138,7 +138,7 @@ ORDER BY t.truck_id;
 
 ![assets/4.2.1.truck.png](assets/4.2.1.truck.png) ![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
->aside positive Si un utilisateur répète une requête qui a déjà été exécutée et que les données de la ou des tables n’ont pas changé depuis la dernière fois que la requête a été exécutée, alors le résultat de la requête sera le même. Au lieu d’exécuter à nouveau la requête, Snowflake peut simplement renvoyer le même résultat que précédemment. 
+> 
 >         
 >Cette procédure permet de réduire considérablement le temps de requête, car Snowflake contourne l’exécution de la requête et, à la place, récupère le résultat directement dans le cache.
 >
@@ -223,7 +223,7 @@ Il semble que nous avons commis une erreur dans le calcul `truck_age`, en faisan
 ### Présentation
 Même si nous avons commis une erreur, Snowflake compte de nombreuses fonctionnalités pour y remédier. Le processus consiste à utiliser l’historique des requêtes, des variables SQL et Time Travel pour restaurer notre table `truck_dev` telle qu’elle était avant l’exécution de cette instruction de mise à jour incorrecte.
 
->aside positive La fonction Time Travel permet d’accéder à des données historiques (données qui ont été modifiées ou supprimées) à n’importe quel moment d’une période définie.
+> 
 >
 
 ### Étape 1 – Exploiter l’historique des requêtes
@@ -271,7 +271,7 @@ BEFORE(STATEMENT => $query_id);
 ![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 Pour connaître les autres options d’instruction Time Travel disponibles, consultez la liste ci-dessous.
->aside positive **AT :** le mot clé AT spécifie que la requête inclut tous les changements apportés par une instruction ou une transaction dont l’horodatage est égal au paramètre spécifié.
+> 
 >
 >**BEFORE :** le mot clé BEFORE spécifie que la requête se réfère à un point précédant immédiatement le paramètre spécifié.
 >

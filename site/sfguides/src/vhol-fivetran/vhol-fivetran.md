@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 authors: Snowflake
 
+
 # Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 <!-- ------------------------ -->
 ## Overview 
@@ -18,7 +19,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 * Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: [link](https://github.com/join/).  See appendix 1 for step-by-step instructions. 
 
-* Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
+* Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
 
 * OPTIONAL: Log in to your Google account, if you have one.
 
@@ -244,7 +245,7 @@ There are three very important configuration files to be aware, all at the top l
 ![Fork repo - 4](assets/image24.png)  
 Various configuration settings are found in this file. Please see [dbt’s documentation](https://docs.getdbt.com/reference/dbt_project.yml) for more information on these settings.
 
-> aside positive
+> 
 > 
 >  **Did You Know?**  
 *******************************************************************************  
@@ -680,7 +681,7 @@ That’s it! You now have a Github account.
 
 ## Appendix II: Snowflake Account Creation
 
-1. Go to <https://signup.snowflake.com/>.  
+1. Go to [https://signup.snowflake.com](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).  
 
 2. Enter your personal information.  You need to use a valid email address that you can access and haven’t used previously.
 ![Appendix II - 1](assets/image14.png)  
@@ -726,7 +727,7 @@ Now we need to configure three reports. These three reports will give us the raw
 
 For each report, we will use Configuration Type: Use Custom Report.
 
-> aside positive
+> 
 > 
 >  **Did You Know?**  
 *******************************************************************************  
@@ -805,7 +806,7 @@ Great! Now click **SAVE & TEST** to save your configuration.
 Click **CONTINUE** to see the next screen, where you can **Start Initial Sync** to start the data flowing!  
 ![Appendix III - 12](assets/image113.png)  
 
-> aside positive
+> 
 > 
 >  **Did You Know?**  
 *******************************************************************************  

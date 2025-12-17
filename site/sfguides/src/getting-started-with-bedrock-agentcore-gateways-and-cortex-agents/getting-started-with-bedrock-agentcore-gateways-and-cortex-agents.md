@@ -6,6 +6,9 @@ summary: This is a quickstart for using Cortex Agents and Amazon Q
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents
+
+
 
 
 # Getting Started with Bedrock AgentCore Gateways and Cortex Agents
@@ -49,7 +52,7 @@ Ingest data into structured and unstructured data stores then:
 
 
 ### What You’ll Need
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [AWS Account](https://aws.amazon.com/free) with access to Bedrock AgentCore
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network
 - AWS CLI - [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
@@ -719,6 +722,4 @@ The OpenAPI schema defines the API endpoint, request and response format, and se
   }
 }
 ```
-
-
 

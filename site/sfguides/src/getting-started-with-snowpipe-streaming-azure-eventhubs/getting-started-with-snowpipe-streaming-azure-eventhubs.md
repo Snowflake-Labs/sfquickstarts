@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: James Sun
 
+
 # Getting Started with Snowpipe Streaming and Azure Event Hubs
 <!---------------------------->
 ## Overview
@@ -46,7 +47,7 @@ The historical data can also be analyzed by BI tools like [Microsoft Power BI on
 
 To participate in the virtual hands-on lab, attendees need the following resources.
 
-- A [Snowflake Enterprise Account on Azure](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access
+- A [Snowflake Enterprise Account on Azure](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` access
 - An [Azure Account](https://learn.microsoft.com/en-us/dotnet/azure/create-azure-account) with administrator privileges.
 
 ### What You'll Learn

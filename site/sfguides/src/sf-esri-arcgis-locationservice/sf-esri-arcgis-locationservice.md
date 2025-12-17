@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Interfacing with ArcGIS Location Services (API) using Snowpark
 
 <!-- ------------------------ -->
@@ -41,13 +42,13 @@ In this Quickstart you will be go over the steps of calculating servicearea/isoc
 
 ### What You will Need 
 
-- A [Snowflake](https://signup.snowflake.com/) Account.
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account.
 - A [ArcGIS](https://www.esri.com/en-us/arcgis/products/arcgis-online/trial) Account.
 - A [ArcGIS Pro](https://www.esri.com/en-us/arcgis/products/arcgis-pro/trial) Installed.
 
 ### Prerequisites
 
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to :
   1. Register for a free trial.
   2. Use a different role that has the ability to 
@@ -64,10 +65,10 @@ In this Quickstart you will be go over the steps of calculating servicearea/isoc
   - Knowledgeable on ArcGIS and ArcGIS Pro.
   - Basic understanding of Geospatial concepts.
 
-> aside positive
+> 
 > **INFO:** If you want to understand Geospatial capabilities of Snowflake, please feel free to go over the [Quickstart: Getting Started with Geospatial - Geography](/en/developers/guides/getting-started-with-geospatial-geography/).
 
-> aside positive
+> 
 > **IMPORTANT:** Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 
 <!-- ------------------------ -->
@@ -83,7 +84,7 @@ You will be invoking API services in ArcGIS, using Snowpark UDF. For this, you w
 
 Keep the API key saved in a secure location. You will need it in the folowing steps.
 
-> aside positive
+> 
 > **IMPORTANT:** Ensure the privilege for the API key is enabled as below:
 
 ![](assets/arcgis_apikey_privilege.jpg)
@@ -127,7 +128,7 @@ create database if not exists arcgis_db;
 
 ~~~
 
-> aside positive
+> 
 > **IMPORTANT:** If you want to explore and learn more about the Snowflake Notebook, please go over the [Quickstart: Getting Started with Snowflake Notebooks](/en/developers/guides/getting-started-with-snowflake-notebooks/).
 
 <!-- ------------------------ -->
@@ -166,7 +167,7 @@ The notebook also creates an quick visualization of the service area also:
 
 In this step, you will be connecting to your Snowflake account from ArcGIS Pro and visualize the service areas.
 
-> aside positive
+> 
 > **Warning:** It is assumed that you had already Snowflake setup connection in ArcGIS Pro.
 
 1. Open ArcGIS Pro, on your laptop and Create a new project
@@ -187,7 +188,7 @@ Once you have added the features to the map, you will see the service area and t
 ![](assets/sa_arcgis_visual.jpg)
 
 
-> aside positive
+> 
 > **Idea:** If you want to play with the layers you can take advantage of the [query layer feature in ArcGIS Pro](https://pro.arcgis.com/en/pro-app/latest/help/mapping/layer-properties/create-a-query-layer-cloud-data-warehouse.htm). This feature will allow you to create queries on the fly and customize your visualization of Snowflake data. 
 
 

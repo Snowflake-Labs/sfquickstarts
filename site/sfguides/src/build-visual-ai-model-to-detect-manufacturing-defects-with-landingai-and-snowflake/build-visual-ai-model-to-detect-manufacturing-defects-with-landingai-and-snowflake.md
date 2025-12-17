@@ -7,6 +7,7 @@ summary: This guide shows how to use LandingLens and Snowflake to create a compu
 environments: web
 status: Published
 
+
 # Use Visual AI Models to Detect Defects with LandingLens on Snowflake
 
 ## Overview
@@ -26,7 +27,7 @@ To users who are familiar with machine learning, LandingLens offers advanced too
 
 
 ### What You’ll Need
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
 - Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
 - A warehouse to *install* LandingLens (the warehouse can be any size and can have auto-suspend enabled)
 - A warehouse to *run* LandingLens

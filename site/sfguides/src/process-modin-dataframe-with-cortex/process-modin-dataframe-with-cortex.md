@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build an AI-Powered Data Processing Pipeline with Modin and Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
@@ -34,7 +35,7 @@ This diagram illustrates the key components that make up Snowflake Cortex AI, sh
 A complete data processing pipeline that transforms product catalog data using AI capabilities and presents insights through an interactive dashboard.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic familiarity with Python and pandas
 
 <!-- ------------------------ -->
@@ -120,7 +121,7 @@ Once loaded, your DataFrame will feature three key columns, ready for the forthc
 - `description`: Product description
 - `price`: Product price
 
-> aside positive
+> 
 > IMPORTANT:
 > - Make sure your Snowflake role has the necessary permissions to create stages and access external data
 > - The path to the CSV file is relative to the stage you created

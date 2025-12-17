@@ -1,16 +1,20 @@
 author: Kala Govindarajan
 id: root-cause-analysis-for-vehicle-product-quality-with-snowflake
 summary: 
-categories: Getting-Started,data-science-&-ml, solution-examples
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/industry/automotive
 environments: web
+language: en
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, Data Science & Ai
+fork repo link: https://github.com/Snowflake-Labs/sfguide-root-cause-analysis-for-vehicle-product-quality-with-snowflake
+
+
 
 # Root Cause Analysis for Vehicle Product Quality with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+
 
 <img src="assets/manufacturing.png"/>
 
@@ -42,7 +46,7 @@ The Cross-region data sharing from Snowflake offers a robust solution to the mul
 - How to leverage Cortex AI to ask questions in Natural language against your data
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex and Arctic are available.
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account in a region where Snowflake Cortex and Arctic are available.
 - Access to the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.
 - Git installed.
 
@@ -55,7 +59,6 @@ The Cross-region data sharing from Snowflake offers a robust solution to the mul
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
@@ -108,7 +111,6 @@ After successful completion of the data loading in the notebook, you are all set
 
 <!-- ------------------------ -->
 ## Streamlit App
-Duration: 2
 
 We will now build a quick multi-page Streamlit in Snowflake app. The app and necessary files are present in the cloned repository [streamlit folder](https://github.com/Snowflake-Labs/sfguide-root-cause-analysis-for-vehicle-product-quality-with-snowflake/tree/main/scripts/streamlit) in the git repository.
 
@@ -184,7 +186,6 @@ Some of the LLM options include:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Vehicle Quality Root Cause Analysis is a complex yet critical process for OEMs to ensure the reliability and safety of their vehicles. The Cross-region data sharing capability from Snowflake, offers a robust solution by providing a unified, scalable, and secure data platform. By centralizing data storage and processing in Snowflake, OEMs can streamline the RCA process, enhance collaboration, and derive meaningful insights, ultimately leading to better decision-making and improved vehicle quality.
 

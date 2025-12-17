@@ -117,7 +117,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 
 結果セットを見ると、`menu_item_health_metrics_obj`は[VARIANT](https://docs.snowflake.com/ja/sql-reference/data-types-semistructured)データ型であることが分かります。
 
->aside positive
+> 
 > ほとんどが規則的でネイティブから半構造化形式のデータ型（例：JSON形式用の文字列と整数）のみを使用するデータの場合、リレーショナルデータとVARIANT列のデータに対するストレージ要件とクエリパフォーマンスは非常に似ています。
 >
 
@@ -155,7 +155,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ### ステップ1 - Lateral Flattenへの導入
 下流ユーザーが求めているデータを`menu_item_health_metrics_obj`列から抽出するために、次のクエリを実行してください。ここでは、先ほど説明したドット表記機能とともに、Snowflakesの[FLATTEN](https://docs.snowflake.com/ja/sql-reference/functions/flatten)関数と[LATERAL JOIN](https://docs.snowflake.com/ja/sql-reference/constructs/join-lateral)機能を利用して、求められている最初の`ingredient`配列を取得します。
 
->aside positive
+> 
 > **フラット化：** VARIANT、OBJECT、またはARRAY列を受け取り、ラテラルビューを生成するテーブル関数です。フラット化は、半構造化データをリレーショナル表現に変換するために使用できます。
 > 
 > **ラテラル結合：** 非ラテラル結合の出力とは異なり、ラテラル結合の出力には、インラインビューから生成された行のみが含まれます。左側の行は、インラインビューに渡されることで既に考慮されているため、左側の行を右側に結合する必要はありません。
@@ -223,7 +223,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 このクエリでは、整合スキーマで[CREATE VIEW](https://docs.snowflake.com/ja/sql-reference/sql/create-view)を使用し、半構造化処理ロジックと追加の列をテーブルとしてカプセル化します。
 
->aside positive
+> 
 > ビューを使用すると、クエリの結果にテーブルのようにアクセスできます。  ビューは、データの結合、分離、保護など、さまざまな目的に役立ちます。
 >
 
@@ -261,7 +261,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 また、[SELECT * EXCLUDEおよびRENAME](https://docs.snowflake.com/ja/sql-reference/sql/select#parameters)パラメータを利用し、クエリやビュー定義の複雑さを軽減することで、SQL開発者の作業を大幅に簡略化することもできます。
 
->aside positive
+> 
 > **除外：** すべての列を選択する場合（SELECT \*またはSELECT table_name.\*）、EXCLUDEは、結果から除外する列を指定します。
 > 
 > **名前を変更：** すべての列を選択する場合（SELECT \*またはSELECT table_name.\*）、結果で使用すべき列エイリアスを指定します。

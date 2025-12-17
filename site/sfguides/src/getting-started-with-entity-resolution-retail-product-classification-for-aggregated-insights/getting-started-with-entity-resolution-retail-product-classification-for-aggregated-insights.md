@@ -6,6 +6,7 @@ summary: This application provides a centralized, AI-driven approach to match pr
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 # Getting Started with Entity Resolution: Retail Product Classification for Aggregated Insights
 <!-- --------------------------->
 ## Overview
@@ -33,7 +34,7 @@ This guide covers:
 ### Prerequisites
 - A [GitHub](https://github.com/) Account
 
-- A Snowflake account with a role that has the ability to create database, schema, tables, and stages. If not, you will need to register for a [free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC&_fsi=05dxBvxS&_fsi=05dxBvxS) or use a different role.
+- A Snowflake account with a role that has the ability to create database, schema, tables, and stages. If not, you will need to register for a [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&_fsi=OuImfiWC&_fsi=OuImfiWC&_fsi=05dxBvxS&_fsi=05dxBvxS&utm_cta=developer-guides) or use a different role.
 
 ### What You Will Build
 

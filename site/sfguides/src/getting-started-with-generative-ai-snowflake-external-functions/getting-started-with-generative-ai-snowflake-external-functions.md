@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # Getting Started with Generative AI in Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
@@ -45,7 +46,7 @@ Here are some key differences and similarities between the two implementations.
 
 ### Prerequisites
 
-* A Snowflake account - [Sign-in or create a free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+* A Snowflake account - [Sign-in or create a free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * A OpenAI account - [Sign-in or create an account](https://openai.com/)
   * [OpenAI API Key](https://platform.openai.com/account/api-keys)
 * AWS Account
@@ -235,7 +236,7 @@ RESPONSE_TRANSLATOR = OPENAI_COMPLETIONS_RESPONSE_TRANSLATOR
 AS 'https://xxxxxxxxxx.execute-api.us-west-1.amazonaws.com/main/v1/completions';
 ```
 
-> aside positive
+> 
 > IMPORTANT: Depending on your current user role in Snowflake, you may need to grant usage of this function to the role like so GRANT USAGE ON FUNCTION OPENAI_EXT_FUNC(VARCHAR) TO <ROLE_NAME>;
 
 ### **Call External Function in Snowflake**
@@ -281,7 +282,7 @@ First I’d recommend that you set up the environment to create and test a simpl
 
 After you have successfully created and tested your external function with Lambda on AWS as per the instructions outlined above, follow steps below to wrap OpenAI API in your AWS Lambda function.
 
-> aside negative
+> 
 > NOTE: This implementation uses the latest **gpt4** model along with the new [Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api).
 
 ### Step 1
@@ -294,7 +295,7 @@ Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-getting-started-wi
 
 * Then create a .zip of the contents of **openai_llm_lambda_function_wrapper** folder on your local machine.
 
-> aside positive
+> 
 > IMPORTANT: Make sure you create the .zip of the contents and not at the root level.
 
 ### Step 3
@@ -329,7 +330,7 @@ from values
 ('{"prompt": "### Snowflake SQL tables, with their properties:### CAMPAIGN_SPEND table CAMPAIGN VARCHAR(60),CHANNEL VARCHAR(60),DATE DATE,TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0) ### A query to the data so we can see total cost per year/month per channel"}');
 ```
 
-> aside positive
+> 
 > IMPORTANT: In the following SQL statement examples, replace **llm_external_function** with the name of the function that you created in [Create the External Function for AWS in Snowflake](https://docs.snowflake.com/en/sql-reference/external-functions-creating-aws-common-ext-function) step.
 
 #### **Example 1**

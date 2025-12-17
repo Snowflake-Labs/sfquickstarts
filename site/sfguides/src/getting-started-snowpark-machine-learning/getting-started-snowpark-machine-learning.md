@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Machine Learning with Snowpark Python: Credit Card Approval Prediction
 <!-- ------------------------ -->
 ## Overview 
@@ -42,7 +43,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 - Hyperparameter Tuning with Snowpark ML
 
 ### What You’ll Need 
-- A free [Snowflake Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_) 
+- A free [Snowflake Trial Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
 - [Anaconda Integration enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)
 - Python 3.9
 - Jupyter Notebook
@@ -95,7 +96,7 @@ jupyter notebook
 ### Snowpark with your own Environment
 If you decide to bring your own Python environment, please make sure to install all of the required packages from the conda_env.yml
 
-> aside positive
+> 
 > There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
 > Please refer to the Snowpark documentation to solve this issue:
 > [Issue with running Snowpark Python on Apple M1 chips](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html#prerequisites)

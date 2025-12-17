@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # Getting Started With Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview
@@ -33,7 +34,7 @@ Learn more about [Snowflake Cortex AI](/en/product/features/cortex/).
 
 ### Prerequisites
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where your choice of LLMs are [available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account in a region where your choice of LLMs are [available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
 
 <!-- ------------------------ -->
 ## Setup
@@ -84,7 +85,7 @@ COPY into CALL_TRANSCRIPTS
   from @call_transcripts_data_stage;
 ```
 
-> aside positive
+> 
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
@@ -136,7 +137,7 @@ select transcript,snowflake.cortex.summarize(transcript) as summary from call_tr
 select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.cortex.count_tokens('summarize',transcript) as number_of_tokens from call_transcripts where language = 'English' limit 1;
 ```
 
-> aside positive
+> 
 > NOTE: Snowflake Cortex LLM functions incur compute cost based on the number of tokens processed. Refer to the [documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations) for more details on each function’s cost in credits per million tokens.
 
 <!-- ------------------------ -->
@@ -285,7 +286,7 @@ This is also a good way to quickly and easily compare how different LLMs might p
 
 For an end-to-end application experience with Snowflake Cortex AI using SQL and Python APIs, download this [.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Getting%20Started%20With%20Snowflake%20Cortex%20AI%20in%20Snowflake%20Notebooks/dash_snowflake_cortex_ai_101_notebook_app.ipynb) and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account. 
 
-> aside positive
+> 
 > NOTE: Before running the cells in the notebook, make sure of the prerequisites listed below.
 
 ### Prerequisites

@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 author: Phani Raj
 
+
 # Build Cortex AISQL Powered Call Center Analytics Solution
 <!-- ------------------------ -->
 
@@ -48,7 +49,7 @@ A comprehensive call center analytics solution featuring:
 
 ### Prerequisites
 
-* Access to a [Snowflake account](https://signup.snowflake.com/)
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 * Basic understanding of Streamlit applications
 * Account must have these features:
 

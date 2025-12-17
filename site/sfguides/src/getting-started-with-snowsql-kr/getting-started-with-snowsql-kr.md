@@ -6,6 +6,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL, kr
 
+
 # SnowSQL 시작하기
 
 <!-- ------------------------ -->
@@ -49,7 +50,7 @@ Duration: 8 우선 Snowflake 계정을 만들고 웹 콘솔 탐색에 익숙해�
 
 ### Snowflake 계정 생성
 
-Snowflake는 무료로 Snowflake 서비스를 이용해 볼 수 있도록 [평가판 계정](https://signup.snowflake.com/?utm_cta=quickstarts_)을 제공합니다.
+Snowflake는 무료로 Snowflake 서비스를 이용해 볼 수 있도록 [평가판 계정](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)을 제공합니다.
 
 ### Snowflake의 웹 콘솔 액세스
 

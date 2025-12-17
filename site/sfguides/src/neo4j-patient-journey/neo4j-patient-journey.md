@@ -3,9 +3,10 @@ id: neo4j-patient-journey
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
 categories: snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 status: Published
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
-language: en
+
 
 # Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics
 
@@ -23,7 +24,7 @@ Neo4j helps organizations find hidden relationships and patterns across billions
 
 ### What You Will Need
 
-- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts) with appropriate access to databases and schemas.
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with appropriate access to databases and schemas.
 - Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below:
   ![image](assets/marketplace.png)
 

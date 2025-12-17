@@ -7,6 +7,7 @@ environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # End to End Machine learning with Snowflake and Dataiku
 <!-- ------------------------ -->
 ## Overview  
@@ -79,7 +80,7 @@ Operational end-to-end ML project using joint capabilities of Snowflake and Data
 - **Snowflake edition**  - Select the ```Enterprise edition``` so you can leverage some advanced capabilities that are not available in the Standard Edition.
 
 
-> aside negative
+> 
 > 
 >  **Snowflake Marketplace dataset** <br> It is strongly recommended that when setting up a new account you use the Provider and Region above because to leverage the marketplace dataset in this lab. If you already have an existing Snowflake account you wish to use that uses a different Provider/Region we would recommend creating a new trial instance for this lab.
 
@@ -364,7 +365,7 @@ Below is the snapshot of the data and it represents aggregation from various int
 
 We have successfully loaded the data from ```external stage``` to snowflake.
 
-> aside negative
+> 
 > 
 >  **About the screen captures, sample code, and environment** <br> Screen captures in this lab depict examples and results that may slightly vary from what you may see when you complete the exercises.
 
@@ -538,7 +539,7 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 ![26](assets/sf_26_marketplace8.png)
 
 
-> aside negative
+> 
 > 
 >  **Database for Machine learning consumption** <br>  This will be created after connecting Snowflake with Dataiku using partner connect...
 
@@ -711,7 +712,7 @@ you should have two datasets ```LOANS_ENRICHED``` and ```UNEMPLOYMENT_DATA```
 ![37](assets/sf_29_partnerconnect4.png)
 
 
-> aside negative
+> 
 > 
 >  **Move to Dataiku console** <br> For feature engineering, model building, Scoring and deployment. 
 
@@ -863,7 +864,7 @@ Secondly because Dataiku DSS infers meanings for each column, it suggests releva
 ![46](assets/dk_prepare_overview2.png)
 
 
-> aside negative
+> 
 > 
 >  **Note about shortcuts** <br> When navigating Dataiku DSS, there are many keyboard short-cuts, one of the most useful when working with the explore tab is the `scroll to column`, simply  click `c ` on your keyboard. 
 
@@ -1343,7 +1344,7 @@ Congratulations  you have now successfully built,  deployed and scored your mode
 
 **To enable the anaconda libraries on snowflake account**
 
-1.Create a new trial account on https://signup.snowflake.com
+1.Create a new trial account on [https://signup.snowflake.com](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 2.Login
 

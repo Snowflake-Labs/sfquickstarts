@@ -8,6 +8,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
 # Implementing a Pipeline for Database Change Management
 <!-- ------------------------ -->
 ## Overview 
@@ -26,7 +27,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account
-- A [Snowflake](https://signup.snowflake.com/) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account
 - [Git cli](https://git-scm.com/downloads/mac) Installed
 - [Snowflake cli](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) Installed
 - Python (>= 3.11) Installed
@@ -36,7 +37,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 - We will be utilising the northwind database, git actions and snowflake to implement a pipeline to build and deploy dynamic tables. We aim to show a release/promotion process from bronze to the gold layer.
 - We will also be creating an isolated sandbox to allow developer to make changes before releasing into a shared environment. The release process will be done by leveraging github actions.
 
-<!-- ------------------------ -->
+<!--
 ## Metadata Configuration
 
 - **summary**: Implementing a Pipeline for Database Change Management
@@ -49,11 +50,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
 - **tags**: Getting Started, Getting Started, Data Engineering
 - **authors**: Meher Garda
-
----
-
-<!-- ------------------------ -->
-
+-->
 
 ## Setup Snowflake environment
 

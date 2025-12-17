@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Présentation de Tasty Bytes
 <!-- ------------------------ -->
 
@@ -25,7 +26,7 @@ Ensuite, nous allons configurer le modèle de données de base de Tasty Bytes, 
 ### Conditions préalables
 - Un [navigateur](https://docs.snowflake.com/fr/user-guide/setup#browser-requirements) Snowflake pris en charge
 - Un compte Snowflake Enterprise ou Business Critical
-    - Si vous n’avez pas de compte Snowflake, [**créez un compte d’essai gratuit de 30 jours**](https://signup.snowflake.com/). Lors de votre inscription, assurez-vous de sélectionner l’édition **Enterprise**. Vous pouvez sélectionner [le cloud/la région Snowflake](https://docs.snowflake.com/fr/user-guide/intro-regions) de votre choix.
+    - Si vous n’avez pas de compte Snowflake, [**créez un compte d’essai gratuit de 30 jours**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Lors de votre inscription, assurez-vous de sélectionner l’édition **Enterprise**. Vous pouvez sélectionner [le cloud/la région Snowflake](https://docs.snowflake.com/fr/user-guide/intro-regions) de votre choix.
     - Une fois inscrit, vous recevrez un e-mail avec un lien d’activation et une URL pour accéder à votre compte Snowflake.
     - ![assets/choose_edition.png](assets/choose_edition.png)
     
@@ -92,7 +93,7 @@ Pour ce guide Quickstart, vous allez utiliser l’interface Web Snowflake appel�
 ### Présentation
 Une fois la configuration de Tasty Bytes terminée, nous pouvons explorer la base de données, les rôles et les entrepôts que nous avons créés. 
 
->aside negative **Remarque :** dans la feuille de calcul *Tasty Bytes – Configuration* que vous avez créée dans la section précédente, faites défiler la page jusqu’en bas, puis copiez, collez et exécutez la commande SQL incluse dans chaque étape ci-dessous.
+> 
 >
 
 ### Étape 1 – Explorer la base de données Tasty Bytes

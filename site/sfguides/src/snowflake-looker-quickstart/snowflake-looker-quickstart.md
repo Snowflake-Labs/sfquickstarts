@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Looker, BI, OAuth, Authentication, Key-Pair
 
+
 # Looker and Snowflake Quickstart
 
 <!-- ------------------------ -->
@@ -23,7 +24,7 @@ This guide will walk you through the process of connecting Looker to Snowflake a
 * How to version control your Looker project with Git.
 
 ### Prerequisites
-* A Snowflake account with `ACCOUNTADMIN` privileges. If you don't have one, you can sign up for a [free trial](https://signup.snowflake.com/).
+* A Snowflake account with `ACCOUNTADMIN` privileges. If you don't have one, you can sign up for a [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 * A Looker instance.
 * A GitHub account.
 

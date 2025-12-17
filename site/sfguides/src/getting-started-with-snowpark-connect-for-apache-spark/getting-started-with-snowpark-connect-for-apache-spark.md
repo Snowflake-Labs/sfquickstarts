@@ -44,7 +44,7 @@ In Apache Spark™ version 3.4, the Apache Spark community introduced Spark Conn
 
 ### Prerequisites
 
-* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 
 <!-- ------------------------ -->
 ## Run PySpark Code
@@ -55,15 +55,15 @@ During this step you will learn how to run PySpark code on Snowflake to:
 * Connect to the Snowpark Connect server
 * Create nested table structures in PySpark and write to Snowflake
 
-Sign up for a [Snowflake Free Trial](https://signup.snowflake.com/) account and login to Snowflake home page. 
+Sign up for a [Snowflake Free Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account and login to Snowflake home page. 
 
-Download the `ipynb` from [this git repository](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/snowparkconnect_demo.ipynb).
+Download the `getting_started_with_snowpark_connect_for_apache_spark.ipynb` from [this git repository](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/getting_started_with_snowpark_connect_for_apache_spark.ipynb).
 
 ### Import the Notebook with PySpark code into Snowflake
 
 * In the Snowsight UI, navigate to `Projects` and click on `Notebooks`.
 * On the top right, click on the down arrow next to `+ Notebook` and select `Import ipynb file`.
-* Select the `snowparkconnect_demo.ipynb` you had downloaded earlier.
+* Select the `getting_started_with_snowpark_connect_for_apache_spark.ipynb` you had downloaded earlier.
 * Select notebook location as `snowflake_learning_db` and `public` schema.
 * Select `run on warehouse` option, select `query warehouse` as `compute_wh` and `create`.
 
@@ -75,7 +75,7 @@ Next up, select the packages drop down at the top right of the notebook. Look fo
 
 After the installation is complete, start or restart the notebook session.
 
-Follow along and run each of the cells in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/snowparkconnect_demo.ipynb).
+Follow along and run each of the cells in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/getting_started_with_snowpark_connect_for_apache_spark.ipynb).
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -92,4 +92,5 @@ Congratulations, you have successfully completed this quickstart!
 ### Related Resources
 
 * [Snowpark Connect](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview)   
-* [Source code on GitHub](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/snowparkconnect_demo.ipynb)  
+* [Source code on GitHub](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/getting_started_with_snowpark_connect_for_apache_spark.ipynb) 
+* [Comprehensive Intro to Snowpark Connect](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/intro_to_snowpark_connect.ipynb)

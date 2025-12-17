@@ -7,6 +7,7 @@ environments: web
 status: hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with LLMOps using Snowflake Cortex and TruLens
 
 ## Overview
@@ -51,7 +52,7 @@ Cortex Search enables low-latency, high-quality search over your Snowflake data.
 - Context filter guardrails
 
 ### Prerequisites
-- A Snowflake account with Cortex LLM Functions and Cortex Search enabled.  If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=yYZEVo4S&_fsi=yYZEVo4S).
+- A Snowflake account with Cortex LLM Functions and Cortex Search enabled.  If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides&_fsi=yYZEVo4S&_fsi=yYZEVo4S).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 ## Setup Environment
@@ -88,7 +89,7 @@ SNOWFLAKE_ROLE=ACCOUNTADMIN
 SNOWFLAKE_CORTEX_SEARCH_SERVICE=LLMOPS_CORTEX_SEARCH_SERVICE
 ```
 
-> aside positive
+> 
 > You will later create a cortex search service with the name ***LLMOPS_CORTEX_SEARCH_SERVICE***. You are welcome to set that now..
 
 Next create a new conda environment and install the packages required with the following commands in your terminal:
@@ -109,7 +110,7 @@ To open the jupyter notebook, you can follow the following steps:
 
 2) Open [snowflake_llmops_quickstart.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-llmops-using-snowflake-cortex-and-trulens/blob/main/snowflake_llmops_quickstart.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
-> aside positive
+> 
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***getting_started_llmops*** -- which is the name of the environment created in the previous step.
 
 ```python

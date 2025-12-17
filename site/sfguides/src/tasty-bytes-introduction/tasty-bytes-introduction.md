@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide
 environments: web
-status: Hidden 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # An Introduction to Tasty Bytes
@@ -26,7 +26,7 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - An Enterprise or Business Critical Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/?utm_cta=quickstarts_). When signing up, please make sure to select **Enterprise** edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). When signing up, please make sure to select **Enterprise** edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
     - ![assets/choose_edition.png](assets/choose_edition.png)
     
@@ -90,7 +90,7 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 ### Overview
 With the Tasty Bytes Setup successful, we can now explore the Database, Roles and Warehouses we created. 
 
->aside negative
+> 
 >**Note:** Within the *Tasty Bytes - Setup* worksheet you created in previous section, please scroll to the bottom and Copy, Paste and  Run the SQL included in each step below.
 >
 

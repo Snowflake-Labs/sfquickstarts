@@ -8,6 +8,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # ALTR Quickstart - Data Access Control
 
 <!-- 1 ------------------------ -->
@@ -17,7 +18,7 @@ This Quick Start Guide is intended for Data Owners and Data Stewards or any othe
 
 ### Prerequisites
 - A Snowflake Enterprise Edition account (or higher). 
-    - We recommend that you sign up for a free [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)
+    - We recommend that you sign up for a free [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - You need to be, or have access to, an ACCOUNTADMIN for your Snowflake instance. 
 
 
@@ -30,7 +31,7 @@ This Quick Start Guide is intended for Data Owners and Data Stewards or any othe
 <!-- 2 ------------------------ -->
 ## Create a sample database
 
->aside positive
+> 
 >**In This Step:** 
 We are creating a sample database by copying a small amount of data from Snowflakes shared *SNOWFLAKE_SAMPLE_DATA* database. We will use this sample database in the rest of this Quickstart. 
 >
@@ -61,18 +62,18 @@ CREATE TABLE SAMPLE_CUSTOMER AS
     LIMIT 10000;
 ```
 
->aside negative
+> 
 > **Note:** If you can't get access to Snowflake's built in sample data and you want to use your own data go for it! To match this guide we recommend creating a separate database using the name ALTR_GETTING_STARTED_DB.  Just populate it with fields from your own data set.  Be sure to include some columns that contain PII like email addresses, names, addresses, SSN's etc. 
 >
 <!-- 3 ------------------------ -->
 ## Setup a new ALTR account
 
->aside positive
+> 
 >**In This Step:** 
 >We will create the ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake. There is no installation required on your premises. The process starts starts in Snowflake's Partner Connect portal
 >
 
->aside negative
+> 
 > **NOTE:** If you already have an ALTR account and want to use it instead of creating a new one then skip to Step 4 ***ALTR Setup for existing accounts*** 
 >
 
@@ -90,13 +91,13 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 - Click "Set Password" Button
 - Follow the prompts in the ALTR Setup Wizard (there are multiple steps). 
 
->aside negative
+> 
 > **NOTE:** When you get to the **choose a database to connect** prompt, you should see *ALTR_GETTING_STARTED_DB* in the list.  Choose it and then wait for the wizard to complete.
 >
 <!-- 4------------------------ -->
 ## ALTR Setup for existing accounts
 
->aside positive
+> 
 >**In This Step**
 >Only perform this step if you plan to use an ALTR account that existed before running this quick start.  If you just created a new ALTR account in the previous step then skip to step 5 **Build Data Classification Report** 
 >
@@ -110,7 +111,7 @@ CREATE TABLE SAMPLE_CUSTOMER AS
   CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(TRUE);
 ```
 
->aside negative
+> 
 > **NOTE**: If the stored procedure runs but you get an error as a result then try calling it again with the parameter set to "FALSE" instead of TRUE as follows:
 >
 ```sql
@@ -118,7 +119,7 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 ```
 ### Connect ALTR to Sample Database
 
->aside negative
+> 
 > **NOTE**: If your current ALTR account is a free tier account you are limited to a single connected database.  You will need to disconnect the existing database from ALTR first in order to connect this quickstart's sample database.  Or, you can use the database you already have connected, just remember the column names may not match what is in this guide. 
 
 - [Log in to your ALTR portal](https://altrnet.live.altr.com/api/auth/organization_login?uiredirect=true)
@@ -130,14 +131,14 @@ CREATE TABLE SAMPLE_CUSTOMER AS
   - Service Account ID: 'PC_ALTR_USER' if ALTR account created via Snowflake Partner Connect
   - Snowflake Database Name: Name given to the sample database (ALTR_GETTING_STARTED_DB)
 
->aside negative
+> 
 > **NOTE:** If your ALTR account was not created via Snowflake Partner Connect try setting ALTR_SERVICE_USER as the Service Account ID.  One way to identify the Service Account ID: is to look at what value is set for other databases that are already connected to ALTR.  Click on a database that is already connected in the Data Sources page and then expand the "Reconfigure Connection" drop down in the detail pane to see the name of the Service Account ID field.
 >
 
 <!-- ------------------------ -->
 ## Build Data Classification Report
 
->aside positive
+> 
 >**In This Step**
 >The preceding steps are one time setup required for ALTR.  Now that those tasks are complete we can start building our data access policy. The first task is to identify what data in our database contains sensitive information, what most people call *classification*. So in this step we will have ALTR generate a classification report sending a sample of data to Google DLP service to get classificaton results. 
 >
@@ -155,7 +156,7 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 - Click on the *Classification Report* tab.
 ![Classification Report](assets/nav_to_class_rpt.png)
 
->aside positive
+> 
 >**Classification Report Explainer:** 
 >- The classification job tags columns with the information type it believes are contained in the data column. We call these *classifier tags* 
 >- A single column can be tagged with multiple *classifier tags* or none.  
@@ -172,7 +173,7 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 <!-- ------------------------ -->
 ## Define Role Based Data Access Policy
 
->aside positive
+> 
 >**In This Step**
 >We will build role based data access policies for EMAIL addresses from within the ALTR portal using ALTR *Locks*.  
 >
@@ -190,7 +191,7 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 - Click the *Update Lock* button to save this lock. 
 ![Classification Report](assets/save_lock.png)
 
->aside positive
+> 
 >**Lock Explainer**
 >- Congrats you just defined your first policy!
 >- This lock defines the policy that will display *EMAIL_ADDRESS* values without any masking so long as the user querying snowflake is using the *SECURITYADMIN* role.  

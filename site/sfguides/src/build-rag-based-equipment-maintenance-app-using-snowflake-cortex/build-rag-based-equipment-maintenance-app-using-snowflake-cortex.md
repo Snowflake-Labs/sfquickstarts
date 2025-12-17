@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Ryan Ellis, Tim Long
 
+
 # Build Rag Based Equipment Maintenance App Using Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
@@ -44,7 +45,7 @@ LLM Functions: SQL and Python functions that leverage large language models (LLM
 
 ML Functions: SQL functions that perform predictive analysis using machine learning to help you gain insights into your structured data and accelerate everyday analytics.
 
-> aside negative
+> 
 > IMPORTANT: Some of CORTEX's functions and features used in this quickstart are in PrPr and or PuPr.  Please reach out to your account team for enablement.  [Availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_ga=2.5151286.405859672.1709568467-277021311.1701887324&_gac=1.124754680.1707955750.Cj0KCQiA5rGuBhCnARIsAN11vgRLWfK6RIoIEqcZ7cFas8qwN4yCoL0q9nttp5UEmSocnPmhdBG57fgaAjqNEALw_wcB&_fsi=j2b82Wl3#availability).
 
 ![Snowpark](assets/cortex.png)
@@ -78,7 +79,7 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 ### Prerequisites
 
 - Access to [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) for source code
-- A Snowflake account, if you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account, if you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 ### Vocabulary
@@ -89,7 +90,7 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 - **UDF**: User defined function
 - **UDTF**: User defined table function
 
-> aside positive
+> 
 > IMPORTANT: Before proceeding, make sure you have the correct access to CORTEX as described [here](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#required-privileges).
 
 <!-- ------------------------ -->
@@ -100,7 +101,7 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, setup Snowflake internal stages, and load repair manuals.
 
-> aside positive
+> 
 > IMPORTANT:
 >
 > - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -718,7 +719,7 @@ You can now ask any question you like of the LLM in regards to fixing the Otto 1
 
 ## Cleanup
 
-> aside negative
+> 
 > IMPORTANT:
 >
 > - If you have created other solutions in your LLM database, do not DROP it.  You will lose those solutions.

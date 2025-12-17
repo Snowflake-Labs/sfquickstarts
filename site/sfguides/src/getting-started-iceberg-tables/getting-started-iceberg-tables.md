@@ -7,13 +7,14 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Iceberg Tables
 <!-- ------------------------ -->
 ## Overview 
 
 This guide is designed to help you understand the capabilities included in Snowflake’s support for Apache Iceberg. Iceberg Tables, now generally available, bring Snowflake’s easy platform management and great performance to data stored externally in the open source Apache Iceberg format.
 
-> aside positive
+> 
 > 
 >  Iceberg Tables are now generally available.
 
@@ -28,7 +29,7 @@ This guide is designed to help you understand the capabilities included in Snowf
 - How to access a Snowflake-managed Iceberg Table from Spark and DuckDB
 
 ### Prerequisites or What You Will Need 
-- A Snowflake account. A [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
+- A Snowflake account. A [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
 - A storage bucket with the same cloud provider in the same region that hosts your Snowflake account above. Direct credential access required as storage integrations are not supported for External Volumes.
 
 <!-- ------------------------ -->
@@ -451,7 +452,7 @@ For a deeper dive on Snowpark for data engineering pipelines, try [this quicksta
 
 Iceberg Tables can be securely shared with consumers either through their own Snowflake account or a provisioned Snowflake Reader account. The consumer can be an external entity or a different internal business unit that is required to have its own unique Snowflake account.
 
-> aside negative
+> 
 > 
 >  Cross-cloud and cross-region sharing of Iceberg Tables is not currently supported. The provider’s external volume, Snowflake account, and consumer’s Snowflake account must all be in the same cloud region.
 

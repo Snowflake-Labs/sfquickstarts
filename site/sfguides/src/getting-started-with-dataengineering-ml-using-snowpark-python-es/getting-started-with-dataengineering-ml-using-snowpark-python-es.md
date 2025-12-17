@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
+
 # Introducción a la ingeniería de datos y al ML con Snowpark para Python
 <!-- ------------------------ -->
 ## Descripción general
@@ -60,10 +61,10 @@ Streamlit es un marco de aplicación de lenguaje Python puro [de código abierto
 - [Git](https://git-scm.com/book/es/v2/Inicio---Sobre-el-Control-de-Versiones-Instalaci%C3%B3n-de-Git) debe estar instalado.
 - [Python 3.9](https://www.python.org/downloads/) debe estar instalado.
   - Ten en cuenta que vas a crear un entorno Python con la versión 3.9 en el paso **Introducción**.
-- Debes disponer de una cuenta de Snowflake con [paquetes de Anaconda habilitados por ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si no tienes una, puedes registrarte para obtener una [cuenta de prueba gratuita](https://signup.snowflake.com/).
+- Debes disponer de una cuenta de Snowflake con [paquetes de Anaconda habilitados por ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Si no tienes una, puedes registrarte para obtener una [cuenta de prueba gratuita](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 - Debes iniciar sesión en una cuenta de Snowflake con rol ACCOUNTADMIN. Si tienes este rol en tu entorno, selecciónalo para usarlo. En el caso contrario, deberás: 1) registrarte para obtener una prueba gratuita; 2) utilizar un rol diferente que permita crear bases de datos, esquemas, tablas, fases, tareas, funciones definidas por el usuario y procedimientos almacenados, o 3) utilizar una base de datos y un esquema existentes en los que puedas crear los objetos mencionados.
 
-> aside positive IMPORTANTE: Antes de comenzar, asegúrate de tener una cuenta de Snowflake con paquetes de Anaconda habilitados por ORGADMIN, tal y como se describe [aquí](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
+> 
 
 <!-- ------------------------ -->
 ## Configuración del entorno
@@ -73,7 +74,7 @@ Streamlit es un marco de aplicación de lenguaje Python puro [de código abierto
 
 Inicia sesión en [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) con tus credenciales para crear tablas, cargar datos de Amazon S3 y configurar las fases internas de Snowflake.
 
-> aside positive IMPORTANTE:
+> 
 >
 > - Si utilizas nombres diferentes para los objetos creados en esta sección, asegúrate de adaptar las secuencias de comandos y el código de las siguientes secciones en consecuencia.
 >
@@ -164,7 +165,7 @@ CREATE OR REPLACE STAGE dash_udfs;
 
 De manera opcional, también puedes abrir [setup.sql](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/setup.sql) en Snowsight y ejecutar todas las sentencias de SQL para crear los objetos y cargar los datos de AWS S3.
 
-> aside positive IMPORTANTE: Si utilizas nombres diferentes para los objetos creados en esta sección, asegúrate de adaptar las secuencias de comandos y el código de las siguientes secciones en consecuencia.
+> 
 
 <!-- ------------------------ -->
 ## Introducción
@@ -192,7 +193,7 @@ git clone git@github.com:Snowflake-Labs/sfguide-getting-started-dataengineering-
 
 Para completar los pasos **Ingeniería de datos** y **Aprendizaje automático**, puedes instalar todo en el entorno local (opción 1) o utilizar Hex (opción 2), tal y como se describe a continuación.
 
-> aside positive IMPORTANTE: Para ejecutar la **aplicación de Streamlit**, tendrás que crear un entorno de Python e instalar Snowpark para Python en el entorno local junto con otras bibliotecas, tal y como se describe en **Instalación local**.
+> 
 
 #### Opción 1: Instalación local
 
@@ -248,13 +249,13 @@ A continuación, puedes ver un ejemplo de ***connection.json*** basado en los no
 }
 ```
 
-> aside negative Nota: Para el parámetro **account** que se menciona arriba, especifica tu **identificador de cuenta** y no incluyas el nombre del dominio snowflakecomputing.com. Snowflake lo añade de forma automática al crear la conexión. Para obtener más información al respecto, [consulta la documentación](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html).
+> 
 
 #### Opción 2: Hex
 
 Si decides usar tu cuenta de [Hex](https://app.hex.tech/login) o [crear una cuenta de prueba gratuita de 30 días](https://app.hex.tech/signup/quickstart-30), Snowpark para Python está integrado para que no tengas que crear un entorno de Python ni instalarlo localmente en tu equipo junto con el resto de las bibliotecas. De esta forma, podrás completar los pasos **Ingeniería de datos** y **Aprendizaje automático** de esta quickstart guide directamente en Hex. (Consulta los pasos correspondientes para obtener más información sobre cómo cargar los cuadernos de ingeniería de datos y ML en Hex).
 
-> aside positive IMPORTANTE: Para ejecutar la **aplicación de Streamlit**, tendrás que crear un entorno Python e instalar Snowpark para Python en el entorno local junto con otras bibliotecas, tal y como se ha descrito en **Instalación local**.
+> 
 
 <!-- ------------------------ -->
 ## Ingeniería de datos
@@ -276,7 +277,7 @@ Para comenzar, sigue estos pasos:
 
 2) Abre y ejecuta las celdas de [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)
 
-> aside positive IMPORTANTE: Asegúrate de que el kernel (de Python) del cuaderno de Jupyter está configurado como ***snowpark-de-ml***, es decir, con el mismo nombre del entorno creado en el paso **Clonación del repositorio de GitHub**.
+> 
 
 ### Cuaderno de ingeniería de datos en Hex
 
@@ -288,7 +289,7 @@ Si decides usar tu cuenta de [Hex](https://app.hex.tech/login) o [crear una cuen
 
 ![Conexión de datos de HEX](assets/hex_data_connection.png)
 
-> aside negative Nota: También puedes crear conexiones de datos compartidos para tus proyectos y usuarios en tu espacio de trabajo. Para obtener más información al respecto, consulta la [documentación](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+> 
 
 3) Sustituye el siguiente fragmento de código en el cuaderno
 
@@ -400,7 +401,7 @@ monthly_revenue_data_pipeline_task = """
 session.sql(monthly_revenue_data_pipeline_task).collect() 
 ```
 
-> aside negative Nota: Observa arriba, en ***monthly_revenue_data_pipeline_task***, que la cláusula **AFTER campaign_spend_data_pipeline_task** hace que sea una tarea dependiente.
+> 
 
 #### Inicio de Tasks
 
@@ -438,7 +439,7 @@ También puedes habilitar el envío de notificaciones push a un servicio de mens
 ## Aprendizaje automático
 
 
-> aside negative SE REQUIERE haber completado correctamente los pasos de ingeniería de datos que se describen en [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
+> 
 
 En el enlace del cuaderno que encontrarás a continuación incluye las siguientes tareas de aprendizaje automático:
 
@@ -462,7 +463,7 @@ Para comenzar, sigue estos pasos:
 
 2) Abre y ejecuta[Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb)
 
-> aside positive IMPORTANTE: Asegúrate de que el kernel (de Python) del cuaderno de Jupyter está configurado como ***snowpark-de-ml***, es decir, con el mismo nombre del entorno creado en el paso **Clonación del repositorio de GitHub**.
+> 
 
 ### Cuaderno de aprendizaje automático en Hex
 
@@ -474,7 +475,7 @@ Si decides usar tu cuenta de [Hex](https://app.hex.tech/login) o [crear una cuen
 
 ![Conexión de datos de HEX](assets/hex_data_connection.png)
 
-> aside negative Nota: También puedes crear conexiones de datos compartidos para tus proyectos y usuarios en tu espacio de trabajo. Para obtener más información al respecto, consulta la [documentación](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
+> 
 
 3) Sustituye el siguiente fragmento de código en el cuaderno
 
@@ -516,7 +517,7 @@ Si todo ha salido bien, deberías ver cómo se abre una ventana del navegador co
 
 Si has habilitado Streamlit en Snowflake (Streamlit-in-Snowflake, SiS) en tu cuenta, sigue estos pasos para ejecutar la aplicación en Snowsight en lugar de localmente en tu ordenador.
 
-> aside negative IMPORTANTE: SiS se encuentra en vista previa privada a fecha de junio de 2023.***
+> 
 
   1) Haz clic en **Streamlit Apps** en el menú de navegación de la izquierda. 
   2) Haz clic en **+ Streamlit App** en la parte superior derecha. 

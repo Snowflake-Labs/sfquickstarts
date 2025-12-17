@@ -6,6 +6,9 @@ summary: This guide will provide step-by-step details for building a data engine
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai
+
+
 
 # S&P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI
 <!-- ------------------------ -->
@@ -50,10 +53,9 @@ To reproduce the full research using the complete datasets then request access t
 
 ### Prerequisites
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
     >
     >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai)
-* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+* A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
 * A Snowflake account login with a role that has the ability to create database, schema, tables, warehouse and notebooks. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
@@ -224,4 +226,3 @@ In this QuickStart you have learned how to use Snowflake Cortex to analyse execu
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai)
 * Access the research ["Questioning the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom)
 * Request access to the longer version of the notebook via <QRS@spglobal.com>
-

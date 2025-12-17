@@ -43,7 +43,7 @@ for Tasty Bytes.
 - [NodeJS](https://nodejs.org/en/download/) Installed
 - [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) Installed
 
-> aside positive
+> 
 > **Installing Using NVM**
 > 
 >  Node Version Manager provides the ability to have multiple versions of Node installed on your local environment.  This can be helpful so that you can complete this lab without impacting any existing Node setup that you have on your machine. 
@@ -606,7 +606,7 @@ Open the `sql.js` file and examine the SQL statement being executed. Test this o
 ```sh
 curl http://localhost:3000
 ```
-> aside negative
+> 
 > **Need help with this step?**
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
@@ -701,7 +701,7 @@ Here are a few curl commands to test the APIs:
 * `curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales?analysis=dayofweek"`
 * `curl "http://localhost:3000/franchise/120/trucks/Guac%20n%27%20Roll/sales?analysis=topitems_dayofweek"`
 
-> aside negative
+> 
 > Need help with this step?
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
@@ -759,7 +759,7 @@ var auth = require('./auth')
 ```
 
 Notice how the `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` from the `.env` file are now used to sign the tokens we generate. Having different secrets means that this back backend can uniquely verify that a token was generated and signed by itself.
-> aside positive
+> 
 > Note that here we are setting an expiration time of 360 minutes for the access tokens to make this lab a little easier (meaning a token will not expire during the entire lab), in a production scenario it would likely be a much shorter expiration time, like 15 minutes.
 
 #### Adding a login endpoint to the API
@@ -834,7 +834,7 @@ You can now add these two endpoints to the API by including it in `app.js`:
 app.use("/", login);
 ```
 
-> aside positive
+> 
 > Note how in the login endpoint we are comparing the stored hashed passwords with a hash of the passed in password, meaning we are never storing plaintext passwords in the database, and the only time we are handling the plaintext password is in this method. Again this makes it important to ensure that the communication between the frontend and the backend is secured using HTTPS in a production scenario.
 
 Since we already created users in the first lab and stored hashed passwords for them in the database, we can try out the login endpoint to get an access token:
@@ -923,7 +923,7 @@ curl http://localhost:3000/ -H "Accept: application/json" -H "Authorization: Bea
 ```
 
 
-> aside negative
+> 
 > Need help with this step?
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
@@ -949,7 +949,7 @@ app.use(cors({
 }));
 ```
 
-> aside negative
+> 
 > Need help with this step?
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`
@@ -1032,7 +1032,7 @@ Next, in the `auth.js` file we can update the `validateToken` function:
     },
 ```
 
-> aside negative
+> 
 > Need help with this step?
 >
 > You can set your entire backend folder to the end of this step by running a `git` command to grab it from the repo. In the `/backend` folder (it will only reset changes you have set in this folder), run `git checkout -- ./backend`

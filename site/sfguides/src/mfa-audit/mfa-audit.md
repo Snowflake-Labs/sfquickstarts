@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Building an MFA Audit System with Streamlit in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
@@ -23,7 +24,7 @@ Learn how to create an interactive Multi-Factor Authentication (MFA) audit syste
 An interactive Streamlit application that displays user MFA status and sends formatted email reports to system administrators about users who haven't enabled MFA.
 
 ### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 
 ### Prerequisites
 - Access to Snowflake Notebooks
@@ -37,7 +38,7 @@ An interactive Streamlit application that displays user MFA status and sends for
 ### Open Snowflake Notebook
 You can retrieve the [MFA Audit Snowflake Notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/MFA_Audit_of_Users/MFA_Audit_of_Users_with_Streamlit_in_Snowflake_Notebooks.ipynb) and follow along with the tutorial.
 
-> aside positive
+> 
 > NOTE:
 > On the above mentioned GitHub page, please click on the download icon (upon hover it should display "Download raw file").
 
@@ -128,7 +129,7 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION my_email_int
 Running this query should return the following confirmation:
 ![image](assets/img02.png)
 
-> aside positive
+> 
 > IMPORTANT:
 > This setup ensures you have the necessary privileges to create notification integrations
 
@@ -157,7 +158,7 @@ CALL SYSTEM$SEND_EMAIL(
 );
 ```
 
-> aside positive
+> 
 > IMPORTANT:
 > Replace `your-name@email-address.com` with the email address tied to your user account.
 

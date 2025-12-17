@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
+
 # Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake
 <!-- ------------------------ -->
 ## Présentation
@@ -48,13 +49,13 @@ Un ensemble de données préparé pouvant être utilisé dans des applications e
 
 ### Créer un compte d’essai Snowflake
 
-Inscrivez-vous et profitez d’un essai gratuit de 30 jours en cliquant [ici](https://signup.snowflake.com/?lab=getStartedWithSnowparkInPythonWorksheets) (vous serez redirigé vers la page de configuration du compte d’essai intitulée **Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake**). Nous vous recommandons de choisir la région la plus proche de vous. Nous vous recommandons de choisir l’édition la plus populaire, Enterprise, mais toutes les éditions fonctionneront pour cet atelier.
+Inscrivez-vous et profitez d’un essai gratuit de 30 jours en cliquant [ici](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&lab=getStartedWithSnowparkInPythonWorksheets&utm_cta=developer-guides) (vous serez redirigé vers la page de configuration du compte d’essai intitulée **Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake**). Nous vous recommandons de choisir la région la plus proche de vous. Nous vous recommandons de choisir l’édition la plus populaire, Enterprise, mais toutes les éditions fonctionneront pour cet atelier.
 
 ### Se connecter et configurer l’atelier
 
 Connectez-vous à votre compte Snowflake. Pour accéder à cet atelier et configurer des exemples de données et de code, assurez-vous de cliquer sur le lien suivant.
 
-> aside positive IMPORTANT : vous devez disposer du rôle ACCOUNTADMIN afin de procéder à la configuration de l’atelier décrite ci-dessous. Remarque : si vous avez créé un nouveau compte d’essai, vous disposez automatiquement du rôle ACCOUNTADMIN.
+> 
 
 <button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 

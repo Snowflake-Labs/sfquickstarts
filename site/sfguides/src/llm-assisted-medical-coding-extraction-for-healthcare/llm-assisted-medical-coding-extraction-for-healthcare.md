@@ -6,6 +6,10 @@ summary: Clinical coding is the task of transforming medical records, usually pr
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-llm-assisted-medical-coding-extraction-for-healthcare-in-snowflake
+
+
+
 
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
@@ -40,7 +44,7 @@ Also Cortex fine-tuning does Automatic Parameter Efficient Fine-tuning (PEFT) wi
 
 ### What You’ll Need 
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex and Arctic are available.
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account in a region where Snowflake Cortex and Arctic are available.
 - Access to the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.
 - Git installed.
 

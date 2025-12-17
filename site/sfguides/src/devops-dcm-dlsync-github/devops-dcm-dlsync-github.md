@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # DevOps: Database Change Management with DLSync and GitHub
 <!-- ------------------------ -->
 ## Overview
@@ -40,7 +41,7 @@ DevOps is concerned with automating the development, release, and maintenance of
 ### What You Will Need
 
 1. **Snowflake**
-    1. A Snowflake Account ([Create snowflake trial account](https://signup.snowflake.com/)) 
+    1. A Snowflake Account ([Create snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)) 
     1. A Snowflake Database and schema (e.g., DEMO_DB.DEMO_SCHEMA)
     1. A Snowflake User with appropriate permissions
 1. **GitHub**
@@ -70,7 +71,7 @@ DLSync is a database change management tool for Snowflake. It tracks changes to 
 
 For more information, see the [DLSync project page](https://github.com/Snowflake-Labs/dlsync).
 
-> aside negative
+> 
 > 
 >  **Note** - DLSync is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
 
@@ -276,7 +277,7 @@ GRANT USAGE ON WAREHOUSE DEMO_WH TO ROLE demo_role;
 GRANT ROLE demo_role TO USER DEMO_USER;
 ```
 
-> aside positive
+> 
 > 
 >  You may also want to create similar objects for production environments (e.g., `demo_db_prod`).
 
@@ -298,7 +299,7 @@ From your repository, go to **Settings > Secrets and variables > Actions**. Add 
 | SNOWFLAKE_SCHEMA | DLSYNC |
 | SNOWFLAKE_PROFILE | dev |
 
-> aside positive
+> 
 > 
 >  **Tip** - For more details on Snowflake connection properties, see the [JDBC Driver connection parameter reference](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc-parameters).
 
@@ -377,7 +378,7 @@ jobs:
             --profile "$profile"
 ```
 
-> aside positive
+> 
 > 
 >  **Tip** - Adjust the script root and profile as needed for your project structure.
 

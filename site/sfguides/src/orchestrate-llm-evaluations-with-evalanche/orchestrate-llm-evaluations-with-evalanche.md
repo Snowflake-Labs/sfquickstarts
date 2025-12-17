@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Orchestrate LLM Evaluations in Snowflake with Evalanche
 <!-- ------------------------ -->
 ## Overview 
@@ -35,7 +36,7 @@ A Metric mostly consists of required input(s) and a prompt asking the LLM to ass
 Data Sources provide the values to Metrics’ required inputs. Data Sources can be a Snowflake table or a SQL SELECT statement. 
 
 ### Prerequisites
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
 
 ### What You’ll Learn 
 - How to deploy Evalanche to a Snowflake account
