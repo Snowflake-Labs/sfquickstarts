@@ -112,7 +112,7 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
   - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
   - **fork repo link**:
     - add a link to your repo
-  - **open in snowflake**:
+  - **open in snowflake link**:
     - add a link to the product as a deeplink or a template link
 
 
