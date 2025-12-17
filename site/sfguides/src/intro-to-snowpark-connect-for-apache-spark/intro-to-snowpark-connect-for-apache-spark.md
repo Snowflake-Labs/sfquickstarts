@@ -8,7 +8,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Comprehensive Guide to Snowpark Connect for Apache Spark &trade;
+# Comprehensive Guide to Snowpark Connect for Apache Spark;
 
 <!-- ------------------------ -->
 ## Overview
