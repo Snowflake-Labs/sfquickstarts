@@ -63,8 +63,8 @@ Duration: 10
 First, clone the quickstart repository to get all the necessary files:
 
 ```bash
-git clone https://github.com/sfc-gh-ebotwick/CORTEX_AGENT_EVALS_QUICKSTART.git
-cd CORTEX_AGENT_EVALS_QUICKSTART
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agent-evaluations.git
+cd sfguide-getting-started-with-cortex-agent-evaluations
 ```
 
 ### What's in the Repository
@@ -544,5 +544,5 @@ Congratulations! You've successfully set up and run Cortex Agent Evaluations. Yo
 
 ### Repository
 
-- [CORTEX_AGENT_EVALS_QUICKSTART on GitHub](https://github.com/sfc-gh-ebotwick/CORTEX_AGENT_EVALS_QUICKSTART)
+- [sfguide-getting-started-with-cortex-agent-evaluations on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agent-evaluations)
 
