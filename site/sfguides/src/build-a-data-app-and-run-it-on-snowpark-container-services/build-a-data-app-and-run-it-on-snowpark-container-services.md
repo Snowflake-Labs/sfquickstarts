@@ -8,8 +8,11 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
+
 # Build a Data App and run it on Snowpark Container Services
-<!-- ------------------------ -->
+
+
 ## Overview 
 
 Snowflake is a terrific platform on which to build data applications. The unique characteristics and cloud-based design allow for building applications that scale with data and workload. This tutorial will go through how to build and deploy both the Processing Layer and the User Interface Layer paired with Snowflake as the Persistence Layer.
