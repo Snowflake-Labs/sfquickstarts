@@ -1057,52 +1057,49 @@ f_logical_consistency = MetricConfig(
 
 ### Create Instrumented App
 
+Directly wrap the LangGraph graph with TruGraph:
+
 ```python
-# Wrapper class for TruLens
-class CustomerIntelligenceAgent:
-    def __init__(self, graph):
-        self.graph = graph
-    
-    def run_query(self, query: str) -> dict:
-        state = {"messages": [HumanMessage(content=query)]}
-        return self.graph.invoke(state)
-
-# Create app instance
-customer_intel_app = CustomerIntelligenceAgent(app)
-
-# Create TruLens instrumented app
-APP_NAME = f"Customer Intelligence Multi-Agent {uuid.uuid4().hex[:8]}"
-APP_VERSION = "V1"
+# Create TruLens instrumented app by directly wrapping the graph
+APP_NAME = "Customer Intelligence Multi-Agent"
+APP_VERSION = f"V{uuid.uuid4().hex[:8]}"
 
 tru_app = TruGraph(
-    customer_intel_app,
+    app,  # The compiled StateGraph directly
     app_name=APP_NAME,
     app_version=APP_VERSION,
-    main_method=customer_intel_app.run_query,
+    main_method=app.invoke,  # Use graph's invoke method directly
     connector=sf_connector,
 )
 ```
 
 ### Run Evaluation
 
+The evaluation dataset contains full LangGraph state dicts that are passed directly to `graph.invoke()`:
+
 ```python
 import pandas as pd
 
-# Define evaluation queries
-evaluation_queries = [
-    "Assess the churn risk for customers complaining about API issues.",
-    "What industries have the highest customer lifetime value?",
+# Define evaluation inputs as full LangGraph state dicts
+# This passes the actual state that LangGraph expects directly to graph.invoke()
+evaluation_inputs = [
+    {
+        "messages": [HumanMessage(content="Assess the churn risk for customers complaining about API issues.")],
+    },
+    {
+        "messages": [HumanMessage(content="What industries have the highest customer lifetime value?")],
+    },
 ]
 
-# Create DataFrame
-queries_df = pd.DataFrame({"query": evaluation_queries})
+# Create DataFrame with the state dicts
+queries_df = pd.DataFrame({"input_state": evaluation_inputs})
 
-# Configure run
+# Configure run - map to the column containing state dicts
 run_config = RunConfig(
     run_name=f"customer_intel_eval_{uuid.uuid4().hex[:8]}",
     dataset_name="customer_intelligence_queries",
     source_type="DATAFRAME",
-    dataset_spec={"RECORD_ROOT.INPUT": "query"},
+    dataset_spec={"RECORD_ROOT.INPUT": "input_state"},  # Maps to state dict column
 )
 
 # Add run and execute
