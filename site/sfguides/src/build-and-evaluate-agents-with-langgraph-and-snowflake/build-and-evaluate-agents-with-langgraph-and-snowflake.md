@@ -10,9 +10,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build and Evaluate Multi-Agent Systems with Snowflake and LangGraph
 
 ## Overview
+
 Duration: 5
 
 Modern organizations need to combine multiple AI capabilities to handle complex business questions. This quickstart demonstrates how to build a **multi-agent supervisor architecture** using LangGraph and Snowflake Cortex Agents for customer intelligence, churn prediction, and business analytics.
+
+You can also watch this use case in action on Youtube:
+
+[LangGraph And Snowflake Cortex AI: Exploring Multi-Agentic Workflows](https://www.youtube.com/watch?v=LsanBaHbCvE)
 
 ### What is a Multi-Agent Supervisor Architecture?
 
@@ -151,6 +156,7 @@ After the Git integration is set up, you can run each SQL script directly from t
 The following sections explain what each script does in detail.
 
 ## Setup Database and Load Data
+
 Duration: 10
 
 The `01_setup_database_and_load_data.sql` script creates the tables and loads demo data. Here's what it does:
@@ -256,6 +262,7 @@ UNION ALL SELECT 'CHURN_EVENTS', COUNT(*) FROM CHURN_EVENTS;
 You should see data in all four tables.
 
 ## Setup Cortex Search Services
+
 Duration: 5
 
 Cortex Search provides hybrid search (semantic + keyword) capabilities for unstructured text data. We'll create search services that the agents will use to find relevant customer feedback and support tickets.
