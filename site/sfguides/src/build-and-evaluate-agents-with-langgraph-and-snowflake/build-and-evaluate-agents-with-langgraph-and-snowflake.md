@@ -34,7 +34,7 @@ User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthe
 
 ### Why LangGraph
 
-LangGraph provides low-level supporting infrastructure for any long-running, stateful workflow or agent. LangGraph is great for building durable, stateful agents across multiple systems.
+[LangGraph](https://github.com/langchain-ai/langgraph) provides low-level supporting infrastructure for any long-running, stateful workflow or agent. LangGraph is great for building durable, stateful agents across multiple systems.
 
 If you're not building with LangGraph, try this [guide](https://www.snowflake.com/en/developers/guides/multi-agent-orchestration-snowflake-intelligence/) to build a multi-agent system entirely native to Snowflake.
 
@@ -320,9 +320,10 @@ SHOW CORTEX SEARCH SERVICES IN SCHEMA CUSTOMER_INTELLIGENCE_DB.PUBLIC;
 ```
 
 ## Setup Semantic Views
+
 Duration: 10
 
-Semantic Views power Cortex Analyst, enabling natural language to SQL conversion. They define the schema, relationships, and business metrics that the AI uses to generate accurate SQL queries.
+[Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) power Cortex Analyst, enabling natural language to SQL conversion. They define the schema, relationships, and business metrics that the AI uses to generate accurate SQL queries.
 
 ### Create Customer Behavior Analyst View
 
@@ -422,6 +423,7 @@ SHOW SEMANTIC VIEWS IN SCHEMA CUSTOMER_INTELLIGENCE_DB.PUBLIC;
 ```
 
 ## Setup Custom AI UDFs
+
 Duration: 10
 
 Custom UDFs (User-Defined Functions) extend agent capabilities with specialized AI analysis. These functions use Snowflake Cortex AI to perform sentiment analysis, behavior analysis, and strategic insights.
@@ -588,9 +590,10 @@ SHOW USER FUNCTIONS IN SCHEMA CUSTOMER_INTELLIGENCE_DB.PUBLIC;
 ```
 
 ## Create Cortex Agents
+
 Duration: 15
 
-Now we create the three specialized Cortex Agents that will be orchestrated by the LangGraph supervisor. Each agent has specific tools and instructions for their domain.
+Now we create the three specialized [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) that will be orchestrated by the LangGraph supervisor. Each agent has specific tools and instructions for their domain.
 
 ### Create Agent Database
 
@@ -797,6 +800,7 @@ SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;
 ```
 
 ## Build LangGraph Supervisor Workflow
+
 Duration: 20
 
 Now we'll build the LangGraph workflow that orchestrates these Snowflake Cortex Agents. This section walks through the Python code from the Jupyter notebook.
@@ -995,9 +999,10 @@ app = workflow.compile()
 ```
 
 ## Evaluate with TruLens
+
 Duration: 15
 
-TruLens provides observability and evaluation for your multi-agent system. We'll set up metrics to assess plan quality, execution efficiency, and response accuracy.
+[TruLens](https://www.trulens.org/) provides observability and evaluation for your multi-agent system. We'll set up metrics to assess plan quality, execution efficiency, and response accuracy.
 
 ### Import TruLens Dependencies
 
@@ -1167,8 +1172,3 @@ Congratulations! You've successfully built a **multi-agent supervisor architectu
 
 - [Developer Guide GitHub Repository](https://github.com/Snowflake-Labs/sfguide-build-and-evaluate-agents-with-snowflake-and-langgraph)
 - [LangChain Snowflake Integration](https://github.com/langchain-ai/langchain-snowflake)
-- [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
-- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex)
-- [Cortex Agents Guide](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents)
-- [TruLens Documentation](https://www.trulens.org/)
-
