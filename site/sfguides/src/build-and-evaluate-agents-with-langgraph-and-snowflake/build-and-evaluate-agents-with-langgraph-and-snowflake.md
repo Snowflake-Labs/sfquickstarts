@@ -40,40 +40,7 @@ If you're not building with LangGraph, try this [guide](https://www.snowflake.co
 
 ### Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        User Query                                │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      SUPERVISOR (Planning)                       │
-│               Plans execution and routes queries                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-           ┌──────────────────┼──────────────────┐
-           ▼                  ▼                  ▼
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│  CONTENT_AGENT  │  │ DATA_ANALYST    │  │ RESEARCH_AGENT  │
-│                 │  │ _AGENT          │  │                 │
-│ • Sentiment     │  │ • Metrics       │  │ • Market Intel  │
-│ • Feedback      │  │ • Behavior      │  │ • Strategy      │
-│ • Support       │  │ • Analytics     │  │ • Trends        │
-└─────────────────┘  └─────────────────┘  └─────────────────┘
-           │                  │                  │
-           └──────────────────┼──────────────────┘
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                 Snowflake AI Tools                              │
-│     Cortex Search │ Cortex Analyst │ Custom AI UDFs             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    SUPERVISOR (Synthesis)                        │
-│              Creates executive summary response                  │
-└─────────────────────────────────────────────────────────────────┘
-```
+![Architecture](assets/architecture.png)
 
 ### What You'll Learn
 
