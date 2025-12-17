@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap
 
 <!-- ------------------------ -->

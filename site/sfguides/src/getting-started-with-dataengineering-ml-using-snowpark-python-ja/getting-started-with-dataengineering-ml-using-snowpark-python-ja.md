@@ -8,6 +8,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
 
+
 # Snowpark for Pythonを使用したデータエンジニアリングとMLの入門
 
 <!-- ------------------------ -->

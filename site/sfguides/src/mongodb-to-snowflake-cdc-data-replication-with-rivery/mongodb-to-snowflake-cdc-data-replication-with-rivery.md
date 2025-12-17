@@ -8,6 +8,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # MongoDB to Snowflake CDC Data Replication with Rivery
 <!-- ------------------------ -->
 

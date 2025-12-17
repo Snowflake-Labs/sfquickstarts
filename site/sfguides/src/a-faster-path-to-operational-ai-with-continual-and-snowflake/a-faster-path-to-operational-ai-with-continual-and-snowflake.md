@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # A Faster Path to Operational AI with Continual and Snowflake
 <!-- ------------------------ -->
 ## Guide Overview

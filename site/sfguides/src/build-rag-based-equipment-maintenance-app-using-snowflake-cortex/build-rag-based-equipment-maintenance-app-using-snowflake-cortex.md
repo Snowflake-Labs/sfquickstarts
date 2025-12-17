@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Ryan Ellis, Tim Long
 
+
 # Build Rag Based Equipment Maintenance App Using Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview

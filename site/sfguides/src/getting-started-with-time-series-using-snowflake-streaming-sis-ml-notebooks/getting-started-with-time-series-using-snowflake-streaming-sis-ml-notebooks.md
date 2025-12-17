@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: nathan.birch@snowflake.com
 
+
 # Getting Started with Time Series Analytics for IoT in Snowflake
 <!-- ------------------------ -->
 ## Overview

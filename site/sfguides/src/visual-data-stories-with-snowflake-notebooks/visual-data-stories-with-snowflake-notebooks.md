@@ -9,6 +9,7 @@ authors: Vino Duraisamy, Doris Lee
 fork repo link: https://github.com/Snowflake-Labs/sfguide-visual-data-storytelling-in-snowflake-notebooks
 
 
+
 # A Guide to Visual Data Storytelling in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview

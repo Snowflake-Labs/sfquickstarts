@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, NLP, Snowpark, Streamlit 
 
+
 # NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
 <!-- ------------------------ -->
 ## Overview 

@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # Build Agentic Application with Anthropic In Snowflake
 <!-- ------------------------ -->
 

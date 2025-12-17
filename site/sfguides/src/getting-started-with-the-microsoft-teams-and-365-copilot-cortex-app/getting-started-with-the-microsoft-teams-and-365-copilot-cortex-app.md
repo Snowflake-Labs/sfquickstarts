@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with The Microsoft Teams and M365 Copilot Cortex App
 <!-- ------------------------ -->
 ## Overview 

@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 Date: 4/3/25
 
+
 # Getting Started with Microsoft Power Platform and Snowflake
 
 <!-- ------------------------ -->

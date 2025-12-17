@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-s
 
 
 
+
 # A Getting Started Guide With Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview

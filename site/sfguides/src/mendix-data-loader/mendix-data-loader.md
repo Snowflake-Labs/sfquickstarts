@@ -6,6 +6,7 @@ summary: Guide on how to use the Mendix Data Loader to ingest data from Mendix a
 environments: web
 status: Published
 
+
 # An Introduction to the Mendix Data Loader
 <!-- ------------------------ -->
 ## Overview

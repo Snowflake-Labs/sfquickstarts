@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 
+
 # Apache Iceberg and Snowflake Open Catalog: Unlock Data Lake Interoperability with Apache Polaris
 <!-- ------------------------ -->
 

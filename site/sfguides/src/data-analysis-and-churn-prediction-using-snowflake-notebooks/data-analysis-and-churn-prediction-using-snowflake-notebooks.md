@@ -7,6 +7,7 @@ environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Data Analysis and Churn Prediction Using Snowflake Notebooks
 <!-- ------------------------ -->
 

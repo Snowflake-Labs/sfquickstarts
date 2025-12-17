@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 language: en
 
+
 # Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics
 <!-- ------------------------ -->
 ## Overview
