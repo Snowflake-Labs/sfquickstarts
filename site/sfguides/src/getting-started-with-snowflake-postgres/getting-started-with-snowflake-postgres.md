@@ -66,7 +66,7 @@ There is both a URL connection string or you can choose a line by line environme
 - port: 5432
 - database_name: defaults to postgres
 
-For this guide, we're continuing to work with the admin role. Snowflake generates credentials for `snowflake_admin` and `application`.  It is recommended to also create additional roles for applications and users with the Postgres [user management features](https://www.postgresql.org/docs/current/user-manag.html). 
+For this guide, we're continuing to work with the admin role. Snowflake generates credentials for `snowflake_admin` and `application`. It is recommended to also create additional roles for applications and users with the Postgres [user management features](https://www.postgresql.org/docs/current/user-manag.html). 
 
 ### Connect to Snowflake Postgres with psql
 
@@ -88,11 +88,16 @@ psql postgres://snowflake_admin:****@****.sfdevrel-sfdevrel-enterprise.us-west-2
 
 Once you are connected, you can explore the database with psql meta commands and or use SQL to create tables, insert data, or issue queries.
 
+Connecting via the `application` user will require SSL. This can be added to the connection string as `?sslmode=require`.
+
+
 ### Connect Snowflake Postgres to a User Interface
 
 Many users connect to Postgres with a graphical user interface and there are many choices like PGAdmin, DBeaver, DataGrip, and many others. All user interfaces will accept Postgres connection inputs in the format described above.
 
 ![snowflake-postgres-ui-dbeaver](assets/snowflake-postgres-ui-dbeaver.png)
+
+Connecting via the `application` user will require SSL. This is typically one of the connection options.
 
 ## Create tables, data, and queries with Postgres
 
