@@ -27,6 +27,12 @@ A multi-agent supervisor architecture uses a central "supervisor" LLM that:
 User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthesize) → Executive Summary
 ```
 
+### Why LangGraph
+
+LangGraph provides low-level supporting infrastructure for any long-running, stateful workflow or agent. LangGraph is great for building durable, stateful agents across multiple systems.
+
+If you're not building with LangGraph, try this [guide](https://www.snowflake.com/en/developers/guides/multi-agent-orchestration-snowflake-intelligence/) to build a multi-agent system entirely native to Snowflake.
+
 ### Architecture Overview
 
 ```
@@ -73,6 +79,7 @@ User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthe
 - How to evaluate agent performance using TruLens with Snowflake
 
 ### What You'll Build
+
 A complete multi-agent customer intelligence system that:
 
 - Routes queries to specialized agents (Content, Data Analyst, Research)
