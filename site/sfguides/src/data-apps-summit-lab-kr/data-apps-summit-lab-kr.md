@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Snowflake 마켓플레이스, Snowpark, Streamlit으로 데이터 애플리케이션 구축
 
 ## 개요

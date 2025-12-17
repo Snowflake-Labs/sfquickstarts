@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Geospatial Analysis of Precisely Datasets using Snowflake Notebooks and Streamlit
 
 <!-- ------------------------ -->

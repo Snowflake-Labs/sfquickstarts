@@ -7,6 +7,7 @@ status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: andries.engelbrecht@snowflake.com
 
+
 # Data-centric Approach to Machine Learning Using Snowflake and Amazon SageMaker Data Wrangler
 
 

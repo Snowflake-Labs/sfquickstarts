@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Building AI Assistant using Snowflake Cortex in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview

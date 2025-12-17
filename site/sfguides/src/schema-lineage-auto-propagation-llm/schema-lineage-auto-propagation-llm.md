@@ -6,6 +6,7 @@ language: en
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # A ETL-LLM Integration Guide: Automate and Ensure Consistent Schema Change Propagation using AI
 
 <!-- ------------------------ -->

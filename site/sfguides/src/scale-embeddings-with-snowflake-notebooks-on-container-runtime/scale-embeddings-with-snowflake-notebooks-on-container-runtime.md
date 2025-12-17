@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Scale Embeddings with Snowflake Notebooks on Container Runtime
 <!-- ------------------------ -->
 ## Overview 

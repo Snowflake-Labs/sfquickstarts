@@ -7,6 +7,7 @@ language: en
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Iceberg in OneLake
 <!-- ------------------------ -->
 ## Overview

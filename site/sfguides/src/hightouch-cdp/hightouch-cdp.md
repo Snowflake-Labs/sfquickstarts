@@ -7,6 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: Luke Ambrosetti
 
+
 # Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake
 <!-- ------------------------ -->
 ## Overview 

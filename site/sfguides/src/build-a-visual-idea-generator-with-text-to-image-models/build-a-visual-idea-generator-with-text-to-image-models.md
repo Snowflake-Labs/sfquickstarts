@@ -6,6 +6,11 @@ summary: A guide to building a visual concept/idea generator from unstructured d
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models
+
+
+
+
 
 # Build a Visual Concept/Idea Generator using a Text-to-Image AI Model
 <!-- ------------------------ -->

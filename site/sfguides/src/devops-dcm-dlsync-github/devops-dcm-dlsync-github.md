@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # DevOps: Database Change Management with DLSync and GitHub
 <!-- ------------------------ -->
 ## Overview

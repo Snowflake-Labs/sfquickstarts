@@ -6,6 +6,11 @@ summary: This hands-on lab will guide you through building a custom machine lear
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-build-ml-models-for-customer-conversions
+
+
+
+
 
 # Building ML Models to Crack the Code of Customer Conversions
 

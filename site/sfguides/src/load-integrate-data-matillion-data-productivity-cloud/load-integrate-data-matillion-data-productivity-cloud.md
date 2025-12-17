@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Matillion Data Productivity Cloud
 <!-- ------------------------ -->
 ## Overview 

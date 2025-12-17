@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue
 <!-- ------------------------ -->
 ## Overview 

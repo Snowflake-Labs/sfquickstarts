@@ -6,6 +6,10 @@ summary: Build a Credit card fraud detection app that leverages Snowflake ML to 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-credit-card-fraud-detection-using-snowflakeml
+
+
+
 
 # Credit Card Fraud Detection using Snowflake ML Functions
 <!-- ------------------------ -->

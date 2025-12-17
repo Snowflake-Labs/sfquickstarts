@@ -9,6 +9,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 lastUpdated: 2024-07-09
 
+
 # Develop a Predictive Model using Snowflake and Sigma
 <!-- The above name is what appears on the website and is searchable. -->
 
