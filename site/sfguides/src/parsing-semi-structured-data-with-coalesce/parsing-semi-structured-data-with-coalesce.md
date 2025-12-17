@@ -7,6 +7,7 @@ environments: web
 status: public
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Parsing Semi-Structured Data with Coalesce
 <!-- ------------------------ -->
 ## Overview  

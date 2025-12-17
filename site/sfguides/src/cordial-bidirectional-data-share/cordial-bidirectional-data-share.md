@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Create a Bidirectional Data Share with Cordial
 <!-- ------------------------ -->
 ## Overview

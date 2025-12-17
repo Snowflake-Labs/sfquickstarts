@@ -7,6 +7,7 @@ environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Building an application on Snowflake with data from Snowflake Marketplace
 <!-- ------------------------ -->
 ## Overview 

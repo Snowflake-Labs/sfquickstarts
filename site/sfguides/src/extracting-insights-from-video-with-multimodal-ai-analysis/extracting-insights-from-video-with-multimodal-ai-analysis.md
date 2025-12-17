@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-extracting-insights-fr
 
 
 
+
 # Extracting Insights from Video with Multimodal AI Analysis
 <!-- ------------------------ -->
 

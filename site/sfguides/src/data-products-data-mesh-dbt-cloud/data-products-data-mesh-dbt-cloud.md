@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Sean McIntyre, Doug Guthrie
 
+
 # Build Data Products and a Data Mesh with dbt platform
 
 <!-- ------------------------ -->

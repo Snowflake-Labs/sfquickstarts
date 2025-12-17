@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
+
 # Introdução à engenharia de dados e ML com Snowpark para Python
 <!-- ------------------------ -->
 ## Visão geral

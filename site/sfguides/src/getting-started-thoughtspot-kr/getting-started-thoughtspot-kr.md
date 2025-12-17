@@ -7,6 +7,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
 author: Thoughtspot
 
+
 # ThoughtSpot 및 Snowflake로 ReactJS 앱 구축
 
 ## 개요

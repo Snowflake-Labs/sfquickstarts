@@ -7,6 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Josh Reini
 
+
 # Getting Started with LlamaParse and Cortex Search
 <!-- ------------------------ -->
 

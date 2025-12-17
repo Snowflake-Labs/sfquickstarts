@@ -9,6 +9,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai
 
 
+
 # S&P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI
 <!-- ------------------------ -->
 ## Overview 

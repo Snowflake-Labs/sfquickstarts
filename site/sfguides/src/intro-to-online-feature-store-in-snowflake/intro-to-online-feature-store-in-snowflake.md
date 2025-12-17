@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake
 
+
 # Introduction to Online Feature Store in Snowflake
 
 <!-- ------------------------ -->

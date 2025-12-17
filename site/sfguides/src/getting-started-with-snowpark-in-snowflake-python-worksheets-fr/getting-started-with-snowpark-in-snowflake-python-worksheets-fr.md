@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
+
 # Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake
 <!-- ------------------------ -->
 ## Présentation
