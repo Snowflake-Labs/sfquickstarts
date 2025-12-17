@@ -20,7 +20,9 @@ Snowflake Postgres is a fully-managed, enterprise-ready Postgres solution. It is
 ### Prerequisites
 - Snowflake account or trial
 - `ACCOUNTADMIN` role or a role that has been granted `CREATE POSTGRES INSTANCE`
+    - For roles other than `ACCOUNTADMIN` you will also need network permissions to attach Postgres to a network. For new networks, `CREATE NETWORK POLICY ON ACCOUNT` and `CREATE NETWORK RULE ON SCHEMA` are required. For attaching Postgres to existing networks the policy owner can `GRANT` usage permissions to the role. 
 - Local Postgres install or a Postgres graphical user interface
+- Ability to attach Postgres to a network. For new network policies `CREATE NETWORK POLICY ON ACCOUNT` or attach an existing network policy 
 
 
 ### What You’ll Learn 
