@@ -541,7 +541,7 @@ Congratulations! You've successfully set up and run Cortex Agent Evaluations. Yo
 - [Cortex Agent Evaluations Documentation](https://docs.snowflake.com/LIMITEDACCESS/cortex-agent-evaluations)
 - [Cortex Agents Guide](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents)
 - [Getting Started with Cortex Agents](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-agents)
-- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
+- [What's Your Agent's GPA? A Framework for Evaluating AI Agent Reliability](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/)
 
 ### Repository
 
