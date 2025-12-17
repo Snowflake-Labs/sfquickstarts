@@ -27,6 +27,7 @@ Cortex Agent Evaluations is a feature within Snowflake Cortex that enables you t
 - **Tool Selection Accuracy**: Measures whether the agent selects the correct tools for a given query
 - **Tool Execution Accuracy**: Evaluates whether tool calls are executed correctly with proper parameters
 - **Answer Correctness**: Assesses the quality and accuracy of the agent's final response
+- **Logical Consistency**: Assesses the agent trace for redundancies, superfluous tool calls or inefficient use of resources.
 
 ### What You'll Learn
 
