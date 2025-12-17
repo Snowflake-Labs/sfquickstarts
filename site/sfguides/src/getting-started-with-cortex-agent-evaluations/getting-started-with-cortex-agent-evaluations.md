@@ -380,7 +380,7 @@ Create a `.env` file in the repository root with your Snowflake credentials:
 ```bash
 SNOWFLAKE_ACCOUNT=<YOUR_ACCOUNT_ID>
 SNOWFLAKE_USER=<YOUR_USERNAME>
-SNOWFLAKE_USER_PASSWORD=<YOUR_PASSWORD>
+SNOWFLAKE_PASSWORD=<YOUR_PASSWORD>
 ```
 
 To get your Snowflake credentials:
