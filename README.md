@@ -36,19 +36,32 @@ You can submit your own Guides to be published on Snowflake's website by submitt
 
 3. Click "Add file" --> "Create new file" 
 4. In the "Name your file" field, type your new folder name followed by a "/", then a file name inside it that ends in '.md'.
+   -- Example: my-guide/my-guide.md <br>
    > -- Please ensure both of these names match exactly (these are case sensitive) <br>
    -- Please use hyphens,  no underscores <br>
    -- Ensure your folder uses lower case alphabets and "Hyphens (-)" and not "Underscores(_)" in folder name <br>
-   -- Example: my-guide/my-guide.md <br>
+
 5. Start authoring in markdown format using the template housed under site -> sfguides/src -> _markdown-template -> markdown-template.md. Select the 'preview' button at the top left to see a preview of your guide.
    > Required fields: language, category tags, id, author name, status (leave this as published) <br>
    Optional Fields: summary, environments, feedback link, fork repo link, open in Snowflake
-6. To submit related assets with your guide, create an 'assets' subfolder under your existing guide folder.
+   Commit your changes in a branch and name it.  Example:  Test-demo-branch
+6. To submit related assets with your guide, go into your branch (Test-demo-branch) that you just created in step 5.  
+
+![Go to Your Fork and Branch](site/sfguides/src/_shared_assets/your-fork-branch.png)
+
+
+Create an 'assets/' subfolder under your existing guide folder and add a "readme.md" file as a placeholder so the folder is created.
+  -- Example: my-guide/assets/readme.md
     > -- Navigate to your guide folder and type 'assets' to create your new sub-folder. Then select 'add file' to upload files directly into the 'assets' sub-folder <br>
     -- Do not create further sub-folders within 'assets' <br>
     -- Please be mindful of image requirements noted [here](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#formatting-considerations). Image size must be less than 1MB. <br>
-7. Select 'Create a new branch for this commit and start a pull request.' Update the name of the of the branch
-8. On the next page, in the light gray box at the top of the page update from 'base: master' to 'base: Snowflake-Labs/sfquickstarts' to compare your changes made on your branch to the main repository. 
+    -- You can add demo files and other .sql files in the "/assets" folder as well if needed.
+7. Select Commit your changes to the branch created in Step 5 and click "Compare & pull request" button on the top. 
+8. On the next page, in the light gray box at the top of the page ensure 'base repository:' is set to 'base: Snowflake-Labs/sfquickstarts'.  The 'head repository:' should be set to your fork name and "compare:" should be set to your branch you created in Step 5.  Compare your changes made on your branch to the main repository. 
+
+
+![Comparing branches](site/sfguides/src/_shared_assets/comparing-branch.png)
+
 9. Update the name and optionally add a description to your request. Create the pull request.
     > Note: It is recommended to create a draft pull request, run all your checks, then mark as ready for review, so we know it's ready to merge immediately.
 
@@ -63,7 +76,7 @@ All PRs have automated checks run against them. The checks assess for the follow
 
 ### Submit an Edit to an Existing Guide on GitHub.com
 1. Fork this repository to your GitHub account (top right of webpage, `fork` button)
-   > If you have already forked the repository, you can go to your branch and select 'sync fork' to update the repository
+   > If you have already forked the repository, you can go to your branch and select 'sync fork' to update the repository before you start making changes.
 
 2. In your fork, select the 'site' folder on the home page -> Then select the 'sfguides/src' folder.
 
