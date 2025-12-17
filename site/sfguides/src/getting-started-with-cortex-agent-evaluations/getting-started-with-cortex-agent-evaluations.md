@@ -163,7 +163,7 @@ Now let's create and run your first agent evaluation.
 
 **1.** Click **Create New Evaluation**
 
-**2.** Enter a name for your evaluation run (e.g., "Baseline Marketing Agent Eval")
+**2.** Enter a name for your evaluation run (e.g., "marketing-campaign-agent-baseline")
 
 **3.** Optionally add a description to document your evaluation purpose
 
@@ -173,21 +173,14 @@ Now let's create and run your first agent evaluation.
 
 ### Step 3: Select or Create a Dataset
 
-#### Option A: Use the Pre-built Dataset**
-
-If you ran the setup script, you'll have a sample evaluation dataset ready:
-
-- Select **Use Existing Dataset**
-- Choose `MARKETING_CAMPAIGNS_DB.PUBLIC.EVALS_TABLE` as your input table
-- Select `MARKETING_CAMPAIGNS_DB.PUBLIC.QUICKSTART_EVALSET` as your dataset destination
-
-#### Option B: Create a New Dataset**
-
 - Select **Create New Dataset**
 - Choose your input table containing queries and expected outputs
-- Specify a destination table for the processed dataset
+- Specify a destination database amd schema `MARKETING_CAMPAIGNS_DB.AGENTS`
+- Specify a dataset name `MARKETING_CAMPAIGN_EVAL_DATASET`
 
 **5.** Click **Next**
+
+![Select Dataset](assets/select-dataset.png)
 
 ### Step 4: Configure Metrics
 
@@ -201,17 +194,62 @@ If you ran the setup script, you'll have a sample evaluation dataset ready:
 
 **3.** Click **Create Evaluation**
 
-![Configure Metrics](assets/configure-metrics.png)
+![Configure Metrics](assets/select-metrics.png)
 
 ### Step 5: Wait for Results
 
 The evaluation will now execute your queries and compute metrics. This typically takes **3-5 minutes** depending on dataset size.
 
-![Evaluation Running](assets/evaluation-running.png)
+![Run in progress](assets/run-in-progress.png)
 
 <!-- ------------------------ -->
 
-## Compare Agent Configurations
+## Examine Evaluation Results
+
+Duration: 10
+
+Now that you've completed your first Cortex Agents Evaluation Run, you can view the results to understand how your agent is performing.
+
+On the `Evaluations` page, we can view overal metrics aggregated by run. So far, we just have one run to view here.
+
+![Evaluation Runs](assets/evaluation-runs.png)
+
+On this page, you can see metrics including:
+
+- /# OF RECORDS (total number of records for the run)
+- AVG DURATION (Average time the agent executed for a single record)
+- AC (Answer Correctness)
+- LC (Logical Consistency)
+- TSA (Tool Selection Accuracy)
+- TEA (Tool Execution Accuracy)
+
+Then, by clicking on the run you can view all of the records that make up the run. This allows you to see which records the agent performed well on and which ones it did not perform as well.
+
+From here, you should select a record with low evaluation scores. We'll start by choosing the query "Generate a report for the holiday gift guide" that scored low on both Answer Correctness (AC) and Tool Selection Accuracy (TSA).
+
+![Run Records](assets/run-records.png)
+
+On this page you will see three columns:
+
+- On the left most side, you can see the evaluation results.
+- In the middle column, you can see the agent trace. This view is interactive and you can examine individual spans of the trace by clicking, and their attributes will display on the right.
+- On the right column, you can see the span information for the selected part of the trace, including fields like `Messages`, `Conversation History`, `Output`, `Model Name`, `Token Count`, and more.
+
+Returning to the left side is how we can examine the metrics. By expanding Tool Selection Accuracy, we can see that the expected tools were the following:
+
+1. query_performance_metrics
+2. generate_campaign_report
+3. query_performance_metrics
+
+However all three were missing and the agent had 0/3 correct positions.
+
+![Tool Selection Accuracy](assets/tsa.png)
+
+Given that the agent did not call any tools, it is expected that the `Answer Correctness` metric score is also low.
+
+<!-- ------------------------ -->
+
+## Improving the Agent
 
 Duration: 10
 
