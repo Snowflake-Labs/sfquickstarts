@@ -71,7 +71,7 @@ Follow these steps to set up the environment and run the demo.
 ### Step 1: Initialize Database Objects
 
 1. Log into Snowflake and open a new SQL worksheet.
-2. Import and run `[scripts/setup.sql](https://github.com/Snowflake-Labs/sfguide-insurance-claims-agent/blob/main/scripts/setup.sql)`. This script creates the necessary database objects:
+2. Import and run [scripts/setup.sql](https://github.com/Snowflake-Labs/sfguide-insurance-claims-agent/blob/main/scripts/setup.sql). This script creates the necessary database objects:
     * **Database:** `INSURANCE_CLAIMS_DEMO`
     * **Schema:** `LOSS_CLAIMS`
     * **Stage:** `LOSS_EVIDENCE`
@@ -92,7 +92,7 @@ Follow these steps to set up the environment and run the demo.
 
 ### Step 3: Configure Cortex AI
 
-1. Import and run `[scripts/setup_cortex_ai.sql](https://github.com/Snowflake-Labs/sfguide-insurance-claims-agent/blob/main/scripts/setup_cortex_ai.sql)`. This script sets up the Cortex AI components including the semantic view and agent configuration.
+1. Import and run [scripts/setup_cortex_ai.sql](https://github.com/Snowflake-Labs/sfguide-insurance-claims-agent/blob/main/scripts/setup_cortex_ai.sql). This script sets up the Cortex AI components including the semantic view and agent configuration.
 
 ### Step 4: Start Using the Agent
 
