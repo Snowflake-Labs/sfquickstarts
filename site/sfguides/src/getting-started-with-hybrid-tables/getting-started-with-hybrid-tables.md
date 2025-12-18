@@ -2,7 +2,7 @@ author: Meny Kobel
 id: getting-started-with-hybrid-tables
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Follow this tutorial to learn the basics of hybrid tables
+summary: Enable transactional workloads with Hybrid Tables in Snowflake for ACID compliance and low-latency operations.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

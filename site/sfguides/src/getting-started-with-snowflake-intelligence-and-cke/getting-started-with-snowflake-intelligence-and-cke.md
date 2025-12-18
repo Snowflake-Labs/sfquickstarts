@@ -1,7 +1,7 @@
 id: getting-started-with-snowflake-intelligence-and-cke
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This guide outlines the process for getting started with Snowflake Intelligence and Cortex Knowledge Extensions.
+summary: Configure Snowflake Intelligence with Cortex Knowledge Extensions for AI-powered analytics enhanced with custom knowledge.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

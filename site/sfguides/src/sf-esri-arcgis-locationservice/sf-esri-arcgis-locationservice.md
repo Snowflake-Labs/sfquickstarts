@@ -2,7 +2,7 @@ authors: Venkatesh Sekar, Jhonatan Garrido-Lecca
 id: sf-esri-arcgis-locationservice
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Calculate ISOChrone or ServiceArea using ArcGIS Location Services (API), natively in Snowflake.
+summary: Integrate Esri ArcGIS Location Services with Snowflake for enterprise geocoding, routing, and geospatial data enrichment.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

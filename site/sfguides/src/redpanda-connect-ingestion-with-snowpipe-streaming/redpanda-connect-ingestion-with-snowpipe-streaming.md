@@ -2,7 +2,7 @@ author: Tyler Rockwood
 id: redpanda-connect-ingestion-with-snowpipe-streaming
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: How to use Redpanda Connect and Snowpipe Streaming to ingest data into Snowflake.
+summary: Ingest streaming data with Redpanda Connect and Snowpipe Streaming for real-time event processing and data synchronization.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ author: Charlie Hammond
 id: overview-of-feature-store-api
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This guide goes through different features of the Snowflake feature Store API.
+summary: Explore Snowflake Feature Store API for programmatic feature management, versioning, serving configuration, and ML operations.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

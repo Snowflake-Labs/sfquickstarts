@@ -2,7 +2,7 @@ author:
 id: insights-to-action-with-snowflake-and-servicenow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: insights-to-action-with-snowflake-and-servicenow
+summary: Connect Snowflake analytics to ServiceNow workflows for data-driven IT service management, automation, and operational insights.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

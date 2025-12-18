@@ -2,7 +2,7 @@ author: James Cha-Earley
 id: getting-started-with-snowflake-agents-api-and-react
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Getting Started with Snowflake Agents API and React
+summary: Build React applications with Snowflake Cortex Agents API for conversational AI interfaces and natural language data access.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ author: Adrian Lee
 id: data-engineering-with-apache-airflow-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: ko
-summary: This is a sample Snowflake Guide
+summary: Apache Airflow와 dbt를 사용하여 Snowflake에서 확장 가능한 데이터 파이프라인을 구축하고 오케스트레이션하는 방법을 학습합니다.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

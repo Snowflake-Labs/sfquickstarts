@@ -1,6 +1,6 @@
 author: laura manor
 id: neo4j-manufacturing
-summary: How to manage risk in manufacturing using Neo4j Graph Analytics for Snowflake
+summary: Manage manufacturing risk with Neo4j graph analytics on Snowflake for supply chain visibility, dependency tracking, and alerts.
 categories: snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/industry/manufacturing
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

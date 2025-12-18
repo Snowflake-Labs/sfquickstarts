@@ -2,7 +2,7 @@ author: Hartland Brown
 id: sfguide-sec-tariff-sentiment
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics, 
 language: en
-summary: This is a sample Snowflake Guide
+summary: Analyze SEC filings and tariff data with sentiment analysis in Snowflake for financial intelligence, risk assessment, and insights.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

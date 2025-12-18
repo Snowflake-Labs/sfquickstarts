@@ -2,7 +2,7 @@ author: Adrian Benavides, Mrinal Wadhwa, Brad Culberson
 id: build-a-private-custom-api-in-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: A guide to building and running a custom private API Powered by Snowflake, Ockam, and Python/Flask
+summary: Create private Python APIs for Snowflake with VPC connectivity for secure internal application access and integrations.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

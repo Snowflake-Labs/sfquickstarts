@@ -2,7 +2,7 @@ author: Prash Medirattaa
 id: end-to-end-machine-learning-with-dataiku
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a sample Snowflake Guide
+summary: Build a complete ML pipeline with Snowflake and Dataiku Cloud to predict loan defaults, from data prep to model deployment.
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

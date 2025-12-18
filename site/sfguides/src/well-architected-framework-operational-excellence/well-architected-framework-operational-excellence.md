@@ -2,7 +2,7 @@ author: Well Architected Framework Team
 id: well-architected-framework-operational-excellence
 categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
 language: en
-summary: Operational Excellence in the Snowflake AI Data Cloud is the practice of running and monitoring systems to deliver business value and continuously improve supporting processes and procedures. 
+summary: Achieve operational excellence in Snowflake with automation, monitoring, CI/CD pipelines, and best practices.
 environments: web
 status: Published 
 

@@ -2,7 +2,7 @@ author: Josh Reini
 id: getting-started-with-ai-observability
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: This is a guide for getting started with Snowflake AI Observability.
+summary: Monitor AI model performance with Snowflake AI Observability for drift detection, quality metrics, and production monitoring.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

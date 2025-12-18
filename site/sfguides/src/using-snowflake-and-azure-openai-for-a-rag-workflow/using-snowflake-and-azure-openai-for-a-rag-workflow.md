@@ -1,7 +1,7 @@
 id: using-snowflake-and-azure-openai-for-a-rag-workflow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Using Snowflake with Azure OpenAI to build a RAG workflow
+summary: Build RAG workflows with Azure OpenAI and Snowflake for secure, enterprise-grade document question answering and retrieval.
 environments: web
 status: Published
 authors: Matt Marzillo

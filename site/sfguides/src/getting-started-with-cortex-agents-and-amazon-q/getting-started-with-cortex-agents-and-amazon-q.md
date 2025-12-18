@@ -2,7 +2,7 @@ author: marzillo-snow, quilpie
 id: getting-started-with-cortex-agents-and-amazon-q
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en
-summary: This is a quickstart for using Cortex Agents and Amazon Q
+summary: Integrate Cortex Agents with Amazon Q for enterprise AI assistants that query data seamlessly across multiple cloud platforms.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

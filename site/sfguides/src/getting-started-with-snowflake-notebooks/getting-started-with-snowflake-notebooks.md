@@ -1,7 +1,7 @@
 id: getting-started-with-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This guide provides the instructions on how to get started with your first Snowflake Notebook.
+summary: Create your first Snowflake Notebook with Python and SQL cells for interactive data analysis, visualization, and ML development.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

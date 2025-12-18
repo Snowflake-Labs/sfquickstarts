@@ -1,6 +1,6 @@
 author: Joviane Bellegarde
 id: cortex-ai-demo-framework
-summary: Cortex AI Demo Framework - Build sophisticated Cortex-powered demos in ~5 minutes
+summary: Explore Cortex AI capabilities with the demo framework for text completion, summarization, translation, embeddings, and analysis.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, 
 environments: web
 language: en

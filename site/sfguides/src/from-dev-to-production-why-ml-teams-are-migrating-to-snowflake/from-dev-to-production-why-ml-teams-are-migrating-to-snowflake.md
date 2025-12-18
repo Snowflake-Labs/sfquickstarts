@@ -1,5 +1,5 @@
 id: from-dev-to-production-why-ml-teams-are-migrating-to-snowflake
-summary: Build a complete ML lifecycle in Snowflake from development to production with call center quality analysis
+summary: Migrate ML workflows to Snowflake for unified development, deployment, experiment tracking, and production model management.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 environments: web

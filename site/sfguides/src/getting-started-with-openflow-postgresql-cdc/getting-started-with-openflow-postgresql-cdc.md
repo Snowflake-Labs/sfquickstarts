@@ -1,7 +1,7 @@
 id: getting-started-with-openflow-postgresql-cdc
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/openflow
 language: en
-summary: Getting Started with Openflow PostgreSQL Change Data Capture (CDC)
+summary: Stream PostgreSQL CDC data to Snowflake with Openflow for real-time database synchronization and change data capture.
 environments: web
 status: published
 feedback link: <https://github.com/Snowflake-Labs/sfquickstarts/issues>

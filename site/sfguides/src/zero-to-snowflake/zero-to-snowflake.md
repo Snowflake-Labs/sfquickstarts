@@ -2,7 +2,7 @@ author: Cameron Shimmin, Dureti Shemsi
 id: zero-to-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
-summary: Zero to Snowflake
+summary: Master Snowflake fundamentals from warehousing to Cortex AI, building data pipelines, governance, and collaboration with Tasty Bytes data.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

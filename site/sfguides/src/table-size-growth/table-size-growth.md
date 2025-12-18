@@ -2,7 +2,7 @@ author: Chanin Nantasenamat
 id: table-size-growth
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/storage
 language: en
-summary: Learn how to monitor and analyze table storage growth trends in Snowflake Notebooks.
+summary: Monitor and analyze table size growth in Snowflake for storage optimization, capacity planning, and cost management.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

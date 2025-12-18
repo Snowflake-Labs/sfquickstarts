@@ -1,7 +1,7 @@
 id: data-teams-with-dbt-core
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
-summary: Build your data pipeline with dbt Core & Snowflake
+summary: Build data pipelines with dbt Core on Snowflake for open-source analytics engineering, testing, documentation, and versioning.
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

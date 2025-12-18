@@ -2,7 +2,7 @@ author: ashleynagaki, vskarine
 id: getting-started-with-streamlit-in-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: How to run custom Streamlit app in Snowflake 
+summary: Run custom Streamlit apps directly in Snowflake for interactive dashboards and data exploration without external hosting.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,7 +1,7 @@
 id: integrate-snowflake-cortex-agents-with-slack
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en
-summary: This guide outlines the process for integrating Snowflake Cortex Agents with Slack.
+summary: Build Slack bots powered by Cortex Agents for conversational data access, natural language analytics, and team collaboration.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

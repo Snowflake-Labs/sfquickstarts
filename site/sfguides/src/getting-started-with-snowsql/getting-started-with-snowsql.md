@@ -1,4 +1,4 @@
-summary: Getting Started with SnowSQL
+summary: Install and configure SnowSQL command-line client for Snowflake database management, queries, and automation scripting.
 id:getting-started-with-snowsql
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

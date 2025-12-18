@@ -2,7 +2,7 @@ author: Jim Warner
 id: improving-ad-performance-capi-hightouch
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Improving ad performance with Facebook's Conversion API (CAPI), using Hightouch and Snowflake.
+summary: Improve advertising performance with Conversions API and Hightouch on Snowflake for better attribution and audience targeting.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

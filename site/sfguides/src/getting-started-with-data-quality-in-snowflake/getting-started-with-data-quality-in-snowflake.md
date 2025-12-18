@@ -1,4 +1,4 @@
-summary: Learn how to get started with Data Quality Monitoring Framework in Snowflake 
+summary: Monitor data quality with Snowflake's built-in framework for automated validation, anomaly detection, metrics tracking, and alerting.
 id: getting-started-with-data-quality-in-snowflake
 categories: getting-started
 environments: web

@@ -1,4 +1,4 @@
-summary: Getting Started with Anthropic on Snowflake Cortex
+summary: Access Claude models via Snowflake Cortex for text generation, analysis, and enterprise AI applications.
 id: getting-started-with-anthropic-on-snowflake-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en

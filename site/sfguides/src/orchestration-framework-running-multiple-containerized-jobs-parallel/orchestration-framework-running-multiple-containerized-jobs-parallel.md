@@ -2,7 +2,7 @@ author: Phani Raj
 id: orchestration-framework-running-multiple-containerized-jobs-parallel
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Building custom orchestration framework for running containerized jobs in parallel 
+summary: Build custom orchestration frameworks for running parallel containerized ML and data processing jobs in Snowpark Container Services.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

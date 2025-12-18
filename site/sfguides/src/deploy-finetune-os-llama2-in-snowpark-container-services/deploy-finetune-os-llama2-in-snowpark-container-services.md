@@ -2,7 +2,7 @@ author: Dash Desai
 id: deploy-finetune-os-llama2-in-snowpark-container-services
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 language: en
-summary: Through this quickstart guide, you will explore Snowpark Container Services
+summary: Deploy and fine-tune Llama 2 models on Snowpark Container Services for custom LLM applications.
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

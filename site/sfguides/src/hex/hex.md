@@ -2,7 +2,7 @@ author: Gabe Flomo [Hex]
 id: hex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This lab will walk you through how to use Snowflake and Hex.
+summary: Build collaborative data science workflows with Hex notebooks and Snowpark for interactive analysis, ML development, and sharing.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

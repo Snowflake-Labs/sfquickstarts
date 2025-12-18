@@ -2,7 +2,7 @@ author: Kuo Lun Lo
 id: end2endmigration
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: End to End SQLServer Migration
+summary: Migrate SQL Server databases and Spark pipelines to Snowflake using SnowConvert and Snowpark Migration Accelerator tools.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

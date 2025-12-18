@@ -2,7 +2,7 @@ author: Sara Altman
 id: tidymodel-prediction-workflows-inside-snowflake-with-orbital
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
-summary: Tidymodel Prediction Workflows Inside Snowflake with Orbital
+summary: Run R tidymodels prediction workflows natively inside Snowflake using Orbital for serverless model execution and scoring.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

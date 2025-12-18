@@ -2,7 +2,7 @@ author: marzillo-snow
 id: setting-up-snowflake-environments-in-vertex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a quickstart for Setting up Snowflake Environments in Vertex AI
+summary: Configure Snowflake environments in Google Vertex AI for unified ML training, model deployment, and data access pipelines.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

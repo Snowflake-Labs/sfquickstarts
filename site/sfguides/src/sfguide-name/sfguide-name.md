@@ -1,6 +1,6 @@
 author: 
 id: sfguide-name
-summary: This is a sample Snowflake Guide
+summary: Template guide for creating Snowflake Quickstarts with proper metadata, formatting, and publishing configuration.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 language: en

@@ -2,7 +2,7 @@ author: Bren Stokes
 id: vhol-data-marketplace-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations
 language: en
-summary: This is a sample Snowflake Guide
+summary: Build a web application with Quasar and AWS Lambda to visualize Snowflake Marketplace economic data with regression analysis.
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

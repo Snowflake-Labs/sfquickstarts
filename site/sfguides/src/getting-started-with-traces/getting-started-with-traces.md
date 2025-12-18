@@ -2,7 +2,7 @@ author: Brad Culberson
 id: getting-started-with-traces
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Getting Started with Traces
+summary: Debug and optimize Python UDFs and stored procedures using Snowflake Logs, Traces, and Metrics for insights.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ author: Carlos Carrero
 id: ask-questions-to-your-own-documents-with-snowflake-cortex-search
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex Search and Streamlit. 
+summary: Build document Q&A systems with Cortex Search for hybrid semantic and keyword retrieval from enterprise knowledge bases.
 environments: web 
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

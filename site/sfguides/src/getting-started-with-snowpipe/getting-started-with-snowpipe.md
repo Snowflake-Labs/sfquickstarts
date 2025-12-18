@@ -1,4 +1,4 @@
-summary: This guide will help you get started with Snowpipe.
+summary: Automate continuous data loading from cloud storage with Snowpipe for real-time ingestion and event-driven data pipelines.
 id: getting-started-with-snowpipe
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

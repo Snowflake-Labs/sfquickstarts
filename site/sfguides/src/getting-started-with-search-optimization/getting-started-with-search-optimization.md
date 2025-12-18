@@ -2,7 +2,7 @@ author: Shreya Agrawal
 id: getting-started-with-search-optimization
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Quickstart guide for using Search Optimization
+summary: Enable Search Optimization in Snowflake for faster point lookup queries on large tables with selective filters.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

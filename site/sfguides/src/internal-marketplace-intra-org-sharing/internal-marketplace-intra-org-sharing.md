@@ -2,7 +2,7 @@ authors: Matthias Nicola, Henrik Nielsen
 id: internal-marketplace-intra-org-sharing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/internal-marketplace
 language: en
-summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
+summary: Share data within your organization using Snowflake Internal Marketplace for governed self-service data access.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

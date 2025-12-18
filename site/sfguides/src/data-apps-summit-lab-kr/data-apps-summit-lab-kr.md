@@ -2,7 +2,7 @@ author:
 id: data-apps-summit-lab-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: ko
-summary: This is a sample Snowflake Guide
+summary: Snowflake Marketplace 데이터와 Snowpark, Streamlit을 활용하여 데이터 애플리케이션을 구축하는 방법을 학습합니다.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

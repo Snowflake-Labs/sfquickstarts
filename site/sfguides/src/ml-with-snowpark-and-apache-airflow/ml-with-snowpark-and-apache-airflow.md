@@ -2,7 +2,7 @@ author: Michael Gregory, George Yates
 id: ml-with-snowpark-and-apache-airflow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This is a sample Snowflake Guide
+summary: Orchestrate MLOps pipelines with Apache Airflow and Snowpark ML for sentiment classification using audio transcription and embeddings.
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

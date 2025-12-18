@@ -1,4 +1,4 @@
-summary: This guide can be used to help customers setup and run queries pertaining to specific setup & configuration items that might be causing over-consumption.
+summary: Configure Snowflake resource optimization with warehouse settings, auto-suspend policies, resource monitors, and cost controls.
 id: resource-optimization-setup
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en

@@ -2,7 +2,7 @@ author: Rajiv Shah
 id: notebook-llama32v
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
 language: en
-summary: This guide will walk show you how to use LLama 3.2 Vision Models on Snowflake Notebooks with Container Runtime with Transformers
+summary: Run Llama 3.2 Vision models in Snowflake Notebooks for multimodal image analysis, document understanding, and visual AI.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

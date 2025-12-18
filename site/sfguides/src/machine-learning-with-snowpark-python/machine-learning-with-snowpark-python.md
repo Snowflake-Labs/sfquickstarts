@@ -2,7 +2,7 @@ author: Caleb Baechtold
 id: machine-learning-with-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This is a sample Snowflake Guide
+summary: Build an orchestrated ML pipeline with Snowpark Python and PyTorch TabNet for bike share trip forecasting at scale.
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

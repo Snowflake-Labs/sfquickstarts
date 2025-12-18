@@ -2,7 +2,7 @@ author: Caleb Baechtold
 id: getting-started-with-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This is a sample Snowflake Guide
+summary: Build end-to-end ML workflows with Snowpark Python including DataFrame operations, UDFs, and customer churn prediction models.
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

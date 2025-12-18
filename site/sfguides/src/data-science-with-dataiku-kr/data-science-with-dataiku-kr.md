@@ -1,4 +1,4 @@
-summary: Snowflake 및 Dataiku로 데이터 과학 가속화
+summary: Dataiku와 Snowflake로 협업 데이터 과학 워크플로우를 구축하여 시각적 ML 파이프라인을 개발합니다.
 id: data-science-with-dataiku-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: ko
