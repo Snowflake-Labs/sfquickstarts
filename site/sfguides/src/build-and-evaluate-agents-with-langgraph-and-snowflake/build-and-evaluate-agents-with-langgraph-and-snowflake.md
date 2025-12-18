@@ -400,7 +400,7 @@ Custom UDFs (User-Defined Functions) extend agent capabilities with specialized 
 Used by the CONTENT_AGENT for sentiment and feedback analysis:
 
 ```sql
-CREATE OR REPLACE FUNCTION AI_ANALYZE_CUSTOMER_CONTENT_V2(
+CREATE OR REPLACE FUNCTION AI_ANALYZE_CUSTOMER_CONTENT(
     "CUSTOMER_IDS_STRING" VARCHAR, 
     "ANALYSIS_TYPE" VARCHAR DEFAULT 'recent_support_tickets'
 )
@@ -470,12 +470,120 @@ FROM ai_content_analysis
 ';
 ```
 
-### Create Customer Behavior Analyzer UDF
+### Create Customer Segment Analyzer UDF
 
-Used by the DATA_ANALYST_AGENT for behavior and churn analysis:
+Used by the DATA_ANALYST_AGENT to analyze customer behavior, metrics and analytics.
 
 ```sql
-CREATE OR REPLACE FUNCTION AI_ANALYZE_CUSTOMER_BEHAVIOR_SEGMENT_V2(
+CREATE OR REPLACE FUNCTION AI_ANALYZE_CUSTOMER_SEGMENT("CUSTOMER_IDS_STRING" VARCHAR, "SEGMENT_NAME" VARCHAR DEFAULT 'high_value_customers')
+RETURNS VARIANT
+LANGUAGE SQL
+AS '
+WITH parsed_customer_ids AS (
+  -- Parse comma-separated string into individual customer IDs
+  SELECT 
+    TRIM(VALUE) as customer_id
+  FROM TABLE(SPLIT_TO_TABLE(customer_ids_string, '',''))
+),
+target_customers AS (
+  SELECT 
+    c.customer_id,
+    c.plan_type,
+    c.monthly_revenue,
+    c.company_size,
+    c.industry,
+    c.status,
+    DATEDIFF(''day'', c.signup_date, CURRENT_DATE()) as customer_age_days
+  FROM customers c
+  INNER JOIN parsed_customer_ids pci ON c.customer_id = pci.customer_id
+),
+segment_usage AS (
+  SELECT 
+    COUNT(DISTINCT u.customer_id) as active_users,
+    COUNT(*) as total_events,
+    ROUND(AVG(u.session_duration_minutes), 2) as avg_session_duration,
+    SUM(u.actions_count) as total_actions
+  FROM usage_events u
+  INNER JOIN parsed_customer_ids pci ON u.customer_id = pci.customer_id
+  WHERE u.event_date >= CURRENT_DATE() - 365 - 90  -- Handle data offset
+),
+segment_support AS (
+  SELECT 
+    COUNT(*) as total_tickets,
+    ROUND(AVG(satisfaction_score), 2) as avg_satisfaction,
+    COUNT(CASE WHEN priority IN (''high'', ''critical'') THEN 1 END) as high_priority_tickets
+  FROM support_tickets s
+  INNER JOIN parsed_customer_ids pci ON s.customer_id = pci.customer_id
+  WHERE s.created_date >= CURRENT_DATE() - 365 - 90  -- Handle data offset
+),
+segment_summary AS (
+  SELECT 
+    tc.customer_count,
+    tc.total_mrr,
+    tc.avg_revenue,
+    tc.plan_mix,
+    su.active_users,
+    su.total_events,
+    su.avg_session_duration,
+    ss.total_tickets,
+    ss.avg_satisfaction,
+    -- AI analysis with proper input validation
+    CASE 
+      WHEN tc.customer_count > 0 THEN
+        AI_COMPLETE(
+          ''claude-3-5-sonnet'',
+          CONCAT(
+            ''Analyze customer segment and respond with valid JSON only:\\n'',
+            ''Segment: '', segment_name, ''\\n'',
+            ''Customers: '', tc.customer_count, ''\\n'',
+            ''MRR: $'', tc.total_mrr, '' (avg $'', tc.avg_revenue, '')\\n'',
+            ''Usage: '', COALESCE(su.active_users, 0), '' active, '', COALESCE(su.total_events, 0), '' events\\n'',
+            ''Support: '', COALESCE(ss.total_tickets, 0), '' tickets, '', COALESCE(ss.avg_satisfaction, 0), ''/5 satisfaction\\n\\n'',
+            ''JSON: {"risk_level":"low/medium/high/critical","key_insight":"main_finding","recommendation":"action"}''
+          )
+        )
+      ELSE NULL
+    END as ai_segment_analysis
+  FROM (
+    SELECT 
+      COUNT(*) as customer_count,
+      SUM(monthly_revenue) as total_mrr,
+      ROUND(AVG(monthly_revenue), 0) as avg_revenue,
+      LISTAGG(DISTINCT plan_type, '', '') as plan_mix
+    FROM target_customers
+  ) tc
+  CROSS JOIN segment_usage su
+  CROSS JOIN segment_support ss
+)
+SELECT 
+  (OBJECT_CONSTRUCT(
+    ''segment_name'', segment_name,
+    ''customer_ids_input'', customer_ids_string,
+    ''segment_metrics'', OBJECT_CONSTRUCT(
+      ''customer_count'', customer_count,
+      ''total_mrr'', total_mrr,
+      ''avg_revenue_per_customer'', avg_revenue,
+      ''plan_mix'', plan_mix,
+      ''active_users'', COALESCE(active_users, 0),
+      ''avg_session_duration'', COALESCE(avg_session_duration, 0),
+      ''support_satisfaction'', COALESCE(avg_satisfaction, 0)
+    ),
+    ''ai_insights'', TRY_PARSE_JSON(ai_segment_analysis),
+    ''raw_ai_response'', ai_segment_analysis,
+    ''processing_mode'', ''agent_compatible_analysis'',
+    ''node_name'', ''ai_customer_segment_analyzer'',
+    ''analysis_timestamp'', CURRENT_TIMESTAMP()
+  ))::VARIANT as result
+FROM segment_summary
+';
+```
+
+### Create Churn Risk Predictor UDF
+
+Used by the DATA_ANALYST_AGENT for engagement and churn risk prediction:
+
+```sql
+CREATE OR REPLACE FUNCTION AI_PREDICT_CHURN_RISK(
     "CUSTOMER_IDS_STRING" VARCHAR, 
     "ANALYSIS_DAYS" NUMBER(38,0) DEFAULT 30
 )
@@ -632,7 +740,7 @@ FROM SPECIFICATION $$
         },
         "CUSTOMER_CONTENT_ANALYZER": {
             "type": "procedure",
-            "identifier": "CUSTOMER_INTELLIGENCE_DB.PUBLIC.AI_ANALYZE_CUSTOMER_CONTENT_V2",
+            "identifier": "CUSTOMER_INTELLIGENCE_DB.PUBLIC.AI_ANALYZE_CUSTOMER_CONTENT",
             "execution_environment": {
                 "type": "warehouse",
                 "warehouse": "COMPUTE_WH",
@@ -677,8 +785,8 @@ FROM SPECIFICATION $$
         {
             "tool_spec": {
                 "type": "generic",
-                "name": "CUSTOMER_BEHAVIOR_ANALYZER",
-                "description": "AI-powered targeted customer behavior analysis.",
+                "name": "CHURN_RISK_PREDICTOR",
+                "description": "AI-powered churn risk prediction and engagement analysis.",
                 "input_schema": {
                     "type": "object",
                     "properties": {
@@ -701,9 +809,9 @@ FROM SPECIFICATION $$
             },
             "semantic_view": "CUSTOMER_INTELLIGENCE_DB.PUBLIC.CUSTOMER_BEHAVIOR_ANALYST"
         },
-        "CUSTOMER_BEHAVIOR_ANALYZER": {
+        "CHURN_RISK_PREDICTOR": {
             "type": "procedure",
-            "identifier": "CUSTOMER_INTELLIGENCE_DB.PUBLIC.AI_ANALYZE_CUSTOMER_BEHAVIOR_SEGMENT_V2",
+            "identifier": "CUSTOMER_INTELLIGENCE_DB.PUBLIC.AI_PREDICT_CHURN_RISK",
             "execution_environment": {
                 "type": "warehouse",
                 "warehouse": "COMPUTE_WH",
