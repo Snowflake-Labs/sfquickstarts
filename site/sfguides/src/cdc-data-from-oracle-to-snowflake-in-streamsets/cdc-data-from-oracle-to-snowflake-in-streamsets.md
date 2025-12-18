@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Process Change Data Capture (CDC) data from Oracle to Snowflake Using StreamSets
 <!-- ------------------------ -->
 ## Overview 

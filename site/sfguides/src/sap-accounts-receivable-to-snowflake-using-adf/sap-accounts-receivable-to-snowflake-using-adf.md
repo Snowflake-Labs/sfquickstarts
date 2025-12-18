@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: david.richert@snowflake.com
 
+
 # SAP Accounts Receivable to Snowflake using ADF
 ## Overview 
 

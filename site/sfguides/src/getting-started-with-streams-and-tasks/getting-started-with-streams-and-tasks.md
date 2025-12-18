@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Steven Maser [Snowflake]
 
+
 # Getting Started with Streams & Tasks
 <!-- ------------------------ -->
 ## Overview 

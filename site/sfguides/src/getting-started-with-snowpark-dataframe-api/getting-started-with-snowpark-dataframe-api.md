@@ -7,6 +7,7 @@ status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Robert Fehrmann
 
+
 # Getting Started with Snowpark and the Dataframe API 
 
 <!-- ------------------------ -->

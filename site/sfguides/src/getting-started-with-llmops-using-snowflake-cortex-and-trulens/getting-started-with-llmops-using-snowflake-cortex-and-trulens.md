@@ -7,6 +7,7 @@ environments: web
 status: hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with LLMOps using Snowflake Cortex and TruLens
 
 ## Overview

@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
 # Build a Data Application with Snowflake Marketplace, Snowflake Notebooks, and Streamlit in Snowflake
 
 ## Overview

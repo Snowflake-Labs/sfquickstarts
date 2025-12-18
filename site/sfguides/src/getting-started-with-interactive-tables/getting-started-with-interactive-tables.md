@@ -9,6 +9,7 @@ language: en
 
 
 
+
 # Getting Started with Snowflake Interactive Tables
 
 ## Overview

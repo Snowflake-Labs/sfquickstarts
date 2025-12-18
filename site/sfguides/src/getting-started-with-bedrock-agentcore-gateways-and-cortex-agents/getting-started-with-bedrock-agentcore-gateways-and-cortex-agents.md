@@ -10,6 +10,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-b
 
 
 
+
 # Getting Started with Bedrock AgentCore Gateways and Cortex Agents
 <!-- ------------------------ -->
 ## Overview

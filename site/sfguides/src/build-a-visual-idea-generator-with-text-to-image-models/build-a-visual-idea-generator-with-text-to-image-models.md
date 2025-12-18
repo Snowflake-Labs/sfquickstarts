@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-ge
 
 
 
+
 # Build a Visual Concept/Idea Generator using a Text-to-Image AI Model
 <!-- ------------------------ -->
 ## Overview 

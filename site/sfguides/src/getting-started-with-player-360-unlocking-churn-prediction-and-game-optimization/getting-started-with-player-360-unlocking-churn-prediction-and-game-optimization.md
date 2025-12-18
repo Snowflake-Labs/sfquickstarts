@@ -11,6 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-p
 
 
 
+
 # Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization
 <!-- ------------------------ -->
 ## Overview

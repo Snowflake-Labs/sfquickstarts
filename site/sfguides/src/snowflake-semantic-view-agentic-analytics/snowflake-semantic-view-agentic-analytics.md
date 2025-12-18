@@ -37,6 +37,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
  - Access to the Snowsight interface (web environment).
  - Account Administrator (`ACCOUNTADMIN`) role access for initial setup.
 
+
 ## Setup
 ### Load the Base Data
 

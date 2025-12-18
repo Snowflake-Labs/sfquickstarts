@@ -8,6 +8,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # ALTR Quickstart - Data Access Control
 
 <!-- 1 ------------------------ -->

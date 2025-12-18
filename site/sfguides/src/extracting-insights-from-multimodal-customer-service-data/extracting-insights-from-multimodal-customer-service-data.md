@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: James Cha-Earley
 
+
 # Snowflake Cortex AI SQL: Extracting Insights from Multimodal Customer Service Data
 
 ## Overview

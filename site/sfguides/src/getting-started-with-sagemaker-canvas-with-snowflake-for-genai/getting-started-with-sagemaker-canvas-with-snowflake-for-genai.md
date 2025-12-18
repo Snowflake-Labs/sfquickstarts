@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Amazon Sagemaker Canvas and Snowflake for Generative AI Use Cases
 <!-- ------------------------ -->
 ## Overview 

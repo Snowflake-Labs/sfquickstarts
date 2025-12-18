@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 authors: Jason West
 
+
 # Getting Started With User-Defined SQL Functions
 
 <!-- ------------------------ -->
