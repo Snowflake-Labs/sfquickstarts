@@ -63,3 +63,69 @@ Ready to transform your claims operations with AI-powered insights? This solutio
 **[Run the Demo on GitHub →](https://github.com/Snowflake-Labs/sfguide-insurance-claims-agent)**
 
 The repository contains complete setup scripts, sample claims data, semantic model definitions, and step-by-step instructions for configuring Snowflake Intelligence with Cortex Analyst and Cortex Search services.
+
+## Setup Instructions
+
+Follow these steps to set up the environment and run the demo.
+
+### Step 1: Initialize Database Objects
+
+1. Log into Snowflake and open a new SQL worksheet.
+2. Import and run `scripts/setup.sql`. This script creates the necessary database objects:
+    * **Database:** `INSURANCE_CLAIMS_DEMO`
+    * **Schema:** `LOSS_CLAIMS`
+    * **Stage:** `LOSS_EVIDENCE`
+    * **Tables:**
+        * `Claims`
+        * `Claim Lines`
+        * `Financial Transactions`
+        * `Authorization`
+        * `Parsed_invoices`
+        * `Parsed_guidelines`
+        * `Parsed_claim_notes`
+        * `GUIDELINES_CHUNK_TABLE`
+        * `NOTES_CHUNK_TABLE`
+
+### Step 2: Upload Evidence Files
+
+1. Upload all files in the `files` directory to the **`LOSS_EVIDENCE`** stage in `INSURANCE_CLAIMS_DEMO.LOSS_CLAIMS`.
+
+### Step 3: Configure Cortex AI
+
+1. Import and run `scripts/setup_cortex_ai.sql`. This script sets up the Cortex AI components including the semantic view and agent configuration.
+
+### Step 4: Start Using the Agent
+
+1. Navigate to **Snowflake Intelligence** and start asking questions!
+
+## Sample Questions
+
+This demo helps answer questions like:
+
+1. **Payment Processing Time:** What percentage of payments were issued to the vendor within the following timeframes after invoice receipt?
+    * 3–5 calendar days
+    * 8–13 calendar days
+    * 14–29 calendar days
+    * 30+ calendar days
+
+2. **Reserve Rationale Presence:** Was a reserve rationale documented in the claim file notes?
+
+3. **Reserve Rationale Sufficiency:** Did the reserve rationale adequately explain the reserve figure(s) set?
+
+4. **Reserve Extension Timeliness:** Was the reserve extension requested in a timely manner?
+
+5. **Payment Over Reserve:** Was a payment issued in excess of the current reserve amount on an open claim?
+
+6. **Authority Violation (Reserves/Payments):** Were the reserving or payment amounts in excess of the examiner's authority?
+
+7. **Authority Compliance:** When the claim exceeded the examiner's authority, were all elements of authority properly handled?
+
+8. **Payment Compliance:** Was the payment made according to the state guidelines?
+
+9. **Settlement Timeliness:** According to the state guidelines, was the claim settled within the required timelines?
+
+10. **AI-Driven Image Summary:** Generate an AI-driven summary of the image.
+
+11. **Invoice Validation:** Extract invoice data and validate with the payments made.
+
+12. **Image Alignment Verification:** Confirm that the images shown align with the claim made.
