@@ -10,7 +10,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/a-comprehensive-guide-creating-graphql-api-on-top-of-snowflake-using-propel/",
       "summary": "This guide teaches how to create a GraphQL API using Propel on Snowflake, focusing on setup, configuration, and development of a high-performance API.",
-      "lastUpdatedAt": "2025-11-01"
+      "lastUpdatedAt": "2025-12-17"
     },
     {
       "title": "A Comprehensive Guide: Ingesting Data into Snowflake",
