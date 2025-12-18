@@ -1,13 +1,13 @@
 author: Tianxia Jia
 id: multi-agent-orchestration-snowflake-intelligence
 language: en
-summary: This is a sample Snowflake Template
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+summary: This guide describes how to configure a master agent that routes user queries to multiple, specialized Cortex Agents using custom tools.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: 
+fork repo link: https://app.snowflake.com/_deeplink/#/agents
 open in snowflake: https://app.snowflake.com/_deeplink/#/agents
+
 
 # Multi-Agent Orchestration in Snowflake Intelligence
 
@@ -20,7 +20,7 @@ This pattern enables a hierarchical agent system where:
 - **Sub-agents** handle domain-specific tasks (multiple Cortex Agents, each cover one domain or use cases)
 - Communication happens via **custom tools** (UDFs)
 
-![Multi-agent orchestration in Snowflake intelligence](site/sfguides/src/multi-agent-orchestration-snowflake-intelligence/assets/multi-agent-orchestration-snowflake-intelligence.png)
+![Multi-agent orchestration in Snowflake intelligence](assets/multi-agent-orchestration-snowflake-intelligence.png)
 
 
 ## Prerequisites
@@ -169,11 +169,11 @@ Agent 2 (AGENT_2): Use this for questions regarding business performance, revenu
 Rule: Do not attempt to answer the question yourself. You must strictly invoke the appropriate tool to get the answer.
 ```
 
-## Step 8: Configure Access (Access Tab)
+### Step 8: Configure Access (Access Tab)
 
 Grant access to roles/users who need to use the Master Agent.
 
-# Usage
+## Usage
 
 ### Via Master Agent (Recommended)
 
@@ -192,7 +192,7 @@ SELECT ASK_AGENT_2('Show me the report for Y');
 
 ## Examples:
 
-![Multi-agent chat](site/sfguides/src/multi-agent-orchestration-snowflake-intelligence/assets/multi-agent-chat.png)
+![Multi-agent chat](assets/multi-agent-chat.png)
 
 **Important notes:**
 
@@ -239,7 +239,7 @@ https://<ACCOUNT>.snowflakecomputing.com/api/v2/databases/<DATABASE>/schemas/<SC
 - **Secret Management:** Never expose tokens in logs
 
 
-## References
+## Resources
 
 - [Snowflake Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)  
 - [External Access Integrations](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)  
