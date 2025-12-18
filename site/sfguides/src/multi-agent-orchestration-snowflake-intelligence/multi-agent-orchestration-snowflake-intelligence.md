@@ -6,7 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://app.snowflake.com/_deeplink/#/agents
-open in snowflake: https://app.snowflake.com/_deeplink/#/agents
+open in snowflake link: https://app.snowflake.com/_deeplink/#/agents
 
 
 # Multi-Agent Orchestration in Snowflake Intelligence
