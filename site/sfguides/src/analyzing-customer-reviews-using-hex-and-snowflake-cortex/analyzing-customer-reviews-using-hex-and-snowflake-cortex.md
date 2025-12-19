@@ -2,7 +2,7 @@ author: Armin Efendic
 id: analyzing-customer-reviews-using-hex-and-snowflake-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Analyze customer reviews with Hex notebooks and Snowflake Cortex for sentiment analysis, topic extraction, and feedback insights.
+summary: Analyze customer reviews with Hex notebooks and Snowflake Cortex for feedback insights using sentiment analysis and topic extraction.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
