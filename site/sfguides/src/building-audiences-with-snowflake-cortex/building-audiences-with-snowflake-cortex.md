@@ -2,7 +2,7 @@ author: Luke Ambrosetti, Dureti Shemsi
 id: building-audiences-with-snowflake-cortex
 language: en
 summary: Build intelligent, industry-specific Cortex Agents that enable natural language audience building and customer analytics across Retail, Financial Services, and Gaming verticals.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -14,7 +14,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-building-audiences-wit
 <!-- ------------------------ -->
 ## Overview
 
-Through this quickstart guide, you will build and deploy three intelligent Cortex Agents—for Retail, Financial Services, and Gaming—that enable natural language audience building and customer analytics. Powered by Snowflake Cortex Analyst and industry-specific semantic models, these agents translate conversational questions into precise SQL queries, allowing you to analyze customer behavior, build targeted marketing segments, and materialize audiences directly in Snowflake Intelligence—no SQL required.
+Through this guide, you will build and deploy three intelligent Cortex Agents—for Retail, Financial Services, and Gaming—that enable natural language audience building and customer analytics. Powered by Snowflake Cortex Analyst and industry-specific semantic models, these agents translate conversational questions into precise SQL queries, allowing you to analyze customer behavior, build targeted marketing segments, and materialize audiences directly in Snowflake Intelligence—no SQL required.
 
 ### Prerequisites
 
@@ -515,11 +515,7 @@ Copy and paste this into Snowflake Intelligence:
 How many high-value customers with predicted lifetime value over $2,000 are flagged as at risk? What's the total revenue at risk from this group?
 ```
 
-**Business Outcome:** Instantly quantifying the business impact of at-risk high-value customers to establish urgency and justify investment in a large-scale reactivation campaign.
-
-**Capability Highlight:** Demonstrates Cortex Analyst using semantic models over structured customer data. It doesn't just count customers; it automatically aggregates predicted lifetime value across a complex segment to calculate total revenue exposure without manual SQL.
-
-**Key Result:** Identifies a substantial population of high-value customers flagged as at risk, representing hundreds of millions in potential lifetime value exposure. The scale of this revenue at risk naturally raises the question: why are these valuable customers at risk?
+This query identifies high-value customers at risk and calculates total revenue exposure to establish campaign urgency.
 
 ### Step 2: Diagnose Dormancy Patterns
 
@@ -529,11 +525,7 @@ Copy and paste this into Snowflake Intelligence:
 For those at-risk high-value customers, how long has it been since their last purchase? What's their average abandoned cart rate? What are the top product interests across this group?
 ```
 
-**Business Outcome:** Understanding the severity of dormancy and whether customers are completely disengaged or still showing browse/cart behavior that indicates reactivation potential.
-
-**Capability Highlight:** Showcases multi-dimensional diagnostic analysis. Cortex Analyst automatically calculates time-based recency metrics, behavioral indicators, and aggregates interest patterns across tens of thousands of customers to reveal the underlying story.
-
-**Key Result:** Reveals critical diagnosis—severely dormant (nearly 2 years since last purchase) BUT high cart abandonment rates show they're still browsing. Interests are remarkably balanced across diverse categories like Cooking, Shopping, Movies, Reading, and Fitness—broad appeal with no single dominant interest, but we need specific customer examples to craft compelling messaging.
+This query diagnoses dormancy severity and reveals behavioral signals that indicate reactivation potential.
 
 ### Step 3: Profile Target Customers
 
@@ -543,11 +535,7 @@ Copy and paste this into Snowflake Intelligence:
 Show me 10 specific examples of at-risk high-value customers who are interested in both fitness and technology. Include their favorite product categories, shopping times, and how much they spent when they were active.
 ```
 
-**Business Outcome:** Moving from aggregate statistics to tangible customer profiles to inform creative messaging, offer design, and channel strategy with real examples.
-
-**Capability Highlight:** Demonstrates Cortex Analyst's ability to drill down from tens of thousands of customers to specific representative examples instantly, pulling together multiple customer attributes to create rich profiles without complex joins or manual data exploration.
-
-**Key Result:** Surfaces real customer examples with wide-ranging spending patterns, varying order values, and mixed preferences across Electronics, Sports, Home & Kitchen, and Fashion categories. Shopping times are distributed across Morning, Afternoon, and Evening, with no dominant pattern. These concrete examples inform campaign creative on fitness-tech product bundles and flexible scheduling across all dayparts, but we need the full prioritized list.
+This query surfaces specific customer profiles to inform campaign creative, messaging, and channel strategy.
 
 ### Step 4: Build Priority Audience
 
@@ -557,11 +545,7 @@ Copy and paste this into Snowflake Intelligence:
 From the fitness and technology interested group who were previously loyal customers, give me the top 1,000 ranked by predicted lifetime value. Include email, phone, preferred channel, and promotional sensitivity. Save this as HIGH_VALUE_WINBACK_CAMPAIGN_Q1.
 ```
 
-**Business Outcome:** Creating a prioritized, activation-ready audience that focuses resources on the highest-probability conversions based on loyalty history, interest alignment, and predicted value.
-
-**Capability Highlight:** Showcases intelligent prioritization combining historical behavior (loyalty), predictive scores (LTV), and engagement preferences in a single operation. Custom tool integration materializes the table directly in Snowflake, eliminating manual exports and enabling immediate campaign activation.
-
-**Key Result:** Produces a prioritized campaign list with customers ranked by predicted lifetime value, organized by Email/SMS/Phone channel preferences and High/Medium/Low promotional sensitivity levels. List is materialized as HIGH_VALUE_WINBACK_CAMPAIGN_Q1 and ready for tiered campaign execution, but we need to forecast ROI.
+This query creates a prioritized, activation-ready audience list and materializes it as a permanent table in Snowflake.
 
 ### Step 5: Model Financial Impact
 
@@ -571,11 +555,7 @@ Copy and paste this into Snowflake Intelligence:
 For this 1,000-customer campaign list, what was their average order value when they were active? If we achieve a 20% win-back rate with a 30% discount offer, what's the first-year revenue impact? Is the ROI positive if our campaign costs $15,000?
 ```
 
-**Business Outcome:** Quantifying expected ROI with specific campaign assumptions to justify spend, set performance targets, and get budget approval with clear financial projections.
-
-**Capability Highlight:** Demonstrates prescriptive analytics and "what-if" financial modeling. Cortex Analyst calculates historical benchmarks, applies multiple business assumptions (win-back rate, discount impact), and performs ROI calculations in a single conversational query.
-
-**Key Result:** Projects two scenarios showing strong positive ROI: Conservative scenario (single purchase) yields solid profitability with ROI well above break-even. Realistic scenario (multiple purchases annually) shows exceptional returns with ROI in the hundreds of percent. Historical purchase patterns and average order values validate the projections. Break-even requires only a small fraction of the targeted customers—compelling business case to proceed immediately.
+This query calculates expected ROI with specific campaign assumptions to justify spend and secure budget approval.
 
 <!-- ------------------------ -->
 ## FSI Campaign Walkthrough
@@ -596,11 +576,7 @@ Copy and paste this into Snowflake Intelligence:
 How many customers have excellent credit scores above 740, make over $100K a year, have a checking account with us, but don't have a travel rewards card yet?
 ```
 
-**Business Outcome:** Instantly sizing the qualified prospect pool for a high-margin premium product by filtering across creditworthiness, income, and existing product relationships.
-
-**Capability Highlight:** Demonstrates Cortex Analyst querying across credit profiles, income levels, and product holdings simultaneously. Automatically handles complex "have this but not that" logic common in financial services cross-sell without requiring SQL knowledge.
-
-**Key Result:** Identifies a substantial pool of qualified prospects who meet all criteria—a significant addressable market for the premium card offer. But qualification alone doesn't guarantee success; we need to understand their financial capacity.
+This query sizes the qualified prospect pool by filtering across creditworthiness, income, and existing product relationships.
 
 ### Step 2: Assess Financial Capacity
 
@@ -610,11 +586,7 @@ Copy and paste this into Snowflake Intelligence:
 For those qualified prospects, what's the breakdown of their credit utilization rates? Show me how many have low utilization under 30%, and what's their average net worth compared to those with higher utilization.
 ```
 
-**Business Outcome:** Diagnosing which prospects have actual borrowing capacity and financial stability for a premium card, not just qualification on paper.
-
-**Capability Highlight:** Showcases diagnostic segmentation and comparative analysis. Cortex Analyst automatically bins credit utilization into meaningful ranges, calculates wealth indicators, and reveals the correlation between utilization and net worth to identify the strongest prospects.
-
-**Key Result:** Reveals a significant subset with low credit utilization and substantial net worth—clear financial capacity and borrowing headroom. But strong finances don't guarantee campaign response; we need engagement signals.
+This query diagnoses which prospects have actual borrowing capacity and financial stability for a premium card.
 
 ### Step 3: Validate Marketing Readiness
 
@@ -624,11 +596,7 @@ Copy and paste this into Snowflake Intelligence:
 From the low-utilization, high-net-worth group, show me 20 specific customers with their marketing propensity scores, recent transaction counts, preferred contact channels, and how long they've been customers. Who looks most engaged?
 ```
 
-**Business Outcome:** Moving from aggregate statistics to specific customer profiles to understand engagement levels, contact preferences, and relationship depth for personalized outreach design.
-
-**Capability Highlight:** Demonstrates drilling into specific customer examples with multi-attribute profiles. Cortex Analyst pulls together propensity scores, behavioral signals, preferences, and tenure to create rich actionable profiles without manual joins.
-
-**Key Result:** Surfaces customer profiles showing long tenure, high propensity scores, frequent recent transactions, clear channel preferences, and substantial net worth. These profiles reveal highly engaged, contactable prospects ready for premium offers, but we need the full prioritized list.
+This query surfaces specific customer profiles to understand engagement levels, contact preferences, and relationship depth.
 
 ### Step 4: Build Campaign List
 
@@ -638,11 +606,7 @@ Copy and paste this into Snowflake Intelligence:
 Give me the top 1,000 customers from the low-utilization, high-net-worth group ranked by net worth, but only include those eligible for marketing and opted in. I need email, phone, preferred contact method, and marketing propensity score. Save this as FSI_PREMIUM_CARD_Q1_PROSPECTS.
 ```
 
-**Business Outcome:** Creating a compliance-ready, prioritized prospect list that maximizes campaign efficiency by focusing on the wealthiest, most engaged, legally contactable customers.
-
-**Capability Highlight:** Showcases intelligent prioritization with compliance enforcement, multi-source data assembly, and table materialization. Custom tool integration saves the audience directly in Snowflake, eliminating manual exports and enabling instant CRM activation.
-
-**Key Result:** Produces a prioritized prospect list with high average net worth, strong opt-in rates, and high marketing propensity scores, ranked by wealth. List materialized and campaign-ready, but executive needs ROI justification.
+This query creates a compliance-ready, prioritized prospect list and materializes it as a permanent table in Snowflake.
 
 ### Step 5: Project Lifetime Value
 
@@ -652,11 +616,7 @@ Copy and paste this into Snowflake Intelligence:
 If we convert 30% of these 1,000 prospects to travel rewards cardholders at $850 annual revenue each, and our campaign costs $50 per prospect to execute, what's our net first-year revenue? What about 5-year customer lifetime value?
 ```
 
-**Business Outcome:** Building a comprehensive business case with clear ROI projections that account for both campaign costs and long-term customer value to secure executive approval.
-
-**Capability Highlight:** Demonstrates prescriptive financial modeling with multiple scenarios. Cortex Analyst applies conversion assumptions, calculates gross revenue, subtracts campaign costs, and projects multi-year value to provide definitive ROI guidance.
-
-**Key Result:** Projects strong net first-year revenue with ROI in the hundreds of percent after campaign costs—compelling immediate payback. 5-year lifetime value analysis shows multiple retention scenarios with multi-year customer values ranging from mid-to-high thousands per converted customer. Both high and moderate retention scenarios demonstrate exceptional returns and substantial long-term revenue potential for this premium segment with minimal risk. Clear financial mandate to proceed with campaign immediately.
+This query builds a comprehensive business case with ROI projections that account for both campaign costs and long-term customer value.
 
 <!-- ------------------------ -->
 ## Gaming Campaign Walkthrough
@@ -677,11 +637,7 @@ Copy and paste this into Snowflake Intelligence:
 How many active subscribers played at least 20 hours in the last 30 days? What's their average lifetime spend compared to all subscribers?
 ```
 
-**Business Outcome:** Instantly establishing a baseline of highly engaged players to understand the addressable market for expansion pack marketing and identify likely early adopters.
-
-**Capability Highlight:** Demonstrates Cortex Analyst analyzing subscription status and recent engagement patterns over time-based activity data. Automatically performs comparative benchmarking against the broader player population without complex queries.
-
-**Key Result:** Identifies a substantial population of highly engaged subscribers with significantly higher lifetime spend compared to the overall subscriber base—confirming they're both highly engaged AND more valuable. But engagement alone doesn't drive viral launch success; we need social amplification.
+This query establishes a baseline of highly engaged players to understand the addressable market for expansion pack marketing.
 
 ### Step 2: Segment Influence Tiers
 
@@ -691,11 +647,7 @@ Copy and paste this into Snowflake Intelligence:
 From those engaged subscribers, how many have 15 or more in-game friends and use the companion app? Show me their breakdown by playtime: casual gamers around 10-20 hours weekly, regular players at 20-35 hours, and hardcore players over 35 hours per week.
 ```
 
-**Business Outcome:** Diagnosing which engaged players have the social reach and platform engagement (app usage) to amplify launch buzz through their networks, not just consume content themselves.
-
-**Capability Highlight:** Showcases multi-dimensional diagnostic segmentation combining social graph metrics, cross-platform engagement, and gameplay intensity. Cortex Analyst performs complex nested filtering and custom bucketing automatically to reveal the influencer tiers.
-
-**Key Result:** Discovers a significant subset of socially connected players, with a substantial group of hardcore players showing maximum influence potential through high weekly playtime. But social reach doesn't guarantee they'll buy; we need purchase intent signals.
+This query identifies players with social reach and platform engagement to amplify launch buzz through their networks.
 
 ### Step 3: Profile VIP Candidates
 
@@ -705,11 +657,7 @@ Copy and paste this into Snowflake Intelligence:
 Show me 15 specific hardcore social players from that group. For each one, show me when they bought the last expansion, how many DLCs they own, their marketing consent channels, and their friend count. Who are our best VIP candidates?
 ```
 
-**Business Outcome:** Moving from aggregate statistics to tangible player profiles to identify concrete VIP candidates and understand purchase patterns, communication preferences, and influence reach.
-
-**Capability Highlight:** Demonstrates drilling into specific player examples with rich multi-attribute profiles. Cortex Analyst pulls together historical purchase timing, content ownership, consent status, and social metrics instantly to create actionable VIP profiles.
-
-**Key Result:** Surfaces player profiles showing day-one expansion purchases, extensive DLC ownership, large friend networks, and multi-channel marketing opt-ins. These concrete profiles validate strong purchase intent and show the VIP list will be highly responsive, but we need the full prioritized list.
+This query surfaces specific player profiles to identify VIP candidates and understand purchase patterns and communication preferences.
 
 ### Step 4: Create VIP List
 
@@ -719,11 +667,7 @@ Copy and paste this into Snowflake Intelligence:
 From the hardcore social players who bought the last expansion within 7 days of launch, give me the top 1,000 ranked by friend count. Include gamer tag, email, phone, preferred notification channel, lifetime spend, and DLC count. Save this as EXPANSION_LAUNCH_INFLUENCERS_SPRING.
 ```
 
-**Business Outcome:** Creating a prioritized VIP list that maximizes network reach by ranking on social influence while ensuring purchase intent through historical early-adopter behavior.
-
-**Capability Highlight:** Showcases intelligent multi-factor prioritization (social rank + purchase history), comprehensive profile assembly, and table materialization. Custom tool integration saves the list in Snowflake for immediate campaign activation without manual processes.
-
-**Key Result:** Produces a VIP list of highly connected players with large friend networks, strong opt-in rates for announcements, substantial lifetime spend, and proven early-adopter behavior. List materialized and campaign-ready, but leadership needs viral revenue projection.
+This query creates a prioritized VIP list ranked by social influence and materializes it as a permanent table in Snowflake.
 
 ### Step 5: Calculate Network Effects
 
@@ -733,16 +677,12 @@ Copy and paste this into Snowflake Intelligence:
 If 75% of these VIPs buy the expansion at launch for $39.99, and each influences 3 friends to buy within the first month, what's our total projected revenue? Compare two scenarios: full price with standard viral effect versus 20% VIP discount with accelerated adoption and stronger network cascade. Does the viral multiplier justify the discount investment?
 ```
 
-**Business Outcome:** Building a prescriptive business case that quantifies the viral multiplier effect and proves that incentivizing influencers with discounts generates net-positive ROI through network amplification.
-
-**Capability Highlight:** Demonstrates prescriptive analytics with multi-step financial modeling. Cortex Analyst calculates direct VIP revenue with discount impact, models friend network cascade effects, aggregates total revenue, and performs cost-benefit analysis in one conversational query.
-
-**Key Result:** Projects strong total revenue combining direct VIP sales and substantial viral network effects from influenced friend purchases. Scenario comparison reveals that while the VIP discount reduces direct revenue, the strategic value of accelerated adoption, community leadership, and network amplification offsets the cost. Given the high lifetime value of VIP players, the discount investment strengthens influencer loyalty and ensures rapid expansion penetration. Clear mandate: incentivizing elite influencers generates superior launch momentum and long-term community engagement worth far more than the discount cost.
+This query quantifies the viral multiplier effect and proves that incentivizing influencers generates net-positive ROI through network amplification.
 
 <!-- ------------------------ -->
 ## Conclusion
 
-Congratulations! You've completed the Building Audiences with Snowflake Cortex quickstart!
+Congratulations! You've completed the Building Audiences with Snowflake Cortex guide!
 
 ### What You Accomplished
 

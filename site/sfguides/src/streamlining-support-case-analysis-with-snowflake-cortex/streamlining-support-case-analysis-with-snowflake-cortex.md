@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Streamlining Support Case Analysis with Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 

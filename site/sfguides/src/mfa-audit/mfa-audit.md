@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Building an MFA Audit System with Streamlit in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview

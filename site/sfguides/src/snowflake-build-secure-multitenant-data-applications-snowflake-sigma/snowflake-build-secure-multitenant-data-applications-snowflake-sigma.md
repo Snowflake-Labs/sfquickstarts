@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/sigmacomputing/sigmaquickstarts/issues
 
+
 # Build and Secure Multi-Tenant Data Applications with Snowflake and Sigma
 <!-- The above name is what appears on the website and is searchable. -->
 

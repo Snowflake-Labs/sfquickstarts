@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Brad Culberson, Scott Winkler, François Vienneau Binette
 
+
 # Terraforming Snowflake
 
 ## Overview

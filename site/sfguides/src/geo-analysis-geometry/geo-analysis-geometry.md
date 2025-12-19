@@ -60,7 +60,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > 
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-![assets/geo_analysis_geometry_2.png](assets/geo_analysis_geometry_2.png)
+![assets/geo-analysis-geometry-2.png](assets/geo-analysis-geometry-2.png)
 
 ### Create a Virtual Warehouse
 
@@ -307,7 +307,7 @@ Then in the navigation menu, select Data > Databases, choose `GEOLAB.GEOMETRY`, 
 
 In the new Window, use the name stageshp and click `Create`.
 
-![assets/geo_analysis_geometry_10.png](assets/geo_analysis_geometry_10.png)
+![assets/geo-analysis-geometry-10.png](assets/geo-analysis-geometry-10.png)
 
 Then select the newly created Stage and click `+ Files` to upload a new file.
 

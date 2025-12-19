@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 authors: Snowflake
 
+
 # Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 <!-- ------------------------ -->
 ## Overview 

@@ -11,8 +11,9 @@ jobs:
       contents: read
     outputs:
       has_relevant_changes: ${{ steps.detect.outputs.has_relevant_changes }}
-      quickstart_names_json: ${{ steps.detect.outputs.quickstart_names_json }}
+      quickstart_batches_json: ${{ steps.detect.outputs.quickstart_batches_json }}
       pr_number: ${{ steps.pr.outputs.number }}
+      relevant_changed_files_json: ${{ steps.detect.outputs.relevant_changed_files_json }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,42 +22,29 @@ jobs:
 
       - name: Determine changed quickstart folders
         id: detect
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          # Get all changed files from the push
+          # Get all changed files using GitHub API (same approach as validate-and-stage.yml)
+          # This properly handles renames by providing explicit status info
           before_commit="${{ github.event.before }}"
           after_commit="${{ github.sha }}"
+          repo="${{ github.repository }}"
           
-          # Handle first push to branch (no before commit)
-          if [ "$before_commit" = "0000000000000000000000000000000000000000" ]; then
-            # First push - check HEAD against previous commit
-            all_files=$(git diff --name-only HEAD^ HEAD || git ls-tree --name-only -r HEAD)
-          else
-            all_files=$(git diff --name-only "$before_commit" "$after_commit")
-          fi
+          # Use GitHub Compare API to get files with status
+          files_json=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$repo/compare/${before_commit}...${after_commit}?per_page=300")
           
-          # Filter for changed files (excluding deleted files and folders starting with _)
-          # Similar to validate-and-stage which uses: select(.status != "removed")
-          changed_files=""
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            
-            # Skip if file doesn't exist (i.e., was deleted)
-            if [ ! -f "$file" ]; then
-              continue
-            fi
-            
-            # Skip files in folders starting with underscore
-            if [[ "$file" =~ /_ ]]; then
-              continue
-            fi
-            
-            # Skip if not under site/sfguides/src/
-            if [[ ! "$file" =~ ^site/sfguides/src/ ]]; then
-              continue
-            fi
-            
-            changed_files="${changed_files}${file}"$'\n'
-          done <<< "$all_files"
+          # Filter files: exclude removed, include only site/sfguides/src/, exclude _* folders
+          # For renamed files, this uses the NEW filename (which is in .filename)
+          changed_files=$(echo "$files_json" | jq -r '
+            .files[]? | 
+            select(.status != "removed") | 
+            .filename | 
+            select(startswith("site/sfguides/src/")) | 
+            select(test("/_") | not)
+          ')
           
           # Filter to only relevant files:
           # 1. Markdown files in root of quickstart directories (not in subdirectories)
@@ -114,13 +102,19 @@ jobs:
               fi
               objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
             done <<< "$quickstart_names"
-            quickstart_names_json="$objs"
-            quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
+            # Chunk quickstarts into batches of 50 to stay under GitHub's 256 matrix job limit
+            batch_size=50
+            quickstart_batches_json=$(echo "$objs" | jq -c --argjson size "$batch_size" '
+              [range(0; length; $size) as $i | .[$i:$i+$size]]
+            ')
             has_relevant_changes=true
           fi
-          echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
-          echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
+          echo "quickstart_batches_json=${quickstart_batches_json:-[]}" >> $GITHUB_OUTPUT
           echo "has_relevant_changes=$has_relevant_changes" >> $GITHUB_OUTPUT
+          # Output only relevant changed files as JSON array for use in webhook payload
+          # (markdown in root of quickstart folders + images in assets folders)
+          relevant_changed_files_json=$(echo "$relevant_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+          echo "relevant_changed_files_json=$relevant_changed_files_json" >> $GITHUB_OUTPUT
 
       - name: Get PR number from commit
         id: pr
@@ -140,85 +134,101 @@ jobs:
       contents: read
     strategy:
       matrix:
-        quickstart: ${{ fromJson(needs.publish.outputs.quickstart_names_json) }}
+        batch: ${{ fromJson(needs.publish.outputs.quickstart_batches_json) }}
       max-parallel: 1  # Sequential execution to avoid rate limits
-      fail-fast: false  # Continue processing other quickstarts even if one fails
+      fail-fast: false  # Continue processing other batches even if one fails
     steps:
-      - name: Call Workato production webhook for ${{ matrix.quickstart.name }}
+      - name: Process batch of quickstarts
         env:
           WORKATO_PROD_WEBHOOK_URL: ${{ secrets.WORKATO_PROD_WEBHOOK_URL }}
+          BATCH_JSON: ${{ toJson(matrix.batch) }}
+          PR_NUMBER: ${{ needs.publish.outputs.pr_number }}
+          RELEVANT_CHANGED_FILES_JSON: ${{ needs.publish.outputs.relevant_changed_files_json }}
         run: |
           if [ -z "$WORKATO_PROD_WEBHOOK_URL" ]; then
             echo "WORKATO_PROD_WEBHOOK_URL is not set. Cannot call production webhook." >&2
             exit 1
           fi
           
-          qname="${{ matrix.quickstart.name }}"
-          qlang="${{ matrix.quickstart.language }}"
-          
-          echo "======================================"
-          echo "Processing quickstart: $qname"
-          echo "Language: $qlang"
-          echo "======================================"
-          
-          # Create single-item array for quickstart_names to match expected format
-          qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
-          
-          payload=$(jq -n \
-            --arg repo "$GITHUB_REPOSITORY" \
-            --arg sha "$GITHUB_SHA" \
-            --arg ref "$GITHUB_REF" \
-            --arg env "prod" \
-            --arg pr_num "${{ needs.publish.outputs.pr_number }}" \
-            --arg qname "$qname" \
-            --argjson qnames "$qnames_array" \
-            '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames}')
-          
-          echo "Payload:"
-          echo "$payload" | jq .
-          
-          max_retries=3
-          retry_count=0
-          wait_time=60
-          
-          while [ $retry_count -lt $max_retries ]; do
-            response=$(curl -sS -w "\n%{http_code}" -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
-            http_code=$(echo "$response" | tail -n1)
-            response_body=$(echo "$response" | sed '$d')
+          # Process each quickstart in this batch sequentially
+          echo "$BATCH_JSON" | jq -c '.[]' | while read -r qs; do
+            qname=$(echo "$qs" | jq -r '.name')
+            qlang=$(echo "$qs" | jq -r '.language')
             
-            echo "Response:"
-            echo "$response_body" | cat
-            echo "HTTP Status: $http_code"
+            echo "======================================"
+            echo "Processing quickstart: $qname"
+            echo "Language: $qlang"
+            echo "======================================"
             
-            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-              echo "✓ Webhook call successful (HTTP $http_code)"
+            # Create single-item array for quickstart_names to match expected format
+            qnames_array=$(jq -n --arg name "$qname" --arg lang "$qlang" '[{name:$name, language:$lang}]')
+            
+            # Filter relevant changed files to only those in this quickstart's directory
+            # Transform to array of objects with 'filename' property
+            changed_files_for_qs=$(echo "$RELEVANT_CHANGED_FILES_JSON" | jq -c --arg qname "$qname" '[.[] | select(startswith("site/sfguides/src/" + $qname + "/")) | {filename: .}]')
+            
+            payload=$(jq -n \
+              --arg repo "$GITHUB_REPOSITORY" \
+              --arg sha "$GITHUB_SHA" \
+              --arg ref "$GITHUB_REF" \
+              --arg env "prod" \
+              --arg pr_num "$PR_NUMBER" \
+              --arg qname "$qname" \
+              --argjson qnames "$qnames_array" \
+              --argjson changed_files "$changed_files_for_qs" \
+              '{repo:$repo, commit_sha:$sha, ref:$ref, environment:$env, pr_number:$pr_num, quickstart_name:$qname, quickstart_names:$qnames, changed_files:$changed_files}')
+            
+            echo "Payload:"
+            echo "$payload" | jq .
+            
+            max_retries=3
+            retry_count=0
+            wait_time=60
+            success=false
+            
+            while [ $retry_count -lt $max_retries ]; do
+              response=$(curl -sS -w "\n%{http_code}" -X POST "$WORKATO_PROD_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
+              http_code=$(echo "$response" | tail -n1)
+              response_body=$(echo "$response" | sed '$d')
+              
+              echo "Response:"
+              echo "$response_body" | cat
+              echo "HTTP Status: $http_code"
+              
+              if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+                echo "✓ Webhook call successful (HTTP $http_code)"
+                success=true
+                break
+              fi
+              
+              if echo "$response_body" | grep -qi "Rate limit reached: 6000 requests per 5m0s"; then
+                retry_count=$((retry_count + 1))
+                if [ $retry_count -lt $max_retries ]; then
+                  echo "⚠ Rate limit reached. Waiting 5 minutes before retry $retry_count/$max_retries..."
+                  sleep 300
+                else
+                  echo "✗ Rate limit reached. Max retries exceeded." >&2
+                  exit 1
+                fi
+              elif [ "$http_code" -ge 500 ]; then
+                retry_count=$((retry_count + 1))
+                if [ $retry_count -lt $max_retries ]; then
+                  echo "⚠ Server error (HTTP $http_code). Waiting ${wait_time}s before retry $retry_count/$max_retries..."
+                  sleep $wait_time
+                  wait_time=$((wait_time * 2))
+                else
+                  echo "✗ Server error (HTTP $http_code). Max retries exceeded." >&2
+                  exit 1
+                fi
+              else
+                echo "✗ Webhook call failed with HTTP $http_code" >&2
+                exit 1
+              fi
+            done
+            
+            if [ "$success" = true ]; then
               echo "Waiting 150 seconds before processing next quickstart..."
               sleep 150
-              exit 0
-            fi
-            
-            if echo "$response_body" | grep -qi "Rate limit reached: 6000 requests per 5m0s"; then
-              retry_count=$((retry_count + 1))
-              if [ $retry_count -lt $max_retries ]; then
-                echo "⚠ Rate limit reached. Waiting 5 minutes before retry $retry_count/$max_retries..."
-                sleep 300
-              else
-                echo "✗ Rate limit reached. Max retries exceeded." >&2
-                exit 1
-              fi
-            elif [ "$http_code" -ge 500 ]; then
-              retry_count=$((retry_count + 1))
-              if [ $retry_count -lt $max_retries ]; then
-                echo "⚠ Server error (HTTP $http_code). Waiting ${wait_time}s before retry $retry_count/$max_retries..."
-                sleep $wait_time
-                wait_time=$((wait_time * 2))
-              else
-                echo "✗ Server error (HTTP $http_code). Max retries exceeded." >&2
-                exit 1
-              fi
-            else
-              echo "✗ Webhook call failed with HTTP $http_code" >&2
-              exit 1
             fi
           done
 

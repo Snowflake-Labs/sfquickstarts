@@ -8,7 +8,9 @@ language: en
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Building an Iceberg Lakehouse with Snowflake and Microsoft OneLake
+
 <!-- ------------------------ -->
 ## Overview
 

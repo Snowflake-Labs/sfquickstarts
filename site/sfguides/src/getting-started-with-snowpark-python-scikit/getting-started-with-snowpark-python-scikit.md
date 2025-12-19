@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Getting Started with Snowpark for Python with Scikit-learn
 <!-- ------------------------ -->
 ## Overview 

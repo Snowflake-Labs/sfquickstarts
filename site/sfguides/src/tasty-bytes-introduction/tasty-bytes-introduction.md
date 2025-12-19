@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide
 environments: web
-status: Hidden 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # An Introduction to Tasty Bytes

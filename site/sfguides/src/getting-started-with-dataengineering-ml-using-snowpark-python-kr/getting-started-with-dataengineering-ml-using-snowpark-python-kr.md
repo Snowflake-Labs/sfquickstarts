@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues/
 
+
 # Snowpark for Python를 사용하여 데이터 엔지니어링 및 ML 시작하기
 
 <!-- ------------------------ -->
