@@ -1,6 +1,6 @@
 author: Joshua Rauh and Ben Marzec
 id: abt-bestbuy-entity-resolution
-summary: Resolve product entities across retail data sources using AI-driven matching in Snowflake for unified product analytics.
+summary: Resolve product entities across retail data sources using AI-driven matching for unified product analytics with Snowflake Cortex and Streamlit.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 environments: web
