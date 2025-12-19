@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Cortex Agents, Evaluations, AI, LLM, Snowflake Cortex
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agent-evaluations
 
 # Getting Started with Cortex Agent Evaluations
 
