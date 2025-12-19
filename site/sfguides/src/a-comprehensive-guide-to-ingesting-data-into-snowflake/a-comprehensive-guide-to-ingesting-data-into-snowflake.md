@@ -1,4 +1,4 @@
-summary: Master data ingestion in Snowflake with COPY commands, Snowpipe automation, and Streaming for any loading scenario.
+summary: Master data ingestion in Snowflake with Kafka, Snowpipe automation, and streaming for any loading scenario.
 id: a-comprehensive-guide-to-ingesting-data-into-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
 language: en
