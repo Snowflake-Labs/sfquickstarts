@@ -5,6 +5,8 @@ language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+authors: Elizabeth Christensen
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-postgres
 
 # Getting Started with Snowflake Postgres
 <!-- ------------------------ -->
