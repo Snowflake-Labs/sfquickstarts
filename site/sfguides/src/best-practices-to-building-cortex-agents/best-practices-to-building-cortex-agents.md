@@ -1,7 +1,7 @@
 
 id: best-practices-to-building-cortex-agents
 language: en
-summary: Apply best practices for building Cortex Agents including prompt design, tool configuration, and error handling.
+summary: Apply best practices for building Cortex Agents including orchestration, tool configuration, and evaluation.
 author: ShenWang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
