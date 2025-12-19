@@ -2,7 +2,7 @@ author: Chanin Nantasenamat
 id: avalanche-customer-review-data-analytics
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
-summary: Analyze customer review data with Avalanche and Snowflake for sentiment analysis, feedback insights, and product improvements.
+summary: Analyze customer review data with Snowflake for sentiment analysis, feedback insights, and product improvements.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
