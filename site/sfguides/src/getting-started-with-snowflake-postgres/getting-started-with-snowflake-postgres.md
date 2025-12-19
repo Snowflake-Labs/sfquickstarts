@@ -19,8 +19,10 @@ Snowflake Postgres is a fully-managed, enterprise-ready Postgres solution. It is
 
 ### Prerequisites
 - Snowflake account or trial
-- `SNOWFLAKE_ADMIN` role
+- `ACCOUNTADMIN` role or a role that has been granted `CREATE POSTGRES INSTANCE`
+    - For roles other than `ACCOUNTADMIN` you will also need network permissions to attach Postgres to a network. For new networks, `CREATE NETWORK POLICY ON ACCOUNT` and `CREATE NETWORK RULE ON SCHEMA` are required. For attaching Postgres to existing networks the policy owner can `GRANT` usage permissions to the role. 
 - Local Postgres install or a Postgres graphical user interface
+- Ability to attach Postgres to a network. For new network policies `CREATE NETWORK POLICY ON ACCOUNT` or attach an existing network policy 
 
 
 ### What You’ll Learn 
@@ -37,8 +39,6 @@ Snowflake Postgres is a fully-managed, enterprise-ready Postgres solution. It is
 ## Deploy a Postgres Instance
 
 You can deploy Postgres from the Snowsight UI or via SQL in a worksheet. Creating a Postgres instance from Snowsight is available from the + button at the top of the navigation menu or under the Manage section in the bottom left.
-
-Note that you need a `SNOWFLAKE_ADMIN` role to create and manage a Postgres cluster.
 
 Postgres instances need these things defined:
 
@@ -68,7 +68,7 @@ There is both a URL connection string or you can choose a line by line environme
 - port: 5432
 - database_name: defaults to postgres
 
-For this guide, we're continuing to work with the admin role. Snowflake generates credentials for `snowflake_admin` and `application`.  It is recommended to also create additional roles for applications and users with the Postgres [user management features](https://www.postgresql.org/docs/current/user-manag.html). 
+For this guide, we're continuing to work with the admin role. Snowflake generates credentials for `snowflake_admin` and `application`. It is recommended to also create additional roles for applications and users with the Postgres [user management features](https://www.postgresql.org/docs/current/user-manag.html). 
 
 ### Connect to Snowflake Postgres with psql
 
@@ -90,11 +90,16 @@ psql postgres://snowflake_admin:****@****.sfdevrel-sfdevrel-enterprise.us-west-2
 
 Once you are connected, you can explore the database with psql meta commands and or use SQL to create tables, insert data, or issue queries.
 
+Connecting via the `application` user will require SSL. This can be added to the connection string as `?sslmode=require`.
+
+
 ### Connect Snowflake Postgres to a User Interface
 
 Many users connect to Postgres with a graphical user interface and there are many choices like PGAdmin, DBeaver, DataGrip, and many others. All user interfaces will accept Postgres connection inputs in the format described above.
 
 ![snowflake-postgres-ui-dbeaver](assets/snowflake-postgres-ui-dbeaver.png)
+
+Connecting via the `application` user will require SSL. This is typically one of the connection options.
 
 ## Create tables, data, and queries with Postgres
 
