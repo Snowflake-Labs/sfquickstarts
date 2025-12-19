@@ -2,7 +2,7 @@ author: Vino Duraisamy
 id: analyze-logistics-data-using-snowpark-connect-for-apache-spark
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
-summary: Analyze logistics and supply chain data with Snowpark Connect for Apache Spark on Snowflake for shipping and inventory insights.
+summary: Analyze logistics and supply chain data with Snowpark Connect for Apache Spark™ on Snowflake for shipping and inventory insights.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
