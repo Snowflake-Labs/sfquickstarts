@@ -568,11 +568,8 @@ Now that you have explored the basics of Snowflake Trail, consider these possibl
 
 #### Quickstart Guides
 
-- [Observability Quickstarts Category](/en/developers/guides/)
-
 - [Getting Started with AI Observability](/en/developers/guides/getting-started-with-ai-observability/)
 - [Getting Started with Event Tables and Alerts](/en/developers/guides/alert-on-events/)
-- [Getting Started with Logging](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-log-messages)
 - [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/)
 - [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 - [Getting Started with Snowpipe Streaming and Azure Event Hubs](/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
