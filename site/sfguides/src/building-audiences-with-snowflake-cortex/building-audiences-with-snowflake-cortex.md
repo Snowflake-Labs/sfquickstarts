@@ -1,7 +1,7 @@
 author: Luke Ambrosetti, Dureti Shemsi
 id: building-audiences-with-snowflake-cortex
 language: en
-summary: Build marketing audiences with Snowflake Cortex AI for intelligent segmentation, lookalike modeling, and personalization.
+summary: Build intelligent, industry-specific Cortex Agents for natural language audience building and customer analytics in Retail, Financial Services, and Gaming verticals.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published

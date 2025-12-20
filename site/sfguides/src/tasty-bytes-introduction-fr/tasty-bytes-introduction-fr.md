@@ -2,7 +2,7 @@ author: Jacob Kranzler
 id: tasty-bytes-introduction-fr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: fr
-summary: Déployez les fondations Tasty Bytes dans Snowflake : base de données, schémas, rôles, entrepôts et contrôle d'accès basé sur les rôles.
+summary: Présentation de Tasty Bytes
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

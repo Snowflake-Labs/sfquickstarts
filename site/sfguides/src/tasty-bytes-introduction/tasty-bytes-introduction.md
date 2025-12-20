@@ -2,7 +2,7 @@ author: Jacob Kranzler
 id: tasty-bytes-introduction
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Deploy the Tasty Bytes data foundation in Snowflake with databases, schemas, roles, and sample food truck data for quickstarts.
+summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

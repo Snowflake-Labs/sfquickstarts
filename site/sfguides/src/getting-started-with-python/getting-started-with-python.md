@@ -1,4 +1,4 @@
-summary: Install and configure the Snowflake Python Connector to create databases, tables, and run queries from your Python environment.
+summary: Getting Started with Python
 id: getting-started-with-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

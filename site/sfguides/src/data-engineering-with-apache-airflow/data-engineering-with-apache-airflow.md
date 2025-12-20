@@ -2,7 +2,7 @@ author: Adrian Lee, George Yates
 id: data-engineering-with-apache-airflow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Orchestrate Snowflake data pipelines with Apache Airflow for scheduled workflows, dependencies, and monitoring dashboards.
+summary: Orchestrate Snowflake data pipelines with Apache Airflow for scheduled workflows, dependencies, and dashboard monitoring.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

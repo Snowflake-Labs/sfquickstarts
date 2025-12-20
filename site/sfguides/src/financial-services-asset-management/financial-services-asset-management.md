@@ -2,7 +2,7 @@ author: Allen Wong
 id: financial-services-asset-management
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Build asset management analytics on Snowflake for portfolio tracking, risk analysis, regulatory reporting, and investment insights.
+summary: Build asset management real-time analytics on Snowflake for portfolio tracking, risk analysis, regulatory reporting, and investment insights.
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

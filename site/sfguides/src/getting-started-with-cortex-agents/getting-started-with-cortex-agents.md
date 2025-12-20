@@ -2,7 +2,7 @@ author: James Cha-Earley, Mubashir Masood, Daniel Silva
 id: getting-started-with-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: Build an intelligent sales assistant using Cortex Agents that combines Cortex Search and Analyst for both structured and unstructured data.
+summary: Build an intelligent sales assistant using Snowflake Cortex Agents that combines Cortex Search and Analyst for both structured and unstructured data.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

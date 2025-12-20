@@ -2,7 +2,7 @@ authors: Jeremiah Hansen
 id: data-engineering-pipelines-with-snowpark-python-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: ko
-summary: Snowpark Python으로 증분 처리, 작업 및 오류 처리를 포함한 프로덕션 데이터 파이프라인을 구축합니다.
+summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

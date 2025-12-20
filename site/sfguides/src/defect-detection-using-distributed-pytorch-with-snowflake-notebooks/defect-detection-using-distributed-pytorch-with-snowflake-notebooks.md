@@ -2,7 +2,7 @@ author: Kala Govindarajan
 id: defect-detection-using-distributed-pytorch-with-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Detect defects with distributed PyTorch in Snowflake Notebooks for manufacturing quality control, inspection, and anomaly detection.
+summary: Use distributed PyTorch in Snowflake Notebooks for manufacturing quality control, inspection, and anomaly/defect detection.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

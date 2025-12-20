@@ -2,7 +2,7 @@ author: Jon Osborn
 id: hybrid-tables-jmeter-performance-testing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Test Hybrid Tables performance with JMeter for transactional workload benchmarking, latency testing, and capacity planning.
+summary: Execute a simple performance test to evaluate hybrid tables.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

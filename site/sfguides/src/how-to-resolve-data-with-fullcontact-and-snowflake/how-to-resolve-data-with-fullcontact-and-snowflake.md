@@ -2,7 +2,7 @@ author: Dan Lee, Alix Thoi
 id: how-to-resolve-data-with-fullcontact-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Unify duplicate customer records using FullContact's Native App for identity resolution and create a single customer view.
+summary: This is a sample Snowflake Guide
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

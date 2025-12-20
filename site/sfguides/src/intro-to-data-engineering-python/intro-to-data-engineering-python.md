@@ -2,7 +2,7 @@ author: Vino Duraisamy
 id: intro-to-data-engineering-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Master data engineering fundamentals with Python on Snowflake including DataFrames, transformations, and pipeline development patterns.
+summary: Through this quickstart guide, you will explore Data engineering in Snowflake using Python
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

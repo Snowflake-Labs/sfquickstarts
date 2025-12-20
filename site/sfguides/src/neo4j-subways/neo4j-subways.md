@@ -1,7 +1,7 @@
 author: corydon baylor
 id: neo4j-subways
 categories: snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/industry/public-sector
-summary: Model subway networks with Neo4j graphs on Snowflake for transportation analytics, route optimization, and disruption planning.
+summary: How to model subway disruptions using dijsktra in Neo4j Graph Analytics for Snowflake
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

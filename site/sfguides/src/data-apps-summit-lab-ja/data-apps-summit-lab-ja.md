@@ -2,7 +2,7 @@ author:
 id: data-apps-summit-lab-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: ja
-summary: Snowflake Marketplace、Snowpark、Streamlitを使用して天気予測データアプリケーションを構築する方法を学びます。
+summary: これはサンプルのSnowflakeガイドのカテゴリーです
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

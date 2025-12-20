@@ -1,4 +1,4 @@
-summary: Query PostgreSQL databases directly from Snowflake with the Snowflake Postgres integration for unified cross-database analytics.
+summary: Getting Started with Snowflake Postgres
 id:getting-started-with-snowflake-postgres
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

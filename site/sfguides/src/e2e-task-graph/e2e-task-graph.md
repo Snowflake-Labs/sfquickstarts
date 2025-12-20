@@ -2,7 +2,7 @@ author: David Hung
 id: e2e-task-graph
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Build end-to-end Task Graphs in Snowflake for complex workflow orchestration with dependencies, error handling, and monitoring.
+summary: Build end-to-end Task Graphs in Snowflake for complex ML workflow orchestration with dependencies, error handling, and monitoring.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

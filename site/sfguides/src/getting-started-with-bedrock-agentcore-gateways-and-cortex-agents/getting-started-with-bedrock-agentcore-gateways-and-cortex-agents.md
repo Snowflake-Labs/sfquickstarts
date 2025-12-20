@@ -2,7 +2,7 @@ author: marzillo-snow, quilpie
 id: getting-started-with-bedrock-agentcore-gateways-and-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Build multi-cloud AI agents with Amazon Bedrock AgentCore Gateways and Snowflake Cortex for cross-platform access.
+summary: Build multi-cloud AI agents with Amazon Q and Snowflake Cortex for cross-platform access.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

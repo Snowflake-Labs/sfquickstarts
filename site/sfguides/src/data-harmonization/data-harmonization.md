@@ -1,7 +1,7 @@
 author: Joshua Rauh and Ben Marzec
 id: data-harmonization
 language: en
-summary: Harmonize data from multiple sources in Snowflake for consistent analytics, unified schemas, clean models, and integration.
+summary: Harmonize data from multiple sources in Snowflake Cortex AI and Streamlit for consistent analytics, unified schemas, clean models, and integration.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, 
 environments: web
 status: Published 

@@ -1,6 +1,6 @@
 author: Chanin Nantasenamat, Liam Sosinsky, Federico Zoufaly
 id: how-to-accelerate-data-warehouse-migrations-with-snowconvert-ai
-summary: Accelerate database migrations to Snowflake with SnowConvert AI for automated code conversion and seamless platform transitions.
+summary: A comprehensive guide covering SnowConvert AI installation, configuration, and end-to-end database migration from legacy platforms to Snowflake.
 categories: featured, data-engineering, migrations, snowflake  
 environments: web  
 status: Published  

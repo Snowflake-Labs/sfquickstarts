@@ -2,7 +2,7 @@ author: Ember Crooks
 id: getting-started-with-snowflake-cluster-key-selection
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Choose optimal cluster keys in Snowflake for query performance optimization and micro-partition pruning efficiency.
+summary: This is a hands-on guide to choosing a Snowflake clustering key
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

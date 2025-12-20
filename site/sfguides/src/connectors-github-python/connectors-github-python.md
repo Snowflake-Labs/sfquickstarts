@@ -2,7 +2,7 @@ author: Tomasz Urbaszek
 id: connectors-github-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/commercialize
 language: en
-summary: Sync GitHub repository data to Snowflake with Python for developer productivity analytics and project tracking.
+summary: Sync GitHub issues API to Snowflake with a native Python connector for developer productivity analytics and project tracking.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

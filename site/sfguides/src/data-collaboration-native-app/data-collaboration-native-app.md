@@ -2,7 +2,7 @@ author: Tim Buchhorn
 id: data-collaboration-native-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: Build Native Apps for secure data collaboration and sharing with customers, partners, and third-party data consumers.
+summary: Turn ML models into Snowflake Native Apps for secure data collaboration and sharing with customers, partners, and third-party data consumers.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

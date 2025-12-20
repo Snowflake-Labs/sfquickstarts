@@ -2,7 +2,7 @@ author: Luke Ambrosetti (special thanks: Aric Wang, Brian Hess, Brad Culberson)
 id: snowflake-recommendation-engine
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Build personalized recommendation engines in Snowflake for product suggestions, content discovery, and user engagement.
+summary: A guide to building and running a recommendation engine in Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

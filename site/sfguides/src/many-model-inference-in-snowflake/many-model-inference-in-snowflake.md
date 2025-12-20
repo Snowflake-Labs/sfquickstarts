@@ -2,7 +2,7 @@ author: Charlie Hammond
 id: many-model-inference-in-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Run inference across multiple ML models in Snowflake for parallel predictions at scale using Model Registry features.
+summary: Easily run inference on many models in Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

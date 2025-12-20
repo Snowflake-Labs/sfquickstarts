@@ -2,7 +2,7 @@ author: marzillo-snow
 id: getting-started-with-snowpark-for-machine-learning-on-sagemaker
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Run Snowpark ML experiments on Amazon SageMaker for scalable model training, hyperparameter tuning, and cloud deployment.
+summary: This is a qucikstart for using Snowpark for ML on SageMaker
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

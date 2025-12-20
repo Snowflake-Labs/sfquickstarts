@@ -2,7 +2,7 @@ author: ashleynagaki, vskarine
 id: getting-started-with-cybersyn-financial-and-economic-essentials-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Access Cybersyn's Financial & Economic Essentials on Snowflake Marketplace for market data, economic indicators, and financial analytics.
+summary: How to access and use Cybersyn’s Financial & Economic Essentials App.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

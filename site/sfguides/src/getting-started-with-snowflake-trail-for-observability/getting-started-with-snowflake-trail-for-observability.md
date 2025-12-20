@@ -2,7 +2,7 @@ author: Matt Barreiro
 id: getting-started-with-snowflake-trail-for-observability
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Enable Snowflake Trail for comprehensive observability across queries, warehouses, tasks, system events, and performance metrics.
+summary: Learn how to enable and use Snowflake Trail for comprehensive observability across your Snowflake workloads, including logs, traces, metrics, and monitoring capabilities.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

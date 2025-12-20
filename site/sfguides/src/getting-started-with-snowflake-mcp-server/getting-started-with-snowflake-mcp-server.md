@@ -1,7 +1,7 @@
 id: getting-started-with-snowflake-mcp-server
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Configure Snowflake MCP Server for Model Context Protocol integration with AI assistants, agents, and external applications.
+summary: This guide outlines the process for getting started with Managed Snowflake MCP Server.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

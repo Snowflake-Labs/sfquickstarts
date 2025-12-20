@@ -2,7 +2,7 @@ author: Chanin Nantasenamat
 id: warehouse-utilization
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Monitor warehouse utilization in Snowflake for capacity planning, cost optimization, performance tuning, and resource allocation.
+summary: Learn how to create an interactive heatmap visualization of Snowflake warehouse utilization patterns in Snowflake Notebooks and Streamlit.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ author: Ashish Kumar
 id: kafka-working-with-iceberg-tables
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
-summary: Stream Kafka data to Apache Iceberg tables in Snowflake for real-time lakehouse analytics with open table format support.
+summary: Through this quickstart guide, you will explore how to ingest data from kafka to Iceberg tables.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

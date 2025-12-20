@@ -2,7 +2,7 @@ author: Phani Raj, Karuna Nadadur
 id: call-centre-analytics-with-snowflake-cortex-and-spcs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 language: en
-summary: Build call center analytics with Cortex and Container Services for transcription, sentiment, and agent insights.
+summary: Build call center analytics with Snowflake Cortex AI Functions and Snowpark Container Services for transcription, sentiment, and agent insights.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

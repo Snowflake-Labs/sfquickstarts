@@ -1,7 +1,7 @@
 author: Tianxia Jia
 id: multi-agent-orchestration-snowflake-intelligence
 language: en
-summary: Orchestrate multiple AI agents with Snowflake Intelligence for complex workflows and coordinated task execution.
+summary: This guide describes how to configure a master agent that routes user queries to multiple, specialized Cortex Agents using custom tools.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ author: chandra-snow
 id: power-apps-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Connect Microsoft Power Apps to Snowflake for low-code business applications with real-time data access and bidirectional updates.
+summary: This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

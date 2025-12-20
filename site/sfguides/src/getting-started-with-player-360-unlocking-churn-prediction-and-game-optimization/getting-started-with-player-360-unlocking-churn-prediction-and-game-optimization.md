@@ -2,7 +2,7 @@ author: Daniel_Yu
 id: getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/gaming, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Build Player 360 profiles with churn prediction in Snowflake for gaming analytics and player engagement optimization.
+summary: The Player 360 solution showcases how gaming companies can create a comprehensive unified data intelligence platform, tailored for game developers, analysts and data scientists aiming to build exceptional gaming experiences.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 

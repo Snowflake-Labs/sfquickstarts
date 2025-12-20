@@ -2,7 +2,7 @@ authors: Dmytro Yaroshenko
 id: data-engineering-deploying-pipelines-with-snowflake-and-dbt-labs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Deploy production data pipelines with dbt Labs and Snowflake for tested, documented, versioned, and orchestrated transforms.
+summary: Deploy production data pipelines with dbt and Snowflake for tested, documented, versioned, and orchestrated transforms.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

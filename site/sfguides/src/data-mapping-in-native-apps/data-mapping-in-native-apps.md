@@ -2,7 +2,7 @@ author: Allan Mitchell
 id: data-mapping-in-native-apps
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: Implement data mapping in Snowflake Native Apps for flexible schema configuration and data integration.
+summary: This guide will provide step-by-step details for building a data mapping requirement in Snowflake Native Apps and Streamlit
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,4 +1,4 @@
-summary: Unlock insights from documents, PDFs, and text with Snowflake Cortex AI for enterprise content analysis and extraction.
+summary: Unlock Insights from Unstructured Data with Snowflake Cortex AI
 id: unlock-insights-from-unstructured-data-with-snowflake-cortex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en

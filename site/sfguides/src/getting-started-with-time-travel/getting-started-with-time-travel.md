@@ -1,4 +1,4 @@
-summary: Recover data and query historical states with Snowflake Time Travel for data protection, auditing, and rollback capabilities.
+summary: Use Time Travel to query previous database states and undrop data.
 id: getting-started-with-time-travel
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en

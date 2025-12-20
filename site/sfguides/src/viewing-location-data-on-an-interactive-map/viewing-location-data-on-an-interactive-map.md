@@ -2,7 +2,7 @@ author: Carston Hernke
 id: viewing-location-data-on-an-interactive-map
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: Visualize geospatial data on interactive maps using Snowflake with Streamlit and mapping libraries for location analytics.
+summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

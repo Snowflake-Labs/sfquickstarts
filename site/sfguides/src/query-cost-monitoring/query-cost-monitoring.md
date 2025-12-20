@@ -2,7 +2,7 @@ author: Chanin Nantasenamat
 id: query-cost-monitoring
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Monitor query costs in Snowflake with dashboards and alerts for usage optimization, budget management, and cost allocation tracking.
+summary: Learn how to build a Query Cost Monitoring tool using Snowflake, Streamlit, Pandas and Altair to analyze and visualize compute costs by individual queries.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

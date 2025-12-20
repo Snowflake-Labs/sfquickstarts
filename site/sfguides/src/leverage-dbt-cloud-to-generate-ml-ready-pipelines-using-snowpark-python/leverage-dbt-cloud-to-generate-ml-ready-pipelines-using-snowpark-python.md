@@ -2,7 +2,7 @@ author: hope-wat
 id: leverage-dbt-cloud-to-generate-ml-ready-pipelines-using-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Combine dbt Cloud with Snowpark Python to build analytics and ML pipelines using Formula 1 data for lap time predictions.
+summary: This is a sample Snowflake Guide
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

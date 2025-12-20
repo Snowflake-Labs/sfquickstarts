@@ -2,7 +2,7 @@ author: Swathi Jasti
 id: optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
-summary: Optimize telecom network operations by analyzing call transcripts and cell tower data with Snowflake Cortex AI for proactive maintenance.
+summary: Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

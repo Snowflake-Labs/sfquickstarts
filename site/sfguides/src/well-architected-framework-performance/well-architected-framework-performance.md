@@ -2,7 +2,7 @@ author: Well Architected Framework Team
 id: well-architected-framework-performance
 categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
 language: en
-summary: Optimize Snowflake performance with well-architected patterns for warehouse sizing, query tuning, and data organization.
+summary: Optimizing performance on Snowflake is crucial for efficient data analysis.
 environments: web
 status: Published 
 

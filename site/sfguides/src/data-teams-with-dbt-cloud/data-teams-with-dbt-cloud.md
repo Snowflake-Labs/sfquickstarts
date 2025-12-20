@@ -1,7 +1,7 @@
 id: data-teams-with-dbt-cloud
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
-summary: Empower data teams with dbt Cloud on Snowflake for collaborative analytics engineering, CI/CD, job orchestration, and governance.
+summary: Build your data pipeline with dbt Cloud & Snowflake
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

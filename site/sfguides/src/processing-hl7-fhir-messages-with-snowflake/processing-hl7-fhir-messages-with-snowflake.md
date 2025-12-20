@@ -2,7 +2,7 @@ author: Adrian Gonzalez, Dan Murphy
 id: processing-hl7-fhir-messages-with-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Process HL7 FHIR healthcare messages in Snowflake for clinical data integration, interoperability, and analytics.
+summary: This is a guide to get familiarized with how to ingest and process HL7 FHIR JSON messages using Snowflake native features.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

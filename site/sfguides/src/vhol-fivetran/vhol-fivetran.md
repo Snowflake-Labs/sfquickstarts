@@ -1,4 +1,4 @@
-summary: Automate marketing data pipelines with Fivetran and Snowflake for centralized customer analytics and campaign performance tracking.
+summary: Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 id: vhol-fivetran
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en

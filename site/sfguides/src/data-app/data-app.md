@@ -1,4 +1,4 @@
-summary: Build single-page data applications on Snowflake with React and the SQL API for interactive analytics and customer portals.
+summary: Build interactive single-page data applications on Snowflake with React and SQL. 
 id: data-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en

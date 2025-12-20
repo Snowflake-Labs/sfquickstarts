@@ -1,6 +1,6 @@
 author: Chanin Nantasenamat
 id: first-machine-learning-project
-summary: Build your first ML project in Snowflake from data preparation through model training, evaluation, and deployment.
+summary: Build your first ML project in Snowflake and Streamlit from data preparation through model training, evaluation, and deployment.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 environments: web

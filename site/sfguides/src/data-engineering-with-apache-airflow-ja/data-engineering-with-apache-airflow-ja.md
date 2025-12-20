@@ -2,7 +2,7 @@ author: Adrian Lee
 id: data-engineering-with-apache-airflow-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: ja
-summary: Apache AirflowとdbtでSnowflakeデータパイプラインを構築し、自動化されたワークフローを作成します。
+summary: Build a one-DAG Data Pipeline with Apache Airflow and dbt transformations for data analysis with Snowpark. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

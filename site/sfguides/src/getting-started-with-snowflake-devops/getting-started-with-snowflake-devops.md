@@ -2,7 +2,7 @@ author: Vincent Raudszus
 id: getting-started-with-snowflake-devops
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Build CI/CD pipelines with Snowflake's Git integration, declarative change management, and GitHub Actions for data pipeline automation.
+summary: Getting Started with Snowflake DevOps
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

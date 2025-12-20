@@ -1,4 +1,4 @@
-summary: Create Snowflake Quickstart guides using the sfquickstarts framework for developer documentation, tutorials, and hands-on labs.
+summary: This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.
 id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en

@@ -2,7 +2,7 @@ author: mando222
 id: getting-started-with-tempo-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Build predictive sales forecasting with Tempo on Snowflake for AI-powered planning, demand insights, and revenue optimization.
+summary: This is a guide on getting started with Tempo on Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
