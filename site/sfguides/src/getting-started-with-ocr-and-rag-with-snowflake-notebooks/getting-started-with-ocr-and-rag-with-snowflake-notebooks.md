@@ -1,7 +1,7 @@
 id: getting-started-with-ocr-and-rag-with-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform
 language: en
-summary: Getting Started with OCR and RAG with Snowflake Notebooks
+summary: Getting Started with OCR and RAG with Snowflake Notebooks 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

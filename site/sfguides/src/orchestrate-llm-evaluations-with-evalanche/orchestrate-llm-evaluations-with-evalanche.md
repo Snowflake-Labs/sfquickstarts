@@ -2,7 +2,7 @@ author: Jason Summer
 id: orchestrate-llm-evaluations-with-evalanche
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
-summary: Orchestrate LLM Evaluations in Snowflake with Evalanche
+summary: Orchestrate LLM Evaluations in Snowflake with Evalanche 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

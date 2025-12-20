@@ -2,7 +2,7 @@ author: Jon Osborn
 id: hybrid-tables-performance-optimization-primer
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Follow this primer to learn about basic hybrid table performance optimization techniques
+summary: Follow this primer to learn about basic hybrid table performance optimization techniques 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

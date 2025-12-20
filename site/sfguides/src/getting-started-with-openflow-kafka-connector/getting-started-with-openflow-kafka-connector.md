@@ -1,6 +1,6 @@
 id: getting-started-with-openflow-kafka-connector
 language: en
-summary: Getting Started with Openflow Kafka Connector for Real-Time Log Streaming
+summary: Getting Started with Openflow Kafka Connector for Real-Time Log Streaming 
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/openflow
 environments: web
 status: Published

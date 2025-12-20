@@ -1,6 +1,6 @@
 author: Eric Tolotti
 id: getting-started-with-iceberg-in-onelake
-summary: This is a quickstart for building an Iceberg Lakehouse using Catalog Linked Databases and Iceberg tables usable by both Snowflake and Microsoft OneLake
+summary: This is a quickstart for building an Iceberg Lakehouse using Catalog Linked Databases and Iceberg tables usable by both Snowflake and Microsoft OneLake 
 title: Building an Iceberg Lakehouse with Snowflake and Microsoft OneLake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 environments: web
