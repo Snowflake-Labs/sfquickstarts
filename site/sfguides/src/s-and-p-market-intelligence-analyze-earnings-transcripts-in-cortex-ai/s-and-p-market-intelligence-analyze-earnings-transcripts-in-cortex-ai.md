@@ -2,7 +2,7 @@ author: Mats Stellwall, Henry Chiang
 id: s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
+summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

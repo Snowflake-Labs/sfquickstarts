@@ -2,7 +2,7 @@ author: Jim Warner
 id: reach-and-frequency-queries
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Shows common reach and frequency queries for advertising measurement
+summary: Shows common reach and frequency queries for advertising measurement 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

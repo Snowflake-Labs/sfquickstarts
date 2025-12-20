@@ -2,7 +2,7 @@ author: Stephen Franks
 id: a-dataiku-and-snowflake-guide-to-data-science
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This is an introduction to Dataiku and Snowflake
+summary: Build collaborative data science workflows with Dataiku and Snowflake for visual ML pipelines and team analytics.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

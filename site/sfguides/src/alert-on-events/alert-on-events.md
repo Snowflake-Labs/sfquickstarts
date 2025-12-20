@@ -1,4 +1,4 @@
-summary: Getting Started with Event Tables and Alerts
+summary: Configure Event Tables and Alerts in Snowflake to monitor system events, trigger notifications, and automate incident response.
 id: alert-on-events
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
 language: en

@@ -2,7 +2,7 @@ author:
 id: accelerate-data-transformation-with-the-telecom-data-cloud
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/telecom, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This is a guide for getting started with Data Integration using Informatica Data Management Cloud
+summary: Transform telecom data with the Informatica Intelligent Cloud Services Accelerator for Snowflake: network analytics, customer insights, and 5G optimization.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

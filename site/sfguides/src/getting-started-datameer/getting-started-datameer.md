@@ -2,7 +2,7 @@ author: seb_froh
 id: getting-started-datameer
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This is a broad introduction of Datameer and covers how to start, load and transform data, and share insights.
+summary: Transform data visually with Datameer and Snowflake for self-service analytics preparation and modeling.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

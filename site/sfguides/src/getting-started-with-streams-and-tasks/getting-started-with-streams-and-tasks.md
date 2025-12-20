@@ -1,7 +1,7 @@
 id: getting-started-with-streams-and-tasks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Learn how to use streams and tasks with Snowflake.
+summary: Learn how to use streams and tasks with Snowflake. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

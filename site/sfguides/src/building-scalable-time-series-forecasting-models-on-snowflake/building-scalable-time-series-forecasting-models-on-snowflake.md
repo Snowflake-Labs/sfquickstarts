@@ -2,7 +2,7 @@ author: Rachel Blum
 id: building-scalable-time-series-forecasting-models-on-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
 language: en
-summary: Automatically Build, Register and Run Inferencing on Paritioned Forecasting Models in Snowflake.
+summary: Build scalable time-series forecasting with Snowflake ML for demand planning, inventory optimization, and trend prediction.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

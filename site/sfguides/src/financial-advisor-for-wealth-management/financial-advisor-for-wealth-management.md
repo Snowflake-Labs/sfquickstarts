@@ -1,4 +1,4 @@
-summary: A preconfigured financial advisor agent in Snowflake Intelligence
+summary: Build AI financial advisors for wealth management and personalized investment recommendations using Snowflake Cortex. 
 id: financial-advisor-for-wealth-management
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/financial-operations, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/financial-services
 language: en

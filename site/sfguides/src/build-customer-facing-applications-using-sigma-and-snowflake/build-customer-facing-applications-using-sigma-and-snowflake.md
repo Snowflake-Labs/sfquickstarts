@@ -2,7 +2,7 @@ author: Kelsey Hammock
 id: build-customer-facing-applications-using-sigma-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This guide will lead you through the process of connecting Sigma to a Snowflake environment and building an application that leverages the data in Snowflake. This guide additionally highlights unique end user capabilities when Sigma is embedded in an application. 
+summary: Build customer-facing analytics applications with Sigma and Snowflake for embedded dashboards and self-service data access.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

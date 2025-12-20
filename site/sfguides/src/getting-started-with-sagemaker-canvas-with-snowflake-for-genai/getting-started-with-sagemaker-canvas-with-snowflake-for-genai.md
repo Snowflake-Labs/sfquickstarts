@@ -2,7 +2,7 @@ author: marzillo-snow
 id: getting-started-with-sagemaker-canvas-with-snowflake-for-genai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: This is a quickstart for using Sagemaker with Canvas for Generative AI
+summary: This is a quickstart for using Sagemaker with Canvas for Generative AI 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
