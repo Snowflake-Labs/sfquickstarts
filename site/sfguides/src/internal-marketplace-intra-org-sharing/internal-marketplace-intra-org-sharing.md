@@ -5,7 +5,7 @@ language: en
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
 environments: web
 status: Published
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Intra-Company Data Sharing With The Snowflake Internal Marketplace 
 <!-- ------------------------ -->
