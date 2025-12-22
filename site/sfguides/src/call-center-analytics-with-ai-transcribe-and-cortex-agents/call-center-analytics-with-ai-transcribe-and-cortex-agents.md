@@ -2,7 +2,7 @@ author: Charlie Hammond
 id: call-center-analytics-with-ai-transcribe-and-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: This guide provides step-by-step details for building call center analytics using AI_TRANSCRIBE and Cortex Agents with simplified setup
+summary: Analyze call center recordings with AI transcription using Snowflake Cortex Agents for conversation insights and automation.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

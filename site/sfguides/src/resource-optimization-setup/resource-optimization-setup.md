@@ -1,4 +1,4 @@
-summary: This guide can be used to help customers setup and run queries pertaining to specific setup & configuration items that might be causing over-consumption.
+summary: This guide can be used to help customers setup and run queries pertaining to specific setup & configuration items that might be causing over-consumption. 
 id: resource-optimization-setup
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en

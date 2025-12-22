@@ -1,6 +1,6 @@
 authors: Phani Alapaty, Vino Duraisamy
 id: declarative-pipelines-using-dynamic-iceberg-tables
-summary: This guide will provide step-by-step details for building Declarative Pipelines using Snowflake Dynamic Iceberg Tables
+summary: Build declarative data pipelines with Snowflake Dynamic Iceberg Tables for automatic, incremental transformations in open formats.
 categories: snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
 language: en

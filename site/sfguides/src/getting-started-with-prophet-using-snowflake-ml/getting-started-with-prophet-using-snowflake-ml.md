@@ -2,7 +2,7 @@ author: Ranjeeta Pegu
 id: getting-started-with-prophet-using-snowflake-ml
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a sample Snowflake Guide to get started with Prophet
+summary: This is a sample Snowflake Guide to get started with Prophet 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

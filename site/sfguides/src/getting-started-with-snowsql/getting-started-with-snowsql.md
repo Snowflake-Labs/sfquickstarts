@@ -1,4 +1,4 @@
-summary: Getting Started with SnowSQL
+summary: Getting Started with SnowSQL 
 id:getting-started-with-snowsql
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

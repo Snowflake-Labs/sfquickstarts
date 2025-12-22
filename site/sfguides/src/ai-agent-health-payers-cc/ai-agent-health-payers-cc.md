@@ -2,7 +2,7 @@ author: Sikha Das
 id: ai-agent-health-payers-cc
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
+summary: Build AI agents for Healthcare using Snowflake Cortex for automated member support, claims inquiries, and benefits assistance.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

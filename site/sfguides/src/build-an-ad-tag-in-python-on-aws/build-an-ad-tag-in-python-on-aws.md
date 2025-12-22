@@ -2,7 +2,7 @@ author: Jim Warner
 id: build-an-ad-tag-in-python-on-aws
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: A guide to building and running a simple ad tag (in Python) Powered by Snowflake and AWS
+summary: Build advertising tags with Python on AWS and Snowflake for ad tech measurement, attribution, and marketing automation.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

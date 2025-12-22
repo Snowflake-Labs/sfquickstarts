@@ -2,7 +2,7 @@ author: Brian Hess, Fredrik Göransson, Charles Yorek, Kesav Rayaprolu
 id: build-a-data-app-with-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: A guide to building and running a data application powered by Snowflake and Node.js
+summary: Create data applications with Snowflake and Node.js for interactive analytics dashboards, customer portals, and embedded data products.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
