@@ -1,4 +1,4 @@
-<img width="1397" height="554" alt="image" src="https://github.com/user-attachments/assets/76e63341-28bf-40c4-a1df-376d1ceaf529" />authors: Matthias Nicola, Henrik Nielsen
+authors: Matthias Nicola, Henrik Nielsen
 id: internal-marketplace-intra-org-sharing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/internal-marketplace
 language: en
@@ -58,9 +58,9 @@ The setup follows these steps:
 - Step 6: Setup of a TPC-H sample database
 - Step 7: Pre-populate the Internal Marketplace with Sample Listings
 
-For Steps 2 through 7 you can download [scripts here](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/tree/main/sql) and execute them in different accounts as per the instructions below. In the Snowflake UI you can easily import these scripts like this:
+For Steps 2 through 7 you can download [scripts here](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/tree/main/sql) and execute them in different accounts as per the instructions below. In the Snowflake UI you can easily import these scripts by going to **Projects** - **Workspaces**, and uploading a SQL file like this:
 
-![Import](assets/importscript.png)
+![Import](assets/importscript_newui.png)
 
 ### Step 1: Create a Snowflake trial account
 
@@ -190,7 +190,7 @@ SHOW ACCOUNTS;
 ```
 
 - Make a note of your account names, URLs, and passwords!
-- Copy or bookmark the account URLs returned by `SHOW ACCOUNTS'. 
+- Copy or bookmark the account URLs returned by 'SHOW ACCOUNTS'. 
 - When you click on one of these URLs you are automatically directed to the respective account for login.
 
 
@@ -635,17 +635,17 @@ In this section we will review further capabilities for managing and monitoring 
 ### Change/Revoke Access or Discoverability for a Listing
 
 - Log into account `HOL_ACCOUNT1` as the `sales_admin` user
-- Navigate to the Provider Studio and open the **Order Insights** listing
+- Navigate to the **Data Sharing** - **Provider Studio**, open the **Listings** section and click on the **Order Insights** listing
 
-    ![](assets/managelistings_01.png)
+    ![](assets/managelistings_01_ni.png)
 
 - In the top right, click on the Access definition of the listing.
 
-    ![](assets/managelistings_02.png)
+    ![](assets/managelistings_02_ni.png)
 
 - You can now add or remove roles or entire accounts that access the data product. Same for discoverability.
 
-    ![](assets/managelistings_03.png)
+    ![](assets/managelistings_03_ni.png)
 
 ---
 ### How to Grant Listing Management Privileges
