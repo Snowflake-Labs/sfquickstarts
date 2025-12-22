@@ -6,28 +6,23 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: <optional but modify to link to your repo>
-open in snowflake: <optional but modify to link into the product>
 
-# Snowflake Guide Template
+# IPO Research Assistant with Cortex AI 
 <!-- ------------------------ -->
 ## Overview 
 
-This Quickstart guide will walk you through creating IPO research agent leveraging key Snowflake Cortex capabilities.  
+This Quickstart guide will walk you through creating IPO research agent leveraging key Snowflake Cortex capabilities.  In this Quickstart, you will perform/create the following:
 
-### Prerequisites
-- Familiarity with Markdown syntax
-
-### What You’ll Learn 
-- The format for a guide (the sections, the metadata and basic markdown)
-- How to include code snippets 
-- How to hyperlink items
-- Ways to include images and videos
+- Setup your account to access various APIs, including the [SEC's Edgar Database](https://www.sec.gov/search-filings) and Finnhub(https://finnhub.io/).
+- Download one quarter's worth of SEC S-1 filings into stage
+- Create a table referencing these filings and supply additional dimensional information, facilitated by a separate EDGAR API endpoint, and create a [Semantic View](https://docs.snowflake.com/en/user-guide/views-semantic/overview) related to this data
+- Create a procedure leveraging the [AI_EXTRACT](https://docs.snowflake.com/en/sql-reference/functions/ai_extract) function
+- Create procedures able to reference Finnhub's real-time stock market data
+- Download market forecast reports from leading firms, in PDFs, and setup document processing and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) on them
+- Create a [Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) with the ability to reason and leverage the various Cortex AI services leveraged above
 
 ### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-
+- A [Snowflake Account](https://signup.snowflake.com) with ACCOUNTADMIN privileges
 
 ### What You’ll Build 
 - A Cortex Agent with multiple tools at its disposal, leveraging the interactive UI of Snowflake Intelligence.  
