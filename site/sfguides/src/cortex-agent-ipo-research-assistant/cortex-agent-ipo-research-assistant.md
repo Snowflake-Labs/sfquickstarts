@@ -28,27 +28,32 @@ This Quickstart guide will walk you through creating IPO research agent leveragi
 - A Cortex Agent with multiple tools at its disposal, leveraging the interactive UI of Snowflake Intelligence.  
 
 <!-- ------------------------ -->
-## Metadata Configuration
+## Getting Started 
 
-It is important to set the correct metadata for your Snowflake Guide. This is the first thing that goes on top of your guide. 
-The metadata contains all the information required for listing and publishing your guide and includes some required and some optional information.
+### Environment Setup
+Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
 
+```
+USE ROLE SYSADMIN;
+CREATE OR REPLACE DATABASE IPO_RESEARCH_DB;
+USE DATABASE IPO_RESEARCH_DB;
 
-```diff
-- REQUIRED FIELDS
+CREATE OR REPLACE WAREHOUSE IPO_RESEARCH_WH 
+WAREHOUSE_SIZE = SMALL AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
+GRANT USAGE ON WAREHOUSE IPO_RESEARCH_WH TO ROLE SYSADMIN;
+USE WAREHOUSE IPO_RESEARCH_WH;
 ```
 
-- **id**: sample-separated-by-hyphens-not-underscores 
-  - make sure to match the id here with the name of the file, all one word.
-- **language**: pick from list 
-  - pick the appropriate language from the list provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags 
-- **categories**: Pick from the list
-  - select from the complete list of categories provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags.  Please DO NOT create new categories.
-- **status**: (`Published`, `Archived`, `Hidden`)<br>
-  `Published` - implies the guide is active<br>
-  `Archived` - implies the sfguide is out of date and deprecated and no longer available.
-- **authors**: Author Full Name 
-  - Indicate the author(s) of this specific sfguide.  
+Next, let's import the Python Notebook that will download S-1 files from the EDGAR database as well as create the tables and AI_EXTRACT function.  You can import the notebook file by clicking the plus button >> Notebook >> Import .ipynb file.  
+
+image_here
+
+Ensure the following are set:
+- Runtime: Run on Container - this is needed as we will be using custom .whl files from the SEC for our project
+- Query Warehouse: IPO_RESEARCH_WH.  If you do not see it as an option, refresh your whole webpage as the left-hand navigation bar can be a bit static.
+
+image_here
+
 
 
 ```diff
