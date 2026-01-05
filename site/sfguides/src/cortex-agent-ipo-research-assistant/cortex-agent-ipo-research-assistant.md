@@ -4,7 +4,7 @@ language: en
 summary: This is a guide to setup a IPO Research Assistant Cortex Agent.  Tools include AI_EXTRACT over SEC S1 Filings, A Semantic View on company information, Cortex Search over market trend PDFs, and Finnhub API for real-time stock information.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # IPO Research Assistant with Cortex AI 
