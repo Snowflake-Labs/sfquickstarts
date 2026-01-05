@@ -1,6 +1,6 @@
 author: Sheena Nasim 
 id: ml-champion-challenger-model-deployment language: en 
-summary: Learn how to implement an automated model retraining and deployment pipeline in Snowflake using the Champion-Challenger strategy with ML Registry, DAGs, and Tasks. 
+summary: Learn how to implement an automated model retraining and deployment pipeline in Snowflake using the Champion-Challenger strategy with Snowflake notebooks, ML Registry, DAGs, and Tasks. 
 categories: snowflake-site:taxonomy/product/ai 
 environments: web status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
@@ -10,35 +10,45 @@ fork repo link: https://github.com/sheena-n/Snowflake-Champion-Challenger.git
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 5
 
-In the realm of production machine learning, maintaining model performance through automated retraining and seamless deployment is crucial. This guide explores a robust solution utilizing the **Champion-Challenger strategy**, implementing a comprehensive model deployment pipeline powered by the Snowflake ML Registry. The pipeline features automated retraining, evaluation, and promotion processes.
+In the realm of production machine learning, maintaining model performance through automated retraining and seamless deployment is crucial. This guide explores a robust solution utilizing the **Champion-Challenger strategy**, implementing a comprehensive model deployment pipeline powered by the Snowflake ML Registry. The pipeline features automated retraining, evaluation, and promotion of ML models.
+
+## 🎯 What is Champion-Challenger Modeling?
+
+Champion-Challenger is a production MLOps pattern where:
+- **Champion**: The current production model serving predictions
+- **Challenger**: A newly trained model that competes with the champion
+- **Evaluation**: Both models are tested on the same holdout dataset
+- **Promotion**: If the challenger performs significantly better, it becomes the new champion
 
 ### Prerequisites
-- Familiarity with machine learning concepts and the Champion-Challenger model strategy
+- Access to Snowflake notebooks
 - Basic understanding of Snowflake's ML capabilities and Model Registry
 - Python programming experience with scikit-learn
 
 ### What You'll Learn
-- How to generate a synthetic dataset for model training and evaluation
-- Steps to train and register a Champion model in Snowflake ML Registry
-- Process for training a Challenger model and comparing its performance against the Champion
-- Automating the model training and promotion pipeline using Snowflake's DAGs and Tasks
+1. How to generate a synthetic dataset for model training and evaluation
+2. Steps to train and register a Champion model in Snowflake ML Registry
+3. Process for training a Challenger model and comparing its performance against the Champion
+4. Automating the model training and promotion pipeline using Snowflake's DAGs and Tasks
 
 ### What You'll Need
 - Access to a Snowflake account with appropriate permissions
-- Python environment with necessary libraries (scikit-learn, Snowflake ML Registry)
 - Snowflake Notebooks enabled in your account
 
 ### What You'll Build
 - A fully automated model retraining and deployment pipeline in Snowflake implementing the Champion-Challenger strategy
 
+### Code Repository
+- You can fork the entire code repo from here: [Automated model retraining](https://github.com/sheena-n/Snowflake-Champion-Challenger.git)
+
 <!-- ------------------------ -->
 
-## Generate Dataset
-Duration: 10
+## 1. Generate Dataset
 
-Create a synthetic credit approval dataset comprising 8,000 loan applications over 20 weeks (400 applications per week). Each application includes nine financial features:
+Run the 1_CC_Model_Training.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_1_DATA_GENERATION/1_CC_Model_Training.ipynb) and import it in the snowflake notebook.
+
+It will create a synthetic credit approval dataset comprising 8,000 loan applications over 20 weeks (400 applications per week). Each application includes nine financial features:
 
 - Applicant age
 - Annual income
@@ -66,72 +76,43 @@ The target variable indicates loan approval (approved/denied) based on weighted 
 
 <!-- ------------------------ -->
 
-## Train a Champion Model
-Duration: 15
+## 2. Train a Champion Model
 
-Train an initial Champion model—a Random Forest classifier built with scikit-learn using the first 10 weeks of data. Finalize the model, push it into the Snowflake Model Registry, and establish the inference pipeline.
+Train an initial Champion model—a Random Forest classifier built with scikit-learn using the first 10 weeks of data. Finalize the model, push it into the Snowflake Model Registry, and establish the inference pipeline. Run the 2_CC_Champion_training.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_2_CHAMPION_TRAINING/2_CC_Champion_training.ipynb) and import it in the snowflake notebook.
 
-### Register Champion in Model Registry
+![Champion model](assets/champion.png)
 
-# Register champion in model registry
-sample_input = X_train.head(100)
-model_name = "CREDIT_APPROVAL"
+Once we build the initial model we will push the model to Snowflake model registry and set the ALIAS property of the model in the registry as "Champion". We will also create a new tag named "LIVE_VERSION" on the model and set it to the name of the champion model version we just logged into registry. 
 
-champion_ref = registry.log_model(
-    model=champion_pipeline,
-    model_name=model_name,
-    sample_input_data=sample_input,
-    target_platforms=["WAREHOUSE", "SNOWPARK_CONTAINER_SERVICES"],
-    comment=f"Champion model trained on weeks 0-9, AUC: {champion_auc:.2f}",
-    metrics={
-        "test_auc": champion_auc,
-        "train_weeks": "0-9",
-        "model_type": "champion",
-        "training_samples": len(X_train)
-    },
-    task=type_hints.Task.TABULAR_BINARY_CLASSIFICATION
-)### Set Model Alias
-
+``` python
 # Set the model alias as CHAMPION
-champion_ref.set_alias("CHAMPION")### Set Live Version Tag
+champion_ref.set_alias("CHAMPION")
 
 # Get the model from the registry
 model = registry.get_model(model_name)
 
 # Set Live version tag
-model.set_tag("LIVE_VERSION", champion_ref.version_name)### Establish Inference Pipeline
+model.set_tag("LIVE_VERSION", champion_ref.version_name)
+```
 
-The inference pipeline remains unchanged regardless of model updates, as all Champion model switching is managed internally within the Snowflake Model Registry:
-
-# Get the live version of the model
+We will establish an inference pipeline after and the inference pipeline remains unchanged regardless of model updates, as all Champion model switching is managed internally within the Snowflake Model Registry.
+``` python
+#Get the live version of the model
 live_version = model.get_tag("live_version")
 
-# Run prediction function
-remote_prediction = model.version(live_version).run(test_data, function_name="predict")<!-- ------------------------ -->
+#Run prediction function
+remote_prediction = model.version(live_version).run(test_data, function_name="predict")
+```
 
-## Challenger Model Training
-Duration: 10
+## 3. Challenger Model Training
+
+![Challenger model](assets/challenger.png)
 
 Train a Challenger model—a Random Forest classifier using scikit-learn on the 3–12 recent weeks of data. Log this new iteration into the Snowflake Model Registry as the Challenger model.
+Follow the same process in step 2 and set the ALIAS property of the model in the registry as "Challenger". Create a new tag named "CHALLENGER_VERSION" on the model and set it to the name of the challenger model version. Run the 3_CC_Challenger_Training.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_3_CHALLENGER_TRAINING/3_CC_Challenger_Training.ipynb) and import it in the snowflake notebook.
 
-### Register Challenger in Model Registry
 
-# Register challenger in model registry
-challenger_ref = registry.log_model(
-    model=challenger_pipeline,
-    model_name=model_name,
-    sample_input_data=sample_input,
-    target_platforms=["WAREHOUSE", "SNOWPARK_CONTAINER_SERVICES"],
-    comment=f"Challenger model trained on weeks 3-12, AUC: {challenger_auc:.2f}",
-    metrics={
-        "test_auc": challenger_auc,
-        "train_weeks": "3-12",
-        "model_type": "challenger",
-        "training_samples": len(X_train)
-    },
-    task=type_hints.Task.TABULAR_BINARY_CLASSIFICATION
-)### Set Challenger Alias and Tag
-
+``` python
 # Set the model alias as CHALLENGER
 challenger_ref.set_alias("CHALLENGER")
 
@@ -139,15 +120,20 @@ challenger_ref.set_alias("CHALLENGER")
 model = registry.get_model(model_name)
 
 # Set Challenger version tag
-model.set_tag("CHALLENGER_VERSION", challenger_ref.version_name)<!-- ------------------------ -->
+model.set_tag("CHALLENGER_VERSION", challenger_ref.version_name)
+```
 
-## Model Performance Check & Swap
-Duration: 10
+<!-- ------------------------ -->
 
-Perform a basic performance check by comparing the AUC scores of the Champion and Challenger models on the evaluation holdout dataset. If the Challenger's AUC is higher, demote the Champion and promote the Challenger as the new Champion, marking it as Live.
+## 4. Model Performance Check & Swap
 
+![Swap model](assets/swap_model.png)
+
+Perform a basic performance check by comparing the AUC scores of the Champion and Challenger models on the evaluation holdout dataset. If the Challenger's AUC is higher, demote the Champion and promote the Challenger as the new Champion, marking it as Live. Run the 4_CC_Swap_Models.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_4_SWAP_MODELS/4_CC_Swap_Models.ipynb) and import it in the snowflake notebook.
+
+
+```python
 ### Performance Comparison Logic
-
 if challenger_metrics['auc'] > champion_metrics['auc']:
     # Promote Challenger to Champion
     print(f"🎉 Challenger outperformed Champion!")
@@ -160,14 +146,13 @@ if challenger_metrics['auc'] > champion_metrics['auc']:
 else:
     print(f"📝 Reason: Challenger performance not better than Champion")
     print(f"🏆 Current Champion Remains Active: {live_version}")<!-- ------------------------ -->
+```
 
-## Automating Model Training and Promotion
-Duration: 15
+## 5. Automating Model Training and Promotion (Steps 3 & 4)
 
-To productionalize this workflow, automate the Challenger training and model promotion pipeline to run weekly (e.g., every Monday at 1 AM). Snowflake's DAGs (Directed Acyclic Graphs) and Tasks features allow scheduling these steps to execute in an orderly fashion.
+To productionalize this workflow, automate the Challenger training and model promotion pipeline to run weekly (e.g., every Monday at 1 AM). Snowflake's DAGs (Directed Acyclic Graphs) and Tasks features allow scheduling these steps to execute in an orderly fashion. Run the CC_5_AUTOMATION.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_5_AUTOMATION/CC_5_AUTOMATION.ipynb) and import it in the snowflake notebook.
 
-### Define and Deploy the DAG
-
+```python
 # Define the DAG - run every weekly Monday 1 AM
 with DAG(dag_name, schedule=Cron("1 1 * * 1", "Asia/Singapore"), warehouse=warehouse_name) as dag:
     
@@ -184,17 +169,11 @@ with DAG(dag_name, schedule=Cron("1 1 * * 1", "Asia/Singapore"), warehouse=wareh
     
     # Define the dependencies between the tasks
     dag_task1 >> dag_task2  # dag_task1 is a predecessor of dag_task2
-
-# Create the DAG in Snowflake
-dag_op.deploy(dag, mode="orreplace")This automation ensures:
-- Weekly retraining of the Challenger model with the latest data
-- Automatic performance comparison between Champion and Challenger
-- Seamless promotion of the best-performing model to production
+```
 
 <!-- ------------------------ -->
 
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You have successfully implemented an automated model retraining and deployment pipeline in Snowflake using the Champion-Challenger strategy.
 
@@ -208,8 +187,7 @@ Snowflake simplifies model lifecycle management by leveraging its ML Registry to
 - Best practices for production ML model lifecycle management
 
 ### Related Resources
+- [Medium Blog On Automated Model Retraining & Deployment In Snowflake](https://medium.com/snowflake/automated-model-retraining-deployment-in-snowflake-2670fe0ac39b)
 - [Snowflake ML Registry Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowflake Tasks and DAGs Documentation](https://docs.snowflake.com/en/user-guide/tasks-intro)
 - [Snowflake Notebooks Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-- [Understanding Customer Reviews using Snowflake Cortex](https://quickstarts.snowflake.com/guide/understanding_customer_reviews_using_snowflake_cortex)
-- [Getting Started with Snowflake Intelligence](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_intelligence)
