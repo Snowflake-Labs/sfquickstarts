@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 This Quickstart guide will walk you through creating IPO research agent leveraging key Snowflake Cortex capabilities.  In this Quickstart, you will perform/create the following:
 
-- Setup your account to access various APIs, including the [SEC's Edgar Database](https://www.sec.gov/search-filings) and Finnhub(https://finnhub.io/).
+- Setup your account to access various APIs, including the [SEC's Edgar Database](https://www.sec.gov/search-filings) and [Finnhub](https://finnhub.io/).
 - Download one quarter's worth of SEC S-1 filings into stage
 - Create a table referencing these filings and supply additional dimensional information, facilitated by a separate EDGAR API endpoint, and create a [Semantic View](https://docs.snowflake.com/en/user-guide/views-semantic/overview) related to this data
 - Create a procedure leveraging the [AI_EXTRACT](https://docs.snowflake.com/en/sql-reference/functions/ai_extract) function
