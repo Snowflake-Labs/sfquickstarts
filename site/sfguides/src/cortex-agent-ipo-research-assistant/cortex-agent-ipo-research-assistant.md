@@ -44,7 +44,7 @@ GRANT USAGE ON WAREHOUSE IPO_RESEARCH_WH TO ROLE SYSADMIN;
 USE WAREHOUSE IPO_RESEARCH_WH;
 ```
 <!-- ------------------------ -->
-## Uploading and Preparing Data from the SEC EDGAR Database (~30 minutes) 
+## EDGAR Data Preparation
 
 ### Overview 
 
@@ -86,7 +86,7 @@ Additional notes:
 - Based on the configuration at the top of `get_s1_filers_list`, we are downloading S-1 filings from Q1 2025.
 - The `download_s1` and `sec_company_names` cells can take up to 10 minutes each due to rate limiting against the EDGAR database.
 <!-- ------------------------ -->
-## Creating the Finnhub API functions for real-time data (~5 minutes) 
+## Finnhub API Preparation
 
 ### Overview 
 
@@ -108,7 +108,7 @@ Since we do not need any custom libraries, we'll use a warehouse-powered noteboo
 
 **Once imported, make sure you add your api key in the `create_secret` cell.**  After doing so, you can run all the cells in order.
 
-## Add Market Research Report PDFs (~10 minutes)
+## Market Reports Preparation 
 
 ### Overview 
 
@@ -214,7 +214,7 @@ SELECT PARSE_JSON(
 
 ```
 
-## Setup the Cortex Agent (~15 minutes)
+## Cortex Agent Setup
 
 ### Recap
 
@@ -289,7 +289,7 @@ Tips:
 Once the agent is able to leverage all the tools, you are finished, and can optionally leverage the agent through [Snowflake Intelligence](https://www.snowflake.com/en/product/snowflake-intelligence/) for further testing or usage.
 
 <!-- ------------------------ -->
-## Conclusion 
+## Conclusion and Resources
 
 Congratulations!  You successfully setup a Cortex Agent that is able to demonstrate IPO research capabilities.  With some time and adjustments, you're well on your way to finding the next unicorn to invest in! 
 
@@ -301,3 +301,10 @@ Congratulations!  You successfully setup a Cortex Agent that is able to demonstr
   - real-time stock information procedures via Finnhub API
 - Creation and configuration of a Cortex Agent
 
+### Related Resources
+- [Semantic View](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
+- [AI_EXTRACT](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
+- [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+- [Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
+- [AI_PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document) 
+- [Snowflake Intelligence](https://www.snowflake.com/en/product/snowflake-intelligence/) 
