@@ -5,9 +5,8 @@ summary: Learn how to implement an automated model retraining and deployment pip
 categories: snowflake-site:taxonomy/product/ai 
 environments: web status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
-fork repo link: https://github.com/sheena-n/Snowflake-Champion-Challenger.git
 
-# Automated Model Retraining & Deployment in Snowflake
+# Automated Model Retraining & Deployment In Snowflake
 <!-- ------------------------ -->
 
 ## Overview
@@ -41,14 +40,13 @@ Champion-Challenger is a production MLOps pattern where:
 - A fully automated model retraining and deployment pipeline in Snowflake implementing the Champion-Challenger strategy
 
 ### Code Repository
-- You can fork the entire code repo from here: [Automated model retraining](https://github.com/sheena-n/Snowflake-Champion-Challenger.git)
+- You can fork the entire code repo from here: [Automated model retraining](assets/)
 
 <!-- ------------------------ -->
 
 ## 1. Generate Dataset
 
-Run the 1_CC_Model_Training.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_1_DATA_GENERATION/1_CC_Model_Training.ipynb) and import it in the snowflake notebook.
-
+Import and run the [1_CC_Model_Training.ipynb](assets/1_CC_Model_Training.ipynb) notebook in your snowflake notebook.
 It will create a synthetic credit approval dataset comprising 8,000 loan applications over 20 weeks (400 applications per week). Each application includes nine financial features:
 
 - Applicant age
@@ -79,7 +77,7 @@ The target variable indicates loan approval (approved/denied) based on weighted 
 
 ## 2. Train a Champion Model
 
-Train an initial Champion model—a Random Forest classifier built with scikit-learn using the first 10 weeks of data. Finalize the model, push it into the Snowflake Model Registry, and establish the inference pipeline. Run the 2_CC_Champion_training.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_2_CHAMPION_TRAINING/2_CC_Champion_training.ipynb) and import it in the snowflake notebook.
+Train an initial Champion model—a Random Forest classifier built with scikit-learn using the first 10 weeks of data. Finalize the model, push it into the Snowflake Model Registry, and establish the inference pipeline. Import and run the [2_CC_Champion_training.ipynb](assets/2_CC_Champion_training.ipynb) notebook in your snowflake notebook. 
 
 ![Champion model](assets/champion.png)
 
@@ -110,8 +108,7 @@ remote_prediction = model.version(live_version).run(test_data, function_name="pr
 ![Challenger model](assets/challenger.png)
 
 Train a Challenger model—a Random Forest classifier using scikit-learn on the 3–12 recent weeks of data. Log this new iteration into the Snowflake Model Registry as the Challenger model.
-Follow the same process in step 2 and set the ALIAS property of the model in the registry as "Challenger". Create a new tag named "CHALLENGER_VERSION" on the model and set it to the name of the challenger model version. Run the 3_CC_Challenger_Training.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_3_CHALLENGER_TRAINING/3_CC_Challenger_Training.ipynb) and import it in the snowflake notebook.
-
+Follow the same process in step 2 and set the ALIAS property of the model in the registry as "Challenger". Create a new tag named "CHALLENGER_VERSION" on the model and set it to the name of the challenger model version. Import and run the [3_CC_Challenger_Training.ipynb](assets/3_CC_Challenger_Training.ipynb) notebook in your snowflake notebook.
 
 ``` python
 # Set the model alias as CHALLENGER
@@ -130,8 +127,7 @@ model.set_tag("CHALLENGER_VERSION", challenger_ref.version_name)
 
 ![Swap model](assets/swap_model.png)
 
-Perform a basic performance check by comparing the AUC scores of the Champion and Challenger models on the evaluation holdout dataset. If the Challenger's AUC is higher, demote the Champion and promote the Challenger as the new Champion, marking it as Live. Run the 4_CC_Swap_Models.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_4_SWAP_MODELS/4_CC_Swap_Models.ipynb) and import it in the snowflake notebook.
-
+Perform a basic performance check by comparing the AUC scores of the Champion and Challenger models on the evaluation holdout dataset. If the Challenger's AUC is higher, demote the Champion and promote the Challenger as the new Champion, marking it as Live. Import and run the [4_CC_Swap_Models.ipynb](assets/4_CC_Swap_Models.ipynb) notebook in your snowflake notebook.
 
 ```python
 ### Performance Comparison Logic
@@ -146,12 +142,13 @@ if challenger_metrics['auc'] > champion_metrics['auc']:
     model.set_tag("LIVE_VERSION", challenger_ref.version_name)
 else:
     print(f"📝 Reason: Challenger performance not better than Champion")
-    print(f"🏆 Current Champion Remains Active: {live_version}")<!-- ------------------------ -->
+    print(f"🏆 Current Champion Remains Active: {live_version}")
 ```
+<!-- ------------------------ -->
 
-## 5. Automating Model Training and Promotion (Steps 3 & 4)
+## 5. Automating Model Training & Promotion
 
-To productionalize this workflow, automate the Challenger training and model promotion pipeline to run weekly (e.g., every Monday at 1 AM). Snowflake's DAGs (Directed Acyclic Graphs) and Tasks features allow scheduling these steps to execute in an orderly fashion. Run the CC_5_AUTOMATION.ipynb notebook from the forked repo or download the notebook code from [here](https://github.com/sheena-n/Snowflake-Champion-Challenger/blob/main/notebooks/CC_5_AUTOMATION/CC_5_AUTOMATION.ipynb) and import it in the snowflake notebook.
+To productionalize this workflow, automate the Challenger training and model promotion pipeline to run weekly (e.g., every Monday at 1 AM). Snowflake's DAGs (Directed Acyclic Graphs) and Tasks features allow scheduling these steps to execute in an orderly fashion. Import and run the [5_CC_Automation.ipynb](assets/5_CC_Automation.ipynb) notebook in your snowflake notebook.
 
 ```python
 # Define the DAG - run every weekly Monday 1 AM
