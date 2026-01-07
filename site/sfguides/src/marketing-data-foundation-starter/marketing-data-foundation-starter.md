@@ -7,6 +7,7 @@ environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Marketing Data Foundation Starter Guide
 <!-- ------------------------ -->
 ## Overview 

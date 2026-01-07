@@ -2,10 +2,11 @@ author: Gilberto Hernandez, Kamesh Sampath
 id: getting-started-snowflake-python-api
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: Learn how to get started with Snowflake's Python API to manage Snowflake objects and tasks.
+summary: Manage Snowflake resources programmatically with the Python API for infrastructure automation, DDL, and data operations.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with the Snowflake Python API
 

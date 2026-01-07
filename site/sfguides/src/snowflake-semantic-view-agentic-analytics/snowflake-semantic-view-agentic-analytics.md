@@ -2,7 +2,7 @@ author: Chanin Nantasenamat, Josh Klahr
 id: snowflake-semantic-view-agentic-analytics
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
-summary: Learn how to build business-friendly semantic views over an enterprise data warehouse and enable cross-functional, AI-powered natural language querying using Snowflake Cortex Analyst and Snowflake Intelligence Agents.
+summary: Learn how to build business-friendly semantic views over an enterprise data warehouse and enable cross-functional, AI-powered natural language querying using Snowflake Cortex Analyst and Snowflake Intelligence Agents. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -36,6 +36,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
  - A Snowflake account.
  - Access to the Snowsight interface (web environment).
  - Account Administrator (`ACCOUNTADMIN`) role access for initial setup.
+
 
 ## Setup
 ### Load the Base Data

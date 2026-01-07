@@ -2,10 +2,11 @@ author: Sarathi Balakrishnan
 id: doc-ai-pipeline-automation
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/document-ai
 language: en
-summary: Automate document processing using Snowflake Document AI
+summary: Automate document processing pipelines with Snowflake Document AI for invoice extraction, OCR, form digitization, and validation.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 
 # Document AI Pipeline Automation

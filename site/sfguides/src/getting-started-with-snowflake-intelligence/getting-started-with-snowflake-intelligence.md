@@ -1,12 +1,13 @@
 id: getting-started-with-snowflake-intelligence
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This guide outlines the process for getting started with Snowflake Intelligence.
+summary: This guide outlines the process for getting started with Snowflake Intelligence. 
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_snowflake_intelligence&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
+
 
 
 

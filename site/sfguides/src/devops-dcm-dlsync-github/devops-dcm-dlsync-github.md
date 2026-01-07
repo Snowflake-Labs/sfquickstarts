@@ -2,10 +2,11 @@ author: Ytbarek Hailu
 id: devops-dcm-dlsync-github
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging DLSync and GitHub
+summary: Synchronize Snowflake database changes with GitHub using DL Sync for declarative, version-controlled deployments and other DevOps best practices.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # DevOps: Database Change Management with DLSync and GitHub
 <!-- ------------------------ -->

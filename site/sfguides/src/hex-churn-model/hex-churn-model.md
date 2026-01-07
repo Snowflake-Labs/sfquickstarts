@@ -2,10 +2,11 @@ author: gflomo@hex.tech
 id: hex-churn-model
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions
 language: en
-summary: This lab will walk you through how to use Snowflake and Hex.
+summary: This lab will walk you through how to use Snowflake and Hex. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Churn modeling using Snowflake and Hex
 

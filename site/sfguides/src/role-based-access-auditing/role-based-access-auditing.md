@@ -2,10 +2,11 @@ author: Chanin Nantasenamat
 id: role-based-access-auditing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Build a utility notebook to audit and report on user roles and privileges in Snowflake Notebooks.
+summary: Build a utility notebook to audit and report on user roles and privileges in Snowflake Notebooks. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build Role-Based Access Audit Dashboards in Snowflake Notebooks
 <!-- ------------------------ -->

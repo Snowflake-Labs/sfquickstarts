@@ -2,10 +2,11 @@ author: Charles Yorek
 id: build-a-cinebot-with-snowflake-native-apps-and-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: This is a sample Snowflake Guide
+summary: Build a movie recommendation chatbot using Snowflake Native Apps and Snowflake Cortex AI for intelligent search and content generation.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build a CineBot with Snowflake Native Apps and Snowflake Cortex
 <!-- ------------------------ -->

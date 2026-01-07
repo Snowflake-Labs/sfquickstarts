@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Dash Desai
 
+
 # Introdução ao Snowpark em planilhas Python para Snowflake
 <!-- ------------------------ -->
 ## Visão geral

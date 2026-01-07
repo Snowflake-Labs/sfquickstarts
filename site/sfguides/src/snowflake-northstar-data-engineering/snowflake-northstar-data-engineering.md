@@ -2,10 +2,11 @@ author: Gilberto Hernandez, Rida Safdar
 id: snowflake-northstar-data-engineering
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Build an end-to-end data pipeline in Snowflake using the I-T-D framework.
+summary: Build an end-to-end data pipeline in Snowflake using the I-T-D framework. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started – Data Engineering with Snowflake
 <!-- ------------------------ -->

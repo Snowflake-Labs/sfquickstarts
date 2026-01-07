@@ -108,7 +108,7 @@ Before starting, ensure you have:
 
 - **Snowflake Account**: Enterprise account with Openflow Snowflake Deployment enabled (AWS or Azure regions)
 - **Account Permissions**: ACCOUNTADMIN role or equivalent for initial setup
-- **PostgreSQL Instance**: PostgreSQL 11+ with logical replication enabled (AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database, or self-hosted)
+- **PostgreSQL Instance**: PostgreSQL 11+ with logical replication enabled. **Recommended**: [Snowflake Postgres](https://www.snowflake.com/en/product/features/postgres/) - see [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/) for setup. Alternatives: AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database, or self-hosted
 - **Network Connectivity**: Ability to configure network access from Snowflake to PostgreSQL
 
 > **Openflow Deployment**: This quickstart uses **Openflow Snowflake Deployment** (Snowflake-managed). If you're using [Openflow BYOC deployment](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about-byoc), the connector setup and concepts are the same, but runtime deployment steps will differ.
@@ -143,13 +143,13 @@ This guide assumes you have a PostgreSQL instance already created and available.
 
 > **Required PostgreSQL Configuration**:
 >
-> - **PostgreSQL instance available**: You have a running PostgreSQL instance (GCP Cloud SQL, AWS RDS, Azure Database, or self-hosted) with network accessibility
+> - **PostgreSQL instance available**: You have a running PostgreSQL instance (Snowflake Postgres, AWS RDS, GCP Cloud SQL, Azure Database, or self-hosted) with network accessibility
 > - **Logical replication enabled**: `wal_level = logical` (required for CDC) - see configuration instructions below
 > - **User with REPLICATION privileges**: The PostgreSQL user must have replication permissions
 > - **Network access**: Configure network access from Snowflake SPCS to your PostgreSQL instance
 > - **Supported versions**: PostgreSQL 11-17
 >
-> This quickstart was tested with **GCP Cloud SQL for PostgreSQL v17**.
+> This quickstart was tested with **Snowflake Postgres v17**.
 
 #### Enable Logical Replication (If Not Already Enabled)
 
@@ -158,11 +158,12 @@ PostgreSQL CDC requires logical replication to be enabled. This allows the conne
 **Grant REPLICATION privileges to your PostgreSQL user:**
 
 ```sql
-ALTER USER postgres WITH REPLICATION;
+ALTER USER snowflake_admin WITH REPLICATION;
 ```
 
 **Enable logical replication** via your PostgreSQL service:
 
+- **Snowflake Postgres**: Logical replication is enabled by default. No additional configuration required. See [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/) for setup
 - **GCP Cloud SQL**: Set the `cloudsql.logical_decoding` and `cloudsql.enable_pglogical` flags to `on`
 - **AWS RDS** or **AWS Aurora**: Set `rds.logical_replication = 1` and apply it to your instance
 - **Azure Database**: Set `wal_level = logical` via the Azure portal or Azure CLI
@@ -177,9 +178,10 @@ After enabling logical replication and restarting your PostgreSQL instance if ne
 Before configuring your PostgreSQL environment, note these setup considerations:
 
 - **Service Compatibility**: You can use any PostgreSQL service:
-  - GCP Cloud SQL
+  - Snowflake Postgres (recommended)
   - AWS RDS
   - Amazon Aurora
+  - GCP Cloud SQL
   - Azure Database for PostgreSQL
   - Self-hosted PostgreSQL
   
@@ -187,7 +189,7 @@ Before configuring your PostgreSQL environment, note these setup considerations:
 
 - **Client Tools**: You can use any PostgreSQL client you're comfortable with - `psql` command-line tool, pgAdmin, DBeaver, DataGrip, TablePlus, or others. This guide shows `psql` examples, but the SQL scripts work with any client.
 
-- **PostgreSQL User**: This guide uses the `postgres` user for both CLI connections and Openflow connector configuration. You can use any PostgreSQL user with appropriate privileges (superuser or replication role) - just ensure the user has permissions for logical replication and can create publications and replication slots.
+- **PostgreSQL User**: This guide uses the `snowflake_admin` user for both CLI connections and Openflow connector configuration. You can use any PostgreSQL user with appropriate privileges (superuser or replication role) - just ensure the user has permissions for logical replication and can create publications and replication slots.
 
 ### Setup PostgreSQL Client Environment
 
@@ -207,10 +209,10 @@ This section shows how to install and configure the `psql` command-line tool, wh
 Set these environment variables to avoid repeating connection parameters:
 
 ```bash
-export PGHOST='YOUR-POSTGRES-HOST'        # e.g., '34.123.45.67' for GCP Cloud SQL
+export PGHOST='YOUR-POSTGRES-HOST'        # e.g., your Snowflake Postgres endpoint
 export PGPORT='5432'
 export PGDATABASE='postgres'
-export PGUSER='postgres'
+export PGUSER='snowflake_admin'
 ```
 
 These variables will be referenced throughout the guide (e.g., `$PGHOST`, `$PGUSER`) for convenience.
@@ -236,6 +238,13 @@ Before proceeding with any configuration, verify that your PostgreSQL instance i
 #### Check PostgreSQL Accessibility
 
 First, ensure your PostgreSQL instance allows external connections:
+
+**For Snowflake Postgres (Recommended):**
+
+- Your Snowflake Postgres instance is accessible via the endpoint provided during setup
+- Network connectivity between Snowflake SPCS and Snowflake Postgres is automatically configured
+- Note the **Connection Endpoint** - you'll need this for both client connection and Openflow connector configuration
+- See [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/) for setup details
 
 **For GCP Cloud SQL:**
 
@@ -268,6 +277,8 @@ First, ensure your PostgreSQL instance allows external connections:
 
 Test the connection to your PostgreSQL instance using any method you prefer:
 
+**For Snowflake Postgres:** Use the `psql` connection URL provided during instance creation. The connection string format is typically provided in the Snowflake Postgres setup UI.
+
 **Option 1: Using psql:**
 
 If you set up environment variables and `.pgpass` in the previous section, simply run:
@@ -279,7 +290,7 @@ psql -c "SELECT version();"
 If you didn't set up environment variables, specify connection parameters explicitly:
 
 ```bash
-psql -h YOUR-POSTGRES-HOST -p 5432 -U postgres -d postgres -c "SELECT version();"
+psql -h YOUR-POSTGRES-HOST -p 5432 -U snowflake_admin -d postgres -c "SELECT version();"
 ```
 
 **Option 2: Using pgAdmin, DBeaver, or other GUI client:**
@@ -320,7 +331,7 @@ Expected output:
 ```text
  current_database | current_user 
 ------------------+--------------
- postgres         | postgres
+ postgres         | snowflake_admin
 (1 row)
 ```
 
@@ -329,6 +340,8 @@ If the connection succeeds without prompting for a password, your psql environme
 #### Verify Logical Replication
 
 Confirm that logical replication is enabled (as required in the PostgreSQL Requirements section):
+
+> **Snowflake Postgres Advantage:** If you're using Snowflake Postgres, logical replication (`wal_level = logical`) is **enabled by default**. You can skip this verification step, but feel free to confirm it works as expected.
 
 ```bash
 psql -c "SHOW wal_level;"
@@ -353,7 +366,7 @@ Now we'll initialize the PostgreSQL database with the healthcare schema, synthet
 
 The `sql/0.init_healthcare.sql` script will:
 
-1. Grant replication privileges to the postgres user
+1. Grant replication privileges to the snowflake_admin user
 2. Create the `healthcare` schema
 3. Create tables: `patients`, `doctors`, `appointments`, `visits`
 4. Load 100 synthetic patients, 10 doctors, 170 appointments, and 100 visit records
@@ -386,12 +399,12 @@ Expected output:
 
 ```text
               List of relations
-   Schema   |     Name     | Type  |  Owner   
-------------+--------------+-------+----------
- healthcare | appointments | table | postgres
- healthcare | doctors      | table | postgres
- healthcare | patients     | table | postgres
- healthcare | visits       | table | postgres
+   Schema   |     Name     | Type  |      Owner      
+------------+--------------+-------+-----------------
+ healthcare | appointments | table | snowflake_admin
+ healthcare | doctors      | table | snowflake_admin
+ healthcare | patients     | table | snowflake_admin
+ healthcare | visits       | table | snowflake_admin
 (4 rows)
 ```
 
@@ -486,13 +499,15 @@ psql -c "SELECT rolname, rolsuper, rolreplication FROM pg_roles WHERE rolname = 
 Expected output:
 
 ```text
- rolname  | rolsuper | rolreplication 
-----------+----------+----------------
- postgres | f        | t
+ rolname         | rolsuper | rolreplication 
+-----------------+----------+----------------
+ snowflake_admin | f        | t
 (1 row)
 ```
 
-> **Note:** The `rolsuper` value depends on your PostgreSQL setup. For managed services (GCP Cloud SQL, AWS RDS, Azure), it's typically `f` (false). For self-hosted installations where you're using the superuser account, it may be `t` (true). The critical column to verify is `rolreplication` which must be `t` (true).
+> **Snowflake Postgres Advantage:** If you're using Snowflake Postgres, the `snowflake_admin` user is **pre-configured with replication privileges** (`rolreplication = t`) and is not a superuser (`rolsuper = f`). This is the recommended secure configuration for CDC workloads.
+>
+> **Note:** For other managed services (AWS RDS, Azure), `rolsuper` is typically `f` (false). For self-hosted installations where you're using the superuser account, it may be `t` (true). The critical column to verify is `rolreplication` which must be `t` (true).
 
 The `rolreplication` column should be `t` (true). If it's `f` (false), grant replication privileges:
 
@@ -540,6 +555,7 @@ Open <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowfl
 >
 > Replace `YOUR-POSTGRES-HOST` with:
 >
+> - **Snowflake Postgres**: Your Snowflake Postgres connection endpoint
 > - **GCP Cloud SQL**: Your instance's public IP (e.g., `34.123.45.67`)
 > - **AWS RDS**: Your RDS endpoint hostname
 > - **Azure Database**: Your Azure PostgreSQL server name
@@ -782,7 +798,7 @@ While this quickstart focuses on PostgreSQL, the concepts and workflow apply to 
 
 #### Supported Databases
 
-- **[PostgreSQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about)**: Versions 11-17 (Standard, AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database) - *Used in this quickstart*
+- **[PostgreSQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about)**: Versions 11-17 (Snowflake Postgres, AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database, Standard) - *Used in this quickstart*
 - **[MySQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/mysql/about)**: Versions 8.0, 8.4 (Standard, AWS RDS, Amazon Aurora, GCP Cloud SQL)
 - **[SQL Server](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/sql-server/about)**: SQL Server 2017+ (Standard, AWS RDS, Azure SQL Database)
 
@@ -839,15 +855,16 @@ Click on the **Parameters** tab and configure the following values:
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| **PostgreSQL Connection URL** | `jdbc:postgresql://<YOUR-POSTGRES-HOST>:5432/postgres` | JDBC connection URL to your PostgreSQL instance. Replace `<YOUR-POSTGRES-HOST>` with your actual PostgreSQL host (e.g., `34.123.45.67` for GCP Cloud SQL) |
+| **PostgreSQL Connection URL** | `jdbc:postgresql://<YOUR-POSTGRES-HOST>:5432/postgres` | JDBC connection URL to your PostgreSQL instance. Replace `<YOUR-POSTGRES-HOST>` with your actual PostgreSQL host (e.g., your Snowflake Postgres endpoint) |
 | **PostgreSQL JDBC Driver** | `postgresql-42.7.7.jar` | Reference to the PostgreSQL JDBC driver JAR (see upload instructions below) |
 | **PostgreSQL Password** | `<YOUR-PASSWORD>` | Password for the PostgreSQL user (stored as sensitive value) |
-| **PostgreSQL Username** | `postgres` | PostgreSQL username (or the user you configured with REPLICATION privileges) |
+| **PostgreSQL Username** | `snowflake_admin` | PostgreSQL username (or the user you configured with REPLICATION privileges) |
 | **Publication Name** | `healthcare_cdc_publication` | Name of the PostgreSQL publication created in [0.init_healthcare.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc/blob/main/sql/0.init_healthcare.sql#L348) |
 | **Replication Slot Name** | Leave empty for auto-generation | Optional. If specified, this exact name will be used for the replication slot. If left empty, Openflow automatically generates a unique name following the pattern `snowflake_connector_<unique_id>`. |
 
 > **Connection URL Format**: The PostgreSQL JDBC URL format is `jdbc:postgresql://HOST:PORT/DATABASE`.
 >
+> - For Snowflake Postgres: Use your Snowflake Postgres endpoint (e.g., `jdbc:postgresql://your-snowflake-postgres-endpoint:5432/postgres`)
 > - For GCP Cloud SQL: Use the public IP address (e.g., `jdbc:postgresql://34.123.45.67:5432/postgres`)
 > - For AWS RDS: Use the endpoint hostname (e.g., `jdbc:postgresql://mydb.abc123.us-east-1.rds.amazonaws.com:5432/postgres`)
 > - For other services: Use your specific connection details
@@ -861,6 +878,8 @@ Follow the animation below to upload the downloaded JAR file and reference it in
 Your completed configuration should look like this:
 
 ![Set PostgreSQL Source Parameters](assets/set_pg_source_params.png)
+
+> **Note:** The screenshot shows `postgres` as the PostgreSQL Username. Based on your setup, use the appropriate username (e.g., Snowflake Postgres uses `snowflake_admin` by default).
 
 Click **Apply** to save your PostgreSQL source parameters configuration.
 
@@ -912,6 +931,8 @@ Click on the **Parameters** tab. By default, you'll see only the parameters spec
 
 ![PostgreSQL Ingestion Parameters with Inheritance](assets/pg_ingestion_params_with_inheritence.png)
 
+> **Note:** The screenshot shows `postgres` as the PostgreSQL Username. Based on your setup, use the appropriate username (e.g., Snowflake Postgres uses `snowflake_admin` by default).
+
 Configure the following key parameters:
 
 | Parameter | Value | Description |
@@ -943,6 +964,8 @@ From **PostgreSQL Destination Parameters**:
 Your completed configuration with inherited parameters should look like this:
 
 ![Set PostgreSQL Ingestion Parameters](assets/set_pg_ingestion_parmeters_with_inheritance.png)
+
+> **Note:** The screenshot shows `postgres` as the PostgreSQL Username. Based on your setup, use the appropriate username (e.g., Snowflake Postgres uses `snowflake_admin` by default).
 
 > **Configuration Notes**:
 >
@@ -2118,8 +2141,9 @@ Congratulations! You've successfully built a real-time CDC pipeline from Postgre
 
 **PostgreSQL Resources**:
 
+- [Snowflake Postgres](https://www.snowflake.com/en/product/features/postgres/)
+- [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/)
 - [PostgreSQL Logical Replication](https://www.postgresql.org/docs/current/logical-replication.html)
-- [GCP Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/postgres/)
 
 **Snowflake Platform**:
 

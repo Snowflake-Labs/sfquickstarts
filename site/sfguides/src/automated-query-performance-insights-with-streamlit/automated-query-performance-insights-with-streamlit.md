@@ -2,10 +2,11 @@ author: Chanin Nantasenamat
 id: automated-query-performance-insights-with-streamlit
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Build an interactive Streamlit app within Snowflake Notebooks to analyze query performance and identify optimization opportunities. This guide demonstrates how to create visualizations and insights for query execution times.
+summary: Build Streamlit apps in Snowflake Notebooks to analyze query performance and identify optimization opportunities.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build Interactive Query Performance App in Snowflake Notebooks
 

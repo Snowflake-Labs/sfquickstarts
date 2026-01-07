@@ -2,10 +2,11 @@ author: Caleb Baechtold
 id: machine-learning-with-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This is a sample Snowflake Guide
+summary: This is a sample Snowflake Guide 
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Machine Learning with Snowpark Python
 <!-- ------------------------ -->

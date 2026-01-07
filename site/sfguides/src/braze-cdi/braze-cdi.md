@@ -2,10 +2,11 @@ author: Luke Ambrosetti
 id: braze-cdi
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
-summary: Braze Cloud Data Ingestion
+summary: Sync Snowflake customer data with Braze Cloud Data Ingestion for personalized marketing campaigns.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Braze Cloud Data Ingestion
 <!-- ------------------------ -->

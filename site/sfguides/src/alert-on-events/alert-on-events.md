@@ -1,4 +1,4 @@
-summary: Getting Started with Event Tables and Alerts
+summary: Configure Event Tables and Alerts in Snowflake to monitor system events, trigger notifications, and automate incident response.
 id: alert-on-events
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
 language: en
@@ -81,7 +81,7 @@ Create the udtf returning only the valid rows:
 CREATE OR REPLACE FUNCTION TRY_PARSE_TICKET(data string)
 returns table (txid varchar, rfid varchar, resort varchar, purchase_time timestamp, expiration_time timestamp, days int, name varchar, address variant, phone varchar, email varchar, emergency_contact variant)
 language python
-runtime_version=3.8
+runtime_version=3.10
 handler='Parser'
 as $$
 import json
@@ -222,7 +222,7 @@ Now that an event table is set on the account, modify the TRY_PARSE_TICKET to lo
 CREATE OR REPLACE FUNCTION TRY_PARSE_TICKET(data string)
 returns table (txid varchar, rfid varchar, resort varchar, purchase_time timestamp, expiration_time timestamp, days int, name varchar, address variant, phone varchar, email varchar, emergency_contact variant)
 language python
-runtime_version=3.8
+runtime_version=3.10
 handler='Parser'
 as $$
 import json

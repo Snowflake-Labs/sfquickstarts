@@ -1,4 +1,4 @@
-summary: Begin modeling your Snowflake database online with SqlDBM 
+summary: Design database schemas visually with SqlDBM for collaborative data modeling, documentation, and direct Snowflake deployment.
 id: database-modeling-with-sqldbm
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en

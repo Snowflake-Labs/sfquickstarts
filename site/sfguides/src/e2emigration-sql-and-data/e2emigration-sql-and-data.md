@@ -2,10 +2,11 @@ author: Kuo Lun Lo
 id: e2emigration-sql-and-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/migrations
 language: en
-summary: End-to-End Migration to Snowflake: SQL Code Conversion and Data Migration
+summary: Migrate databases to Snowflake with SQL conversion, data transfer, and validation for complete platform transitions.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # End-to-End Migration to Snowflake: SQL Code Conversion and Data Migration
 

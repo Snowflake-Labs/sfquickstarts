@@ -7,6 +7,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 authors: Jason West
 
+
 # 사용자 정의 SQL 함수 시작하기
 
 <!-- ------------------------ -->

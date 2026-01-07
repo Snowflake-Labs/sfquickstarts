@@ -7,6 +7,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Robert Fehrmann
 
+
 # Snowpark 및 DataFrame API 시작하기
 
 <!-- ------------------------ -->

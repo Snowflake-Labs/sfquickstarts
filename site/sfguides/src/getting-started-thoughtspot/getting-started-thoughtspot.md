@@ -2,10 +2,11 @@ author: Thoughtspot
 id: getting-started-thoughtspot
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Build an interactive react app with ThoughtSpot and Snowflake
+summary: Build interactive React analytics apps with ThoughtSpot and Snowflake for natural language search and embedded BI.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build a ReactJS app with ThoughtSpot and Snowflake
 

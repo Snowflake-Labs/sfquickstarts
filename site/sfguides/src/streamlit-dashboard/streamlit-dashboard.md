@@ -2,10 +2,11 @@ author: Chanin Nantasenamat
 id: streamlit-dashboard
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Learn how to create an interactive YouTube analytics dashboard using Streamlit within Snowflake Notebooks. This guide covers data generation, visualization, and user interaction to effectively communicate your data insights.
+summary: Learn how to create an interactive YouTube analytics dashboard using Streamlit within Snowflake Notebooks. This guide covers data generation, visualization, and user interaction to effectively communicate your data insights. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues  
+
 
 # Building a YouTube Analytics Dashboard with Streamlit in Snowflake Notebooks
 <!-- ------------------------ -->

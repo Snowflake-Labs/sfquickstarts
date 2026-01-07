@@ -8,6 +8,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
+
 # Implementing a Pipeline for Database Change Management
 <!-- ------------------------ -->
 ## Overview 

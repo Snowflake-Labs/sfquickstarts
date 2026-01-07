@@ -2,9 +2,10 @@ author: Naveen Thomas
 id: build-collaborative-large-language-vision-models-to-detect-pnemonia-with-landingai-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: This guide shows how to use LandingLens and Snowflake to create a computer vision model that detects pneumonia in X-ray images.
+summary: Detect pneumonia in chest X-rays using LandingAI vision models integrated with Snowflake for healthcare AI applications.
 environments: web
 status: Published
+
 
 # Visual AI Models with LandingLens on Snowflake
 

@@ -2,10 +2,11 @@ author: Vino Duraisamy
 id: modern-lakehouse-analytics-on-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics
 language: en
-summary: This quickstart guide shows you how to get started Lakehouse analytics use cases on Snowflake
+summary: This quickstart guide shows you how to get started Lakehouse analytics use cases on Snowflake 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Intro to Lakehouse Analytics on Snowflake
 <!-- ------------------------ -->

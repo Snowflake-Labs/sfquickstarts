@@ -1,11 +1,12 @@
 id: getting-started-with-llamaparse-and-cortex-search
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Parse Documents with LlamaParse and Search with Cortex
+summary: Parse Documents with LlamaParse and Search with Cortex 
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Josh Reini
+
 
 # Getting Started with LlamaParse and Cortex Search
 <!-- ------------------------ -->

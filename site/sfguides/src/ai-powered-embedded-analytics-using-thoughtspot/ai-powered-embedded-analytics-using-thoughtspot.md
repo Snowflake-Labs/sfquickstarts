@@ -2,10 +2,11 @@ author: Ali Alladin (ali.alladin@thoughtspot.com)
 id: ai-powered-embedded-analytics-using-thoughtspot
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Guide to create your own embedded analytics application using ThoughtSpot
+summary: Embed AI-powered analytics with ThoughtSpot and Snowflake for natural language search and self-service business intelligence.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # AI Powered Embedded Analytics using ThoughtSpot
 <!-- ------------------------ -->

@@ -1,11 +1,12 @@
 author: Chanin Nantasenamat
 id: getting-started-with-interactive-tables
-summary: This guide demonstrates how to set up and use Snowflake's Interactive Warehouses and Tables to achieve sub-second query performance.
+summary: This guide demonstrates how to set up and use Snowflake's Interactive Warehouses and Tables to achieve sub-second query performance. 
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
 environments: web
 status: Published
 language: en
+
 
 
 
@@ -117,7 +118,7 @@ CREATE OR REPLACE STAGE my_csv_stage
 
 1. In the Snowflake UI, navigate to the database you created (`MY_DEMO_DB`).
 2. Go to the `my_csv_stage` stage
-3. Upload the `synthetic_hits_data.csv` file to this stage.
+3. Upload the [`synthetic_hits_data.csv`](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/synthetic_hits_data.csv) file to this stage.
 
 #### Step 4: Create the Table and Load Data
 
@@ -481,6 +482,10 @@ In this guide, we explored how to address the challenge of low-latency, near rea
 - How to benchmark and visually demonstrate the performance gains of interactive setups over standard ones using Python, proving their effectiveness for high-concurrency workloads.
 
 ### Related Resources
+
+Data and Notebook:
+- [synthetic_hits_data.csv](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/synthetic_hits_data.csv)
+- [Getting_Started_with_Interactive_Tables.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/Getting_Started_with_Interactive_Tables.ipynb)
 
 Documentation:
 - [Snowflake interactive tables and interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive)

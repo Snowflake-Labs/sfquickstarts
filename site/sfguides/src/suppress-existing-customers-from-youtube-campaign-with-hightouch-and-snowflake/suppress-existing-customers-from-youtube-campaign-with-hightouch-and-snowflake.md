@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Suppress existing customers from a Youtube campaign with Hightouch and Snowflake
 <!-- ------------------------ -->
 ## Overview 

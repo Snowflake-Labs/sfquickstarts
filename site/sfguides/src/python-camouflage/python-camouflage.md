@@ -2,10 +2,11 @@ author: Kevin Keller (kkellersnow)
 id: python-camouflage
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: Project Python Camouflage aims to give a working MVP for tokenization in Snowflake using Python.
+summary: Project Python Camouflage aims to give a working MVP for tokenization in Snowflake using Python. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Tokenization in Snowflake Using Python UDFs (Python Camouflage)
 <!-- ------------------------ -->

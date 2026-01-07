@@ -2,10 +2,11 @@ author: marzillo-snow
 id: example-matt-marzillo
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a quickstart for using Snowpark for ML on AzureML
+summary: Run experiments on Azure Machine Learning with Snowpark ML for cloud-based model training, hyperparameter tuning, and deployment.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowpark for Machine Learning on AzureML
 <!-- ------------------------ -->

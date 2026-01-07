@@ -2,10 +2,11 @@ author: Arne Mauser, Kelvin So, Dash Desai
 id: getting-started-with-synthetic-data-and-distillation-for-llms
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: This guide provides the instructions for creating custom LLMs with synthetic data and distillation using Snowflake Cortex AI.
+summary: This guide provides the instructions for creating custom LLMs with synthetic data and distillation using Snowflake Cortex AI. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation
 <!-- ------------------------ -->
