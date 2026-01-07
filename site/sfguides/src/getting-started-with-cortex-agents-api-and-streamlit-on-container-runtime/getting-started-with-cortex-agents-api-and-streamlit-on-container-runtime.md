@@ -1,9 +1,9 @@
 id: getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/guide, snowflake-site:taxonomy/product/platform
 language: en
 summary: Deploy a Streamlit app on the Container Runtime that calls the Cortex Agents API (agent:run) using the Snowflake Documentation Cortex Knowledge Extension (CKE), with multi-turn chat via the Threads API.
 environments: web
-status: Draft
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Rishu Saxena
 
@@ -14,14 +14,27 @@ authors: Rishu Saxena
 
 ## Overview
 
-In this quickstart, you will build a Streamlit in Snowflake (SiS) app that runs on the **Container Runtime** and calls the **Cortex Agents API** from inside the app.
+In this guide, you will build a Streamlit in Snowflake (SiS) app that runs on the **Container Runtime** and calls the **Cortex Agents API** from inside the app.
 
 Why Container Runtime?
 - Streamlit in Snowflake supports **two runtime environments**: *warehouse runtime* and *container runtime*. The container runtime serves your app as a **long-running, shared server** backed by a **compute pool** node (and uses a separate warehouse only for SQL queries). This makes it a great fit for interactive apps and caching. 
 - On the **warehouse runtime**, Streamlit code executes in a stored-procedure-style environment where you can often rely on Snowflake-specific helpers like the **`_snowflake` module** for interacting with Snowflake services.
 On the **container runtime**, your app runs as a long-lived service **outside** that stored procedure environment, which means **`_snowflake` isn’t available**—but you gain a more standard, app-server-like model. For calling Snowflake REST endpoints (including **Cortex / Agents APIs**), the recommended pattern is to **use the container session’s OAuth token** (read from **`/snowflake/session/token`**) and make direct HTTPS requests with a normal HTTP client like **`requests`**.
 
-![Snowflake Intelligence](assets/streamlit_runtime_comparison_table.png)
+
+### Streamlit Runtime Environments: Warehouse vs Container
+
+| Supported feature | Warehouse runtime | Container runtime |
+|------------------|------------------|------------------|
+| **Compute** | Virtual warehouse for app code and internal queries. | Compute pool node for app code. Virtual warehouse for internal queries. |
+| **Base image** | Linux in a Python stored procedure. | Linux in a Snowpark container. |
+| **Python versions** | 3.9, 3.10, 3.11 | 3.11 |
+| **Streamlit versions** | 1.22+ (limited selection) | 1.49+ (any version, including streamlit-nightly) |
+| **Dependencies** | Packages from the Snowflake Conda channel via `environment.yml`. Pin versions with `=`. Use version ranges with `*` wildcard. | Packages from an external index (e.g., PyPI) via `pyproject.toml` or `requirements.txt`. Pin versions with `==`. Use version ranges with `<`, `<=`, `>=`, `>`, `*`, and comma-separated lists. |
+| **Entrypoint location** | Root of your source directory. | Root or subdirectory within your source directory. |
+| **Streamlit server** | Temporary per-viewer instance. Does not share disk, compute, or memory between sessions. Does not support caching between sessions. | Persistent shared instance for all viewers. Shares disk, compute, and memory between sessions. Fully supports Streamlit caching. |
+| **Startup times** | Slower per viewer (on-demand app creation). | Faster per viewer, but slower deployment (container startup). |
+| **Access** | Requires ownership to edit. Uses owner’s rights for queries (similar limits to owner’s rights stored procedures). | Same as warehouse runtime. Owner’s rights for queries with option to use caller’s rights on some or all queries. |
 
 
 ### What you will learn
@@ -48,8 +61,9 @@ A Streamlit chat app that:
 
 > In Snowsight, use **Projects » Workspaces** for the SQL in this guide.
 
+## Step-by-Step guide
 
-## Step 1: Create the project objects (SQL)
+### Step 1: Create the project objects (SQL)
 
 Open **Snowsight → Projects → Workspaces**, create a new **SQL File**, then run the following as **ACCOUNTADMIN**.
 
@@ -85,9 +99,9 @@ CREATE OR REPLACE STAGE APP_STAGE;
 ```
 
 
-## Step 2: Install the Snowflake Documentation CKE (Marketplace)
+### Step 2: Install the Snowflake Documentation CKE (Marketplace)
 
-You’ll use the same external knowledge source as the “Getting Started with Snowflake Intelligence and CKE” quickstart:
+You’ll use the same external knowledge source as the “Getting Started with Snowflake Intelligence and CKE” guide:
 **Snowflake Documentation** published as a **Cortex Knowledge Extension (CKE)** on Snowflake Marketplace.
 
 1. In Snowsight, open **Data Products → Marketplace**
@@ -108,7 +122,7 @@ SHOW CORTEX SEARCH SERVICES IN DATABASE SNOWFLAKE_DOCUMENTATION;
 ```
 
 
-## Step 3: Create the Cortex Agent (SQL)
+### Step 3: Create the Cortex Agent (SQL)
 
 This guide creates an agent named **SNOWFLAKE_DOCUMENTATION** in the same schema as the Streamlit app:
 `AGENTS_STREAMLIT_DEMO.APP`.
@@ -156,12 +170,12 @@ $$;
 SHOW AGENTS IN SCHEMA AGENTS_STREAMLIT_DEMO.APP;
 ```
 
-> This quickstart uses ACCOUNTADMIN and does not add custom roles or grants.  
+> This guide uses ACCOUNTADMIN and does not add custom roles or grants.  
 
 
-## Step 4: Clone the GitHub repository
+### Step 4: Clone the GitHub repository
 
-Clone this [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime) and get the following files from **app** folder:
+Clone this [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime) and get the following files from **assets** folder:
 1. `requirements.txt`
 2. `streamlit_app.py`
 
@@ -175,11 +189,11 @@ Clone this [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting
 
 
 
-## Step 5: Deploy the Streamlit app (Container Runtime)
+### Step 5: Deploy the Streamlit app (Container Runtime)
 
 You can deploy using **staged files** (SQL + Snowsight upload) or using **Git integration**. This guide uses staged files.
 
-### 5A) Upload files to the stage (Snowsight UI)
+#### 5A) Upload files to the stage (Snowsight UI)
 
 1. In Snowsight, go to **Data → Databases → AGENTS_STREAMLIT_DEMO → APP → Stages → APP_STAGE**
 2. Upload:
@@ -192,7 +206,7 @@ Your stage should look like:
 - `@AGENTS_STREAMLIT_DEMO.APP.APP_STAGE/streamlit_app.py`
 - `@AGENTS_STREAMLIT_DEMO.APP.APP_STAGE/requirements.txt`
 
-### 5B) Create External Access Integration and Streamlit object (SQL)
+#### 5B) Create External Access Integration and Streamlit object (SQL)
 
 In Snowsight, go to **Workspaces** and run:
 
@@ -230,7 +244,7 @@ Then open the app:
 > The container runtime requires both `RUNTIME_NAME = 'SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'` and a `COMPUTE_POOL`.
 
 
-## Step 6: Try it out
+### Step 6: Try it out
 
 In the Streamlit UI, ask questions like:
 
@@ -285,7 +299,7 @@ DROP DATABASE IF EXISTS AGENTS_STREAMLIT_DEMO;
 ```
 
 
-## Conclusion and resources
+## Conclusion and Resources
 
 Congratulations! You’ve successfully deployed a Streamlit in Snowflake app on the **Container Runtime** and used it to call the **Cortex Agents API** to power a **multi-turn** chat experience grounded in the Snowflake Documentation **Cortex Knowledge Extension**.
 
