@@ -1,4 +1,4 @@
-summary: Guide to getting started with user-defined SQL functions
+summary: Guide to getting started with user-defined SQL functions 
 id: getting-started-with-user-defined-sql-functions
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

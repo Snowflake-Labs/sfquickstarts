@@ -2,7 +2,7 @@ author: Charlie Hammond
 id: getting-started-with-task-graphs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This quickstart sets up an example Snowflake task graph to showcase its features.
+summary: This quickstart sets up an example Snowflake task graph to showcase its features. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ author: Jason Summer
 id: fine-tune-an-llm-in-snowpark-container-services-with-autotrain
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 language: en
-summary: Fine-Tuning an LLM in Snowpark Container Services with AutoTrain
+summary: Fine-tune LLMs using AutoTrain on Snowpark Container Services for customized text generation models.
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

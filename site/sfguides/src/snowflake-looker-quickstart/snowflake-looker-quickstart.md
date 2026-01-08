@@ -1,6 +1,6 @@
 author: Ali Khosro
 id: snowflake-looker-quickstart
-summary: A guide on how to connect Looker to Snowflake using Key-Pair and OAuth authentication, and build a simple dashboard.
+summary: A guide on how to connect Looker to Snowflake using Key-Pair and OAuth authentication, and build a simple dashboard. 
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 environments: web

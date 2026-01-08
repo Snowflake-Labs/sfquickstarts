@@ -2,7 +2,7 @@ author: Haythem Tellili
 id: build-collaborative-filtering-recommender-system-with-relationalai-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: This guide shows how to use RelationalAI and Snowflake to create a recommender system.
+summary: Build collaborative recommendation systems with RelationalAI and Snowflake for personalized user experiences.
 environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/rai-samples/issues

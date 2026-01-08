@@ -1,4 +1,4 @@
-summary: Learn how to manage Snowflake using Terraform
+summary: Learn how to manage Snowflake using Terraform 
 id: terraforming-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

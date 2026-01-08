@@ -2,7 +2,7 @@ author: Constantin Stanca
 id: xml-processing-snowpark
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform
 language: en
-summary: Snowflake guide on how to process XML with Snowpark
+summary: Snowflake guide on how to process XML with Snowpark 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,7 +2,7 @@ author: Brad Culberson
 id: build-a-custom-api-in-python-on-aws
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: A guide to building and running a custom API (in Python) Powered by Snowflake and AWS
+summary: Deploy Python REST APIs on AWS Lambda and Snowflake for serverless data application backends and microservices.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

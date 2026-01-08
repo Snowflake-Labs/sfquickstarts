@@ -2,7 +2,7 @@ author: Scott Teal, Saurin Shah, Mauricio Rojas Fernandez
 id: extract-attributes-dicom-files-java-udf
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
-summary: This is a guide to get familiar with Snowflake's support for unstructured data
+summary: Extract medical imaging attributes from DICOM files using Java UDFs in Snowflake for healthcare analytics workflows.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

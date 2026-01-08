@@ -2,7 +2,7 @@ author: Charlie Hammond
 id: train-an-xgboost-model-with-gpus-using-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform
 language: en
-summary: This is a sample Snowflake Guide
+summary: This is a sample Snowflake Guide 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

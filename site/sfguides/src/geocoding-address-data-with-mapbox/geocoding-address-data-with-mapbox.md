@@ -2,7 +2,7 @@ author: chriswhong
 id: geocoding-address-data-with-mapbox
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Forward and Reverse Geocoding with the Mapbox App
+summary: Convert addresses to coordinates with Mapbox geocoding on Snowflake for location enrichment, mapping, and spatial analytics.
 environments: 
 status: Published
 feedback link: https://github.com/chriswhong/sfquickstarts

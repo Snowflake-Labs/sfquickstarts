@@ -2,7 +2,7 @@ author: Piotr Hachaj
 id: connectors-example-push-based-java
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/commercialize
 language: en
-summary: Overview of building Snowflake push based connectors using Java and Native Apps.
+summary: Build push-based Java connectors for Snowflake Native Apps to ingest data from custom sources, APIs, and enterprise applications.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

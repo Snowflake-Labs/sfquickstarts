@@ -2,7 +2,7 @@ author: Jeremiah Hansen
 id: devops-dcm-terraform-github
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This quickstart will provide step-by-step details for getting started with DevOps on Snowflake by leveraging Terraform and GitHub
+summary: Manage Snowflake resources with Terraform and GitHub Actions for infrastructure-as-code deployments and version control.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues

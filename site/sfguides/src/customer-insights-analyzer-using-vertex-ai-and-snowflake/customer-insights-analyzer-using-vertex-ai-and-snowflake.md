@@ -2,7 +2,7 @@ author: Matt Marzillo
 id: customer-insights-analyzer-using-vertex-ai-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
-summary: This is a quickstart for using Snowflake with Google for Generative AI
+summary: Analyze customer insights with Google Vertex AI and Snowflake for advanced ML-driven segmentation and behavioral analytics.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,4 +1,4 @@
-summary: This guide can be used to help customers setup and run queries pertaining to monitoring billing metrics that might help identify areas of over-consumption.
+summary: This guide can be used to help customers setup and run queries pertaining to monitoring billing metrics that might help identify areas of over-consumption. 
 id: resource-optimization-billing-metrics
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
