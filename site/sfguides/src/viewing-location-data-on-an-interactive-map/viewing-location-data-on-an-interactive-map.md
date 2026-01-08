@@ -108,7 +108,7 @@ WHERE addr.city = 'New York'
 
 <!-- ------------------------ -->
 ### Configure the Honeycomb Maps application
-1. Navigate to **Catalog** -> **Apps** in the Snowsight left navigation menu
+1. Navigate to **Catalog** -> **Apps** in the Snowsight left navigation menu (or [click here](https://app.snowflake.com/_deeplink/#/apps/applications?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-viewing-location-data-on-an-interactive-map) to go directly)
 2. Click on **Honeycomb Maps**
 
 #### Configure Restricted Caller's Rights
