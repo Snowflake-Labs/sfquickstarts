@@ -2,14 +2,14 @@ author: Carston Hernke
 id: viewing-location-data-on-an-interactive-map
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app. 
+summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-
 # Viewing Location Data on an Interactive Map
-<!-- ------------------------ -->
+
+
 ## Overview 
 Honeycomb Maps is a Snowflake Native App for building interactive map dashboards using data in Snowflake tables. As a native app, Honeycomb Maps runs completely inside Snowflake, keeping data secure by eliminating the need to extract or duplicate it.
 
@@ -20,7 +20,7 @@ Honeycomb Maps provides a no-code interface for creating interactive, shareable,
 In this quickstart guide, you will learn how to use Honeycomb Maps to create an interactive visualization of geospatial data. You will create a map showing pizza restaurants in New York City, add additional layers to visualize density, and create interactive components to filter the data.
 
 ### Prerequisites
-- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account.
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account.
 - Permissions to install apps from Snowflake Marketplace (An ACCOUNTADMIN role will work)
 - Access to Snowflake's US_REAL_ESTATE sample database (available for free from Snowflake Marketplace) or your own geospatial data
 - Basic familiarity with SQL queries
