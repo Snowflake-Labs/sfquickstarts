@@ -1,5 +1,5 @@
 id: getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime
-categories: snowflake-site:taxonomy/solution-center/certification/guide, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/guide, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/ai
 language: en
 summary: Deploy a Streamlit app on the Container Runtime that calls the Cortex Agents API (agent:run) using the Snowflake Documentation Cortex Knowledge Extension (CKE), with multi-turn chat via the Threads API.
 environments: web
@@ -50,8 +50,6 @@ A Streamlit chat app that:
 
 ## Prerequisites
 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
->Download the [Git repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime)
 - A Snowflake account with:
   - Access to **Snowsight**
   - Access to **Streamlit in Snowflake**
@@ -173,9 +171,9 @@ SHOW AGENTS IN SCHEMA AGENTS_STREAMLIT_DEMO.APP;
 > This guide uses ACCOUNTADMIN and does not add custom roles or grants.  
 
 
-### Step 4: Clone the GitHub repository
+### Step 4: Download the apps files
 
-Clone this [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime) and get the following files from **assets** folder:
+Download the following files from [**assets**](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime/assets) folder:
 1. `requirements.txt`
 2. `streamlit_app.py`
 
@@ -308,7 +306,6 @@ Congratulations! You’ve successfully deployed a Streamlit in Snowflake app on 
 You learned how to run Streamlit on a compute pool and securely authenticate to Snowflake REST endpoints using the container session token—then connect it all together to create an agent-driven application that can reason over trusted documentation and respond from a single, interactive chat interface.
 
 ### Related Resources:
-- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-api-and-streamlit-on-container-runtime)
 - [CKE in Snowflake Marketplace](https://app.snowflake.com/marketplace/data-products?sortBy=popular&categorySecondary=%5B%2226%22%5D)
 - Runtime environments for Streamlit apps: https://docs.snowflake.com/developer-guide/streamlit/app-development/runtime-environments
 - Manage secrets/configuration for Streamlit (container runtime + Cortex API calls): https://docs.snowflake.com/developer-guide/streamlit/app-development/secrets-and-configuration
