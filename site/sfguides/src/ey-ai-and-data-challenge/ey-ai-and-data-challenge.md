@@ -107,7 +107,7 @@ Participating teams are able to submit to the portal multiple times per day and 
 
 
 ## Resources
-There are a variety of resources to help you your knowledge about Snowflake's AI/ML features, integrations with Github, and collaboration features. 
+There are a variety of resources to help you enrich your knowledge about Snowflake's AI/ML features, integrations with Github, and collaboration features. 
 
 Review the resources below and explore all of the things you can do with Snowflake Notebooks and AI/ML tools!
 
