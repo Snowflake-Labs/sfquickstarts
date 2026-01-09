@@ -106,7 +106,7 @@ Download and explore the Landsat and Terraclimate notebooks from the EY AI & Dat
 Participating teams are able to submit to the portal multiple times per day and see their team climb to the top of the leaderboard! 
 
 
-### Resources
+## Resources
 There are a variety of resources to help you your knowledge about Snowflake's AI/ML features, integrations with Github, and collaboration features. 
 
 Review the resources below and explore all of the things you can do with Snowflake Notebooks and AI/ML tools!
