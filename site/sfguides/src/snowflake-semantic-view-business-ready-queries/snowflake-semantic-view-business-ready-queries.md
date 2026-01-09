@@ -71,7 +71,13 @@ To systematically explore how Semantic Views simplify queries, we organize examp
 **Key Insight:** Semantic Views provide progressively more value as you move toward the High/High quadrant. Simple queries remain simple, but complex multi-table aggregations see dramatic improvements—from 25+ lines of Traditional SQL to 10-12 lines of Semantic SQL.
 
 <!-- ------------------------ -->
-## Create Semantic Views
+## Setup
+
+### Notebook
+
+You can follow along this quickstart using the [build-business-ready-queries-with-snowflake-semantic-views.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Snowflake_Semantic_View_Business_Ready_Queries/build-business-ready-queries-with-snowflake-semantic-views.ipynb) notebook file.
+
+### Create Semantic Views
 
 Semantic Views are created using the `CREATE SEMANTIC VIEW` statement, which defines five key components:
 
