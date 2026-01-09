@@ -76,7 +76,7 @@ You will set up all three of these pieces to ensure access and control is set up
 - Open a new SQL worksheet, paste the code, and choose "Run all."
 
 This will:
-- Enable cross-region inference to access the Claude Sonnet 45 LLM.
+- Enable cross-region inference to access the Claude Sonnet 4-5 LLM.
 - Create a permissive network policy, allowing the external agent to use its access token.
 
 
