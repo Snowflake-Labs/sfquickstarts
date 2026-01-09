@@ -5,14 +5,10 @@ on:
     branches:
       - master
       - main
-    branches-ignore:
-      - manifests
   pull_request:
     branches:
       - master
       - main
-    branches-ignore:
-      - manifests
   workflow_dispatch: {}
 
 permissions:
