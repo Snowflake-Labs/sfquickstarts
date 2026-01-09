@@ -3,7 +3,8 @@ id: ml-champion-challenger-model-deployment
 language: en 
 summary: Learn how to implement an automated model retraining and deployment pipeline in Snowflake using the Champion-Challenger strategy with Snowflake notebooks, ML Registry, DAGs, and Tasks. 
 categories: snowflake-site:taxonomy/product/ai 
-environments: web status: Published 
+environments: web 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
 
 # Automated Model Retraining & Deployment In Snowflake
