@@ -119,7 +119,7 @@ To get started with evaluations, we first want to initialize our TruEra session.
 - To initialize TruEra Session: 
   - Import the Snowflake connector and passing in the Snowpark session.
 - Set up Metrics: 
-  - Use Claude Sonnet 45 to evaluate the agent on two key metrics:
+  - Use Claude Sonnet 4-5 to evaluate the agent on two key metrics:
     - Tool Selection:Evaluates if the agent chooses the right tool at the right time.
     - Tool Calling: Ensures the agent is using the tool correctly by passing the right parameters and query.
 Note: These are client-side metrics defined using an LLM judge, which compares the agent's execution trace to a set of criteria to produce a score.
