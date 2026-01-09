@@ -1,5 +1,5 @@
 author: Chanin Nantasenamat
-id: build-business-ready-queries-with-snowflake-semantic-views
+id: snowflake-semantic-view-business-ready-queries
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/ai
 language: en
 summary: Learn how to create Semantic Views in Snowflake to simplify complex SQL queries and build business-friendly abstractions over your data.
