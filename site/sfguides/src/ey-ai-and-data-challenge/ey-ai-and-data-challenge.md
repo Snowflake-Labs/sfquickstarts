@@ -57,7 +57,7 @@ It takes just a few minutes to signup, and you will receive an email link to you
 
 When you sign in to your account for the first time, you will need to run a setup script in SQL. 
 
-This script creates external network access to install PyPI packages and access Planetary Computer API endpoints. The template to run the SQL script is located in the Snowflake-Labs repo on [Github](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ey-ai-and-data-challenge).
+This script creates external network access to install PyPI packages and access Planetary Computer API endpoints. The template to run the SQL script is located in the Snowflake-Labs repo on [Github](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ey-ai-and-data-challenge/assets/snowflake_setup.sql).
 
 If you have already created your Snowflake account, the setup script can be accessed directly within Snowflake using this [deeplink](https://app.snowflake.com/templates?template=setup_account_data_challenge_template).
 
@@ -68,7 +68,7 @@ It can be accessed directly as a Snowflake template [using this deeplink](https:
 
 
 ## Upload Notebooks to your Workspace
-If you have any trouble with the template link, the notebook also located in the [Snowflake-Labs repo on Github](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ey-ai-and-data-challenge/getting_started_notebook.ipynb)
+If you have any trouble with the template link, the notebook also located in the [Snowflake-Labs repo on Github](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ey-ai-and-data-challenge/assets/getting_started_notebook.ipynb)
 
 You can upload the notebook into your Workspace by clicking the "Add New" button and choosing "Upload Files".
     ![img](assets/add_new_upload_files.png)
@@ -97,7 +97,7 @@ Review the resources below and explore all of the things you can do with Snowfla
 
 
 ### Resources
-- https://challenge.ey.com/?utm_medium=institutions&utm_source=snowflake&utm_campaign=quickstart
+- [EY AI & Data Challenge Registration Site](https://challenge.ey.com/?utm_medium=institutions&utm_source=snowflake&utm_campaign=quickstart)
 - [Workspaces Environment](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces) - a cloud computing environment that integrates with Github for team collaboration
 - [Notebooks in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview) - Jupyter Notebook functionality backed by powerful cloud computing resources
 - [Integrating Workspaces with a Git repository](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git)
