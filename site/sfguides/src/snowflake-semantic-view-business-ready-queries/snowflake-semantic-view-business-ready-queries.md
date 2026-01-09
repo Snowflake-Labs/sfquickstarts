@@ -1166,10 +1166,10 @@ Using the **Question/Schema Complexity Matrix**, we explored queries across all 
 
 | Quadrant | Traditional SQL | Semantic SQL | Improvement |
 |----------|----------------|--------------|-------------|
-| **Low / Low** (Queries 1-3) | 8-13 lines | 6-7 lines | Modest—simpler syntax |
-| **High / Low** (Queries 11, 13, 19) | 9-13 lines | 6-7 lines | Moderate—metrics eliminate formulas |
-| **Low / High** (Queries 21, 23) | 17-23 lines | 9-15 lines | Significant—auto `JOIN`s |
-| **High / High** (Queries 22, 32-34) | 19-32 lines | 10-13 lines | **Dramatic—biggest ROI** |
+| **Low / Low** (Queries 1, 2, 3) | 8-13 lines | 6-7 lines | Modest — simpler syntax |
+| **High / Low** (Queries 11, 13, 19) | 9-13 lines | 6-7 lines | Moderate — metrics eliminate formulas |
+| **Low / High** (Queries 21, 22, 23) | 17-23 lines | 9-15 lines | Significant — auto `JOIN`s |
+| **High / High** (Queries 22, 32-34) | 19-32 lines | 10-13 lines | Dramatic — biggest ROI |
 
 **Bottom Line:** The complexity framework reveals that Semantic Views provide the greatest value for High Question / High Schema queries—exactly the queries that cause the most pain in traditional SQL development.
 
