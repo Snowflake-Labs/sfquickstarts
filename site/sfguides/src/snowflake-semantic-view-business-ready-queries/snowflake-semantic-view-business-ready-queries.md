@@ -1149,26 +1149,7 @@ ORDER BY web_site_sk;
 ```
 
 <!-- ------------------------ -->
-## Conclusion And Resources
-
-Congratulations! You've successfully built a comprehensive Semantic View over the TPC-DS dataset and learned how to transform complex SQL queries into simple, business-friendly Semantic SQL. You've seen how Semantic Views can dramatically reduce query complexity while maintaining full analytical power.
-
-### Question/Schema Complexity: Key Findings
-
-Using our **Question/Schema Complexity Matrix**, we explored queries across all four quadrants:
-
-| Quadrant | Traditional SQL | Semantic SQL | Improvement |
-|----------|----------------|--------------|-------------|
-| **Low / Low** (Queries 1-3) | 8-13 lines | 6-7 lines | Modest—simpler syntax |
-| **High / Low** (Queries 11, 13, 19) | 9-13 lines | 6-7 lines | Moderate—metrics eliminate formulas |
-| **Low / High** (Queries 21, 23) | 17-23 lines | 9-15 lines | Significant—auto `JOIN`s |
-| **High / High** (Queries 22, 32-34) | 19-32 lines | 10-13 lines | **Dramatic—biggest ROI** |
-
-**Note:** Query 22 was moved to High/High because its complex `CASE` statement represents "High Question" complexity, not simple filtering.
-
-**Bottom Line:** The complexity framework reveals that Semantic Views provide the greatest value for High Question / High Schema queries—exactly the queries that cause the most pain in traditional SQL development.
-
-### Lessons Learned
+## Lessons Learned
 
 Throughout this tutorial, we discovered key patterns for simplifying queries with Semantic Views:
 
@@ -1179,7 +1160,20 @@ Throughout this tutorial, we discovered key patterns for simplifying queries wit
 | `FACTS` | Retrieves row-level computed values | When you need detailed or derived data from the semantic model |
 | `WHERE` | Filters data using any attribute | Same as traditional SQL `WHERE` clause |
 
-**Key Takeaways:**
+### Question/Schema Complexity: Key Findings
+
+Using the **Question/Schema Complexity Matrix**, we explored queries across all four quadrants:
+
+| Quadrant | Traditional SQL | Semantic SQL | Improvement |
+|----------|----------------|--------------|-------------|
+| **Low / Low** (Queries 1-3) | 8-13 lines | 6-7 lines | Modest—simpler syntax |
+| **High / Low** (Queries 11, 13, 19) | 9-13 lines | 6-7 lines | Moderate—metrics eliminate formulas |
+| **Low / High** (Queries 21, 23) | 17-23 lines | 9-15 lines | Significant—auto `JOIN`s |
+| **High / High** (Queries 22, 32-34) | 19-32 lines | 10-13 lines | **Dramatic—biggest ROI** |
+
+**Bottom Line:** The complexity framework reveals that Semantic Views provide the greatest value for High Question / High Schema queries—exactly the queries that cause the most pain in traditional SQL development.
+
+### Key Takeaways
 
 1. **`JOIN`s become automatic** — Define relationships once in the semantic view, and Snowflake handles the joins. What was 4-5 explicit `JOIN`s becomes implicit.
 
@@ -1190,6 +1184,11 @@ Throughout this tutorial, we discovered key patterns for simplifying queries wit
 4. **Query complexity scales** — Simple queries stay simple, but complex multi-table aggregations see the biggest improvement (from 20+ lines to 5-10 lines).
 
 5. **Same results, less code** — Semantic SQL produces identical results to traditional SQL with significantly less code to write and maintain.
+
+<!-- ------------------------ -->
+## Conclusion And Resources
+
+Congratulations! You've successfully built a comprehensive Semantic View over the TPC-DS dataset and learned how to transform complex SQL queries into simple, business-friendly Semantic SQL. You've seen how Semantic Views can dramatically reduce query complexity while maintaining full analytical power.
 
 Happy querying!
 
