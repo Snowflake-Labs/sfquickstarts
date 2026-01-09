@@ -86,7 +86,7 @@ GRANT ROLE doc_ai_role TO USER <your_user_name>;
 If AI_EXTRACT is not [available in-region](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql#label-cortex-llm-availability), run the following command to allow cross-region inference:
 
 ```sql
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 ```
 
 ### Assume the New Role
