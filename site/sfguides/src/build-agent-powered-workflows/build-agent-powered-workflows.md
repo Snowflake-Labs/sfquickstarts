@@ -54,7 +54,7 @@ Now that the data is AI-ready, the next thing we want to do is create our MCP se
 - Access the lab's GitHub repository using the [this link](https://github.com/Snowflake-Labs/MCP-HOL-BUILD-2025).
 - Open create_MCP_for_server.sql and copy the code.
 
-In your Snowflake account, go to Projects and then Worksheets.
+In your Snowflake account, go to Projects and then Worksheets or [click here](https://app.snowflake.com/_deeplink/worksheets?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agent-powered-workflows) to go there directly.
 - Open a new worksheet, paste the code, and choose Run all.
 
 The code will:
@@ -81,7 +81,7 @@ This will:
 
 
 <!-- ------------------------ -->
-## Run the Notebook and Connect the Agent
+## Run Notebook and Connect Agent
 Next, we'll build the agent connect to the MCP server. Now that you've run both the SQL scripts, we can open the notebook. 
 
 From the [GitHub repository](https://github.com/Snowflake-Labs/MCP-HOL-BUILD-2025), open the build-and-evaluate-langgraph-agents-with-mcp-tools.ipynb file.
@@ -97,7 +97,7 @@ Once this cell runs, we now have our tools ready to go to add to our agent.
 
 
 <!-- ------------------------ -->
-## Define and Compile the Agent
+## Define and Compile Agent
 For our we will be using GPT-4o as our LLM.
 
 - Define a simple call_model function that calls the LLM with the MCP server tools binded to it (PubMed and Clinical Trials search).
@@ -111,7 +111,7 @@ Try out the agent by asking a simple question, such as "What is the primary indi
 What this agent is doing is calling the LLM to answer the question, and then the LLM, if it decides it is necessary, will then reach out to our MCP server to get access to search results from either clinical trials data or PubMed. 
 
 <!-- ------------------------ -->
-## Set up AI Observability and Observations
+## Set up AI Observability
 We see our agent is working, but the question is how to know how well it is performing. This is where AI observability and evaluations come in. To measure the agent's performance, you will use AI observability and evaluations.
 
 To get started with evaluations, we first want to initialize our TruEra session. This is how we connect to Snowflake so we can store our logs, traces, and evaluations as we are evaluating our agent. To make this connection, we are going to simply import the Snowflake connector and then pass in the Snowpark session that we created earlier.
@@ -127,7 +127,7 @@ Note: These are client-side metrics defined using an LLM judge, which compares t
 This score is going to tell us whether the agent is performing well or poorly on these specific criteria.
 
 <!-- ------------------------ -->
-## Register and Run the First Agent Version
+## Run the First Agent Version
 Register the first version of the agent using TrueGraph, which is suitable for the Langraph framework, with an application name and a version.
 
 Next, create a test set of queries that mirrors what the agent will face in production.
