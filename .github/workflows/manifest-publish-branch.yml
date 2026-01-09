@@ -1,0 +1,66 @@
+name: Publish manifest to manifests branch
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  publish-manifest:
+    if: github.ref != 'refs/heads/manifests'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # generator reads git history; pushing needs tags/branches
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate manifest
+        run: |
+          python3 "scripts/generate_manifest/manifest generator.py"
+
+      - name: Commit manifest to manifests branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="site/sfguides/src/_shared_assets/quickstart-manifest.json"
+          SHA="${GITHUB_SHA}"
+          # Ensure we have remote refs
+          git fetch origin --tags --prune
+
+          # Create or attach a worktree for the manifests branch
+          if git ls-remote --heads origin manifests | grep -q 'refs/heads/manifests'; then
+            echo "Remote 'manifests' branch exists; creating worktree from origin/manifests"
+            git worktree add ../manifests-wt origin/manifests
+          else
+            echo "Remote 'manifests' branch does not exist; creating new local branch"
+            git worktree add -b manifests ../manifests-wt
+            # Start with a clean branch that only tracks manifest files
+            (cd ../manifests-wt && git rm -r -f . >/dev/null 2>&1 || true)
+          fi
+
+          # Copy outputs
+          mkdir -p ../manifests-wt
+          cp "$OUT" "../manifests-wt/quickstart-manifest.json"
+          cp "$OUT" "../manifests-wt/quickstart-manifest-${SHA}.json"
+
+          # Commit and push
+          pushd ../manifests-wt >/dev/null
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add quickstart-manifest.json "quickstart-manifest-${SHA}.json"
+          git commit -m "chore(manifest): update for ${SHA}" || echo "No changes to commit"
+          git push origin HEAD:manifests
+          popd >/dev/null
+
+
