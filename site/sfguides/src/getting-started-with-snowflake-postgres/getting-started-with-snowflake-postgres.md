@@ -40,7 +40,7 @@ Snowflake Postgres is a fully-managed, enterprise-ready Postgres solution. It is
 <!-- ------------------------ -->
 ## Deploy a Postgres Instance
 
-You can deploy Postgres from the Snowsight UI or via SQL in a worksheet. Creating a Postgres instance from Snowsight is available from the + button at the top of the navigation menu or under the Manage section in the bottom left.
+You can deploy Postgres from the Snowsight UI or via SQL in a worksheet. [Creating a Postgres instance](https://app.snowflake.com/_deeplink/#/postgres?show=create&utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-postgres) from Snowsight is available from the + button at the top of the navigation menu or under the Manage section in the bottom left.
 
 Postgres instances need these things defined:
 

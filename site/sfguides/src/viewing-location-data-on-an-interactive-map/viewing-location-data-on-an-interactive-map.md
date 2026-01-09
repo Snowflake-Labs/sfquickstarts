@@ -2,14 +2,14 @@ author: Carston Hernke
 id: viewing-location-data-on-an-interactive-map
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app. 
+summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-
 # Viewing Location Data on an Interactive Map
-<!-- ------------------------ -->
+
+
 ## Overview 
 Honeycomb Maps is a Snowflake Native App for building interactive map dashboards using data in Snowflake tables. As a native app, Honeycomb Maps runs completely inside Snowflake, keeping data secure by eliminating the need to extract or duplicate it.
 
@@ -108,7 +108,7 @@ WHERE addr.city = 'New York'
 
 <!-- ------------------------ -->
 ### Configure the Honeycomb Maps application
-1. Navigate to **Catalog** -> **Apps** in the Snowsight left navigation menu
+1. Navigate to **Catalog** -> **Apps** in the Snowsight left navigation menu (or [click here](https://app.snowflake.com/_deeplink/#/apps/applications?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-viewing-location-data-on-an-interactive-map) to go directly)
 2. Click on **Honeycomb Maps**
 
 #### Configure Restricted Caller's Rights
