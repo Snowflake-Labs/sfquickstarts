@@ -7,13 +7,23 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ey-ai-and-data-challenge
-open in snowflake: https://app.snowflake.com/templates?template=setup_account_data_challenge_template
+open in snowflake link: https://app.snowflake.com/templates?template=setup_account_data_challenge_template
 
 # Getting Started with Snowflake Notebooks for the EY AI & Data Challenge
 <!-- ------------------------ -->
-## The 2026 EY AI & Data Challenge: Optimizing Clean Water Supply
+## 2026 Challenge: Optimizing Clean Water Supply
 
-One of the largest annual data challenges in the world with over 45,000 participants across 146 countries, the [EY AI & Data Challenge](https://challenge.ey.com/?utm_medium=institutions&utm_source=snowflake&utm_campaign=quickstart) gives innovators the opportunity to build skills while developing forward-thinking solutions to mitigate global sustainability issues. This year, the global competition invites university students, early career professionals and EY people to use AI and data to tackle one of humanity's most pressing needs: access to clean, safe water.
+One of the largest data challenges in the world with over 45,000 participants across 146 countries, the [EY AI & Data Challenge](https://challenge.ey.com/?utm_medium=institutions&utm_source=snowflake&utm_campaign=quickstart) gives innovators the opportunity to build skills while developing forward-thinking solutions to mitigate global sustainability issues. This year, the global competition invites university students, early career professionals and EY employees to use AI and data to tackle one of humanity's most pressing needs: access to clean, safe water.
+
+## Challenge Overview
+The objective of this challenge is to build a robust **machine learning model** capable of predicting water quality across various river locations in South Africa. In addition to accurate predictions, the model should also identify and emphasize the key factors that significantly influence water quality.
+
+Participants will be provided with a dataset containing three water quality parameters — **Total Alkalinity**, **Electrical Conductance**, and **Dissolved Reactive Phosphorus** — collected between 2011 and 2015 from approximately 200 river locations across South Africa. Each data point includes the geographic coordinates (latitude and longitude) of the sampling site, the date of collection, and the corresponding water quality measurements.
+
+Using this dataset, participants are expected to build a machine learning model to predict water quality parameters for a separate validation dataset, which includes locations from different regions not present in the training data. The challenge also encourages participants to explore feature importance and provide insights into the factors most strongly associated with variations in water quality.
+
+This challenge is designed for participants with varying levels of experience in data science, remote sensing, and environmental analytics. It offers a valuable opportunity to apply machine learning techniques to real-world environmental data and contribute to advancing water quality monitoring using artificial intelligence.
+
 
 ### What will participants do?
 EY has joined forces with one of its key alliances, Snowflake, to empower the next generation of changemakers to turn data into real-world impact. 
@@ -31,13 +41,13 @@ Using Snowflake's AI Data Cloud and EY's platform, along with a combination of d
 
 ### What You’ll Need 
 - Register for the [EY AI & Data Challenge](https://challenge.ey.com/?utm_medium=institutions&utm_source=snowflake&utm_campaign=quickstart) 
-- Create a Snowlake Trial Account with the custom link provided on the EY Data Challenge Portal - this link will enable special features that are required for the Data Challenge
-- Download the Jupyter Notebook files and training data from the EY Data Challenge Portal
+- Create a Snowlake Trial Account with the custom link provided on the EY AI & Data Challenge Portal - this link will enable special features that are required for the Data Challenge
+- Download the Jupyter Notebook files and training data from the EY AI & Data Challenge Portal
 
 ### What You’ll Build 
 Once you complete this guide, you should be able to setup your own Snowflake Account, configure it to access the Microsoft Planetary Computer API, and run the "Getting Started Notebook" to conduct your own geospatial analysis of water sources and water quality.
 
-## Overview of Snowflake Notebooks and Workspaces
+## Snowflake Notebooks and Workspaces
 [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview) offer an interactive, cell-based programming environment for Python and SQL. With a Snowflake Notebook, you can perform exploratory data analysis, experiment with feature engineering for machine learning, and perform other data science tasks within Snowflake.
 
 You can write and execute code, visualize results, and tell the story of your analysis all in one place.
@@ -73,7 +83,7 @@ If you have any trouble with the template link, the notebook also located in the
 You can upload the notebook into your Workspace by clicking the "Add New" button and choosing "Upload Files".
     ![img](assets/add_new_upload_files.png)
 
-## Start running the notebook
+## Start running the Notebook
 
 1. Click Connect and choose the External Access Integration "DATA_CHALLENGE_EXTERNAL_ACCESS"
     ![img](assets/connect_your_notebook.jpg)
@@ -91,12 +101,16 @@ You can upload the notebook into your Workspace by clicking the "Add New" button
 
 ## Next Steps
 
+Download and explore the Landsat and Terraclimate notebooks from the EY AI & Data Challenge portal to gain a deeper understanding of these tools. Use the Benchmark Model notebook to review the training and data submission workflow. 
+
+Participating teams are able to submit to the portal multiple times per day and see their team climb to the top of the leaderboard! 
+
+
+### Resources
 There are a variety of resources to help you your knowledge about Snowflake's AI/ML features, integrations with Github, and collaboration features. 
 
 Review the resources below and explore all of the things you can do with Snowflake Notebooks and AI/ML tools!
 
-
-### Resources
 - [EY AI & Data Challenge Registration Site](https://challenge.ey.com/?utm_medium=institutions&utm_source=snowflake&utm_campaign=quickstart)
 - [Workspaces Environment](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces) - a cloud computing environment that integrates with Github for team collaboration
 - [Notebooks in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview) - Jupyter Notebook functionality backed by powerful cloud computing resources
