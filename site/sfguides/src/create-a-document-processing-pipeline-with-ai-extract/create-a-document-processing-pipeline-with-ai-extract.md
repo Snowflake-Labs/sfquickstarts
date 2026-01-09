@@ -295,7 +295,6 @@ In this section, you will upload new documents and view the automatically extrac
 4. Select **+ Files**.
 5. In the **Upload Your Files** dialog that appears, select the files you downloaded in the previous section.
 
-> aside negative
 > Note that this will not process the existing files in the stage. To include these files, delete the existing files from the stage prior to uploading the folder contents. You can quickly remove all existing files from the stage using:
 > ```sql
 > REMOVE @my_pdf_stage;
@@ -311,7 +310,6 @@ After uploading the documents to the stage, view the information extracted from 
 SELECT * FROM pdf_reviews;
 ```
 
-> aside negative
 > Note that as the task runs every minute, the table may take approximately 1-2 minutes to be populated.
 
 ### Create Analysis View
