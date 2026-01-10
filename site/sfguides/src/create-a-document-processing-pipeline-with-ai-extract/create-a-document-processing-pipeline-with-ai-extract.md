@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 open in snowflake: https://docs.snowflake.com/en/sql-reference/functions/ai_extract
 
-# Create a Document Processing Pipeline with AI&#95;EXTRACT
+# Create a Document Processing Pipeline with AI_EXTRACT
 <!-- ------------------------ -->
 ## Overview
 
