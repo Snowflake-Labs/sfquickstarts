@@ -214,7 +214,7 @@ WHERE addr.city = 'New York'
   AND poi.category_main = 'Pizza Restaurant';
 ```
 
-![Honeycomb Maps SQL editor interface](custom_sql_interface.png)
+![Honeycomb Maps SQL editor interface](assets/custom_sql_interface.png)
 
 This query joins several tables to find all pizza restaurants in New York City, retrieving their names, categories, and geographic coordinates.
 
