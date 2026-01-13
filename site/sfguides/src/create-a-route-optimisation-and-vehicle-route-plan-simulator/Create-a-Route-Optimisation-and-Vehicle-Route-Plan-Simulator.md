@@ -213,6 +213,23 @@ The Function Tester allows you to test all three routing functions:
 
 > **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses. When you customize the map region, the Function Tester is automatically updated with region-specific coordinates.
 
+### Overture Maps for Real-World Testing
+
+The Function Tester uses preset sample addresses for quick testing. For more realistic testing with real-world points of interest (restaurants, supermarkets, warehouses, etc.), the **Carto Overture Maps Places** dataset is acquired from the Snowflake Marketplace.
+
+This is done automatically by the `deploy-demo` skill later in this quickstart:
+
+```
+use the local skill from skills/deploy-demo
+```
+
+The skill acquires the Overture Maps dataset which provides:
+- **50+ million points of interest** worldwide
+- Categories including retail, food service, healthcare, logistics
+- Accurate addresses and coordinates for realistic delivery scenarios
+
+This dataset powers the Route Optimization Simulator Streamlit app, allowing you to simulate deliveries to real businesses in your configured map region.
+
 ### Customize the Map Region (Optional)
 
 The default deployment uses a San Francisco map. To change to a different region:
