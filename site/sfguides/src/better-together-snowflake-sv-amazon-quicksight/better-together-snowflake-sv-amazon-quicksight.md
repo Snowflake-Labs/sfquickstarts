@@ -7,9 +7,9 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: <optional but modify to link to your repo>
-open in snowflake: <optional but modify to link into the product>
+open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 
-# Snowflake Guide Template
+# Unleash AI-Powered BI with Snowflake Semantic View and Amazon Quick Sight better together
 <!-- ------------------------ -->
 ## Overview 
 
