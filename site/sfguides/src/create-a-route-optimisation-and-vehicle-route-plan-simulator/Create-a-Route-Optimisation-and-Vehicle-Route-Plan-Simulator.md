@@ -23,19 +23,40 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
 
 
 
-If you would prefer to skip to quickly see how the route optimization service might work for you, you can quickly use the **free api service** using the instructions as option 2 for creating the functions.
-
 You will be leveraging [Open Route Service](https://openrouteservice.org/) to optimize vehicle routes in order to distribute goods to chosen destinations on time.
 
 You will be creating **Directions**, **Route Optimization** and [**Isochrone**](https://en.wikipedia.org/wiki/Isochrone_map) functions.
 
-
-The quickstart contains two options.  Both options require distinct prerequisites.  With either option, Snowflake allows for creation of a fully interactive route simulator which will benefit many vehicle centric industries such as **retail**, **distribution**, **healthcare** and more.
+This quickstart uses **Cortex Code**, Snowflake's AI-powered CLI, to deploy the solution with natural language commands and automated skills. Snowflake allows for creation of a fully interactive route simulator which will benefit many vehicle centric industries such as **retail**, **distribution**, **healthcare** and more.
 
 ### Prerequisites
 
-**Option 1** 
-Use Snowpark Containers with a native app using the Open Route Service
+> **_NOTE:_** Cortex Code is currently in **Private Preview**. Contact your Snowflake account team for access.
+
+**This is what you will need**:
+
+-   **ACCOUNTADMIN** access to your Snowflake account
+
+-   [Snowpark Container Services Activated](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+
+> **_NOTE:_** This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.
+
+-   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) - Required to download map files from provider account
+
+-   **Cortex Code CLI** installed and configured
+    - Installation: Once you have access, install via the provided instructions
+    - Add to your PATH: `export PATH="$HOME/.local/bin:$PATH"` (add to `~/.zshrc` or `~/.bashrc`)
+    - Verify: `cortex --version`
+
+-   **Container Runtime** - One of the following:
+    - [Podman](https://podman.io/) (recommended): `brew install podman` (macOS) 
+    - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+-   [Git](https://git-scm.com/downloads) installed
+
+-   [VSCode](https://code.visualstudio.com/download) recommended for running Cortex Code commands
+
+-   Clone or download the repository: `git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator`
 
 ### Route Planning And Optimization Architecture
 
@@ -43,613 +64,174 @@ The architecture below shows the solution which uses a native app and container 
 
 ![alt text](assets/image-7.png)
 
-This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a medium CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
-
-**This is what you will need**:
-
--   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
-    
-> **_NOTE:_** - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to securely download the map and config files from the provider account.
-
-- [Snowpark Container Services Activated](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-
-> **_NOTE:_** This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
-
--   **ACCOUNTADMIN** access to the account.
-
--   [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
-
-- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) installed
-
--  (Recommended) [Git](https://git-scm.com/downloads) installed. 
-
-- Either download the zip or use git to copy the contents of the the git repo here: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator. 
+This is a self contained service which is managed by you. There are no API calls outside of Snowflake and no API limitations. This quickstart uses a medium CPU pool which is capable of running unlimited service calls within **New York City**. If you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
 
-- [VSCode](https://code.visualstudio.com/download) with the Snowflake extension installed.
+### What You'll Learn 
 
-**Option 2**
-Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service. 
-
-![alt text](assets/image-19.png)
-
--   You will need access to a Snowflake Account
-
--   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
-    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  This is for connecting to the open route service api.
-
--   An free account with [Open Route Service](https://openrouteservice.org/)
-
--   **ACCOUNTADMIN** access to the account.
-
-
-### What You’ll Learn 
-
+- Deploy a Snowflake Native App using **Cortex Code** AI-powered CLI with natural language commands
+- Use **Snowpark Container Services** to run OpenRouteService as a self-managed routing engine
 - A more advanced understanding of **Geospatial** data in Snowflake
-- Using **AISQL** functions with Snowpark
-- Create 3 user defined functions which either call the open route service API or you will learn how to create the service in snowflake using a snowpark container services native app. 
-
--  create simple and multi waypoint directions point to point functions based on the road network and vehicle profile
-- Route Optimization to match the demands with vehicle availability
-- Create an isochrone for catchment analysis
+- Using **AISQL** functions with Snowpark to explore routing capabilities
+- Work with 3 routing functions deployed via the Native App:
+  - **Directions** - Simple and multi-waypoint routing based on road network and vehicle profile
+  - **Optimization** - Route optimization matching demands with vehicle availability
+  - **Isochrones** - Catchment area analysis based on travel time
 - Creating a location centric application using Streamlit 
 - An insight to the Carto Overture Places dataset to build an innovative route planning simulation solution
-  - Leverage vehicle capabilities and matching with job specifics
-  - use a real dataset to simulate route plans for a specific depot
 
-### What You’ll Build 
-- A streamlit application to simulate route plans for potential customers anywhere in the world.  This could be for a potential new depot or simply to try out route optimisation which you will later replace with a real data pipeline.
+### What You'll Build 
+- A **Route Optimization Simulator** Streamlit application to simulate route plans for potential customers anywhere in the world. This could be for a potential new depot or simply to try out route optimisation which you will later replace with a real data pipeline.
 
 <!-- ------------------------ -->
-## Option 1 - Native app & SPCS
+## Deploy the Route Optimizer
 
+![Cortex Code Deployment](assets/image-7.png)
 
-![alt text](assets/image-7.png)
-Use Snowpark Containers with a native app using the Open Route Service
+Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natural language commands and automated skills.
 
-This will create the necessary snowflake database and stages within the public schema.
+### Setup Cortex Code
 
-- Open up visual studio code with the downloaded github repository as per the prerequisites.
+1. **Open VS Code** with the cloned repository folder
 
-- Use the Snowflake **add-in** to login to your snowflake account
+2. **Launch Cortex Code CLI** in the VS Code terminal:
+   ```bash
+   cortex
+   ```
 
-![alt text](assets/addin.png)
+3. **Connect to Snowflake** - Cortex Code will prompt you to select or create a connection
 
-- Within the Repo, navigate to: 
+4. **(Optional) Verify Prerequisites** - Run the prerequisites check skill to ensure all dependencies are installed:
+   ```
+   use the local skill from skills/check-prerequisites
+   ```
 
-  **Native_app** > **Provider_setup** >  **env_setup.sql**
+### Deploy the Native App
 
-- Press run all or ctrl + enter / command + enter to run the code within visual studio code.
-
-You will now have a database which contains an empty repository and three stages.  You can view these stages easily with the VSCode addin.
-
-![alt text](assets/setup_stages.png)
-
-The  **ORS_SPCS_STAGE** stage will contain a map extract and a config file.
-
-The **ORS_GRAPHS_SPCS_STAGE** stage will contain files in a graphs structure to easily calculate route optimisations.  The graphs created will depend on the map uploaded and which vehicle profiles are enabled.
-
-The **ORS_ELEVATION_CACHE_SPCS_STAGE**. 
-
-This cache stores elevation data based on the chosen map extract.  This improves performance when enabled.
-
-- Navigate to the folder **Provider_setup > staged files**.
-
-In here you will see two files.  One of which is a map file.  
-
-An example map file you can use is of San Francisco which is provided in the staged_files folder.  To use this file, it needs to be uploaded to the **ORS_SPCS_STAGE**.  You can do this either manually within snowsight, or more conveniently, using the snowflake add-in.
-
-
-
-You can choose from a range of map files from websites such as these
-
-https://download.geofabrik.de/
-https://download.bbbike.org/osm/
-
-The file below is the original weekly updated open street map which contains the whole planet.
-https://planet.openstreetmap.org/pbf/
-
-Bear in mind the bigger the map, the longer it will take to create the graphs.  You may also require a larger compute for the container to run if you are using a larger map. You might also need to update parameter XMX (Max RAM assigned to Java) in file `services/openrouteservice/openrouteservice.yaml`. As a Rule of Thumb, set it to: `<PBF-size> * <profiles> * 2`
-
-Also please note that the size of the files uploaded using the put command is limited to 5G.  If you wish to use the world file, you will need to initially store in a cloud storage like S3 bucket or Azure Blob Storage and then copy using the copy command.
-
-The ors-config file is a configuration file for the app.  This does a variety of things.
-
--  Open up the ors-config.yml file to take a look at it
-
-You will see at the beginning of the yml file is a source file locator.  
-
-```yml
-
-ors:
-  engine:
-    profile_default:
-      build:  
-        source_file: /home/ors/files/sanFrancisco.osm.pbf
+Simply type the following command in Cortex Code:
 
 ```
-This is what the URL will be to point to the right map file.   If you would like to use a different map, as well as uploading the alternative map you will need to change the source file parameter here.
-
-Next you will see a profiles configuration area
-
-```yml
-    profiles:
-      driving-car:
-        enabled: true
-      cycling-road:
-        enabled: true
-      driving-hgv:
-        enabled: true
-```
-This is where you can configure multiple types of vehicles.  If you look at the commented out profiles in here, you can also  configure each profile further as well as adding additional profiles.
-
-- edit the config yml file and add **cycling-electric** and **foot-walking** profiles:
-
-```yml
-    profiles:
-      driving-car:
-        enabled: true
-      cycling-road:
-        enabled: true
-      driving-hgv:
-        enabled: true
-      cycling-electric:
-        enabled: true
-      foot-walking:
-        enabled: true
+use the local skill from skills/deploy-route-optimizer
 ```
 
-Here is where you can change the amount of maximum visited nodes.
+Cortex Code will automatically:
+- Create the required database, stages, and image repository
+- Upload configuration files
+- Detect your container runtime (Docker or Podman)
+- Build and push all 4 container images
+- Deploy the Native App
 
-The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below. Same for maximum_routes.
+The skill will guide you through any required steps, including:
+- Selecting your preferred container runtime if both are available
+- Authenticating with the Snowflake image registry
+- Monitoring the build progress
 
+### Activate the App
 
-```yml
-    matrix:
-      maximum_visited_nodes: 1000000000
-      maximum_routes: 25000000
+Once deployment completes, Cortex Code will provide a link to your app. You need to:
+
+1. Navigate to **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP** in Snowsight
+2. Grant the required privileges via the UI
+3. Click **Activate** and wait for the services to start
+
+### Customize the Map Region (Optional)
+
+The default deployment uses a San Francisco map. To change to a different region:
+
+```
+use the local skill from skills/ors-map-customization
 ```
 
-There are also other options available for each profile - and each option will depend on what the profile is.
+This skill will:
+- Present available map regions (Great Britain, Germany, France, etc.)
+- Download the selected map data
+- Configure routing profiles
+- Update the Function Tester with region-specific coordinates
+- Create a Git branch for your customization
 
-### Importing new files into a stage using the Snowflake Add-In.
+### Available Cortex Code Skills
 
-- Download a new map file for **new york city**.
+| Skill | Description | Command |
+|-------|-------------|---------|
+| `check-prerequisites` | Verify and install dependencies | `use the local skill from skills/check-prerequisites` |
+| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from skills/deploy-route-optimizer` |
+| `ors-map-customization` | Change map region and customize app | `use the local skill from skills/ors-map-customization` |
+| `deploy-demo` | Deploy demo notebook and Streamlit | `use the local skill from skills/deploy-demo` |
+| `customize-function-tester` | Customize Function Tester coordinates | `use the local skill from skills/customize-function-tester` |
+| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from skills/uninstall-route-optimizer` |
 
-- Click [here](https://download.bbbike.org/osm/bbbike/NewYork/NewYork.osm.pbf) to download the New York City OSM.PBF file.
+### Git Branching for Multiple Regions
 
+Cortex Code automatically manages Git branches for different map configurations:
 
--   Within the snowflake add-in navigate to the newly created **ORS_SPCS_STAGE**.   You will see this in the **Object Explorer**
-
-
-![alt text](assets/view_stages.png)
-
--   Click on the upload icon - ![alt text](assets/upload.png) 
-
-Navigate to the newly **downloaded New York** file to upload the map file to the snowflake stage.
-
-![alt text](assets/newyork.png)
-
-Modify the **config file** by changing the source file location to the following:
-
-```yml
-    build:  
-        source_file: /home/ors/files/NewYork.osm.pbf
-        instructions: false
+```
+main                           <- Original San Francisco configuration
+├── feature/ors-great-britain  <- Great Britain customizations
+├── feature/ors-germany        <- Germany customizations
+└── feature/ors-<region>       <- Other region customizations
 ```
 
-Finally, use the upload tool again to upload the modified config file to snowflake.  
-
-You should see the new files appear in th stages area
-
-
-Once the files are uploaded, refresh the cache of the stage
-
-```sql
-ALTER STAGE OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE REFRESH;
- ```
-
-Execute the following to ensure the files are registered on the stage directory
-
-```sql
- select * from directory(@OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE);
-
- ```
-![alt text](assets/directory.png)
-
-### Create the image and services.
-
-You will now load the docker images to the snowflake repository
-
-- Navigate to the provider_setup > spcs_setup.sh and openn the file.
-- Amend where it says **YOUR_CONNECTION** with your **snowcli** connection.  
-
-> **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](/en/developers/guides/getting-started-with-snowflake-cli/) before proceeding which will explain how these are created.
-
-- Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal from the **/native_app** directory within vscode and run the following:
-
+To switch between regions:
 ```bash
-chmod +x provider_setup/spcs_setup.sh
+git checkout feature/ors-great-britain
 ```
 
-Run the **spcs_setup.sh** file. 
+Then redeploy with Cortex Code to apply the configuration.
 
-```bash
-./provider_setup/spcs_setup.sh
-```
-
-You will need to ensure that you have docker desktop running before you run the file.
-
-
-You now have an 4 docker images inside the previously created repository:
-
-- Within the env_setup.sql, run the following command:  
-
-```sql
-SHOW IMAGES IN IMAGE REPOSITORY IMAGE_REPOSITORY;
-```
-You should see four images pushed to the image repository like this:
-
-![alt text](assets/stage_upload.png)
-
-The **downloader** image will copy the config and map file from the setup stage to the consumer app.
-
-The **routing_reverse_proxy** will securely manage traffic between  the other three services.
-
-The **openrouteservice** contains all the apis which the openrouteservice offers
-
-The **vroom service** manages the route optimization service.
-
-Now the assets are all setup in the repository and stages, you will now configure the app.
-
-- Using the same terminal in the same directory as before, execute the following snow CLI command
-
-```bash
-snow app run -c <CONNECTION_NAME>
-```
-
-This will do the following:
-
-**The Manifest File**
-use the manifest file to compile to package all 4 images stored inside the image repository
-
-Allow permissions for the consumer to create pools for running services.
-
-Specify the default streamlit for configuring the app.
-
-**The setup script**
-
-When a consumer installs the app, it will add all the services for each image and create all objects needed to run the application.
-
-This also includes the functions that we will later use in streamlit.  The following functions are created:
--   Directions
--   Isochrones
--   Optimisation
-
-You will also note that an additional function (download) is created which calls the downloader service to download the map and config file from the provider stage to the consumer stage.
-
-Once you application package is installed, you will see a new installed app appear in the **apps** section of Snowsight.  This is a locally installed app for testing purposes.
-
-![alt text](assets/native_app.png)
-
-You will also see an application package which you can use to share with other accounts either privately or via the marketplace.
-
-
-### Activate the app
-
-If you login to snow sight you will see the following newly created app within **Data Products > Apps**.  This is an app local to this snowflake for testing purposes.
-
-![alt text](assets/activate_app.png)
-
-- Open the app and grant the permissions as requested by the application.  Once granted, you can then press **Activate**
-
-You will need to wait a few minutes for the graphs to update.  Within the graphs stage you should see the following folders appear:
-
-![alt text](assets/graphs_stage.png)
-
-NB: you may need to refresh the stages to view the profiles. in the directory.
-
-If you open the functions part of the app you will see the following functions appear
-
-![alt text](assets/image-6.png)
-
-You will learn how to use these functions after option 2 of the quickstart which produces the same functions using rest api calls to the external service.  If you wish, skip option 2 and navigate to the Snowflake Marketplace section.  You will need a dataset provided by **Carto** on the market place for the part of the notebook and the streamlit to run. 
+Once your app is activated and running, continue to deploy the demo.
 
 <!-- ------------------------ -->
-## Option 2 Calling ORS APIs
+## Deploy the Demo
 
-![alt text](assets/image-19.png)
+Now that the Route Optimizer Native App is running, use Cortex Code to deploy the complete demo including the Marketplace data, notebooks, and Streamlit application.
 
-Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
+In the Cortex Code CLI, type:
 
-The open route service is free to use but there are restrictions in the number of calls to the freely available api api.
+```
+use the local skill from skills/deploy-demo
+```
 
-https://openrouteservice.org/plans/
+Cortex Code will automatically:
+- Acquire the **Carto Overture Maps Places** dataset from the Snowflake Marketplace
+- Create the `VEHICLE_ROUTING_SIMULATOR` database with required schemas
+- Deploy the **Add Carto Data** notebook and execute it to prepare the data
+- Deploy the **Routing Functions with AISQL** notebook for exploring the functions
+- Deploy the **Simulator** Streamlit application
 
-### Register to Open Route Service and retrieve a key
+### What Gets Created
 
--   Visit [OpenRouteService](https://openrouteservice.org).  Register here and then retrieve your key.
+| Component | Location | Description |
+|-----------|----------|-------------|
+| Marketplace Data | `OVERTURE_MAPS__PLACES` | Carto Overture POI dataset |
+| Database | `VEHICLE_ROUTING_SIMULATOR` | Demo database with DATA, NOTEBOOKS, STREAMLITS schemas |
+| Notebook | `NOTEBOOKS.ADD_CARTO_DATA` | Prepares POI data for the demo |
+| Notebook | `NOTEBOOKS.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of routing functions |
+| Streamlit | `STREAMLITS.SIMULATOR` | Route optimization simulator app |
 
+### Explore the Routing Functions (Optional)
 
-Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
+After deployment, you can explore the routing functions interactively using the notebook:
 
+1. Navigate to **Projects > Notebooks** in Snowsight
+2. Open **ROUTING_FUNCTIONS_AISQL**
+3. Follow the notebook to learn how to use:
+   - **Directions** - Point-to-point and multi-waypoint routing
+   - **Optimization** - Vehicle route optimization matching jobs to vehicles
+   - **Isochrones** - Catchment area analysis based on travel time
+
+The notebook demonstrates using **AISQL** to generate sample data and visualize results with Pydeck maps.
+
+### Access the Streamlit App
+
+Once deployment completes, navigate to the Streamlit app:
+
+1. Go to **Projects > Streamlits** in Snowsight
+2. Click on **SIMULATOR**
+
+Or run this SQL to get the direct URL:
 ```sql
-CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
-CREATE WAREHOUSE IF NOT EXISTS ROUTING_ANALYTICS;
-
-CREATE SCHEMA IF NOT EXISTS CORE;
-CREATE SCHEMA IF NOT EXISTS DATA;
+SELECT CONCAT('https://app.snowflake.com/', CURRENT_ORGANIZATION_NAME(), '/', CURRENT_ACCOUNT_NAME(), '/#/streamlit-apps/VEHICLE_ROUTING_SIMULATOR.STREAMLITS.SIMULATOR') AS streamlit_url;
 ```
-
-Copy the create secret command and replace the secret string with your secret token provided by Open Route Service.
-
-```sql
-CREATE SECRET IF NOT EXISTS CORE.ROUTING_TOKEN
-  TYPE = GENERIC_STRING
-  SECRET_STRING = '<replace with your secret token>'
-  COMMENT = 'token for routing demo'
-```
-Create a Network Rule and External Integration
-
-```sql
-
-CREATE OR REPLACE NETWORK RULE open_route_api
-  MODE = EGRESS
-  TYPE = HOST_PORT
-  VALUE_LIST = ('api.openrouteservice.org');
-
-
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION open_route_integration
-  ALLOWED_NETWORK_RULES = (open_route_api)
-  ALLOWED_AUTHENTICATION_SECRETS = all
-  ENABLED = true;
-
-```
-
--   Create a simple directions function
-
-Directions Function 1 - for simple point to point directions
-
-```sql
-
-CREATE OR REPLACE FUNCTION CORE.DIRECTIONS (method varchar, jstart array, jend array)
-RETURNS VARIANT
-language python
-runtime_version = 3.10
-handler = 'get_directions'
-external_access_integrations = (OPEN_ROUTE_INTEGRATION)
-PACKAGES = ('snowflake-snowpark-python','requests')
-SECRETS = ('cred' = CORE.ROUTING_TOKEN )
-
-AS
-$$
-import requests
-import _snowflake
-def get_directions(method,jstart,jend):
-    request = f'''https://api.openrouteservice.org/v2/directions/{method}'''
-    key = _snowflake.get_generic_secret_string('cred')
-
-    PARAMS = {'api_key':key,
-            'start':f'{jstart[0]},{jstart[1]}', 'end':f'{jend[0]},{jend[1]}'}
-
-    r = requests.get(url = request, params = PARAMS)
-    response = r.json()
-    
-    return response
-$$;
-
-```
--   Create a Directions function with Way Points
-
-```sql
-CREATE OR REPLACE FUNCTION CORE.DIRECTIONS (method varchar, locations variant)
-RETURNS VARIANT
-language python
-runtime_version = 3.9
-handler = 'get_directions'
-external_access_integrations = (OPEN_ROUTE_INTEGRATION)
-PACKAGES = ('snowflake-snowpark-python','requests')
-SECRETS = ('cred' = CORE.ROUTING_TOKEN )
-
-AS
-$$
-import requests
-import _snowflake
-import json
-
-def get_directions(method,locations):
-    request_directions = f'''https://api.openrouteservice.org/v2/directions/{method}/geojson'''
-    key = _snowflake.get_generic_secret_string('cred')
-
-    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-               'Authorization':key,
-               'Content-Type': 'application/json; charset=utf-8'}
-
-    body = locations
-
-    r = requests.post(url = request_directions,json = body, headers=HEADERS)
-    response = r.json()
-    
-    return response
-
-    $$;
-```
-
--   Create an Optimisation Function
-
-```sql
-
-CREATE OR REPLACE FUNCTION CORE.OPTIMIZATION (jobs array, vehicles array)
-RETURNS VARIANT
-language python
-runtime_version = 3.9
-handler = 'get_optimization'
-external_access_integrations = (OPEN_ROUTE_INTEGRATION)
-PACKAGES = ('snowflake-snowpark-python','requests')
-SECRETS = ('cred' = CORE.ROUTING_TOKEN )
-
-AS
-$$
-import requests
-import _snowflake
-def get_optimization(jobs,vehicles):
-    request_optimization = f'''https://api.openrouteservice.org/optimization'''
-    key = _snowflake.get_generic_secret_string('cred')
-    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-               'Authorization':key,
-               'Content-Type': 'application/json; charset=utf-8'}
-
-    body = {"jobs":jobs,"vehicles":vehicles}
-
-    r = requests.post(url = request_optimization,json = body, headers=HEADERS)
-    response = r.json()
-    
-    return response
-$$;
-```
-.   Create an Isochrone function
-
-```sql
-CREATE OR REPLACE FUNCTION CORE.ISOCHRONES(method string, lon float, lat float, range int)
-RETURNS VARIANT
-language python
-runtime_version = 3.9
-handler = 'get_isochrone'
-external_access_integrations = (OPEN_ROUTE_INTEGRATION)
-PACKAGES = ('snowflake-snowpark-python','requests')
-SECRETS = ('cred' = CORE.ROUTING_TOKEN )
-
-AS
-$$
-import requests
-import _snowflake
-def get_isochrone(method,lon,lat,range):
-    request_isochrone = f'''https://api.openrouteservice.org/v2/isochrones/{method}'''
-    key = _snowflake.get_generic_secret_string('cred')
-    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-               'Authorization':key,
-               'Content-Type': 'application/json; charset=utf-8'}
-
-    body = {'locations':[[lon,lat]],
-                    'range':[range*60],
-                    'location_type':'start',
-                    'range_type':'time',
-                    'smoothing':10}
-
-    r = requests.post(url = request_isochrone,json = body, headers=HEADERS)
-    response = r.json()
-    
-    return response
-$$;
-```
-
-You will now see the functions below ready to use.
-
-![alt text](assets/image-8.png)
-
-<!-- ------------------------ -->
-## Snowflake Marketplace
-
-Before you try out your functions, you will get a dataset from the marketplace.  This is the Carto Overture dataset which includes an extensive point of interest map across the whole world.  It is also useful for routing simulations.
--   Navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
-
-![alt text](assets/I002.png)
-
-
-Search for Overture Maps - Places
-
-![alt text](assets/I004.png)
-
-Click on the following dataset then press **Get** Do not change the database name.
-
-![alt text](assets/I004a.png)
-
-<!-- ------------------------ -->
-## Routing functions with AISQL
-
-You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  
-
-This notebook covers using the functions, how to apply them and how to visualize the results.  At the end you will have a good understand of how the route optimisation service works well with Snowflake Advanced analytical capabilites - which will also lead onto creating the streamlit datasets which will be covered in the next section.
-
-- To ensure the AI LLM model will work in your region and cloud, please run the following command:
-
-```sql  
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
-```
-
-- Run the following SQL to setup a new database and schema for collecting Views/Tables and notebooks for the simulator:
-
-```sql
-CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
-CREATE WAREHOUSE IF NOT EXISTS ROUTING_ANALYTICS;
-
-CREATE SCHEMA IF NOT EXISTS DATA;
-CREATE SCHEMA IF NOT EXISTS NOTEBOOKS;
-CREATE SCHEMA IF NOT EXISTS STREAMLITS;
-```
-
-
--   Download following [notebook](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Notebook/routing_setup.ipynb) 
-
--   Download the following [environment file](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Notebook/environment.yml)
-
-
--    Create 1 stage to store the notebook assets
-
- ```sql
- CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.notebook DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-```
-- Import the downloaded notebook and environment file into the stage using a method of choice such as the Snowsight UI or Visual Studio Code.
-- Run the following to create your notebook
-
-```sql
-CREATE OR REPLACE NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL
-FROM '@VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.NOTEBOOK'
-MAIN_FILE = 'routing_setup.ipynb'
-QUERY_WAREHOUSE = 'ROUTING_ANALYTICS'
-COMMENT = '{"origin":"sf_sit-is", "name":"Route Optimization with Open Route Service", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"notebook"}}';
-
-ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL ADD LIVE VERSION FROM LAST;
-```
-You will now be able to try out how the functions work and use them in conjunction with **AISQL**.
-
-Navigate to the notebook and follow the provided instructions.  In order to run the streamlit, it is essential that you run from the cell **add_carto_data** AND BELOW.  This is to ensure that you have all the correct dependencies needed.
-
-- Ensure you run all the code below this section **BEFORE** you move to the streamlit.
-
-![alt text](assets/image-20.png)
-<!-- ------------------------ -->
-## Deploy the Streamlit
-
-Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
-
-
-- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Streamlit/streamlit.zip) to download the files needed for the streamlit app.
-
-- Unzip all files ready for uploading to a stage.
-
-
--    Create 1 stage to store streamlit assets
-
- ```sql
- CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.STREAMLITS.STREAMLIT DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-```
-- Navigate to the Streamlit Stage or the VSCode add-in to import the files.
-
-- Upload all files with the exception of config.toml to the streamlit stage
-- Upload the the config.toml file to a folder called .streamlit within the streamlit stage.
-- Create the streamlit using the following script
-
-```sql
-CREATE OR REPLACE STREAMLIT VEHICLE_ROUTING_SIMULATOR.STREAMLITS.SIMULATOR
-ROOT_LOCATION = '@VEHICLE_ROUTING_SIMULATOR.STREAMLITS.streamlit'
-FROM 'routing.py'
-QUERY_WAREHOUSE = 'ROUTING_ANALYTICS'
-COMMENT = '{"origin":"sf_sit-is", "name":"Route Optimization with Open Route Service", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"Streamlit"}}';
-```
-- Go to the homepage in Snowsight
-
-- Click on the **Projects** > **Streamlits** and run the **SIMULATOR**.
 
 <!-- ------------------------ -->
 ## Run the Streamlit
@@ -664,16 +246,19 @@ The streamlit app which you have open simulates potential routes to 29 delivery 
 
 If you wish to add additional choice of distributor types, you can with the provided notebook.
 
-Before you choose your category, you must select where the routing specific functions are.  This app works with both the api call method and the native app method.  If you followed the instructions and went through both options, you can test out either option using the supplied radio selector.
+The routing functions are provided by the Native App you deployed via Cortex Code.
 
 ![alt text](assets/image-10.png)
 
 
 The places you will work with are real as they are based on the Carto Overture points of interest maps which is a dataset freely available on the marketplace.  This allows you to create a location relevant scenario based on the needs of a specific usecase.
 
-**Please note:**  For this simulation the data has been restricted to new york city.  You will need to revise the initial notebook should you require an additional location.  This is an extract filtered by **GEOHASH**.  
+**Please note:**  For this simulation the data has been restricted to New York City. The POI data is filtered by **GEOHASH**.  
 
-If you have built the native app and require an alternative city, you will need to upload the new map to the configuration stage.
+If you require an alternative city, use the Cortex Code map customization skill:
+```
+use the local skill from skills/ors-map-customization
+```
 
 ### End to End with Streamlit Dynamic Simulator Overview Diagram
 
