@@ -134,6 +134,85 @@ Once deployment completes, Cortex Code will provide a link to your app. You need
 2. Grant the required privileges via the UI
 3. Click **Activate** and wait for the services to start
 
+### ORS Configuration
+
+The Native App is configured via the `ors-config.yml` file which controls:
+
+**Map Source File**
+```yml
+ors:
+  engine:
+    profile_default:
+      build:  
+        source_file: /home/ors/files/sanFrancisco.osm.pbf
+```
+The default deployment uses San Francisco. When you customize the map region, this path is updated automatically.
+
+**Routing Profiles**
+
+The configuration defines which vehicle types are available for routing:
+
+| Profile | Description | Default |
+|---------|-------------|---------|
+| `driving-car` | Standard passenger vehicle | ✅ Enabled |
+| `driving-hgv` | Heavy goods vehicle (trucks) | ✅ Enabled |
+| `cycling-road` | Road bicycle | ✅ Enabled |
+| `cycling-regular` | Regular bicycle | ❌ Disabled |
+| `cycling-electric` | Electric bicycle | ❌ Disabled |
+| `foot-walking` | Pedestrian walking | ❌ Disabled |
+| `foot-hiking` | Hiking trails | ❌ Disabled |
+| `wheelchair` | Wheelchair accessible | ❌ Disabled |
+
+> **_NOTE:_** Enabling more profiles increases graph build time and compute resource usage. The default configuration covers most delivery and logistics use cases.
+
+**Optimization Limits**
+
+The config also controls route optimization capacity:
+```yml
+matrix:
+  maximum_visited_nodes: 1000000000
+  maximum_routes: 25000000
+```
+These settings support complex route optimizations with many vehicles and delivery points.
+
+### Function Tester
+
+The Native App includes a built-in **Function Tester** Streamlit application for testing the routing functions interactively.
+
+![Function Tester](assets/image-6.png)
+
+To access the Function Tester:
+1. Open **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP** in Snowsight
+2. Navigate to the **Function Tester** page in the app
+
+The Function Tester allows you to test all three routing functions:
+
+**🗺️ DIRECTIONS**
+- Select start and end locations from preset addresses
+- Choose a routing profile (car, truck, bicycle)
+- View the calculated route on an interactive map
+- See step-by-step directions and distance/duration
+
+**🚚 OPTIMIZATION**
+- Configure multiple vehicles with different:
+  - Time windows (start/end hours)
+  - Capacity limits
+  - Skill sets (refrigeration, hazardous goods, etc.)
+- Add delivery jobs with:
+  - Locations
+  - Time windows
+  - Required skills
+- Run the optimization to see assigned routes per vehicle
+- View detailed itinerary for each vehicle
+
+**⏰ ISOCHRONES**
+- Select a center point location
+- Choose travel time in minutes
+- Generate a catchment polygon showing how far you can travel
+- Useful for delivery zone planning and coverage analysis
+
+> **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses. When you customize the map region, the Function Tester is automatically updated with region-specific coordinates.
+
 ### Customize the Map Region (Optional)
 
 The default deployment uses a San Francisco map. To change to a different region:
