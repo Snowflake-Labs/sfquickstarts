@@ -21,6 +21,8 @@ This Quickstart demostrates the integration between Snowflake and [Amazon Quick 
 
 The integration showcases Snowflake's [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview)), a new schema-level object in Snowflake which is crucial for Generative AI (GenAI) because it provides the meaning and business context to raw enterprise data, acting as a reliable bridge between human language and complex data structures. You can define business metrics and model business entities and their relationships. You can use semantic views in Cortex Analyst and query these views in a SELECT statement. You can also share semantic views in private listings, in public listings on the Snowflake Marketplace, and in organizational listings. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications.
 
+
+
 ![Semantic View diagram](assets/semantic-views-diagram.png)
 
 
