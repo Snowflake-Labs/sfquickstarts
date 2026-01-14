@@ -238,12 +238,49 @@ The default deployment uses a San Francisco map. To change to a different region
 use the local skill from skills/ors-map-customization
 ```
 
-This skill will:
-- Present available map regions (Great Britain, Germany, France, etc.)
-- Download the selected map data
-- Configure routing profiles
-- Update the Function Tester with region-specific coordinates
-- Create a Git branch for your customization
+**Map Download & Resource Scaling**
+
+The skill downloads OpenStreetMap data from Geofabrik or BBBike and automatically suggests resource scaling based on map size:
+
+| Map Size | Compute Pool | Auto-Suspend | Use Case |
+|----------|--------------|--------------|----------|
+| < 1GB | CPU_X64_S (default) | 1 hour | Cities, small regions |
+| 1-5GB | HIGHMEM_X64_M | 8 hours | States, small countries |
+| > 5GB | HIGHMEM_X64_M | 24 hours | Large countries |
+
+**Routing Profile Configuration**
+
+The skill presents available routing profiles and lets you enable/disable them:
+
+| Profile | Category | Description |
+|---------|----------|-------------|
+| `driving-car` | Driving | Standard passenger vehicle |
+| `driving-hgv` | Driving | Heavy goods vehicles (trucks) |
+| `cycling-road` | Cycling | Road bicycles |
+| `cycling-electric` | Cycling | Electric bicycles |
+| `foot-walking` | Foot | Pedestrian walking |
+| `wheelchair` | Wheelchair | Wheelchair accessible routes |
+
+> **_NOTE:_** Enabling more profiles increases graph build time. The default (driving-car, driving-hgv, cycling-road) covers most logistics use cases.
+
+**Function Tester & Notebook Customization**
+
+The skill automatically updates:
+
+1. **Function Tester Streamlit** - Generates region-specific sample addresses for:
+   - Start locations (5 landmarks/city centers)
+   - End locations (5 different destinations)
+   - Waypoints (20 locations across the region)
+
+2. **AISQL Notebook** - Updates all AI prompts to generate sample data for your region:
+   - For **country/state maps** (e.g., Germany, California): You'll be asked to choose a specific city within that region for realistic delivery scenarios
+   - For **city maps** (e.g., New York, London): Uses the city directly
+
+   This ensures AI-generated restaurants, delivery jobs, and customer locations are within drivable distance of each other.
+
+**Git Branch Management**
+
+All customizations are committed to a feature branch (e.g., `feature/ors-great-britain`), preserving the original San Francisco configuration on `main`.
 
 ### Available Cortex Code Skills
 
