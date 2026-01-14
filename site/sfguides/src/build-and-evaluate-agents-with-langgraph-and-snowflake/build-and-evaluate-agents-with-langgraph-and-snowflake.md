@@ -21,15 +21,15 @@ You can also watch this use case in action on Youtube:
 
 ### What is a Multi-Agent Supervisor Architecture?
 
-A multi-agent supervisor architecture uses a central "supervisor" LLM that:
+A multi-agent supervisor architecture uses a central "supervisor" LLM as a hub that coordinates specialized agents:
 
-1. **Analyzes** incoming queries to understand intent
-2. **Plans** an execution strategy with explicit steps
-3. **Routes** queries to specialized agents based on the plan
-4. **Synthesizes** results from multiple agents into coherent executive summaries
+1. **Plans** an execution strategy with explicit steps (once, immutable)
+2. **Routes** queries to specialized agents based on the plan
+3. **Coordinates** data flow between agents when multi-step analysis is needed
+4. **Synthesizes** results from agents into coherent executive summaries
 
 ```
-User Query → Supervisor (Plan) → Specialized Agent(s) → Supervisor (Synthesize) → Executive Summary
+User Query → Supervisor (Plan) → Agent → Supervisor (Route) → Agent → Supervisor (Synthesize) → Summary
 ```
 
 ### Why LangGraph
@@ -878,7 +878,7 @@ SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;
 
 Duration: 20
 
-Now we'll build the LangGraph workflow that orchestrates these Snowflake Cortex Agents. This section walks through the Python code from the Jupyter notebook.
+Now we'll build the LangGraph workflow that orchestrates these Snowflake Cortex Agents. This section uses the Jupyter notebook from the companion repository.
 
 ### Local Environment Setup
 
@@ -911,311 +911,127 @@ SNOWFLAKE_WAREHOUSE=COMPUTE_WH
 SNOWFLAKE_ROLE=your_role
 ```
 
-### Import Dependencies
+### Open the Notebook
 
-```python
-# LangGraph imports
-from langgraph.graph import StateGraph, START, END
-from langgraph.types import Command
-from langgraph.graph.message import MessagesState
+Open `build_and_evaluate_agents_with_langgraph_and_snowflake.ipynb`:
 
-# LangChain imports
-from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
-from langchain_core.prompts import ChatPromptTemplate
 
-# Snowflake imports
-from langchain_snowflake import ChatSnowflake, SnowflakeCortexAgent, create_session_from_env
+### Notebook Walkthrough
 
-# Utility imports
-import json
-import os
-from typing import Dict, List, Optional, Literal
-from dotenv import load_dotenv
+The notebook guides you through building the multi-agent workflow step-by-step:
 
-load_dotenv()
+#### Steps 1-2: Import Dependencies and Define State
+
+Run the first few cells to import all necessary libraries including LangGraph, LangChain, and the Snowflake integration. The workflow uses an extended `MessagesState` that tracks:
+
+- The execution plan (immutable after creation)
+- Current step in the plan
+- Agent outputs (accumulated from all agents)
+- Execution errors (aggregated, not cascaded)
+
+#### Steps 3-5: Connect to Snowflake and Initialize Components
+
+These cells establish your Snowflake session and initialize:
+- **Supervisor Model**: A `ChatSnowflake` instance using `claude-4-sonnet` for routing and synthesis
+- **Specialized Agents**: Three `SnowflakeCortexAgent` instances (CONTENT_AGENT, DATA_ANALYST_AGENT, RESEARCH_AGENT)
+
+#### Steps 6-7: Create Prompts and Helper Functions
+
+The supervisor uses two prompts:
+- **Planning Prompt**: Creates an efficient, immutable execution plan with consolidated queries
+- **Synthesis Prompt**: Combines agent results into executive summaries
+
+Helper functions handle message parsing, plan tracking, and context passing between agents.
+
+#### Steps 8-9: Define Node Functions
+
+Each node in the graph has a dedicated function:
+
+- **supervisor_node**: Handles planning (once) and synthesis (once) - the hub of the architecture
+- **content_agent_node**: Invokes the Content Agent for feedback and sentiment analysis
+- **data_analyst_agent_node**: Invokes the Data Analyst Agent for metrics and churn analysis
+- **research_agent_node**: Invokes the Research Agent for strategic analysis
+
+All agent nodes route back to the supervisor for clean hub-and-spoke coordination.
+
+#### Steps 10-12: Build and Compile the Graph
+
+Assemble the workflow using LangGraph's `StateGraph`:
+
+```
+START → supervisor (planning) → Agent → supervisor (routing) → Agent → supervisor (synthesis) → END
 ```
 
-### Define Workflow State
+The compiled graph features:
 
-The state tracks messages, execution plan, and current step:
+- **Immutable plan**: Created once, executed linearly without re-planning
+- **No LLM routing calls**: Supervisor uses simple plan lookup
+- **Consolidated queries**: Single SQL aggregations instead of multiple calls
+- **Aggregated error handling**: Errors collected, not cascaded
 
-```python
-class State(MessagesState):
-    """Extended state that tracks execution plan and progress."""
-    execution_plan: Optional[Dict] = None  # The supervisor's explicit plan
-    current_step: int = 0  # Current step being executed
-```
+#### Step 13: Test the Workflow
 
-### Create Snowflake Session
+Run sample queries to test the system:
 
-```python
-session = create_session_from_env()
-
-# Ensure warehouse is set
-warehouse = os.getenv('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH')
-session.sql(f"USE WAREHOUSE {warehouse}").collect()
-
-print(f"Connected to: {session.get_current_database()}")
-```
-
-### Initialize Components
-
-```python
-# Supervisor model for routing and synthesis
-supervisor_model = ChatSnowflake(
-    session=session,
-    model="claude-4-sonnet",
-    temperature=0.1,
-    max_tokens=2000
-)
-
-# Agent configuration
-AGENT_DATABASE = "SNOWFLAKE_INTELLIGENCE"
-AGENT_SCHEMA = "AGENTS"
-AGENT_WAREHOUSE = os.getenv('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH')
-
-# Initialize specialized agents
-content_agent = SnowflakeCortexAgent(
-    session=session,
-    name="CONTENT_AGENT",
-    database=AGENT_DATABASE,
-    schema=AGENT_SCHEMA,
-    warehouse=AGENT_WAREHOUSE,
-)
-
-data_analyst_agent = SnowflakeCortexAgent(
-    session=session,
-    name="DATA_ANALYST_AGENT",
-    database=AGENT_DATABASE,
-    schema=AGENT_SCHEMA,
-    warehouse=AGENT_WAREHOUSE,
-)
-
-research_agent = SnowflakeCortexAgent(
-    session=session,
-    name="RESEARCH_AGENT",
-    database=AGENT_DATABASE,
-    schema=AGENT_SCHEMA,
-    warehouse=AGENT_WAREHOUSE,
-)
-```
-
-### Create Supervisor Prompts
-
-The supervisor uses two prompts - one for planning and one for synthesis:
-
-```python
-planning_prompt = """
-You are an Executive AI Assistant supervisor. Create EFFICIENT execution plans.
-
-**Agent Selection:**
-| Question Type | Agent | Why |
-|--------------|-------|-----|
-| Counts, averages, metrics, trends | DATA_ANALYST_AGENT | Direct SQL query |
-| Customer complaints, feedback themes | CONTENT_AGENT | Semantic search needed |
-| Industry analysis, market segments, CLV | RESEARCH_AGENT | Strategic SQL analytics |
-
-**JSON Response Format:**
-{
-    "plan_summary": "Single-agent approach: [AGENT] will [direct action]",
-    "steps": [
-        {
-            "step_number": 1,
-            "agent": "AGENT_NAME",
-            "purpose": "Direct answer to the question",
-            "expected_output": "The specific answer with metrics"
-        }
-    ],
-    "combination_strategy": "Present agent's response directly",
-    "expected_final_output": "Clear answer to the question"
-}
-
-**Query:** {input}
-
-**RESPOND WITH ONLY THE JSON**
-"""
-
-synthesis_prompt = """
-You are an Executive AI Assistant synthesizing agent results.
-
-**Original Question**: {question}
-**Plan Summary**: {plan_summary}
-**Agent Results**: {agent_outputs}
-
-Provide a clear, confident answer with:
-## Summary
-[Direct answer in 2-3 sentences with key metrics]
-
-## Key Findings
-[3-5 bullet points of important insights]
-
-## Recommendations
-[2-3 actionable next steps]
-"""
-```
-
-### Build the Graph
-
-```python
-# Create the StateGraph
-workflow = StateGraph(State)
-
-# Add nodes
-workflow.add_node("supervisor", supervisor_node)
-workflow.add_node("CONTENT_AGENT", content_agent_node)
-workflow.add_node("DATA_ANALYST_AGENT", data_analyst_agent_node)
-workflow.add_node("RESEARCH_AGENT", research_agent_node)
-
-# Add entry point
-workflow.add_edge(START, "supervisor")
-
-# Compile
-app = workflow.compile()
-```
+| Query Type | Expected Agent |
+|------------|----------------|
+| Customer feedback, sentiment, complaints | CONTENT_AGENT |
+| Metrics, behavior, churn, analytics | DATA_ANALYST_AGENT |
+| Market research, competition, strategy | RESEARCH_AGENT |
 
 ## Evaluate with TruLens
 
 Duration: 15
 
-[TruLens](https://www.trulens.org/) provides observability and evaluation for your multi-agent system. We'll set up metrics to assess plan quality, execution efficiency, and response accuracy.
+[TruLens](https://www.trulens.org/) provides observability and evaluation for your multi-agent system. Continue following the notebook to set up metrics and run evaluations.
 
-### Import TruLens Dependencies
+### TruLens Setup (Steps 14+ in Notebook)
 
-```python
-from trulens.apps.langgraph import TruGraph
-from trulens.connectors.snowflake import SnowflakeConnector
-from trulens.providers.cortex import Cortex
-from trulens.core.feedback.custom_metric import MetricConfig
-from trulens.core.feedback.selector import Selector
-from trulens.core.run import Run, RunConfig
-from functools import partial
-import uuid
-```
+The notebook walks you through:
 
-### Setup TruLens Connector
+1. **Importing TruLens Dependencies**: Including `TruGraph`, `SnowflakeConnector`, and `Cortex` provider
 
-```python
-# Connect TruLens to Snowflake for observability
-sf_connector = SnowflakeConnector(snowpark_session=session)
+2. **Connecting to Snowflake**: Creating a connector that stores evaluation data in Snowflake
 
-# Initialize Cortex provider for evaluations
-trace_eval_provider = Cortex(
-    model_engine="openai-gpt-5",
-    snowpark_session=session
-)
-```
+3. **Configuring Evaluation Metrics**:
+   - **Plan Quality**: Evaluates how well the supervisor creates execution plans
+   - **Plan Adherence**: Checks if agents follow the plan
+   - **Execution Efficiency**: Measures workflow efficiency
+   - **Logical Consistency**: Verifies consistency across agent responses
 
-### Configure Evaluation Metrics
+4. **Instrumenting the App**: Wrapping the LangGraph graph with `TruGraph` for observability
 
-```python
-# Plan Quality - Evaluates supervisor's planning ability
-f_plan_quality = MetricConfig(
-    metric_implementation=partial(
-        trace_eval_provider.plan_quality_with_cot_reasons,
-        enable_trace_compression=False
-    ),
-    metric_name="Plan Quality",
-    selectors={"trace": Selector(trace_level=True)},
-)
+5. **Running Evaluations**: Processing test queries and computing metrics
 
-# Plan Adherence - Checks if agents follow the plan
-f_plan_adherence = MetricConfig(
-    metric_implementation=partial(
-        trace_eval_provider.plan_adherence_with_cot_reasons,
-        enable_trace_compression=False
-    ),
-    metric_name="Plan Adherence",
-    selectors={"trace": Selector(trace_level=True)},
-)
+### Evaluation Metrics
 
-# Execution Efficiency - Measures workflow efficiency
-f_execution_efficiency = MetricConfig(
-    metric_implementation=partial(
-        trace_eval_provider.execution_efficiency_with_cot_reasons,
-        enable_trace_compression=False
-    ),
-    metric_name="Execution Efficiency",
-    selectors={"trace": Selector(trace_level=True)},
-)
+The notebook configures these Goal-Plan-Action (GPA) alignment metrics:
 
-# Logical Consistency - Verifies response consistency
-f_logical_consistency = MetricConfig(
-    metric_implementation=partial(
-        trace_eval_provider.logical_consistency_with_cot_reasons,
-        enable_trace_compression=False
-    ),
-    metric_name="Logical Consistency",
-    selectors={"trace": Selector(trace_level=True)},
-)
-```
+| Metric | Description |
+|--------|-------------|
+| Plan Quality | How well does the supervisor create actionable execution plans? |
+| Plan Adherence | Do agents follow the specified plan? |
+| Execution Efficiency | Is the workflow efficient (minimal redundant calls)? |
+| Logical Consistency | Are responses consistent across agents? |
+| Answer Relevance | Does the final answer address the original question? |
 
-### Create Instrumented App
+### Running the Evaluation
 
-Directly wrap the LangGraph graph with TruGraph:
+Follow the notebook cells to:
 
-```python
-# Create TruLens instrumented app by directly wrapping the graph
-APP_NAME = "Customer Intelligence Multi-Agent"
-APP_VERSION = f"V{uuid.uuid4().hex[:8]}"
+1. Define evaluation inputs as LangGraph state dicts
+2. Create a DataFrame with test queries
+3. Configure and start the evaluation run
+4. Wait for invocations to complete
+5. Compute all metrics
 
-tru_app = TruGraph(
-    app,  # The compiled StateGraph directly
-    app_name=APP_NAME,
-    app_version=APP_VERSION,
-    main_method=app.invoke,  # Use graph's invoke method directly
-    connector=sf_connector,
-)
-```
-
-### Run Evaluation
-
-The evaluation dataset contains full LangGraph state dicts that are passed directly to `graph.invoke()`:
-
-```python
-import pandas as pd
-
-# Define evaluation inputs as full LangGraph state dicts
-# This passes the actual state that LangGraph expects directly to graph.invoke()
-evaluation_inputs = [
-    {
-        "messages": [HumanMessage(content="Assess the churn risk for customers complaining about API issues.")],
-    },
-    {
-        "messages": [HumanMessage(content="What industries have the highest customer lifetime value?")],
-    },
-]
-
-# Create DataFrame with the state dicts
-queries_df = pd.DataFrame({"input_state": evaluation_inputs})
-
-# Configure run - map to the column containing state dicts
-run_config = RunConfig(
-    run_name=f"customer_intel_eval_{uuid.uuid4().hex[:8]}",
-    dataset_name="customer_intelligence_queries",
-    source_type="DATAFRAME",
-    dataset_spec={"RECORD_ROOT.INPUT": "input_state"},  # Maps to state dict column
-)
-
-# Add run and execute
-run = tru_app.add_run(run_config=run_config)
-run.start(input_df=queries_df)
-
-# Compute metrics
-metrics = [
-    "answer_relevance",
-    f_plan_quality,
-    f_plan_adherence,
-    f_execution_efficiency,
-    f_logical_consistency,
-]
-run.compute_metrics(metrics)
-```
+Results are stored in Snowflake and can be viewed in Snowsight.
 
 ## Conclusion and Resources
 
 Duration: 5
 
-Congratulations! You've successfully built a **multi-agent supervisor architecture** using LangGraph and Snowflake Cortex. This system demonstrates:
+Congratulations! You've successfully built an **efficient multi-agent supervisor architecture** using LangGraph and Snowflake Cortex. This system demonstrates:
 
 ### What You Built
 
@@ -1226,11 +1042,12 @@ Congratulations! You've successfully built a **multi-agent supervisor architectu
    - Custom AI UDFs for specialized analysis
    - Three specialized Cortex Agents
 
-2. **LangGraph Workflow**
-   - Supervisor model for intelligent routing
-   - Explicit execution planning
-   - Multi-agent orchestration
-   - Response synthesis
+2. **Efficient LangGraph Workflow**
+   - Hub-and-spoke architecture with supervisor as central coordinator
+   - Immutable execution planning (plan once, execute linearly)
+   - No LLM calls for routing (simple plan lookup)
+   - Aggregated error handling (errors collected, not cascaded)
+   - State-based context passing between agents
 
 3. **Evaluation Pipeline**
    - TruLens integration for observability
