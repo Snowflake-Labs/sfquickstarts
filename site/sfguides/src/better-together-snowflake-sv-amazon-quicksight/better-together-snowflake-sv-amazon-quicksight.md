@@ -1,15 +1,17 @@
 author: Mary Law
 id: better-together-snowflake-sv-amazon-quicksight
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
-summary: Unleash AI-Powered BI with Snowflake Semantic View and Amazon Quick Sight better together
+summary: This is a Quickstart for building Snowflake and Amazon Quicksight highlight Snowflake Semantic View as part of better together enablement
+title: Better Together: Unleash AI-Powered BI with Snowflake Semantic View and Amazon Quick Sight 
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 fork repo link: <optional but modify to link to your repo>
 open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 
-# Unleash AI-Powered BI with Snowflake Semantic View and Amazon Quick Sight better together
+
+# Better Together: Unleash AI-Powered BI with Snowflake Semantic View and Amazon Quick Sight 
 <!-- ------------------------ -->
 ## Overview 
 
@@ -17,13 +19,16 @@ Unlock the full potential of your data with the powerhouse combination of [Snowf
 
 This Quickstart demostrates the integration between Snowflake and [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/) to deliver AI-powered BI capabilities and unified intelligence across all your enterprise data sources, and bridges the critical "last-mile gap" between insights and action.
 
-The integration showcases the semantic view, a new schema-level object in Snowflake which is crucial for Generative AI (GenAI) because it provides the meaning and business context to raw enterprise data, acting as a reliable bridge between human language and complex data structures. You can define business metrics and model business entities and their relationships. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications.
+The integration showcases Snowflake's [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview)), a new schema-level object in Snowflake which is crucial for Generative AI (GenAI) because it provides the meaning and business context to raw enterprise data, acting as a reliable bridge between human language and complex data structures. You can define business metrics and model business entities and their relationships. You can use semantic views in Cortex Analyst and query these views in a SELECT statement. You can also share semantic views in private listings, in public listings on the Snowflake Marketplace, and in organizational listings. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications.
+
+![Semantic View diagram](assets/semantic-views-diagram.png)
 
 
 ### Prerequisites
-- Familiarity with Snowflake [Signup to trial account [here](https://signup.snowflake.com/)]
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account [signup here](https://signup.snowflake.com/)
 - Familiarity with SQL
 - Familiarity with Python
+- Familiarity with AWS 
 
 ### What You’ll Learn 
 
