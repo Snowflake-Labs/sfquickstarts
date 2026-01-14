@@ -19,52 +19,116 @@ Unlock the full potential of your data with the powerhouse combination of [Snowf
 
 This Quickstart demostrates the integration between Snowflake and [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/) to deliver AI-powered BI capabilities and unified intelligence across all your enterprise data sources, and bridges the critical "last-mile gap" between insights and action.
 
-The integration showcases Snowflake's [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview)), a new schema-level object in Snowflake which is crucial for Generative AI (GenAI) because it provides the meaning and business context to raw enterprise data, acting as a reliable bridge between human language and complex data structures. You can define business metrics and model business entities and their relationships. You can use semantic views in Cortex Analyst and query these views in a SELECT statement. You can also share semantic views in private listings, in public listings on the Snowflake Marketplace, and in organizational listings. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications.
+The integration showcases Snowflake's [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview), a new schema-level object in Snowflake. It provides the meaning and business context to raw enterprise data, "metrics" (e.g., total view, user_rating) and "dimensions" (e.g., movie, genre), acting as a reliable bridge between human language and complex data structures. By embedding organizational context and definitions directly into the data layer, semantic views ensure that both AI and BI systems interpret information uniformly, leading to trustworthy answers and significantly reducing the risk of AI hallucinations. You can use semantic views in Cortex Analyst and query these views in a SELECT statement. You can also share semantic views in [private listings](https://docs.snowflake.com/en/collaboration/provider-listings-creating-publishing.html#label-listings-create), in public listings on the [Snowflake Marketplace](https://app.snowflake.com/_deeplink/marketplace), and in organizational listings. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications. Lastly, as native Snowflake schema objects, semantic views have object-level access controls. You can grant or restrict usage and query rights on semantic views just as with tables and views, ensuring authorized, governed usage across SQL, BI and AI endpoints.  You can read more about how to write “Semantic SQL” [here](https://docs.snowflake.com/en/user-guide/views-semantic/querying).
 
-
+<br>
 
 ![Semantic View diagram](assets/semantic-views-diagram.png)
 
+## Usecase
 
-### Prerequisites
-- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account [signup here](https://signup.snowflake.com/)
-- Familiarity with SQL
-- Familiarity with Python
-- Familiarity with AWS 
+We leverage Snowflake native ingestion capabilities to ingest data from Amazon S3 into Snowflake. We then load the structured movie review data into a database schema and create a semantic view that bridges the gap between business users and databases. [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) then allows self-serve analytics via natural language queries for business teams and non-technical users with instant answers and insights from their structured data in Snowflake. We will then export the semantic view for metadata extraction via Snowflake notebook which enriches the data for Amazon Quick Sight integration as Topics. This allows the BI team to create interactive charts/dashboard, build calculated fields, create data stories, build scenarios (what-if) all via natural language.
+
+
+The end-to-end workflow will look like this:
+
+![architecture diagram](assets/xx-diagram.png)
+
+<br>
 
 ### What You’ll Learn 
 
-You will learn about the following Snowflake features during this Quickstart:
-- Snowflake([Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
-- Cortex analyst and [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview))
-  
-
-### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
+- How to setup a warehouse, database and schema in Snowflake
+- How to load data into Snowflake from Amazon S3
+- The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics
+- Introduction to Snowflake notebook [Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
+- How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (Amazon Quick Sight) 
 
 
 ### What You’ll Build 
-- A Snowflake Guide in Markdown format
+You will build a foundational yet practical setup of a Snowflake semantic view, complete with data views and a defined semantic model, enabling consistent data querying for AI and BI with Amazon Quick Sight.
 
 
-## Creating Sections
 
-A single sfguide consists of multiple steps or sections. 
-These sections are defined in Markdown using Header tags.  Header 2 tag is `##`, Header 3 tag is `###` and so forth. 
+### What You'll Need
+- Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/). If you do not have an account, sign up for a [trial account here](https://signup.snowflake.com/)
+  - Access to ACCOUNTADMIN role is required for creating semantic views
+- Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
 
-```markdown
-## Step 1 Title as H2 tag
+  **Ensure to sign up to both of the above in AWS US West (Oregon)** 
+  At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland). Refer to See the [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html)
+- Basic knowledge of SQL and Python
+- Familiarity with data analysis concepts
+<br>
 
-All the content for the step goes here.
+<!-- ------------------------ -->
 
-## Step 2 Title as H2 tag
+## Setup Environment
 
-### Subheader goes here as H3 tag.
+### Download the Notebook
+
+Firstly, to follow along with this quickstart, download the Notebook [update-me-better-together-snowflake-sv-amazon-quicksight.ipynb](https://github.com/update-me-quicksight.ipynb) from GitHub.
+
+Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
+
+### Setup your Database and Schema
+
+First, we'll create a new database named `SAMPLE_DATA` and a schema named `TPCDS_SF10TCL` to organize our data. We will then set the context to use this new schema.
+
+```sql
+-- Create a new test database named SAMPLE_DATA
+CREATE DATABASE SAMPLE_DATA;
+
+-- Use the newly created database
+USE DATABASE SAMPLE_DATA;
+<!-- ------------------------ -->
+## Setting up the Data in Snowflake
+
+### Overview
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
+* Create Snowflake objects (warehouse, database, schema, raw tables)
+* Ingest data from S3 to raw tables
+* Create review view 
+
+### Creating Objects, Loading Data, and Joining Data
+* Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view
+
+  ```sql
+
+  USE ROLE sysadmin;
+
+  /*--
+  • database, schema and warehouse creation
+  --*/
+
+  -- create tb_voc database
+  CREATE OR REPLACE DATABASE tb_voc;
+
+  -- create raw_pos schema
+  CREATE OR REPLACE SCHEMA tb_voc.raw_pos;
 
 
-```
->Please avoid going beyond H4 #### as it will not render on the page correctly!
+<!-- ------------------------ -->
+## Setting up Snowflake Notebook
+### Overview
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
+
+* Download the notebook **xxxxx.ipynb** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)
+
+* Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
+
+* Using the import button on the top right, import the downloaded notebook.
+
+* Provide a name for the notebook and select appropriate database `tb_voc`, schema `analytics` and warehouse `tasty_ds_wh`
+
+* Open the notebook once created and add the following packages by using the "Packages" button on the top right
+  * snowflake-snowpark-python
+  * snowflake-ml-python
+
+* Now you are ready to run the notebook by clicking "Run All" button on the top right or running each cell individually. 
+
+<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Headers and Subheaders
@@ -153,6 +217,7 @@ If you want to learn more about Snowflake Guide formatting, checkout the officia
 ### Related Resources
 - <link to github code repo>
 - <link to related documentation>
+- [Getting started](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/#0) with Semantic views
 
 ### EXAMPLES:
 * **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
