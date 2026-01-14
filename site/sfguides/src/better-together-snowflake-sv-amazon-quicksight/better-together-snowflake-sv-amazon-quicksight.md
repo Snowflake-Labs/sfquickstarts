@@ -1,11 +1,11 @@
 author: Mary Law
 id: better-together-snowflake-sv-amazon-quicksight
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
 summary: Unleash AI-Powered BI with Snowflake Semantic View and Amazon Quick Sight better together
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 fork repo link: <optional but modify to link to your repo>
 open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 
@@ -13,28 +13,24 @@ open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 <!-- ------------------------ -->
 ## Overview 
 
-Please use [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides) as a guiding document for writing your own Snowflake Guide. <br>
-This example guide has elements that you will use when writing your own guides, including: formatting, code snippet highlighting, video links, inserting photos, and more. 
+Unlock the full potential of your data with the powerhouse combination of [Snowflake](https://www.snowflake.com/en/) and [Amazon Quick](https://aws.amazon.com/quicksuite/). Say goodbye to data silos and hello to seamless, intelligent insights. As a multi-award-winning [AWS Technology Partner](https://www.snowflake.com/en/why-snowflake/partners/all-partners/aws/) (Winner- Global Data & Analytics Partner -2023, 2024, 2025) with multiple AWS accreditations that include AWS ISV Competencies in Generative AI, Machine Learning, Data and Analytics, and Retail. Snowflake powers AI, data engineering, applications, and analytics on a trusted, scalable AI Data Cloud—eliminating silos and accelerating innovation.
 
-It is important to include on the first page of your guide the following sections: 
-- Prerequisites, 
-- What you'll learn
-- What you'll need
-- What you'll build 
+This Quickstart demostrates the integration between Snowflake and [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/) to deliver AI-powered BI capabilities and unified intelligence across all your enterprise data sources, and bridges the critical "last-mile gap" between insights and action.
 
-Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
+The integration showcases the semantic view, a new schema-level object in Snowflake which is crucial for Generative AI (GenAI) because it provides the meaning and business context to raw enterprise data, acting as a reliable bridge between human language and complex data structures. You can define business metrics and model business entities and their relationships. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications.
 
-The rest of this Snowflake Guide explains the steps of writing your own guide with some basic layout information.  
-Detailed formatting options can be found in this [Snowflake Guide](https://www.snowflake.com/en/developers/guides/get-started-with-guides). 
 
 ### Prerequisites
-- Familiarity with Markdown syntax
+- Familiarity with Snowflake [Signup to trial account [here](https://signup.snowflake.com/)]
+- Familiarity with SQL
+- Familiarity with Python
 
 ### What You’ll Learn 
-- The format for a guide (the sections, the metadata and basic markdown)
-- How to include code snippets 
-- How to hyperlink items
-- Ways to include images and videos
+
+You will learn about the following Snowflake features during this Quickstart:
+- Snowflake([Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
+- Cortex analyst and [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview))
+  
 
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
@@ -44,44 +40,7 @@ Detailed formatting options can be found in this [Snowflake Guide](https://www.s
 ### What You’ll Build 
 - A Snowflake Guide in Markdown format
 
-<!-- ------------------------ -->
-## Metadata Configuration
 
-It is important to set the correct metadata for your Snowflake Guide. This is the first thing that goes on top of your guide. 
-The metadata contains all the information required for listing and publishing your guide and includes some required and some optional information.
-
-
-```diff
-- REQUIRED FIELDS
-```
-
-- **id**: sample-separated-by-hyphens-not-underscores 
-  - make sure to match the id here with the name of the file, all one word.
-- **language**: pick from list 
-  - pick the appropriate language from the list provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags 
-- **categories**: Pick from the list
-  - select from the complete list of categories provided here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags.  Please DO NOT create new categories.
-- **status**: (`Published`, `Archived`, `Hidden`)<br>
-  `Published` - implies the guide is active<br>
-  `Archived` - implies the sfguide is out of date and deprecated and no longer available.
-- **authors**: Author Full Name 
-  - Indicate the author(s) of this specific sfguide.  
-
-
-```diff
-- OPTIONAL
-```
-  - **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-  - **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-  - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-  - **fork repo link**: add your repo link here for GitHub
-  - **open in snowflake**: add deeplinks straight into the product or to a template within Snowflake.
-
-
-
-<!-- ------------------------ -->
 ## Creating Sections
 
 A single sfguide consists of multiple steps or sections. 
