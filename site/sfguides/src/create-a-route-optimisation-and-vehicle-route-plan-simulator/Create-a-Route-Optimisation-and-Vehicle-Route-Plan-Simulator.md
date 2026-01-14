@@ -384,14 +384,24 @@ The routing functions are provided by the Native App you deployed via Cortex Cod
 ![alt text](assets/image-10.png)
 
 
-The places you will work with are real as they are based on the Carto Overture points of interest maps which is a dataset freely available on the marketplace.  This allows you to create a location relevant scenario based on the needs of a specific usecase.
+The places you will work with are real as they are based on the **Carto Overture Points of Interest** dataset freely available on the Snowflake Marketplace. This allows you to create a location relevant scenario based on the needs of a specific use case.
 
-**Please note:**  For this simulation the data has been restricted to New York City. The POI data is filtered by **GEOHASH**.  
+**Region-Specific Data**
 
-If you require an alternative city, use the Cortex Code map customization skill:
-```
-use the local skill from skills/ors-map-customization
-```
+The POI data displayed in the Simulator is filtered by **GEOHASH** to match your configured map region:
+
+| Configuration | POI Data Location | Example |
+|---------------|-------------------|---------|
+| Default (San Francisco map) | New York City | Restaurants, supermarkets, etc. in NYC |
+| Custom map region | City chosen during customization | If you selected "Germany" map and chose "Berlin" as the notebook city, POI data will be for Berlin |
+
+When you run the `ors-map-customization` skill:
+- For **country/state maps**: You select a major city within that region (e.g., "London" for Great Britain)
+- For **city maps**: Uses that city directly (e.g., New York)
+
+The `add_carto_data` notebook filters the Overture dataset to your chosen city and creates the industry-specific views (Food, Health, Cosmetics distributors and customers).
+
+> **_TIP:_** To change the city, run the map customization skill again or modify the `add_carto_data` notebook directly.
 
 ### End to End with Streamlit Dynamic Simulator Overview Diagram
 
@@ -402,8 +412,8 @@ use the local skill from skills/ors-map-customization
 - Open up the side menu
 - Select the industry type.
 - Choose the LLM model in order to search for a location.
-- Type in a word or phrase in the world which will help locate the simulation.  
-**NB** You will only return results in the New York City boundary.
+- Type in a word or phrase which will help locate the simulation.  
+**NB** Results are restricted to your configured city boundary.
 - Choose the distance in KM for how wide you would like the app to search for nearby distributors.
 
     ![alt text](assets/image-11.png)
