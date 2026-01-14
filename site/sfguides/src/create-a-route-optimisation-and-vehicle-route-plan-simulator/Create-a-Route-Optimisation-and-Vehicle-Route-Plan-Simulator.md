@@ -240,13 +240,33 @@ use the local skill from skills/ors-map-customization
 
 **Map Download & Resource Scaling**
 
-The skill downloads OpenStreetMap data from Geofabrik or BBBike and automatically suggests resource scaling based on map size:
+The skill downloads OpenStreetMap data from Geofabrik or BBBike. The bigger the map file, the longer it takes to:
+- **Download** the OSM data from the source
+- **Upload** to the Snowflake stage
+- **Generate graph files** for route calculations
 
-| Map Size | Compute Pool | Auto-Suspend | Use Case |
-|----------|--------------|--------------|----------|
-| < 1GB | CPU_X64_S (default) | 1 hour | Cities, small regions |
-| 1-5GB | HIGHMEM_X64_M | 8 hours | States, small countries |
-| > 5GB | HIGHMEM_X64_M | 24 hours | Large countries |
+| Map Size | Example Regions | Download Time | Graph Build Time | 
+|----------|-----------------|---------------|------------------|
+| < 100MB | San Francisco, Zurich | Minutes | 5-15 minutes |
+| 100MB - 1GB | New York State, Switzerland | 10-30 minutes | 30-60 minutes |
+| 1-5GB | Germany, France, California | 30-60 minutes | 1-3 hours |
+| > 5GB | Great Britain, entire countries | 1-2 hours | 3-8+ hours |
+
+> **_IMPORTANT:_** For country-wide or large region maps, graph generation can take **several hours**. The services will show as "running" while building graphs in the background.
+
+**Automatic Compute Scaling**
+
+Cortex Code will detect the map size after download and offer to **resize the compute pool** to speed up graph generation:
+
+| Map Size | Suggested Compute | Auto-Suspend Extension |
+|----------|-------------------|------------------------|
+| < 1GB | CPU_X64_S (default) | 1 hour |
+| 1-5GB | HIGHMEM_X64_M | 8 hours |
+| > 5GB | HIGHMEM_X64_M | 24 hours |
+
+When prompted, you can accept the scaling recommendation to ensure graphs are computed as quickly as possible. The extended auto-suspend time prevents the service from shutting down mid-build.
+
+> **_TIP:_** For quickest results, use the smallest map that covers your use case. A city-level map (e.g., New York) builds much faster than a country map (e.g., USA).
 
 **Routing Profile Configuration**
 
@@ -380,9 +400,6 @@ The streamlit app which you have open simulates potential routes to 29 delivery 
 If you wish to add additional choice of distributor types, you can with the provided notebook.
 
 The routing functions are provided by the Native App you deployed via Cortex Code.
-
-![alt text](assets/image-10.png)
-
 
 The places you will work with are real as they are based on the **Carto Overture Points of Interest** dataset freely available on the Snowflake Marketplace. This allows you to create a location relevant scenario based on the needs of a specific use case.
 
