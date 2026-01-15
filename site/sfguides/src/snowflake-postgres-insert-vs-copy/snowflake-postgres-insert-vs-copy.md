@@ -217,6 +217,7 @@ SELECT 'INSERT INTO load_test (product_name, quantity, price) VALUES ' ||
 FROM generate_series(1, 1000) s
 GROUP BY (s - 1) / 100;
 
+-- Turn off spooling
 \o
 
 -- Restore normal output settings
@@ -291,6 +292,7 @@ SELECT
     round((random() * 100)::numeric, 2)
 FROM generate_series(1, 1000) s;
 
+-- Turn off spooling
 \o
 
 -- Restore normal output settings
