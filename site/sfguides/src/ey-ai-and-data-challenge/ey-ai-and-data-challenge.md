@@ -67,20 +67,47 @@ It takes just a few minutes to signup, and you will receive an email link to you
 
 When you sign in to your account for the first time, you will need to run a setup script in SQL. 
 
-This script creates external network access to install PyPI packages and access Planetary Computer API endpoints. The template to run the SQL script is located in the Snowflake-Labs repo on [Github](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ey-ai-and-data-challenge/assets/snowflake_setup.sql).
+This script creates external network access to install PyPI packages and access Planetary Computer API endpoints. 
 
-If you have already created your Snowflake account, the setup script can be accessed directly within Snowflake using this [deeplink](https://app.snowflake.com/templates?template=setup_account_data_challenge_template).
+If you have already created your Snowflake account, this template should load the first time you login to your account.
 
-## Open Snowflake Notebook in Workspaces
-If you are able to run the "Show Integrations" command and you see "DATA_CHALLENGE_EXTERNAL_ACCESS" listed in the results, then you are ready to start on the Getting Started Notebook.
+If it does not, the setup script template can be accessed directly within Snowflake using this [deeplink](https://app.snowflake.com/templates?template=setup_account_data_challenge_template).
 
-It can be accessed directly as a Snowflake template [using this deeplink](https://app.snowflake.com/templates?template=getting_started_data_challenge_template)
+If the template deeplink does not work, you can find the script in the Snowflake-Labs repo on [Github](https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge/scripts/snowflake_setup.sql).
+
+## Create New Workspace from git repo
+After running the setup script in SQL, you can load all of the files into your Snowflake Account by creating a new Workspace from a Git repository. 
+
+1. Click "My Workspace" menu in the Workspaces pane, and select "From Git repository"
+
+    ![img](assets/workspace_menu.png)
+
+2. Paste the repository URL:
+```markdown
+https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge
+```
+
+3. The Workspace name will auto-populate, but you can choose something simpler.
+
+    ![img](assets/create_workspace_from_git.png)
+
+4. Click "Public repository" and click "Create". 
+There's no need to authenticate when you access a public github repo. 
+
+5. In a few seconds, your workspace will be created, and you will see a home page that says:
+"Welcome to Workspaces", with the name of your workspace in the top left pane, and the notebook "getting_started_notebook.ipynb" in the file list. 
+
+    ![img](assets/welcome_to_workspaces.png)
+
+6. In the future, when your team creates your own private repo on Github.com, you can sync your repo files with your Snowflake Workspace with just a few clicks by following [these instructions.](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#configure-for-authenticating-with-oauth)
 
 
 ## Upload Notebooks to your Workspace
-If you have any trouble with the template link, the notebook also located in the [Snowflake-Labs repo on Github](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ey-ai-and-data-challenge/assets/getting_started_notebook.ipynb)
+If you have any trouble with the git integration, don't worry! 
 
-You can upload the notebook into your Workspace by clicking the "Add New" button and choosing "Upload Files".
+The notebook is located in the [Snowflake-Labs repo on Github](https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge/getting_started_notebook.ipynb)
+
+You can download it from Github, and then upload the notebook into "My Workspace" by clicking the "Add New" button and choosing "Upload Files".
     ![img](assets/add_new_upload_files.png)
 
 ## Start running the Notebook
@@ -88,14 +115,20 @@ You can upload the notebook into your Workspace by clicking the "Add New" button
 1. Click Connect and choose the External Access Integration "DATA_CHALLENGE_EXTERNAL_ACCESS"
     ![img](assets/connect_your_notebook.jpg)
 
+    Most of the demo notebooks will run on the default version of Python 3.12, but if you run into issues, you can click "Service Settings" and change the version of Python to 3.10.
+
+    ![img](assets/connect_your_notebook_service_settings.png)
+
 2. Wait until the container is running and the kernel is connected
     ![img](assets/connected_kernel.jpg)    
 
-3. Run the first few cells to create the requirements.txt file, then refresh the browser tab.
+3. If you were successful with the git integration, the requirements.txt file is already in your environment. If not, then just run the first few cells in the notebook to create the requirements.txt file, then refresh the browser tab to see it in your file list in your Workspace environment. 
 
 4. Run the "pip install" to load all the required python packages
 
 5. After you install the python packages, restart the kernel. 
+
+Each notebook has its own kernel, so each time you run a pip install in a notebook, you have to restart the kernel. For more information, check out this [diagram](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-compute-setup#setting-up-compute). 
 
 6. Run the remaining cells to call the Planetary Computer API, download satellite imagery data, and analyze it directly in your Notebook!
 
