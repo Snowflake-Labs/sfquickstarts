@@ -246,28 +246,39 @@ The Function Tester allows you to test all three routing functions:
 > **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses. When you customize the map region, the Function Tester is automatically updated with region-specific coordinates.
 
 <!-- ------------------------ -->
-## Customize the Map Region
+## Customize Your Deployment
 
-The default deployment uses a San Francisco map. Before deploying the demo, you can customize the map region to use any location in the world - for example, **Paris, France**.
+The default deployment uses San Francisco with standard vehicle types and demo industries (Food, Healthcare, Cosmetics). Before deploying the demo, you can customize **three key areas**:
 
-> **_NOTE:_** This step is optional. If you skip customization, the demo will use San Francisco as the default region.
+| Customization | Default | Example Custom |
+|---------------|---------|----------------|
+| 🗺️ **Map Region** | San Francisco | Paris, London, Tokyo, etc. |
+| 🚚 **Vehicle Types** | Car, HGV, Road Bicycle | Add walking, wheelchair, electric bicycle |
+| 🏭 **Industries** | Food, Healthcare, Cosmetics | Beverages, Electronics, Office Supplies |
 
-To customize the map region, run:
+> **_NOTE:_** This step is optional. If you skip customization, the demo will use the defaults.
+
+To customize, run:
 
 ```
 use the local skill from skills/ors-map-customization
 ```
 
-> **_PLEASE NOTE:_** This skill modifies files in your local repository to match your chosen location, industry, and vehicle types. It updates:
-> - **ORS config file** - Map source and routing profiles
-> - **Compute resources** - Scales based on map size
-> - **Function Tester** - Region-specific addresses and coordinates
-> - **AISQL Notebook** - AI prompts customized for your city
-> - **Add Carto Data Notebook** - Geohash filter for your region
-> - **Streamlit Simulator** - Default search location
->
-> **If using Git:** Changes are saved to a new feature branch (e.g., `feature/ors-paris`), allowing you to easily switch back to `main` for San Francisco defaults.
-> **If not using Git:** Changes are made directly to your local files. Keep a backup if you want to preserve the original configuration.
+### What Gets Customized
+
+The skill guides you through each customization area and automatically updates:
+
+| Component | What Changes |
+|-----------|--------------|
+| **ORS Config** | Map source file and enabled routing profiles |
+| **Compute Resources** | Scales based on map size (larger maps need more compute) |
+| **Function Tester** | Sample addresses for your region |
+| **AISQL Notebook** | AI prompts generate data for your city |
+| **Add Carto Data Notebook** | POI filter for your region + industry categories |
+| **Streamlit Simulator** | Default search location |
+
+> **If using Git:** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults.
+> **If not using Git:** Changes are made directly to local files. Keep a backup if needed.
 
 ### Example: Customizing to Paris
 
@@ -275,8 +286,14 @@ When you run the skill, Cortex Code will guide you through:
 
 1. **Choose a region** - For this example, select **Paris** or **Île-de-France** from Geofabrik
 2. **Download the map** - The skill downloads the OpenStreetMap data
-3. **Configure routing profiles** - Choose which vehicle types to enable (car, truck, bicycle, etc.)
-4. **Update the services** - The skill restarts the ORS services with the new map
+3. **Configure vehicle types** - Choose which routing profiles to enable:
+   - `driving-car` - Standard passenger vehicle
+   - `driving-hgv` - Heavy goods vehicle (trucks)
+   - `cycling-road` - Road bicycles
+   - `foot-walking` - Pedestrian (optional)
+   - `wheelchair` - Wheelchair accessible (optional)
+4. **Customize industries** (optional) - Add or modify industry categories for your use case
+5. **Update the services** - The skill restarts the ORS services with the new configuration
 
 **⏳ Wait for Services to Restart**
 
