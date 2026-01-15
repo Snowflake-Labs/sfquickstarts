@@ -13,19 +13,30 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ![alt text](assets/intromap.png)
 
-In this solution, you will **install an [Open Route Service](https://openrouteservice.org/) Native App** in Snowflake using **Cortex Code** skills. The entire setup takes just **minutes** - simply run natural language commands and the AI-powered CLI handles the rest.
+**Deploy a complete route optimization platform in minutes using just natural language commands.**
 
-Once deployed, you will be able to:
+This solution installs an [Open Route Service](https://openrouteservice.org/) Native App directly in your Snowflake account using **Cortex Code** - Snowflake's AI-powered CLI. No complex setup, no external APIs, no data leaving Snowflake.
 
-- **Visualize** delivery points anywhere in the world and understand the best routes for vehicles to deliver goods or services from a designated depot. Use the multi-layer mapping capabilities of Pydeck to create easy-to-understand routing plans.
+### What You'll Build
 
-- **Discover** what it would look like to route goods to real-world points of interest such as restaurants or supermarkets using the **Overture Maps Places** dataset provided freely on the Snowflake Marketplace by Carto.
+🚚 **Route Optimization Simulator** - A fully interactive Streamlit app that simulates vehicle routing scenarios using real-world business locations from the **Carto Overture Maps** dataset.
 
-- **Understand** numerous routing scenarios across a variety of industries anywhere in the world.
+📍 **Three Powerful Routing Functions:**
+- **Directions** - Calculate optimal routes between multiple waypoints
+- **Optimization** - Match delivery jobs to vehicles based on time windows, capacity, and skills
+- **Isochrones** - Generate catchment polygons showing reachable areas within a given drive time
 
-The Native App provides three powerful routing functions: **Directions**, **Route Optimization**, and [**Isochrones**](https://en.wikipedia.org/wiki/Isochrone_map) - all running securely within your Snowflake account with no external API calls required.
+🗺️ **Any Location, Any Industry** - Customize to Paris, London, New York, or anywhere in the world. Configure for food distribution, healthcare logistics, retail delivery, or your specific use case.
 
-This solution benefits vehicle-centric industries such as **retail**, **distribution**, **healthcare** and more.
+### Why This Matters
+
+| Traditional Approach | This Solution |
+|---------------------|---------------|
+| External API dependencies | Self-contained Native App |
+| Data leaves your environment | Everything stays in Snowflake |
+| Complex integration work | Deploy with natural language commands |
+| Pay-per-call API limits | Unlimited calls, you control compute |
+| Hours of setup | Minutes to deploy |
 
 ### Prerequisites
 
