@@ -75,31 +75,36 @@ If it does not, the setup script template can be accessed directly within Snowfl
 
 If the template deeplink does not work, you can find the script in the Snowflake-Labs repo on [Github](https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge/scripts/snowflake_setup.sql).
 
+
 ## Create New Workspace from git repo
 After running the setup script in SQL, you can load all of the files into your Snowflake Account by creating a new Workspace from a Git repository. 
 
-1. Click "My Workspace" menu in the Workspaces pane, and select "From Git repository"
+1. Navigate to Workspaces with this [deeplink](https://app.snowflake.com/_deeplink/workspaces) or by clicking Workspaces in the left sidebar navigation.
+
+    ![img](assets/workspaces_nav.png)
+
+2. Click "My Workspace" menu in the Workspaces pane, and select "From Git repository"
 
     ![img](assets/workspace_menu.png)
 
-2. Paste the repository URL:
+3. Paste the repository URL:
 ```markdown
 https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge
 ```
 
-3. The Workspace name will auto-populate, but you can choose something simpler.
+4. The Workspace name will auto-populate, but you can choose something simpler.
 
     ![img](assets/create_workspace_from_git.png)
 
-4. Click "Public repository" and click "Create". 
+5. Click "Public repository" and click "Create". 
 There's no need to authenticate when you access a public github repo. 
 
-5. In a few seconds, your workspace will be created, and you will see a home page that says:
+6. In a few seconds, your workspace will be created, and you will see a home page that says:
 "Welcome to Workspaces", with the name of your workspace in the top left pane, and the notebook "getting_started_notebook.ipynb" in the file list. 
 
     ![img](assets/welcome_to_workspaces.png)
 
-6. In the future, when your team creates your own private repo on Github.com, you can sync your repo files with your Snowflake Workspace with just a few clicks by following [these instructions.](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#configure-for-authenticating-with-oauth)
+7. In the future, when your team creates your own private repo on Github.com, you can sync your repo files with your Snowflake Workspace with just a few clicks by following [these instructions.](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#configure-for-authenticating-with-oauth)
 
 
 ## Upload Notebooks to your Workspace
