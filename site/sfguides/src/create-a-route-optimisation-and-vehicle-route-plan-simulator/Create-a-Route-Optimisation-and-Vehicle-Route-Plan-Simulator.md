@@ -264,40 +264,60 @@ To customize, run:
 use the local skill from skills/ors-map-customization
 ```
 
-### What Gets Customized
+### How the Customization Works
 
-The skill guides you through each customization area and automatically updates:
+The skill starts by asking you **three yes/no questions** to determine what you want to customize:
 
-| Component | What Changes |
-|-----------|--------------|
-| **ORS Config** | Map source file and enabled routing profiles |
-| **Compute Resources** | Scales based on map size (larger maps need more compute) |
-| **Function Tester** | Sample addresses for your region |
-| **AISQL Notebook** | AI prompts generate data for your city |
-| **Add Carto Data Notebook** | POI filter for your region + industry categories |
-| **Streamlit Simulator** | Default search location |
+1. **"Do you want to customize the LOCATION (map region)?"**
+   - If YES → Downloads new map, uploads to stage, rebuilds routing graphs
+   - If NO → Skips map download entirely
+
+2. **"Do you want to customize VEHICLE TYPES (routing profiles)?"**
+   - If YES → Modifies routing profiles, rebuilds graphs for each vehicle type
+   - If NO → Keeps default profiles (car, HGV, road bicycle)
+
+3. **"Do you want to customize INDUSTRIES for the demo?"**
+   - If YES → Modifies industry categories in notebooks
+   - If NO → Keeps default industries (Food, Healthcare, Cosmetics)
+
+### What Gets Updated Based on Your Choices
+
+| Your Choices | What Gets Updated |
+|--------------|-------------------|
+| **Location = YES** | Map file downloaded, ORS config, graphs rebuilt, Function Tester coordinates, all demo content |
+| **Vehicles = YES** | Routing profiles in config, graphs rebuilt, Function Tester profiles, app redeployed |
+| **Industries = YES** | Add Carto Data notebook, AISQL notebook, Streamlit defaults |
+| **Location OR Vehicles = YES** | Function Tester app updated and Native App redeployed |
+| **Industries ONLY** | Only demo content updated - no app redeployment needed |
 
 > **If using Git:** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults.
 > **If not using Git:** Changes are made directly to local files. Keep a backup if needed.
 
-### Example: Customizing to Paris
+### Example: Customizing to Paris with All Options
 
-When you run the skill, Cortex Code will guide you through:
+When you run the skill and answer YES to all three questions, Cortex Code will guide you through:
 
-1. **Choose a region** - For this example, select **Paris** or **Île-de-France** from Geofabrik
-2. **Download the map** - The skill downloads the OpenStreetMap data
-3. **Configure vehicle types** - Choose which routing profiles to enable:
-   - `driving-car` - Standard passenger vehicle
-   - `driving-hgv` - Heavy goods vehicle (trucks)
-   - `cycling-road` - Road bicycles
-   - `foot-walking` - Pedestrian (optional)
-   - `wheelchair` - Wheelchair accessible (optional)
-4. **Customize industries** (optional) - Add or modify industry categories for your use case
-5. **Update the services** - The skill restarts the ORS services with the new configuration
+1. **Location customization:**
+   - Choose **Paris** or **Île-de-France** from Geofabrik
+   - The skill downloads and uploads the OpenStreetMap data
+
+2. **Vehicle type customization:**
+   - Choose which routing profiles to enable:
+     - `driving-car` - Standard passenger vehicle
+     - `driving-hgv` - Heavy goods vehicle (trucks)
+     - `cycling-road` - Road bicycles
+     - `foot-walking` - Pedestrian (optional)
+     - `wheelchair` - Wheelchair accessible (optional)
+
+3. **Industry customization:**
+   - Add or modify industry categories for your use case (e.g., Beverages, Electronics)
+
+4. **Update services:**
+   - The skill restarts the ORS services to rebuild routing graphs
 
 **⏳ Wait for Services to Restart**
 
-After the map is uploaded, the services need to rebuild the routing graphs. You can monitor progress in the Service Manager:
+After the map is uploaded (if location was changed) or profiles were modified (if vehicles were changed), the services need to rebuild the routing graphs. You can monitor progress in the Service Manager:
 
 1. Navigate to **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP**
 2. Check the **Service Manager** - all 4 services should show ✅ RUNNING
@@ -305,9 +325,11 @@ After the map is uploaded, the services need to rebuild the routing graphs. You 
 
 Once services are running, the Function Tester will show **Paris addresses** instead of San Francisco!
 
-### Map Download & Resource Scaling
+> **_TIP:_** If you only want to change industries (and keep San Francisco with default vehicles), answer NO to location and vehicles. This skips map download and graph building entirely - making it much faster!
 
-The skill downloads OpenStreetMap data from Geofabrik or BBBike. The bigger the map file, the longer it takes to:
+### Map Download & Resource Scaling (Location Changes Only)
+
+If you selected YES to location customization, the skill downloads OpenStreetMap data from Geofabrik or BBBike. The bigger the map file, the longer it takes to:
 - **Download** the OSM data from the source
 - **Upload** to the Snowflake stage
 - **Generate graph files** for route calculations
