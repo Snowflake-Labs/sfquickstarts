@@ -197,7 +197,7 @@ These settings support complex route optimizations with many vehicles and delive
 
 The Native App includes a built-in **Function Tester** Streamlit application for testing the routing functions interactively.
 
-![Function Tester](assets/image-6.png)
+![Function Tester](assets/function_tester.png)
 
 To access the Function Tester:
 1. Open **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP** in Snowsight
