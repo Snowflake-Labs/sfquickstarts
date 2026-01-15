@@ -441,11 +441,6 @@ Navigate to the Simulator Streamlit app:
 1. Go to **Projects > Streamlits** in Snowsight
 2. Click on **SIMULATOR**
 
-Or run this SQL to get the direct URL:
-```sql
-SELECT CONCAT('https://app.snowflake.com/', CURRENT_ORGANIZATION_NAME(), '/', CURRENT_ACCOUNT_NAME(), '/#/streamlit-apps/VEHICLE_ROUTING_SIMULATOR.STREAMLITS.SIMULATOR') AS streamlit_url;
-```
-
 <!-- ------------------------ -->
 ## Run the Streamlit
 
