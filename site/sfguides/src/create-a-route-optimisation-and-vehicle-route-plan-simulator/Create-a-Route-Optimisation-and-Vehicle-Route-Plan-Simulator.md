@@ -231,32 +231,39 @@ The Function Tester allows you to test all three routing functions:
 
 > **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses. When you customize the map region, the Function Tester is automatically updated with region-specific coordinates.
 
-### Overture Maps for Real-World Testing
+<!-- ------------------------ -->
+## Customize the Map Region
 
-The Function Tester uses preset sample addresses for quick testing. For more realistic testing with real-world points of interest (restaurants, supermarkets, warehouses, etc.), the **Carto Overture Maps Places** dataset is acquired from the Snowflake Marketplace.
+The default deployment uses a San Francisco map. Before deploying the demo, you can customize the map region to use any location in the world - for example, **Paris, France**.
 
-This is done automatically by the `deploy-demo` skill later in this quickstart:
+> **_NOTE:_** This step is optional. If you skip customization, the demo will use San Francisco as the default region.
 
-```
-use the local skill from skills/deploy-demo
-```
-
-The skill acquires the Overture Maps dataset which provides:
-- **50+ million points of interest** worldwide
-- Categories including retail, food service, healthcare, logistics
-- Accurate addresses and coordinates for realistic delivery scenarios
-
-This dataset powers the Route Optimization Simulator Streamlit app, allowing you to simulate deliveries to real businesses in your configured map region.
-
-### Customize the Map Region (Optional)
-
-The default deployment uses a San Francisco map. To change to a different region:
+To customize the map region, run:
 
 ```
 use the local skill from skills/ors-map-customization
 ```
 
-**Map Download & Resource Scaling**
+### Example: Customizing to Paris
+
+When you run the skill, Cortex Code will guide you through:
+
+1. **Choose a region** - For this example, select **Paris** or **Île-de-France** from Geofabrik
+2. **Download the map** - The skill downloads the OpenStreetMap data
+3. **Configure routing profiles** - Choose which vehicle types to enable (car, truck, bicycle, etc.)
+4. **Update the services** - The skill restarts the ORS services with the new map
+
+**⏳ Wait for Services to Restart**
+
+After the map is uploaded, the services need to rebuild the routing graphs. You can monitor progress in the Service Manager:
+
+1. Navigate to **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP**
+2. Check the **Service Manager** - all 4 services should show ✅ RUNNING
+3. The **Open Route Service** will take the longest as it builds the graph files
+
+Once services are running, the Function Tester will show **Paris addresses** instead of San Francisco!
+
+### Map Download & Resource Scaling
 
 The skill downloads OpenStreetMap data from Geofabrik or BBBike. The bigger the map file, the longer it takes to:
 - **Download** the OSM data from the source
@@ -335,45 +342,21 @@ To customize, you can:
 
 **Git Branch Management**
 
-All customizations are committed to a feature branch (e.g., `feature/ors-great-britain`), preserving the original San Francisco configuration on `main`.
+All customizations are committed to a feature branch (e.g., `feature/ors-paris`), preserving the original San Francisco configuration on `main`. To switch between regions later:
 
-### Available Cortex Code Skills
-
-| Skill | Description | Command |
-|-------|-------------|---------|
-| `check-prerequisites` | Verify and install dependencies | `use the local skill from skills/check-prerequisites` |
-| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from skills/deploy-route-optimizer` |
-| `ors-map-customization` | Change map region and customize app | `use the local skill from skills/ors-map-customization` |
-| `deploy-demo` | Deploy demo notebook and Streamlit | `use the local skill from skills/deploy-demo` |
-| `customize-function-tester` | Customize Function Tester coordinates | `use the local skill from skills/customize-function-tester` |
-| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from skills/uninstall-route-optimizer` |
-
-### Git Branching for Multiple Regions
-
-Cortex Code automatically manages Git branches for different map configurations:
-
-```
-main                           <- Original San Francisco configuration
-├── feature/ors-great-britain  <- Great Britain customizations
-├── feature/ors-germany        <- Germany customizations
-└── feature/ors-<region>       <- Other region customizations
-```
-
-To switch between regions:
 ```bash
-git checkout feature/ors-great-britain
+git checkout feature/ors-paris    # Switch to Paris
+git checkout main                 # Switch back to San Francisco
 ```
 
 Then redeploy with Cortex Code to apply the configuration.
 
-Once your app is activated and running, continue to deploy the demo.
+Once your services are running with the new map (or if you skipped customization), continue to deploy the demo.
 
 <!-- ------------------------ -->
 ## Deploy the Demo
 
-Now that the Route Optimizer Native App is running, use Cortex Code to deploy the complete demo including the Marketplace data, notebooks, and Streamlit application.
-
-> **_IMPORTANT:_** If you customized the map region using `ors-map-customization`, run `deploy-demo` **after** that customization. This ensures the notebooks and Streamlit use your chosen region's city and coordinates. If you skip customization, the demo defaults to San Francisco.
+Now that your Route Optimizer is configured (either with San Francisco default or your customized region like Paris), deploy the demo to get real-world points of interest data and the full simulation experience.
 
 In the Cortex Code CLI, type:
 
@@ -382,11 +365,12 @@ use the local skill from skills/deploy-demo
 ```
 
 Cortex Code will automatically:
-- Acquire the **Carto Overture Maps Places** dataset from the Snowflake Marketplace
-- Create the `VEHICLE_ROUTING_SIMULATOR` database with required schemas
-- Deploy the **Add Carto Data** notebook and execute it to prepare the data
-- Deploy the **Routing Functions with AISQL** notebook for exploring the functions
-- Deploy the **Simulator** Streamlit application
+- **Acquire Marketplace Data** - Gets the **Carto Overture Maps Places** dataset with 50+ million POIs worldwide
+- **Create Demo Database** - Sets up `VEHICLE_ROUTING_SIMULATOR` with required schemas
+- **Deploy Notebooks** - Provisions the AISQL notebook customized for your chosen city (e.g., Paris)
+- **Deploy Simulator** - Creates the Route Optimization Streamlit app with real POI data
+
+> **_NOTE:_** The demo uses your customized region. If you selected Paris, the notebooks and Streamlit will show Paris restaurants, supermarkets, and other businesses.
 
 ### What Gets Created
 
@@ -398,22 +382,34 @@ Cortex Code will automatically:
 | Notebook | `NOTEBOOKS.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of routing functions |
 | Streamlit | `STREAMLITS.SIMULATOR` | Route optimization simulator app |
 
-### Explore the Routing Functions (Optional)
+### What's Next?
 
-After deployment, you can explore the routing functions interactively using the notebook:
+After deployment completes, you have two options:
+
+**Option A: Go Straight to the Simulator** → Jump to [Run the Streamlit](#run-the-streamlit)
+
+Launch the Route Optimization Simulator immediately to see vehicle routing in action with real POI data from your configured region (Paris, San Francisco, etc.).
+
+**Option B: Explore with AISQL Notebook First** → Continue below
+
+Learn how the routing functions work by running through the interactive notebook with AI-generated sample data.
+
+### Explore the Routing Functions with AISQL (Optional)
+
+The AISQL notebook demonstrates how to use the routing functions programmatically with AI-generated sample data customized for your region.
 
 1. Navigate to **Projects > Notebooks** in Snowsight
 2. Open **ROUTING_FUNCTIONS_AISQL**
-3. Follow the notebook to learn how to use:
+3. Run through the notebook to explore:
    - **Directions** - Point-to-point and multi-waypoint routing
    - **Optimization** - Vehicle route optimization matching jobs to vehicles
    - **Isochrones** - Catchment area analysis based on travel time
 
-The notebook demonstrates using **AISQL** to generate sample data and visualize results with Pydeck maps.
+> **_TIP:_** The notebook prompts are customized for your chosen city. If you selected Paris, the AI will generate sample restaurants, delivery jobs, and customer locations in Paris!
 
 ### Access the Streamlit App
 
-Once deployment completes, navigate to the Streamlit app:
+Navigate to the Simulator Streamlit app:
 
 1. Go to **Projects > Streamlits** in Snowsight
 2. Click on **SIMULATOR**
@@ -1259,6 +1255,20 @@ The app is confined to a B2B model as we do not have public names and addresses 
 
 
 
+
+<!-- ------------------------ -->
+## Available Cortex Code Skills
+
+For reference, here are all available Cortex Code skills for this solution:
+
+| Skill | Description | Command |
+|-------|-------------|---------|
+| `check-prerequisites` | Verify and install dependencies | `use the local skill from skills/check-prerequisites` |
+| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from skills/deploy-route-optimizer` |
+| `ors-map-customization` | Change map region (Paris, London, etc.) | `use the local skill from skills/ors-map-customization` |
+| `deploy-demo` | Deploy notebooks and Simulator Streamlit | `use the local skill from skills/deploy-demo` |
+| `customize-function-tester` | Update Function Tester coordinates | `use the local skill from skills/customize-function-tester` |
+| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from skills/uninstall-route-optimizer` |
 
 <!-- ------------------------ -->
 ## Uninstall the Route Optimizer
