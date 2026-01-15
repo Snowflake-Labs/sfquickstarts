@@ -472,13 +472,9 @@ The POI data displayed in the Simulator is filtered by **GEOHASH** to match your
 | Default (San Francisco map) | San Francisco | Restaurants, supermarkets, etc. in SF |
 | Custom map region | City chosen during customization | If you selected "Germany" map and chose "Berlin" as the notebook city, POI data will be for Berlin |
 
-When you run the `ors-map-customization` skill:
-- For **country/state maps**: You select a major city within that region (e.g., "London" for Great Britain)
-- For **city maps**: Uses that city directly (e.g., New York)
+The `add_carto_data` notebook (deployed by `deploy-demo`) filters the Overture dataset to your chosen city and creates the industry-specific views (Food, Health, Cosmetics distributors and customers).
 
-The `add_carto_data` notebook filters the Overture dataset to your chosen city and creates the industry-specific views (Food, Health, Cosmetics distributors and customers).
-
-> **_TIP:_** To change the city, run the map customization skill again or modify the `add_carto_data` notebook directly.
+> **_TIP:_** To change the city, run the `ors-map-customization` skill again. See the [Customize the Map Region](#customize-the-map-region) section for details on how city selection works for country vs. city maps.
 
 ### Setting the Context of the Routing Scenario
 
