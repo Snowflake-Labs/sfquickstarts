@@ -338,6 +338,8 @@ Once your app is activated and running, continue to deploy the demo.
 
 Now that the Route Optimizer Native App is running, use Cortex Code to deploy the complete demo including the Marketplace data, notebooks, and Streamlit application.
 
+> **_IMPORTANT:_** If you customized the map region using `ors-map-customization`, run `deploy-demo` **after** that customization. This ensures the notebooks and Streamlit use your chosen region's city and coordinates. If you skip customization, the demo defaults to San Francisco.
+
 In the Cortex Code CLI, type:
 
 ```
@@ -409,7 +411,7 @@ The POI data displayed in the Simulator is filtered by **GEOHASH** to match your
 
 | Configuration | POI Data Location | Example |
 |---------------|-------------------|---------|
-| Default (San Francisco map) | New York City | Restaurants, supermarkets, etc. in NYC |
+| Default (San Francisco map) | San Francisco | Restaurants, supermarkets, etc. in SF |
 | Custom map region | City chosen during customization | If you selected "Germany" map and chose "Berlin" as the notebook city, POI data will be for Berlin |
 
 When you run the `ors-map-customization` skill:
@@ -451,11 +453,11 @@ The `add_carto_data` notebook filters the Overture dataset to your chosen city a
 
 - You may close the side bar.
 
-### Wholesaler Routing Walkthrough.
+### Wholesaler Routing Walkthrough
 
-This is an example scenario based on the previously selected fields.
+This is an example scenario based on the previously selected fields. The example uses San Francisco (the default map), but you can search for any location within your configured map region.
 
-**Hudson Produce** is in New York City.  This week they have 3 vehicles assigned to make up to 30 deliveries today.
+**Bay Area Produce** is in San Francisco. This week they have 3 vehicles assigned to make up to 30 deliveries today.
 
 ![alt text](assets/image-12.png)
 
@@ -625,7 +627,7 @@ places_f = places_f.select('GEOMETRY',call_function('ST_X',
 
 **Cortex map filter**
 
-This is where Cortex is used to filter the places dataset. The prompt is asking the model to 'give me the Latitude an Longitude which centers the following place.' The 'following place' is a free text field which the user enters such as: the Statue of Liberty, or London, or Heathrow Airport. They enter whatever they like and cortex will try and make sense of it.
+This is where Cortex is used to filter the places dataset. The prompt is asking the model to 'give me the Latitude an Longitude which centers the following place.' The 'following place' is a free text field which the user enters such as: the Golden Gate Bridge, Fisherman's Wharf, or Union Square. They enter whatever they like and Cortex will try and make sense of it.
 The user also chooses an LLM model (I have found mistral-large2 works very well) and a distance. Different LLMs produce varying results of accuracy. For better accuracy, perhaps use Cortex Fine Tuning to load good examples into the model - such as the Overture Points of Interest itself. I found that mistral large 2 produced the result accuracy I needed without fine tuning. The distance is not really used for the LLM, but is used later to filter out potential distributors by straight line distance.
 
 ```python
@@ -634,7 +636,7 @@ with st.sidebar:
     st.markdown('##### Cortex Powered Map Filter')
     st.info(prompt)
     model = st.selectbox('Choose Model:',['reka-flash','mistral-large2'],1)
-    place = st.text_input('Choose Input','Heathrow Airport')
+    place = st.text_input('Choose Input','Fisherman\'s Wharf')
     distance = st.number_input('Distance from location in KM',1,300,5)
 
 ```
@@ -1209,7 +1211,7 @@ def veh_journey(dataframe,vehicle):
 
 ```
 
-Below you can see an example of all three vehicles travelling around Paris to drop goods off. This is combining points and line string layers for each vehicle as well as the isochrone layer.
+Below you can see an example of all three vehicles travelling around your selected city to drop goods off. This is combining points and line string layers for each vehicle as well as the isochrone layer.
 
 ![map with tabs](assets/ST08.png)
 
@@ -1222,6 +1224,24 @@ The app is confined to a B2B model as we do not have public names and addresses 
 
 
 
+
+<!-- ------------------------ -->
+## Uninstall the Route Optimizer
+
+To remove the Route Optimizer Native App and all associated resources from your Snowflake account, use the uninstall skill:
+
+```
+use the local skill from skills/uninstall-route-optimizer
+```
+
+This skill will:
+- Remove the Native App (`OPENROUTESERVICE_NATIVE_APP`)
+- Drop the Application Package (`OPENROUTESERVICE_NATIVE_APP_PKG`)
+- Delete the setup database (`OPENROUTESERVICE_SETUP`) including all stages and image repository
+- Remove the compute pool and all container services
+- Optionally remove the warehouse and local container images
+
+> **_NOTE:_** The uninstall skill will ask for confirmation before removing resources. This is a destructive operation that cannot be undone.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
