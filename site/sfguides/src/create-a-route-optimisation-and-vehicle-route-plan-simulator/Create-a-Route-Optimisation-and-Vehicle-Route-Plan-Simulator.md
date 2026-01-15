@@ -1,11 +1,12 @@
-author: Becky O’Connor and Piotr Paczewski
+author: Becky O'Connor and Piotr Paczewski
 id: create-a-route-optimisation-and-vehicle-route-plan-simulator
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: This tutorial leverages Snowflake Container Services, native apps, Geospatial Analytics, Streamlit, Cortex and the Open Route Service to optimize vehicle routes in order to distribute goods to chosen destinations on time.
+summary: Deploy an OpenRouteService Native App in minutes using Cortex Code skills. Build a self-contained route optimization platform with directions, vehicle optimization, and isochrones - all within Snowflake with no external API dependencies.
 environments: web
-status: Archived 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
 # Create a Route Optimization and Vehicle Route Plan Simulator
 <!-- ------------------------ -->
