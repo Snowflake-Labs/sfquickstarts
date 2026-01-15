@@ -13,21 +13,19 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ![alt text](assets/intromap.png)
 
-In this quickstart, we will be leveraging the the tools within Snowflake to:
+In this quickstart, you will **install an [Open Route Service](https://openrouteservice.org/) Native App** in Snowflake using **Cortex Code** skills. The entire setup takes just **minutes** - simply run natural language commands and the AI-powered CLI handles the rest.
 
-- **Visualize** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
+Once deployed, you will be able to:
 
-- **Discover** what it would look like to route goods to real world points of interest such as restaurants or supermarkets using the Overture Point of Interest dataset provided freely on the marketplace by Carto.
+- **Visualize** delivery points anywhere in the world and understand the best routes for vehicles to deliver goods or services from a designated depot. Use the multi-layer mapping capabilities of Pydeck to create easy-to-understand routing plans.
+
+- **Discover** what it would look like to route goods to real-world points of interest such as restaurants or supermarkets using the **Overture Maps Places** dataset provided freely on the Snowflake Marketplace by Carto.
 
 - **Understand** numerous routing scenarios across a variety of industries anywhere in the world.
 
+The Native App provides three powerful routing functions: **Directions**, **Route Optimization**, and [**Isochrones**](https://en.wikipedia.org/wiki/Isochrone_map) - all running securely within your Snowflake account with no external API calls required.
 
-
-You will be leveraging [Open Route Service](https://openrouteservice.org/) to optimize vehicle routes in order to distribute goods to chosen destinations on time.
-
-You will be creating **Directions**, **Route Optimization** and [**Isochrone**](https://en.wikipedia.org/wiki/Isochrone_map) functions.
-
-This quickstart uses **Cortex Code**, Snowflake's AI-powered CLI, to deploy the solution with natural language commands and automated skills. Snowflake allows for creation of a fully interactive route simulator which will benefit many vehicle centric industries such as **retail**, **distribution**, **healthcare** and more.
+This solution benefits vehicle-centric industries such as **retail**, **distribution**, **healthcare** and more.
 
 ### Prerequisites
 
