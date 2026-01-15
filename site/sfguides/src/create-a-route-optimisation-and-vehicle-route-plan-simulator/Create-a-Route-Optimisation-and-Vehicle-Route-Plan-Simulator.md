@@ -284,10 +284,10 @@ The skill starts by asking you **three yes/no questions** to determine what you 
 
 | Your Choices | What Gets Updated |
 |--------------|-------------------|
-| **Location = YES** | Map file downloaded, ORS config, graphs rebuilt, Function Tester coordinates, all demo content |
-| **Vehicles = YES** | Routing profiles in config, graphs rebuilt, Function Tester profiles, app redeployed |
+| **Location = YES** | Map file downloaded, ORS config, graphs rebuilt, Function Tester + Simulator coordinates, all demo content |
+| **Vehicles = YES** | Routing profiles in config, graphs rebuilt, Function Tester + Simulator profiles, app redeployed |
 | **Industries = YES** | Add Carto Data notebook, AISQL notebook, Streamlit defaults |
-| **Location OR Vehicles = YES** | Function Tester app updated and Native App redeployed |
+| **Location OR Vehicles = YES** | Function Tester + Simulator apps updated and Native App redeployed |
 | **Industries ONLY** | Only demo content updated - no app redeployment needed |
 
 > **If using Git:** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults.
