@@ -1352,26 +1352,32 @@ This skill will:
 ## Conclusion and Resources
 ### Conclusion
 
-So you will now see that by combining AI, freely accessible points of interests, easy to use geospatial functions, the ability to securely call the open route service and the powers of Streamlit in Snowflake - creating innovative geospatial applications  is entirely possible. 
+You've just deployed a complete route optimization platform **in minutes** using natural language commands - no complex configuration files, no external API dependencies, and no data leaving your Snowflake environment.
 
-Snowflake provides powerful solutions when you bring Snowflake's advanced analytics, Cortex, Snowpark and Streamlit's visualization capabilities together.  Also, by leveraging the open route service (or even an alternative provider such as the Carto Toolbox) using external integrations provides another level of geospatial capabilites such as route optimisation, directions and isochrones.  
+This solution demonstrates the power of combining:
+- **Cortex Code** - AI-powered CLI that turns natural language into automated workflows
+- **Snowpark Container Services** - Running OpenRouteService as a self-managed Native App
+- **Carto Overture Maps** - Real-world points of interest for authentic simulations
+- **Streamlit** - Interactive visualization that brings routing scenarios to life
 
-
+The key advantage of this approach is **flexibility without complexity**. Want to switch from San Francisco to Paris? Just answer "yes" to location customization. Need to add walking routes? Enable the profile. Want different industries? Customize the demo. The decision tree approach means you only run the steps you need.
 
 ### What You Learned
 
-You will have learned the following:
- - How to use Snowflake Cortex can be used as a location filter, which can filter a comprehensive point of interest dataset to anywhere in the world.
+- **Deploy Native Apps with Cortex Code** - Use natural language skills to automate complex Snowflake deployments including container services, stages, and compute pools
 
-- Use text based Search capabilities for advanced filtering which adds accurate context to a simulation
+- **Self-Managed Route Optimization** - Run OpenRouteService entirely within Snowflake with no external API calls, giving you unlimited routing requests and complete data privacy
 
-- How to utilise Pydeck to create a multi layered map
+- **Flexible Customization** - Use the decision tree approach to customize location, vehicle types, and industries - running only the steps you need
 
-- Leverage the open route service to create the following
+- **Three Routing Functions:**
+    - **Directions** - Point-to-point and multi-waypoint routing
+    - **Optimization** - Match delivery jobs to vehicles based on time windows, capacity, and skills
+    - **Isochrones** - Generate catchment polygons showing reachable areas
 
-    - isochrones (catchements) based on drive time
-    - Simple Directions and Directions which include waypoints
-    - Route Optimisations
+- **Real-World Data Integration** - Leverage the Carto Overture Places dataset to create location-relevant simulations with real businesses
+
+- **Interactive Visualization** - Build multi-layer maps with Pydeck showing routes, delivery points, and catchment areas
 
 
 ### Related Resources
