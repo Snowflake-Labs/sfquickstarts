@@ -73,7 +73,7 @@ pip install kafka-python confluent-kafka
 
 ### Clone or Download the Assets
 
-Download the assets from this quickstart to a local directory from this [GitHub repository](https://github.com/sfc-gh-bhess/sfg-kafka-interactive-tables-streaming). 
+Download the assets from this quickstart to a local directory from this [GitHub repository](https://github.com/sfc-gh-bhess/sfguide-kafka-interactive-tables-streaming). 
 The assets include:
 - `docker-compose.yml` - Kafka cluster configuration
 - `Dockerfile` - Kafka Connect with Snowflake connector
