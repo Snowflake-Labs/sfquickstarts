@@ -2,38 +2,40 @@ author: Josh Reini
 id: getting-started-with-ai-observability
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: This is a guide for getting started with Snowflake AI Observability.
+summary: Monitor AI model performance with Snowflake AI Observability for drift detection, quality metrics, and production monitoring.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability
+
+
+
+
 
 # Getting Started with AI Observability
 
 ## Overview
 
+The widespread integration of large language models (LLMs) and generative AI in mission-critical business processes has created a need for robust AI observability to address the inherent “black box” and nondeterministic nature of these systems and applications. The complexity of AI systems makes it challenging to understand their behavior, performance and resource consumption.
 
-AI Observability in Snowflake Cortex enables you to easily evaluate and trace your gen AI applications. With AI Observability, you can measure the performance of your AI applications by running systematic evaluations, and iterate on your application configurations to optimize performance. In addition, you can log the application traces to debug your application. AI Observability improves trust and transparency of gen AI applications and agents, enabling thorough benchmarking and performance measurement prior to deploying your applications.
+[AI observability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability) enables developers to monitor, analyze and visualize the internal states, inputs and outputs of generative AI applications, increasing accuracy, trust, efficiency and regulatory compliance in real-world environments. AI observability spans all stages of application development, including development, testing and production, and anchors on three key pillars:
+* **Tracing**: As developers build and customize their applications, tracing enables them to visualize the inputs, outputs and intermediate states of the application. This provides granular information of each component within the application to enable better debugging and explainability of the application behavior.
+* **Evaluations**: After the initial version of the application is ready, developers conduct systematic evaluations to assess their application's performance to proactively improve response accuracy. This allows them to test and compare different models and prompts and finalize the configuration for product deployments.
+* **Monitoring**: Once the application is deployed in production, developers need to constantly monitor the performance of their application to ensure operational reliability and avoid performance drift. Continuous monitoring also enables them to fine-tune the application by eliminating failure points and accommodating data drift.
 
-In this tutorial, you'll build a Retrieval-Augmented Generation (RAG) system using Cortex Search and Cortex LLMs. This will be the basis of our example. Then, you'll add OpenTelemetry tracing using TruLens to the app. Last, you'll create a test set and run LLM-as-judge evaluations in batch against your application.
-
-Here is a summary of what you will be able to learn in each step by following this quickstart:
-
-- **Setup Environment**: Create Snowflake objects required for the example.
-- **Prepare Data**: Load, parse and chunk data for RAG.
-- **Create a RAG**: Create a RAG with Cortex Search and Complete, adding TruLens instrumentation.
-- **Register the App**: Set application metadata for experiment tracking.
-- **Create a Run**: Configure your test set for evaluation.
-- **Compute Evaluation Metrics**: Compute evaluation metrics in batch on the run.
-- **Examine Results**: Navigate AI Observability in Snowsight to view and compare traces and evaluation results.
+In this quickstart, you'll build a [Retrieval-Augmented Generation](https://www.snowflake.com/en/fundamentals/rag/) (RAG) system using Cortex Search and Cortex LLMs. This will be the basis of our example. Last, you'll create a test set and run LLM-as-judge evaluations in batch against your application.
 
 ### What is TruLens?
 
 [TruLens](https://www.trulens.org/) is a library for tracking and evaluating Generative AI applications in open source, along with powering Snowflake AI Observability.
 
 ### What You Will Learn
-- How to build a RAG with Cortex Search and Cortex LLM Functions.
-- How to create a run.
-- How to compute evaluation metrics.
+- How to load, parse, and chunk data for RAG
+- How to create a RAG with Cortex Search and Complete, adding TruLens instrumentation
+- How to set application metadata for experiment tracking
+- How to create a run and configure your test set for evaluation
+- How to compute evaluation metrics in batch on the run
+- How to navigate AI Observability to view and compare traces and evaluation results
 
 ### What You Will Build
 - A retrieval-augmented generation (RAG) app
@@ -45,8 +47,7 @@ Here is a summary of what you will be able to learn in each step by following th
 
 ## Setup Environment
 
-
-If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN privileges, ensure that the user role has the following roles granted ():
+This phase prepares your environment and creates the dedicated database and warehouse. If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN privileges, ensure that the user role has the following roles granted ():
 
 - SNOWFLAKE.CORTEX_USER database role
 - SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP application role
@@ -54,20 +55,29 @@ If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN
 
 For more information, see [Required Privileges for AI Observability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#label-ai-observability-required-privileges).
 
-To open the notebook, open [getting-started-with-ai-observability.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/getting-started-with-ai-observability.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
+We will use a [Snowflake Notebook](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) to execute all the setup. Open the [getting-started-with-ai-observability.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/getting-started-with-ai-observability.ipynb) file from the GitHub repository and download it to open the Notebook. ***(NOTE: Do NOT right-click to download.)***
 
-Then, create a new Snowflake notebook by importing the notebook file in Snowsight.
+Then, create a new Snowflake Notebook by importing the notebook file in Snowsight.
+* Projects » Notebooks
+* Click the + Notebook drop-down and select Import .ipynb file
+* Select the getting-started-with-ai-observability.ipynb file
+* In Create notebook, configure the fields to your liking and click Create when done
 
-In your Snowflake notebook, install the following python packages from the Snowflake conda channel:
-* `snowflake-ml-python`
-* `snowflake.core`
-* `trulens-core==1.5.2`
-* `trulens-providers-cortex==1.5.2`
-* `trulens-connectors-snowflake==1.5.2`
+Once in the Snowflake Notebook, we will [import packages](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-import-packages) from Anaconda: 
+* Select Packages menu at the top of your Notebook
+* Search for these packages listed in the Snowflake Anaconda channel
+     * `snowflake-ml-python`
+     * `snowflake.core`
+     * `trulens-core==1.5.2`
+     * `trulens-providers-cortex==1.5.2`
+     * `trulens-connectors-snowflake==1.5.2`
+ * Select a package to install it for use in your Notebook, and optionally change the default package version in the list of Installed Packages
+ * Packages installed by you appear under Installed Packages
+ * After the package is added, it may take some time to be installed. After it is installed, you will see a confirmation message and you can then import and use the libraries in a Python cell
 
-Once we have a Snowflake notebook with the right packages installed, we are ready to go.
+Once we have the Snowflake Notebook with the right packages installed, we are ready to go.
 
-In the notebook, begin by setting up your Snowflake environment. Create a new database, warehouse, and establish a session.
+In the notebook, we will begin by setting up your Snowflake environment. Execute these cells to create a new database, warehouse, and establish a session.
 
 ```python
 from snowflake.snowpark.context import get_active_session
@@ -88,14 +98,15 @@ USE WAREHOUSE cortex_search_tutorial_wh;
 
 ## Prepare Data
 
+This phase focuses on acquiring the documents needed for your RAG application and securely storing them in Snowflake using an internal stage. These documents will be indexed by Cortex Search in a later step. 
 
-You will use a sample dataset of the Federal Open Market Committee (FOMC) meeting minutes for this example. This is a sample of twelve 10-page documents with meeting notes from FOMC meetings from 2023 and 2024. Download the files directly from your browser by following this link:
-
-[FOMC minutes sample](https://drive.google.com/file/d/1C6TdVjy6d-GnasGO6ZrIEVJQRcedDQxG/view)
+You will use a sample dataset of the Federal Open Market Committee (FOMC) meeting minutes for this example. This is a sample of twelve 10-page documents with meeting notes from FOMC meetings from 2023 and 2024. Download the files directly from your browser through this link: [FOMC minutes sample](https://drive.google.com/file/d/1C6TdVjy6d-GnasGO6ZrIEVJQRcedDQxG/view).
 
 The complete set of FOMC minutes can be found at the [US Federal Reserve’s website](https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm).
 
-Create a stage in Snowflake to store your PDF files.
+> NOTE: Make sure to first unzip all the contents of the zipped folder to upload the PDF files.
+
+Execute the following SQL commands in your Snowflake Notebook to create a dedicated stage within your database. This stage is where you will upload the downloaded PDF files.
 
 ```sql
 CREATE OR REPLACE STAGE cortex_search_tutorial_db.public.fomc
@@ -105,24 +116,29 @@ CREATE OR REPLACE STAGE cortex_search_tutorial_db.public.fomc
 
 Now upload the dataset. You can upload the dataset in Snowsight or using SQL. To upload in Snowsight:
 
-1. Sign in to Snowsight.
-2. Select **Data** in the left-side navigation menu.
-3. Select your database `cortex_search_tutorial_db`.
-4. Select your schema `public`.
-5. Select **Stages** and choose `fomc`.
-6. On the top right, select the **+ Files** button.
-7. Drag and drop files into the UI or select **Browse** to choose a file from the dialog window.
-8. Select **Upload** to upload your file.
+1. Select Catalog » Database Explorer
+2. Select your database `cortex_search_tutorial_db`.
+3. Select your schema `public`.
+4. Select **Stages** and choose `fomc`.
+5. On the top right, select the **+ Files** button.
+6. Drag and drop files into the UI or select **Browse** to choose a file from the dialog window.
+7. Select **Upload** to upload your file.
 
-Ensure that your PDF files have been successfully uploaded to the stage.
+Run the following command in your Snowflake Notebook to confirm that your PDF files have been successfully uploaded to the stage.
 
 ```sql
 ls @cortex_search_tutorial_db.public.fomc
 ```
 
+You should see a list of the PDF files, confirming they are ready to be parsed and indexed for RAG.
+
 ### Parse the data
 
-Parse the uploaded PDF files to extract their content.
+To make the PDF data useful for retrieval, we must first extract the text content and then break that content into small, searchable segments.
+
+We use the built in SNOWFLAKE.CORTEX.PARSE_DOCUMENT function to extract text from the PDF files stored in your stage, placing the result into a new table. 
+
+Execute the following SQL commands in your Snowflake Notebook to parse the uploaded PDF files and extract their content.
 
 ```sql
 CREATE OR REPLACE TABLE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.PARSED_FOMC_CONTENT AS SELECT 
@@ -140,7 +156,9 @@ CREATE OR REPLACE TABLE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.PARSED_FOMC_CONTENT AS 
 
 ### Chunk the data
 
-Split the parsed text into manageable chunks for efficient searching.
+Large text blocks are inefficient for search. We use the SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER function to break the parsed content into smaller, overlapping chunks. This overlap ensures context is not lost at the chunk boundaries. 
+
+Execute the following commands in your Snowflake Notebook to split the parsed text into manageable chunks for efficient searching.
 
 ```sql
 CREATE OR REPLACE TABLE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.CHUNKED_FOMC_CONTENT (
@@ -164,8 +182,9 @@ FROM
 
 ## Create a RAG
 
+In this phase, you will create the Cortex Search Service, establish the tracing mechanism using TruLens, and construct the complete RAG application.
 
-Set up the Cortex Search service to enable efficient querying of the chunked content.
+We create the search index over the chunked FOMC data, defining the warehouse and the embedding model. Execute the following commands in your Snowflake Notebook to set up the Cortex Search service and enable efficient querying of the chunked content.
 
 ```sql
 CREATE OR REPLACE CORTEX SEARCH SERVICE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.FOMC_SEARCH_SERVICE
@@ -181,7 +200,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.FOMC_SE
     );
 ```
 
-Next, we can create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
+Next, we define a class `CortexSearchRetreiver` to connect to our Cortex Search Service and add the `retrieve` method that we can leverage to call it from within the Snowflake Notebook session. Execute the following code in the Snowflake Notebook:
 
 ```python
 from snowflake.snowpark.context import get_active_session
@@ -228,13 +247,6 @@ retrieved_context = retriever.retrieve(query="how was inflation expected to evol
 retrieved_context
 ```
 
-Before we put together the RAG, we want to enable TruLens-OpenTelemetry for tracing and observability.
-
-```python
-import os
-os.environ["TRULENS_OTEL_TRACING"] = "1"
-```
-
 Create a database and schema to store our traces and evaluations.
 
 ```sql
@@ -244,7 +256,7 @@ create or replace schema observability_schema;
 use schema observability_schema;
 ```
 
-Then, construct the RAG system with integrated instrumentation using the retriever we created previously. Including the span type and attributes in instrumentation will power evaluations of the spans captured.
+Then, we construct the RAG system with integrated instrumentation using the retriever we created previously. By including the span type and attributes in instrumentation, it will power evaluations of the spans captured.
 
 ```python
 from snowflake.cortex import complete
@@ -306,7 +318,7 @@ class RAG:
 rag = RAG()
 ```
 
-Test the RAG system by querying it with a sample question.
+Test the RAG system by querying it with a sample question. The successful execution of the RAG query confirms that the tracing is active and the system is ready for formal evaluation.
 
 ```python
 response = rag.query("how was inflation expected to evolve in 2024?")
@@ -314,8 +326,7 @@ response = rag.query("how was inflation expected to evolve in 2024?")
 
 ## Register the App
 
-
-Set metadata including application name and version, along with the snowpark session to store the experiments.
+We will register your newly built RAG system with the TruLens observability framework. This registration tells the system where to store the evaluation results and tracing data within Snowflake and defines the specific application you are tracking. We will set metadata, including application name, version, and Snowpark session, to store the experiments.
 
 ```python
 from trulens.apps.app import TruApp
@@ -333,26 +344,26 @@ tru_rag = TruApp(
         connector=tru_snowflake_connector
     )
 ```
+Your application is now ready to run formal evaluations.
 
 ## Create a Run
 
+This phase prepares the formal test set and registers the evaluation experiment with TruLens. We will prepare a set of test queries to evaluate the RAG system.
 
-Prepare a set of test queries to evaluate the RAG system.
+The evaluation requires a dataset of predefined questions and their corresponding correct answers, which are the ground truth responses. The test set can be either a dataframe in Python or a table in Snowflake. In this example, we'll use a table in Snowflake.
 
-The test set can be either a dataframe in python or a table in Snowflake. In this example, we'll use a table in snowflake.
+1. Download the `fomc_dataset.csv` [dataset](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/fomc_dataset.csv) provided on GitHub.
+2. Upload `fomc_dataset.csv` to Snowflake via Snowsight:
+     * Select Ingestion » Add data
+     * Select the tile Load data into a Table
+     * Upload the `fomc_dataset.csv` file from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/tree/main)
+     * Choose `OBSERVABILITY_DB.OBSERVABILITY_SCHEMA` for the schema
+     * Select + Create new table
+     * Name the new table `FOMC_DATA`, then click next
+     * Update the column names to `QUERY` and `GROUND_TRUTH_RESPONSE`
+     * Select Load
 
-First, download the [dataset provided](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/fomc_dataset.csv).
-
-Then, upload `fomc_dataset.csv` to Snowflake:
-
-1. Select Data -> Add Data
-2. Choose the tile: Load data into a Table
-3. Upload `fomc_dataset.csv` from the [github repository]()
-4. Choose `OBSERVABILITY_DB.OBSERVABILITY_SCHEMA`, create a new table
-5. Name the new table `FOMC_DATA` , then click next.
-6. Update the column names to `QUERY`, and `GROUND_TRUTH_RESPONSE` and select Load.
-
-Set up the configuration for running experiments and add the run to TruLens.
+Execute the following code in your Snowflake Notebook. This will set up the configuration for running experiments and add the run to Snowflake.
 
 ```python
 from trulens.core.run import Run
@@ -375,16 +386,19 @@ run_config = RunConfig(
 run: Run = tru_rag.add_run(run_config=run_config)
 ```
 
-Start the experiment run with the prepared test set. Doing so will invoke the application in batch using the inputs in the dataset you provided in the run.
+Start the experiment run with the prepared test set. This will invoke the application in batch using the inputs in the dataset you provided in the run.
 
 ```python
 run.start()
 ```
 
+This may take around 10 to 15 minutes to load. Once this process completes, all the data will be collected and you can proceed to calculate the evaluation metrics.
+
 ## Compute Evaluation Metrics
 
+We will analyze the performance of the RAG system by computing relevant metrics.
 
-Analyze the performance of the RAG system by computing relevant metrics.
+Execute the following command in your Snowflake Notebook to trigger the batch computation of the three RAG triad.
 
 ```python
 run.compute_metrics([
@@ -396,9 +410,9 @@ run.compute_metrics([
 
 Evaluation metrics provide a quantifiable way to measure the accuracy and performance of your application. These metrics are computed using specific inputs to the application, LLM-generated outputs and any intermediate information (e.g., retrieved results for a RAG application). Additionally, some metrics can also be computed using ground truth if available.
 
-Metric computations using "LLM-as-a-judge" approach where an LLM is used to generate a score (between 0 - 1) and an associated explanation based on the provided information.
+Metric computations use the "LLM-as-a-judge" approach, where an LLM is used to generate a score (between 0 - 1) and an associated explanation is given based on the provided information.
 
-The starting point for evaluating RAGs is the RAG triad of context relevance, groundedness and answer relevance. These are localized evaluations of a RAG system so you can pinpoint the root cause of poor performance. They are also reference-free, meaning they can be run without using ground truth data.
+The starting point for evaluating RAGs is the RAG triad of context relevance, groundedness and answer relevance. These are localized evaluations of a RAG system, so you can pinpoint the root cause of poor performance. They are also reference-free, meaning they can be run without using ground truth data.
 
 ![RAG Triad](assets/RAG_Triad.png)
 
@@ -413,9 +427,9 @@ Answer relevance determines if the generated response is relevant to the user qu
 
 ## Examine Results
 
-To view evaluation results, navigate to Snowsight → AI & ML → Evaluations in the side navigation menu. The following user journey navigates you through the steps to view the evaluation results for your application runs
+To view evaluation results, navigate to Snowsight. Select AI & ML » Evaluations in the side navigation menu. The following user journey navigates you through the steps to view the evaluation results for your application runs
 
-1. View all applications: Navigate to Snowsight → AI & ML → Evaluations
+1. View all applications: Navigate to Snowsight. Select AI & ML » Evaluations
    
 ![apps](assets/apps.png)
 
@@ -423,17 +437,17 @@ To view evaluation results, navigate to Snowsight → AI & ML → Evaluations in
     
 ![runs](assets/runs.png)
 
-3. View evaluation results for a run: Select a run to view the aggregated results as well as the results corresponding to each record.
+3. View evaluation results for a run: Select a run to view the aggregated results and the results corresponding to each record.
 
 ![results](assets/results.png)
 
-4. View traces for each record: Select a specific record to view detailed traces, metadata and evaluation results for a the record.
+4. View traces for each record: Select a specific record to view detailed traces, metadata and evaluation results for the record.
    
 ![record](assets/trace.png)
 
 ## Conclusion And Resources
 
-Congratulations! You've successfully built a RAG by combining Cortex Search and Cortex Complete. You also created your first run, and computed evaluation metrics on the run. Last, you learned how to navigate the AI Observability interface to understand the detailed traces and individual evaluation results.
+Congratulations! You've successfully built a RAG by combining Cortex Search and Cortex Complete. You also created your first run and computed evaluation metrics on the run. Last, you learned how to navigate the AI Observability interface to understand the detailed traces and individual evaluation results.
 
 ### What You Learned
 
@@ -444,5 +458,5 @@ Congratulations! You've successfully built a RAG by combining Cortex Search and 
 
 ### Related Resources
 
-- [AI Observabilty Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/)
+- [AI Observability Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/)
 - [Open Source TruLens Documentation](https://www.trulens.org/getting_started/)

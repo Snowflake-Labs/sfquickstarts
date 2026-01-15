@@ -2,10 +2,13 @@ author: Mats Stellwall, Henry Chiang
 id: s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
+summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai
+
+
 
 # S&P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI
 <!-- ------------------------ -->
@@ -223,4 +226,3 @@ In this QuickStart you have learned how to use Snowflake Cortex to analyse execu
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai)
 * Access the research ["Questioning the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom)
 * Request access to the longer version of the notebook via <QRS@spglobal.com>
-

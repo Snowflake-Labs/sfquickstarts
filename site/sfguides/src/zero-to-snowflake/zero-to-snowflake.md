@@ -1,8 +1,8 @@
-author: Dureti Shemsi, Cameron Shimmin
+author: Cameron Shimmin, Dureti Shemsi
 id: zero-to-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
-summary: Zero to Snowflake
+summary: Zero to Snowflake 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -31,12 +31,6 @@ Our mission is to provide unique, high-quality food options in a convenient and 
  - An Enterprise or Business Critical Snowflake Account
  - If you do not have a Snowflake Account, please [sign up for a Free 30 Day Trial Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides&_fsi=6tNBra0z&_fsi=6tNBra0z). When signing up, please make sure to select  Enterprise edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions?_fsi=6tNBra0z&_fsi=6tNBra0z).
  - After registering, you will receive an email with an activation link and your Snowflake Account URL.
-- **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=zero-to-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Workspace</a> SQL file:** 
-
-```sql
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
-```
-- Simply copy and paste the line above into a SQL file and run it while logged in with the `ACCOUNTADMIN` role.
 
 ### What You Will Learn
 
@@ -59,7 +53,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
 ### **Overview**
 
-In this Quickstart, we will use <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=zero-to-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Workspaces</a> to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL file for the setup and each vignette. This will keep our code organized and easy to manage.
+In this guide, we will use <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=zero-to-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Workspaces</a> to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL file for the setup and each vignette. This will keep our code organized and easy to manage.
 
 Let's walk through how to create your first SQL file, add the necessary setup code, and run it.
 
@@ -752,11 +746,11 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ### Overview
 
-Welcome to the Zero to Snowflake Hands-on Lab focused on Snowflake Cortex AI!
+Welcome to the Zero to Snowflake guide focused on Snowflake Cortex AI!
 
-Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, <!-- Snowflake Copilot for AI-assisted SQL development, --> Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
+Within this guide, we will explore Snowflake's complete AI platform through a progressive journey from experimentation into unified business intelligence. We'll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AI Functions for production-scale analysis, <!-- Snowflake Copilot for AI-assisted SQL development, --> Cortex Search for semantic text searching, and Cortex Analyst for natural language analytics.
 
-- For more detail on Snowflake Cortex AI please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
+- For more detail on Snowflake Cortex AI, please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
 
 ### What You Will Learn
 
@@ -772,7 +766,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 **Phase 1: AI Foundation**
 * AI Experimentation Environment using Cortex Playground for model testing and optimization.
-* Production-scale Review Analysis pipeline using AISQL Functions for systematic customer feedback processing.
+* Production-scale Review Analysis pipeline using Cortex AI Functions for systematic customer feedback processing.
 
 **Phase 2: Intelligent Development & Discovery**
 <!-- * AI-Assisted SQL Development Workflow using Copilot for complex query generation. -->
@@ -789,7 +783,8 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 #### Overview
 
-As a data analyst at Tasty Bytes, you need to rapidly explore customer feedback using AI models to identify service improvement opportunities. Traditionally, AI experimentation is complex and time-consuming. **Snowflake Cortex Playground** solves this by offering a quick, secure environment directly within Snowflake's UI to experiment with diverse AI models, compare their performance on real business data, and export successful approaches as production-ready SQL. This lab guides you through using Cortex Playground for rapid prototyping and seamless integration of AI into your data workflows.
+As a data analyst at Tasty Bytes, you need to rapidly explore customer feedback using AI models to identify service improvement opportunities. Traditionally, AI experimentation is complex and time-consuming. **[Snowflake Cortex Playground](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-playground)** solves this by offering a quick, secure environment directly within Snowflake's UI to experiment with diverse AI models, compare their performance on real business data, and export successful approaches as production-ready SQL. This module guides you through using Cortex Playground for rapid prototyping and seamless integration of AI into your data workflows.
+
 
 #### Step 1 - Connect Data & Filter
 
@@ -805,8 +800,8 @@ Let's begin by connecting directly to customer review data within Cortex Playgro
       * **Schema: HARMONIZED**
       * **Table: TRUCK_REVIEWS_V**
 5.  Click **Let's go**
-6.  Select text column: **REVIEW**
-7.  Select filter column: **TRUCK_BRAND_NAME**
+6.  Select text column: **REVIEW**.
+7.  Select filter column: **TRUCK_BRAND_NAME**.
 8.  Click **Done**.
 9.  In the system prompt box, apply a filter using the **TRUCK_BRAND_NAME** dropdown. There are multiple reviews available for each truck brand. For instance, you can select "**Better Of Bread**" to narrow down the reviews. If "**Better Of Bread**" isn't available, please choose any other truck brand from the dropdown and proceed with one of its reviews.
 
@@ -875,28 +870,28 @@ In this section, let's explore the core technology that takes your AI insights f
 
 #### The Foundation: SQL at Its Core
 
-Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action! You can run it directly in a <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=zero-to-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Workspace</a> SQL file, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
+Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action! You can run it directly in a Workspace SQL file, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
+
+#### The AI_COMPLETE Function
+
+Behind every prompt you've run, the **[AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete)** function is hard at work. This is Snowflake Cortex AI's powerful function providing direct access to industry-leading large language models for text completion. The Cortex Playground simply offers an intuitive interface to test and compare these models before you embed them directly into your SQL. (Heads up: AI_COMPLETE is the updated version of SNOWFLAKE.CORTEX.COMPLETE)
 
 ![assets/vignette-3/cortex-playground-view-code.png](assets/vignette-3/cortex-playground-view-code.png)
-
-#### The SNOWFLAKE.CORTEX.COMPLETE Function
-
-Behind every prompt you've run, the **SNOWFLAKE.CORTEX.COMPLETE** function is hard at work. This is Snowflake Cortex's powerful function providing direct access to industry-leading large language models for text completion. The Cortex Playground simply offers an intuitive interface to test and compare these models before you embed them directly into your SQL. (Heads up: this will evolve to AI_COMPLETE in future releases.)
 
 This seamless integration means your AI experimentation directly translates into production-ready workflows within Snowflake.
 
 #### Conclusion
 
-The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT_ANSWER()**, and **AI_SUMMARIZE_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
+The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT_ANSWER()**, and **AI_SUMMARIZE_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
 
-### AISQL Functions
+### AI Functions
 
-![./assets/aisql_functions_header.png](./assets/aisql_functions_header.png)
+![./assets/ai_functions_header.png](./assets/ai_functions_header.png)
 
 
 #### Overview
 
-You've experimented with AI models in Cortex Playground to analyze individual customer reviews. Now, it's time to scale! This Quickstart shows you how to use **AI SQL Functions** to process thousands of reviews, turning experimental insights into production-ready intelligence. You'll learn to:
+You've successfully experimented with AI models in Cortex Playground to analyze individual customer reviews. Now, it's time to scale! This guide shows you how to use **[AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)** to process thousands of reviews, turning experimental insights into production-ready intelligence. You'll learn to:
 
 1.  **USE SENTIMENT()** to score and label truck customer reviews.
 2.  **Use AI_CLASSIFY()** to categorize reviews by themes.
@@ -905,12 +900,12 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 ### Get the SQL code and paste it into your SQL File.
 
-Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new SQL File to follow along in Snowflake. 
+Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new SQL File to follow along in Snowflake.
 <!-- Uncomment when Copilot is added back -->
 <!-- **Note that once you've reached the end of the SQL File you can skip to [Step 19 - Snowflake Copilot](/en/developers/guides/zero-to-snowflake/).** -->
 
 <!-- Remove when Copilot is added back -->
-**Note: Once you've reached the end of the SQL File, you can skip to [Step 19 - Cortex Search](/en/developers/guides/zero-to-snowflake/).**
+
 <!-- End remove -->
 
 ### Step 1 - Setting Context
@@ -1074,7 +1069,7 @@ GROUP BY
 
 #### Conclusion
 
-We've successfully demonstrated the transformative power of AI SQL functions, shifting customer feedback analysis from individual review processing to systemic, production-scale intelligence. Our journey through these four core functions clearly illustrates how each serves a distinct analytical purpose, transforming raw customer voices into comprehensive business intelligence—systematic, scalable, and immediately actionable. What once required individual review analysis now processes thousands of reviews in seconds, providing both the emotional context and specific details crucial for data-driven operational improvements.
+We've successfully demonstrated the transformative power of AI Functions, shifting customer feedback analysis from individual review processing to systemic, production-scale intelligence. Our journey through these four core functions clearly illustrates how each serves a distinct analytical purpose, transforming raw customer voices into comprehensive business intelligence—systematic, scalable, and immediately actionable. What once required individual review analysis now processes thousands of reviews in seconds, providing both the emotional context and specific details crucial for data-driven operational improvements.
 
 <!-- Uncomment when Copilot is added back -->
 <!-- As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease. -->
@@ -1156,7 +1151,7 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 While AI-powered tools excel at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
 <!-- End Remove -->
 
-**Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent re-ranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
+**[Snowflake Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent re-ranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
 
 #### Step 1 - Access Cortex Search 
 
@@ -1243,7 +1238,7 @@ Now try another query:
 
 Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.
 
-**In the next module** - Cortex Analyst - you’ll use natural language to query structured data. 
+In the next module - Cortex Analyst - you'll use natural language to query structured data. 
 
 ### Optional: Cortex Analyst
 
@@ -1254,7 +1249,7 @@ Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback.
 
 A business analyst at Tasty Bytes needs to enable self-service analytics, allowing the business team to ask complex questions in natural language and get instant insights without relying on data analysts to write SQL. While previous AI tools helped with finding reviews and complex query generation, the demand now is for **conversational analytics** that directly transforms structured business data into immediate insights.
 
-**Cortex Analyst** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.
+**[Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.
 
 #### Step 1 -  Design Semantic Model
 
@@ -1390,7 +1385,7 @@ The Chief Operating Officer at Tasty Bytes receives dozens of fragmented reports
 
 When the COO needs to understand why Q3 revenue dropped, connecting customer feedback sentiment with actual financial performance requires hours of manual analysis, SQL expertise, and cross-referencing multiple data sources. This is a significant hurdle for executives and other non-technical roles.
 
-In this section, we'll demonstrate how Snowflake Intelligence tackles this challenge by combining the capabilities of Cortex Search and Cortex Analyst, which are made available through the setup. This integration allows for a single conversational AI agent. You'll see how executives and other non-technical roles can ask natural language questions and receive immediate answers with visualizations. This kind of insight would normally take weeks of analyst work across multiple teams.
+In this section, we'll demonstrate how **[Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)** tackles this challenge by combining the capabilities of Cortex Search and Cortex Analyst, which are made available through the setup. This integration allows for a single conversational AI agent. You'll see how executives and other non-technical roles can ask natural language questions and receive immediate answers with visualizations. This kind of insight would normally take weeks of analyst work across multiple teams.
 
 **Prerequisites:**
 
@@ -1561,7 +1556,7 @@ With your intelligence agent created, we can now access the Snowflake Intelligen
 
 1.  Open Snowsight and navigate to the AI & ML Studio, then select **Snowflake Intelligence**
 2.  Select our created agent: `tasty_bytes_intelligence_agent`
-3.  Select the sources: select `tasy_byets_review_search` and `tasty_bytes_business_analytics`
+3.  Select the sources: select `tasty_bytes_review_search` and `tasty_bytes_business_analytics`
 
 You are now ready to demonstrate unified business intelligence through natural language.
 

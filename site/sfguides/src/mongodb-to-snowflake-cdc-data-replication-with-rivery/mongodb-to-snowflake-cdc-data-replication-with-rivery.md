@@ -3,10 +3,11 @@ author: Zachary Cie
 id: mongodb-to-snowflake-cdc-data-replication-with-rivery
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: MongoDB to Snowflake CDC Data Replication with Rivery
+summary: MongoDB to Snowflake CDC Data Replication with Rivery 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # MongoDB to Snowflake CDC Data Replication with Rivery
 <!-- ------------------------ -->

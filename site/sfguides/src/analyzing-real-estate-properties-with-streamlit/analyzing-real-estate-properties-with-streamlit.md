@@ -1,4 +1,4 @@
-summary: Analyzing real estate properties with Streamlit 
+summary: Analyze real estate property data with Streamlit dashboards on Snowflake for market insights, valuation, and investment analysis.
 id: analyzing-real-estate-properties-with-streamlit
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en

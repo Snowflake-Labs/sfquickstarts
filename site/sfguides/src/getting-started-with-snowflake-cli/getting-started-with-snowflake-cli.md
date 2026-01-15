@@ -1,11 +1,12 @@
 author: Tomasz Urbaszek, Gilberto Hernandez, Bhumika Goel, David Wang
-summary: Getting Started with Snowflake CLI
+summary: Getting Started with Snowflake CLI 
 id:getting-started-with-snowflake-cli
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowflake CLI
 <!-- ------------------------ -->

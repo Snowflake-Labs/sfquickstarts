@@ -2,10 +2,11 @@ author: melindawebster
 id: dcdf-incremental-processing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: Getting Started with DCDF Data Architecture Incremental Processing/Logical Partitions
+summary: Process data incrementally in Snowflake with DCDF Data Architecture and Dynamic Tables for efficient, cost-effective data pipelines.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with DCDF Data Architecture Incremental Processing & Logical Partitions
 <!-- ------------------------ -->

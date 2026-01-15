@@ -2,10 +2,11 @@ author: Matt Marzillo
 id: getting-started-with-microsoft-copilot-studio-and-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: This is a quickstart showing users how use Microsoft Copilot Studio with Snowflake Cortex Agents
+summary: This is a quickstart showing users how use Microsoft Copilot Studio with Snowflake Cortex Agents 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Microsoft Copilot Studio and Snowflake Cortex Agents
 <!-- ------------------------ -->
@@ -15,35 +16,30 @@ Microsoft Copilot Studio is a conversational AI platform that allows users to cr
 
 Cortex Agents orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
 
-Using the two services together allows users to build a copilot in Microsoft with all of their Microsoft data and tooling alongside Snowflake Cortex services on top of their Snowflake data with efficiently and securely (with Oauth support).
+By combining these two services, users can efficiently and securely build a copilot within Microsoft. This copilot leverages all of their Microsoft data and tooling alongside Snowflake Cortex services, which operate on their Snowflake data with Oauth support.
 
 ### Use Case
-In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
+The core goal of this quickstart is to create a single, powerful Sales Intelligence solution that lives inside Microsoft Copilot. We’ll achieve this by creating a powerful Cortex Agent in Snowflake and securely connecting it to your Microsoft Copilot. Two data sources will be built, one with structured sales data and another with unstructured sales call data. We will create a Cortex Agent that uses Cortex Search (for unstructured data) and Cortex Analyst (for structured data), and then wrap a Cortex Agent around it so that it can combine both services in a unified agentic experience. This can then be used by Copilot by leveraging OAuth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
 
-Snowflake Cortex has proven to be a best-in-class platform for building GenAI services and agents with your data and while there is overlap with functionality in Microsoft Copilot Studio we see many customers who want to build GenAI services in Snowflake Cortex then materialize those services to MS Copilot. Having MS Copilot serve as the single Copilot interface for all GenAI services and agents.
-
+Snowflake Cortex has proven to be a best-in-class platform for building GenAI services and agents with your data. While there is overlap with functionality in Microsoft Copilot Studio, we see many customers who want to build GenAI services in Snowflake Cortex then materialize those services to Microsoft Copilot, having it serve as the single interface for all GenAI services and agents.
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and a Snowflake account
-- Familiarity with [Microsoft 365 Copilot Studio](https://www.microsoft.com/en-us/microsoft-365/copilot/) and an account along with access to the Azure Entra ID service for that tenant.
+- Familiarity with Snowflake and a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
+- Familiarity with [Microsoft 365 Copilot Studio](https://www.microsoft.com/en-us/microsoft-365/copilot/) and and a Microsoft 365 Account
+- Access to the Microsoft Entra ID service for the Microsoft 365 tenant
 
 ### What You’ll Learn
-- Creating Snowflake Cortex Services for Search, Analyst and Agents
-- Creating a Microsoft 365 Copilot 
-- Connecting your MS Copilot to the Cortex Agent
+- How to create  Snowflake Cortex Services for Search, Analyst, and Agents
+- How to create a Microsoft 365 Copilot 
+- How to connect your Microsoft Copilot to the Cortex Agent
 
 ![](assets/agentcopilotarch.png)
 1. Create a Cortex Analyst Service with Semantic Model
 2. Create a Cortex Search Service
 3. Create a Cortex Agent that will use the services above as tools
-4. Connect and authenticate to Cortex Agent from MS Copilot
+4. Connect and authenticate to Cortex Agent from Microsoft Copilot
 5. Use the Copilot with Cortex Agent
-6. (Optional and not covered in this quickstart) connect other MS Services to your Copilot
-
-### What You’ll Need
-- [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) 
-- [MS 365 Account](https://www.microsoft.com/en-us/microsoft-365/copilot/)
-- Access to the Entra ID service the MS 365 tenant
+6. (Optional and not covered in this quickstart) connect other Microsoft Services to your Copilot
 
 ### What You'll Build
 - A Snowflake Search Service
@@ -54,10 +50,12 @@ Snowflake Cortex has proven to be a best-in-class platform for building GenAI se
 <!-- ------------------------ -->
 ## Configure Oauth
 
-This is the preferred method for configuring OAuth, for the manual steps please see the [Appendix](#appendix)
+To securely connect your Microsoft Copilot to your Snowflake Cortex Agent, we use the industry standard OAuth protocol. This process involves creating two connected applications in Microsoft Entra ID and linking them to Snowflake via a Security Integration. 
 
-Copy and paste the below power shell script into a text editor.
-- Replace < tenant id > with your Microsoft tenant id
+We will use a PowerShell script to automate the manual configuration steps. This is the preferred method for configuring OAuth. For the manual steps, please see the [Appendix](#appendix) section.
+
+Copy and paste the provided PowerShell script into a text editor.
+- Replace the < tenant id > placeholder in the script with your actual Microsoft tenant id
 - Save it as "AppCreationAndConfig.ps1"
 
 ```
@@ -258,35 +256,36 @@ $outputContent | Out-File -FilePath $outputFile -Encoding UTF8
 Write-Host "Info saved to: $outputFile"
 ```
 
-Go to your Azure Portal and open up a Powershell terminal and upload the Powershell script.
+Go to your Azure Portal, open up a PowerShell terminal, and upload the PowerShell script.
 
 ![](assets/powershell.png)
 
-After uploading the script you will execute it by running:
+After uploading the script, you will execute it by running in the PowerShell terminal:
 ```
 ./AppCreationAndConfig.ps1
 ```
 
-You will be prompted to name your registration and provide your **tenant id**, as well as the define the **role** (this should be **analyst**). You will also be prompted to name the app resources and app client, you can name them something simple like **cortexappresource** and **cortexappclient**.
+The script will prompt you for the required naming and access details. You will be prompted to name your registration and provide your **tenant id**, as well as the defined **role** (this should be **analyst**). You will also be prompted to name the app resources and app client. You can name them something simple like **cortexappresource** and **cortexappclient**.
 
 This should all take about 1-2 minutes!
 
-You will then download the snowflakeinfo.txt file and use that code to create your security integration and user in Snowflake.
+Upon completion, the script generates a snowflakeinfo.txt file containing the connection details. You will then download the snowflakeinfo.txt file and use that code to create your security integration and user in Snowflake.
 
 ![](assets/snowflakeinfo.png)
 
 
-Use the **Snowflake SQL Commands** to create the security integration, role and user in Snowflake.
+In a Snowflake SQL worksheet, copy and execute the **Snowflake SQL Commands** to create the security integration, role, and user in Snowflake.
 
 ![](assets/createsecurityintegration.png)
 
-Keep the **Snowflake power platform connection info** to reference when you connect from Copilot Studio to Snowflake.
+> **NOTE**: Keep the section titled **Snowflake power platform connection info** (Tenant, Client ID, Client Secret, Resource URL). You will need to reference these values when configuring the connection inside Copilot Studio to Snowflake. 
 
 *If you already have a security integration for something like PowerBI you will have to [alter the security integration](https://docs.snowflake.com/en/sql-reference/sql/alter-security-integration-oauth-external) by adding the new audience url and mapping name, mapping attribute must remain 'login_name'.*
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
 
+This phase establishes the full environment that the Microsoft Copilot will access. Run the following commands in your Snowflake SQL worksheet to create the tables, load the sample sales data, and create the necessary warehouse.
 
 ```sql
 -- Create database and schema
@@ -390,21 +389,21 @@ CREATE OR REPLACE STAGE models DIRECTORY = (ENABLE = TRUE);
 ```
 
 Setting up Cortex Analyst
-- Go to **AI * ML** on the side and select **Cortex Analyst**.
-- Select the SALES_INTELLIGENCE.DATA Database and Schema.
-- Select **Create New** and select **Create new Semantic View**.
+- In Snowsight, navigate to **AI & ML » Cortex Analyst**.
+- Select SALES_INTELLIGENCE.DATA as the Database and Schema.
+- Select **Create New » Create new Semantic View**.
  ![](assets/analystui.png)
 
  Select the MODELS Stage and name the Analyst Service SALES_METRICS_MODEL and select **Next**.
  - Select the SALES_INTELLIGENCE database and the SALES_METRICS table then select **Next**.
  - Select all of the columns and select **Create and Save**.
 
- This is a VERY simple Analyst service. You can click through the dimensions and see that Cortex used LLMs to write descriptions and synonyms for each of the dimensions. We're going to leave this as-is, but know that you can adjust this as needed to enhance the performance of Cortex Analyst.
+> **NOTE**: This is a VERY simple Analyst service. You can click through the dimensions and see that Cortex used LLMs to write descriptions and synonyms for each of the dimensions. We're going to leave this as-is, but know that you can adjust this as needed to enhance the performance of Cortex Analyst.
  ![](assets/builtanalyst.png)
 
 Setting up Cortex Agent
-- Go to **AI * ML** on the side and select **Cortex Agent**.
-- Select the SALES_INTELLIGENCE.DATA Database and Schema.
+- In Snowsight, navigate to **AI & ML » Cortex Agent**.
+- Select SALES_INTELLIGENCE.DATA as the Database and Schema.
 - Select **Create Agent**.
 - Name the agent SALES_INTELLIGENCE_AGENT and create the agent.
 ![](assets/salesintelligence.png)
@@ -412,26 +411,28 @@ Setting up Cortex Agent
 Let's add the tools and orchestration to the agent
 - Select **Edit** in the top right.
 - Select **Tools** and **Add** by Cortex Analyst.
-- Select the SALES_INTELLIGENCE.DATA Database and Schema and Select the SALES_METRICS_MODEL and generate a Description with Cortex AI.
+- Select SALES_INTELLIGENCE.DATA as the Database and Schema.
+- Select the SALES_METRICS_MODEL and generate a Description with Cortex AI.
 - Select **Add**
 ![](assets/analysttoolui.png)
 
 - Select **Add** by Cortex Search.
-- Select the SALES_INTELLIGENCE.DATA Database and Schema and Select the SALES_CONVERSATION_SEARCH.
+- Select SALES_INTELLIGENCE.DATA as the Database and Schema.
+- Select the SALES_CONVERSATION_SEARCH.
 - Enter the name SALES_CONVERSATION_SEARCH and enter the description "the search service is for providing information on sales call transcripts".
 - Select **Add**.
 ![](assets/searchtoolui.png)
 
-- Select **Orchestration** and s leave the model set to **auto**.
+- Select **Orchestration** and leave the model set to **auto**.
 - Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details, be quick with decisions efficiency is important".
 - Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided. Provide answers that are suitable for all chat interfaces with no visualizations and quick and brief responses".
 - Click on **Access** and select the Analyst role.
 - Select **Save**.
 
 
-Cortex Agent with Analyst and Search  offers a highly accurate text to sql generator along with an efficient hybrid search service wrapped in an efficient data agent.
+Cortex Agent with Analyst and Search offers a highly accurate text to sql generator, along with an efficient hybrid search service wrapped in an efficient data agent.
 
-Now run the below code in the same SQL worksheet to create a Stored Procedure that calls a Snowflake Cortex Agents that will orchestrate with the provided tools and return an answer.
+The last step is granting the correct role permissions and creating a [Stored Procedure](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-overview). The Copilot Studio will call this procedure to trigger the Agent logic. Run the below code in the same SQL worksheet to create a Stored Procedure that calls the Snowflake Cortex Agent that will orchestrate with the provided tools and return an answer.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -505,7 +506,7 @@ def call_sales_intelligence_agent_proc(query: str):
 $$;
 ```
 
-After the creation of stored_proc, let’s test and verify the stored proc works
+After the creation of stored_proc, let's test and verify the stored procedure works. If the test call returns a successful summary of the conversation, your Agent is ready to connect to Microsoft Copilot Studio.
 
 ```sql
 call call_cortex_agent_proc('what is the Initial discovery call with TechCorp Inc about') 
@@ -527,21 +528,21 @@ Go to your Microsoft Copilot Studio or select Copilot Studio from your Azure Por
 - Name the Agent something like **“Sales Agent”**
 - Select **Create**
 
-After several seconds you should see your new Sales Agent
+After several seconds, you should see your new Sales Agent.
 
 ### Configuring Copilot Agent
 
 ![](assets/agents.png)
 
-**Select Add topic > from blank**
+**Select Add a topic » From blank**
 
 ![](assets/addtopic.png)
 
-The Trigger, default to **The agent** choose displays
+The Trigger, default to **The agent chooses** displays.
 
 ![](assets/trigger.png)
 
-Select **Edit** under  and enter the text **"use cortex agent"** then select the plus sign; this phrase will act as a **trigger** in the copilot to use the cortex agent we just created.
+Select **Edit** under and enter the text **"use cortex agent"**. Then select the plus sign. This phrase will act as a **trigger** in the Copilot to use the Cortex Agent we just created.
 
 ![](assets/describetrigger.png)
 
@@ -555,16 +556,16 @@ Select the plus sign under the trigger
 
 ![](assets/triggerinput.png)
 
-Click on Save 
-Click on the plus sign under the Question 
+Click on Save. 
+Click on the plus sign under the Question. 
 
-**Select Add a tool, New Agent flow under the Question activity**
+**Select Add a tool, New Agent flow under the Question activity**.
 
-A new window opens the Agent flows page, similar to this
+A new window opens the Agent flows page, similar to this:
 
 ![](assets/newtool.png)
 
-Click on the + icon, In between the “When an agent calls the flow” and ‘Respond to the agent’
+Click on the + icon, In between the “When an agent calls the flow” and ‘Respond to the agent’.
 
 ![](assets/whenagentcalls.png)
 
@@ -575,7 +576,7 @@ Click on the + icon, In between the “When an agent calls the flow” and ‘Re
 
 ### Create a Snowflake Connection
 
-Enter in the connection parameters (refer to the snowflakeinfo.txt downloaded from the oauth set up) here. This should look similar to below.
+Enter in the connection parameters (refer to the snowflakeinfo.txt downloaded from the OAuth set up) here. This should look similar to below:
 
 For Resource URL: this can be obtained from the snowflakeinfo.text
 <resource URL>
@@ -584,7 +585,7 @@ For example: xxxxx-32f76bad5eb7
 
 ![](assets/snowflakeconnection.png)
 
-Under Parameters select 
+Under Parameters select: 
 - Body/Statement
 - Database
 - Schema
@@ -593,7 +594,7 @@ Under Parameters select
 
 ![](assets/connectorparams.png)
 
-Enter the values as shown in the screenshot below.
+Enter the values as shown in the screenshot below:
 - For the Body/Statement parameter, enter this query
 
 ```sql
@@ -603,7 +604,7 @@ CALL sales_intelligence.data.call_cortex_agent_proc('<>');
 ![](assets/connectorwithcall.png)
 
 
-Select the Run a flow from Copilot action add an input parameter named copilot_prompt.
+Select the Run a flow from Copilot action. Add an input parameter named copilot_prompt.
 
 ![](assets/agentcallsflow.png)
 
@@ -612,15 +613,15 @@ For the type of output, choose **Text**  and named **output_to_copilot**, in the
 
 ![](assets/respondtoagent.png)
 
-- and select **body/Data**
+- Select **body/Data**
 
 ![](assets/bodydata.png)
 
-- save and publish the flow
+- Save and publish the flow
 
 ![](assets/saveandpublish.png)
 
-Go back to the copilot studio browser
+Go back to the Copilot Studio browser:
 - Select the plus sign below the Question activity and select "Add an action" and you will see a new option for "Run a flow from Copilot"
 - For the empty parameter value select input_to_agent directing the copilot prompt to go to the flow
 - Select the plus sign under the Flow action and select send a message
@@ -633,7 +634,7 @@ Go back to the copilot studio browser
 
 - Save the flow
 
-Go back to the Flow window and select Submit SQL Statement for Execution
+Go back to the Flow window and select Submit SQL Statement for Execution.
 In the Body/statement parameter where we call the stored procedure remove the <> , select the lightning bolt and select the copilot_prompt parameter. LEAVE THE SINGLE QUOTES IN THE QUERY!
 
 ![](assets/inputvariable.png)
@@ -641,7 +642,7 @@ In the Body/statement parameter where we call the stored procedure remove the <>
 **Save and publish the flow!**
 
 ### Now let's test the Agent!
-- Go back to the Copilot studio, make sure the Copilot is saved.
+- Go back to the Copilot Studio, make sure the Copilot is saved.
 - Select Test in the top right corner and enter "use cortex agent".
 - Once asked what you to know from the Cortex Sales Agent type "tell me about securebank".
 - You be prompted to connect or retry, select connect and a new window will pop up where you can connect to your Snowflake connection. This is a one time connection.
@@ -650,31 +651,33 @@ In the Body/statement parameter where we call the stored procedure remove the <>
 - Now you can update the stored procedure or Flow to better output the results or you can immediately ask the agent "can you summarize this call" and it will use Azure OpenAI to summarize the call.
 - Enter "use cortex agent" once more and after the prompt type "what was the size of the securebank deal?" Now the Agent is using Cortex Analyst to return results from a SQL query. Ask the Copilot "just show me the deal value" and you'll see below.
 
-**if you expect (and are comfortable with) long running flows users can increase the Timeout value on the Snowflake Execute SQL action however users can also provide additional instructions to the cortex agent to maximize efficiency**
+> **NOTE**: If you expect (and are comfortable with) long running flows, users can increase the Timeout value on the Snowflake Execute SQL action. However, users can also provide additional instructions to the Cortex Agent to maximize efficiency.
 
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-### Technical Considerations
-This quickstart showed you how to set up the connection to Cortex Agents from MS Copilots. In order to make for a more robust Copilot you will likely add additional triggers to other Agents or Knowledge Sources so that your Copilot is more versatile and can act on specific prompts/triggers.
+Congratulations! You have successfully completed this integration! You have built a secure, powerful bridge between your enterprise data in Snowflake Cortex Agents and your user interface in Microsoft Copilot Studio.
 
-### What you learned
+### Technical Considerations
+This quickstart showed you how to set up the connection to Cortex Agents from Microsoft Copilot. We focused on setting up one specific trigger, which was the one that routes questions to your Snowflake Agent. In order to make for a more robust Copilot, you will likely add additional triggers to other Agents or Knowledge Sources so that your Copilot is more versatile and can act on specific prompts/triggers.
+
+### What You Learned
 By following this quickstart, you learned how to:
-- Creating Snowflake Cortex Services for Search, Analyst and Agents
-- Creating a Microsoft 365 Copilot 
-- Connecting your MS Copilot to the Cortex Agent
+- Create Snowflake Cortex Services for Search, Analyst, and Agents
+- Create a Microsoft 365 Copilot 
+- Connect your Microsoft Copilot to the Cortex Agent
 
 ### Resources
 - Learn more about the complete [Snowflake Cortex set of features](/en/product/features/cortex/)
 - Learn more about using [Agents in Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
-- Learn more about using [MS Copilot Studio](https://www.microsoft.com/en-us/microsoft-copilot/microsoft-copilot-studio)
-- This quickstart shows you how to build custom Copilots with Snowflake Cortex. In 2025 there will be an easier way to connect a 365 or Teams Copilot to any agent in Snowflake. See the announcement in the bottom [here](/en/news/press-releases/snowflake-securely-integrates-microsoft-azure-openai-service-to-provide-access-to-the-latest-openai-models-with-expanded-microsoft-partnership/)
+- Learn more about using [Microsoft Copilot Studio](https://www.microsoft.com/en-us/microsoft-copilot/microsoft-copilot-studio)
+- This quickstart shows you how to build custom Copilots with Snowflake Cortex. In 2025 there will be an easier way to connect a 365 or Teams Copilot to any agent in Snowflake. See the announcement in the bottom [here](/en/news/press-releases/snowflake-securely-integrates-microsoft-azure-openai-service-to-provide-access-to-the-latest-openai-models-with-expanded-microsoft-partnership/).
 
 <!-- ------------------------ -->
 ## Appendix
 
-This section shows the steps required to configure Oauth in Entra ID manually. This is handled with the Power Shell Script in the [Configure OAuth Section](#configure-oauth)
+This section shows the steps required to configure Oauth in Entra ID manually. This entire workflow was automated with the PowerShell script in the [Configure OAuth Section](#configure-oauth)
 
 ### Configure the OAuth resource in Microsoft Entra ID
 - Navigate to the Microsoft Azure Portal and authenticate.
@@ -691,7 +694,7 @@ This section shows the steps required to configure Oauth in Entra ID manually. T
 To add a Snowflake Role as a Role for OAuth flows where the programmatic client requests an 	access token for itself:
 - Click on Manifest.
 - Locate the appRoles element.
-- Enter an App Role with the following settings, the Snowflake role should be the one which has access to a warehouse, and usage privileges on the schema (check here for details on manifest values)
+- Enter an App Role with the following settings, the Snowflake role should be the one which has access to a warehouse, and usage privileges on the schema (check here for details on manifest values).
 - See the sample definition below:
 The App Role manifests as follows. Avoid using high-privilege roles like ACCOUNTADMIN, SECURITYADMIN or ORGADMIN. 
 ```json

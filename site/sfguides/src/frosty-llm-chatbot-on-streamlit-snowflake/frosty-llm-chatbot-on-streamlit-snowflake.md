@@ -7,6 +7,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Joshua Carroll, Richard Meng, Caroline Frasca
 
+
 # Frosty: Build an LLM Chatbot in Streamlit on your Snowflake Data
 <!-- ------------------------ -->
 ## Overview 

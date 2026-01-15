@@ -2,10 +2,11 @@ author: Bharath Suresh
 id: quickstart-generative-bi-quicksight
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Build a Generative BI Dashboard using Amazon QuickSight and Amazon Q.
+summary: Build a Generative BI Dashboard using Amazon QuickSight and Amazon Q. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build a Generative BI Dashboard with Amazon QuickSight and Amazon Q
 

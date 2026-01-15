@@ -2,10 +2,11 @@ author: Elliott Botwick
 id: end-to-end-ml-workflow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
 language: en
-summary: Learn how to build an end-to-end machine learning workflow in Snowflake, from feature engineering to model deployment and monitoring.
+summary: Build complete ML workflows in Snowflake from data preparation through training, evaluation, deployment, monitoring, and iteration.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build an End-to-End ML Workflow in Snowflake
 

@@ -2,10 +2,11 @@ author:
 id: insights-to-action-with-snowflake-and-servicenow
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: insights-to-action-with-snowflake-and-servicenow
+summary: insights-to-action-with-snowflake-and-servicenow 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Insights to Action With Snowflake and ServiceNow
 <!-- ------------------------ -->

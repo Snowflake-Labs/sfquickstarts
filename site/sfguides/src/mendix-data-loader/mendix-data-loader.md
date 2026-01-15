@@ -2,9 +2,10 @@ author: Trong Tran
 id: mendix-data-loader
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
 language: en
-summary: Guide on how to use the Mendix Data Loader to ingest data from Mendix applications via a published OData service.
+summary: Guide on how to use the Mendix Data Loader to ingest data from Mendix applications via a published OData service. 
 environments: web
 status: Published
+
 
 # An Introduction to the Mendix Data Loader
 <!-- ------------------------ -->

@@ -2,10 +2,11 @@ authors: Matthias Nicola, Vinay Srihari
 id: horizon-intra-org-sharing
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: explore Horizon Collaboration pillar features for sharing of data and apps
+summary: explore Horizon Collaboration pillar features for sharing of data and apps 
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+
 
 # Explore Cross-Cloud Sharing of Data and Applications with Private Listings
 <!-- ------------------------ -->

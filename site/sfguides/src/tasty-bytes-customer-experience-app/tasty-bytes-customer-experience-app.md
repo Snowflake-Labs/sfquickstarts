@@ -2,7 +2,7 @@ author: Charlie Hammond
 id: tasty-bytes-customer-experience-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience.
+summary: This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

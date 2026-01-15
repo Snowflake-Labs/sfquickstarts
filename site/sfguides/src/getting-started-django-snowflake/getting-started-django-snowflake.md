@@ -2,10 +2,11 @@ author: Gilberto Hernandez
 id: getting-started-django-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: How to get started with Snowflake as a backend for Django.
+summary: Build Django web applications with Snowflake as the database backend using the Django Snowflake connector and ORM.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowflake as a backend for Django
 <!-- ------------------------ -->

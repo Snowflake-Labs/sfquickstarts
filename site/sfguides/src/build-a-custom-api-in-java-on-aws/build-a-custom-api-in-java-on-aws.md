@@ -2,7 +2,7 @@ author: Brad Culberson
 id: build-a-custom-api-in-java-on-aws
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: A guide to building and running a custom API (in Java) Powered by Snowflake and AWS
+summary: Create custom Java REST APIs on AWS that connect to Snowflake for application integration and secure data access.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

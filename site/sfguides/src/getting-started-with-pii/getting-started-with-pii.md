@@ -2,7 +2,7 @@ author: sanderiam
 id: getting-started-with-pii
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
 language: en
-summary: Learn how to process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security
+summary: Learn how to process PII data using Snowflake RBAC, DAC, Row Access Policies, and Column Level Security 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

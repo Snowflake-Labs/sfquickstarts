@@ -1,13 +1,16 @@
 author: Manuel Figueroa, Joviane Bellegarde
 id: marketing-data-foundation-starter-v3
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: Marketing Data Foundation Starter Guide V3
+summary: Marketing Data Foundation Starter Guide 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3
 
-# Marketing Data Foundation Starter Guide V3
+
+
+# Marketing Data Foundation Starter Guide
 <!-- ------------------------ -->
 ## Overview 
 
@@ -55,6 +58,8 @@ This demo consists of a native application that provides a framework to easily u
 - [Snow CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/index) Installed.
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) Installed.
 - [Python](https://www.python.org/downloads/) Installed.
+
+> **Note:** This guide assumes your connector data (Fivetran for Facebook Ads, Omnata for LinkedIn Ads) is already loaded into your Snowflake account. The app helps you link and transform this existing data. Sample data is also provided if you don't have connectors configured.
 
 
 <!-- ------------------------ -->
@@ -119,7 +124,7 @@ Refer to the desired output below:
 Ensure that Docker Desktop is running and that you're signed in to your Docker account.
 
 ### Bypass MFA
-Create a Worksheet in Snowsight and run the following command to disble MFA for 30 minutes. This statement is to allow the many cells in the Jupyter Notebook to run successfully without waiting for MFA approval from the user.
+Create a Worksheet in Snowsight and run the following command to disable MFA for 45 minutes. This statement is to allow the many cells in the Jupyter Notebook to run successfully without waiting for MFA approval from the user.
 ```sql
 ALTER USER <replace with your user> SET MINS_TO_BYPASS_MFA = 45;
 ```
@@ -184,19 +189,41 @@ These steps will provide instructions on how to bring the data to Snowflake or c
 
 ![LinkData](assets/link_data.png)
 
+#### Option A: Using Sample Data (Recommended for Demo)
+
 Since we are going to use the sample data, you can continue to the ***Link data already in Snowflake*** option.
 
-Depending on the platform selected in the previous step, please select either of these options
+Depending on the platform selected in the previous step, please select either of these options:
 
-Facebook:
- - DATABASE: ```FIVETRAN_CONNECTOR_DEMO``` SCHEMA: ```FACEBOOK_RAW``` 
+**Facebook via Fivetran:**
+ - DATABASE: `FIVETRAN_CONNECTOR_DEMO` 
+ - SCHEMA: `FACEBOOK_RAW` 
 
-LinkedIn:
- - DATABASE: ```OMNATA_CONNECTOR_DEMO``` SCHEMA: ```LINKEDIN_RAW```
+**LinkedIn via Omnata:**
+ - DATABASE: `OMNATA_CONNECTOR_DEMO` 
+ - SCHEMA: `LINKEDIN_RAW`
 
-When you click on the connect option, the application will verify you have access to the sample data  and will show you the list of tables in the selected schema.
+When you click on the connect option, the application will verify you have access to the sample data and will show you the list of tables in the selected schema.
 
 ![Fivetran](assets/fivetran.png)
+
+#### Option B: Using Your Own Connector Data
+
+If you have Fivetran or Omnata connectors already configured:
+
+**For Facebook Ads via Fivetran:**
+1. Ensure your Fivetran connector is syncing Facebook Ads data to Snowflake
+2. Select ***Link data already in Snowflake***
+3. Choose your Fivetran destination database and the Facebook schema
+4. The app will validate that the required tables exist
+
+**For LinkedIn Ads via Omnata:**
+1. Ensure your Omnata connector is syncing LinkedIn Ads data to Snowflake
+2. Select ***Link data already in Snowflake***
+3. Choose your Omnata database and LinkedIn schema
+4. The app will validate that the required tables exist
+
+> **Note:** Connector setup (Fivetran/Omnata configuration, authentication, sync schedules) must be completed in your connector platform before using this app. The app only links to and transforms existing data.
 
 
 ### 3. Explore and Apply Mappings
@@ -272,7 +299,7 @@ DROP WAREHOUSE IF EXISTS MDFSV3SPCS_BUILD_WH;
 DROP ROLE IF EXISTS MARKETING_DATA_FOUNDATION_V3_ROLE;
 ```
 
-Use this cleanup script to remove all objects created in this Quickstart.
+Use this cleanup script to remove all objects created in this Guide.
 <!-- ------------------------ -->
 ## Conclusion And Resources
 

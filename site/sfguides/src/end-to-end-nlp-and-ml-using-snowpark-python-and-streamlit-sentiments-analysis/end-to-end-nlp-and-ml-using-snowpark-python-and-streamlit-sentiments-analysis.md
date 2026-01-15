@@ -1,12 +1,13 @@
 author: sfc-gh-imehaddi
 id: end-to-end-nlp-and-ml-using-snowpark-python-and-streamlit-sentiments-analysis
 language: en
-summary: This is a sample Snowflake Guide
+summary: Perform sentiment analysis using Snowpark Python for NLP feature engineering, model training, and Streamlit visualization.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/snowpark
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, NLP, Snowpark, Streamlit 
+
 
 # NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
 <!-- ------------------------ -->

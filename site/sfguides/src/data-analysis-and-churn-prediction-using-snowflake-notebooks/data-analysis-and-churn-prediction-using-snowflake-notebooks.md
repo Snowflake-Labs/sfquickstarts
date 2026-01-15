@@ -2,10 +2,11 @@ author: Joviane Bellegarde
 id: data-analysis-and-churn-prediction-using-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
-summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
+summary: Analyze customer data and predict churn using Snowflake Notebooks for interactive ML development, visualization, and deployment.
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Data Analysis and Churn Prediction Using Snowflake Notebooks
 <!-- ------------------------ -->

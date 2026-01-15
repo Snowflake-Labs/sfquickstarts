@@ -1,4 +1,4 @@
-summary: Getting Started with Multimodal Analysis on Snowflake Cortex
+summary: Getting Started with Multimodal Analysis on Snowflake Cortex 
 id: getting-started-with-multimodal-analysis-on-snowflake-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en

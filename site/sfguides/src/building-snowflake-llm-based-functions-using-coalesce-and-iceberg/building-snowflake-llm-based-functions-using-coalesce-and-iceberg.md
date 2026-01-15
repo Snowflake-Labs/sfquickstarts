@@ -2,10 +2,11 @@ author: Josh Hall
 id: building-snowflake-llm-based-functions-using-coalesce-and-iceberg
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Learn to build Cortex based data pipelines in Coalesce using Iceberg tables
+summary: Build LLM-powered functions with Coalesce and Apache Iceberg™ for AI-enhanced data transformations and intelligent processing.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Building Snowflake LLM Based Functions using Coalesce and Iceberg
 <!-- ------------------------ -->

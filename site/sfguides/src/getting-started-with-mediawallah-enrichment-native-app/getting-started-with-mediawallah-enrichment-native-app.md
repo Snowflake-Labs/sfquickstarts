@@ -2,10 +2,11 @@ author: Jeffrey Chen
 id: getting-started-with-mediawallah-enrichment-native-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a guide to use MediaWallah's Enrichment Application
+summary: This is a guide to use MediaWallah's Enrichment Application 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with MediaWallah Enrichment Application
 <!-- ------------------------ -->

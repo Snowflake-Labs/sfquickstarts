@@ -1,11 +1,12 @@
 id: ai-video-search-with-snowflake-and-twelvelabs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This guide outlines the process for creating a video search and summarization workflow in Snowflake Notebook on Container Runtime.
+summary: Build video search applications with Twelve Labs and Snowflake for multimodal content understanding and semantic retrieval.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
+
 
 # AI Video Search with Snowflake and Twelve Labs
 <!-- ------------------------ -->

@@ -1,6 +1,6 @@
-summary: A preconfigured financial advisor agent in Snowflake Intelligence
+summary: Build AI financial advisors for wealth management and personalized investment recommendations using Snowflake Cortex. 
 id: financial-advisor-for-wealth-management
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/financial-operations, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/solution-center/certification/certified-solution
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/financial-operations, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/financial-services
 language: en
 environments: web
 status: Published
@@ -55,3 +55,11 @@ This solution serves as a comprehensive foundation for various wealth management
   * **Compliance and Risk Monitoring**: Identify clients with risk concentrations, portfolios exceeding stated risk tolerance, or those requiring periodic reviews to maintain compliance with fiduciary standards.
   * **New Client Onboarding**: Leverage historical research and market insights to quickly develop investment strategies aligned with new client goals, risk profiles, and preferences.
   * **High-Touch Relationship Management**: Track interaction frequency with high-net-worth clients and surface priority alerts to ensure consistent, proactive client engagement.
+
+## Get Started
+
+Ready to transform your wealth management practice with AI-powered insights? This solution includes everything you need to get up and running quickly.
+
+**[Run the Demo on GitHub →](https://github.com/Snowflake-Labs/sfguide-financial-advisor-for-asset-management)**
+
+The repository contains complete setup scripts, sample financial research documents, semantic model definitions, and step-by-step instructions for configuring Snowflake Intelligence with Cortex Analyst and Cortex Search services.

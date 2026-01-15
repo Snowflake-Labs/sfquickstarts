@@ -2,10 +2,14 @@ author: Kala Govindarajan
 id: credit-card-fraud-detection-using-snowflake-ml
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/financial-operations, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
-summary: Build a Credit card fraud detection app that leverages Snowflake ML to train a binary classification model to detect if a transaction is fraudulent or not
+summary: Detect credit card fraud with Snowflake ML using anomaly detection and classification models for real-time transaction scoring.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-credit-card-fraud-detection-using-snowflakeml
+
+
+
 
 # Credit Card Fraud Detection using Snowflake ML Functions
 <!-- ------------------------ -->

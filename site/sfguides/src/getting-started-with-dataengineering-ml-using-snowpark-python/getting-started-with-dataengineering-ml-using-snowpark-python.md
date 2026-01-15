@@ -1,11 +1,12 @@
 id: getting-started-with-dataengineering-ml-using-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
-summary: Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks
+summary: Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks 
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
+
 
 # Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks
 <!-- ------------------------ -->

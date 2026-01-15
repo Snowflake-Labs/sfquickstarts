@@ -2,10 +2,11 @@ author: David Hrncir
 id: fivetran-vineyard-assistant-chatbot
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
 language: en
-summary: Build a RAG-based GenAI Streamlit application with Fivetran and Snowflake using structured data.
+summary: Build a vineyard assistant chatbot with Fivetran, Streamlit and Snowflake Cortex AI for wine industry analytics.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build a RAG-based, GenAI chatbot using Structured Data with Snowflake and Fivetran
 <!-- ------------------------ -->

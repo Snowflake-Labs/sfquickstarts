@@ -2,10 +2,11 @@ author: Ritika Sharma
 id: a-guide-to-kipi-marketing-mix-modelling-analytics-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
-summary: This is a sample Snowflake Guide
+summary: Install and explore Kipi's Marketing Mix Modeling Native App to optimize budget allocation, analyze campaigns, and improve marketing ROI in Snowflake.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # A Guide to Kipi Marketing Mix Modelling and Analytics App
 <!-- ------------------------ -->

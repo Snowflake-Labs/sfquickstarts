@@ -2,10 +2,11 @@ author: Gilberto Hernandez, Chris Cardillo
 id: get-started-snowflake-cortex-knowledge-extensions
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations
 language: en
-summary: How to build a chatbot using Snowflake Cortex Knowledge Extensions
+summary: Configure Cortex Knowledge Extensions to enhance AI capabilities with custom enterprise knowledge bases and domain expertise.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Cortex Knowledge Extensions on Snowflake Marketplace
 ## Overview 

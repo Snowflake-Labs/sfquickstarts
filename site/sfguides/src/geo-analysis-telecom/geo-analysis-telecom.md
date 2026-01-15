@@ -2,10 +2,11 @@ author: Oleksii Bielov
 id: geo-analysis-telecom
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/telecom, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 language: en
-summary: Geospatial Analysis for Telecom with Snowflake and Carto
+summary: Analyze telecom network coverage and cell tower data with Snowflake geospatial functions and CARTO.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Geospatial Analytics for Telecom with Snowflake and Carto
 <!-- ------------------------ -->

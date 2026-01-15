@@ -2,7 +2,7 @@ author: Chandra Nayak & Madeline Lee
 id: visual-analytics-powered-by-snowflake-and-tableau
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
-summary: Visual Analytics Powered by Snowflake and Tableau
+summary: Visual Analytics Powered by Snowflake and Tableau 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -2,10 +2,11 @@ author: Oleksii Bielov
 id: geospatial-analytics-with-snowflake-and-carto-ny
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 language: en
-summary: This is a sample Snowflake Guide
+summary: Analyze New York City points-of-interest using Snowflake GEOGRAPHY and CARTO Analytics Toolbox for retail insights.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Geospatial Analytics for Retail with Snowflake and CARTO
 <!-- ------------------------ -->

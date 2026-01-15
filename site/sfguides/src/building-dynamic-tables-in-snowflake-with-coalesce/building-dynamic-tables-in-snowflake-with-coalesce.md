@@ -2,10 +2,11 @@ author: Christina Jimenez
 id: building-dynamic-tables-in-snowflake-with-coalesce
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Building Dynamic Tables in Snowflake with Coalesce
+summary: Create and manage Dynamic Tables using Coalesce's visual interface for automated, declarative pipeline orchestration in Snowflake.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Building Dynamic Tables in Snowflake with Coalesce
 <!-- ------------------------ -->

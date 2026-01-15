@@ -2,10 +2,11 @@ author: Vino Duraisamy, Ajita Sharma, Jason Hughes
 id: hands-on-with-apache-iceberg-and-snowflake-open-catalog
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
-summary: Learn how to create managed Apache Iceberg tables in Snowflake and sync them with Snowflake Open Catalog to enable cross-engine analytics with this hands-on tutorial.
+summary: Learn how to create managed Apache Iceberg tables in Snowflake and sync them with Snowflake Open Catalog to enable cross-engine analytics with this hands-on tutorial. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Build a Lakehouse with Apache Iceberg and Snowflake Open Catalog
 <!-- ------------------------ -->

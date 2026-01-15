@@ -2,10 +2,11 @@ author: Matt Marzillo
 id: getting-started-with-ai-foundry-and-the-snowflake-managed-mcp
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en
-summary: This is a quickstart showing users how use Azure AI Foundry and the Snowflake Managed MCP Server
+summary: Connect Microsoft AI Foundry with Snowflake Managed MCP for cross-platform AI model deployment and unified data integration.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with AI Foundry and the Snowflake Managed MCP Server
 <!-- ------------------------ -->

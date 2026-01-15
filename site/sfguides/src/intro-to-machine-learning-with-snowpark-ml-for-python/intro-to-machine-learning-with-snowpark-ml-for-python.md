@@ -2,10 +2,11 @@ author: sikha-das
 id: intro-to-machine-learning-with-snowpark-ml-for-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/migrations, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
-summary: Through this quickstart guide, you will explore Snowflake for Machine Learning.
+summary: Through this quickstart guide, you will explore Snowflake for Machine Learning. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with ML Development in Snowflake
 <!-- ------------------------ -->

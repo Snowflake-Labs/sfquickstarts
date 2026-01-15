@@ -2,10 +2,11 @@ author: Mats Stellwall
 id: getting-started-with-snowpark-python-scikit
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Getting Started with Snowpark for Python with Scikit-learn
+summary: Getting Started with Snowpark for Python with Scikit-learn 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowpark for Python with Scikit-learn
 <!-- ------------------------ -->
