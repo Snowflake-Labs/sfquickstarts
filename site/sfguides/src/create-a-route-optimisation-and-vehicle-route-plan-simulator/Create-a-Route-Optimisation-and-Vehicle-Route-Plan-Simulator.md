@@ -65,7 +65,10 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
 
 -   [VSCode](https://code.visualstudio.com/download) recommended for running Cortex Code commands
 
--   Clone or download the repository: `git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator`
+-   Clone or download the repository:
+    ```bash
+    git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+    ```
 
 ### Route Planning And Optimization Architecture
 
