@@ -298,6 +298,23 @@ The skill automatically updates:
 
    This ensures AI-generated restaurants, delivery jobs, and customer locations are within drivable distance of each other.
 
+**Industry Category Customization (Optional)**
+
+The default industries are Healthcare, Food, and Cosmetics. The skill offers an optional step to customize industries for your specific use case:
+
+| Default Industry | Product Types | Customer Types |
+|------------------|---------------|----------------|
+| Healthcare | Flammable, Sharps, Temperature-controlled | Hospitals, Pharmacies, Dentists |
+| Food | Fresh, Frozen, Non-perishable | Supermarkets, Restaurants, Butchers |
+| Cosmetics | Hair products, Electronics, Make-up | Outlets, Fashion stores |
+
+To customize, you can:
+- Add new industries (e.g., "Beverages", "Electronics", "Office Supplies")
+- Define product categories and vehicle skill requirements
+- Choose customer types from Overture Maps categories in your region
+
+> **_TIP:_** The Streamlit app reads industries dynamically from the database, so only the `add_carto_data.ipynb` notebook needs updating. The app automatically adapts to any changes.
+
 **Git Branch Management**
 
 All customizations are committed to a feature branch (e.g., `feature/ors-great-britain`), preserving the original San Francisco configuration on `main`.
