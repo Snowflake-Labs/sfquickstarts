@@ -453,10 +453,6 @@ The `add_carto_data` notebook filters the Overture dataset to your chosen city a
 
 > **_TIP:_** To change the city, run the map customization skill again or modify the `add_carto_data` notebook directly.
 
-### End to End with Streamlit Dynamic Simulator Overview Diagram
-
-![alt text](assets/Overview_Diagram.png)
-
 ### Setting the Context of the Routing Scenario
 
 - Open up the side menu
