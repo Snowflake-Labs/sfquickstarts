@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ![alt text](assets/intromap.png)
 
-In this quickstart, you will **install an [Open Route Service](https://openrouteservice.org/) Native App** in Snowflake using **Cortex Code** skills. The entire setup takes just **minutes** - simply run natural language commands and the AI-powered CLI handles the rest.
+In this solution, you will **install an [Open Route Service](https://openrouteservice.org/) Native App** in Snowflake using **Cortex Code** skills. The entire setup takes just **minutes** - simply run natural language commands and the AI-powered CLI handles the rest.
 
 Once deployed, you will be able to:
 
@@ -62,7 +62,7 @@ The architecture below shows the solution which uses a native app and container 
 
 ![alt text](assets/image-7.png)
 
-This is a self contained service which is managed by you. There are no API calls outside of Snowflake and no API limitations. This quickstart uses a medium CPU pool which is capable of running unlimited service calls within **New York City**. If you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
+This is a self-contained service which is managed by you. There are no API calls outside of Snowflake and no API limitations. This solution uses a medium CPU pool which is capable of running unlimited service calls within **San Francisco** (the default map). If you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
 
 ### What You'll Learn 
