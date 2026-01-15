@@ -253,6 +253,16 @@ To customize the map region, run:
 use the local skill from skills/ors-map-customization
 ```
 
+> **_PLEASE NOTE:_** This skill modifies files in your local repository to match your chosen location, industry, and vehicle types. It updates:
+> - **ORS config file** - Map source and routing profiles
+> - **Compute resources** - Scales based on map size
+> - **Function Tester** - Region-specific addresses and coordinates
+> - **AISQL Notebook** - AI prompts customized for your city
+> - **Add Carto Data Notebook** - Geohash filter for your region
+> - **Streamlit Simulator** - Default search location
+>
+> All changes are saved to a **new Git branch** (e.g., `feature/ors-paris`). This allows you to easily switch back to the `main` branch to reload the San Francisco defaults at any time.
+
 ### Example: Customizing to Paris
 
 When you run the skill, Cortex Code will guide you through:
