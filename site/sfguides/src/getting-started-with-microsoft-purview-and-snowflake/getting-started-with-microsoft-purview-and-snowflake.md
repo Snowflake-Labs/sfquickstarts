@@ -2,10 +2,11 @@ author: sfc-gh-etolotti
 id: getting-started-with-microsoft-purview-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a Quickstart for using Snowflake with Microsoft Purview
+summary: This is a Quickstart for using Snowflake with Microsoft Purview 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Microsoft Purview and Snowflake
 <!-- ------------------------ -->

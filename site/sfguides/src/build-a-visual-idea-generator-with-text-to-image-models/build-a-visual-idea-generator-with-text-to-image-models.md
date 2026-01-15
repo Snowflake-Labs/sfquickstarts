@@ -2,10 +2,15 @@ author: Prabhath Nanisetty
 id: build-a-visual-idea-generator-with-text-to-image-models
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
-summary: A guide to building a visual concept/idea generator from unstructured data powered by Text2Image LLM models and Streamlit.
+summary: Generate visual ideas with Text2Image LLM models and Streamlit in Snowflake for creative content, marketing assets, and design automation.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models
+
+
+
+
 
 # Build a Visual Concept/Idea Generator using a Text-to-Image AI Model
 <!-- ------------------------ -->

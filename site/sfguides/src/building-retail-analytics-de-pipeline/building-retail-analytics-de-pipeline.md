@@ -1,11 +1,16 @@
 id: building-retail-analytics-de-pipeline
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Build a comprehensive retail analytics pipeline using Snowflake's modern data engineering features including Snowpark DB APIs, Snowpark APIS, Cortex AI, managed Iceberg tables, streamlit and using Snowflake Trail for Observability.
+summary: Build retail analytics data engineering pipelines with Snowflake managed Iceberg tables for sales tracking, inventory management, and customer insights.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Phani Raj
+fork repo link: https://github.com/Snowflake-Labs/sfguide-building-retail-analytics-de-pipeline
+
+
+
+
 
 # Build a Retail Analytics Data Engineering Pipeline with Snowflake
 <!-- ------------------------ -->

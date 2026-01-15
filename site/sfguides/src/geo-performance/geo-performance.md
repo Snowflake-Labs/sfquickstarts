@@ -2,10 +2,11 @@ author: Oleksii Bielov
 id: geo-performance
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: Performance optimization techniques for Geo
+summary: Optimize geospatial query performance in Snowflake with clustering, indexing, search optimization, and query tuning.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Performance Optimization Techniques for Geospatial queries
 

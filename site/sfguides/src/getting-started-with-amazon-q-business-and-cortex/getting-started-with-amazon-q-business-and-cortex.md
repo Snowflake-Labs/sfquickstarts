@@ -2,10 +2,14 @@ author: marzillo-snow
 id: getting-started-with-amazon-q-business-and-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: This is a quickstart for using Amazon Q Business with Cortex
+summary: Integrate Amazon Q Business with Snowflake Cortex for enterprise AI assistants that query data across multiple cloud platforms.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex
+
+
+
 
 # Getting Started with Amazon Q Business and Cortex
 <!-- ------------------------ -->

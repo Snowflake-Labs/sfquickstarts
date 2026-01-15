@@ -2,7 +2,7 @@ author: mando222
 id: getting-started-with-tempo-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a guide on getting started with Tempo on Snowflake
+summary: This is a guide on getting started with Tempo on Snowflake 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

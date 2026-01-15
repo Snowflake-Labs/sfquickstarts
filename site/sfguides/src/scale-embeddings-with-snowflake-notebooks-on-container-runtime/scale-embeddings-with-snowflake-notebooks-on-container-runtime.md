@@ -2,10 +2,11 @@ author: Sikha Das
 id: scale-embeddings-with-snowflake-notebooks-on-container-runtime
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This guide will show you how to experiment with and scale embeddings generation in Snowflake Notebooks with Container Runtime
+summary: This guide will show you how to experiment with and scale embeddings generation in Snowflake Notebooks with Container Runtime 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Scale Embeddings with Snowflake Notebooks on Container Runtime
 <!-- ------------------------ -->

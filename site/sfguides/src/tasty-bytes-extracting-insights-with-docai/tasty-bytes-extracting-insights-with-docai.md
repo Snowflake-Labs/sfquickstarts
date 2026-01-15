@@ -2,10 +2,11 @@ author: Jacob Kranzler
 id: tasty-bytes-extracting-insights-with-docai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/document-ai
 language: en
-summary: Walkthrough extracting data from PDF Inspection Reports using Document AI
+summary: Walkthrough extracting data from PDF Inspection Reports using Document AI 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Extracting Insights from Unstructured Data with Document AI
 <!-- ------------------------ -->

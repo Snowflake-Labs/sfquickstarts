@@ -1,11 +1,12 @@
 id: build-rag-based-equipment-maintenance-app-using-snowflake-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: Build Rag Based Equipment Maintenance App Using Snowflake Cortex
+summary: Build equipment maintenance apps with RAG and Snowflake Cortex for intelligent troubleshooting, manuals search, and predictive alerts.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Ryan Ellis, Tim Long
+
 
 # Build Rag Based Equipment Maintenance App Using Snowflake Cortex
 <!-- ------------------------ -->

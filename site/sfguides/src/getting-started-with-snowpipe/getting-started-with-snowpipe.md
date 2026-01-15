@@ -1,10 +1,11 @@
-summary: This guide will help you get started with Snowpipe.
+summary: This guide will help you get started with Snowpipe. 
 id: getting-started-with-snowpipe
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowpipe
 <!-- ------------------------ -->

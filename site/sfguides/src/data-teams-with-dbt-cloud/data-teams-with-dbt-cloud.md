@@ -7,6 +7,7 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Amy Chen, Dmytro Yaroshenko
 
+
 # Accelerating Data Teams with dbt Cloud & Snowflake
 <!-- ------------------------ -->
 ## Overview 

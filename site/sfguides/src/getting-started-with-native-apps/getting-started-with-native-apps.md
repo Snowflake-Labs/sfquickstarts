@@ -2,7 +2,7 @@ author: Daniel Myers
 id: getting-started-with-native-apps
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: Follow this tutorial to get up and running with your first Snowflake Native Application
+summary: Follow this tutorial to get up and running with your first Snowflake Native Application 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

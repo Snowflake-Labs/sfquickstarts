@@ -2,7 +2,7 @@ author: Becky O’Connor
 id: using-snowflake-cortex-and-streamlit-with-geospatial-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
-summary: This is a sample Snowflake Guide
+summary: This is a sample Snowflake Guide 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

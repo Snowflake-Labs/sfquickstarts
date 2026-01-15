@@ -1,10 +1,11 @@
 id: getting-started-with-snowpark-for-machine-learning-on-vertexai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a qucikstart for using Snowpark for ML on Vertex AI
+summary: This is a qucikstart for using Snowpark for ML on Vertex AI 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowpark for Machine Learning on Vertex AI
 <!-- ------------------------ -->

@@ -2,10 +2,14 @@ author: Kala Govindarajan
 id: llm-assisted-medical-coding-extraction-for-healthcare
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
-summary: Clinical coding is the task of transforming medical records, usually presented as free texts written by clinicians or as typed texts, into structured codes in a classification system like ICD-10. By completing this QuickStart guide, you will see how fine tuning alleviates the workload on physicians and medical coders, as we aim to advance the implementation of autonomous medical coding. This approach will not only ensure high accuracy and clinical specificity in Medical code extraction but also support various healthcare models paving the way for a more sustainable and effective healthcare environment.
+summary: Clinical coding is the task of transforming medical records, usually presented as free texts written by clinicians or as typed texts, into structured codes in a classification system like ICD-10. By completing this QuickStart guide, you will see how fine tuning alleviates the workload on physicians and medical coders, as we aim to advance the implementation of autonomous medical coding. This approach will not only ensure high accuracy and clinical specificity in Medical code extraction but also support various healthcare models paving the way for a more sustainable and effective healthcare environment. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-llm-assisted-medical-coding-extraction-for-healthcare-in-snowflake
+
+
+
 
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->

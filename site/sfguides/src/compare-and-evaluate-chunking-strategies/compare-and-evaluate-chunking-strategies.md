@@ -2,10 +2,11 @@ author: Josh Reini, Elliot Botwick
 id: compare-and-evaluate-chunking-strategies
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Learn how to evaluate different chunking strategies for Retrieval Augmented Generation (RAG) applications using Snowflake's AI Observability features.
+summary: Compare document chunking strategies with Snowflake AI Observability for optimal RAG performance, retrieval accuracy, and embeddings.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Compare and Evaluate Chunking Strategies
 

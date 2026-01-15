@@ -1,13 +1,14 @@
 id: getting-started-with-snowflake-managed-mcp-and-bedrock-agentcore
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: This is a quickstart for using the Snowflake Managed MCP Server and Bedrock AgentCore
+summary: This is a quickstart for using the Snowflake Managed MCP Server and Amazon Bedrock AgentCore 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: James Sun, Matt Marzillo
 
-# Getting Started with Snowflake Managed MCP Server and Bedrock AgentCore
+
+# Getting Started with Snowflake Managed MCP Server and Amazon Bedrock AgentCore
 
 <!-- ------------------------ -->
 ## Overview 
@@ -20,19 +21,19 @@ authors: James Sun, Matt Marzillo
 
 ### Use Case
 
-In this use case you will build a Cortex Search service and Cortex Analyst services that will allow users to quickly generate responses from Pokemon sightings data in New York City.
+In this use case you will build a Cortex Search service and Cortex Analyst services that will allow users to quickly generate responses from Pokemon sightings data in New York City cia an Amazon Bedrock AgentCore Gateway.
 
 The end-to-end workflow will look like this:
 ![](assets/bedrockmcparch.png)
-1. User will make a prompt to the AgentCore Agent built in Strands.
-2. Using AgentCore Runtime, Memory and a Bedrock Claude Model the Agent will orchestrate across Cortex Search and Analyst via an MCP client and Snowflake’s hosted MCP Server.
+1. User will make a prompt to the Amazon Bedrock AgentCore Agent built in Strands.
+2. Using AgentCore Runtime, Memory and a Amazon Bedrock Claude Model the Agent will orchestrate across Cortex Search and Analyst via an MCP client and Snowflake’s hosted MCP Server.
 3. The agent will then access Amazon Location via a boto3 request to geocode the results from returned from the MCP Client.
 4. After orchestrating services the agent will prepare an answer and return it to the user.
 
 
 ### Prerequisites
 - Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account with Cortex Search.
-- Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account with access to Bedrock AgentCore.
+- Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account with access to Amazon Bedrock AgentCore.
 - A Subscription to a Claude Sonnet model in AWS Marketplace. You can complete this by going to AWS marketplace console -> discover products -> search for claude sonnet 4 -> view purchase options -> subscribe.
 
 Once subscribed to a model it will look like this:
@@ -41,18 +42,18 @@ Once subscribed to a model it will look like this:
 ### What You'll Learn
 - Using Cortex Search and Cortex Analyst.
 - Using the Snowflake Managed MCP Server.
-- Using Bedrock AgentCore with a Strands Agent to access Snowflake Cortex via MCP and Amazon Location.
+- Using Amazon Bedrock AgentCore with a Strands Agent to access Snowflake Cortex via MCP and Amazon Location.
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
-- [AWS Account](https://aws.amazon.com/free) with access to Bedrock AgentCore.
+- [AWS Account](https://aws.amazon.com/free) with access to Amazon Bedrock AgentCore.
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network.
 
 ### What You’ll Build 
 You will build an end-to-end Agentic worklfow in AgentCore and Snowflake Cortex, this includes:
 - Cortex Search and Cortex Analyst Services 
 - A Snowflake Managed MCP Object
-- A Bedrock AgentCore Agent
+- An Amazon Bedrock AgentCore Agent
 
 <!-- ------------------------ -->
 ## Set Up Snowflake and Cortex
@@ -317,7 +318,7 @@ This quickstart is just that, a quick way to get you started with using AgentCor
 ### What You Learned
 - Using Cortex Search and Cortex Analyst.
 - Using the Snowflake Managed MCP Server.
-- Using Bedrock AgentCore with a Strands Agent to access Snowflake Cortex via MCP and Amazon Location.
+- Using Amazon Bedrock AgentCore with a Strands Agent to access Snowflake Cortex via MCP and Amazon Location.
 
 ### Resources
 There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together:

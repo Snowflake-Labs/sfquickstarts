@@ -2,10 +2,11 @@ author: Tim Buchhorn
 id: data-collaboration-two-way
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This is a Snowflake Guide on how to use Snowflake's Data Collaboration features to share an enrich data. 
+summary: Enable bidirectional data collaboration in Snowflake for secure two-way data sharing between organizations and partners.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Two Way Data Collaboration
 <!-- ------------------------ -->

@@ -7,6 +7,7 @@ environments: web
 status: Hidden
 feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://github.com/Snowflake-Labs/sfguides/issues)
 
+
 # Seamless Machine Learning Workflows with Snowpark & Deepnote
 
 <!-- ------------------------ -->

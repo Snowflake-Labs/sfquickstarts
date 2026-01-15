@@ -2,10 +2,11 @@ author: Anthony Melatti
 id: doc-ai-invoice-reconciliation
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/document-ai
 language: en
-summary: Snowflake Document AI for Automated Invoice Reconciliation
+summary: Automate invoice reconciliation with Snowflake Document AI for accounts payable processing, matching, validation, and financial automation.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Document AI Invoice Reconciliation
 <!-- ------------------------ -->

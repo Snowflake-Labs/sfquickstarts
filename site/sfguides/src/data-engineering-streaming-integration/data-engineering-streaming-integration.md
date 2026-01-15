@@ -1,4 +1,4 @@
-summary: Streaming Data Integration with Snowflake
+summary: Build streaming data pipelines in Snowflake for real-time ingestion from Kafka, Kinesis, CDC sources, and event streams.
 id: data-engineering-streaming-integration
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
@@ -6,6 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
 author: Dmytro Yaroshenko
+
 
 # Streaming Data Integration with Snowflake
 <!-- ------------------------ -->

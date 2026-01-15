@@ -2,7 +2,7 @@ author: Matt
 id: accelerate-your-graphql-development-on-snowflake-with-hasura
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Instantly Build GraphQL APIs on Your Snowflake Data with Hasura
+summary: Build GraphQL APIs on Snowflake using Hasura for instant, real-time data access with subscriptions and mutations.
 environments: web
 status: Published
 feedback link: https://github.com/matt-hasura

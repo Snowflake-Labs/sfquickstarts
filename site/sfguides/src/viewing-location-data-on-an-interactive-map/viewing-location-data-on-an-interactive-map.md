@@ -8,6 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Viewing Location Data on an Interactive Map
+
 <!-- ------------------------ -->
 ## Overview 
 Honeycomb Maps is a Snowflake Native App for building interactive map dashboards using data in Snowflake tables. As a native app, Honeycomb Maps runs completely inside Snowflake, keeping data secure by eliminating the need to extract or duplicate it.
@@ -72,7 +73,8 @@ Alternatively, you can search for "Honeycomb Maps" within the Snowflake Marketpl
 
 ![Activate waiting Honeycomb Maps screen](assets/activate_configure_honeycomb_maps_waiting.png)
 
-<!-- ------------------------ -->
+
+
 ## Get POI Data 
 ### Get the Data from Marketplace
 ![Snowflake Real Estate Data Listing](assets/snowflake_real_estate_data_listing.png)
@@ -105,9 +107,9 @@ WHERE addr.city = 'New York'
 
 ![POI data Snowsight query](assets/poi_data_snowsight_query.png)
 
-<!-- ------------------------ -->
+
 ### Configure the Honeycomb Maps application
-1. Navigate to **Catalog** -> **Apps** in the Snowsight left navigation menu
+1. Navigate to **Catalog** -> **Apps** in the Snowsight left navigation menu (or [click here](https://app.snowflake.com/_deeplink/#/apps/applications?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-viewing-location-data-on-an-interactive-map) to go directly)
 2. Click on **Honeycomb Maps**
 
 #### Configure Restricted Caller's Rights
@@ -171,6 +173,8 @@ _If you don't see the screen above, ensure that you ran the grant warehouse quer
 
 You have now successfully installed Honeycomb Maps and are ready to create your first interactive map!
 
+
+
 <!-- ------------------------ -->
 ## Create Your First Map
 Now that you have Honeycomb Maps installed, let's create your first map visualization.
@@ -213,7 +217,7 @@ WHERE addr.city = 'New York'
   AND poi.category_main = 'Pizza Restaurant';
 ```
 
-![Honeycomb Maps SQL editor interface](custom_sql_interface.png)
+![Honeycomb Maps SQL editor interface](assets/custom_sql_interface.png)
 
 This query joins several tables to find all pizza restaurants in New York City, retrieving their names, categories, and geographic coordinates.
 
@@ -248,7 +252,9 @@ Tooltips allow users to see information about each restaurant when hovering over
 
 Your map now displays all pizza restaurants with customized styling and tooltips!
 
-<!-- ------------------------ -->
+
+
+
 ## Add a Density Layer
 
 Now, let's add a layer to show the density of pizza restaurants using hexagonal H3 cells. H3 is a hexagon-based spatial index that allows us to group points into hexagon cells and generate metrics and heatmaps for each cell.
@@ -270,6 +276,8 @@ This creates a hexagon grid where each cell is colored based on the number of pi
 10. Enable tooltips for this layer to show the exact count in each cell
 
 ![Density Layer](assets/density_layer.png)
+
+
 
 <!-- ------------------------ -->
 ## Add Interactive Components
@@ -367,6 +375,7 @@ Maps can be shared with 'All users' or with specific named users. For a map to b
 ![Honeycomb Maps sharing dialog ui](assets/access_management_map_sharing_dialog.png)
 
 Congratulations! You've successfully created, customized, and shared an interactive map visualization using Honeycomb Maps.
+
 
 <!-- ------------------------ -->
 ## Next Steps and Advanced Features

@@ -2,7 +2,7 @@ author: Simon Coombes
 id: building-a-sports-prediction-model-with-snowpark-ml
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/sports, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
-summary: Building a Sports Prediction Model with Snowpark ML
+summary: Predict sports outcomes using Snowpark ML for feature engineering, model training, real-time scoring, and betting analytics.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
