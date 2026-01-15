@@ -1,6 +1,6 @@
 author: Brian Pace
 id: snowflake-postgres-getting-started-with-tables
-categories: databases, postgresql, postgres, tutorial
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Follow this tutorial to learn the basics of PostgreSQL for transactional workloads
 environments: local, cloud
