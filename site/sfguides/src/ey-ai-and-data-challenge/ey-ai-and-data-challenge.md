@@ -26,7 +26,7 @@ This challenge is designed for participants with varying levels of experience in
 
 
 ### What will participants do?
-EY has joined forces with one of its key alliances, Snowflake, to empower the next generation of changemakers to turn data into real-world impact. 
+EY and Snowflake have joined forces to empower the next generation of changemakers to turn data into real-world impact.
 
 Using Snowflake's AI Data Cloud and EY's platform, along with a combination of datasets, participants will develop cutting-edge machine learning models that forecast water quality in inland bodies - creating actionable insights that can transform public health policy and community outcomes.
 
