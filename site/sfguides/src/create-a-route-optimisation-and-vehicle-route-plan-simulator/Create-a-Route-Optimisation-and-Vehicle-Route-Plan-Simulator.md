@@ -134,6 +134,24 @@ Once deployment completes, Cortex Code will provide a link to your app. You need
 2. Grant the required privileges via the UI
 3. Click **Activate** and wait for the services to start
 
+### Service Manager
+
+After activation, the Native App provides a **Service Manager** dashboard to monitor and control all ORS services:
+
+![Service Manager](assets/image.png)
+
+The Service Manager shows:
+- **Service Status Dashboard** - Overview of all running, stopped, and error states
+- **Individual Service Management** - Start/Stop controls for each service:
+  - **Data Downloader** - Downloads and updates map data
+  - **Open Route Service** - Core routing and directions engine
+  - **Routing Gateway** - API gateway for routing requests
+  - **VROOM Service** - Route optimization engine
+
+Use the **Start All** / **Stop All** buttons for bulk operations, or manage services individually. Click **Refresh Status** to update the dashboard.
+
+> **_TIP:_** All 4 services should show ✅ RUNNING status before using the routing functions.
+
 ### ORS Configuration
 
 The Native App is configured via the `ors-config.yml` file which controls:
