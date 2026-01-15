@@ -79,7 +79,7 @@ If the template deeplink does not work, you can find the script in the Snowflake
 ## Create New Workspace from git repo
 After running the setup script in SQL, you can load all of the files into your Snowflake Account by creating a new Workspace from a Git repository. 
 
-1. Navigate to Workspaces with this [deeplink](https://app.snowflake.com/_deeplink/workspaces) or by clicking Workspaces in the left sidebar navigation.
+1. Navigate to Workspaces with this [deeplink](https://app.snowflake.com/_deeplink/workspaces) or by clicking the "Projects" icon, then selecting "Workspaces" in the left sidebar navigation.
 
     ![img](assets/workspaces_nav.png)
 
@@ -113,18 +113,23 @@ If you have any trouble with the git integration, don't worry!
 The notebook is located in the [Snowflake-Labs repo on Github](https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge/getting_started_notebook.ipynb)
 
 You can download it from Github, and then upload the notebook into "My Workspace" by clicking the "Add New" button and choosing "Upload Files".
+
     ![img](assets/add_new_upload_files.png)
 
 ## Start running the Notebook
 
 1. Click Connect and choose the External Access Integration "DATA_CHALLENGE_EXTERNAL_ACCESS"
+
     ![img](assets/connect_your_notebook.jpg)
 
-    Most of the demo notebooks will run on the default version of Python 3.12, but if you run into issues, you can click "Service Settings" and change the version of Python to 3.10.
+    Note: Most of the demo notebooks will run on the default version of Python 3.12, but if you run into issues, you can click the pencil icon to edit the service, then expand the "Service Settings" section, and change the version of Python to 3.10.
+
+    ![img](assets/edit_service.png)
 
     ![img](assets/connect_your_notebook_service_settings.png)
 
-2. Wait until the container is running and the kernel is connected
+2. In just a few moment, you will see the icon turn green to indicate that the container is running and the kernel is connected.
+
     ![img](assets/connected_kernel.jpg)    
 
 3. If you were successful with the git integration, the requirements.txt file is already in your environment. If not, then just run the first few cells in the notebook to create the requirements.txt file, then refresh the browser tab to see it in your file list in your Workspace environment. 
