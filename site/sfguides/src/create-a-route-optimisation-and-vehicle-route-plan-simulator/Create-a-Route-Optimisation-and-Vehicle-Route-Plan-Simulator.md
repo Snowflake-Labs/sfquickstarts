@@ -138,7 +138,7 @@ Once deployment completes, Cortex Code will provide a link to your app. You need
 
 After activation, the Native App provides a **Service Manager** dashboard to monitor and control all ORS services:
 
-![Service Manager](assets/image.png)
+![Service Manager](assets/service_manager.png)
 
 The Service Manager shows:
 - **Service Status Dashboard** - Overview of all running, stopped, and error states
