@@ -61,14 +61,16 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
     - [Podman](https://podman.io/) (recommended): `brew install podman` (macOS) 
     - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
--   [Git](https://git-scm.com/downloads) installed
-
 -   [VSCode](https://code.visualstudio.com/download) recommended for running Cortex Code commands
 
--   Clone or download the repository:
-    ```bash
-    git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-    ```
+-   **Download the repository** - Choose one option:
+    - **With Git** (recommended): 
+      ```bash
+      git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+      ```
+    - **Without Git**: Download the ZIP from [GitHub](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator) and extract it
+
+> **_NOTE:_** Git is optional but recommended. If you use Git, customizations are saved to feature branches, making it easy to switch between configurations.
 
 ### Route Planning And Optimization Architecture
 
@@ -264,7 +266,8 @@ use the local skill from skills/ors-map-customization
 > - **Add Carto Data Notebook** - Geohash filter for your region
 > - **Streamlit Simulator** - Default search location
 >
-> All changes are saved to a **new Git branch** (e.g., `feature/ors-paris`). This allows you to easily switch back to the `main` branch to reload the San Francisco defaults at any time.
+> **If using Git:** Changes are saved to a new feature branch (e.g., `feature/ors-paris`), allowing you to easily switch back to `main` for San Francisco defaults.
+> **If not using Git:** Changes are made directly to your local files. Keep a backup if you want to preserve the original configuration.
 
 ### Example: Customizing to Paris
 
@@ -362,9 +365,9 @@ To customize, you can:
 
 > **_TIP:_** The Streamlit app reads industries dynamically from the database, so only the `add_carto_data.ipynb` notebook needs updating. The app automatically adapts to any changes.
 
-**Git Branch Management**
+**Git Branch Management (If Using Git)**
 
-All customizations are committed to a feature branch (e.g., `feature/ors-paris`), preserving the original San Francisco configuration on `main`. To switch between regions later:
+If you're using Git, customizations are saved to a feature branch (e.g., `feature/ors-paris`), preserving the original San Francisco configuration on `main`. To switch between regions:
 
 ```bash
 git checkout feature/ors-paris    # Switch to Paris
@@ -372,6 +375,8 @@ git checkout main                 # Switch back to San Francisco
 ```
 
 Then redeploy with Cortex Code to apply the configuration.
+
+> **_NOTE:_** If you downloaded the repository as a ZIP (without Git), changes are made directly to your local files. Keep a backup if you want to preserve the original configuration.
 
 Once your services are running with the new map (or if you skipped customization), continue to deploy the demo.
 
