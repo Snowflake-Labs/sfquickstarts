@@ -363,7 +363,9 @@ To customize, you can:
 - Define product categories and vehicle skill requirements
 - Choose customer types from Overture Maps categories in your region
 
-> **_TIP:_** The Streamlit app reads industries dynamically from the database, so only the `add_carto_data.ipynb` notebook needs updating. The app automatically adapts to any changes.
+> **_IMPORTANT:_** After customizing industries, you must run the `deploy-demo` skill to apply the changes to the database. The skill will automatically prompt you to continue to deployment after customization is complete.
+
+> **_TIP:_** The Streamlit app reads industries dynamically from the database, so once `deploy-demo` runs, the app automatically reflects your new industries.
 
 **Git Branch Management (If Using Git)**
 
