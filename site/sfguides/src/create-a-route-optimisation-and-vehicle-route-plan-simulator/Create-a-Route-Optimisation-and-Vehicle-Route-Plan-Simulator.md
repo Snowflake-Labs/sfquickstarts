@@ -367,22 +367,27 @@ The skill automatically updates:
 
 **Industry Category Customization (Optional)**
 
-The default industries are Healthcare, Food, and Cosmetics. The skill offers an optional step to customize industries for your specific use case:
+The default industries are Healthcare, Food, and Cosmetics. The skill offers an optional step to customize industries for your specific use case.
 
-| Default Industry | Product Types | Customer Types |
-|------------------|---------------|----------------|
-| Healthcare | Flammable, Sharps, Temperature-controlled | Hospitals, Pharmacies, Dentists |
-| Food | Fresh, Frozen, Non-perishable | Supermarkets, Restaurants, Butchers |
-| Cosmetics | Hair products, Electronics, Make-up | Outlets, Fashion stores |
+**Each industry gets its own specific configuration:**
 
-To customize, you can:
-- Add new industries (e.g., "Beverages", "Electronics", "Office Supplies")
-- Define product categories and vehicle skill requirements
-- Choose customer types from Overture Maps categories in your region
+| Industry | Product Types (PA/PB/PC) | Customer Types | Vehicle Skills |
+|----------|--------------------------|----------------|----------------|
+| **Healthcare** | Flammable, Sharps, Temperature-controlled | Hospitals, Pharmacies, Dentists | Hazmat Handler, Cold Chain, Standard |
+| **Food** | Fresh, Frozen, Non-perishable | Supermarkets, Restaurants, Butchers | Fresh Delivery, Refrigerated, Standard |
+| **Cosmetics** | Hair products, Electronics, Make-up | Outlets, Fashion stores | Premium, Fragile, Standard |
 
-> **_IMPORTANT:_** After customizing industries, you must run the `deploy-demo` skill to apply the changes to the database. The skill will automatically prompt you to continue to deployment after customization is complete.
+**Example custom industries:**
 
-> **_TIP:_** The Streamlit app reads industries dynamically from the database, so once `deploy-demo` runs, the app automatically reflects your new industries.
+| Industry | Product Types | Customer Types | Vehicle Skills |
+|----------|--------------|----------------|----------------|
+| **Beverages** | Alcoholic, Carbonated, Still Water | Bars, Restaurants, Hotels | Age Verification, Fragile Handler, Heavy Load |
+| **Electronics** | High-Value, Fragile Equipment, Standard | Electronics Stores, Computer Shops | Secure Transport, Fragile Handler, Standard |
+| **Pharmaceuticals** | Controlled, Temperature Sensitive, OTC | Pharmacies, Hospitals, Clinics | Licensed Carrier, Cold Chain, Standard |
+
+> **_IMPORTANT:_** After customizing industries, you must run the `deploy-demo` skill to apply the changes. The skill will automatically prompt you to continue to deployment.
+
+> **_TIP:_** The Streamlit app reads industries dynamically from the database - your custom industries appear automatically after deployment.
 
 **Git Branch Management (If Using Git)**
 
