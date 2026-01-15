@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Deploy an OpenRouteService Native App in minutes using Cortex Code skills. Build a self-contained route optimization platform with directions, vehicle optimization, and isochrones - all within Snowflake with no external API dependencies.
 environments: web
-status: Published 
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
@@ -46,10 +46,10 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
 **This is what you will need**:
 
 -   **ACCOUNTADMIN** access to your Snowflake account
-
+    
 -   [Snowpark Container Services Activated](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 
-> **_NOTE:_** This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.
+> **_NOTE:_** This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
 
 -   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) - Required to download map files from provider account
 
@@ -202,9 +202,9 @@ The configuration defines which vehicle types are available for routing:
 
 The config also controls route optimization capacity:
 ```yml
-matrix:
-  maximum_visited_nodes: 1000000000
-  maximum_routes: 25000000
+    matrix:
+      maximum_visited_nodes: 1000000000
+      maximum_routes: 25000000
 ```
 These settings support complex route optimizations with many vehicles and delivery points.
 
