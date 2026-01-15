@@ -134,7 +134,9 @@ Each notebook has its own kernel, so each time you run a pip install in a notebo
 
 ## Next Steps
 
-Download and explore the Landsat and Terraclimate notebooks from the EY AI & Data Challenge portal to gain a deeper understanding of these tools. Use the Benchmark Model notebook to review the training and data submission workflow. 
+Explore the Landsat and Terraclimate notebooks in your Workspace or download them from the EY AI & Data Challenge portal to gain a deeper understanding of these tools. 
+
+Run the Benchmark Model notebook to review the training and data submission workflow. 
 
 Participating teams are able to submit to the portal multiple times per day and see their team climb to the top of the leaderboard! 
 
