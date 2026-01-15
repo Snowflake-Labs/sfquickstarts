@@ -452,7 +452,7 @@ The streamlit app which you have open simulates potential routes to 29 delivery 
 -   Health
 -   Cosmetics
 
-If you wish to add additional choice of distributor types, you can with the provided notebook.
+If you wish to add additional industry types, use the `ors-map-customization` skill which includes an optional step to customize industries. See [Industry Category Customization](#industry-category-customization-optional) for details.
 
 The routing functions are provided by the Native App you deployed via Cortex Code.
 
