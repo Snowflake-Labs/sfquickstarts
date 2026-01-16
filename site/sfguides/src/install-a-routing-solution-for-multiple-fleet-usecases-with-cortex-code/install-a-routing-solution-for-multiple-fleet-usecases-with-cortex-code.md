@@ -345,26 +345,30 @@ skills/customizations/
 The main `customizations` skill orchestrates the process by asking **three yes/no questions**, then runs only the relevant sub-skills:
 
 1. **"Do you want to customize the LOCATION (map region)?"**
-   - If YES → Runs `location.md` → `vehicles.md` → `streamlits.md` → `aisql-notebook.md` → `carto-notebook.md`
+   - If YES → Runs `location.md` → `vehicles.md`
    - If NO → Skips map download entirely
 
 2. **"Do you want to customize VEHICLE TYPES (routing profiles)?"**
-   - If YES → Runs `vehicles.md` → `streamlits.md`
+   - If YES → Runs `vehicles.md`
    - If NO → Keeps default profiles (car, HGV, road bicycle)
 
 3. **"Do you want to customize INDUSTRIES for the demo?"**
-   - If YES → Runs `industries.md` → `aisql-notebook.md` → `carto-notebook.md`
+   - If YES → Runs `industries.md`
    - If NO → Keeps default industries (Food, Healthcare, Cosmetics)
+
+**For ANY customization:** The orchestrator ALWAYS runs `streamlits.md`, `aisql-notebook.md`, and `carto-notebook.md` to ensure all components are updated consistently, followed by `deploy-demo` to apply changes to Snowflake.
 
 ### Which Sub-Skills Run Based on Your Choices
 
 | Your Choices | Sub-Skills Executed | What Gets Updated |
 |--------------|---------------------|-------------------|
-| **Location = YES** | `location` → `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` | Map downloaded, config rebuilt, graphs regenerated, all apps updated |
-| **Vehicles only = YES** | `vehicles` → `streamlits` | Routing profiles modified, graphs rebuilt, apps updated |
-| **Industries only = YES** | `industries` → `aisql-notebook` → `carto-notebook` | Demo content updated (no app redeployment needed) |
-| **Location + Industries** | All sub-skills | Everything updated |
+| **Location = YES** | `location` → `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-demo** | Map downloaded, config rebuilt, graphs regenerated, all apps updated |
+| **Vehicles = YES** | `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-demo** | Routing profiles modified, graphs rebuilt, all apps updated |
+| **Industries = YES** | `industries` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-demo** | Industry config updated, all apps updated |
+| **Any combination** | All relevant sub-skills + `streamlits` + `aisql-notebook` + `carto-notebook` → **deploy-demo** | Everything updated |
 | **Nothing** | None | Exit (no changes) |
+
+> **_IMPORTANT:_** For ANY customization, all Streamlit apps and notebooks are updated, and `deploy-demo` MUST be run to apply changes to Snowflake.
 
 > **If using Git:** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults.
 > **If not using Git:** Changes are made directly to local files. Keep a backup if needed.
@@ -394,10 +398,10 @@ use the local skill from skills/customizations/carto-notebook
 ```
 
 > **_IMPORTANT:_** When running sub-skills independently, be aware of dependencies:
-> - After running `location`, you should also run `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook`
-> - After running `vehicles`, you should also run `streamlits`
-> - After running `industries`, you should also run `aisql-notebook` → `carto-notebook`
-> - After any customization, run `deploy-demo` to apply changes to Snowflake
+> - After running `location`, you should also run `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → `deploy-demo`
+> - After running `vehicles`, you should also run `streamlits` → `aisql-notebook` → `carto-notebook` → `deploy-demo`
+> - After running `industries`, you should also run `streamlits` → `aisql-notebook` → `carto-notebook` → `deploy-demo`
+> - **For ANY customization:** All Streamlits and notebooks must be updated, and `deploy-demo` MUST be run
 
 ### Example: Customizing to Paris with All Options
 
