@@ -232,8 +232,12 @@ Once deployment completes, Cortex Code will provide a link to your app. You need
 
 ![Navigate to Apps](assets/navigate_to_apps.png)
 
-2. Grant the required privileges via the UI
-3. Click **Activate** and wait for the services to start
+2. Click on the **OPENROUTESERVICE_NATIVE_APP** to open it
+
+![App Icon](assets/app_icon.png)
+
+3. Grant the required privileges via the UI
+4. Click **Activate** and wait for the services to start
 
 ### Service Manager
 
