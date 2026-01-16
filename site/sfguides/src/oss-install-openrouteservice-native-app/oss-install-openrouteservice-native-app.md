@@ -450,6 +450,21 @@ Cortex Code will find the appropriate skill and guide you through the process:
 - Services restart to rebuild routing graphs for Paris
 - Changes are applied directly to your local files
 
+Once the customization completes, Cortex Code shows a summary of everything that was updated:
+
+![Location Customization Complete](assets/location_customization_complete.png)
+
+The summary confirms:
+1. ✅ **Map downloaded** - The Île-de-France map for the Paris region
+2. ✅ **Config updated** - `ors-config.yml` now points to the new map file
+3. ✅ **Service spec updated** - Volume paths configured for Paris
+4. ✅ **Services resumed** - ORS_SERVICE is rebuilding routing graphs (this takes 15-30 minutes depending on map size)
+5. ✅ **Streamlit updated** - Default location changed to "Eiffel Tower, Paris"
+6. ✅ **AISQL notebook updated** - AI prompts now reference Paris
+7. ✅ **Carto notebook updated** - Geohash filter set for Paris region
+
+> **_NOTE:_** If the demo is installed, Cortex Code will ask if you want to run `deploy-demo` to push the updated Streamlit and notebooks to Snowflake. If the demo is not yet installed, these updates will be applied automatically when you deploy the demo later.
+
 > **_NOTE:_** Demo-related customizations (industries, notebooks, Simulator) are handled by the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart after installing ORS.
 
 **⏳ Wait for Services to Restart**
