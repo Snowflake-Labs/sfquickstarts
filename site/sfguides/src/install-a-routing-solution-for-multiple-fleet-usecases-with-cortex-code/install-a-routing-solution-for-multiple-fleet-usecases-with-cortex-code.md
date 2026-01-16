@@ -67,20 +67,6 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
 
 -   [VSCode](https://code.visualstudio.com/download) recommended for running Cortex Code commands
 
--   **Fork and clone the repository** (recommended for customizations):
-    1. **Fork the repo**: Go to [GitHub](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator) and click **Fork** to create your own copy
-    2. **Clone your fork**:
-      ```bash
-      git clone https://github.com/<YOUR-USERNAME>/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-      ```
-    - **Without Git**: Download the ZIP from the repository and extract it
-
-After cloning, open the folder in VS Code. You should see the following structure in your Explorer:
-
-![Cloned Repository Structure](assets/cloned_objects.png)
-
-> **_IMPORTANT:_** If you plan to customize the deployment (change location, vehicles, or industries), you **must fork the repository first**. Cloning the original repo directly won't give you permission to create branches or push your customizations. Your fork gives you full write access to save and version your configurations.
-
 ### Route Planning And Optimization Architecture
 
 The architecture below shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
@@ -115,19 +101,27 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
 
 ### Setup Cortex Code
 
-1. **Clone the repository using the integrated terminal** (if you haven't already):
-   ```bash
-   git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-   cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-   ```
-   If you have downloaded the folder outside of git, navigate to the downloaded folder using the VSCode UI
+1. **Fork and clone the repository**:
+   - **Fork the repo**: Go to [GitHub](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator) and click **Fork** to create your own copy
+   - **Clone your fork** using the integrated terminal:
+     ```bash
+     git clone https://github.com/<YOUR-USERNAME>/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+     cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+     ```
+   - **Without Git**: Download the ZIP from the repository and extract it, then navigate to the folder in VS Code
 
-3. **Launch Cortex Code CLI** in the VS Code terminal:
+   After cloning, open the folder in VS Code. You should see the following structure in your Explorer:
+
+   ![Cloned Repository Structure](assets/cloned_objects.png)
+
+   > **_IMPORTANT:_** If you plan to customize the deployment (change location, vehicles, or industries), you **must fork the repository first**. Cloning the original repo directly won't give you permission to create branches or push your customizations.
+
+2. **Launch Cortex Code CLI** in the VS Code terminal:
    ```bash
    cortex
    ```
 
-4. **Connect to Snowflake** - Cortex Code will prompt you to select or create a connection.  once a connection has ben created using one of the authentication methods, you will now be able to start cortex code in the terminal by using the **cortex** command which will give you a similar screen as below.
+3. **Connect to Snowflake** - Cortex Code will prompt you to select or create a connection.  once a connection has ben created using one of the authentication methods, you will now be able to start cortex code in the terminal by using the **cortex** command which will give you a similar screen as below.
 
 ![Cortex Code Logged In](assets/co-co-logged-in.png)
 
