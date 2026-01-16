@@ -229,6 +229,9 @@ Once complete, you'll see a success message with a direct link to your app:
 Once deployment completes, Cortex Code will provide a link to your app. You need to:
 
 1. Navigate to **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP** in Snowsight
+
+![Navigate to Apps](assets/navigate_to_apps.png)
+
 2. Grant the required privileges via the UI
 3. Click **Activate** and wait for the services to start
 
