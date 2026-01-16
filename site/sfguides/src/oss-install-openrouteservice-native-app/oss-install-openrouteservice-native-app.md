@@ -101,20 +101,17 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
 
 ### Setup Cortex Code
 
-1. **Fork and clone the repository**:
-   - **Fork the repo**: Go to [GitHub](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator) and click **Fork** to create your own copy
-   - **Clone your fork** using the integrated terminal:
-     ```bash
-     git clone https://github.com/<YOUR-USERNAME>/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-     cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-     ```
-   - **Without Git**: Download the ZIP from the repository and extract it, then navigate to the folder in VS Code
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+   cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+   ```
+   
+   **Without Git**: Download the ZIP from the repository and extract it, then navigate to the folder in VS Code
 
    After cloning, open the folder in VS Code. You should see the following structure in your Explorer:
 
    ![Cloned Repository Structure](assets/cloned_objects.png)
-
-   > **_IMPORTANT:_** If you plan to customize the deployment (change location or vehicles), you **must fork the repository first**. Cloning the original repo directly won't give you permission to create branches or push your customizations.
 
 2. **Launch Cortex Code CLI** in the VS Code terminal:
    ```bash
@@ -406,8 +403,6 @@ The main `customizations` skill orchestrates the process by asking **two yes/no 
 | **Location + Vehicles** | `location` → `vehicles` → **deploy-route-optimizer** | Everything updated |
 | **Nothing** | None | Exit (no changes) |
 
-> **If using Git (with your fork):** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults. Make sure you cloned **your fork** (not the original repo) to have permission to create branches and push changes.
-
 ### Running Individual Sub-Skills
 
 You can also run specific customizations directly:
@@ -446,9 +441,9 @@ When you run `use the local skill from oss-install-openrouteservice-native-app/s
 - Updates Function Tester with region-specific sample addresses
 - Updates available vehicle profiles dropdown to match your configuration
 
-**Step 4: Save & Apply**
-- Optionally creates Git feature branch for your customizations
+**Step 4: Apply Changes**
 - Services restart to rebuild routing graphs
+- Changes are applied directly to your local files
 
 > **_NOTE:_** Demo-related customizations (industries, notebooks, Simulator) are handled by the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart after installing ORS.
 
@@ -529,20 +524,7 @@ This ensures test addresses are valid for your map region and vehicle options ma
 
 > **_NOTE:_** Demo-related customizations (AISQL notebooks, industry categories) are covered in the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart.
 
-**Git Branch Management (Requires Your Fork)**
-
-If you're using Git with **your forked repository**, customizations are saved to a feature branch (e.g., `feature/ors-paris`), preserving the original San Francisco configuration on `main`. To switch between regions:
-
-```bash
-git checkout feature/ors-paris    # Switch to Paris
-git checkout main                 # Switch back to San Francisco
-```
-
-Then redeploy with Cortex Code to apply the configuration.
-
-> **_NOTE:_** Branch creation and pushing requires write access. If you cloned the original Snowflake-Labs repo directly, you won't have permission to push branches. See the [Prerequisites](#prerequisites) section for fork instructions.
-
-> **_NOTE:_** If you downloaded the repository as a ZIP (without Git), changes are made directly to your local files. Keep a backup if you want to preserve the original configuration.
+> **_TIP:_** Customizations modify your local files directly. If you want to preserve the original San Francisco configuration, make a backup before customizing.
 
 Once your services are running with the new map (or if you skipped customization), you're ready to deploy the demo!
 
