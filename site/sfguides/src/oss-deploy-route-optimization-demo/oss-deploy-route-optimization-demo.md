@@ -213,6 +213,31 @@ use the local skill from oss-install-openrouteservice-native-app/skills/uninstal
 ```
 
 <!-- ------------------------ -->
+## Available Cortex Code Skills
+
+For reference, here are the Cortex Code skills for the Route Optimization Demo:
+
+### Demo Skills
+
+| Skill | Description | Command |
+|-------|-------------|---------|
+| `deploy-demo` | Deploy notebooks and Simulator Streamlit | `use the local skill from oss-deploy-route-optimization-demo/skills/deploy-demo` |
+| `uninstall-demo` | Remove demo database, optionally marketplace data | `use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo` |
+
+### Customization Sub-Skills
+
+| Sub-Skill | Description | Command |
+|-----------|-------------|---------|
+| `industries` | Customize industry categories | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/industries` |
+| `streamlits` | Update Simulator with region coordinates | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/streamlits` |
+| `aisql-notebook` | Update AI prompts for your region | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/aisql-notebook` |
+| `carto-notebook` | Update POI data source | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/carto-notebook` |
+
+### ORS Skills
+
+For OpenRouteService Native App skills (installation, location/vehicle customization, uninstall), see the **[Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/)** quickstart.
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 
 ### Conclusion
