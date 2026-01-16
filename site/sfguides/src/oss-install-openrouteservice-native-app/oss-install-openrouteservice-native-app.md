@@ -259,7 +259,7 @@ Once activated, you'll see a **Launch app** button appear. Click it to open the 
 
 ### Service Manager
 
-After activation, the Native App provides a **Service Manager** dashboard to monitor and control all ORS services:
+The Launch app button takes you to the **Service Manager** dashboard, which displays the status of each of the four services running:
 
 ![Service Manager](assets/service-manager.png)
 
