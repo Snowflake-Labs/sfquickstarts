@@ -248,7 +248,12 @@ Click **Grant** for Step 1. For Step 2, click **Review** to see the external end
 
 4. Once all privileges are granted, click **Activate** and wait a few minutes for the routing functions to install and the graphs to build
 
-> **_NOTE:_** The activation time depends on the size of your map. Smaller city maps will complete in a few minutes, while larger country or state maps may take longer as the routing graphs are more complex to generate.
+> **_NOTE:_** The activation time depends on your configuration:
+> - **Map size**: Larger country or state maps take longer than city maps
+> - **Vehicle profiles**: Each enabled profile (driving-car, cycling, walking, etc.) generates its own routing graph
+> - **Resource scaling**: The compute pool size affects build speed
+>
+> The combination of map size and vehicle options determines the total number of graphs to build. A city map with 2 profiles will complete quickly, while a country map with 5+ profiles will take significantly longer.
 
 ### Service Manager
 
