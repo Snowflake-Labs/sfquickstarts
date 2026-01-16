@@ -477,6 +477,8 @@ After the map is uploaded (if location was changed) or profiles were modified (i
 
 Once services are running, the Function Tester will show **Paris addresses** instead of San Francisco!
 
+![New Location Complete](assets/new-location-complete.png)
+
 > **_TIP:_** If you only want to enable additional vehicle profiles (and keep San Francisco), answer NO to location. This skips map download entirely - making it much faster!
 
 ### Map Download & Resource Scaling (Location Changes Only)
