@@ -116,6 +116,8 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
 
 3. **Connect to Snowflake** - Cortex Code will prompt you to select or create a connection
 
+![Cortex Code Logged In](assets/co-co-logged-in.png)
+
 4. **(Optional) Verify Prerequisites** - Run the prerequisites check skill to ensure all dependencies are installed:
    ```
    use the local skill from skills/check-prerequisites
