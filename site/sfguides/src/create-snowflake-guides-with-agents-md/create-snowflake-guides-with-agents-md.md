@@ -208,19 +208,19 @@ Before finalizing, the agent runs the generated guide through this checklist pro
 
 #### Pre-Publish Verification
 
-[ ] Categories are from the approved list
-[ ] ID is lowercase with hyphens (not underscores)
-[ ] ID matches markdown file name (without .md extension)
-[ ] ID matches the folder name containing the markdown file
-[ ] Language tag is populated with valid code
-[ ] Title starts with an action verb
-[ ] Overview section includes all required subsections
-[ ] Prerequisites includes Snowflake account signup link as first item
-[ ] Conclusion starts with "Congratulations! You've successfully..."
-[ ] No HTML is used in the markdown
-[ ] All code snippets are preserved exactly
-[ ] Headers do not exceed H4 (`####`)
-wwww[ ] H2 headings are 3-4 words max
+- [ ] Categories are from the approved list
+- [ ] ID is lowercase with hyphens (not underscores)
+- [ ] ID matches markdown file name (without .md extension)
+- [ ] ID matches the folder name containing the markdown file
+- [ ] Language tag is populated with valid code
+- [ ] Title starts with an action verb
+- [ ] Overview section includes all required subsections
+- [ ] Prerequisites includes Snowflake account signup link as first item
+- [ ] Conclusion starts with "Congratulations! You've successfully..."
+- [ ] No HTML is used in the markdown
+- [ ] All code snippets are preserved exactly
+- [ ] Headers do not exceed H4 (`####`)
+- [ ] H2 headings are 3-4 words max
 
 #### Example of Guide Validation: Semantic View
 
