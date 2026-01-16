@@ -479,6 +479,10 @@ Once services are running, the Function Tester will show **Paris addresses** ins
 
 ![New Location Complete](assets/new-location-complete.png)
 
+You can now test the routing functions with Paris addresses. Here's an example of testing the **ISOCHRONES** function to calculate a 15-minute driving catchment area from the Eiffel Tower:
+
+![Test Isochrones Paris](assets/test-isochrones-paris.png)
+
 > **_TIP:_** If you only want to enable additional vehicle profiles (and keep San Francisco), answer NO to location. This skips map download entirely - making it much faster!
 
 ### Map Download & Resource Scaling (Location Changes Only)
