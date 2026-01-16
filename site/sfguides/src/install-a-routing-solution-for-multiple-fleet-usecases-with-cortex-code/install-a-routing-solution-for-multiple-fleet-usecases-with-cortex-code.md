@@ -75,6 +75,10 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
       ```
     - **Without Git**: Download the ZIP from the repository and extract it
 
+After cloning, open the folder in VS Code. You should see the following structure in your Explorer:
+
+![Cloned Repository Structure](assets/cloned_objects.png)
+
 > **_IMPORTANT:_** If you plan to customize the deployment (change location, vehicles, or industries), you **must fork the repository first**. Cloning the original repo directly won't give you permission to create branches or push your customizations. Your fork gives you full write access to save and version your configurations.
 
 ### Route Planning And Optimization Architecture
