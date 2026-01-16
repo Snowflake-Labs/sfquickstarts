@@ -83,15 +83,36 @@ Cortex Code will automatically:
 - **Deploy Notebooks** - Provisions the AISQL notebook customized for your chosen city
 - **Deploy Simulator** - Creates the Route Optimization Streamlit app with real POI data
 
-### What Gets Created
+### What Gets Installed
 
-| Component | Location | Description |
-|-----------|----------|-------------|
-| Marketplace Data | `OVERTURE_MAPS__PLACES` | Carto Overture POI dataset |
-| Database | `VEHICLE_ROUTING_SIMULATOR` | Demo database with DATA, NOTEBOOKS, STREAMLITS schemas |
-| Notebook | `NOTEBOOKS.ADD_CARTO_DATA` | Prepares POI data for the demo |
-| Notebook | `NOTEBOOKS.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of routing functions |
-| Streamlit | `STREAMLITS.SIMULATOR` | Route optimization simulator app |
+The demo skill creates the following Snowflake objects:
+
+**Marketplace Data**
+| Component | Name | Description |
+|-----------|------|-------------|
+| Database | `OVERTURE_MAPS__PLACES` | Carto Overture Maps Places dataset with 50M+ POIs worldwide |
+
+**Demo Database & Infrastructure**
+| Component | Name | Description |
+|-----------|------|-------------|
+| Database | `VEHICLE_ROUTING_SIMULATOR` | Main demo database |
+| Schema | `VEHICLE_ROUTING_SIMULATOR.DATA` | Prepared POI data for the simulator |
+| Schema | `VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS` | Notebook storage and stages |
+| Schema | `VEHICLE_ROUTING_SIMULATOR.STREAMLITS` | Streamlit app storage |
+| Warehouse | `ROUTING_ANALYTICS` | Compute warehouse for queries (auto-suspend 60s) |
+| Stage | `NOTEBOOKS.notebook` | Stage for notebook files |
+| Stage | `STREAMLITS.STREAMLIT` | Stage for Streamlit files |
+
+**Notebooks**
+| Component | Name | Description |
+|-----------|------|-------------|
+| Notebook | `NOTEBOOKS.ADD_CARTO_DATA` | Prepares POI data from Carto Overture for the demo |
+| Notebook | `NOTEBOOKS.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of Directions, Optimization, and Isochrones |
+
+**Streamlit Application**
+| Component | Name | Description |
+|-----------|------|-------------|
+| Streamlit | `STREAMLITS.SIMULATOR` | Route Optimization Simulator with real POI data |
 
 Once deployment completes successfully, you'll see a summary with direct links to your resources:
 
