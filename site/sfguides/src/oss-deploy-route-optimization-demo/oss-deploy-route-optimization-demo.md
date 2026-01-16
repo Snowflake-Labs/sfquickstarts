@@ -118,6 +118,10 @@ Once deployment completes successfully, you'll see a summary with direct links t
 
 ![Demo Deployed Successfully](assets/deployed_successfully.png)
 
+Cortex Code confirms all demo components are installed and ready to use:
+
+![Demo Installed](assets/demo_installed.png)
+
 <!-- ------------------------ -->
 ## Explore the Routing Functions with AISQL
 
