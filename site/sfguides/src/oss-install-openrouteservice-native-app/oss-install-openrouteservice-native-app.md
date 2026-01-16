@@ -421,28 +421,33 @@ use the local skill from oss-install-openrouteservice-native-app/skills/customiz
 
 ### Example: Customizing to Paris
 
-When you run `use the local skill from oss-install-openrouteservice-native-app/skills/customizations` and answer YES to location:
+Let's try changing the location to Paris. In Cortex Code, simply type:
 
-**Step 1: Location Sub-Skill** (`location.md`)
-- Choose **Paris** or **Île-de-France** from Geofabrik
-- Downloads and uploads the OpenStreetMap data
-- Updates `ors-config.yml` with new map path
+```
+change the location to paris
+```
 
-**Step 2: Vehicles Sub-Skill** (`vehicles.md`)
-- Choose which routing profiles to enable:
+Cortex Code will find the appropriate skill and guide you through the process:
+
+**Step 1: Location Change**
+- Cortex Code downloads the Paris (or Île-de-France) map from Geofabrik
+- Uploads the OpenStreetMap data to Snowflake
+- Updates `ors-config.yml` with the new map path
+
+**Step 2: Vehicle Profiles**
+- Choose which routing profiles to enable for Paris:
   - `driving-car` - Standard passenger vehicle ✅
   - `driving-hgv` - Heavy goods vehicle (trucks) ✅
   - `cycling-road` - Road bicycles ✅
   - `foot-walking` - Pedestrian (optional)
   - `wheelchair` - Wheelchair accessible (optional)
-- Updates routing profile configuration
 
 **Step 3: Function Tester Update**
-- Updates Function Tester with region-specific sample addresses
+- Updates Function Tester with Paris addresses
 - Updates available vehicle profiles dropdown to match your configuration
 
-**Step 4: Apply Changes**
-- Services restart to rebuild routing graphs
+**Step 4: Rebuild Graphs**
+- Services restart to rebuild routing graphs for Paris
 - Changes are applied directly to your local files
 
 > **_NOTE:_** Demo-related customizations (industries, notebooks, Simulator) are handled by the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart after installing ORS.
