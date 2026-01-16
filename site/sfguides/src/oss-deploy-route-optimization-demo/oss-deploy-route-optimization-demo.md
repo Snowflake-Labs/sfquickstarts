@@ -221,6 +221,7 @@ For reference, here are the Cortex Code skills for the Route Optimization Demo:
 
 | Skill | Description | Command |
 |-------|-------------|---------|
+| `check-ors-prerequisite` | Verify ORS Native App is installed | `use the local skill from oss-deploy-route-optimization-demo/skills/check-ors-prerequisite` |
 | `deploy-demo` | Deploy notebooks and Simulator Streamlit | `use the local skill from oss-deploy-route-optimization-demo/skills/deploy-demo` |
 | `uninstall-demo` | Remove demo database, optionally marketplace data | `use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo` |
 
