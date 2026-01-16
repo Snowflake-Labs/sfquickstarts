@@ -2,7 +2,7 @@ author: Shriya Rai
 id: customer-reviews-analytics-using-snowflake-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
 language: en
-summary: This guide demonstrates how we can leverage Snowflake Cortex to enable customer review analytics.
+summary: Analyze customer reviews with Snowflake Cortex AI for sentiment analysis, topic extraction, and feedback insights.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

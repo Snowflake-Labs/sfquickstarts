@@ -1,4 +1,4 @@
-summary: This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.  
+summary: This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.
 id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
@@ -99,9 +99,11 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
   - `Published` - implies the guide is active<br>
   - `Archived` - implies the sfguide is out of date and deprecated and no longer available<br>
   - Please note the `hidden` status will no longer be supported. If a content piece is not ready for publication, please keep this in draft form until you are ready to make this live. 
+  - `Archived` status wil be assessed on a case by case basis and is preferred that it is avoided to prevent redirect issues.  It is recommended to update existing guides.  Redirects will only be applied where absolutely needed.
 - **authors**:
-  - Provide author full name (+ author GitHub account). Multiple authors can be added
+  - Provide author full name. Multiple authors can be added
   - Including the GitHub Account login helps us notify you of any changes requested in the future.
+
 
 **OPTIONAL FIELDS**
 
@@ -112,7 +114,7 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
   - **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
   - **fork repo link**:
     - add a link to your repo
-  - **open in snowflake**:
+  - **open in snowflake link**:
     - add a link to the product as a deeplink or a template link
 
 
@@ -120,7 +122,7 @@ You can see the source metadata at the top of the markdown for this guide [here]
 
 
 
-## Markdown File Creation 
+## Markdown File and Formatting
 
 This section covers the basic markdown formatting options that you will need for your QuickStart. 
 
@@ -132,7 +134,7 @@ Look at the [markdown source for this sfguide](https://github.com/Snowflake-Labs
 Sticking to these guidelines ensures that all Guides have a similar look and feel.  Keeping the document clean helps create a good end-user experience.
 
 - Remember to include the header info in  your markdown 
-- Keep the Headings short: 3-4 words
+- Keep the H2 (##) Headings short: 3-4 words
 - Have an Overview section <br>(this includes the Prerequisites, What You'll Learn, What You'll Build and What You'll Need subsections)
 - Have a Conclusion and Resources section <br>
  (this includes the What We've Covered and Related Resources links)
@@ -192,15 +194,17 @@ Code for adding videos:
 
 <!-- ------------------------ -->
 
-## Language and Category tags
+## Important tags to include
 
 All tags are added into the metadata at the start of your markdown file. For fields beyond language, the taxonomy path is added to the "categories" section. Multiple categories are separated by commas. 
 
 
 ### Language Tags
 
+Language tags are important for the guides to show up in the regional pages.  Please use appropriate tags as they align to your guide content.
+
 >NOTE:
->Please pick a tag from the language category below.. **Do not create new tags if you don't see them in the list**<br>
+>Please pick the Code from the language category below and include "language: `Code`. **Do not create new tags if you don't see them in the list**<br>
 
 | Code  | Language         |
 |:------|:-----------------|
@@ -215,7 +219,8 @@ All tags are added into the metadata at the start of your markdown file. For fie
 
 ### Content Type Tagging
 
-Select the taxonomy path from the list below and add to the "category" field at the start of your markdown file to specify the content type that the guide will be displayed as on the site. **Do not create new content types if you don't see them in the list**
+Select the taxonomy path from the list below and add to the "category" field at the start of your markdown file to specify the content type that the guide will be displayed as on the site. 
+**Do not create new content types if you don't see them in the list**
 
 | Content Type | Taxonomy Path |
 |--------------|---------------|
@@ -231,7 +236,7 @@ Select the taxonomy path from the list below and add to the "category" field at 
 >NOTE:
 >Please pick applicable categories from the tables below. Not all 3 categories are not required. The taxonomy path is input into the "tags" field and multiple tags are separated by commas. **Do not create new tags if you don't see them in the list**<br>
 
-
+Add the "Taxonomy Path" in comma separated format for multiple selections in the "categories: " portion of the header. 
 
 #### Category 1: Product Category
 
@@ -306,6 +311,8 @@ Select the taxonomy path from the list below and add to the "category" field at 
 
 #### Industries Category
 
+Please select any relevant Industries for your Guide and add in the "categories: " section of the header. 
+
 | Industry | Taxonomy Path |
 |-----------|---------------|
 | Advertising, Media & Entertainment | snowflake-site:taxonomy/industry/advertising-media-and-entertainment |
@@ -325,12 +332,8 @@ Select the taxonomy path from the list below and add to the "category" field at 
 ## Converting Existing Files to Markdown
 
 
-If you have an existing word document that needs to be converted to markdown format, you can do that using Pandoc.  You will use the **GitHub Flavored Markdown (GFM)**.
-
-To convert a Word document (.docx) to Markdown using Pandoc:
-
-
-You can also use the Google Docs feature of saving to Markdown, however **please review your markdown before submission as some formatting options can be different.** In some instances Google Docs may add additional spacing during conversion that will cause markdown errors. 
+You can use the Google Docs feature of saving to Markdown, however **please review your markdown before submission as some formatting options can be different.** In some instances Google Docs may add additional spacing or characters during conversion that will cause markdown errors. 
+ 
 
 
 <!-- ------------------------ -->
@@ -344,24 +347,23 @@ You can also use the Google Docs feature of saving to Markdown, however **please
    
 3. In your fork, select the 'site' folder on the home page -> Then select the 'sfguides/src' folder and navigate to the folder for your guide or create a new guide.
    
-4. Once you are done with the content creation process or editing of your guide, you must update the following at the top of the page:
-  base: Snowflake-Labs/sfquickstarts | base: master and compare against your repo and PR. If this does not show up for you, select "compare across forks" and the initial base block will allow you to populate Snowflake-Labs/sfquickstarts.
+4.  Specific steps to "Create" or "Edit" a Guide are covered in the [README file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/README.md) for easy reference
 
-5. Create a Pull Request in GitHub and submit. At this point, a staging URL is generated and commented into the PR in GitHub that can be reviewed.
+5. The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them in a comment on GitHub before you are able to submit the PR.
 
-6. The pull request goes through a validation process to ensure the appropriate formatting and tags are used.  If any errors are detected, you will be notified of them in a comment on GitHub before you are able to submit the PR.
+6.  An automated preview link is generated and commented on your PR for you to review and make sure everything looks as expected. 
 
-7. The DevRel team will approve the PR. Once approved it will publish to www.snowflake.com/en/developers/guides within an hour. 
+7. The DevRel team will review and approve the PR. Once approved it will publish to www.snowflake.com/en/developers/guides within an hour. 
 
 
 
 **The following automated checks are run and must pass before PRs can be created:**
 
-- Categories are applied from the [approved list](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags)
+- Categories are applied from the [approved list](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#important-tags-to-include )
 
 - ID criteria (second line in template): id must exist, id must be separated by dashes, id must be lowercase, id must match the markdown file name (without .md extension), id must match the immediate folder name the file is in
 
-- Language tag must be populated (see [here](https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags) for the list)
+- Language tag must be populated (see [here](https://www.snowflake.com/en/developers/guides/get-started-with-guides/##important-tags-to-include) for the list)
 
  
 <!-- ------------------------ -->

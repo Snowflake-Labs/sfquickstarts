@@ -1,7 +1,7 @@
 id: advanced-guide-to-snowflake-feature-store
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
-summary: Learn how to get started and use Snowflake Feature Store to manage features and deploy models into production
+summary: Implement advanced Feature Store patterns in Snowflake for online serving, feature pipelines, and ML experimentation.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

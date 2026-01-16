@@ -1,7 +1,7 @@
 author: Joshua Rauh and Ben Marzec
 id: data-harmonization
 language: en
-summary: Build an end-to-end data harmonization solution using Snowflake Cortex AI, Streamlit, and hybrid matching techniques to reconcile product data between competing retailers
+summary: Harmonize data from multiple sources in Snowflake Cortex AI and Streamlit for consistent analytics, unified schemas, clean models, and integration.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, 
 environments: web
 status: Published 

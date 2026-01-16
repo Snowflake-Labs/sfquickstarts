@@ -2,7 +2,7 @@ author: Gilberto Hernandez
 id: data-apps-summit-lab
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations
 language: en
-summary: Build a data app un Snowflake
+summary: Build a weather prediction app using Snowflake Marketplace data, Snowflake Notebooks for ML training, and Streamlit.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,5 +1,5 @@
 id: build-an-ai-assistant-for-fsi-with-aisql-and-snowflake-intelligence
-summary: Build an AI-powered Stock Selection Agent for Financial Services using Snowflake's AISQL functions, Document AI, Cortex Search, and Snowflake Intelligence. Process unstructured data from analyst reports, earnings calls, and financial documents to create intelligent conversational agents.
+summary: Build an AI-powered Stock Selection Agent with Snowflake AI Functions and Snowflake Intelligence for natural language banking analytics on unstructured data.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/document-ai, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 language: en
