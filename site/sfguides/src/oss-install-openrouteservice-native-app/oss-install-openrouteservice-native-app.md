@@ -224,7 +224,8 @@ Once complete, you'll see a success message with a direct link to your app:
 
 ![Route Optimizer Installed Successfully](assets/install_successful.png)
 
-### Activate the App
+<!-- ------------------------ -->
+## Activate the App
 
 Once deployment completes, Cortex Code will provide a link to your app. You need to:
 
@@ -275,7 +276,8 @@ Use the **Start All** / **Stop All** buttons for bulk operations, or manage serv
 
 > **_TIP:_** All 4 services should show ✅ RUNNING status before using the routing functions.
 
-### ORS Configuration
+<!-- ------------------------ -->
+## ORS Configuration
 
 The Native App is configured via the `ors-config.yml` file which controls:
 
@@ -317,7 +319,8 @@ The config also controls route optimization capacity:
 ```
 These settings support complex route optimizations with many vehicles and delivery points.
 
-### Function Tester
+<!-- ------------------------ -->
+## Function Tester
 
 The Native App includes a built-in **Function Tester** Streamlit application for testing the routing functions interactively.
 
