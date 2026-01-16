@@ -236,7 +236,16 @@ Once deployment completes, Cortex Code will provide a link to your app. You need
 
 ![App Icon](assets/app_icon.png)
 
-3. Grant the required privileges via the UI
+3. Grant the required privileges and review external access
+
+![Grant Privileges](assets/grant-priviliges.png)
+
+The app requires these permissions to function:
+- **CREATE COMPUTE POOL**: Allows the app to create compute pools for running the OpenRouteService containers via Snowpark Container Services
+- **External access integration**: Required to download OpenStreetMap (OSM) data files from external sources during the initial setup
+
+Click **Grant** for Step 1, then **Review** and approve the external access integration in Step 2.
+
 4. Click **Activate** and wait for the services to start
 
 ### Service Manager
