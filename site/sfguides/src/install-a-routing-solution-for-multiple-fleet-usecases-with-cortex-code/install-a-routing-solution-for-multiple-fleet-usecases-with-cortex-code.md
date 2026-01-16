@@ -237,7 +237,7 @@ ors:
   engine:
     profile_default:
       build:  
-        source_file: /home/ors/files/sanFrancisco.osm.pbf
+        source_file: /home/ors/files/SanFrancisco.osm.pbf
 ```
 The default deployment uses San Francisco. When you customize the map region, this path is updated automatically.
 
@@ -251,6 +251,7 @@ The configuration defines which vehicle types are available for routing:
 | `driving-hgv` | Heavy goods vehicle (trucks) | ✅ Enabled |
 | `cycling-road` | Road bicycle | ✅ Enabled |
 | `cycling-regular` | Regular bicycle | ❌ Disabled |
+| `cycling-mountain` | Mountain bicycle | ❌ Disabled |
 | `cycling-electric` | Electric bicycle | ❌ Disabled |
 | `foot-walking` | Pedestrian walking | ❌ Disabled |
 | `foot-hiking` | Hiking trails | ❌ Disabled |
@@ -263,8 +264,8 @@ The configuration defines which vehicle types are available for routing:
 The config also controls route optimization capacity:
 ```yml
     matrix:
-      maximum_visited_nodes: 1000000000
-      maximum_routes: 25000000
+      maximum_visited_nodes: 100000000
+      maximum_routes: 250000
 ```
 These settings support complex route optimizations with many vehicles and delivery points.
 
@@ -492,9 +493,12 @@ The skill presents available routing profiles and lets you enable/disable them:
 |---------|----------|-------------|
 | `driving-car` | Driving | Standard passenger vehicle |
 | `driving-hgv` | Driving | Heavy goods vehicles (trucks) |
+| `cycling-regular` | Cycling | Standard bicycles |
 | `cycling-road` | Cycling | Road bicycles |
+| `cycling-mountain` | Cycling | Mountain bicycles |
 | `cycling-electric` | Cycling | Electric bicycles |
 | `foot-walking` | Foot | Pedestrian walking |
+| `foot-hiking` | Foot | Hiking trails |
 | `wheelchair` | Wheelchair | Wheelchair accessible routes |
 
 > **_NOTE:_** Enabling more profiles increases graph build time. The default (driving-car, driving-hgv, cycling-road) covers most logistics use cases.
