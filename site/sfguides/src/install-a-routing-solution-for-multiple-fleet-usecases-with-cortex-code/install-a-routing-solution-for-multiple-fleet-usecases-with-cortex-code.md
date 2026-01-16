@@ -362,13 +362,15 @@ The main `customizations` skill orchestrates the process by asking **three yes/n
 
 | Your Choices | Sub-Skills Executed | What Gets Updated |
 |--------------|---------------------|-------------------|
-| **Location = YES** | `location` → `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-demo** | Map downloaded, config rebuilt, graphs regenerated, all apps updated |
-| **Vehicles = YES** | `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-demo** | Routing profiles modified, graphs rebuilt, all apps updated |
-| **Industries = YES** | `industries` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-demo** | Industry config updated, all apps updated |
-| **Any combination** | All relevant sub-skills + `streamlits` + `aisql-notebook` + `carto-notebook` → **deploy-demo** | Everything updated |
+| **Location = YES** | `location` → `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-route-optimizer** → **deploy-demo** | Map downloaded, graphs rebuilt, Native App updated, all demo content updated |
+| **Vehicles = YES** | `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-route-optimizer** → **deploy-demo** | Routing profiles modified, Native App updated, all demo content updated |
+| **Industries = YES** | `industries` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-demo** | Industry config updated, demo content updated (no Native App change) |
+| **Location/Vehicles + Industries** | All relevant sub-skills → **deploy-route-optimizer** → **deploy-demo** | Everything updated |
 | **Nothing** | None | Exit (no changes) |
 
-> **_IMPORTANT:_** For ANY customization, all Streamlit apps and notebooks are updated, and `deploy-demo` MUST be run to apply changes to Snowflake.
+> **_IMPORTANT:_** 
+> - For ANY customization, all Streamlit apps and notebooks are updated, and `deploy-demo` MUST be run
+> - If Location OR Vehicles change, `deploy-route-optimizer` MUST also be run to push the updated `function_tester.py` to the Native App (images don't need rebuilding - only app code is updated)
 
 > **If using Git:** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults.
 > **If not using Git:** Changes are made directly to local files. Keep a backup if needed.
@@ -398,9 +400,10 @@ use the local skill from skills/customizations/carto-notebook
 ```
 
 > **_IMPORTANT:_** When running sub-skills independently, be aware of dependencies:
-> - After running `location`, you should also run `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → `deploy-demo`
-> - After running `vehicles`, you should also run `streamlits` → `aisql-notebook` → `carto-notebook` → `deploy-demo`
+> - After running `location`, you should also run `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-route-optimizer** → `deploy-demo`
+> - After running `vehicles`, you should also run `streamlits` → `aisql-notebook` → `carto-notebook` → **deploy-route-optimizer** → `deploy-demo`
 > - After running `industries`, you should also run `streamlits` → `aisql-notebook` → `carto-notebook` → `deploy-demo`
+> - **For Location/Vehicles changes:** `deploy-route-optimizer` is needed to push updated `function_tester.py` to the Native App
 > - **For ANY customization:** All Streamlits and notebooks must be updated, and `deploy-demo` MUST be run
 
 ### Example: Customizing to Paris with All Options
