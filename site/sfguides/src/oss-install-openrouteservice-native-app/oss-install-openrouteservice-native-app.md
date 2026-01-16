@@ -244,7 +244,7 @@ The app requires these permissions to function:
 - **CREATE COMPUTE POOL**: Allows the app to create compute pools for running the OpenRouteService containers via Snowpark Container Services
 - **External access integration**: Required to download OpenStreetMap (OSM) data files from external sources during the initial setup
 
-Click **Grant** for Step 1, then **Review** and approve the external access integration in Step 2.
+Click **Grant** for Step 1. For Step 2, click **Review** to see the external endpoints, then click **Connect** to allow the connection.
 
 4. Click **Activate** and wait for the services to start
 
