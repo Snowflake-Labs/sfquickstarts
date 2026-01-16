@@ -110,16 +110,12 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
 
 ### Setup Cortex Code
 
-1. **Clone the repository** (if you haven't already):
+1. **Clone the repository using the integrated terminal** (if you haven't already):
    ```bash
    git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
    cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
    ```
-
-2. **Open VS Code** with the cloned repository folder:
-   ```bash
-   code .
-   ```
+   If you have downloaded the folder outside of git, navigate to the downloaded folder using the VSCode UI
 
 3. **Launch Cortex Code CLI** in the VS Code terminal:
    ```bash
