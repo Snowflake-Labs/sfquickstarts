@@ -205,11 +205,23 @@ You can customize the demo for different industries or regions using the customi
 
 ### Change Industries
 
+Simply type a natural language command like:
+
+```
+change industry
+```
+
+Cortex Code automatically finds the relevant skill and guides you through the options:
+
+![Change Industry](assets/change_induatry.png)
+
+You can add a new industry, modify an existing one, or replace one with something different. The skill updates the Streamlit simulator with your customized industry categories (product types, customer types, vehicle skills).
+
+Alternatively, you can use the full skill path:
+
 ```
 use the local skill from oss-deploy-route-optimization-demo/skills/customizations/industries
 ```
-
-Customize the industry categories (product types, customer types, vehicle skills) for your specific use case.
 
 ### Update Streamlit Apps
 
