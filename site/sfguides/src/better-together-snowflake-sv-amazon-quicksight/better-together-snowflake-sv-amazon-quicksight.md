@@ -27,21 +27,28 @@ The integration showcases Snowflake's [semantic view](https://docs.snowflake.com
 
 ## Usecase
 
-We leverage Snowflake native ingestion capabilities to ingest data from Amazon S3 into Snowflake. We then load the structured movie review data into a database schema and create a semantic view that bridges the gap between business users and databases. [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) then allows self-serve analytics via natural language queries for business teams and non-technical users with instant answers and insights from their structured data in Snowflake. Snowflake Notebook is used to programmatically interact with [Amazon Quick Sight via API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html) to set up integration and create a data source and data set. This allows the BI team to create interactive charts/dashboard, build calculated fields, create data stories, build scenarios (what-if) all via natural language.
+This integration leverages Snowflake's native capabilities to ingest structured movie review data directly from Amazon S3 into a database schema. Defining a Snowflake semantic view with table, relationships, dimensions, and metrics to enhance AI-powered analytics. Semantic models are shifted from individual BI tool layers to the core data platform, guaranteeing that all tools utilize the same semantic concepts.  
+
+**🔑 Key Steps and Benefits:**  
+**1. Data Ingestion and Semantic View Creation**: Data is loaded from Amazon S3 using Snowflake's native ingestion tools. A semantic view is then established to simplify the database structure for business users.  
+**2. Self-Serve Analytics with [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Business teams and non-technical users can perform self-serve analytics using natural language queries via Snowflake Cortex Analyst, gaining instant insights from the structured data in Snowflake.  
+**3. Amazon Quick Sight Integration**: Snowflake Notebook is used to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html) to set up integration and create a data source and data set.  
+**4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations.  
+
 
 
 The end-to-end workflow will look like this:
 
-![architecture diagram](assets/xx-diagram.png)
+![architecture diagram](assets/arch.png)
 
 <br>
 
 ### What You’ll Learn 
 
-- How to setup a warehouse, database and schema in Snowflake
+- How to setup a Snowflake warehouse, database and schema
 - How to load data into Snowflake from Amazon S3
 - The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics
-- Introduction to Snowflake notebook [Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
+- Introduction to Snowflake [Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
 - How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (Amazon Quick Sight via [API call](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html))
   
 
