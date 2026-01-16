@@ -255,6 +255,8 @@ Click **Grant** for Step 1. For Step 2, click **Review** to see the external end
 >
 > The combination of map size and vehicle options determines the total number of graphs to build. A city map with 2 profiles will complete quickly, while a country map with 5+ profiles will take significantly longer.
 
+Once activated, you'll see a **Launch app** button appear. Click it to open the Service Manager.
+
 ### Service Manager
 
 After activation, the Native App provides a **Service Manager** dashboard to monitor and control all ORS services:
