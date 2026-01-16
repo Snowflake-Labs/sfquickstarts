@@ -1,0 +1,237 @@
+author: Becky O'Connor and Piotr Paczewski
+id: oss-deploy-route-optimization-demo
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
+summary: Deploy a Route Optimization Simulator demo using the OpenRouteService Native App. Build an interactive Streamlit app that simulates vehicle routing scenarios using real-world POI data from Carto Overture Maps.
+environments: web
+status: Draft
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+
+# Deploy Route Optimization Demo with Cortex Code
+
+> 🚚 **Simulate. Optimize. Deliver.** Build an interactive route optimization demo using real-world business locations - powered by OpenRouteService in Snowflake.
+
+<!-- ------------------------ -->
+## Overview 
+
+![Route Optimization Simulator](assets/overview-map.png)
+
+**Build a fully interactive Route Optimization Simulator using the OpenRouteService Native App.**
+
+This quickstart deploys a demo application that simulates vehicle routing scenarios using real-world business locations from the **Carto Overture Maps** dataset. You'll explore routing functions through an interactive notebook and run a complete Streamlit simulator.
+
+### What You'll Build
+
+🚚 **Route Optimization Simulator** - A fully interactive Streamlit app that:
+- Finds potential distributors and customers using AI-powered location search
+- Generates catchment areas using isochrones
+- Optimizes routes for multiple vehicles with different skills and time windows
+- Visualizes routes, delivery points, and vehicle assignments on interactive maps
+
+📓 **AISQL Exploration Notebook** - Learn how to:
+- Use AI to generate realistic sample data for your region
+- Call the Directions, Optimization, and Isochrones functions
+- Visualize routes and catchment areas with Pydeck
+
+### Prerequisites
+
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart first.
+
+**Required:**
+- OpenRouteService Native App deployed and activated
+- Cortex Code CLI installed and configured
+- Active Snowflake connection with ACCOUNTADMIN access
+
+### What You'll Learn 
+
+- Deploy demo notebooks and Streamlit apps using Cortex Code skills
+- Work with the **Carto Overture Maps Places** dataset for real-world POI data
+- Use **AISQL** functions to generate sample data with Snowflake Cortex
+- Build multi-layer geospatial visualizations with Pydeck
+- Create vehicle routing simulations with time windows, capacity, and skills
+
+<!-- ------------------------ -->
+## Deploy the Demo
+
+Use Cortex Code to deploy the demo including Marketplace data, notebooks, and the Streamlit simulator.
+
+### Run the Deploy Demo Skill
+
+In the Cortex Code CLI, type:
+
+```
+use the local skill from demo_example/skills/deploy-demo
+```
+
+> **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
+
+Cortex Code will automatically:
+- **Verify** OpenRouteService Native App is installed and running
+- **Acquire Marketplace Data** - Gets the **Carto Overture Maps Places** dataset with 50+ million POIs worldwide
+- **Create Demo Database** - Sets up `VEHICLE_ROUTING_SIMULATOR` with required schemas
+- **Deploy Notebooks** - Provisions the AISQL notebook customized for your chosen city
+- **Deploy Simulator** - Creates the Route Optimization Streamlit app with real POI data
+
+### What Gets Created
+
+| Component | Location | Description |
+|-----------|----------|-------------|
+| Marketplace Data | `OVERTURE_MAPS__PLACES` | Carto Overture POI dataset |
+| Database | `VEHICLE_ROUTING_SIMULATOR` | Demo database with DATA, NOTEBOOKS, STREAMLITS schemas |
+| Notebook | `NOTEBOOKS.ADD_CARTO_DATA` | Prepares POI data for the demo |
+| Notebook | `NOTEBOOKS.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of routing functions |
+| Streamlit | `STREAMLITS.SIMULATOR` | Route optimization simulator app |
+
+<!-- ------------------------ -->
+## Explore the Routing Functions with AISQL
+
+The AISQL notebook is an interactive exploration of all three routing functions. It uses **Snowflake Cortex AI** to generate realistic sample data - restaurants, delivery jobs, customer addresses - all customized for your configured region.
+
+1. Navigate to **Projects > Notebooks** in Snowsight
+2. Open **ROUTING_FUNCTIONS_AISQL**
+
+**What the Notebook Covers:**
+
+| Section | What You'll Learn |
+|---------|-------------------|
+| **1. Simple Directions** | Generate a hotel and restaurant using AI, then call the `DIRECTIONS` function to get point-to-point routing |
+| **2. Cortex Generated Maps** | Let AI write the Pydeck visualization code for you |
+| **3. Advanced Directions with Waypoints** | Create a multi-stop route visiting multiple locations |
+| **4. Route Optimization (1 Vehicle)** | Use the `OPTIMIZATION` function to assign jobs efficiently |
+| **5. Route Optimization (Multiple Vehicles)** | Scale up with 40 customers and 5 vehicles with different skills |
+| **6. Isochrones** | Generate catchment polygons showing reachable areas |
+
+<!-- ------------------------ -->
+## Run the Streamlit Simulator
+
+![Streamlit Simulator](assets/streamlit-simulator.png)
+
+Navigate to the Simulator Streamlit app:
+
+1. Go to **Projects > Streamlits** in Snowsight
+2. Click on **SIMULATOR**
+
+### Setting the Context
+
+Open the sidebar to configure:
+- **Industry Type** - Food, Health, or Cosmetics
+- **LLM Model** - For location search (recommend mistral-large2)
+- **Search Location** - Free text like "Fisherman's Wharf" or "Golden Gate Bridge"
+- **Distance Radius** - How far to search for distributors
+
+![Sidebar Menu](assets/sidebar-menu.png)
+
+### Select a Distributor
+
+![Distributor Selection](assets/distributor-selection.png)
+
+Choose from the list of nearby distributors sorted by distance from your search location.
+
+### Configure Vehicles
+
+![Vehicle Configuration](assets/vehicle-configuration.png)
+
+Configure up to 3 vehicles with:
+- **Time Windows** - Start and end hours
+- **Vehicle Profile** - Car, HGV, or bicycle
+- **Skills** - Each vehicle has a pre-assigned skill level
+
+### Generate Catchment Area
+
+![Isochrone Catchment](assets/isochrone-catchment.png)
+
+Set the order acceptance catchment time to generate an isochrone showing all reachable delivery locations.
+
+### View Optimized Routes
+
+![Job Assignments](assets/job-assignments.png)
+
+See which jobs are assigned to which vehicles based on skills and time windows.
+
+![Route Map](assets/route-map.png)
+
+View the optimized routes on an interactive map with color-coded paths for each vehicle.
+
+### Vehicle Itinerary
+
+![Vehicle Itinerary](assets/vehicle-itinerary.png)
+
+Each vehicle tab shows detailed turn-by-turn instructions for the entire journey.
+
+<!-- ------------------------ -->
+## Customize the Demo
+
+You can customize the demo for different industries or regions using the customization skills:
+
+### Change Industries
+
+```
+use the local skill from demo_example/skills/customizations/industries
+```
+
+Customize the industry categories (product types, customer types, vehicle skills) for your specific use case.
+
+### Update Streamlit Apps
+
+```
+use the local skill from demo_example/skills/customizations/streamlits
+```
+
+Update the Simulator with region-specific coordinates.
+
+### Update Notebooks
+
+```
+use the local skill from demo_example/skills/customizations/aisql-notebook
+use the local skill from demo_example/skills/customizations/carto-notebook
+```
+
+Update the notebooks with city-specific AI prompts and POI data filters.
+
+> **_NOTE:_** To change the map region (e.g., San Francisco to Paris), you need to update the OpenRouteService Native App first. See the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart for location customization.
+
+<!-- ------------------------ -->
+## Uninstall the Demo
+
+To remove the demo resources (but keep the OpenRouteService Native App):
+
+```sql
+-- Remove the demo database (notebooks, Streamlit apps)
+DROP DATABASE IF EXISTS VEHICLE_ROUTING_SIMULATOR CASCADE;
+
+-- Optionally remove the Marketplace data
+DROP DATABASE IF EXISTS OVERTURE_MAPS__PLACES CASCADE;
+```
+
+To remove everything including the OpenRouteService Native App, use:
+```
+use the local skill from openrouteservice/skills/uninstall-route-optimizer
+```
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+
+### Conclusion
+
+You've deployed a complete Route Optimization Simulator that demonstrates the power of combining:
+- **OpenRouteService Native App** - Self-contained routing engine in Snowflake
+- **Carto Overture Maps** - Real-world points of interest for authentic simulations
+- **Snowflake Cortex AI** - Generate sample data with natural language
+- **Streamlit** - Interactive visualization that brings routing scenarios to life
+
+### What You Learned
+
+- Deploy demo applications using Cortex Code skills
+- Work with the Carto Overture Places dataset for POI data
+- Use AISQL to generate sample data with Snowflake Cortex
+- Build vehicle routing simulations with time windows, capacity, and skills
+- Visualize routes and catchment areas with Pydeck
+
+### Related Resources
+
+- [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) - Install the routing engine first
+- [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
+- [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
+- [Streamlit](https://streamlit.io/)
+- [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)

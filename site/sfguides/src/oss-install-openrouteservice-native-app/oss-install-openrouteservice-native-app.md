@@ -1,14 +1,14 @@
 author: Becky O'Connor and Piotr Paczewski
-id: install-a-routing-solution-for-multiple-fleet-usecases-with-cortex-code
+id: oss-install-openrouteservice-native-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: Deploy an OpenRouteService Native App in minutes using Cortex Code skills. Build a self-contained route optimization platform with directions, vehicle optimization, and isochrones - all within Snowflake with no external API dependencies.
+summary: Deploy an OpenRouteService Native App in Snowflake using Cortex Code skills. Create a self-contained routing engine with directions, optimization, and isochrones - no external APIs required.
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
-# Install a routing solution for multiple fleet usecases with cortex code
+# Install OpenRouteService Native App with Cortex Code
 
 > 🚀 **Install. Customize. Optimize.** Use natural language to deploy a complete route optimization solution in Snowflake - no code, no external APIs, just results.
 
@@ -168,7 +168,7 @@ use the local skill from skills/<skill-name>
 
 For example:
 ```
-use the local skill from skills/deploy-route-optimizer
+use the local skill from openrouteservice/skills/deploy-route-optimizer
 ```
 
 Cortex Code reads the skill's markdown file and executes each step, asking for input when needed and verifying success before moving on.
@@ -179,7 +179,7 @@ Cortex Code reads the skill's markdown file and executes each step, asking for i
 
 Run the prerequisites check skill to ensure all dependencies are installed:
    ```
-   use the local skill from skills/check-prerequisites
+   use the local skill from openrouteservice/skills/check-prerequisites
    ```
 
 ### Deploy the Native App
@@ -187,7 +187,7 @@ Run the prerequisites check skill to ensure all dependencies are installed:
 Simply type the following command in Cortex Code:
 
 ```
-use the local skill from skills/deploy-route-optimizer
+use the local skill from openrouteservice/skills/deploy-route-optimizer
 ```
 
 Cortex Code will automatically:
@@ -324,7 +324,7 @@ The default deployment uses San Francisco with standard vehicle types and demo i
 To customize, run:
 
 ```
-use the local skill from skills/customizations
+use the local skill from openrouteservice/skills/customizations
 ```
 
 ### Modular Customization Architecture
@@ -383,22 +383,22 @@ You can also run specific customizations directly without going through the orch
 
 ```bash
 # Just change the map region
-use the local skill from skills/customizations/location
+use the local skill from openrouteservice/skills/customizations/location
 
 # Just modify vehicle profiles
-use the local skill from skills/customizations/vehicles
+use the local skill from openrouteservice/skills/customizations/vehicles
 
 # Just change industries for the demo
-use the local skill from skills/customizations/industries
+use the local skill from demo_example/skills/customizations/industries
 
 # Just update the Streamlit apps with new coordinates
-use the local skill from skills/customizations/streamlits
+use the local skill from demo_example/skills/customizations/streamlits
 
 # Just update the AISQL notebook prompts
-use the local skill from skills/customizations/aisql-notebook
+use the local skill from demo_example/skills/customizations/aisql-notebook
 
 # Just update the Carto POI data notebook
-use the local skill from skills/customizations/carto-notebook
+use the local skill from demo_example/skills/customizations/carto-notebook
 ```
 
 > **_IMPORTANT:_** When running sub-skills independently, be aware of dependencies:
@@ -410,7 +410,7 @@ use the local skill from skills/customizations/carto-notebook
 
 ### Example: Customizing to Paris with All Options
 
-When you run `use the local skill from skills/customizations` and answer YES to all three questions, the orchestrator runs the sub-skills in order:
+When you run `use the local skill from openrouteservice/skills/customizations` and answer YES to all three questions, the orchestrator runs the sub-skills in order:
 
 **Step 1: Location Sub-Skill** (`location.md`)
 - Choose **Paris** or **Île-de-France** from Geofabrik
@@ -568,7 +568,7 @@ Now that your Route Optimizer is configured (either with San Francisco default o
 In the Cortex Code CLI, type:
 
 ```
-use the local skill from skills/deploy-demo
+use the local skill from demo_example/skills/deploy-demo
 ```
 
 Cortex Code will automatically:
@@ -1476,11 +1476,11 @@ For reference, here are all available Cortex Code skills for this solution:
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| `check-prerequisites` | Verify and install dependencies | `use the local skill from skills/check-prerequisites` |
-| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from skills/deploy-route-optimizer` |
-| `customizations` | Orchestrate all customizations | `use the local skill from skills/customizations` |
-| `deploy-demo` | Deploy notebooks and Simulator Streamlit | `use the local skill from skills/deploy-demo` |
-| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from skills/uninstall-route-optimizer` |
+| `check-prerequisites` | Verify and install dependencies | `use the local skill from openrouteservice/skills/check-prerequisites` |
+| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from openrouteservice/skills/deploy-route-optimizer` |
+| `customizations` | Orchestrate all customizations | `use the local skill from openrouteservice/skills/customizations` |
+| `deploy-demo` | Deploy notebooks and Simulator Streamlit | `use the local skill from demo_example/skills/deploy-demo` |
+| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from openrouteservice/skills/uninstall-route-optimizer` |
 
 ### Customization Sub-Skills
 
@@ -1488,12 +1488,12 @@ These can be run individually for targeted updates:
 
 | Sub-Skill | Description | Command |
 |-----------|-------------|---------|
-| `location` | Download new map, rebuild graphs | `use the local skill from skills/customizations/location` |
-| `vehicles` | Configure routing profiles | `use the local skill from skills/customizations/vehicles` |
-| `industries` | Customize demo industry categories | `use the local skill from skills/customizations/industries` |
-| `streamlits` | Update Function Tester & Simulator | `use the local skill from skills/customizations/streamlits` |
-| `aisql-notebook` | Update AI prompts for your region | `use the local skill from skills/customizations/aisql-notebook` |
-| `carto-notebook` | Update POI data source | `use the local skill from skills/customizations/carto-notebook` |
+| `location` | Download new map, rebuild graphs | `use the local skill from openrouteservice/skills/customizations/location` |
+| `vehicles` | Configure routing profiles | `use the local skill from openrouteservice/skills/customizations/vehicles` |
+| `industries` | Customize demo industry categories | `use the local skill from demo_example/skills/customizations/industries` |
+| `streamlits` | Update Function Tester & Simulator | `use the local skill from demo_example/skills/customizations/streamlits` |
+| `aisql-notebook` | Update AI prompts for your region | `use the local skill from demo_example/skills/customizations/aisql-notebook` |
+| `carto-notebook` | Update POI data source | `use the local skill from demo_example/skills/customizations/carto-notebook` |
 
 > **_TIP:_** Use the main `customizations` skill to let Cortex Code orchestrate the process. Only use individual sub-skills when you need targeted updates and understand the dependencies.
 
@@ -1516,7 +1516,7 @@ After making customizations, certain skills may need to be re-run:
 To remove the Route Optimizer Native App and all associated resources from your Snowflake account, use the uninstall skill:
 
 ```
-use the local skill from skills/uninstall-route-optimizer
+use the local skill from openrouteservice/skills/uninstall-route-optimizer
 ```
 
 This skill will:
