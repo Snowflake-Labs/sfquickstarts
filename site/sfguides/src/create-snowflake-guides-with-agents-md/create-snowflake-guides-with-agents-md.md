@@ -1,60 +1,62 @@
 author: Chanin Nantasenamat
-id: create-snowflake-quickstarts-with-agents-md
+id: create-snowflake-guides-with-agents-md
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: Learn how to use the AGENTS.md file with AI assistants to convert Jupyter notebooks into properly formatted Snowflake Quickstarts tutorials.
+summary: Learn how to use the AGENTS.md file with AI assistants to convert Jupyter notebooks into properly formatted Snowflake Guides.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Create Snowflake Quickstarts with AGENTS.md
+# Create Snowflake Guides with AGENTS.md
 <!-- ------------------------ -->
 ## Overview
 
 Creating written tutorials can be a time-consuming and error-prone process, especially when done manually. The AGENTS.md file provides a structured approach to automate this process using AI assistants like Claude, ChatGPT, or Cursor AI.
 
-This tutorial walks you through the complete workflow of using AGENTS.md to convert input Jupyter notebooks into properly formatted Snowflake Quickstarts that follow official guidelines.
+This tutorial walks you through the complete workflow of using AGENTS.md to convert input Jupyter notebooks into properly formatted Snowflake Guides that follow official guidelines.
+
+> **Note:** Snowflake Guides (formerly known as Snowflake Quickstarts) are step-by-step tutorials published on the Snowflake developer site. "Quickstart" is now a content type category within Snowflake Guides, alongside other types like Community Solution, Partner Solution, and Certified Solution.
 
 ### About AGENTS.md
 
 The AGENTS.md file provides instruction and sets of rules to AI coding agents, following the standard format defined at [https://agents.md/](https://agents.md/). This standardized format ensures that AI assistants can reliably interpret and follow project-specific guidelines.
 
-The Snowflake Quickstarts AGENTS.md as proposed herein combines this standard format with specific instructions from two official Snowflake resources:
+The Snowflake Guides AGENTS.md as proposed herein combines this standard format with specific instructions from two official Snowflake resources:
 
-1. **[Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/)** - The official Snowflake quickstart creation guide
+1. **[Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/)** - The official Snowflake Guides creation guide
 2. **[Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template)** - The official template structure from the `sfquickstarts` repository
 
-While the official markdown template can be used directly to create quickstarts, the AGENTS.md file adds additional value by including:
+While the official markdown template can be used directly to create guides, the AGENTS.md file adds additional value by including:
 
 - **AI-specific instructions** - Guidance for how AI assistants should process and convert documents
 - **Validation checklists** - Pre-publish verification steps to catch common errors
-- **Category reference tables** - Complete taxonomy analysis for automatically identifying the appropriate categories that the quickstart belong to
-- **Best practices** - Apply best practices in the creation of quickstarts
+- **Category reference tables** - Complete taxonomy analysis for automatically identifying the appropriate categories
+- **Best practices** - Apply best practices in the creation of guides
 - **Workflow automation** - Structured prompts and output formatting rules
 
 ### What You'll Learn
 - How the AGENTS.md file structures the conversion process
 - The required metadata fields and their formats
-- How to organize content into the Quickstarts template
+- How to organize content into the Snowflake Guides template
 - Best practices for code blocks, headers, and formatting
-- How to validate your generated quickstart
+- How to validate your generated guide
 
 ### What You'll Build
 By the end of this tutorial, you'll be able to:
-- Convert a Jupyter notebook into a publish-ready Snowflake Quickstart
+- Convert a Jupyter notebook into a publish-ready Snowflake Guide
 - Use the AGENTS.md file to guide AI assistants through the conversion process
 - Apply proper metadata, categories, and formatting to meet Snowflake's publishing standards
 
 ### Prerequisites
 - Access to an AI assistant (Claude, ChatGPT, Cursor AI, or similar)
-- A Jupyter notebook to convert into a quickstart
+- A Jupyter notebook to convert into a guide
 - Basic understanding of Markdown formatting
 
 <!-- ------------------------ -->
 ## Understanding AGENTS.md
 
-The AGENTS.md file is an instruction set that guides AI assistants through the quickstart conversion process. It contains:
+The AGENTS.md file is an instruction set that guides AI assistants through the Snowflake Guide conversion process. It contains:
 
 ### Key Components
 
@@ -81,11 +83,15 @@ The AGENTS.md file is an instruction set that guides AI assistants through the q
 ```
 
 <!-- ------------------------ -->
-## Required Metadata Fields
+## Anatomy of a Snowflake Guide
 
-Every quickstart begins with metadata. Here's what it looks like in the quickstart:
+This section covers the key structural elements that make up a properly formatted Snowflake Guide.
 
-### Metadata Example
+### Required Metadata Fields
+
+Every guide begins with metadata. Here's what it looks like:
+
+#### Metadata Example
 
 ```yaml
 author: Chanin Nantasenamat
@@ -98,7 +104,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ```
 
-### Metadata Fields
+#### Metadata Fields
 
 | Field | Rule | Example |
 |-------|------|---------|
@@ -109,10 +115,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 | `summary` | One sentence description | Brief overview of the guide |
 | `status` | `Published` or `Archived` | `Published` |
 
-<!-- ------------------------ -->
-## Content Structure
+### Content Structure
 
-The official Snowflake Quickstart template markdown defines the specific structure that every quickstart must follow and this includes:
+The official Snowflake Guides template defines the specific structure that every guide must follow:
 
 1. **Overview** (with subsections)
    - What You'll Learn
@@ -125,7 +130,7 @@ The official Snowflake Quickstart template markdown defines the specific structu
    - What You Learned
    - Related Resources
 
-### Header Hierarchy
+#### Header Hierarchy
 
 ```markdown
 ## Main Section (H2) - Appears in right-side menu
@@ -135,7 +140,7 @@ The official Snowflake Quickstart template markdown defines the specific structu
 
 > **Important:** Never go beyond H4 (`####`). Deeper headings won't render correctly.
 
-### Real Example: Semantic View Quickstart Structure
+#### Example of Content Structure: Semantic View
 
 ```markdown
 ## Overview
@@ -167,55 +172,57 @@ The official Snowflake Quickstart template markdown defines the specific structu
 ### Related Resources
 ```
 
-<!-- ------------------------ -->
-## Category Selection
+### Category Selection
 
-Categories must come from the approved lists and are stored in AGENTS.md. Here's how the agent selects them:
+Categories must come from the approved lists stored in AGENTS.md. Here's how the agent selects them:
 
-### Always Include Quickstart
+#### Content Type: Quickstart
+
+"Quickstart" is a content type category that must be included in every guide:
 
 ```
 snowflake-site:taxonomy/solution-center/certification/quickstart
 ```
 
-### Match Content to Categories
+Other content types include: Community Solution, Partner Solution, and Certified Solution.
 
-For the Semantic View quickstart, we matched:
+#### Match Content to Categories
+
+For the Semantic View guide, we matched:
 
 | Content Keywords | Selected Category |
 |-----------------|-------------------|
 | "Analytics", "queries", "SQL" | `snowflake-site:taxonomy/product/analytics` |
 | "Semantic Views", "AI-powered" | `snowflake-site:taxonomy/product/ai` |
 
-### Category Sources in AGENTS.md
+#### Category Sources in AGENTS.md
 
 1. **Product Categories** - AI, Analytics, Data Engineering, Platform
 2. **Technical Use-Cases** - Ingestion, Transformation, Business Intelligence
 3. **Prioritized Features** - Cortex Analyst, Snowpark, Dynamic Tables
 4. **Industries** - Financial Services, Healthcare, Retail
 
-<!-- ------------------------ -->
-## Validation Checklist
+### Validation Checklist
 
-Before finalizing, the agent runs the generated quickstart through this checklist provided in AGENTS.md:
+Before finalizing, the agent runs the generated guide through this checklist provided in AGENTS.md:
 
-### Pre-Publish Verification
+#### Pre-Publish Verification
 
-- [ ] Categories are from the approved list
-- [ ] ID is lowercase with hyphens (not underscores)
-- [ ] ID matches markdown file name (without .md extension)
-- [ ] ID matches the folder name containing the markdown file
-- [ ] Language tag is populated with valid code
-- [ ] Title starts with an action verb
-- [ ] Overview section includes all required subsections
-- [ ] Prerequisites includes Snowflake account signup link as first item
-- [ ] Conclusion starts with "Congratulations! You've successfully..."
-- [ ] No HTML is used in the markdown
-- [ ] All code snippets are preserved exactly
-- [ ] Headers do not exceed H4 (`####`)
-- [ ] H2 headings are 3-4 words max
+[ ] Categories are from the approved list
+[ ] ID is lowercase with hyphens (not underscores)
+[ ] ID matches markdown file name (without .md extension)
+[ ] ID matches the folder name containing the markdown file
+[ ] Language tag is populated with valid code
+[ ] Title starts with an action verb
+[ ] Overview section includes all required subsections
+[ ] Prerequisites includes Snowflake account signup link as first item
+[ ] Conclusion starts with "Congratulations! You've successfully..."
+[ ] No HTML is used in the markdown
+[ ] All code snippets are preserved exactly
+[ ] Headers do not exceed H4 (`####`)
+wwww[ ] H2 headings are 3-4 words max
 
-### Example: Semantic View Quickstart Validation
+#### Example of Guide Validation: Semantic View
 
 | Check | Status |
 |-------|--------|
@@ -226,19 +233,18 @@ Before finalizing, the agent runs the generated quickstart through this checklis
 | Prerequisites: Snowflake signup link first | ✓ Included |
 | Conclusion: "Congratulations! You've successfully..." | ✓ Correct format |
 
-<!-- ------------------------ -->
-## Export Format
+### Export Format
 
-The AGENTS.md specifies exactly how to package the generated quickstart.
+The AGENTS.md specifies exactly how to package the generated guide.
 
-### File Structure
+#### File Structure
 
 ```
 build-business-ready-queries-with-snowflake-semantic-views/
 └── build-business-ready-queries-with-snowflake-semantic-views.md
 ```
 
-### Key Rules
+#### Key Rules
 
 1. **Folder name** = `id` field value
 2. **File name** = `id` field value + `.md`
@@ -249,7 +255,7 @@ build-business-ready-queries-with-snowflake-semantic-views/
 <!-- ------------------------ -->
 ## Complete Workflow Example
 
-Let's walk through how the Semantic View quickstart was created:
+Let's walk through how the Semantic View guide was created:
 
 ### Step 1: Reference the agent file
 
@@ -262,7 +268,7 @@ Enter the following into the chat box:
 
 After a few moments, the AI will ask:
 ```
-Welcome! I'll help you convert your document into a Snowflake Quickstarts tutorial. Before we begin, please tell me:
+Welcome! I'll help you convert your document into a Snowflake Guide. Before we begin, please tell me:
 
 What is your name? (This will be used as the author)
 ```
@@ -310,10 +316,10 @@ Ran through the validation checklist and confirmed all items passed.
 
 Upon completion, the AI will say:
 ```
-I've generated your Snowflake Quickstarts tutorial.
+I've generated your Snowflake Guide.
 ```
 
-This is followed by details of the generated quickstart:
+This is followed by details of the generated guide:
 ```
 ### ✅ Tutorial Generated
 +----------------+---------------------------------------------------------------------+
@@ -346,17 +352,17 @@ Here are some key best practices:
 
 ### The Notebook as Source of Truth
 
-The input notebook serves as the **single source of truth** for quickstart generation. A well-structured notebook contains two essential components that also form the core of any quickstart:
+The input notebook serves as the **single source of truth** for generation of Snowflake Guides. A well-structured notebook contains two essential components that form the core of any guide:
 
 | Component | Purpose | Example |
 |-----------|---------|---------|
 | **Code Documentation** | Markdown cells explaining concepts, context, and expected outcomes | "This query retrieves store information filtered by state..." |
 | **Code Snippets** | Executable code cells with SQL queries, Python code, or configurations | `SELECT * FROM store WHERE s_state = 'TN'` |
 
-The AI extracts both components from the notebook and transforms them into the quickstart format, documentation becomes explanatory prose, and code snippets are preserved exactly as written.
+The AI extracts both components from the notebook and transforms them into the guide format—documentation becomes explanatory prose, and code snippets are preserved exactly as written.
 
-**Example:** The Semantic View quickstart was generated from this Jupyter notebook:
-- [Snowflake_Semantic_View_Business_Ready_Queries](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Snowflake_Semantic_View_Business_Ready_Queries) - Contains all SQL queries, markdown explanations, and expected outputs that became the quickstart content.
+**Example:** The Semantic View guide was generated from this Jupyter notebook:
+- [Snowflake_Semantic_View_Business_Ready_Queries](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Snowflake_Semantic_View_Business_Ready_Queries) - Contains all SQL queries, markdown explanations, and expected outputs that became the guide content.
 
 ### Content Fidelity (Preventing Hallucination)
 
@@ -375,18 +381,18 @@ The AGENTS.md enforces strict rules to prevent AI hallucination and ensure all c
 - Prevents outdated or incorrect information from external sources
 - Makes fact-checking easier since all content is traceable to the source
 
-**Example:** If the source notebook shows a specific SQL query, that exact query must appear in the quickstart; not a "cleaned up" or "improved" version.
+**Example:** If the source notebook shows a specific SQL query, that exact query must appear in the guide—not a "cleaned up" or "improved" version.
 
 ### Fact-Checking Is Essential
 
-After AI generates the quickstart, fact-checking against official documentation is critical. The AGENTS.md includes explicit guidance for this in the Iteration section:
+After AI generates the guide, fact-checking against official documentation is critical. The AGENTS.md includes explicit guidance for this in the Iteration section:
 
 **What to verify:**
 1. **Technical claims** - Verify SQL syntax, function names, and parameter descriptions against [Snowflake Documentation](https://docs.snowflake.com/)
 2. **Links** - Ensure all URLs in Related Resources are valid and point to current documentation
 3. **Terminology** - Confirm Snowflake-specific terms match official naming conventions
 
-**Example from Semantic View quickstart:**
+**Example from Semantic View guide:**
 
 During fact-checking, we verified the `CREATE SEMANTIC VIEW` components against the official documentation:
 - Confirmed `FACTS` refers to row-level expressions (non-aggregated), not aggregates
@@ -395,7 +401,7 @@ During fact-checking, we verified the `CREATE SEMANTIC VIEW` components against 
 
 ### Adding Images Post-Generation
 
-Images and screenshots can be added **after** the quickstart has been generated through:
+Images and screenshots can be added **after** the guide has been generated through:
 
 1. **Manual addition** - Capture screenshots and add them to the markdown with proper formatting:
    ```markdown
@@ -408,7 +414,7 @@ Images and screenshots can be added **after** the quickstart has been generated 
 - Naming: lowercase with hyphens (no underscores, no special characters)
 - Maximum file size: 1 MB (GIFs may be larger but should be optimized)
 - Format: PNG or JPG
-- Location: Place in an `assets/` folder within the quickstart directory
+- Location: Place in an `assets/` folder within the guide directory
 
 ### Formatting
 
@@ -432,7 +438,7 @@ Images and screenshots can be added **after** the quickstart has been generated 
 <!-- ------------------------ -->
 ## Publishing Your Work
 
-Once your quickstart is validated and ready, submit it to the official Snowflake repositories available on GitHub.
+Once your guide is validated and ready, submit it to the official Snowflake repositories on GitHub.
 
 ### Submit Your Jupyter Notebook
 
@@ -441,7 +447,7 @@ Once your quickstart is validated and ready, submit it to the official Snowflake
 3. Add your `.ipynb` file and any supporting files
 4. Submit a Pull Request
 
-### Submit Your Quickstart
+### Submit Your Guide
 
 1. Fork the [sfquickstarts](https://github.com/Snowflake-Labs/sfquickstarts) repo
 2. Navigate to `site/sfguides/src/`
@@ -451,7 +457,7 @@ Once your quickstart is validated and ready, submit it to the official Snowflake
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've successfully learned how to use the AGENTS.md file to create Snowflake Quickstarts tutorials. You now understand the complete workflow from providing a source document to generating a properly formatted, validated quickstart.
+Congratulations! You've successfully learned how to use the AGENTS.md file to create Snowflake Guides. You now understand the complete workflow from providing a source document to generating a properly formatted, validated guide.
 
 ### What You Learned
 - **AGENTS.md structure** - Metadata fields, content hierarchy, and category selection
@@ -465,20 +471,20 @@ Congratulations! You've successfully learned how to use the AGENTS.md file to cr
 AGENTS.md Guideline:
 - [agents.md](https://agents.md/) - The official specification for providing instructions to AI coding agents
 
-Official Snowflake Quickstart Resources:
-- [Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/) - Official guide for creating Snowflake quickstarts
-- [Snowflake Guides - Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) - Official template structure for Snowflake Guides from `sfquickstarts` repository
-- [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides) - Official Snowflake quickstarts repository
+Official Snowflake Guides Resources:
+- [Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/) - Official guide for creating Snowflake Guides
+- [Snowflake Guides - Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) - Official template structure from `sfquickstarts` repository
+- [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides) - Official Snowflake Guides repository
 - [Snowflake Documentation](https://docs.snowflake.com/) - Official Snowflake docs
 
-Example Quickstarts:
-- [Build Business-Ready Queries with Snowflake Semantic Views](build-business-ready-queries-with-snowflake-semantic-views/) - The example quickstart used in this tutorial
+Example Guides:
+- [Build Business-Ready Queries with Snowflake Semantic Views](build-business-ready-queries-with-snowflake-semantic-views/) - The example guide used in this tutorial
 
 Source Notebooks:
-- [Snowflake_Semantic_View_Business_Ready_Queries](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Snowflake_Semantic_View_Business_Ready_Queries) - The input notebook that was converted into the Semantic View quickstart
+- [Snowflake_Semantic_View_Business_Ready_Queries](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Snowflake_Semantic_View_Business_Ready_Queries) - The input notebook that was converted into the Semantic View guide
 
 Publishing Your Work:
 - [snowflake-demo-notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) - Submit your input Jupyter notebooks here
-- [sfquickstarts](https://github.com/Snowflake-Labs/sfquickstarts) - Submit your generated quickstarts here
+- [sfquickstarts](https://github.com/Snowflake-Labs/sfquickstarts) - Submit your generated guides here
 
-Happy quickstart creating!
+Happy guide creating!
