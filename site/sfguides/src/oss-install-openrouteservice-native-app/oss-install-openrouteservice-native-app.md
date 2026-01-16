@@ -303,7 +303,7 @@ The Function Tester allows you to test all three routing functions:
 - Generate a catchment polygon showing how far you can travel
 - Useful for delivery zone planning and coverage analysis
 
-> **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses. When you customize the map region, the Function Tester is automatically updated with region-specific coordinates.
+> **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses and default vehicle profiles (car, HGV, road bicycle). When you customize the deployment, the Function Tester is automatically updated with region-specific addresses and your enabled vehicle profiles.
 
 <!-- ------------------------ -->
 ## Customize Your Deployment
@@ -390,7 +390,8 @@ When you run `use the local skill from oss-install-openrouteservice-native-app/s
 - Updates routing profile configuration
 
 **Step 3: Function Tester Update**
-- Updates Function Tester with region-specific coordinates
+- Updates Function Tester with region-specific sample addresses
+- Updates available vehicle profiles dropdown to match your configuration
 
 **Step 4: Save & Apply**
 - Optionally creates Git feature branch for your customizations
@@ -460,12 +461,18 @@ The skill presents available routing profiles and lets you enable/disable them:
 
 **Function Tester Customization**
 
-The skill automatically updates the **Function Tester Streamlit** with region-specific sample addresses:
+The skill automatically updates the **Function Tester Streamlit** with:
+
+**Region-specific sample addresses:**
 - Start locations (5 landmarks/city centers)
 - End locations (5 different destinations)
 - Waypoints (20 locations across the region)
 
-This ensures test addresses are valid for your configured map region.
+**Vehicle profiles dropdown:**
+- Updated to show only your enabled profiles
+- Matches the profiles configured in `ors-config.yml`
+
+This ensures test addresses are valid for your map region and vehicle options match your configuration.
 
 > **_NOTE:_** Demo-related customizations (AISQL notebooks, industry categories) are covered in the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart.
 
