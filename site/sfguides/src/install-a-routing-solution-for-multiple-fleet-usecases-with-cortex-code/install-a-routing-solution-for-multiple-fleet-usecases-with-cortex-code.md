@@ -61,6 +61,8 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
     - Add to your PATH: `export PATH="$HOME/.local/bin:$PATH"` (add to `~/.zshrc` or `~/.bashrc`)
     - Verify: `cortex --version`
 
+> **_TODO:_** 📝 This section requires update once the official Cortex Code installation method is publicly available. The current instructions are for Private Preview access only.
+
 -   **Container Runtime** - One of the following:
     - [Podman](https://podman.io/) (recommended): `brew install podman` (macOS) 
     - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
