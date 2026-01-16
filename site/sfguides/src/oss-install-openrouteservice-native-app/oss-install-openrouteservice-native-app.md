@@ -102,10 +102,10 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
 ### Setup Cortex Code
 
 1. **Clone the repository**:
-   ```bash
+     ```bash
    git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-   cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
-   ```
+     cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+     ```
    
    **Without Git**: Download the ZIP from the repository and extract it, then navigate to the folder in VS Code
 
@@ -532,9 +532,9 @@ The skill presents available routing profiles and lets you enable/disable them:
 The skill automatically updates the **Function Tester Streamlit** with:
 
 **Region-specific sample addresses:**
-- Start locations (5 landmarks/city centers)
-- End locations (5 different destinations)
-- Waypoints (20 locations across the region)
+   - Start locations (5 landmarks/city centers)
+   - End locations (5 different destinations)
+   - Waypoints (20 locations across the region)
 
 **Vehicle profiles dropdown:**
 - Updated to show only your enabled profiles
@@ -669,20 +669,24 @@ Deploy the demo to see the routing functions in action with real-world POI data:
 - [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
 
 
-#### Further Related Material
+#### Continue Your Journey
 
-- [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
+- [Deploy a Route Optimization Demo](/guide/oss-deploy-route-optimization-demo/) - Build a complete vehicle routing simulator with AI-generated sample data using the Native App you just installed
 
-- [Building Geospatial Multi-Layer Apps with Snowflake and Streamlit](/en/developers/guides/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/)
+#### OpenRouteService Resources
 
-- [H3 Indexing](https://h3geo.org/docs/)
+- [OpenRouteService Official Website](https://openrouteservice.org/) - Documentation, API reference, and community resources
+- [OpenRouteService on GitHub](https://github.com/GIScience/openrouteservice) - Source code and technical documentation
+- [VROOM Project](https://github.com/VROOM-Project/vroom) - Vehicle Routing Open-source Optimization Machine powering route optimization
 
-- [Streamlit](https://streamlit.io/)
+#### Cortex Code
 
-- [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
+- [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) - AI-powered features in Snowflake
+- [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about) - Build and distribute applications within Snowflake
 
-- [Using Cortex and Streamlit With Geospatial Data](/en/developers/guides/using-snowflake-cortex-and-streamlit-with-geospatial-data/)
+#### Map Data Sources
 
-- [Getting started with Geospatial AI and ML using Snowflake Cortex](/en/developers/guides/geo-for-machine-learning/)
+- [Geofabrik Downloads](https://download.geofabrik.de/) - Country and region OpenStreetMap extracts
+- [BBBike Extracts](https://extract.bbbike.org/) - City-specific OpenStreetMap extracts for faster processing
 
 

@@ -329,10 +329,21 @@ You've deployed a complete Route Optimization Simulator that demonstrates the po
 - Build vehicle routing simulations with time windows, capacity, and skills
 - Visualize routes and catchment areas with Pydeck
 
-### Related Resources
+### Related Quickstart
 
-- [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) - Install the routing engine first
-- [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
-- [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
-- [Streamlit](https://streamlit.io/)
-- [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
+- [Install OpenRouteService Native App](/guide/oss-install-openrouteservice-native-app/) - Install and customize the routing engine (prerequisite for this demo)
+
+### Source Code
+
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator) - Skills, notebooks, and Streamlit apps
+
+### OpenRouteService Resources
+
+- [OpenRouteService Official Website](https://openrouteservice.org/) - Documentation and API reference
+- [VROOM Project](https://github.com/VROOM-Project/vroom) - Vehicle Routing Open-source Optimization Machine
+
+### Cortex Code & Snowflake
+
+- [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) - AI-powered features in Snowflake
+- [Carto Overture Maps Places](https://www.carto.com/blog/overture-maps-data-in-snowflake) - POI data for the demo
+- [Streamlit](https://streamlit.io/) - Interactive data apps
