@@ -472,16 +472,33 @@ Learn how the routing functions work by running through the interactive notebook
 
 ### Explore the Routing Functions with AISQL (Optional)
 
-The AISQL notebook demonstrates how to use the routing functions programmatically with AI-generated sample data customized for your region.
+The AISQL notebook is an interactive exploration of all three routing functions. It uses **Snowflake Cortex AI** to generate realistic sample data - restaurants, delivery jobs, customer addresses - all customized for your configured region.
 
 1. Navigate to **Projects > Notebooks** in Snowsight
 2. Open **ROUTING_FUNCTIONS_AISQL**
-3. Run through the notebook to explore:
-   - **Directions** - Point-to-point and multi-waypoint routing
-   - **Optimization** - Vehicle route optimization matching jobs to vehicles
-   - **Isochrones** - Catchment area analysis based on travel time
+
+**What the Notebook Covers:**
+
+| Section | What You'll Learn |
+|---------|-------------------|
+| **1. Simple Directions** | Generate a hotel and restaurant using AI, then call the `DIRECTIONS` function to get point-to-point routing with distance, duration, and turn-by-turn instructions |
+| **2. Cortex Generated Maps** | Let AI write the Pydeck visualization code for you - see how Cortex can generate working map code from natural language prompts |
+| **3. Advanced Directions with Waypoints** | Generate 10 restaurants, then create a multi-stop route visiting all of them - essential for delivery route planning |
+| **4. Route Optimization (1 Vehicle)** | Create a supplier location and 10 delivery jobs with time windows, then use the `OPTIMIZATION` function to assign jobs efficiently |
+| **5. Route Optimization (Multiple Vehicles)** | Scale up to 40 customers and 5 vehicles with different skills and time windows - see how the optimizer distributes work |
+| **6. Isochrones** | Generate catchment polygons showing everywhere reachable within 20 minutes by car vs. bicycle - useful for delivery zone planning |
+
+**Key Techniques Demonstrated:**
+
+- Using `AI_COMPLETE` with structured JSON output to generate location data
+- Calling Native App functions: `DIRECTIONS`, `OPTIMIZATION`, `ISOCHRONES`
+- Parsing and visualizing GeoJSON responses
+- Building multi-layer Pydeck maps with routes, waypoints, and catchment areas
+- Working with time windows and vehicle skills for realistic optimization scenarios
 
 > **_TIP:_** The notebook prompts are customized for your chosen city. If you selected Paris, the AI will generate sample restaurants, delivery jobs, and customer locations in Paris!
+
+> **_NOTE:_** The notebook creates tables as it runs (e.g., `SIMPLE_DIRECTIONS`, `TEN_RANDOM`, `SUPPLIER`). These persist in your database so you can re-run visualizations without regenerating data.
 
 ### Access the Streamlit App
 
