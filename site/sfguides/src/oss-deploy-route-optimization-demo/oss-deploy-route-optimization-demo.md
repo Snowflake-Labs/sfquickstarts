@@ -66,13 +66,13 @@ use the local skill from oss-deploy-route-optimization-demo/skills/deploy-demo
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
 
-![Checks Installed](assets/checks_installed.png)
+![Checks Installed](assets/checks-installed.png)
 
 Cortex Code verifies that the Native App is installed and all four services are running before proceeding with the demo deployment.
 
 The skill then uses interactive prompting to gather required information:
 
-![Interactive Prompts](assets/interactive_prompts.png)
+![Interactive Prompts](assets/interactive-prompts.png)
 
 > **_TIP:_** Use your keyboard arrow keys to navigate through options, then press **Enter** to confirm your selection.
 
@@ -116,11 +116,11 @@ The demo skill creates the following Snowflake objects:
 
 Once deployment completes successfully, you'll see a summary with direct links to your resources:
 
-![Demo Deployed Successfully](assets/deployed_successfully.png)
+![Demo Deployed Successfully](assets/deployed-successfully.png)
 
 Cortex Code confirms all demo components are installed and ready to use:
 
-![Demo Installed](assets/demo_installed.png)
+![Demo Installed](assets/demo-installed.png)
 
 <!-- ------------------------ -->
 ## Explore the Routing Functions with AISQL
@@ -213,13 +213,13 @@ change industry
 
 Cortex Code automatically finds the relevant skill and guides you through the options:
 
-![Change Industry](assets/change_induatry.png)
+![Change Industry](assets/change-industry.png)
 
 You can add a new industry, modify an existing one, or replace one with something different. The skill updates the Streamlit simulator with your customized industry categories (product types, customer types, vehicle skills).
 
 Once the wizard completes, the Streamlit app is automatically refreshed with your new industry:
 
-![Change Industry Result](assets/change_industry.png)
+![Change Industry Result](assets/change-industry.png)
 
 Alternatively, you can use the full skill path:
 
@@ -264,7 +264,7 @@ This will:
 - Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
 - Optionally remove the warehouse (`ROUTING_ANALYTICS`)
 
-![Demo Uninstalled](assets/demo_uninstalled.png)
+![Demo Uninstalled](assets/demo-uninstalled.png)
 
 > **_NOTE:_** The OpenRouteService Native App remains installed and functional. You can redeploy the demo at any time.
 
@@ -278,7 +278,7 @@ uninstall demo and optimizer
 
 Cortex Code will run both uninstall skills in sequence, removing all resources from your Snowflake account.
 
-![Uninstall Complete](assets/uninstalled_all.png)
+![Uninstall Complete](assets/uninstalled-all.png)
 
 > **_TIP:_** You can also use the full skill paths if preferred:
 > - `use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo`

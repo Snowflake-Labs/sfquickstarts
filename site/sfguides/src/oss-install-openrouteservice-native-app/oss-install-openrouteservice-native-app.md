@@ -111,7 +111,7 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
 
    After cloning, open the folder in VS Code. You should see the following structure in your Explorer:
 
-   ![Cloned Repository Structure](assets/cloned_objects.png)
+   ![Cloned Repository Structure](assets/cloned-objects.png)
 
 2. **Launch Cortex Code CLI** in the VS Code terminal:
    ```bash
@@ -199,7 +199,7 @@ The skill will guide you through any required steps, including:
 
 The skill uses interactive prompting to gather required information:
 
-![Interactive Skill Prompting](assets/prompt_setup_database.png)
+![Interactive Skill Prompting](assets/prompt-setup-database.png)
 
 > **_TIP:_** Use your keyboard arrow keys to toggle through the options, then press **Enter** to confirm your selection.
 
@@ -219,7 +219,7 @@ Simply confirm each prompt as the skill progresses. The skill handles all the co
 
 Once complete, you'll see a success message with a direct link to your app:
 
-![Route Optimizer Installed Successfully](assets/install_successful.png)
+![Route Optimizer Installed Successfully](assets/install-successful.png)
 
 <!-- ------------------------ -->
 ## Activate the App
@@ -228,15 +228,15 @@ Once deployment completes, Cortex Code will provide a link to your app. You need
 
 1. Navigate to **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP** in Snowsight
 
-![Navigate to Apps](assets/navigate_to_apps.png)
+![Navigate to Apps](assets/navigate-to-apps.png)
 
 2. Click on the **OPENROUTESERVICE_NATIVE_APP** to open it
 
-![App Icon](assets/app_icon.png)
+![App Icon](assets/app-icon.png)
 
 3. Grant the required privileges and review external access
 
-![Grant Privileges](assets/grant-priviliges.png)
+![Grant Privileges](assets/grant-privileges.png)
 
 The app requires these permissions to function:
 - **CREATE COMPUTE POOL**: Allows the app to create compute pools for running the OpenRouteService containers via Snowpark Container Services
@@ -452,7 +452,7 @@ Cortex Code will find the appropriate skill and guide you through the process:
 
 Once the customization completes, Cortex Code shows a summary of everything that was updated:
 
-![Location Customization Complete](assets/location_customization_complete.png)
+![Location Customization Complete](assets/location-customization-complete.png)
 
 The summary confirms:
 1. ✅ **Map downloaded** - The Île-de-France map for the Paris region
