@@ -48,6 +48,7 @@ If you're not building with LangGraph, try this [guide](https://www.snowflake.co
 - How to create Cortex Search services for semantic search
 - How to build Semantic Views for Cortex Analyst text-to-SQL
 - How to build a multi-agent supervisor workflow using LangGraph
+- How to run and debug your workflow with LangGraph Studio
 - How to evaluate agent performance using TruLens with Snowflake
 
 ### What You'll Build
@@ -58,6 +59,7 @@ A complete multi-agent customer intelligence system that:
 - Uses Cortex Search for semantic search across support tickets
 - Uses Cortex Analyst for natural language to SQL conversion
 - Uses custom AI UDFs for sentiment analysis and churn prediction
+- Can be run interactively via LangGraph Studio or programmatically via notebook
 - Evaluates responses using Agent Goal-Plan-Action alignment metrics via TruLens
 
 ### Prerequisites
@@ -65,6 +67,8 @@ A complete multi-agent customer intelligence system that:
 - [Snowflake Account](https://signup.snowflake.com/) with Cortex AI features enabled
 - Python 3.9+ installed locally
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
+- [LangGraph CLI](https://langchain-ai.github.io/langgraph/how-tos/local-studio/) (`pip install langgraph-cli`) for LangGraph Studio
+- [LangSmith Account](https://smith.langchain.com/) (optional, for tracing)
 - Basic familiarity with LangGraph and LangChain concepts (optional)
 
 ## Setup Git Integration
@@ -979,6 +983,79 @@ Run sample queries to test the system:
 | Metrics, behavior, churn, analytics | DATA_ANALYST_AGENT |
 | Market research, competition, strategy | RESEARCH_AGENT |
 
+## Run with LangGraph Studio
+
+Duration: 10
+
+[LangGraph Studio](https://smith.langchain.com/studio) provides a visual interface for developing, debugging, and testing your multi-agent workflow. It's an excellent alternative to running the notebook for interactive exploration.
+
+### Install LangGraph CLI
+
+Add the LangGraph CLI to your environment:
+
+```bash
+pip install langgraph-cli
+```
+
+### Configure Agent Location
+
+The companion repository includes a `studio_app.py` file that connects to your Snowflake Cortex Agents. Open this file and verify the agent database and schema match your setup:
+
+```python
+agent_database = "SNOWFLAKE_INTELLIGENCE"  # Your agent database
+agent_schema = "AGENTS"                     # Your agent schema
+```
+
+### Launch LangGraph Studio
+
+From the repository directory, start the development server:
+
+```bash
+langgraph dev
+```
+
+This opens LangGraph Studio in your browser at [https://smith.langchain.com/studio/](https://smith.langchain.com/studio/).
+
+### Using LangGraph Studio
+
+In the Studio interface:
+
+1. **Enter your query** in the "Messages" field
+2. **Click "Run"** to execute the workflow
+3. **Watch the execution** as it flows through the supervisor and agents
+4. **Inspect state** at each node to debug or understand behavior
+
+### Sample Test Queries
+
+Try these business scenarios to test your multi-agent system:
+
+| Query Type | Example Query |
+|------------|---------------|
+| Content Analysis | "Assess the churn risk for customers complaining about API issues." |
+| Data Analytics | "What's the average session duration for enterprise vs professional customers?" |
+| Strategic Research | "What industries represent our best expansion opportunities?" |
+| Churn Prediction | "Which customers are most likely to churn in the next 30 days?" |
+| Support Analysis | "What are the most common support issues for enterprise customers?" |
+
+### Optional: Enable LangSmith Tracing
+
+For enhanced observability, add LangSmith credentials to your `.env` file:
+
+```env
+LANGSMITH_API_KEY=your_langsmith_api_key
+```
+
+This enables detailed tracing of all LLM calls and agent interactions within LangGraph Studio.
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "401 Unauthorized" | Check your Snowflake credentials in `.env` and verify your role has USAGE on the Cortex Agents |
+| "No human message found" | Enter the query in the "Messages" field in LangGraph Studio |
+| Agent returns 0 customers | Verify Cortex Search service includes `customer_id` in ATTRIBUTES and demo data was loaded |
+| Connection Issues | Verify `SNOWFLAKE_ACCOUNT` format (e.g., `org-account` or `account.region`) |
+
 ## Evaluate with TruLens
 
 Duration: 15
@@ -1049,7 +1126,12 @@ Congratulations! You've successfully built an **efficient multi-agent supervisor
    - Aggregated error handling (errors collected, not cascaded)
    - State-based context passing between agents
 
-3. **Evaluation Pipeline**
+3. **Interactive Development Environment**
+   - LangGraph Studio for visual workflow debugging
+   - Real-time state inspection at each node
+   - LangSmith tracing for detailed observability
+
+4. **Evaluation Pipeline**
    - TruLens integration for observability
    - Custom metrics for goal-plan-action (GPA) alignment
    - Snowflake-native evaluation storage
@@ -1057,8 +1139,9 @@ Congratulations! You've successfully built an **efficient multi-agent supervisor
 ### Next Steps
 
 - **Add more agents**: Extend with specialized agents for sales, finance, or operations
-- **Tune prompts**: Use the evaluations to guide improvements to supervisor and agent prompts.
+- **Tune prompts**: Use the evaluations to guide improvements to supervisor and agent prompts
 - **Build custom tools**: Create additional UDFs for domain-specific analysis
+- **Iterate with LangGraph Studio**: Use the visual debugger to rapidly test and refine your workflow
 
 ### Related Resources
 
