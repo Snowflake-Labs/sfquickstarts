@@ -217,6 +217,10 @@ Cortex Code automatically finds the relevant skill and guides you through the op
 
 You can add a new industry, modify an existing one, or replace one with something different. The skill updates the Streamlit simulator with your customized industry categories (product types, customer types, vehicle skills).
 
+Once the wizard completes, the Streamlit app is automatically refreshed with your new industry:
+
+![Change Industry Result](assets/change_industry.png)
+
 Alternatively, you can use the full skill path:
 
 ```
