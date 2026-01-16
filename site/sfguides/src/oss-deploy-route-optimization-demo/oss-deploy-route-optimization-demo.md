@@ -83,6 +83,10 @@ Cortex Code will automatically:
 | Notebook | `NOTEBOOKS.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of routing functions |
 | Streamlit | `STREAMLITS.SIMULATOR` | Route optimization simulator app |
 
+Once deployment completes successfully, you'll see a summary with direct links to your resources:
+
+![Demo Deployed Successfully](assets/deployed_successfully.png)
+
 <!-- ------------------------ -->
 ## Explore the Routing Functions with AISQL
 
