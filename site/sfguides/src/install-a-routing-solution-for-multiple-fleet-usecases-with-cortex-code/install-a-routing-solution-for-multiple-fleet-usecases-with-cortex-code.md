@@ -524,11 +524,11 @@ After deployment completes, you have two options:
 
 Launch the Route Optimization Simulator immediately to see vehicle routing in action with real POI data from your configured region (Paris, San Francisco, etc.).
 
-**Option B: Explore with AISQL Notebook First** → Continue below
+**Option B: Explore with AISQL Notebook First**
 
 Learn how the routing functions work by running through the interactive notebook with AI-generated sample data.
 
-### Explore the Routing Functions with AISQL (Optional)
+## Explore the Routing Functions with AISQL
 
 The AISQL notebook is an interactive exploration of all three routing functions. It uses **Snowflake Cortex AI** to generate realistic sample data - restaurants, delivery jobs, customer addresses - all customized for your configured region.
 
