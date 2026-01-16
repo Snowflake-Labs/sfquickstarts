@@ -222,146 +222,125 @@ CREATE INDEX idx_order_header_customer ON quickstart.order_header(customer_id);
 
 #### Load Sample Data
 
-Now let's load sample data into our tables.  For this tutorial, we'll generate sample data using Postgres's `generate_series()` function. This allows you to control the volume of test data by adjusting the variables below.  Be sure to copy the entire code block.
+Now let's load sample data into our tables. We'll generate sample data using Postgres's `generate_series()` function. You can adjust the row counts to control the volume of test data.
 
-**Configure the number of rows to generate:**
+**Step 1: Clear existing data**
+
+First, clear any existing data from the tables. We truncate `truck_history` first, then `truck` with CASCADE to handle the foreign key relationship with `order_header`:
 
 ```sql
--- Set the number of trucks and orders to generate
--- Adjust these values based on your testing needs
-DO $$
-DECLARE
-    num_trucks INTEGER := 1000;        -- Number of trucks to generate
-    num_orders INTEGER := 1000000;       -- Number of orders to generate
-    base_order_id BIGINT := 1000;      -- Starting order ID
-BEGIN
-    RAISE NOTICE 'Starting data generation...';
-    
-    RAISE NOTICE 'Cleaning out tables';
-    TRUNCATE TABLE quickstart.truck_history;
-    TRUNCATE TABLE quickstart.truck cascade;
+TRUNCATE TABLE quickstart.truck_history;
+TRUNCATE TABLE quickstart.truck CASCADE;
+```
 
-    RAISE NOTICE 'Generating % trucks', num_trucks;
-    
-    -- Arrays for random data generation
-    DECLARE
-        cities TEXT[] := ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
-                               'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
-                               'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte',
-                               'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Boston'];
-        regions TEXT[] := ARRAY['Northeast', 'Southeast', 'Midwest', 'Southwest', 'West'];
-        states TEXT[] := ARRAY['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'TX', 'CA', 'TX', 'CA',
-                               'TX', 'FL', 'TX', 'OH', 'NC', 'CA', 'IN', 'WA', 'CO', 'MA'];
-        makes TEXT[] := ARRAY['Ford', 'Mercedes', 'Freightliner', 'Chevrolet', 'GMC', 'RAM'];
-        models TEXT[] := ARRAY['Transit', 'Sprinter', 'MT45', 'Express', 'Savana', 'ProMaster'];
-        channels TEXT[] := ARRAY['mobile', 'web', 'phone', 'kiosk'];
-        statuses TEXT[] := ARRAY['COMPLETED', 'COMPLETED', 'COMPLETED', 'INQUEUE', 'PROCESSING'];
-        
-        city_idx INTEGER;
-        truck_count INTEGER;
-    BEGIN
-        -- Generate truck data
-        INSERT INTO quickstart.truck (
-            truck_id, menu_type_id, primary_city, region, iso_region, country, 
-            iso_country_code, franchise_flag, year, make, model, ev_flag, franchise_id, 
-            truck_opening_date, truck_email, record_start_time
-        )
-        SELECT 
-            gs.truck_id, (gs.truck_id % 5) + 1 AS menu_type_id, cities[(gs.truck_id % array_length(cities, 1)) + 1] AS primary_city,
-            regions[(gs.truck_id % array_length(regions, 1)) + 1] AS region, states[(gs.truck_id % array_length(states, 1)) + 1] AS iso_region,
-            'United States' AS country, 'US' AS iso_country_code, (gs.truck_id % 2)::INTEGER AS franchise_flag,
-            2015 + (gs.truck_id % 10) AS year, makes[(gs.truck_id % array_length(makes, 1)) + 1] AS make,
-            models[(gs.truck_id % array_length(models, 1)) + 1] AS model, (gs.truck_id % 4 = 0)::INTEGER AS ev_flag,
-            100 + (gs.truck_id % 500) AS franchise_id, CURRENT_DATE - (gs.truck_id % 1825 || ' days')::INTERVAL AS truck_opening_date,
-            gs.truck_id || '_truck@email.com' AS truck_email,
-            CURRENT_TIMESTAMP - (gs.truck_id % 365 || ' days')::INTERVAL AS record_start_time
-        FROM generate_series(1, num_trucks) AS gs(truck_id);
-        
-        GET DIAGNOSTICS truck_count = ROW_COUNT;
-        RAISE NOTICE 'Generated % trucks', truck_count;
-        
-        -- Copy truck data to truck_history
-        INSERT INTO quickstart.truck_history 
-        SELECT *, NULL as record_end_time FROM quickstart.truck;
-        
-        RAISE NOTICE 'Copied % records to truck_history', truck_count;
-        RAISE NOTICE 'Generating % orders', num_orders;
-        
-        -- Generate order data with foreign key constraint compliance
-        -- This approach ensures all truck_ids reference existing trucks
-        INSERT INTO quickstart.order_header (
-            order_id, truck_id, location_id, customer_id, discount_id, 
-            shift_id, shift_start_time, shift_end_time, order_channel, order_ts, 
-            served_ts, order_currency, order_amount, order_tax_amount, 
-            order_discount_amount, order_total, order_status
-        )
-        WITH ordered_trucks AS (
-            -- Get all truck_ids in order for deterministic selection
-            SELECT truck_id, ROW_NUMBER() OVER (ORDER BY truck_id) as truck_seq
-            FROM quickstart.truck
-        )
-        SELECT 
-            base_order_id + gs.order_seq AS order_id,
-            -- Select truck_id ensuring foreign key constraint is satisfied
-            -- Use modulo to cycle through available trucks with weighted distribution
-            -- Lower truck_ids (first 20%) get selected more frequently
-            (SELECT truck_id 
-             FROM ordered_trucks 
-             WHERE truck_seq = (
-                 CASE 
-                     -- 80% of the time, select from first 20% of trucks (popular trucks)
-                     WHEN (gs.order_seq * 17) % 100 < 80 THEN 
-                         ((gs.order_seq * 31) % GREATEST(1, CEIL(num_trucks * 0.2)::INTEGER)) + 1
-                     -- 20% of the time, select from all trucks
-                     ELSE 
-                         ((gs.order_seq * 37) % num_trucks) + 1
-                 END
-             )
-            ) AS truck_id,
-            5000 + (gs.order_seq % 1000) AS location_id, 2000 + (gs.order_seq % 5000) AS customer_id,
-            CASE WHEN (gs.order_seq * 7) % 100 < 10 
-                THEN ((gs.order_seq * 11) % 20)::FLOAT 
-                ELSE 0 
-            END AS discount_id,
-            (gs.order_seq % 3) + 1 AS shift_id,
-            CASE (gs.order_seq % 3)
-                WHEN 0 THEN '08:00:00'::TIME
-                WHEN 1 THEN '16:00:00'::TIME
-                ELSE '00:00:00'::TIME
-            END AS shift_start_time,
-            CASE (gs.order_seq % 3)
-                WHEN 0 THEN '16:00:00'::TIME
-                WHEN 1 THEN '23:00:00'::TIME
-                ELSE '08:00:00'::TIME
-            END AS shift_end_time,
-            channels[(gs.order_seq % array_length(channels, 1)) + 1] AS order_channel,
-            CURRENT_TIMESTAMP - ((num_orders - gs.order_seq) % 180 || ' days')::INTERVAL 
-                + ((gs.order_seq % 86400) || ' seconds')::INTERVAL AS order_ts,
-            CASE 
-                WHEN (gs.order_seq * 13) % 100 < 80 THEN 
-                    (CURRENT_TIMESTAMP - ((num_orders - gs.order_seq) % 180 || ' days')::INTERVAL 
-                        + ((gs.order_seq % 86400 + 300) || ' seconds')::INTERVAL)::TEXT
-                ELSE ''
-            END AS served_ts,
-            'USD' AS order_currency,
-            (10 + ((gs.order_seq * 19) % 90))::NUMERIC(10,4) AS order_amount,
-            ((10 + ((gs.order_seq * 19) % 90)) * 0.08)::NUMERIC(10,4)::TEXT AS order_tax_amount,
-            CASE 
-                WHEN (gs.order_seq * 23) % 100 < 10 THEN 
-                    (((gs.order_seq * 29) % 20) * 0.1)::NUMERIC(10,4)::TEXT
-                ELSE '0'
-            END AS order_discount_amount,
-            ((10 + ((gs.order_seq * 19) % 90)) * 1.08)::NUMERIC(10,4) AS order_total,
-            statuses[(gs.order_seq % array_length(statuses, 1)) + 1] AS order_status
-        FROM generate_series(1, num_orders) AS gs(order_seq);
-        
-        GET DIAGNOSTICS truck_count = ROW_COUNT;
-        RAISE NOTICE 'Generated % orders', truck_count;
-        RAISE NOTICE 'Data generation complete!';
-        RAISE NOTICE 'Total trucks: %', (SELECT COUNT(*) FROM quickstart.truck);
-        RAISE NOTICE 'Total orders: %', (SELECT COUNT(*) FROM quickstart.order_header);
-    END;
-END $$;
+**Step 2: Load the truck table (1,000 rows)**
+
+Generate truck records with varied cities, makes, models, and other attributes:
+
+```sql
+INSERT INTO quickstart.truck (
+    truck_id, menu_type_id, primary_city, region, iso_region, country, 
+    iso_country_code, franchise_flag, year, make, model, ev_flag, franchise_id, 
+    truck_opening_date, truck_email, record_start_time
+)
+SELECT 
+    gs.id AS truck_id,
+    (gs.id % 5) + 1 AS menu_type_id,
+    (ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
+           'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
+           'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte',
+           'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Boston'])[(gs.id % 20) + 1] AS primary_city,
+    (ARRAY['Northeast', 'Southeast', 'Midwest', 'Southwest', 'West'])[(gs.id % 5) + 1] AS region,
+    (ARRAY['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'FL', 'OH', 'NC', 'WA'])[(gs.id % 10) + 1] AS iso_region,
+    'United States' AS country,
+    'US' AS iso_country_code,
+    (gs.id % 2)::INTEGER AS franchise_flag,
+    2015 + (gs.id % 10) AS year,
+    (ARRAY['Ford', 'Mercedes', 'Freightliner', 'Chevrolet', 'GMC', 'RAM'])[(gs.id % 6) + 1] AS make,
+    (ARRAY['Transit', 'Sprinter', 'MT45', 'Express', 'Savana', 'ProMaster'])[(gs.id % 6) + 1] AS model,
+    (gs.id % 4 = 0)::INTEGER AS ev_flag,
+    100 + (gs.id % 500) AS franchise_id,
+    CURRENT_DATE - ((gs.id % 1825) || ' days')::INTERVAL AS truck_opening_date,
+    gs.id || '_truck@email.com' AS truck_email,
+    CURRENT_TIMESTAMP - ((gs.id % 365) || ' days')::INTERVAL AS record_start_time
+FROM generate_series(1, 1000) AS gs(id);
+```
+
+**Step 3: Load the truck_history table**
+
+Copy all truck records into the history table. This simulates having a historical record for each truck:
+
+```sql
+INSERT INTO quickstart.truck_history 
+SELECT *, NULL AS record_end_time 
+FROM quickstart.truck;
+```
+
+**Step 4: Load the order_header table (1,000,000 rows)**
+
+Generate order records that reference existing trucks. This query uses a weighted distribution where 80% of orders go to the top 20% of trucks (simulating popular food trucks):
+
+```sql
+INSERT INTO quickstart.order_header (
+    order_id, truck_id, location_id, customer_id, discount_id, 
+    shift_id, shift_start_time, shift_end_time, order_channel, order_ts, 
+    served_ts, order_currency, order_amount, order_tax_amount, 
+    order_discount_amount, order_total, order_status
+)
+SELECT 
+    1000 + gs.id AS order_id,
+    -- Weighted truck selection: 80% of orders go to top 20% of trucks
+    CASE 
+        WHEN (gs.id * 17) % 100 < 80 THEN ((gs.id * 31) % 200) + 1  -- Top 200 trucks
+        ELSE ((gs.id * 37) % 1000) + 1                              -- All trucks
+    END AS truck_id,
+    5000 + (gs.id % 1000) AS location_id,
+    2000 + (gs.id % 5000) AS customer_id,
+    CASE WHEN (gs.id * 7) % 100 < 10 THEN ((gs.id * 11) % 20)::FLOAT ELSE 0 END AS discount_id,
+    (gs.id % 3) + 1 AS shift_id,
+    CASE (gs.id % 3)
+        WHEN 0 THEN '08:00:00'::TIME
+        WHEN 1 THEN '16:00:00'::TIME
+        ELSE '00:00:00'::TIME
+    END AS shift_start_time,
+    CASE (gs.id % 3)
+        WHEN 0 THEN '16:00:00'::TIME
+        WHEN 1 THEN '23:00:00'::TIME
+        ELSE '08:00:00'::TIME
+    END AS shift_end_time,
+    (ARRAY['mobile', 'web', 'phone', 'kiosk'])[(gs.id % 4) + 1] AS order_channel,
+    CURRENT_TIMESTAMP - ((1000000 - gs.id) % 180 || ' days')::INTERVAL 
+        + ((gs.id % 86400) || ' seconds')::INTERVAL AS order_ts,
+    CASE 
+        WHEN (gs.id * 13) % 100 < 80 THEN 
+            (CURRENT_TIMESTAMP - ((1000000 - gs.id) % 180 || ' days')::INTERVAL 
+                + ((gs.id % 86400 + 300) || ' seconds')::INTERVAL)::TEXT
+        ELSE ''
+    END AS served_ts,
+    'USD' AS order_currency,
+    (10 + ((gs.id * 19) % 90))::NUMERIC(10,4) AS order_amount,
+    ((10 + ((gs.id * 19) % 90)) * 0.08)::NUMERIC(10,4)::TEXT AS order_tax_amount,
+    CASE 
+        WHEN (gs.id * 23) % 100 < 10 THEN (((gs.id * 29) % 20) * 0.1)::NUMERIC(10,4)::TEXT
+        ELSE '0'
+    END AS order_discount_amount,
+    ((10 + ((gs.id * 19) % 90)) * 1.08)::NUMERIC(10,4) AS order_total,
+    (ARRAY['COMPLETED', 'COMPLETED', 'COMPLETED', 'INQUEUE', 'PROCESSING'])[(gs.id % 5) + 1] AS order_status
+FROM generate_series(1, 1000000) AS gs(id);
+```
+
+> **Note**: This insert may take 30-60 seconds depending on your environment.
+
+**Step 5: Verify data relationships**
+
+Confirm the foreign key relationships are intact by checking that all orders reference valid trucks:
+
+```sql
+SELECT 
+    (SELECT COUNT(*) FROM quickstart.truck) AS trucks,
+    (SELECT COUNT(*) FROM quickstart.truck_history) AS truck_history,
+    (SELECT COUNT(*) FROM quickstart.order_header) AS orders,
+    (SELECT COUNT(DISTINCT truck_id) FROM quickstart.order_header) AS trucks_with_orders;
 ```
 
 Although autovacuum will run and perform the necessary background statistics gathering, etc. the below commands will manually perform a vacuum and analyze on the newly populated tables.
@@ -693,6 +672,11 @@ WHERE order_id = (SELECT MIN(order_id) FROM quickstart.order_header);
 Session 2 will wait for Session 1's lock to be released.  This is known as a blocking lock.
 
 In a third terminal, you can view the locks that have not been granted (blocked):
+
+```shell
+psql -U snowflake_admin -d quickstart_db
+```
+
 ```sql
 -- Session 3
 SELECT l.locktype, l.relation::regclass, l.mode,
