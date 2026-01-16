@@ -122,7 +122,7 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
    cortex
    ```
 
-4. **Connect to Snowflake** - Cortex Code will prompt you to select or create a connection
+4. **Connect to Snowflake** - Cortex Code will prompt you to select or create a connection.  once a connection has ben created using one of the authentication methods, you will now be able to start cortex code in the terminal by using the **cortex** command which will give you a similar screen as below.
 
 ![Cortex Code Logged In](assets/co-co-logged-in.png)
 
