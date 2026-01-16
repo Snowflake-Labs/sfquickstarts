@@ -73,10 +73,10 @@ pip install kafka-python confluent-kafka
 
 ### Clone or Download the Assets
 
-Download the assets from this quickstart to a local directory from this [GitHub repository](https://github.com/sfc-gh-bhess/sfguide-kafka-interactive-tables-streaming). 
+Download the assets from this quickstart to a local directory from this (GitHub repository)[https://github.com/]. 
 The assets include:
 - `docker-compose.yml` - Kafka cluster configuration
-- `Dockerfile` - Kafka Connect with Snowflake connector
+- `Dockerfile.connect` - Kafka Connect with Snowflake connector
 - `generate_sensor_data.py` - Script to generate continuous sensor data
 - `send_message.py` - Script to send a single message
 - `INTERACTIVE_TABLES_SETUP.ipynb` - Snowflake notebook for setup
@@ -204,7 +204,7 @@ Topic: sensor_data	TopicId: h4tQAyduQm-TD6L4qyLOew	PartitionCount: 3	Replication
 
 ### Set Environment Variables
 
-Set your Snowflake account identifier as an environment variable. This is the part before `.snowflakecomputing.com` (e.g., `xyz12345`):
+Set your Snowflake account identifier as an environment variable. This is the part before `.snowflakecomputing.com` (e.g., `xyz12345` or `someorg-someacctname`):
 
 ```bash
 export SNOWFLAKE_ACCOUNT="your-account-identifier"
