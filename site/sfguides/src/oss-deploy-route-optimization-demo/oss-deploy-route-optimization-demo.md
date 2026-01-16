@@ -66,6 +66,10 @@ use the local skill from oss-deploy-route-optimization-demo/skills/deploy-demo
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
 
+![Checks Installed](assets/checks_installed.png)
+
+Cortex Code verifies that the Native App is installed and all four services are running before proceeding with the demo deployment.
+
 Cortex Code will automatically:
 - **Verify** OpenRouteService Native App is installed and running
 - **Acquire Marketplace Data** - Gets the **Carto Overture Maps Places** dataset with 50+ million POIs worldwide
