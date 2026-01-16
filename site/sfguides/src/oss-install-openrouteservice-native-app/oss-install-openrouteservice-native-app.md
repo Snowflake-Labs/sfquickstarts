@@ -206,6 +206,20 @@ The skill uses interactive prompting to gather required information:
 
 > **_TIP:_** Use your keyboard arrow keys to toggle through the options, then press **Enter** to confirm your selection.
 
+**What gets installed:**
+
+| Component | Name | Description |
+|-----------|------|-------------|
+| Database | `OPENROUTESERVICE_SETUP` | Setup database with stages and image repository |
+| Stage | `ORS_SPCS_STAGE` | Configuration files and map data |
+| Stage | `ORS_GRAPHS_SPCS_STAGE` | Generated routing graphs |
+| Stage | `ORS_ELEVATION_CACHE_SPCS_STAGE` | Elevation data cache |
+| Image Repository | `IMAGE_REPOSITORY` | Container images for services |
+| Application Package | `OPENROUTESERVICE_NATIVE_APP_PKG` | Native App package |
+| Application | `OPENROUTESERVICE_NATIVE_APP` | Deployed Native App with routing functions |
+
+Simply confirm each prompt as the skill progresses. The skill handles all the complex setup automatically - creating databases, uploading files, building containers, and deploying the Native App.
+
 ### Activate the App
 
 Once deployment completes, Cortex Code will provide a link to your app. You need to:
