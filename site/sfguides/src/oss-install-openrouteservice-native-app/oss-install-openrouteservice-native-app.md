@@ -200,6 +200,12 @@ The skill will guide you through any required steps, including:
 - Authenticating with the Snowflake image registry
 - Monitoring the build progress
 
+The skill uses interactive prompting to gather required information:
+
+![Interactive Skill Prompting](assets/prompt_setup_database.png)
+
+> **_TIP:_** Use your keyboard arrow keys to toggle through the options, then press **Enter** to confirm your selection.
+
 ### Activate the App
 
 Once deployment completes, Cortex Code will provide a link to your app. You need to:
