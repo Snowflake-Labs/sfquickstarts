@@ -73,7 +73,7 @@ pip install kafka-python confluent-kafka
 
 ### Clone or Download the Assets
 
-Download the assets from this quickstart to a local directory from this (GitHub repository)[https://github.com/]. 
+Download the assets from this quickstart to a local directory from this [GitHub repository](https://github.com/Snowflake-Labs/sfguide-kafka-interactive-tables-streaming). 
 The assets include:
 - `docker-compose.yml` - Kafka cluster configuration
 - `Dockerfile.connect` - Kafka Connect with Snowflake connector
@@ -170,7 +170,6 @@ docker compose ps
 You should see both `kafka` and `kafka-connect` services running.
 
 ## Create Kafka Topic
-Duration: 5
 
 ### Create the Sensor Data Topic
 
@@ -547,7 +546,6 @@ docker compose down -v
 Go back to the **`INTERACTIVE_TABLES_SETUP.ipynb`** notebook in Snowsight and run the cleanup cells in **Part 9: Cleanup**. This will drop all the Snowflake objects created during the demo.
 
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You've successfully built a real-time data pipeline using:
 
