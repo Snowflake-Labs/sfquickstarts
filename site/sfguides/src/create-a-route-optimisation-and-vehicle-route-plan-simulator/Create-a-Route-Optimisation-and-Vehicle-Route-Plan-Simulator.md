@@ -141,28 +141,28 @@ Skills are structured specifications that instruct Cortex Code how to perform a 
 | **Customizability** | Skills can be modified to fit your specific requirements |
 | **AI-Assisted Creation** | Cortex Code can help you create new skills from natural language descriptions |
 
-**How Cortex Code Uses Skills**
+**How This Solution Uses Skills**
 
-Cortex Code can leverage skills in three ways:
+This repository demonstrates how skills can manage the **complete lifecycle** of an end-to-end Snowflake analytical solution - from installation through customization to uninstallation. The 6 pre-built skills in the `skills/` folder cover every stage:
 
-1. **Use existing local skills** - Run pre-built skills included in a repository:
-   ```
-   use the local skill from skills/deploy-route-optimizer
-   ```
+| Stage | Skills | What They Do |
+|-------|--------|--------------|
+| **🔍 Prerequisites** | `check-prerequisites` | Verify dependencies, container runtime, and Snowflake access |
+| **📦 Install** | `deploy-route-optimizer`, `deploy-demo` | Deploy Native App, container services, notebooks, and Streamlits |
+| **⚙️ Customize** | `ors-map-customization`, `customize-function-tester` | Change map region, vehicle types, industries, and sample data |
+| **🗑️ Uninstall** | `uninstall-route-optimizer` | Cleanly remove all resources from your Snowflake account |
 
-2. **Use skills from a URL** - Reference skills hosted online (e.g., GitHub):
-   ```
-   use the skill from https://github.com/example/skill.md
-   ```
+To run any skill, simply tell Cortex Code:
+```
+use the local skill from skills/<skill-name>
+```
 
-3. **Create new skills** - Ask Cortex Code to generate a skill from a description:
-   ```
-   create a skill that sets up a new Snowflake database with sample tables
-   ```
+For example:
+```
+use the local skill from skills/deploy-route-optimizer
+```
 
-**Skills in This Solution**
-
-This repository includes 6 pre-built skills in the `skills/` folder. Each skill automates a specific part of the deployment and configuration process, from checking prerequisites to customizing your map region. You'll use these skills throughout this guide.
+Cortex Code reads the skill's markdown file and executes each step, asking for input when needed and verifying success before moving on.
 
 > **_TIP:_** Want to see what a skill does before running it? Open the skill's `.md` file in the `skills/` folder to review the exact steps.
 
