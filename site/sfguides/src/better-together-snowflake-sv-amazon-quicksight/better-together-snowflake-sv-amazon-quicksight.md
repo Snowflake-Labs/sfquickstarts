@@ -27,7 +27,7 @@ The integration showcases Snowflake's [semantic view](https://docs.snowflake.com
 
 ## Usecase
 
-We leverage Snowflake native ingestion capabilities to ingest data from Amazon S3 into Snowflake. We then load the structured movie review data into a database schema and create a semantic view that bridges the gap between business users and databases. [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) then allows self-serve analytics via natural language queries for business teams and non-technical users with instant answers and insights from their structured data in Snowflake. We will then export the semantic view for metadata extraction via Snowflake notebook which enriches the data for Amazon Quick Sight integration as Topics. This allows the BI team to create interactive charts/dashboard, build calculated fields, create data stories, build scenarios (what-if) all via natural language.
+We leverage Snowflake native ingestion capabilities to ingest data from Amazon S3 into Snowflake. We then load the structured movie review data into a database schema and create a semantic view that bridges the gap between business users and databases. [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) then allows self-serve analytics via natural language queries for business teams and non-technical users with instant answers and insights from their structured data in Snowflake. Using Snowflake notebook, we will then connect to [Amazon Quick Sight via API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html) to setup integration and create of data source and data set. This allows the BI team to create interactive charts/dashboard, build calculated fields, create data stories, build scenarios (what-if) all via natural language.
 
 
 The end-to-end workflow will look like this:
@@ -42,7 +42,8 @@ The end-to-end workflow will look like this:
 - How to load data into Snowflake from Amazon S3
 - The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics
 - Introduction to Snowflake notebook [Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
-- How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (Amazon Quick Sight) 
+- How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (Amazon Quick Sight via [API call](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html))
+  
 
 
 ### What You’ll Build 
