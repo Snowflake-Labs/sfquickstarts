@@ -540,7 +540,7 @@ For demo-related skills (deploying notebooks, Streamlit simulator, and demo cust
 <!-- ------------------------ -->
 ## Uninstall the Route Optimizer
 
-To remove the Route Optimizer Native App and all associated resources from your Snowflake account, use the uninstall skill:
+To remove the OpenRouteService Native App and ORS resources from your Snowflake account, use the uninstall skill:
 
 ```
 use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer
@@ -550,10 +550,9 @@ This skill will:
 - Remove the Native App (`OPENROUTESERVICE_NATIVE_APP`)
 - Drop the Application Package (`OPENROUTESERVICE_NATIVE_APP_PKG`)
 - Delete the setup database (`OPENROUTESERVICE_SETUP`) including all stages and image repository
-- Delete the demo database (`VEHICLE_ROUTING_SIMULATOR`) including notebooks and Streamlit apps
-- Remove the compute pool and all container services
-- Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
-- Optionally remove the warehouse and local container images
+- Optionally remove local container images
+
+> **_NOTE:_** This skill only removes ORS components. To remove demo content (notebooks, Streamlit simulator), use the uninstall skill from the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart.
 
 > **_NOTE:_** The uninstall skill will ask for confirmation before removing resources. This is a destructive operation that cannot be undone.
 

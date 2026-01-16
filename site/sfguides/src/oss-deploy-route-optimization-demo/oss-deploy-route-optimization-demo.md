@@ -194,17 +194,20 @@ Update the notebooks with city-specific AI prompts and POI data filters.
 <!-- ------------------------ -->
 ## Uninstall the Demo
 
-To remove the demo resources (but keep the OpenRouteService Native App):
+To remove the demo resources (notebooks, Streamlit simulator) while keeping the OpenRouteService Native App, use the uninstall skill:
 
-```sql
--- Remove the demo database (notebooks, Streamlit apps)
-DROP DATABASE IF EXISTS VEHICLE_ROUTING_SIMULATOR CASCADE;
-
--- Optionally remove the Marketplace data
-DROP DATABASE IF EXISTS OVERTURE_MAPS__PLACES CASCADE;
+```
+use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo
 ```
 
-To remove everything including the OpenRouteService Native App, use:
+This skill will:
+- Remove the demo database (`VEHICLE_ROUTING_SIMULATOR`) including notebooks and Streamlit apps
+- Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
+- Optionally remove the warehouse (`ROUTING_ANALYTICS`)
+
+> **_NOTE:_** The OpenRouteService Native App remains installed and functional. You can redeploy the demo at any time.
+
+To also remove the OpenRouteService Native App, use:
 ```
 use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer
 ```
