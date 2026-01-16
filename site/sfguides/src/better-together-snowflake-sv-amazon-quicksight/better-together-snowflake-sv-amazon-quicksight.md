@@ -30,14 +30,11 @@ The integration showcases Snowflake's [semantic view](https://docs.snowflake.com
 This integration leverages Snowflake's native capabilities to ingest structured movie review data directly from Amazon S3 into a database schema. Defining a Snowflake semantic view with table, relationships, dimensions, and metrics to enhance AI-powered analytics. Semantic models are shifted from individual BI tool layers to the core data platform, guaranteeing that all tools utilize the same semantic concepts.  
 
 **🔑 Key Steps and Benefits:**  
+
 **1. Data Ingestion and Semantic View Creation**: Data is loaded from Amazon S3 using Snowflake's native ingestion tools. A semantic view is then established to simplify the database structure for business users.  
 **2. Self-Serve Analytics with [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Business teams and non-technical users can perform self-serve analytics using natural language queries via Snowflake Cortex Analyst, gaining instant insights from the structured data in Snowflake.  
 **3. Amazon Quick Sight Integration**: Snowflake Notebook is used to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html) to set up integration and create a data source and data set.  
 **4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations.  
-
-
-
-The end-to-end workflow will look like this:
 
 ![architecture diagram](assets/arch.png)
 
@@ -89,6 +86,8 @@ CREATE DATABASE SAMPLE_DATA;
 
 -- Use the newly created database
 USE DATABASE SAMPLE_DATA;
+```
+
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
 
@@ -136,84 +135,11 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 * Now you are ready to run the notebook by clicking "Run All" button on the top right or running each cell individually. 
 
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
-## Headers and Subheaders
-
-Keep the headers to a minimum as a best practice.
-These show up as your menu on the right.  Keeping them short (3-4 words) helps keep the guide precise and easy to follow.
 
 
 
-### Formatting Operations
 
-You can format various elements in markdown format in your guide.
-Details of that are available at: 
-
-[Get Started with Guides](##) to refresh markdown to add formatting, generate code snippets, info boxes, and download buttons etc. 
-
-
-The guide linked above explains how you can use various formatting elements and the tag categories etc. to keep in mind when drafting your guide.<br>
-Please use the guide to add elements to your markdown within this template.  <p>
-
-
-> NOTE:
-> This template is an example of the layout/flow to use.
-
-
-
-<!-- ------------------------ -->
-## Adding Appropriate Tags 
-
-**Content Type & Industries Tags** 
-- Pick the appropriate content type that applies to your Guide. This helps with filtering content on the website.
-- If relevant, please pick industry tags as well so content is reflected appropriately on the website.
-
-- Languages
-Guides are available in various languages for the regions.
-specific language tags must be added to the document to ensure the regional pages can see your guide.
-
-**Please pick from the list of languages** 
-- These are the supported exact acronyms used on the main page.  
-- Deviating from the accronyms means your pages will not show up on the regional pages.
-
-
-**Please pick tags from the list of 3 types of categories** 
-- DO NOT create new tags if you don't see them in the list.  
-
-
-A complete list of the language and category tags is available here: https://www.snowflake.com/en/developers/guides/get-started-with-guides/#language-and-category-tags
-
-
-
-<!-- ------------------------ -->
-## Images and Videos
-
-Ensure your videos are uploaded to the YouTube Channel (Snowflake Developer) before you start working on your guide.
-
-You have the option to submit videos to Snowflake Corporate channel, Developers Channel or International Channel.
-Use this link to [submit your videos](https://www.wrike.com/frontend/requestforms/index.html?token=eyJhY2NvdW50SWQiOjE5ODk1MzYsInRhc2tGb3JtSWQiOjExNDYyNzB9CTQ4NDU3Mjk1MjcxNjYJMTk3ZmNhNWQ1ODM5NTc1OGI2OWY5Mjc4Mzk4M2YwOGQ1Y2RiNGVlMGUzZDg3OTk3NzI3N2JkMTIyOGViZTdjMQ==)
-
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-Image Guidelines: 
-- Naming convention should be all lower case and include underscores (no hyphens)
-- No special characters 
-- File size should be less than 1MB. Gifs may be larger, however, should be optimized to prevent reduction of page load times
-- Image file name should align to the name in .md file (this is case sensitive) 
-- All images should be added to the 'assets' subfolder for your guide (please do not create additional subfolders within the 'assets' subfolder)
-- No full resolution images; these should be optimized for web (recommended: tinypng) 
-- Do no use HTML code for adding images
-
-
-
-<!-- ------------------------ -->
 ## Conclusion And Resources
-
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
 
 If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Snowflake Guide](#)
 
@@ -225,9 +151,5 @@ If you want to learn more about Snowflake Guide formatting, checkout the officia
 ### Related Resources
 - <link to github code repo>
 - <link to related documentation>
-- [Getting started](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/#0) with Semantic views
-
-### EXAMPLES:
-* **Logged Out experience with one click into product:** [Understanding Customer Reviews using Snowflake Cortex](https://www.snowflake.com/en/developers/guides/understanding-customer-reviews-using-snowflake-cortex/)
-* **Topic pages with multiple use cases below the Overview:** [Data Connectivity with Snowflake Openflow](https://www.snowflake.com/en/developers/guides/data-connectivity-with-snowflake-openflow/)
-* **Simple Hands-on Guide**: [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
+* [Getting started with Semantic views](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/#0)  
+* [Getting Started with Cortex Analyst](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
