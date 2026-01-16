@@ -244,6 +244,8 @@ This will:
 - Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
 - Optionally remove the warehouse (`ROUTING_ANALYTICS`)
 
+![Demo Uninstalled](assets/demo_uninstalled.png)
+
 > **_NOTE:_** The OpenRouteService Native App remains installed and functional. You can redeploy the demo at any time.
 
 ### Uninstall Everything
