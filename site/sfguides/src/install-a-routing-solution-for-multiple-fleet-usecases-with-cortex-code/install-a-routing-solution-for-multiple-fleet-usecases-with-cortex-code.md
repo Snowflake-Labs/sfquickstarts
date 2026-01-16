@@ -1523,7 +1523,9 @@ This skill will:
 - Remove the Native App (`OPENROUTESERVICE_NATIVE_APP`)
 - Drop the Application Package (`OPENROUTESERVICE_NATIVE_APP_PKG`)
 - Delete the setup database (`OPENROUTESERVICE_SETUP`) including all stages and image repository
+- Delete the demo database (`VEHICLE_ROUTING_SIMULATOR`) including notebooks and Streamlit apps
 - Remove the compute pool and all container services
+- Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
 - Optionally remove the warehouse and local container images
 
 > **_NOTE:_** The uninstall skill will ask for confirmation before removing resources. This is a destructive operation that cannot be undone.
