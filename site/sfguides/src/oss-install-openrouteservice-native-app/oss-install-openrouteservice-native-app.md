@@ -246,7 +246,9 @@ The app requires these permissions to function:
 
 Click **Grant** for Step 1. For Step 2, click **Review** to see the external endpoints, then click **Connect** to allow the connection.
 
-4. Click **Activate** and wait for the services to start
+4. Once all privileges are granted, click **Activate** and wait a few minutes for the routing functions to install and the graphs to build
+
+> **_NOTE:_** The activation time depends on the size of your map. Smaller city maps will complete in a few minutes, while larger country or state maps may take longer as the routing graphs are more complex to generate.
 
 ### Service Manager
 
