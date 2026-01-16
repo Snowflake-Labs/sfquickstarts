@@ -137,7 +137,7 @@ The official Snowflake Quickstart template markdown defines the specific structu
 
 ### Real Example: Semantic View Quickstart Structure
 
-```
+```markdown
 ## Overview
 ### What You'll Learn
 ### What You'll Build
@@ -446,8 +446,7 @@ Once your quickstart is validated and ready, submit it to the official Snowflake
 1. Fork the [sfquickstarts](https://github.com/Snowflake-Labs/sfquickstarts) repo
 2. Navigate to `site/sfguides/src/`
 3. Extract your ZIP file (creates the folder with your markdown file)
-4. **Important:** Remove the `-` from all `-``` instances in your markdown file before publishing
-5. Submit a Pull Request
+4. Submit a Pull Request
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
