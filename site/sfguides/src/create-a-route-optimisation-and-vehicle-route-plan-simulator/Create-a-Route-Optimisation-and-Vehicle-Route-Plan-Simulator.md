@@ -118,7 +118,57 @@ Use Cortex Code, Snowflake's AI-powered CLI, to deploy the Native App using natu
 
 ![Cortex Code Logged In](assets/co-co-logged-in.png)
 
-4. **(Optional) Verify Prerequisites** - Run the prerequisites check skill to ensure all dependencies are installed:
+### Understanding Cortex Code Skills
+
+Before running any commands, it's helpful to understand what **skills** are and how they power this solution.
+
+**What are Skills?**
+
+Skills are structured specifications that instruct Cortex Code how to perform a procedure. Think of them as detailed recipes - they define the exact steps, parameters, and verification checks needed to accomplish a task. Each skill is a markdown file that describes:
+
+- **What the skill does** - A clear description of the outcome
+- **Step-by-step instructions** - The exact sequence of actions to perform
+- **Stopping points** - Where to pause for user input or verification
+- **Success criteria** - How to verify the task completed correctly
+
+**Benefits of Using Skills**
+
+| Benefit | Description |
+|---------|-------------|
+| **Consistency** | Skills ensure the same steps are followed every time, reducing human error |
+| **Reusability** | Once created, skills can be shared and reused across projects and teams |
+| **Transparency** | You can read the skill file to understand exactly what will happen before running it |
+| **Customizability** | Skills can be modified to fit your specific requirements |
+| **AI-Assisted Creation** | Cortex Code can help you create new skills from natural language descriptions |
+
+**How Cortex Code Uses Skills**
+
+Cortex Code can leverage skills in three ways:
+
+1. **Use existing local skills** - Run pre-built skills included in a repository:
+   ```
+   use the local skill from skills/deploy-route-optimizer
+   ```
+
+2. **Use skills from a URL** - Reference skills hosted online (e.g., GitHub):
+   ```
+   use the skill from https://github.com/example/skill.md
+   ```
+
+3. **Create new skills** - Ask Cortex Code to generate a skill from a description:
+   ```
+   create a skill that sets up a new Snowflake database with sample tables
+   ```
+
+**Skills in This Solution**
+
+This repository includes 6 pre-built skills in the `skills/` folder. Each skill automates a specific part of the deployment and configuration process, from checking prerequisites to customizing your map region. You'll use these skills throughout this guide.
+
+> **_TIP:_** Want to see what a skill does before running it? Open the skill's `.md` file in the `skills/` folder to review the exact steps.
+
+### Verify Prerequisites (Optional)
+
+Run the prerequisites check skill to ensure all dependencies are installed:
    ```
    use the local skill from skills/check-prerequisites
    ```
