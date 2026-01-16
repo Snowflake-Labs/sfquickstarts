@@ -20,7 +20,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ## Overview
 
 In this guide, we'll use Python to analyze data in Snowflake using the Posit
-Team Native App. You'll learn how to launch the Posit Team Native App and use the available Positron Pro IDE. You'll also learn how to use the Ibis library to translate Python code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
+Team Native App. You'll learn how to launch the Posit Team Native App, access Posit Workbench, and use the available Positron Pro IDE. You'll also learn how to use the Ibis library to translate Python code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
 
 We'll focus on a healthcare example by analyzing heart failure data. We'll guide you through accessing the data and performing data cleaning, transformation, and visualization. Finally, you'll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—completing an end-to-end analysis in Python _entirely within Snowflake_.
 
@@ -45,7 +45,7 @@ or look at the materials provided in the accompanying repository:
 ### Prerequisites
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with appropriate access to create warehouses, databases, and schemas. This is typically the `sysadmin` role.
-- A Posit Workbench license and the ability to launch [Posit Workbench](https://docs.posit.co/partnerships/snowflake/posit-team/workbench/) from the [Posit Team Native App](https://docs.posit.co/partnerships/snowflake/posit-team/). An administrator with the `accountadmin` role can provide these for you.
+- A Posit Workbench license and the ability to launch [Workbench](https://docs.posit.co/partnerships/snowflake/posit-team/workbench/) from the [Posit Team Native App](https://docs.posit.co/partnerships/snowflake/posit-team/). An administrator with the `accountadmin` role can provide these for you.
 - Familiarity with Python.
 
 ## Setup
@@ -107,10 +107,9 @@ Next, we need to create a table to hold the heart failure dataset.
 
 ### Confirm the database, data, and schema
 
-You should now be able to see the heart failure data in Snowsight. Navigate to **Horizon Catalog** > **Catalog** > **Databases** > `HEART_FAILURE` > `PUBLIC` > `Tables`. You should now see the `HEART_FAILURE` table.
+You should now be able to see the heart failure data in Snowsight. Navigate to **Horizon Catalog** > **Catalog** > **Database Explorer** > `HEART_FAILURE` > `PUBLIC` > `Tables`. You should now see the `HEART_FAILURE` table.
 
-<!-- retake screenshot in light mode -->
-![](assets/snowflake/confirm_data.png)
+![](assets/snowflake/confirm-data.png)
 
 ### Launch Posit Workbench from the Posit Team Native App
 
@@ -130,17 +129,17 @@ You might be asked to validate your email address. Next, choose a name for the A
 
 Please note that your administrator must first [install and configure](https://docs.posit.co/partnerships/snowflake/posit-team/) the Posit Team Native App--and Posit Workbench within it--before you can follow the remaining steps.
 
-Once the Posit Team Native App is installed and configured, in Snowsight, navigate to **Horizon Catalog** > **Catalog** > **Installed Apps** > the Posit Team Native App. If you do not see the Posit Team Native App listed, ask your Snowflake account administrator for access to the app.
+Once your administrator has installed and configred the Posit Team Native App, in Snowsight, navigate to **Horizon Catalog** > **Catalog** > **Installed Apps** > the Posit Team Native App. If you do not see the Posit Team Native App listed, ask your Snowflake account administrator for access to the app.
 
 After clicking on the app, you will see the Posit Team Native App page.
 
-Click on **Launch app**. 
+Click **Launch app**. 
 
 ![](assets/snowflake/launch-app.png)
 
 #### Step 3: Open Posit Workbench from the Posit Team Native App
 
-From the Posit Team Native App, click on Posit Workbench.
+From the Posit Team Native App, click **Posit Workbench**.
 
 ![](assets/snowflake/launch-workbench.png)
 
@@ -165,7 +164,7 @@ When prompted, select Positron Pro. You can optionally give your session a uniqu
 #### Step 3: Log into your Snowflake account
 
 Next, connect to your Snowflake account from within Posit Workbench.
-Under **Session Credentials**, click the button with the Snowflake icon to sign in to Snowflake. Follow the sign in prompts.
+Under **Session Credentials**, click the button with the Snowflake icon to sign in to Snowflake. Follow any sign in prompts.
 
 ![](assets/posit_workbench/snowflake_login_success.png)
 
@@ -181,13 +180,10 @@ You will now be able to work with your Snowflake data
 in Positron Pro. Since the IDE is provided by the Posit Workbench Native App,
 your entire analysis will occur securely within Snowflake.
 
-### Install Quarto, Shiny, and Jupyter extensions
-
-> Since Positron is built on the open-source core of VS Code, you can use VS Code extensions in Positron.
+### Install Quarto and Shiny Extensions
 
 The Quarto and Shiny VS Code extensions support the development
-of Quarto documents and Shiny apps in Positron Pro. The Jupyter extension provides
-support for running Python code in notebook cells
+of Quarto documents and Shiny apps in Positron Pro. 
 
 Install these extensions:
 
@@ -198,7 +194,6 @@ Install these extensions:
 
 3. Install the Quarto extension: click on the Quarto extension, then click **Install**. For more informatin, see the [Quarto extension documentation](https://quarto.org/docs/tools/vscode.html).
 4. Install the Shiny extension: Follow the same steps as above, but search for and install the Shiny extension. For more information, see the [Shiny extension documentation](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/).
-5. Install the Jupyter extension: Follow the same steps as above, but search for and install the Jupyter extension. For more information, see the [Jupyter extension documentation](https://jupyterlab.readthedocs.io/en/stable/user/extensions.html).
 
 ### Open a new folder
 
@@ -235,21 +230,21 @@ You now have an empty `heart_failure` folder open and ready for your work.
 ### Access the Quickstart Materials
 
 This Quickstart will walk you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
-To follow along, you can clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/):
+To follow along, clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/):
 
-```
+```bash
 git clone https://github.com/posit-dev/snowflake-posit-quickstart-python/
 ```
 
 ### Install requirements
+
+**Note:** Make sure your virtual environment is activated (`source .venv/bin/activate`) before running the command below.
 
 In a terminal, `cd` into the directory you just created by cloning the GitHub repo, and run the following command to install the dependencies listed in `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
 ```
-
-**Note:** Make sure your virtual environment is activated (`source .venv/bin/activate`) before installing.
 
 ## Build Report and Dashboard
 
@@ -274,9 +269,9 @@ in Positron Pro.
 
 ![](assets/quarto/run-chunk.png)
 
-When you run a cell, cell output is displayed in the Jupyter interactive console.
+When you run a cell, cell output is displayed in the **PLOTS** pane.
 
-<!-- ![](assets/quarto/interactive-console.png) DOUBLE CHECK SCREENSHOT -->
+![](assets/quarto/plots-pane.png) DOUBLE CHECK SCREENSHOT
 
 To render and preview the entire document, click the `Preview` button
 or run `quarto preview quarto.qmd` from the terminal.
@@ -589,11 +584,11 @@ Shinylive is also available for [R](https://shinylive.io/r/examples/) for Shiny 
 
 ### Overview
 
-Python is a powerful, versatile tool for data science, and combined with Snowflake's high-performance data capabilities, it enables robust, end-to-end data workflows. Using the Posit Team Native App, you can securely work with Python _within Snowflake_ while taking advantage of tools like Ibis, Quarto, and Shiny for Python to analyze, visualize, and share your results.
+Python is a powerful, versatile tool for data science, and combined with Snowflake's high-performance data capabilities, it enables robust, end-to-end data workflows. Using Posit Workbench within the Posit Team Native App, you can securely work with Python _within Snowflake_ while taking advantage of tools like Ibis, Quarto, and Shiny for Python to analyze, visualize, and share your results.
 
 ### What You Learned
 
-- How to use Positron Pro within Workbench on the Posit Team Native App.
+- How to launch Positron Pro from Workbench in the Posit Team Native App.
 - How to connect to your Snowflake data from Python to create tables, visualizations, and more.
 - How to create a Quarto document containing plots and tables built in Python, using data stored in Snowflake.
 - How to build an interactive Shiny for Python application, working with data stored in Snowflake.
