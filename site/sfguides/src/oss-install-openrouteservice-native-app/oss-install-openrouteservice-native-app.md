@@ -165,7 +165,7 @@ use the local skill from skills/<skill-name>
 
 For example:
 ```
-use the local skill from openrouteservice/skills/deploy-route-optimizer
+use the local skill from oss-install-openrouteservice-native-app/skills/deploy-route-optimizer
 ```
 
 Cortex Code reads the skill's markdown file and executes each step, asking for input when needed and verifying success before moving on.
@@ -176,7 +176,7 @@ Cortex Code reads the skill's markdown file and executes each step, asking for i
 
 Run the prerequisites check skill to ensure all dependencies are installed:
    ```
-   use the local skill from openrouteservice/skills/check-prerequisites
+   use the local skill from oss-install-openrouteservice-native-app/skills/check-prerequisites
    ```
 
 ### Deploy the Native App
@@ -184,7 +184,7 @@ Run the prerequisites check skill to ensure all dependencies are installed:
 Simply type the following command in Cortex Code:
 
 ```
-use the local skill from openrouteservice/skills/deploy-route-optimizer
+use the local skill from oss-install-openrouteservice-native-app/skills/deploy-route-optimizer
 ```
 
 Cortex Code will automatically:
@@ -320,13 +320,13 @@ The default deployment uses San Francisco with standard vehicle types. You can c
 To customize, run:
 
 ```
-use the local skill from openrouteservice/skills/customizations
+use the local skill from oss-install-openrouteservice-native-app/skills/customizations
 ```
 
 ### ORS Customization Skills
 
 ```
-openrouteservice/skills/customizations/
+oss-install-openrouteservice-native-app/skills/customizations/
 ├── customizations.md    ← Main orchestrator (entry point)
 ├── location.md          ← Download new map, rebuild graphs
 └── vehicles.md          ← Configure routing profiles  
@@ -361,10 +361,10 @@ You can also run specific customizations directly:
 
 ```bash
 # Just change the map region
-use the local skill from openrouteservice/skills/customizations/location
+use the local skill from oss-install-openrouteservice-native-app/skills/customizations/location
 
 # Just modify vehicle profiles
-use the local skill from openrouteservice/skills/customizations/vehicles
+use the local skill from oss-install-openrouteservice-native-app/skills/customizations/vehicles
 ```
 
 > **_IMPORTANT:_** When running sub-skills independently, be aware of dependencies:
@@ -373,7 +373,7 @@ use the local skill from openrouteservice/skills/customizations/vehicles
 
 ### Example: Customizing to Paris
 
-When you run `use the local skill from openrouteservice/skills/customizations` and answer YES to location:
+When you run `use the local skill from oss-install-openrouteservice-native-app/skills/customizations` and answer YES to location:
 
 **Step 1: Location Sub-Skill** (`location.md`)
 - Choose **Paris** or **Île-de-France** from Geofabrik
@@ -511,9 +511,9 @@ For reference, here are the Cortex Code skills for the OpenRouteService Native A
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| `check-prerequisites` | Verify and install dependencies | `use the local skill from openrouteservice/skills/check-prerequisites` |
-| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from openrouteservice/skills/deploy-route-optimizer` |
-| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from openrouteservice/skills/uninstall-route-optimizer` |
+| `check-prerequisites` | Verify and install dependencies | `use the local skill from oss-install-openrouteservice-native-app/skills/check-prerequisites` |
+| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from oss-install-openrouteservice-native-app/skills/deploy-route-optimizer` |
+| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer` |
 
 ### Customization Sub-Skills
 
@@ -521,10 +521,10 @@ These can be run individually for targeted updates to the Native App:
 
 | Sub-Skill | Description | Command |
 |-----------|-------------|---------|
-| `location` | Download new map, rebuild graphs | `use the local skill from openrouteservice/skills/customizations/location` |
-| `vehicles` | Configure routing profiles | `use the local skill from openrouteservice/skills/customizations/vehicles` |
+| `location` | Download new map, rebuild graphs | `use the local skill from oss-install-openrouteservice-native-app/skills/customizations/location` |
+| `vehicles` | Configure routing profiles | `use the local skill from oss-install-openrouteservice-native-app/skills/customizations/vehicles` |
 
-> **_TIP:_** Use the main `customizations` skill to let Cortex Code orchestrate the process: `use the local skill from openrouteservice/skills/customizations`
+> **_TIP:_** Use the main `customizations` skill to let Cortex Code orchestrate the process: `use the local skill from oss-install-openrouteservice-native-app/skills/customizations`
 
 ### Demo Skills
 
@@ -536,7 +536,7 @@ For demo-related skills (deploying notebooks, Streamlit simulator, and demo cust
 To remove the Route Optimizer Native App and all associated resources from your Snowflake account, use the uninstall skill:
 
 ```
-use the local skill from openrouteservice/skills/uninstall-route-optimizer
+use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer
 ```
 
 This skill will:

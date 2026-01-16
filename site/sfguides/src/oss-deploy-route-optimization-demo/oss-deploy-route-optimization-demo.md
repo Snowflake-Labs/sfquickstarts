@@ -61,7 +61,7 @@ Use Cortex Code to deploy the demo including Marketplace data, notebooks, and th
 In the Cortex Code CLI, type:
 
 ```
-use the local skill from demo_example/skills/deploy-demo
+use the local skill from oss-deploy-route-optimization-demo/skills/deploy-demo
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
@@ -167,7 +167,7 @@ You can customize the demo for different industries or regions using the customi
 ### Change Industries
 
 ```
-use the local skill from demo_example/skills/customizations/industries
+use the local skill from oss-deploy-route-optimization-demo/skills/customizations/industries
 ```
 
 Customize the industry categories (product types, customer types, vehicle skills) for your specific use case.
@@ -175,7 +175,7 @@ Customize the industry categories (product types, customer types, vehicle skills
 ### Update Streamlit Apps
 
 ```
-use the local skill from demo_example/skills/customizations/streamlits
+use the local skill from oss-deploy-route-optimization-demo/skills/customizations/streamlits
 ```
 
 Update the Simulator with region-specific coordinates.
@@ -183,8 +183,8 @@ Update the Simulator with region-specific coordinates.
 ### Update Notebooks
 
 ```
-use the local skill from demo_example/skills/customizations/aisql-notebook
-use the local skill from demo_example/skills/customizations/carto-notebook
+use the local skill from oss-deploy-route-optimization-demo/skills/customizations/aisql-notebook
+use the local skill from oss-deploy-route-optimization-demo/skills/customizations/carto-notebook
 ```
 
 Update the notebooks with city-specific AI prompts and POI data filters.
@@ -206,7 +206,7 @@ DROP DATABASE IF EXISTS OVERTURE_MAPS__PLACES CASCADE;
 
 To remove everything including the OpenRouteService Native App, use:
 ```
-use the local skill from openrouteservice/skills/uninstall-route-optimizer
+use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer
 ```
 
 <!-- ------------------------ -->
