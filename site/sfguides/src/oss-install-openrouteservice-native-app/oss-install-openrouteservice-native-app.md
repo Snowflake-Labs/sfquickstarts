@@ -220,6 +220,10 @@ The skill uses interactive prompting to gather required information:
 
 Simply confirm each prompt as the skill progresses. The skill handles all the complex setup automatically - creating databases, uploading files, building containers, and deploying the Native App.
 
+Once complete, you'll see a success message with a direct link to your app:
+
+![Route Optimizer Installed Successfully](assets/install_successful.png)
+
 ### Activate the App
 
 Once deployment completes, Cortex Code will provide a link to your app. You need to:
