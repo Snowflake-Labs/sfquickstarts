@@ -198,23 +198,38 @@ Update the notebooks with city-specific AI prompts and POI data filters.
 <!-- ------------------------ -->
 ## Uninstall the Demo
 
-To remove the demo resources (notebooks, Streamlit simulator) while keeping the OpenRouteService Native App, use the uninstall skill:
+Cortex Code makes uninstallation simple with natural language commands.
+
+### Uninstall Demo Only
+
+To remove just the demo resources (notebooks, Streamlit simulator) while keeping the OpenRouteService Native App:
 
 ```
-use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo
+uninstall demo
 ```
 
-This skill will:
+This will:
 - Remove the demo database (`VEHICLE_ROUTING_SIMULATOR`) including notebooks and Streamlit apps
 - Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
 - Optionally remove the warehouse (`ROUTING_ANALYTICS`)
 
 > **_NOTE:_** The OpenRouteService Native App remains installed and functional. You can redeploy the demo at any time.
 
-To also remove the OpenRouteService Native App, use:
+### Uninstall Everything
+
+To remove both the demo AND the OpenRouteService Native App:
+
 ```
-use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer
+uninstall demo and optimizer
 ```
+
+Cortex Code will run both uninstall skills in sequence, removing all resources from your Snowflake account.
+
+![Uninstall Complete](assets/uninstalled_all.png)
+
+> **_TIP:_** You can also use the full skill paths if preferred:
+> - `use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo`
+> - `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer`
 
 <!-- ------------------------ -->
 ## Available Cortex Code Skills

@@ -1,6 +1,7 @@
 author: Becky O'Connor and Piotr Paczewski
 id: oss-install-openrouteservice-native-app
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-cent
+er/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Deploy an OpenRouteService Native App in Snowflake using Cortex Code skills. Create a self-contained routing engine with directions, optimization, and isochrones - no external APIs required.
 environments: web
@@ -540,19 +541,36 @@ For demo-related skills (deploying notebooks, Streamlit simulator, and demo cust
 <!-- ------------------------ -->
 ## Uninstall the Route Optimizer
 
-To remove the OpenRouteService Native App and ORS resources from your Snowflake account, use the uninstall skill:
+Cortex Code makes uninstallation simple with natural language commands.
+
+### Uninstall ORS Only
+
+To remove the OpenRouteService Native App and ORS resources:
 
 ```
-use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer
+uninstall route optimizer
 ```
 
-This skill will:
+This will:
 - Remove the Native App (`OPENROUTESERVICE_NATIVE_APP`)
 - Drop the Application Package (`OPENROUTESERVICE_NATIVE_APP_PKG`)
 - Delete the setup database (`OPENROUTESERVICE_SETUP`) including all stages and image repository
 - Optionally remove local container images
 
-> **_NOTE:_** This skill only removes ORS components. To remove demo content (notebooks, Streamlit simulator), use the uninstall skill from the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart.
+> **_NOTE:_** This only removes ORS components. Demo content (notebooks, Streamlit simulator) will remain if deployed.
+
+### Uninstall Everything
+
+If you also deployed the demo and want to remove everything:
+
+```
+uninstall demo and optimizer
+```
+
+Cortex Code will run both uninstall skills, removing all demo and ORS resources from your Snowflake account.
+
+> **_TIP:_** You can also use the full skill path if preferred:
+> `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer`
 
 > **_NOTE:_** The uninstall skill will ask for confirmation before removing resources. This is a destructive operation that cannot be undone.
 
