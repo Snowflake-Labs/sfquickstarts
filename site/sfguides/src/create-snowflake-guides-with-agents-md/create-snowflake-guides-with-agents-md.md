@@ -22,7 +22,7 @@ This tutorial walks you through the complete workflow of using AGENTS.md to conv
 
 The AGENTS.md file provides instruction and sets of rules to AI coding agents, following the standard format defined at [https://agents.md/](https://agents.md/). This standardized format ensures that AI assistants can reliably interpret and follow project-specific guidelines.
 
-The Snowflake Guides AGENTS.md as proposed herein combines this standard format with specific instructions from two official Snowflake resources:
+The [Snowflake Guides AGENTS.md](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Create-Snowflake-Guides-with-AGENTS-md/AGENTS.md) as proposed herein combines this standard format with specific instructions from two official Snowflake resources:
 
 1. **[Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/)** - The official Snowflake Guides creation guide
 2. **[Markdown Template](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template)** - The official template structure from the `sfquickstarts` repository
@@ -468,8 +468,9 @@ Congratulations! You've successfully learned how to use the AGENTS.md file to cr
 
 ### Related Resources
 
-AGENTS.md Guideline:
-- [agents.md](https://agents.md/) - The official specification for providing instructions to AI coding agents
+AGENTS.md:
+- [Snowflake Guides AGENTS.md](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Create-Snowflake-Guides-with-AGENTS-md/AGENTS.md)
+- [AGENTS.md Guidelines](https://agents.md/) - The official specification for providing instructions to AI coding agents
 
 Official Snowflake Guides Resources:
 - [Get Started with Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides/) - Official guide for creating Snowflake Guides
@@ -480,11 +481,12 @@ Official Snowflake Guides Resources:
 Example Guides:
 - [Build Business-Ready Queries with Snowflake Semantic Views](build-business-ready-queries-with-snowflake-semantic-views/) - The example guide used in this tutorial
 
-Source Notebooks:
+Example Notebooks:
 - [Snowflake_Semantic_View_Business_Ready_Queries](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Snowflake_Semantic_View_Business_Ready_Queries) - The input notebook that was converted into the Semantic View guide
+- [Create Snowflake Guides with AGENTS.md](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Create-Snowflake-Guides-with-AGENTS-md)
 
 Publishing Your Work:
 - [snowflake-demo-notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) - Submit your input Jupyter notebooks here
 - [sfquickstarts](https://github.com/Snowflake-Labs/sfquickstarts) - Submit your generated guides here
 
-Happy guide creating!
+Happy creations!
