@@ -157,7 +157,7 @@ This repository demonstrates how skills can manage the **complete lifecycle** of
 |-------|--------|--------------|
 | **🔍 Prerequisites** | `check-prerequisites` | Verify dependencies, container runtime, and Snowflake access |
 | **📦 Install** | `deploy-route-optimizer`, `deploy-demo` | Deploy Native App, container services, notebooks, and Streamlits |
-| **⚙️ Customize** | `ors-map-customization`, `customize-function-tester` | Change map region, vehicle types, industries, and sample data |
+| **⚙️ Customize** | `customizations` (with 6 sub-skills) | Change map region, vehicle types, industries, and sample data |
 | **🗑️ Uninstall** | `uninstall-route-optimizer` | Cleanly remove all resources from your Snowflake account |
 
 To run any skill, simply tell Cortex Code:
@@ -322,59 +322,118 @@ The default deployment uses San Francisco with standard vehicle types and demo i
 To customize, run:
 
 ```
-use the local skill from skills/ors-map-customization
+use the local skill from skills/customizations
+```
+
+### Modular Customization Architecture
+
+The customization system uses a **modular architecture** with individual sub-skills that can be run independently or orchestrated together:
+
+```
+skills/customizations/
+├── customizations.md    ← Main orchestrator (entry point)
+├── location.md          ← Download new map, rebuild graphs
+├── vehicles.md          ← Configure routing profiles  
+├── industries.md        ← Customize industry categories
+├── streamlits.md        ← Update Function Tester & Simulator
+├── aisql-notebook.md    ← Update AI prompts for your region
+└── carto-notebook.md    ← Update POI data source
 ```
 
 ### How the Customization Works
 
-The skill starts by asking you **three yes/no questions** to determine what you want to customize:
+The main `customizations` skill orchestrates the process by asking **three yes/no questions**, then runs only the relevant sub-skills:
 
 1. **"Do you want to customize the LOCATION (map region)?"**
-   - If YES → Downloads new map, uploads to stage, rebuilds routing graphs
+   - If YES → Runs `location.md` → `vehicles.md` → `streamlits.md` → `aisql-notebook.md` → `carto-notebook.md`
    - If NO → Skips map download entirely
 
 2. **"Do you want to customize VEHICLE TYPES (routing profiles)?"**
-   - If YES → Modifies routing profiles, rebuilds graphs for each vehicle type
+   - If YES → Runs `vehicles.md` → `streamlits.md`
    - If NO → Keeps default profiles (car, HGV, road bicycle)
 
 3. **"Do you want to customize INDUSTRIES for the demo?"**
-   - If YES → Modifies industry categories in notebooks
+   - If YES → Runs `industries.md` → `aisql-notebook.md` → `carto-notebook.md`
    - If NO → Keeps default industries (Food, Healthcare, Cosmetics)
 
-### What Gets Updated Based on Your Choices
+### Which Sub-Skills Run Based on Your Choices
 
-| Your Choices | What Gets Updated |
-|--------------|-------------------|
-| **Location = YES** | Map file downloaded, ORS config, graphs rebuilt, Function Tester + Simulator coordinates, all demo content |
-| **Vehicles = YES** | Routing profiles in config, graphs rebuilt, Function Tester + Simulator profiles, app redeployed |
-| **Industries = YES** | Add Carto Data notebook, AISQL notebook, Streamlit defaults |
-| **Location OR Vehicles = YES** | Function Tester + Simulator apps updated and Native App redeployed |
-| **Industries ONLY** | Only demo content updated - no app redeployment needed |
+| Your Choices | Sub-Skills Executed | What Gets Updated |
+|--------------|---------------------|-------------------|
+| **Location = YES** | `location` → `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook` | Map downloaded, config rebuilt, graphs regenerated, all apps updated |
+| **Vehicles only = YES** | `vehicles` → `streamlits` | Routing profiles modified, graphs rebuilt, apps updated |
+| **Industries only = YES** | `industries` → `aisql-notebook` → `carto-notebook` | Demo content updated (no app redeployment needed) |
+| **Location + Industries** | All sub-skills | Everything updated |
+| **Nothing** | None | Exit (no changes) |
 
 > **If using Git:** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults.
 > **If not using Git:** Changes are made directly to local files. Keep a backup if needed.
 
+### Running Individual Sub-Skills
+
+You can also run specific customizations directly without going through the orchestrator:
+
+```bash
+# Just change the map region
+use the local skill from skills/customizations/location
+
+# Just modify vehicle profiles
+use the local skill from skills/customizations/vehicles
+
+# Just change industries for the demo
+use the local skill from skills/customizations/industries
+
+# Just update the Streamlit apps with new coordinates
+use the local skill from skills/customizations/streamlits
+
+# Just update the AISQL notebook prompts
+use the local skill from skills/customizations/aisql-notebook
+
+# Just update the Carto POI data notebook
+use the local skill from skills/customizations/carto-notebook
+```
+
+> **_IMPORTANT:_** When running sub-skills independently, be aware of dependencies:
+> - After running `location`, you should also run `vehicles` → `streamlits` → `aisql-notebook` → `carto-notebook`
+> - After running `vehicles`, you should also run `streamlits`
+> - After running `industries`, you should also run `aisql-notebook` → `carto-notebook`
+> - After any customization, run `deploy-demo` to apply changes to Snowflake
+
 ### Example: Customizing to Paris with All Options
 
-When you run the skill and answer YES to all three questions, Cortex Code will guide you through:
+When you run `use the local skill from skills/customizations` and answer YES to all three questions, the orchestrator runs the sub-skills in order:
 
-1. **Location customization:**
-   - Choose **Paris** or **Île-de-France** from Geofabrik
-   - The skill downloads and uploads the OpenStreetMap data
+**Step 1: Location Sub-Skill** (`location.md`)
+- Choose **Paris** or **Île-de-France** from Geofabrik
+- Downloads and uploads the OpenStreetMap data
+- Updates `ors-config.yml` with new map path
 
-2. **Vehicle type customization:**
-   - Choose which routing profiles to enable:
-     - `driving-car` - Standard passenger vehicle
-     - `driving-hgv` - Heavy goods vehicle (trucks)
-     - `cycling-road` - Road bicycles
-     - `foot-walking` - Pedestrian (optional)
-     - `wheelchair` - Wheelchair accessible (optional)
+**Step 2: Vehicles Sub-Skill** (`vehicles.md`)
+- Choose which routing profiles to enable:
+  - `driving-car` - Standard passenger vehicle ✅
+  - `driving-hgv` - Heavy goods vehicle (trucks) ✅
+  - `cycling-road` - Road bicycles ✅
+  - `foot-walking` - Pedestrian (optional)
+  - `wheelchair` - Wheelchair accessible (optional)
+- Updates routing profile configuration
 
-3. **Industry customization:**
-   - Add or modify industry categories for your use case (e.g., Beverages, Electronics)
+**Step 3: Industries Sub-Skill** (`industries.md`)
+- Add or modify industry categories for your use case
+- Configures product types, customer types, and vehicle skills for each industry
 
-4. **Update services:**
-   - The skill restarts the ORS services to rebuild routing graphs
+**Step 4: Streamlits Sub-Skill** (`streamlits.md`)
+- Updates Function Tester with Paris coordinates
+- Updates Simulator with Paris as default city
+
+**Step 5: AISQL Notebook Sub-Skill** (`aisql-notebook.md`)
+- Updates all AI prompts to generate Paris-based sample data
+
+**Step 6: Carto Notebook Sub-Skill** (`carto-notebook.md`)
+- Updates POI data source with Paris geohash filter
+
+**Step 7: Save & Deploy**
+- Optionally creates Git feature branch
+- Prompts to run `deploy-demo` to apply changes
 
 **⏳ Wait for Services to Restart**
 
@@ -576,7 +635,7 @@ The streamlit app which you have open simulates potential routes to 29 delivery 
 -   Health
 -   Cosmetics
 
-If you wish to add additional industry types, use the `ors-map-customization` skill which includes an optional step to customize industries. See [Industry Category Customization](#industry-category-customization-optional) for details.
+If you wish to add additional industry types, use the `customizations` skill which includes an optional step to customize industries via the `industries` sub-skill. See [Industry Category Customization](#industry-category-customization-optional) for details.
 
 The routing functions are provided by the Native App you deployed via Cortex Code.
 
@@ -593,7 +652,7 @@ The POI data displayed in the Simulator is filtered by **GEOHASH** to match your
 
 The `add_carto_data` notebook (deployed by `deploy-demo`) filters the Overture dataset to your chosen city and creates the industry-specific views (Food, Health, Cosmetics distributors and customers).
 
-> **_TIP:_** To change the city, run the `ors-map-customization` skill again. See the [Customize the Map Region](#customize-the-map-region) section for details on how city selection works for country vs. city maps.
+> **_TIP:_** To change the city, run the `customizations` skill again (or the `location` sub-skill directly). See the [Customize Your Deployment](#customize-your-deployment) section for details on how city selection works for country vs. city maps.
 
 ### Setting the Context of the Routing Scenario
 
@@ -1399,14 +1458,43 @@ The app is confined to a B2B model as we do not have public names and addresses 
 
 For reference, here are all available Cortex Code skills for this solution:
 
+### Main Skills
+
 | Skill | Description | Command |
 |-------|-------------|---------|
 | `check-prerequisites` | Verify and install dependencies | `use the local skill from skills/check-prerequisites` |
 | `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from skills/deploy-route-optimizer` |
-| `ors-map-customization` | Change map region (Paris, London, etc.) | `use the local skill from skills/ors-map-customization` |
+| `customizations` | Orchestrate all customizations | `use the local skill from skills/customizations` |
 | `deploy-demo` | Deploy notebooks and Simulator Streamlit | `use the local skill from skills/deploy-demo` |
-| `customize-function-tester` | Update Function Tester coordinates | `use the local skill from skills/customize-function-tester` |
 | `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from skills/uninstall-route-optimizer` |
+
+### Customization Sub-Skills
+
+These can be run individually for targeted updates:
+
+| Sub-Skill | Description | Command |
+|-----------|-------------|---------|
+| `location` | Download new map, rebuild graphs | `use the local skill from skills/customizations/location` |
+| `vehicles` | Configure routing profiles | `use the local skill from skills/customizations/vehicles` |
+| `industries` | Customize demo industry categories | `use the local skill from skills/customizations/industries` |
+| `streamlits` | Update Function Tester & Simulator | `use the local skill from skills/customizations/streamlits` |
+| `aisql-notebook` | Update AI prompts for your region | `use the local skill from skills/customizations/aisql-notebook` |
+| `carto-notebook` | Update POI data source | `use the local skill from skills/customizations/carto-notebook` |
+
+> **_TIP:_** Use the main `customizations` skill to let Cortex Code orchestrate the process. Only use individual sub-skills when you need targeted updates and understand the dependencies.
+
+### Re-running Skills After Customization
+
+After making customizations, certain skills may need to be re-run:
+
+| What You Customized | Re-run These Skills |
+|---------------------|---------------------|
+| Location (map region) | `deploy-demo` to apply updated notebooks/Streamlit |
+| Vehicles (routing profiles) | App auto-restarts; optionally re-run `deploy-demo` |
+| Industries only | `deploy-demo` to apply updated notebooks/Streamlit |
+| Any combination | `deploy-demo` to ensure all changes are applied |
+
+> **_NOTE:_** The main `customizations` skill will prompt you to run `deploy-demo` automatically at the end.
 
 <!-- ------------------------ -->
 ## Uninstall the Route Optimizer
