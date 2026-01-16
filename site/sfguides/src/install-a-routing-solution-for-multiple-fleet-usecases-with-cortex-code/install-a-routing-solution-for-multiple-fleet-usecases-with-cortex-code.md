@@ -67,14 +67,15 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
 
 -   [VSCode](https://code.visualstudio.com/download) recommended for running Cortex Code commands
 
--   **Download the repository** - Choose one option:
-    - **With Git** (recommended): 
+-   **Fork and clone the repository** (recommended for customizations):
+    1. **Fork the repo**: Go to [GitHub](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator) and click **Fork** to create your own copy
+    2. **Clone your fork**:
       ```bash
-      git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+      git clone https://github.com/<YOUR-USERNAME>/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
       ```
-    - **Without Git**: Download the ZIP from [GitHub](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator) and extract it
+    - **Without Git**: Download the ZIP from the repository and extract it
 
-> **_NOTE:_** Git is optional but recommended. If you use Git, customizations are saved to feature branches, making it easy to switch between configurations.
+> **_IMPORTANT:_** If you plan to customize the deployment (change location, vehicles, or industries), you **must fork the repository first**. Cloning the original repo directly won't give you permission to create branches or push your customizations. Your fork gives you full write access to save and version your configurations.
 
 ### Route Planning And Optimization Architecture
 
@@ -373,7 +374,7 @@ The main `customizations` skill orchestrates the process by asking **three yes/n
 > - For ANY customization, all Streamlit apps and notebooks are updated, and `deploy-demo` MUST be run
 > - If Location OR Vehicles change, `deploy-route-optimizer` MUST also be run to push the updated `function_tester.py` to the Native App (images don't need rebuilding - only app code is updated)
 
-> **If using Git:** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults.
+> **If using Git (with your fork):** Changes are saved to a feature branch (e.g., `feature/ors-paris`), allowing you to switch back to `main` for defaults. Make sure you cloned **your fork** (not the original repo) to have permission to create branches and push changes.
 > **If not using Git:** Changes are made directly to local files. Keep a backup if needed.
 
 ### Running Individual Sub-Skills
@@ -542,9 +543,9 @@ The default industries are Healthcare, Food, and Cosmetics. The skill offers an 
 
 > **_TIP:_** The Streamlit app reads industries dynamically from the database - your custom industries appear automatically after deployment.
 
-**Git Branch Management (If Using Git)**
+**Git Branch Management (Requires Your Fork)**
 
-If you're using Git, customizations are saved to a feature branch (e.g., `feature/ors-paris`), preserving the original San Francisco configuration on `main`. To switch between regions:
+If you're using Git with **your forked repository**, customizations are saved to a feature branch (e.g., `feature/ors-paris`), preserving the original San Francisco configuration on `main`. To switch between regions:
 
 ```bash
 git checkout feature/ors-paris    # Switch to Paris
@@ -552,6 +553,8 @@ git checkout main                 # Switch back to San Francisco
 ```
 
 Then redeploy with Cortex Code to apply the configuration.
+
+> **_NOTE:_** Branch creation and pushing requires write access. If you cloned the original Snowflake-Labs repo directly, you won't have permission to push branches. See the [Prerequisites](#prerequisites) section for fork instructions.
 
 > **_NOTE:_** If you downloaded the repository as a ZIP (without Git), changes are made directly to your local files. Keep a backup if you want to preserve the original configuration.
 
