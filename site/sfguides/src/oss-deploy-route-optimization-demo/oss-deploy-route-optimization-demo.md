@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Deploy a Route Optimization Simulator demo using the OpenRouteService Native App. Build an interactive Streamlit app that simulates vehicle routing scenarios using real-world POI data from Carto Overture Maps.
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Deploy Route Optimization Demo with Cortex Code
