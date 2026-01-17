@@ -4,14 +4,14 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This tutorial leverages Snowflake Container Services, native apps, Geospatial Analytics, Streamlit, Cortex and the Open Route Service to optimize vehicle routes in order to distribute goods to chosen destinations on time.
 environments: web
-status: Published 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Create a Route Optimization and Vehicle Route Plan Simulator
 <!-- ------------------------ -->
 ## Overview 
 
-![alt text](assets/intro-map.png)
+![alt text](assets/intromap.png)
 
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
@@ -41,7 +41,7 @@ Use Snowpark Containers with a native app using the Open Route Service
 
 The architecture below shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
 
-![alt text](assets/ors-architecture.png)
+![alt text](assets/image-7.png)
 
 This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a medium CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
@@ -71,7 +71,7 @@ This is a self contained service which is managed by you.  There are no api call
 **Option 2**
 Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service. 
 
-![alt text](assets/api-architecture.png)
+![alt text](assets/image-19.png)
 
 -   You will need access to a Snowflake Account
 
@@ -104,7 +104,7 @@ Use External Access Integration with Python Functions to call and retrieve data 
 ## Option 1 - Native app & SPCS
 
 
-![alt text](assets/ors-architecture.png)
+![alt text](assets/image-7.png)
 Use Snowpark Containers with a native app using the Open Route Service
 
 This will create the necessary snowflake database and stages within the public schema.
@@ -113,7 +113,7 @@ This will create the necessary snowflake database and stages within the public s
 
 - Use the Snowflake **add-in** to login to your snowflake account
 
-![alt text](assets/vscode-addon.png)
+![alt text](assets/addin.png)
 
 - Within the Repo, navigate to: 
 
@@ -123,7 +123,7 @@ This will create the necessary snowflake database and stages within the public s
 
 You will now have a database which contains an empty repository and three stages.  You can view these stages easily with the VSCode addin.
 
-![alt text](assets/setup-stages.png)
+![alt text](assets/setup_stages.png)
 
 The  **ORS_SPCS_STAGE** stage will contain a map extract and a config file.
 
@@ -222,13 +222,13 @@ There are also other options available for each profile - and each option will d
 -   Within the snowflake add-in navigate to the newly created **ORS_SPCS_STAGE**.   You will see this in the **Object Explorer**
 
 
-![alt text](assets/view-stages.png)
+![alt text](assets/view_stages.png)
 
--   Click on the upload icon - ![alt text](assets/upload-icon.png) 
+-   Click on the upload icon - ![alt text](assets/upload.png) 
 
 Navigate to the newly **downloaded New York** file to upload the map file to the snowflake stage.
 
-![alt text](assets/new-york-map.png)
+![alt text](assets/newyork.png)
 
 Modify the **config file** by changing the source file location to the following:
 
@@ -255,7 +255,7 @@ Execute the following to ensure the files are registered on the stage directory
  select * from directory(@OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE);
 
  ```
-![alt text](assets/stage-directory.png)
+![alt text](assets/directory.png)
 
 ### Create the image and services.
 
@@ -264,7 +264,7 @@ You will now load the docker images to the snowflake repository
 - Navigate to the provider_setup > spcs_setup.sh and openn the file.
 - Amend where it says **YOUR_CONNECTION** with your **snowcli** connection.  
 
-> **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0) before proceeding which will explain how these are created.
+> **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](/en/developers/guides/getting-started-with-snowflake-cli/) before proceeding which will explain how these are created.
 
 - Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal from the **/native_app** directory within vscode and run the following:
 
@@ -290,7 +290,7 @@ SHOW IMAGES IN IMAGE REPOSITORY IMAGE_REPOSITORY;
 ```
 You should see four images pushed to the image repository like this:
 
-![alt text](assets/images-uploaded.png)
+![alt text](assets/stage_upload.png)
 
 The **downloader** image will copy the config and map file from the setup stage to the consumer app.
 
@@ -330,7 +330,7 @@ You will also note that an additional function (download) is created which calls
 
 Once you application package is installed, you will see a new installed app appear in the **apps** section of Snowsight.  This is a locally installed app for testing purposes.
 
-![alt text](assets/native-app.png)
+![alt text](assets/native_app.png)
 
 You will also see an application package which you can use to share with other accounts either privately or via the marketplace.
 
@@ -339,26 +339,26 @@ You will also see an application package which you can use to share with other a
 
 If you login to snow sight you will see the following newly created app within **Data Products > Apps**.  This is an app local to this snowflake for testing purposes.
 
-![alt text](assets/activate-app.png)
+![alt text](assets/activate_app.png)
 
 - Open the app and grant the permissions as requested by the application.  Once granted, you can then press **Activate**
 
 You will need to wait a few minutes for the graphs to update.  Within the graphs stage you should see the following folders appear:
 
-![alt text](assets/graphs-stage.png)
+![alt text](assets/graphs_stage.png)
 
 NB: you may need to refresh the stages to view the profiles. in the directory.
 
 If you open the functions part of the app you will see the following functions appear
 
-![alt text](assets/app-functions.png)
+![alt text](assets/image-6.png)
 
 You will learn how to use these functions after option 2 of the quickstart which produces the same functions using rest api calls to the external service.  If you wish, skip option 2 and navigate to the Snowflake Marketplace section.  You will need a dataset provided by **Carto** on the market place for the part of the notebook and the streamlit to run. 
 
 <!-- ------------------------ -->
 ## Option 2 Calling ORS APIs
 
-![alt text](assets/api-architecture.png)
+![alt text](assets/image-19.png)
 
 Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
 
@@ -545,7 +545,7 @@ $$;
 
 You will now see the functions below ready to use.
 
-![alt text](assets/functions-created.png)
+![alt text](assets/image-8.png)
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
@@ -553,16 +553,16 @@ You will now see the functions below ready to use.
 Before you try out your functions, you will get a dataset from the marketplace.  This is the Carto Overture dataset which includes an extensive point of interest map across the whole world.  It is also useful for routing simulations.
 -   Navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
-![alt text](assets/marketplace-navigation.png)
+![alt text](assets/I002.png)
 
 
 Search for Overture Maps - Places
 
-![alt text](assets/marketplace-search-overture.png)
+![alt text](assets/I004.png)
 
 Click on the following dataset then press **Get** Do not change the database name.
 
-![alt text](assets/marketplace-get-dataset.png)
+![alt text](assets/I004a.png)
 
 <!-- ------------------------ -->
 ## Routing functions with AISQL
@@ -617,7 +617,7 @@ Navigate to the notebook and follow the provided instructions.  In order to run 
 
 - Ensure you run all the code below this section **BEFORE** you move to the streamlit.
 
-![alt text](assets/notebook-carto-section.png)
+![alt text](assets/image-20.png)
 <!-- ------------------------ -->
 ## Deploy the Streamlit
 
@@ -654,7 +654,7 @@ COMMENT = '{"origin":"sf_sit-is", "name":"Route Optimization with Open Route Ser
 <!-- ------------------------ -->
 ## Run the Streamlit
 
-![alt text](assets/streamlit-main.png)
+![alt text](assets/image-9.png)
 
 The streamlit app which you have open simulates potential routes to 29 delivery locations for selected customer types - all coming from a user definable wholesaler.  Currently there are 3 types of distributor available although with the notebook, you can create limitless industry categories:
 
@@ -666,7 +666,7 @@ If you wish to add additional choice of distributor types, you can with the prov
 
 Before you choose your category, you must select where the routing specific functions are.  This app works with both the api call method and the native app method.  If you followed the instructions and went through both options, you can test out either option using the supplied radio selector.
 
-![alt text](assets/function-source-selector.png)
+![alt text](assets/image-10.png)
 
 
 The places you will work with are real as they are based on the Carto Overture points of interest maps which is a dataset freely available on the marketplace.  This allows you to create a location relevant scenario based on the needs of a specific usecase.
@@ -677,7 +677,7 @@ If you have built the native app and require an alternative city, you will need 
 
 ### End to End with Streamlit Dynamic Simulator Overview Diagram
 
-![alt text](assets/overview-diagram.png)
+![alt text](assets/Overview_Diagram.png)
 
 ### Setting the Context of the Routing Scenario
 
@@ -688,13 +688,13 @@ If you have built the native app and require an alternative city, you will need 
 **NB** You will only return results in the New York City boundary.
 - Choose the distance in KM for how wide you would like the app to search for nearby distributors.
 
-    ![alt text](assets/sidebar-cortex-filter.png)
+    ![alt text](assets/image-11.png)
 
 - Scroll down to get a map which highlights the place plus where all the nearby distributors are.  
 
 - Scroll further down in the sidebar to select a specific distributor. - This is sorted by distance from the centre point.  You should have relevent wholesalers based on location and industry.
 
-![alt text](assets/distributor-list.png)
+![alt text](assets/image-14.png)
 
 
 - Choose the type of customers you want to deliver goods to.  In this case, we are choosing supermarkets and restaurants.  Customer types can be configured using the provided notebook.
@@ -702,7 +702,7 @@ If you have built the native app and require an alternative city, you will need 
 
 - There is an order acceptance catchment time - this will be used to generate an isochrone which will filter possible delivery locations within that isochrone.  The isochrone produced is a polygon shaped to all the possible places you can drive within the acceptable drive time.
 
-![alt text](assets/isochrone-filter.png)
+![alt text](assets/image-15.png)
 
 - You may close the side bar.
 
@@ -712,7 +712,7 @@ This is an example scenario based on the previously selected fields.
 
 **Hudson Produce** is in New York City.  This week they have 3 vehicles assigned to make up to 30 deliveries today.
 
-![alt text](assets/depot-vehicles-overview.png)
+![alt text](assets/image-12.png)
 
 **Vehicle 1** will start between 8HRS and 17HRS - this vehicle is a car.  [hover over information]  the vehicle has a capacity limit of 4 and been assigned a skill level of 1 - this vehicle does not have a freezer so can only carry fresh food.
 
@@ -730,9 +730,9 @@ Once the selections are made you can choose the scope for the jobs - this is bas
 
 -   Select 25mins based on how far you can cycle in that time.
 
-![alt text](assets/catchment-diagram.png)
+![alt text](assets/image-16.png)
 
-![alt text](assets/vehicle-skills-assignment.png)
+![alt text](assets/image-17.png)
 
 You will note that orders of the Non Perishable orders will only go to vehicle 3, the fresh food will go to vehicle 2 and the frozen food will go to vehicle 1.
 
@@ -742,7 +742,7 @@ You will note that orders of the Non Perishable orders will only go to vehicle 3
 
 Next we look at the map
 
-![alt text](assets/vehicle-routes-map.png)
+![alt text](assets/image-18.png)
 
 Vehicle 3 has the least amount of things to deliver but takes the longest to deliver them.  This is probably because the vehicle is a bicycle.  [change bicycle to hgv and re run]
 
@@ -754,7 +754,7 @@ When looking at the map itself, you will see the lines of the route for each veh
 
 Tabs - this will give instructions for each segment of the drivers journey - the final stop is the return back to the wholesaler.
 
-![alt text](assets/vehicle-itinerary.png)
+![alt text](assets/vehicle_itenary.png)
 
 
 ### How does it work
@@ -989,7 +989,7 @@ view_state = pdk.ViewState(bbox.LON.iloc[0], bbox.LAT.iloc[0], zoom=4)
     st.pydeck_chart(pdk.Deck(layers=[context],map_style=None,initial_view_state=view_state))
 
 ```
-![map](assets/pydeck-context-map.png)
+![map](assets/ST01.png)
 
 We will next add a new layer which will show all industry related industry suggestions that are within X distance of the blue spot.
 
@@ -1126,7 +1126,7 @@ st.pydeck_chart(pdk.Deck(layers=[wholesalers,context],
 
 ```
 
-![map](assets/pydeck-wholesalers-map.png)
+![map](assets/ST02.png)
 
 The returned results will also generate a list of places to select from using a drop down list:
 
@@ -1150,7 +1150,7 @@ s_warehouse = st.selectbox('Choose Wholesaler to distribute goods from:',
 ```
 
 
-![choose depot](assets/choose-depot-dropdown.png)
+![choose depot](assets/ST03.png)
 
 
 **Job Template**
@@ -1182,7 +1182,7 @@ range_minutes = st.number_input('Order Acceptance catchment time:',0,120,20)
 
 ```
 
-![catchment_time](assets/catchment-time-input.png)
+![catchment_time](assets/ST04.png)
 
 We will now focus on filtering a new point of interest dataset by drive time. This dataset will simulate typical customers within the catchment. For this, we will leverage the 'isochrone' function which calls the open route service api to build a catchment polygon.
 
@@ -1210,7 +1210,7 @@ You will see that after calling the isochrone function, we then join the resulti
 
 Now lets filter **'the what'** on the customer dataset. We have all points of interests around the catchment of a depo, however, we have not specified what type of organisations these customers are. This is what the next drop down list is for. The user will pick the type of customer which is relevant to the industry. This example filter selection below will only retain organisations which are categorised as hospitals, dentists and pharmacies. Because the categories are in two fields, we will use the **SEARCH** function again.
 
-![cust_type_filter](assets/customer-type-filter.png)
+![cust_type_filter](assets/ST05.png)
 
 ```python
 
@@ -1284,7 +1284,7 @@ jobs = places_2.select(array_agg('JOB').alias('JOB'))
 **The Vehicles**
 The example I have created, is an example of only 3 vehicles at pre defined skill levels.
 
-![vehicle_config](assets/vehicle-config-panel.png)
+![vehicle_config](assets/ST06.png)
 
 The vehicle location is then Aligned to the previously selected depot. In reality, vehicles might have varying start destinations - however, for simplicity all vehicle starting points are the same.
 
@@ -1425,7 +1425,7 @@ optim_line = optim_line\
 
 This will return detailed route plans which include all drop offs, line strings as well as written instructions.
 
-![directions](assets/directions-results.png)
+![directions](assets/ST07.png)
 
 Two layers are created for the visualisation - one for the line paths and the other for the drop offs. The layers have been generated by a python function in order to reuse the code for each vehicle. This is so i can show a vehicle plan each containing an independant map within each tab.
 
@@ -1466,7 +1466,7 @@ def veh_journey(dataframe,vehicle):
 
 Below you can see an example of all three vehicles travelling around Paris to drop goods off. This is combining points and line string layers for each vehicle as well as the isochrone layer.
 
-![map with tabs](assets/map-with-vehicle-tabs.png)
+![map with tabs](assets/ST08.png)
 
 #### Considerations
 The Job details may plot routes outside the agreed time.  The Demo has only vehicles where each vehicle has a unique skill.  We will need more vehicles / less skills to prevent these violations.
@@ -1516,7 +1516,7 @@ You will have learned the following:
 
 - [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
-- [Building Geospatial Multi-Layer Apps with Snowflake and Streamlit](https://quickstarts.snowflake.com/guide/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/)
+- [Building Geospatial Multi-Layer Apps with Snowflake and Streamlit](/en/developers/guides/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/)
 
 - [H3 Indexing](https://h3geo.org/docs/)
 
@@ -1524,8 +1524,8 @@ You will have learned the following:
 
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
-- [Using Cortex and Streamlit With Geospatial Data](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
+- [Using Cortex and Streamlit With Geospatial Data](/en/developers/guides/using-snowflake-cortex-and-streamlit-with-geospatial-data/)
 
-- [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
+- [Getting started with Geospatial AI and ML using Snowflake Cortex](/en/developers/guides/geo-for-machine-learning/)
 
 
