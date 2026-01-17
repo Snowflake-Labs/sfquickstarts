@@ -4,9 +4,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Deploy an OpenRouteService Native App in Snowflake using Cortex Code skills. Create a self-contained routing engine with directions, optimization, and isochrones - no external APIs required.
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
 # Install OpenRouteService Native App with Cortex Code
 
