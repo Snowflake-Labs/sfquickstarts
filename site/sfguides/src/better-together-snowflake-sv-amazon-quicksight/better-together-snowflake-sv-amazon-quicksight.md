@@ -72,18 +72,36 @@ You will build a foundational yet practical setup of a Snowflake semantic view, 
 ## Setup Environment
 
 
-### Setup your Database and Schema
+<!-- ------------------------ -->
+## Setting up Snowflake Notebook
+### Overview
 
-First, we'll create a new warehouse `WORKSHOPWH` and a database named `movies` to organize our data. 
-We will then set the context to use this warehouse and database to import the sample notebook
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to import and run the notebook to create the environment.
+
+* Download the Notebook **[update-me-better-together-snowflake-sv-amazon-quicksight.ipynb]** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)
+
+>Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
+If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook. 
 
 
-### Creating Objects, Loading Data, and Joining Data
-* Navigate to Worksheets, click **"+"** in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+* Using the import button, import the downloaded notebook.
 
 
-![new sql file](assets/new-sql-file.png)  
+![import notebook](assets/import-notebook.png)
 
+
+Accept the default and ensure to select the `**Run on Warehouse**` 
+We will create a new warehouse `WORKSHOPWH` and a database named `movies` to organize our data via this notebook
+
+![notebook creation](assets/notebook-creation.png)
+
+
+
+
+
+
+
+<!------------>
 
 * Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3, and create the review view
 
