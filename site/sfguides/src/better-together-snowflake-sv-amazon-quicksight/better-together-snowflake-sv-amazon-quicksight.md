@@ -57,10 +57,11 @@ You will build a foundational yet practical setup of a Snowflake semantic view, 
 
 ### What You'll Need
 - Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/). If you do not have an account, sign up for a [trial account here](https://signup.snowflake.com/)
-  - Access to ACCOUNTADMIN role is required for creating semantic views
+  - Select `Enterprise` edition
+  - Access to `ACCOUNTADMIN` role is required for creating semantic views
 - Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
 
-  **Ensure to sign up to both of the above in AWS US West (Oregon)** 
+  **Ensure to sign up to both of the above in AWS `US West (Oregon)`** 
   At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland). Refer to See the [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html)
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
@@ -79,9 +80,12 @@ We will then set the context to use this warehouse and database to import the sa
 
 ### Creating Objects, Loading Data, and Joining Data
 * Navigate to Worksheets, click **"+"** in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
-* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3,  and create the review view
 
-![new sql file](assets/new-sql-file.png)
+
+![new sql file](assets/new-sql-file.png)  
+
+
+* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3, and create the review view
 
 ```sql
 
