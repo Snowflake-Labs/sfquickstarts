@@ -69,11 +69,8 @@ You will build a foundational yet practical setup of a Snowflake semantic view, 
 
 <!-- ------------------------ -->
 
-## Setup Environment
+## Setup Our Environment
 
-
-<!-- ------------------------ -->
-## Setting up Snowflake Notebook
 ### Overview
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to import and run the notebook to create the environment.  
@@ -83,7 +80,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 >Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
 If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook. 
-
 
 
 * Click on the **`+`** **Create button** -> `Notebook` to `Import` the downloaded notebook.
@@ -210,9 +206,9 @@ select count(*) from movies_dashboard;
 
 
 ### Proceed to create the Semantic view 
-Once our warehouse, database and `movies_dashboard` table has been created & loaded (Part 1 and Part 2 of the notebook),  we will create the semantic view
+Once our warehouse, database and `movies_dashboard` table has been created & loaded (Part 1 and Part 2 of the notebook),  we will create the semantic view.
 
-From Snowsight
+#### From Snowsight
 * Select **AI & ML** 
 * Select **Cortex Analyst**
 * Click on the `Create new` drop down 
@@ -221,7 +217,7 @@ From Snowsight
 * Enter `MOVIES_SV` as the name of the semantic view 
 * Click **NEXT** to continue
 
-For example of using SQL to create a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
+To use SQL to create a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
 
 <br> 
 
@@ -229,18 +225,25 @@ For example of using SQL to create a semantic view, refer to the [example here](
 ![semantic view creation](assets/create-sv.png)
 
 
-- We will click **SKIP** the `Provide context (optional)` page 
+* Click **SKIP** the `Provide context (optional)` page 
 
-- Select `Movies` >> `Public` >> `MOVIES_DASHBOARD` and click **Next**
+* Select `Movies` >> `Public` >> `MOVIES_DASHBOARD` and click **Next**
 
 ![select table for SV creation](assets/select-table.png)
 
-- Select ✅ **ALL** 16 columns  
+* Select ✅ **ALL** 16 columns  
 ![select columns for SV creation](assets/select-columns.png)
   
-- Select ✅ `Add sample values to the semantic view`
-- Select ✅ `Add descriptions to the semantic view`
-- Click **Create and Save**
+* Select ✅ `Add sample values to the semantic view`
+* Select ✅ `Add descriptions to the semantic view`
+* Click **Create and Save**
+
+>> Creation of semantic view may take up to 10 minutes. Please don't close the window.
+
+The semantic view created in a few minutes, you can click on the `Explain the dataset` and click on the suggested query to verify the response on the right hand side.
+* Click **Save** before continue
+
+![SV ready](assets/sv-ready.png)
 
   
 
