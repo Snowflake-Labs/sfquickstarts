@@ -99,9 +99,18 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 
 
 
+We will then create the Semantic View via UI 
 
+* Select **AI & ML**  
+* Select **Cortex Analyst**  
+* Click on the `Create new drop down`  
+* Select our `Movies` database and `Public` Schema  
+* Enter `MOVIES_SV` as the name of the semantic view   
+* Click NEXT to continue
 
+<br> 
 
+![semantic view creation](assets/create-sv.png)
 
 <!------------>
 
