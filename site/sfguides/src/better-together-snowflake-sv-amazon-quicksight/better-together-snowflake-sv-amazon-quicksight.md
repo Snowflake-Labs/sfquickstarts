@@ -97,23 +97,10 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 
 ![notebook creation](assets/notebook-creation.png)
 
-### Now we will create the semantic view for the movie dashboard
 
-From Snowsight
-* Select **AI & ML** 
-* Select **Cortex Analyst**
-* Click on the `Create new` drop down 
-* Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
-* In the **Location to  store**: Select `Movies` database and `Public` Schema
-* Enter `MOVIES_SV` as the name of the semantic view 
-* Click **NEXT** to continue
-
-<br> 
-
-![semantic view creation](assets/create-sv.png)
 
 <!------------>
-
+#### Optional: for those who want to use SQL worksheet
 * Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3, and create the review view
 
 ```sql
@@ -218,8 +205,22 @@ select count(*) from movies_dashboard;
 ```
 
 
+### Proceed to create the Semantic view 
+Once our warehouse, database and `movies_dashboard` table has been created and loaded,  we will create the semantic view
+
+From Snowsight
+* Select **AI & ML** 
+* Select **Cortex Analyst**
+* Click on the `Create new` drop down 
+* Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
+* In the **Location to  store**: Select `Movies` database and `Public` Schema
+* Enter `MOVIES_SV` as the name of the semantic view 
+* Click **NEXT** to continue
+
+<br> 
 
 
+![semantic view creation](assets/create-sv.png)
 
 
 
