@@ -95,7 +95,11 @@ If you are looking to use other packages, click on the Packages dropdown on the 
 Accept the default and ensure to select the **`Run on Warehouse`** 
 We will create a new warehouse `WORKSHOPWH` and a database named `movies` to organize our data via this notebook
 
-![notebook creation](assets/notebook-creation.png)
+![notebook creation](assets/notebook-creation.png)  
+
+We will run the cells in notebook load the data into the `movies_dashboard`  
+
+![run notebook](assets/run-notebook.png)  
 
 
 
