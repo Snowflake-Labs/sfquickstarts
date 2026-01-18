@@ -70,7 +70,7 @@ You will build a foundational yet practical setup of a Snowflake semantic view, 
 
 ## Setup Environment
 
-### Download the Notebook
+### Import the Notebook from Snowsight
 
 Firstly, to follow along with this quickstart, download the Notebook [update-me-better-together-snowflake-sv-amazon-quicksight.ipynb](https://github.com/update-me-sfquicksight.ipynb) from GitHub.
 
@@ -81,6 +81,8 @@ After login to Snowflake, click on the "+" (Create) to import the notebook we do
 
 
 ![import notebook](assets/import-notebook.png)
+
+
 ![import notebook](assets/import-notebook2.png)
 
 ### Setup your Database and Schema
