@@ -1,4 +1,4 @@
-author: Mary Law
+author: Mary Law (in partnership with AWS Ying Wang)
 id: better-together-snowflake-sv-amazon-quicksight
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
@@ -76,21 +76,23 @@ You will build a foundational yet practical setup of a Snowflake semantic view, 
 ## Setting up Snowflake Notebook
 ### Overview
 
-You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to import and run the notebook to create the environment.
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to import and run the notebook to create the environment.  
 
-* Download the Notebook **[update-me-better-together-snowflake-sv-amazon-quicksight.ipynb]** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)
+* Download the Notebook **[update-me-better-together-snowflake-sv-amazon-quicksight.ipynb]** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)   
+<br>
 
 >Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
 If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook. 
 
 
-* Using the import button, import the downloaded notebook.
+
+* Click on the **`+`** **Create button** -> `Notebook` to `Import` the downloaded notebook.
 
 
 ![import notebook](assets/import-notebook.png)
 
 
-Accept the default and ensure to select the `**Run on Warehouse**` 
+Accept the default and ensure to select the **`Run on Warehouse`** 
 We will create a new warehouse `WORKSHOPWH` and a database named `movies` to organize our data via this notebook
 
 ![notebook creation](assets/notebook-creation.png)
