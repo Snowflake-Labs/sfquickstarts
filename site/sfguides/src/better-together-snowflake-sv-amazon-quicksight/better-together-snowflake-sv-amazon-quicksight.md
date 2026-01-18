@@ -210,7 +210,7 @@ select count(*) from movies_dashboard;
 
 
 ### Proceed to create the Semantic view 
-Once our warehouse, database and `movies_dashboard` table has been created and loaded,  we will create the semantic view
+Once our warehouse, database and `movies_dashboard` table has been created & loaded (Part 1 and Part 2 of the notebook),  we will create the semantic view
 
 From Snowsight
 * Select **AI & ML** 
