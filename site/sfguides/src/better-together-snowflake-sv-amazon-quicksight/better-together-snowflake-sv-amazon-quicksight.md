@@ -221,15 +221,28 @@ From Snowsight
 * Enter `MOVIES_SV` as the name of the semantic view 
 * Click **NEXT** to continue
 
+For example of using SQL to create a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
+
 <br> 
 
 
 ![semantic view creation](assets/create-sv.png)
 
 
+- We will click **SKIP** the `Provide context (optional)` page 
 
+- Select `Movies` >> `Public` >> `MOVIES_DASHBOARD` and click **Next**
 
+![select table for SV creation](assets/select-table.png)
 
+- Select ✅ **ALL** 16 columns  
+![select columns for SV creation](assets/select-columns.png)
+  
+- Select ✅ `Add sample values to the semantic view`
+- Select ✅ `Add descriptions to the semantic view`
+- Click **Create and Save**
+
+  
 
 ## Conclusion And Resources
 
