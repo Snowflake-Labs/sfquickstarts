@@ -70,79 +70,98 @@ You will build a foundational yet practical setup of a Snowflake semantic view, 
 
 ## Setup Environment
 
-### Import the Notebook from Snowsight
-
-Firstly, to follow along with this quickstart, download the Notebook [update-me-better-together-snowflake-sv-amazon-quicksight.ipynb](https://github.com/update-me-sfquicksight.ipynb) from GitHub.
-
->Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
-If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
-
-After login to Snowflake, click on the "+" (Create) to import the notebook we downloaded.
-
-
-![import notebook](assets/import-notebook.png)
-
-
-![import notebook](assets/import-notebook2.png)
 
 ### Setup your Database and Schema
 
-First, we'll create a new database named `SAMPLE_DATA` and a schema named `TPCDS_SF10TCL` to organize our data. We will then set the context to use this new schema.
+First, we'll create a new warehouse `WORKSHOPWH` and a database named `movies` to organize our data. 
+We will then set the context to use this warehouse and database to import the sample notebook
 
-```sql
--- Create a new test database named SAMPLE_DATA
-CREATE DATABASE SAMPLE_DATA;
-
--- Use the newly created database
-USE DATABASE SAMPLE_DATA;
-```
-
-<!-- ------------------------ -->
-## Setting up the Data in Snowflake
-
-### Overview
-You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
-* Create Snowflake objects (warehouse, database, schema, raw tables)
-* Ingest data from S3 to raw tables
-* Create review view 
 
 ### Creating Objects, Loading Data, and Joining Data
-* Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
-* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view
+* Navigate to Worksheets, click **"+"** in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3,  and create the review view
 
-  ```sql
+![new sql file](assets/new-sql-file.png)
 
-  USE ROLE sysadmin;
+```sql
 
-  /*--
-  • database, schema and warehouse creation
-  --*/
+USE ROLE ACCOUNTADMIN;
 
-  -- create tb_voc database
-  CREATE OR REPLACE DATABASE tb_voc;
+-- Create role for semantic view quick start
+CREATE ROLE IF NOT EXISTS quickstart_role 
+   COMMENT = 'Role for semantic view quick start demo';
 
-  -- create raw_pos schema
-  CREATE OR REPLACE SCHEMA tb_voc.raw_pos;
+-- Set variables for user
+SET my_user = CURRENT_USER();
+
+--Grant role to your user 
+GRANT ROLE quickstart_role TO USER IDENTIFIER($my_user);
+
+
+/*--
+ • warehouse, database, schema creation
+--*/
+
+CREATE WAREHOUSE IF NOT EXISTS WORKSHOPWH WITH
+   WAREHOUSE_SIZE = 'XSMALL'
+   AUTO_SUSPEND = 60
+   AUTO_RESUME = TRUE
+   COMMENT = 'Warehouse for semantic view quick start demo';
+   
+CREATE DATABASE IF NOT EXISTS movies; 
+
+GRANT OWNERSHIP ON DATABASE movies TO ROLE quickstart_role COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON SCHEMA movies.PUBLIC TO ROLE quickstart_role COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON WAREHOUSE workshopwh TO ROLE quickstart_role COPY CURRENT GRANTS;
+
+-- Grant privileges to create semantic views
+GRANT CREATE SEMANTIC VIEW ON SCHEMA movies.PUBLIC TO ROLE quickstart_role;
+GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE quickstart_role;
+
+-- =============================================
+-- PART 1: Snowflake Setup for semantic view quick start
+-- =============================================
+
+-- Verify the below information
+SELECT
+  CURRENT_DATABASE() AS current_db,
+  CURRENT_SCHEMA()   AS current_schema,
+  CURRENT_ROLE()     AS current_role,
+  CURRENT_USER() AS current_user;
+
+```
+
 
 
 <!-- ------------------------ -->
 ## Setting up Snowflake Notebook
 ### Overview
+
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
 
-* Download the notebook **xxxxx.ipynb** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)
+* Download the Notebook **[update-me-better-together-snowflake-sv-amazon-quicksight.ipynb]** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)
 
-* Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
+>Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
+If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook. 
 
-* Using the import button on the top right, import the downloaded notebook.
 
-* Provide a name for the notebook and select appropriate database `tb_voc`, schema `analytics` and warehouse `tasty_ds_wh`
+* Using the import button, import the downloaded notebook.
 
-* Open the notebook once created and add the following packages by using the "Packages" button on the top right
-  * snowflake-snowpark-python
-  * snowflake-ml-python
+
+![import notebook](assets/import-notebook.png)
+
+
+* Select the database `movies`, schema `public` and warehouse `workshopwh` created earlier
 
 * Now you are ready to run the notebook by clicking "Run All" button on the top right or running each cell individually. 
+
+
+
+
+<!-- ------------------------ -->
+
+
+
 
 
 
