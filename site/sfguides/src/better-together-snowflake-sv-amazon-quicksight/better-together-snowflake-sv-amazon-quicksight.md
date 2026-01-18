@@ -105,9 +105,13 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 
 <!------------>
 
-* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3, and create the review view
+* Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3, and create the review view
 
 ```sql
+
+-- =============================================
+-- PART 1: Snowflake Setup for semantic view quick start
+-- =============================================
 
 USE ROLE ACCOUNTADMIN;
 
@@ -122,9 +126,7 @@ SET my_user = CURRENT_USER();
 GRANT ROLE quickstart_role TO USER IDENTIFIER($my_user);
 
 
-/*--
- • warehouse, database, schema creation
---*/
+-- Create warehouse, database, schema and grant role
 
 CREATE WAREHOUSE IF NOT EXISTS WORKSHOPWH WITH
    WAREHOUSE_SIZE = 'XSMALL'
@@ -142,10 +144,6 @@ GRANT OWNERSHIP ON WAREHOUSE workshopwh TO ROLE quickstart_role COPY CURRENT GRA
 GRANT CREATE SEMANTIC VIEW ON SCHEMA movies.PUBLIC TO ROLE quickstart_role;
 GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE quickstart_role;
 
--- =============================================
--- PART 1: Snowflake Setup for semantic view quick start
--- =============================================
-
 -- Verify the below information
 SELECT
   CURRENT_DATABASE() AS current_db,
@@ -153,36 +151,64 @@ SELECT
   CURRENT_ROLE()     AS current_role,
   CURRENT_USER() AS current_user;
 
+-- Set variables for the specified role, database, and schema
+SET my_role = 'quickstart_role';
+SET my_db = CURRENT_DATABASE();
+SET my_schema = CURRENT_SCHEMA();
+SET my_full_schema = $my_db || '.' || $my_schema;
+
+
+
+-- ==============================================
+-- PART 2: DATA SETUP (as quickstart_role)
+-- ==============================================
+
+-- create demo table for our movie data, we will surface this in dashboard
+CREATE TABLE if not exists movies_dashboard (
+        movie_id NUMBER,
+    	movie_title VARCHAR,
+   	    movie_release_year INTEGER,
+    	genre VARCHAR,
+   	    user_rating FLOAT,
+   	    rating_timestamp TIMESTAMP_NTZ,
+    	user_id NUMBER,
+    	user_firstname VARCHAR,
+   	    user_lastname VARCHAR,
+    	user_city VARCHAR,
+    	user_state VARCHAR,
+    	user_country VARCHAR,
+    	user_email VARCHAR,
+    	user_phonenumber VARCHAR,
+    	interaction_timestamp NUMBER ,
+    	interaction_type VARCHAR
+);
+
+CREATE OR REPLACE STAGE MOVIEDASHBOARD
+URL='s3://hol-qs-bucket/'
+FILE_FORMAT = (TYPE = 'csv');
+
+COPY INTO movies_dashboard FROM @MOVIEDASHBOARD/movies_dashboard.csv
+  FILE_FORMAT=(TYPE = 'csv' FIELD_DELIMITER = ',' SKIP_HEADER = 1);
+
+-- Create stage for docs 
+CREATE STAGE DOCS
+DIRECTORY = ( ENABLE = true )
+ENCRYPTION = ( TYPE = 'SNOWFLAKE_SSE' );
+
+-- Create stage for semantic models
+CREATE STAGE IF NOT EXISTS MODELS
+  DIRECTORY = (ENABLE = TRUE)
+  COMMENT = 'Stage for semantic model files';
+
+-- let's verify the data load
+select distinct movie_title from movies_dashboard;
+
+-- verify 773 records been loaded
+select count(*) from movies_dashboard;
+
 ```
 
 
-
-<!-- ------------------------ -->
-## Setting up Snowflake Notebook
-### Overview
-
-You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
-
-* Download the Notebook **[update-me-better-together-snowflake-sv-amazon-quicksight.ipynb]** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)
-
->Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
-If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook. 
-
-
-* Using the import button, import the downloaded notebook.
-
-
-![import notebook](assets/import-notebook.png)
-
-
-* Select the database `movies`, schema `public` and warehouse `workshopwh` created earlier
-
-* Now you are ready to run the notebook by clicking "Run All" button on the top right or running each cell individually. 
-
-
-
-
-<!-- ------------------------ -->
 
 
 
