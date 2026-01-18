@@ -248,12 +248,20 @@ The semantic view should get created in a few minutes, you can click on the `Exp
 
 <br>
 
-Feel free to experiment and add more `➕ verfied queries`. 
+✏️  ✏️  Feel free to :-
+1. add more `➕ verfied queries` 
 Verified queries are example gold questions with correct answers that give the LLM an example of an accurate answer. This improves accuracy, reduce latency, and help generate better suggestions for your semantic view.  
 Example: verifying `What is the average user rating for movies in the Adventure genre over time` ensures Cortex Analyst generates the right SQL for all similarly phrased questions. 
 > Cortex Analyst only uses verified queries when they are similar to the question that the user asked.  
 
+2. Edit the dimension and click on **⚝ Generate field** to populate field description and synonyms
+For example: synoyms for `USER_PHONENUMBER` >  phone_number, telephone, mobile_number, contact_number, phone, cell_phone, telephone_number, mobile, contact_phone, user_phone, user_mobile, phone_contact, cellular_number, user_telephone
 
+![generate fields](assets/generate-fields.png)
+
+<br>
+
+<br>
   
 
 ## Conclusion And Resources
