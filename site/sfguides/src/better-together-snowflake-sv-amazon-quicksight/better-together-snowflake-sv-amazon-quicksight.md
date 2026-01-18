@@ -97,16 +97,16 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 
 ![notebook creation](assets/notebook-creation.png)
 
+### Now we will create the semantic view for the movie dashboard
 
-
-We will then create the Semantic View via UI 
-
-* Select **AI & ML**  
-* Select **Cortex Analyst**  
-* Click on the `Create new drop down`  
-* Select our `Movies` database and `Public` Schema  
-* Enter `MOVIES_SV` as the name of the semantic view   
-* Click NEXT to continue
+From Snowsight
+* Select **AI & ML** 
+* Select **Cortex Analyst**
+* Click on the `Create new` drop down 
+* Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
+* In the **Location to  store**: Select `Movies` database and `Public` Schema
+* Enter `MOVIES_SV` as the name of the semantic view 
+* Click **NEXT** to continue
 
 <br> 
 
