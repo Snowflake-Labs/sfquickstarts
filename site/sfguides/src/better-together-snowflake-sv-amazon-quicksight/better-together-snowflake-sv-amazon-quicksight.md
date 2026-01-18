@@ -105,7 +105,7 @@ We will run the cells in notebook load the data into the `movies_dashboard`
 
 <!------------>
 #### Optional: for those who want to use SQL worksheet
-* Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest shift  data from S3, and create the review view
+* Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest data from Amazon S3, and create the movies table
 
 ```sql
 
