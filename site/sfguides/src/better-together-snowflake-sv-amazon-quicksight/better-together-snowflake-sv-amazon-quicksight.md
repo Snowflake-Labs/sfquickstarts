@@ -72,9 +72,15 @@ You will build a foundational yet practical setup of a Snowflake semantic view, 
 
 ### Download the Notebook
 
-Firstly, to follow along with this quickstart, download the Notebook [update-me-better-together-snowflake-sv-amazon-quicksight.ipynb](https://github.com/update-me-quicksight.ipynb) from GitHub.
+Firstly, to follow along with this quickstart, download the Notebook [update-me-better-together-snowflake-sv-amazon-quicksight.ipynb](https://github.com/update-me-sfquicksight.ipynb) from GitHub.
 
-Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
+Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
+If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
+
+After login to Snowflake, click on the "+" (Create) to import the notebook we downloaded.
+
+![import notebook](assets/import notebook.png)
+
 
 ### Setup your Database and Schema
 
