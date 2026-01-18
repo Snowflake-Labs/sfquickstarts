@@ -97,7 +97,7 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 
 ![notebook creation](assets/notebook-creation.png)  
 
-We will run the cells in notebook load the data into the `movies_dashboard`  
+We will run the cells in notebook to load the data into the `movies_dashboard` , procced with running `Part 1` and `Part 2` of the notebook
 
 ![run notebook](assets/run-notebook.png)  
 
