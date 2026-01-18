@@ -227,7 +227,7 @@ To use SQL to create a semantic view, refer to the [example here](https://docs.s
 
 * In the `Provide context (optional)` page -> Click **SKIP** 
 
-* In the `Select table for Semantic view` page
+* In the `Select table for Semantic view` page  
    Select `Movies` >> `Public` >> `MOVIES_DASHBOARD` and click **Next**
 
 ![select table for SV creation](assets/select-table.png)
