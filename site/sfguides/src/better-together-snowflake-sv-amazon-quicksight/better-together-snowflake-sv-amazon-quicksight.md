@@ -225,9 +225,10 @@ To use SQL to create a semantic view, refer to the [example here](https://docs.s
 ![semantic view creation](assets/create-sv.png)
 
 
-* Click **SKIP** the `Provide context (optional)` page 
+* In the `Provide context (optional)` page -> Click **SKIP** 
 
-* Select `Movies` >> `Public` >> `MOVIES_DASHBOARD` and click **Next**
+* In the `Select table for Semantic view` page
+   Select `Movies` >> `Public` >> `MOVIES_DASHBOARD` and click **Next**
 
 ![select table for SV creation](assets/select-table.png)
 
@@ -238,9 +239,9 @@ To use SQL to create a semantic view, refer to the [example here](https://docs.s
 * Select ✅ `Add descriptions to the semantic view`
 * Click **Create and Save**
 
->> Creation of semantic view may take up to 10 minutes. Please don't close the window.
+    > Creation of semantic view may take up to 10 minutes. Please don't close the window.
 
-The semantic view created in a few minutes, you can click on the `Explain the dataset` and click on the suggested query to verify the response on the right hand side.
+The semantic view should get created in a few minutes, you can click on the `Explain the dataset` and click on the suggested query to verify the response on the right hand side.
 * Click **Save** before continue
 
 ![SV ready](assets/sv-ready.png)
