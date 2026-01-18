@@ -248,7 +248,15 @@ The semantic view should get created in a few minutes, you can click on the `Exp
 
 <br>
 
+Before proceeding, let's confirm the creation of the semantic view, from `Catalog` >>  `Database Explorer`
 
+- Database: `MOVIES`
+- Schema: `PUBLIC`
+- Semantic Views: `MOVIES_SV`
+
+![movie SV ready](assets/movies-sv.png)  
+
+<br>
 > ✏️  ✏️  Feel free to :-
 1. add more `➕ verfied queries` 
 Verified queries are example gold questions with correct answers that give the LLM an example of an accurate answer. This improves accuracy, reduce latency, and help generate better suggestions for your semantic view.  
