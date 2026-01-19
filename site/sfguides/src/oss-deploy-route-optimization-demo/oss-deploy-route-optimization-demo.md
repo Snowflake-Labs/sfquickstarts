@@ -1,4 +1,4 @@
-author: Becky O'Connor and Piotr Paczewski
+author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-deploy-route-optimization-demo
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
