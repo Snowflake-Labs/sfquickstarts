@@ -176,7 +176,7 @@ The architecture diagram below illustrates how each component connects:
 
 ![Telco Operations AI Architecture](assets/images/architecture-overview.jpg)
 
-The detailed component diagram shows the specific Snowflake objects created during deployment:
+The dataflow diagram below shows how data moves through the system to power Snowflake Intelligence. Raw data enters from the left (CSV files, PDF documents, MP3 audio recordings), gets processed through Cortex AI functions in the middle (AI_PARSE_DOCUMENT, AI_TRANSCRIBE, AI_SENTIMENT), and flows into the structured outputs on the right (Cortex Search services and Cortex Analyst semantic models). These services become the "tools" that the Snowflake Intelligence agent uses to answer user questions—combining structured SQL queries with semantic search across unstructured content.
 
 ![Architecture Diagram](assets/images/architecture-diagram.png)
 
