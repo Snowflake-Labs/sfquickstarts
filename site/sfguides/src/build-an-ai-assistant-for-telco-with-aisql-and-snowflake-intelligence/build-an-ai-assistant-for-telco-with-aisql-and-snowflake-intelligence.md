@@ -7,7 +7,7 @@ status: Hidden
 author: Vasanth Pandiaraj, Becky O'Connor
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence
-tags: Cortex AI, Snowflake Intelligence, Document AI, Cortex Analyst, Cortex Search, Telecommunications, Agents, RAG, Text-to-SQL, Call Center Analytics, AI Transcribe, Semantic Models, Network Operations
+tags: Cortex AI, Snowflake Intelligence, Document Processing, Cortex Analyst, Cortex Search, Telecommunications, Agents, RAG, Text-to-SQL, Call Center Analytics, AI Transcribe, Semantic Models, Network Operations
 
 
 
@@ -68,7 +68,7 @@ This diverse dataset enables you to experience how modern AI can unify structure
 
 In this quickstart, you'll build a comprehensive AI-powered telecommunications operations platform called **NovaConnect Intelligence** using Snowflake's Cortex AI capabilities. This end-to-end solution demonstrates how to:
 
-- Process unstructured documents (PDFs) with **Document AI**
+- Process unstructured documents (PDFs) with **Cortex Document Processing**
 - Transcribe and analyze customer call audio with **AI Transcribe** and **AI Sentiment**
 - Create intelligent search experiences with **Cortex Search Services**
 - Build natural language data queries with **Cortex Analyst** and semantic models
@@ -93,7 +93,7 @@ In this quickstart, you'll build a comprehensive AI-powered telecommunications o
 1. **Snowsight UI** (default) - Deploy directly from GitHub using Snowflake's Git integration
 2. **Cortex Code CLI** (alternative) - Use the Telco Agent Builder skill for guided deployment
 
-> **⚠️ Note for Trial Accounts:** The **Web Search** agent tool requires **External Access Integration**, which is not enabled by default on trial accounts. If you need this feature, contact your Snowflake representative to have it enabled. All other features (Document AI, Cortex Search, Cortex Analyst, email notifications) work without this.
+> **⚠️ Note for Trial Accounts:** The **Web Search** agent tool requires **External Access Integration**, which is not enabled by default on trial accounts. If you need this feature, contact your Snowflake representative to have it enabled. All other features (Document Processing, Cortex Search, Cortex Analyst, email notifications) work without this.
 
 ### Assets Created
 
@@ -130,7 +130,7 @@ This quickstart deploys a **complete multi-modal AI platform** combining:
 
 **AI Capabilities**:
 
-- Document AI (AI_PARSE_DOCUMENT)
+- Cortex Document Processing (AI_PARSE_DOCUMENT, AI_EXTRACT)
 - Audio AI (AI_TRANSCRIBE with timestamps)
 - Sentiment AI (AI_SENTIMENT for call analysis)
 - Translation AI (AI_TRANSLATE for multi-language support)
@@ -150,7 +150,7 @@ This quickstart deploys a **complete multi-modal AI platform** combining:
 - **Cortex Search**: 2 search services for semantic search and RAG
 - **Cortex Analyst**: 3 semantic models for natural language SQL
 - **Snowflake Intelligence**: Conversational agents with tool orchestration
-- **Document AI**: Automated document processing at scale
+- **Cortex Document Processing**: Automated document processing at scale
 
 <!-- ------------------------ -->
 
@@ -1314,7 +1314,7 @@ After running the customization, your agent queries will return results using yo
 
 ### What You've Accomplished
 
-In this quickstart, you've built a comprehensive AI-powered telecommunications operations platform using Snowflake's Cortex AI capabilities. You started by processing unstructured data—extracting insights from PDF help documents using Document AI, transcribing customer call recordings with AI_TRANSCRIBE, and analyzing sentiment across thousands of data points. This transformed raw, unstructured telecommunications content into structured, queryable data that forms the foundation of intelligent applications.
+In this quickstart, you've built a comprehensive AI-powered telecommunications operations platform using Snowflake's Cortex AI capabilities. You started by processing unstructured data—extracting insights from PDF help documents using Cortex Document Processing, transcribing customer call recordings with AI_TRANSCRIBE, and analyzing sentiment across thousands of data points. This transformed raw, unstructured telecommunications content into structured, queryable data that forms the foundation of intelligent applications.
 
 You then created the AI services layer that makes this data accessible and actionable. Cortex Search services enable semantic search across call transcripts and support tickets—finding relevant information based on meaning rather than keywords. Cortex Analyst semantic models allow natural language queries against structured network and customer data, automatically generating SQL from plain English questions. Together, these services power the intelligence layer that connects users to insights without requiring technical expertise.
 
