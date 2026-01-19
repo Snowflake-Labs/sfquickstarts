@@ -17,11 +17,13 @@ tags: Cortex AI, Snowflake Intelligence, Document Processing, Cortex Analyst, Co
 
 ## Overview
 
-![NovaConnect Logo](assets/images/novaconnect-logo.png)
-
 ### Introduction
 
 Telecommunications companies face unique challenges in managing vast amounts of operational data—from network performance metrics and infrastructure capacity to customer call recordings, support tickets, and satisfaction surveys. To address these challenges effectively, a unified platform is essential—one capable of storing and processing all data types, whether MP3 call recordings, PDF help documents, or structured network telemetry.
+
+Throughout this quickstart, we'll use **NovaConnect**—a fictitious telecommunications company—as our example organization. NovaConnect operates a nationwide 5G network serving millions of customers, and needs AI-powered tools to analyze network performance, understand customer feedback, and streamline support operations.
+
+<img src="assets/images/novaconnect-logo.png" alt="NovaConnect Logo" width="75%"/>
 
 This data must be readily accessible for analysis using the latest large language models (LLMs) such as Anthropic, Gemma, LLaMA, or DeepSeek. Ensuring the trustworthiness and security of generated insights is critical, especially when they inform network operations decisions and customer experience strategies.
 
