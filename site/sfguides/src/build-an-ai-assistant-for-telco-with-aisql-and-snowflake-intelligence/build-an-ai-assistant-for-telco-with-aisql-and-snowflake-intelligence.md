@@ -89,9 +89,35 @@ In this quickstart, you'll build a comprehensive AI-powered telecommunications o
 - Basic knowledge of SQL
 - 15-20 minutes for deployment
 
-**Deployment Options:**
-1. **Snowsight UI** (default) - Deploy directly from GitHub using Snowflake's Git integration
-2. **Cortex Code CLI** (alternative) - Use the Telco Agent Builder skill for guided deployment
+### Deployment Options
+
+This quickstart offers two deployment paths to accommodate different preferences and skill levels. Choose the option that best fits your workflow:
+
+#### Option 1: Snowsight UI (Recommended)
+
+**Best for:** Most users, visual learners, those new to Snowflake
+
+Deploy directly from GitHub using Snowflake's built-in Git integration. This approach:
+- **No local setup required** - Everything runs in your browser
+- **Visual feedback** - Watch each step execute in Snowsight
+- **Easy troubleshooting** - See errors immediately in the UI
+- **Learn as you go** - Understand what each script does
+
+You'll connect Snowflake to GitHub, then run a series of SQL scripts that automatically:
+1. Configure your account and create required objects
+2. Load sample data from stages
+3. Deploy Cortex Search services and Analyst semantic models
+4. Create notebooks for data processing
+5. Deploy the SnowMail native app
+
+#### Option 2: Cortex Code CLI (Alternative)
+
+**Best for:** Developers, automation enthusiasts, CLI power users
+
+Use the Telco Agent Builder skill for guided, conversational deployment. This approach:
+- **Conversational interface** - AI guides you through deployment
+- **Automated execution** - Less manual copying/pasting
+- **Skill-based** - Uses Cortex Code's agent capabilities
 
 > **⚠️ Note for Trial Accounts:** The **Web Search** agent tool requires **External Access Integration**, which is not enabled by default on trial accounts. If you need this feature, contact your Snowflake representative to have it enabled. All other features (Document Processing, Cortex Search, Cortex Analyst, email notifications) work without this.
 
