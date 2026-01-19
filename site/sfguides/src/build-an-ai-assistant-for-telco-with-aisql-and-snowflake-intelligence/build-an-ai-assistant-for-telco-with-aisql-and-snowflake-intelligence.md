@@ -291,6 +291,26 @@ https://github.com/Snowflake-Labs/sfquickstarts.git
 
 ### Step 3: Deploy from GitHub (Choose Method)
 
+#### Understanding GitHub Integration in Snowflake
+
+Snowflake's **Git Integration** feature allows you to connect directly to GitHub repositories and execute SQL scripts without downloading files locally. This is powerful because:
+
+- **Version Control**: Scripts are always up-to-date from the source repository
+- **No Downloads**: Execute directly from GitHub - no local files needed
+- **Reproducible**: Same scripts, same results every time
+- **Workspace Integration**: Browse, view, and edit files directly in Snowsight
+
+When you created the Git Repository object in Step 2, Snowflake established a connection to the `sfquickstarts` GitHub repository. This connection allows you to:
+
+1. **Browse files** in the repository through the Snowsight UI
+2. **Execute SQL files** directly using `EXECUTE IMMEDIATE FROM @<stage>/<path>`
+3. **Create Workspaces** from repository folders for interactive development
+4. **Fetch updates** when the repository changes
+
+The deployment scripts in `assets/sql/` are numbered 01-06 and should be executed in order. Each script builds on the previous one, creating the complete NovaConnect AI platform.
+
+#### Choose Your Deployment Method
+
 **Option A: Execute all at once** (in one worksheet):
 
 ```sql
