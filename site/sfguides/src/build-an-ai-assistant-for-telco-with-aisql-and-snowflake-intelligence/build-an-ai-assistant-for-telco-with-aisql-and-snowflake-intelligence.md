@@ -140,7 +140,7 @@ This quickstart deploys a **complete multi-modal AI platform** combining:
 
 ### System Architecture
 
-![Telco Operations AI Architecture](assets/images/architecture-overview.png)
+![Telco Operations AI Architecture](assets/images/architecture-overview.jpg)
 
 ![Architecture Diagram](assets/images/architecture-diagram.png)
 
