@@ -299,7 +299,7 @@ https://github.com/Snowflake-Labs/sfquickstarts.git
 
 ---
 
-### Step 3: Deploy from GitHub (Choose Method)
+### Step 3: Deploy from GitHub Using Git Integration
 
 #### Understanding GitHub Integration in Snowflake
 
