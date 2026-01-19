@@ -166,7 +166,17 @@ This quickstart deploys a **complete multi-modal AI platform** combining:
 
 ### System Architecture
 
+The NovaConnect AI platform follows a layered architecture that transforms raw unstructured data into actionable intelligence. Data flows from multiple sources (documents, audio, structured tables) through Cortex AI processing functions, into organized tables and search indices, and finally surfaces through Snowflake Intelligence agents and applications.
+
+The architecture diagram below illustrates how each component connects:
+
+- **Left side**: Raw data sources (PDFs, MP3s, CSVs) stored in Snowflake stages
+- **Middle**: AI processing layer using Cortex functions to extract, transcribe, and analyze content
+- **Right side**: Structured outputs (tables, search services, semantic models) that power the agent
+
 ![Telco Operations AI Architecture](assets/images/architecture-overview.jpg)
+
+The detailed component diagram shows the specific Snowflake objects created during deployment:
 
 ![Architecture Diagram](assets/images/architecture-diagram.png)
 
