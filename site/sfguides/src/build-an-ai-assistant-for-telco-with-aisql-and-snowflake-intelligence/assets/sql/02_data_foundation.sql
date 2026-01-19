@@ -13,6 +13,10 @@ USE SCHEMA DEFAULT_SCHEMA;
 
 ALTER SESSION SET QUERY_TAG = '{"origin":"sf_sit-is", "name":"Build an AI Assistant for Telco using AISQL and Snowflake Intelligence", "version":{"major":1, "minor":0},"attributes":{"is_quickstart":1, "source":"sql"}}';
 
+-- Enable cross-region inference for Cortex AI functions
+-- This allows using AI models hosted in other regions when not available locally
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+
 -- ============================================================================
 -- Step 1: Copy Data Files from Git Repository to Stages
 -- ============================================================================

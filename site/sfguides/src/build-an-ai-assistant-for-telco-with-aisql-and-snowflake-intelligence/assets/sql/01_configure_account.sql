@@ -23,6 +23,10 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE TELCO_ANALYST_ROLE;
 -- Grant CORTEX_USER database role (required for Cortex AI functions)
 GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE TELCO_ANALYST_ROLE;
 
+-- Enable cross-region inference for Cortex AI functions
+-- This allows using AI models hosted in other regions when not available locally
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+
 -- Grant role to ACCOUNTADMIN and SYSADMIN for administrative access
 GRANT ROLE TELCO_ANALYST_ROLE TO ROLE ACCOUNTADMIN;
 GRANT ROLE TELCO_ANALYST_ROLE TO ROLE SYSADMIN;
