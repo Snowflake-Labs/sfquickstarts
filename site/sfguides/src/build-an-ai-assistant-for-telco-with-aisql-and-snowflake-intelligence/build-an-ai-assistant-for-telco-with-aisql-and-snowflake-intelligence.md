@@ -427,7 +427,7 @@ The Telco Agent Builder skill will:
 - **Progress tracking** - Real-time status updates
 - **Customization** - Easily modify settings during deployment
 
-> **Note**: Cortex Code CLI is available for Snowflake customers. Visit [docs.snowflake.com](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents) for more information.
+> **Note**: Cortex Code CLI is currently in Private Preview. Contact your Snowflake account team to request access.
 
 ---
 
