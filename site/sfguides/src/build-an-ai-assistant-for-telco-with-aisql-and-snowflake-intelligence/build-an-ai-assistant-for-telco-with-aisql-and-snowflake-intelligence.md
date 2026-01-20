@@ -23,7 +23,7 @@ Telecommunications companies face unique challenges in managing vast amounts of 
 
 Throughout this quickstart, we'll use **NovaConnect**—a fictitious telecommunications company—as our example organization. NovaConnect operates a nationwide 5G network serving millions of customers, and needs AI-powered tools to analyze network performance, understand customer feedback, and streamline support operations.
 
-<img src="assets/images/novaconnect-logo.png" alt="NovaConnect Logo" width="75%"/>
+<img src="assets/novaconnect-logo.png" alt="NovaConnect Logo" width="75%"/>
 
 This data must be readily accessible for analysis using the latest large language models (LLMs) such as Anthropic, Gemma, LLaMA, or DeepSeek. Ensuring the trustworthiness and security of generated insights is critical, especially when they inform network operations decisions and customer experience strategies.
 
@@ -176,11 +176,11 @@ The architecture diagram below illustrates how each component connects:
 - **Middle**: AI processing layer using Cortex functions to extract, transcribe, and analyze content
 - **Right side**: Structured outputs (tables, search services, semantic models) that power the agent
 
-![Telco Operations AI Architecture](assets/images/architecture-overview.jpg)
+![Telco Operations AI Architecture](assets/architecture-overview.jpg)
 
 The dataflow diagram below shows how data moves through the system to power Snowflake Intelligence. Raw data enters from the left (CSV files, PDF documents, MP3 audio recordings), gets processed through Cortex AI functions in the middle (AI_PARSE_DOCUMENT, AI_TRANSCRIBE, AI_SENTIMENT), and flows into the structured outputs on the right (Cortex Search services and Cortex Analyst semantic models). These services become the "tools" that the Snowflake Intelligence agent uses to answer user questions—combining structured SQL queries with semantic search across unstructured content.
 
-![Architecture Diagram](assets/images/architecture-diagram.png)
+![Architecture Diagram](assets/architecture-diagram.png)
 
 ### Key Technologies
 
@@ -535,7 +535,7 @@ The AI and ML Studio provides access to:
 
 The Cortex LLM Playground lets you compare text completions across multiple large language models available in Cortex AI.
 
-![Cortex Playground](assets/images/cortex-playground.png)
+![Cortex Playground](assets/cortex-playground.png)
 
 **Try it now:**
 
@@ -563,7 +563,7 @@ The model will suggest various factors to consider:
 
 ### Document Processing Playground
 
-![Document Processing Playground](assets/images/document-processing-playground.png)
+![Document Processing Playground](assets/document-processing-playground.png)
 
 The **Document Processing Playground** is a powerful AI tool that helps you understand how text is extracted from documents. It provides an interactive UI for testing **AI_EXTRACT** and **AI_PARSE_DOCUMENT** functions, allowing you to experiment with different extraction strategies before implementing them in production.
 
@@ -578,7 +578,7 @@ The **Document Processing Playground** is a powerful AI tool that helps you unde
 4. Choose 1-2 PDF documents (e.g., NovaConnect help documents)
 5. Click **Open playground**
 
-![Document Selected in Playground](assets/images/pdfs_document_playground.png)
+![Document Selected in Playground](assets/pdfs_document_playground.png)
 
 #### Step 2: Extract Information Using Questions
 
@@ -596,7 +596,7 @@ The **Extraction** tab is where you can ask questions to pull specific informati
 
 After entering each question, click **Add Prompt** to see the extracted results.
 
-![Extraction with Contract Terms](assets/images/contract-terms.png)
+![Extraction with Contract Terms](assets/contract-terms.png)
 
 #### Step 3: Get the SQL Code
 
@@ -923,7 +923,7 @@ This agent represents the **culmination of all the previous work** - it brings t
 
 ### Access the Agent
 
-![Snowflake Intelligence](assets/images/snowflake-intelligence-ui.jpg)
+![Snowflake Intelligence](assets/snowflake-intelligence-ui.jpg)
 
 1. Navigate to **AI & ML Studio** → **Snowflake Intelligence** in your Snowflake account
 2. Select the **Telco Operations AI Agent**
@@ -931,7 +931,7 @@ This agent represents the **culmination of all the previous work** - it brings t
 
 **Location**: `SNOWFLAKE_INTELLIGENCE.AGENTS."Telco Operations AI Agent"`
 
-![Intelligence Tab Navigation](assets/images/intelligence-navigation.png)
+![Intelligence Tab Navigation](assets/intelligence-navigation.png)
 
 ---
 
@@ -1095,7 +1095,7 @@ Here's an example conversation demonstrating the agent's capabilities:
 
 Here are the sample questions configured in the agent:
 
-![Agent Sample Questions](assets/images/intelligence-sample-questions.jpg)
+![Agent Sample Questions](assets/intelligence-sample-questions.jpg)
 
 1. "Which regions have the highest network latency issues?"
 2. "Show me 5G towers operating above 80% capacity"
@@ -1107,9 +1107,9 @@ Here are the sample questions configured in the agent:
 8. "Show me regions with both high latency and customer complaints"
 9. "What percentage of calls mention competitor names?"
 
-![Agent Testing Example](assets/images/agent-query-response-1.png)
+![Agent Testing Example](assets/agent-query-response-1.png)
 
-![Agent Testing Example 2](assets/images/agent-query-response-2.png)
+![Agent Testing Example 2](assets/agent-query-response-2.png)
 
 ---
 
@@ -1125,7 +1125,7 @@ After using the agent, explore its configuration:
    - **Orchestration Instructions**: How the agent decides which tools to use
    - **Access Control**: Who can use the agent
 
-![Create Agent Button](assets/images/create-agent-button.png)
+![Create Agent Button](assets/create-agent-button.png)
 
 ### Agent Configuration Details
 
@@ -1133,27 +1133,27 @@ When configuring the agent, you'll see these key sections:
 
 **Agent Description:**
 
-![Describe Agent](assets/images/agent-description-form.png)
+![Describe Agent](assets/agent-description-form.png)
 
 **Semantic Model YAML Files:**
 
 The agent uses 3 semantic models located in the CORTEX_ANALYST stage:
 
-![YAML Files](assets/images/semantic-model-yaml-files.jpg)
+![YAML Files](assets/semantic-model-yaml-files.jpg)
 
 **Add Tools with Detailed Descriptions:**
 
-![Detailed Description](assets/images/tool-description-generate.png)
+![Detailed Description](assets/tool-description-generate.png)
 
 **All 3 Semantic Model Tools:**
 
-![All 3 Semantic Model Tools](assets/images/semantic-model-tools-added.png)
+![All 3 Semantic Model Tools](assets/semantic-model-tools-added.png)
 
 **Cortex Search Service Configuration:**
 
-![Call Transcripts Search](assets/images/cortex-search-transcripts-config.jpg)
+![Call Transcripts Search](assets/cortex-search-transcripts-config.jpg)
 
-![Search Services](assets/images/cortex-search-services-list.jpg)
+![Search Services](assets/cortex-search-services-list.jpg)
 
 **Test Your Agent:**
 
@@ -1168,11 +1168,11 @@ The Test Agent interface is where you can interact with your AI assistant in rea
 
 Try questions like: *"What regions have the highest call drop rates?"* or *"What are customers saying about 5G coverage?"*
 
-![Test Agent](assets/images/agent-test-interface.png)
+![Test Agent](assets/agent-test-interface.png)
 
 **Configure Sample Questions:**
 
-![Agent Questions](assets/images/agent-sample-questions.jpg)
+![Agent Questions](assets/agent-sample-questions.jpg)
 
 ---
 
@@ -1202,7 +1202,7 @@ To customize the appearance of your Intelligence interface:
 1. Navigate to **AI & ML** → **Agents** → **Snowflake Intelligence** tab
 2. Click **Open Settings**
 
-![Intelligence Settings Panel](assets/images/intelligence-settings.png)
+![Intelligence Settings Panel](assets/intelligence-settings.png)
 
 **Customize the Interface:**
 
@@ -1215,9 +1215,9 @@ To customize the appearance of your Intelligence interface:
 
 Use the NovaConnect logos to brand your interface:
 
-![NovaConnect Full Logo](assets/images/novaconnect-logo.png)
+![NovaConnect Full Logo](assets/novaconnect-logo.png)
 
-![NovaConnect Compact Logo](assets/images/novaconnect-logo-icon.png)
+![NovaConnect Compact Logo](assets/novaconnect-logo-icon.png)
 
 ---
 
