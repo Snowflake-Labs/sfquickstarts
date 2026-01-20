@@ -100,37 +100,29 @@ You can access the interface for adding Connector DataSets via the Appstore, the
 
    - (Conditional) If you want to connect to data via the **APPSTORE**, do the following:
 
-     - Select _Appstore_ in the toolbar at the top of the screen.
-     - Click the _Search_ tab.
-     - Click the _Connector_ checkbox under Capability.
-     - Use the search bar or page navigation to locate the Connector you want to connect to, then click it to open its details view.
+     - Select _Appstore_ in the toolbar at the Features Section of the left menu
+     - Use the search bar to locate the Connector you want to connect to, then click it to open its details view.
      - Click _Get the Data_.
-
-     - Alternatively, for some of the most popular Connectors, a _Get the Cards_ button is available. This allows you to power up several prebuilt, live Cards based on your own data, without having to configure advanced options. This is a great way to "preview" the Connector to make sure it provides the data you want. If you choose this option, you are asked to select the desired account or input your account information if you haven't created an account for this Connector yet.
 
    - (Conditional) If you want to connect to data via the **DATA CENTER**, do the following:
 
-     - Select _Data_ in the toolbar at the top of the screen.
-     - In the Connect Data area at the top of the screen, select _Connectors_, _File_, or _Database_, depending on the connection type.
+     - Go to  _Datasets_ in the Features Section at the left menu.
+     - Select Connect Data at the top menu
+     - In the Connect Data submenu at the top of the screen, select _Connectors_, _Upload a spreadsheet_, depending on the connection type.
 
      - You can use the following table to learn more about these Connector types:
 
        | Connector Type | Description                                                                                                                                                                                   |
        | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
        | Connectors     | A Connector for a third-party app in which data is stored in the cloud. Most of Domo's Connectors fall into this category. Examples include Facebook, Salesforce, Adobe Analytics, and so on. |
-       | File           | A Connector used to pull files into Domo. Examples include Excel, Google Sheets, and Box.                                                                                                     |
-       | Database       | A Connector in which you write a query to pull data from a database into Domo. Examples include MySQL, Amazon Redshift, and MongoDB.                                                          |
+       | Upload a Spreadsheet           | A Connector used to pull files into Domo. Examples include Excel, Google Sheets, and Box.                                                                                                     |
+       
 
-     - The other two icons in this area denote other non-Connector methods for bringing data into Domo. Federated refers to federated DataSets, and API refers to Domo's development environment, where you can build your own custom Connectors. For more information on Federated DataSets, see Connecting to Data Using Workbench 5.
+     - The other  icons in this area denote other non-Connector methods for bringing data into Domo. Federated refers to federated DataSets, and Cloud Integration refers to native integration with different CDW (i.e. Snowflake).
      - Select the Connector type you want.
      - Click the desired Connector tile.
 
      _Note: Popular Connectors are marked with a Preferred tag. This is also used when there are several different Connectors to the same data, such as Facebook. The most commonly used option will display the Preferred tag._
-
-   - (Conditional) If you want to connect to data via the menu, do the following:
-     - Select > _Data_.
-     - Select _Connectors_, _File_, or _Database_. _For more information about these Connector types, see the above table._
-     - Click the desired Connector tile.
 
 1. Specify the settings in each section. - Refer to the general information included in this topic and to the help in the specific data Connector.
    _For more information about configuring specific data Connectors, see Configuring Each Connector.
@@ -140,17 +132,13 @@ You can access the interface for adding Connector DataSets via the Appstore, the
 
 ## Connector Settings
 
-All Connector types in Domo have different options for setting up a DataSet.
+All [Connector](https://domo-support.domo.com/s/topic/0TO5w000000ZammGAC/connect-data-to-domo?language=en_US) types in Domo have different options for setting up a DataSet.
 
 Most Connectors require you to enter login credentials, an API key, a server URL, or a combination of these to access the Connector. If you cannot connect after entering your credentials, you have most likely entered incorrect credentials.
-
-For information about finding credentials, see the documentation for your specific Connector. You can find this under [API Connectors](https://domo-support.domo.com/s/topic/0TO5w000000ZaoQGAS).
 
 After you connect, you are usually asked for information about the data you want to pull and the desired format. Most Connectors have two or more associated report types. In addition, many Connectors request a timeframe for the data to be retrieved. You may also be asked to submit a query for retrieving data. For example, when connecting to JIRA you can enter a JQL query to retrieve data for a specified search filter.
 
 For most Connectors, you are also asked to schedule data updates. You can use basic scheduling, in which you select a single, specific unit of time (such as "Every hour") and enter the time of day when the update is to occur, if required. Or you can use advanced scheduling, in which you can select multiple update times.
-
-The information in this section is general and may or may not be required for a certain Connector. For specific requirements for Connectors, see [API Connectors](https://domo-support.domo.com/s/topic/0TO5w000000ZaoQGAS).
 
 ### Connector Credentials
 
@@ -204,6 +192,9 @@ Schedule times are based on UTC but can be seen in your timezone._
 
   ![assets/advanced_connector.png](assets/advanced_connector.png)
   ![assets/advanced_connector2.png](assets/advanced_connector2.png)
+
+## Connecting to Snowflake
+Domo's native Snowflake integration enables direct, real-time connectivity to your Snowflake data warehouse without the need to extract, copy, or move data into Domo's infrastructure. Using Cloud Integration to Snowflake, Domo pushes query execution directly to Snowflake, leveraging its compute power while keeping your data securely in place. This approach eliminates data duplication, reduces storage costs, and ensures you're always working with the most current data available in your Snowflake environment
 
 ## Connector Error handling
 
