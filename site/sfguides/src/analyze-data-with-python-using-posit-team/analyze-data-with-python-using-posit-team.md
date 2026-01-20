@@ -192,7 +192,7 @@ Install these extensions:
 
 ![](assets/positron/extensions_quarto.png)
 
-3. Install the Quarto extension: click on the Quarto extension, then click **Install**. For more informatin, see the [Quarto extension documentation](https://quarto.org/docs/tools/vscode.html).
+3. Install the Quarto extension: click on the Quarto extension, then click **Install**. For more information, see the [Quarto extension documentation](https://quarto.org/docs/tools/vscode.html).
 4. Install the Shiny extension: Follow the same steps as above, but search for and install the Shiny extension. For more information, see the [Shiny extension documentation](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/).
 
 ### Open a new folder
