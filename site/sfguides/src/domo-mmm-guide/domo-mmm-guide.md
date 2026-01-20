@@ -193,8 +193,6 @@ Schedule times are based on UTC but can be seen in your timezone._
   ![assets/advanced_connector.png](assets/advanced_connector.png)
   ![assets/advanced_connector2.png](assets/advanced_connector2.png)
 
-## Connecting to Snowflake
-Domo's native Snowflake integration enables direct, real-time connectivity to your Snowflake data warehouse without the need to extract, copy, or move data into Domo's infrastructure. Using Cloud Integration to Snowflake, Domo pushes query execution directly to Snowflake, leveraging its compute power while keeping your data securely in place. This approach eliminates data duplication, reduces storage costs, and ensures you're always working with the most current data available in your Snowflake environment
 
 ## Connector Error handling
 
@@ -207,6 +205,10 @@ The options in this dialog are as follows:
 |----|----|
 | Always retry when an update fails | Domo retries to update the DataSet. After retrying the specified number of times, Domo sends a notification if the update attempt is unsuccessful. |
 | Do not retry when update fails | Domo sends a notification if the update attempt is unsuccessful, and no retries are made.|
+
+
+## Connecting to Snowflake
+Domo's native Snowflake integration enables direct, real-time connectivity to your Snowflake data warehouse without the need to extract, copy, or move data into Domo's infrastructure. Using Cloud Integration to Snowflake, Domo pushes query execution directly to Snowflake, leveraging its compute power while keeping your data securely in place. This approach eliminates data duplication, reduces storage costs, and ensures you're always working with the most current data available in your Snowflake environment
 
 ## Create a Magic ETL DataFlow
 
@@ -337,26 +339,23 @@ ORDER BY week_start_date;
 |-------------|---------------|
 | Minimum Channels | 2 marketing channels |
 | Maximum Channels | 10 marketing channels |
-| Minimum Date Range | 8 weeks |
-| Maximum Date Range | 208 weeks (~4 years) |
-| Recommended Range | 1-3 years for robust modeling |
+| Minimum Date Range | 52 weeks |
+| Maximum Date Range | 104 weeks (~2 years) |
 | Currency | All channels should use same currency |
-| Granularity | Consistent time granularity (weekly recommended) |
+| Granularity | Weekly  granularity (weekly recommended) |
 
-> aside positive
-> **Tip**: Weekly data aggregation typically provides the best balance between granularity and statistical power for MMM analysis. Include multiple seasonal cycles if possible.
 
 <!-- ------------------------ -->
 
 ## Configure the Model
 Duration: 15
 
-Once Domo MMM is provisioned, follow these steps to configure your first model.
+Once Domo's Dataset is provisioned, follow these steps to configure your first model.
 
 ### Step 1: Launch the Application
 
-1. Navigate to **Asset Library** in your Domo instance
-2. Search for "Domo MMM" or "Stella MMM"
+1. Navigate to **App Studio** in your Domo instance
+2. Search for "Domo MMM"
 3. Click to launch the application
 4. You'll see the **Welcome** screen
 
