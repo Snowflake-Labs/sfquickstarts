@@ -1,6 +1,6 @@
 author: Domo
-id: getting-started-with-domo-mmm
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
+id: domo-mmm-guide
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Build Marketing Mix Models with Domo MMM and Snowflake Cortex AI to measure channel incrementality, optimize budgets, and maximize marketing ROI.
 environments: web
@@ -413,7 +413,7 @@ iROAS priors incorporate your domain knowledge into the model:
 | Display Ads | 1.2 | Awareness channels often have lower direct iROAS |
 | Email Marketing | 5.0 | Low cost channel with high returns |
 
-![Channel Mapping](assets/Welcome_Screen.png)
+![Channel Mapping](assets/welcome_screen.png)
 
 
 ### Step 4: Save Configuration
