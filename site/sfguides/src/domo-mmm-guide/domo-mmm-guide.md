@@ -425,34 +425,36 @@ iROAS priors incorporate your domain knowledge into the model:
    - 52-104 weeks of data
    - No duplicate column mappings
    - Required fields present
-     
-![Run Analysys](assets/run_analysis.png)
+
      
 <!-- ------------------------ -->
 
 ## Run the Analysis
-Duration:  The model takes from 7 to 15 min to run
 
 ### Launching Model Execution
 
 After saving your configuration:
 
 1. Click **"Run Stella MMM Analysis"**
-2. The workflow execution modal appears
-3. Monitor progress through 6 phases:
+
+     
+![Run Analysys](assets/run_analysis.png)
+
+3. The workflow execution modal appears
+4. Monitor progress through 6 phases:
 
 ### Execution Phases
 
-| Phase | Progress | Description |
-|-------|----------|-------------|
-| Data Validation | 10% | Verifying data quality and completeness |
-| Feature Engineering | 30% | Creating adstock transformations and normalizations |
-| Bayesian Model Setup | 50% | Initializing PyMC model with priors |
-| MCMC Sampling | 70% | Running Markov Chain Monte Carlo sampling |
-| Posterior Analysis | 85% | Computing statistics on posterior distributions |
-| Generating Insights | 95% | Calculating metrics and preparing visualizations |
+| Phase | Description |
+|-------|-------------|
+| Data Validation | Verifying data quality and completeness |
+| Feature Engineering |  Creating adstock transformations and normalizations |
+| Bayesian Model Setup |  Initializing PyMC model with priors |
+| MCMC Sampling |  Running Markov Chain Monte Carlo sampling |
+| Posterior Analysis | Computing statistics on posterior distributions |
+| Generating Insights | Calculating metrics and preparing visualizations |
 
-![Execution Progress](assets/execution_progress.png)
+![Execution Progress](assets/model_execution.png)
 
 ### What Happens Behind the Scenes
 
@@ -463,7 +465,6 @@ The Domo Code Engine executes a PyMC-based Bayesian model that:
 3. **Runs MCMC Sampling** - Generates thousands of samples from posterior distribution
 4. **Calculates Key Metrics** - iROAS with confidence intervals, channel contribution, revenue decomposition
 
-> aside negative
 > **Note**: Model execution typically takes 5-15 minutes depending on data volume and number of channels. Do not close the browser during execution.
 
 <!-- ------------------------ -->
@@ -475,37 +476,48 @@ Once the model completes, you'll be taken to the **Insights Dashboard** with fou
 
 ### Tab 1: Channel Performance
 
+Contains two view toggles: **Performance View** and **Contribution View**.
+
 #### iROAS Chart
 
 ![iROAS Results](assets/iroas_results.png)
 
-**How to Read:**
-- Each bar represents a channel's Incremental Return on Ad Spend
-- Error bars show 95% confidence intervals
-- Higher iROAS = more efficient channel
-
-**Example Interpretation:**
-> "Facebook Ads has an iROAS of 2.8x, meaning every $1 spent generates $2.80 in incremental revenue. The confidence interval of [2.3x - 3.2x] indicates statistical significance."
-
-#### Revenue Waterfall
-
-![Waterfall Results](assets/waterfall_results.png)
-
-**How to Read:**
-- **Baseline**: Revenue that would occur without marketing
-- **Channel Bars**: Incremental revenue attributed to each channel
-- **Total**: Sum of baseline + all channel contributions
+Displays the Incremental Return on Ad Spend for each marketing channel with 95% confidence intervals.
 
 #### Channel Contribution Over Time
 
 ![Contribution Trend](assets/contribution_trend.png)
 
-**How to Read:**
-- Stacked area chart showing weekly contribution by channel
-- Helps identify seasonal patterns and trends
-- Compare channel performance across time periods
+Stacked area chart showing weekly revenue contribution by channel over the analysis period.
 
-### Tab 2: Budget Optimizer
+### Tab 2: Statistical Analysis
+
+Contains collapsible sections with **Performance View** and **Contribution View** toggles.
+
+#### VIF Analysis
+
+![VIF Chart](assets/vif_chart.png)
+
+Variance Inflation Factor chart showing multicollinearity levels between marketing variables.
+
+#### Correlation Matrix
+
+![Correlation Matrix](assets/correlation_matrix.png)
+
+Heatmap displaying pairwise correlations between all model variables.
+
+#### Out of Sample Analysis
+
+Model performance metrics on unseen test data with prediction intervals.
+
+### Tab 3: Budget Allocation
+
+![Budget Allocation](assets/budget_allocation.png)
+
+Displays KPI cards (Total Budget, Recommended Allocation, Optimized Revenue, Revenue Lift %) and model-recommended budget allocation by channel based on iROAS rankings.
+
+
+### Tab 4: Budget Optimizer
 
 ![Budget Optimizer Results](assets/budget_optimizer_results.png)
 
@@ -521,89 +533,38 @@ Once the model completes, you'll be taken to the **Insights Dashboard** with fou
 3. Click "Apply Scenario" to see projected impact
 4. Export recommendations for planning
 
-### Tab 3: Model Diagnostics
-
-#### Key Metrics
-
-| Metric | Description | Good Range |
-|--------|-------------|------------|
-| **R²** | Variance explained by model | > 0.80 |
-| **MAPE** | Mean Absolute Percentage Error | < 15% |
-| **VIF** | Variance Inflation Factor | < 5.0 |
-
-#### R² Interpretation
-
-| R² Value | Quality | Interpretation |
-|----------|---------|----------------|
-| > 0.95 | Excellent | Model explains almost all variance |
-| 0.85 - 0.95 | Good | Strong predictive power |
-| 0.70 - 0.85 | Moderate | Acceptable for most use cases |
-| < 0.70 | Needs Review | Consider adding variables |
-
-#### VIF Analysis (Multicollinearity)
-
-![VIF Chart](assets/vif_chart.png)
-
-**How to Read:**
-- VIF < 5: No multicollinearity concern
-- VIF 5-10: Moderate correlation, monitor closely
-- VIF > 10: High multicollinearity, consider combining channels
-
-#### Correlation Matrix
-
-![Correlation Matrix](assets/correlation_matrix.png)
-
-**How to Read:**
-- Blue = positive correlation
-- Red = negative correlation
-- High correlation between channels may indicate multicollinearity
-
-### Tab 4: Settings
-
-- **Export Results**: Download charts as PNG images
-- **Model Metadata**: View execution details and parameters
-- **Configuration**: Review mapped fields and settings
-
 <!-- ------------------------ -->
 
 ## Using Cortex AI Analysis
-Duration: 10
+Duration: 5
 
 > aside positive
-> **Snowflake Cortex Integration**: This optional feature provides AI-powered natural language insights on your MMM results.
+> **Snowflake Cortex Integration**: This feature provides AI-powered natural language insights on your MMM results.
 
 ### Enabling Cortex Analysis
 
-If Snowflake Cortex integration was configured during provisioning:
+The **Cortex Analysis** button is available in the **Channel Performance** and **Statistical Analysis** tabs:
 
-1. Navigate to any chart in the Insights Dashboard
-2. Look for the **"Cortex Analysis"** button
-3. Click to initiate AI analysis
+1. Navigate to Channel Performance or Statistical Analysis tab
+2. Click the **"Cortex Analysis"** button
+3. AI analyzes the current view and generates insights
 
 ![Cortex Button](assets/cortex_button.png)
 
-### How Cortex Analysis Works
+### Tab 5: Snowflake Intelligence
 
-1. **Thread Creation**: A conversation thread is created in Snowflake
-2. **Data Context**: MMM metrics and chart data are sent to the Cortex Agent
-3. **AI Analysis**: The agent analyzes patterns and generates insights
-4. **Natural Language Response**: Results are displayed in plain language
+![Snowflake Intelligence](assets/snowflake_intelligence.png)
 
-### Example Cortex Insights
+AI-powered chat interface for natural language insights on your MMM results.
 
-**For iROAS Analysis:**
-> "Your Email Marketing channel shows the highest iROAS at 5.2x, significantly outperforming other channels. However, its budget allocation is only 8% of total spend. Consider reallocating 10-15% from lower-performing Display channels to Email Marketing to maximize overall ROI."
+#### Requirements
 
-**For Budget Optimization:**
-> "Based on the current model, reallocating $50,000 from Google Display to Facebook Ads could increase total incremental revenue by approximately 12%. The recommended allocation maintains minimum brand presence while optimizing for performance."
+To enable Snowflake Intelligence, the following must be configured in Snowflake:
 
-### Continuing the Conversation
+- Snowflake account with **Cortex Agents** enabled
+- Cortex Agent created and deployed in your Snowflake environment
+- Proper database and schema permissions for the agent
 
-Cortex AI supports multi-turn conversations:
-
-1. Ask follow-up questions in the chat interface
-2. Request specific analysis (e.g., "What about seasonality effects?")
-3. Get recommendations tailored to your business context
 
 <!-- ------------------------ -->
 
@@ -615,38 +576,10 @@ Duration: 5
 | Practice | Why It Matters |
 |----------|----------------|
 | Use weekly aggregation | Optimal balance of granularity and statistical power |
-| Include 1-3 years of data | Captures seasonality and long-term patterns |
+| Include 1-2 years of data | Captures seasonality and long-term patterns |
 | Validate spend data with finance | Ensures accuracy of channel attribution |
 | Remove test/invalid data | Prevents model contamination |
 
-### Model Configuration
-
-| Practice | Why It Matters |
-|----------|----------------|
-| Set reasonable iROAS priors | Helps model convergence and accuracy |
-| Include control variables | Accounts for external factors |
-| Start with major channels | Focus on channels with significant spend |
-| Group similar channels | Reduces multicollinearity issues |
-
-### Interpretation
-
-| Practice | Why It Matters |
-|----------|----------------|
-| Check R² and MAPE first | Validates model reliability |
-| Review VIF for multicollinearity | Ensures independent channel effects |
-| Consider confidence intervals | Accounts for uncertainty in estimates |
-| Compare to business intuition | Validates results make sense |
-
-### Optimization
-
-| Practice | Why It Matters |
-|----------|----------------|
-| Set realistic constraints | Maintains brand presence and relationships |
-| Test scenarios incrementally | Validates optimization recommendations |
-| Re-run quarterly | Captures changing market dynamics |
-| Document decisions | Creates audit trail for budget changes |
-
-<!-- ------------------------ -->
 
 ## Troubleshooting
 Duration: 5
@@ -682,8 +615,6 @@ Duration: 5
 If you encounter issues not covered here:
 
 1. **Domo Support**: Contact through the Domo Help Center
-2. **Documentation**: Review in-app help guides
-3. **Community**: Post questions in Domo Community forums
 
 <!-- ------------------------ -->
 
