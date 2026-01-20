@@ -480,29 +480,32 @@ Contains two view toggles: **Performance View** and **Contribution View**.
 
 #### iROAS Chart
 
-![iROAS Results](assets/iroas_results.png)
-
 Displays the Incremental Return on Ad Spend for each marketing channel with 95% confidence intervals.
+
+![iROAS Results](assets/iroas_results.png)
 
 #### Channel Contribution Over Time
 
-![Contribution Trend](assets/contribution_trend.png)
-
 Stacked area chart showing weekly revenue contribution by channel over the analysis period.
 
-### Tab 2: Statistical Analysis
-viout
-#### VIF Analysis
+![Contribution Trend](assets/contribution_trend.png)
 
-![VIF Chart](assets/vif_chart.png)
+
+### Tab 2: Statistical Analysis
+
+#### VIF Analysis
 
 Variance Inflation Factor chart showing multicollinearity levels between marketing variables.
 
+![VIF Chart](assets/vif_chart.png)
+
+
 #### Correlation Matrix
+
+Heatmap displaying pairwise correlations between all model variables.
 
 ![Correlation Matrix](assets/correlation_matrix.png)
 
-Heatmap displaying pairwise correlations between all model variables.
 
 #### Out of Sample Analysis
 
@@ -510,14 +513,11 @@ Model performance metrics on unseen test data with prediction intervals.
 
 ### Tab 3: Budget Allocation
 
-![Budget Allocation](assets/budget_allocation.png)
-
 Displays KPI cards (Total Budget, Recommended Allocation, Optimized Revenue, Revenue Lift %) and model-recommended budget allocation by channel based on iROAS rankings.
 
+![Budget Allocation](assets/budget_allocation.png)
 
 ### Tab 4: Budget Optimizer
-
-![Budget Optimizer Results](assets/budget_optimizer_results.png)
 
 **Features:**
 - **Current Allocation**: Your existing budget distribution
@@ -531,12 +531,13 @@ Displays KPI cards (Total Budget, Recommended Allocation, Optimized Revenue, Rev
 3. Click "Apply Scenario" to see projected impact
 4. Export recommendations for planning
 
+![Budget Optimizer Results](assets/budget_optimizer_results.png)
+
 <!-- ------------------------ -->
 
 ## Using Cortex AI Analysis
 Duration: 5
 
-> aside positive
 > **Snowflake Cortex Integration**: This feature provides AI-powered natural language insights on your MMM results.
 
 ### Enabling Cortex Analysis
@@ -640,7 +641,7 @@ For further learning, explore the following resources:
 - [Domo Knowledge Base](https://domo-support.domo.com/s/knowledge-base?language=en_US)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
 - [Marketing Mix Modeling Overview](https://en.wikipedia.org/wiki/Marketing_mix_modeling)
-- [PyMC Documentation](https://www.pymc.io/welcome.html)
+- [Stella](https://www.stellaheystella.com/)
 - [Snowflake Cortex AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Domo Community](https://www.domo.com/domo-central/community)
 - [Domo Community Forum](https://community-forums.domo.com/main)
