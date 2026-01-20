@@ -491,9 +491,7 @@ Displays the Incremental Return on Ad Spend for each marketing channel with 95% 
 Stacked area chart showing weekly revenue contribution by channel over the analysis period.
 
 ### Tab 2: Statistical Analysis
-
-Contains collapsible sections with **Performance View** and **Contribution View** toggles.
-
+viout
 #### VIF Analysis
 
 ![VIF Chart](assets/vif_chart.png)
