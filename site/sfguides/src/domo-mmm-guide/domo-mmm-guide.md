@@ -359,7 +359,6 @@ Once Domo's Dataset is provisioned, follow these steps to configure your first m
 3. Click to launch the application
 4. You'll see the **Welcome** screen
 
-![Welcome Screen](assets/welcome_screen.png)
 
 ### Step 2: Field Mapping
 
@@ -382,13 +381,11 @@ Click **"Get Started"** to begin the configuration wizard.
 
 For each marketing channel:
 
-1. Click **"+ Add Channel"**
-2. Enter channel name (e.g., "Facebook Ads")
-3. Select the dataset (same or different dataset)
-4. Map the spend field (e.g., `facebook_ads_spend`)
-5. Repeat for all channels (minimum 2, maximum 10)
+1. Map the spend field (e.g., `facebook_ads_spend`)
+2. 6. Repeat for all channels (minimum 2, maximum 10)
+3. If there is more than 10 marketing Channel, click **"+ Add Channel"**
+4. Map the aditional spend field (e.g., `facebook_ads_spend`)
 
-![Channel Mapping](assets/channel_mapping.png)
 
 #### Add Control Variables (Optional)
 
@@ -416,20 +413,25 @@ iROAS priors incorporate your domain knowledge into the model:
 | Display Ads | 1.2 | Awareness channels often have lower direct iROAS |
 | Email Marketing | 5.0 | Low cost channel with high returns |
 
+![Channel Mapping](assets/Welcome_Screen.png)
+
+
 ### Step 4: Save Configuration
 
 1. Review all mappings in the summary panel
 2. Click **"Save Mapping"**
 3. System validates configuration:
    - Minimum 2 channels
-   - 8-208 weeks of data
+   - 52-104 weeks of data
    - No duplicate column mappings
    - Required fields present
-
+     
+![Run Analysys](assets/run_analysis.png)
+     
 <!-- ------------------------ -->
 
 ## Run the Analysis
-Duration: 10
+Duration:  The model takes from 7 to 15 min to run
 
 ### Launching Model Execution
 
