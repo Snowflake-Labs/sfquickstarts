@@ -467,6 +467,26 @@ The Domo Code Engine executes a PyMC-based Bayesian model that:
 
 > **Note**: Model execution typically takes 5-15 minutes depending on data volume and number of channels. Do not close the browser during execution.
 
+### Output Datasets
+
+When the model execution completes, the following datasets are created in Snowflake to support the visualizations:
+
+| Dataset Name | Purpose | Visualization |
+|--------------|---------|---------------|
+| Stella MMM metrics summary data | Core model metrics (R², MAPE, incremental revenue) | Metric Cards |
+| Stella MMM metrics Channel Performance | Channel-level iROAS and attribution | iROAS Chart |
+| Stella MMM metrics Waterfall Decomposition Data | Revenue decomposition by component | Waterfall Chart |
+| Stella MMM metrics Contribution Breakdown over time | Weekly contribution trends | Contribution Over Time Chart |
+| Stella MMM metrics VIF Results | Variance Inflation Factor (multicollinearity) | VIF Analysis |
+| Stella MMM Correlation Matrix | Variable correlation values | Correlation Matrix Heatmap |
+| Stella MMM metrics Out of Sample Data | Model validation on test data | Out of Sample Chart |
+| Stella MMM metrics Budget Optimization Data | Current budget allocation | Budget Allocation |
+| Stella MMM metrics Budget Optimization Summary Data | Optimization summary metrics | Budget Summary Cards |
+| Stella MMM Optimization Details | Budget optimizer results | Optimization Results |
+| Stella MMM Allocation Summary | Channel allocation recommendations | Allocation Comparison |
+
+These datasets can be accessed in Domo's Data Center for further analysis or custom reporting.
+
 <!-- ------------------------ -->
 
 ## Interpret Results
