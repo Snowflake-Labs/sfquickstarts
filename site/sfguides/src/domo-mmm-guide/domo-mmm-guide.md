@@ -551,9 +551,9 @@ The **Cortex Analysis** button is available in the **Channel Performance** and *
 
 ### Tab 5: Snowflake Intelligence
 
-![Snowflake Intelligence](assets/snowflake_intelligence.png)
-
 AI-powered chat interface for natural language insights on your MMM results.
+
+![Snowflake Intelligence](assets/snowflake_intelligence.png)
 
 #### Requirements
 
