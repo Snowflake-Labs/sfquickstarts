@@ -14,15 +14,16 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-In this quickstart, we'll walk through how to use Domo's MMM (Marketing Mix Modeling) app to build powerful Bayesian models that measure the true incremental impact of your marketing channels on revenue. By the end of this guide, you'll be equipped to deploy and utilize the app's capabilities to drive data-driven marketing decisions and optimize your budget allocation.
+In this quickstart, you'll learn how to use Domo to consolidate your marketing performance data from multiple sources and run Marketing Mix Modelling analysis using Domo MMM. By the end of this guide, you'll have a unified marketing dataset connected to an AI-powered analysis that shows which channels drive true incremental revenue, where budget is being wasted, and how to reallocate spend for maximum impact.
 
 
 ### What is Domo MMM?
 
-Domo MMM is a sophisticated Marketing Mix Modeling application that Domo MMM analyses past performance, seasonality, and spend data to show which channels drive true incremental revenue. Trained on thousands of real incrementality studies, Domo MMM interprets complex statistical outputs and
-translates them into actionable recommendations.Built natively within the Domo platform and natively integrated with  **Snowflake Cortex AI** , it helps marketing teams understand true channel performance, optimize budget allocation, and maximize ROI through data-driven insights.
+Every marketing team faces the same question from finance: which channels actually work? Platform metrics show clicks and conversions, but they cannot separate correlation from causation. They cannot tell you which sales would have happened anyway, or explain the impact of channels that don't have direct tracking.
 
-Domo MMM isolates the incremental impact of each channel through a specialised AI agent trained exclusively on marketing measurement data from leading academics and measurement experts. This AI understands statistical significance, confidence intervals, and channel attribution in ways that general-purpose language models cannot. It processes complex statistical computations via Snowflake's enterprise infrastructure and embeds sophisticated measurement capabilities directly into daily workflows through Domo's AI Agent framework. 
+Domo MMM answers these questions using Bayesian statistical modelling. It analyses your historical marketing spend alongside revenue data to isolate the incremental impact of each channel, accounting for seasonality, carryover effects, and diminishing returns. The result is a confidence interval for each channel's true return on investment, not a single point estimate that hides uncertainty.
+
+Built natively within Domo and integrated with Snowflake Cortex AI, Domo MMM translates complex statistical outputs into plain English recommendations. Marketing teams can ask natural language questions about their model results and receive evidence-based answers without needing to understand the underlying mathematics. 
 
 ### Prerequisites
 
@@ -78,9 +79,9 @@ The Domo team will review the request and contact you with more information.
 
 ## Prepare Your Data
 
-Domo MMM requires your data to be structured with specific components. This section covers how to prepare your marketing performance data for optimal modeling results.
+Before running your MMM analysis, you need to consolidate your marketing performance data into a single dataset. Most organisations have this data scattered across multiple platforms: revenue in their CRM or ERP, digital spend in Google and Meta, offline spend in separate tracking systems. Domo's connectors and Magic ETL bring these sources together into the unified structure that Domo MMM requires.
 
-Over the next few sections, you'll supercharge your marketing data by leveraging SQL in Snowflake alongside Domo’s Magic ETL. Connect key sources such as Adobe Analytics, Google Analytics, Marketo, NetSuite, Salesforce, Facebook, and Instagram. Use customizable join logic and preparatory steps tailored to your data environment to build a cohesive, centralized data foundation. These preparatory steps allow for advanced attribution models and media mix analysis, ensuring you have the insights needed to optimize your marketing strategy.
+Over the next few sections, you'll supercharge your marketing data by leveraging SQL in Snowflake alongside Domo's Magic ETL. Connect key sources such as Adobe Analytics, Google Analytics, Marketo, NetSuite, Salesforce, Facebook, and Instagram. Use customizable join logic and preparatory steps tailored to your data environment to build a cohesive, centralized data foundation. These preparatory steps allow for advanced attribution models and media mix analysis, ensuring you have the insights needed to optimize your marketing strategy.
 
 Leverage the Domo Data Warehouse to access your data wherever it sits to transform & visualize.
 ![assets/warehouse.png](assets/warehouse.png)
@@ -346,7 +347,11 @@ ORDER BY week_start_date;
 
 ## Configure the Model
 
-Once Domo's Dataset is provisioned, follow these steps to configure your first model.
+Domo MMM uses your prepared dataset to build a Bayesian Marketing Mix Model. The configuration wizard guides you through three key decisions: which revenue metric to optimise, which marketing channels to include in the analysis, and any external factors (like seasonality or promotions) that affect revenue independently of marketing spend.
+
+The model will then run 4,000 Bayesian simulations to calculate the incremental contribution of each channel, accounting for adstock (the carryover effect of marketing spend) and saturation (diminishing returns at higher spend levels). This typically takes 5 to 15 minutes depending on your data volume.
+
+Once complete, you'll have access to channel performance dashboards, statistical validation metrics, budget optimisation recommendations, and AI-powered natural language insights through Snowflake Cortex AI.
 
 ### Step 1: Launch the Application
 
@@ -561,7 +566,7 @@ The Budget Optimizer recommends optimal spend allocation across channels, maximi
 
 <!-- ------------------------ -->
 
-## Using Cortex AI Analysis
+## AI-Powered Insights with Snowflake Cortex
 
 > **Snowflake Cortex Integration**: This feature provides AI-powered natural language insights on your MMM results.
 
@@ -575,19 +580,92 @@ The **Cortex Analysis** button is available in the **Channel Performance** and *
 
 ![Cortex Button](assets/cortex_button.png)
 
-### Tab 5: Snowflake Intelligence
+<!-- ------------------------ -->
 
-AI-powered chat interface for natural language insights on your MMM results.
+## Snowflake Intelligence Integration
+
+AI-powered chat interface for natural language insights on your MMM results. This feature enables you to ask questions in natural language about your model execution results and receive contextually relevant answers powered by Snowflake Cortex AI.
+
+### How It Works
+
+The Snowflake Intelligence integration uses a **Semantic View** to define relationships between the MMM output datasets. The semantic view is built around a central concept: the **Document ID**, which serves as the execution identifier that links all output tables from a single model run.
+
+When you run the Domo MMM analysis, each execution generates a unique `documentID`. This identifier is written to every output dataset, creating a relational structure that allows the Cortex Agent to understand how data across different tables relates to a specific model execution.
+
+### Setting Up Snowflake Intelligence
+
+To enable this feature, you need to configure two components in your Snowflake environment:
+
+**1. Create the Semantic View**
+
+In Snowflake, create a Semantic View that includes the 10 output datasets generated by Domo MMM:
+
+- `STELLA_MMM_VARIABLES` (base table - model configuration and inputs)
+- `STELLA_MMM_METRICS_SUMMARY_DATA`
+- `STELLA_MMM_METRICS_CHANNEL_PERFORMANCE`
+- `STELLA_MMM_CORRELATION_MATRIX`
+- `STELLA_MMM_ACTUAL_VS_PREDICTED_DATA`
+- `STELLA_MMM_METRICS_OUT_OF_SAMPLE_DATA`
+- `STELLA_MMM_METRICS_CONTRIBUTION_BREAKDOWN_OVER_TIME`
+- `STELLA_MMM_METRICS_WATERFALL_DECOMPOSITION_DATA`
+- `STELLA_MMM_METRICS_BUDGET_OPTIMIZATION_DATA`
+- Additional optimization tables as needed
+
+Define relationships between these tables using `DOCUMENTID` as the join key. This ensures that when the Cortex Agent answers questions, it retrieves coherent results from a single model execution. Each table should include business definitions for all columns and metrics to help the AI understand the semantic meaning of the data.
+
+![Semantic View Model](assets/semantic_view_model.png)
+
+**2. Create a Cortex Agent**
+
+Create a Snowflake Cortex Agent that uses the Semantic View you configured. The agent interprets natural language queries and generates SQL to retrieve answers from the semantic view.
+
+![Cortex Agent](assets/cortex_agent.png)
+
+**3. Configure Agent Behavior**
+
+Define the agent's behavior to ensure responses are relevant to marketing mix modeling:
+
+- Provide context about MMM concepts (iROAS, incrementality, Bayesian modeling)
+- Instruct the agent to always filter by `documentID` when answering questions
+- Configure response style (concise, data-driven, with statistical context)
+- Set parameters for response length and specificity
+
+**4. Connect to Domo MMM**
+
+Once the Cortex Agent is deployed:
+
+1. Note the agent's endpoint and authentication credentials
+2. In Domo MMM configuration, provide the Snowflake connection details
+3. Grant appropriate permissions for the agent to access MMM datasets
+
+### Using Snowflake Intelligence in Domo MMM
+
+Once configured, the Snowflake Intelligence tab provides:
+
+- **Natural Language Queries**: Ask questions about model results in plain English
+- **Contextual Responses**: Answers are automatically filtered to the current execution (documentID)
+- **Data-Driven Insights**: Agent retrieves actual values from output datasets, not generic recommendations
+- **Follow-Up Questions**: Maintain conversation context for deeper analysis
+
+**Example Queries:**
+
+- "Which channel should I invest more in based on iROAS?"
+- "What's the confidence interval for Facebook's incremental contribution?"
+- "How does my model fit compare to best practices?"
+- "What budget reallocation would maximize revenue?"
 
 ![Snowflake Intelligence](assets/snowflake_intelligence.png)
 
-#### Requirements
+### Requirements Summary
 
-To enable Snowflake Intelligence, the following must be configured in Snowflake:
+To enable Snowflake Intelligence, ensure:
 
-- Snowflake account with **Cortex Agents** enabled
-- Cortex Agent created and deployed in your Snowflake environment
-- Proper database and schema permissions for the agent
+- Snowflake account with **Cortex Agents** feature enabled
+- MMM output datasets written to Snowflake (via Domo connector or federated dataset)
+- **Semantic View** created with proper `documentID` relationships and business definitions
+- **Cortex Agent** deployed and connected to the semantic view
+- Domo MMM configured with Snowflake connection details
+- Proper database and schema permissions for the agent service account
 
 
 <!-- ------------------------ -->
@@ -603,6 +681,7 @@ To enable Snowflake Intelligence, the following must be configured in Snowflake:
 | Validate spend data with finance | Ensures accuracy of channel attribution |
 | Remove test/invalid data | Prevents model contamination |
 
+<!-- ------------------------ -->
 
 ## Troubleshooting
 
