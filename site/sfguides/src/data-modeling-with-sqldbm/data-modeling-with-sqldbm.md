@@ -1,4 +1,4 @@
-summary: Data modeling your Snowflake database with SqlDBM 
+summary: Design data models visually with SqlDBM for collaborative schema design, documentation, and direct Snowflake deployment.
 id: data-modeling-with-sqldbm
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en

@@ -2,10 +2,11 @@ author: sfc-gh-etolotti
 id: getting-started-with-azure-data-factory-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This is a quickstart for using Snowflake with Azure Data Factory
+summary: Build enterprise data pipelines with Azure Data Factory and Snowflake for orchestrated ETL, CDC, and data integration workflows.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Azure Data Factory and Snowflake
 <!-- ------------------------ -->

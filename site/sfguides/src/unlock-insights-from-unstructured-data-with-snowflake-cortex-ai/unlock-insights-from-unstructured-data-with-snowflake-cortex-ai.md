@@ -1,4 +1,4 @@
-summary: Unlock Insights from Unstructured Data with Snowflake Cortex AI
+summary: Unlock Insights from Unstructured Data with Snowflake Cortex AI 
 id: unlock-insights-from-unstructured-data-with-snowflake-cortex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
@@ -8,7 +8,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: Sean Morris, Stephen Dickson
 [environment_name]: ai209
 
+
+fork repo link: https://github.com/Snowflake-Labs/sfguide-unlock-insights-from-unstructured-data-with-snowflake-cortex-ai
 # Unlock Insights from Unstructured Data with Snowflake Cortex AI
+
+
 <!-- ------------------------ -->
 ## Overview
 

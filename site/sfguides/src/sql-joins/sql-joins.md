@@ -1,7 +1,7 @@
 author: Snowflake Devrel Team
 id: sql-joins
 language: en
-summary: Learn SQL JOINs with clear examples, performance tips, and interview Q&A. Master INNER, LEFT, RIGHT, FULL, SELF & NATURAL JOINs today.
+summary: Learn SQL JOINs with clear examples, performance tips, and interview Q&A. Master INNER, LEFT, RIGHT, FULL, SELF & NATURAL JOINs today. 
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Published 

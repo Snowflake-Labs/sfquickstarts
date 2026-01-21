@@ -1,11 +1,12 @@
 id: getting-started-with-time-series-using-snowflake-streaming-sis-ml-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/time-series-functions
 language: en
-summary: Getting Started with Time Series Analytics for IoT in Snowflake
+summary: Getting Started with Time Series Analytics for IoT in Snowflake 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 author: nathan.birch@snowflake.com
+
 
 # Getting Started with Time Series Analytics for IoT in Snowflake
 <!-- ------------------------ -->

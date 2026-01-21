@@ -2,10 +2,11 @@ author: Mats Stellwall, Doris Lee
 id: data-engineering-pipelines-with-snowpark-pandas
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
+summary: Build data engineering pipelines with Snowpark pandas for familiar DataFrame transformations at Snowflake scale.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Data Engineering Pipeline with pandas on Snowflake
 <!-- ------------------------ -->

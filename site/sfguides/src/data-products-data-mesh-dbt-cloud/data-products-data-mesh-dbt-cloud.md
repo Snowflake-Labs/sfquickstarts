@@ -1,4 +1,4 @@
-summary: Build Data Products and a Data Mesh with dbt platform
+summary: Implement data mesh architecture with dbt Cloud on Snowflake for domain-driven data products and federated governance.
 id: data-products-data-mesh-dbt-cloud
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
@@ -6,6 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Sean McIntyre, Doug Guthrie
+
 
 # Build Data Products and a Data Mesh with dbt platform
 

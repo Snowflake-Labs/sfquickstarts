@@ -2,10 +2,11 @@ author: Jon Tiritilli
 id: domo-marketing-attribution-quickstart
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Build powerful marketing attribution and media mix models
+summary: Build marketing attribution and media mix models with Domo and Snowflake for campaign ROI and spend optimization.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Domo Marketing Attribution
 

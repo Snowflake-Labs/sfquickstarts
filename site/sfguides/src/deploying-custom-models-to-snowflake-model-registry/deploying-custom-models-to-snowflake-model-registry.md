@@ -2,10 +2,15 @@ author: Mats Stellwall
 id: deploying-custom-models-to-snowflake-model-registry
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
-summary: Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.
+summary: Deploy custom ML models to Snowflake Model Registry for versioning, governance, metadata tracking, and production inference.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables-tasty-bytes
+
+
+
+
 
 # Deploying Custom Models To Snowflake Model Registry
 <!-- ------------------------ -->

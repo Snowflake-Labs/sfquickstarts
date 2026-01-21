@@ -2,7 +2,7 @@ author: obashaw
 id: google-analytics-4-template-setup
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: This QuickStart provides instructions on how to set up Sigma's Google Analytics 4 template.
+summary: This QuickStart provides instructions on how to set up Sigma's Google Analytics 4 template. 
 environments: web
 status: Published
 feedback link: https://github.com/sigmacomputing/sigmaquickstarts/issues

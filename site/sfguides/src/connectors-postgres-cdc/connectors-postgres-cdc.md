@@ -2,10 +2,11 @@ author: Joviane Bellegarde
 id: connectors-postgres-cdc
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: CDC Data from PostgreSQL to Snowflake
+summary: Build real-time financial dashboards using Change Data Capture from PostgreSQL to Snowflake with Dynamic Tables and Streamlit.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables
 <!-- ------------------------ -->

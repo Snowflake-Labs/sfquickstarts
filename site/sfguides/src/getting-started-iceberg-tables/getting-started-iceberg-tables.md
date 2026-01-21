@@ -2,10 +2,11 @@ author: Scott Teal, Brad Culberson, Vino Duraisamy
 id: getting-started-iceberg-tables
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
-summary: This is a sample Snowflake Guide
+summary: Create a Snowflake-managed open data lakehouse with Apache Iceberg Tables, governance policies, and Spark integration.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Iceberg Tables
 <!-- ------------------------ -->

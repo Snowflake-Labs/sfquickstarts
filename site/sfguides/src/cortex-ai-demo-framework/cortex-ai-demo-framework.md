@@ -7,6 +7,11 @@ language: en
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, AI, Demo Development, Framework
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-demo-framework
+
+
+
+
 
 # Cortex AI Demo Framework
 <!-- ------------------------ -->

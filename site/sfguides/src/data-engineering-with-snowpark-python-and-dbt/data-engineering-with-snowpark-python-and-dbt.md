@@ -2,7 +2,7 @@ author: Jeremiah Hansen
 id: data-engineering-with-snowpark-python-and-dbt
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
-summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python and dbt
+summary: Combine Snowpark Python with dbt for powerful data engineering pipelines with testing, documentation, and versioning.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -7,6 +7,7 @@ environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Enrich Salesforce data with Snowflake to deliver your Customer 360
 
 <!-- ------------------------ -->

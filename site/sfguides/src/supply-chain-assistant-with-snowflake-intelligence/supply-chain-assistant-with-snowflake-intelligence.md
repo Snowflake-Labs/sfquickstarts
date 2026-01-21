@@ -2,7 +2,7 @@ authors: Reid Lewis, Cameron Shimmin
 id: supply-chain-assistant-with-snowflake-intelligence
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search
 language: en
-summary: Build an intelligent supply chain assistant using Snowflake Intelligence and Cortex AI capabilities to help operations managers make data-driven inventory management decisions.
+summary: Build an intelligent supply chain assistant using Snowflake Intelligence and Cortex AI capabilities to help operations managers make data-driven inventory management decisions. 
 status: Published
 environments: web
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -130,7 +130,7 @@ The database will model a multi-tier supply chain network with suppliers, manufa
 
 ![Supply Chain Network Demo](assets/supply-chain-network-demo.png)
 
-1. Navigate to **Projects > Workspaces** to create a new private workspace in Snowsight
+1. Navigate to [**Projects > Workspaces**](https://app.snowflake.com/_deeplink/#/workspaces/?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-supply-chain-assistant-with-snowflake-intelligence) to create a new private workspace in Snowsight
 2. Add a new SQL file to your workspace
 3. Import the **scripts/setup.sql** file from the quickstart repository
 4. Click **Run All** to execute the entire script
@@ -248,7 +248,7 @@ ALTER WAREHOUSE SUPPLY_CHAIN_ASSISTANT_WH SET WAREHOUSE_SIZE = 'SMALL';
 
 #### Step 2: Create Search Service via UI
 
-1. In Snowsight, navigate to **AI & ML** > **Cortex Search** in the left navigation
+1. In Snowsight, navigate to [**AI & ML** > **Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-supply-chain-assistant-with-snowflake-intelligence) in the left navigation
 2. Click **Create** button
 3. Configure the search service:
    * **Database:** `SUPPLY_CHAIN_ASSISTANT_DB`
@@ -274,7 +274,7 @@ Now that you have your semantic models and search service created, you can combi
 
 > Ensure you are using SUPPLY_CHAIN_ASSISTANT_ROLE in Snowsight
 
-1. Click on **Agents** within the **AI & ML** section on the left-hand navigation bar in Snowsight
+1. Click [on **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-supply-chain-assistant-with-snowflake-intelligence) within the **AI & ML** section on the left-hand navigation bar in Snowsight
 2. Click **Create Agent** button
 3. * **Database** `SNOWFLAKE_INTELLIEGENCE`
 4. * **Schema** `AGENTS`

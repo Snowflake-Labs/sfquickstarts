@@ -2,13 +2,16 @@ author: marzillo-snow, quilpie
 id: getting-started-with-bedrock-agentcore-gateways-and-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
-summary: This is a quickstart for using Cortex Agents and Amazon Q
+summary: Build multi-cloud AI agents with Amazon Q and Snowflake Cortex for cross-platform access.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents
 
 
-# Getting Started with Bedrock AgentCore Gateways and Cortex Agents
+
+
+# Getting Started with Amazon Bedrock AgentCore Gateways and Cortex Agents
 <!-- ------------------------ -->
 ## Overview
 
@@ -16,13 +19,13 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
 
 
-[Bedrock AgentCore Gateways](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) provides a way to turn existing APIs into fully-managed MCP servers without needing to manage infrastructure or hosting. By bringing your OpenAPI specifications, Gateway converts your APIs into tools accessible through the standardized **Model Context Protocol (MCP)** interface.
+[Amazon Bedrock AgentCore Gateways](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) provides a way to turn existing APIs into fully-managed MCP servers without needing to manage infrastructure or hosting. By bringing your OpenAPI specifications, Gateway converts your APIs into tools accessible through the standardized **Model Context Protocol (MCP)** interface.
 
 
 ### Use Case
 
 
-Users will create an intelligent search system on structured and unstructured movie data using Snowflake Cortex AI and via an AgentCore Gateway. Snowflake Cortex AI will process and index the unstructured movie reviews and structured movie ratings, making them searchable through advanced text analysis. We will then include the Cortex Agent as a target from a Bedrock AgentCore Gateway that can be used alongside other targets as part of a broader Bedrock AgentCore Agent.
+Users will create an intelligent search system on structured and unstructured movie data using Snowflake Cortex AI and via an AgentCore Gateway. Snowflake Cortex AI will process and index the unstructured movie reviews and structured movie ratings, making them searchable through advanced text analysis. We will then include the Cortex Agent as a target from a Amazon Bedrock AgentCore Gateway that can be used alongside other targets as part of a broader Amazon Bedrock AgentCore Agent.
 
 The end-to-end workflow will look like this:
 ![](assets/AgentCoreArchitecture.png)
@@ -31,7 +34,7 @@ Ingest data into structured and unstructured data stores then:
 1. Create a Cortex Analyst service with structured data with a Semantic View.
 2. Using Snowflake functions prepare the data and create a Cortex Search service with unstructured data.
 3. Create a Cortex Agent that brokers the decision on when to use each service (as well as other GenAI functions)
-4. A Bedrock AgentCore Gateway Target is created using Secretes Manager to store the Snowflake PAT and connect to the Cortex Agent via OpenAPI.
+4. An Amazon Bedrock AgentCore Gateway Target is created using Secretes Manager to store the Snowflake PAT and connect to the Cortex Agent via OpenAPI.
 5. Build a Streamlit App to pass request to Cortex via AgentCore Gateway
 
 
@@ -44,13 +47,13 @@ Ingest data into structured and unstructured data stores then:
 - Using Cortex Search along with complimentary functions in Snowflake.
 - Using Cortex Analyst and semantic models in Snowflake.
 - Using Cortex Agents.
-- Using Bedrock AgentCore Gateways with OpenAPI Targets.
+- Using Amazon Bedrock AgentCore Gateways with OpenAPI Targets.
 - Using Streamlit to build a simple app to serve results of your AgentCore Gateway
 
 
 ### What You’ll Need
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
-- [AWS Account](https://aws.amazon.com/free) with access to Bedrock AgentCore
+- [AWS Account](https://aws.amazon.com/free) with access to Amazon Bedrock AgentCore
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network
 - AWS CLI - [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 - Python 3.11+ - [Download Python](https://www.python.org/downloads/)
@@ -64,7 +67,7 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 - to create a Snowflake Cortex Search Service on unstructured data
 - to create a semantic view with Cortex Analyst on structured data
 - to create a Cortex Agent using the Search and Analyst services
-- to create a Bedrock AgentCore Gateway with a Snowflake Cortex Target leveraging AgentCore Identity along with a second target to the Wikipedia API
+- to create an Amazon Bedrock AgentCore Gateway with a Snowflake Cortex Target leveraging AgentCore Identity along with a second target to the Wikipedia API
 
 
 <!-- ------------------------ -->
@@ -475,7 +478,7 @@ Select the MOVIES agent you just created and select **Edit**.
 - In the **About > Description** section place this sentence, "This agent helps answer questions on a select set of movies."
 - In the **Orchestration Instructions** please these instructions, "Return only the final answer for the user, in clean Markdown. No planning text, no status messages, no tool traces, no JSON, no code blocks. Use short sentences. Prefer ‘- ’ bullets (not numbered lists). Avoid headings unless asked. Keep lists ≤ 8 items. Don’t echo the question. If there are no results, say ‘No results.’
 You are answering for an external app. Produce concise, well‑formatted Markdown. No preamble, no ‘thinking’, no meta‑commentary, no escaping. Final answer only."
-- Select your favorite Claude model (running on Bedrock) and click Save
+- Select your favorite Claude model (running on Amazon Bedrock) and click Save
 ![](assets/orchestrateagent.png)
 
 With Cortex Agents you can add number of [tools](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#tools) including native AI services and custom tools. In this quickstart we are only using 1 Cortex Search service and 1 Cortex Analyst service, but Cortex Agents can scale to be much more complex.
@@ -547,7 +550,7 @@ You should see output affirming the creation of the AWS services like: Gateway, 
 
 You can now head to your AWS Portal and see what was created.
 
-- In Bedrock AgentCore select **Gateways > Find your Target** and you should see something like below.
+- In Amazon Bedrock AgentCore select **Gateways > Find your Target** and you should see something like below.
 ![](assets/gatewayandtarget.png)
 
 
@@ -588,14 +591,14 @@ python cleanup_aws_resources.py
 This quickstart is just that, a quick way to get you started with using AgentCore Gateways you are encouraged to build upon this by adding more Cortex Tools to your Cortex Agents and more Targets to your AgentCore Gateway.
    - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service.
    - Scale Agents to include more robust Analyst services and multiple tables and a broader Semantic View.
-   - Use more targets in your AgentCore Gateway and leverage LLMs in Bedrock AgentCore to coalesce, send request and consolidate a response.
+   - Use more targets in your AgentCore Gateway and leverage LLMs in Amazon Bedrock AgentCore to coalesce, send request and consolidate a response.
 
 
 ### What You Learned
 - How to use Cortex Search along with complimentary functions in Snowflake.
 - How to use Cortex Analyst and semantic models in Snowflake.
 - How to use Cortex Agents.
-- How to use Bedrock AgentCore Gateways with OpenAPI Targets.
+- How to use Amazon Bedrock AgentCore Gateways with OpenAPI Targets.
 - How to use Streamlit to build a simple app to serve results of your AgentCore Gateway
 
 
@@ -606,7 +609,7 @@ There are some great blogs on Medium regarding Snowflake Cortex and Amazon Servi
 - [Snowflake Cortex](/en/data-cloud/cortex/)
 
 
-- [Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/)
+- [Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/)
 
 
 - [AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-building.html)
@@ -719,6 +722,4 @@ The OpenAPI schema defines the API endpoint, request and response format, and se
   }
 }
 ```
-
-
 

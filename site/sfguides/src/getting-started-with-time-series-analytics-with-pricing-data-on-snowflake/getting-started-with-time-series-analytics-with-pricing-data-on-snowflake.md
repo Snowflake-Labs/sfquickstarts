@@ -2,10 +2,13 @@ author: Swathi Jasti
 id: getting-started-with-time-series-analytics-with-pricing-data-on-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics
 language: en
-summary: Getting Started with Time Series Analytics with Pricing Data on Snowflake
+summary: Getting Started with Time Series Analytics with Pricing Data on Snowflake 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-using-sql
+
+
 
 # Getting Started with Time Series Analytics with Pricing Data on Snowflake
 <!-- ------------------------ -->

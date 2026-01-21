@@ -2,10 +2,11 @@ author: Miles Adkins
 id: automl-with-snowflake-and-h2o
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.
+summary: Build ML models with H2O AutoML on Snowflake for automated feature engineering, model selection, tuning, and production deployment.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # AutoML with Snowflake and H2O Driverless AI
 

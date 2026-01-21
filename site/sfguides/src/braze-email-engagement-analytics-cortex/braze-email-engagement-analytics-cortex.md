@@ -2,7 +2,7 @@ author: Snowflake
 id: braze-email-engagement-analytics-cortex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Build an intelligent email engagement analytics app using Braze data and Snowflake Cortex AI
+summary: Analyze Braze email engagement data with Snowflake Cortex AI for campaign optimization, personalization, and marketing insights.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues

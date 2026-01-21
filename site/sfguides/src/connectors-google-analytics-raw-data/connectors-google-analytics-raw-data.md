@@ -2,10 +2,11 @@ author: Joviane Bellegarde
 id: connectors-google-analytics-raw-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
 language: en
-summary: Getting Started with the Snowflake Connector for Google Analytics
+summary: Ingest raw Google Analytics data into Snowflake with a native connector for custom marketing analytics and attribution modeling.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with the Snowflake Connector for Google Analytics
 <!-- ------------------------ -->

@@ -1,11 +1,12 @@
 author: James Cha-Earley
 id: get-started-with-openai-sdk-and-managed-mcp-for-cortex-agents
-summary: Get Started with OpenAI SDK and Managed MCP for Cortex Agents
+summary: Connect OpenAI SDK to Snowflake Cortex Agents via Managed MCP for AI assistant development and data-driven chatbots.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/snowflake-feature/ml-functions
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 language: en
+
 
 
 # Get Started with OpenAI SDK and Managed MCP for Cortex Agents

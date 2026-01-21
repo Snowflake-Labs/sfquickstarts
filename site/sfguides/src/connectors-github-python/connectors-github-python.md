@@ -2,7 +2,7 @@ author: Tomasz Urbaszek
 id: connectors-github-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/commercialize
 language: en
-summary: Overview of building Snowflake native connectors using Python, Snowpark and Native Apps. Example connector connects to GitHub issues API. 
+summary: Sync GitHub issues API to Snowflake with a native Python connector for developer productivity analytics and project tracking.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,3 +1,4 @@
+author: Sho Tanaka, Dash Desai
 id: getting-started-with-snowflake-intelligence-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
 language: ja
@@ -5,12 +6,11 @@ summary: このガイドでは、Snowflake Intelligence の導入方法につい
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-authors: Sho Tanaka, Dash Desai
 open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_snowflake_intelligence_ja&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
 
-# Snowflake Intelligence の入門
+# はじめての Snowflake Intelligence
 
 ## Overview
 
@@ -67,29 +67,29 @@ Snowflake Intelligence の構成要素（エージェント）を作成する方
 
 > 注意: 上記 SQL 実行後、Snowsight でユーザーロールを **SNOWFLAKE_INTELLIGENCE_ADMIN** に切り替えてください。
 
-### Cortex Analyst
+### Cortex Analyst (分析)
 
 このツールは、SQL を生成することで、エージェントが Snowflake 内の構造化データをクエリできるようにします。これは、ビジネスコンセプト（例：「商品名」、「売上」）と Snowflake アカウント内の基盤となるテーブルやカラムとの間のマッピングであるセマンティックビューに依存しています。この抽象化により、テーブルが複雑または任意の命名規則を持っている場合でも、LLM がデータを効果的にクエリする方法を理解できるようになります。
 
-* Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a> を選択します
-* 右上の **Create new** のドロップダウン矢印をクリックし、**Upload your YAML file** を選択します
+* Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI と ML** >> **アナリスト**</a> を選択します
+* 右上の **新規作成** のドロップダウン矢印をクリックし、**YAML ファイルをアップロード** を選択します
 * [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence-ja/blob/main/marketing_campaigns.yaml) をアップロード | データベース、スキーマ、ステージを選択: **DB_SI_JP.RETAIL** >> **SEMANTIC_MODELS** 
-* 右上の **Save** をクリックします 
+* 右上の **アップロード** をクリックします 
 
-### Cortex Search
+### Cortex Search (検索)
 
 このツールは、カスタマーサポートチケット、Slack の会話、契約書などの非構造化テキストデータから情報を検索・取得することをエージェントに可能にします。Cortex Search を活用してこれらのテキスト「チャンク」をインデックス化しクエリすることで、エージェントは[Retrieval Augmented Generation](https://www.snowflake.com/en/fundamentals/rag/)（RAG）を実行できます。
 
-* Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Search**</a> を選択します
-* 右上の **Create** をクリックします
-    - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **WH_SI_JP**
-    - Database and Schema: **DB_SI_JP.RETAIL**
-    - Service Name: Support_Cases
-    - Select data to be indexed: SUPPORT_CASES テーブルを選択
-    - Select a search column: TRANSCRIPT を選択
-    - Select attribute column(s): TITLE、PRODUCT を選択 
-    - Select columns to include in the service: すべて選択
-    - Configure your Search Service: デフォルト値を維持しますが、"Warehouse for indexing" には **WH_SI_JP** を選択します（WH_SI_JP が利用できない場合は COMPUTE_WH を選択）
+* Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI と ML** >> **検索**</a> を選択します
+* 右上の **作成** をクリックします
+    - サービスデータベースとスキーマ: **DB_SI_JP.RETAIL**
+    - サービス名: Support_Cases
+    - インデックスを作成するデータを選択: SUPPORT_CASES テーブルを選択
+    - 検索列を選択: TRANSCRIPT を選択
+    - 属性列を選択: TITLE、PRODUCT を選択 
+    - サービスに含む列を選択: すべて選択
+    - インデックス作成用のウェアハウス: **WH_SI_JP**
+    - 他はデフォルトで問題なし
 
 #### オプション: Cortex AISQL を使用したサポートケースの活用
 
@@ -133,17 +133,16 @@ as (
 
 組織内のさまざまなユースケースやビジネスチームに対して、複数のエージェントを作成できることに注意してください。
 
-* Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Agents**</a> を選択します
-* 右上の **Create agent** をクリックします
-     - **Create this agent for Snowflake Intelligence** を選択
+* Snowsight の左側のナビゲーションメニューで、<a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI と ML** >> **エージェント**</a> を選択します
+* 右上の **エージェントを作成** をクリックします
      - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Agent object name: Sales_AI
      - Display name: Sales//AI
-* 新しく作成された **Sales_AI** エージェントを選択し、右上の **Edit** をクリックして、以下の更新を行います。
+* 新しく作成された **Sales_AI** エージェントを選択し、右上の **編集** をクリックして、以下の更新を行います。
 
 ### Instructions (指示) の追加
 
-**Example questions** に以下のスターター質問を追加します：
+**質問の例** に以下のスターター質問を追加します：
 
 - 6月から8月までの商品カテゴリー別の売上トレンドを見せてください
 - 最近、カスタマーサポートチケットでジャケットについてどんな問題が報告されていますか？
@@ -154,9 +153,9 @@ as (
 ツール (Tools) は、Agent がタスクを達成するために使用できる機能です。これらを Agent のスキルセットと考えてください。以下の各ツールを1つ以上追加できます。
 
 * Tools
-  - **Cortex Analyst**
-    - **+ Add** をクリック
-        - Semantic model fileを選択: **DB_SI_JP.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
+  - **Cortex アナリスト**
+    - **+ 追加** をクリック
+        - セマンティックモデルのファイルを選択: **DB_SI_JP.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
         - Name: Sales_And_Marketing_Data
 
         - Description: *DB_SI_JP.RETAIL スキーマの Sales and Marketing Data モデルは、マーケティングキャンペーン、商品情報、売上データ、ソーシャルメディアエンゲージメントを接続することで、小売ビジネスのパフォーマンスの全体像を提供します。このモデルは、クリックとインプレッションを通じてマーケティングキャンペーンの効果を追跡することを可能にし、異なる地域の実際の売上パフォーマンスとリンクします。ソーシャルメディアエンゲージメントは、インフルエンサーの活動とメンションを通じて監視され、すべてのデータは商品カテゴリーとIDを通じて接続されます。テーブル間の時間的な整合性により、時間経過に伴うマーケティングの売上パフォーマンスとソーシャルメディアエンゲージメントへの影響を包括的に分析できます。*
@@ -165,29 +164,29 @@ as (
         - Query timeout (seconds): 60
 
   - **Cortex Search Services**
-    - **+ Add** をクリック
+    - **+ 追加** をクリック
 
         - Search service: **DB_SI_JP.RETAIL** >> **Support_Cases**
-        - ID column: ID
-        - Title column: TITLE
-        - Name: Support_Cases
+        - ID 列: ID
+        - タイトル列: TITLE
+        - 名前: Support_Cases
 
     >  注意: オプションで AGGREGATED_SUPPORT_CASES Cortex Search サービスを作成した場合は、ここに追加することもできます。
 
-  - **Custom tools**
-    - **+ Add** をクリック
+  - **カスタムツール**
+    - **+ 追加** をクリック
 
-      - Resource type: procedure
-      - Database & Schema: **DB_SI_JP.RETAIL**
-      - Custom tool identifier: **DB_SI_JP.RETAIL.SEND_EMAIL()**
-      - Name: Send_Email
-      - Warehouse: **WH_SI_JP**
-      - Parameter: body
-        - Description: *これには HTML 構文を使用してください。取得したコンテンツが Markdown の場合は、HTML に変換してください。body が提供されていない場合は、最後の質問を要約し、それをメールのコンテンツとして使用してください。*
-      - Parameter: recipient_email
-        - Description: *メールアドレスが提供されていない場合は、現在のユーザーのメールアドレスに送信してください。*
-      - Parameter: subject
-        - Description: *件名が提供されていない場合は、"Snowflake Intelligence" を使用してください。*
+      - リソースタイプ: procedure
+      - データベースとスキーマ: **DB_SI_JP.RETAIL**
+      - カスタムツール識別子: **DB_SI_JP.RETAIL.SEND_EMAIL()**
+      - 名前: Send_Email
+      - ウェアハウス: **WH_SI_JP**
+      - パラメーター: body
+        - 説明: *これには HTML 構文を使用してください。取得したコンテンツが Markdown の場合は、HTML に変換してください。body が提供されていない場合は、最後の質問を要約し、それをメールのコンテンツとして使用してください。*
+      - パラメーター: recipient_email
+        - 説明: *メールアドレスが提供されていない場合は、現在のユーザーのメールアドレスに送信してください。*
+      - パラメーター: subject
+        - 説明: *件名が提供されていない場合は、"Snowflake Intelligence" を使用してください。*
       
 
 * Orchestration Instructions: *グラフで視覚的に回答できる場合は、ユーザーが指定していなくても、常にグラフを生成することを選択してください。*
@@ -195,7 +194,7 @@ as (
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
 
-> 注意: 右上の **Save** をクリックして、新しく更新された **Sales_AI** エージェントを保存してください。
+> 注意: 右上の **追加** をクリックして、新しく更新された **Sales_AI** エージェントを保存してください。
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence

@@ -2,10 +2,11 @@ author: Mohammad Aslam Khan, Phani Raj, Vinay Srihari
 id: using-precisely-enrich-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 language: en
-summary: analysis of geospatial data for location profiling with Precisely marketplace data products
+summary: analysis of geospatial data for location profiling with Precisely marketplace data products 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Geospatial Analysis of Precisely Datasets using Snowflake Notebooks and Streamlit
 

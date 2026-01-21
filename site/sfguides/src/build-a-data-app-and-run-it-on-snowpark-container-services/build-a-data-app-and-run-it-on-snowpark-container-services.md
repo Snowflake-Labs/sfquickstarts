@@ -2,7 +2,7 @@ author: Fredrik Göransson, Allan Mitchell
 id: build-a-data-app-and-run-it-on-snowpark-container-services
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 language: en
-summary: Build a Data App and run it on Snowpark Container Services
+summary: Build and deploy data applications on Snowpark Container Services for secure, scalable app hosting within your Snowflake account.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

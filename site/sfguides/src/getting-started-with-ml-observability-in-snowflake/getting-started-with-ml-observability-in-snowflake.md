@@ -6,6 +6,10 @@ summary: ML Ops is defined as the core function of ML engineering focused on opt
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-ml-observability-in-snowflake
+
+
+
 
 # Getting Started with ML Observability in Snowflake
 <!-- ------------------------ -->
@@ -223,5 +227,3 @@ In this guide, we explored how financial firms can build end-to-end, production-
 - [Download Reference Architecture](https://drive.google.com/file/d/1DSXlhZQlfI8DYiE-HYKcLK5wyaFYSqIb/view?usp=sharing)
 - [Watch the Demo](https://youtu.be/VS7_yvt498Y?list=TLGGF-5YkcMeUncyNDA5MjAyNQ)
 - 
-
-

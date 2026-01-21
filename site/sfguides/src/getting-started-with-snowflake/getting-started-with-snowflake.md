@@ -1,11 +1,12 @@
 id: getting-started-with-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
+summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Victoria Warner (Cybersyn)
+
 
 # Getting Started with Snowflake
 

@@ -2,10 +2,15 @@ author: Allie Fero, James Cha-Earley
 id: build-ml-models-for-customer-conversions
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
-summary: This hands-on lab will guide you through building a custom machine learning model to predict customer purchase likelihood by analyzing the complex relationship between website experience metrics and product reviews.
+summary: Build ML models to predict customer conversions in Snowflake for marketing optimization and conversion rate improvement.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-build-ml-models-for-customer-conversions
+
+
+
+
 
 # Building ML Models to Crack the Code of Customer Conversions
 

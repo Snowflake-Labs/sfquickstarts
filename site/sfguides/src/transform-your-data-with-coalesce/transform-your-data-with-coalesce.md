@@ -2,11 +2,12 @@ author: Alex Engelmann
 id: transform-your-data-with-coalesce
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Accelerate Transformations with Coalesce and Snowflake
+summary: Accelerate Transformations with Coalesce and Snowflake 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Alex Engelmann
+
 # Accelerate Transformations with Coalesce and Snowflake
 <!-- ------------------------ -->
 ## Overview 

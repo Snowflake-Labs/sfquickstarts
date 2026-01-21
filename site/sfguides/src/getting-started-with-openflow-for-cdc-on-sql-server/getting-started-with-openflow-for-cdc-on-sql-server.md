@@ -2,10 +2,11 @@ author: Vino Duraisamy, Jakub Puchalski
 id: getting-started-with-openflow-for-cdc-on-sql-server
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/openflow
 language: en
-summary: Through this guide, you will learn how to move beyond slow, nightly batch jobs and stream data in real-time from an operational database like SQL Server directly into Snowflake.
+summary: Through this guide, you will learn how to move beyond slow, nightly batch jobs and stream data in real-time from an operational database like SQL Server directly into Snowflake. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowflake Openflow for Change Data Capture from SQL Server
 <!-- ------------------------ -->

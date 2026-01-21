@@ -2,10 +2,11 @@ author: Armin Efendic and Chase Romano
 id: end-to-end-model-development-with-snowpark-and-hex
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This lab will walk you through how to use Snowflake and Hex.
+summary: Develop ML models end-to-end with Snowpark and Hex for collaborative experimentation and production deployment.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # End to End Model Development with Hex and Snowpark
 

@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
 # Tasty Bytes - 데이터 사이언스를 위한 Snowpark 101
 
 <!-- ------------------------ -->

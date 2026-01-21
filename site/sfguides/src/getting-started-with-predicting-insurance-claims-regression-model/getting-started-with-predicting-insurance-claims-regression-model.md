@@ -2,7 +2,7 @@ author: Swathi Jasti
 id: getting-started-with-predicting-insurance-claims-regression-model
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
-summary: This quickstart provides an end-to-end workflow for predicting insurance claim outcomes using machine learning, focusing on feature engineering, model training, and deployment.
+summary: This quickstart provides an end-to-end workflow for predicting insurance claim outcomes using machine learning, focusing on feature engineering, model training, and deployment. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

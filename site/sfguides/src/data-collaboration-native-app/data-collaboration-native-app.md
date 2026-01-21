@@ -2,10 +2,11 @@ author: Tim Buchhorn
 id: data-collaboration-native-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
-summary: This Quickstart will take you through how to build an ML Model in Snowlfake, and then share it via the Snowflake Native App Framework.
+summary: Turn ML models into Snowflake Native Apps for secure data collaboration and sharing with customers, partners, and third-party data consumers.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started With Model Sharing Using Native Apps
 <!-- ------------------------ -->

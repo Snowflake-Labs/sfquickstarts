@@ -2,10 +2,11 @@ author: Chanin Nantasenamat
 id: snowflake-semantic-view
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Learn how to create and query Snowflake Semantic Views to enhance AI-powered Business Intelligence and conversational analytics with a consistent, database-native semantic layer.
+summary: Learn how to create and query Snowflake Semantic Views to enhance AI-powered Business Intelligence and conversational analytics with a consistent, database-native semantic layer. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Getting Started with Snowflake Semantic View
 <!-- ------------------------ -->

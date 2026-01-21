@@ -1,8 +1,8 @@
-author: Dureti Shemsi, Cameron Shimmin
+author: Cameron Shimmin, Dureti Shemsi
 id: zero-to-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
-summary: Zero to Snowflake
+summary: Zero to Snowflake 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -53,7 +53,7 @@ Our mission is to provide unique, high-quality food options in a convenient and 
 
 ### **Overview**
 
-In this Quickstart, we will use <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=zero-to-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Workspaces</a> to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL file for the setup and each vignette. This will keep our code organized and easy to manage.
+In this guide, we will use <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=zero-to-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Workspaces</a> to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL file for the setup and each vignette. This will keep our code organized and easy to manage.
 
 Let's walk through how to create your first SQL file, add the necessary setup code, and run it.
 
