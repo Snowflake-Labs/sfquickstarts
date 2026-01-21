@@ -6,7 +6,6 @@ language: en
 status: Hidden
 author: Vasanth Pandiaraj, Becky O'Connor
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence
 tags: Cortex AI, Snowflake Intelligence, Document Processing, Cortex Analyst, Cortex Search, Telecommunications, Agents, RAG, Text-to-SQL, Call Center Analytics, AI Transcribe, Semantic Models, Network Operations
 
 
