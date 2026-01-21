@@ -175,9 +175,8 @@ Under **Environment**, enter at least 2.5 GB of RAM in the **Memory (GB)** field
 Then, click **Launch** to launch Positron Pro. If desired, you can check the **Auto-join sesssion** option to automatically open the IDE when the session is ready.
 
 ![](assets/positron/launch_positron.png)
-
 You will now be able to work with your Snowflake data
-in Positron Pro. Since the IDE is provided by the Posit Workbench Native App,
+in Positron Pro. Since the IDE is provided by Posit Workbench within the Posit Team Native App,
 your entire analysis will occur securely within Snowflake.
 
 ### Install Quarto and Shiny Extensions
@@ -195,7 +194,7 @@ Install these extensions:
 3. Install the Quarto extension: click on the Quarto extension, then click **Install**. For more information, see the [Quarto extension documentation](https://quarto.org/docs/tools/vscode.html).
 4. Install the Shiny extension: Follow the same steps as above, but search for and install the Shiny extension. For more information, see the [Shiny extension documentation](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/).
 
-### Open a new folder
+### Create a Folder for your Work
 
 1. Use the Command Palette to open a folder:
 
@@ -215,7 +214,21 @@ Install these extensions:
 
 You now have an empty `heart_failure` folder open and ready for your work.
 
-### Create a virtual environment
+### Access the Quickstart Materials
+
+This Quickstart will walk you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
+
+To follow along, clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/) by running the following command in a terminal:
+
+```bash
+git clone https://github.com/posit-dev/snowflake-posit-quickstart-python/
+```
+
+> If you don't already see a terminal open, open the Command Palette (`Ctrl/Cmd+Shift+P`), then select **Terminal: Create New Terminal** to open one.
+
+This creates a new directory within the `heart_failure` folder you created above.
+
+### Create a Virtual Environment
 
 1. Open the Command Palette (`Cmd/Ctrl+Shift+P`), then search for and select **Python: Create Environment**.
 
@@ -223,28 +236,10 @@ You now have an empty `heart_failure` folder open and ready for your work.
 
 3. Select the Python version you want to use.
 
-4. In a terminal, activate the virtual environment by running `source .venv/bin/activate`.
+4. When prompted to **Select dependencies to install**, choose the `requirements.txt` file from the cloned GitHub repo.
 
-> If you don't already see a terminal open, open the Command Palette (`Ctrl/Cmd+Shift+P`), then select **Terminal: Create New Terminal** to open one.
-
-### Access the Quickstart Materials
-
-This Quickstart will walk you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
-To follow along, clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/):
-
-```bash
-git clone https://github.com/posit-dev/snowflake-posit-quickstart-python/
-```
-
-### Install requirements
-
-**Note:** Make sure your virtual environment is activated (`source .venv/bin/activate`) before running the command below.
-
-In a terminal, `cd` into the directory you just created by cloning the GitHub repo, and run the following command to install the dependencies listed in `requirements.txt`:
-
-```bash
-pip install -r requirements.txt
-```
+- This will create the virtual environment with the necessary dependencies. Positron should activate the virtual environment automatically.
+- If Positron does not create the virtual environment automatically, open the terminal and run `source .venv/bin/activate`.
 
 ## Build Report and Dashboard
 
@@ -271,7 +266,7 @@ in Positron Pro.
 
 When you run a cell, cell output is displayed in the **PLOTS** pane.
 
-![](assets/quarto/plots-pane.png) DOUBLE CHECK SCREENSHOT
+![](assets/quarto/plots-pane.png)
 
 To render and preview the entire document, click the `Preview` button
 or run `quarto preview quarto.qmd` from the terminal.
