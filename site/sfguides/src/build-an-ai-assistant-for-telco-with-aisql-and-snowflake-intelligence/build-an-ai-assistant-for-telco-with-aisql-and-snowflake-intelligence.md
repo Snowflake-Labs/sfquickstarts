@@ -279,23 +279,28 @@ https://github.com/Snowflake-Labs/sfquickstarts.git
 
 3. Press **Create**
 
-**You should see the repository file structure:**
+4. **Navigate to the telco guide assets folder:**
+   
+   ```
+   site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/
+   ```
+   
+   > ⚠️ **Important**: The sfquickstarts repository contains many guides. You must navigate to the path above to find the assets for this specific guide.
+
+**You should see the following file structure:**
 
 ```
-├── README.md                   
-├── LICENSE                     
-├── .gitignore
-└── assets/
-    ├── sql/                    ← Deployment scripts (START HERE)
-    ├── data/                   ← CSV files and PDFs
-    ├── audio/                  ← MP3 call recordings
-    ├── Notebooks/              ← Snowflake notebooks
-    ├── semantic_models/        ← YAML definitions
-    └── native_app_snowmail/    ← SnowMail Native App
+assets/
+├── sql/                    ← Deployment scripts (START HERE)
+├── data/                   ← CSV files and PDFs
+├── audio/                  ← MP3 call recordings
+├── Notebooks/              ← Snowflake notebooks
+├── semantic_models/        ← YAML definitions
+└── native_app_snowmail/    ← SnowMail Native App
 ```
 
-1. **Navigate to `assets/sql/`** - This is where the deployment scripts are
-2. You'll see SQL files numbered 01-06
+5. **Navigate to `sql/`** - This is where the deployment scripts are
+6. You'll see SQL files numbered 01-06
 
 ✅ **You're now ready to deploy!**
 
