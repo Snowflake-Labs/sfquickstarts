@@ -6,6 +6,7 @@ summary: Build a Fleet Intelligence Control Center for taxi operations using Ope
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
 # Deploy Fleet Intelligence Solution for Taxis
 

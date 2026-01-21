@@ -6,6 +6,7 @@ summary: Build an interactive Route Optimization Simulator using the OpenRouteSe
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
 # Deploy Route Optimization Demo with Cortex Code
 

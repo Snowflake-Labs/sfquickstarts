@@ -6,6 +6,7 @@ summary: Install a self-contained OpenRouteService Native App in Snowflake using
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
 # Install OpenRouteService Native App with Cortex Code
 
