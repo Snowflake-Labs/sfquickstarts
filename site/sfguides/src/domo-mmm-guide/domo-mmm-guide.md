@@ -1,4 +1,4 @@
-author: Domo
+author: Andreina Toledo Men - Domo
 id: domo-mmm-guide
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
 language: en
@@ -13,7 +13,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 5
 
 In this quickstart, we'll walk through how to use Domo's MMM (Marketing Mix Modeling) app to build powerful Bayesian models that measure the true incremental impact of your marketing channels on revenue. By the end of this guide, you'll be equipped to deploy and utilize the app's capabilities to drive data-driven marketing decisions and optimize your budget allocation.
 
@@ -54,9 +53,8 @@ Domo MMM isolates the incremental impact of each channel through a specialised A
 - A Marketing Mix Modeling solution to analyze channel performance, view iROAS metrics with confidence intervals, decompose revenue by channel, and optimize budget allocation using AI-powered recommendations.
 
 <!-- ------------------------ -->
-# Install
-## Request Access
-Duration: 3
+## Install
+### Request Access
 
 Request the Domo MMM app:
 
@@ -79,7 +77,6 @@ The Domo team will review the request and contact you with more information.
 <!-- ------------------------ -->
 
 ## Prepare Your Data
-Duration: 10
 
 Domo MMM requires your data to be structured with specific components. This section covers how to prepare your marketing performance data for optimal modeling results.
 
@@ -88,7 +85,7 @@ Over the next few sections, you'll supercharge your marketing data by leveraging
 Leverage the Domo Data Warehouse to access your data wherever it sits to transform & visualize.
 ![assets/warehouse.png](assets/warehouse.png)
 
-## Add a DataSet using a Connector
+### Add a DataSet using a Connector
 
 When you add a DataSet, you are automatically assigned as the DataSet owner. For information about changing the owner of a DataSet, see Changing the Owner of a DataSet.
 
@@ -130,7 +127,7 @@ You can access the interface for adding Connector DataSets via the Appstore, the
 1. When finished, click _Save_.
    - You are taken to the details view for the DataSet in the Data Center. For more information about this view, see Data Center Layout.
 
-## Connector Settings
+### Connector Settings
 
 All [Connector](https://domo-support.domo.com/s/topic/0TO5w000000ZammGAC/connect-data-to-domo?language=en_US) types in Domo have different options for setting up a DataSet.
 
@@ -146,18 +143,18 @@ If required, specify the credentials for connecting to the data provider. If ava
 
 Some Connectors, such as Google Drive, use OAuth to connect. This means that you only need to enter your credentials once for a given account. In the future, when you go to create a DataSet using this Connector account, your credentials are passed in automatically. Other Connectors do not use OAuth, so you must enter your credentials each time you create a DataSet using this Connector account.
 
-### Connector Details
+#### Connector Details
 
 Most Connectors include a Details settings category. Here you usually specify options like the report to run, the timeframe for the data, a data query for pulling specific information from a database, and so on. If a query is required, the type of query you need to use depends on the Connector type and the source data in your system.
 
 Click _Load Preview_ to verify that your data is accessible. If connection errors occur, verify the specified connection information.
 
-## Connector Scheduling
+### Connector Scheduling
 
 In the **Scheduling** settings category, you can specify the update schedule, retry settings, and update method you want for this DataSet.
 You can use either basic or advanced scheduling for connectors.
 
-### Basic scheduling
+#### Basic scheduling
 
 In the **Basic Scheduling** tab, you can create a basic update schedule in which you specify a predefined update interval for this DataSet (such as "every Monday at 10:00 AM").
 
@@ -194,7 +191,7 @@ Schedule times are based on UTC but can be seen in your timezone._
   ![assets/advanced_connector2.png](assets/advanced_connector2.png)
 
 
-## Connector Error handling
+### Connector Error handling
 
 Retry settings determine whether Domo should attempt to retry if updates fail for this DataSet and, if so, the frequency and maximum number of retries. These settings apply only to scheduled runs, not manual runs. You access the retry options dialog by selecting *Always retry when an update fails*.
 
@@ -207,10 +204,10 @@ The options in this dialog are as follows:
 | Do not retry when update fails | Domo sends a notification if the update attempt is unsuccessful, and no retries are made.|
 
 
-## Connecting to Snowflake
+### Connecting to Snowflake
 Domo's native Snowflake integration enables direct, real-time connectivity to your Snowflake data warehouse without the need to extract, copy, or move data into Domo's infrastructure. Using Cloud Integration to Snowflake, Domo pushes query execution directly to Snowflake, leveraging its compute power while keeping your data securely in place. This approach eliminates data duplication, reduces storage costs, and ensures you're always working with the most current data available in your Snowflake environment
 
-## Create a Magic ETL DataFlow
+### Create a Magic ETL DataFlow
 
 Follow these steps to create a *Magic ETL* DataFlow:
 
@@ -263,7 +260,7 @@ Why are output DataSets not marked as Updated when the DataFlow completes succes
 
 This is usually because the data has not actually changed—no update has occurred. The DataSets show as updated if the data has changed during a successful DataFlow execution.
 
-### Best Practices for Magic ETL DataFlows
+#### Best Practices for Magic ETL DataFlows
 
 We recommend the following for your DataFlow:
 
@@ -285,7 +282,7 @@ We recommend the following for your DataFlow:
   - Scripting tiles
   - Data Science tiles
 
-## Connect to Your Data
+### Connect to Your Data
 
 1. Select the _DataFlows_ icon on the left  
   ![assets/dataflows_menu.png](assets/dataflows_menu.png)
@@ -293,12 +290,12 @@ We recommend the following for your DataFlow:
 1. Locate the Mixed Media Model Dataflow  
   ![assets/dataflows_row.png](assets/dataflows_row.png)
 
-1. Select the input dataset and click _Change Dataset_ to replace the sample data with the data you have created through this quickstart.  
+1. Select the input dataset and click _Change Dataset_ to replace the sample data with the data you have created through this quickstart.
   ![assets/change_dataset_magic_etl.png](assets/change_dataset_magic_etl.png)
 
-### Data Structure Requirements
+#### Data Structure Requirements
 
-#### Required Fields
+**Required Fields**
 
 | Field Type | Description | Example |
 |------------|-------------|---------|
@@ -306,14 +303,14 @@ We recommend the following for your DataFlow:
 | **Date** | Time dimension (weekly recommended) | `week_start_date`, `report_date` |
 | **Channel Spend** | Marketing spend per channel (2-10 channels) | `facebook_spend`, `google_ads_spend` |
 
-#### Optional Fields
+**Optional Fields**
 
 | Field Type | Description | Example |
 |------------|-------------|---------|
 | **Control Variables** | External factors affecting revenue | `seasonality_index`, `competitor_activity` |
 | **Custom Variables** | Binary or numeric indicators | `promotion_flag`, `holiday_indicator` |
 
-### Example Data Schema
+#### Example Data Schema
 
 ```sql
 -- Example: Marketing Performance Dataset
@@ -333,7 +330,7 @@ WHERE week_start_date BETWEEN '2022-01-01' AND '2024-12-31'
 ORDER BY week_start_date;
 ```
 
-### Data Requirements
+#### Data Requirements
 
 | Requirement | Specification |
 |-------------|---------------|
@@ -348,7 +345,6 @@ ORDER BY week_start_date;
 <!-- ------------------------ -->
 
 ## Configure the Model
-Duration: 15
 
 Once Domo's Dataset is provisioned, follow these steps to configure your first model.
 
@@ -490,7 +486,6 @@ These datasets can be accessed in Domo's Data Center for further analysis or cus
 <!-- ------------------------ -->
 
 ## Interpret Results
-Duration: 15
 
 Once the model completes, you'll be taken to the **Insights Dashboard** with four main tabs.
 
@@ -556,7 +551,6 @@ Displays KPI cards (Total Budget, Recommended Allocation, Optimized Revenue, Rev
 <!-- ------------------------ -->
 
 ## Using Cortex AI Analysis
-Duration: 5
 
 > **Snowflake Cortex Integration**: This feature provides AI-powered natural language insights on your MMM results.
 
@@ -588,7 +582,6 @@ To enable Snowflake Intelligence, the following must be configured in Snowflake:
 <!-- ------------------------ -->
 
 ## Best Practices
-Duration: 5
 
 ### Data Quality
 
@@ -601,7 +594,6 @@ Duration: 5
 
 
 ## Troubleshooting
-Duration: 5
 
 ### Common Issues and Solutions
 
@@ -638,7 +630,6 @@ If you encounter issues not covered here:
 <!-- ------------------------ -->
 
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 
