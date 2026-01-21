@@ -238,7 +238,7 @@ This creates a new directory within the `heart_failure` folder you created above
 
 4. When prompted to **Select dependencies to install**, choose the `requirements.txt` file from the cloned GitHub repo.
 
-- This will create the virtual environment with the necessary dependencies. Positron should activate the virtual environment automatically.
+- This creates the virtual environment with the necessary dependencies. Positron activates the virtual environment automatically.
 - If Positron does not create the virtual environment automatically, open the terminal and run `source .venv/bin/activate`.
 
 ## Build Report and Dashboard
