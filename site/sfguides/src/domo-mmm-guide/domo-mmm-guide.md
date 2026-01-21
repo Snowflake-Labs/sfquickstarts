@@ -395,7 +395,6 @@ Control variables help account for external factors:
 
 iROAS priors incorporate your domain knowledge into the model:
 
-> aside positive
 > **What are Priors?** In Bayesian statistics, priors represent your existing knowledge before seeing the data. Setting iROAS priors helps the model converge faster and can improve accuracy when you have reliable historical benchmarks.
 
 1. Click **"Set iROAS Priors"** (optional section)
@@ -499,18 +498,26 @@ Displays the Incremental Return on Ad Spend for each marketing channel with 95% 
 
 ![iROAS Results](assets/iroas_results.png)
 
-#### Channel Contribution Over Time
+#### Revenue Waterfall Analysis
 
-Stacked area chart showing weekly revenue contribution by channel over the analysis period.
+Shows the incremental revenue contribution by marketing channel.
 
 ![Contribution Trend](assets/contribution_trend.png)
 
 
 ### Tab 2: Statistical Analysis
 
+This tab provides statistical validation metrics and diagnostics to assess model quality and reliability.
+
+**Model R²**: Measures how well the model explains revenue variance (higher is better, target >0.70)
+
+**MAPE (Mean Absolute Percentage Error)**: Average prediction error as a percentage (lower is better, target <15%)
+
+**Total Incremental Revenue**: Sum of all marketing-driven revenue across channels
+
 #### VIF Analysis
 
-Variance Inflation Factor chart showing multicollinearity levels between marketing variables.
+Variance Inflation Factor (VIF) measures multicollinearity between marketing variables. VIF values above 10 indicate high correlation between channels, which may affect model reliability.
 
 ![VIF Chart](assets/vif_chart.png)
 
@@ -524,7 +531,9 @@ Heatmap displaying pairwise correlations between all model variables.
 
 #### Out of Sample Analysis
 
-Model performance metrics on unseen test data with prediction intervals.
+Model performance metrics on unseen test data with prediction intervals to validate accuracy.
+
+![Out of Sample Analysis](assets/out_of_sample.png)
 
 ### Tab 3: Budget Allocation
 
@@ -534,11 +543,13 @@ Displays KPI cards (Total Budget, Recommended Allocation, Optimized Revenue, Rev
 
 ### Tab 4: Budget Optimizer
 
+The Budget Optimizer recommends optimal spend allocation across channels, maximizing total revenue within your budget constraints.
+
 **Features:**
 - **Current Allocation**: Your existing budget distribution
 - **Recommended Allocation**: AI-optimized budget distribution
 - **Projected Lift**: Expected revenue increase from optimization
-- **Constraints**: Set min/max budgets per channel
+- **Constraints**: Set min/max budgets per channel to reflect business requirements
 
 **How to Use:**
 1. Review current vs. recommended allocations
