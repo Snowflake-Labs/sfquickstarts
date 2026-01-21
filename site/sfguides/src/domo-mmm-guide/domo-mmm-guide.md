@@ -8,13 +8,13 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Getting Started with Domo MMM
+# Getting Started with Domo Marketing Mix Modelling
 
 <!-- ------------------------ -->
 
 ## Overview
 
-In this quickstart, you'll learn how to use Domo to consolidate your marketing performance data from multiple sources and run Marketing Mix Modelling analysis using Domo MMM. By the end of this guide, you'll have a unified marketing dataset connected to an AI-powered analysis that shows which channels drive true incremental revenue, where budget is being wasted, and how to reallocate spend for maximum impact.
+In this quickstart, you'll learn how to use Domo to consolidate your marketing performance data from multiple sources and run Marketing Mix Modelling analysis using Domo MMM. By the end of this guide, you'll have a unified marketing dataset connected to an AI-powered analysis that shows which channels drive true incremental revenue, where budget is being wasted, and how to reallocate spend for maximum impact. You'll also be able to interrogate your model results using natural language through Snowflake Intelligence, asking questions like "What happens if I cut social spend by 20%?" and receiving evidence-based answers in plain English.
 
 
 ### What is Domo MMM?
@@ -23,7 +23,7 @@ Every marketing team faces the same question from finance: which channels actual
 
 Domo MMM answers these questions using Bayesian statistical modelling. It analyses your historical marketing spend alongside revenue data to isolate the incremental impact of each channel, accounting for seasonality, carryover effects, and diminishing returns. The result is a confidence interval for each channel's true return on investment, not a single point estimate that hides uncertainty.
 
-Built natively within Domo and integrated with Snowflake Cortex AI, Domo MMM translates complex statistical outputs into plain English recommendations. Marketing teams can ask natural language questions about their model results and receive evidence-based answers without needing to understand the underlying mathematics. 
+What makes Domo MMM different is how you interact with these results. Traditional MMM outputs require a statistician to interpret. Domo MMM integrates with Snowflake Intelligence to create a conversational layer over your model. Ask "Which channel should I prioritise next quarter?" or "Why is the model recommending I reduce TV spend?" and receive answers drawn directly from your analysis. The system understands marketing concepts like saturation, diminishing returns, and incremental contribution, translating statistical findings into decisions you can act on immediately. 
 
 ### Prerequisites
 
@@ -36,12 +36,13 @@ Built natively within Domo and integrated with Snowflake Cortex AI, Domo MMM tra
 ### What You'll Learn
 
 - How to request and deploy Domo MMM from Domo
-- How to intialize a dataset using Domo Connectors
+- How to initialise a dataset using Domo Connectors
 - How to prepare and structure your marketing data for MMM analysis
 - How to configure field mappings in Domo MMM
 - How to run and interpret Bayesian Marketing Mix Model results
-- How to use budget optimization recommendations
-- How to leverage Snowflake Cortex AI for natural language insights
+- How to use budget optimisation recommendations
+- How to set up and use Snowflake Intelligence for natural language queries
+- How to generate AI-powered insights using Cortex Analysis
 
 ### What You'll Need
 
