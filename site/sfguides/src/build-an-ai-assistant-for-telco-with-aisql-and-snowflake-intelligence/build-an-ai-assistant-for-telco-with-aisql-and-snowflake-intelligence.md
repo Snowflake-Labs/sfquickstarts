@@ -3,7 +3,7 @@ summary: Build an AI-powered Telco Operations Agent with Snowflake AI Functions 
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/industry/telecommunications, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/document-ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 language: en
-status: Hidden
+status: Published
 author: Vasanth Pandiaraj, Becky O'Connor
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Cortex AI, Snowflake Intelligence, Document Processing, Cortex Analyst, Cortex Search, Telecommunications, Agents, RAG, Text-to-SQL, Call Center Analytics, AI Transcribe, Semantic Models, Network Operations
