@@ -12,7 +12,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 This guide walks you through setting up a governed data lakehouse with Apache Iceberg tables in Snowflake, implementing data governance policies, establishing data quality monitoring, and creating an AI agent for natural language data exploration.
 
-## What You'll Build
+## Overview
+
+### What You'll Build
 
 In this guide, you will build an **end-to-end governed data lakehouse** for **Amazon Product Reviews Analytics**.
 
@@ -25,7 +27,7 @@ We will cover key aspects of building a production-ready, AI-enabled data lakeho
 
 ![Governed Lakehouse Architecture](assets/governed-lakehouse-architecture.png)
 
-## What You'll Learn
+### What You'll Learn
 
 **In this guide, you will learn:**
 
@@ -41,7 +43,7 @@ We will cover key aspects of building a production-ready, AI-enabled data lakeho
     - Semantic model design for text-to-SQL
     - Agent creation and configuration
 
-## What is Apache Iceberg?
+### What is Apache Iceberg?
 
 Apache Iceberg is an open table format designed for huge analytic datasets. It provides:
 
@@ -57,8 +59,6 @@ Iceberg tables in Snowflake combine the performance and query semantics of nativ
 - Existing data lakes you cannot (or choose not to) migrate
 - Multi-engine architectures where multiple compute engines access the same data
 - Cost optimization by leveraging your own cloud storage
-
-![Iceberg Tables Architecture](assets/iceberg-tables-architecture.png)
 
 ### Iceberg Tables - Key Concepts
 
@@ -76,7 +76,7 @@ Iceberg tables in Snowflake combine the performance and query semantics of nativ
 - Snowflake reads metadata to understand table structure
 - Enables features like schema evolution and time travel
 
-## What is Snowflake Data Governance?
+### What is Snowflake Data Governance?
 
 Snowflake provides a comprehensive suite of governance features that work seamlessly with Iceberg tables:
 
@@ -98,7 +98,7 @@ Classification system for organizing and governing data:
 - ✅ **Tag-based policies** - link masking policies to tags
 - ✅ **Compliance tracking** - identify PII, sensitivity levels
 
-## What are Data Metric Functions?
+### What are Data Metric Functions?
 
 Data Metric Functions (DMFs) measure the state and integrity of your data. They enable:
 
@@ -116,29 +116,9 @@ Data Metric Functions (DMFs) measure the state and integrity of your data. They 
 - Snowflake handles compute automatically
 - Pay only for scheduled executions
 
-## What are Cortex Agents?
+### What are Cortex Agents?
 
 Cortex Agents are AI-powered assistants that orchestrate across multiple tools to answer questions and perform tasks.
-
-### How Agents Work
-
-```
-User Question → Agent Orchestration → Tool Selection → SQL Generation → Results
-     ↓                   ↓                  ↓               ↓            ↓
-"What's the       LLM decides        Cortex         Semantic      Formatted
- avg rating?"     which tool         Analyst        Model SQL     Response
-```
-
-### Agent Components
-
-**Orchestration Model:**
-- LLM that plans and selects tools (e.g., `claude-4-sonnet`, `llama3.3-70B`)
-- Interprets user intent and routes to appropriate tools
-
-**Tools:**
-- **Cortex Analyst** - Text-to-SQL using semantic models
-- **Cortex Search** - Vector search for unstructured data
-- **Custom Tools** - UDFs and stored procedures
 
 **Semantic Model:**
 - YAML definition of your data's business meaning
@@ -152,10 +132,11 @@ User Question → Agent Orchestration → Tool Selection → SQL Generation → 
 
 | Requirement | Details |
 |-------------|---------|
-| **Snowflake Account** | Active account with admin access |
+| **Snowflake Account** | Snowflake Free Trial Account |
 | **Edition** | Enterprise Edition or higher (required for governance features) |
 | **Role** | `ACCOUNTADMIN` or equivalent privileges |
-| **Warehouse** | XS or larger for query execution |
+| **Cloud Region** | AWS US-WEST-2 (Snowflake instance should be in the same region as your AWS instance) |
+
 
 ### AWS Requirements (for custom external volumes)
 
@@ -163,19 +144,18 @@ User Question → Agent Orchestration → Tool Selection → SQL Generation → 
 |-------------|---------|
 | **S3 Bucket** | Bucket containing Iceberg data files |
 | **IAM Permissions** | Ability to create IAM policies and roles |
-| **External ID** | For cross-account access security |
+
 
 ### Skills & Knowledge
 
 - Basic SQL proficiency
-- Understanding of data governance concepts
-- Familiarity with cloud storage (helpful but not required)
+- Familiarity with cloud storage (AWS S3 in particular for this demo)
 
-## Download SQL files
+### Download SQL files
 
 Download the SQL, JSON and YAML files from [this git repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/govern-your-lakehouse-for-ai-vhol) into your local machine. 
 
-## File Reference
+### File Reference
 
 | File | Purpose |
 |------|---------|
@@ -188,7 +168,7 @@ Download the SQL, JSON and YAML files from [this git repository](https://github.
 
 <!-- ------------------------ -->
 
-## 1. Setup: External Iceberg Tables
+## Setup: External Iceberg Tables
 
 ### AWS IAM Configuration
 
@@ -355,7 +335,7 @@ SELECT COUNT(*) AS total_reviews,
 FROM product_reviews_iceberg;
 ```
 <!-- ------------------------ -->
-## 2. Governance: Access Control & Data Protection
+## Governance: Access Control, Tagging & Masking
 
 ### Overview
 
@@ -520,7 +500,7 @@ SELECT * FROM TABLE(
 ```
 <!-- ------------------------ -->
 
-## 3. Data Quality: Monitoring with Data Metric Functions
+## Data Quality: Monitoring with Data Metric Functions
 
 ### Overview
 
@@ -592,7 +572,7 @@ SELECT LAKEHOUSE_VHOL.PUBLIC.invalid_rating_count(
 
 <!-- ------------------------ -->
 
-## 4. AI Agent: Natural Language Data Access
+## AI Agent: Natural Language Data Access
 
 ### Overview
 
