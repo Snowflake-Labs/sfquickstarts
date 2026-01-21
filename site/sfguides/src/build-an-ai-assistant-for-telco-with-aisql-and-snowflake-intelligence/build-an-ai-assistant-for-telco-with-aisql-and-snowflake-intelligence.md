@@ -371,18 +371,15 @@ EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branc
 
 If you have Cortex Code CLI installed, you can use the **Telco Agent Builder skill** for guided, automated deployment:
 
-**1. Install the Skill**
+**1. Clone and Navigate to the Repository**
 
 ```bash
 # Clone the quickstart repository
 git clone https://github.com/Snowflake-Labs/sfquickstarts.git
 cd sfquickstarts/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence
-
-# Copy the skill to your Cortex Code skills directory
-cp assets/cortex_code_skill/telco-agent-builder.yaml ~/.cortex/skills/
 ```
 
-**2. Configure Your Snowflake Connection**
+**2. Configure Your Snowflake Connection** (if not already configured)
 
 ```bash
 # List available connections
@@ -392,23 +389,17 @@ snow connection list
 snow connection add
 ```
 
-**3. Run the Skill**
+**3. Run Cortex Code with the Skill**
 
-Launch Cortex Code and invoke the skill:
+Launch Cortex Code from the project directory - it will automatically detect the skill in `assets/cortex_code_skill/`:
 
 ```bash
 cortex
 
-# Then in Cortex Code:
-> Build the telco agent for me
-```
-
-Or use natural language:
-
-```
+# Then ask Cortex Code to deploy:
 > Deploy the NovaConnect Telco Operations AI quickstart
 > Set up the telecommunications agent
-> Help me build the telco operations assistant
+> Build the telco agent for me
 ```
 
 **What the skill does:**
