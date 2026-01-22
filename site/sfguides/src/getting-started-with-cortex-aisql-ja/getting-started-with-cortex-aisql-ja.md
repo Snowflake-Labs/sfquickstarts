@@ -18,7 +18,7 @@ authors: Sho Tanaka, Dash Desai
 Cortex AI 関数は、SQL をマルチモーダルデータ向けの AI クエリ言語として再定義し、強力な AI 機能を Snowflake の SQL エンジンに直接組み込みます。Google、OpenAI、Anthropic、Meta などの業界をリードする LLM を使用して、使い慣れた SQL コマンドでテキスト、画像、音声にわたるスケーラブルな AI パイプラインを構築できます。
 新しい FILE データ型によるマルチモーダルデータのネイティブサポートにより、Cortex AI 関数は AI_FILTER やAI_AGGREGATE などの AI オペレーターと従来の SQL をシームレスに統合し、アナリストがエンタープライズグレードのセキュリティとガバナンスを維持しながら、多様なデータタイプをより効率的かつコスト効率よく処理できるようにします。
 
-### Cortex AI Functions とは？
+### Cortex AI 関数とは？
 
 Cortex AI 関数は、構造化データと非構造化データ分析の間の従来の壁を取り払い、別々のツールや専門的なスキルの必要性を排除します。
 
@@ -194,6 +194,6 @@ Cortex AI 関数の強力なオペレーターを使用して、自然言語で 
 ### 関連リソース
 
 - [GitHubリポジトリ](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions)
-- [Cortex AI Functionsドキュメント](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
+- [Cortex AI 関数ドキュメント](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
 - [リファレンスアーキテクチャをダウンロード](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-aisql/img/f65e99c9c8dbf752.png?_ga=2.50488033.970314110.1758562613-1806211272.1741193538&_gac=1.112796406.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
 - [ブログを読む](/en/blog/ai-sql-query-language/)
