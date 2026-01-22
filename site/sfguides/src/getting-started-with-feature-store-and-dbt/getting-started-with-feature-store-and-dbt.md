@@ -2,7 +2,7 @@ author: Charlie Hammond
 id: getting-started-with-feature-store-and-dbt
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
-summary: This guide will go through everything you need to get started with dbt and Snowflake Feature Store
+summary: This guide will go through everything you need to get started with dbt and Snowflake Feature Store 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

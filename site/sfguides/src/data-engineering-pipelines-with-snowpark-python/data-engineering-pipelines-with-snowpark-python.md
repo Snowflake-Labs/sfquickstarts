@@ -2,7 +2,7 @@ authors: Jeremiah Hansen
 id: data-engineering-pipelines-with-snowpark-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
+summary: Build robust data engineering pipelines with Snowpark Python for ELT, CDC processing, and data transformations.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

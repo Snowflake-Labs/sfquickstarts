@@ -2,7 +2,7 @@ author: Adrian Lee
 id: devops-dcm-schemachange-jenkins
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and Jenkins
+summary: Automate Snowflake database deployments with Jenkins CI/CD pipelines using schemachange for continuous database integration.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

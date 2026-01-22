@@ -2,7 +2,7 @@ author: Rachel Blum
 id: building-scalable-time-series-forecasting-models-on-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
 language: en
-summary: Automatically Build, Register and Run Inferencing on Paritioned Forecasting Models in Snowflake.
+summary: Build scalable time-series forecasting with Snowflake ML for demand planning, inventory optimization, and trend prediction.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Forecasting is a business process that predicts future events over time based on historical time-series data, and has cross-industry applicability and utility in nearly every organization. Multiple business units can benefit from this modelling technique to more accurately predict performance, demand, or or any activity that can lead to improved business reactivity and optimization.
 
-The Forecast Model Builder accelerates time to value by offering modeling flexibility, a low code environment, and automated model deployment through Snowflake Model Registry. This solution walks through a complete time series forecasting workflow, from Exploratory Data Analysis (EDA) to model training, and finally batch inference in Snowflake. By leveraging XGBoost, Snowpark, and Snowflake’s Model Registry, we create a scalable and efficient forecasting solution.
+The Forecast Model Builder accelerates time to value by offering modeling flexibility, a low code environment, and automated model deployment through Snowflake Model Registry. This solution walks through a complete time series forecasting workflow, from Exploratory Data Analysis (EDA) to model training, and finally batch inference and evaluation in Snowflake. By leveraging XGBoost, Snowpark, and Snowflake’s Model Registry, we create a scalable and efficient forecasting solution.
 
 ![App](assets/highlevelarch.png)
 
@@ -41,6 +41,10 @@ This guide will walk you through the process of:
 This solution leverages several key Snowflake features:
 
 - [**Snowflake Notebooks**](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) is a unified development interface in Snowsight that offers an interactive, cell-based programming environment for Python, SQL, and Markdown. In Snowflake Notebooks, you can leverage your Snowflake data to perform exploratory data analysis, develop machine learning models, and perform other data science and data engineering workflows, all within the same interface.
+
+- [**Snowflake Feature Store**](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview): Feature Transformations are standardized and centralized into the Feature Store, ensuring that features used for training, evaluation, and inference are consistent and fresh.
+
+- [**Snowflake Datasetse**](https://docs.snowflake.com/en/developer-guide/snowflake-ml/dataset): Datasets are Snowflake schema-level objects specifically designed for machine learning workflows. Snowflake Datasets hold collections of data organized into versions. Each version holds a materialized snapshot of your data with guaranteed immutability, efficient data access, and interoperability with popular deep learning frameworks.
 
 - [**Snowflake Model Registry**](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview): After training a model, operationalizing the model and running inference in Snowflake starts with logging the model in the Snowflake Model Registry. The Model Registry lets you securely manage models and their metadata in Snowflake, regardless of origin and type, and makes running inference easy. 
 
@@ -105,11 +109,11 @@ To run the EDA Notebook:
 In this notebook, we explore a **partitioned time series modeling approach** using **XGBoost** and **Snowflake's Snowpark**, enabling efficient and scalable forecasting for large datasets.
 
 **Key Highlights**
-- **Feature Engineering for Time Series**  This notebook applies various transformations, including rolling averages, date-based feature expansion, and aggregations to enhance predictive power.  
+- **Feature Engineering for Time Series**  This notebook applies various transformations, including rolling averages, date-based feature expansion, and aggregations to enhance predictive power. These features are then registered in the schema level **Snowflake Feature Store**.
 
 - **Snowflake Integration** Leveraging **Snowpark DataFrames**, we ensure seamless data processing within Snowflake’s environment, reducing the need for external data movement.  
 
-- **XGBoost for Forecasting** The model is trained using **XGBoost**, a powerful gradient boosting algorithm, with hyperparameter tuning and evaluation.  
+- **XGBoost for Forecasting** The model is trained using **XGBoost**, a powerful gradient boosting algorithm.
 
 - **Efficient Model Deployment**  The workflow includes exporting trained models and registering them in **Snowflake’s Model Registry** for scalable inference.  
 
@@ -123,27 +127,51 @@ To run the Feature Engineering and Advanced Modeling Notebook:
 4) Follow the instructions provided in the each notebook cell.
 
 <!-- ------------------------ -->
-## Inferencing
+## Evaluation
 
-This notebook is designed to perform **inference** using the trained time series model from the modeling pipeline. It leverages **Snowflake's Snowpark** environment to efficiently make predictions on new data, ensuring seamless integration between model training and deployment.
+This notebook is designed to perform **inference and evaluation** using the trained time series model from the modeling pipeline. It leverages **Snowflake's Snowpark** environment to efficiently make predictions on new data, ensuring seamless integration between model training and deployment.
 
 **Key Highlights**
 - **Model Deployment & Inference** Uses a pre-trained model from the **Snowflake Model Registry** to generate forecasts on fresh time series data.  
 
-- **Feature Engineering for Predictions** Applies time-based transformations, including rolling averages and datetime feature expansion, to maintain consistency between training and inference.  
-
 - **Snowflake-Powered Data Processing** Processes large-scale inference data directly within Snowflake, leveraging Snowpark's **distributed computing capabilities** to avoid unnecessary data movement.  
 
-- **Efficient Forecast Storage** Saves inference results into a dedicated Snowflake table, ensuring that forecasts are readily available for downstream analysis and business applications.  
+- **Visualize Model Performance with Streamlit** Plots performance metrics for the overall model and individual partitions, allowing efficient drill-down into model evaluation.
 
-By the end of this notebook, you'll have a scalable and efficient pipeline for time series inference, enabling real-time and batch forecasting within Snowflake’s powerful data ecosystem.
+- **Promote Model and Create Model Monitor** Track model performance over time as scheduled inference populates the results table.
+
+By the end of this notebook, you'll have a clear understanding of your models performance, giving you confidence to promote it to production and run inference.
 ___
 
-To run the Inferencing Notebook:
+To run the Evaluation Notebook:
 1) Go to Projects > Notebooks in Snowsight. 
-2) Open the notebook <YOUR_PROJECT_NAME>_INFERENCE.
+2) Open the notebook <YOUR_PROJECT_NAME>_EVALUATION.
 3) Switch to Container Runtime.
 4) Follow the instructions provided in the each notebook cell.
+
+<!-- ------------------------ -->
+## Inference_job
+
+This notebook is designed to perform **scheduled inference** using the trained time series model from the modeling pipeline. It leverages **Snowflake's Snowpark** environment to efficiently identify new records for inference and generate predictions, populating the results table. 
+
+**Key Highlights**
+- **Model Deployment & Inference** Uses a pre-trained model from the **Snowflake Model Registry** to generate forecasts on fresh time series data.  
+
+- **Snowflake-Powered Data Processing** Identifies new data for inference and generates predictions, leveraging Snowpark's **distributed computing capabilities** to avoid unnecessary data movement.  
+
+- **Efficient Forecast Storage** Saves inference results into a dedicated Snowflake table, ensuring that forecasts are readily available for downstream analysis and business applications.
+
+- **Scheduled Inference** Easily schedule the notebook as a recurring job to automate forecasting.
+
+By the end of this notebook, you'll have a scalable and efficient pipeline for time series inference, enabling forecasting within Snowflake’s powerful data ecosystem.
+___
+
+To run the Inference Notebook:
+1) Go to Projects > Notebooks in Snowsight. 
+2) Open the notebook <YOUR_PROJECT_NAME>_INFERENCE_JOB.
+3) Switch to Container Runtime.
+4) Follow the instructions provided in the each notebook cell.
+5) To schedule recurring inference, use the notebook scheduling button next to "Run All".
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -167,10 +195,11 @@ After completing all the notebooks in this series, a user has gained a **compreh
 - Leveraging **Snowpark** for large-scale, in-database model training  
 - Evaluating model accuracy and performance  
 
-**4. Deploying and Running Forecast Inference**
-- Loading a trained model and applying it to new data  
+**4. Evaluating Forecast Results**
+- Loading a trained model and applying it to validation data  
 - Ensuring consistency between **training and inference pipelines**  
-- Storing predictions in **Snowflake tables** for real-time access  
+- Storing predictions in **Snowflake tables** for real-time access 
+- Visualizing forecast model performance 
 
 By following this workflow, a user is now equipped with the knowledge to build, deploy, and scale time series forecasting models efficiently within Snowflake, enabling data-driven decision-making in real-world business scenarios. 🚀
 

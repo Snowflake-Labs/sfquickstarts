@@ -1,12 +1,12 @@
 author: Tianxia Jia
 id: multi-agent-orchestration-snowflake-intelligence
 language: en
-summary: This guide describes how to configure a master agent that routes user queries to multiple, specialized Cortex Agents using custom tools.
+summary: This guide describes how to configure a master agent that routes user queries to multiple, specialized Cortex Agents using custom tools. 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://app.snowflake.com/_deeplink/#/agents
-open in snowflake: https://app.snowflake.com/_deeplink/#/agents
+open in snowflake link: https://app.snowflake.com/_deeplink/#/agents
 
 
 # Multi-Agent Orchestration in Snowflake Intelligence

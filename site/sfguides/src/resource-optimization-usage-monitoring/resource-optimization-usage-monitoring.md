@@ -1,4 +1,4 @@
-summary: This guide can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption.
+summary: This guide can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption. 
 id: resource-optimization-usage-monitoring
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en

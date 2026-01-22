@@ -1,7 +1,7 @@
 id: build-agentic-application-in-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: In this hands-on lab, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
+summary: Build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI for autonomous task execution and intelligent workflows.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
@@ -13,7 +13,7 @@ authors: Dash Desai
 
 ## Overview
 
-In this guide, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
+In this guide, you'll learn how to build a data agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data. Data agents are specialized AI entities configured within Snowflake Intelligence. Data teams define their scope, what data sources they can access, their purpose (e.g., "Sales Performance Agent"), and what actions they can perform. They are designed to interpret user questions within their specific domain, securely analyze the relevant data and generate responses.
 
 We'll use a custom dataset focused on bikes and skis. This dataset is intentionally artificial, ensuring that no external LLM has prior knowledge of it. This gives us a clean and controlled environment to test and evaluate our data agent. By the end of the session, you'll have a working AI-powered agent capable of understanding and retrieving insights across diverse data types — all securely within Snowflake.
 
@@ -27,16 +27,16 @@ Snowflake Intelligence removes the barriers to insights, enabling users to under
 
 - How to setup your environment using Git integration and Snowflake Notebooks 
 - How to work with semantic models and setup Cortex Analyst for structured data
-- How to setup Cortext Search for unstructured data like PDFs and images
+- How to setup Cortex Search for unstructured data like PDFs and images
 - How to use these tools in Snowflake Intelligence
 
 ### What You Will Build
 
-A Data Agent that can intelligently respond to questions by reasoning over both structured and unstructured data.
+A data agent that can intelligently respond to questions by reasoning over both structured and unstructured data.
 
 ### What You Will Need
 
-* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](/en/developers/guides/build-agentic-application-in-snowflake/).
+* Access to a [Snowflake account](https://bit.ly/devdaybootcamp2025) as described in the next step.
 
 <!-- ------------------------ -->
 ## Snowflake Trial Account
@@ -61,7 +61,7 @@ To complete this lab, you'll need to create a Snowflake account.
 <!-- ------------------------ -->
 
 
-* Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai).
+* Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai).
 
 * In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -100,23 +100,25 @@ Notification Integration:
 Stored Procedure:
   - send_email
 ```
-
-> 
+ 
 > NOTE: Switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 ## Create Tools
 <!-- ------------------------ -->
 
 
-We will use Snowflake Notebook to setup the Cortex Analyst and Cortex Search tools that will be used by the data agent in Snowflake Intelligence.
+We will use [Snowflake Notebook](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) to set up the [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) tools that will be used by the data agent in Snowflake Intelligence.
 
 Let's get started!
 
-* Browse to <a href="https://app.snowflake.com/_deeplink/#/data/databases?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Databases</a> and select **DASH_CORTEX_AGENTS** » **DATA** » **Git Repositories** » **GIT REPO** and right click on `SETUP_TOOLS.ipynb`, then click on "..." and select **Create notebook**.
-
-* Give it a name and select other options including **DASH_CORTEX_AGENTS** and **DATA** for location and **Run on warehouse** for Python environment.
+* Browse to <a href="https://app.snowflake.com/_deeplink/#/data/databases?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Catalog » Database Explorer</a>
+* Select **DASH_CORTEX_AGENTS** » **DATA** » **Git Repositories** » **GIT REPO**
+* Right click on `SETUP_TOOLS.ipynb`, then click on "..." and select **Create notebook**.
+* Give the Notebook a name
+* Select Notebook location as **DASH_CORTEX_AGENTS** and **DATA**
+* Sekect runtime as **Run on warehouse**
   
-IMPORTANT NOTE: Run through all the cells in the Snowflake Notebook before proceeding.
+> IMPORTANT NOTE: Run through all the cells in the Snowflake Notebook before proceeding. It may take 3-5 minutes to run through everything.
 
 ## Explore Semantic Model
 
@@ -135,6 +137,8 @@ Let's ask these analytical questions to test the semantic file:
 - **What is the average revenue per transaction per sales channel?**
 - **What products are often bought by the same customers?**
 
+Cortex Analyst should successfully generate and execute complex SQL to answer these questions.
+
 ### Cortex Analyst and Cortex Search Integration
 
 Using Cortex Analyst integration with Cortex Search, we can improve the retrieval of possible values of a column without listing them all in the semantic model file. Let's try it as an example for the ARTICLE NAMES.
@@ -152,15 +156,14 @@ At this point, you may see this response:
 Now let's integrate the **ARTICLE_NAME** dimension with the **DASH_CORTEX_AGENTS.DATA.ARTICLE_NAME_SEARCH** Cortex Search Service we created in the Notebook.
 
 * Remove the sample values provided
-* Click on **+ Search Service** and add **ARTICLE_NAME_SEARCH**
+* Click on **+ Search Service** and add **DASH_CORTEX_AGENTS.DATA >> ARTICLE_NAME_SEARCH**
 * Click on **Save**, also save your semantic file (top right)
 
 Now let's ask the same question again.
 
 #### - *Q. What are the total sales for the carvers?*
 
-Notice that Cortex Analyst is now able to provide the right answer because of the Cortex Search integration. Also note that we asked for "Carvers", but the literal article name is "Carver Skis."
-
+Notice that Cortex Analyst is now able to provide the right answer because of the Cortex Search integration. Also note that we asked for "Carvers", but the literal article name is "Carver Skis." This enhances the Agent’s ability to handle imprecise or partially correct user input.
 
 ## Snowflake Intelligence
 <!-- ------------------------ -->
@@ -175,8 +178,8 @@ Note that you can create multiple agents for various use cases and/or business t
 
 * In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Agents**</a> 
 * On the top right, click on **Create agent**
-     - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Select **Create this agent for Snowflake Intelligence**
+     - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Agent object name: **Dash_AI**
      - Display name: **Dash//AI**
 * Select the newly created **Dash_AI** agent and click on **Edit** on the top right corner and make the following updates.
@@ -198,44 +201,43 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 * Tools
   - **Cortex Analyst**
     - Click on **+ Add**
+        - Select Semantic model file **DASH_CORTEX_AGENTS.DATA.SEMANTIC_FILES** >> **semantic.yaml**
         - Name: Sales_Data
-        - Add: Semantic model file **DASH_CORTEX_AGENTS.DATA.SEMANTIC_FILES** >> **semantic.yaml**
+        - Description: *This retail sales analytics semantic model from DASH_CORTEX_AGENTS.DATA database provides comprehensive sales transaction analysis capabilities through a star schema connecting customer demographics, product catalog, and sales facts. The model enables detailed reporting on sales performance across multiple dimensions including customer segments (Premium, Regular, Occasional), product categories (Bikes, Ski Boots, Skis), sales channels (Online, In-Store, Partner), and time periods. The central FACT_SALES table captures transaction details including quantities, pricing, and promotional information, while linking to DIM_CUSTOMER for demographic analysis and DIM_ARTICLE for product performance insights. The system supports advanced product search functionality and is specifically designed to answer sales-related questions about product performance, customer behavior, and revenue analysis while excluding product specifications or usage information.*
         - Warehouse: **COMPUTE_WH**
         - Query timeout (seconds): 60
-        - Description: *This retail sales analytics semantic model from DASH_CORTEX_AGENTS.DATA database provides comprehensive sales transaction analysis capabilities through a star schema connecting customer demographics, product catalog, and sales facts. The model enables detailed reporting on sales performance across multiple dimensions including customer segments (Premium, Regular, Occasional), product categories (Bikes, Ski Boots, Skis), sales channels (Online, In-Store, Partner), and time periods. The central FACT_SALES table captures transaction details including quantities, pricing, and promotional information, while linking to DIM_CUSTOMER for demographic analysis and DIM_ARTICLE for product performance insights. The system supports advanced product search functionality and is specifically designed to answer sales-related questions about product performance, customer behavior, and revenue analysis while excluding product specifications or usage information.*
 
   - **Cortex Search Services**
     - Click on **+ Add**
-        - Name: Docs
         - Search service: **DASH_CORTEX_AGENTS.DATA.DOCS**
         - ID column: CHUNK_INDEX
         - Title column: RELATIVE_PATH
+        - Name: Docs
 
   - **Custom tools**
     - Click on **+ Add**
-      - Name: Send_Email
       - Resource type: procedure
       - Database & Schema: **DASH_CORTEX_AGENTS.DATA**
       - Custom tool identifier: **DASH_CORTEX_AGENTS.DATA.SEND_EMAIL()**
+      - Name: Send_Email
+      - Warehouse: **COMPUTE_WH**
+      - Query timeout (seconds): 60
       - Parameter: body
         - Description: *Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
         - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
       - Parameter: subject
-        - Description: *If subject is not provided, use "Snowflake Intelligence"*.
-      - Warehouse: **COMPUTE_WH**
-      - Query timeout (seconds): 60
+        - Description: *If the subject is not provided, use "Snowflake Intelligence"*.
 
-* Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
+* Orchestration instructions: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
 
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
-> 
 > NOTE: On the top right corner, click on **Save** to save the newly updated **Dash_AI** agent.
 
 ### Launch Snowflake Intelligence
 
-Open <a href="https://app.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Intelligence</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
+Open <a href="https://app.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Intelligence</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN** and your agent should be set to Dash//AI.
 
 Now, let's ask the following questions.
 
@@ -253,7 +255,6 @@ Since we have processed images, the extracted descriptions can also be used by C
 
 #### - *Q. Is there any brand in the frame of the downhill bike?*
 
-> 
 > Feel free to explore the PDF documents and images to ask other questions.
 
 ### Structured Data
@@ -277,18 +278,18 @@ Notice that all 3 tables are used to answer this question.
 <!-- ------------------------ -->
 
 
-Congratulations! You've learned how to securely build data agents and agentic application in Snowflake.
+Congratulations! You've learned how to securely build data agents and agentic applications in Snowflake.
 
 ### What You Learned
 
 - How to setup your environment using Git integration and Snowflake Notebooks 
 - How to work with semantic models and setup Cortex Analyst for structured data
-- How to setup Cortext Search for unstructured data like PDFs and images
+- How to setup Cortex Search for unstructured data like PDFs and images
 - How to use these tools in Snowflake Intelligence
 
 ### Related Resources
 
-- [GitHub repo](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai)
+- [GitHub repository](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai)
 - [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Snowflake Intelligence](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)

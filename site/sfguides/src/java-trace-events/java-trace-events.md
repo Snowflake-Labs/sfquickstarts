@@ -2,7 +2,7 @@ author: Alexey Litouka
 id: java-trace-events
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: An example of emitting trace events from Java, and analyzing them
+summary: An example of emitting trace events from Java, and analyzing them 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

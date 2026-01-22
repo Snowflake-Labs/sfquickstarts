@@ -1,4 +1,4 @@
-summary: Getting Started with Python
+summary: Getting Started with Python 
 id: getting-started-with-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en

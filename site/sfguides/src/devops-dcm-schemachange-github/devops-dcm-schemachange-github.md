@@ -2,7 +2,7 @@ author: Jeremiah Hansen
 id: devops-dcm-schemachange-github
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and GitHub
+summary: Automate Snowflake database deployments with GitHub Actions using schemachange for version-controlled schema migrations.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

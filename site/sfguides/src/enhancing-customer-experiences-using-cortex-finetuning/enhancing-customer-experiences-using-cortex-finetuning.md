@@ -2,7 +2,7 @@ author: Kala Govindarajan
 id: enhancing-customer-experiences-using-cortex-finetuning
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en
-summary: Build an automated customer support agent that showcases the power of Cortex Fine-Tuning and helps the Tasty Bytes team to respond with a highly accurate automated email to customer tickets
+summary: Fine-tune LLMs with Snowflake Cortex for personalized customer experiences, domain-specific responses, and improved AI interactions.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

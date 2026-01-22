@@ -2,7 +2,7 @@ author: Joyce
 id: a-postman-tutorial-for-snowflake-sql-api
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
-summary: Explore the Snowflake SQL API with Postman
+summary: Test and explore Snowflake SQL API endpoints using Postman for REST-based query execution, automation, and integration.
 environments: web
 status: Published
 feedback link: https://github.com/loopDelicious/sfquickstarts

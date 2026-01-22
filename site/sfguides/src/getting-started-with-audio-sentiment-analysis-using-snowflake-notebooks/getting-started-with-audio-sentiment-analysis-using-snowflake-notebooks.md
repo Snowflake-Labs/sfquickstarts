@@ -1,7 +1,7 @@
 id: getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
-summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks
+summary: Analyze audio sentiment in Snowflake Notebooks for call center analytics, voice-of-customer insights, and emotion detection.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
