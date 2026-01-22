@@ -1,0 +1,26 @@
+survey_id,call_id,customer_id,survey_date,csat_score,nps_score,would_recommend,survey_comments
+SURVEY_001,CALL_001,CUST_000123,2025-01-15,4,8,TRUE,Agent was helpful and applied credit. Waiting for tower fix.
+SURVEY_002,CALL_002,CUST_001567,2025-01-15,1,2,FALSE,Agent was dismissive and unhelpful. Very frustrated!
+SURVEY_003,CALL_003,CUST_000456,2025-01-14,1,1,FALSE,Terrible service! No resolution and agent refused to help.
+SURVEY_004,CALL_004,CUST_000789,2025-01-14,5,9,TRUE,Raj was excellent! Fixed my problem in minutes.
+SURVEY_005,CALL_005,CUST_001890,2025-01-13,3,5,FALSE,Agent tried to help but no real solution. Still have slow speeds.
+SURVEY_006,CALL_006,CUST_001567,2025-01-13,1,0,FALSE,Worst experience ever! Previous issue not resolved and no record found.
+SURVEY_007,CALL_007,CUST_002123,2025-01-12,5,10,TRUE,Quick and easy! Ahmad was great.
+SURVEY_008,CALL_008,CUST_001234,2025-01-12,2,3,FALSE,Finally got WiFi calling enabled but took 3 calls to resolve.
+SURVEY_009,CALL_009,CUST_002456,2025-01-11,5,9,TRUE,Melissa fixed billing error immediately. Excellent!
+SURVEY_010,CALL_010,CUST_002789,2025-01-11,3,5,FALSE,Issue acknowledged but no immediate solution. Disappointed.
+SURVEY_011,CALL_011,CUST_003012,2025-01-10,5,9,TRUE,Simple WiFi calling setup. Worked perfectly!
+SURVEY_012,CALL_012,CUST_003345,2025-01-10,2,4,FALSE,Tower upgrade next month. No help for current problem.
+SURVEY_013,CALL_013,CUST_003678,2025-01-09,1,2,FALSE,Agent refused to help with roaming charges. Very upset!
+SURVEY_014,CALL_014,CUST_004234,2025-01-08,5,10,TRUE,Smooth upgrade to 5G! Great experience!
+SURVEY_015,CALL_015,CUST_004567,2025-01-08,4,8,TRUE,Agent fixed signal issue with tower adjustment. Good!
+SURVEY_016,CALL_016,CUST_004890,2025-01-07,5,9,TRUE,APN setup worked first try. Quick support!
+SURVEY_017,CALL_017,CUST_005123,2025-01-07,5,10,TRUE,Called to compliment agent Siti. Excellent service!
+SURVEY_018,CALL_018,CUST_003001,2025-01-06,1,1,FALSE,Third call about same issue! No fix! Switching to Maxis!
+SURVEY_019,CALL_019,CUST_005456,2025-01-06,2,3,FALSE,Double billing error again. System problems not fixed.
+SURVEY_020,CALL_020,CUST_005789,2025-01-05,5,9,TRUE,Business account setup was professional and easy.
+SURVEY_021,CALL_021,CUST_006012,2025-01-05,1,2,FALSE,Network issues for weeks with no real action. Very poor!
+SURVEY_022,CALL_022,CUST_006345,2025-01-04,4,8,TRUE,Address update was quick and simple.
+SURVEY_023,CALL_023,CUST_006678,2025-01-04,5,10,TRUE,Payment extension without fees. Very understanding!
+SURVEY_024,CALL_024,CUST_006901,2025-01-03,2,4,FALSE,5G speeds below advertised. No clear timeline for fix.
+SURVEY_025,CALL_025,CUST_007234,2025-01-03,5,9,TRUE,VoLTE activation simple and quick. Works great!
