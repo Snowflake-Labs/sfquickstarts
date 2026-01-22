@@ -1,0 +1,253 @@
+name: network_performance
+description: Semantic model for telecom network performance metrics across towers and regions. Used for operational efficiency analysis, network quality monitoring, and identifying performance issues.
+
+tables:
+  - name: NETWORK_PERFORMANCE
+    base_table:
+      database: TELCO_OPERATIONS_AI
+      schema: DEFAULT_SCHEMA
+      table: NETWORK_PERFORMANCE
+    
+    dimensions:
+      - name: TOWER_ID
+        expr: TOWER_ID
+        data_type: VARCHAR(50)
+        description: Unique identifier for the cell tower
+        sample_values:
+          - TWR_NE_001
+          - TWR_SE_001
+          - TWR_SW_001
+        synonyms:
+          - tower_identifier
+          - cell_tower_id
+          - site_id
+      
+      - name: TOWER_NAME
+        expr: TOWER_NAME
+        data_type: VARCHAR(100)
+        description: Name of the cell tower location
+        sample_values:
+          - 5G Tower Boston Central
+          - 5G Tower NYC Midtown
+          - 4G Tower Miami Beach
+        synonyms:
+          - tower_location
+          - site_name
+          - cell_site_name
+      
+      - name: REGION
+        expr: REGION
+        data_type: VARCHAR(50)
+        description: Geographic region where the tower is located
+        sample_values:
+          - Northeast
+          - Southeast
+          - Southwest
+          - Northwest
+        synonyms:
+          - geographical_region
+          - area
+          - territory
+          - zone
+      
+      - name: NETWORK_TYPE
+        expr: NETWORK_TYPE
+        data_type: VARCHAR(10)
+        description: Type of network technology (4G or 5G)
+        sample_values:
+          - 4G
+          - 5G
+        synonyms:
+          - network_technology
+          - technology_type
+          - network_generation
+    
+    time_dimensions:
+      - name: MEASUREMENT_DATE
+        expr: MEASUREMENT_DATE
+        data_type: DATE
+        description: Date when the network performance was measured
+        sample_values:
+          - '2025-01-01'
+          - '2025-01-02'
+        synonyms:
+          - date
+          - performance_date
+          - measurement_day
+      
+      - name: MEASUREMENT_HOUR
+        expr: MEASUREMENT_HOUR
+        data_type: INT
+        description: Hour of the day when measurement was taken (0-23)
+        sample_values:
+          - '10'
+          - '14'
+          - '18'
+        synonyms:
+          - hour
+          - time_hour
+          - hour_of_day
+    
+    facts:
+      - name: AVG_LATENCY_MS
+        expr: AVG_LATENCY_MS
+        data_type: FLOAT
+        description: Average network latency in milliseconds. Lower is better.
+        sample_values:
+          - '15.2'
+          - '18.5'
+          - '25.5'
+        synonyms:
+          - latency
+          - response_time
+          - ping_time
+          - network_delay
+      
+      - name: AVG_DOWNLOAD_SPEED_MBPS
+        expr: AVG_DOWNLOAD_SPEED_MBPS
+        data_type: FLOAT
+        description: Average download speed in megabits per second
+        sample_values:
+          - '850.5'
+          - '920.5'
+          - '450.2'
+        synonyms:
+          - download_speed
+          - downlink_speed
+          - download_throughput
+      
+      - name: AVG_UPLOAD_SPEED_MBPS
+        expr: AVG_UPLOAD_SPEED_MBPS
+        data_type: FLOAT
+        description: Average upload speed in megabits per second
+        sample_values:
+          - '120.3'
+          - '135.2'
+          - '80.5'
+        synonyms:
+          - upload_speed
+          - uplink_speed
+          - upload_throughput
+      
+      - name: PACKET_LOSS_PCT
+        expr: PACKET_LOSS_PCT
+        data_type: FLOAT
+        description: Percentage of data packets lost during transmission. Lower is better.
+        sample_values:
+          - '0.5'
+          - '1.2'
+          - '2.5'
+        synonyms:
+          - packet_loss
+          - data_loss_percentage
+          - packet_drop_rate
+      
+      - name: SIGNAL_STRENGTH_DBM
+        expr: SIGNAL_STRENGTH_DBM
+        data_type: FLOAT
+        description: Signal strength in dBm (decibel-milliwatts). Values closer to 0 are better.
+        sample_values:
+          - '-75.0'
+          - '-73.5'
+          - '-80.0'
+        synonyms:
+          - signal_quality
+          - signal_power
+          - rssi
+      
+      - name: ACTIVE_USERS
+        expr: ACTIVE_USERS
+        data_type: INT
+        description: Number of active users connected to the tower
+        sample_values:
+          - '1250'
+          - '1800'
+          - '2500'
+        synonyms:
+          - connected_users
+          - user_count
+          - subscribers
+      
+      - name: DATA_VOLUME_GB
+        expr: DATA_VOLUME_GB
+        data_type: FLOAT
+        description: Total data volume in gigabytes transferred
+        sample_values:
+          - '2500.5'
+          - '3200.8'
+          - '4500.2'
+        synonyms:
+          - data_usage
+          - traffic_volume
+          - bandwidth_consumption
+      
+      - name: PEAK_CONCURRENT_USERS
+        expr: PEAK_CONCURRENT_USERS
+        data_type: INT
+        description: Maximum number of concurrent users during the measurement period
+        sample_values:
+          - '1400'
+          - '2100'
+          - '2800'
+        synonyms:
+          - peak_users
+          - max_concurrent_users
+          - maximum_users
+      
+      - name: CALL_DROP_RATE_PCT
+        expr: CALL_DROP_RATE_PCT
+        data_type: FLOAT
+        description: Percentage of calls that were dropped. Lower is better.
+        sample_values:
+          - '0.8'
+          - '1.5'
+          - '2.2'
+        synonyms:
+          - dropped_calls
+          - call_failure_rate
+          - disconnection_rate
+      
+      - name: HANDOVER_SUCCESS_RATE_PCT
+        expr: HANDOVER_SUCCESS_RATE_PCT
+        data_type: FLOAT
+        description: Percentage of successful handovers between towers. Higher is better.
+        sample_values:
+          - '98.5'
+          - '97.8'
+          - '95.5'
+        synonyms:
+          - handoff_success
+          - handover_rate
+          - seamless_handover
+      
+      - name: AVAILABILITY_PCT
+        expr: AVAILABILITY_PCT
+        data_type: FLOAT
+        description: Percentage of time the network was available. Higher is better.
+        sample_values:
+          - '99.2'
+          - '99.1'
+          - '98.0'
+        synonyms:
+          - uptime
+          - network_availability
+          - service_availability
+    
+    description: Network performance metrics for cell towers including latency, speed, packet loss, and availability
+
+verified_queries:
+  - name: Towers with high latency
+    question: Which towers have high latency issues?
+    sql: SELECT tower_name, region, AVG(avg_latency_ms) as avg_latency FROM network_performance WHERE measurement_date >= DATEADD(day, -7, CURRENT_DATE()) GROUP BY tower_name, region HAVING AVG(avg_latency_ms) > 20 ORDER BY avg_latency DESC
+    verified_by: System
+    verified_at: 1747000000
+  
+  - name: Best performing 5G towers
+    question: What are the best performing 5G towers by download speed?
+    sql: SELECT tower_name, region, AVG(avg_download_speed_mbps) as avg_speed FROM network_performance WHERE network_type = '5G' AND measurement_date >= DATEADD(day, -7, CURRENT_DATE()) GROUP BY tower_name, region ORDER BY avg_speed DESC LIMIT 5
+    verified_by: System
+    verified_at: 1747000000
+
+custom_instructions: Focus on identifying performance issues, comparing regions, and highlighting towers that need attention. Consider latency, packet loss, and call drop rates as critical quality indicators.
+
+
