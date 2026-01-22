@@ -421,7 +421,6 @@ Less logging means less disk I/O and faster commits.
 
 <!-- ------------------------ -->
 ## Using COPY in Applications
-Duration: 3
 
 Understanding COPY performance is great, but how do you use it in real applications? Here are examples for popular programming languages.
 

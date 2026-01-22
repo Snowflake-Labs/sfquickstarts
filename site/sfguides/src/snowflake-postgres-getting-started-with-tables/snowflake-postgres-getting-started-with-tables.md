@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Follow this tutorial to learn the basics of PostgreSQL for transactional workloads
 environments: local, cloud
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Snowflake Postgres Tables
