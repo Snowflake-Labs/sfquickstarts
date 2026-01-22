@@ -1,4 +1,4 @@
-id: getting-started-with-cortex-aisql
+id: getting-started-with-cortex-aisql-ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: ja
 summary: このガイドは Cortex AI 関数をはじめるうえでのガイドラインを提供します。
