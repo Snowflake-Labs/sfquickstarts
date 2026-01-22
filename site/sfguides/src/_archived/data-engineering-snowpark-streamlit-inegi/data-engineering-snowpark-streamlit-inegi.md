@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: es
 summary: End-to-End from local to cloud using Snowapark Python Streamlit
 environments: web
-status: Archive 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Ingenieria de Datos con Snowpark y visualización con Streamlit
