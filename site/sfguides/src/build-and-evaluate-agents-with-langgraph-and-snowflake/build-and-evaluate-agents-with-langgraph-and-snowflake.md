@@ -11,8 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 5
-
 Modern organizations need to combine multiple AI capabilities to handle complex business questions. This quickstart demonstrates how to build a **multi-agent supervisor architecture** using LangGraph and Snowflake Cortex Agents for customer intelligence, churn prediction, and business analytics.
 
 You can also watch this use case in action on Youtube:
@@ -73,8 +71,6 @@ A complete multi-agent customer intelligence system that:
 
 ## Setup Git Integration
 
-Duration: 5
-
 The first step is to clone the repository into Snowflake using Git Integration. This gives you access to all the SQL scripts and demo data files.
 
 ### Create Database and Clone Repository
@@ -127,8 +123,6 @@ After the Git integration is set up, you can run each SQL script directly from t
 The following sections explain what each script does in detail.
 
 ## Setup Database and Load Data
-
-Duration: 10
 
 The `01_setup_database_and_load_data.sql` script creates the tables and loads demo data. Here's what it does:
 
@@ -234,8 +228,6 @@ You should see data in all four tables.
 
 ## Setup Cortex Search Services
 
-Duration: 5
-
 Cortex Search provides hybrid search (semantic + keyword) capabilities for unstructured text data. We'll create search services that the agents will use to find relevant customer feedback and support tickets.
 
 ### Create Support Tickets Search Service
@@ -291,8 +283,6 @@ SHOW CORTEX SEARCH SERVICES IN SCHEMA CUSTOMER_INTELLIGENCE_DB.PUBLIC;
 ```
 
 ## Setup Semantic Views
-
-Duration: 10
 
 [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) power Cortex Analyst, enabling natural language to SQL conversion. They define the schema, relationships, and business metrics that the AI uses to generate accurate SQL queries.
 
@@ -394,8 +384,6 @@ SHOW SEMANTIC VIEWS IN SCHEMA CUSTOMER_INTELLIGENCE_DB.PUBLIC;
 ```
 
 ## Setup Custom AI UDFs
-
-Duration: 10
 
 Custom UDFs (User-Defined Functions) extend agent capabilities with specialized AI analysis. These functions use Snowflake Cortex AI to perform sentiment analysis, behavior analysis, and strategic insights.
 
@@ -670,8 +658,6 @@ SHOW USER FUNCTIONS IN SCHEMA CUSTOMER_INTELLIGENCE_DB.PUBLIC;
 
 ## Create Cortex Agents
 
-Duration: 15
-
 Now we create the three specialized [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) that will be orchestrated by the LangGraph supervisor. Each agent has specific tools and instructions for their domain.
 
 ### Create Agent Database
@@ -880,8 +866,6 @@ SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;
 
 ## Build LangGraph Supervisor Workflow
 
-Duration: 20
-
 Now we'll build the LangGraph workflow that orchestrates these Snowflake Cortex Agents. This section uses the Jupyter notebook from the companion repository.
 
 ### Local Environment Setup
@@ -985,8 +969,6 @@ Run sample queries to test the system:
 
 ## Run with LangGraph Studio
 
-Duration: 10
-
 [LangGraph Studio](https://smith.langchain.com/studio) provides a visual interface for developing, debugging, and testing your multi-agent workflow. It's an excellent alternative to running the notebook for interactive exploration.
 
 ### Install LangGraph CLI
@@ -1058,8 +1040,6 @@ This enables detailed tracing of all LLM calls and agent interactions within Lan
 
 ## Evaluate with TruLens
 
-Duration: 15
-
 [TruLens](https://www.trulens.org/) provides observability and evaluation for your multi-agent system. Continue following the notebook to set up metrics and run evaluations.
 
 ### TruLens Setup (Steps 14+ in Notebook)
@@ -1105,8 +1085,6 @@ Follow the notebook cells to:
 Results are stored in Snowflake and can be viewed in Snowsight.
 
 ## Conclusion and Resources
-
-Duration: 5
 
 Congratulations! You've successfully built an **efficient multi-agent supervisor architecture** using LangGraph and Snowflake Cortex. This system demonstrates:
 
