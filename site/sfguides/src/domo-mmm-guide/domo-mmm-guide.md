@@ -1,6 +1,6 @@
 author: Andreina Toledo Men - Domo
 id: domo-mmm-guide
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics
 language: en
 summary: Build Marketing Mix Models with Domo MMM and Snowflake Cortex AI to measure channel incrementality, optimize budgets, and maximize marketing ROI.
 environments: web
@@ -284,18 +284,7 @@ We recommend the following for your DataFlow:
   - Scripting tiles
   - Data Science tiles
 
-### Connect to Your Data
-
-1. Select the _DataFlows_ icon on the left  
-  ![assets/dataflows_menu.png](assets/dataflows_menu.png)
-
-1. Locate the Mixed Media Model Dataflow  
-  ![assets/dataflows_row.png](assets/dataflows_row.png)
-
-1. Select the input dataset and click _Change Dataset_ to replace the sample data with the data you have created through this quickstart.
-  ![assets/change_dataset_magic_etl.png](assets/change_dataset_magic_etl.png)
-
-#### Data Structure Requirements
+### Data Structure Requirements
 
 **Required Fields**
 
