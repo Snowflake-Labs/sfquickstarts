@@ -11,19 +11,19 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-If you're migrating to Snowflake Postgres from another platform, you have several options:
+If you're migrating to Snowflake Postgres from another platform, you a few options:
 
 - **pg_dump and pg_restore**: A reliable way to collect an entire database and restore it to a new location. Great for smaller databases (50-150GB) where a brief downtime window is acceptable.
 
-- **Logical replication**: When your database is too large for dump/restore downtime, but lack direct WAL access (common with managed services like RDS), logical replication provides a path forward.
+- **Logical replication**: When your database is too large for dump/restore downtime,  logical replication provides a path forward.
 
-This quickstart focuses on the **logical replication** approach for migrating to Snowflake Postgres. Your existing database, aka the source, becomes the `publisher`, and Snowflake Postgres, aka the target, becomes the `subscriber`. During initial load, all data is copied from publisher to subscriber. After that, any transactions on the publisher are continuously sent to the subscriber, and then a final migration cutover is initiated.
+This guide focuses on the **logical replication** approach for migrating to Snowflake Postgres. Your existing database, aka the source, becomes the `publisher`, and Snowflake Postgres, aka the target, becomes the `subscriber`. During initial load, all data is copied from publisher to subscriber. After that, any transactions on the publisher are continuously sent to the subscriber, and then a final migration cutover is initiated.
 
 ### What You Will Build
 - A sample remote database
 - Snowflake Postgres instance
 - Networking ingress/egress between Snowflake Postgres and a remote database
-- A logical replication pipeline from a remote PostgreSQL database to Snowflake Postgres
+- A logical replication pipeline from a remote Postgres database to Snowflake Postgres
 - A completed data migration from a Postgres to Snowflake Postgres
 
 ### What You Will Learn
@@ -36,23 +36,17 @@ This quickstart focuses on the **logical replication** approach for migrating to
 - How to fix sequences and clean up after migration
 
 ### Prerequisites
-- A source Postgres database, for this guide we will use a local database. Any local or cloud database can be used instead by changing the connection details below.
+- A source Postgres database. Any self hosted or cloud Postgres database can be used by changing the connection details below.
 - Access to a Snowflake account with Snowflake Postgres enabled
 
 
 <!-- ------------------------ -->
-## Set Up Local Postgres
+## The Source Database
 
 ### Overview
-For this guide, we'll create a local PostgreSQL database as our origin system. This simulates having an existing production database that you want to migrate to Snowflake Postgres.
+For this guide, we'll create a PostgreSQL database as our origin system. This simulates having an existing production database that you want to migrate to Snowflake Postgres. Any environment for Postgres, including cloud managed environments like Amazon RDS can be used. 
 
 ### Create Sample Tables
-
-Start your local PostgreSQL and connect to the default `postgres` database using `psql`:
-
-```bash
-psql -U postgres
-```
 
 This example SQL creates three tables that represent a simple ecommerce application: customers, products, and orders.
 
@@ -166,7 +160,7 @@ For logical replication, Snowflake Postgres must be able to initiate a connectio
 -- Create the ingress rule to allow traffic from origin or other application connections
 CREATE NETWORK RULE PG_INGRESS
   TYPE = IPV4
-  VALUE_LIST = ('204.236.226.69/32', '25.253.158.254')
+  VALUE_LIST = ('204.236.226.69/32', '25.253.158.254/32')
   MODE = POSTGRES_INGRESS;
 
 -- Create an egress rule to allow Snowflake Postgres to initiate a connection to the source
@@ -203,15 +197,15 @@ Virtual network peering and PrivateLink are also supported for this use case.
 ## Migrate Schema from Source to Target
 
 ### Overview
-Logical replication only replicates data changes (`INSERT`, `UPDATE`, `DELETE`), so you must ensure that the target database has the correct schema beforehand. In this step, we'll copy the schema from our local `postgres` database to Snowflake Postgres.
+Logical replication only replicates data changes (`INSERT`, `UPDATE`, `DELETE`), so you must ensure that the target database has the correct schema beforehand. In this step, we'll copy the schema from the source `postgres` database to Snowflake Postgres.
 
 ### Set Up Connection Variables
 
 First, set environment variables for your connection strings:
 
 ```bash
-# Local source database
-export SOURCE_DB_URI="postgres://postgres@localhost:5432/postgres"
+# Source database 
+export SOURCE_DB_URI="postgres://postgres:your_password@mydb-instance.abc123xyz.us-west-2.rds.amazonaws.com:5432/postgres"
 
 # Snowflake Postgres target (use your actual credentials)
 export TARGET_DB_URI="postgres://snowflake_admin:********@hmj7c3jdlwu.sfengineering-pgtest6.qa6.us-west-2.aws.postgres.snowflake.app:5432/postgres"
@@ -247,13 +241,14 @@ psql $TARGET_DB_URI
 You should see the `customers`, `products`, and `orders` tables listed. The tables will be empty - that's expected, as data will be replicated in the next steps.
 
 >  
+>
 > If your migration process proceeds while application development continues, you must keep the receiving database's schema in sync with any schema changes made on your source database.
 
 <!-- ------------------------ -->
 ## Configure Replication Publisher in Source Database
 
 ### Overview
-Configure your local source database to act as a publisher for logical replication.
+Configure your source database to act as a publisher for logical replication.
 
 ### Enable Logical Replication
 
@@ -316,15 +311,9 @@ Connect to your Snowflake Postgres database and create a subscription using the 
 
 ```sql
 CREATE SUBSCRIPTION snowflake_migration 
-CONNECTION 'host={source_host} port=5432 dbname=postgres user=replication_user password={password}' 
+CONNECTION 'host={source_host} port=5432 dbname=postgres user={replication_user} password={password}' 
 PUBLICATION snowflake_migration;
 ```
-
-Replace the placeholders:
-- `{source_host}` - public IP or hostname of your source database
-- `{database}` - name of the source database
-- `{replication_user}` - the replication user created earlier
-- `{password}` - the password for the replication user
 
 Creating the subscription will:
 1. Create a replication slot on the publisher
