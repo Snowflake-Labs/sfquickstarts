@@ -248,8 +248,7 @@ psql $TARGET_DB_URI
 
 You should see the `customers`, `products`, and `orders` tables listed. The tables will be empty - that's expected, as data will be replicated in the next steps.
 
-> aside positive
-> 
+>  
 > If your migration process proceeds while application development continues, you must keep the receiving database's schema in sync with any schema changes made on your source database.
 
 <!-- ------------------------ -->
@@ -334,7 +333,6 @@ Creating the subscription will:
 2. Begin copying data from tables in the publication
 3. Create temporary slots for each table during initial synchronization
 
-> aside negative
 > 
 > If the subscription creation fails check the network settings above, both that the source allows connections from Snowflake Postgres and Snowflake Postgres egress is configured to contact the external database.
 
@@ -421,7 +419,6 @@ Once replication is caught up and you've validated the data, perform the cutover
 4. **Update application connection strings** to point to Snowflake Postgres
 5. **Resume application operations**
 
-> aside positive
 > 
 > Plan your cutover window carefully. While logical replication minimizes downtime, you still need a brief window where writes are stopped to ensure consistency.
 
