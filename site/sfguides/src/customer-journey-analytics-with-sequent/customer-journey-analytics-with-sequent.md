@@ -1,6 +1,6 @@
 id: customer-journey-analytics-with-sequent
 language: en
-summary: Build a comprehensive customer journey analytics platform within Snowflake that combines path analysis, multi-touch attribution, behavioral segmentation, and predictive modeling to transform complex event sequences into actionable insights.
+summary: Build customer journey analytics with Snowflake and Sequent for path analysis, funnel metrics, and conversion optimization.
 categories: snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/industry/travel-and-hospitality, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/industry/healthcare-and-life-sciences
 environments: web
 status: Published

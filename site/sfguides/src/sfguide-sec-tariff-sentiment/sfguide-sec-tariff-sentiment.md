@@ -2,7 +2,7 @@ author: Hartland Brown
 id: sfguide-sec-tariff-sentiment
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics, 
 language: en
-summary: This is a sample Snowflake Guide
+summary: This is a sample Snowflake Guide 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

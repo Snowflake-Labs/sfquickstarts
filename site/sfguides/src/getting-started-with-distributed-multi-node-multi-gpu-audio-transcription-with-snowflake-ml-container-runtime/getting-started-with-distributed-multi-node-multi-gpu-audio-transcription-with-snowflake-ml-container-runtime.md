@@ -1,6 +1,6 @@
 author: Dharmendra Shavkani
 id: getting-started-with-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime
-summary: This guide will provide step-by-step details for using multi-node multi-gpu audio transcription with snowflake ml container runtime
+summary: This guide will provide step-by-step details for using multi-node multi-gpu audio transcription with snowflake ml container runtime 
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 environments: web
 language: en

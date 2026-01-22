@@ -1,7 +1,7 @@
 id: getting-started-with-snowflake-cortex-ai
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: This guide provides the instructions for getting started with Snowflake Cortex AI.
+summary: This guide provides the instructions for getting started with Snowflake Cortex AI. 
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

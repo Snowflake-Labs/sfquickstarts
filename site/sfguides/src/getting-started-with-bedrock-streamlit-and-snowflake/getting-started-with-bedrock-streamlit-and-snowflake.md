@@ -1,7 +1,7 @@
 id: getting-started-with-bedrock-streamlit-and-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-summary: Getting Started with Bedrock, Streamlit and Snowflake using Snowpark External Access
+summary: Build AI-powered Streamlit applications with Amazon Bedrock and Snowflake for intelligent data exploration and analysis.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>

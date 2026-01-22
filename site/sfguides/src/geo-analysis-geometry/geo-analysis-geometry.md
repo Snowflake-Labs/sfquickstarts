@@ -2,7 +2,7 @@ author: Peter Popov, Oleksii Bielov
 id: geo-analysis-geometry
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
-summary: This is a sample Snowflake Guide
+summary: Master Snowflake's GEOMETRY data type for geospatial analysis including energy grids, LTE coverage, and spatial queries.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

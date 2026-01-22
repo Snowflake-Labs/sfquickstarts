@@ -1,4 +1,4 @@
-summary: Getting Started With External Functions on AWS
+summary: Create AWS Lambda external functions in Snowflake to call APIs, run custom code, and extend SQL with cloud compute.
 id: getting-started-external-functions-aws
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en

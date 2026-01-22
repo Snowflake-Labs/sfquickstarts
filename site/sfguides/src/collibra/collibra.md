@@ -2,7 +2,7 @@ author:
 id: collibra
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
 language: en
-summary: This is a sample Snowflake Guide to show how a user can work with Collibra in integration with Snowflake. 
+summary: Catalog Snowflake data in Collibra for data governance, policy enforcement, and controlled access across your data platform.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

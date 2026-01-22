@@ -1,7 +1,7 @@
 id: getting-started-external-functions-azure
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Getting Started With External Functions on Azure
+summary: Create Azure Functions as external functions in Snowflake to integrate Azure services, APIs, and custom compute.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
