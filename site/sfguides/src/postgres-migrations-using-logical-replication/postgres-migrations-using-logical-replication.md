@@ -15,8 +15,6 @@ If you're migrating to Snowflake Postgres from another platform, you have severa
 
 - **pg_dump and pg_restore**: A reliable way to collect an entire database and restore it to a new location. Great for smaller databases (50-150GB) where a brief downtime window is acceptable.
 
-- **WAL-based migration**: For larger databases with WAL backup systems like pgBackRest or WAL-G/E, you can stream WAL to your new host for an exact copy with minimal downtime.
-
 - **Logical replication**: When your database is too large for dump/restore downtime, but lack direct WAL access (common with managed services like RDS), logical replication provides a path forward.
 
 This quickstart focuses on the **logical replication** approach for migrating to Snowflake Postgres. Your existing database, aka the source, becomes the `publisher`, and Snowflake Postgres, aka the target, becomes the `subscriber`. During initial load, all data is copied from publisher to subscriber. After that, any transactions on the publisher are continuously sent to the subscriber, and then a final migration cutover is initiated.
