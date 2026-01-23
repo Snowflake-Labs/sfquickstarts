@@ -27,13 +27,16 @@ You can use semantic views in Cortex Analyst and query these views in a SELECT s
 
 ## Usecase
 
-This integration leverages Snowflake's native capabilities to ingest structured movie review data directly from Amazon S3 into a database schema. Defining a Snowflake semantic view with table, relationships, dimensions, and metrics to enhance AI-powered analytics. Semantic models are shifted from individual BI tool layers to the core data platform, guaranteeing that all tools utilize the same semantic concepts.  
+In this tutorial, you'll learn how to process and analyze customer review data for a Media company with Snowflake Cortex Analyst followed by building a dashboard in Amazon Quick Sight. Briefly, you'll work with the movies dataset, which contains customer reviews for a movie media company, and transform data into actionable insights.
+
+This integration leverages Snowflake's native capabilities to ingest structured movie review data directly from Amazon S3 into a database schema. Defining a Snowflake semantic view with table relationships, dimensions, and metrics to enhance AI-powered analytics. Semantic models are shifted from individual BI tool layers to the core data platform, guaranteeing that all tools utilize the same semantic concepts.  
+
 
 **🔑 Key Steps and Benefits:**  
 
-**1. Data Ingestion and Semantic View Creation**: Data is loaded from Amazon S3 using Snowflake's native ingestion tools. A semantic view is then established to simplify the database structure for business users.  
+**1. Data Ingestion and Semantic View Creation**: Data is loaded from Amazon S3 using Snowflake's native ingestion tools. A semantic view is then established to simplify the database structure for business users all via SQL.
 **2. Self-Serve Analytics with [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Business teams and non-technical users can perform self-serve analytics using natural language queries via Snowflake Cortex Analyst, gaining instant insights from the structured data in Snowflake.  
-**3. Amazon Quick Sight Integration**: Snowflake Notebook is used to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html) to set up integration and create a data source and data set.  
+**3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook, you will complete process of creating QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html). 
 **4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations.  
 
 ![architecture diagram](assets/arch.png)
@@ -51,13 +54,13 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 
 
 ### What You’ll Build 
-You will build a foundational yet practical setup of a Snowflake semantic view, complete with data views and a defined semantic model, enabling consistent data querying for AI and BI with Amazon Quick Sight.
+You will build a foundational yet practical setup of a Snowflake Cortex Analyst, complete with data views and a defined semantic model, enabling consistent data querying for AI and BI with Amazon Quick Sight.
 
 
 
 ### What You'll Need
 - Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/). If you do not have an account, sign up for a [trial account here](https://signup.snowflake.com/)
-  - Select `Enterprise` edition
+  - Select `Enterprise` edition on `AWS` Cloud
   - Access to `ACCOUNTADMIN` role is required for creating semantic views
 - Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
 
