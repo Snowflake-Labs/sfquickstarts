@@ -2,6 +2,9 @@ name: Build and upload quickstart manifest (test-only)
 
 on:
   workflow_dispatch: {}
+  push:
+    branches:
+      - manifest_weekly
 
 permissions:
   contents: read
