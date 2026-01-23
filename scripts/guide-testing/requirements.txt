@@ -1,0 +1,13 @@
+# Snowflake SQL Validator Requirements
+#
+# This tool requires:
+# - snowflake-cli (`snow`) for fast SQL EXPLAIN validation
+# - cortex CLI for AI-powered analysis of syntax errors
+# - codespell for spell checking
+#
+# Install snowflake-cli:
+#   pip install snowflake-cli
+#
+# cortex CLI should already be installed separately.
+snowflake-cli
+codespell
