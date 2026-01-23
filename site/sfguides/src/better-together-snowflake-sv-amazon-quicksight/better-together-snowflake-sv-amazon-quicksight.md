@@ -117,7 +117,10 @@ SELECT TO_VARCHAR( GET_DDL(
   'MOVIES.PUBLIC.MOVIE_ANALYTICS_SV'
 ));
 ```
+<br>
+
 - ensure to click on `Download as CSV`
+- <br>
 ![export-sv-ddl.gif](assets/export-sv-ddl.gif)  
 
 
