@@ -154,8 +154,10 @@ Let's confirm the creation of the semantic view
 * Ensure to `Save` before exit
 
 To use SQL to view a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
+<br>
 
-![movie SV ready](assets/movies-analytics-sv.png)  
+![movie SV ready](assets/movies-analytics-sv.png) 
+
 <br> 
 
 
@@ -182,9 +184,7 @@ Example: verifying `What is the average rating for all movies in 2023?` ensures 
 If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Snowflake Guide](#)
 
 ### What You Learned
-- Basics of creating sections
-- adding formatting and code snippets
-- Adding images and videos with considerations to keep in mind
+- 
 
 ### Related Resources
 - <link to github code repo>
