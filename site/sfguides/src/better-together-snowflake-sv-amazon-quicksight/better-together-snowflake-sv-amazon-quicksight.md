@@ -15,11 +15,11 @@ open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 <!-- ------------------------ -->
 ## Overview 
 
-Unlock the full potential of your data with the powerhouse combination of [Snowflake](https://www.snowflake.com/en/) and [Amazon Quick](https://aws.amazon.com/quicksuite/). Say goodbye to data silos and hello to seamless, intelligent insights. As a multi-award-winning [AWS Technology Partner](https://www.snowflake.com/en/why-snowflake/partners/all-partners/aws/) (Winner- Global Data & Analytics Partner -2023, 2024, 2025) with multiple AWS accreditations that include AWS ISV Competencies in Generative AI, Machine Learning, Data and Analytics, and Retail. Snowflake powers AI, data engineering, applications, and analytics on a trusted, scalable AI Data Cloud—eliminating silos and accelerating innovation.
+The [Snowflake](https://www.snowflake.com/en/) platform is a fully managed service that’s truly easy to use, connected across your entire data estate and trusted by thousands of customers. It integrates tighty with AWS Services. This Quickstart demostrates the integration between Snowflake and [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/) to deliver AI-powered BI capabilities and unified intelligence across all your enterprise data sources, and bridges the critical "last-mile gap" between insights and action.
 
-This Quickstart demostrates the integration between Snowflake and [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/) to deliver AI-powered BI capabilities and unified intelligence across all your enterprise data sources, and bridges the critical "last-mile gap" between insights and action.
+The integration showcases Snowflake's [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview), a new schema-level object in Snowflake. Semantic view provides the meaning and business context to raw enterprise data - "metrics" (eg. total view, user_rating) and "dimensions" (e.g., movie, genre), acting as a reliable bridge between human language and complex data structures. By embedding organizational context and definitions directly into the data layer, semantic views ensure that both AI and BI systems interpret information uniformly, leading to trustworthy answers and significantly reducing the risk of AI hallucinations. 
 
-The integration showcases Snowflake's [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview), a new schema-level object in Snowflake. Semantic view provides the meaning and business context to raw enterprise data - "metrics" (eg. total view, user_rating) and "dimensions" (e.g., movie, genre), acting as a reliable bridge between human language and complex data structures. By embedding organizational context and definitions directly into the data layer, semantic views ensure that both AI and BI systems interpret information uniformly, leading to trustworthy answers and significantly reducing the risk of AI hallucinations. You can use semantic views in Cortex Analyst and query these views in a SELECT statement. You can also share semantic views in [private listings](https://docs.snowflake.com/en/collaboration/provider-listings-creating-publishing.html#label-listings-create), in public listings on the [Snowflake Marketplace](https://app.snowflake.com/_deeplink/marketplace), and in organizational listings. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications. Lastly, as native Snowflake schema objects, semantic views have object-level access controls. You can grant or restrict usage and query rights on semantic views just as with tables and views, ensuring authorized, governed usage across SQL, BI and AI endpoints.  You can read more about how to write “Semantic SQL” [here](https://docs.snowflake.com/en/user-guide/views-semantic/querying).
+You can use semantic views in Cortex Analyst and query these views in a SELECT statement. You can also share semantic views in [private listings](https://docs.snowflake.com/en/collaboration/provider-listings-creating-publishing.html#label-listings-create), in public listings on the [Snowflake Marketplace](https://app.snowflake.com/_deeplink/marketplace), and in organizational listings. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications. Lastly, as native Snowflake schema objects, semantic views have object-level access controls. You can grant or restrict usage and query rights on semantic views just as with tables and views, ensuring authorized, governed usage across SQL, BI and AI endpoints.  You can read more about how to write “Semantic SQL” [here](https://docs.snowflake.com/en/user-guide/views-semantic/querying).
 
 <br>
 
@@ -100,8 +100,8 @@ We will run the cells in notebook to load the data into the `movies_dashboard` ,
 
 
 <!------------>
-#### Optional: for those who want to use SQL worksheet
-* Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, raw tables), ingest data from Amazon S3, and create the movies table
+#### Optional: for those who want to use SQL worksheet to create warehouse and database before importing the notebook
+* Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database)
 
 ```sql
 
@@ -112,162 +112,61 @@ We will run the cells in notebook to load the data into the `movies_dashboard` ,
 USE ROLE ACCOUNTADMIN;
 
 -- Create role for semantic view quick start
-CREATE ROLE IF NOT EXISTS quickstart_role 
-   COMMENT = 'Role for semantic view quick start demo';
+CREATE ROLE IF NOT EXISTS semantic_quick_start_role
+COMMENT = 'Role for semantic view quick start demo';
 
--- Set variables for user
+-- Set variables
 SET my_user = CURRENT_USER();
-
+    
 --Grant role to your user 
-GRANT ROLE quickstart_role TO USER IDENTIFIER($my_user);
-
-
--- Create warehouse, database, schema and grant role
-
-CREATE WAREHOUSE IF NOT EXISTS WORKSHOPWH WITH
-   WAREHOUSE_SIZE = 'XSMALL'
-   AUTO_SUSPEND = 60
-   AUTO_RESUME = TRUE
-   COMMENT = 'Warehouse for semantic view quick start demo';
-   
-CREATE DATABASE IF NOT EXISTS movies; 
-
-GRANT OWNERSHIP ON DATABASE movies TO ROLE quickstart_role COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON SCHEMA movies.PUBLIC TO ROLE quickstart_role COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON WAREHOUSE workshopwh TO ROLE quickstart_role COPY CURRENT GRANTS;
-
+GRANT ROLE semantic_quick_start_role TO USER IDENTIFIER($my_user);
+    
+-- create database, schema and warehouse
+CREATE WAREHOUSE IF NOT EXISTS WORKSHOPWH WITH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 1800 AUTO_RESUME = TRUE COMMENT = 'Warehouse for semantic view quick start demo';
+CREATE DATABASE IF NOT EXISTS movies;
+GRANT OWNERSHIP ON DATABASE movies TO ROLE semantic_quick_start_role COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON WAREHOUSE workshopwh TO ROLE semantic_quick_start_role COPY CURRENT GRANTS;
 -- Grant privileges to create semantic views
-GRANT CREATE SEMANTIC VIEW ON SCHEMA movies.PUBLIC TO ROLE quickstart_role;
-GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE quickstart_role;
+GRANT CREATE SEMANTIC VIEW ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
+GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 
--- Verify the below information
-SELECT
-  CURRENT_DATABASE() AS current_db,
-  CURRENT_SCHEMA()   AS current_schema,
-  CURRENT_ROLE()     AS current_role,
-  CURRENT_USER() AS current_user;
-
--- Set variables for the specified role, database, and schema
-SET my_role = 'quickstart_role';
-SET my_db = CURRENT_DATABASE();
-SET my_schema = CURRENT_SCHEMA();
-SET my_full_schema = $my_db || '.' || $my_schema;
-
-
-
--- ==============================================
--- PART 2: DATA SETUP (as quickstart_role)
--- ==============================================
-
--- create demo table for our movie data, we will surface this in dashboard
-CREATE TABLE if not exists movies_dashboard (
-        movie_id NUMBER,
-    	movie_title VARCHAR,
-   	    movie_release_year INTEGER,
-    	genre VARCHAR,
-   	    user_rating FLOAT,
-   	    rating_timestamp TIMESTAMP_NTZ,
-    	user_id NUMBER,
-    	user_firstname VARCHAR,
-   	    user_lastname VARCHAR,
-    	user_city VARCHAR,
-    	user_state VARCHAR,
-    	user_country VARCHAR,
-    	user_email VARCHAR,
-    	user_phonenumber VARCHAR,
-    	interaction_timestamp NUMBER ,
-    	interaction_type VARCHAR
-);
-
-CREATE OR REPLACE STAGE MOVIEDASHBOARD
-URL='s3://hol-qs-bucket/'
-FILE_FORMAT = (TYPE = 'csv');
-
-COPY INTO movies_dashboard FROM @MOVIEDASHBOARD/movies_dashboard.csv
-  FILE_FORMAT=(TYPE = 'csv' FIELD_DELIMITER = ',' SKIP_HEADER = 1);
-
--- Create stage for docs 
-CREATE STAGE DOCS
-DIRECTORY = ( ENABLE = true )
-ENCRYPTION = ( TYPE = 'SNOWFLAKE_SSE' );
-
--- Create stage for semantic models
-CREATE STAGE IF NOT EXISTS MODELS
-  DIRECTORY = (ENABLE = TRUE)
-  COMMENT = 'Stage for semantic model files';
-
--- let's verify the data load
-select distinct movie_title from movies_dashboard;
-
--- verify 773 records been loaded
-select count(*) from movies_dashboard;
 
 ```
 
 
-### Proceed to create the Semantic view 
-Once our warehouse, database and `movies_dashboard` table has been created & loaded (Part 1 and Part 2 of the notebook),  we will create the semantic view.
+#### Proceed to import the notebook
+Once our warehouse and database has been created,  we will upload the [notebook](https://notebook)  
 
-#### From Snowsight
-* Select **AI & ML** 
-* Select **Cortex Analyst**
-* Click on the `Create new` drop down 
+#### Viewing the Semantic View and ask question about our data
+
+Let's confirm the creation of the semantic view
+
+
+* From Snowsight, Select **AI & ML** -> **Cortex Analyst**
 * Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
-* In the **Location to  store**: Select `Movies` database and `Public` Schema
-* Enter `MOVIES_SV` as the name of the semantic view 
-* Click **NEXT** to continue
+* Select `Movies` database and `Public` Schema 
+* View the details of the semantic view `MOVIES_ANALYST_SV` 
+* Feel free to explore and `Explain the dataset` in the `Playground`
+* Ensure to `Save` before exit
 
-To use SQL to create a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
+To use SQL to view a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
 
+![movie SV ready](assets/movies-analytics-sv.png)  
 <br> 
 
 
-![semantic view creation](assets/create-sv.png)
-
-
-* In the `Provide context (optional)` page -> Click **SKIP** 
-
-* In the `Select table for Semantic view` page  
-   Select `Movies` >> `Public` >> `MOVIES_DASHBOARD` and click **Next**
-
-![select table for SV creation](assets/select-table.png)
-
-* Select ✅ **ALL** 16 columns  
-![select columns for SV creation](assets/select-columns.png)
-  
-* Select ✅ `Add sample values to the semantic view`
-* Select ✅ `Add descriptions to the semantic view`
-* Click **Create and Save**
-
-    > Creation of semantic view may take up to 10 minutes. Please don't close the window.
-
-The semantic view should get created in a few minutes, you can click on the `Explain the dataset` and click on the suggested query to verify the response on the right hand side.
-* Click **Save** before continue
-
-![SV ready](assets/sv-ready.png)
+![SV in snowsight](assets/sv-snow.gif)
 
 <br>
 
-Before proceeding, let's confirm the creation of the semantic view, from `Catalog` >>  `Database Explorer`
 
-- Database: `MOVIES`
-- Schema: `PUBLIC`
-- Semantic Views: `MOVIES_SV`
-
-![movie SV ready](assets/movies-sv.png)  
-
-<br>
 > ✏️  ✏️  Feel free to :-
 1. add more `➕ verfied queries` 
-Verified queries are example gold questions with correct answers that give the LLM an example of an accurate answer. This improves accuracy, reduce latency, and help generate better suggestions for your semantic view.  
-Example: verifying `What is the average user rating for movies in the Adventure genre over time` ensures Cortex Analyst generates the right SQL for all similarly phrased questions. 
+Verified queries are example gold questions with correct answers that give the LLM an example of an accurate answer. This improves accuracy, reduce latency, and help generate better suggestions for your semantic view.
+
+Example: verifying `What is the average rating for all movies in 2023?` ensures Cortex Analyst generates the right SQL for all similarly phrased questions. 
 > Cortex Analyst only uses verified queries when they are similar to the question that the user asked.  
-
-2. Edit the dimension and click on **⚝ Generate field** to populate field description and synonyms  
-For example: synoyms for `USER_PHONENUMBER` >  phone_number, telephone, mobile_number, contact_number, phone, mobile
-
-![generate fields](assets/generate-fields.png)
-
 
 
 <br>
