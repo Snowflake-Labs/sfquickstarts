@@ -15,7 +15,7 @@ open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 <!-- ------------------------ -->
 ## Overview 
 
-[Snowflake](https://www.snowflake.com/en/) is a fully managed Data & AI platform that is truly easy to use, connected across your entire data estate and trusted by thousands of customers. It integrates tighty with [Amazon Web Services](https://www.snowflake.com/en/blog/snowflake-aws-enterprise-data-ai-adoption/) to accelerate enterprise Data and AI Adoption. This Quickstart demostrates the integration between Snowflake and [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/) to deliver AI-powered BI capabilities and unified intelligence across all your enterprise data sources, and bridges the critical "last-mile gap" between insights and action.
+[Snowflake](https://www.snowflake.com/en/) is a fully managed Data & AI platform that is truly easy to use, connected across your entire data estate and trusted by thousands of customers. It integrates tighty with [Amazon Web Services](https://www.snowflake.com/en/blog/snowflake-aws-enterprise-data-ai-adoption/) to accelerate enterprise Data and AI Adoption. This Quickstart demostrates the integration between Snowflake and [Amazon Quick](https://aws.amazon.com/quicksuite/quicksight/) to deliver AI-powered BI capabilities and unified intelligence across all your enterprise data sources, and bridges the critical "last-mile gap" between insights and action.
 
 The integration showcases Snowflake's [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview), a new schema-level object in Snowflake. Semantic view provides the meaning and business context to raw enterprise data - "metrics" (eg. total view, user_rating) and "dimensions" (e.g., movie, genre), acting as a reliable bridge between human language and complex data structures. By embedding organizational context and definitions directly into the data layer, semantic views ensure that both AI and BI systems interpret information uniformly, leading to trustworthy answers and significantly reducing the risk of AI hallucinations. 
 
@@ -93,7 +93,7 @@ If you are looking to use other packages, click on the Packages dropdown on the 
 
 Accept the default and ensure to select the **`Run on Warehouse`**
 
->By default, the notebook warehouse is set to SYSTEM$STREAMLIT_NOTEBOOK_WH. However, you can specify a different warehouse at the time of notebook creation by choosing one from the dropdown list. 
+By default, the notebook warehouse is set to SYSTEM$STREAMLIT_NOTEBOOK_WH. However, you can specify a different warehouse at the time of notebook creation by choosing one from the dropdown list. 
 
 ![notebook creation](assets/notebook-creation.png) 
 
@@ -104,7 +104,7 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 ![notebook wh](assets/set-notebook-wh.png)  
 
 
-We will run the cells in notebook to load the data into the `movies_dashboard` , proceed with running `Part 1` and `Part 2` and the reminder of the notebook
+We will run the cells in notebook to load the data into the database `MOVIES` , proceed with running `Part 1` and `Part 2` and the reminder of the notebook
 
 ![run notebook](assets/run-notebook.png)  
 
@@ -121,19 +121,57 @@ SELECT TO_VARCHAR( GET_DDL(
 
 ensure to click on `Download as CSV` and rename this file to **SF_DDL.csv**
 
-- <br>
+<br>
+ 
 ![export-sv-ddl](assets/export-sv-ddl.gif)  
 
 
 
-### This completes the Snowflake side setup
+### ✅✅ This completes the Snowflake side setup
 
-The next section is the **QuickSight Dataset Generator** which by using AWS CloudShell and Quicksight API
+At this stage, you can view the semantic view `MOVIES_ANALYST_SV` and ask question using natural language with Cortex Analyst.
 
-#### Complete Workflow
-0. Open AWS console --> cloudshell --> Upload the zip
+To view the semantic view created in UI:
 
-![cloudshell](assets/cloudshell.png)  
+* From Snowsight, Select **AI & ML** -> **Cortex Analyst**
+* Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
+* Select `Movies` database and `Public` Schema 
+* View the details of the semantic view `MOVIES_ANALYST_SV`
+> To use SQL to view a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
+
+![movie SV ready](assets/movies-analytics-sv.png) 
+
+<br>
+
+* Feel free to explore and `Explain the dataset` in `Playground`
+* Ensure to `Save` before exit  
+
+
+![SV in snowsight](assets/sv-snow.gif)
+
+<br>
+
+
+✏️  ✏️  Feel free to `add more` `➕ verfied queries` 
+> Verified queries are example gold questions with correct answers that give the LLM an example of an accurate answer. This improves accuracy, reduce latency, and help generate better suggestions for your semantic view.
+
+Example: verifying `What is the average rating for all movies in 2023?` ensures Cortex Analyst generates the right SQL for all similarly phrased questions. 
+> Cortex Analyst only uses verified queries when they are similar to the question that the user asked.  
+
+<br>
+
+<!-- ------------------------ -->
+
+## **QuickSight Dataset Generator** with AWS CloudShell to call Quicksight API
+Follow the guide in the notebook to complete the process of creating QuickSight datasets from Snowflake DDL, setting up credentials to sharing datasets with users.
+
+
+### Complete Workflow
+0. Open AWS console --> cloudshell --> Upload the `Solution_Package.zip`
+
+![cloudshell upload](assets/cloudshell-upload.png)  
+
+
 
 1. Create AWS Secret (Snowflake credentials)
    
@@ -151,7 +189,11 @@ The next section is the **QuickSight Dataset Generator** which by using AWS Clou
 
 
 
-<!------------>
+
+<br>
+
+<!-- ------------------------ -->
+
 #### Optional: for those who want to use SQL worksheet to create warehouse and database before importing the notebook
 * Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database)  
 Once our warehouse and database has been created,  you can upload the [notebook](https://notebook) and execute the guided cells.
@@ -187,41 +229,9 @@ GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 
 ```
 
-
-### Viewing the Semantic View and ask question about our data
-
-To view the semantic view created in UI:
-
-* From Snowsight, Select **AI & ML** -> **Cortex Analyst**
-* Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
-* Select `Movies` database and `Public` Schema 
-* View the details of the semantic view `MOVIES_ANALYST_SV`
-> To use SQL to view a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
-
-![movie SV ready](assets/movies-analytics-sv.png) 
-
-<br>
-* Feel free to explore and `Explain the dataset` in the `Playground`
-* Ensure to `Save` before exit  
-
-
-![SV in snowsight](assets/sv-snow.gif)
-
-<br>
-
-
-> ✏️  ✏️  Feel free to :-
-1. add more `➕ verfied queries` 
-Verified queries are example gold questions with correct answers that give the LLM an example of an accurate answer. This improves accuracy, reduce latency, and help generate better suggestions for your semantic view.
-
-Example: verifying `What is the average rating for all movies in 2023?` ensures Cortex Analyst generates the right SQL for all similarly phrased questions. 
-> Cortex Analyst only uses verified queries when they are similar to the question that the user asked.  
-
-
 <br>
 
 <br>
-  
 
 ## Conclusion And Resources
 
