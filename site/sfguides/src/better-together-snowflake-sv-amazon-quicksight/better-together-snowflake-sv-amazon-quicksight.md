@@ -103,9 +103,23 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 
 ![notebook wh](assets/set-notebook-wh.png)  
 
-We will run the cells in notebook to load the data into the `movies_dashboard` , procced with running `Part 1` and `Part 2` of the notebook
+
+We will run the cells in notebook to load the data into the `movies_dashboard` , procced with running `Part 1` and `Part 2` and the reminder of the notebook
 
 ![run notebook](assets/run-notebook.png)  
+
+! Important: 
+After running the cell `Get_SV_DDL` with the following SQL:
+
+```sql
+SELECT TO_VARCHAR( GET_DDL(
+  'SEMANTIC_VIEW',
+  'MOVIES.PUBLIC.MOVIE_ANALYTICS_SV'
+));
+```
+- ensure to click on `Download as CSV`
+![export-sv-ddl.gif](assets/export-sv-ddl.gif)  
+
 
 
 
