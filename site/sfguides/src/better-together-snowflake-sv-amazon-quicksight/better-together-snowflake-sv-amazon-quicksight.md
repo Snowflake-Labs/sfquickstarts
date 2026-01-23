@@ -91,10 +91,17 @@ If you are looking to use other packages, click on the Packages dropdown on the 
 ![import notebook](assets/import-notebook.png)
 
 
-Accept the default and ensure to select the **`Run on Warehouse`** 
-We will create a new warehouse `WORKSHOPWH` and a database named `movies` to organize our data via this notebook
+Accept the default and ensure to select the **`Run on Warehouse`**
 
-![notebook creation](assets/notebook-creation.png)  
+>By default, the notebook warehouse is set to SYSTEM$STREAMLIT_NOTEBOOK_WH. However, you can specify a different warehouse at the time of notebook creation by choosing one from the dropdown list. 
+
+![notebook creation](assets/notebook-creation.png) 
+
+We will create a new warehouse `WORKSHOPWH` and a database named `movies` to organize our data via this notebook.
+
+>After notebook creation, you can choose a different warehouse from the notebook settings. More details [here](https://docs.snowflake.com/en/release-notes/bcr-bundles/2025_01/bcr-1887)
+
+![notebook wh](assets/set-notebook-wh.png)  
 
 We will run the cells in notebook to load the data into the `movies_dashboard` , procced with running `Part 1` and `Part 2` of the notebook
 
