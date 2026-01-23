@@ -34,9 +34,9 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 
 **🔑 Key Steps and Benefits:**  
 
-**1. Data Ingestion and Semantic View Creation**: Data is loaded from Amazon S3 using Snowflake's native ingestion tools. A semantic view is then established to simplify the database structure for business users all via SQL.
+**1. Data Ingestion and Semantic View Creation**: Data is loaded from Amazon S3 using Snowflake's native ingestion tools. A semantic view is then established to simplify the database structure for business users all via SQL.  
 **2. Self-Serve Analytics with [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Business teams and non-technical users can perform self-serve analytics using natural language queries via Snowflake Cortex Analyst, gaining instant insights from the structured data in Snowflake.  
-**3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook, you will complete process of creating QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html). 
+**3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook to create QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html).  
 **4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations.  
 
 ![architecture diagram](assets/arch.png)
@@ -49,7 +49,7 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 - How to load data into Snowflake from Amazon S3
 - The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics
 - Introduction to Snowflake [Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
-- How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (Amazon Quick Sight via [API call](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html))
+- How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (eg.Amazon Quick Sight) 
   
 
 
@@ -60,11 +60,11 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
 
 ### What You'll Need
 - Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/). If you do not have an account, sign up for a [trial account here](https://signup.snowflake.com/)
-  - Select `Enterprise` edition on `AWS` Cloud
-  - Access to `ACCOUNTADMIN` role is required for creating semantic views
+  - Select **`Enterprise`** edition on **`AWS`** Cloud
+  - Access to **`ACCOUNTADMIN`** role is required for creating semantic views
 - Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
 
-  **Ensure to sign up to both of the above in AWS `US West (Oregon)`** 
+  **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`** 
   At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland). Refer to See the [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html)
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
@@ -139,7 +139,7 @@ GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 
 
 #### Proceed to import the notebook
-Once our warehouse and database has been created,  we will upload the [notebook](https://notebook)  
+Once our warehouse and database has been created,  we will upload the [notebook](https://notebook) and execute the guided cells.
 
 #### Viewing the Semantic View and ask question about our data
 
