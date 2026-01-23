@@ -104,7 +104,7 @@ We will create a new warehouse `WORKSHOPWH` and a database named `movies` to org
 ![notebook wh](assets/set-notebook-wh.png)  
 
 
-We will run the cells in notebook to load the data into the `movies_dashboard` , procced with running `Part 1` and `Part 2` and the reminder of the notebook
+We will run the cells in notebook to load the data into the `movies_dashboard` , proceed with running `Part 1` and `Part 2` and the reminder of the notebook
 
 ![run notebook](assets/run-notebook.png)  
 
@@ -119,16 +119,43 @@ SELECT TO_VARCHAR( GET_DDL(
 ```
 <br>
 
-- ensure to click on `Download as CSV`
-- <br>
-![export-sv-ddl.gif](assets/export-sv-ddl.gif)  
+- ensure to click on `Download as CSV` and rename this file to **SF_DDL.csv**
 
+- <br>
+![export-sv-ddl](assets/export-sv-ddl.gif)  
+
+
+
+### This completes the Snowflake side setup
+
+The next section is the **QuickSight Dataset Generator** which by using AWS CloudShell and Quicksight API
+
+#### Complete Workflow
+0. Open AWS console --> cloudshell --> Upload the zip
+
+![cloudshell](assets/cloudshell.png)  
+
+1. Create AWS Secret (Snowflake credentials)
+   
+2. Create QuickSight Data Source (using secret)
+   
+3. Generate QuickSight Schema (from Snowflake DDL saved as SF_DLL.csv earlier)
+   
+4. Create Dataset (from generated schema)
+   
+5. Start SPICE Ingestion (load data)
+   
+6. Share Dataset (with users)
+   
+7. From Quick Suite console, create Q topic or Dashboard
 
 
 
 <!------------>
 #### Optional: for those who want to use SQL worksheet to create warehouse and database before importing the notebook
-* Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database)
+* Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database)  
+Once our warehouse and database has been created,  you can upload the [notebook](https://notebook) and execute the guided cells.
+<br>
 
 ```sql
 
@@ -158,18 +185,12 @@ GRANT OWNERSHIP ON WAREHOUSE workshopwh TO ROLE semantic_quick_start_role COPY C
 GRANT CREATE SEMANTIC VIEW ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 
-
 ```
 
 
-#### Proceed to import the notebook
-Once our warehouse and database has been created,  we will upload the [notebook](https://notebook) and execute the guided cells.
-<br>
+### Viewing the Semantic View and ask question about our data
 
-#### Viewing the Semantic View and ask question about our data
-
-Let's confirm the creation of the semantic view
-
+To view the semantic view created in UI:
 
 * From Snowsight, Select **AI & ML** -> **Cortex Analyst**
 * Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
