@@ -140,6 +140,7 @@ GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 
 #### Proceed to import the notebook
 Once our warehouse and database has been created,  we will upload the [notebook](https://notebook) and execute the guided cells.
+<br>
 
 #### Viewing the Semantic View and ask question about our data
 
@@ -149,16 +150,14 @@ Let's confirm the creation of the semantic view
 * From Snowsight, Select **AI & ML** -> **Cortex Analyst**
 * Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
 * Select `Movies` database and `Public` Schema 
-* View the details of the semantic view `MOVIES_ANALYST_SV` 
-* Feel free to explore and `Explain the dataset` in the `Playground`
-* Ensure to `Save` before exit
-
-To use SQL to view a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
-<br>
+* View the details of the semantic view `MOVIES_ANALYST_SV`
+> To use SQL to view a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
 
 ![movie SV ready](assets/movies-analytics-sv.png) 
 
-<br> 
+<br>
+* Feel free to explore and `Explain the dataset` in the `Playground`
+* Ensure to `Save` before exit  
 
 
 ![SV in snowsight](assets/sv-snow.gif)
