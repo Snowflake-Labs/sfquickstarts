@@ -108,7 +108,7 @@ We will run the cells in notebook to load the data into the `movies_dashboard` ,
 
 ![run notebook](assets/run-notebook.png)  
 
-! Important: 
+🚨 Important!!
 After running the cell `Get_SV_DDL` with the following SQL:
 
 ```sql
@@ -119,7 +119,7 @@ SELECT TO_VARCHAR( GET_DDL(
 ```
 <br>
 
-- ensure to click on `Download as CSV` and rename this file to **SF_DDL.csv**
+ensure to click on `Download as CSV` and rename this file to **SF_DDL.csv**
 
 - <br>
 ![export-sv-ddl](assets/export-sv-ddl.gif)  
