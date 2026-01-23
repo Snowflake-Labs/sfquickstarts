@@ -39,7 +39,7 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 **3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook to create QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html).  
 **4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations.  
 
-![architecture diagram](assets/arch.png)
+![architecture diagram](assets/snow-quick.png)
 
 <br>
 
@@ -178,17 +178,61 @@ Follow the guide in the notebook to complete the process of creating QuickSight 
 2. Create QuickSight Data Source (using secret)
    
 3. Generate QuickSight Schema (from Snowflake DDL saved as SF_DLL.csv earlier)
+
+```
+**Expected Output**
+Parsing Snowflake DDL from: SF_DDL.csv
+Found 3 tables
+Found 2 relationships
+Found 17 dimensions
+Found 1 facts
+Found 7 metrics
+
+Generating complete QuickSight dataset schema...
+Complete schema saved to: quicksight_schema_complete.json
+
+This schema includes:
+  ✓ All 3 physical tables (MOVIES, USERS, RATINGS)
+  ✓ Logical tables with joins
+  ✓ Column renames based on DDL aliases
+  ✓ Type casts (IDs to STRING)
+  ✓ Calculated fields (USER_FULL_NAME, DISTINCT_MOVIES)
+  ✓ Column descriptions from DDL comments
+```
+
+<br>
+
    
 4. Create Dataset (from generated schema)
+
+```
+**Expected Output**
+✓ Dataset created: movie-analytics-dataset
+✓ Status: 201
+✓ Ingestion started: ingestion-1769081615
+```
+
+5. Start [SPICE:Super-fast, Parallel, In-memory Calculation Engine](https://docs.aws.amazon.com/quicksuite/latest/userguide/spice.html) Ingestion (load data)
+
+```
+ "IngestionId": "ingestion-1769082493",
+        "IngestionStatus": "COMPLETED",
+        "ErrorInfo": {},
+        "RowInfo": {
+            "RowsIngested": 378436,
+            "RowsDropped": 0,
+            "TotalRowsInDataset": 378436
+```
+
+
    
-5. Start SPICE Ingestion (load data)
+6. Share Dataset (with users) - Optional
    
-6. Share Dataset (with users)
-   
-7. From Quick Suite console, create Q topic or Dashboard
+7. Once the dataset has been created and ingestion completed, you can go into Amazon Quick Console to view the dataset, create Q topic or Dashboard
 
 
 
+![quick](assets/quick.png)  
 
 <br>
 
