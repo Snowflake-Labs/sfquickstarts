@@ -83,7 +83,7 @@ In this step, you'll create all the Snowflake objects needed for the MONAI solut
 
 ### Step 1: Create Database Objects
 
-1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation
+1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation, or [click here](https://app.snowflake.com/_deeplink/#/workspaces?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
 2. Click `+ Add new` to create a new Workspace
 3. Click `SQL File` to create a new SQL file
 4. Copy the setup script from [setup.sql](assets/scripts/setup.sql) and paste it into your SQL file
@@ -107,7 +107,7 @@ Download each notebook:
 
 Then import each notebook into Snowflake:
 
-1. In Snowsight, navigate to `Projects` → `Notebooks`
+1. In Snowsight, navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
 2. Click the dropdown arrow on **+ Notebook** and select **Import .ipynb file**
 3. Upload a notebook file and configure:
    - **Name**: Keep the default (e.g., `01_ingest_data`)
@@ -133,7 +133,7 @@ Then import each notebook into Snowflake:
 
 ### Step 1: Open the Notebook
 
-1. In Snowsight, navigate to `Projects` → `Notebooks`
+1. In Snowsight, navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
 2. Find `MONAI_01_INGEST_DATA` in the `MONAI_DB.UTILS` schema
 3. Click to open the notebook
 
@@ -181,7 +181,7 @@ After successful execution, you should see:
 
 ### Step 1: Open and Run the Training Notebook
 
-1. Navigate to `Projects` → `Notebooks`
+1. Navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
 2. Open your imported `02_model_training` notebook
 3. Click **Start** to initialize Container Runtime
 4. Once active, click **Run all** to execute all cells
@@ -226,7 +226,7 @@ After training completes, the notebook automatically registers the model in the 
 
 ### Step 1: Open and Run the Inference Notebook
 
-1. Navigate to `Projects` → `Notebooks`
+1. Navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
 2. Open your imported `03_model_inference` notebook
 3. Click **Start** to initialize Container Runtime
 4. Once active, click **Run all** to execute all cells
