@@ -10,7 +10,8 @@ tags: Getting Started, MONAI, Medical Imaging, GPU, Container Runtime, Ray, ML, 
 fork repo link: https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai
 
 # Distributed Medical Image Processing with MONAI on Snowflake
-<!-- ------------------------ -->
+
+
 
 ## Overview
 
