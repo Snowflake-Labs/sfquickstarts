@@ -11,7 +11,7 @@ fork repo link: <optional but modify to link to your repo>
 open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 
 
-# Better Together: Unleash AI-Powered BI with Snowflake Semantic View and Amazon Quick Sight 
+# Better Together: Unleash AI-Powered BI with Snowflake and Amazon Quick
 <!-- ------------------------ -->
 ## Overview 
 
@@ -27,9 +27,9 @@ You can use semantic views in Cortex Analyst and query these views in a SELECT s
 
 ## Usecase
 
-In this tutorial, you'll learn how to process and analyze customer review data for a Media company with Snowflake Cortex Analyst followed by building a dashboard in Amazon Quick Sight. Briefly, you'll work with the movies dataset, which contains customer reviews for a movie media company, and transform data into actionable insights.
+In this tutorial, you'll learn how to process and analyze customer review data for a Media company with Snowflake Cortex Analyst followed by building a dashboard in [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/), part of the Amazon Quick Suite. Briefly, you'll work with the movies dataset, which contains customer reviews for a movie media company, and transform data into actionable insights.
 
-This integration leverages Snowflake's native capabilities to ingest structured movie review data directly from Amazon S3 into a database schema. Defining a Snowflake semantic view with table relationships, dimensions, and metrics to enhance AI-powered analytics. Semantic models are shifted from individual BI tool layers to the core data platform, guaranteeing that all tools utilize the same semantic concepts.  
+This integration leverages Snowflake's native capabilities to ingest structured movie review data directly from Amazon S3 into a database schema. Defining a Snowflake semantic view with table relationships, dimensions, and metrics to enhance AI-powered analytics all with SQL. Semantic models are shifted from individual BI tool layers to the core data platform, guaranteeing that all tools utilize the same semantic concepts.  
 
 
 **🔑 Key Steps and Benefits:**  
@@ -37,7 +37,7 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 **1. Data Ingestion and Semantic View Creation**: Data is loaded from Amazon S3 using Snowflake's native ingestion tools. A semantic view is then established to simplify the database structure for business users all via SQL.  
 **2. Self-Serve Analytics with [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Business teams and non-technical users can perform self-serve analytics using natural language queries via Snowflake Cortex Analyst, gaining instant insights from the structured data in Snowflake.  
 **3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook to create QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html).  
-**4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations.  
+**4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations. The BI team can further incorporate this Snowflake sourced dashboard into the (Amazon Quick) Movies [Space](https://aws.amazon.com/quick/spaces/) and combine other files, dashboards, topics, knowledge bases, and application actions into a unified and customizable enterprise knowledge center. 
 
 ![architecture diagram](assets/ref-arch.png)
 
@@ -129,7 +129,7 @@ ensure to click on `Download as CSV` and rename this file to **SF_DDL.csv**
 
 ### ✅✅ This completes the Snowflake side setup
 
-At this stage, you can view the semantic view `MOVIES_ANALYST_SV` and ask question using natural language with Cortex Analyst.
+At this stage, you can view the semantic view `MOVIES_ANALYST_SV` in Snowsight and ask question using natural language with Cortex Analyst.
 
 To view the semantic view created in UI:
 
@@ -144,7 +144,7 @@ To view the semantic view created in UI:
 <br>
 
 * Feel free to explore and `Explain the dataset` in `Playground`
-* Ensure to `Save` before exit  
+* Ensure to `**Save**` before exit  
 
 
 ![SV in snowsight](assets/sv-snow.gif)
