@@ -158,6 +158,12 @@ To view the semantic view created in UI:
 Example: verifying `What is the average rating for all movies in 2023?` ensures Cortex Analyst generates the right SQL for all similarly phrased questions. 
 > Cortex Analyst only uses verified queries when they are similar to the question that the user asked.  
 
+🎦 Try the following sample questions:-
+- `show me the total rating values by movies titles`
+- `list the top 10 most popular movies at all times`
+
+![verify sql in cortext](assets/verify-sql-cortex.png)
+
 <br>
 
 <!-- ------------------------ -->
