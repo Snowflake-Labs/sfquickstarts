@@ -309,9 +309,8 @@ Snowflake's **Git Integration** feature allows you to connect directly to GitHub
 When you created the Git Repository object in Step 2, Snowflake established a connection to the Telco AI GitHub repository. This connection allows you to:
 
 1. **Browse files** in the repository through the Snowsight UI
-2. **Execute SQL files** directly using `EXECUTE IMMEDIATE FROM @<stage>/<path>`
-3. **Create Workspaces** from repository folders for interactive development
-4. **Fetch updates** when the repository changes
+2. **Create Workspaces** from repository folders for interactive development
+3. **Fetch updates** when the repository changes
 
 The deployment scripts in `assets/sql/` are numbered 01-05 and should be executed in order. Each script builds on the previous one, creating the complete NovaConnect AI platform.
 
