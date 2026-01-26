@@ -41,7 +41,7 @@ In this Quickstart, you'll build an end-to-end data pipeline using Dynamic Table
 - A semantic view for natural language querying
 
 <!-- ------------------------ -->
-## Create your Snowflake Workspace
+## Create Snowflake Workspace
 
 This Quickstart has a companion GitHub repository that contains all the SQL scripts you'll need to complete the lab. Rather than cloning the repository locally, we'll create a Snowflake Workspace directly from the GitHub repo, allowing you to work with the files inside Snowflake.
 
@@ -95,7 +95,7 @@ Snowflake will now clone the repository and create your workspace. This may take
 You can now open these files directly within Snowflake. Throughout this Quickstart, when we reference a file (like "Open **01_dynamic_tables.sql**"), you'll open it from your workspace rather than from a local clone.
 
 <!-- ------------------------ -->
-## Ingest Tasty Bytes data
+## Load data
 
 Let's now load the Tasty Bytes data that we'll use in our pipeline. 
 
@@ -144,13 +144,15 @@ Dynamic Tables are a declarative way of defining data transformations in Snowfla
 Let's build our three-tier pipeline.
 
 <!-- ------------------------ -->
-## Create Tier 1: Enriched data
+## Create Pipeline
+
+### Tier 1: Enriched data
 
 The first tier of our pipeline enriches the raw order data with additional dimensions and calculations. We'll create two Dynamic Tables in this tier.
 
 Open **01_dynamic_tables.sql** in your workspace. Let's examine and create the first tier Dynamic Tables.
 
-### Create orders_enriched
+#### Create orders_enriched
 
 This Dynamic Table adds temporal dimensions (day of week, hour) and financial metrics to order headers. It also adds a discount flag based on whether a discount was applied.
 
@@ -191,7 +193,7 @@ WHERE order_id IS NOT NULL
 ```
 
 
-### Create order_items_enriched
+#### Create order_items_enriched
 
 This Dynamic Table enriches order line items by joining with the menu table to add product details and profit calculations:
 
@@ -241,12 +243,11 @@ WHERE od.order_id IS NOT NULL
 
 Run these `CREATE OR REPLACE DYNAMIC TABLE` statements in order. Snowflake will create the tables and immediately begin the first refresh. Note that the first refresh may take a few minutes. That's because Snowflake will perform a full refresh when initializing a new dynamic table. In our case, these dynamic tables are first created by processing the nearly 1 billion rows of raw data. Subsequently, these dynamic tables will only update incrementally.
 
-<!-- ------------------------ -->
-## Create Tier 2: Fact tables
+### Create Tier 2: Fact tables
 
 The second tier joins enriched data into comprehensive fact tables that are ready for analysis. This tier uses the `DOWNSTREAM` refresh strategy.
 
-### Create order_fact
+#### Create order_fact
 
 This Dynamic Table joins order headers and enriched line items (which already include product details from the menu) into a complete picture of each order line:
 
@@ -297,12 +298,11 @@ Note the `TARGET_LAG = 'DOWNSTREAM'` setting. This means this table will only re
 
 Run the statement to create the `order_fact` Dynamic Table.
 
-<!-- ------------------------ -->
-## Create Tier 3: Aggregated metrics
+### Create Tier 3: Aggregated metrics
 
 The third tier pre-aggregates data into business metrics that power dashboards and reports. These aggregations make queries faster by pre-computing common calculations.
 
-### Create daily_business_metrics
+#### Create daily_business_metrics
 
 This Dynamic Table aggregates daily business performance:
 
@@ -334,7 +334,7 @@ FROM tasty_bytes_db.analytics.order_fact
 GROUP BY order_date, day_name;
 ```
 
-### Create product_performance_metrics
+#### Create product_performance_metrics
 
 This Dynamic Table tracks product-level performance:
 
@@ -380,7 +380,7 @@ Run both statements to create these aggregated Dynamic Tables. These tables use 
 With all three tiers created, you've now built a complete declarative data pipeline! Snowflake automatically manages the dependencies and refresh logic for you.
 
 <!-- ------------------------ -->
-## View the dependency graph
+## View dependency graph
 
 Snowflake automatically tracks dependencies between your Dynamic Tables. Let's visualize this dependency graph.
 
@@ -400,7 +400,7 @@ This visualization helps you understand how data flows through your pipeline. Sn
 ![dag](./assets/dag.png)
 
 <!-- ------------------------ -->
-## Create a stored procedure to generate data
+## Create stored procedure
 
 Since we aren't automating the loading of new data from S3 into our raw tables, we need a different way to insert new data in our source tables. This will help us understand and demonstrate incremental refresh capabilities.
 
@@ -655,7 +655,7 @@ You should see today's date in the daily metrics with the newly generated orders
 You've now verified that Dynamic Tables can efficiently process incremental updates through a multi-tier pipeline!
 
 <!-- ------------------------ -->
-## Monitor your pipeline
+## Monitor pipeline
 
 Monitoring is crucial for production data pipelines. Snowflake provides rich metadata about Dynamic Table operations.
 
@@ -718,7 +718,7 @@ This query uses a window function (`ROW_NUMBER()`) to get only the most recent r
 These monitoring queries are essential for understanding your pipeline's performance and troubleshooting issues in production.
 
 <!-- ------------------------ -->
-## Query your data with Cortex Analyst
+## Create a semantic view
 
 Let's take things a step further. Let's make the data queryable using natural language with Snowflake Cortex Analyst. Cortex Analyst allows business users to ask questions in plain English and get answers powered by your data.
 
@@ -812,7 +812,7 @@ This natural language interface makes your Dynamic Tables pipeline accessible to
 ![analyst playground](./assets/semantic_view.png)
 
 <!-- ------------------------ -->
-## Create an Agent
+## Create and use an AI agent
 
 Now let's create an AI agent. This agent will use the semantic view we created earlier to answer natural language questions about our Dynamic Tables data.
 
@@ -848,8 +848,7 @@ Let's create an agent in the Snowflake UI:
 
 Your agent now has access to Cortex Analyst and can query your Dynamic Tables using natural language!
 
-<!-- ------------------------ -->
-## Use the agent in Snowflake Intelligence
+### Use the agent in Snowflake Intelligence
 
 Let's test the agent by asking questions about our data:
 
@@ -872,6 +871,7 @@ The agent will translate these natural language questions into SQL queries again
 Great job, you just used an agent in Snowflake Intelligence!
 
 ![agent](./assets/gent.png)
+
 
 <!-- ------------------------ -->
 ## Clean up
@@ -907,7 +907,7 @@ DROP WAREHOUSE IF EXISTS tasty_bytes_wh;
 Before running cleanup, consider whether you want to keep the environment for further experimentation with Dynamic Tables.
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 
 Congratulations! You've built a complete declarative data pipeline using Snowflake Dynamic Tables. You've learned how to create multi-tier transformations, configure refresh strategies, monitor pipeline health, and enable natural language querying through AI agents powered by Cortex Analyst within Snowflake Intelligence.
 
