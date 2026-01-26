@@ -39,7 +39,7 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 **3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook to create QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html).  
 **4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations.  
 
-![architecture diagram](assets/snow-quick.png)
+![architecture diagram](assets/ref-arch.png)
 
 <br>
 
@@ -234,17 +234,25 @@ This schema includes:
    
 6. Share Dataset (with users) - Optional
    
-7. Once the dataset has been created and ingestion completed, you can go into Amazon Quick Console to view the dataset, create Q topic or Dashboard
+7. Once the dataset has been created and ingestion completed, you can go into Amazon Quick Console to view the dataset, create [Q topic](https://docs.aws.amazon.com/quicksuite/latest/userguide/topics.html), Dashboard or even generate your `Movies` [Space](https://aws.amazon.com/quick/spaces/) for your team. 
+
+We can ask the same verified queries to generate dashboard  
+
+ `show me the highest rating movies`
+![highest rating movies](assets/highest-rating-movies.png)  
+
+![popular movies](assets/movies-pop.png)  
 
 
 
-![quick](assets/quick.png)  
 
 <br>
 
 <!-- ------------------------ -->
 
-#### Optional: for those who want to use SQL worksheet to create warehouse and database before importing the notebook
+## Appendix
+
+### Appendix 1: for those who want to use SQL worksheet to create warehouse and database before importing the notebook
 * Alternatively, paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database)  
 Once our warehouse and database has been created,  you can upload the [notebook](https://notebook) and execute the guided cells.
 <br>
@@ -282,6 +290,8 @@ GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 <br>
 
 <br>
+
+
 
 ## Conclusion And Resources
 
