@@ -291,23 +291,17 @@ GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 
 <br>
 
-## Contents
 
-```
-├── better-together-snowflake-sv-amazon-quicksight.md  # Main guide
-└── assets/                                             # Screenshots, Snowflake notebook & 
-```
 
 ## Conclusion And Resources
 
 If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Snowflake Guide](#)
 
 ### What You Learned
-
+- 
 
 ### Related Resources
- [Getting Started with Semantic Views](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/)
- [Getting Started with Cortex Analyst](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
- [Amazon QuickSight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html)
-
-
+- <link to github code repo>
+- <link to related documentation>
+* [Getting started with Semantic views](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/#0)  
+* [Getting Started with Cortex Analyst](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
