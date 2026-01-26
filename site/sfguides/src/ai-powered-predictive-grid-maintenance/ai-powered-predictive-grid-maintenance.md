@@ -70,7 +70,7 @@ The platform implements a modern **Medallion Architecture** across Snowflake:
 
 **Unstructured Data Integration**: 80 maintenance log documents with NLP-ready text extraction and severity classification. 15 technical manuals from ABB, GE, Siemens, and Westinghouse. 150 visual inspection records from drone, thermal, and LiDAR scans. 281 computer vision detections with GPS coordinates for field navigation.
 
-**Snowflake Intelligence Agents**: Natural language queries across structured and unstructured data via Grid Reliability Intelligence Agent. Three Cortex Search services for documents, maintenance logs, and technical manuals. Semantic views optimized for Cortex Analyst text-to-SQL conversion.
+**Cortex Agents**: Natural language queries across structured and unstructured data via Grid Reliability Intelligence Agent. Three Cortex Search services for documents, maintenance logs, and technical manuals. Semantic views optimized for Cortex Analyst text-to-SQL conversion.
 
 ## Key Differentiators
 
