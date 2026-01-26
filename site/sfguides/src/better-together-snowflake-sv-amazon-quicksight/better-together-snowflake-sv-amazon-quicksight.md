@@ -49,7 +49,7 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 - How to load data into Snowflake from Amazon S3
 - The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics
 - Introduction to Snowflake [Notebook](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-notebooks/)
-- How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (eg.Amazon Quick Sight) 
+- How semantic views enhance AI-powered analytics (Cortex Analyst) and consistency across BI tools (eg. Amazon Quick Sight) 
   
 
 
@@ -78,7 +78,7 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to import and run the notebook to create the environment.  
 
-* Download the Notebook **[update-me-better-together-snowflake-sv-amazon-quicksight.ipynb]** using this [link](https://github.com/Snowflake-Labs/xx/tree/main/notebook)   
+* Download the Notebook **SF_Quick_Quickstart.ipynb** using this [link](https://github.com/Quilpie/sfquickstarts_fork/blob/4ea650aa3ac9a569ff0a4b2d4fb27c512edb9428/site/sfguides/src/better-together-snowflake-sv-amazon-quicksight/SF_QUICK_QUICKSTART.ipynb)   
 <br>
 
 >Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
@@ -170,7 +170,7 @@ Example: verifying `What is the average rating for all movies in 2023?` ensures 
 
 ## **QuickSight Dataset Generator** with AWS CloudShell to call Quicksight API
 Follow the guide in the notebook to complete the process of creating QuickSight datasets from Snowflake DDL, setting up credentials to sharing datasets with users.
-
+Download the `QuickSight Dataset Generator` [Solution_Package.zip](https://github.com/Quilpie/sfquickstarts_fork/blob/4ea650aa3ac9a569ff0a4b2d4fb27c512edb9428/site/sfguides/src/better-together-snowflake-sv-amazon-quicksight/Solution_Package.zip)
 
 ### Complete Workflow
 0. Open AWS console --> cloudshell --> Upload the `Solution_Package.zip`
@@ -294,14 +294,15 @@ GRANT CREATE STAGE ON SCHEMA movies.PUBLIC TO ROLE semantic_quick_start_role;
 
 
 ## Conclusion And Resources
+Congratulations on completing this lab! You’ve successfully leveraged Snowflake to generate insights and how to integrate with Amazon Quick Suite. 
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Snowflake Guide](#)
 
 ### What You Learned
-- 
+How to analyze data using Snowflake Cortex Analyst 
+The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics using Semantic SQL
+The integration between Snowflake and Amazon Quick Suite
 
 ### Related Resources
-- <link to github code repo>
-- <link to related documentation>
-* [Getting started with Semantic views](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/#0)  
-* [Getting Started with Cortex Analyst](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
+- Link to [github code repo](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/better-together-snowflake-sv-amazon-quicksight)
+- [Getting started with Semantic views](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/#0)  
+- [Getting Started with Cortex Analyst](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-analyst/)
