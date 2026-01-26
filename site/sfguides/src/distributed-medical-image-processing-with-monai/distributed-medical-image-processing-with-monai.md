@@ -1,7 +1,7 @@
 author: Carlos Guzman, Jeevan Rag, Joviane Bellegarde
 id: distributed-medical-image-processing-with-monai
 summary: Build a distributed medical image registration pipeline using MONAI on Snowflake's Container Runtime with GPU acceleration
-categories: snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 environments: web
 language: en
 status: Published
@@ -87,7 +87,7 @@ In this step, you'll create all the Snowflake objects needed for the MONAI solut
 1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation, or [click here](https://app.snowflake.com/_deeplink/#/workspaces?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
 2. Click `+ Add new` to create a new Workspace
 3. Click `SQL File` to create a new SQL file
-4. Copy the setup script from [setup.sql](assets/scripts/setup.sql) and paste it into your SQL file
+4. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/scripts/setup.sql) and paste it into your SQL file
 
 ### Step 2: Run Infrastructure Setup (Sections 1-7)
 
@@ -101,10 +101,10 @@ Run the first part of the setup script to create:
 
 ### Step 3: Import Notebooks
 
-Download each notebook:
-- [01_ingest_data.ipynb](assets/notebooks/01_ingest_data.ipynb)
-- [02_model_training.ipynb](assets/notebooks/02_model_training.ipynb)
-- [03_model_inference.ipynb](assets/notebooks/03_model_inference.ipynb)
+Download each notebook from GitHub:
+- [01_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/notebooks/01_ingest_data.ipynb)
+- [02_model_training.ipynb](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/notebooks/02_model_training.ipynb)
+- [03_model_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/notebooks/03_model_inference.ipynb)
 
 Then import each notebook into Snowflake:
 

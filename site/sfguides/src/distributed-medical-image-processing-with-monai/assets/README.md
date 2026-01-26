@@ -6,4 +6,4 @@ Build a distributed medical image registration pipeline using MONAI (Medical Ope
 
 ## Step-By-Step Guide
 
-For prerequisites, environment setup, step-by-step guide and instructions, please refer to the [QuickStart Guide](https://quickstarts.snowflake.com/guide/distributed_medical_image_processing_with_monai/index.html?index=..%2F..index#0).
+For prerequisites, environment setup, step-by-step guide and instructions, please refer to the [QuickStart Guide](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai).
