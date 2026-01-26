@@ -62,8 +62,6 @@ CREATE OR REPLACE API INTEGRATION dynamic_tables_git_integration
 
 This API integration allows Snowflake to access public repositories in the Snowflake-Labs organization on GitHub. 
 
-> aside positive
-> 
 > **Note**: Only users with ACCOUNTADMIN privileges (or the CREATE INTEGRATION privilege) can create API integrations. If you don't have these privileges, ask your Snowflake administrator to create this integration for you.
 
 ### Create the Workspace
@@ -92,10 +90,9 @@ Snowflake will now clone the repository and create your workspace. This may take
 - **04_monitoring.sql**
 - **05_intelligence.sql**
 - **06_cleanup.sql**
-- **streamlit.py**
 - **semantic_model.yaml**
 
-You can now open these files directly within Snowflake. Throughout this Quickstart, when we reference a file (like "open **01_dynamic_tables.sql**"), you'll open it from your workspace rather than from a local clone.
+You can now open these files directly within Snowflake. Throughout this Quickstart, when we reference a file (like "Open **01_dynamic_tables.sql**"), you'll open it from your workspace rather than from a local clone.
 
 <!-- ------------------------ -->
 ## Ingest Tasty Bytes data
@@ -117,9 +114,7 @@ Click on the **00_load_tasty_bytes.sql** file to open it in your workspace. This
 Run the entire script. The output should confirm the creation of these objects and the loading of all of the data. The load can take several minutes to complete given the volume of data – nearly 1 billion rows of raw data across the three tables.
 
 If you encounter any errors, ensure you're using a role with sufficient privileges (such as ACCOUNTADMIN).
-
-> aside positive
-> 
+ 
 > **Note**: This script uses the `lab_role` role for all subsequent operations. If you encounter permission issues, you may need to grant additional privileges to this role or use ACCOUNTADMIN.
 
 
@@ -401,6 +396,8 @@ For example, for `order_fact`, you should see:
 - Downstream: `daily_business_metrics`, `product_performance_metrics`
 
 This visualization helps you understand how data flows through your pipeline. Snowflake uses this dependency graph to determine refresh order and optimize refresh operations.
+
+![dag](./assets/dag.png)
 
 <!-- ------------------------ -->
 ## Create a stored procedure to generate data
@@ -784,10 +781,9 @@ Once generation is complete, you'll see the semantic view with:
 You can view the details of the semantic view by clicking "Edit YAML" in the Snowsight UI. You can edit any of these descriptions or add custom synonyms to improve how the view understands your business terminology. For now, the AI-generated view works great out of the box.
 
 Click **Save** to save your semantic view. 
-
-> aside positive
-> 
+ 
 > **Note**: Your workspace includes a **semantic_model.yaml** file that represents an enhanced semantic view with additional synonyms and descriptions. Feel free to explore it as a reference for how you might further refine your semantic view, but for this Quickstart, we'll use the AI-generated version from the UI.
+
 
 ### Ask questions in the Analyst playground
 
@@ -812,6 +808,8 @@ As you ask questions, notice that Cortex Analyst:
 - Provides explanations of the results
 
 This natural language interface makes your Dynamic Tables pipeline accessible to business users who may not know SQL, democratizing access to your data.
+
+![analyst playground](./assets/semantic_view.png)
 
 <!-- ------------------------ -->
 ## Create an Agent
@@ -872,6 +870,9 @@ Try asking questions like:
 The agent will translate these natural language questions into SQL queries against your Dynamic Tables and return results. You can see the generated SQL and explore the data interactively. It will also generate visualizations when acceptable.
 
 Great job, you just used an agent in Snowflake Intelligence!
+
+![agent](./assets/gent.png)
+
 <!-- ------------------------ -->
 ## Clean up
 
