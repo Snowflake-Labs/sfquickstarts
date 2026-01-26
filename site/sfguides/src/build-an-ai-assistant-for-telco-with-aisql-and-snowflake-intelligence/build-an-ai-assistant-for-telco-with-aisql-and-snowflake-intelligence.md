@@ -226,11 +226,11 @@ The dataflow diagram below shows how data moves through the system to power Snow
 USE ROLE ACCOUNTADMIN;
 
 -- Create SEPARATE database for Git repositories (won't be dropped with main database)
-CREATE DATABASE IF NOT EXISTS SNOWFLAKE_QUICKSTART_REPOS
+CREATE DATABASE IF NOT EXISTS TELCO_AI_LAB
     COMMENT = 'Persistent database for Git repository integrations - DO NOT DROP';
-CREATE SCHEMA IF NOT EXISTS SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS;
+CREATE SCHEMA IF NOT EXISTS TELCO_AI_LAB.GIT_REPOS;
 
-USE DATABASE SNOWFLAKE_QUICKSTART_REPOS;
+USE DATABASE TELCO_AI_LAB;
 USE SCHEMA GIT_REPOS;
 
 -- Create API integration for GitHub
@@ -243,18 +243,18 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 GRANT USAGE ON INTEGRATION git_api_integration TO ROLE ACCOUNTADMIN;
 
 -- Create Git repository object
-CREATE OR REPLACE GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO
+CREATE OR REPLACE GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO
     API_INTEGRATION = git_api_integration
     ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence.git';
 
 -- Grant READ permission on Git repository
-GRANT READ ON GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO TO ROLE ACCOUNTADMIN;
+GRANT READ ON GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO TO ROLE ACCOUNTADMIN;
 
 -- Fetch code from GitHub
-ALTER GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO FETCH;
+ALTER GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO FETCH;
 
 SELECT 'Git integration ready!' AS status,
-       'Git repo is in SNOWFLAKE_QUICKSTART_REPOS database (separate from main database)' AS note;
+       'Git repo is in TELCO_AI_LAB database (separate from main database)' AS note;
 ```
 
 4. Click **Run** (or press Cmd/Ctrl + Enter)
@@ -309,28 +309,14 @@ Snowflake's **Git Integration** feature allows you to connect directly to GitHub
 When you created the Git Repository object in Step 2, Snowflake established a connection to the Telco AI GitHub repository. This connection allows you to:
 
 1. **Browse files** in the repository through the Snowsight UI
-2. **Execute SQL files** directly using `EXECUTE IMMEDIATE FROM @<stage>/<path>`
-3. **Create Workspaces** from repository folders for interactive development
-4. **Fetch updates** when the repository changes
+2. **Create Workspaces** from repository folders for interactive development
+3. **Fetch updates** when the repository changes
 
 The deployment scripts in `assets/sql/` are numbered 01-05 and should be executed in order. Each script builds on the previous one, creating the complete NovaConnect AI platform.
 
-#### Choose Your Deployment Method
+#### Deploy Using the Git Repositories UI
 
-**Option A: Execute all at once** (in one worksheet):
-
-```sql
--- Run deployment scripts directly from GitHub (fully qualified names)
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/01_configure_account.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/02_data_foundation.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/03_deploy_cortex_search.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/04_deploy_cortex_analyst.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/05_deploy_notebooks.sql;
-```
-
-**Option B: Use Git Repositories UI** (interactive):
-
-1. Navigate: **Projects** → **Git Repositories** → **SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO**
+1. Navigate: **Projects** → **Git Repositories** → **TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO**
 2. Browse to: `assets/sql/`
 3. Right-click each file (01-05) → "Open in new worksheet"
 4. Execute each script in order
@@ -1449,12 +1435,7 @@ DROP DATABASE IF EXISTS TELCO_OPERATIONS_AI;
 DROP DATABASE IF EXISTS SNOWFLAKE_INTELLIGENCE;
 
 -- Fetch latest code
-ALTER GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO FETCH;
-
--- Re-run deployment scripts (01-05)
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/01_configure_account.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/02_data_foundation.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/03_deploy_cortex_search.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/04_deploy_cortex_analyst.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/main/assets/sql/05_deploy_notebooks.sql;
+ALTER GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO FETCH;
 ```
+
+Then re-run deployment scripts (01-05) from the Git Repositories UI as described in Step 3.
