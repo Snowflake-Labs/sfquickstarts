@@ -20,9 +20,9 @@ The platform demonstrates how utilities can modernize asset management by unifyi
 
 ## The Business Challenge
 
-**Aging Infrastructure**: 40% of transformers and circuit breakers exceed 20 years old, with traditional 25-year design life under stress from increased loading and climate extremes.
+**Aging Infrastructure**: Approximately 40% of transformers and circuit breakers exceed 20 years old, with traditional 25-year design life under stress from increased loading and climate extremes.
 
-**Reactive Maintenance Is Costly**: 60-70% of failures occur despite calendar-based maintenance. Emergency replacements cost 3-5x more than planned maintenance, with average transformer failures costing $385K, causing 4.2 hours of outage, and affecting 8,500 customers.
+**Reactive Maintenance Is Costly**: 60-70% of failures occur despite calendar-based maintenance. Emergency replacements cost 3-5x more than planned maintenance, with average transformer failures costing approximately $400K+, 4+ hours of outage, and affecting thousands of customers.
 
 **Data Silos Prevent Intelligence**: OT sensor data trapped in SCADA systems, IT asset data in separate enterprise systems, and maintenance logs in unstructured formats create fragmented visibility across critical assets.
 
@@ -158,13 +158,51 @@ chmod +x deploy.sh
 > pip install -r requirements.txt
 > ```
 
-### Step 6: Verify & Access
+### Step 6: Interact with Snowflake Intelligence
 
-**Streamlit Dashboard:**
-- Snowflake UI → **Projects** → **Streamlit** → **GRID_RELIABILITY_DASHBOARD**
+Navigate to **Snowflake UI** → **AI & ML** → **Snowflake Intelligence** → **Grid Reliability Intelligence Agent**
 
-**Cortex Agent:**
-- Snowflake UI → **Projects** → **Snowflake Intelligence** → **Grid Reliability Intelligence Agent**
+Try these sample prompts to explore the agent's capabilities:
+
+**Operational Alerts & Risk Assessment:**
+- "Good morning! What's the status of our grid assets today?"
+- "Which assets need immediate attention?"
+- "Show me all critical and high-risk assets"
+- "How many transformers have a risk score above 80?"
+
+**Geographic & Location Queries:**
+- "Show me all critical assets in Miami-Dade county"
+- "Which counties have the most high-risk assets?"
+
+**Asset-Specific Inquiries:**
+- "Tell me about transformer T-SS047-001"
+- "What's the health status of asset T-SS023-001?"
+
+**Maintenance Planning:**
+- "Which assets should we schedule for maintenance next week?"
+- "Show me all assets overdue for maintenance"
+- "Which transformers haven't been maintained in over 90 days?"
+
+**Document Search:**
+- "Find maintenance logs for transformer T-SS047-001"
+- "What do the technical manuals say about oil temperature thresholds?"
+- "Show me recent maintenance reports mentioning overheating"
+- "What are the installation procedures for ABB transformers?"
+
+**Financial & ROI Analysis:**
+- "What is our predicted cost avoidance this month?"
+- "What's the ROI of our predictive maintenance program?"
+
+### Step 7: Explore the Streamlit Dashboard
+
+Navigate to **Snowflake UI** → **Projects** → **Streamlit** → **GRID_RELIABILITY_DASHBOARD**
+
+The dashboard provides:
+- **Fleet Overview**: Real-time health scores and risk distribution across all assets
+- **Predictive Analytics**: ML-driven failure probability trends and maintenance recommendations
+- **Geographic View**: Asset locations with risk-based color coding
+- **Maintenance Tracker**: Upcoming and overdue maintenance activities
+- **Alert Monitor**: Critical issues requiring immediate attention
 
 ### Cleanup
 
