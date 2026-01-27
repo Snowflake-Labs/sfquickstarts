@@ -123,7 +123,7 @@ ensure to click on `Download as CSV` and rename this file to **SF_DDL.csv**
 
 <br>
  
-![export-sv-ddl](assets/export-sv-ddl.gif)  
+![export-sv-ddl](assets/download-sv-ddl.gif)  
 
 
 
