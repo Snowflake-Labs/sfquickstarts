@@ -16,6 +16,37 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 The solution showcases how organizations can leverage best-of-breed tools without vendor lock-in, allowing Spark code written for AWS Glue to run unmodified on Snowflake using [Snowpark Connect](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview).
 
+### Setup
+
+This guide has an accompanying GitHub repository that contains all the files, scripts, data, and resources you need to complete this quickstart:
+
+<button>
+
+  [GitHub Repository: glue_cld_snowflake](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main)
+</button>
+
+**Repository Contents:**
+```
+glue_cld_snowflake/
+├── cloudformation/
+│   └── iceberg_glue_stack_cloudformation_template.yaml  # AWS infrastructure template
+├── data/
+│   ├── customers.json                                    # Customer data
+│   └── sales_data_1m.json.gz                            # 1M sales records (compressed)
+├── scripts/
+│   ├── iceberg_cld_demo_sales_table_script_1.py         # Load sales data
+│   ├── iceberg_cld_demo_customer_table_script_2.py      # Load customer data
+│   ├── iceberg_cld_demo_sales_report_table_script_3.py  # Generate sales report
+│   └── iceberg_cld_demo_snow_report_table_script_4.py   # Create Snowflake report table
+├── snowflake_notebook/
+│   └── 01_GLUE_LH_SNOWPARK_CONNECT_DEMO.ipynb           # Snowflake notebook
+├── diagrams/                                             # Architecture diagrams
+└── trusted_policy/
+    └── IAM_trust_policy.json                             # IAM trust policy template
+```
+
+Clone or download this repository before starting the quickstart to have all necessary files readily available.
+
 ![Lakehouse Architecture](assets/arch.jpeg)
 
 For this guide, we will use a Sales Analytics use case where 1M+ transaction records are processed. We'll load sales and customer data into Iceberg tables via AWS Glue, then demonstrate how the exact same Spark code can run on both AWS Glue and Snowflake to generate identical Top 10 product sales reports.
@@ -36,6 +67,7 @@ For this guide, we will use a Sales Analytics use case where 1M+ transaction rec
 - An [AWS Account](https://aws.amazon.com/free/) with administrative access
 - [AWS CLI](https://aws.amazon.com/cli/) installed and configured (optional, for command-line deployment)
 - Snowflake Notebook feature enabled (requires Snowflake Runtime 2.0+)
+- The [accompanying GitHub repository](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main) cloned or downloaded to your local machine
 
 ### What You'll Build 
 - An AWS Glue Database with Iceberg tables stored on S3
@@ -45,7 +77,7 @@ For this guide, we will use a Sales Analytics use case where 1M+ transaction rec
 - Sales analytics pipeline demonstrating 95%+ code reuse between platforms
 
 <!-- ------------------------ -->
-## Architecture and Data Flow
+## Lakehouse Architecture and Data Flow
 
 This solution implements an **open lakehouse architecture** that separates storage from compute and uses open standards (Apache Iceberg) to enable seamless interoperability.
 
@@ -137,13 +169,15 @@ aws s3api put-object --bucket $DATA_BUCKET --key iceberg-warehouse/
 
 ### Upload Data Files
 
-Upload the data files from the `data/` folder:
+Upload the data files from the [`data/` folder](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main/data) in the repository:
 
 ```bash
-# Navigate to project directory
+# Navigate to the cloned repository directory
+# (https://github.com/sfc-gh-pjain/glue_cld_snowflake)
 cd glue_cld_snowflake
 
-# Upload data files
+# Upload data files from the cloned repository
+# (https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main/data)
 aws s3 cp data/customers.json s3://$DATA_BUCKET/raw_data/customers.json
 aws s3 cp data/sales_data_1m.json.gz s3://$DATA_BUCKET/raw_data/sales_data_1m.json.gz
 
@@ -155,10 +189,11 @@ aws s3 ls s3://$DATA_BUCKET/raw_data/
 
 ### Upload Glue Scripts
 
-Upload all Glue ETL scripts from the `scripts/` folder:
+Upload all Glue ETL scripts from the [`scripts/` folder](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main/scripts) in the repository:
 
 ```bash
-# Upload all Glue scripts
+# Upload all Glue scripts from the cloned repository
+# (https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main/scripts)
 aws s3 sync scripts/ s3://$DATA_BUCKET/scripts/ --exclude "*" --include "*.py"
 
 # Verify scripts upload
@@ -174,42 +209,6 @@ iceberg_cld_demo_sales_table_script_1.py
 iceberg_cld_demo_sales_report_table_script_3.py
 iceberg_cld_demo_snow_report_table_script_4.py
 ```
-
-<!-- ------------------------ -->
-## Configure Snowflake Notebook
-
-In this step, we will create a Snowflake notebook and configure the required packages for Snowpark Connect.
-
-### Access Snowflake Notebooks
-
-- Log into your Snowflake account
-- Navigate to **Projects** → **Notebooks** in the left sidebar
-- Click **+ Notebook** button to create a new notebook
-
-### Import the Notebook
-
-- Select **Import from file** option
-- Upload the file: `snowflake_notebook/01_GLUE_LH_SNOWPARK_CONNECT_DEMO.ipynb`
-- Give your notebook a meaningful name (e.g., "AWS Glue Iceberg Integration Demo")
-
-### Configure Notebook Runtime
-
-- Click on **Notebook settings** (gear icon)
-- Select **Snowflake Runtime**: Choose **2.0** or later
-- Select **Warehouse**: Choose any warehouse for compute (e.g., `COMPUTE_WH`)
-  - Recommended: Small or Medium warehouse for this demo
-- Click **Apply**
-
-### Add Snowpark Connect Package
-
-- Click on the **Packages** tab in the notebook
-- Search for `snowpark-connect`
-- Select the **latest version** of Snowpark Connect
-- Click **Add** to install the package
-
-![Snowflake Notebook Packages](assets/packages.jpeg)
-
-**Note:** The notebook will initialize with Snowpark Connect capabilities after adding this package.
 
 <!-- ------------------------ -->
 ## Create Snowflake External Volume
@@ -305,7 +304,7 @@ Gather these parameters before deploying:
 - Navigate to **AWS CloudFormation Console**
 - Click **Create stack** → **With new resources**
 - Choose **Upload a template file**
-- Upload: `cloudformation/iceberg_glue_stack_cloudformation_template.yaml`
+- Upload: [`cloudformation/iceberg_glue_stack_cloudformation_template.yaml`](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main/cloudformation)
 - Click **Next**
 
 ![CloudFormation Template](assets/cloudform.jpeg)
@@ -345,7 +344,8 @@ export DATA_BUCKET=my-iceberg-lakehouse-demo-123456789012
 export SNOWFLAKE_USER_ARN="arn:aws:iam::123456789012:user/abc..."
 export SNOWFLAKE_EXT_ID="XYZ12345_SFCRole=1_..."
 
-# Deploy stack
+# Deploy stack using CloudFormation template from the cloned repository
+# (https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main/cloudformation)
 aws cloudformation create-stack \
   --stack-name iceberg-glue-snowflake-demo \
   --template-body file://cloudformation/iceberg_glue_stack_cloudformation_template.yaml \
@@ -657,9 +657,40 @@ You should see all 4 Iceberg tables that were created by Glue:
 - `top_10_products_report_snow`
 
 <!-- ------------------------ -->
-## Run Snowflake Analytics - Code Portability Demo
+## Run Apache Spark code in Snowflake
 
 This is where the magic happens! We'll run the **exact same Spark code** in Snowflake that we ran in AWS Glue.
+
+### Install Snowpark Connect for Apache Spark
+
+First, create a Snowflake notebook and configure the required packages for Snowpark Connect.
+
+**Access Snowflake Notebooks:**
+- Log into your Snowflake account
+- Navigate to **Projects** → **Notebooks** in the left sidebar
+- Click **+ Notebook** button to create a new notebook
+
+**Import the Notebook:**
+- Select **Import from file** option
+- Upload the file: [`snowflake_notebook/01_GLUE_LH_SNOWPARK_CONNECT_DEMO.ipynb`](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main/snowflake_notebook)
+- Give your notebook a meaningful name (e.g., "AWS Glue Iceberg Integration Demo")
+
+**Configure Notebook Runtime:**
+- Click on **Notebook settings** (gear icon)
+- Select **Snowflake Runtime**: Choose **2.0** or later
+- Select **Warehouse**: Choose any warehouse for compute (e.g., `COMPUTE_WH`)
+  - Recommended: Small or Medium warehouse for this demo
+- Click **Apply**
+
+**Add Snowpark Connect Package:**
+- Click on the **Packages** tab in the notebook
+- Search for `snowpark-connect`
+- Select the **latest version** of Snowpark Connect
+- Click **Add** to install the package
+
+![Snowflake Notebook Packages](assets/packages.jpeg)
+
+**Note:** The notebook will initialize with Snowpark Connect capabilities after adding this package.
 
 ### Initialize Snowpark Connect
 
@@ -969,6 +1000,7 @@ You've successfully built an interoperable lakehouse architecture that demonstra
 - Faster time to value (no data migration needed)
 
 ### Related Resources 
+- [GitHub Repository for this Quickstart](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main)
 - [Snowflake Catalog-Linked Database Documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
 - [Snowpark Connect Overview](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview)
 - [Apache Iceberg Documentation](https://iceberg.apache.org/)
