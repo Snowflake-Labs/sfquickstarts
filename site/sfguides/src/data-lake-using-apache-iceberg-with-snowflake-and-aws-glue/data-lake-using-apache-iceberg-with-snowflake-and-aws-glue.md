@@ -632,7 +632,7 @@ You've successfully converted parquet data to Iceberg format using AWS Glue, int
 - how Snowflake integrates with S3 and the Glue Data Catalog to modernize Data Lakes with Iceberg
 - converting parquet files to Iceberg tables using AWS Glue
 - configuring the Snowflake integrations with Glue Data Catalog leveraging IRC and vended credentails for storage access
-- creating Snowflake a Calaog-Linked Database to an External Catalog such as the Glue Data Catalog and using it to read and write Iceberg tables
+- creating a Snowflake a Catalog-Linked Database to an External Catalog such as the Glue Data Catalog and using it to read and write Iceberg tables
 
 ### Related Resources 
 - [Snowflake Iceberg documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg)
