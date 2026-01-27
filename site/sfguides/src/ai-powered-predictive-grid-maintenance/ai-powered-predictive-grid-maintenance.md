@@ -7,7 +7,7 @@ status: Published
 authors: Sri Subramanian, Tripp Smith, Dureti Shemsi
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Cortex AI, Snowflake Intelligence, Cortex Analyst, Cortex Search, Snowpark ML, Predictive Maintenance, Machine Learning, Energy & Utilities, Streamlit, Unstructured Data, Power Grid, Transformers
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/ai-powered-predictive-grid-maintenance/assets
+fork repo link: https://github.com/Snowflake-Labs/sfguide-ai-powered-predictive-grid-maintenance
 
 
 # AI-Powered Predictive Grid Maintenance
@@ -94,121 +94,11 @@ The platform implements a modern **Medallion Architecture** across Snowflake:
 
 ## Get Started
 
-### Prerequisites
+Ready to build predictive maintenance for your grid assets? This guide includes everything you need to get up and running quickly.
 
-- **Snowflake Account** with `ACCOUNTADMIN` role ([sign up for free trial](https://signup.snowflake.com/))
-- **Python 3.8+** ([download](https://www.python.org/downloads/))
-- **Git** installed
+**[GitHub Repository →](https://github.com/Snowflake-Labs/sfguide-ai-powered-predictive-grid-maintenance)**
 
-Verify installations:
-```bash
-python3 --version
-pip --version
-```
-
-### Step 1: Install Snowflake CLI
-
-```bash
-pip install snowflake-cli-labs
-```
-
-Or download installer from [Snowflake CLI Installation Guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation)
-
-Verify: `snow --version`
-
-### Step 2: Configure Snowflake Connection
-
-```bash
-snow connection add
-```
-
-| Prompt | Value |
-|--------|-------|
-| Connection name | `default` |
-| Account | Your account identifier |
-| User | Your username |
-| Password | Your password |
-| Role | `ACCOUNTADMIN` |
-| Other prompts | Press Enter to skip |
-
-> Find your account identifier in the URL: `https://<account-identifier>.snowflakecomputing.com`
-
-### Step 3: Test Connection
-
-```bash
-snow connection test -c default
-```
-
-### Step 4: Clone Repository
-
-```bash
-git clone https://github.com/Snowflake-Labs/sfquickstarts.git
-cd sfquickstarts/site/sfguides/src/ai-powered-predictive-grid-maintenance/assets
-```
-
-### Step 5: Deploy
-
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-
-> **Note:** The deployment script automatically creates a Python virtual environment and installs all required dependencies. If dependency installation fails, you can manually run:
-> ```bash
-> pip install -r requirements.txt
-> ```
-
-### Step 6: Interact with Snowflake Intelligence
-
-Navigate to **Snowflake UI** → **AI & ML** → **Snowflake Intelligence** → **Grid Reliability Intelligence Agent**
-
-Try these sample prompts to explore the agent's capabilities:
-
-**Operational Alerts & Risk Assessment:**
-- "Good morning! What's the status of our grid assets today?"
-- "Which assets need immediate attention?"
-- "Show me all critical and high-risk assets"
-- "How many transformers have a risk score above 80?"
-
-**Geographic & Location Queries:**
-- "Show me all critical assets in Miami-Dade county"
-- "Which counties have the most high-risk assets?"
-
-**Asset-Specific Inquiries:**
-- "Tell me about transformer T-SS047-001"
-- "What's the health status of asset T-SS023-001?"
-
-**Maintenance Planning:**
-- "Which assets should we schedule for maintenance next week?"
-- "Show me all assets overdue for maintenance"
-- "Which transformers haven't been maintained in over 90 days?"
-
-**Document Search:**
-- "Find maintenance logs for transformer T-SS047-001"
-- "What do the technical manuals say about oil temperature thresholds?"
-- "Show me recent maintenance reports mentioning overheating"
-- "What are the installation procedures for ABB transformers?"
-
-**Financial & ROI Analysis:**
-- "What is our predicted cost avoidance this month?"
-- "What's the ROI of our predictive maintenance program?"
-
-### Step 7: Explore the Streamlit Dashboard
-
-Navigate to **Snowflake UI** → **Projects** → **Streamlit** → **GRID_RELIABILITY_DASHBOARD**
-
-The dashboard provides:
-- **Fleet Overview**: Real-time health scores and risk distribution across all assets
-- **Predictive Analytics**: ML-driven failure probability trends and maintenance recommendations
-- **Geographic View**: Asset locations with risk-based color coding
-- **Maintenance Tracker**: Upcoming and overdue maintenance activities
-- **Alert Monitor**: Critical issues requiring immediate attention
-
-### Cleanup
-
-```bash
-./clean.sh
-```
+The repository contains complete setup scripts, SQL deployment files, data generators, semantic model definitions, and step-by-step instructions for deploying the full solution.
 
 ## Resources
 
