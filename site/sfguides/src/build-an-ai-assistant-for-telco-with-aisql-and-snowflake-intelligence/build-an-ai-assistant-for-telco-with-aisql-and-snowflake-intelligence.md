@@ -1,12 +1,13 @@
 id: build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence
 summary: Build an AI-powered Telco Operations Agent with Snowflake AI Functions and Snowflake Intelligence for natural language analytics on network performance, customer feedback, and call center data.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/industry/telecommunications, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/document-ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/solution-center/certification/certified-solution
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/industry/telecommunications, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/document-ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 language: en
 status: Published
 author: Vasanth Pandiaraj, Becky O'Connor
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Cortex AI, Snowflake Intelligence, Document Processing, Cortex Analyst, Cortex Search, Telecommunications, Agents, RAG, Text-to-SQL, Call Center Analytics, AI Transcribe, Semantic Models, Network Operations
+fork repo link: https://github.com/Snowflake-Labs/sfguide-build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence
+tags: Snowflake Intelligence, Document Processing, Cortex Analyst, Cortex Search, Telecommunications, Agents, RAG, Text-to-SQL, Call Center Analytics, AI Transcribe, Semantic Models, Network Operations
 
 
 
@@ -109,7 +110,6 @@ You'll connect Snowflake to GitHub, then run a series of SQL scripts that automa
 2. Load sample data from stages
 3. Deploy Cortex Search services and Analyst semantic models
 4. Create notebooks for data processing
-5. Deploy the SnowMail native app
 
 #### Option 2: Cortex Code CLI (Alternative)
 
@@ -119,8 +119,6 @@ Use the Telco Agent Builder skill for guided, conversational deployment. This ap
 - **Conversational interface** - AI guides you through deployment
 - **Automated execution** - Less manual copying/pasting
 - **Skill-based** - Uses Cortex Code's agent capabilities
-
-> **⚠️ Note for Trial Accounts:** The **Web Search** agent tool requires **External Access Integration**, which is not enabled by default on trial accounts. If you need this feature, contact your Snowflake representative to have it enabled. All other features (Document Processing, Cortex Search, Cortex Analyst, email notifications) work without this.
 
 ### Assets Created
 
@@ -134,7 +132,6 @@ By the end of this lab, you'll have deployed:
 - **3 Cortex Analyst Semantic Models** (network, infrastructure, customer)
 - **1 Snowflake Intelligence Agent** (Telco Operations AI Agent)
 - **3 Snowflake Notebooks** for data processing
-- **1 Native App** (SnowMail email viewer)
 - **33+ Files** (25 MP3 audio, 8 PDF documents)
 
 <!-- ------------------------ -->
@@ -229,11 +226,11 @@ The dataflow diagram below shows how data moves through the system to power Snow
 USE ROLE ACCOUNTADMIN;
 
 -- Create SEPARATE database for Git repositories (won't be dropped with main database)
-CREATE DATABASE IF NOT EXISTS SNOWFLAKE_QUICKSTART_REPOS
+CREATE DATABASE IF NOT EXISTS TELCO_AI_LAB
     COMMENT = 'Persistent database for Git repository integrations - DO NOT DROP';
-CREATE SCHEMA IF NOT EXISTS SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS;
+CREATE SCHEMA IF NOT EXISTS TELCO_AI_LAB.GIT_REPOS;
 
-USE DATABASE SNOWFLAKE_QUICKSTART_REPOS;
+USE DATABASE TELCO_AI_LAB;
 USE SCHEMA GIT_REPOS;
 
 -- Create API integration for GitHub
@@ -246,18 +243,18 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 GRANT USAGE ON INTEGRATION git_api_integration TO ROLE ACCOUNTADMIN;
 
 -- Create Git repository object
-CREATE OR REPLACE GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO
+CREATE OR REPLACE GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO
     API_INTEGRATION = git_api_integration
-    ORIGIN = 'https://github.com/Snowflake-Labs/sfquickstarts.git';
+    ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence.git';
 
 -- Grant READ permission on Git repository
-GRANT READ ON GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO TO ROLE ACCOUNTADMIN;
+GRANT READ ON GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO TO ROLE ACCOUNTADMIN;
 
 -- Fetch code from GitHub
-ALTER GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO FETCH;
+ALTER GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO FETCH;
 
 SELECT 'Git integration ready!' AS status,
-       'Git repo is in SNOWFLAKE_QUICKSTART_REPOS database (separate from main database)' AS note;
+       'Git repo is in TELCO_AI_LAB database (separate from main database)' AS note;
 ```
 
 4. Click **Run** (or press Cmd/Ctrl + Enter)
@@ -273,18 +270,12 @@ Now will create a workspace from the github repository
 2. When Prompted, use the following URL in the **Repository URL** field:
 
 ```text    
-https://github.com/Snowflake-Labs/sfquickstarts.git
+https://github.com/Snowflake-Labs/sfguide-build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence.git
 ```
 
 3. Press **Create**
 
-4. **Navigate to the telco guide assets folder:**
-   
-   ```
-   site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/
-   ```
-   
-   > ⚠️ **Important**: The sfquickstarts repository contains many guides. You must navigate to the path above to find the assets for this specific guide.
+4. **Navigate to the assets folder** (at the root of the repository):
 
 **You should see the following file structure:**
 
@@ -294,12 +285,11 @@ assets/
 ├── data/                   ← CSV files and PDFs
 ├── audio/                  ← MP3 call recordings
 ├── Notebooks/              ← Snowflake notebooks
-├── semantic_models/        ← YAML definitions
-└── native_app_snowmail/    ← SnowMail Native App
+└── semantic_models/        ← YAML definitions
 ```
 
 5. **Navigate to `sql/`** - This is where the deployment scripts are
-6. You'll see SQL files numbered 01-06
+6. You'll see SQL files numbered 01-05
 
 ✅ **You're now ready to deploy!**
 
@@ -316,34 +306,19 @@ Snowflake's **Git Integration** feature allows you to connect directly to GitHub
 - **Reproducible**: Same scripts, same results every time
 - **Workspace Integration**: Browse, view, and edit files directly in Snowsight
 
-When you created the Git Repository object in Step 2, Snowflake established a connection to the `sfquickstarts` GitHub repository. This connection allows you to:
+When you created the Git Repository object in Step 2, Snowflake established a connection to the Telco AI GitHub repository. This connection allows you to:
 
 1. **Browse files** in the repository through the Snowsight UI
-2. **Execute SQL files** directly using `EXECUTE IMMEDIATE FROM @<stage>/<path>`
-3. **Create Workspaces** from repository folders for interactive development
-4. **Fetch updates** when the repository changes
+2. **Create Workspaces** from repository folders for interactive development
+3. **Fetch updates** when the repository changes
 
-The deployment scripts in `assets/sql/` are numbered 01-06 and should be executed in order. Each script builds on the previous one, creating the complete NovaConnect AI platform.
+The deployment scripts in `assets/sql/` are numbered 01-05 and should be executed in order. Each script builds on the previous one, creating the complete NovaConnect AI platform.
 
-#### Choose Your Deployment Method
+#### Deploy Using the Git Repositories UI
 
-**Option A: Execute all at once** (in one worksheet):
-
-```sql
--- Run deployment scripts directly from GitHub (fully qualified names)
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/01_configure_account.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/02_data_foundation.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/03_deploy_cortex_search.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/04_deploy_cortex_analyst.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/05_deploy_notebooks.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/06_deploy_snowmail.sql;
-```
-
-**Option B: Use Git Repositories UI** (interactive):
-
-1. Navigate: **Projects** → **Git Repositories** → **SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO**
-2. Browse to: `site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/`
-3. Right-click each file (01-06) → "Open in new worksheet"
+1. Navigate: **Projects** → **Git Repositories** → **TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO**
+2. Browse to: `assets/sql/`
+3. Right-click each file (01-05) → "Open in new worksheet"
 4. Execute each script in order
 
 **What gets deployed**:
@@ -355,7 +330,6 @@ EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branc
 5. ✅ 3 Cortex Analyst Semantic Models
 6. ✅ 1 Snowflake Intelligence Agent
 7. ✅ 3 Notebooks
-8. ✅ 1 Native App (SnowMail email viewer)
 9. ✅ Stages with MP3 audio files and PDFs
 
 **Deployment time**: 15-20 minutes
@@ -368,14 +342,13 @@ EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branc
 
 #### Option C: Automated Deployment with Cortex Code
 
-If you have Cortex Code CLI installed, you can use the **Telco Agent Builder skill** for guided, automated deployment:
+If you have Cortex Code CLI installed, you can use the built-in **skills** for guided, automated deployment. Skills are structured markdown instructions that guide Cortex Code through complex deployment procedures.
 
-**1. Clone and Navigate to the Repository**
+**1. Clone the Repository**
 
 ```bash
-# Clone the quickstart repository
-git clone https://github.com/Snowflake-Labs/sfquickstarts.git
-cd sfquickstarts/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence
+git clone https://github.com/Snowflake-Labs/sfguide-build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence.git
+cd sfguide-build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence
 ```
 
 **2. Configure Your Snowflake Connection** (if not already configured)
@@ -388,39 +361,98 @@ snow connection list
 snow connection add
 ```
 
-**3. Run Cortex Code with the Skill**
+**3. Launch Cortex Code**
 
-Launch Cortex Code from the project directory - it will automatically detect the skill in `assets/cortex_code_skill/`:
+Start Cortex Code from the project directory. It will automatically detect the skills in `.cortex/skills/`:
 
 ```bash
 cortex
-
-# Then ask Cortex Code to deploy:
-> Deploy the NovaConnect Telco Operations AI quickstart
-> Set up the telecommunications agent
-> Build the telco agent for me
 ```
 
-**What the skill does:**
+**4. Deploy Using the Skill**
 
-The Telco Agent Builder skill will:
-- ✅ Verify your Snowflake connection and permissions
-- ✅ Create the database, schemas, roles, and warehouse
-- ✅ Upload all data files (CSV, PDF, MP3) to Snowflake stages
-- ✅ Create and load 14+ tables with sample data
-- ✅ Deploy 2 Cortex Search services
-- ✅ Upload semantic model YAML files for Cortex Analyst
-- ✅ Create the Snowflake Intelligence Agent
-- ✅ Deploy 3 Snowflake Notebooks
-- ✅ Install the SnowMail Native App
-- ✅ Verify the complete deployment
+Once Cortex Code is running, simply ask it to deploy. Use any of these prompts:
 
-**Benefits of CLI deployment:**
+```
+> Deploy the NovaConnect Telco Operations AI quickstart
+> Build the telco agent
+> Set up the telecommunications agent
+```
 
-- **Interactive guidance** - Step-by-step with explanations
-- **Error handling** - Automatic troubleshooting and fixes
+Cortex Code will load the `telco-agent-builder` skill and guide you through each step interactively.
+
+**5. (Optional) Customize Regions Before Deployment**
+
+The skill will ask if you want to customize the demo regions. By default, the data uses Malaysian regions (Kuala Lumpur, Selangor, Penang, etc.). 
+
+If you prefer different regions, the skill will run a Python script to generate customized CSV files:
+
+```bash
+# US Cities preset
+python assets/scripts/generate_regional_data.py --preset us
+
+# European Cities preset
+python assets/scripts/generate_regional_data.py --preset european
+
+# Generic regions (Region Alpha, Region Beta, etc.)
+python assets/scripts/generate_regional_data.py --preset generic
+
+# Custom mapping
+python assets/scripts/generate_regional_data.py --mapping "Kuala Lumpur:Sydney,Selangor:Melbourne"
+```
+
+This generates new CSV files in `assets/data/regional/` which the skill will upload instead of the defaults.
+
+---
+
+#### Available Skills
+
+The repository includes two skills in `.cortex/skills/`:
+
+| Skill | Description | Trigger Phrases |
+|-------|-------------|-----------------|
+| **telco-agent-builder** | Deploy the complete solution | "deploy telco", "build the agent", "set up novaconnect" |
+| **telco-agent-uninstall** | Clean up all resources | "uninstall telco", "remove the agent", "cleanup" |
+
+---
+
+#### What the Deployment Skill Does
+
+The **telco-agent-builder** skill guides you through these steps:
+
+1. ✅ **Verify prerequisites** - Check Snowflake connection and permissions
+2. ✅ **Customize regions** (optional) - Generate regional data if requested
+3. ✅ **Configure account** - Create role, warehouse, database, schemas, and stages
+4. ✅ **Upload data** - Copy CSV, PDF, and MP3 files to Snowflake stages
+5. ✅ **Load tables** - Create and populate 14+ tables with telco data
+6. ✅ **Deploy Cortex Search** - Create 2 semantic search services
+7. ✅ **Deploy Cortex Analyst** - Upload semantic models and create the Intelligence Agent
+8. ✅ **Deploy Notebooks** - Create 3 Snowflake Notebooks
+9. ✅ **Verify deployment** - Run checks to confirm everything is working
+
+---
+
+#### Uninstalling with Cortex Code
+
+To remove all deployed resources, use the uninstall skill:
+
+```
+> Uninstall the telco agent
+> Clean up the NovaConnect deployment
+> Remove the telco quickstart
+```
+
+This will drop the database, warehouse, role, and all related objects.
+
+---
+
+#### Benefits of CLI Deployment
+
+- **Interactive guidance** - Step-by-step with explanations at each stage
+- **Error handling** - Automatic troubleshooting and suggested fixes
 - **Progress tracking** - Real-time status updates
-- **Customization** - Easily modify settings during deployment
+- **Customization** - Easily modify regions, settings, or skip optional steps
+- **Idempotent** - Safe to re-run if interrupted
 
 > **Note**: Cortex Code CLI is currently in Private Preview. Contact your Snowflake account team to request access.
 
@@ -506,6 +538,35 @@ SHOW NOTEBOOKS IN TELCO_OPERATIONS_AI.NOTEBOOKS;
 
 <!-- ------------------------ -->
 
+## Explore the Demo
+Duration: 45
+
+### Installation Complete - Now Let's Explore!
+
+Congratulations! You've successfully deployed the NovaConnect Telco Operations AI platform. The installation phase is complete.
+
+**What you've deployed:**
+- Database with 14+ tables of telco data
+- 2 Cortex Search services for semantic search
+- 3 Cortex Analyst semantic models for natural language queries
+- 1 Snowflake Intelligence Agent
+- 3 Snowflake Notebooks for data processing
+
+**What's next:**
+In the following sections, you'll explore and interact with the AI capabilities you just deployed:
+
+| Stage | Section | What You'll Do |
+|-------|---------|----------------|
+| **1** | **AI & ML Studio** | Explore Cortex Playground and Document Processing Playground to understand LLM capabilities |
+| **2** | **Snowflake Notebooks** | Run 3 notebooks to process documents, transcribe audio, and explore AI functions |
+| | - Document Processing | Process PDFs with AI_PARSE_DOCUMENT (Notebook 1) |
+| | - Audio Analysis | Transcribe call recordings with AI_TRANSCRIBE (Notebook 2) |
+| | - Intelligence Lab | Advanced AI exploration and analytics (Notebook 3) |
+| **3** | **AI Services** | Explore the deployed Cortex Search and Cortex Analyst services |
+| **4** | **Intelligence Agent** | Chat with your telco data using the deployed agent |
+
+---
+
 ## AI & ML Studio
 
 ### Snowflake AI and ML Studio
@@ -530,9 +591,20 @@ The AI and ML Studio provides access to:
 
 The Cortex LLM Playground lets you compare text completions across multiple large language models available in Cortex AI.
 
+#### Why This Matters for Unstructured Data
+
+Before processing unstructured documents at scale, it's valuable to understand how LLMs interpret and extract information from text. The Cortex Playground provides a sandbox to:
+
+- **Test different models** - Compare how Claude, Llama, Mistral, and other models handle your specific use cases
+- **Refine your prompts** - Experiment with prompt engineering before building production pipelines
+- **Understand model capabilities** - See how models extract key information, summarize content, and answer questions
+- **Validate extraction strategies** - Test whether a model can reliably pull specific data points from unstructured text
+
+This foundational understanding will help you design better document processing workflows when you move to the Notebooks section.
+
 ![Cortex Playground](assets/cortex-playground.png)
 
-**Try it now:**
+#### Try it now:
 
 1. Click on **Cortex Playground** in the AI & ML Studio
 2. Select a model (e.g., `claude-4-sonnet`, `llama-3.1-70b`, `mistral-large2`)
@@ -552,7 +624,22 @@ The model will suggest various factors to consider:
 - Signal strength (dBm)
 - User load and capacity utilization
 
-**Key insight**: Notice how the model provides industry-relevant metrics - all of which are available in the datasets you'll be working with in this lab.
+#### Experiment with Document-Style Prompts
+
+Try pasting a sample of unstructured text and asking the model to extract specific information:
+
+**Example - Extracting from a support ticket:**
+
+> "Extract the following from this support ticket: customer issue, product mentioned, urgency level, and resolution requested.
+>
+> Ticket: Customer called regarding slow internet speeds on their NovaConnect Pro plan. They've been experiencing issues for 3 days and have already tried restarting their router. Customer is frustrated as they work from home and need this resolved urgently. Requesting a technician visit or account credit."
+
+**What you'll learn:**
+- How well the model identifies key entities
+- Whether it can handle domain-specific terminology
+- How to structure extraction prompts for consistent results
+
+**Key insight**: The prompt engineering skills you develop here translate directly to the AI_EXTRACT and AI_PARSE_DOCUMENT functions you'll use in the Notebooks.
 
 ---
 
@@ -910,7 +997,6 @@ The **Telco Operations AI Agent** is your AI-powered telecommunications operatio
 - 💬 Search customer call transcripts for specific topics
 - 📧 Search support tickets for issue patterns
 - 📈 Track customer sentiment and churn risk
-- ✉️ Generate and send email summaries via SnowMail
 
 This agent represents the **culmination of all the previous work** - it brings together the unstructured data processing, search services, and semantic models into one conversational interface.
 
@@ -1043,20 +1129,18 @@ The agent will:
 - Identify regions with both technical and satisfaction issues
 - Provide actionable insights
 
-#### 6. Email Report Generation
+#### 6. Cross-Domain Analysis
 
 **Try asking:**
 
-> "Send me an email summary of network performance issues"
+> "Are network issues correlated with negative customer sentiment?"
 
 The agent will:
 
-- Compile findings from your session
-- Format as professional email with markdown
-- Save to EMAIL_PREVIEWS table
-- Return SnowMail URL for viewing
-
-**IMPORTANT**: After calling SEND_EMAIL, the agent will display a **clickable URL** - right-click or CMD+Click to open the email in SnowMail!
+- Query both network performance and customer feedback
+- Correlate latency spikes with complaint volumes
+- Identify regions with both technical and satisfaction issues
+- Provide actionable insights
 
 ---
 
@@ -1079,10 +1163,6 @@ Here's an example conversation demonstrating the agent's capabilities:
 **You:** "What are the top 3 customer complaints in October 2025?"
 
 **Agent:** *Queries customer feedback, shows complaint categories ranked*
-
-**You:** "Send me an email summary of our findings"
-
-**Agent:** *Generates comprehensive email summary, returns SnowMail URL*
 
 ---
 
@@ -1231,15 +1311,6 @@ The agent maintains context, so you can:
 2. Drill deeper on specific findings
 3. Request different visualizations
 4. Ask for comparisons
-5. Request email summary
-
-#### Request Email Summaries
-
-End your research session with:
-
-> "Send me an email summarizing our findings"
-
-You'll get a professional email with all insights accessible via SnowMail!
 
 ---
 
@@ -1259,16 +1330,6 @@ The agent is:
 
 This ensures comprehensive, validated answers.
 
-#### When You See a SnowMail URL
-
-**What to do**:
-
-1. Right-click the URL
-2. Select "Open in new tab" (or CMD+Click / CTRL+Click)
-3. View your email in the SnowMail interface
-
-**Note**: The email wasn't "sent" externally - it's saved for demo viewing.
-
 ---
 
 ### Data Limitations & Disclaimers
@@ -1282,32 +1343,6 @@ This ensures comprehensive, validated answers.
 #### Purpose
 
 This is a **demonstration environment** showing telecommunications AI capabilities. **Do not make actual business decisions based on this data!**
-
----
-
-## SnowMail Application
-
-### Overview
-
-SnowMail is a native Snowflake application that provides a Gmail-style email viewer for AI-generated reports and notifications.
-
-### Access SnowMail
-
-Navigate to: **Data Products** → **Apps** → **SNOWMAIL**
-
-### What SnowMail Provides
-
-- 📧 **Email Inbox** - View AI-generated email reports
-- ⭐ **Starred Messages** - Mark important emails
-- 📖 **Read/Unread Status** - Track which reports you've reviewed
-- 🎨 **Snowflake Branding** - Professional formatting with Snowflake styling
-
-### Using SnowMail
-
-1. When the agent sends an email, it saves to the `EMAIL_PREVIEWS` table
-2. Click the SnowMail URL provided by the agent
-3. View your email in the Gmail-style interface
-4. Star important reports for future reference
 
 ---
 
@@ -1371,11 +1406,11 @@ In this quickstart, you've built a comprehensive AI-powered telecommunications o
 
 You then created the AI services layer that makes this data accessible and actionable. Cortex Search services enable semantic search across call transcripts and support tickets—finding relevant information based on meaning rather than keywords. Cortex Analyst semantic models allow natural language queries against structured network and customer data, automatically generating SQL from plain English questions. Together, these services power the intelligence layer that connects users to insights without requiring technical expertise.
 
-Finally, you deployed and explored the Snowflake Intelligence Agent—the "Telco Operations AI Agent" that orchestrates all of these capabilities through a conversational interface. The agent seamlessly combines search services, semantic models, and email notifications to answer complex operational questions, generate visualizations, and send email summaries via SnowMail. This demonstrates how modern AI platforms can unify structured and unstructured data analysis, enabling faster decision-making and deeper insights across telecommunications operations use cases.
+Finally, you deployed and explored the Snowflake Intelligence Agent—the "Telco Operations AI Agent" that orchestrates all of these capabilities through a conversational interface. The agent seamlessly combines search services and semantic models to answer complex operational questions and generate visualizations. This demonstrates how modern AI platforms can unify structured and unstructured data analysis, enabling faster decision-making and deeper insights across telecommunications operations use cases.
 
 ### Resources
 
-- **Repository**: [GitHub - Telco AI Assistant](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence)
+- **Repository**: [GitHub - Telco AI Assistant](https://github.com/Snowflake-Labs/sfguide-build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence)
 - **Documentation**: See README.md in repository
 
 ---
@@ -1398,18 +1433,9 @@ Since the Git repo is in a separate database, you can easily reset:
 -- Drop the main database (Git repo stays safe!)
 DROP DATABASE IF EXISTS TELCO_OPERATIONS_AI;
 DROP DATABASE IF EXISTS SNOWFLAKE_INTELLIGENCE;
-DROP APPLICATION IF EXISTS SNOWMAIL;
-DROP APPLICATION PACKAGE IF EXISTS SNOWMAIL_PKG;
-DROP DATABASE IF EXISTS TELCO_OPERATIONS_AI_SNOWMAIL_PKG;
 
 -- Fetch latest code
-ALTER GIT REPOSITORY SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO FETCH;
-
--- Re-run deployment scripts (01-06)
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/01_configure_account.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/02_data_foundation.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/03_deploy_cortex_search.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/04_deploy_cortex_analyst.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/05_deploy_notebooks.sql;
-EXECUTE IMMEDIATE FROM @SNOWFLAKE_QUICKSTART_REPOS.GIT_REPOS.TELCO_AI_REPO/branches/master/site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/sql/06_deploy_snowmail.sql;
+ALTER GIT REPOSITORY TELCO_AI_LAB.GIT_REPOS.TELCO_AI_REPO FETCH;
 ```
+
+Then re-run deployment scripts (01-05) from the Git Repositories UI as described in Step 3.

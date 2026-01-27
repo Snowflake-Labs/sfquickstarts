@@ -3,7 +3,7 @@ id: intro-to-snowpark-connect-for-apache-spark
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
 summary: Learn how to build production-ready PySpark pipelines on Snowflake using Snowpark Connect for Apache Spark. 
-open in snowflake link: https://app.snowflake.com/?template=intro_to_snowpark_connect&utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=intro_to_snowpark_connect&utm_cta=developer-guides-deeplink
+open in snowflake link: https://app.snowflake.com/templates/?template=intro_to_snowpark_connect&utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=intro_to_snowpark_connect&utm_cta=developer-guides-deeplink
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
