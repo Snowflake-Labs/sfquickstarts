@@ -8,7 +8,7 @@ authors: Mats Stellwall, Constantin Stanca, Dureti Shemsi
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management
 
-# Agentic AI for Asset Management
+# Agentic AI for Asset Management using Snowflake Public Data
 
 ## Overview
 
