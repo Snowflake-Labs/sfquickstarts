@@ -42,7 +42,7 @@ To have fast and efficient near real-time reporting, we will use Dynamic Tables 
 
 ## Launch the Codespace in GitHub
 
-Navigate to the [code repository](https://github.com/sfc-gh-bculberson/Summit2025-DE214) in GitHub.
+Navigate to the [code repository](https://github.com/Snowflake-Labs/Summit2025-DE214) in GitHub.
 
 Click on the green Code Button, go to the Codespaces tab, and click the green Create codespace on main. You must be logged into GitHub to see the Codespaces tab.
 
@@ -253,7 +253,7 @@ select * from LIFT_RIDE limit 10;
 
 We have created a notebook you can use to get started building the streaming data pipeline.
 
-[Download](https://github.com/sfc-gh-bculberson/Summit2025-DE214/raw/refs/heads/main/transformation_notebook.ipynb) the Notebook from Github.
+[Download](https://github.com/Snowflake-Labs/Summit2025-DE214/raw/refs/heads/main/transformation_notebook.ipynb) the Notebook from Github.
 
 Login to Snowsight, click on the bottom left to get the Navigation Menu and Switch Role to STREAMING_INGEST.
 
@@ -299,7 +299,7 @@ Add the Package plotly and pandas.
 
 ![Import Pandas](assets/ImportPandas.png)
 
-Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
+Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/Snowflake-Labs/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
 
 Run the Streamlit to see the visualizations from the data pipeline built in this guide.
 
