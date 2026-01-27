@@ -978,27 +978,6 @@ You've successfully built an interoperable lakehouse architecture that demonstra
 - How Snowpark Connect enables identical Spark code to run on both platforms
 - How to achieve zero data movement with bi-directional read/write capabilities
 
-### Key Takeaways
-
-1. **Open Standards Work**: Apache Iceberg enables true multi-platform data access
-2. **Code Portability is Real**: 95%+ of Spark code runs unchanged on Snowflake
-3. **Zero Data Movement**: Both platforms query the same S3 data
-4. **Catalog-Linked Databases**: Automatic table discovery eliminates manual setup
-5. **Snowpark Connect**: Brings Spark API compatibility to Snowflake
-
-### Real-World Benefits
-
-**For Data Engineers:**
-- Write Spark code once, run anywhere
-- Use the best tool for each job
-- No vendor lock-in
-
-**For Organizations:**
-- Reduce infrastructure costs (no data duplication)
-- Improve data consistency (single source of truth)
-- Enable multi-cloud strategies
-- Faster time to value (no data migration needed)
-
 ### Related Resources 
 - [GitHub Repository for this Quickstart](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main)
 - [Snowflake Catalog-Linked Database Documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
