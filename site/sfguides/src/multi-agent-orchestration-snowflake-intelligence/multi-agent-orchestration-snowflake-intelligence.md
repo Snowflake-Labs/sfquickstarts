@@ -44,7 +44,7 @@ This pattern enables a hierarchical agent system where:
 
 ### Step 2: Configure and Run Setup Script
 
-Open [`multi_agent_setup_generic.sql`](#code:-multi_agent_setup_generic.sql) and replace all placeholders:
+Open [`SQL Code`](#sql-code) and replace all placeholders:
 
 | Placeholder | Description | Example |
 | :---- | :---- | :---- |
@@ -247,185 +247,185 @@ https://<ACCOUNT>.snowflakecomputing.com/api/v2/databases/<DATABASE>/schemas/<SC
 
 ## SQL Code 
 
-```sql *\-- \============================================================================*  
-*\-- CORTEX AGENT MULTI-AGENT SETUP (GENERIC TEMPLATE)*  
-*\-- \============================================================================*  
-*\-- This script sets up the infrastructure to call Cortex Agents programmatically*  
-*\-- via UDFs, enabling multi-agent orchestration patterns.*  
-*\--*  
-*\-- PLACEHOLDERS TO REPLACE:*  
-*\--   \<YOUR\_ACCOUNT\>       \- Your Snowflake account identifier (e.g., ABC12345)*  
-*\--   \<YOUR\_DATABASE\>      \- Database where agents are defined*  
-*\--   \<YOUR\_SCHEMA\>        \- Schema where agents are defined*   
-*\--   \<YOUR\_AGENT\_NAME\>    \- Name of your Cortex Agent*  
-*\--   \<YOUR\_ROLE\>          \- Role that will execute the agent UDFs*  
-*\--   \<YOUR\_PAT\_TOKEN\>     \- Personal Access Token (generated from Snowflake UI)*  
-*\-- \============================================================================*
+```sql -- ============================================================================*  
+-- CORTEX AGENT MULTI-AGENT SETUP (GENERIC TEMPLATE)*  
+-- ============================================================================*  
+-- This script sets up the infrastructure to call Cortex Agents programmatically*  
+-- via UDFs, enabling multi-agent orchestration patterns.*  
+--*  
+-- PLACEHOLDERS TO REPLACE:*  
+--   <YOUR_ACCOUNT>       - Your Snowflake account identifier (e.g., ABC12345)*  
+--   <YOUR_DATABASE>      - Database where agents are defined*  
+--   <YOUR_SCHEMA>        - Schema where agents are defined*   
+--   <YOUR_AGENT_NAME>    - Name of your Cortex Agent*  
+--   <YOUR_ROLE>          - Role that will execute the agent UDFs*  
+--   <YOUR_PAT_TOKEN>     - Personal Access Token (generated from Snowflake UI)*  
+-- ============================================================================*
 
 USE ROLE ACCOUNTADMIN;
 
-*\-- \============================================================================*  
-*\-- STEP 1: CREATE NETWORK RULE FOR EGRESS TO SNOWFLAKE API*  
-*\-- \============================================================================*  
-*\-- Allows the UDF to make outbound calls to your Snowflake account's REST API.*  
-*\-- Required for the agent to call itself via HTTP.*
+-- ============================================================================*  
+-- STEP 1: CREATE NETWORK RULE FOR EGRESS TO SNOWFLAKE API*  
+-- ============================================================================*  
+-- Allows the UDF to make outbound calls to your Snowflake account's REST API.*  
+-- Required for the agent to call itself via HTTP.*
 
-CREATE OR REPLACE NETWORK RULE cortex\_agent\_egress\_rule  
- MODE \= EGRESS  
- TYPE \= HOST\_PORT  
- VALUE\_LIST \= ('\<YOUR\_ACCOUNT\>.snowflakecomputing.com');
+CREATE OR REPLACE NETWORK RULE cortex_agent_egress_rule  
+ MODE = EGRESS  
+ TYPE = HOST_PORT  
+ VALUE_LIST = ('<YOUR_ACCOUNT>.snowflakecomputing.com');
 
-*\-- \============================================================================*  
-*\-- STEP 2: STORE PAT TOKEN AS A SECRET*  
-*\-- \============================================================================*  
-*\-- Securely stores the Personal Access Token.*  
-*\-- Generate PAT from Snowflake UI: User Menu → My Profile → Authentication → Generate Token*  
-*\-- NOTE: PAT tokens have an expiration date. Regenerate and update secret as needed.*
+-- ============================================================================*  
+-- STEP 2: STORE PAT TOKEN AS A SECRET*  
+-- ============================================================================*  
+-- Securely stores the Personal Access Token.*  
+-- Generate PAT from Snowflake UI: User Menu → My Profile → Authentication → Generate Token*  
+-- NOTE: PAT tokens have an expiration date. Regenerate and update secret as needed.*
 
-CREATE OR REPLACE SECRET cortex\_agent\_token\_secret  
- TYPE \= GENERIC\_STRING  
- SECRET\_STRING \= '\<YOUR\_PAT\_TOKEN\>';
+CREATE OR REPLACE SECRET cortex_agent_token_secret  
+ TYPE = GENERIC_STRING  
+ SECRET_STRING = '<YOUR_PAT_TOKEN>';
 
-*\-- \============================================================================*  
-*\-- STEP 3: CREATE EXTERNAL ACCESS INTEGRATION*  
-*\-- \============================================================================*  
-*\-- Bridges the network rule and secrets, allowing UDFs to make authenticated*  
-*\-- external calls to the Snowflake API.*
+-- ============================================================================*  
+-- STEP 3: CREATE EXTERNAL ACCESS INTEGRATION*  
+-- ============================================================================*  
+-- Bridges the network rule and secrets, allowing UDFs to make authenticated*  
+-- external calls to the Snowflake API.*
 
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION cortex\_agent\_external\_access  
- ALLOWED\_NETWORK\_RULES \= (cortex\_agent\_egress\_rule)  
- ALLOWED\_AUTHENTICATION\_SECRETS \= ALL  
- ENABLED \= TRUE;
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION cortex_agent_external_access  
+ ALLOWED_NETWORK_RULES = (cortex_agent_egress_rule)  
+ ALLOWED_AUTHENTICATION_SECRETS = ALL  
+ ENABLED = TRUE;
 
-*\-- \============================================================================*  
-*\-- STEP 4: GRANT PERMISSIONS TO EXECUTION ROLE*  
-*\-- \============================================================================*  
-*\-- Grant the necessary permissions to the role that will call the agent UDFs.*
+-- ============================================================================*  
+-- STEP 4: GRANT PERMISSIONS TO EXECUTION ROLE*  
+-- ============================================================================*  
+-- Grant the necessary permissions to the role that will call the agent UDFs.*
 
-GRANT READ ON SECRET cortex\_agent\_token\_secret TO ROLE \<YOUR\_ROLE\>;  
-GRANT USAGE ON INTEGRATION cortex\_agent\_external\_access TO ROLE \<YOUR\_ROLE\>;
+GRANT READ ON SECRET cortex_agent_token_secret TO ROLE <YOUR_ROLE>;  
+GRANT USAGE ON INTEGRATION cortex_agent_external_access TO ROLE <YOUR_ROLE>;
 
-*\-- \============================================================================*  
-*\-- STEP 5: CREATE GENERIC AGENT CALLER UDF*  
-*\-- \============================================================================*  
-*\-- Template UDF that calls a Cortex Agent via REST API.*  
-*\-- Duplicate and customize for each agent you want to call.*
+-- ============================================================================*  
+-- STEP 5: CREATE GENERIC AGENT CALLER UDF*  
+-- ============================================================================*  
+-- Template UDF that calls a Cortex Agent via REST API.*  
+-- Duplicate and customize for each agent you want to call.*
 
-CREATE OR REPLACE FUNCTION call\_cortex\_agent(user\_query STRING)  
+CREATE OR REPLACE FUNCTION call_cortex_agent(user_query STRING)  
 RETURNS STRING  
 LANGUAGE PYTHON  
-RUNTIME\_VERSION \= '3.12'  
-PACKAGES \= ('requests', 'snowflake-snowpark-python')  
-EXTERNAL\_ACCESS\_INTEGRATIONS \= (cortex\_agent\_external\_access)  
-SECRETS \= ('agent\_token' \= cortex\_agent\_token\_secret)  
-HANDLER \= 'run\_agent'  
+RUNTIME_VERSION = '3.12'  
+PACKAGES = ('requests', 'snowflake-snowpark-python')  
+EXTERNAL_ACCESS_INTEGRATIONS = (cortex_agent_external_access)  
+SECRETS = ('agent_token' = cortex_agent_token_secret)  
+HANDLER = 'run_agent'  
 AS  
 $$  
-import \_snowflake  
+import _snowflake  
 import requests  
 import json
 
-def run\_agent(user\_query):  
+def run_agent(user_query):  
    """  
    Calls a Cortex Agent via REST API and returns the text response.  
    Handles Server-Sent Events (SSE) streaming format.  
    """  
-   \# Retrieve the stored PAT token  
+   # Retrieve the stored PAT token  
    try:  
-       token \= \_snowflake.get\_generic\_secret\_string('agent\_token')  
+       token = _snowflake.get_generic_secret_string('agent_token')  
    except Exception as e:  
        return f"Error: Could not read secret. Verify grants. Details: {str(e)}"
 
-   \# Construct the agent API endpoint  
-   \# Format: https://\<account\>.snowflakecomputing.com/api/v2/databases/\<db\>/schemas/\<schema\>/agents/\<agent\>:run  
-   url \= "https://\<YOUR\_ACCOUNT\>.snowflakecomputing.com/api/v2/databases/\<YOUR\_DATABASE\>/schemas/\<YOUR\_SCHEMA\>/agents/\<YOUR\_AGENT\_NAME\>:run"  
+   # Construct the agent API endpoint  
+   # Format: https://<account>.snowflakecomputing.com/api/v2/databases/<db>/schemas/<schema>/agents/<agent>:run  
+   url = "https://<YOUR_ACCOUNT>.snowflakecomputing.com/api/v2/databases/<YOUR_DATABASE>/schemas/<YOUR_SCHEMA>/agents/<YOUR_AGENT_NAME>:run"  
     
-   headers \= {  
+   headers = {  
        "Authorization": f"Bearer {token}",  
        "Content-Type": "application/json",  
        "Accept": "text/event-stream"  
    }  
     
-   payload \= {  
-       "messages": \[  
+   payload = {  
+       "messages": [  
            {  
                "role": "user",  
-               "content": \[{"type": "text", "text": user\_query}\]  
+               "content": [{"type": "text", "text": user_query}]  
            }  
-       \]  
+       ]  
    }  
     
    try:  
-       \# Make streaming request to agent API  
-       response \= requests.post(url, headers\=headers, json=payload, stream\=True)  
+       # Make streaming request to agent API  
+       response = requests.post(url, headers=headers, json=payload, stream=True)  
         
-       if response.status\_code \!= 200:  
-           return f"API Error {response.status\_code}: {response.text}"  
+       if response.status_code != 200:  
+           return f"API Error {response.status_code}: {response.text}"  
         
-       \# Parse Server-Sent Events (SSE) stream  
-       final\_answer \= \[\]  
-       current\_event \= None  
+       # Parse Server-Sent Events (SSE) stream  
+       final_answer = []  
+       current_event = None  
         
-       for line in response.iter\_lines():  
+       for line in response.iter_lines():  
            if not line:  
                continue  
             
-           decoded\_line \= line.decode('utf-8')  
+           decoded_line = line.decode('utf-8')  
             
-           \# Track event type  
-           if decoded\_line.startswith('event: '):  
-               current\_event \= decoded\_line\[7:\].strip()  
+           # Track event type  
+           if decoded_line.startswith('event: '):  
+               current_event = decoded_line[7:].strip()  
             
-           \# Extract data payload  
-           if decoded\_line.startswith('data: '):  
-               data\_str \= decoded\_line\[6:\]  
-               if data\_str \== '\[DONE\]':  
+           # Extract data payload  
+           if decoded_line.startswith('data: '):  
+               data_str = decoded_line[6:]  
+               if data_str == '[DONE]':  
                    break  
                 
                try:  
-                   data \= json.loads(data\_str)  
-                   \# Collect text delta events (the actual response content)  
-                   if current\_event \== 'response.text.delta' and 'text' in data:  
-                       final\_answer.append(data\['text'\])  
+                   data = json.loads(data_str)  
+                   # Collect text delta events (the actual response content)  
+                   if current_event == 'response.text.delta' and 'text' in data:  
+                       final_answer.append(data['text'])  
                except json.JSONDecodeError:  
                    continue  
         
-       return "".join(final\_answer) if final\_answer else "Agent returned no text content."
+       return "".join(final_answer) if final_answer else "Agent returned no text content."
 
    except Exception as e:  
        return f"Connection error: {str(e)}"  
 $$;
 
-*\-- \============================================================================*  
-*\-- EXAMPLE: CREATE ADDITIONAL AGENT CALLERS*  
-*\-- \============================================================================*  
-*\-- Copy and modify the UDF above for each agent. Only change the URL endpoint.*  
-*\--*  
-*\-- Example for a second agent:*  
-*\--*  
-*\-- CREATE OR REPLACE FUNCTION call\_second\_agent(user\_query STRING)*  
-*\-- RETURNS STRING*  
-*\-- ... (same as above, but change the url variable to point to different agent)*
+-- ============================================================================*  
+-- EXAMPLE: CREATE ADDITIONAL AGENT CALLERS*  
+-- ============================================================================*  
+-- Copy and modify the UDF above for each agent. Only change the URL endpoint.*  
+--*  
+-- Example for a second agent:*  
+--*  
+-- CREATE OR REPLACE FUNCTION call_second_agent(user_query STRING)*  
+-- RETURNS STRING*  
+-- ... (same as above, but change the url variable to point to different agent)*
 
-*\-- \============================================================================*  
-*\-- USAGE EXAMPLES*  
-*\-- \============================================================================*  
-*\-- SELECT call\_cortex\_agent('What is the current status?');*
+-- ============================================================================*  
+-- USAGE EXAMPLES*  
+-- ============================================================================*  
+-- SELECT call_cortex_agent('What is the current status?');*
 
-*\-- \============================================================================*  
-*\-- OPTIONAL: NETWORK POLICY MODIFICATION (IF REQUIRED)*  
-*\-- \============================================================================*  
-*\-- If your account has network policies blocking agent traffic, you may need*  
-*\-- to add Cortex Agent IP ranges. Check with your admin first.*  
-*\--*  
-*\-- \-- View current network policies*  
-*\-- SHOW PARAMETERS LIKE 'NETWORK\_POLICY' IN ACCOUNT;*  
-*\-- SHOW PARAMETERS LIKE 'NETWORK\_POLICY' IN USER \<YOUR\_USERNAME\>;*  
-*\--*  
-*\-- \-- If modification is needed, add required IPs to allowed list*  
-*\-- ALTER NETWORK POLICY \<YOUR\_POLICY\_NAME\> SET ALLOWED\_IP\_LIST \= (*  
-*\--     ... existing IPs ...,*  
-*\--     '\<AGENT\_IP\_RANGE\>'  \-- Add agent IPs here*  
-*\-- );* 
+-- ============================================================================*  
+-- OPTIONAL: NETWORK POLICY MODIFICATION (IF REQUIRED)*  
+-- ============================================================================*  
+-- If your account has network policies blocking agent traffic, you may need*  
+-- to add Cortex Agent IP ranges. Check with your admin first.*  
+--*  
+-- -- View current network policies*  
+-- SHOW PARAMETERS LIKE 'NETWORK_POLICY' IN ACCOUNT;*  
+-- SHOW PARAMETERS LIKE 'NETWORK_POLICY' IN USER <YOUR_USERNAME>;*  
+--*  
+-- -- If modification is needed, add required IPs to allowed list*  
+-- ALTER NETWORK POLICY <YOUR_POLICY_NAME> SET ALLOWED_IP_LIST = (*  
+--     ... existing IPs ...,*  
+--     '<AGENT_IP_RANGE>'  -- Add agent IPs here*  
+-- );* 
 
 ```
