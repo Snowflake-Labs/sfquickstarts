@@ -16,6 +16,35 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 The solution showcases how organizations can leverage best-of-breed tools without vendor lock-in, allowing Spark code written for AWS Glue to run unmodified on Snowflake using [Snowpark Connect](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview).
 
+![Lakehouse Architecture](assets/arch.jpeg)
+
+For this guide, we will use a Sales Analytics use case where 1M+ transaction records are processed. We'll load sales and customer data into Iceberg tables via AWS Glue, then demonstrate how the exact same Spark code can run on both AWS Glue and Snowflake to generate identical Top 10 product sales reports.
+
+### Prerequisites
+- Familiarity with Snowflake, basic SQL, Snowsight UI, and Snowflake Objects
+- Familiarity with AWS Services (S3, Glue, CloudFormation, IAM) and the Management Console
+- Basic knowledge of Python and PySpark
+
+### What You'll Learn 
+- How to create Iceberg tables in the [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) using Glue ETL jobs
+- How to configure a [Snowflake Catalog-Linked Database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) with the Glue Data Catalog via Iceberg REST Catalog APIs
+- How to use [Snowpark Connect](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview) to run identical Spark code on Snowflake
+- How to achieve true code portability between AWS Glue and Snowflake with zero data movement
+
+### What You'll Need 
+- A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=interoperable_lakehouse_glue_iceberg) with `ACCOUNTADMIN` access (Enterprise Edition or higher recommended)
+- An [AWS Account](https://aws.amazon.com/free/) with administrative access
+- [AWS CLI](https://aws.amazon.com/cli/) installed and configured (optional, for command-line deployment)
+- Snowflake Notebook feature enabled (requires Snowflake Runtime 2.0+)
+- The [accompanying GitHub repository](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main) cloned or downloaded to your local machine
+
+### What You'll Build 
+- An AWS Glue Database with Iceberg tables stored on S3
+- CloudFormation-deployed infrastructure including IAM roles and Glue ETL jobs
+- Snowflake External Volume and Catalog Integration with AWS Glue
+- Snowflake Catalog-Linked Database for automatic table discovery
+- Sales analytics pipeline demonstrating 95%+ code reuse between platforms
+
 ### Setup
 
 This guide has an accompanying GitHub repository that contains all the files, scripts, data, and resources you need to complete this quickstart:
@@ -46,35 +75,6 @@ glue_cld_snowflake/
 ```
 
 Clone or download this repository before starting the quickstart to have all necessary files readily available.
-
-![Lakehouse Architecture](assets/arch.jpeg)
-
-For this guide, we will use a Sales Analytics use case where 1M+ transaction records are processed. We'll load sales and customer data into Iceberg tables via AWS Glue, then demonstrate how the exact same Spark code can run on both AWS Glue and Snowflake to generate identical Top 10 product sales reports.
-
-### Prerequisites
-- Familiarity with Snowflake, basic SQL, Snowsight UI, and Snowflake Objects
-- Familiarity with AWS Services (S3, Glue, CloudFormation, IAM) and the Management Console
-- Basic knowledge of Python and PySpark
-
-### What You'll Learn 
-- How to create Iceberg tables in the [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) using Glue ETL jobs
-- How to configure a [Snowflake Catalog-Linked Database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) with the Glue Data Catalog via Iceberg REST Catalog APIs
-- How to use [Snowpark Connect](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview) to run identical Spark code on Snowflake
-- How to achieve true code portability between AWS Glue and Snowflake with zero data movement
-
-### What You'll Need 
-- A [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=interoperable_lakehouse_glue_iceberg) with `ACCOUNTADMIN` access (Enterprise Edition or higher recommended)
-- An [AWS Account](https://aws.amazon.com/free/) with administrative access
-- [AWS CLI](https://aws.amazon.com/cli/) installed and configured (optional, for command-line deployment)
-- Snowflake Notebook feature enabled (requires Snowflake Runtime 2.0+)
-- The [accompanying GitHub repository](https://github.com/sfc-gh-pjain/glue_cld_snowflake/tree/main) cloned or downloaded to your local machine
-
-### What You'll Build 
-- An AWS Glue Database with Iceberg tables stored on S3
-- CloudFormation-deployed infrastructure including IAM roles and Glue ETL jobs
-- Snowflake External Volume and Catalog Integration with AWS Glue
-- Snowflake Catalog-Linked Database for automatic table discovery
-- Sales analytics pipeline demonstrating 95%+ code reuse between platforms
 
 <!-- ------------------------ -->
 ## Lakehouse Architecture and Data Flow
