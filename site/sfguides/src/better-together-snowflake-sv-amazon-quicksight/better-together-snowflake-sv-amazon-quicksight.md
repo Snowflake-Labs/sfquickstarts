@@ -7,7 +7,7 @@ title: Better Together: Unleash AI-Powered BI with Snowflake Semantic View and A
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-fork repo link: <optional but modify to link to your repo>
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/better-together-snowflake-sv-amazon-quicksight
 open in snowflake: <[Open in Snowflake](https://signup.snowflake.com/)>
 
 
