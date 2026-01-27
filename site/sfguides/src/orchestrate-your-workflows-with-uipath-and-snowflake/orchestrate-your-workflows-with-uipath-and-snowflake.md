@@ -27,7 +27,7 @@ UiPath Maestro is a cloud-native agentic orchestration platform designed to coor
 - How a "Connected App" model allows UiPath to securely talk to Snowflake without moving data out of your environment 
 - The different ways to connect, ranging from simple database updates (JDBC) to advanced AI tool-calling (MCP)
 
-### Reference Architecture 
+## Reference Architecture 
 ![assets/architecture.png](assets/architecture.png)
 
 <!-- ------------------------ -->
@@ -45,7 +45,7 @@ Connect with Snowflake Account Team to do a joint architectural deep dive with y
 - Snowflake features and services that can be leveraged through UiPath Orchestration Platform.
 
 
-### Related Resources
+## Related Resources
 - https://www.uipath.com/blog/product-and-updates/snowflake-intelligence-and-uipath-agentic-automation
 - https://docs.uipath.com/activities/other/latest/integration-service/uipath-snowflake-cortex-interact-agent
 - https://docs.uipath.com/studio-web/automation-cloud/latest/user-guide/integrating-snowflake-cortex-api-with-api-workflows
