@@ -12,11 +12,15 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-[Apache Iceberg](https://iceberg.apache.org/) is an open table format for huge analytical datasets that enables high performance analytics on open data formats with ACID compliance. This guide demonstrates how to build a modern, interoperable lakehouse architecture that seamlessly integrates **AWS Glue**, **Apache Iceberg**, and **Snowflake** to enable data processing workloads across multiple compute engines while maintaining a single source of truth.
+[Apache Iceberg](https://iceberg.apache.org/) is an open table format for huge analytical datasets that enables high performance analytics on open data formats with ACID compliance. With Apache Iceberg's broad adoption across major data platforms, it is designed for vendor-neutral interoperability. You can write data once and query it from any compatible engine—no proprietary formats, no data migration required. 
+
+This guide demonstrates how to build a modern, interoperable lakehouse architecture that seamlessly integrates **AWS Glue**, **Apache Iceberg**, and **Snowflake** to enable data processing workloads across multiple compute engines while maintaining a single source of truth.
 
 The solution showcases how organizations can leverage best-of-breed tools without vendor lock-in, allowing Spark code written for AWS Glue to run unmodified on Snowflake using [Snowpark Connect](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview).
 
 ![Lakehouse Architecture](assets/arch.jpeg)
+
+Your organization's data lives everywhere -- across tools, platforms, and cloud providers. If you use both AWS and Snowflake, you can build a connected and interoperable architecture that focuses on getting value from your data without costly and complex data movement.
 
 For this guide, we will use a Sales Analytics use case where 1M+ transaction records are processed. We'll load sales and customer data into Iceberg tables via AWS Glue, then demonstrate how the exact same Spark code can run on both AWS Glue and Snowflake to generate identical Top 10 product sales reports.
 
@@ -507,7 +511,7 @@ aws glue get-tables --database-name $GLUE_DB_NAME \
 -----------------------------------------------------------
 ```
 
-### Generate Sales Report
+###Generate Sales Report
 
 In this step, we run the sales report job that performs the same analytics that we'll later replicate in Snowflake.
 
