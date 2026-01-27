@@ -77,7 +77,7 @@ glue_cld_snowflake/
 Clone or download this repository before starting the quickstart to have all necessary files readily available.
 
 <!-- ------------------------ -->
-## Lakehouse Architecture and Data Flow
+## Architecture and Data Flow
 
 This solution implements an **open lakehouse architecture** that separates storage from compute and uses open standards (Apache Iceberg) to enable seamless interoperability.
 
@@ -134,7 +134,7 @@ This solution implements an **open lakehouse architecture** that separates stora
 ```
 
 <!-- ------------------------ -->
-## Create S3 Bucket and Upload Data
+## Upload Data into S3
 
 In this step, we will create an S3 bucket and upload the data files and Glue scripts needed for the demo.
 
@@ -365,9 +365,6 @@ aws cloudformation describe-stacks \
   --query 'Stacks[0].StackStatus'
 ```
 
-<!-- ------------------------ -->
-## Get CloudFormation Outputs and Update Snowflake
-
 After CloudFormation completes, retrieve the IAM Role ARN and update the Snowflake notebook.
 
 ### Get the Glue IAM Role ARN
@@ -414,8 +411,7 @@ STORAGE_LOCATIONS = (
 
 Re-run Cell 2 to recreate the external volume with the correct IAM role.
 
-<!-- ------------------------ -->
-## Verify AWS Glue Resources
+### Verify AWS Glue Resources
 
 Before running the ETL jobs, verify that CloudFormation created all required resources.
 
@@ -455,7 +451,7 @@ Each job should have:
 - **Number of workers**: 2
 
 <!-- ------------------------ -->
-## Run Glue ETL Jobs - Load Data
+## Run Glue ETL Jobs
 
 In this step, we will run the Glue ETL jobs to load data into Iceberg tables.
 
@@ -511,8 +507,7 @@ aws glue get-tables --database-name $GLUE_DB_NAME \
 -----------------------------------------------------------
 ```
 
-<!-- ------------------------ -->
-## Run Glue ETL Job - Generate Sales Report
+### Generate Sales Report
 
 In this step, we run the sales report job that performs the same analytics that we'll later replicate in Snowflake.
 
