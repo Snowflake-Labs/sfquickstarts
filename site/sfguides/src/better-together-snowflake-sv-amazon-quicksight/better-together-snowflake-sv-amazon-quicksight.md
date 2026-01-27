@@ -78,7 +78,7 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to import and run the notebook to create the environment.  
 
-* Download the Notebook **SF_Quick_Quickstart.ipynb** using this [link](https://github.com/Quilpie/sfquickstarts_fork/blob/4ea650aa3ac9a569ff0a4b2d4fb27c512edb9428/site/sfguides/src/better-together-snowflake-sv-amazon-quicksight/SF_QUICK_QUICKSTART.ipynb)   
+* Download the Notebook **SF_Quick_Quickstart.ipynb** from the `assets` folder
 <br>
 
 >Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! 
@@ -170,10 +170,10 @@ Example: verifying `What is the average rating for all movies in 2023?` ensures 
 
 ## **QuickSight Dataset Generator** with AWS CloudShell to call Quicksight API
 Follow the guide in the notebook to complete the process of creating QuickSight datasets from Snowflake DDL, setting up credentials to sharing datasets with users.
-Download the `QuickSight Dataset Generator` [Solution_Package.zip](https://github.com/Quilpie/sfquickstarts_fork/blob/4ea650aa3ac9a569ff0a4b2d4fb27c512edb9428/site/sfguides/src/better-together-snowflake-sv-amazon-quicksight/Solution_Package.zip)
+Download the `QuickSight Dataset Generator` Solution_Package.zip from the `assets` folder
 
 ### Complete Workflow
-0. Open AWS console --> cloudshell --> Upload the `Solution_Package.zip`
+0. Open AWS console --> cloudshell --> Upload the `Solution_Package.zip` 
 
 ![cloudshell upload](assets/cloudshell-upload.png)  
 
