@@ -324,9 +324,9 @@ Solution: begin with lower-stakes domains like Sales/Marketing
 
 Foundation:
 
-- [ ] Every table has a clear business description
-- [ ] Every column has a clear description
-- [ ] Proprietary terms and abbreviations are explained
+[ ] Every table has a clear business description
+[ ] Every column has a clear description
+[ ] Proprietary terms and abbreviations are explained
 
 Critical features:
 
