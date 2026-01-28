@@ -114,9 +114,9 @@ What this agent is doing is calling the LLM to answer the question, and then the
 ## Set up AI Observability
 We see our agent is working, but the question is how to know how well it is performing. This is where AI observability and evaluations come in. To measure the agent's performance, you will use AI observability and evaluations.
 
-To get started with evaluations, we first want to initialize our TruEra session. This is how we connect to Snowflake so we can store our logs, traces, and evaluations as we are evaluating our agent. To make this connection, we are going to simply import the Snowflake connector and then pass in the Snowpark session that we created earlier.
+To get started with evaluations, we first want to initialize our TruLens session. This is how we connect to Snowflake so we can store our logs, traces, and evaluations as we are evaluating our agent. To make this connection, we are going to simply import the Snowflake connector and then pass in the Snowpark session that we created earlier.
 
-- To initialize TruEra Session: 
+- To initialize TruLens Session: 
   - Import the Snowflake connector and passing in the Snowpark session.
 - Set up Metrics: 
   - Use Claude Sonnet 4-5 to evaluate the agent on two key metrics:
