@@ -135,7 +135,7 @@ At this stage, you can view the semantic view `MOVIES_ANALYST_SV` in Snowsight a
 To view the semantic view created in UI:
 
 * From Snowsight, Select **AI & ML** -> **Cortex Analyst**
-* Ensure to select the  `QUICKSTART_ROLE` and `WORKSHOPSH` created earlier
+* Ensure to select the  `SEMANTIC_QUICK_START_ROLE` and `WORKSHOPSH` created earlier
 * Select `Movies` database and `Public` Schema 
 * View the details of the semantic view `MOVIES_ANALYST_SV`
 > To use SQL to view a semantic view, refer to the [example here](https://docs.snowflake.com/en/user-guide/views-semantic/example)
