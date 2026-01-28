@@ -13,12 +13,12 @@ status: Published
 
 Creating high-quality semantic views is the foundation for delivering accurate, intuitive, and trustworthy answers in Cortex Analyst.
 
-This guide walks through best practices for designing and building semantic views using **[Autopilot]**(https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
+This guide walks through best practices for designing and building semantic views using [**Autopilot**](https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
 
 The autopilot is the fastest and easiest way to create semantic views, especially if:
 - You’re new to the full semantic view specification
 - You want to quickly build a high-quality semantic view without diving deep into code
-- You’d like to test your view interactively with Cortex Analyst
+- You’d like to test your view interactively with Cortex Analyst\
 
 
 The autopilot also uses AI and LLMs to make setup easier:
@@ -58,7 +58,7 @@ If you prefer to build semantic views programmatically using SQL (for example, f
 
 ### Organization strategy
 
-Organize by business domain:
+**Organize by business domain:**
 
 - Structure semantic views by business topic/domain (for example: Sales, Marketing, Customer Support)
 - Keep models focused — don’t try to cover everything in one model unless necessary
@@ -81,7 +81,7 @@ Cortex Analyst no longer has hard limitations on semantic view size. However, it
 1. You have distinct business domains that don’t need to be joined
 2. Different user groups need different views of the data
 
-Routing best practices:
+### Routing best practices:
 
 - Use clear, distinct semantic view descriptions to improve routing performance
 - Split by use case (Sales vs. Legal vs. Marketing), not by similarity
@@ -90,7 +90,7 @@ Routing best practices:
 - Routing will NOT join across semantic views — each model is independent
 - Customers have tested successfully with 50+ semantic views in production, but fewer views generally perform better
 
-When to use a single larger semantic view instead:
+**When to use a single larger semantic view instead:**
 
 - You have densely connected tables that frequently need to be joined
 - There is a single business domain with many related tables
@@ -100,12 +100,12 @@ When to use a single larger semantic view instead:
 
 ### Tables and columns
 
-Table limits:
+**Table limits:**
 
 - Even without strict limits, start with 5–10 tables for an initial POC to make debugging easier
 - As the use case grows, consider splitting into multiple semantic views and using routing when it makes sense
 
-Column selection:
+**Column selection:**
 
 - Include only business-relevant columns that will be used in SQL generation
 - Use the litmus test: “Will my end users ask about this?”
@@ -117,7 +117,7 @@ Why descriptions matter:
 - Descriptions greatly improve performance — this is not optional
 - LLMs may sometimes understand public-domain information (for example, zip codes and countries) but not your proprietary terms
 
-Good table description:
+**Good table description:**
 
 ```yaml
 description: "Daily sales data by product line, aligned with
@@ -125,13 +125,13 @@ description: "Daily sales data by product line, aligned with
 table to analyze sales trends and profit by product."
 ```
 
-Poor table description:
+**Poor table description:**
 
 ```yaml
 description: "Sales table" # Too vague
 ```
 
-Good column description:
+**Good column description:**
 
 ```yaml
 - name: csat_score
@@ -140,7 +140,7 @@ Good column description:
   satisfied. Also referred to as KPI_1 in legacy systems."
 ```
 
-Poor column description:
+**Poor column description:**
 
 ```yaml
 - name: csat_score
@@ -189,7 +189,7 @@ filters:
     expr: last_purchase_date >= DATEADD(year, -1, CURRENT_DATE())
 ```
 
-Best practices:
+### Best practices:
 
 - Metrics and filters are often underused but are critical for accuracy
 - Define metrics and filters wherever possible
@@ -201,13 +201,13 @@ Once you have your basic semantic view structure, these features are essential f
 
 ### Verified queries
 
-Why add verified queries?
+**Why add verified queries?**
 
 - The model gets access to verified queries only when the user’s question is semantically similar, so they generally don’t meaningfully increase token usage
 - Verified queries are essential for improving accuracy
 - They also help generate other improvements (filters, metrics, descriptions, and more) from good examples of “gold SQL”
 
-How many to add:
+**How many to add:**
 
 - The more the better — there’s no meaningful upper limit
 - Start with 10–20, covering your most common questions, and add more based on real user questions over time
