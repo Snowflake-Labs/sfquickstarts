@@ -13,15 +13,24 @@ status: Published
 
 Creating high-quality semantic views is the foundation for delivering accurate, intuitive, and trustworthy answers in Cortex Analyst.
 
-This guide walks through best practices for designing and building semantic views using **“autopilot”**, Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
+This guide walks through best practices for designing and building semantic views using ****[Autopilot]**(https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
 
-This guide focuses on the autopilot workflow. If you prefer to build semantic views programmatically using SQL (for example, for CI/CD pipelines), use the SQL-focused semantic view guide instead.
+The autopilot is the fastest and easiest way to create semantic views, especially if:
+- You’re new to the full semantic view specification
+- You want to quickly build a high-quality semantic view without diving deep into code
+- You’d like to test your view interactively with Cortex Analyst
+
+The autopilot also uses AI and LLMs to make setup easier:
+- It automatically adds helpful descriptions to your fields and measures
+- It offers smart suggestions as you define your semantic model
+- You can even start from an existing dashboard or SQL queries to save time
+
+If you prefer to build semantic views programmatically using SQL (for example, for CI/CD pipelines), use the [SQL-focused semantic view guide](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/) instead.
 
 ### Prerequisites
 
 - Familiarity with your business domain (the questions end users will ask)
 - Read access to the source tables you want to model
-- Basic SQL knowledge (recommended)
 
 ### What You’ll Learn
 
@@ -36,37 +45,33 @@ This guide focuses on the autopilot workflow. If you prefer to build semantic vi
 - A Snowflake account with access to Snowsight
 - One or more tables you want to expose through Cortex Analyst
 
-### What You’ll Build
 
-- A production-ready semantic view approach (design + checklist) for Cortex Analyst
 
-## Step 1: Choose Your Creation Path (Autopilot vs SQL)
+The autopilot is the fastest and easiest way to create semantic views, especially if:
+You’re new to the full semantic view specification
+You want to quickly build a high-quality semantic view without diving deep into code
+You’d like to test your view interactively with Cortex Analyst
+The autopilot also uses AI and LLMs to make setup easier:
+It automatically adds helpful descriptions to your fields and measures
+It offers smart suggestions as you define your semantic model
+You can even start from an existing dashboard or SQL queries to save time
 
-There are two paths for creating semantic views:
 
-- **Autopilot (UI + AI assistance)**:
-  - Best when you’re new to the semantic view specification, want fast iteration, and want interactive testing with Cortex Analyst.
-  - Autopilot can help by generating or improving field descriptions and offering suggestions as you define the model.
-  - You can also start from existing dashboards or SQL queries to accelerate setup.
+## Semantic view design principles {#semantic-view-design-principles}
 
-- **SQL API (programmatic)**:
-  - Best when you already know the semantic view specification and want to script or automate semantic view creation.
-  - Ideal for CI/CD pipelines or integration workflows.
+**Core philosophy: Think like your end users**
 
-## Step 2: Semantic View Design Principles
-
-### Core philosophy: Think like your end users
-
-- **Design from the end-user perspective**, not the database perspective.
-- Use **business terminology**, not technical table names.
+- Design from the end-user perspective, not the database perspective
+- Use business terminology, not technical table names
 - Ask: “If I were explaining this data to a business stakeholder, how would I describe it?”
 
-### Organize by business domain (not by schema)
+### Organization strategy
 
-Structure semantic views by business topic/domain (for example: Sales, Marketing, Customer Support).
+Organize by business domain:
 
-- Keep models focused; don’t try to cover everything in one model unless necessary.
-- Split by **use case**, not by data structure.
+- Structure semantic views by business topic/domain (for example: Sales, Marketing, Customer Support)
+- Keep models focused — don’t try to cover everything in one model unless necessary
+- Split by use case rather than by data structure
 
 Good examples:
 
@@ -78,67 +83,48 @@ Avoid:
 
 - “All CRM Tables” semantic view
 
-## Step 3: Routing vs a Single Semantic View
+### Routing vs. single semantic view
 
-Cortex Analyst no longer has hard limitations on semantic view size, but it can still make sense to break up large semantic views.
-
-### When to use multiple semantic views (routing)
-
-Routing may make sense when:
+Cortex Analyst no longer has hard limitations on semantic view size. However, it may still make sense to break up large semantic views in the following cases:
 
 1. You have distinct business domains that don’t need to be joined
 2. Different user groups need different views of the data
 
 Routing best practices:
 
-- Use **clear, distinct semantic view descriptions** to improve routing performance.
-- Split by use case (Sales vs Legal vs Marketing), not by similarity.
-- Avoid many “almost identical” semantic view descriptions; that reduces routing accuracy.
-- Routing adds slight latency (a few seconds for reranking).
-- Routing will **not** join across semantic views; each semantic view is independent.
+- Use clear, distinct semantic view descriptions to improve routing performance
+- Split by use case (Sales vs. Legal vs. Marketing), not by similarity
+- Having multiple very similar semantic view descriptions will reduce routing accuracy
+- Note: routing adds slight latency (~a few seconds for reranking)
+- Routing will NOT join across semantic views — each model is independent
+- Customers have tested successfully with 50+ semantic views in production, but fewer views generally perform better
 
-### When to use a single larger semantic view
-
-Use a single semantic view when:
+When to use a single larger semantic view instead:
 
 - You have densely connected tables that frequently need to be joined
-- You have one business domain with many related tables
-- You’re using frontier models where pruning allows large semantic views (for example, Claude or GPT)
+- There is a single business domain with many related tables
+- You are using frontier models where pruning enables larger semantic views (for example, Claude or GPT)
 
-## Step 4: Build the Semantic View (Tables, Columns, Relationships)
+## Building Your Semantic View {#building-your-semantic-view}
 
-### Start small for your first POC
+### Tables and columns
 
-Even if there are no strict limits, start small to make debugging easier:
+Table limits:
 
-- Start with **5–10 tables** for an initial POC
-- Expand gradually
-- Split into multiple semantic views with routing when it makes sense
+- Even without strict limits, start with 5–10 tables for an initial POC to make debugging easier
+- As the use case grows, consider splitting into multiple semantic views and using routing when it makes sense
 
-### Column selection
+Column selection:
 
-- Include only **business-relevant** columns that users will ask about.
-- Filter out “everything else” that won’t be used in the generated SQL.
+- Include only business-relevant columns that will be used in SQL generation
 - Use the litmus test: “Will my end users ask about this?”
 
-### Relationships (joins)
-
-Cortex Analyst will not join tables unless relationships are **explicitly defined** in the semantic view. Ensure you define all required relationships.
-
-#### Many-to-many relationships
-
-Many-to-many relationships are not directly supported. A common workaround is to create a shared dimension table that bridges the gap, turning the problem into two many-to-one relationships.
-
-## Step 5: Write High-Quality Descriptions (Most Important Element)
-
-Descriptions are a major driver of accuracy and are not optional.
+### Descriptions: the most important element
 
 Why descriptions matter:
 
-- Descriptions greatly improve performance.
-- LLMs may understand public-domain concepts (for example, countries), but they won’t understand your proprietary terms unless you explain them.
-
-### Table description example
+- Descriptions greatly improve performance — this is not optional
+- LLMs may sometimes understand public-domain information (for example, zip codes and countries) but not your proprietary terms
 
 Good table description:
 
@@ -153,8 +139,6 @@ Poor table description:
 ```yaml
 description: "Sales table" # Too vague
 ```
-
-### Column description example
 
 Good column description:
 
@@ -172,34 +156,40 @@ Poor column description:
   description: "Score" # Assumes knowledge
 ```
 
-### Synonyms (current guidance)
+### Synonyms: no longer recommended
 
-Current guidance is to **avoid synonyms** unless you have unique or industry-specific cases that the model is unlikely to know:
+Current guidance is to avoid synonyms unless you have unique or industry-specific cases that the model is unlikely to know:
 
-- Recent evaluations with frontier models show synonyms typically don’t provide meaningful gains.
-- They consume tokens without significant accuracy improvement.
+- Recent evaluations with frontier models show that adding synonyms doesn’t add significant value
+- Synonyms typically consume tokens without meaningful accuracy improvement
+- Synonyms remain available in the specification for edge cases
 
-## Step 6: Define Metrics and Filters (Often Underused, Highly Impactful)
+### Relationships
 
-Metrics and filters help Cortex Analyst generate consistent, correct SQL and reduce ambiguity.
+Cortex Analyst will not join tables unless relationships are explicitly defined in the semantic view. Make sure to define all required relationships.
 
-### Metrics
+Many-to-many relationships:
 
-Metrics are reusable, pre-defined calculations:
+- Currently, these are not directly supported
+- Workaround: create a shared dimension table to bridge the gap
+  - This allows two many-to-one relationships to simulate many-to-many behavior
+
+### Metrics and filters
+
+Metrics are pre-defined calculations:
 
 ```yaml
 metrics:
   - name: total_revenue
     description: "Sum of all order revenue, calculated as unit price × quantity"
     expr: SUM(unit_price * quantity)
+
   - name: average_order_value
     description: "Average revenue per order"
     expr: SUM(revenue) / COUNT(DISTINCT order_id)
 ```
 
-### Filters
-
-Filters define reusable WHERE-clause logic:
+Filters describe reusable WHERE-clause logic:
 
 ```yaml
 filters:
@@ -210,34 +200,42 @@ filters:
 
 Best practices:
 
-- Define metrics and filters wherever possible.
-- If available in your workflow, use “get more suggestions” to propose metrics and filters (often driven by adding verified queries).
+- Metrics and filters are often underused but are critical for accuracy
+- Define metrics and filters wherever possible
+- If available in your workflow, use “get more suggestions” (often driven by adding high-quality verified queries)
 
-## Step 7: Improve Accuracy After Initial Setup
+## After initial setup - increasing accuracy {#after-initial-setup---increasing-accuracy}
 
-Once the basic semantic view structure is in place, these features are essential for production-quality accuracy.
+Once you have your basic semantic view structure, these features are essential for production-quality accuracy. Don’t skip these — they’re what separate a working POC from a trusted production system.
 
-### Add verified queries (gold SQL examples)
+### Verified queries
 
-Why add verified queries:
+Why add verified queries?
 
-- They are included only when the user’s question is semantically similar, so they don’t usually add significant token overhead.
-- They materially improve SQL accuracy.
-- They can also drive improvements to filters, metrics, descriptions, and other model elements.
+- The model gets access to verified queries only when the user’s question is semantically similar, so they generally don’t meaningfully increase token usage
+- Verified queries are essential for improving accuracy
+- They also help generate other improvements (filters, metrics, descriptions, and more) from good examples of “gold SQL”
 
 How many to add:
 
-- Start with **10–20 verified queries** covering your most common questions.
-- Continue adding based on real user questions over time (there’s no meaningful upper limit).
-- Use suggestions (if available) based on query history and usage.
+- The more the better — there’s no meaningful upper limit
+- Start with 10–20, covering your most common questions, and add more based on real user questions over time
+- Use suggestion panels (if available) driven by query history and usage data
 
-### Use custom instructions correctly
+### Custom instructions
 
-A common mistake is mixing up the two instruction types:
+The most common mistake with custom instructions is mixing up the two instruction types.
 
-#### SQL Generation instructions
+“SQL generation” custom instructions are applied during SQL generation for all queries.
 
-Applied during SQL generation for all queries; use for business-specific logic:
+Use cases:
+
+- Business-specific SQL logic
+- Default filters or calculations
+- Fiscal year definitions
+- Data quirks or idiosyncrasies
+
+Example:
 
 ```yaml
 module_custom_instructions:
@@ -248,9 +246,9 @@ module_custom_instructions:
     - "The product_id column in orders table maps to id column in products table, even though naming differs"
 ```
 
-#### Question categorization (classification) instructions
+“Question categorization” (classification) custom instructions apply only to question understanding. They tell Cortex Analyst when to reject questions vs. accept them and when to ask clarifying questions.
 
-Applied only during question understanding; use to accept/reject and disambiguate:
+Example:
 
 ```yaml
 module_custom_instructions:
@@ -258,99 +256,104 @@ module_custom_instructions:
     # Rejection examples
     - "Reject questions about employee salaries or compensation"
     - "Reject questions containing profanity or inappropriate content"
+
     # Disambiguation examples
     - "When users ask about 'active users', clarify whether they mean users active in last 90 days"
 ```
 
-Best practices:
+Best practices for custom instructions:
 
-- Be specific.
-  - Good: “If no date filter is provided, apply a filter for the last year”
-  - Bad: “Filter queries for the last year”
-- Always test after adding instructions (the playground is a good way to validate behavior).
+1. Be specific
+   - Good: “If no date filter is provided, apply a filter for the last year”
+   - Bad: “Filter queries for the last year”
+2. Always test after adding instructions
+   - The playground is a great way to quickly test changes
 
-## Step 8: Add Cortex Search Services (For Fuzzy Text Matching)
+### Cortex Search services
 
-Cortex Search services enable fuzzy matching for **text columns** where user input won’t match your data exactly. This helps Cortex Analyst generate higher-quality WHERE clauses.
+What they do: enable fuzzy matching for text columns where user input won’t match your data exactly.
 
 When you need this:
 
-- Product names (for example, user asks “iPhone 13” but the data has “Apple iPhone 13 - 128GB Blue”)
-- Customer names (for example, “John Smith” vs “Smith, John A.”)
-- Company names (for example, “Microsoft” vs “Microsoft Corporation”)
-- Venue names (for example, “Madison Square Garden” vs “MSG - Madison Square Garden Arena”)
+- Product names (for example: “iPhone 13” vs “Apple iPhone 13 - 128GB Blue”)
+- Customer names (for example: “John Smith” vs “Smith, John A.”)
+- Company names (for example: “Microsoft” vs “Microsoft Corporation”)
+- Venue names (for example: “Madison Square Garden” vs “MSG - Madison Square Garden Arena”)
 
 Common mistakes:
 
 - Using search services with numeric or date columns
-- Using them with paragraph-style text fields (notes, long descriptions, comments)
+- Using them with paragraph-style text fields (notes, descriptions, comments)
 
-## Step 9: Testing and Iteration
+## Testing and Iteration {#testing-and-iteration}
 
 ### Create an evaluation set
 
-Build benchmark questions:
+Build your benchmark questions:
 
 - Start with ~10 representative questions
-- Source them from business users, existing dashboards, or real usage
-- Include different complexity levels and use cases
+- Source from business users, existing dashboards, or actual usage
+- Cover different complexity levels and use cases
 
 ### Measure accuracy
 
 Available tools:
 
-- Use an OSS Streamlit evaluation tool to measure SQL accuracy (recommended)
-- A native Snowsight evaluation experience may be available depending on product timing
+- The best way to measure accuracy is to use the OSS Streamlit evaluation tool: `https://github.com/Snowflake-Labs/semantic-model-generator/`
+- A Snowsight native evaluation experience may be available depending on product timing
 
 ### Iterative improvement workflow
 
-- Review suggestions and feedback regularly.
-- Add verified queries derived from real usage.
-- Use resulting suggestions to refine metrics, filters, custom instructions, and descriptions.
+- Use suggestions panels and feedback loops to add verified queries from real usage data
+- As you collect more verified queries, you can improve metrics, filters, custom instructions, and descriptions to align more closely with real user behavior
 
-## Step 10: Common Pitfalls and How to Avoid Them
+## Common Pitfalls and How to Avoid Them {#common-pitfalls-and-how-to-avoid-them}
 
-- **Undefined scope**
-  - What happens: Stakeholders keep adding “just one more thing”
-  - Solution: Define crisp success criteria with clear boundaries
+### Undefined scope
 
-- **Starting too big**
-  - What happens: Modeling an entire enterprise warehouse on day one
-  - Solution: Start with 5–10 tables, one domain, one use case
+What happens: stakeholders keep adding “just one more thing” to the POC  
+Solution: define crisp success criteria upfront with clear boundaries
 
-- **Skipping verified queries**
-  - What happens: Inconsistent accuracy on common questions
-  - Solution: Add 10–20 verified queries early and grow over time
+### Starting too big
 
-- **Wrong initial use case**
-  - What happens: Starting with high-stakes domains (Finance/Legal) that require near-perfect accuracy
-  - Solution: Begin with lower-stakes domains (Sales/Marketing) to iterate safely
+What happens: trying to model an entire enterprise data warehouse from day one  
+Solution: start with 5–10 tables, one business domain, and a specific use case
 
-### Production-ready semantic view checklist
+### Choosing not to use verified queries
+
+What happens: accuracy is inconsistent, especially on common questions  
+Solution: add 10–20 verified queries covering frequent questions from the start
+
+### Wrong initial use case
+
+What happens: starting with Finance/Legal where near-100% accuracy is required  
+Solution: begin with lower-stakes domains like Sales/Marketing
+
+### Production-ready semantic model checklist
 
 Foundation:
 
-- Every table has a clear business description
-- Every column has a clear description
-- Proprietary terms and abbreviations are explained
+- [ ] Every table has a clear business description
+- [ ] Every column has a clear description
+- [ ] Proprietary terms and abbreviations are explained
 
 Critical features:
 
-- 10–20 verified queries covering common questions
-- Custom instructions for business-specific logic
-- Cortex Search services for high-cardinality text columns
-- Metrics defined for reusable calculations
-- Filters defined for common conditions
+- [ ] 10–20 verified queries covering common questions
+- [ ] Custom instructions for business-specific logic
+- [ ] Cortex Search services for all high-cardinality text columns
+- [ ] Metrics defined for reusable calculations
+- [ ] Filters defined for common conditions
 
 Testing (recommended before deployment):
 
-- An evaluation set exists
-- SQL accuracy is measured with an evaluation tool
+- [ ] Evaluation set created
+- [ ] SQL accuracy measured with an evaluation tool
 
 Ongoing optimization:
 
-- Weekly review of suggestions and feedback
-- A process exists for adding verified queries and applying related improvements
+- [ ] Weekly review of suggestions and feedback data
+- [ ] Process for adding new verified queries and related suggestions is in place
 
 ## Conclusion And Resources
 
@@ -367,4 +370,3 @@ Ongoing optimization:
 - Semantic views overview and core concepts (Snowflake documentation)
 - Cortex Analyst documentation (Snowflake documentation)
 - SQL-based semantic view creation guide (Snowflake developer guides)
-
