@@ -15,16 +15,7 @@ Creating high-quality semantic views is the foundation for delivering accurate, 
 
 This guide walks through best practices for designing and building semantic views using [**Autopilot**](https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
 
-The autopilot is the fastest and easiest way to create semantic views, especially if:
-- You’re new to the full semantic view specification
-- You want to quickly build a high-quality semantic view without diving deep into code
-- You’d like to test your view interactively with Cortex Analyst\
-
-
-The autopilot also uses AI and LLMs to make setup easier:
-- It automatically adds helpful descriptions to your fields and measures
-- It offers smart suggestions as you define your semantic model
-- You can even start from an existing dashboard or SQL queries to save time
+Autopilot is the fastest way to create high-quality semantic views, especially if you’re new to the specification, want to avoid deep code work, or plan to test interactively with Cortex Analyst. It uses AI and LLMs to simplify setup by auto-generating field and measure descriptions, providing smart modeling suggestions, and letting you start from existing dashboards or SQL.
 
 <img src="assets/semantic-view-autopilot.png">
 
