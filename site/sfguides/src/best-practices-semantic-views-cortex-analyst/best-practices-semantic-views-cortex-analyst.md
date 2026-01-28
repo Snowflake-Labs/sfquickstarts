@@ -320,13 +320,13 @@ Solution: add 10–20 verified queries covering frequent questions from the star
 What happens: starting with Finance/Legal where near-100% accuracy is required  
 Solution: begin with lower-stakes domains like Sales/Marketing
 
-### Production-ready semantic model checklist
+## Production-ready semantic model checklist
 
 Foundation:
 
-[ ] Every table has a clear business description
-[ ] Every column has a clear description
-[ ] Proprietary terms and abbreviations are explained
+⬜ Every table has a clear business description
+✅ Every column has a clear description
+- [ ] Proprietary terms and abbreviations are explained
 
 Critical features:
 
@@ -345,19 +345,3 @@ Ongoing optimization:
 
 - [ ] Weekly review of suggestions and feedback data
 - [ ] Process for adding new verified queries and related suggestions is in place
-
-## Conclusion and Resources
-
-### What We Covered
-
-- How to scope and organize semantic views by business domain
-- When to use routing vs a single semantic view
-- How to select tables/columns and define relationships reliably
-- How to improve accuracy with descriptions, metrics, filters, verified queries, custom instructions, and search services
-- How to test and iterate using evaluation sets and feedback loops
-
-### Related Resources
-
-- Semantic views overview and core concepts (Snowflake documentation)
-- Cortex Analyst documentation (Snowflake documentation)
-- SQL-based semantic view creation guide (Snowflake developer guides)
