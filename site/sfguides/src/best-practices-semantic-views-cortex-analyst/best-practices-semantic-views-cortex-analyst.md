@@ -207,7 +207,7 @@ The most common mistake with custom instructions is mixing up the two instructio
 
 “SQL generation” custom instructions are applied during SQL generation for all queries.
 
-Use cases:
+**Use cases:**
 
 - Business-specific SQL logic
 - Default filters or calculations
@@ -240,7 +240,7 @@ module_custom_instructions:
     - "When users ask about 'active users', clarify whether they mean users active in last 90 days"
 ```
 
-Best practices for custom instructions:
+### Best practices for custom instructions:
 
 1. Be specific
    - Good: “If no date filter is provided, apply a filter for the last year”
@@ -250,16 +250,16 @@ Best practices for custom instructions:
 
 ### Cortex Search services
 
-What they do: enable fuzzy matching for text columns where user input won’t match your data exactly.
+Cortex Search services enable fuzzy matching for text columns where user input won’t match your data exactly.
 
-When you need this:
+*When you need this:*
 
 - Product names (for example: “iPhone 13” vs “Apple iPhone 13 - 128GB Blue”)
 - Customer names (for example: “John Smith” vs “Smith, John A.”)
 - Company names (for example: “Microsoft” vs “Microsoft Corporation”)
 - Venue names (for example: “Madison Square Garden” vs “MSG - Madison Square Garden Arena”)
 
-Common mistakes:
+*Common mistakes:*
 
 - Using search services with numeric or date columns
 - Using them with paragraph-style text fields (notes, descriptions, comments)
@@ -278,7 +278,7 @@ Build your benchmark questions:
 
 Available tools:
 
-- The best way to measure accuracy is to use the OSS Streamlit evaluation tool: `https://github.com/Snowflake-Labs/semantic-model-generator/`
+- The best way to measure accuracy is to use the [OSS Streamlit evaluation tool](https://github.com/Snowflake-Labs/semantic-model-generator/)
 - A Snowsight native evaluation experience may be available depending on product timing
 
 ### Iterative improvement workflow
