@@ -13,15 +13,24 @@ status: Published
 
 Creating high-quality semantic views is the foundation for delivering accurate, intuitive, and trustworthy answers in Cortex Analyst.
 
-This guide walks through best practices for designing and building semantic views using **“autopilot”**, Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
+This guide walks through best practices for designing and building semantic views using ****[Autopilot]**(https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
 
-This guide focuses on the autopilot workflow. If you prefer to build semantic views programmatically using SQL (for example, for CI/CD pipelines), use the SQL-focused semantic view guide instead.
+The autopilot is the fastest and easiest way to create semantic views, especially if:
+- You’re new to the full semantic view specification
+- You want to quickly build a high-quality semantic view without diving deep into code
+- You’d like to test your view interactively with Cortex Analyst
+
+The autopilot also uses AI and LLMs to make setup easier:
+- It automatically adds helpful descriptions to your fields and measures
+- It offers smart suggestions as you define your semantic model
+- You can even start from an existing dashboard or SQL queries to save time
+
+If you prefer to build semantic views programmatically using SQL (for example, for CI/CD pipelines), use the [SQL-focused semantic view guide](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/) instead.
 
 ### Prerequisites
 
 - Familiarity with your business domain (the questions end users will ask)
 - Read access to the source tables you want to model
-- Basic SQL knowledge (recommended)
 
 ### What You’ll Learn
 
@@ -36,17 +45,17 @@ This guide focuses on the autopilot workflow. If you prefer to build semantic vi
 - A Snowflake account with access to Snowsight
 - One or more tables you want to expose through Cortex Analyst
 
-### What You’ll Build
 
-- A production-ready semantic view approach (design + checklist) for Cortex Analyst
 
-## When to use the SQL API
+The autopilot is the fastest and easiest way to create semantic views, especially if:
+You’re new to the full semantic view specification
+You want to quickly build a high-quality semantic view without diving deep into code
+You’d like to test your view interactively with Cortex Analyst
+The autopilot also uses AI and LLMs to make setup easier:
+It automatically adds helpful descriptions to your fields and measures
+It offers smart suggestions as you define your semantic model
+You can even start from an existing dashboard or SQL queries to save time
 
-If you are already familiar with semantic view specifications, or prefer working directly with the SQL API, use the SQL guide:
-
-- `https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/`
-- It’s ideal for CI/CD or integration pipelines.
-- It provides flexibility for teams who want to script or automate semantic view creation.
 
 ## Semantic view design principles {#semantic-view-design-principles}
 
