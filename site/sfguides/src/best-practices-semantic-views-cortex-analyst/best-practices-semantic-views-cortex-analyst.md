@@ -326,7 +326,7 @@ Foundation:
 
 ⬜ Every table has a clear business description
 ✅ Every column has a clear description
-- [ ] Proprietary terms and abbreviations are explained
+- [x] Proprietary terms and abbreviations are explained
 
 Critical features:
 
