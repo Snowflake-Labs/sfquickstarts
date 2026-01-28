@@ -6,7 +6,6 @@ categories: snowflake-site:taxonomy/solution-center/includes/architecture,snowfl
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt
 
 # Orchestrate Your Workflows with UiPath and Snowflake
 
