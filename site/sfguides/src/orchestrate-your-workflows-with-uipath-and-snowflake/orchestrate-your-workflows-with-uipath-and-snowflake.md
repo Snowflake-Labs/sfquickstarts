@@ -10,16 +10,16 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Orchestrate Your Workflows with UiPath and Snowflake
 
 ## Overview
-Imagine a global retailer managing supply chain volatility; this architecture enables you to turn massive datasets into automated business outcomes. While Snowflake acts as the "brains," utilizing Cortex AI to analyze fluctuating demand and identify inventory gaps across thousands of unstructured reports , UiPath serves as the "hands," automatically triggering workflows to reorder stock or update ERP systems the moment a shortfall is identified. By bridging Snowflake’s analytical depth with UiPath’s execution engine, your organization can move beyond static reporting to autonomous action. This integrated approach ensures that every data-driven insight translates directly into a real-time competitive advantage for your operations.
+Imagine a global retailer managing supply chain volatility. While Snowflake acts as the "brains," utilizing Cortex AI to analyze fluctuating demand and identify inventory gaps across thousands of unstructured reports , UiPath serves as the "hands," automatically triggering workflows to reorder stock or update ERP systems the moment a shortfall is identified. By bridging Snowflake’s analytical depth with UiPath’s execution engine, your organization can move beyond static reporting to autonomous action. This integrated approach ensures that every data-driven insight translates directly into a real-time competitive advantage for your operations.
 
 ## UiPath
-UiPath provides an AI-powered business automation platform that uses software robots to automate repetitive, manual tasks typically performed by humans. By integrating Robotic Process Automation (RPA) with advanced AI, the company helps organizations streamline workflows, reduce errors, and accelerate digital transformation across industries like finance, healthcare, and retail. 
+UiPath is an enterprise agentic business-orchestration platform that unifies AI Agents, Humans, RPA, and APIs under a governed control plane—authored in a shared no-/low-/pro-code canvas—to rapidly build complex end-to-end workstreams with enterprise-grade governance.
 
-UiPath Maestro is a cloud-native agentic orchestration platform designed to coordinate complex, long-running business processes across AI agents, robots (RPA), and people. It provides:
-- End-to-End Orchestration: Unlike traditional RPA that handles individual tasks, Maestro unifies disjointed automations into cohesive outcome-driven workflows.
-- Visual Modeling: Uses industry-standard BPMN 2.0 (Business Process Model and Notation) to design and monitor complex branching logic and decision-making.
-- Intelligent Decisioning: Integrates a Decision Model and Notation (DMN) engine to manage business rules and logic separately from the workflow.
-- Human-in-the-Loop: Seamlessly escalates to human workers for approvals or exceptions, ensuring oversight in autonomous AI processes
+__Rapid Development__<br>Build workstreams in one canvas by composing AI Agents, RPA/APIs, and human-in-the-loop steps as a single flow. Start fast with no/low-code and extend with pro-code for bespoke logic and integrations—scaling from simple automations to production-grade orchestration.
+
+__Enterprise Governance__<br>A unified control plane enforces policy, access, and lifecycle management across agents, automation, and human tasks. Versioning, environment promotion, and audit trails enable controlled change and compliance at scale.
+
+__Monitoring & Optimization__<br>End-to-end observability spans agent actions, RPA jobs, API calls, and human actions. Track outcomes, exceptions, and bottlenecks, then iterate safely with governed rollouts and feedback loops to improve reliability, cost, and quality.
 
 ### What You’ll Learn 
 - How Snowflake acts as the central intelligence hub while UiPath executes the physical steps of your business processes
