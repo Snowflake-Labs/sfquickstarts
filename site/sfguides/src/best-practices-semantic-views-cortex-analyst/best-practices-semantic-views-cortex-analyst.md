@@ -308,28 +308,28 @@ Solution: add 10–20 verified queries covering frequent questions from the star
 What happens: starting with Finance/Legal where near-100% accuracy is required  
 Solution: begin with lower-stakes domains like Sales/Marketing
 
-## Production-ready semantic model checklist
+## A Checklist for Production-Ready Semantic Model
 
-Foundation:
+### Foundation:
 
 ✅ Every table has a clear business description\
 ✅ Every column has a clear description\
 ✅ Proprietary terms and abbreviations are explained
 
-Critical features:
+### Critical features:
 
-- [ ] 10–20 verified queries covering common questions
-- [ ] Custom instructions for business-specific logic
-- [ ] Cortex Search services for all high-cardinality text columns
-- [ ] Metrics defined for reusable calculations
-- [ ] Filters defined for common conditions
+✅ 10–20 verified queries covering common questions\
+✅ Custom instructions for business-specific logic\
+✅ Cortex Search services for all high-cardinality text columns\
+✅ Metrics defined for reusable calculations\
+✅ Filters defined for common conditions
 
-Testing (recommended before deployment):
+### Testing (recommended before deployment):
 
-- [ ] Evaluation set created
-- [ ] SQL accuracy measured with an evaluation tool
+✅ Evaluation set created\
+✅ SQL accuracy measured with an evaluation tool
 
-Ongoing optimization:
+### Ongoing optimization:
 
-- [ ] Weekly review of suggestions and feedback data
-- [ ] Process for adding new verified queries and related suggestions is in place
+✅ Weekly review of suggestions and feedback data\
+✅ Process for adding new verified queries and related suggestions is in place
