@@ -10,7 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Orchestrate Your Workflows with UiPath and Snowflake
 
 ## Overview
-Imagine a global retailer managing supply chain volatility. While Snowflake acts as the "brains," utilizing Cortex AI to analyze fluctuating demand and identify inventory gaps across thousands of unstructured reports , UiPath serves as the "hands," automatically triggering workflows to reorder stock or update ERP systems the moment a shortfall is identified. By bridging Snowflake’s analytical depth with UiPath’s execution engine, your organization can move beyond static reporting to autonomous action. This integrated approach ensures that every data-driven insight translates directly into a real-time competitive advantage for your operations.
+Imagine a global retailer managing supply chain volatility, while Snowflake acts as the "brains," utilizing Cortex AI to analyze fluctuating demand and identify inventory gaps across thousands of unstructured reports , UiPath serves as the "hands," automatically triggering workflows to reorder stock or update ERP systems the moment a shortfall is identified. By bridging Snowflake’s analytical depth with UiPath’s execution engine, your organization can move beyond static reporting to autonomous action. This integrated approach ensures that every data-driven insight translates directly into a real-time competitive advantage for your operations.
 
 ## UiPath
 UiPath is an enterprise agentic business-orchestration platform that unifies AI Agents, Humans, RPA, and APIs under a governed control plane—authored in a shared no-/low-/pro-code canvas—to rapidly build complex end-to-end workstreams with enterprise-grade governance.
