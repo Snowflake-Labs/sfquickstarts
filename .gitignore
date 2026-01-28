@@ -1,3 +1,5 @@
+site/sfguides/src/_shared_assets/quickstart-manifest.json
+
 bazel-*
 .DS_Store
 .drone.sec.yml
