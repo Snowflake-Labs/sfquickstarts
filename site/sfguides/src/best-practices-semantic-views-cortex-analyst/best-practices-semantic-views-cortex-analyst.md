@@ -26,7 +26,7 @@ The autopilot also uses AI and LLMs to make setup easier:
 - It offers smart suggestions as you define your semantic model
 - You can even start from an existing dashboard or SQL queries to save time
 
-![Semantic View Autopilot]<img src="assets/semantic-view-autopilot.png">
+<img src="assets/semantic-view-autopilot.png">
 
 ### When to use the SQL API
 
@@ -64,13 +64,13 @@ If you prefer to build semantic views programmatically using SQL (for example, f
 - Keep models focused — don’t try to cover everything in one model unless necessary
 - Split by use case rather than by data structure
 
-Good examples:
+**Good examples:**
 
 - Sales Performance semantic view
 - Customer Support Metrics semantic view
 - Marketing Campaign Analysis semantic view
 
-Avoid:
+**Avoid:**
 
 - “All CRM Tables” semantic view
 
@@ -112,10 +112,7 @@ Cortex Analyst no longer has hard limitations on semantic view size. However, it
 
 ### Descriptions: the most important element
 
-Why descriptions matter:
-
-- Descriptions greatly improve performance — this is not optional
-- LLMs may sometimes understand public-domain information (for example, zip codes and countries) but not your proprietary terms
+High-quality descriptions are not optional—they are required because they directly determine model accuracy and answer quality. LLMs cannot reliably infer proprietary terms, so explicit, authoritative descriptions are necessary to ensure correct and consistent results.
 
 **Good table description:**
 
@@ -149,7 +146,7 @@ description: "Sales table" # Too vague
 
 ### Synonyms: no longer recommended
 
-Current guidance is to avoid synonyms unless you have unique or industry-specific cases that the model is unlikely to know:
+Current guidance is to *avoid* synonyms unless you have unique or industry-specific cases that the model is unlikely to know:
 
 - Recent evaluations with frontier models show that adding synonyms doesn’t add significant value
 - Synonyms typically consume tokens without meaningful accuracy improvement
@@ -159,7 +156,7 @@ Current guidance is to avoid synonyms unless you have unique or industry-specifi
 
 Cortex Analyst will not join tables unless relationships are explicitly defined in the semantic view. Make sure to define all required relationships.
 
-Many-to-many relationships:
+**Many-to-many relationships:**
 
 - Currently, these are not directly supported
 - Workaround: create a shared dimension table to bridge the gap
@@ -324,9 +321,9 @@ Solution: begin with lower-stakes domains like Sales/Marketing
 
 Foundation:
 
-⬜ Every table has a clear business description
-✅ Every column has a clear description
-- [x] Proprietary terms and abbreviations are explained
+✅ Every table has a clear business description\
+✅ Every column has a clear description\
+✅ Proprietary terms and abbreviations are explained
 
 Critical features:
 
