@@ -13,13 +13,13 @@ status: Published
 
 Creating high-quality semantic views is the foundation for delivering accurate, intuitive, and trustworthy answers in Cortex Analyst.
 
-This guide walks through best practices for designing and building semantic views using [**Autopilot**](https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
+This guide walks through best practices for designing and building semantic views using [**Autopilot**](https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. 
 
-Autopilot is the fastest way to create high-quality semantic views, especially if you’re new to the specification, want to avoid deep code work, or plan to test interactively with Cortex Analyst. It uses AI and LLMs to simplify setup by auto-generating field and measure descriptions, providing smart modeling suggestions, and letting you start from existing dashboards or SQL.
+Autopilot is the fastest way to create high-quality semantic views, whether you’re new to the specification or refining a production model. Powered by AI and LLMs, it simplifies setup by auto-generating descriptions, offering smart modeling suggestions, and letting you start from existing dashboards or SQL—so your views are organized, explainable, and optimized for performance and accuracy.
 
 <img src="assets/semantic-view-autopilot.png">
 
-### When to use the SQL API
+**When to use the SQL API**
 
 If you prefer to build semantic views programmatically using SQL (for example, for CI/CD pipelines), use the [SQL-focused semantic view guide](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/) instead. 
 - It’s ideal for CI/CD or integration pipelines
@@ -308,7 +308,7 @@ Solution: add 10–20 verified queries covering frequent questions from the star
 What happens: starting with Finance/Legal where near-100% accuracy is required  
 Solution: begin with lower-stakes domains like Sales/Marketing
 
-## A Checklist for Production-Ready Semantic Model
+## Your Production-Ready Checklist
 
 ### Foundation:
 
