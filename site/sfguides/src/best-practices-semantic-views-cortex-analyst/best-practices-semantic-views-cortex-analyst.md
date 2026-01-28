@@ -13,32 +13,34 @@ status: Published
 
 Creating high-quality semantic views is the foundation for delivering accurate, intuitive, and trustworthy answers in Cortex Analyst.
 
-This guide walks through best practices for designing and building semantic views using ****[Autopilot]**(https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
+This guide walks through best practices for designing and building semantic views using **[Autopilot]**(https://docs.snowflake.com/en/user-guide/views-semantic/overview), Snowflake’s AI-assisted, UI-based workflow. Whether you’re just getting started or refining a production model, these principles will help you create semantic views that are organized, explainable, and optimized for both performance and accuracy.
 
 The autopilot is the fastest and easiest way to create semantic views, especially if:
 - You’re new to the full semantic view specification
 - You want to quickly build a high-quality semantic view without diving deep into code
 - You’d like to test your view interactively with Cortex Analyst
 
+
 The autopilot also uses AI and LLMs to make setup easier:
 - It automatically adds helpful descriptions to your fields and measures
 - It offers smart suggestions as you define your semantic model
 - You can even start from an existing dashboard or SQL queries to save time
 
-If you prefer to build semantic views programmatically using SQL (for example, for CI/CD pipelines), use the [SQL-focused semantic view guide](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/) instead.
+![Semantic View Autopilot]<img src="assets/semantic-view-autopilot.png">
 
-### Prerequisites
+### When to use the SQL API
 
-- Familiarity with your business domain (the questions end users will ask)
-- Read access to the source tables you want to model
+If you prefer to build semantic views programmatically using SQL (for example, for CI/CD pipelines), use the [SQL-focused semantic view guide](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/) instead. 
+- It’s ideal for CI/CD or integration pipelines
+- It provides flexibility for teams who want to script or automate their semantic view creation
 
 ### What You’ll Learn
 
-- Core semantic view design principles (“think like your end users”)
+- Core semantic view design principles
 - How to scope, organize, and route semantic views by business domain
-- How to select tables/columns and define relationships correctly
 - How to improve accuracy with descriptions, metrics, filters, verified queries, and custom instructions
 - How to test and iterate using evaluation sets and feedback loops
+- Common pitfalls and how to avoid them
 
 ### What You’ll Need
 
@@ -46,18 +48,7 @@ If you prefer to build semantic views programmatically using SQL (for example, f
 - One or more tables you want to expose through Cortex Analyst
 
 
-
-The autopilot is the fastest and easiest way to create semantic views, especially if:
-You’re new to the full semantic view specification
-You want to quickly build a high-quality semantic view without diving deep into code
-You’d like to test your view interactively with Cortex Analyst
-The autopilot also uses AI and LLMs to make setup easier:
-It automatically adds helpful descriptions to your fields and measures
-It offers smart suggestions as you define your semantic model
-You can even start from an existing dashboard or SQL queries to save time
-
-
-## Semantic view design principles {#semantic-view-design-principles}
+## Semantic view design principles
 
 **Core philosophy: Think like your end users**
 
@@ -105,7 +96,7 @@ When to use a single larger semantic view instead:
 - There is a single business domain with many related tables
 - You are using frontier models where pruning enables larger semantic views (for example, Claude or GPT)
 
-## Building Your Semantic View {#building-your-semantic-view}
+## Building Your Semantic View
 
 ### Tables and columns
 
@@ -204,7 +195,7 @@ Best practices:
 - Define metrics and filters wherever possible
 - If available in your workflow, use “get more suggestions” (often driven by adding high-quality verified queries)
 
-## After initial setup - increasing accuracy {#after-initial-setup---increasing-accuracy}
+## After initial setup - increasing accuracy
 
 Once you have your basic semantic view structure, these features are essential for production-quality accuracy. Don’t skip these — they’re what separate a working POC from a trusted production system.
 
@@ -285,7 +276,7 @@ Common mistakes:
 - Using search services with numeric or date columns
 - Using them with paragraph-style text fields (notes, descriptions, comments)
 
-## Testing and Iteration {#testing-and-iteration}
+## Testing and Iteration
 
 ### Create an evaluation set
 
@@ -307,7 +298,7 @@ Available tools:
 - Use suggestions panels and feedback loops to add verified queries from real usage data
 - As you collect more verified queries, you can improve metrics, filters, custom instructions, and descriptions to align more closely with real user behavior
 
-## Common Pitfalls and How to Avoid Them {#common-pitfalls-and-how-to-avoid-them}
+## Common Pitfalls and How to Avoid Them
 
 ### Undefined scope
 
@@ -355,7 +346,7 @@ Ongoing optimization:
 - [ ] Weekly review of suggestions and feedback data
 - [ ] Process for adding new verified queries and related suggestions is in place
 
-## Conclusion And Resources
+## Conclusion and Resources
 
 ### What We Covered
 
