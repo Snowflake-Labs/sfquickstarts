@@ -25,7 +25,7 @@ You can use semantic views in Cortex Analyst and query these views in a SELECT s
 
 ![Semantic View diagram](assets/semantic-views-diagram.png)
 
-## Usecase
+## Use Case
 
 In this tutorial, you'll learn how to process and analyze customer review data for a Media company with Snowflake Cortex Analyst followed by building a dashboard in [Amazon Quick Sight](https://aws.amazon.com/quicksuite/quicksight/), part of the Amazon Quick Suite. Briefly, you'll work with the movies dataset, which contains customer reviews for a movie media company, and transform data into actionable insights.
 
@@ -65,7 +65,8 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
 - Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
 
   **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`** 
-  At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland). Refer to See the [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html)
+  At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland).
+  Refer to [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html)
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
 <br>
@@ -144,7 +145,7 @@ To view the semantic view created in UI:
 <br>
 
 * Feel free to explore and `Explain the dataset` in `Playground`
-* Ensure to `**Save**` before exit  
+* Ensure to `Save` before exit  
 
 
 ![SV in snowsight](assets/sv-snow.gif)
