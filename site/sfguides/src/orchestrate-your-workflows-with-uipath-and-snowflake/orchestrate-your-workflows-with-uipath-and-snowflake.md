@@ -27,7 +27,7 @@ __Monitoring & Optimization__<br>End-to-end observability spans agent actions, R
 - The different ways to connect, ranging from simple database updates (JDBC) to advanced AI tool-calling (MCP)
 
 ## Reference Architecture 
-![assets/architecture.png](assets/architecture.png)
+![assets/uipath_snowflake_architecture.png](assets/uipath_snowflake_architecture.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
