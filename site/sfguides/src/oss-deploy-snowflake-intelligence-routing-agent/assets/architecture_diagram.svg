@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 580">
+  <defs>
+    <style>
+      .border { fill: none; stroke: #29B5E8; stroke-width: 2; rx: 20; }
+      .bg { fill: #f8fbfd; }
+      .line { stroke: #29B5E8; stroke-width: 2; fill: none; }
+      .circle { fill: white; stroke: #29B5E8; stroke-width: 2; }
+      .text { font-family: 'Segoe UI', Arial, sans-serif; fill: #29B5E8; }
+      .text-dark { font-family: 'Segoe UI', Arial, sans-serif; fill: #333; }
+      .text-small { font-family: 'Segoe UI', Arial, sans-serif; fill: #666; font-size: 12px; }
+      .text-orange { font-family: 'Segoe UI', Arial, sans-serif; fill: #ff9800; font-size: 11px; }
+      .chat-box { fill: white; stroke: #ddd; stroke-width: 1; }
+      .chat-bubble-user { fill: #f5f5f5; }
+      .chat-bubble-agent { fill: #e3f6fc; }
+      .icon { fill: none; stroke: #29B5E8; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .service-box { fill: #e8f7fc; stroke: #29B5E8; stroke-width: 1.5; rx: 8; }
+      .native-app-box { fill: #fff; stroke: #29B5E8; stroke-width: 2; rx: 12; }
+      .tool-box { fill: white; stroke: #29B5E8; stroke-width: 2; rx: 10; }
+      .custom-tools-box { fill: none; stroke: #29B5E8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 12; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect class="bg" x="0" y="0" width="1100" height="580" rx="20"/>
+  <rect class="border" x="10" y="10" width="1080" height="560" rx="20"/>
+  
+  <!-- Title at the top -->
+  <text class="text" x="550" y="45" font-size="20" text-anchor="middle" font-weight="bold">Snowflake Intelligence - Route Planning Architecture</text>
+  
+  <!-- Snowflake Intelligence UI Label -->
+  <text class="text" x="150" y="85" font-size="14" text-anchor="middle" font-weight="bold">Snowflake Intelligence UI</text>
+  
+  <!-- Chat Interface Box -->
+  <g transform="translate(40, 100)">
+    <rect class="chat-box" x="0" y="0" width="220" height="260" rx="12"/>
+    
+    <!-- Title bar -->
+    <rect fill="#f5f5f5" x="1" y="1" width="218" height="35" rx="12"/>
+    <text class="text-dark" x="15" y="24" font-size="14" font-weight="bold">Routing Assistant</text>
+    
+    <!-- Agent bubble -->
+    <g transform="translate(10, 50)">
+      <circle cx="15" cy="15" r="12" fill="#e3f6fc" stroke="#29B5E8" stroke-width="1.5"/>
+      <rect x="9" y="10" width="4" height="4" rx="1" fill="#29B5E8"/>
+      <rect x="17" y="10" width="4" height="4" rx="1" fill="#29B5E8"/>
+      <rect x="10" y="17" width="10" height="3" rx="1" fill="#29B5E8"/>
+      <rect class="chat-bubble-agent" x="35" y="0" width="160" height="30" rx="8"/>
+    </g>
+    
+    <!-- User message -->
+    <g transform="translate(10, 95)">
+      <!-- User icon -->
+      <circle cx="15" cy="18" r="12" fill="#f5f5f5" stroke="#999" stroke-width="1.5"/>
+      <circle cx="15" cy="14" r="5" fill="#999"/>
+      <path d="M7,26 Q15,20 23,26" fill="#999"/>
+      <rect class="chat-bubble-user" x="35" y="0" width="165" height="35" rx="8"/>
+      <text class="text-dark" x="42" y="15" font-size="10">Get directions from Union Square</text>
+      <text class="text-dark" x="42" y="27" font-size="10">SF to Golden Gate Bridge</text>
+    </g>
+    
+    <!-- Agent response -->
+    <g transform="translate(10, 145)">
+      <circle cx="15" cy="15" r="12" fill="#e3f6fc" stroke="#29B5E8" stroke-width="1.5"/>
+      <rect x="9" y="10" width="4" height="4" rx="1" fill="#29B5E8"/>
+      <rect x="17" y="10" width="4" height="4" rx="1" fill="#29B5E8"/>
+      <rect x="10" y="17" width="10" height="3" rx="1" fill="#29B5E8"/>
+      <rect class="chat-bubble-agent" x="35" y="0" width="160" height="40" rx="8"/>
+      <text class="text-small" x="45" y="16">Distance: 9.9 km</text>
+      <text class="text-small" x="45" y="31">Duration: 17 mins</text>
+    </g>
+    
+    <!-- Input box -->
+    <rect fill="white" stroke="#ddd" x="10" y="210" width="180" height="35" rx="8"/>
+    <text class="text-small" x="20" y="232">How can I help?</text>
+    <polygon points="200,227 210,227 205,217" fill="#29B5E8"/>
+  </g>
+  
+  <!-- ROUTING AGENT (Master) -->
+  <g transform="translate(580, 70)">
+    <circle class="circle" cx="50" cy="35" r="35"/>
+    <rect x="35" y="22" width="10" height="10" rx="2" fill="#29B5E8"/>
+    <rect x="55" y="22" width="10" height="10" rx="2" fill="#29B5E8"/>
+    <rect x="37" y="40" width="26" height="6" rx="2" fill="#29B5E8"/>
+    <rect x="43" y="12" width="14" height="6" rx="1" fill="#29B5E8"/>
+    
+    <text class="text" x="100" y="30" font-size="20" font-weight="bold">Routing Agent</text>
+    <text class="text-small" x="100" y="50">OPENROUTESERVICE_NATIVE_APP.CORE</text>
+  </g>
+  
+  <!-- Connection lines from Routing Agent to Custom Tools box -->
+  <line class="line" x1="630" y1="140" x2="630" y2="170"/>
+  
+  <!-- Custom Tools label -->
+  <text class="text" x="630" y="188" font-size="13" text-anchor="middle" font-weight="bold">Custom Tools</text>
+  
+  <!-- Dashed box around custom tools -->
+  <rect class="custom-tools-box" x="285" y="195" width="690" height="115"/>
+  
+  <!-- Connection lines to individual tools -->
+  <line class="line" x1="380" y1="170" x2="880" y2="170"/>
+  <line class="line" x1="380" y1="170" x2="380" y2="210"/>
+  <line class="line" x1="630" y1="195" x2="630" y2="210"/>
+  <line class="line" x1="880" y1="170" x2="880" y2="210"/>
+  
+  <!-- TOOL_DIRECTIONS -->
+  <g transform="translate(300, 210)">
+    <rect class="tool-box" x="0" y="0" width="160" height="80" rx="10"/>
+    <!-- Icon on top -->
+    <circle class="circle" cx="80" cy="28" r="18"/>
+    <path class="icon" d="M70,35 L76,22 L82,32 L90,18"/>
+    <circle cx="70" cy="35" r="2.5" fill="#29B5E8"/>
+    <circle cx="90" cy="18" r="2.5" fill="#29B5E8"/>
+    <!-- Text below -->
+    <text class="text" x="80" y="65" font-size="11" text-anchor="middle" font-weight="bold">TOOL_DIRECTIONS</text>
+  </g>
+  
+  <!-- TOOL_ISOCHRONE -->
+  <g transform="translate(550, 210)">
+    <rect class="tool-box" x="0" y="0" width="160" height="80" rx="10"/>
+    <!-- Icon on top -->
+    <circle class="circle" cx="80" cy="28" r="18"/>
+    <circle cx="80" cy="28" r="4" fill="#29B5E8"/>
+    <circle cx="80" cy="28" r="8" fill="none" stroke="#29B5E8" stroke-width="1.5"/>
+    <circle cx="80" cy="28" r="13" fill="none" stroke="#29B5E8" stroke-width="1" stroke-dasharray="3,2"/>
+    <!-- Text below -->
+    <text class="text" x="80" y="65" font-size="11" text-anchor="middle" font-weight="bold">TOOL_ISOCHRONE</text>
+  </g>
+  
+  <!-- TOOL_OPTIMIZATION -->
+  <g transform="translate(800, 210)">
+    <rect class="tool-box" x="0" y="0" width="160" height="80" rx="10"/>
+    <!-- Icon on top -->
+    <circle class="circle" cx="80" cy="28" r="18"/>
+    <circle cx="80" cy="18" r="3" fill="#29B5E8"/>
+    <circle cx="70" cy="35" r="3" fill="#29B5E8"/>
+    <circle cx="90" cy="35" r="3" fill="#29B5E8"/>
+    <line class="icon" x1="80" y1="21" x2="70" y2="32"/>
+    <line class="icon" x1="80" y1="21" x2="90" y2="32"/>
+    <line class="icon" x1="70" y1="35" x2="90" y2="35"/>
+    <!-- Text below -->
+    <text class="text" x="80" y="65" font-size="11" text-anchor="middle" font-weight="bold">TOOL_OPTIMIZATION</text>
+  </g>
+  
+  <!-- Cortex AI notes under each tool -->
+  <text class="text-orange" x="380" y="305" text-anchor="middle">+ Cortex AI Geocoding (Claude Sonnet)</text>
+  <text class="text-orange" x="630" y="305" text-anchor="middle">+ Cortex AI Geocoding (Claude Sonnet)</text>
+  <text class="text-orange" x="880" y="305" text-anchor="middle">+ Cortex AI Geocoding (Claude Sonnet)</text>
+  
+  <!-- Connection lines from Tools to Native App Functions -->
+  <line class="line" x1="380" y1="315" x2="380" y2="370"/>
+  <line class="line" x1="630" y1="315" x2="630" y2="370"/>
+  <line class="line" x1="880" y1="315" x2="880" y2="370"/>
+  
+  <!-- OpenRouteService Native App Box -->
+  <g transform="translate(260, 370)">
+    <rect class="native-app-box" x="0" y="0" width="720" height="140" rx="15"/>
+    <text class="text" x="360" y="28" font-size="16" text-anchor="middle" font-weight="bold">OpenRouteService Native App</text>
+    <text class="text-small" x="360" y="46" text-anchor="middle">OPENROUTESERVICE_NATIVE_APP.CORE</text>
+    
+    <!-- DIRECTIONS Function -->
+    <g transform="translate(40, 60)">
+      <rect class="service-box" x="0" y="0" width="160" height="60" rx="8"/>
+      <text class="text" x="80" y="25" font-size="13" text-anchor="middle" font-weight="bold">DIRECTIONS</text>
+      <text class="text-small" x="80" y="45" text-anchor="middle">Point-to-point routing</text>
+    </g>
+    
+    <!-- ISOCHRONE Function -->
+    <g transform="translate(290, 60)">
+      <rect class="service-box" x="0" y="0" width="160" height="60" rx="8"/>
+      <text class="text" x="80" y="25" font-size="13" text-anchor="middle" font-weight="bold">ISOCHRONE</text>
+      <text class="text-small" x="80" y="45" text-anchor="middle">Reachability analysis</text>
+    </g>
+    
+    <!-- OPTIMIZATION Function -->
+    <g transform="translate(540, 60)">
+      <rect class="service-box" x="0" y="0" width="160" height="60" rx="8"/>
+      <text class="text" x="80" y="25" font-size="13" text-anchor="middle" font-weight="bold">OPTIMIZATION</text>
+      <text class="text-small" x="80" y="45" text-anchor="middle">Multi-stop planning</text>
+    </g>
+  </g>
+  
+</svg>
