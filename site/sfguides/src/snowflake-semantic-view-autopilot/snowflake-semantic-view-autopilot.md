@@ -329,8 +329,7 @@ Now let's create a Semantic View using the Semantic View Wizard with an existing
 2. Pick `SVA_VHOL_DB.SVA_VHOL_SCHEMA` from the dropdown
 3. Select **"Create New Semantic View"**
 
-> aside positive
-> Be sure to use the `ACCOUNTADMIN` role or a role that has ownership rights on `SVA_VHOL_DB.SVA_VHOL_SCHEMA`.
+Note: Be sure to use the `ACCOUNTADMIN` role or a role that has ownership rights on `SVA_VHOL_DB.SVA_VHOL_SCHEMA`.
 
 4. Name your semantic view `SVA_MARKETING_SV` and click **"Next"**
 5. In the following screen, select **"Tableau Files"** as your context
@@ -377,11 +376,10 @@ ORDER BY total_cost_per_lead DESC
 LIMIT 10;
 ```
 
-> aside negative
-> When querying Semantic Views with Standard SQL, remember:
-> - Dimensions and facts can be selected directly
-> - Metrics must be aggregated using `AGG`, `MIN`, `MAX`, or `ANYVALUE`
-> - You must include a `GROUP BY` clause if your SELECT statement includes any metrics
+Note: When querying Semantic Views with Standard SQL, remember:
+- Dimensions and facts can be selected directly
+- Metrics must be aggregated using `AGG`, `MIN`, `MAX`, or `ANYVALUE`
+- You must include a `GROUP BY` clause if your SELECT statement includes any metrics
 
 <!-- ------------------------ -->
 ## Generate Tableau TDS File
