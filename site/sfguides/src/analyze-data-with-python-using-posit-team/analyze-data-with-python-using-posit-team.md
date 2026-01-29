@@ -45,7 +45,7 @@ or look at the materials provided in the accompanying repository:
 ### Prerequisites
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with appropriate access to create warehouses, databases, and schemas. This is typically the `sysadmin` role.
-- A Posit Workbench license and the ability to launch [Workbench](https://docs.posit.co/partnerships/snowflake/posit-team/workbench/) from the [Posit Team Native App](https://docs.posit.co/partnerships/snowflake/posit-team/). An administrator with the `accountadmin` role can provide these for you.
+- A Posit Workbench license and the ability to launch [Workbench](https://docs.posit.co/partnerships/snowflake/posit-team/workbench/) and Positron Pro from the [Posit Team Native App](https://docs.posit.co/partnerships/snowflake/posit-team/). An administrator with the `accountadmin` role can provide these for you.
 - Familiarity with Python.
 
 ## Setup
@@ -91,7 +91,7 @@ Next, we need to create a table to hold the heart failure dataset.
     
     - You should now see a file named `heart_failure_clinical_records_dataset.csv`. We’ll upload this CSV into Snowflake using the Snowsight UI.
 
-3. In Snowsight, click **+** > **Add Data**, then select **Load Data into a Table**.
+3. In Snowsight, click **Ingestion** > **Load Data into a Table**.
 
 4. Click **Browse** and choose `heart_failure_clinical_records_dataset.csv` from your machine.
 
@@ -103,7 +103,7 @@ Next, we need to create a table to hold the heart failure dataset.
    - Ensure **+ Create new table** is selected.
    - For **Name**, enter `HEART_FAILURE`.
 
-7. Click **Next**, then **Load****.
+7. Click **Next**, then **Load**.
 
 ### Confirm the database, data, and schema
 
@@ -194,39 +194,31 @@ Install these extensions:
 3. Install the Quarto extension: click on the Quarto extension, then click **Install**. For more information, see the [Quarto extension documentation](https://quarto.org/docs/tools/vscode.html).
 4. Install the Shiny extension: Follow the same steps as above, but search for and install the Shiny extension. For more information, see the [Shiny extension documentation](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/).
 
-### Create a Folder for your Work
-
-1. Use the Command Palette to open a folder:
-
-   - Press `Ctrl/Cmd+Shift+P` to open the Command Palette.
-   - Type "File: Open Folder", and press `enter`. 
-   - In the dialog that appears, navigate to the directory where you want your work to live and click **OK**.
-
-2. Create a subfolder:
-
-    - In the Explorer pane (left sidebar), click the new folder button (the folder icon) and name the folder `heart_failure`.
-
-3. Switch into the new folder:
-
-    - Press `Ctrl/Cmd+Shift+P` again to reopen the Command Palette.
-    - Select **File: Open Folder**.
-    - Navigate to `heart_failure` and click **OK**.
-
-You now have an empty `heart_failure` folder open and ready for your work.
-
 ### Access the Quickstart Materials
 
 This Quickstart will walk you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
 
-To follow along, clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/) by running the following command in a terminal:
+1. Open your home folder:
 
-```bash
-git clone https://github.com/posit-dev/snowflake-posit-quickstart-python/
-```
+   - Press `Ctrl/Cmd+Shift+P` to open the Command Palette.
+   - Type "File: Open Folder", and press `enter`.
+   - Navigate to your home directory and click **OK**.
 
-> If you don't already see a terminal open, open the Command Palette (`Ctrl/Cmd+Shift+P`), then select **Terminal: Create New Terminal** to open one.
+2. Clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/) by running the following command in a terminal:
 
-This creates a new directory within the `heart_failure` folder you created above.
+   ```bash
+   git clone https://github.com/posit-dev/snowflake-posit-quickstart-python/
+   ```
+
+   > If you don't already see a terminal open, open the Command Palette (`Ctrl/Cmd+Shift+P`), then select **Terminal: Create New Terminal** to open one.
+
+   > Note: This guide uses HTTPS for git authentication. Standard git authentication procedures apply.
+
+3. Open the cloned repository folder:
+
+   - Press `Ctrl/Cmd+Shift+P` to open the Command Palette.
+   - Select **File: Open Folder**.
+   - Navigate to `snowflake-posit-quickstart-python` and click **OK**.
 
 ### Create a Virtual Environment
 
@@ -238,8 +230,15 @@ This creates a new directory within the `heart_failure` folder you created above
 
 4. When prompted to **Select dependencies to install**, choose the `requirements.txt` file from the cloned GitHub repo.
 
-- This creates the virtual environment with the necessary dependencies. Positron activates the virtual environment automatically.
-- If Positron does not create the virtual environment automatically, open the terminal and run `source .venv/bin/activate`.
+   - This creates the virtual environment with the necessary dependencies. Positron activates the virtual environment automatically.
+   - If Positron does not activate the virtual environment automatically, open the terminal and run `source .venv/bin/activate`.
+
+5. To ensure you have the latest versions of pip and dependencies, run the following commands in the terminal:
+
+   ```bash
+   python -m pip install --upgrade pip setuptools wheel
+   pip install -r requirements.txt
+   ```
 
 ## Build Report and Dashboard
 
@@ -313,6 +312,8 @@ con = ibis.snowflake.connect(
 ```
 
 The variable `con` now stores our connection.
+
+> **Note:** You might see a warning about "Unable to create Ibis UDFs" when connecting to Snowflake. This warning occurs when your role doesn't have privileges to create certain functions. You can safely ignore this warning, as the basic Ibis functionality used in this guide will work without these UDFs.
 
 ### Create a Table
 
