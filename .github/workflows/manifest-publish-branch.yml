@@ -53,6 +53,6 @@ jobs:
           MANIFEST_S3_BUCKET: ${{ secrets.MANIFEST_S3_BUCKET }}
           MANIFEST_S3_PREFIX: ${{ secrets.MANIFEST_S3_PREFIX }}
         run: |
-          python3 "scripts/generate_manifest/manifest generator.py"
+          python3 "scripts/generate_manifest/manifest_generator.py"
 
 
