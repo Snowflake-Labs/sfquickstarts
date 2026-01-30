@@ -302,6 +302,8 @@ We can also provide a `schema` here to make connecting to specific tables easier
 
 ```python
 import ibis
+from plotnine import ggplot, aes, geom_boxplot, labs, theme
+from great_tables import GT
 
 con = ibis.snowflake.connect(
   warehouse="HF_WH",
@@ -351,7 +353,7 @@ Right now, `heart_failure_filtered` is still a [table expression](https://ibis-p
 Ibis lazily evaluates commands, which means that the full query is never run on
 the database unless explicitly requested.
 
-Use `.execute()` or `.to_pandas()` to force Ibis to compile the table expression
+Use `.execute()` to force Ibis to compile the table expression
 into SQL and run that SQL on Snowflake.
 
 ```python
@@ -363,6 +365,8 @@ If we want to see the SQL code that Ibis generates, we can run `ibis.to_sql()`.
 ```python
 ibis.to_sql(heart_failure_filtered)
 ```
+
+You will see the following output in the Positron **Viewer** pane:
 
 ```
 SELECT
