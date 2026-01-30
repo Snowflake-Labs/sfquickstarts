@@ -1,5 +1,5 @@
 author: Sara Altman, Daniel Chen, Sarah Sdao
-id: analyze-data-with-python-using-posit-team-and-snowflake
+id: analyze-data-with-python-using-posit-team
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
 summary: Analyze Snowflake data using Python with the Posit Team Native App for collaborative data science, ML development, and visualization.
