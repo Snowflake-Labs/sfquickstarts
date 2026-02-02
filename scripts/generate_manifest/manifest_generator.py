@@ -3,14 +3,6 @@ import re
 import json
 import subprocess
 from typing import Dict, List, Optional
-from datetime import datetime
-
-try:
-    import boto3  # type: ignore
-    from botocore.exceptions import BotoCoreError, ClientError  # type: ignore
-except Exception:
-    boto3 = None  # type: ignore
-    BotoCoreError = ClientError = Exception  # type: ignore
 
 def find_repo_root() -> str:
     """
@@ -183,41 +175,6 @@ def build_manifest() -> Dict[str, List[Dict[str, str]]]:
     return {"quickstartMetadata": entries}
 
 
-def get_current_commit_sha() -> Optional[str]:
-    """
-    Returns the full SHA of the current commit, or None if unavailable.
-    """
-    try:
-        out = subprocess.check_output(
-            ["git", "-C", REPO_ROOT, "rev-parse", "HEAD"],
-            stderr=subprocess.DEVNULL,
-        )
-        return out.decode().strip() or None
-    except Exception:
-        return None
-
-
-def upload_file_to_s3(file_path: str, bucket: str, key: str) -> bool:
-    """
-    Upload a file to S3 using boto3. Returns True on success, False otherwise.
-    Requires valid AWS credentials to be available in the environment/instance profile.
-    """
-    if boto3 is None:
-        print("S3 upload skipped: boto3 not available.")
-        return False
-    try:
-        extra_args = {
-            "ContentType": "application/json; charset=utf-8",
-        }
-        s3 = boto3.client("s3")
-        s3.upload_file(file_path, bucket, key, ExtraArgs=extra_args)
-        print(f"✓ Uploaded to s3://{bucket}/{key}")
-        return True
-    except (BotoCoreError, ClientError) as e:
-        print(f"Error uploading to S3 (s3://{bucket}/{key}): {e}")
-        return False
-
-
 def main() -> None:
     if not os.path.exists(SRC_DIR):
         print(f"Error: Source directory not found: {SRC_DIR}")
@@ -243,36 +200,6 @@ def main() -> None:
     print(f"✓ Successfully wrote {entry_count} quickstarts to manifest")
     print(f"✓ Output: {out_path}")
     print(f"{'='*60}")
-
-    # Optional S3 upload (env-driven; format of JSON is unchanged)
-    # Provide either:
-    #   - MANIFEST_S3_BUCKET (required to enable upload)
-    #   - MANIFEST_S3_PREFIX (optional, e.g. 'manifests/')
-    # This script will upload:
-    #   - {prefix}quickstart-manifest.json (latest)
-    #   - {prefix}quickstart-manifest-{commitSha}.json (versioned), if SHA available
-    bucket = os.environ.get("MANIFEST_S3_BUCKET", "").strip()
-    prefix = os.environ.get("MANIFEST_S3_PREFIX", "").strip()
-    if prefix and not prefix.endswith("/"):
-        prefix = prefix + "/"
-
-    if bucket:
-        print("\nAttempting S3 upload of manifest...")
-        sha = get_current_commit_sha()
-        latest_key = f"{prefix}quickstart-manifest.json"
-        uploaded_latest = upload_file_to_s3(out_path, bucket, latest_key)
-
-        uploaded_versioned = False
-        if sha:
-            versioned_key = f"{prefix}quickstart-manifest-{sha}.json"
-            uploaded_versioned = upload_file_to_s3(out_path, bucket, versioned_key)
-        else:
-            print("Skipped versioned upload: commit SHA unavailable.")
-
-        if uploaded_latest or uploaded_versioned:
-            print("S3 upload completed.")
-        else:
-            print("S3 upload not performed or failed. See messages above.")
 
 
 if __name__ == "__main__":

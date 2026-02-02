@@ -2,12 +2,15 @@ name: Publish manifest to manifests branch
 
 on:
   workflow_dispatch: {}
+  pull_request:
+    branches: [ master ]
   schedule:
     # Run around 23:59 America/Los_Angeles accounting for DST.
     - cron: "59 06 * * *"  # 23:59 PT during Daylight Time (UTC-7)
     - cron: "59 07 * * *"  # 23:59 PT during Standard Time (UTC-8)
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
@@ -30,29 +33,46 @@ jobs:
             echo "run=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Configure AWS credentials
-        if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-
       - name: Set up Python
         if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
-      - name: Install Python deps
-        if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
-        run: pip install boto3
-
       - name: Generate manifest
         if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
-        env:
-          MANIFEST_S3_BUCKET: ${{ secrets.MANIFEST_S3_BUCKET }}
-          MANIFEST_S3_PREFIX: ${{ secrets.MANIFEST_S3_PREFIX }}
         run: |
           python3 "scripts/generate_manifest/manifest_generator.py"
 
+      - name: Upload manifest as artifact
+        if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quickstart-manifest-${{ github.sha }}
+          path: site/sfguides/src/_shared_assets/quickstart-manifest.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Configure AWS credentials (OIDC)
+        if: steps.gate.outputs.run == 'true' || (github.event_name != 'schedule' && github.ref == 'refs/heads/master')
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+
+      - name: Upload to S3 (latest and versioned)
+        if: steps.gate.outputs.run == 'true' || (github.event_name != 'schedule' && github.ref == 'refs/heads/master')
+        env:
+          BUCKET: ${{ vars.MANIFEST_S3_BUCKET }}
+          PREFIX: ${{ vars.MANIFEST_S3_PREFIX }}
+        run: |
+          set -euo pipefail
+          PREFIX="${PREFIX:-}"
+          if [ -n "$PREFIX" ] && [ "${PREFIX%/}" = "$PREFIX" ]; then PREFIX="${PREFIX}/"; fi
+          FILE="site/sfguides/src/_shared_assets/quickstart-manifest.json"
+          LATEST="s3://${BUCKET}/${PREFIX}quickstart-manifest.json"
+          VERSIONED="s3://${BUCKET}/${PREFIX}quickstart-manifest-${GITHUB_SHA}.json"
+          echo "Uploading $FILE to $LATEST and $VERSIONED"
+          aws s3 cp "$FILE" "$LATEST" --content-type "application/json; charset=utf-8"
+          aws s3 cp "$FILE" "$VERSIONED" --content-type "application/json; charset=utf-8"
 
