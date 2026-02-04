@@ -6,7 +6,7 @@ summary: Build an intelligent sales assistant using Snowflake Cortex Agents that
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents/&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
+open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
 # Getting Started with Cortex Agents
@@ -85,7 +85,7 @@ A full-stack application that enables users to:
     >
     >Download the [Git repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents)
 - A [Snowflake account login](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with a role with sufficient privileges to create databases, schemas, tables, and upload files. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
-- **Cortex Agents Access**: You will need access to Snowflake Cortex AI, including **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
+- **Cortex Agents Access**: You will need access to Snowflake Cortex AI, including [**Cortex Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents), [**Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents), and [**Cortex Analyst**](https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents) features.
 
 ## Setup Data
 
@@ -110,7 +110,7 @@ This script will:
 
 ## Create Agent
 
-**Step 1.** In Snowsight, Click on AI & ML » Agents.
+**Step 1.** In Snowsight, Click on AI & ML » Agents or [click here](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents)
 **Step 2.** Click on Create Agents.
 * Select `Create this agent for Snowflake Intelligence`
 * Set the Agent Object Name to `SALES_INTELLIGENCE_AGENT`

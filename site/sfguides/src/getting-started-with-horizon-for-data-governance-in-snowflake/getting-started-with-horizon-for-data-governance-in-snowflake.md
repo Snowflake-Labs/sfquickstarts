@@ -1,27 +1,48 @@
-author: Susan Devitt
+author: Susan Devitt, Severin Gassauer-Fleissner
 id: getting-started-with-horizon-for-data-governance-in-snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/product/cortex-ai, snowflake-site:taxonomy/snowflake-feature/horizon
 language: en
-summary: This guide is used to demonstrate the capabilities of Horizon for Data Governance. The walk-through consists of being able to ingest and monitor data pipelines in your organization, how to actively govern data including lineage and masking, and how Horizon can help with monitoring data in Snowflake using Snowsight. 
+summary: This guide demonstrates Snowflake Horizon's capabilities for modern data governance, including AI-powered automation. Learn to monitor data pipelines, govern data with lineage and masking, leverage AI for automated PII classification and redaction, create governed semantic views for Cortex Analyst, and query governance metadata using natural language.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake
 
 
 # Getting Started with Horizon for Data Governance in Snowflake
 <!-- ------------------------ -->
 ## Overview 
 
-Horizon is a suite of native Snowflake features that allow people easily find, understand, and trust data. In this lab you'll learn how Horizon ensures people have reliable and trustworthy data to make confident, data-driven decisions while ensuring observability and security of data assets.
+Snowflake Horizon is a suite of native Snowflake features that help people easily find, understand, and trust data. In this comprehensive lab, you'll learn how Horizon ensures reliable and trustworthy data for confident, data-driven decisions while maintaining observability and security of data assets—including AI-powered analytics.
 
-In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing a provided sample database of synthetic customer orders. Using this example data, you will learn how Horizon can monitor and provide visibility into your data within Snowflake. We will examine Horizon features from three different personas within Snowflake 
- - a Data Engineer monitoring pipelines
- - a Data Governor monitoring and masking PII
- - a Data Governor Admin auditing access and lineage 
+In this hands-on lab, you will follow a step-by-step guide using a sample database of synthetic customer orders. You'll explore how Horizon monitors and governs data through three key personas:
+ - **Data Engineer**: Monitoring pipelines and data quality
+ - **Data Governor**: Protecting PII with masking and classification
+ - **Data Governor Admin**: Auditing access, lineage, and compliance
+
+This lab demonstrates governance capabilities including AI-powered extensions that automate PII discovery, enable governed natural language queries, and ensure consistent policy enforcement across SQL and AI workloads. 
+
+### AI-Powered Governance Extensions
+
+This lab showcases how Snowflake's AI capabilities enhance and automate governance:
+
+**Automated PII Discovery (Section 2)**  
+Use native CLASSIFICATION_PROFILE to automatically discover and tag 50+ PII types across your structured data with custom tag mapping.
+
+**AI_REDACT for Unstructured Data (Section 5)**  
+Apply AI_REDACT to remove sensitive information from unstructured text like customer feedback.
+
+**Governed AI Analytics (Section 4)**  
+Create semantic views for Cortex Analyst where masking policies, row access policies, and tags automatically apply to natural language queries—zero additional configuration required.
+
+**Natural Language Governance (Section 6)**  
+Query governance metadata using Cortex Code and Cortex Analyst in plain English. Ask questions like "Which tables have PII but no masking policy?" without writing SQL.
+
+**Key Principle**: Fine-grained access controls are consistently enforced whether users query data via SQL, Python, or AI-powered natural language interfaces. The same governance policies protect traditional and AI workloads.
 
 ### Introduction to Horizon
 
-Before we dive into the lab, lets take a look at a typical governance workflow and learn a bit more about the personas we will be exploring today. 
+Before we dive into the lab, let's take a look at a typical governance workflow and learn a bit more about the personas we will be exploring today. 
 #### Typical Governance Workflow  
 ![img](assets/workflow.png)
 
@@ -34,28 +55,41 @@ Before we dive into the lab, lets take a look at a typical governance workflow a
 
 #### [Data Governor Admin Persona Video](https://youtu.be/doView4YqUI?si=tQd_KP7YzIIvogla)  
 
-Now that you have the introduction to Horizon and our personas, lets get started.
+Now that you have the introduction to Horizon and our personas, let's get started.
 
 ### - What You’ll Learn 
-- How to protect sensitive data using Snowflake's role-based masking policies
-- How to visualize column-level lineage for impact analysis
-- How to create a Horizon dashboard in Snowsight to monitor your data and policies
+**Core Governance (Sections 1-3):**
+- Protect sensitive data with role-based masking and row access policies
+- Visualize column-level lineage for impact analysis
+- Monitor data quality with custom and system data metric functions
+- Audit data access and track schema changes
+- Create Horizon dashboards in Snowsight
+
+**AI Governance Extensions (Sections 4-6):**
+- Create governed semantic views for Cortex Analyst
+- Automate PII discovery with CLASSIFICATION_PROFILE
+- Redact sensitive data from unstructured text with AI_REDACT
+- Query governance metadata using natural language
+- Ensure consistent policy enforcement across SQL and AI workloads
 
 ### - What You’ll Need 
-- A trial [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
+- A trial [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account with ACCOUNTADMIN access (recommended) or an existing Snowflake account
+- Approximately 115 minutes to complete all sections
+- Basic familiarity with SQL (no AI/ML expertise required)
 <!-- ------------------------ -->
 ## Setup
+
 
 All the scripts for this lab are available at [Snowflake Labs](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake) for you as a resource.
 
 Let's get started! First we will run the [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/0-lab-Setup.sql) 
 
 
-**1. Create a new worksheet titled 0_lab_setup**
+### Step 1 - Create a new worksheet titled 0_lab_setup
 
 In Snowsight create a new worksheet and rename it 0_lab_setup.
 
-**2. Copy the below script in its entirety and paste into your worksheet.**
+### Step 2 - Copy the below script in its entirety and paste into your worksheet
 
 This script will create the objects and load data needed to run the lab. More explanation on these objects and how they are used will be provided in later steps.
 ### [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/0-lab-Setup.sql)
@@ -130,8 +164,8 @@ COMMENT = 'Schema containing Tags';
 CREATE OR REPLACE TABLE HRZN_DB.TAG_SCHEMA.ROW_POLICY_MAP
     (role STRING, state_visibility STRING);
 
--- with the table in place, we will now INSERT the relevant Role to City Permissions mapping to ensure
--- our Test only can see Massachusetts customers
+-- with the table in place, we will now INSERT the relevant Role to State Permissions mapping to ensure
+-- our Test Role can only see Massachusetts (MA) customers
 INSERT INTO HRZN_DB.TAG_SCHEMA.ROW_POLICY_MAP
     VALUES ('HRZN_DATA_USER','MA'); 
 
@@ -160,16 +194,16 @@ GRANT SELECT ON ALL VIEWS IN SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_IT_ADMIN;
 USE ROLE ACCOUNTADMIN;
 GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE HRZN_DATA_ENGINEER;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE HRZN_DATA_ENGINEER;
--- Commented out because as of May 22 2024 this will not work in trial accounts.
---GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE HRZN_DATA_ENGINEER;
+-- Note: This grant may not be available in all trial accounts.
+-- GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE HRZN_DATA_ENGINEER;
 
 GRANT DATABASE ROLE SNOWFLAKE.GOVERNANCE_VIEWER TO ROLE HRZN_DATA_GOVERNOR;
 GRANT DATABASE ROLE SNOWFLAKE.OBJECT_VIEWER TO ROLE HRZN_DATA_GOVERNOR;
 GRANT DATABASE ROLE SNOWFLAKE.USAGE_VIEWER TO ROLE HRZN_DATA_GOVERNOR;
 GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE HRZN_DATA_GOVERNOR;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE HRZN_DATA_GOVERNOR;
--- Commented out because as of May 22 2024 this will not work in trial accounts.
---GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE HRZN_DATA_GOVERNOR;
+-- Note: This grant may not be available in all trial accounts.
+-- GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE HRZN_DATA_GOVERNOR;
 
 
 GRANT DATABASE ROLE SNOWFLAKE.GOVERNANCE_VIEWER TO ROLE HRZN_IT_ADMIN;
@@ -177,8 +211,8 @@ GRANT DATABASE ROLE SNOWFLAKE.OBJECT_VIEWER TO ROLE HRZN_IT_ADMIN;
 GRANT DATABASE ROLE SNOWFLAKE.USAGE_VIEWER TO ROLE HRZN_IT_ADMIN;
 GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE HRZN_IT_ADMIN;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE HRZN_IT_ADMIN;
--- Commented out because as of May 22 2024 this will not work in trial accounts.
---GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE HRZN_IT_ADMIN;
+-- Note: This grant may not be available in all trial accounts.
+-- GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE HRZN_IT_ADMIN;
 
 
 
@@ -240,51 +274,60 @@ GRANT APPLY PROJECTION POLICY ON ACCOUNT TO ROLE HRZN_DATA_GOVERNOR;
 
 GRANT DATABASE ROLE SNOWFLAKE.CLASSIFICATION_ADMIN TO ROLE HRZN_DATA_GOVERNOR;
 
-
 --USE ROLE HRZN_DATA_ENGINEER;
 --truncate table HRZN_DB.HRZN_SCH.CUSTOMER;
 --truncate table HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 
-
---Create Lineage
+--Create View for Semantic Models and Analysis
 USE ROLE HRZN_DATA_ENGINEER;
-
-
 use database HRZN_DB;
 use schema HRZN_DB.HRZN_SCH;
 USE WAREHOUSE HRZN_WH;
 
--- create new table, then populate it with dynamic content
-create OR REPLACE table HRZN_DB.HRZN_SCH.Customer_NY as
-select *  EXCLUDE ZIP from HRZN_DB.HRZN_SCH.CUSTOMER where state='NY';
-
-create OR REPLACE table HRZN_DB.HRZN_SCH.Customer_DC as
-select *  EXCLUDE ZIP from HRZN_DB.HRZN_SCH.CUSTOMER where state='DC';
-
-create OR REPLACE table HRZN_DB.HRZN_SCH.Customer_AR as
-select *  EXCLUDE ZIP from HRZN_DB.HRZN_SCH.CUSTOMER where state='AR';
-
-
+-- Create summary view for customer order analytics
 CREATE OR REPLACE VIEW HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY AS
 SELECT C.ID, C.FIRST_NAME, C.LAST_NAME, COUNT(CO.ORDER_ID) ORDERS_COUNT, SUM(CO.ORDER_TOTAL) ORDER_TOTAL
 FROM HRZN_DB.HRZN_SCH.CUSTOMER C, HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS CO
-WHERE C.ID  = CO.CUSTOMER_ID
+WHERE C.ID = CO.CUSTOMER_ID
 GROUP BY 1,2,3;
 
-CREATE OR REPLACE TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY_NY AS
-SELECT CS.*
-FROM HRZN_DB.HRZN_SCH.Customer_NY C, HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY CS
-WHERE C.ID  = CS.ID;
+-- ============================================================================
+-- AI GOVERNANCE EXTENSION PRIVILEGES
+-- ============================================================================
+-- These grants enable sections 4-6 (Semantic Views, AI_REDACT, NL Governance)
+-- Added for AI Governance Lab Extensions
+-- ============================================================================
 
--- create new user stage, then copy CUSTOMER data here
-create OR REPLACE stage CustomerNYStage;
-copy into @CustomerNYStage from HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY_NY;
+USE ROLE ACCOUNTADMIN;
+
+-- Section 4: Semantic View Governance
+GRANT CREATE SEMANTIC VIEW ON SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
+GRANT CREATE VIEW ON SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
+GRANT SELECT ON TABLE HRZN_DB.HRZN_SCH.CUSTOMER TO ROLE HRZN_DATA_GOVERNOR;
+GRANT SELECT ON TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS TO ROLE HRZN_DATA_GOVERNOR;
+
+-- Section 5: Cortex Agent Governance
+GRANT CREATE SCHEMA ON DATABASE HRZN_DB TO ROLE HRZN_DATA_GOVERNOR;
+
+-- Section 6: AI-Powered Classification
+GRANT CREATE FUNCTION ON SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
+GRANT CREATE PROCEDURE ON SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
+GRANT USAGE ON SCHEMA HRZN_DB.CLASSIFIERS TO ROLE HRZN_DATA_GOVERNOR;
+GRANT CREATE FUNCTION ON SCHEMA HRZN_DB.CLASSIFIERS TO ROLE HRZN_DATA_GOVERNOR;
+
+-- Allow roles to use Cortex functions
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_USER;
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_IT_ADMIN;
+
+SELECT 'Lab setup complete. You can now run sections 1-6.' as status;
 ````
 <!-- ------------------------ -->
 
-## Horizon as a Data Engineer - Data Quality Monitoring
+## Data Quality Monitoring
 
-### Overview
+
+### Overview: Horizon as a Data Engineer 
 Data Governance doesn't need to be a daunting undertaking. This section is all about how to get started with curating assets to understand common problems that most data organizations want to solve such as data quality monitoring. We will show you how easily all roles benefit from Horizon and Snowflake's RBAC Framework. 
 
 Before we begin, the Snowflake Access Control Framework is based on:
@@ -505,10 +548,13 @@ Before moving on, let's validate the Schedule is in place
 SHOW PARAMETERS LIKE 'DATA_METRIC_SCHEDULE' IN TABLE HRZN_DB.HRZN_SCH.CUSTOMER;
 ```
 
-Review the schedule
-by selecting metric_name, ref_entity_name, schedule, schedule_status from table(information_schema.data_metric_function_references(
+Review the schedule:
+```
+SELECT metric_name, ref_entity_name, schedule, schedule_status 
+FROM TABLE(INFORMATION_SCHEMA.DATA_METRIC_FUNCTION_REFERENCES(
     ref_entity_name => 'HRZN_DB.HRZN_SCH.CUSTOMER', 
     ref_entity_domain => 'TABLE'));
+```
 
 
 The results our Data Metric Functions are written to an Event table, let's start by taking a look at the Raw output
@@ -539,9 +585,10 @@ ORDER BY change_commit_time DESC;
 
 
 
-## Horizon as Data Governor - Know & protect your data
+## Know & protect your data
 
-**Overview**
+
+### Overview: Horizon as Data Governor
 
 In today's world of data management, it is common to have policies and procedures that range from data quality and retention to personal data protection. A Data Governor within an organization defines and applies data policies. Here we will explore Horizon features such as **universal search** that makes it easier to find Account objects,Snowflake Marketplace listings, relevant Snowflake Documentation and Snowflake Community Knowledge Base articles.
 
@@ -570,278 +617,507 @@ USE DATABASE HRZN_DB;
 USE SCHEMA HRZN_SCH;
 ````
 
-Now, Let’s look at the customer details
+Now, Let's look at the customer details
 ````
 SELECT FIRST_NAME, LAST_NAME, STREET_ADDRESS, STATE, CITY, ZIP, PHONE_NUMBER, EMAIL, SSN, BIRTHDATE, CREDITCARD
 FROM HRZN_DB.HRZN_SCH.CUSTOMER
 SAMPLE (100 ROWS);
 ````
 
-### Protecting Sensitive Information
+### AI-Powered Data Classification with Tag Mapping
+
 Looking at this table we can see there is a lot of PII and sensitive data that needs to be protected. However, as a Data user, we may not understand what fields contain the sensitive data.
 
-To set this straight, we need to ensure that the right fields are classified and tagged properly. Further, we need to mask PII and other senstive data. Lets switch to the Data governor role and we can explore the Horizon features for classification, tagging and masking.
+To set this straight, we need to ensure that the right fields are classified and tagged properly using AI-powered classification. Let's switch to the Data Governor role and explore automated classification with custom tag mapping.
+
 ````
 USE ROLE HRZN_DATA_GOVERNOR;
 USE WAREHOUSE HRZN_WH;
 USE DATABASE HRZN_DB;
 USE SCHEMA HRZN_SCH;
 ````
-#### Sensitive Data Classification
 
- In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to automatically detect
- sensitive information and apply relevant Snowflake system defined privacy tags. 
+#### Create Custom Classification Tag
 
- Classification is a multi-step process that associates Snowflake-defined system
- tags to columns by analyzing the fields and metadata for personal data. Data 
- Classification can be done via SQL or the Snowsight interface.
+We'll create a custom DATA_CLASSIFICATION tag that will automatically propagate to downstream tables. This implements the BYOT (Bring Your Own Tags) pattern.
 
- Within this step we will be using SQL to classify a single table as well as all
- tables within a schema.
-
- To learn how to complete Data Classification within the Snowsight interface,
- please see the following documentation: 
-
- [Using Snowsight to classify tables in a schema]
-(https://docs.snowflake.com/en/user-guide/governance-classify-using#using-sf-web-interface-to-classify-tables-in-a-schema)
-
-#### Autoclassification for Sensitive information
-> 
->OPTIONAL: You can perform classification through the UI as well.
---Databases -> HRZN_DB -> HRZN_SCH --> Click "..." -> Classify and Tag Sensitive Data
-
-As our Raw Customer Schema only includes one table, let's use SYSTEM$CLASSIFY against it
 ````
-CALL SYSTEM$CLASSIFY('HRZN_DB.HRZN_SCH.CUSTOMER', {'auto_tag': true});
+-- Create tag schema
+CREATE SCHEMA IF NOT EXISTS HRZN_DB.TAG_SCHEMA;
+USE SCHEMA HRZN_DB.TAG_SCHEMA;
+
+-- Create enterprise classification tag with propagation enabled
+CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION 
+    ALLOWED_VALUES 'PII', 'RESTRICTED', 'SENSITIVE', 'INTERNAL', 'PUBLIC'
+    COMMENT = 'Enterprise data classification with AI automation and propagation'
+    PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT;
 ````
 
-Now let's view the new Tags Snowflake applied automatically via Data Classification
+>
+>Note: PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT ensures tags automatically flow to tables created via CREATE TABLE AS SELECT (CTAS) or views. System tags don't propagate, only user-defined tags do.
+
+#### Create Classification Profile with Tag Map
+
+Create a classification profile that maps native categories to our custom tag:
+
 ````
+USE ROLE SYSADMIN;
+
+CREATE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE 
+    HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE(
+    {
+      'minimum_object_age_for_classification_days': 0,
+      'maximum_classification_validity_days': 90,
+      'auto_tag': true,
+      'classify_views': true,
+      'tag_map': {
+        'column_tag_map': [
+          {
+            'tag_name': 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION',
+            'tag_value': 'PII',
+            'semantic_categories': [
+              'EMAIL', 
+              'US_SOCIAL_SECURITY_NUMBER',
+              'NATIONAL_IDENTIFIER',
+              'US_BANK_ACCOUNT_NUMBER',
+              'CREDIT_CARD_NUMBER'
+            ]
+          },
+          {
+            'tag_name': 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION',
+            'tag_value': 'RESTRICTED',
+            'semantic_categories': [
+              'PHONE_NUMBER',
+              'DATE_OF_BIRTH'
+            ]
+          },
+          {
+            'tag_name': 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION',
+            'tag_value': 'SENSITIVE',
+            'semantic_categories': [
+              'NAME',
+              'STREET_ADDRESS',
+              'CITY',
+              'US_STATE',
+              'ZIP_CODE'
+            ]
+          },
+          {
+            'tag_name': 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION',
+            'tag_value': 'INTERNAL',
+            'semantic_categories': [
+              'JOB_TITLE',
+              'OCCUPATION',
+              'COMPANY'
+            ]
+          }
+        ]
+      }
+    });
+````
+
+>
+>Note: The tag_map defines a five-tier classification taxonomy:
+>- PII: Personal identifiers (highest protection)
+>- RESTRICTED: Sensitive personal data
+>- SENSITIVE: Personal information
+>- INTERNAL: Business data
+>- PUBLIC: Non-sensitive identifiers (implicit for unclassified columns)
+
+#### Apply Classification Profile and Run Classification
+
+Apply the profile to the database and classify tables:
+
+````
+USE ROLE HRZN_DATA_GOVERNOR;
+
+-- Apply classification profile to the database
+ALTER DATABASE HRZN_DB 
+    SET CLASSIFICATION_PROFILE = 'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE';
+
+-- Run AI classification on CUSTOMER table
+CALL SYSTEM$CLASSIFY(
+    'HRZN_DB.HRZN_SCH.CUSTOMER',
+    'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE'
+);
+
+-- Classify CUSTOMER_ORDERS table for tag propagation
+CALL SYSTEM$CLASSIFY(
+    'HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS',
+    'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE'
+);
+````
+
+View all tags applied (both system and custom):
+
+````
+-- View all tags applied (system + custom)
 SELECT TAG_DATABASE, TAG_SCHEMA, OBJECT_NAME, COLUMN_NAME, TAG_NAME, TAG_VALUE
 FROM TABLE(
   HRZN_DB.INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS(
     'HRZN_DB.HRZN_SCH.CUSTOMER',
     'table'
-));
-````
-> 
->OPTIONAL You can perform classification through the UI as well.
---Databases -> HRZN_DB -> HRZN_SCH --> Click "..." -> Classify and Tag Sensitive Data
-
-As our Raw Point-of-Sale Schema includes numerous tables, let's use SYSTEM$CLASSIFY_SCHEMA against it
-````
-CALL SYSTEM$CLASSIFY_SCHEMA('HRZN_DB.HRZN_SCH', {'auto_tag': true});
+))
+ORDER BY TAG_NAME, COLUMN_NAME;
 ````
 
-Once again, let's view the Tags applied using the Customer table within the Schema
-````
-    SELECT * FROM TABLE(HRZN_DB.information_schema.tag_references_all_columns('HRZN_DB.HRZN_SCH.CUSTOMER','table'));
-````
-#### Custom Classification
+View only the DATA_CLASSIFICATION tags (the ones that will propagate):
 
- Snowflake provides the CUSTOM_CLASSIFIER class in the SNOWFLAKE.DATA_PRIVACY schema
- to enable Data Engineers / Governors to extend their Data Classification capabilities based on their own knowledge of their data.
+````
+-- View DATA_CLASSIFICATION tags on CUSTOMER table
+SELECT 
+    COLUMN_NAME,
+    TAG_VALUE as CLASSIFICATION_LEVEL
+FROM TABLE(
+    INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS(
+        'HRZN_DB.HRZN_SCH.CUSTOMER', 
+        'table'
+    )
+)
+WHERE TAG_NAME = 'DATA_CLASSIFICATION'
+ORDER BY 
+    CASE TAG_VALUE 
+        WHEN 'PII' THEN 1
+        WHEN 'RESTRICTED' THEN 2
+        WHEN 'SENSITIVE' THEN 3
+        WHEN 'INTERNAL' THEN 4
+        WHEN 'PUBLIC' THEN 5
+    END,
+    COLUMN_NAME;
+````
+
+>
+>Key Insight: The classification profile applied both system tags (SEMANTIC_CATEGORY, PRIVACY_CATEGORY) and our custom DATA_CLASSIFICATION tag. Only the DATA_CLASSIFICATION tag will propagate to downstream tables.
+
+#### Custom Classification for Credit Cards
+
+Extend classification with custom patterns for domain-specific data:
 
 ````
 USE SCHEMA HRZN_DB.CLASSIFIERS;
 
-create or replace snowflake.data_privacy.custom_classifier CREDITCARD();
+-- Create a custom classifier for credit card patterns
+CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CUSTOM_CLASSIFIER CREDITCARD();
 
-Show snowflake.data_privacy.custom_classifier;
+SHOW SNOWFLAKE.DATA_PRIVACY.CUSTOM_CLASSIFIER;
 
-Call creditcard!add_regex('MC_PAYMENT_CARD','IDENTIFIER','^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$');
-Call creditcard!add_regex('AMX_PAYMENT_CARD','IDENTIFIER','^3[4-7][0-9]{13}$');
+-- Add regex patterns for different credit card types
+CALL creditcard!add_regex('MC_PAYMENT_CARD','IDENTIFIER','^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$');
+CALL creditcard!add_regex('AMX_PAYMENT_CARD','IDENTIFIER','^3[4-7][0-9]{13}$');
 
-Select creditcard!list();
+SELECT creditcard!list();
 
-select CREDITCARD from HRZN_DB.HRZN_SCH.CUSTOMER where CREDITCARD regexp '^3[4-7][0-9]{13}$';
+-- Verify credit card data exists
+SELECT CREDITCARD 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER 
+WHERE CREDITCARD REGEXP '^3[4-7][0-9]{13}$'
+LIMIT 5;
 
-CALL SYSTEM$CLASSIFY('HRZN_DB.HRZN_SCH.CUSTOMER',{'auto_tag': true, 'custom_classifiers': ['HRZN_DB.CLASSIFIERS.CREDITCARD']});
-````
-> 
->Note: This statement shows if a column is classified as a particular tag
-````
-Select SYSTEM$GET_TAG('snowflake.core.semantic_category','HRZN_DB.HRZN_SCH.CUSTOMER.CREDITCARD','column');
-````
-> 
->
- Moving forward as Schemas or Tables are created and updated we can use this exact process of Automatic and Custom Classification to maintain a strong governance posture and build rich semantic-layer metadata.
+-- Re-classify with custom classifier
+CALL SYSTEM$CLASSIFY(
+    'HRZN_DB.HRZN_SCH.CUSTOMER',
+    {'custom_classifiers': ['HRZN_DB.CLASSIFIERS.CREDITCARD'], 'auto_tag': true}
+);
 
-#### Tagging
-
-A tag-based masking policy combines the object tagging and masking policy features to allow a masking policy to be set on a tag using an ALTER TAG command. When the data type in the masking policy signature and the data type of the column match, the tagged column is automatically protected by the conditions in the masking policy.
-````
-USE SCHEMA TAG_SCHEMA;
-````
-Create cost_center tag and add comment
-````
-create tag HRZN_DB.TAG_SCHEMA.cost_center allowed_values 'Sales','Marketing','Support';
-alter tag HRZN_DB.TAG_SCHEMA.cost_center set comment = 'Respective Cost center for chargeback';
-````
-Create on sensitive datasets and add comments
-````
-create tag HRZN_DB.TAG_SCHEMA.confidential allowed_values 'Sensitive','Restricted','Highly Confidential';
-alter tag HRZN_DB.TAG_SCHEMA.confidential set comment = 'Confidential information';
-                                      
-create tag HRZN_DB.TAG_SCHEMA.pii_type allowed_values 'Email','Phone Number','Last Name';
-alter tag HRZN_DB.TAG_SCHEMA.pii_type set comment = 'PII Columns';
+-- Check credit card classification
+SELECT SYSTEM$GET_TAG('snowflake.core.semantic_category','HRZN_DB.HRZN_SCH.CUSTOMER.CREDITCARD','column');
 ````
 
-Apply tag on warehouse dev_demo_wh
-````
-alter warehouse HRZN_WH set tag cost_center = 'Sales';
-````
-Apply tags at the table and column level
-````
---Table Level
-alter table HRZN_DB.HRZN_SCH.customer set tag HRZN_DB.TAG_SCHEMA.confidential ='Sensitive';  
-alter table HRZN_DB.HRZN_SCH.customer set tag HRZN_DB.TAG_SCHEMA.cost_center ='Sales';  
---Column Level
-alter table HRZN_DB.HRZN_SCH.customer modify email set tag HRZN_DB.TAG_SCHEMA.pii_type ='Email';
-alter table HRZN_DB.HRZN_SCH.customer modify phone_number set tag HRZN_DB.TAG_SCHEMA.pii_type ='Phone Number';
-alter table HRZN_DB.HRZN_SCH.customer modify last_name set tag HRZN_DB.TAG_SCHEMA.pii_type ='Last Name';
-````
+#### Tag-Based Masking Policies (Multi-Type)
 
-Query account usage view to check tags and reference
-> 
->Note: The following VIEWs have a latency of about 20 min after creating TAG objects before they will be able to display data.
-````
-select * from snowflake.account_usage.tag_references where tag_name ='CONFIDENTIAL' ;
-select * from snowflake.account_usage.tag_references where tag_name ='PII_TYPE' ;
-select * from snowflake.account_usage.tag_references where tag_name ='COST_CENTER' ;
-````
+Snowflake masking policies are **data-type specific**. A STRING policy only works on STRING columns. For production-ready protection, create one policy per data type and attach all to the same tag.
 
-Now we can use the TAG_REFERENCE_ALL_COLUMNS function to return the Tags associated with our customer order table.
-````
-SELECT
-    tag_database,
-    tag_schema,
-    tag_name,
-    column_name,
-    tag_value
-FROM TABLE(information_schema.tag_references_all_columns
-    ('HRZN_DB.HRZN_SCH.customer','table'));
-````
-#### Dynamic Data Masking
-In Snowflake it is possible to use Column-Level Security to mask dynamically and create a conditional policy. Lets see how we can combine these to create a conditional masking policy.
-````
---Create masking policy for PII
-CREATE OR REPLACE MASKING POLICY HRZN_DB.TAG_SCHEMA.MASK_PII AS
-  (VAL CHAR) RETURNS CHAR ->
-  CASE
-    WHEN CURRENT_ROLE() IN ('ACCOUNTADMIN', 'HRZN_DATA_GOVERNOR') THEN VAL
-      ELSE '***PII MASKED***'
-    END;
+First, create a consent lookup table for masking decisions:
 
-
- CREATE OR REPLACE MASKING POLICY HRZN_DB.TAG_SCHEMA.MASK_SENSITIVE AS
-  (VAL CHAR) RETURNS CHAR ->
-  CASE
-    WHEN CURRENT_ROLE() IN ('ACCOUNTADMIN', 'HRZN_DATA_GOVERNOR') THEN VAL
-      ELSE '***SENSITIVE***'
-    END;
-
---Apply policies to specific columns
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN SSN SET MASKING POLICY HRZN_DB.TAG_SCHEMA.MASK_PII;
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN CREDITCARD SET MASKING POLICY HRZN_DB.TAG_SCHEMA.MASK_SENSITIVE;
-
-
-SELECT SSN,CREDITCARD FROM HRZN_DB.HRZN_SCH.CUSTOMER;
-````
-
-Now we can switch back to our Data User role from the beginning of the script. LEts see if the Data User still has access to sensitive data. 
-````
-USE ROLE HRZN_DATA_USER;
-USE WAREHOUSE HRZN_WH;
-SELECT SSN,CREDITCARD FROM HRZN_DB.HRZN_SCH.CUSTOMER;
-````
-The data is masked for the Data User. 
 ````
 USE ROLE HRZN_DATA_GOVERNOR;
 USE SCHEMA HRZN_DB.TAG_SCHEMA;
-````
-The Data Governor can create opt-in masking based on condition
-````
-create or replace masking policy HRZN_DB.TAG_SCHEMA.conditionalPolicyDemo 
-   as (phone_nbr string, optin string) returns string ->
-   case
-      when optin = 'Y' then phone_nbr
-      else '***OPT OUT***'
-   end;
 
-alter table HRZN_DB.HRZN_SCH.CUSTOMER modify column PHONE_NUMBER set
-   masking policy HRZN_DB.TAG_SCHEMA.conditionalPolicyDemo  using (PHONE_NUMBER, OPTIN);
+-- Create opt-in lookup table for masking decisions
+CREATE OR REPLACE TABLE HRZN_DB.TAG_SCHEMA.CUSTOMER_CONSENT_MAP AS
+SELECT DISTINCT ID as CUSTOMER_ID, OPTIN 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER;
 
-SELECT PHONE_NUMBER,OPTIN FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+GRANT SELECT ON TABLE HRZN_DB.TAG_SCHEMA.CUSTOMER_CONSENT_MAP TO ROLE HRZN_DATA_USER;
+GRANT SELECT ON TABLE HRZN_DB.TAG_SCHEMA.CUSTOMER_CONSENT_MAP TO ROLE HRZN_IT_ADMIN;
 ````
 
+Now create the multi-type masking policies:
 
-Snowflake makes it possible to streamline the masking process by grouping all these sensitive or PII columns under a common tag and apply masking for that tag.
 ````
---Create a Tag
-CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.PII_COL ALLOWED_VALUES 'PII-DATA','NON-PII';
-
---Apply to the table
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN LAST_NAME SET TAG  HRZN_DB.TAG_SCHEMA.PII_COL = 'PII-DATA';
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN BIRTHDATE SET TAG  HRZN_DB.TAG_SCHEMA.PII_COL = 'PII-DATA';
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN STREET_ADDRESS SET TAG  HRZN_DB.TAG_SCHEMA.PII_COL = 'PII-DATA';
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN CITY SET TAG  HRZN_DB.TAG_SCHEMA.PII_COL = 'PII-DATA';
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN STATE SET TAG  HRZN_DB.TAG_SCHEMA.PII_COL = 'PII-DATA';
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN ZIP SET TAG  HRZN_DB.TAG_SCHEMA.PII_COL = 'PII-DATA';
-
-
---Create Masking Policy
-CREATE OR REPLACE MASKING POLICY HRZN_DB.TAG_SCHEMA.PII_DATA_MASK AS (VAL string) RETURNS string ->
+-- ============================================================================
+-- STRING MASKING POLICY (for VARCHAR columns)
+-- ============================================================================
+CREATE OR REPLACE MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_STRING
+AS (VAL STRING) 
+RETURNS STRING ->
 CASE
-WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.PII_COL') = 'PII-DATA' 
-    AND CURRENT_ROLE() NOT IN ('HRZN_DATA_GOVERNOR','ACCOUNTADMIN') 
-    THEN '**PII TAG MASKED**'
-ELSE VAL
+    -- Governors and admins always see full data
+    WHEN CURRENT_ROLE() IN ('HRZN_DATA_GOVERNOR', 'ACCOUNTADMIN')
+    THEN VAL
+    
+    -- PII: Full redaction for non-governors
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'PII'
+    THEN '***PII-REDACTED***'
+    
+    -- RESTRICTED: Partial masking - show last 4 characters
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'RESTRICTED'
+    THEN CONCAT('***-', RIGHT(VAL, 4))
+    
+    -- SENSITIVE: SHA2 hash for pseudonymization
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'SENSITIVE'
+    THEN SHA2(VAL, 256)
+    
+    -- INTERNAL and PUBLIC: Visible to all
+    ELSE VAL
 END;
 
+-- ============================================================================
+-- NUMBER MASKING POLICY (for FLOAT, INTEGER, NUMBER columns)
+-- ============================================================================
+CREATE OR REPLACE MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_NUMBER
+AS (VAL NUMBER) 
+RETURNS NUMBER ->
+CASE
+    WHEN CURRENT_ROLE() IN ('HRZN_DATA_GOVERNOR', 'ACCOUNTADMIN')
+    THEN VAL
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'PII'
+    THEN NULL
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'RESTRICTED'
+    THEN ROUND(VAL, -2)
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'SENSITIVE'
+    THEN ABS(HASH(VAL))
+    ELSE VAL
+END;
 
---Apply Masking policy to the tag
-ALTER TAG HRZN_DB.TAG_SCHEMA.PII_COL SET MASKING POLICY HRZN_DB.TAG_SCHEMA.PII_DATA_MASK;
+-- ============================================================================
+-- DATE MASKING POLICY (for DATE columns)
+-- ============================================================================
+CREATE OR REPLACE MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_DATE
+AS (VAL DATE) 
+RETURNS DATE ->
+CASE
+    WHEN CURRENT_ROLE() IN ('HRZN_DATA_GOVERNOR', 'ACCOUNTADMIN')
+    THEN VAL
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'PII'
+    THEN NULL
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'RESTRICTED'
+    THEN DATE_TRUNC('YEAR', VAL)
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'SENSITIVE'
+    THEN DATE_TRUNC('MONTH', VAL)
+    ELSE VAL
+END;
+
+-- ============================================================================
+-- TIMESTAMP MASKING POLICY (for TIMESTAMP columns)
+-- ============================================================================
+CREATE OR REPLACE MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_TIMESTAMP
+AS (VAL TIMESTAMP) 
+RETURNS TIMESTAMP ->
+CASE
+    WHEN CURRENT_ROLE() IN ('HRZN_DATA_GOVERNOR', 'ACCOUNTADMIN')
+    THEN VAL
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'PII'
+    THEN NULL
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'RESTRICTED'
+    THEN DATE_TRUNC('DAY', VAL)
+    WHEN SYSTEM$GET_TAG_ON_CURRENT_COLUMN('HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION') = 'SENSITIVE'
+    THEN DATE_TRUNC('MONTH', VAL)
+    ELSE VAL
+END;
+
+-- ============================================================================
+-- ATTACH ALL POLICIES TO THE DATA_CLASSIFICATION TAG
+-- ============================================================================
+ALTER TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION 
+    SET MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_STRING;
+
+ALTER TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION 
+    SET MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_NUMBER;
+
+ALTER TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION 
+    SET MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_DATE;
+
+ALTER TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION 
+    SET MASKING POLICY HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_TIMESTAMP;
 ````
-Lets switch back to the Data User role and Check if the sensitive data is visible or masked
+
+>
+>**Best Practice**: Each data type gets appropriate masking logic. Here's the complete masking matrix:
+
+| Data Type | PII | RESTRICTED | SENSITIVE | INTERNAL/PUBLIC |
+|-----------|-----|------------|-----------|-----------------|
+| **STRING** | `***PII-REDACTED***` | `***-` + last 4 chars | SHA2 hash | Visible |
+| **NUMBER** | NULL | Rounded (-2 precision) | ABS(HASH) | Visible |
+| **DATE** | NULL | Year only (Jan 1) | Month only (1st) | Visible |
+| **TIMESTAMP** | NULL | Day only (midnight) | Month only (1st) | Visible |
+
+>**Key Benefits**:
+>- **Type Safety**: Policies match column data types automatically
+>- **Automatic Application**: Any column tagged with DATA_CLASSIFICATION gets the right policy
+>- **Future-Proof**: Add new tables/columns - just tag them!
+
+Test the masking as different roles:
+
 ````
-USE ROLE HRZN_DATA_USER;
-SELECT FIRST_NAME, LAST_NAME, STREET_ADDRESS, CITY, STATE, ZIP 
+-- Test as HRZN_DATA_GOVERNOR (sees unmasked data, all records)
+USE ROLE HRZN_DATA_GOVERNOR;
+SELECT 
+    ID,              -- PUBLIC
+    FIRST_NAME,      -- SENSITIVE
+    EMAIL,           -- PII
+    SSN,             -- PII
+    PHONE_NUMBER,    -- RESTRICTED
+    BIRTHDATE,       -- RESTRICTED
+    COMPANY,         -- INTERNAL
+    OPTIN            -- Shows consent status
+FROM HRZN_DB.HRZN_SCH.CUSTOMER
+LIMIT 10;
+
+-- Count all customers vs opted-in customers (Governor sees all)
+SELECT 
+    COUNT(*) as total_customers,
+    SUM(CASE WHEN OPTIN = 'Y' THEN 1 ELSE 0 END) as opted_in_customers
 FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+
+-- Test as HRZN_DATA_USER (sees masked data)
+USE ROLE HRZN_DATA_USER;
+SELECT 
+    ID,              -- PUBLIC: Visible
+    FIRST_NAME,      -- SENSITIVE: SHA2 hashed
+    EMAIL,           -- PII: ***PII-REDACTED***
+    SSN,             -- PII: ***PII-REDACTED***
+    PHONE_NUMBER,    -- RESTRICTED: ***-1234
+    BIRTHDATE,       -- RESTRICTED: ***-0590
+    COMPANY          -- INTERNAL: Visible
+FROM HRZN_DB.HRZN_SCH.CUSTOMER
+LIMIT 10;
 ````
-When we switch back to the Data Governor role we can see that the data is still present, just masked when required.
+
+#### Opt-In Governance with Row Access Policy
+
+For consent-based data access, the best practice is to use a **row access policy** combined with masking policies. This creates layered protection:
+- **Row access policy**: Controls which records are visible based on consent
+- **Masking policy**: Controls how visible data appears based on classification
 
 ````
 USE ROLE HRZN_DATA_GOVERNOR;
-SELECT FIRST_NAME, LAST_NAME, STREET_ADDRESS, CITY, STATE, ZIP 
+USE SCHEMA HRZN_DB.TAG_SCHEMA;
+
+-- Create opt-in row access policy
+CREATE OR REPLACE ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_OPTIN_POLICY
+    AS (OPTIN_STATUS STRING) RETURNS BOOLEAN ->
+    CASE
+        -- Governors and admins see all records regardless of consent
+        WHEN CURRENT_ROLE() IN ('ACCOUNTADMIN', 'HRZN_DATA_ENGINEER', 'HRZN_DATA_GOVERNOR', 'HRZN_IT_ADMIN')
+        THEN TRUE
+        -- Data users only see opted-in customers
+        WHEN CURRENT_ROLE() = 'HRZN_DATA_USER' AND OPTIN_STATUS = 'Y'
+        THEN TRUE
+        -- Hide non-opted-in records from data users
+        ELSE FALSE
+    END;
+
+-- Apply opt-in policy to CUSTOMER table
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER
+    ADD ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_OPTIN_POLICY ON (OPTIN);
+````
+
+Test the layered governance:
+
+````
+-- As Governor: See all customers and count
+USE ROLE HRZN_DATA_GOVERNOR;
+SELECT 
+    COUNT(*) as total_customers,
+    SUM(CASE WHEN OPTIN = 'Y' THEN 1 ELSE 0 END) as opted_in_customers
 FROM HRZN_DB.HRZN_SCH.CUSTOMER;
-````
 
-#### Row-Access Policies
-
- Now that our Data Governor is happy with our Tag Based Dynamic Masking controlling masking at the column level, we will now look to restrict access at the row level for our Data Analyst role.
-
- Within our Customer  table, our role should only see Customers who are
- based in Massachussets(MA).
-
-First, We need to unset any exising masking policies on the column
-````USE ROLE HRZN_DATA_GOVERNOR;
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN STATE UNSET TAG  HRZN_DB.TAG_SCHEMA.PII_COL;
-````
-Lets see what the data user can see.
-````
+-- As Data User: Only see opted-in customers (with masking applied)
 USE ROLE HRZN_DATA_USER;
-SELECT FIRST_NAME, STREET_ADDRESS, STATE, OPTIN, PHONE_NUMBER, EMAIL, JOB, COMPANY FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+SELECT COUNT(*) as visible_customers FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+
+SELECT EMAIL, SSN, PHONE_NUMBER, OPTIN 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER 
+LIMIT 5;
+-- Notice: All visible rows have OPTIN='Y', and PII is still masked!
 ````
-We will need to use row level security to show only the Data for Massachusetts.
+
+>
+>**Key Observation - Defense in Depth**:
+>- Row access policy filters WHO can see WHICH records (consent-based)
+>- Masking policy controls HOW data appears when visible (classification-based)
+>- Both policies apply automatically - no application code changes needed!
+
+#### Demonstrate Tag Propagation
+
+Create a copy of the CUSTOMER table to show automatic tag propagation:
+
+````
+-- Create derived table - tags propagate automatically
+USE ROLE HRZN_DATA_ENGINEER;
+CREATE TABLE HRZN_DB.HRZN_SCH.CUSTOMER_COPY AS 
+SELECT * FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+
+-- View propagated tags
+USE ROLE HRZN_DATA_GOVERNOR;
+-- Check if DATA_CLASSIFICATION tags propagated
+SELECT 
+    COLUMN_NAME,
+    TAG_VALUE as CLASSIFICATION_LEVEL
+FROM TABLE(
+    INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS(
+        'HRZN_DB.HRZN_SCH.CUSTOMER_COPY', 
+        'table'
+    )
+)
+WHERE TAG_NAME = 'DATA_CLASSIFICATION'
+ORDER BY 
+    CASE TAG_VALUE 
+        WHEN 'PII' THEN 1
+        WHEN 'RESTRICTED' THEN 2
+        WHEN 'SENSITIVE' THEN 3
+        WHEN 'INTERNAL' THEN 4
+        WHEN 'PUBLIC' THEN 5
+    END,
+    COLUMN_NAME;
+
+-- Query the copy as HRZN_DATA_USER - masking still applies!
+USE ROLE HRZN_DATA_USER;
+SELECT * FROM HRZN_DB.HRZN_SCH.CUSTOMER_COPY LIMIT 5;
+
+USE ROLE HRZN_DATA_GOVERNOR;
+````
+
+>
+>Key Observation: The DATA_CLASSIFICATION tags automatically propagated to CUSTOMER_COPY, and the masking policy attached to the tag automatically protects the new table. Zero manual work required!
+
+#### Row-Access Policies (State-Based Filtering)
+
+Now that our Data Governor is happy with our Tag Based Dynamic Masking controlling masking at the column level, we will now look to restrict access at the row level for our Data User role.
+
+Within our Customer table, the HRZN_DATA_USER role should only see Customers who are based in Massachusetts (MA).
+
+>
+>**Note**: Multiple row access policies on the same table are ANDed together. We'll first drop the opt-in policy to demonstrate state-based filtering in isolation.
+
 ````
 USE ROLE HRZN_DATA_GOVERNOR;
---The mapping for the user is in the table ROW_POLICY_MAP
+
+-- Drop the opt-in policy to demonstrate state-based filtering cleanly
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER
+    DROP ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_OPTIN_POLICY;
+
+-- Unset STATE tag to allow it to be used in WHERE clause
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN STATE UNSET TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION;
+
+-- The mapping for the user is in the table ROW_POLICY_MAP
 SELECT * FROM HRZN_DB.TAG_SCHEMA.ROW_POLICY_MAP; 
 ````
 
 > 
 >Note: Snowflake supports row-level security through the use of Row Access Policies to determine which rows to return in the query result. The row access policy can be relatively simple to allow one particular role to view rows, or be more complex to include a mapping table in the policy definition to determine access to rows in the query result.
+
 ````
 CREATE OR REPLACE ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_STATE_RESTRICTIONS
     AS (STATE STRING) RETURNS BOOLEAN ->
@@ -856,36 +1132,32 @@ CREATE OR REPLACE ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_STATE_RESTRICTIO
             )
 COMMENT = 'Policy to limit rows returned based on mapping table of ROLE and STATE: governance.row_policy_map';
 
-
-
- -- let's now apply the Row Access Policy to our City column in the Customer Order table
+-- Apply the Row Access Policy to the STATE column
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER
     ADD ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_STATE_RESTRICTIONS ON (STATE);
 ````
 
-With the policy successfully applied, let's test it using the Data User Role
+With the policy successfully applied, let's test it using the Data User Role:
+
 ````
 USE ROLE HRZN_DATA_USER;
-SELECT FIRST_NAME, STREET_ADDRESS, STATE, OPTIN, PHONE_NUMBER, EMAIL, JOB, COMPANY FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+SELECT FIRST_NAME, STREET_ADDRESS, STATE, PHONE_NUMBER, EMAIL, JOB, COMPANY 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+
+USE ROLE HRZN_DATA_GOVERNOR;
 ````
 
+>
+>Result: Only Massachusetts (MA) customers are visible to HRZN_DATA_USER. All other states are filtered out automatically.
 
 #### Aggregation Policies
 
- Outside of the Data Access Policies (Masking and Row Access) we have covered,
- Snowflake Horizon also provides Privacy Policies. In this section we will cover
- the ability to set Aggregation Policies on Database Objects which can restrict
- certain roles to only aggregate data by only allowing for queries that aggregate
- data into groups of a minimum size versus retrieving individual roles.
-
- For the Data User role we have created, let's test an Aggregation Policy out against our Raw Order Header table.
-
+Outside of the Data Access Policies (Masking and Row Access) we have covered, Snowflake Horizon also provides Privacy Policies. In this section we will cover the ability to set Aggregation Policies on Database Objects which can restrict certain roles to only aggregate data by only allowing for queries that aggregate data into groups of a minimum size versus retrieving individual rows.
 
 > 
-> An Aggregation Policy is a schema-level object that controls what type of query can access data from a table or view. When an aggregation policy is applied to a table, queries against that table must aggregate data into groups of a minimum size in order to return results,thereby preventing a query from returning information from an individual record.
+> An Aggregation Policy is a schema-level object that controls what type of query can access data from a table or view. When an aggregation policy is applied to a table, queries against that table must aggregate data into groups of a minimum size in order to return results, thereby preventing a query from returning information from an individual record.
 
-
-For our use case, we will create a Conditional Aggregation Policy in our Governance Schema that will only allow queries from non-admin users to return results for queries that aggregate more than 1000 rows
+For our use case, we will create a Conditional Aggregation Policy that will only allow queries from non-admin users to return results for queries that aggregate more than 100 rows:
 
 ````
 USE ROLE HRZN_DATA_GOVERNOR;
@@ -897,41 +1169,35 @@ CREATE OR REPLACE AGGREGATION POLICY HRZN_DB.TAG_SCHEMA.aggregation_policy
       THEN NO_AGGREGATION_CONSTRAINT()  
       ELSE AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE => 100) -- atleast 100 rows in aggregate
     END;
-````
-With the Aggregation Policy created, let's apply it to our Order Header table
-````
+
+-- Apply to CUSTOMER_ORDERS table
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS
     SET AGGREGATION POLICY HRZN_DB.TAG_SCHEMA.aggregation_policy;
 ````    
 
-- Lets try running a simple SELECT *?
+Test the aggregation policy:
+
 ````
+-- As governor - no restrictions
+USE ROLE HRZN_DATA_GOVERNOR;
 SELECT TOP 10 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
-````
-- What happens if we include over 100 rows?
-````
-SELECT TOP 101 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
-````
-Now, lets switch to the Data User role and try those same queries.
-````
+
+-- As data user - restricted to aggregates only
 USE ROLE HRZN_DATA_USER;
-````
-- Lets try running a simple SELECT *?
-````
+
+-- This will fail - can't SELECT * with aggregation policy
 SELECT TOP 10 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
-````
-- What happens if we include over 100 rows?
-````
-SELECT TOP 101 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
+
+-- This works - aggregates over 100 rows
+SELECT ORDER_CURRENCY, SUM(ORDER_AMOUNT) 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS 
+GROUP BY ORDER_CURRENCY;
 ````
 
+Let's answer aggregate business questions with the combined policies:
 
-Lets answer a few aggregate business questions on on the Customer Order table that we have previously:
-1. Deployed Masking against PII columns
-2. Deployed Row Level Security to restrict our Test Role to only Massachusetts results
-
-- What are the total order amounts?
 ````
+-- Total order amounts by state and city (>100 row groups allowed)
 SELECT 
     cl.state,
     cl.city,
@@ -942,36 +1208,13 @@ JOIN HRZN_DB.HRZN_SCH.CUSTOMER cl
     ON oh.customer_id = cl.id
 GROUP BY ALL
 ORDER BY order_total DESC;
-
-SELECT 
-    cl.state,
-    cl.city,
-    COUNT(oh.order_id) AS count_order,
-    SUM(oh.order_amount) AS order_total
-FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS oh
-JOIN HRZN_DB.HRZN_SCH.CUSTOMER cl
-    ON oh.customer_id = cl.id
-WHERE oh.order_amount > 64
-GROUP BY ALL
-ORDER BY order_total DESC;
-
-SELECT 
-    cl.state,
-    cl.city,
-    COUNT(oh.order_id) AS count_order,
-    SUM(oh.order_amount) AS order_total
-FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS oh
-JOIN HRZN_DB.HRZN_SCH.CUSTOMER cl
-    ON oh.customer_id = cl.id
-WHERE oh.order_amount > 3
-GROUP BY ALL
-ORDER BY order_total DESC;
 ````
 
+> 
+>Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
 
--What are the total order amounts by company and job?
- >Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
- ````
+````
+-- Total order amounts by company and job
 SELECT 
     cl.company,
     cl.job,
@@ -984,10 +1227,10 @@ GROUP BY ALL
 ORDER BY order_total DESC;
 ````
 
-Now lets try switching to our Data Governor Role, and now run that same query to see what the results look like in a privileged Role not restricted by Row Access and Aggregation policies.
+Switch to Data Governor to see unrestricted results:
+
 ````
 USE ROLE HRZN_DATA_GOVERNOR;
-USE SCHEMA HRZN_DB.TAG_SCHEMA;
 
 SELECT 
     cl.company,
@@ -1000,15 +1243,21 @@ JOIN HRZN_DB.HRZN_SCH.CUSTOMER cl
 GROUP BY ALL
 ORDER BY order_total DESC;
 ````
+
 #### Projection Policies
+
 Within this step, we will cover another Privacy Policy framework provided by Snowflake Horizon this time diving into Projection Policies which in short will prevent queries from using a SELECT statement to project values from a column.
 
 > 
 > A projection policy is a first-class, schema-level object that defines whether a column can be projected in the output of a SQL query result. A column with a projection policy assigned to it is said to be projection constrained.
 
+For our use case, we will create a Conditional Projection Policy that will only allow our Admin Roles to project the columns we will assign it to:
 
-For our use case, we will create a Conditional Projection Policy in our Governance Schema that will only allow our Admin Roles to project the columns we will assign it to
 ````
+-- Unset ZIP tag first
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN ZIP UNSET TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION;
+
+-- Create projection policy
 CREATE OR REPLACE PROJECTION POLICY HRZN_DB.TAG_SCHEMA.projection_policy
   AS () RETURNS PROJECTION_CONSTRAINT -> 
   CASE
@@ -1017,56 +1266,67 @@ CREATE OR REPLACE PROJECTION POLICY HRZN_DB.TAG_SCHEMA.projection_policy
     ELSE PROJECTION_CONSTRAINT(ALLOW => false)
   END;
 ````
-We need to unset any exising masking poilcies on the column
-````
-ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN ZIP UNSET TAG  HRZN_DB.TAG_SCHEMA.PII_COL;
-````
-With the Projection Policy in place, let's assign it to our Postal Code column
+
+With the Projection Policy in place, let's assign it to our ZIP column:
+
 ````
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER
  MODIFY COLUMN ZIP
  SET PROJECTION POLICY HRZN_DB.TAG_SCHEMA.projection_policy;
 ````
-Lets see how our projection policy works for the Data User. What does a 
-SELECT * against the table yield?
+
+Let's see how our projection policy works for the Data User:
+
 ````
- USE ROLE HRZN_DATA_USER;
-SELECT TOP 100 * FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+USE ROLE HRZN_DATA_USER;
+SELECT TOP 100 * FROM HRZN_DB.HRZN_SCH.CUSTOMER; -- Fails - ZIP cannot be projected
 ````
 
-What if we EXCLUDE the postal_code column?
+What if we EXCLUDE the ZIP column?
+
 ````
-SELECT TOP 100 * EXCLUDE ZIP FROM HRZN_DB.HRZN_SCH.CUSTOMER;
+SELECT TOP 100 * EXCLUDE ZIP FROM HRZN_DB.HRZN_SCH.CUSTOMER; -- Works!
 ````
 
- Although our Projection Policy blocks our Data User Role from including the Postal Code column
- in the SELECT clause it can still be used in the WHERE clause to assist with analysis.
+Although our Projection Policy blocks our Data User Role from including the ZIP column in the SELECT clause, it can still be used in the WHERE clause to assist with analysis:
 
-Knowing this, let's now help our marketing team by addressing a few of their questions
-
-Which CUSTOMERS from postal_code other than 97135 AND 95357 should recieve a program anniversary promotion this month? 
 ````
+-- Filter by ZIP without projecting it
 SELECT 
-* EXCLUDE ZIP
+    * EXCLUDE ZIP
 FROM HRZN_DB.HRZN_SCH.CUSTOMER
 WHERE ZIP NOT IN ('97135', '95357');
-````
 
-Which members from postal_code 97135 AND 95357 have have opted in for text messages?
-````
+-- Find customers who opted in from specific ZIP codes
 SELECT 
-    ID,FIRST_NAME,PHONE_NUMBER,EMAIL, COMPANY
+    ID, FIRST_NAME, PHONE_NUMBER, EMAIL, COMPANY
 FROM HRZN_DB.HRZN_SCH.CUSTOMER
 WHERE ZIP IN ('97135', '95357')
     AND OPTIN = 'Y';
 ````
-Now that we've protected our data and our users can access it appropriately to address their questions, let's move on to explore the Governor Admin role.
+
+#### Optional Cleanup for Next Labs
+
+Reset policies for subsequent sections:
+
+````
+USE ROLE HRZN_DATA_GOVERNOR;
+
+-- Optional cleanup for next labs
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS UNSET AGGREGATION POLICY;
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN ZIP UNSET PROJECTION POLICY;
+
+-- Re-apply DATA_CLASSIFICATION tag to ZIP for consistency
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER MODIFY COLUMN ZIP SET TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION = 'SENSITIVE';
+````
+
+Now that we've protected our data with AI-powered classification and our users can access it appropriately, let's move on to explore the Governor Admin role.
 
 
-<!-- ------------------------ -->
-## Governor Admin - Access & Audit
+## Access & Audit
 
-**Overview**
+
+### Overview: Governor Admin 
 
 Access History provides insights into user queries encompassing what data was 
 read and when, as well as what statements have performed a write operations. Access History is particularly important for Compliance, Auditing, and Governance.
@@ -1235,7 +1495,7 @@ FROM
                       )
                     )
                 )
-                WHERE TAG_NAME IN ('CONFIDENTIAL','PII_COL','PII_TYPE') 
+                WHERE TAG_NAME IN ('SEMANTIC_CATEGORY','PRIVACY_CATEGORY','DATA_CLASSIFICATION') 
             )
             OR
             TARGET_COLUMN_NAME IN (
@@ -1252,7 +1512,7 @@ FROM
                       )
                     )
                 )
-                WHERE TAG_NAME IN ('CONFIDENTIAL','PII_COL','PII_TYPE') --Enter the relevant tag(s) to check against.
+                WHERE TAG_NAME IN ('SEMANTIC_CATEGORY','PRIVACY_CATEGORY','DATA_CLASSIFICATION') --Enter the relevant tag(s) to check against.
             )
             );
 ````
@@ -1278,30 +1538,531 @@ Base Objects Accessed: Base data objects required to execute a query.
  > Clean up (Optional).
  >Create a new worksheet named 99_lab_teardown. Copy and paste the entire Teardown Script at [ 99-lab-teardown.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/99-lab-teardown.sql) 
 <!-- ------------------------ -->
+## Semantic Views for AI Analytics
+
+### Overview: Data Governor 
+
+Semantic views are database objects that enable natural language querying via Cortex Analyst while automatically enforcing existing governance policies. In this section, you'll create a semantic view with dimensions, metrics, and facts that inherits all masking and row access policies from underlying tables.
+
+In Snowsight create a new worksheet and rename it `4_Semantic_View_Governance`. Copy and paste each code block below and execute. You can also find the entire script at [4-Semantic-View-Governance.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/4-Semantic-View-Governance.sql)
+
+### Create a Semantic View
+
+Create a semantic view that defines business-friendly dimensions and metrics:
+
+````
+USE ROLE HRZN_DATA_GOVERNOR;
+USE WAREHOUSE HRZN_WH;
+USE DATABASE HRZN_DB;
+USE SCHEMA HRZN_SCH;
+
+CREATE OR REPLACE SEMANTIC VIEW CUSTOMER_ORDER_ANALYTICS
+  TABLES (
+    customers AS HRZN_DB.HRZN_SCH.CUSTOMER
+      PRIMARY KEY (ID)
+      WITH SYNONYMS ('customer', 'clients', 'buyers'),
+    orders AS HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS
+      PRIMARY KEY (ORDER_ID)
+  )
+  RELATIONSHIPS (
+    orders_to_customers AS
+      orders (CUSTOMER_ID) REFERENCES customers (ID)
+  )
+  DIMENSIONS (
+    customers.customer_name AS CONCAT(FIRST_NAME, ' ', LAST_NAME),
+    customers.email_address AS EMAIL,
+    customers.phone AS PHONE_NUMBER,
+    customers.location_state AS STATE,
+    orders.order_date AS ORDER_TS
+  )
+  FACTS (
+    orders.order_total_fact AS ORDER_TOTAL
+      WITH SYNONYMS ('revenue', 'sales', 'amount')
+      COMMENT 'Total dollar value of individual orders',
+    orders.order_tax_fact AS ORDER_TAX
+      WITH SYNONYMS ('tax', 'tax amount')
+      COMMENT 'Tax amount for individual orders'
+  )
+  METRICS (
+    orders.total_revenue AS SUM(orders.order_total_fact)
+      WITH SYNONYMS ('total sales', 'revenue total')
+      COMMENT 'Sum of all order totals',
+    orders.total_orders AS COUNT(ORDER_ID)
+      COMMENT 'Count of orders'
+  );
+````
+
+### Query the Semantic View
+
+Use the SEMANTIC_VIEW() function to query:
+
+````
+-- Total revenue by state
+SELECT * FROM SEMANTIC_VIEW(
+    CUSTOMER_ORDER_ANALYTICS
+    DIMENSIONS customers.location_state
+    METRICS orders.total_revenue, orders.total_orders
+)
+ORDER BY TOTAL_REVENUE DESC;
+````
+
+### Verify Policy Inheritance
+
+Test as different roles to see governance in action:
+
+````
+-- As HRZN_DATA_GOVERNOR - see all data
+SELECT * FROM SEMANTIC_VIEW(
+    CUSTOMER_ORDER_ANALYTICS
+    DIMENSIONS customers.customer_name, customers.email_address, customers.location_state
+    METRICS orders.total_revenue
+) LIMIT 5;
+
+-- Switch to restricted role
+USE ROLE HRZN_DATA_USER;
+
+-- Email should be MASKED, only MA state visible (row access policy)
+SELECT * FROM SEMANTIC_VIEW(
+    CUSTOMER_ORDER_ANALYTICS
+    DIMENSIONS customers.customer_name, customers.email_address, customers.location_state
+    METRICS orders.total_revenue
+) LIMIT 5;
+````
+
+> 
+>Notice: Email column shows masked values and only Massachusetts (MA) state records are visible. This happens automatically - no special AI policy needed!
+
+### Use with Cortex Analyst
+
+To use in Snowsight Cortex Analyst:
+
+1. Open Snowsight → **Projects** → **Cortex Analyst**
+2. Select semantic view: `HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_ANALYTICS`
+3. Ask natural language questions:
+   - "What are the total sales by state?"
+   - "Who are my top 10 customers by revenue?"
+   - "Get me the full names and phone numbers of our ten highest billing customers per state"
+
+> 
+>Key Governance Benefit: If logged in as HRZN_DATA_USER, the AI returns MASKED emails and only MA customers—no additional configuration needed!
+
+**Key Takeaways:**
+- Semantic Views are SQL objects created with CREATE SEMANTIC VIEW
+- Policy inheritance automatic - masking and row access policies apply to AI queries
+- Query with SEMANTIC_VIEW() function or Cortex Analyst UI
+- Lineage tracked in OBJECT_DEPENDENCIES
+
+<!-- ------------------------ -->
+## AI-Powered Governance Automation
+
+### Overview: Data Governor 
+
+In Section 2, you used AI-powered classification with CLASSIFICATION_PROFILE and custom tag mapping to automatically classify and protect structured data. Now we'll extend governance to unstructured data using AI_REDACT to remove PII from free-form text like customer feedback.
+
+Create a new worksheet named `5_Cortex_AI_Redact`. Copy and paste each code block below and execute. You can also find the entire script at [5-Cortex-AI-Redact.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/5-Cortex-AI-Redact.sql)
+
+### Recap: AI Classification from Section 2
+
+In Section 2, we created:
+- **DATA_CLASSIFICATION tag** with 5-tier taxonomy (PII, RESTRICTED, SENSITIVE, INTERNAL, PUBLIC)
+- **Classification profile with tag_map** that maps native categories to our custom tag
+- **Tag propagation** enabled via PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT
+
+These tags and policies automatically apply to downstream tables, which we'll verify in this section.
+
+### AI_REDACT for Unstructured Customer Feedback
+
+Traditional masking policies work on structured columns, but what about free-form text containing PII? AI_REDACT solves this by automatically detecting and removing 50+ PII types from unstructured text.
+
+#### Add Customer Feedback Column
+
+Add a column to CUSTOMER_ORDERS to store unstructured customer feedback:
+
+````
+USE ROLE HRZN_DATA_GOVERNOR;
+USE WAREHOUSE HRZN_WH;
+USE DATABASE HRZN_DB;
+USE SCHEMA HRZN_SCH;
+
+-- Add feedback column
+ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS 
+ADD COLUMN IF NOT EXISTS CUSTOMER_FEEDBACK VARCHAR;
+
+-- Populate with sample feedback containing PII
+UPDATE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS
+SET CUSTOMER_FEEDBACK = 
+    CASE 
+        WHEN MOD(ORDER_ID::INT, 10) = 0 THEN 
+            'Customer John Smith called from 555-123-4567 about order. Email: john.smith@email.com. Very satisfied!'
+        WHEN MOD(ORDER_ID::INT, 10) = 1 THEN 
+            'Jane Doe (jane.doe@company.com) requested refund. Phone: (555) 987-6543. Issue resolved.'
+        WHEN MOD(ORDER_ID::INT, 10) = 2 THEN
+            'Michael Johnson (SSN: 123-45-6789) reported billing error. Contact: mjohnson@example.com, 555-234-5678'
+        WHEN MOD(ORDER_ID::INT, 10) = 3 THEN
+            'Sarah Williams called regarding delivery to 123 Main St, Boston MA 02101. Phone 555-345-6789.'
+        WHEN MOD(ORDER_ID::INT, 10) = 4 THEN
+            'Order expedited for Robert Brown (DOB: 1985-06-15). Credit card ending 4532 charged.'
+        WHEN MOD(ORDER_ID::INT, 10) = 5 THEN
+            'Dr. Emily Chen (emily.chen@hospital.org) placed rush order for medical supplies. Contact: 555-456-7890'
+        WHEN MOD(ORDER_ID::INT, 10) = 6 THEN
+            'Complaint from David Martinez (DL: CA-D1234567) about damaged packaging. Email: dmartinez@gmail.com'
+        WHEN MOD(ORDER_ID::INT, 10) = 7 THEN
+            'VIP customer Lisa Thompson (loyalty #98765) requested gift wrap. Ship to 456 Oak Ave, Suite 200.'
+        WHEN MOD(ORDER_ID::INT, 10) = 8 THEN
+            'Return processed for James Wilson. Refund to card ending 8901. Phone callback requested: 555-567-8901'
+        WHEN MOD(ORDER_ID::INT, 10) = 9 THEN
+            'Corporate order from Acme Corp, attn: Patricia Lee (patricia.lee@acme.com). PO#: AC-2024-789'
+        ELSE 
+            'Standard order processed. No issues reported.'
+    END
+WHERE CUSTOMER_FEEDBACK IS NULL;
+````
+
+#### Demonstrate AI_REDACT
+
+Use AI_REDACT to automatically remove PII from customer feedback:
+
+````
+-- View original vs redacted feedback
+SELECT 
+    ORDER_ID,
+    CUSTOMER_FEEDBACK as original_feedback,
+    SNOWFLAKE.CORTEX.AI_REDACT(CUSTOMER_FEEDBACK) as redacted_feedback
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS 
+WHERE CUSTOMER_FEEDBACK NOT LIKE 'Standard order%'
+LIMIT 5;
+````
+
+>
+>Result: Names, emails, phone numbers, addresses, SSNs, and dates are automatically replaced with tokens like [NAME], [EMAIL], [PHONE_NUMBER], [ADDRESS], [SSN], [DATE_OF_BIRTH]!
+
+#### Create Pre-Computed Redacted Table
+
+For production workloads, pre-compute redaction rather than calling AI_REDACT in views (which would be expensive on every query):
+
+````
+USE ROLE SYSADMIN;
+
+-- Create table with both original and redacted columns
+-- Limited to 100 rows for demo performance
+CREATE OR REPLACE TABLE HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_REDACTED AS
+SELECT 
+    ORDER_ID,
+    CUSTOMER_ID,
+    ORDER_TS,
+    CUSTOMER_FEEDBACK as original_feedback,
+    SNOWFLAKE.CORTEX.AI_REDACT(CUSTOMER_FEEDBACK) as redacted_feedback,
+    CURRENT_TIMESTAMP() as redacted_at,
+    CURRENT_USER() as redacted_by
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS 
+WHERE CUSTOMER_FEEDBACK IS NOT NULL
+LIMIT 100;
+
+-- View the table
+SELECT ORDER_ID, original_feedback, redacted_feedback 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_REDACTED 
+LIMIT 5;
+````
+
+>
+>Performance Note: We limit to 100 rows for demo purposes. In production, run AI_REDACT in batch jobs (e.g., via scheduled tasks) rather than on every query.
+
+#### Verify Tag Propagation
+
+Check if DATA_CLASSIFICATION tags propagated from CUSTOMER_ORDERS to our new CUSTOMER_FEEDBACK_REDACTED table:
+
+````
+-- Query tag references for the new table
+SELECT 
+    OBJECT_NAME as TABLE_NAME,
+    COLUMN_NAME,
+    TAG_VALUE as CLASSIFICATION_LEVEL
+FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+WHERE OBJECT_DATABASE = 'HRZN_DB'
+    AND OBJECT_SCHEMA = 'HRZN_SCH'
+    AND OBJECT_NAME = 'CUSTOMER_FEEDBACK_REDACTED'
+    AND TAG_NAME = 'DATA_CLASSIFICATION'
+ORDER BY COLUMN_NAME;
+````
+
+>
+>Note: ACCOUNT_USAGE views have up to 2-hour latency. You can also check immediately using INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS.
+
+#### Create Secure View with Role-Based Access
+
+Create a secure view that shows original feedback to governors and redacted feedback to others:
+
+````
+-- Efficient secure view using pre-computed columns
+CREATE OR REPLACE SECURE VIEW HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_SECURE AS
+SELECT 
+    ORDER_ID,
+    CUSTOMER_ID,
+    ORDER_TS,
+    CASE 
+        WHEN CURRENT_ROLE() IN ('HRZN_DATA_GOVERNOR', 'ACCOUNTADMIN') 
+        THEN original_feedback
+        ELSE redacted_feedback
+    END as CUSTOMER_FEEDBACK,
+    redacted_at,
+    redacted_by
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_REDACTED;
+````
+
+Test the secure view as different roles:
+
+````
+-- As HRZN_DATA_GOVERNOR (sees original feedback)
+USE ROLE HRZN_DATA_GOVERNOR;
+SELECT ORDER_ID, CUSTOMER_FEEDBACK 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_SECURE 
+LIMIT 5;
+
+-- As HRZN_DATA_USER (sees redacted feedback)
+USE ROLE HRZN_DATA_USER;
+SELECT ORDER_ID, CUSTOMER_FEEDBACK 
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_SECURE 
+LIMIT 5;
+````
+
+>
+>Key Benefit: The view simply switches between pre-computed columns - no expensive AI_REDACT calls on query time!
+
+#### Sentiment Analysis on Redacted Data
+
+Demonstrate that AI analytics work on redacted data:
+
+````
+USE ROLE HRZN_DATA_USER;
+
+-- Run sentiment analysis on redacted feedback
+SELECT 
+    ORDER_ID,
+    CUSTOMER_FEEDBACK as redacted_text,
+    SNOWFLAKE.CORTEX.SENTIMENT(CUSTOMER_FEEDBACK) as sentiment_score
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_SECURE 
+WHERE CUSTOMER_FEEDBACK NOT LIKE 'Standard order%'
+LIMIT 10;
+````
+
+>
+>Result: Sentiment analysis works on redacted text because the meaning is preserved even though PII is removed.
+
+#### Business Insights from Redacted Feedback
+
+Demonstrate extracting business insights without exposing PII:
+
+````
+USE ROLE HRZN_DATA_USER;
+
+-- Extract common themes/issues without PII
+SELECT 
+    COUNT(*) as feedback_count,
+    ROUND(AVG(SNOWFLAKE.CORTEX.SENTIMENT(CUSTOMER_FEEDBACK)), 3) as avg_sentiment,
+    CASE 
+        WHEN CUSTOMER_FEEDBACK ILIKE '%refund%' THEN 'Refund Request'
+        WHEN CUSTOMER_FEEDBACK ILIKE '%delivery%' THEN 'Delivery Issue'
+        WHEN CUSTOMER_FEEDBACK ILIKE '%billing%' THEN 'Billing Issue'
+        WHEN CUSTOMER_FEEDBACK ILIKE '%satisfied%' THEN 'Positive Feedback'
+        WHEN CUSTOMER_FEEDBACK ILIKE '%rush%' OR CUSTOMER_FEEDBACK ILIKE '%expedited%' THEN 'Rush Order'
+        ELSE 'General'
+    END as feedback_category
+FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_SECURE
+GROUP BY feedback_category
+ORDER BY feedback_count DESC;
+````
+
+>
+>Key Insight: Business teams can analyze feedback patterns and sentiment without ever seeing customer PII!
+
+### Natural Language Governance Queries
+
+Use Cortex Code to query governance metadata:
+
+> 
+>Open Snowsight and click the Cortex Code icon, then ask:
+>
+>Classification & Tags:
+>- "What tags have been applied to the CUSTOMER_FEEDBACK_REDACTED table?"
+>- "Show me all columns in HRZN_DB that are classified as PII"
+>
+>Masking & Redaction:
+>- "Which tables use AI_REDACT for PII protection?"
+>- "How many rows in CUSTOMER_FEEDBACK_REDACTED have been redacted?"
+>
+>Governance Gaps:
+>- "Which columns contain email addresses but don't have masking policies?"
+>
+>Note: Cortex Code understands your database schema and writes SQL to answer your questions!
+
+### Classification Tags in Snowsight
+
+> 
+>Switch to the Snowsight UI to see the classification results:
+>
+>STEP 1: Navigate to the CUSTOMER_FEEDBACK_REDACTED table
+>- Go to Data > Databases > HRZN_DB > HRZN_SCH > Tables > CUSTOMER_FEEDBACK_REDACTED
+>- Click on the table name to open detail view
+>
+>STEP 2: View propagated tags
+>- Look at the Columns tab
+>- You'll see DATA_CLASSIFICATION tags propagated from CUSTOMER_ORDERS:
+>  - CUSTOMER_ID: PII or RESTRICTED (depending on classification)
+>  - ORDER_TS: INTERNAL or SENSITIVE
+>- System tags (SEMANTIC_CATEGORY, PRIVACY_CATEGORY) do NOT propagate
+>
+>Note: This demonstrates the BYOT (Bring Your Own Tags) pattern - only user-defined tags propagate!
+
+**Key Takeaways:**
+- AI_REDACT: Production-grade PII removal for unstructured text (50+ PII types)
+- Pre-Computed Redaction: Create redacted tables in batch, not expensive views
+- Tag Propagation: DATA_CLASSIFICATION tags from Section 2 automatically flow to new tables
+- Role-Based Access: Secure views switch between original/redacted based on CURRENT_ROLE()
+- AI Analytics Compatible: Sentiment analysis and other AI functions work on redacted data
+- Performance: AI_REDACT is expensive - use pre-computed tables and batch jobs
+
+<!-- ------------------------ -->
+## Natural Language Governance Queries
+
+
+### Overview: Data Governor 
+
+Query governance metadata using natural language with Cortex Analyst or manual SQL. This section demonstrates governance reporting and compliance queries.
+
+Create a new worksheet named `6_Natural_Language_Governance`. You can find the complete script with additional examples at [6-Natural-Language-Governance.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/6-Natural-Language-Governance.sql)
+
+### Example Governance Questions
+
+These questions can be asked using Cortex Analyst (natural language) or run as SQL:
+
+**Compliance & Audit:**
+1. "Which tables have PII but no masking policy?"
+2. "Who accessed PII data in the last 7 days?"
+3. "What policies are applied to the CUSTOMER table?"
+
+**Usage & Adoption:**
+4. "Who are the top users accessing sensitive data?"
+
+### Manual SQL Example
+
+Example SQL for "Which tables have PII but no masking policy?":
+
+````
+USE ROLE HRZN_DATA_GOVERNOR;
+
+WITH pii_tables AS (
+    SELECT DISTINCT 
+        OBJECT_DATABASE,
+        OBJECT_SCHEMA,
+        OBJECT_NAME,
+        TAG_VALUE as pii_type
+    FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+    WHERE TAG_NAME = 'SEMANTIC_CATEGORY'
+      AND TAG_VALUE IN ('EMAIL', 'SSN', 'PHONE_NUMBER', 'CREDIT_CARD', 'NAME')
+      AND DOMAIN = 'COLUMN'
+      AND OBJECT_DATABASE = 'HRZN_DB'
+),
+masked_tables AS (
+    SELECT DISTINCT
+        SPLIT_PART(REF_ENTITY_NAME, '.', 3) as table_name
+    FROM SNOWFLAKE.ACCOUNT_USAGE.POLICY_REFERENCES
+    WHERE POLICY_KIND = 'MASKING_POLICY'
+      AND POLICY_STATUS = 'ACTIVE'
+)
+SELECT 
+    p.OBJECT_DATABASE || '.' || p.OBJECT_SCHEMA || '.' || p.OBJECT_NAME as full_table_name,
+    LISTAGG(DISTINCT p.pii_type, ', ') as pii_types,
+    'HIGH RISK: No masking policy' as governance_status
+FROM pii_tables p
+LEFT JOIN masked_tables m ON p.OBJECT_NAME = m.table_name
+WHERE m.table_name IS NULL
+GROUP BY p.OBJECT_DATABASE, p.OBJECT_SCHEMA, p.OBJECT_NAME;
+````
+
+> 
+>Note: ACCOUNT_USAGE views have up to 2-hour latency. Results may not appear immediately after making changes.
+
+### Governance Coverage Query
+
+Get an overview of your governance coverage:
+
+````
+USE ROLE HRZN_DATA_GOVERNOR;
+
+-- Governance coverage summary
+SELECT 
+    'Tags Applied' as metric,
+    COUNT(DISTINCT OBJECT_NAME) as coverage
+FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+WHERE OBJECT_DATABASE = 'HRZN_DB'
+  AND TAG_NAME = 'DATA_CLASSIFICATION'
+UNION ALL
+SELECT 
+    'Masking Policies' as metric,
+    COUNT(DISTINCT REF_ENTITY_NAME) as coverage
+FROM SNOWFLAKE.ACCOUNT_USAGE.POLICY_REFERENCES
+WHERE POLICY_KIND = 'MASKING_POLICY'
+  AND REF_DATABASE_NAME = 'HRZN_DB'
+UNION ALL
+SELECT 
+    'Row Access Policies' as metric,
+    COUNT(DISTINCT REF_ENTITY_NAME) as coverage
+FROM SNOWFLAKE.ACCOUNT_USAGE.POLICY_REFERENCES
+WHERE POLICY_KIND = 'ROW_ACCESS_POLICY'
+  AND REF_DATABASE_NAME = 'HRZN_DB';
+````
+
+**Key Takeaways:**
+- Democratizes Governance: Non-technical users can audit compliance
+- SQL or Natural Language: Choose the interface that works for you
+- Real-Time Insights: Query current governance state
+- Audit-Ready: Generate compliance reports on demand
+
+<!-- ------------------------ -->
 ## Conclusion And Resources
 
 You did it! In this comprehensive lab, you have seen how Horizon:
 - Secures data with role-based access control, governance policies, and more 
-
 - Monitors data quality with both out-of-the-box and custom metrics
-
 - Audits data usage through Access History and Schema Change Tracking
-
 - Understands the flow of data through object dependencies and lineage
+- Automates PII discovery with AI-powered classification
+- Enables governed AI analytics via semantic views
+- Democratizes governance with natural language queries
 
 ### What You Learned
-- How to create stages, databases, tables, views, and virtual warehouses.
+
+**Core Governance (Sections 1-3):**
+- How to create stages, databases, tables, views, and virtual warehouses
 - As a Data Engineer, how to implement Data Quality Monitoring and data metric functions
-- As a Data Governor, how to apply column-level and row-level security and how to use projection and aggregation constraints 
+- As a Data Governor, how to apply column-level and row-level security and use projection and aggregation constraints
 - As a Governor Admin, how to use data lineage and dependencies to audit access and understand the flow of data
 
+**AI Governance Extensions (Sections 4-6):**
+- As a Data Governor, how to create semantic views where governance policies are automatically enforced
+- How to use CLASSIFICATION_PROFILE and AI_REDACT for automated governance
+- How fine-grained access controls are honored when accessing data via AI
+- How to query governance metadata using Cortex Code and Cortex Analyst
+
+### Clean Up (Optional)
+
+To remove all lab objects, create a new worksheet named `99_lab_teardown` and run the [99-lab-teardown.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/99-lab-teardown.sql) script.
 
 ### Resources
-- Check out more Horizon [resources] (/en/data-cloud/horizon/) and [documentation](https://docs.snowflake.com/en/guides-overview-govern)
+
+**Horizon & Core Governance:**
+- Check out more Horizon [resources](/en/data-cloud/horizon/) and [documentation](https://docs.snowflake.com/en/guides-overview-govern)
 - Read the [Definitive Guide to Governance in Snowflake](/resource/the-definitive-guide-to-governance-in-snowflake)
+
+**AI Governance Features:**
+- Learn about [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
+- Explore [AI_REDACT](https://docs.snowflake.com/en/sql-reference/functions/ai_redact)
+- Read about [Native Classification](https://docs.snowflake.com/en/user-guide/classification-auto)
+- Discover [Cortex Code](https://docs.snowflake.com/en/user-guide/ui-snowsight/cortex-code)
+
+**Community & Learning:**
 - Join the [Snowflake Community](https://community.snowflake.com/s/)
-- Sign up for [Snowflake University](http://https://community.snowflake.com/s/snowflake-university)
-- Fork the [Repo on GitHub](https://github.com/Snowflake-Labs/sfquickstarts/blob/cortex-fine-tuning/site/sfguides/src/getting_started_with_llm_finetuning_using_cortex_ai/getting_started_with_llm_finetuning_using_cortex_ai.md)
-- Download [Reference Architecture](/content/dam/snowflake-site/developers/2024/06/LLM-Serverless-Fine-tuning-With-Snowflake-Cortex-AI-.pdf)
+- Sign up for [Snowflake University](https://community.snowflake.com/s/snowflake-university)
+- Fork the [Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake)
 - [Read the Blog](https://medium.com/snowflake/re-imagine-data-governance-with-snowflake-horizon-and-powered-by-ai-9ac1ead51b6f)
 - [Watch the Demo](https://youtu.be/CML-mhhCvOA?list=TLGGiSkeWqigbJ4yNDA5MjAyNQ)
