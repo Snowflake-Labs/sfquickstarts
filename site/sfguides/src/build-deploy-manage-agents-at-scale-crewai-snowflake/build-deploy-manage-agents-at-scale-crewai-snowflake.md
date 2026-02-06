@@ -91,9 +91,9 @@ The Snowflake-managed MCP server endpoint format is:
 https://<<account_URL>>/api/v2/databases/{database}/schemas/{schema}/mcp-servers/{name}
 ```
 
-(From the Snowflake docs: [Snowflake-managed MCP server](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp).)
+[Snowflake-managed MCP server docs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp).
 
-### Test the managed MCP server with `curl` (PAT auth)
+**Test the managed MCP server with `curl` (PAT auth)**
 
 Snowflake recommends OAuth for production, but a PAT is the quickest way to test. The quickstart shows a working `tools/list` call:
 
@@ -110,9 +110,7 @@ curl -X POST "https://<<YOUR-ORG-YOUR-ACCOUNT>>.snowflakecomputing.com/api/v2/da
   }'
 ```
 
-### Security notes (recommended)
-
-From the Snowflake docs:
+### Security notes
 
 - Prefer **OAuth** over hardcoded tokens for long-lived integrations.
 - If you use a **PAT**, create it with the **least-privileged role**.
@@ -124,7 +122,7 @@ See: [Snowflake-managed MCP server security recommendations](https://docs.snowfl
 
 CrewAI recommends using `uv` plus the `crewai` CLI. Their installation docs are here: [CrewAI Installation](https://docs.crewai.com/en/installation).
 
-### Install the CrewAI CLI (once)
+### Install the CrewAI CLI
 
 ```bash
 uv tool install crewai
@@ -143,7 +141,7 @@ crewai install
 uv add mcp
 ```
 
-## Connect CrewAI to the Snowflake-managed MCP server (recommended)
+## Connect CrewAI to the Snowflake-managed MCP server
 
 CrewAI can connect to **remote HTTPS MCP servers**. We’ll point it at the Snowflake-managed MCP URL and pass the auth header.
 
@@ -215,7 +213,7 @@ if __name__ == "__main__":
     main()
 ```
 
-### Run the Crew
+## Run the Crew
 
 From the root of your `snowflake_mcp_research` project:
 
