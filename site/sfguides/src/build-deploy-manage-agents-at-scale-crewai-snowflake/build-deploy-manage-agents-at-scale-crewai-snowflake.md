@@ -150,14 +150,14 @@ CrewAI can connect to **remote HTTPS MCP servers**. We’ll point it at the Snow
 > **Note**
 > Snowflake’s managed MCP server currently supports **non-streaming** responses. We’ll set `streamable=False`.
 
-### Set environment variables
+**Set environment variables**
 
 ```bash
 export SNOWFLAKE_MCP_URL="https://<<YOUR-ORG-YOUR-ACCOUNT>>.snowflakecomputing.com/api/v2/databases/<<DB>>/schemas/<<SCHEMA>>/mcp-servers/<<MCP_SERVER_NAME>>"
 export SNOWFLAKE_MCP_TOKEN="<<YOUR-PAT-TOKEN>>"
 ```
 
-### Update `src/snowflake_mcp_research/main.py` (managed MCP over HTTPS)
+Update `src/snowflake_mcp_research/main.py` (managed MCP over HTTPS)
 
 Replace the scaffolded `main.py` with:
 
