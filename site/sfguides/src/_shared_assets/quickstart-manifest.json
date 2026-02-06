@@ -250,7 +250,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/ai-powered-predictive-grid-maintenance/",
       "summary": "AI-powered predictive maintenance solution for power grid transformers built on Snowflake",
-      "lastUpdatedAt": "2026-01-26"
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "AI Video Search with Snowflake and Twelve Labs",
@@ -484,12 +484,36 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Best Practices for Creating Semantic Views for Cortex Analyst",
+      "categories": [
+        "quickstart"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/best-practices-semantic-views-cortex-analyst/",
+      "summary": "Learn best practices for designing high-quality semantic views for Cortex Analyst using Snowflake’s AI-assisted “autopilot” workflow.",
+      "lastUpdatedAt": "2026-01-27"
+    },
+    {
       "title": "Best Practices for Building Cortex Agents",
       "categories": [],
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/",
       "summary": "",
       "lastUpdatedAt": "2025-12-11"
+    },
+    {
+      "title": "Better Together: Unleash AI-Powered BI with Snowflake and Amazon Quick",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/business-intelligence",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/better-together-snowflake-sv-amazon-quicksight/",
+      "summary": "This is a Quickstart for building Snowflake and Amazon Quicksight highlight Snowflake Semantic View as part of better together enablement",
+      "lastUpdatedAt": "2026-01-28"
     },
     {
       "title": "Build a Bioinformatics Solubility Dashboard in Snowflake",
@@ -638,7 +662,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-private-custom-api-in-python/",
       "summary": "Use Ockam and Python/Flask to create private Python APIs for Snowflake with VPC connectivity for secure internal application access and integrations.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Build a Streaming Data Pipeine in Python",
@@ -649,7 +673,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-streaming-data-pipeline-in-python/",
       "summary": "Build streaming data pipelines in Python with Rowset API, Snowflake Dynamic Tables, and Streamlit for real-time data ingestion.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Build a Visual Concept/Idea Generator using a Text-to-Image AI Model",
@@ -1255,7 +1279,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/cortex-agent-ipo-research-assistant/",
       "summary": "This is a guide to setup a IPO Research Assistant Cortex Agent.  Tools include AI_EXTRACT over SEC S1 Filings, A Semantic View on company information, Cortex Search over market trend PDFs, and Finnhub API for real-time stock information.",
-      "lastUpdatedAt": "2026-01-06"
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Sentiment Analysis Using Snowflake Cortex AI on Iceberg Tables",
@@ -1696,8 +1720,8 @@
       ],
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/",
-      "summary": "Build open table format data lakes with Apache Iceberg using Snowflake External Volumes, AWS S3 and Glue Data Catalog.",
-      "lastUpdatedAt": "2025-12-19"
+      "summary": "Build open table format data lakes with Apache Iceberg using Snowflake Catalog-Linked Datbases, Vended Credentials, AWS S3, Lake Formation and Glue Data Catalog.",
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Data Modeling With Snowflake + SqlDBM",
@@ -3819,7 +3843,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-the-microsoft-teams-and-365-copilot-cortex-app/",
       "summary": "This is a quickstart showing users how use the Microsoft Teams and M365 Copilot Cortex App",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-30"
     },
     {
       "title": "Getting Started with Time Series Analytics with Pricing Data on Snowflake",
@@ -4226,6 +4250,18 @@
       "url": "https://www.snowflake.com/en/developers/guides/internal-marketplace-intra-org-sharing/",
       "summary": "INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Interoperable Lakehouse with AWS Glue, Snowflake Iceberg Tables, and Snowpark Connect for Apache Spark",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering",
+        "snowflake-site:taxonomy/snowflake-feature/apache-iceberg"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/interoperable-lakehouse-with-aws-glue-snowflake-iceberg-tables-and-snowpark-connect-for-apache-spark/",
+      "summary": "Build an interoperable lakehouse architecture using Apache Iceberg with AWS Glue, Catalog-Linked Databases, and Snowpark Connect for true code portability.",
+      "lastUpdatedAt": "2026-01-29"
     },
     {
       "title": "Intro to Data Engineering using Python in Snowflake",
@@ -4789,6 +4825,23 @@
       "lastUpdatedAt": "2025-12-11"
     },
     {
+      "title": "Orchestrate Your Workflows with UiPath and Snowflake",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/includes/architecture",
+        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
+        "snowflake-site:taxonomy/solution-center/certification/certified-solution",
+        "snowflake-site:taxonomy/product/applications-and-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants",
+        "snowflake-site:taxonomy/snowflake-feature/external-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/orchestrate-your-workflows-with-uipath-and-snowflake/",
+      "summary": "Integration Patterns : UiPath to Snowflake Workflow Orchestration",
+      "lastUpdatedAt": "2026-01-30"
+    },
+    {
       "title": "Building Orchestration Framework for Running Containerized Jobs in Parallel",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4830,6 +4883,23 @@
       "url": "https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/",
       "summary": "Build an interactive Route Optimization Simulator using the OpenRouteService Native App. Deploy AISQL notebooks and a Streamlit app that simulates vehicle routing with real-world POI data from Carto Overture Maps - requires ORS Native App as prerequisite.",
       "lastUpdatedAt": "2026-01-21"
+    },
+    {
+      "title": "Deploy Snowflake Intelligence Routing Agent",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/applications-and-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/native-apps",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark-container-services",
+        "snowflake-site:taxonomy/snowflake-feature/geospatial",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions",
+        "snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/",
+      "summary": "Deploy a Snowflake Intelligence Agent for AI-powered route planning using OpenRouteService. Create a conversational assistant that handles directions, isochrones, and multi-stop delivery optimization - all with natural language location input and Cortex AI geocoding.",
+      "lastUpdatedAt": "2026-01-29"
     },
     {
       "title": "Install OpenRouteService Native App with Cortex Code",
@@ -4903,7 +4973,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/power-apps-snowflake/",
       "summary": "This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake",
-      "lastUpdatedAt": "2026-01-20"
+      "lastUpdatedAt": "2026-01-28"
     },
     {
       "title": "Predict Ad Impressions with ML-Powered Analysis",
@@ -5436,6 +5506,18 @@
       "url": "https://www.snowflake.com/en/developers/guides/snowflake-semantic-view-agentic-analytics/",
       "summary": "Learn how to build business-friendly semantic views over an enterprise data warehouse and enable cross-functional, AI-powered natural language querying using Snowflake Cortex Analyst and Snowflake Intelligence Agents.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Build Semantic Views and Connect to Tableau with Snowflake",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/snowflake-semantic-view-autopilot/",
+      "summary": "Learn how to go from raw campaign data to a fully usable Snowflake Semantic View and seamlessly consume it in Tableau.",
+      "lastUpdatedAt": "2026-01-28"
     },
     {
       "title": "Build Business-Ready Queries with Snowflake Semantic Views",

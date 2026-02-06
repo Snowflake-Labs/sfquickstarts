@@ -5,9 +5,8 @@ on:
   pull_request:
     branches: [ master ]
   schedule:
-    # Run around 23:59 America/Los_Angeles accounting for DST.
-    - cron: "59 06 * * *"  # 23:59 PT during Daylight Time (UTC-7)
-    - cron: "59 07 * * *"  # 23:59 PT during Standard Time (UTC-8)
+    # Daily at 07:59 UTC (commenter: no DST adjustments needed)
+    - cron: "59 07 * * *"
 
 permissions:
   id-token: write
@@ -22,30 +21,16 @@ jobs:
         with:
           fetch-depth: 0 # generator reads git history; pushing needs tags/branches
 
-      - name: Check Pacific time (23:59)
-        id: gate
-        run: |
-          NOW=$(TZ=America/Los_Angeles date +'%H:%M')
-          echo "Now (America/Los_Angeles): $NOW"
-          if [ "$NOW" = "23:59" ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "run=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Set up Python
-        if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
       - name: Generate manifest
-        if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
         run: |
           python3 "scripts/generate_manifest/manifest_generator.py"
 
       - name: Upload manifest as artifact
-        if: steps.gate.outputs.run == 'true' || github.event_name != 'schedule'
         uses: actions/upload-artifact@v4
         with:
           name: quickstart-manifest-${{ github.sha }}
@@ -54,14 +39,14 @@ jobs:
           retention-days: 14
 
       - name: Configure AWS credentials (OIDC)
-        if: steps.gate.outputs.run == 'true' || (github.event_name != 'schedule' && github.ref == 'refs/heads/master')
+        if: github.event_name != 'pull_request'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ vars.AWS_REGION }}
           role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
 
       - name: Upload to S3 (latest and versioned)
-        if: steps.gate.outputs.run == 'true' || (github.event_name != 'schedule' && github.ref == 'refs/heads/master')
+        if: github.event_name != 'pull_request'
         env:
           BUCKET: ${{ vars.MANIFEST_S3_BUCKET }}
           PREFIX: ${{ vars.MANIFEST_S3_PREFIX }}

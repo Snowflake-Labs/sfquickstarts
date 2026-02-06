@@ -1,9 +1,0 @@
-name: REMOVED - Build and upload quickstart manifest (test-only)
-on:
-  workflow_dispatch: {}
-jobs:
-  noop:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Test artifact workflow retired; using S3-only uploads."
-
