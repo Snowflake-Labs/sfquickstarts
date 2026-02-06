@@ -41,7 +41,7 @@ In this Guide, you will build a complete medical image registration system that:
 - Familiarity with Python and deep learning concepts
 - Familiarity with medical imaging (helpful but not required)
 - A Snowflake account with access to Container Runtime and GPU compute pools
-- Go to the [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) sign-up page and register for a free account
+- Go to the <a href="https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides" target="_blank">Snowflake</a> sign-up page and register for a free account
 
 <!-- ------------------------ -->
 ## Architecture Overview
@@ -80,61 +80,45 @@ The MONAI medical image processing solution consists of three notebooks running 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment
 
-In this step, you'll create all the Snowflake objects needed for the MONAI solution.
+In this step, you'll create all the Snowflake objects needed for the MONAI solution. The setup script automatically downloads and configures all notebooks from GitHub!
 
 ### Step 1: Create Database Objects
 
-1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation, or [click here](https://app.snowflake.com/_deeplink/#/workspaces?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
+1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation, or <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
 2. Click `+ Add new` to create a new Workspace
 3. Click `SQL File` to create a new SQL file
-4. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/scripts/setup.sql) and paste it into your SQL file
+4. Copy the setup script from <a href="https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/scripts/setup.sql" target="_blank">setup.sql</a> and paste it into your SQL file
 
-### Step 2: Run Infrastructure Setup (Sections 1-7)
+### Step 2: Run the Setup Script
 
-Run the first part of the setup script to create:
+Run the complete setup script to automatically create:
 - **Role**: `MONAI_DATA_SCIENTIST` with appropriate privileges
 - **Warehouse**: `MONAI_WH` (SMALL size)
 - **Database**: `MONAI_DB` with `UTILS` and `RESULTS` schemas
-- **Stages**: `NOTEBOOK`, `MONAI_MEDICAL_IMAGES_STG`, `RESULTS_STG`
-- **Network Rule + External Access Integration**: For pip install
+- **Stages**: `NOTEBOOK_STG`, `MONAI_MEDICAL_IMAGES_STG`, `RESULTS_STG`
+- **Network Rule + External Access Integration**: For pip install and GitHub access
 - **GPU Compute Pool**: `MONAI_GPU_ML_M_POOL` (GPU_NV_M instances)
+- **Notebooks**: All 3 notebooks downloaded from GitHub and configured automatically
 
-### Step 3: Import Notebooks
+The script creates a `LOAD_NOTEBOOKS_FROM_GITHUB()` procedure that:
+1. Downloads all notebook files from the GitHub repository
+2. Uploads them to the `NOTEBOOK_STG` stage
+3. Creates the notebooks with the correct compute pool and warehouse
+4. Configures external access integration on each notebook
 
-Download each notebook from GitHub:
-- [01_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/notebooks/01_ingest_data.ipynb)
-- [02_model_training.ipynb](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/notebooks/02_model_training.ipynb)
-- [03_model_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/notebooks/03_model_inference.ipynb)
+### Step 3: Verify Notebooks
 
-Then import each notebook into Snowflake:
-
-1. In Snowsight, navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
-2. Click the dropdown arrow on **+ Notebook** and select **Import .ipynb file**
-3. Upload a notebook file and configure:
-   - **Name**: Keep the default (e.g., `01_ingest_data`)
-   - **Notebook location**: `MONAI_DB` / `UTILS`
-   - **Runtime**: Select **Run on container**
-   - **Runtime version**: Select a GPU runtime
-   - **Compute pool**: `MONAI_GPU_ML_M_POOL`
-   - **Query warehouse**: `MONAI_WH`
-4. Click **Create**
-
-![Import Notebook Settings](assets/import_notebook.png)
-
-5. After the notebook opens, click the **⋮** menu → **Notebook settings**
-6. Click the **External access** tab
-7. Toggle **ON** the `MONAI_ALLOW_ALL_EAI` integration and click **Save**
-
-![External Access Settings](assets/external_access_settings.png)
-
-8. Repeat steps 2-7 for all 3 notebooks
+After the setup script completes, navigate to `Projects` → `Notebooks` in Snowsight. You should see three notebooks already created:
+- `MONAI_01_INGEST_DATA`
+- `MONAI_02_MODEL_TRAINING`
+- `MONAI_03_MODEL_INFERENCE`
 
 <!-- ------------------------ -->
 ## Run Data Ingestion Notebook
 
 ### Step 1: Open the Notebook
 
-1. In Snowsight, navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
+1. In Snowsight, navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
 2. Find `MONAI_01_INGEST_DATA` in the `MONAI_DB.UTILS` schema
 3. Click to open the notebook
 
@@ -182,7 +166,7 @@ After successful execution, you should see:
 
 ### Step 1: Open and Run the Training Notebook
 
-1. Navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
+1. Navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
 2. Open your imported `02_model_training` notebook
 3. Click **Start** to initialize Container Runtime
 4. Once active, click **Run all** to execute all cells
@@ -227,7 +211,7 @@ After training completes, the notebook automatically registers the model in the 
 
 ### Step 1: Open and Run the Inference Notebook
 
-1. Navigate to `Projects` → `Notebooks`, or [click here](https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai) to go there directly
+1. Navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
 2. Open your imported `03_model_inference` notebook
 3. Click **Start** to initialize Container Runtime
 4. Once active, click **Run all** to execute all cells
@@ -274,16 +258,16 @@ Congratulations! You have successfully built a distributed medical image registr
 ### Related Resources
 
 **Blog:**
-- [Medium: Distributed Medical Image Processing with MONAI](https://medium.com/@carlos.guzman_87814/ff68e1b09544)
+- <a href="https://medium.com/@carlos.guzman_87814/ff68e1b09544" target="_blank">Medium: Distributed Medical Image Processing with MONAI</a>
 
 **Snowflake Documentation:**
-- [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
-- [Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview)
+- <a href="https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs" target="_blank">Notebooks on Container Runtime</a>
+- <a href="https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview" target="_blank">Model Registry</a>
 
 **MONAI Resources:**
-- [MONAI Documentation](https://monai.readthedocs.io/en/latest/)
-- [MONAI GitHub](https://github.com/Project-MONAI/MONAI)
-- [MONAI Tutorials](https://github.com/Project-MONAI/tutorials)
+- <a href="https://monai.readthedocs.io/en/latest/" target="_blank">MONAI Documentation</a>
+- <a href="https://github.com/Project-MONAI/MONAI" target="_blank">MONAI GitHub</a>
+- <a href="https://github.com/Project-MONAI/tutorials" target="_blank">MONAI Tutorials</a>
 
 **Ray Documentation:**
-- [Ray Train](https://docs.ray.io/en/latest/train/train.html)
+- <a href="https://docs.ray.io/en/latest/train/train.html" target="_blank">Ray Train</a>

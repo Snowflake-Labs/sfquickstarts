@@ -1,6 +1,6 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-deploy-a-fleet-intelligence-solution-for-taxis
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Build a Fleet Intelligence Control Center for taxi operations using OpenRouteService. Deploy a multi-page Streamlit app with real-time driver tracking, route visualization, and H3 heat maps - powered by Snowflake Cortex AI and geospatial analytics.
 environments: web
@@ -41,7 +41,7 @@ This quickstart deploys a multi-page Streamlit application that simulates a taxi
 
 **Required:**
 - OpenRouteService Native App deployed and activated
-- Cortex Code CLI installed and configured
+- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) installed and configured
 - Active Snowflake connection with ACCOUNTADMIN access
 - Overture Maps Places and Addresses datasets from Snowflake Marketplace
 

@@ -1,6 +1,6 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-deploy-snowflake-intelligence-routing-agent
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
 language: en
 summary: Deploy a Snowflake Intelligence Agent for AI-powered route planning using OpenRouteService. Create a conversational assistant that handles directions, isochrones, and multi-stop delivery optimization - all with natural language location input and Cortex AI geocoding.
 environments: web
@@ -41,7 +41,7 @@ This quickstart deploys a **Snowflake Intelligence Agent** that wraps OpenRouteS
 
 **Required:**
 - OpenRouteService Native App deployed and activated
-- Cortex Code CLI installed and configured
+- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) installed and configured
 - Active Snowflake connection with ACCOUNTADMIN access
 - Cortex AI access (claude-sonnet-4-5 model for geocoding)
 

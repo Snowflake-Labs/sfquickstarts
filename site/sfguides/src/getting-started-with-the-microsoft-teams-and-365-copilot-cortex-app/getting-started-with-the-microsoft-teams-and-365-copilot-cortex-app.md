@@ -1,4 +1,4 @@
-author: Matt Marzillo
+author: Matt Marzillo, Mary Law
 id: getting-started-with-the-microsoft-teams-and-365-copilot-cortex-app
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
@@ -9,7 +9,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
 # Getting Started with The Microsoft Teams and M365 Copilot Cortex App
-<!-- ------------------------ -->
+
+
+
 ## Overview 
 
 The Microsoft M365 Copilot and Snowflake Cortex Agents integration simplifies AI-powered data interactions so that both technical and business users can interact with their structured and unstructured data using natural language. Direct access to Cortex Agents from Microsoft M365 Copilot makes it possible to combine powerful generative AI data agents with secure data in Snowflake, unlocking endless business efficiencies for every organization, from faster customer support to optimized supply chain operations.
@@ -158,6 +160,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE sales_conversation_search
   TARGET_LAG = '1 hour'
   AS (
     SELECT
+        conversation_id,
         transcript_text,
         customer_name,
         deal_stage,
@@ -170,19 +173,28 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE sales_conversation_search
 CREATE OR REPLACE STAGE models DIRECTORY = (ENABLE = TRUE);
 ```
 
-Now we will have to set up a semantic model for Cortex Analyst.
+Now we will have to set up a semantic view for Cortex Analyst.
+<br>
+
+[Semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview) is a new Snowflake schema-level object. You can define business metrics and model business entities and their relationships. By adding business meaning to physical data, the semantic view enhances data-driven decisions and provides consistent business definitions across enterprise applications. 
 
 
 Setting up Cortex Analyst
-- Go to **AI * ML** on the side and select **Cortex Analyst**.
+- Go to **AI & ML** on the side and select **Cortex Analyst**.
 - Select the `SALES_INTELLIGENCE.DATA` Database and Schema.
 - Select **Create New** and select **Create new Semantic View**.
  ![](assets/analystui.png)
 
- Select the `MODELS` Stage and name the Analyst Service `SALES_METRICS_MODEL` and select **Next**.
- - Select the `SALES_INTELLIGENCE` database and the `SALES_METRICS` table then select **Next**.
- - Select all of the columns and select **Create and Save**.
-
+ Name the Analyst Service `SALES_METRICS_MODEL` and select **Next**.
+ - We will skip the `Provide context (optional)` so click **Next**
+ - Select the `SALES_INTELLIGENCE` database, `DATA` schema, `SALES_METRICS` table then select **Next**.
+ - Select all of the columns
+ - Check  
+ ☑️ Add sample values to the semantic view  
+ ☑️ Add descriptions to the semantic view
+ -  Select **Create and Save**.
+  ![](assets/createsv.png)
+ 
  This is a VERY simple Analyst service. You can click through the dimensions and see that Cortex used LLMS to write descriptions and synonyms for each of the dimensions. We're going to leave this as-is, but know that you can adjust this as needed to enhance the performance of Cortex Analyst.
  ![](assets/builtanalyst.png)
 
@@ -195,7 +207,7 @@ Setting up Cortex Agent
 
 Let's add the tools and orchestration to the agent
 - Select **Tools** and **Add** by Cortex Analyst.
-- Select the `SALES_INTELLIGENCE.DATA` Database and Schema and Select the `SALES_METRICS_MODEL` and generate a Description with Cortex AI.
+- Select the `SALES_INTELLIGENCE.DATA` Database and Schema and Select the `SALES_METRICS_MODEL` created earlier and generate a Description with Cortex AI.
 - Select **Add**
 ![](assets/analysttoolui.png)
 
@@ -204,24 +216,44 @@ Let's add the tools and orchestration to the agent
 - Enter the name `SALES_CONVERSATION_SEARCH` and enter the description "the search service is for providing information on sales call transcripts".
 - Select `CONVERSATION_ID` as the ID column and `CUSTOMER_NAME` as the Title Column.
 - Select **Add**.
-![](assets/searchtoolui.png)
+![](assets/searchtoolui2.png)
 
 - Select **Orchestration** and leave the model set to **auto**.
 - Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details".
 - Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided".
 - Select **Save**.
 
+> 🧪 Feel free to test the agent created with the following questions:-
+> - what is the largest deal size? 
+> - what is the meeting with TechCorp Inc about and any action item?
+![](assets/testcortexagent.png)
+
 And last we will run this below script to grant the appropriate privileges to the `PUBLIC` role (or whatever role you can use). 
 
+The role you are using must have access to all of the following that the Cortex Agent(s) is/are accessing:
+USAGE on the database(s), Schema(s), Cortex search service(s)
+SELECT on the semantic view(s), table(s), dynamic tables (s), views
+
+Example SQL:
+
 ```sql
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE PUBLIC;
 GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
-GRANT USAGE ON SCHEMA DATA TO ROLE PUBLIC;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE PUBLIC;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
 GRANT SELECT ON SALES_METRICS TO ROLE PUBLIC;
 GRANT SELECT ON SALES_INTELLIGENCE.DATA.SALES_METRICS TO ROLE PUBLIC;
 GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE PUBLIC;
+GRANT SELECT ON ALL SEMANTIC VIEWS IN DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
 GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
+
 ```
+
+>  🛡️ SNOWFLAKE.CORTEX_USER database role is used to grant customers access to Snowflake Cortex features. By default, this role is granted to the `PUBLIC` role. The PUBLIC role is automatically granted to all users and roles, so this allows all users in your account to use Snowflake Cortex LLM functions.
+If you don’t want all users to have this privilege, you can revoke access from the PUBLIC role and grant access to specific roles. For details, see [Cortex LLM Functions required privileges](https://docs.snowflake.com/en/sql-reference/snowflake-db-roles). 
+
+
+
+
 <!-- ------------------------ -->
 ## App Connectivity
 
@@ -232,6 +264,7 @@ Replace <TENANT-ID> with your organization’s tenant identifier:
 ```
 https://login.microsoftonline.com/<TENANT-ID>/adminconsent?client_id=5a840489-78db-4a42-8772-47be9d833efe
 ```
+> Note that `client_id=5a840489-78db-4a42-8772-47be9d833efe` ia also known as the application ID of the application. You can build the same URL to grant tenant-wide admin consent. This is the Snowflake Microsofts application ID. Refer to [Microsoft doc](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/grant-admin-consent?pivots=portal#construct-the-url-for-g[…]nant-wide-admin-consent)
 
 ![](assets/consentone.png)
 
@@ -296,6 +329,8 @@ And you are now ready to go! You can continue asking questions like:
 - How was the call with Securebank?
 - What was the worst customer call we had?
 - Show the deals that are currently pending
+
+![](assets/agent.gif)
 
 The Snowflake Cortex Teams and M365 App now supports the below functionality. Users are encouraged to expand on this use case to explore its complete functionality
 

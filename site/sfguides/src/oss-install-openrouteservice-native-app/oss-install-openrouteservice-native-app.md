@@ -1,6 +1,6 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-install-openrouteservice-native-app
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Install a self-contained OpenRouteService Native App in Snowflake using Cortex Code AI-powered skills. Deploy routing functions (Directions, Optimization, Isochrones) via Snowpark Container Services with no external APIs - customize for any city worldwide.
 environments: web
@@ -46,8 +46,6 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
 
 ### Prerequisites
 
-> **_NOTE:_** Cortex Code is currently in **Private Preview**. Contact your Snowflake account team for access.
-
 **This is what you will need**:
 
 -   **ACCOUNTADMIN** access to your Snowflake account
@@ -58,12 +56,8 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
 
 -   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) - Required to download map files from provider account
 
--   **Cortex Code CLI** installed and configured
-    - Installation: Once you have access, install via the provided instructions
-    - Add to your PATH: `export PATH="$HOME/.local/bin:$PATH"` (add to `~/.zshrc` or `~/.bashrc`)
+-   **[Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)** installed and configured
     - Verify: `cortex --version`
-
-> **_TODO:_** 📝 This section requires update once the official Cortex Code installation method is publicly available. The current instructions are for Private Preview access only.
 
 -   **Container Runtime** - One of the following:
     - [Podman](https://podman.io/) (recommended): `brew install podman` (macOS) 

@@ -361,15 +361,35 @@ snow connection list
 snow connection add
 ```
 
-**3. Launch Cortex Code**
+**3. Register the Project Skills**
 
-Start Cortex Code from the project directory. It will automatically detect the skills in `.cortex/skills/`:
+The repository includes custom skills in `.cortex/skills/`, but they need to be registered before use. Run this command once to add the skills directory:
+
+```bash
+# Register the skills directory (one-time setup)
+cortex skill add .cortex/skills
+
+# Verify the skills were added
+cortex skill list
+```
+
+You should see output like:
+```
+Added skill directory: /path/to/.cortex/skills
+Skills found: telco-agent-builder, telco-agent-uninstall
+```
+
+> **Note**: Skills require a file named `SKILL.md` (uppercase) in each skill subdirectory. The repository is pre-configured with this structure.
+
+**4. Launch Cortex Code**
+
+Start Cortex Code from the project directory:
 
 ```bash
 cortex
 ```
 
-**4. Deploy Using the Skill**
+**5. Deploy Using the Skill**
 
 Once Cortex Code is running, simply ask it to deploy. Use any of these prompts:
 
@@ -381,7 +401,7 @@ Once Cortex Code is running, simply ask it to deploy. Use any of these prompts:
 
 Cortex Code will load the `telco-agent-builder` skill and guide you through each step interactively.
 
-**5. (Optional) Customize Regions Before Deployment**
+**6. (Optional) Customize Regions Before Deployment**
 
 The skill will ask if you want to customize the demo regions. By default, the data uses Malaysian regions (Kuala Lumpur, Selangor, Penang, etc.). 
 
@@ -453,6 +473,29 @@ This will drop the database, warehouse, role, and all related objects.
 - **Progress tracking** - Real-time status updates
 - **Customization** - Easily modify regions, settings, or skip optional steps
 - **Idempotent** - Safe to re-run if interrupted
+
+---
+
+#### Troubleshooting Skills
+
+**Skills not found?** If Cortex Code doesn't recognize the skills, verify they're registered:
+
+```bash
+# Check registered skills
+cortex skill list
+
+# If not listed, add the skills directory
+cortex skill add .cortex/skills
+```
+
+**"No valid skills found" error?** Skills require a specific file structure:
+- Each skill must be in its own subdirectory (e.g., `.cortex/skills/telco-agent-builder/`)
+- The skill file must be named `SKILL.md` (uppercase, not `skill.md` or `<name>.md`)
+
+**To remove a registered skill directory:**
+```bash
+cortex skill remove .cortex/skills
+```
 
 > **Note**: Cortex Code CLI is currently in Private Preview. Contact your Snowflake account team to request access.
 
