@@ -1,4 +1,4 @@
-name: Publish manifest to manifests branch
+name: Publish branch to S3
 
 on:
   workflow_dispatch: {}
@@ -13,7 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  publish-manifest:
+  publish-to-s3:
+    name: Publish branch to S3
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
