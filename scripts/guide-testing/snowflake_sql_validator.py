@@ -368,6 +368,14 @@ class SnowflakeSQLValidator:
         if first_word in ('CASE', 'AVG', 'SUM', 'COUNT', 'MAX', 'MIN', 'SPLIT_PART', 'ORDER', 'GROUP', 'WHERE', 'AND', 'OR'):
             return True, "", True, "Partial SQL expression (not full statement)", False, False
         
+        # Check for Python session.sql() calls in SQL blocks
+        if sql_clean.strip().startswith('session.') or sql_clean.strip().startswith('session ='):
+            return True, "", True, "Python Snowpark code (wrong language tag)", False, False
+        
+        # Check for bracket placeholders like [CONSUMER NAME]
+        if re.search(r'\[[A-Z][A-Z_ ]+\]', sql_clean):
+            return True, "", True, "Bracket placeholder (user replaces)", False, False
+        
         first_word = sql_clean.strip().split()[0].upper() if sql_clean.strip() else ""
         first_two = ' '.join(sql_clean.strip().split()[:2]).upper() if sql_clean.strip() else ""
         

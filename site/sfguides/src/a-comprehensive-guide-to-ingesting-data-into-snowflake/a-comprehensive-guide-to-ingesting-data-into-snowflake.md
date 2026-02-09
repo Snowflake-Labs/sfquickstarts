@@ -119,7 +119,7 @@ import random
 
 from dotenv import load_dotenv
 from faker import Faker
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 load_dotenv()
 fake = Faker()
@@ -136,7 +136,7 @@ def print_lift_ticket():
     lift_ticket = {'txid': str(uuid.uuid4()),
                    'rfid': hex(random.getrandbits(96)),
                    'resort': fake.random_element(elements=resorts),
-                   'purchase_time': datetime.utcnow().isoformat(),
+                   'purchase_time': datetime.now(timezone.utc).isoformat(),
                    'expiration_time': date(2023, 6, 1).isoformat(),
                    'days': fake.random_int(min=1, max=7),
                    'name': fake.name(),
@@ -168,7 +168,7 @@ python ./data_generator.py 1
 
 You should see 1 record written to output.
 
-In order to quickly have data available for the rest of the guide, dump a lot of data to a file for re-use.
+In order to quickly have data available for the rest of the guide, dump a lot of data to a file for reuse.
 
 Run the following in your shell:
 
@@ -235,7 +235,7 @@ Make sure you protect your .env and .p8 file as those are credentials directly t
 
 Snowflake has a [Python connector](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector) which is an easy way to run sql and upload files. One way to get data in would be to do an SQL INSERT statement for each record. While this is a convenient way to insert data, it is not efficient as Snowflake is an OLAP engine and is optimized around writing large batches of data.
 
-Create a table in Snowflake called LIFT_TICKETS_PY_INSERT to recieve this data from the INGEST user.
+Create a table in Snowflake called LIFT_TICKETS_PY_INSERT to receive this data from the INGEST user.
 
 ```sql
 USE ROLE INGEST;
@@ -258,7 +258,7 @@ snowflake.connector.paramstyle='qmark'
 
 
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None
@@ -345,7 +345,7 @@ The total time loading in parallel will be the same or worse than before. This i
 
 * Connectors will switch to creating and uploading a file and doing a COPY into when large batches are set. This is not configurable.
 
-* Many assume adding significant concurrency will support higher throughputs of data. The additional concurrent INSERTS will be blocked by other INSERTS, more frequently when small payloads are inserted. You need to move to bigger batches to get more througput.
+* Many assume adding significant concurrency will support higher throughputs of data. The additional concurrent INSERTS will be blocked by other INSERTS, more frequently when small payloads are inserted. You need to move to bigger batches to get more throughput.
 
 * Review query history to see what the connector is doing.
 
@@ -389,7 +389,7 @@ logging.basicConfig(level=logging.WARN)
 
 
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None
@@ -553,7 +553,7 @@ logging.basicConfig(level=logging.WARN)
 
 
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None
@@ -595,7 +595,7 @@ if __name__ == "__main__":
     snow = connect_snow()
     batch = []
     temp_dir = tempfile.TemporaryDirectory()
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     host = os.getenv("SNOWFLAKE_ACCOUNT") + ".snowflakecomputing.com"
     ingest_manager = SimpleIngestManager(account=os.getenv("SNOWFLAKE_ACCOUNT"),
                                          host=host,
@@ -702,7 +702,7 @@ logging.basicConfig(level=logging.WARN)
 
 
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None

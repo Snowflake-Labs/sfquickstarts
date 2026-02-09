@@ -1,0 +1,77 @@
+[09:56:01] [0:00:00] Command: snowflake_sql_validator.py --batch ../../site/sfguides/src --limit 3 --deep-review --continue --output reports/batch_validation.md --progress-log reports/batch_validation_progress.log
+[09:56:01] [0:00:00] Output: reports/batch_validation.md
+📂 Continuing from previous run (294 guides already processed)
+[09:56:01] [0:00:00] 📂 Continuing from previous run (294 guides already processed)
+  (476 are published)
+[09:56:01] [0:00:00] Found 476 published guides (sorted alphabetically)
+  (182 remaining after skipping processed)
+[09:56:01] [0:00:00] 182 remaining after skipping already processed
+[09:56:01] [0:00:00] Limited to 3 guides
+Found 3 guides to validate
+[09:56:01] [0:00:00] Starting validation of 3 guides
+  (deep review enabled - this will be slower)
+[09:56:01] [0:00:00] Deep review enabled
+
+[1/3][09:56:01] [0:00:00] 
+──────────────────────────────────────────────────
+[09:56:01] [0:00:00] [1/3] Starting: google-analytics-4-template-setup
+
+📖 Validating: google-analytics-4-template-setup.md
+   🔍 Running cortex deep review for outdated content...
+   ✨ Deep review complete
+   📝 Running spell check...
+   📝 Found 10 spelling issues
+   ✅ All 1 validated SQL blocks are valid (0 skipped)
+📊 CSV saved: reports/batch_validation.csv
+📊 Issues CSV saved: reports/batch_validation_issues.csv
+[09:57:09] [0:01:08]   💾 Saved 1 results to: reports/batch_validation.csv
+[09:57:09] [0:01:08] Completed: google-analytics-4-template-setup | SQL blocks: 1 | 🔍 Deep reviewed
+
+[2/3][09:57:09] [0:01:08] 
+──────────────────────────────────────────────────
+[09:57:09] [0:01:08] [2/3] Starting: hands-on-with-apache-iceberg-and-snowflake-open-catalog
+
+📖 Validating: hands-on-with-apache-iceberg-and-snowflake-open-catalog.md
+   ❌ Block 1 (line 265): [Syntax Error] syntax error line 6 at position 30 unexpected ''/polaris/api/catalog''
+   🔍 Running cortex deep review for outdated content...
+   ✨ Deep review complete
+   📝 Running spell check...
+   ❌ 1 SYNTAX ERRORS, ⚠️ 6 context issues, ✅ 0 valid, ⏭️ 2 skipped
+📊 CSV saved: reports/batch_validation.csv
+📊 Issues CSV saved: reports/batch_validation_issues.csv
+[09:58:13] [0:02:12]   💾 Saved 1 results to: reports/batch_validation.csv
+[09:58:13] [0:02:12] Completed: hands-on-with-apache-iceberg-and-snowflake-open-catalog | SQL blocks: 9 | ❌ Syntax errors: 1 | ⚠️ Context errors: 6 | 🔍 Deep reviewed
+
+[3/3][09:58:13] [0:02:12] 
+──────────────────────────────────────────────────
+[09:58:13] [0:02:12] [3/3] Starting: harness-the-power-of-snowflake-with-informatica-idmc
+
+📖 Validating: harness-the-power-of-snowflake-with-informatica-idmc.md
+   No SQL blocks found
+   🧠 Running cortex deep review...
+   ✨ Deep review complete
+   📝 Running spell check...
+   📝 Found 2 spelling issues
+📊 CSV saved: reports/batch_validation.csv
+📊 Issues CSV saved: reports/batch_validation_issues.csv
+[09:59:37] [0:03:35]   💾 Saved 1 results to: reports/batch_validation.csv
+[09:59:37] [0:03:35] Completed: harness-the-power-of-snowflake-with-informatica-idmc | 🔍 Deep reviewed
+
+📊 Report saved: reports/batch_validation.md
+
+==================================================
+VALIDATION COMPLETE
+==================================================
+  Guides: 3
+  ❌ SYNTAX ERRORS: 1 ← Need attention!
+  ⚠️ Context errors: 6 (objects don't exist)
+  🔍 Deep reviews: 3 guides analyzed by cortex
+  ⏱️  Total time: 0:03:35
+  📄 Progress log: reports/batch_validation_progress.log
+[09:59:37] [0:03:35] 
+============================================================
+[09:59:37] [0:03:35] VALIDATION COMPLETE
+[09:59:37] [0:03:35]   Total guides: 3
+[09:59:37] [0:03:35]   Syntax errors found: 1
+[09:59:37] [0:03:35]   Total time: 0:03:35
+[09:59:37] [0:03:35] ============================================================
