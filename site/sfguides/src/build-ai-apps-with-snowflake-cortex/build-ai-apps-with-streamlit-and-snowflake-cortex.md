@@ -1,5 +1,5 @@
 author: Chanin Nantasenamat
-id: build-ai-apps-with-snowflake-cortex
+id: build-ai-apps-with-streamlit-and-snowflake-cortex
 summary: Learn to build AI-powered Streamlit apps using Snowflake Cortex LLM functions, from basic connections to a complete LinkedIn post generator with caching and theming.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Streamlit, Cortex, LLM, AI, Getting Started
 
-# Build AI Apps with Snowflake Cortex
+# Build AI Apps with Streamlit and Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
 
