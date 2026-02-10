@@ -42,6 +42,25 @@ This progression takes you from a simple database connection to a production-rea
 - A Snowflake warehouse with Cortex LLM access
 
 <!-- ------------------------ -->
+## Getting Started
+
+Clone or download the code from the [30 Days of AI GitHub repository](https://github.com/streamlit/30daysofai):
+
+```bash
+git clone https://github.com/streamlit/30DaysOfAI.git
+cd 30DaysOfAI/app
+```
+
+The app code for each day is available at:
+- [Day 1: Snowflake Connection](https://github.com/streamlit/30DaysOfAI/blob/main/app/day1.py)
+- [Day 2: Basic LLM Call](https://github.com/streamlit/30DaysOfAI/blob/main/app/day2.py)
+- [Day 3: Streaming Responses](https://github.com/streamlit/30DaysOfAI/blob/main/app/day3.py)
+- [Day 4: Caching](https://github.com/streamlit/30DaysOfAI/blob/main/app/day4.py)
+- [Day 5: Post Generator](https://github.com/streamlit/30DaysOfAI/blob/main/app/day5.py)
+- [Day 6: Status Indicators](https://github.com/streamlit/30DaysOfAI/blob/main/app/day6.py)
+- [Day 7: Theming & Layout](https://github.com/streamlit/30DaysOfAI/blob/main/app/day7.py)
+
+<!-- ------------------------ -->
 ## Connect to Snowflake
 
 The first step is establishing a connection to Snowflake that works across different environments.
