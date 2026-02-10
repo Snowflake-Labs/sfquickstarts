@@ -66,7 +66,7 @@ st.success(f"Successfully connected! Snowflake Version: {version}")
 
 Once connected, the app displays a success message confirming the Snowflake version:
 
-![Day 1: Snowflake connection success](assets/day1.png)
+![](assets/day1.png)
 
 ### Local Development Setup
 
@@ -120,7 +120,7 @@ if st.button("Generate Response"):
 
 The app provides a simple interface where users can enter prompts and receive LLM-generated responses:
 
-![Day 2: Basic Cortex LLM call](assets/day2.png)
+![](assets/day2.png)
 
 ### Available Models
 
@@ -173,7 +173,7 @@ if st.button("Generate Response"):
 
 Users can select their preferred model and see responses appear progressively:
 
-![Day 3: Streaming LLM responses](assets/day3.png)
+![](assets/day3.png)
 
 ### Direct vs Streaming
 
@@ -234,7 +234,7 @@ if st.button("Submit"):
 
 The app displays the response time, demonstrating dramatically faster results on cached queries:
 
-![Day 4: Cached LLM responses](assets/day4.png)
+![](assets/day4.png)
 
 The first call will take several seconds. Subsequent calls with the same prompt return instantly from cache.
 
@@ -291,7 +291,7 @@ if st.button("Generate Post"):
 
 The LinkedIn Post Generator allows users to customize tone and word count to create tailored social media content:
 
-![Day 5: LinkedIn Post Generator](assets/day5.png)
+![](assets/day5.png)
 
 <!-- ------------------------ -->
 ## Add Status Indicators
@@ -327,7 +327,7 @@ if st.button("Generate Post"):
 
 The status indicator provides real-time feedback as the app processes the request:
 
-![Day 6: Status indicators](assets/day6.png)
+![](assets/day6.png)
 
 <!-- ------------------------ -->
 ## Customize Theming and Layout
@@ -398,7 +398,7 @@ if st.button("Generate Post"):
 
 The final app features a sidebar for controls and a bordered container for the generated output:
 
-![Day 7: Theming and layout](assets/day7.png)
+![](assets/day7.png)
 
 ### Custom Theme Configuration
 
