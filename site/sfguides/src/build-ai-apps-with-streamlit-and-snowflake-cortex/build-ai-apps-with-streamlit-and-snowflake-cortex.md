@@ -301,6 +301,33 @@ Status indicators provide feedback during long-running operations.
 ### Using st.status
 
 ```python
+import streamlit as st
+import json
+from snowflake.snowpark.functions import ai_complete
+
+try:
+    from snowflake.snowpark.context import get_active_session
+    session = get_active_session()
+except:
+    from snowflake.snowpark import Session
+    session = Session.builder.configs(st.secrets["connections"]["snowflake"]).create()
+
+@st.cache_data
+def call_cortex_llm(prompt_text):
+    model = "claude-3-5-sonnet"
+    df = session.range(1).select(
+        ai_complete(model=model, prompt=prompt_text).alias("response")
+    )
+    response_raw = df.collect()[0][0]
+    response_json = json.loads(response_raw)
+    return response_json
+
+st.title(":material/post: LinkedIn Post Generator")
+
+content = st.text_input("Content URL:", "https://docs.snowflake.com/en/user-guide/views-semantic/overview")
+tone = st.selectbox("Tone:", ["Professional", "Casual", "Funny"])
+word_count = st.slider("Approximate word count:", 50, 300, 100)
+
 if st.button("Generate Post"):
     with st.status("Starting engine...", expanded=True) as status:
         st.write(":material/psychology: Thinking: Analyzing constraints and tone...")
