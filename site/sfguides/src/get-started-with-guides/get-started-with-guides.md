@@ -96,7 +96,7 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
 - **categories**: 
   - Select from the complete list of content type categories, categories 1, 2 and 3 and/or industries categories provided.  Please DO NOT create new categories.
 - **status**: 
-  - `Published` - implies the guide is active<br>
+  - `Published` - implies the guide is active. This should be used for all submitted guides. <br>
   - `Archived` - implies the sfguide is out of date and deprecated and no longer available<br>
   - Please note the `hidden` status will no longer be supported. If a content piece is not ready for publication, please keep this in draft form until you are ready to make this live. 
   - `Archived` status wil be assessed on a case by case basis and is preferred that it is avoided to prevent redirect issues.  It is recommended to update existing guides.  Redirects will only be applied where absolutely needed.
