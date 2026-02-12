@@ -80,54 +80,38 @@ The MONAI medical image processing solution consists of three notebooks running 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment
 
-In this step, you'll create all the Snowflake objects needed for the MONAI solution.
+In this step, you'll create all the Snowflake objects needed for the MONAI solution. The setup script automatically downloads and configures all notebooks from GitHub!
 
 ### Step 1: Create Database Objects
 
 1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation, or <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
 2. Click `+ Add new` to create a new Workspace
 3. Click `SQL File` to create a new SQL file
-4. Copy the setup script from <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/distributed-medical-image-processing-with-monai/assets/scripts/setup.sql" target="_blank">setup.sql</a> and paste it into your SQL file
+4. Copy the setup script from <a href="https://github.com/Snowflake-Labs/sfguide-distributed-medical-image-processing-with-monai/blob/main/scripts/setup.sql" target="_blank">setup.sql</a> and paste it into your SQL file
 
-### Step 2: Run Infrastructure Setup (Sections 1-7)
+### Step 2: Run the Setup Script
 
-Run the first part of the setup script to create:
+Run the complete setup script to automatically create:
 - **Role**: `MONAI_DATA_SCIENTIST` with appropriate privileges
 - **Warehouse**: `MONAI_WH` (SMALL size)
 - **Database**: `MONAI_DB` with `UTILS` and `RESULTS` schemas
-- **Stages**: `NOTEBOOK`, `MONAI_MEDICAL_IMAGES_STG`, `RESULTS_STG`
-- **Network Rule + External Access Integration**: For pip install
+- **Stages**: `NOTEBOOK_STG`, `MONAI_MEDICAL_IMAGES_STG`, `RESULTS_STG`
+- **Network Rule + External Access Integration**: For pip install and GitHub access
 - **GPU Compute Pool**: `MONAI_GPU_ML_M_POOL` (GPU_NV_M instances)
+- **Notebooks**: All 3 notebooks downloaded from GitHub and configured automatically
 
-### Step 3: Import Notebooks
+The script creates a `LOAD_NOTEBOOKS_FROM_GITHUB()` procedure that:
+1. Downloads all notebook files from the GitHub repository
+2. Uploads them to the `NOTEBOOK_STG` stage
+3. Creates the notebooks with the correct compute pool and warehouse
+4. Configures external access integration on each notebook
 
-Download each notebook from GitHub:
-- <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/distributed-medical-image-processing-with-monai/assets/notebooks/01_ingest_data.ipynb" target="_blank">01_ingest_data.ipynb</a>
-- <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/distributed-medical-image-processing-with-monai/assets/notebooks/02_model_training.ipynb" target="_blank">02_model_training.ipynb</a>
-- <a href="https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/distributed-medical-image-processing-with-monai/assets/notebooks/03_model_inference.ipynb" target="_blank">03_model_inference.ipynb</a>
+### Step 3: Verify Notebooks
 
-Then import each notebook into Snowflake:
-
-1. In Snowsight, navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
-2. Click the dropdown arrow on **+ Notebook** and select **Import .ipynb file**
-3. Upload a notebook file and configure:
-   - **Name**: Keep the default (e.g., `01_ingest_data`)
-   - **Notebook location**: `MONAI_DB` / `UTILS`
-   - **Runtime**: Select **Run on container**
-   - **Runtime version**: Select a GPU runtime
-   - **Compute pool**: `MONAI_GPU_ML_M_POOL`
-   - **Query warehouse**: `MONAI_WH`
-4. Click **Create**
-
-![Import Notebook Settings](assets/import_notebook.png)
-
-5. After the notebook opens, click the **⋮** menu → **Notebook settings**
-6. Click the **External access** tab
-7. Toggle **ON** the `MONAI_ALLOW_ALL_EAI` integration and click **Save**
-
-![External Access Settings](assets/external_access_settings.png)
-
-8. Repeat steps 2-7 for all 3 notebooks
+After the setup script completes, navigate to `Projects` → `Notebooks` in Snowsight. You should see three notebooks already created:
+- `MONAI_01_INGEST_DATA`
+- `MONAI_02_MODEL_TRAINING`
+- `MONAI_03_MODEL_INFERENCE`
 
 <!-- ------------------------ -->
 ## Run Data Ingestion Notebook
