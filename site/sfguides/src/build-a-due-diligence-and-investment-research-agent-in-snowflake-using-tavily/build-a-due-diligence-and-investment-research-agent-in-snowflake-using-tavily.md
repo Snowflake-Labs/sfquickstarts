@@ -121,3 +121,117 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
 
 7. Launch **Snowflake Intelligence** and verify that the agent has access to both configured tools.
    ![Snowflake Intelligence Tool Image](assets/snowflake_intelligence.png)
+
+## Using Snowflake Intelligence with Tavily Web Search and Cortex Analyst
+
+- You can now interact with Snowflake Intelligence by asking questions and observing how it leverages Tavily’s fast, efficient web search API alongside Cortex Analyst to provide real-time context for your Snowflake data.
+
+### 1) Example 1: Regulatory & Valuation Risk Assessment (Nike)
+
+**User Prompt:**
+
+> “Given Nike's NYSE fundamentals and latest earnings data, are there any recent regulatory investigations, lawsuits, or enforcement actions in the last 30 days that could materially impact valuation?”
+
+📌 *Insert Image Below — Example 1 Chat Screenshot*  
+![Example 1 Output](assets/example1.png)
+
+---
+
+#### What Happens Behind the Scenes
+
+1. **Snowflake Intelligence calls `tavily_web_search` first**
+   - The agent identifies that the question requires recent, time-bound external developments.
+   - It invokes the Tavily Web Search Tool to retrieve regulatory and legal news.
+   - Tavily’s fast and efficient search ensures:
+     - Up-to-date information (last 30 days)
+     - Relevant filtering around investigations and enforcement
+     - Reduced hallucination risk by grounding responses in real web sources
+
+2. **Snowflake Intelligence then calls the Cortex Analyst tool**
+   - The agent generates SQL dynamically to retrieve financial fundamentals.
+   - It queries revenue, net income, and other structured data from your Snowflake database.
+   - The SQL execution establishes the financial baseline.
+
+📌 *Insert Image Below — Reasoning Trace Showing Tavily + Cortex Calls*  
+![Reasoning Trace 1](assets/reasoning_trace1.png)
+
+3. **Synthesis**
+   - External regulatory findings (Tavily)
+   - Structured financial metrics (Cortex Analyst SQL)
+   - Combined valuation-aware reasoning
+
+Without Tavily, the agent would lack fresh regulatory intelligence.  
+Without Cortex Analyst, it could not contextualize events against actual financial scale.
+
+---
+
+### 2) Example 2: Commodity Sensitivity & Market Developments (Exxon Mobil)
+
+**User Prompt:**
+
+> “Based on Exxon Mobil’s fundamentals, analyze its revenue scale and assess whether recent geopolitical or OPEC-related developments could impact forward cash flow.”
+
+📌 *Insert Image Below — Example 2 Chat Screenshot*  
+![Example 2 Output](assets/example2.png)
+
+---
+
+#### Step-by-Step Orchestration
+
+1. **Cortex Analyst Tool is invoked**
+   - The agent dynamically generates SQL to query revenue and net income.
+   - It establishes a financial baseline directly from Snowflake tables.
+   - SQL execution is visible in the reasoning trace.
+
+📌 *Insert Image Below — Reasoning Trace Showing SQL + Tavily Calls*  
+![Reasoning Trace 2](assets/reasoning_trace_2.png)
+
+2. **`tavily_web_search` is triggered**
+   - The agent retrieves recent OPEC decisions and geopolitical developments.
+   - Tavily delivers high-signal, relevant results in real time.
+
+3. **Combined Financial + Market Intelligence**
+   - Financial exposure (from structured data)
+   - Market catalysts (from Tavily search)
+   - Synthesized forward cash flow implications
+
+---
+
+### Why Tavily Strengthens the Financial Agent
+
+Tavily’s fast and efficient search:
+
+- Retrieves high-signal, recent developments
+- Anchors analysis in real-world, time-sensitive events
+- Reduces speculative or generic responses
+- Grounds the Financial Agent’s reasoning with external validation
+
+This transforms Snowflake Intelligence from a SQL-driven assistant into a contextual financial reasoning engine.
+
+---
+
+## Conclusion
+
+Congratulations on completing this exercise!
+
+By integrating Tavily Web Search with Cortex Analyst, Snowflake Intelligence becomes a multi-step reasoning system capable of:
+
+- Generating SQL dynamically through Cortex Analyst
+- Executing structured financial analysis directly in Snowflake
+- Retrieving real-time external intelligence via Tavily
+- Synthesizing both structured and unstructured data into valuation-aware insights
+
+The Financial Agent moves beyond simple querying and becomes a grounded, decision-support system for due diligence and investment research.
+
+---
+
+## What You've Learned
+
+- How Snowflake Intelligence orchestrates both Tavily Web Search and Cortex Analyst tools
+- How Cortex Analyst dynamically generates SQL to query financial tables
+- How Tavily provides real-time, high-quality external intelligence
+- How combining structured financial data with live market signals improves analytical depth
+- How to build a Financial Agent capable of contextual, risk-aware financial reasoning
+
+You have now implemented a Financial Agent that bridges structured Snowflake data with live external intelligence — enabling real-time, grounded financial analysis.
+```
