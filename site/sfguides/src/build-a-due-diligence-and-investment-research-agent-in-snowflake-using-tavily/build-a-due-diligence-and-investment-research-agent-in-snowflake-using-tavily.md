@@ -56,6 +56,8 @@ This Financial Agent can support a variety of investment and corporate analysis 
 
 By combining trusted financial reference data in Snowflake with Tavily’s real-time web intelligence, you reduce blind spots in traditional analysis and enable faster, more informed decision-making across structured and unstructured data sources.
 
+## Setup
+
 ### Configuring the Tavily Web Search API
 
 Follow the steps below to configure Tavily Web Search within Snowflake.
