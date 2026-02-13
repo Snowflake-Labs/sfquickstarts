@@ -132,7 +132,6 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
 
 > “Given Nike's NYSE fundamentals and latest earnings data, are there any recent regulatory investigations, lawsuits, or enforcement actions in the last 30 days that could materially impact valuation?”
 
-📌 *Insert Image Below — Example 1 Chat Screenshot*  
 ![Example 1 Output](assets/example1.png)
 
 ---
@@ -152,7 +151,6 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
    - It queries revenue, net income, and other structured data from your Snowflake database.
    - The SQL execution establishes the financial baseline.
 
-📌 *Insert Image Below — Reasoning Trace Showing Tavily + Cortex Calls*  
 ![Reasoning Trace 1](assets/reasoning_trace1.png)
 
 3. **Synthesis**
@@ -171,7 +169,6 @@ Without Cortex Analyst, it could not contextualize events against actual financi
 
 > “Based on Exxon Mobil’s fundamentals, analyze its revenue scale and assess whether recent geopolitical or OPEC-related developments could impact forward cash flow.”
 
-📌 *Insert Image Below — Example 2 Chat Screenshot*  
 ![Example 2 Output](assets/example2.png)
 
 ---
@@ -183,7 +180,6 @@ Without Cortex Analyst, it could not contextualize events against actual financi
    - It establishes a financial baseline directly from Snowflake tables.
    - SQL execution is visible in the reasoning trace.
 
-📌 *Insert Image Below — Reasoning Trace Showing SQL + Tavily Calls*  
 ![Reasoning Trace 2](assets/reasoning_trace_2.png)
 
 2. **`tavily_web_search` is triggered**
