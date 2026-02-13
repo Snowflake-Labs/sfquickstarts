@@ -66,7 +66,7 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
    - Search for **Tavily**.
    - Select the Tavily listing and follow the prompts to install it in your account.
 
-   ![Tavily SnowFlake Marketplace image](assets/snowflake_tavily_marketplace.png)
+   ![SnowFlake Tavily Marketplace Image](assets/snowflake_tavily_marketplace.png)
 
 2. **Provide Your Tavily API Key**
 
