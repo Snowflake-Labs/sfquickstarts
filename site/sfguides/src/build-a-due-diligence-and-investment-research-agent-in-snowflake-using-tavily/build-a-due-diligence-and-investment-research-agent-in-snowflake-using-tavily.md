@@ -230,4 +230,5 @@ The Financial Agent moves beyond simple querying and becomes a grounded, decisio
 - How to build a Financial Agent capable of contextual, risk-aware financial reasoning
 
 You have now implemented a Financial Agent that bridges structured Snowflake data with live external intelligence — enabling real-time, grounded financial analysis.
-```
+
+## Related Resources
