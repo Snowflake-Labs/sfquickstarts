@@ -86,10 +86,16 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
      ![Tavily API Run](assets/tavily_api_run.png)
    - You should see the query results displayed in the output console, similar to the example shown above. 
 
-4. **Confirm Successful Setup**
+### Load Financial Tables into Snowflake
+- Ensure your account privileges, region, and other required configurations are properly set before proceeding to avoid errors.
+- Run the commands shown in the image below to create your database and schema, and set the appropriate context to ensure everything is configured correctly.
+  <insert_image_here_later>
+- You can verify that your new database and schema are set correctly by checking the context displayed in the top-right corner.
+  <insert_image_here_later>
+- Click the **“+”** icon, then select **Table → From File**.  
+  <insert_image_here_later>
+- After uploading your CSV file, ensure the correct **database** and **schema** are selected. Then click **+ Create New Table** and provide an appropriate table name of your choice.  
+  <insert_image_here_later>
 
-   - If you see search results returned in the output console, the Tavily Web Search API has been successfully configured.
-   - You are now ready to use Tavily as a tool within your Financial Agent.
-
-   <insert_image_here_later>
-
+**Once the table is created, verify that it appears under the selected database and schema before proceeding. You can also preview the data to confirm it has been loaded correctly.**
+<insert_image_here_later>
