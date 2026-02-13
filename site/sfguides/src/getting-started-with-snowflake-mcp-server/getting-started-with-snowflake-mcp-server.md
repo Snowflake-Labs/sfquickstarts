@@ -77,7 +77,11 @@ This tool enables the agent to query structured data in Snowflake by generating 
 * In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a>
 * On the top right, click on **Create new** down arrow and select **Upload your YAML file** 
 * Upload [FINANCIAL_SERVICES_ANALYTICS.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/FINANCIAL_SERVICES_ANALYTICS.yaml) | Select database, schema, and stage: **DASH_MCP_DB.DATA** >> **SEMANTIC_MODELS** 
-* On the top right, click on **Save** 
+* On the top right, click on **Save**
+
+#### Semantic View
+
+* In Snowsight, [create Semantic View](https://docs.snowflake.com/en/user-guide/views-semantic/ui#label-views-semantic-ui-create) based on the YAML file.
 
 <!-- ------------------------ -->
 ## Snowflake MCP Server
@@ -92,17 +96,17 @@ To create the Snowflake MCP server, run the following in the same SQL worksheet.
 create or replace mcp server dash_mcp_server from specification
 $$
 tools:
-  - name: "Finance & Risk Assessment Semantic View"
+  - name: "Finance_and_Risk_Assessment_Semantic_View"
     identifier: "DASH_MCP_DB.DATA.FINANCIAL_SERVICES_ANALYTICS"
     type: "CORTEX_ANALYST_MESSAGE"
     description: "Comprehensive semantic model for financial services analytics, providing unified business definitions and relationships across customer data, transactions, marketing campaigns, support interactions, and risk assessments."
     title: "Financial And Risk Assessment"
-  - name: "Support Tickets Cortex Search"
+  - name: "Support_Tickets_Cortex_Search"
     identifier: "DASH_MCP_DB.DATA.SUPPORT_TICKETS"
     type: "CORTEX_SEARCH_SERVICE_QUERY"
     description: "A tool that performs keyword and vector search over unstructured support tickets data."
     title: "Support Tickets Cortex Search"
-  - name: "SQL Execution Tool"
+  - name: "SQL_Execution_Tool"
     type: "SYSTEM_EXECUTE_SQL"
     description: "A tool to execute SQL queries against the connected Snowflake database."
     title: "SQL Execution Tool"
@@ -285,20 +289,25 @@ To see how you can call agent(s) that you have access to, follow these steps.
 create or replace mcp server dash_mcp_server from specification
 $$
 tools:
-  - name: "Finance & Risk Assessment Semantic View"
+  - name: "Finance_and_Risk_Assessment_Semantic_View"
     identifier: "DASH_MCP_DB.DATA.FINANCIAL_SERVICES_ANALYTICS"
     type: "CORTEX_ANALYST_MESSAGE"
     description: "Comprehensive semantic model for financial services analytics, providing unified business definitions and relationships across customer data, transactions, marketing campaigns, support interactions, and risk assessments."
     title: "Financial And Risk Assessment"
-  - name: "Support Tickets Cortex Search"
+  - name: "Support_Tickets_Cortex_Search"
     identifier: "DASH_MCP_DB.DATA.SUPPORT_TICKETS"
     type: "CORTEX_SEARCH_SERVICE_QUERY"
     description: "A tool that performs keyword and vector search over unstructured support tickets data."
     title: "Support Tickets Cortex Search"
-  - name: "SQL Execution Tool"
+  - name: "SQL_Execution_Tool"
     type: "SYSTEM_EXECUTE_SQL"
-    description: "A tool to execute SQL queries against the connected Snowflake database."
+    description: "A tool to execute SQL queries against the connected Snowflake account."
     title: "SQL Execution Tool"
+  - name: "Snowflake_Documentation_Agent"
+    identifier: "SNOWFLAKE_INTELLIGENCE.AGENTS.SNOWFLAKE_DOCUMENTATION"
+    type: "CORTEX_AGENT_RUN"
+    description: "An agent that performs keyword and vector search over Snowflake Documentation."
+    title: "Snowflake Documentation"
   - name: "Send_Email"
     identifier: "DASH_MCP_DB.DATA.SEND_EMAIL"
     type: "GENERIC"
@@ -319,11 +328,6 @@ tools:
           subject:
             description: "If subject is not provided, use Snowflake Intelligence."
             type: "string"
-  - name: "Snowflake Documentation Agent"
-    identifier: "SNOWFLAKE_INTELLIGENCE.AGENTS.SNOWFLAKE_DOCUMENTATION"
-    type: "CORTEX_AGENT_RUN"
-    description: "An agent that performs keyword and vector search over Snowflake Documentation."
-    title: "Snowflake Documentation"
 $$;
 ```
 
