@@ -63,19 +63,23 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
 1. **Install Tavily from Snowflake Marketplace**
 
    - Navigate to **Snowflake Marketplace**.
-   - Search for **Tavily**.
-   - Select the Tavily listing and follow the prompts to install it in your account.
+   - Search for **Tavily Search API**.
+   - Click on 'Get' and follow the prompts to install it in your account.
 
    ![SnowFlake Tavily Marketplace Image](assets/snowflake_tavily_marketplace.png)
 
 2. **Provide Your Tavily API Key**
 
-   - After installation, open the Tavily application in Snowflake.
-   - When prompted, enter your **Tavily API key** to enable real-time search functionality.
-   - If you do not have an API key, you can create one at:  
-     https://tavily.com/
+   - After installation, click on 'Open'
+     ![Tavily Search Open](assets/tavily_search_open.png)
+     
+   - When prompted, enter your **Tavily API key** to enable real-time search functionality (If you do not have an API key, you can create one at:  
+     https://tavily.com/).
+     ![Tavily API Config](assets/tavily_api_config.png)
 
-   <insert_multiple_images_here_later>
+   - External API access must be enabled in the API configuration settings to allow outbound calls (You should find it below the API config field).
+
+ 
 
 3. **Validate the Configuration**
 
