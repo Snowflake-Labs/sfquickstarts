@@ -78,14 +78,13 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
 
    - External API access must be enabled in the API configuration settings to allow outbound calls (You should find it below the API config field).
 
- 
-
 3. **Validate the Configuration**
 
-   - Once the API key is configured, use the built-in test interface to execute a sample search query.
-   - This verifies that Snowflake can successfully communicate with Tavily’s Web Search API.
-
-   <Insert_image_here_later>
+   - Once the API key is configured, click on 'Open Worksheet'.
+     ![Tavily Open Worksheet](assets/tavily_open_worksheet.png)
+   - Then run the default query by selecting your appropriate warehouse and ensuring the Database is set to TAVILY_SEARCH_API and the Schema is set to TAVILY_SCHEMA, as shown below.
+     ![Tavily API Run](assets/tavily_api_run.png)
+   - You should see the query results displayed in the output console, similar to the example shown above. 
 
 4. **Confirm Successful Setup**
 
