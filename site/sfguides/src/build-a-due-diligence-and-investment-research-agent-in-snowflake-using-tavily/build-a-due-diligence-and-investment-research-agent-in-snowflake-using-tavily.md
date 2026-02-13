@@ -110,13 +110,14 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
 2. Click **Create Agent**, then provide a name, description, and relevant example questions for your agent.  
    ![Create Agent Image](assets/create_agent.png)
 3. Navigate to the **Tools** tab and add the **Cortex Analyst** tool.  
-   ![Create Tool Image](assets/create_tool.png)  
+   ![Create Tool Image](assets/create_tool.png)
+   Add the Cortex Analyst Tool  
    ![Cortex Analyst Tool Creation Image](assets/cortex_analyst_tool_creation.png)
 
-4. Create a new custom tool for the **Tavily Search API** and configure its required parameters.  
+5. Create a new custom tool for the **Tavily Search API** and configure its required parameters.  
    ![Tavily Search tool Creation](assets/tavily_search_tool_creation.png)
 
-5. Click **Save Updates** to apply the updates.
+6. Click **Save Updates** to apply the updates.
 
-6. Launch **Snowflake Intelligence** and verify that the agent has access to both configured tools.
-   ![Snowflake Intelligence Tool Image](assets/snowflake_intelligence_tool.png)
+7. Launch **Snowflake Intelligence** and verify that the agent has access to both configured tools.
+   ![Snowflake Intelligence Tool Image](assets/snowflake_intelligence.png)
