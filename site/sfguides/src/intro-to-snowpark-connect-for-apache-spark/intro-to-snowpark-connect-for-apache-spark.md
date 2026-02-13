@@ -8,7 +8,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Comprehensive Guide to Snowpark Connect for Apache Spark
+# Comprehensive Guide to Snowpark Connect for Apache Spark™
 
 <!-- ------------------------ -->
 ## Overview
@@ -68,7 +68,7 @@ A production-ready menu analytics pipeline for Tasty Bytes (a fictitious global 
 - Basic familiarity with Python and PySpark concepts
 
 <!-- ------------------------ -->
-## Pipeline Overview
+### Pipeline Overview
 
 The demo pipeline follows these eight steps from setup to summary:
 
@@ -319,7 +319,7 @@ print(f"✅ Data ingestion complete: {metrics.rows_ingested:,} rows loaded into 
 ```
 
 <!-- ------------------------ -->
-## Data Ingestion Methods Reference
+### Data Ingestion Methods Reference
 
 Beyond the pipeline example above, here are additional ways to load data into Spark DataFrames.
 
@@ -556,7 +556,7 @@ print(f"✅ Validation complete: {metrics.rows_after_validation:,} rows passed a
 ```
 
 <!-- ------------------------ -->
-## Feature Support Matrix
+### Feature Support Matrix
 
 Understanding what PySpark features are supported helps you write efficient code.
 
@@ -734,7 +734,7 @@ df_transformed.select(
 ```
 
 <!-- ------------------------ -->
-## Transformation API Reference
+### Transformation API Reference
 
 All transformations push down to Snowflake SQL - no data leaves the warehouse until you explicitly collect results.
 
@@ -1101,7 +1101,7 @@ print(f"✅ Write complete: {metrics.rows_written:,} rows written to {config.out
 ```
 
 <!-- ------------------------ -->
-## Writing Data Reference
+### Writing Data Reference
 
 Write transformed data back to Snowflake tables, stages, or cloud storage.
 
@@ -1165,7 +1165,7 @@ df.write.mode("overwrite").parquet("wasbs://container@account.blob.core.windows.
 ```
 
 <!-- ------------------------ -->
-## Performance and Compression
+### Performance and Compression
 
 Optimize storage and query performance with partitioning and compression strategies.
 
@@ -1279,7 +1279,7 @@ cleanup_and_summarize(df_transformed, metrics)
 ```
 
 <!-- ------------------------ -->
-## Best Practices
+### Best Practices
 
 Follow these best practices to get optimal performance from Snowpark Connect.
 
@@ -1314,7 +1314,7 @@ Follow these best practices to get optimal performance from Snowpark Connect.
 ✅ Row counts and business metrics tracked
 
 <!-- ------------------------ -->
-## Conclusion And Resources
+### Conclusion And Resources
 
 Congratulations! You have successfully completed this comprehensive guide to Snowpark Connect for Apache Spark.
 

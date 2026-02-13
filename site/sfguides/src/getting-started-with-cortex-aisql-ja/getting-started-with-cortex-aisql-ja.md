@@ -9,7 +9,7 @@ authors: Sho Tanaka, Dash Desai
 
 
 
-# はじめての Cortex AI 関数（日本語版）
+# はじめての Cortex AI 関数
 <!-- ------------------------ -->
 
 ## 概要
@@ -66,17 +66,17 @@ Cortex AI 関数の強力なオペレーターを使用して、自然言語で 
 ## セットアップ
 
 
-**ステップ 1.** Snowsight で[SQLワークシートを作成](https://docs.snowflake.com/ja/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg%2C+THrZMtDg&_fsi=THrZMtDg%2C+THrZMtDg#create-worksheets-from-a-sql-file)し、[setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/setup.sql)を開いて、すべてのステートメントを上から順に実行します。
+**ステップ 1.** Snowsight で[SQLワークシートを作成](https://docs.snowflake.com/ja/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg%2C+THrZMtDg&_fsi=THrZMtDg%2C+THrZMtDg#create-worksheets-from-a-sql-file)し、[setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/blob/main/setup.sql)を開いて、すべてのステートメントを上から順に実行します。
 
-**ステップ 2.** サンプルの[画像ファイル](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/tree/main/data/images)をダウンロードし、**Snowsight >> Data >> Add Data >> Load files into a Stage**を使用して、ステップ1で作成した`DASH_DB.DASH_SCHEMA.DASH_IMAGE_FILES`ステージにアップロードします。
+**ステップ 2.** サンプルの[画像ファイル](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/tree/main/data/images)をダウンロードし、**Snowsight >> Data >> Add Data >> Load files into a Stage**を使用して、ステップ1で作成した`DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.QS_IMAGE_FILES`ステージにアップロードします。
 
-**ステップ 3.** サンプルの[音声ファイル](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/tree/main/data/audio)をダウンロードし、**Snowsight >> Data >> Add Data >> Load files into a Stage**を使用して、ステップ1で作成した`DASH_DB.DASH_SCHEMA.DASH_AUDIO_FILES`ステージにアップロードします。
+**ステップ 3.** サンプルの[音声ファイル](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/tree/main/data/audio)をダウンロードし、**Snowsight >> Data >> Add Data >> Load files into a Stage**を使用して、ステップ1で作成した`DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.QS_AUDIO_FILES`ステージにアップロードします。
 
-**ステップ 4.** Snowsight で[SQLワークシートを作成](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file)し、[images.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/images.sql)を開いて、すべてのステートメントを上から順に実行してIMAGESテーブルを作成します。
+**ステップ 4.** Snowsight で[SQLワークシートを作成](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file)し、[images.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/blob/main/images.sql)を開いて、すべてのステートメントを上から順に実行してIMAGESテーブルを作成します。
 
-**ステップ 5.** Snowsight で[SQLワークシートを作成](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file)し、[audio.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/audio.sql)を開いて、すべてのステートメントを上から順に実行してVOICEMAILSテーブルを作成します。
+**ステップ 5.** Snowsight で[SQLワークシートを作成](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file)し、[audio.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/blob/main/audio.sql)を開いて、すべてのステートメントを上から順に実行してVOICEMAILSテーブルを作成します。
 
-**ステップ 6.** [cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions/blob/dd715f1e87644f41ca0a0fa8a8621f2b66a926ba/CORTEX_AI_FUNCTIONS.ipynb)をクリックして、GitHubからNotebookをダウンロードします。（注意：右クリックでダウンロードしないでください。）
+**ステップ 6.** [cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/blob/main/CORTEX_AI_FUNCTIONS.ipynb)をクリックして、GitHubからNotebookをダウンロードします。（注意：右クリックでダウンロードしないでください。）
 
 **ステップ 7.** Snowsightで：
 
@@ -84,9 +84,9 @@ Cortex AI 関数の強力なオペレーターを使用して、自然言語で 
 * 右上の**Notebook**の下矢印をクリックし、ドロップダウンメニューから**Import .ipynb file**を選択
 * 上のステップでダウンロードした**cortex_ai_functions.ipynb**ファイルを選択
 * Create Notebookポップアップで
-    * Notebook locationには`DASH_DB`と`DASH_SCHEMA`を選択
-    * Python environmentには`Run on warehouse`を選択
-    * Query warehouseには`DASH_WH_S`を選択
+    * Notebook locationには`DB_QS_CORTEX_AI_FUNCTIONS`と`SCHEMA_QS_CORTEX_AI_FUNCTIONS`を選択
+    * Python environmentには`ウェアハウスで実行`を選択
+    * Query warehouseには`WH_QS_CORTEX_AI_FUNCTIONS`を選択
     * Notebook warehouseにはデフォルトの`SYSTEM$STREAMLIT_NOTEBOOK_WH`を選択
     * **Create**ボタンをクリック
 
@@ -104,7 +104,7 @@ Cortex AI 関数の強力なオペレーターを使用して、自然言語で 
 
 > 前提条件：**セットアップ**に記載されているステップが正常に完了していること。
 
-以下は、ダウンロードしてSnowflakeアカウントにインポートした[cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions/blob/dd715f1e87644f41ca0a0fa8a8621f2b66a926ba/CORTEX_AI_FUNCTIONS.ipynb) Notebookのコードウォークスルーです。
+以下は、ダウンロードしてSnowflakeアカウントにインポートした[cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/blob/main/CORTEX_AI_FUNCTIONS.ipynb) Notebookのコードウォークスルーです。
 
 ステータスが**Starting**から**Active**に変わったら、すべてのセルを上から順に実行します。
 
@@ -145,14 +145,14 @@ JOIN ... ON [AI_FILTER()](https://docs.snowflake.com/en/sql-reference/functions/
 **ステップ 1.** SQL ワークシートで、以下のステートメントを実行して、サンプル Python ファイルを保存するためのSnowflake マネージド内部ステージを作成します。
 
 ```sql
- create or replace stage DASH_DB.DASH_SCHEMA.DASH_PY_FILES 
+ create or replace stage DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.PY_FILES 
     encryption = (TYPE = 'SNOWFLAKE_SSE') 
     directory = ( ENABLE = true );
 ```
 
-**ステップ 2.** [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage)を使用して、[snowbooks_extras.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/snowbooks_extras.py)を**DASH_DB.DASH_SCHEMA.DASH_PY_FILES**ステージにアップロードします。
+**ステップ 2.** [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage)を使用して、[snowbooks_extras.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/blob/main/snowbooks_extras.py)を**DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.PY_FILES**ステージにアップロードします。
 
-**ステップ 3.** 既存の**cortex_ai_functions.ipynb** Notebook を再度開き、右上の**Packages** >> **State Packages**をクリックして、**@DASH_DB.DASH_SCHEMA.DASH_PY_FILES/snowbooks_extras.py**を入力し、**Import**をクリックします。
+**ステップ 3.** 既存の**cortex_ai_functions.ipynb** Notebook を再度開き、右上の**Packages** >> **State Packages**をクリックして、**@DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.PY_FILES/snowbooks_extras.py**を入力し、**Import**をクリックします。
 
 ![Add package](assets/add_package.png)
 
@@ -193,7 +193,7 @@ Cortex AI 関数の強力なオペレーターを使用して、自然言語で 
 
 ### 関連リソース
 
-- [GitHubリポジトリ](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions)
+- [GitHubリポジトリ](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja)
 - [Cortex AI 関数ドキュメント](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
 - [リファレンスアーキテクチャをダウンロード](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-aisql/img/f65e99c9c8dbf752.png?_ga=2.50488033.970314110.1758562613-1806211272.1741193538&_gac=1.112796406.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
 - [ブログを読む](/en/blog/ai-sql-query-language/)

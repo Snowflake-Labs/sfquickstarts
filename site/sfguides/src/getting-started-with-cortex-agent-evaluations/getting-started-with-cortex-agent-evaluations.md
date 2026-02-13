@@ -105,7 +105,7 @@ The setup script creates a new role called `AGENT_EVAL_ROLE` with all the necess
 | Permission Type | Description |
 |-----------------|-------------|
 | Database/Schema Usage | Access to the `MARKETING_CAMPAIGNS_DB` database and `AGENTS` schema |
-| Database Roles | `SNOWFLAKE.CORTEX_USER` for Cortex features and `SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP` for accessing agent traces |
+| Database Roles | `SNOWFLAKE.CORTEX_USER` for Cortex features |
 | Dataset Creation | Ability to create datasets, file formats, tables, and stages |
 | Task Management | Create and execute tasks for scheduled evaluations |
 | Agent Monitoring | Monitor permissions on agents in the schema |

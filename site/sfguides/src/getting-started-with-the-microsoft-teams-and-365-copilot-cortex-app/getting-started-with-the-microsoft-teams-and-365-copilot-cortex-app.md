@@ -230,15 +230,30 @@ Let's add the tools and orchestration to the agent
 
 And last we will run this below script to grant the appropriate privileges to the `PUBLIC` role (or whatever role you can use). 
 
+The role you are using must have access to all of the following that the Cortex Agent(s) is/are accessing:
+USAGE on the database(s), Schema(s), Cortex search service(s)
+SELECT on the semantic view(s), table(s), dynamic tables (s), views
+
+Example SQL:
+
 ```sql
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE PUBLIC;
 GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
-GRANT USAGE ON SCHEMA DATA TO ROLE PUBLIC;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE PUBLIC;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
 GRANT SELECT ON SALES_METRICS TO ROLE PUBLIC;
 GRANT SELECT ON SALES_INTELLIGENCE.DATA.SALES_METRICS TO ROLE PUBLIC;
 GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE PUBLIC;
+GRANT SELECT ON ALL SEMANTIC VIEWS IN DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
 GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
+
 ```
+
+>  🛡️ SNOWFLAKE.CORTEX_USER database role is used to grant customers access to Snowflake Cortex features. By default, this role is granted to the `PUBLIC` role. The PUBLIC role is automatically granted to all users and roles, so this allows all users in your account to use Snowflake Cortex LLM functions.
+If you don’t want all users to have this privilege, you can revoke access from the PUBLIC role and grant access to specific roles. For details, see [Cortex LLM Functions required privileges](https://docs.snowflake.com/en/sql-reference/snowflake-db-roles). 
+
+
+
+
 <!-- ------------------------ -->
 ## App Connectivity
 
