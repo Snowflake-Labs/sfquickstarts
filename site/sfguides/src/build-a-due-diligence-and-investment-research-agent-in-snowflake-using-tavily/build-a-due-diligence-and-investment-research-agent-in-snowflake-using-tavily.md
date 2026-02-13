@@ -89,13 +89,13 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
 ### Load Financial Tables into Snowflake
 - Ensure your account privileges, region, and other required configurations are properly set before proceeding to avoid errors.
 - Run the commands shown in the image below to create your database and schema, and set the appropriate context to ensure everything is configured correctly.
-  <insert_image_here_later>
+  ![Create Database Schema](assets/create_database_schema.png)
 - You can verify that your new database and schema are set correctly by checking the context displayed in the top-right corner.
-  <insert_image_here_later>
+  ![Confirm Database Schema](assets/confirm_database_schema.png)
 - Click the **“+”** icon, then select **Table → From File**.  
-  <insert_image_here_later>
+  ![Create Table from File](assets/create_table_from_file.png)
 - After uploading your CSV file, ensure the correct **database** and **schema** are selected. Then click **+ Create New Table** and provide an appropriate table name of your choice.  
-  <insert_image_here_later>
+  ![upload CSV File](assets/upload_csv_file.png)
 
 **Once the table is created, verify that it appears under the selected database and schema before proceeding. You can also preview the data to confirm it has been loaded correctly.**
-<insert_image_here_later>
+![Database Explorer](assets/database_explorer.png)
