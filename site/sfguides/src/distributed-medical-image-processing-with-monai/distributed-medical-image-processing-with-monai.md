@@ -1,6 +1,6 @@
 author: Carlos Guzman, Jeevan Rag, Joviane Bellegarde
 id: distributed-medical-image-processing-with-monai
-summary: Build a distributed medical image registration pipeline using MONAI on Snowflake's Container Runtime with GPU acceleration
+summary: Build a distributed medical image registration pipeline using MONAI on Snowflake Container Services with GPU acceleration
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 environments: web
 language: en
@@ -15,7 +15,9 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-distributed-medical-im
 
 ## Overview
 
-Medical image registration is a critical task in healthcare AI, enabling the alignment of CT scans taken at different times or breathing phases. This guide demonstrates how to build a production-ready distributed training and inference pipeline using **MONAI** (Medical Open Network for AI) on **Snowflake's Container Runtime with GPU acceleration**.
+
+
+Medical image registration is a critical task in healthcare AI, enabling the alignment of CT scans taken at different times or breathing phases. This guide demonstrates how to build a production-ready distributed training and inference pipeline using **MONAI** (Medical Open Network for AI) on **Snowflake Container Services with GPU acceleration**. 
 
 In this Guide, you will build a complete medical image registration system that:
 - Downloads and processes lung CT scans from public datasets
@@ -95,7 +97,7 @@ Run the complete setup script to automatically create:
 - **Role**: `SF_CLINICAL_DATA_SCIENTIST` with appropriate privileges
 - **Warehouse**: `SF_CLINICAL_WH` (SMALL size)
 - **Database**: `SF_CLINICAL_DB` with `UTILS` and `RESULTS` schemas
-- **Stages**: `NOTEBOOK_STG`, `MONAI_MEDICAL_IMAGES_STG`, `RESULTS_STG`
+- **Stages**: `NOTEBOOK_STG`, `SF_CLINICAL_MEDICAL_IMAGES_STG`, `RESULTS_STG`
 - **Network Rule + External Access Integration**: For pip install and GitHub access
 - **GPU Compute Pool**: `SF_CLINICAL_GPU_ML_M_POOL` (GPU_NV_M instances)
 - **Notebooks**: All 3 notebooks downloaded from GitHub and configured automatically
@@ -162,6 +164,8 @@ After successful execution, you should see:
 <!-- ------------------------ -->
 ## Run Model Training Notebook
 
+![slider](assets/slider.png) 
+
 ### Step 1: Open the Training Notebook
 
 1. Navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
@@ -171,21 +175,27 @@ After successful execution, you should see:
 ### Step 2: Install Dependencies and Restart Kernel
 
 1. Run the **install_ml_packages** cell (`!pip install snowflake-ml-python --upgrade nibabel monai`)
-2. After packages install, click **Session → Restart Session** to restart the kernel
-3. Run the remaining cells sequentially
+2. A "Kernel restart may be needed" message appears with a **Show me how** button - click it
+3. A dropdown menu opens from the top (next to the **Active** button)
+4. Click **Restart kernel** to load the new packages
 
-### Step 3: Understand the Training Pipeline
+### Step 3: Run Remaining Cells
+
+After the kernel restarts:
+
+1. Click **Run all** at the top of the notebook to execute all cells
+
+### Step 4: Understand the Training Pipeline
 
 The notebook executes these key steps:
 
-1. **Ray Cluster Setup**: Initializes distributed computing with 4 worker nodes
-2. **Dependency Installation**: Installs MONAI, PyTorch, nibabel on all nodes
-3. **Data Loading**: Reads paired CT scan paths from stages
-4. **Model Definition**: Creates LocalNet registration network
-5. **Training Loop**: Trains with Mutual Information + Bending Energy loss
-6. **Model Registry**: Saves best model to Snowflake Model Registry
+1. **ML Jobs Setup**: Configures Snowflake ML Jobs for GPU training
+2. **Data Loading**: Reads paired CT scan paths from stages
+3. **Model Definition**: Creates LocalNet registration network
+4. **Training Loop**: Trains with Mutual Information + Bending Energy loss
+5. **Model Registry**: Saves best model to Snowflake Model Registry
 
-### Step 4: Monitor Training Progress
+### Step 5: Monitor Training Progress
 
 The training loop displays:
 - Epoch number and total loss
@@ -195,13 +205,11 @@ The training loop displays:
 
 The notebook also includes interactive CT scan visualization to inspect the training data.
 
-![CT Scan Slider](assets/02_ct_slider.png)
-
-### Step 5: Verify Model Registration
+### Step 6: Verify Model Registration
 
 After training completes, the notebook automatically registers the model in the Snowflake Model Registry. You should see `LUNG_CT_REGISTRATION` with version `v1` in the output.
 
-### Step 6: Exit and Proceed to Next Notebook
+### Step 7: Exit and Proceed to Next Notebook
 
 1. Click the **←** back arrow in the top-left corner
 2. In the "End session?" dialog, click **End session**
@@ -219,10 +227,17 @@ After training completes, the notebook automatically registers the model in the 
 ### Step 2: Install Dependencies and Restart Kernel
 
 1. Run the **install_ml_packages** cell (`!pip install snowflake-ml-python --upgrade`)
-2. After packages install, click **Session → Restart Session** to restart the kernel
-3. Continue running the remaining cells
+2. A "Kernel restart may be needed" message appears with a **Show me how** button - click it
+3. A dropdown menu opens from the top (next to the **Active** button)
+4. Click **Restart kernel** to load the new packages
 
-### Step 3: Review Inference Results
+### Step 3: Run Remaining Cells
+
+After the kernel restarts:
+
+1. Click **Run all** at the top of the notebook to execute all cells
+
+### Step 4: Review Inference Results
 
 The notebook:
 
