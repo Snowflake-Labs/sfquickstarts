@@ -73,8 +73,7 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
    - After installation, click on 'Open'
      ![Tavily Search Open](assets/tavily_search_open.png)
      
-   - When prompted, enter your **Tavily API key** to enable real-time search functionality (If you do not have an API key, you can create one at:  
-     https://tavily.com/).
+   - When prompted, enter your **Tavily API key** to enable real-time search functionality (If you do not have an API key, you can create one at: https://tavily.com/).
      ![Tavily API Config](assets/tavily_api_config.png)
 
    - External API access must be enabled in the API configuration settings to allow outbound calls (You should find it below the API config field).
