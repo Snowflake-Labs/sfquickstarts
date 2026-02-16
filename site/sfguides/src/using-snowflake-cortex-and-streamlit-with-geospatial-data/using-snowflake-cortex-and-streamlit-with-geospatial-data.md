@@ -10,7 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Using Snowflake Cortex And Streamlit With Geospatial Data
 <!-- ------------------------ -->
 ## Overview 
-
+Test Changes
 Analyzing Location specific data in order to make decisions often requires 'niche' techniques which are often worked on by 'geography' experts.   In snowflake, everyone can be an expert in any location in which they need to understand - whether it's points of interest, transport links or government boundaries - all is feasible using standard functionality available within Snowflake.  
 
 Already, there are so many location specific datasets available within the **Snowflake Marketplace** which significantly reduces data ingestion and engineering time.  Getting access to these datasets are as simple as **Get Data**, where you will enjoy leveraging location specific features using either SQL Queries or Snowpark Dataframes.  And these result sets are then rendered easily using **Streamlit in Snowflake** dashboards.
