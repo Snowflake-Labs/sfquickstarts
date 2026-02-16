@@ -127,7 +127,7 @@ After executing these statements, your Snowflake environment will contain a samp
 
 **Duration: 10 minutes**
 
-Mendix provides a detailed Quickstart on [Building a Responsive Web App](https://docs.mendix.com/QuickStarts/responsive-web-app/). If you are new to Mendix, we recommend completing that Quickstart or keeping it open alongside this guide to look up any unfamiliar concepts referenced in the steps below.
+Mendix provides a detailed Quickstart on [Building a Responsive Web App](https://docs.mendix.com/quickstarts/part1/). If you are new to Mendix, we recommend completing that Quickstart or keeping it open alongside this guide to look up any unfamiliar concepts referenced in the steps below.
 
 1. Install Mendix Studio Pro:
    - **Windows users**: Download and install Mendix Studio Pro version 9.24.2 from [here](https://marketplace.mendix.com/link/studiopro/9.24.2).
@@ -145,7 +145,7 @@ Mendix provides a detailed Quickstart on [Building a Responsive Web App](https:/
 
 4. Download the following additional modules from the Mendix Marketplace:
 
-    - [GenAI Commons](https://marketplace.mendix.com/link/component/227933)
+    - [GenAI Commons](https://marketplace.mendix.com/link/component/239448)
     - [Encryption](https://marketplace.mendix.com/link/component/1011)
     - [Community Commons](https://marketplace.mendix.com/link/component/170)
 
