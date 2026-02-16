@@ -178,7 +178,7 @@ Mendix provides a detailed Quickstart on [Building a Responsive Web App](https:/
 
     Several `.mpk` files are provided with earlier steps already implemented. These can be used as reference material or to continue if you encounter issues. For security reasons, the private key required to connect to Snowflake is not included and must be configured manually in each `.mpk` file.
 
-8. [Download the first .mpk](assets/REST_SQL_QuickStart.mpk "download").
+8. [Download the first .mpk](https://github.com/Snowflake-Labs/sfquickstarts/raw/25909c7ce8ed16194a8c79bcfaddcc0be50f4776/site/sfguides/src/mendix-rest-sql/assets/REST_SQL_Quickstart.mpk "download").
 9. Run the Mendix app.
 
     ![Run Mendix Application](assets/run_application.png)
@@ -403,7 +403,7 @@ Employee
 
 ![Employee Table](assets/table_display.png)
 
-[Download second .mpk](assets/REST_SQL_QuickStart_2.mpk "download")
+[Download second .mpk](https://github.com/Snowflake-Labs/sfquickstarts/raw/25909c7ce8ed16194a8c79bcfaddcc0be50f4776/site/sfguides/src/mendix-rest-sql/assets/REST_SQL_Quickstart_2.mpk "download")
 
 <!-- ------------------------ -->
 ## Updating Snowflake Data from Within Mendix
@@ -534,7 +534,7 @@ When configured correctly, the `?` placeholders in the SQL statement are safely 
 
 ![Edit Employee Info](assets/table_display.png)
 
-[Download third .mpk](assets/REST_SQL_QuickStart_3.mpk "download")
+[Download third .mpk](https://github.com/Snowflake-Labs/sfquickstarts/raw/25909c7ce8ed16194a8c79bcfaddcc0be50f4776/site/sfguides/src/mendix-rest-sql/assets/REST_SQL_Quickstart_3.mpk "download")
 
 <!-- ------------------------ -->
 ## (Optional) Deploy the Mendix Application
