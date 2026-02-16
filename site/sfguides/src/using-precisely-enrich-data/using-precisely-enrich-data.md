@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Test
+
 
 Analyzing location-specific data for decision-making often requires specialized techniques typically handled by geography experts. However, with Snowflake's native [Geospatial Data Types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial) and [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial) anyone can analyze geographic data—whether it's regional demographics, city points, market data, or points of interest—using the platform’s built-in geospatial functionalities.
 
@@ -25,18 +25,18 @@ Numerous location-based datasets are available within the [Snowflake Marketplace
 - A Streamlit app to visualize:
   - Demographic and market insights
   - Spatial relationships between regions and city points
-  - 
-Geographic points of interest based on spatial queries
+  - Geographic points of interest based on spatial queries
 
 
 ### What You’ll Learn
-##
+
 In this quickstart, we will use Snowflake’s tools to:
 
-##- **Query and explore** sample datasets, including:
+- **Query and explore** sample datasets, including:
   - Regional demographic data
   - Points of Interest data
-  - Market data samples  -  **Integrate** geographic and market data by:
+  - Market data samples
+- **Integrate** geographic and market data by:
   - Joining region and market datasets on the `MICROCODE` field
   - Creating a new table (`mbi_demographics_jp`) that consolidates demographic and economic information
 - **Enhance** geospatial data by:
@@ -53,7 +53,6 @@ In this quickstart, we will use Snowflake’s tools to:
 
 ![alt text](assets/I001.png)
 
-![alt text](assets/I001_test.png)
 <!-- ------------------------ -->
 
 ## Acquire Datasets from Marketplace
