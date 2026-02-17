@@ -17,6 +17,8 @@ feedback link: https://github.com/manisrinivasan2k1/sfquickstarts/issues
 
 ## Overview
 
+![Snowflake x Tavily](assets/snowflake_x_tavily.png)
+
 In this guide, you will build a real-time Due Diligence and Investment Research Agent in Snowflake that enhances structured NYSE financial data with live external intelligence powered by Tavily Web Search.
 
 You will learn how to create a Financial Agent that analyzes ticker-level fundamentals stored in Snowflake and enriches them with timely insights from across the web. Using Tavily’s real-time search capabilities, the agent retrieves recent news, regulatory updates, litigation developments, executive changes, and emerging risk signals that may not yet be reflected in financial statements.
