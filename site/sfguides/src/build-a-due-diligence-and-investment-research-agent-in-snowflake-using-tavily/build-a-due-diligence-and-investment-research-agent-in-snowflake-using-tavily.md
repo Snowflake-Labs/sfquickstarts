@@ -1,7 +1,7 @@
 author: Mani Srinivasan
 id: build-a-due-diligence-and-investment-research-agent-in-snowflake-using-tavily
 language: en
-summary: Build a due diligence and investment research agent in Snowflake that enriches NYSE financial data with real-time web intelligence using Tavily.
+summary: Build a real-time Due Diligence and Investment Research Agent in Snowflake that combines structured company fundamentals with live external intelligence using Tavily Web Search.
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/solution-center/certification/partner-solution
 environments: web
 status: Published
@@ -11,7 +11,7 @@ feedback link: https://github.com/manisrinivasan2k1/sfquickstarts/issues
 
 ![Snowflake x Tavily](assets/snowflakextavily.png)
 
-In this guide, you will build a real-time Due Diligence and Investment Research Agent in Snowflake that enhances structured NYSE financial data with live external intelligence powered by Tavily Web Search.
+In this guide, you will build a real-time Due Diligence and Investment Research Agent in Snowflake that combines structured company fundamentals with live external intelligence using Tavily Web Search.
 
 Tavily is a purpose-built web search API designed specifically for AI agents. Unlike traditional search engines, Tavily provides a fast, structured, and relevance-optimized web access layer that enables agents to retrieve high-signal, up-to-date information with minimal noise.
 
