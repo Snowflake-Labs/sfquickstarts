@@ -92,7 +92,8 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
      ![Tavily Open Worksheet](assets/tavily_open_worksheet.png)
    - Then run the default query by selecting your appropriate warehouse and ensuring the Database is set to TAVILY_SEARCH_API and the Schema is set to TAVILY_SCHEMA, as shown below.
      ![Tavily API Run](assets/tavily_api_run.png)
-   - You should see the query results displayed in the output console, similar to the example shown above. 
+   - You should see the query results displayed in the output console, similar to the example shown above.
+You can follow the steps in this video for a quick setup: https://www.youtube.com/watch?v=rC2FSjtqkfQ&t=279s
 
 ### Load Financial Tables into Snowflake
 
