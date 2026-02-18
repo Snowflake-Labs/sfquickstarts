@@ -1,6 +1,6 @@
 author: Carlos Guzman, Jeevan Rag, Joviane Bellegarde
 id: distributed-medical-image-processing-with-monai
-summary: Build a distributed medical image registration pipeline using MONAI on Snowflake's Container Runtime with GPU acceleration
+summary: Build a distributed medical image registration pipeline using MONAI on Snowflake Container Services with GPU acceleration
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 environments: web
 language: en
@@ -15,7 +15,9 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-distributed-medical-im
 
 ## Overview
 
-Medical image registration is a critical task in healthcare AI, enabling the alignment of CT scans taken at different times or breathing phases. This guide demonstrates how to build a production-ready distributed training and inference pipeline using **MONAI** (Medical Open Network for AI) on **Snowflake's Container Runtime with GPU acceleration**.
+
+
+Medical image registration is a critical task in healthcare AI, enabling the alignment of CT scans taken at different times or breathing phases. This guide demonstrates how to build a production-ready distributed training and inference pipeline using **MONAI** (Medical Open Network for AI) on **Snowflake Container Services with GPU acceleration**. 
 
 In this Guide, you will build a complete medical image registration system that:
 - Downloads and processes lung CT scans from public datasets
@@ -92,12 +94,12 @@ In this step, you'll create all the Snowflake objects needed for the MONAI solut
 ### Step 2: Run the Setup Script
 
 Run the complete setup script to automatically create:
-- **Role**: `MONAI_DATA_SCIENTIST` with appropriate privileges
-- **Warehouse**: `MONAI_WH` (SMALL size)
-- **Database**: `MONAI_DB` with `UTILS` and `RESULTS` schemas
-- **Stages**: `NOTEBOOK_STG`, `MONAI_MEDICAL_IMAGES_STG`, `RESULTS_STG`
+- **Role**: `SF_CLINICAL_DATA_SCIENTIST` with appropriate privileges
+- **Warehouse**: `SF_CLINICAL_WH` (SMALL size)
+- **Database**: `SF_CLINICAL_DB` with `UTILS` and `RESULTS` schemas
+- **Stages**: `NOTEBOOK_STG`, `SF_CLINICAL_MEDICAL_IMAGES_STG`, `RESULTS_STG`
 - **Network Rule + External Access Integration**: For pip install and GitHub access
-- **GPU Compute Pool**: `MONAI_GPU_ML_M_POOL` (GPU_NV_M instances)
+- **GPU Compute Pool**: `SF_CLINICAL_GPU_ML_M_POOL` (GPU_NV_M instances)
 - **Notebooks**: All 3 notebooks downloaded from GitHub and configured automatically
 
 The script creates a `LOAD_NOTEBOOKS_FROM_GITHUB()` procedure that:
@@ -109,9 +111,9 @@ The script creates a `LOAD_NOTEBOOKS_FROM_GITHUB()` procedure that:
 ### Step 3: Verify Notebooks
 
 After the setup script completes, navigate to `Projects` → `Notebooks` in Snowsight. You should see three notebooks already created:
-- `MONAI_01_INGEST_DATA`
-- `MONAI_02_MODEL_TRAINING`
-- `MONAI_03_MODEL_INFERENCE`
+- `SF_CLINICAL_01_INGEST_DATA`
+- `SF_CLINICAL_02_MODEL_TRAINING`
+- `SF_CLINICAL_03_MODEL_INFERENCE`
 
 <!-- ------------------------ -->
 ## Run Data Ingestion Notebook
@@ -119,7 +121,7 @@ After the setup script completes, navigate to `Projects` → `Notebooks` in Snow
 ### Step 1: Open the Notebook
 
 1. In Snowsight, navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
-2. Find `MONAI_01_INGEST_DATA` in the `MONAI_DB.UTILS` schema
+2. Find `SF_CLINICAL_01_INGEST_DATA` in the `SF_CLINICAL_DB.UTILS` schema
 3. Click to open the notebook
 
 ### Step 2: Start Container Runtime
@@ -130,7 +132,7 @@ After the setup script completes, navigate to `Projects` → `Notebooks` in Snow
 
 ### Step 3: Install Dependencies and Restart Kernel
 
-1. Run the **install_monai** cell (`!pip install monai`) to install the MONAI library
+1. Run the **install_dependencies** cell (`!pip install monai`) to install the MONAI library
 2. A "Kernel restart may be needed" message appears with a **Show me how** button - click it
 3. A dropdown menu opens from the top (next to the **Active** button)
 4. Click **Restart kernel** to load the new packages
@@ -145,8 +147,6 @@ This will execute the remaining cells:
 - **Initialize Session**: Connects to Snowflake and sets query tags
 - **Download Data**: Downloads paired lung CT scans from Zenodo (~266MB)
 - **Upload to Stages**: Uploads NIfTI files to Snowflake stages
-
-![Upload Complete](assets/01_upload_complete.png)
 
 ### Expected Output
 
@@ -164,25 +164,38 @@ After successful execution, you should see:
 <!-- ------------------------ -->
 ## Run Model Training Notebook
 
-### Step 1: Open and Run the Training Notebook
+![slider](assets/slider.png) 
+
+### Step 1: Open the Training Notebook
 
 1. Navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
-2. Open your imported `02_model_training` notebook
+2. Open `SF_CLINICAL_02_MODEL_TRAINING` in the `SF_CLINICAL_DB.UTILS` schema
 3. Click **Start** to initialize Container Runtime
-4. Once active, click **Run all** to execute all cells
 
-### Step 2: Understand the Training Pipeline
+### Step 2: Install Dependencies and Restart Kernel
+
+1. Run the **install_ml_packages** cell (`!pip install snowflake-ml-python --upgrade nibabel monai`)
+2. A "Kernel restart may be needed" message appears with a **Show me how** button - click it
+3. A dropdown menu opens from the top (next to the **Active** button)
+4. Click **Restart kernel** to load the new packages
+
+### Step 3: Run Remaining Cells
+
+After the kernel restarts:
+
+1. Click **Run all** at the top of the notebook to execute all cells
+
+### Step 4: Understand the Training Pipeline
 
 The notebook executes these key steps:
 
-1. **Ray Cluster Setup**: Initializes distributed computing with 4 worker nodes
-2. **Dependency Installation**: Installs MONAI, PyTorch, nibabel on all nodes
-3. **Data Loading**: Reads paired CT scan paths from stages
-4. **Model Definition**: Creates LocalNet registration network
-5. **Training Loop**: Trains with Mutual Information + Bending Energy loss
-6. **Model Registry**: Saves best model to Snowflake Model Registry
+1. **ML Jobs Setup**: Configures Snowflake ML Jobs for GPU training
+2. **Data Loading**: Reads paired CT scan paths from stages
+3. **Model Definition**: Creates LocalNet registration network
+4. **Training Loop**: Trains with Mutual Information + Bending Energy loss
+5. **Model Registry**: Saves best model to Snowflake Model Registry
 
-### Step 3: Monitor Training Progress
+### Step 5: Monitor Training Progress
 
 The training loop displays:
 - Epoch number and total loss
@@ -190,17 +203,13 @@ The training loop displays:
 - Regularization loss (deformation smoothness)
 - Validation Dice score (segmentation overlap)
 
-The notebook also includes interactive CT scan visualization to inspect the training data:
+The notebook also includes interactive CT scan visualization to inspect the training data.
 
-![CT Scan Visualization](assets/02_ct_visualization.png)
-
-### Step 4: Verify Model Registration
+### Step 6: Verify Model Registration
 
 After training completes, the notebook automatically registers the model in the Snowflake Model Registry. You should see `LUNG_CT_REGISTRATION` with version `v1` in the output.
 
-![Model Registration](assets/03_model_registration.png)
-
-### Step 5: Exit and Proceed to Next Notebook
+### Step 7: Exit and Proceed to Next Notebook
 
 1. Click the **←** back arrow in the top-left corner
 2. In the "End session?" dialog, click **End session**
@@ -209,25 +218,35 @@ After training completes, the notebook automatically registers the model in the 
 <!-- ------------------------ -->
 ## Run Model Inference Notebook
 
-### Step 1: Open and Run the Inference Notebook
+### Step 1: Open the Inference Notebook
 
 1. Navigate to `Projects` → `Notebooks`, or <a href="https://app.snowflake.com/_deeplink/#/notebooks?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-distributed-medical-image-processing-with-monai" target="_blank">click here</a> to go there directly
-2. Open your imported `03_model_inference` notebook
+2. Open `SF_CLINICAL_03_MODEL_INFERENCE` in the `SF_CLINICAL_DB.UTILS` schema
 3. Click **Start** to initialize Container Runtime
-4. Once active, click **Run all** to execute all cells
 
-### Step 2: Review Inference Results
+### Step 2: Install Dependencies and Restart Kernel
+
+1. Run the **install_ml_packages** cell (`!pip install snowflake-ml-python --upgrade`)
+2. A "Kernel restart may be needed" message appears with a **Show me how** button - click it
+3. A dropdown menu opens from the top (next to the **Active** button)
+4. Click **Restart kernel** to load the new packages
+
+### Step 3: Run Remaining Cells
+
+After the kernel restarts:
+
+1. Click **Run all** at the top of the notebook to execute all cells
+
+### Step 4: Review Inference Results
 
 The notebook:
 
 1. **Loads Model**: Retrieves trained model from Model Registry
-2. **Configures Ray Workers**: Sets up parallel inference actors
-3. **Processes Images**: Runs registration on all test cases
+2. **Runs Batch Inference**: Uses `run_batch()` API for distributed GPU processing
+3. **Processes Images**: Runs registration on all test cases in parallel
 4. **Saves Results**: Writes registered images to stages and metrics to table
 
-The notebook displays results automatically and saves them to `MONAI_DB.RESULTS.MONAI_PAIRED_LUNG_RESULTS`.
-
-![Save Results](assets/03_save_results.png)
+The notebook displays results automatically and saves them to `SF_CLINICAL_DB.RESULTS.SF_CLINICAL_INFERENCE_RESULTS`.
 
 <!-- ------------------------ -->
 ## Cleanup
