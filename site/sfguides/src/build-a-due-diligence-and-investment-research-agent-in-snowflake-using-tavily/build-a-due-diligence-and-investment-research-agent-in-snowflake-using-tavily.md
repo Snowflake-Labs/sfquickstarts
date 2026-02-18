@@ -211,32 +211,35 @@ Without Tavily, the agent would lack fresh regulatory intelligence.
 Without Cortex Analyst, it could not contextualize events against actual financial scale.
 
 
-### 2) Example 2: Commodity Sensitivity & Market Developments (Exxon Mobil)
+### 2) Example 2: Revenue Scale & Recent Business Developments (Walmart)
 
 **User Prompt:**
 
-> “Based on Exxon Mobil’s fundamentals, analyze its revenue scale and assess whether recent geopolitical or OPEC-related developments could impact forward cash flow.”
+> “Based on Walmart’s fundamentals, analyze its revenue scale and assess whether any recent supply-chain disruptions, labor-related developments, major pricing strategy changes, or significant earnings guidance updates in the last 30 days could impact forward cash flow.”
 
 ![Example 2 Output](assets/example2.png)
-
 
 #### Step-by-Step Orchestration
 
 1. **Cortex Analyst Tool is invoked**
-   - The agent dynamically generates SQL to query revenue and net income.
-   - It establishes a financial baseline directly from Snowflake tables.
+   - The agent dynamically generates SQL to query key fundamentals (e.g., TTM revenue, market cap, net income).
+   - It establishes a structured financial baseline directly from Snowflake tables.
    - SQL execution is visible in the reasoning trace.
 
 ![Reasoning Trace 2](assets/reasoning_trace_2.png)
 
 2. **`tavily_web_search` is triggered**
-   - The agent retrieves recent OPEC decisions and geopolitical developments.
-   - Tavily delivers high-signal, relevant results in real time.
+   - The agent searches for recent business developments tied to forward cash flow drivers, such as:
+     - Supply chain or logistics disruptions
+     - Labor-related news (staffing, wage pressure, store operations)
+     - Pricing strategy changes
+     - Earnings guidance updates or major business announcements
+   - Tavily delivers high-signal, recent results in real time.
 
-3. **Combined Financial + Market Intelligence**
-   - Financial exposure (from structured data)
-   - Market catalysts (from Tavily search)
-   - Synthesized forward cash flow implications
+3. **Combined Financial + Business Intelligence**
+   - Financial scale and baseline metrics (from structured data)
+   - Recent operational and business drivers (from Tavily search)
+   - Synthesized implications for forward cash flow
 
 
 ### Why Tavily Strengthens the Financial Agent
