@@ -21,6 +21,8 @@ feedback link: https://github.com/manisrinivasan2k1/sfquickstarts/issues
 
 In this guide, you will build a real-time Due Diligence and Investment Research Agent in Snowflake that enhances structured NYSE financial data with live external intelligence powered by Tavily Web Search.
 
+Tavily is a purpose-built web search API designed specifically for AI agents. Unlike traditional search engines, Tavily provides a fast, structured, and relevance-optimized web access layer that enables agents to retrieve high-signal, up-to-date information with minimal noise.
+
 You will learn how to create a Financial Agent that analyzes ticker-level fundamentals stored in Snowflake and enriches them with timely insights from across the web. Using Tavily’s real-time search capabilities, the agent retrieves recent news, regulatory updates, litigation developments, executive changes, and emerging risk signals that may not yet be reflected in financial statements.
 
 By combining trusted financial reference data in Snowflake with Tavily’s up-to-date web intelligence, the agent performs contextual risk and opportunity analysis that goes beyond static datasets. This approach helps reduce blind spots between earnings cycles and surfaces early warning signals for buy-side, private equity, and corporate development workflows.
@@ -70,7 +72,7 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
 
 1. **Install Tavily from Snowflake Marketplace**
 
-   - Navigate to **Snowflake Marketplace**.
+   - Navigate to **[Snowflake Marketplace](https://app.snowflake.com/marketplace)**.
    - Search for **Tavily Search API**.
    - Click on 'Get' and follow the prompts to install it in your account.
 
@@ -93,13 +95,14 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
    - Then run the default query by selecting your appropriate warehouse and ensuring the Database is set to TAVILY_SEARCH_API and the Schema is set to TAVILY_SCHEMA, as shown below.
      ![Tavily API Run](assets/tavily_api_run.png)
    - You should see the query results displayed in the output console, similar to the example shown above.
+
 You can follow the steps in this video for a quick setup: https://www.youtube.com/watch?v=rC2FSjtqkfQ&t=279s
 
 ### Load Financial Tables into Snowflake
 
 There are two ways to bring financial fundamentals into Snowflake for use with the Financial Agent.
 
-The most production-ready approach is to integrate structured financial datasets directly from the **Snowflake Marketplace**, such as LSEG Financials. However, for this demo, we will use a smaller custom dataset (created using the [Alpha Vantage API](https://www.alphavantage.co) to keep the environment lightweight, transparent, and easier to understand while focusing on agent orchestration and tool integration.
+The most production-ready approach is to integrate structured financial datasets directly from the **Snowflake Marketplace**, such as LSEG Financials. However, for this demo, we will use a smaller custom dataset (created using the [Alpha Vantage API](https://www.alphavantage.co)) to keep the environment lightweight, transparent, and easier to understand while focusing on agent orchestration and tool integration.
 
 ---
 
@@ -280,3 +283,27 @@ The Financial Agent moves beyond simple querying and becomes a grounded, decisio
 You have now implemented a Financial Agent that bridges structured Snowflake data with live external intelligence — enabling real-time, grounded financial analysis.
 
 ## Related Resources
+
+### Snowflake
+
+- [Snowflake Marketplace](https://app.snowflake.com/marketplace)  
+  Discover and subscribe to third-party datasets, including financial fundamentals and market data providers.
+
+- [LSEG Financials on Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZ1M6ZEU48S/lseg-financials?search=NYSE%20Financials)  
+  Example of an enterprise-grade financial fundamentals dataset available directly within Snowflake.
+
+- [Snowflake Developer Guides](https://www.snowflake.com/en/developers/guides/)  
+  Explore additional hands-on tutorials and implementation guides.
+
+---
+
+### Tavily
+
+- [Tavily API Documentation](https://docs.tavily.com/welcome)  
+  Official documentation for integrating and configuring the Tavily Web Search API.
+
+- [Tavily Product Overview](https://www.tavily.com/product)  
+  Learn more about Tavily’s fast and efficient search capabilities for AI applications.
+
+- [Tavily Blog](https://www.tavily.com/blog)  
+  Insights, updates, and best practices for building with Tavily-powered intelligence.
