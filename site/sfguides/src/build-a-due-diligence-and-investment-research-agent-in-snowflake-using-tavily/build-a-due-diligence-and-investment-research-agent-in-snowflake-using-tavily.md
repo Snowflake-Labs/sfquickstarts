@@ -52,6 +52,14 @@ By the end of this guide, you will have a working Financial Agent that demonstra
 
 By the end of this guide, you will have a working Financial Agent capable of analyzing a company’s fundamentals and enriching that analysis with real-time developments from across the web.
 
+### What You Will Learn
+
+- How to configure Tavily Web Search within Snowflake
+- How to build and configure a Financial Agent
+- How Cortex Analyst dynamically generates SQL
+- How to combine structured financial data with real-time external intelligence
+- How to orchestrate multiple tools within Snowflake Intelligence
+
 ### How You Can Use It
 
 This Financial Agent can support a variety of investment and corporate analysis workflows, including:
