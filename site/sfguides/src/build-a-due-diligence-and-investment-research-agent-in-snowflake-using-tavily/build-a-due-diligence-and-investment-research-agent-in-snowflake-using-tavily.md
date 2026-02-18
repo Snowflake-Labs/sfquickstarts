@@ -127,7 +127,7 @@ This approach provides:
 
 ---
 
-#### Option 2: Load Your Own Financial Tables (Demo-Friendly Approach)
+#### Option 2: Load Your Own Financial Tables
 
 For this guide, we will use a smaller custom dataset to:
 - Maintain full control over the schema
