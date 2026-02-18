@@ -99,7 +99,7 @@ You can follow the steps in this video for a quick setup: https://www.youtube.co
 
 There are two ways to bring financial fundamentals into Snowflake for use with the Financial Agent.
 
-The most production-ready approach is to integrate structured financial datasets directly from the **Snowflake Marketplace**, such as LSEG Financials. However, for this demo, we will use a smaller custom dataset to keep the environment lightweight, transparent, and easier to understand while focusing on agent orchestration and tool integration.
+The most production-ready approach is to integrate structured financial datasets directly from the **Snowflake Marketplace**, such as LSEG Financials. However, for this demo, we will use a smaller custom dataset (created using the [Alpha Vantage API](https://www.alphavantage.co) to keep the environment lightweight, transparent, and easier to understand while focusing on agent orchestration and tool integration.
 
 ---
 
@@ -155,8 +155,6 @@ For this guide, we will use a smaller custom dataset to:
 ### Create a Snowflake Agent with Tavily Search and Cortex Analyst Tools
 
 1. In the Snowflake UI, navigate to the **AI & ML** tab and select **Agents**.  
-   <insert_image_here_later>
-
 2. Click **Create Agent**, then provide a name, description, and relevant example questions for your agent.  
    ![Create Agent Image](assets/create_agent.png)
 3. Navigate to the **Tools** tab and add the **Cortex Analyst** tool.  
