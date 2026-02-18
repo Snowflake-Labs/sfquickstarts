@@ -9,7 +9,7 @@ feedback link: https://github.com/manisrinivasan2k1/sfquickstarts/issues
 
 ## Overview
 
-![Snowflake x Tavily](assets/snowflake_x_tavily.png)
+![Snowflake x Tavily](assets/snowflakextavily.png)
 
 In this guide, you will build a real-time Due Diligence and Investment Research Agent in Snowflake that enhances structured NYSE financial data with live external intelligence powered by Tavily Web Search.
 
