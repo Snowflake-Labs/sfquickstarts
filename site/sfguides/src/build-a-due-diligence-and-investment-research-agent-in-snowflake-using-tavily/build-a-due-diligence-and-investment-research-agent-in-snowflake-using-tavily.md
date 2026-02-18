@@ -96,7 +96,8 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
      ![Tavily API Run](assets/tavily_api_run.png)
    - You should see the query results displayed in the output console, similar to the example shown above.
 
-You can follow the steps in this video for a quick setup: https://www.youtube.com/watch?v=rC2FSjtqkfQ&t=279s
+You can follow the steps in this video for a quick setup:  
+[Watch the setup video](https://www.youtube.com/watch?v=rC2FSjtqkfQ&t=279s)
 
 ### Load Financial Tables into Snowflake
 
