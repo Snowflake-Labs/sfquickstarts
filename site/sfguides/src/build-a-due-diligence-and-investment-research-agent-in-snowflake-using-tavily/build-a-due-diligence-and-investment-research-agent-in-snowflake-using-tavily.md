@@ -1,19 +1,11 @@
 author: Mani Srinivasan
-id: build-a-due-diligence-agent-in-snowflake-with-tavily
-categories: snowflake-site:taxonomy/solution-center/quickstart, snowflake-site:taxonomy/product/ai-and-ml
+id: build-a-due-diligence-and-investment-research-agent-in-snowflake-using-tavily
 language: en
 summary: Build a due diligence and investment research agent in Snowflake that enriches NYSE financial data with real-time web intelligence using Tavily.
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/solution-center/certification/partner-solution
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/manisrinivasan2k1/sfquickstarts/issues
-
-<style>
-  img {
-    width: 800px;
-    height: auto;
-  }
-</style>
-
 
 ## Overview
 
@@ -113,7 +105,6 @@ There are two ways to bring financial fundamentals into Snowflake for use with t
 
 The most production-ready approach is to integrate structured financial datasets directly from the **Snowflake Marketplace**, such as LSEG Financials. However, for this demo, we will use a smaller custom dataset (created using the [Alpha Vantage API](https://www.alphavantage.co)) to keep the environment lightweight, transparent, and easier to understand while focusing on agent orchestration and tool integration.
 
----
 
 #### Option 1: Use Snowflake Marketplace (Enterprise-Grade Dataset)
 
@@ -137,7 +128,6 @@ This approach provides:
 - Production-ready schemas and tables
 - No need for manual CSV uploads
 
----
 
 #### Option 2: Load Your Own Financial Tables
 
@@ -174,12 +164,12 @@ For this guide, we will use a smaller custom dataset to:
    Add the Cortex Analyst Tool  
    ![Cortex Analyst Tool Creation Image](assets/cortex_analyst_tool_creation.png)
 
-5. Create a new custom tool for the **Tavily Search API** and configure its required parameters.  
+4. Create a new custom tool for the **Tavily Search API** and configure its required parameters.  
    ![Tavily Search tool Creation](assets/tavily_search_tool_creation.png)
 
-6. Click **Save Updates** to apply the updates.
+5. Click **Save Updates** to apply the updates.
 
-7. Launch **Snowflake Intelligence** and verify that the agent has access to both configured tools.
+6. Launch **Snowflake Intelligence** and verify that the agent has access to both configured tools.
    ![Snowflake Intelligence Tool Image](assets/snowflake_intelligence.png)
 
 ## Using Snowflake Intelligence with Tavily Web Search and Cortex Analyst
@@ -194,7 +184,6 @@ For this guide, we will use a smaller custom dataset to:
 
 ![Example 1 Output](assets/example1.png)
 
----
 
 #### What Happens Behind the Scenes
 
@@ -221,7 +210,6 @@ For this guide, we will use a smaller custom dataset to:
 Without Tavily, the agent would lack fresh regulatory intelligence.  
 Without Cortex Analyst, it could not contextualize events against actual financial scale.
 
----
 
 ### 2) Example 2: Commodity Sensitivity & Market Developments (Exxon Mobil)
 
@@ -231,7 +219,6 @@ Without Cortex Analyst, it could not contextualize events against actual financi
 
 ![Example 2 Output](assets/example2.png)
 
----
 
 #### Step-by-Step Orchestration
 
@@ -251,7 +238,6 @@ Without Cortex Analyst, it could not contextualize events against actual financi
    - Market catalysts (from Tavily search)
    - Synthesized forward cash flow implications
 
----
 
 ### Why Tavily Strengthens the Financial Agent
 
@@ -264,7 +250,6 @@ Tavily’s fast and efficient search:
 
 This transforms Snowflake Intelligence from a SQL-driven assistant into a contextual financial reasoning engine.
 
----
 
 ## Conclusion
 
@@ -279,7 +264,6 @@ By integrating Tavily Web Search with Cortex Analyst, Snowflake Intelligence bec
 
 The Financial Agent moves beyond simple querying and becomes a grounded, decision-support system for due diligence and investment research.
 
----
 
 ## What You've Learned
 
@@ -304,7 +288,6 @@ You have now implemented a Financial Agent that bridges structured Snowflake dat
 - [Snowflake Developer Guides](https://www.snowflake.com/en/developers/guides/)  
   Explore additional hands-on tutorials and implementation guides.
 
----
 
 ### Tavily
 
