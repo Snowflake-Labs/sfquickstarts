@@ -29,13 +29,17 @@ By the end of this guide, you will have a working Financial Agent that demonstra
 
 ### Prerequisites
 
-- A Snowflake account with appropriate access to databases, schemas, Agents, and Cortex Analyst capabilities.  
-  https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides
+- Familiarity with Snowflake fundamentals, including SQL, databases, schemas, and tables  
+- Basic understanding of Cortex AI capabilities within Snowflake  
+- Foundational knowledge of Agentic AI concepts and tool orchestration  
 
-- A Tavily API key to enable real-time web search. Tavily offers 1,000 free API credits per month with no credit card required.  
-  https://tavily.com/
+### What You’ll Need
 
-- Familiarity with Snowflake SQL and basic AI agent concepts.
+- A Snowflake account with appropriate access to databases, schemas, Agents, and Cortex Analyst capabilities  
+  [Sign up for a Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
+
+- A Tavily API key to enable real-time web search. Tavily offers 1,000 free API credits per month with no credit card required  
+  [Get your Tavily API key](https://tavily.com/)
 
 ### What You Will Build
 
@@ -91,13 +95,57 @@ Follow the steps below to configure Tavily Web Search within Snowflake.
    - You should see the query results displayed in the output console, similar to the example shown above. 
 
 ### Load Financial Tables into Snowflake
+
+There are two ways to bring financial fundamentals into Snowflake for use with the Financial Agent.
+
+The most production-ready approach is to integrate structured financial datasets directly from the **Snowflake Marketplace**, such as LSEG Financials. However, for this demo, we will use a smaller custom dataset to keep the environment lightweight, transparent, and easier to understand while focusing on agent orchestration and tool integration.
+
+---
+
+#### Option 1: Use Snowflake Marketplace (Enterprise-Grade Dataset)
+
+For a production or enterprise use case, the recommended approach is to subscribe to a structured financial dataset directly from the Snowflake Marketplace.
+
+Example dataset:
+[LSEG Financials on Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZ1M6ZEU48S/lseg-financials?search=NYSE%20Financials)
+
+📌 *Insert Marketplace Screenshot Below*  
+<insert_marketplace_image_here>
+
+Steps:
+- Open the Snowflake Marketplace.
+- Search for “LSEG Financials” (or another financial fundamentals dataset).
+- Request or subscribe to the listing.
+- Follow the on-screen steps to add the shared database to your Snowflake account.
+- Once added, you will have access to structured financial tables directly within your account.
+
+This approach provides:
+- Enterprise-grade standardized financial data
+- Broad historical coverage
+- Production-ready schemas and tables
+- No need for manual CSV uploads
+
+---
+
+#### Option 2: Load Your Own Financial Tables (Demo-Friendly Approach)
+
+For this guide, we will use a smaller custom dataset to:
+- Maintain full control over the schema
+- Keep the demo lightweight
+- Focus on how the Financial Agent orchestrates Cortex Analyst and Tavily Web Search
+
+**Steps:**
 - Ensure your account privileges, region, and other required configurations are properly set before proceeding to avoid errors.
-- Run the commands shown in the image below to create your database and schema, and set the appropriate context to ensure everything is configured correctly.
+
+- Run the commands shown in the image below to create your database and schema, and set the appropriate context to ensure everything is configured correctly.  
   ![Create Database Schema](assets/create_database_schema.png)
-- You can verify that your new database and schema are set correctly by checking the context displayed in the top-right corner.
+
+- You can verify that your new database and schema are set correctly by checking the context displayed in the top-right corner.  
   ![Confirm Database Schema](assets/confirm_database_schema.png)
+
 - Click the **“+”** icon, then select **Table → From File**.  
   ![Create Table from File](assets/create_table_from_file.png)
+
 - After uploading your CSV file, ensure the correct **database** and **schema** are selected. Then click **+ Create New Table** and provide an appropriate table name of your choice.  
   ![upload CSV File](assets/upload_csv_file.png)
 
