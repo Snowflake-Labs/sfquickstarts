@@ -109,8 +109,7 @@ For a production or enterprise use case, the recommended approach is to subscrib
 Example dataset:
 [LSEG Financials on Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZ1M6ZEU48S/lseg-financials?search=NYSE%20Financials)
 
-📌 *Insert Marketplace Screenshot Below*  
-<insert_marketplace_image_here>
+![LSEG](assets/lseg.png)
 
 Steps:
 - Open the Snowflake Marketplace.
