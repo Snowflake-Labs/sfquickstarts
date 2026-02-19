@@ -3,7 +3,7 @@ id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
-status: Hidden
+status: Published
 author:  Snowflake DevRel Team
 
 # Snowflake Guide Basics
