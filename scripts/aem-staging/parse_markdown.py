@@ -91,10 +91,12 @@ def transform_image_urls(markdown: str, base_url: str, quickstart_name: str) -> 
         
         url = url.lstrip('./')
         
+        # Strip 'assets/' prefix since images are uploaded directly to quickstart folder
         if url.startswith('assets/'):
-            new_url = f"{base_url}/{quickstart_name}/{url}"
+            filename = url[7:]  # Remove 'assets/' prefix
+            new_url = f"{base_url}/{quickstart_name}/{filename}"
         else:
-            new_url = f"{base_url}/{quickstart_name}/assets/{url}"
+            new_url = f"{base_url}/{quickstart_name}/{url}"
         
         count += 1
         return f"![{alt_text}]({new_url})"
