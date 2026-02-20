@@ -1,12 +1,12 @@
 author: Abhinav Vadrevu, Nick El-Rayess
-id: power-bi-semantic-layer-to-snowflake-semantic-views
+id: how-to-ingest-power-bi-semantic-models
 language: en
 summary: Bring your Power BI semantic layer (relationships + measures) into Snowflake Semantic Views so the same governed business definitions power Cortex Analyst / Snowflake Intelligence and Power BI.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Ingest a Power BI semantic layer into Snowflake Semantic Views
+# How to Ingest Power BI Semantic Models
 
 ## Overview
 
