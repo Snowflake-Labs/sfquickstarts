@@ -48,8 +48,6 @@ The app code for this quickstart:
 
 Raw LLM responses are unstructured text. Structured output solves key challenges.
 
-> Note: This section is repurposed from Day 30 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=30).
-
 ### The Problem
 
 ```python
@@ -83,8 +81,6 @@ Structured output gives you direct access to individual fields via dot notation,
 ## Define Pydantic Schemas
 
 Pydantic models define the expected output structure.
-
-> Note: This section is repurposed from Day 30 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=30).
 
 ### Basic Schema
 
@@ -140,9 +136,7 @@ Advanced schemas can include lists, numeric constraints (`ge`, `le`), string len
 <!-- ------------------------ -->
 ## Create the Parser
 
-PydanticOutputParser generates format instructions for the LLM.
-
-> Note: This section is repurposed from Day 30 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=30).
+`PydanticOutputParser` generates format instructions for the LLM.
 
 ### Setup Parser
 
@@ -184,8 +178,6 @@ The parser validates the LLM's JSON output against your schema and returns a typ
 ## Build the Chain
 
 Combine template, LLM, and parser into a pipeline.
-
-> Note: This section is repurposed from Day 30 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=30).
 
 ### Create Template with Format Instructions
 
@@ -247,8 +239,6 @@ Pass `format_instructions` from the parser to fill the template placeholder. The
 ## Build Plant Recommender App
 
 Create the complete Streamlit application.
-
-> Note: This section is repurposed from Day 30 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=30).
 
 ### Full Application Code
 
@@ -321,8 +311,6 @@ The app uses `st.columns()` to display metrics cleanly and `model_dump()` to sho
 
 Robust error handling for production applications.
 
-> Note: This section is repurposed from Day 30 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=30).
-
 ### Parser Errors
 
 Catch parsing failures when the LLM response doesn't match the schema:
@@ -393,8 +381,6 @@ Layered exception handling catches parsing errors, validation failures, and gene
 
 <!-- ------------------------ -->
 ## Best Practices
-
-> Note: This section is repurposed from Day 30 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=30).
 
 ### Schema Design
 
