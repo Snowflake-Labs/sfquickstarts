@@ -445,7 +445,7 @@ Congratulations! You've learned how to use Pydantic with LangChain and Snowflake
 ### What You Learned
 - Why structured output matters for LLM applications
 - How to define Pydantic schemas for LLM output
-- How to use PydanticOutputParser with LangChain
+- How to use `PydanticOutputParser` with LangChain
 - How to build reliable data extraction pipelines with error handling
 
 ### Related Resources
