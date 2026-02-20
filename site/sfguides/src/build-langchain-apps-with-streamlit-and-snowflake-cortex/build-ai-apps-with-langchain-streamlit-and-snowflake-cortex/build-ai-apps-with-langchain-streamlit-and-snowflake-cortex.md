@@ -1,6 +1,6 @@
 author: Siavash Yasini, Chanin Nantasenamat
-id: build-langchain-apps-with-streamlit-and-snowflake-cortex
-summary: Learn how to integrate LangChain with Snowflake Cortex to build composable LLM applications with prompt templates and chains.
+id: build-ai-apps-with-langchain-streamlit-and-snowflake-cortex
+summary: Learn how to integrate LangChain with Streamlit and Snowflake Cortex to build composable LLM apps with prompt templates and chains.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai
 language: en
 environments: web
@@ -8,20 +8,20 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Streamlit, LangChain, Cortex, LLM, Prompt Templates
 
-# Build LangChain Apps with Streamlit and Snowflake Cortex
+# Build AI Apps with LangChain, Streamlit and Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
 
-In this quickstart, you'll learn how to integrate LangChain with Snowflake Cortex to build composable LLM applications. LangChain provides powerful abstractions for prompt templates, chains, and output handling that work seamlessly with Cortex models.
+In this quickstart, you'll learn how to integrate LangChain with Streamlit and Snowflake Cortex to build composable LLM applications. LangChain provides powerful abstractions for prompt templates, chains, and output handling that work seamlessly with Cortex models.
 
 ### What You'll Learn
-- How to install and configure langchain-snowflake
+- How to install and configure `langchain-snowflake`
 - How to create prompt templates with variables
 - How to build LangChain chains with Cortex LLMs
 - How to compose templates and models into pipelines
 
 ### What You'll Build
-A LinkedIn Post Generator that uses LangChain prompt templates and Snowflake Cortex to generate customized social media content.
+A LinkedIn Post Generator that uses LangChain prompt templates with Streamlit and Snowflake Cortex to generate customized social media content.
 
 ![](assets/app.png)
 
@@ -59,9 +59,10 @@ pip install langchain-snowflake
 Or add to your `requirements.txt`:
 
 ```
-langchain-snowflake
 streamlit
 snowflake-snowpark-python
+langchain-core
+langchain-snowflake
 ```
 
 ### Verify Installation
@@ -424,10 +425,10 @@ Save the code above as `streamlit_app.py` and deploy using one of these options:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've learned how to integrate LangChain with Snowflake Cortex to build composable LLM applications. You can now create reusable prompt templates, build chains, and compose powerful AI pipelines.
+Congratulations! You've learned how to integrate LangChain with Streamlit and Snowflake Cortex to build composable LLM apps. You can now create reusable prompt templates, build chains, and compose powerful AI pipelines.
 
 ### What You Learned
-- Installing and configuring langchain-snowflake
+- Installing and configuring `langchain-snowflake`
 - Creating prompt templates with variables
 - Building LangChain chains with Cortex LLMs
 - Composing templates and models into pipelines
