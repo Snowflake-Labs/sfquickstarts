@@ -18,8 +18,6 @@ In this guide, you’ll take a Power BI semantic layer and turn it into a **Snow
 - Snowflake Intelligence (agentic/assistant experiences, where available)
 - Power BI (so dashboards and AI stay consistent)
 
-**Time to complete**: ~30 minutes
-
 ## Prerequisites
 
 - Snowflake account with access to **Semantic Views** and **Cortex Analyst**
