@@ -230,17 +230,17 @@ jobs:
             
             case "$extension_lower" in
               jpg|jpeg|png|gif|svg|webp|bmp|ico|tiff)
-                echo "📤 Uploading: $filename"
+                echo "📤 Uploading: $filename (PUT to overwrite if exists)"
                 
                 content_type="image/$extension_lower"
                 [ "$extension_lower" = "jpg" ] && content_type="image/jpeg"
                 [ "$extension_lower" = "svg" ] && content_type="image/svg+xml"
                 
-                curl -s -X POST \
-                  "${AEM_URL}${dam_folder}.createasset.html" \
+                curl -s -X PUT \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
                   -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-                  -F "file=@${img};type=${content_type}" \
-                  -F "fileName=${filename}" || echo "⚠️ Warning: Failed to upload $filename"
+                  -H "Content-Type: ${content_type}" \
+                  --data-binary "@${img}" || echo "⚠️ Warning: Failed to upload $filename"
                 
                 sleep 1
                 
