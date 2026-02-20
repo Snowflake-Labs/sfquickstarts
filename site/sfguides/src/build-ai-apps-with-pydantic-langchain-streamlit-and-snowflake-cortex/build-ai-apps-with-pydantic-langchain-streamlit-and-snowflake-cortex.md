@@ -1,5 +1,5 @@
 author: Siavash Yasini, Chanin Nantasenamat
-id: build-ai-apps-with--pydantic-langchain-streamlit-and-snowflake-cortex
+id: build-ai-apps-with-pydantic-langchain-streamlit-and-snowflake-cortex
 summary: Learn how to use Pydantic with LangChain, Streamlit and Snowflake Cortex to generate type-safe, validated structured output from LLM responses.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai
 language: en
