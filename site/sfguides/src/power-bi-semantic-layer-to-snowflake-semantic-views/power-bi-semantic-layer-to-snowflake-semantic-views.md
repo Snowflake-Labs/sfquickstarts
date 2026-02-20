@@ -1,9 +1,9 @@
-author: Snowflake
+author: Abhinav Vadrevu, Nick El-Rayess
 id: power-bi-semantic-layer-to-snowflake-semantic-views
 language: en
 summary: Bring your Power BI semantic layer (relationships + measures) into Snowflake Semantic Views so the same governed business definitions power Cortex Analyst / Snowflake Intelligence and Power BI.
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Ingest a Power BI semantic layer into Snowflake Semantic Views
@@ -79,7 +79,7 @@ If you don’t see a `.pbix` import option, use Option B.
 5. Provide context:
    - **Select tables**: choose the Snowflake tables/views that back your Power BI model.
    - **SQL queries (recommended)**: paste 2–5 “gold” queries you want the semantic layer to support. These are used to infer relationships and may be added as **verified queries**.
-6. Select columns to include (Snowflake recommends \(\le\) 50 columns for performance and accuracy). Prefer:
+6. Select columns to include (Snowflake recommends <= 50 columns for performance and accuracy). Prefer:
    - Join keys
    - Core dimensions used for slicing (date, customer, product, region)
    - Facts used in metrics (amounts, counts)
@@ -115,8 +115,8 @@ You can query semantic views in two common ways.
 SELECT *
 FROM SEMANTIC_VIEW(
   <DB>.<SCHEMA>.<SEMANTIC_VIEW_NAME>
-  DIMENSIONS <LOGICAL_TABLE>.<DIMENSION_NAME>
   METRICS <LOGICAL_TABLE>.<METRIC_NAME>
+  DIMENSIONS <LOGICAL_TABLE>.<DIMENSION_NAME>
 )
 ORDER BY 1;
 ```
@@ -163,8 +163,8 @@ CREATE OR REPLACE VIEW <DB>.<SCHEMA>.POWERBI_REVENUE_BY_MONTH AS
 SELECT *
 FROM SEMANTIC_VIEW(
   <DB>.<SCHEMA>.<SEMANTIC_VIEW_NAME>
-  DIMENSIONS <LOGICAL_TABLE>.MONTH
   METRICS <LOGICAL_TABLE>.TOTAL_REVENUE
+  DIMENSIONS <LOGICAL_TABLE>.MONTH
 );
 ```
 
