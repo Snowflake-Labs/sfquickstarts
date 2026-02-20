@@ -14,7 +14,7 @@ The following sections explain the various headings of a guide that are required
 
 Your guide will reside in this [sfguides/src folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src)
 
-### Overview TEST TEST TEST 
+### Overview TEST Images upload
 
 Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
@@ -38,6 +38,12 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 ### What You’ll Build 
 Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 Test line
+
+### Test Images
+![Synthetic Data Generator Demo](assets/puppy.jpg)
+
+### Test Images
+![Synthetic Data Generator Demo](assets/puppy01.jpg)
 
 ### Layout Basics
 
