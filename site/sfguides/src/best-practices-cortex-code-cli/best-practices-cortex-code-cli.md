@@ -27,20 +27,6 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 
 > **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code). 
 
-### Connect to Snowflake
-
-Start an interactive session:
-
-```
-cortex
-```
-
-The setup wizard will prompt you to choose an existing connection (from `~/.snowflake/connections.toml`) or create a new one. If you already have a named connection, you can start with it explicitly:
-
-```
-cortex -c <connection_name>
-```
-
 For more details on setup, connections, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
 
 ### What you'll learn
