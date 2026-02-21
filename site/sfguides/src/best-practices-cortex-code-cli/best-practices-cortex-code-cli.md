@@ -253,6 +253,11 @@ With Cortex Code CLI, you can often collapse that end-to-end loop into a single 
 
 [dbt Projects on Snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-using-workspaces) are a Snowflake native implementation of dbt that unlocks project management and orchestration through Workspaces.
 
+Keep these Workspace-specific considerations in mind:
+- **`profiles.yml` is required in the workspace**: Each dbt project folder in a Snowflake Workspace must include a `profiles.yml` that specifies a target `warehouse`, `database`, `schema`, and `role`. (Unlike dbt Core, `account` and `user` can be blank/arbitrary because runs execute in Snowflake under the current context.)
+- **File-count limits**: A dbt project folder can’t exceed 20,000 files (including generated/log directories).
+- **Sharing**: Workspaces are typically created in a personal database and aren’t shareable; use shared workspaces if you need multi-user collaboration.
+
 If you are using Snowflake's native dbt implementation, try prompts like:
 
 ```
