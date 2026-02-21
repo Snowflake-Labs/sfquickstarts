@@ -91,9 +91,12 @@ For more details on setup, connections, supported models, or CLI reference, see 
 
 ## Where to start
 
-- **Everyone**: start with [Data exploration](#data-exploration) to find data you can work with and validate access.
-- **Data engineers**: then go to [Create and manage dbt projects](#create-and-manage-dbt-projects) → [Debug Apache Airflow® orchestration](#debug-apache-airflow-orchestration) → [Add semantic views to your gold tables](#add-semantic-views-to-your-gold-tables).
-- **Analytics and app builders**: then go to [Build interactive dashboards](#build-interactive-dashboards) → [Cortex Agents for Snowflake Intelligence](#cortex-agents-for-snowflake-intelligence).
+Everyone can start with [Data exploration](#data-exploration) to find data you can work with and validate access.
+
+Then follow the progression that matches your goal:
+
+- **Data engineering (pipelines and operations)**: explore how to [Create and manage dbt projects](#create-and-manage-dbt-projects), or [Debug Apache Airflow® orchestration](#debug-apache-airflow-orchestration) as you operationalize runs. Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you’re ready to standardize metrics and definitions for downstream consumers.
+- **Analytics and app builders (interactive experiences)**: learn how to [Build Streamlit dashboards](#build-interactive-dashboards), then orchestrate [Cortex Agents for Snowflake Intelligence](#cortex-agents-for-snowflake-intelligence) so end users can self-serve answers and insights, grounded in governed data and the right tools.
 
 ## Data exploration
 
