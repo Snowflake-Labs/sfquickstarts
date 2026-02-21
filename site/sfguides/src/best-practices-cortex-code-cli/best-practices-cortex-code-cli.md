@@ -25,7 +25,7 @@ This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.co
 curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh 
 ```
 
-> **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial.](https://signup.snowflake.com/cortex-code). 
+> **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code). 
 
 For more details on setup, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
 
@@ -78,7 +78,7 @@ For more details on setup, supported models, or CLI reference, see the [Cortex C
 
 ## Data exploration
 
-Here we'll create a basic synthetic dataset and do some basic analysis to generate a dashboard.
+In this section, you’ll use Cortex Code CLI to discover data you can work with, confirm you have the right permissions, and run a few exploratory questions. If you don’t have a convenient dataset handy, you can generate a small synthetic one to follow along—then use it in the dashboard example that follows.
 
 ### Discover and explore data
 
