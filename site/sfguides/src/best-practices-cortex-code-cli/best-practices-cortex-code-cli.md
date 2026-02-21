@@ -27,6 +27,8 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 
 > **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial here](https://signup.snowflake.com/cortex-code). 
 
+For more details on setup, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
+
 ### What You'll Learn
 - Key terminology
 - Best practices when using Cortex Code CLI
@@ -70,23 +72,13 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 ### Security & governance
 
 * Never commit secrets - keep credentials out of code and version control  
-* Review privilege grants and RBAC changes carefully  
-* Use skills like `agent-optimization` or `semantic-view-optimization` for expert workflows  
+* Review privilege grants and RBAC changes carefully   
 * Leverage built-in help - ask "How does this work?" or check Snowflake documentation
 
 
 ## Data exploration
 
 Here we'll create a basic synthetic dataset and do some basic analysis to generate a dashboard.
-
-### Connect to a Snowflake account
-
-```
-$ cortex -c <your demo account> 
-# or
-$ cortex 
-> connect to <my demo account> 
-```
 
 ### Discover and explore data
 
