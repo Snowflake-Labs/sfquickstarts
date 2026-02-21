@@ -40,35 +40,39 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 - **[Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Snowflake service that translates natural language questions into SQL queries, using semantic models to understand business logic.
 - **[Semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)**: schema-level objects that combine data with business context (definitions, relationships, and metrics) to power consistent analytics and natural-language-to-SQL experiences.
 
-## Design principles
+## Best practices
+
+> **Always ensure you're on the latest CLI version.** Run `cortex --version` and update if needed.
 
 ### Communicate naturally
 
-* **Use plain language** to describe what you want, not how to do it  
-* **Ask "What steps are available to me?"** if you feel stuck  
-* **Check if specialized skills should be loaded** for agents, semantic models, or complex workflows  
-* **Iterate conversationally** - just say what you'd like changed
+* Use plain language to describe what you want, not how to do it  
+* Iterate conversationally - just say what you'd like changed
+* If you feel stuck, ask "What steps are available to me?"  
+* New skills are always being added. Ask "what skills are available?" to see the latest.
+* Check if specialized skills should be loaded for agents, semantic models, or complex workflows  
 
 ### Review before accepting
 
-* **Understand proposed changes** before they're executed, especially SQL DDL/DML operations  
-* **Verify file modifications** - what will be created, edited, or deleted  
-* **Use caution with production** environments and destructive operations (DROP, DELETE, etc.)  
-* **Ask for explanations** if unsure: "Why are you doing this?" or "What will this change?"
+* Understand proposed changes before they're executed, especially SQL DDL/DML operations  
+* Verify file modifications - what will be created, edited, or deleted  
+* Use caution with production environments and destructive operations (DROP, DELETE, etc.)  
+* Ask for explanations if unsure: "Why are you doing this?" or "What will this change?"
 
 ### Work effectively
 
-* **Start small and test frequently** - build one component at a time.  
-* **Use /plan for complex tasks** to see the full approach before starting  
-* **Run Cortex Code in VS Code/Cursor terminal** to view code files side-by-side  
-* **Write complex requirements in .md files** and reference them in conversation
+* Start small and test frequently - build one component at a time  
+* Use `/plan` for complex tasks to see the full approach before starting  
+* Run Cortex Code in a VS Code/Cursor terminal to view code files side-by-side  
+* Write complex requirements in `.md` files and reference them in the conversation  
+* If you hit unexpected behavior, confirm you’re on the latest CLI version (for example: run `cortex --version` and update if needed)
 
 ### Security & governance
 
-* **Never commit secrets** - keep credentials out of code and version control  
-* **Review privilege grants and RBAC changes** carefully  
-* **Use skills** like **agent-optimization** or **semantic-view-optimization** for expert workflows  
-* **Leverage built-in help** - ask "How does this work?" or check Snowflake documentation
+* Never commit secrets - keep credentials out of code and version control  
+* Review privilege grants and RBAC changes carefully  
+* Use skills like `agent-optimization` or `semantic-view-optimization` for expert workflows  
+* Leverage built-in help - ask "How does this work?" or check Snowflake documentation
 
 
 ## Data exploration
@@ -224,6 +228,14 @@ If the risk score is high, end the response with a recommended retention offer
 (e.g., 'Offer 10% discount').
 Constraint: Never reveal the raw CHURN_RISK_SCORE to the user; interpret it as
 'Low', 'Medium', or 'High'.
+```
+
+### Optimize your Cortex Agent
+
+Once the agent is created, iterate on reliability and usefulness with the `agent-optimization` skill:
+
+```
+Use the agent-optimization skill to review and improve this Cortex Agent configuration (system prompt, tool routing logic, and guardrails). Make it more reliable, reduce unnecessary tool calls, and add any missing constraints or clarifying questions for edge cases.
 ```
 
 ### Deploy to Snowflake Intelligence
