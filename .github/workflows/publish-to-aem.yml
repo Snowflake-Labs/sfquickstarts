@@ -84,6 +84,7 @@ jobs:
             --commit-sha "$COMMIT_SHA" \
             --quickstart-name "$QUICKSTART_NAME" \
             --base-image-url "$BASE_IMAGE_URL" \
+            --strip-assets-prefix \
             --output-json parsed_content.json
           
           echo "📄 Parsed markdown content:"
