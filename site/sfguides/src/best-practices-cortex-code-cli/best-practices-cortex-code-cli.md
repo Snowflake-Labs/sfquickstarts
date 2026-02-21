@@ -27,12 +27,26 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 
 > **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code). 
 
-For more details on setup, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
+### Connect to Snowflake
+
+Start an interactive session:
+
+```
+cortex
+```
+
+The setup wizard will prompt you to choose an existing connection (from `~/.snowflake/connections.toml`) or create a new one. If you already have a named connection, you can start with it explicitly:
+
+```
+cortex -c <connection_name>
+```
+
+For more details on setup, connections, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
 
 ### What you'll learn
 - Key terminology
 - Best practices when using Cortex Code CLI
-- Core use cases around data exploration, building agents, creating semantic views, and orchestrating data pipelines (dbt and Apache Airflow®)
+- Core use cases around building and operating data pipelines (dbt and Apache Airflow®), adding semantic views on gold models, and building interactive analytics experiences (exploration, dashboards, and agents)
 
 ## Terminology
 
@@ -75,10 +89,15 @@ For more details on setup, supported models, or CLI reference, see the [Cortex C
 * Review privilege grants and RBAC changes carefully   
 * Leverage built-in help - ask "How does this work?" or check Snowflake documentation
 
+## Where to start
+
+- **Everyone**: start with [Data exploration](#data-exploration) to find data you can work with and validate access.
+- **Data engineers**: then go to [Create and manage dbt projects](#create-and-manage-dbt-projects) → [Debug Apache Airflow® orchestration](#debug-apache-airflow-orchestration) → [Add semantic views to your gold tables](#add-semantic-views-to-your-gold-tables).
+- **Analytics and app builders**: then go to [Build interactive dashboards](#build-interactive-dashboards) → [Cortex Agents for Snowflake Intelligence](#cortex-agents-for-snowflake-intelligence).
 
 ## Data exploration
 
-In this section, you’ll use Cortex Code CLI to discover data you can work with, confirm you have the right permissions, and run a few exploratory questions. If you don’t have a convenient dataset handy, you can generate a small synthetic one to follow along—then use it in the dashboard example that follows.
+In this section, you’ll use Cortex Code CLI to discover data you can work with, confirm you have the right permissions, and run a few exploratory questions. If you don’t have a convenient dataset handy, you can generate a small synthetic one to follow along—then use it in the dashboard example that follows. If you’re focused on pipelines first, feel free to jump ahead to [Create and manage dbt projects](#create-and-manage-dbt-projects).
 
 ### Discover and explore data
 
@@ -101,6 +120,8 @@ Why am I getting a permissions error?
 ```
 
 ### Generate synthetic data
+
+If you need a dataset to practice on, generate a small synthetic one.
 
 Examples:
 
@@ -147,6 +168,8 @@ I want to identify the heaviest data users who are also churning.
 
 ## Build interactive dashboards
 
+Next, turn your exploration into an interactive Streamlit app you can share.
+
 Create and deploy Streamlit apps with charts, filters, and interactivity.
 
 Open a good-looking dashboard (for example, [this dashboard](https://s3-figma-hubfile-images-production.figma.com/hub/file/carousel/img/fc3a04485c66b47e6985c5bd5f0c4b28495a3456)), copy it to the clipboard, then paste it into Cortex Code (Ctrl+V).
@@ -168,11 +191,11 @@ Congratulations! You should now have a working Streamlit dashboard that displays
 
 ## Cortex Agents for Snowflake Intelligence
 
-Now, let's make this more interactive by creating a Cortex Agent to answer questions about this data in Snowflake Intelligence.
+Now, let's make this more interactive by creating a Cortex Agent to answer questions about this data in Snowflake Intelligence. In this process, we'll augment the existing synthetic data with some synthetic data of customer calls. 
 
 Check out [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/) for additional guidance as you configure your agent's design, tooling, and orchestration instructions for optimal reliability.
 
-In this process, we'll augment the existing synthetic data with some synthetic data of customer calls. 
+We’ll set up two building blocks: one for structured analytics and one for unstructured text, then combine them into a single agent experience.
 
 ### Create a semantic view for Cortex Analyst
 
