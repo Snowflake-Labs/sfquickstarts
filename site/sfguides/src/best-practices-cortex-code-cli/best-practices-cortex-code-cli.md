@@ -10,15 +10,7 @@ status: Published
 
 This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.com/user-guide/cortex-code/cortex-code-cli), an AI-powered command-line coding agent designed to streamline the process of building, debugging, and deploying Snowflake applications through natural language conversations.  
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube-nocookie.com/embed/lftWaAcG2nE?rel=0&modestbranding=1&controls=0&iv_load_policy=3"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-></iframe>
+[![Watch the Cortex Code CLI video on YouTube](assets/cortex-code-cli-overview-video.svg)](https://www.youtube.com/watch?v=lftWaAcG2nE)
 
 ## Installation instructions
 
