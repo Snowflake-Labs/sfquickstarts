@@ -171,11 +171,13 @@ Give me a link to access the dashboard when it's done.
 
 Congratulations! You should now have a working Streamlit dashboard that displays the dataset you created!
 
+## Create a Cortex Agent for Snowflake Intelligence
+
 Now, let's make this more interactive by creating a Cortex agent to answer questions about this data in Snowflake Intelligence.
 
 In this process, we'll augment the existing synthetic data with some synthetic data of customer calls. 
 
-## Create a Semantic View
+### Create a Semantic View for Cortex Analyst
 
 Now let's create a semantic view so that you can use Cortex Analyst with this data. Try the prompt below and use the defaults for all the questions it asks. 
 
@@ -184,7 +186,7 @@ Write a Semantic View named DEMO_TELECOM_CHURN_ANALYTICS for Cortex Analyst
 based on this data.  Use the semantic-view optimization skill
 ```
 
-## Create a Cortex Search service
+### Create a Cortex Search service
 
 Step 1: Generate some synthetic data containing customer service calls 
 
@@ -204,7 +206,7 @@ Create a Cortex Search Service named CALL_LOGS_SEARCH that indexes these
 transcripts. It should index the TRANSCRIPT_TEXT column and filter by CUSTOMER_ID
 ```
 
-## Create a Cortex Agent
+### Create a Cortex Agent
 
 Finally, let's create a Cortex Agent that uses these two services and add it to Snowflake Intelligence:
 
@@ -223,7 +225,7 @@ Constraint: Never reveal the raw CHURN_RISK_SCORE to the user; interpret it as
 'Low', 'Medium', or 'High'."
 ```
 
-## Deploy to Snowflake Intelligence
+### Deploy to Snowflake Intelligence
 
 Finally, we can deploy the agent to [Snowflake Intelligence](https://ai.snowflake.com/)
 
@@ -326,7 +328,7 @@ Semantic view design principles to keep in mind:
   - **Add rich metadata**: fill in descriptions, metrics, and filters; include verified queries and custom instructions when needed to steer consistent outputs.
   - **Use assisted creation where possible**: Snowflake's **Semantic View Autopilot** can accelerate scaffolding, then refine by hand.
 
-- Check out more [best practices and semantic view design principles](https://www.snowflake.com/en/developers/guides/best-practices-semantic-views-cortex-analyst/#semantic-view-design-principles).
+Check out more [best practices and semantic view design principles](https://www.snowflake.com/en/developers/guides/best-practices-semantic-views-cortex-analyst/#semantic-view-design-principles).
 
 ## Conclusion and Resources
 
