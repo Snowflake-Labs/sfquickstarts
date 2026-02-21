@@ -16,7 +16,7 @@ This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.co
 
 ## Installation instructions
 
-### What You'll Need
+### What you'll need
 - Snowflake account with appropriate permissions
 - A supported environment: macOS on Apple Silicon, Intel Linux on Intel, or Windows Subsystem for Linux (WSL)
 - Terminal access
@@ -25,11 +25,11 @@ This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.co
 curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh 
 ```
 
-> **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial here](https://signup.snowflake.com/cortex-code). 
+> **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial.](https://signup.snowflake.com/cortex-code). 
 
 For more details on setup, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
 
-### What You'll Learn
+### What you'll learn
 - Key terminology
 - Best practices when using Cortex Code CLI
 - Core use cases around data exploration, building agents, creating semantic views, and orchestrating data pipelines (dbt and Apache Airflow®)
