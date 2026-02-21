@@ -8,11 +8,11 @@ status: Published
 
 # Best Practices for Cortex Code CLI
 
-This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.com/user-guide/cortex-code/cortex-code-cli), an AI-powered command-line coding agent designed to streamline the process of building, debugging, and deploying Snowflake applications through natural language conversations.  
+This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.com/user-guide/cortex-code/cortex-code-cli), an AI-powered command-line coding agent designed to streamline the process of building, debugging, and deploying Snowflake applications through natural language conversations.
 
-[![A video thumbnail titled Cortex Code CLI Overview](https://www.snowflake.com/content/dam/snowflake-site/general/external/cli-thumbnail-dev-guide.png)](https://www.youtube.com/watch?v=lftWaAcG2nE)
+[![A video thumbnail for Cortex Code CLI Overview](https://www.snowflake.com/content/dam/snowflake-site/general/external/cli-thumbnail-dev-guide.png)](https://www.youtube.com/watch?v=lftWaAcG2nE)
 
-[Watch how you can use Cortex Code CLI](https://www.youtube.com/watch?v=lftWaAcG2nE).
+[Watch how you can use Cortex Code CLI in less than 3 minutes](https://www.youtube.com/watch?v=lftWaAcG2nE).
 
 ## Installation instructions
 
@@ -93,7 +93,7 @@ For more details on setup, connections, supported models, or CLI reference, see 
 
 Everyone can start with [Data exploration](#data-exploration) to find data you can work with and validate access.
 
-Then follow the progression that matches your goal:
+Then, discover use cases that best match your goal:
 
 - **Data engineering (pipelines and operations)**: explore how to [Create and manage dbt projects](#create-and-manage-dbt-projects), or [Debug Apache Airflow® orchestration](#debug-apache-airflow-orchestration) as you operationalize runs. Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you’re ready to standardize metrics and definitions for downstream consumers.
 - **Analytics and app builders (interactive experiences)**: learn how to [Build Streamlit dashboards](#build-interactive-dashboards), then orchestrate [Cortex Agents for Snowflake Intelligence](#cortex-agents-for-snowflake-intelligence) so end users can self-serve answers and insights, grounded in governed data and the right tools.
