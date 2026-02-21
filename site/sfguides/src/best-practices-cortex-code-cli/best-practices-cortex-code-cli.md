@@ -72,9 +72,7 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 * **Leverage built-in help** - ask "How does this work?" or check Snowflake documentation
 
 
-# 101 Use Cases
-
-## Data discovery & querying
+## Data exploration
 
 Here we'll create a basic synthetic dataset and do some basic analysis to generate a dashboard.
 
@@ -173,9 +171,7 @@ Give me a link to access the dashboard when it's done.
 
 Congratulations! You should now have a working Streamlit dashboard that displays the dataset you created!
 
-# 201 Use Cases
-
-Now, let's make this more interactive by creating a cortex agent to answer questions about this data in Snowflake Intelligence.
+Now, let's make this more interactive by creating a Cortex agent to answer questions about this data in Snowflake Intelligence.
 
 In this process, we'll augment the existing synthetic data with some synthetic data of customer calls. 
 
@@ -242,21 +238,31 @@ Now you should be able to access this agent in Snowflake Intelligence and ask it
 - *What are customers complaining about in their calls?"* 
 - *"Show me high-risk customers with monthly charges over $100"*
 
-
 ## Create and manage dbt projects
 
 Sometimes starting a brand-new dbt project can feel like a full-day task: jumping between Snowsight, your IDE, your terminal, and your dbt repo to define sources, build models, add tests, run builds, validate outputs, and share results.
 
 With Cortex Code CLI, you can often collapse that end-to-end loop into a single conversation, staying in flow while it handles the boilerplate, wiring, and Snowflake-specific best practices.
 
+
+### dbt Core and dbt Cloud
+
+If you run dbt from your own repo (dbt Core) or manage it via dbt Cloud, you can still use Cortex Code CLI to generate and evolve the project locally—while respecting your existing connection setup (for example, using `~/.dbt` instead of creating a new `profiles.yml`).
+
+For example:
+
+```
+Create a dbt project under /tasty_food that builds a data pipeline to analyze order information and trends using my source data in Database tb_101 Schema RAW. Add appropriate tests, run a build, validate the output, and generate a shareable HTML summary. Don’t create a profiles.yml file; I already have a Snowflake connection via ~/.dbt. When running dbt commands, use --target PM.
+```
+
+And when your project grows, you can use Cortex Code CLI to help keep it fast and cost-efficient:
+
+```
+Take a look at /target/run_results.json, identify the slowest-running models, suggest specific performance optimizations, and flag any models that aren’t referenced downstream and could potentially be removed.
+```
 ### dbt Projects on Snowflake
 
 [dbt Projects on Snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-using-workspaces) are a Snowflake native implementation of dbt that unlocks project management and orchestration through Workspaces.
-
-Keep these Workspace-specific considerations in mind:
-- **`profiles.yml` is required in the workspace**: Each dbt project folder in a Snowflake Workspace must include a `profiles.yml` that specifies a target `warehouse`, `database`, `schema`, and `role`. (Unlike dbt Core, `account` and `user` can be blank/arbitrary because runs execute in Snowflake under the current context.)
-- **File-count limits**: A dbt project folder can’t exceed 20,000 files (including generated/log directories).
-- **Sharing**: Workspaces are typically created in a personal database and aren’t shareable; use shared workspaces if you need multi-user collaboration.
 
 If you are using Snowflake's native dbt implementation, try prompts like:
 
@@ -278,22 +284,6 @@ Once you have a first version working, keep iterating with follow-ups like:
 - **Cleaner layering**: Can you refactor this into staging and mart layers?
 - **Speed/cost**: How would you optimize this project for performance and cost?
 
-### dbt Core and dbt Cloud
-
-If you run dbt from your own repo (dbt Core) or manage it via dbt Cloud, you can still use Cortex Code CLI to generate and evolve the project locally—while respecting your existing connection setup (for example, using `~/.dbt` instead of creating a new `profiles.yml`).
-
-For example:
-
-```
-Create a dbt project under /tasty_food that builds a data pipeline to analyze order information and trends using my source data in Database tb_101 Schema RAW. Add appropriate tests, run a build, validate the output, and generate a shareable HTML summary. Don’t create a profiles.yml file; I already have a Snowflake connection via ~/.dbt. When running dbt commands, use --target PM.
-```
-
-And when your project grows, you can use Cortex Code CLI to help keep it fast and cost-efficient:
-
-```
-Take a look at /target/run_results.json, identify the slowest-running models, suggest specific performance optimizations, and flag any models that aren’t referenced downstream and could potentially be removed.
-```
-
 ## Debug Apache Airflow® orchestration
 
 Airflow + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn’t populate, upstream data is missing, or a warehouse setting causes timeouts.
@@ -308,6 +298,35 @@ From there, you can follow up with prompts like:
 - **Add guardrails**: Can you add a data quality check before loading?
 - **Assess impact**: Which downstream reports depend on this table?
 - **Fix fast**: The pipeline failed—can you diagnose and fix it?
+
+## Adding Semantic Views on your gold tables
+
+Once your dbt pipeline produces “gold” (business-ready) models (typically your mart layer), you can add a semantic view on top to define metrics, dimensions, and joins in one place. This helps downstream consumers (dashboards, BI tools, and AI apps) use consistent definitions without everyone re-implementing business logic in their own queries.
+
+How do you know your dbt outputs are “gold”? Typically, they:
+- **Have stable business meaning** (one agreed definition for key metrics like “weekly revenue”)
+- **Are consumer-ready** (modeled for analytics, often your `marts/` layer rather than `staging/` or `intermediate/`)
+- **Are tested and reliable** (core tests pass consistently and runs are repeatable)
+- **Are documented** (clear naming + descriptions so others know what to query)
+
+Try a prompt like:
+
+```
+Create a semantic view named <SEMANTIC_VIEW_NAME (e.g., WEEKLY_TRUCK_PERFORMANCE_SEMANTIC)> on top of my gold dbt models (mart layer): <GOLD_MODELS_OR_SCHEMA>
+Define:
+- Dimensions: <DIMENSIONS (e.g., truck_id, city, week_start_date)>
+- Measures (with definitions): <MEASURES (e.g., weekly_revenue = sum(net_amount), total_orders = count_distinct(order_id))>
+- Relationships/joins: <RELATIONSHIPS_OR_JOINS (e.g., weekly_metrics.truck_id -> dim_truck.truck_id)>
+Use business-friendly names and descriptions, and validate it answers questions like <EXAMPLE_QUESTIONS (e.g., "Which cities grew WoW revenue?", "Top 10 trucks by AOV last week")>.
+```
+
+Semantic view design principles to keep in mind:
+  - **Design from your end-users' perspective, not the database perspective**: use business terminology (not raw table/column names) and define metrics the way stakeholders talk about them. Ask: “If I were explaining this data to a business stakeholder, how would I describe it?”
+  - **Keep views focused**: organize by business domain/use case; split very large models when different audiences need different slices.
+  - **Add rich metadata**: fill in descriptions, metrics, and filters; include verified queries and custom instructions when needed to steer consistent outputs.
+  - **Use assisted creation where possible**: Snowflake's **Semantic View Autopilot** can accelerate scaffolding, then refine by hand.
+
+- Check out more [best practices and semantic view design principles](https://www.snowflake.com/en/developers/guides/best-practices-semantic-views-cortex-analyst/#semantic-view-design-principles).
 
 ## Conclusion and Resources
 
