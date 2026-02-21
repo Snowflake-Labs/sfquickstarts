@@ -278,7 +278,7 @@ Once you have a first version working, keep iterating with follow-ups like:
 - **Cleaner layering**: Can you refactor this into staging and mart layers?
 - **Speed/cost**: How would you optimize this project for performance and cost?
 
-### dbt OSS and dbt Cloud
+### dbt Core and dbt Cloud
 
 If you run dbt from your own repo (dbt Core) or manage it via dbt Cloud, you can still use Cortex Code CLI to generate and evolve the project locally—while respecting your existing connection setup (for example, using `~/.dbt` instead of creating a new `profiles.yml`).
 
