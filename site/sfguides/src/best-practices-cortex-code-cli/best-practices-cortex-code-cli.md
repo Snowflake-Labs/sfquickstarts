@@ -274,9 +274,9 @@ Open the generated HTML summary in my browser.
 
 Once you have a first version working, keep iterating with follow-ups like:
 - **Why this structure**: Why did you structure the model this way?
-- **Better coverage**: Add more tests for nulls and uniqueness.
-- **Cleaner layering**: Refactor this into staging and mart layers.
-- **Speed/cost**: Optimize for performance.
+- **Better coverage**: Can you add more tests for nulls and uniqueness?
+- **Cleaner layering**: Can you refactor this into staging and mart layers?
+- **Speed/cost**: How would you optimize this project for performance and cost?
 
 ### dbt OSS and dbt Cloud
 
@@ -305,9 +305,9 @@ What's wrong with dbt_finance_customer_product_dag in dev Airflow? Help me debug
 ```
 
 From there, you can follow up with prompts like:
-- **Add guardrails**: Add a data quality check before loading.
-- **Assess impact**: Show me which downstream reports depend on this table.
-- **Fix fast**: The pipeline failed—diagnose and fix it.
+- **Add guardrails**: Can you add a data quality check before loading?
+- **Assess impact**: Which downstream reports depend on this table?
+- **Fix fast**: The pipeline failed—can you diagnose and fix it?
 
 ## Conclusion and Resources
 
