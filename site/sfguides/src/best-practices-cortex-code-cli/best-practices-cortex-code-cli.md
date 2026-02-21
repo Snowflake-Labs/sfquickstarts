@@ -12,7 +12,7 @@ This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.co
 
 [![A video thumbnail titled Cortex Code CLI Overview ](https://www.snowflake.com/content/dam/snowflake-site/general/external/cli-thumbnail-dev-guide.png)](https://www.youtube.com/watch?v=lftWaAcG2nE)
 
-P[Watch how you can use Cortex Code CLI](https://www.youtube.com/watch?v=lftWaAcG2nE)!
+[Watch how you can use Cortex Code CLI](https://www.youtube.com/watch?v=lftWaAcG2nE)!
 
 ## Installation instructions
 
