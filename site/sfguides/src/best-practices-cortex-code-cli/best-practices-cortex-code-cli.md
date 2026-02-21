@@ -253,7 +253,7 @@ With Cortex Code CLI, you can often collapse that end-to-end loop into a single 
 
 [dbt Projects on Snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-using-workspaces) are a Snowflake native implementation of dbt that unlocks project management and orchestration through Workspaces.
 
-If you’re using dbt in a Native Project workflow, try prompts like:
+If you are using Snowflake's native dbt implementation, try prompts like:
 
 ```
 Find all of the tables within Database tb_101 Schema RAW.
@@ -289,7 +289,7 @@ And when your project grows, you can use Cortex Code CLI to help keep it fast an
 Take a look at /target/run_results.json, identify the slowest-running models, suggest specific performance optimizations, and flag any models that aren’t referenced downstream and could potentially be removed.
 ```
 
-## Debug Airflow orchestration
+## Debug Apache Airflow® orchestration
 
 Airflow + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn’t populate, upstream data is missing, or a warehouse setting causes timeouts.
 
