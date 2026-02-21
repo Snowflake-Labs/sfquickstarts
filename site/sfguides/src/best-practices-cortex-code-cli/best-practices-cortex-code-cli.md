@@ -72,9 +72,9 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 * **Leverage built-in help** - ask "How does this work?" or check Snowflake documentation
 
 
-## 101 Use Cases
+# 101 Use Cases
 
-### Data discovery & querying
+## Data discovery & querying
 
 Here we'll create a basic synthetic dataset and do some basic analysis to generate a dashboard.
 
@@ -139,7 +139,7 @@ they cancelled their service (churn). Ensure there's a customer_id column that's
 unique. Create the data locally and then upload it to Snowflake.
 ```
 
-### Perform basic queries against this data
+### Query your data
 
 Ask anything! Here are some basic examples:
 
@@ -152,7 +152,7 @@ the most risky regions and contract types.
 I want to identify the heaviest data users who are also churning.
 ```
 
-### Build Interactive Dashboards
+## Build Interactive Dashboards
 
 Create and deploy Streamlit apps with charts, filters, and interactivity.
 
@@ -173,13 +173,13 @@ Give me a link to access the dashboard when it's done.
 
 Congratulations! You should now have a working Streamlit dashboard that displays the dataset you created!
 
-## 201 Use Cases
+# 201 Use Cases
 
 Now, let's make this more interactive by creating a cortex agent to answer questions about this data in Snowflake Intelligence.
 
 In this process, we'll augment the existing synthetic data with some synthetic data of customer calls. 
 
-### Create a Semantic View for Cortex Analyst
+## Create a Semantic View
 
 Now let's create a semantic view so that you can use Cortex Analyst with this data. Try the prompt below and use the defaults for all the questions it asks. 
 
@@ -188,7 +188,7 @@ Write a Semantic View named DEMO_TELECOM_CHURN_ANALYTICS for Cortex Analyst
 based on this data.  Use the semantic-view optimization skill
 ```
 
-### Create a Cortex Search service
+## Create a Cortex Search service
 
 Step 1: Generate some synthetic data containing customer service calls 
 
@@ -208,7 +208,7 @@ Create a Cortex Search Service named CALL_LOGS_SEARCH that indexes these
 transcripts. It should index the TRANSCRIPT_TEXT column and filter by CUSTOMER_ID
 ```
 
-### Create a Cortex Agent
+## Create a Cortex Agent
 
 Finally, let's create a Cortex Agent that uses these two services and add it to Snowflake Intelligence:
 
@@ -227,7 +227,7 @@ Constraint: Never reveal the raw CHURN_RISK_SCORE to the user; interpret it as
 'Low', 'Medium', or 'High'."
 ```
 
-### Deploy to Snowflake Intelligence
+## Deploy to Snowflake Intelligence
 
 Finally, we can deploy the agent to [Snowflake Intelligence](https://ai.snowflake.com/)
 
@@ -239,7 +239,68 @@ Ta-da! You have successfully created and deployed a Snowflake Intelligence agent
 
 Now you should be able to access this agent in Snowflake Intelligence and ask it questions like: 
 
-*What are customers complaining about in their calls?"* or *"Show me high-risk customers with monthly charges over $100"*
+- *What are customers complaining about in their calls?"* 
+- *"Show me high-risk customers with monthly charges over $100"*
+
+
+## Create and manage dbt projects
+
+Sometimes starting a brand-new dbt project can feel like a full-day task: jumping between Snowsight, your IDE, your terminal, and your dbt repo to define sources, build models, add tests, run builds, validate outputs, and share results.
+
+With Cortex Code CLI, you can often collapse that end-to-end loop into a single conversation, staying in flow while it handles the boilerplate, wiring, and Snowflake-specific best practices.
+
+### Native Projects
+
+If you’re using dbt in a Native Project workflow, try prompts like:
+
+```
+Find all of the tables within Database tb_101 Schema RAW.
+```
+
+```
+Create a dbt project that uses these source tables to create an operations pipeline to analyze weekly food truck performance using the Tasty Bytes dataset. Using the raw order, menu, and truck location data, build a model that calculates weekly revenue, total orders, and average order value by truck and city. Add appropriate tests, run a build, validate the output, and generate a shareable HTML summary of the results.
+```
+
+```
+Open the generated HTML summary in my browser.
+```
+
+Once you have a first version working, keep iterating with follow-ups like:
+- **Why this structure**: Why did you structure the model this way?
+- **Better coverage**: Add more tests for nulls and uniqueness.
+- **Cleaner layering**: Refactor this into staging and mart layers.
+- **Speed/cost**: Optimize for performance.
+
+### dbt OSS and dbt Cloud
+
+If you run dbt from your own repo (dbt Core) or manage it via dbt Cloud, you can still use Cortex Code CLI to generate and evolve the project locally—while respecting your existing connection setup (for example, using `~/.dbt` instead of creating a new `profiles.yml`).
+
+For example:
+
+```
+Create a dbt project under /tasty_food that builds a data pipeline to analyze order information and trends using my source data in Database tb_101 Schema RAW. Add appropriate tests, run a build, validate the output, and generate a shareable HTML summary. Don’t create a profiles.yml file; I already have a Snowflake connection via ~/.dbt. When running dbt commands, use --target PM.
+```
+
+And when your project grows, you can use Cortex Code CLI to help keep it fast and cost-efficient:
+
+```
+Take a look at /target/run_results.json, identify the slowest-running models, suggest specific performance optimizations, and flag any models that aren’t referenced downstream and could potentially be removed.
+```
+
+## Debug Airflow orchestration
+
+Airflow + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn’t populate, upstream data is missing, or a warehouse setting causes timeouts.
+
+Instead of manually bouncing between the Airflow UI, task logs, DAG code, dbt artifacts, and Snowflake, you can ask Cortex Code CLI to triage the whole issue end-to-end. For example:
+
+```
+What's wrong with dbt_finance_customer_product_dag in dev Airflow? Help me debug why my dbt model product_unistore_compute_account_revenue isn't populated.
+```
+
+From there, you can follow up with prompts like:
+- **Add guardrails**: Add a data quality check before loading.
+- **Assess impact**: Show me which downstream reports depend on this table.
+- **Fix fast**: The pipeline failed—diagnose and fix it.
 
 ## Conclusion and Resources
 
