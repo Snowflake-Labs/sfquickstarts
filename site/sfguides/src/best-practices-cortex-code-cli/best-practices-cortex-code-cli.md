@@ -29,11 +29,6 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 
 For more details on setup, connections, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
 
-### What you'll learn
-- Key terminology
-- Best practices when using Cortex Code CLI
-- Core use cases around building and operating data pipelines (dbt and Apache Airflow®), adding semantic views on gold models, and building interactive analytics experiences (exploration, dashboards, and agents)
-
 ## Terminology
 
 - **[Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)** is an AI-powered coding agent for building, debugging, and working in Snowflake through natural language conversations.
@@ -77,16 +72,16 @@ For more details on setup, connections, supported models, or CLI reference, see 
 
 ## Where to start
 
-Everyone can start with [Data exploration](#data-exploration) to find data you can work with and validate access.
+Everyone can start with [data exploration](#data-exploration) to find data you can work with and validate access.
 
 Then, discover use cases that best match your goal:
 
-- **Data engineering (pipelines and operations)**: explore how to [Create and manage dbt projects](#create-and-manage-dbt-projects), or [Debug Apache Airflow® orchestration](#debug-apache-airflow-orchestration) as you operationalize runs. Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you’re ready to standardize metrics and definitions for downstream consumers.
-- **Analytics and app builders (interactive experiences)**: learn how to [Build Streamlit dashboards](#build-interactive-dashboards), then orchestrate [Cortex Agents for Snowflake Intelligence](#cortex-agents-for-snowflake-intelligence) so end users can self-serve answers and insights, grounded in governed data and the right tools.
+- **Data engineering (pipelines and operations)**: explore how to [create and manage dbt projects](#create-and-manage-dbt-projects), or operationalize runs with [Apache Airflow® orchestration](#apache-airflow-orchestration). Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you're ready to standardize metrics and definitions for downstream users.
+- **Analytics and app builders (interactive experiences)**: learn how to [build interactive dashboards](#build-interactive-dashboards) using Streamlit, or configure production-ready [Cortex Agents for Snowflake Intelligence](#cortex-agents-for-snowflake-intelligence) so end users can self-serve answers and insights, grounded in governed data and the right tools.
 
 ## Data exploration
 
-In this section, you’ll use Cortex Code CLI to discover data you can work with, confirm you have the right permissions, and run a few exploratory questions. If you don’t have a convenient dataset handy, you can generate a small synthetic one to follow along—then use it in the dashboard example that follows. If you’re focused on pipelines first, feel free to jump ahead to [Create and manage dbt projects](#create-and-manage-dbt-projects).
+In this section, you’ll use Cortex Code CLI to discover data you can work with, confirm you have the right permissions, and run a few exploratory questions. If you don’t have a convenient dataset handy, you can generate a small synthetic one to follow along—then use it in the dashboard example that follows. 
 
 ### Discover and explore data
 
@@ -303,7 +298,7 @@ Once you have a first version working, keep iterating with follow-ups like:
 - **Cleaner layering**: Can you refactor this into staging and mart layers?
 - **Speed/cost**: How would you optimize this project for performance and cost?
 
-## Debug Apache Airflow® orchestration
+## Apache Airflow® orchestration
 
 Airflow + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn’t populate, upstream data is missing, or a warehouse setting causes timeouts.
 
