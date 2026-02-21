@@ -249,7 +249,9 @@ Sometimes starting a brand-new dbt project can feel like a full-day task: jumpin
 
 With Cortex Code CLI, you can often collapse that end-to-end loop into a single conversation, staying in flow while it handles the boilerplate, wiring, and Snowflake-specific best practices.
 
-### Native Projects
+### dbt Projects on Snowflake
+
+[dbt Projects on Snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-using-workspaces) are a Snowflake native implementation of dbt that unlocks project management and orchestration through Workspaces.
 
 If you’re using dbt in a Native Project workflow, try prompts like:
 
