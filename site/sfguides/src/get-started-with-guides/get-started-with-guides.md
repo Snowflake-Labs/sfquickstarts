@@ -42,9 +42,6 @@ Test line
 ### Test Images
 ![Synthetic Data Generator Demo](assets/puppy.jpg)
 
-### Test Images
-![Synthetic Data Generator Demo](assets/puppy01.jpg)
-
 ### Layout Basics
 
 At a minimum, the Guide should include the following headings and subheadings. A single sfguide consists of multiple steps. 
