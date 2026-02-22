@@ -292,26 +292,71 @@ Create a dbt project that uses these source tables to create an operations pipel
 Open the generated HTML summary in my browser.
 ```
 
-Once you have a first version working, keep iterating with follow-ups like:
-- **Why this structure**: Why did you structure the model this way?
-- **Better coverage**: Can you add more tests for nulls and uniqueness?
-- **Cleaner layering**: Can you refactor this into staging and mart layers?
-- **Speed/cost**: How would you optimize this project for performance and cost?
+Once you have a first version working, keep iterating with follow-up prompts like:
+- Why did you structure the model this way?
+- Can you add more tests for nulls and uniqueness?
+- Can you refactor this into staging and mart layers?
+- How would you optimize this project for performance and cost?
 
 ## Apache Airflow® orchestration
 
-Airflow + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn’t populate, upstream data is missing, or a warehouse setting causes timeouts.
+Apache Airflow® + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn’t populate, upstream data is missing, or a warehouse setting causes timeouts.
 
-Instead of manually bouncing between the Airflow UI, task logs, DAG code, dbt artifacts, and Snowflake, you can ask Cortex Code CLI to triage the whole issue end-to-end. For example:
+Cortex Code CLI provides built-in support for Airflow, giving you a natural language interface to monitor DAGs, manage runs, debug failures, author pipelines, and understand lineage across your Airflow deployments.
+
+### Quick setup
+
+- **Prereq**: install [`uv`](https://docs.astral.sh/uv/getting-started/installation/) (required for `cortex airflow`).
+- **Configure an instance**:
+  - Run `/airflow` inside Cortex Code (supports multiple named instances), or
+  - Export connection details before starting Cortex Code:
+
+```bash
+export AIRFLOW_API_URL=https://airflow.example.com
+export AIRFLOW_AUTH_TOKEN=your-api-token
+# Or use AIRFLOW_USERNAME / AIRFLOW_PASSWORD
+```
+
+- **In-session**: `/airflow` (manage), `/airflow show` (masked), `/airflow clear` (remove)
+
+### Common commands
+
+```bash
+cortex airflow health
+cortex airflow dags list
+cortex airflow dags source my_pipeline
+cortex airflow runs trigger my_pipeline
+cortex airflow runs list my_pipeline
+cortex airflow tasks list my_pipeline <run_id>
+```
+
+Run `cortex airflow --help` for the full list of commands.
+
+### Example prompts
+
+For end-to-end failure triage:
+
+```
+Why did my_pipeline fail last night? Identify the root cause from run state and task logs, assess downstream impact, and recommend a fix.
+```
+
+To trigger a run and wait for results:
+
+```
+Test the daily_etl DAG and let me know when it finishes. If it fails, summarize the failing task and the error.
+```
+
+For lineage/impact questions:
 
 ```
 What's wrong with dbt_finance_customer_product_dag in dev Airflow? Help me debug why my dbt model product_unistore_compute_account_revenue isn't populated.
 ```
 
-From there, you can follow up with prompts like:
-- **Add guardrails**: Can you add a data quality check before loading?
-- **Assess impact**: Which downstream reports depend on this table?
-- **Fix fast**: The pipeline failed—can you diagnose and fix it?
+### Troubleshooting quick checks
+
+- **Connection refused**: verify `AIRFLOW_API_URL` and run `cortex airflow health`
+- **401/403**: verify token/credentials; check expiry and API permissions
+- **DAG not found**: confirm DAG ID and check for import/parse errors preventing it from loading
 
 ## Add semantic views to your gold tables
 
