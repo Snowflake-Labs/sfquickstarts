@@ -304,15 +304,6 @@ Apache Airflow® + Snowflake workflows often fail in cross-tool ways: a DAG task
 
 Cortex Code CLI provides built-in support for Airflow, giving you a natural language interface to monitor DAGs, manage runs, debug failures, author pipelines, and understand lineage across your Airflow deployments.
 
-### Capabilities at a glance
-
-- **Pipeline monitoring**: health checks, DAG inspection, connection/variable visibility, and scheduling control. For example: "Is my Airflow instance healthy?"
-- **Run management**: trigger DAGs on demand, wait for results, and pass custom run configuration. For example: "Test the daily_etl DAG and let me know when it finishes."
-- **Failure debugging**: root cause analysis across run state, task instances, and logs with impact assessment and fix recommendations. For example: "Why did my_pipeline fail last night?"
-- **DAG authoring**: guided DAG creation using your existing patterns, connections, and providers. For example: "Create a DAG that extracts from Snowflake and loads to S3 daily."
-- **Lineage and impact**: upstream origin tracing and downstream impact analysis through DAG source code. For example: "What would break if I change the customers table schema?"
-- **Migration and modern patterns**: migrate Airflow 2 → 3 and add human-in-the-loop steps (Airflow 3.1+). For example: "Migrate my DAGs from Airflow 2 to Airflow 3."
-
 ### Quick setup
 
 - **Prereq**: install [`uv`](https://docs.astral.sh/uv/getting-started/installation/) (required for `cortex airflow`).
@@ -341,24 +332,42 @@ cortex airflow tasks list my_pipeline <run_id>
 
 Run `cortex airflow --help` for the full list of commands.
 
-### Example prompts
+### Key capabilities and example prompts
 
-For end-to-end failure triage:
+- **Pipeline monitoring**
+
+```
+Is my Airflow instance healthy?
+```
+
+- **Run management**
+
+```
+Test the daily_etl DAG and let me know when it finishes.
+```
+
+- **Failure debugging**
 
 ```
 Why did my_pipeline fail last night? Identify the root cause from run state and task logs, assess downstream impact, and recommend a fix.
 ```
 
-To trigger a run and wait for results:
+- **DAG authoring**
 
 ```
-Test the daily_etl DAG and let me know when it finishes. If it fails, summarize the failing task and the error.
+Create a DAG that extracts from Snowflake and loads to S3 daily.
 ```
 
-For lineage/impact questions:
+- **Lineage and impact**
 
 ```
 What would break if I change the customers table schema? Trace upstream origins and downstream dependencies through DAG source code.
+```
+
+- **Migration and modern patterns**
+
+```
+Migrate my DAGs from Airflow 2 to Airflow 3.
 ```
 
 ### Troubleshooting quick checks
