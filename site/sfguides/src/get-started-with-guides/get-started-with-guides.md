@@ -379,3 +379,4 @@ You can use the Google Docs feature of saving to Markdown, however **please revi
 - Video on [How to Fork a Repo](https://youtu.be/ePRJHFXU6n4)
 - [Markdown template that can be used](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template).
 - Video on [How to Edit a Guide](https://youtu.be/yd9LXsvTSTU)
+
