@@ -86,7 +86,7 @@ Everyone can start with [data exploration](#data-exploration) to find data you c
 Then, discover use cases that best match your goal:
 
 - **Data engineering (pipelines and operations)**: explore how to [create and manage dbt projects](#create-and-manage-dbt-projects), or operationalize runs with [Apache Airflow® orchestration](#apache-airflow-orchestration). Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you're ready to standardize metrics and definitions for downstream users.
-- **Analytics and app builders (interactive experiences)**: learn how to [build interactive dashboards](#build-interactive-dashboards) using Streamlit, or configure production-ready [Cortex Agents](#production-ready-cortex-agents) so end users can self-serve answers and insights in Snowflake Intelligence (or your own app), grounded in governed data and the right tools.
+- **Analytics and app builders (interactive experiences)**: learn how to [build interactive dashboards](#build-interactive-dashboards) using Streamlit, or configure production-ready [Cortex Agents](#production-ready-cortex-agents) so end users can self-serve answers and insights in Snowflake Intelligence, grounded in governed data and the right tools.
 
 ## Data exploration
 
@@ -351,156 +351,87 @@ Check out more [best practices and semantic view design principles](https://www.
 
 ## Production-ready Cortex Agents
 
-Use [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) to create self-serve experiences in Snowflake Intelligence.
+Use [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) to create self-serve experiences in [Snowflake Intelligence](https://ai.snowflake.com/).
 
-More guidance: [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/).
+In Cortex Code CLI, the `cortex-agent` skill is automatically loaded when you mention agent-related tasks. You can also invoke it explicitly with `$cortex-agent` to see all available workflows.
 
-In Cortex Code CLI, use the `cortex-agent` skill as the required entry point for agent work in Snowflake. It detects your intent and routes to the right workflow.
+### Core building blocks
 
-At a high level, all production-ready Cortex Agents should include these core building blocks:
+Production-ready agents need:
 
-1. **Semantic layer (semantic views)**: governed definitions and context for structured metrics (plus a Cortex Search service for unstructured content).
-2. **Tools**: what the agent is allowed to call (for example, Cortex Analyst and Cortex Search), including any parameters, filters, and constraints.
-3. **Orchestration instructions**: the system prompt, tool-routing rules, and guardrails that control how the agent plans and acts.
-4. **Evaluations + observability**: trace-level scoring and regression runs you can use to gate releases and monitor drift over time.
+1. **Semantic layer**: semantic views for structured metrics, Cortex Search for unstructured content
+2. **Tools**: what the agent can call (Cortex Analyst, Cortex Search) with parameters and constraints
+3. **Orchestration instructions**: system prompt, tool-routing rules, and guardrails
+4. **Evaluations**: benchmarks and regression tests to gate releases and monitor drift
 
-### Skill capabilities
+### What you can do
 
-#### Discovery & management
+| Task | Example prompt |
+|------|----------------|
+| **Discover** | `List my Cortex agents` or `Show agents in ANALYTICS database` |
+| **Create** | `Create a Cortex Agent named SALES_AGENT in DB.SCHEMA with Analyst and Search tools` |
+| **Edit** | `Update the system prompt for DB.SCHEMA.MY_AGENT` |
+| **Debug** | `Debug why MY_AGENT answered incorrectly for "What was Q3 revenue?"` |
+| **Evaluate** | `Evaluate DB.SCHEMA.MY_AGENT on my eval set and summarize failures` |
+| **Optimize** | `Optimize DB.SCHEMA.MY_AGENT for production readiness` |
+| **Deploy** | `Deploy DB.SCHEMA.MY_AGENT to Snowflake Intelligence` |
 
-| Workflow | What it does |
-|----------|--------------|
-| **List** | Discover agents in a database/schema |
-| **Download** | Export agent specification to JSON |
-| **Delete** | Remove an agent (with production safety checks and backup) |
+### Evaluation approaches
 
-```
-List my Cortex agents
-Show agents in the ANALYTICS database
-Download the configuration for my sales_agent
-Delete the test agent in DEV.SANDBOX
-```
+| Approach | Best For |
+|----------|----------|
+| **Native Snowflake Evaluations** | Formal benchmarking with built-in metrics (`answer_correctness`, `tool_selection_accuracy`) |
+| **Script-based (LLM-as-judge)** | Quick iteration using `SNOWFLAKE.CORTEX.COMPLETE` |
+| **TruLens Agent GPA** | Trace-level scoring for goal fulfillment and execution efficiency |
 
-#### Building & Editing
+**Best practices**: Start with real eval sets (user trials, logs, edge cases), score the trace not just output, and set pass thresholds for CI/CD gates.
 
-| Workflow | What it does |
-|----------|--------------|
-| **Create** | Build a new agent with tools, instructions, and configuration |
-| **Edit** | Modify an existing agent's instructions, tools, or settings |
-
-```
-Create a new Cortex Agent named SALES_AGENT in DB.SCHEMA with Cortex Analyst and Cortex Search tools
-Edit my agent's instructions to handle billing questions better
-Add a Cortex Search tool to my existing agent
-Update the system prompt for DB.SCHEMA.MY_AGENT
-```
-
-#### Testing & Production Readiness
-
-| Workflow | What it does |
-|----------|--------------|
-| **Evaluate** | Run benchmarks using native Snowflake evaluations or LLM-as-judge |
-| **Optimize** | Full workflow: benchmark → identify issues → improve → validate |
-| **Debug** | Deep-dive analysis of a single query failure |
-| **Ad hoc testing** | Try questions interactively without formal evaluation |
-| **Dataset curation** | Build and manage evaluation sets from scratch or production logs |
-
-```
-Evaluate DB.SCHEMA.MY_AGENT on my eval set and summarize failures
-Optimize DB.SCHEMA.MY_AGENT for production readiness
-Debug why MY_AGENT answered incorrectly for: "What was Q3 revenue?"
-Test my agent with some sample questions
-Create an evaluation dataset from production logs
-```
-
-**Evaluation approaches:**
-
-| Approach | Best For | Description |
-|----------|----------|-------------|
-| **Native Snowflake Evaluations** | Formal benchmarking, Snowsight tracking | Built-in metrics: `answer_correctness`, `tool_selection_accuracy`, `logical_consistency`. |
-| **Script-based (LLM-as-judge)** | Quick iteration, local analysis | Uses `SNOWFLAKE.CORTEX.COMPLETE`. Results stored locally in JSON. |
-| **TruLens Agent GPA** | Trace-level scoring | Measures goal fulfillment, plan quality, execution efficiency. [Learn more](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/). |
-
-**Best practices:**
-- Start with a real eval set (user trials, agent logs, edge cases)
-- Score the trace, not just the output
-- Set pass thresholds and run evals in CI/CD to gate releases
-
-Learn more: [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/).
-
----
-
-### Deploy to Snowflake Intelligence
-
-Deploy your optimized agent to [Snowflake Intelligence](https://ai.snowflake.com/) to enable self-serve access for end users.
-
-```
-Deploy <DATABASE.SCHEMA.AGENT_NAME> to Snowflake Intelligence
-```
-
----
+Learn more: [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/) and [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/).
 
 ### Example: Build a Telecom Retention Agent
 
-In this walkthrough, you'll set up two tools for structured analytics using **Cortex Analyst** grounded by your semantic definitions and unstructured retrieval using **Cortex Search** over customer call transcripts, then combine them into a single agent experience.
+This walkthrough creates an agent with two tools: **Cortex Analyst** for structured metrics and **Cortex Search** for customer call transcripts.
 
-#### Step 1: Create a semantic view for Cortex Analyst
-
-Create a semantic view so you can use Cortex Analyst with this data:
+**Step 1: Create a semantic view**
 
 ```
-Write a Semantic View named DEMO_TELECOM_CHURN_ANALYTICS for Cortex Analyst 
-based on this data.
+If you don't already have a structured customer churn table, create one named TELECOM_CUSTOMERS in <DATABASE>.<SCHEMA>:
+
+Create a customer churn dataset for a telecom company showing customer usage for 100,000 customers.
+Include basic demographic data such as fake names, phone numbers, U.S. city and state. Also include data usage (GB), call minutes, contract length, and whether
+they cancelled their service (churn). Ensure there's a customer_id column that's unique. Create the data locally and then upload it to Snowflake as <DATABASE>.<SCHEMA>.TELECOM_CUSTOMERS.
+
+Then write a Semantic View named DEMO_TELECOM_CHURN_ANALYTICS for Cortex Analyst based on the <DATABASE>.<SCHEMA>.TELECOM_CUSTOMERS table.
 ```
 
-#### Step 2: Create a Cortex Search service
+**Step 2: Create a Cortex Search service**
 
 ```
-Generate a new table called customer_call_logs. Generate 50 realistic customer
-service transcripts (2-3 sentences each) as PDF files. Some should be angry
-complaints about coverage, others should be questions about billing. Then 
-use the AI_PARSE_DOCUMENT function to extract the text and layout information
-from the PDFs into the TRANSCRIPT_TEXT column. Split text into chunks for better
-search quality. 
-``` 
-
-```
-Create a Cortex Search Service named CALL_LOGS_SEARCH that indexes these
-transcripts. It should index the TRANSCRIPT_TEXT column and filter by CUSTOMER_ID
+Create a Cortex Search Service named CALL_LOGS_SEARCH that indexes customer call transcripts. Index the TRANSCRIPT_TEXT column and filter by CUSTOMER_ID.
 ```
 
-#### Step 3: Create a Cortex Agent
-
-Create a Cortex Agent that uses these two services:
+**Step 3: Create the agent**
 
 ```
-Create a new Cortex Agent in <DATABASE>.<SCHEMA> named TELECOM_RETENTION_AGENT that has access to two tools:
-- cortex_analyst: query the TELECOM_CUSTOMERS table via the DEMO_TELECOM_CHURN_ANALYTICS semantic view
+Create a Cortex Agent named TELECOM_RETENTION_AGENT with two tools:
+- cortex_analyst: query via DEMO_TELECOM_CHURN_ANALYTICS semantic view
 - cortex_search: search the CALL_LOGS_SEARCH service
 
-Write the system prompt and tool-routing rules.
-Persona: You are a Senior Retention Specialist.
-Routing Logic: If the user asks for 'metrics', 'counts', or 'averages', 
-use the Analyst tool. If the user asks for 'sentiment', 'reasons', or 
-'summaries of calls', use the Search tool.
-Output Format: Always verify the customer ID before answering. 
-If the risk score is high, end the response with a recommended retention offer 
-(e.g., 'Offer 10% discount').
-Constraint: Never reveal the raw CHURN_RISK_SCORE to the user; interpret it as
-'Low', 'Medium', or 'High'.
+Persona: Senior Retention Specialist.
+Routing: Use Analyst for metrics/counts/averages. Use Search for sentiment/reasons/call summaries.
+Constraint: Never reveal raw CHURN_RISK_SCORE; interpret as Low/Medium/High.
 ```
 
-#### Step 4: Optimize and evaluate
-
-Use the optimization workflow to improve your agent (baseline → improve → validate), then set up ongoing evaluations to catch drift:
+**Step 4: Optimize**
 
 ```
-Optimize my agent <DATABASE.SCHEMA.AGENT_NAME> for production readiness.
+Optimize TELECOM_RETENTION_AGENT for production. Create a 15-20 question eval set, run baseline, and fix failures.
+```
 
-- Create a 15–20 question eval set (include edge cases) and run a baseline.
-- Identify failure patterns, then iterate with ALTER AGENT (one change at a time) 
-  until we hit agreed pass thresholds.
-- Set up weekly evaluations to catch drift over time.
+**Step 5: Deploy**
+
+```
+Deploy TELECOM_RETENTION_AGENT to Snowflake Intelligence.
 ```
 
 ## Conclusion and resources
