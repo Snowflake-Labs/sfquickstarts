@@ -3,35 +3,9 @@ name: Publish to AEM (Without Workato)
 on:
   push:
     branches: [workato_replacement_push_to_prod]
-  workflow_dispatch:
-    inputs:
-      quickstart_name:
-        description: 'Quickstart folder name to publish (e.g., get-started-with-guides)'
-        required: true
-        type: string
-      language:
-        description: 'Language code'
-        required: false
-        default: 'en'
-        type: string
 
 jobs:
-  # Manual dispatch - skip detection, go straight to publish
-  manual_publish:
-    if: github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/publish-to-aem.yml
-    with:
-      quickstart_name: ${{ inputs.quickstart_name }}
-      language: ${{ inputs.language }}
-      commit_sha: ${{ github.sha }}
-    secrets:
-      AEM_USERNAME: ${{ secrets.AEM_USERNAME_PROD }}
-      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_PROD }}
-      AEM_AUTHOR_URL: ${{ secrets.AEM_AUTHOR_URL_PROD }}
-      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL_PROD }}
-
   detect_changes:
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
