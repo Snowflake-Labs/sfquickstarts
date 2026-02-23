@@ -67,7 +67,7 @@ The adoption of conversational analytics with a solid data foundation on Snowfla
 - **Data Governance for Trust and Compliance:** Standardized data access via Semantic Views and Agent governance ensures consistent, auditable, and reliable results, which is paramount for internal analysis and external regulatory reporting.
 - **Foundation for New Product Development:** The unified data model and semantic layer act as a robust engine, significantly reducing the friction and time required to prototype and launch innovative, data-centric financial products.
 
-![solution architecture](./assets/cortex.jpg)
+![solution architecture](assets/cortex.png)
 
 <!-- ------------------------ -->
 ## Use Cases and Applications
