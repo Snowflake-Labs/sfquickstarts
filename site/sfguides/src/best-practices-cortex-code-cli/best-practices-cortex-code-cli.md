@@ -36,19 +36,19 @@ For more details on setup, connections, supported models, or CLI reference, see 
 - Best practices for effective prompting and safe execution
 - How to explore data and build interactive Streamlit dashboards
 - How to create and manage dbt projects and debug Apache Airflow® orchestration
-- How to add semantic views on gold tables and build production-ready Cortex Agents (for Snowflake Intelligence and external apps)
+- How to add semantic views on gold tables and build production-ready Cortex Agents for Snowflake Intelligence
 
 ## Terminology
 
 - **[Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)** is an AI-powered coding agent for building, debugging, and working in Snowflake through natural language conversations.
-- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: reusable instruction packs (playbooks) that guide Cortex Code through specific workflows (for example, `cortex-agent` and `semantic-view-optimization`).
+- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: reusable instruction packs (playbooks) that guide Cortex Code through specific workflows (for example, `cortex-agent` and `semantic-view`).
 - **[Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)**: conversational AI assistants you build in Snowflake that can autonomously answer questions, use tools, and interact with your data.
 - **[Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Snowflake service that translates natural language questions into SQL queries, using semantic models to understand business logic.
 - **[Semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)**: schema-level objects that combine data with business context (definitions, relationships, and metrics) to power consistent analytics and natural-language-to-SQL experiences.
 
 ## Best practices
 
-> **Always ensure you're on the latest CLI version.** Run `cortex --version` and update if needed.
+> **Always ensure you're on the latest CLI version.** Run `cortex --version` and update with `cortex update` if needed.
 
 ### Communicate naturally
 
@@ -71,7 +71,7 @@ For more details on setup, connections, supported models, or CLI reference, see 
 * Use `/plan` for complex tasks to see the full approach before starting  
 * Run Cortex Code in a VS Code/Cursor terminal to view code files side-by-side  
 * Write complex requirements in `.md` files and reference them in the conversation  
-* If you hit unexpected behavior, confirm you’re on the latest CLI version (for example: run `cortex --version` and update if needed)
+* If you hit unexpected behavior, confirm you're on the latest CLI version (for example: run `cortex --version` and update with `cortex update` if needed)
 
 ### Security & governance
 
@@ -90,7 +90,7 @@ Then, discover use cases that best match your goal:
 
 ## Data exploration
 
-In this section, you’ll use Cortex Code CLI to discover data you can work with, confirm you have the right permissions, and run a few exploratory questions. If you don’t have a convenient dataset handy, you can generate a small synthetic one to follow along—then use it in the dashboard example that follows. 
+In this section, you'll use Cortex Code CLI to discover data you can work with, confirm you have the right permissions, and run a few exploratory questions. If you don't have a convenient dataset handy, you can generate a small synthetic one to follow along—then use it in the dashboard example that follows. 
 
 ### Discover and explore data
 
@@ -182,7 +182,7 @@ Give me a link to access the dashboard when it's done.
 
 Congratulations! You should now have a working Streamlit dashboard that displays the dataset you created!
 
-Want to make this experience self-serve for end users (not just a dashboard)? Jump to [Production-Ready Cortex Agents](#production-ready-cortex-agents) to build an agent you can use in Snowflake Intelligence or call from an external application.
+Want to make this experience self-serve for end users (not just a dashboard)? Jump to [Production-Ready Cortex Agents](#production-ready-cortex-agents) to build an agent you can use in Snowflake Intelligence.
 
 ## Create and manage dbt projects
 
@@ -198,13 +198,13 @@ If you run dbt from your own repo (dbt Core) or manage it via dbt Cloud, you can
 For example:
 
 ```
-Create a dbt project under /tasty_food that builds a data pipeline to analyze order information and trends using my source data in Database tb_101 Schema RAW. Add appropriate tests, run a build, validate the output, and generate a shareable HTML summary. Don’t create a profiles.yml file; I already have a Snowflake connection via ~/.dbt. When running dbt commands, use --target PM.
+Create a dbt project under /tasty_food that builds a data pipeline to analyze order information and trends using my source data in Database tb_101 Schema RAW. Add appropriate tests, run a build, validate the output, and generate a shareable HTML summary. Don't create a profiles.yml file; I already have a Snowflake connection via ~/.dbt. When running dbt commands, use --target PM.
 ```
 
 And when your project grows, you can use Cortex Code CLI to help keep it fast and cost-efficient:
 
 ```
-Take a look at /target/run_results.json, identify the slowest-running models, suggest specific performance optimizations, and flag any models that aren’t referenced downstream and could potentially be removed.
+Take a look at /target/run_results.json, identify the slowest-running models, suggest specific performance optimizations, and flag any models that aren't referenced downstream and could potentially be removed.
 ```
 ### dbt Projects on Snowflake
 
@@ -232,13 +232,19 @@ Once you have a first version working, keep iterating with follow-up prompts lik
 
 ## Apache Airflow® orchestration
 
-Apache Airflow® + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn’t populate, upstream data is missing, or a warehouse setting causes timeouts.
+Apache Airflow® + Snowflake workflows often fail in cross-tool ways: a DAG task fails, a dbt model doesn't populate, upstream data is missing, or a warehouse setting causes timeouts.
 
 Cortex Code CLI provides built-in support for Airflow, giving you a natural language interface to monitor DAGs, manage runs, debug failures, author pipelines, and understand lineage across your Airflow deployments.
 
 ### Quick setup
 
-- **Prereq**: install [`uv`](https://docs.astral.sh/uv/getting-started/installation/) (required for `cortex airflow`).
+- **Prereq**: install [`uv`](https://docs.astral.sh/uv/getting-started/installation/) (required for `cortex airflow`):
+  ```bash
+  # macOS
+  brew install uv
+  # Or cross-platform
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
 - **Configure an instance**:
   - Run `/airflow` inside Cortex Code (supports multiple named instances), or
   - Export connection details before starting Cortex Code:
@@ -310,10 +316,10 @@ Migrate my DAGs from Airflow 2 to Airflow 3.
 
 ## Add semantic views to your gold tables
 
-Once your dbt pipeline produces “gold” (business-ready) models (typically your mart layer), you can add a semantic view on top to define metrics, dimensions, and joins in one place. This helps downstream consumers (dashboards, BI tools, and AI apps) use consistent definitions without everyone re-implementing business logic in their own queries.
+Once your dbt pipeline produces "gold" (business-ready) models (typically your mart layer), you can add a semantic view on top to define metrics, dimensions, and joins in one place. This helps downstream consumers (dashboards, BI tools, and AI apps) use consistent definitions without everyone re-implementing business logic in their own queries.
 
-How do you know your dbt outputs are “gold”? Typically, they:
-- **Have stable business meaning** (one agreed definition for key metrics like “weekly revenue”)
+How do you know your dbt outputs are "gold"? Typically, they:
+- **Have stable business meaning** (one agreed definition for key metrics like "weekly revenue")
 - **Are consumer-ready** (modeled for analytics, often your `marts/` layer rather than `staging/` or `intermediate/`)
 - **Are tested and reliable** (core tests pass consistently and runs are repeatable)
 - **Are documented** (clear naming + descriptions so others know what to query)
@@ -332,11 +338,11 @@ Use business-friendly names and descriptions, and validate it answers questions 
 Then refine it with a follow-up prompt:
 
 ```
-Use the semantic-view-optimization skill to review and improve <SEMANTIC_VIEW_NAME>. Tighten metric definitions, check joins/relationships, improve naming and descriptions, and recommend any verified queries or custom instructions to make it more reliable for downstream consumers.
+Use the semantic-view skill to review and improve <SEMANTIC_VIEW_NAME>. Tighten metric definitions, check joins/relationships, improve naming and descriptions, and recommend any verified queries or custom instructions to make it more reliable for downstream consumers.
 ```
 
 Semantic view design principles to keep in mind:
-- **Design from your end users' perspective, not the database perspective**: use business terminology (not raw table/column names) and define metrics the way stakeholders talk about them. Ask: “If I were explaining this data to a business stakeholder, how would I describe it?”
+- **Design from your end users' perspective, not the database perspective**: use business terminology (not raw table/column names) and define metrics the way stakeholders talk about them. Ask: "If I were explaining this data to a business stakeholder, how would I describe it?"
 - **Keep views focused**: organize by business domain/use case; split very large models when different audiences need different slices.
 - **Add rich metadata**: fill in descriptions, metrics, and filters; include verified queries and custom instructions when needed to steer consistent outputs.
 - **Use assisted creation where possible**: Snowflake **Semantic View Autopilot** can accelerate scaffolding, then refine by hand.
@@ -345,7 +351,7 @@ Check out more [best practices and semantic view design principles](https://www.
 
 ## Production-ready Cortex Agents
 
-Use [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) to create self-serve experiences in Snowflake Intelligence, and to power external applications by calling the [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run).
+Use [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) to create self-serve experiences in Snowflake Intelligence.
 
 More guidance: [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/).
 
@@ -357,8 +363,6 @@ At a high level, all production-ready Cortex Agents should include these core bu
 2. **Tools**: what the agent is allowed to call (for example, Cortex Analyst and Cortex Search), including any parameters, filters, and constraints.
 3. **Orchestration instructions**: the system prompt, tool-routing rules, and guardrails that control how the agent plans and acts.
 4. **Evaluations + observability**: trace-level scoring and regression runs you can use to gate releases and monitor drift over time.
-
----
 
 ### Skill capabilities
 
@@ -408,10 +412,20 @@ Debug why MY_AGENT answered incorrectly for: "What was Q3 revenue?"
 Test my agent with some sample questions
 Create an evaluation dataset from production logs
 ```
-
 ---
 
-### Walkthrough: Build a Telecom Retention Agent
+### Deploy to Snowflake Intelligence
+
+Deploy your optimized agent to [Snowflake Intelligence](https://ai.snowflake.com/) to enable self-serve access for end users.
+
+```
+Deploy <DATABASE.SCHEMA.AGENT_NAME> to Snowflake Intelligence
+```
+
+---
+---
+
+### Example: Build a Telecom Retention Agent
 
 In this walkthrough, you'll set up two tools for structured analytics using **Cortex Analyst** grounded by your semantic definitions and unstructured retrieval using **Cortex Search** over customer call transcripts, then combine them into a single agent experience.
 
@@ -489,15 +503,6 @@ Optimize my agent <DATABASE.SCHEMA.AGENT_NAME> for production readiness.
 
 Learn more: [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/).
 
-#### Step 5: Deploy to Snowflake intelligence
-
-Deploy your optimized agent to [Snowflake Intelligence](https://ai.snowflake.com/) to enable self-serve access. Business users can then ask questions like:
-
-- *"What are customers complaining about in their calls?"*
-- *"Show me high-risk customers with monthly charges over $100."*
-
-To integrate with external apps, use the [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run).
-
 ## Conclusion and resources
 
 The key to success with Cortex Code CLI is to start small, test frequently, and iterate based on feedback. Leverage the built-in skills for complex workflows, always review proposed changes before execution, and use best practices like proper descriptions, verified queries, and custom instructions to ensure your applications are accurate and maintainable.
@@ -505,4 +510,3 @@ The key to success with Cortex Code CLI is to start small, test frequently, and 
 - [Cortex Code CLI docs](http://docs.snowflake.com/user-guide/cortex-code/cortex-code-cli)
 - Start your [30-day Cortex Code CLI Trial](https://signup.snowflake.com/cortex-code)
 - [Cortex Code in Snowsight](http://docs.snowflake.com/user-guide/cortex-code/cortex-code-snowsight)
-
