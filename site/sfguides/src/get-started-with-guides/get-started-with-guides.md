@@ -42,7 +42,8 @@ Test line
 ### Test Images
 ![Synthetic Data Generator Demo](assets/puppy.jpg)
 
-### Layout Basics
+### Test Image3
+![Test Image](assets/puppy01.jpg)
 
 At a minimum, the Guide should include the following headings and subheadings. A single sfguide consists of multiple steps. 
 These steps are defined in Markdown using Header 2 tag `##`. Sub-steps will use a Header 3 tag `###` and so forth.  Please avoid going beyond H4 `####`.
