@@ -43,6 +43,8 @@ jobs:
       AEM_PASSWORD: ${{ secrets.AEM_PASSWORD }}
       AEM_URL: ${{ secrets.AEM_AUTHOR_URL }}
       AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL }}
+      MAX_RETRIES: 3
+      RETRY_DELAY: 5
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -60,6 +62,82 @@ jobs:
 
       - name: Install dependencies
         run: pip install pyyaml
+
+      - name: Create retry helper script
+        run: |
+          cat > /tmp/aem_retry.sh << 'RETRY_SCRIPT'
+          #!/bin/bash
+          # AEM API call with retry logic
+          # Usage: aem_retry.sh <method> <url> <data_file_or_string> [content_type]
+          
+          METHOD="$1"
+          URL="$2"
+          DATA="$3"
+          CONTENT_TYPE="${4:-application/x-www-form-urlencoded}"
+          MAX_RETRIES="${MAX_RETRIES:-3}"
+          RETRY_DELAY="${RETRY_DELAY:-5}"
+          
+          for attempt in $(seq 1 $MAX_RETRIES); do
+            echo "🔄 Attempt $attempt of $MAX_RETRIES: $METHOD $URL"
+            
+            if [ -f "$DATA" ]; then
+              response=$(curl -s -w "\n%{http_code}" -X "$METHOD" \
+                "$URL" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: $CONTENT_TYPE" \
+                --data-binary @"$DATA" 2>&1)
+            else
+              response=$(curl -s -w "\n%{http_code}" -X "$METHOD" \
+                "$URL" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: $CONTENT_TYPE" \
+                -d "$DATA" 2>&1)
+            fi
+            
+            http_code=$(echo "$response" | tail -n1)
+            body=$(echo "$response" | sed '$d')
+            
+            # Success
+            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+              echo "✅ Success (HTTP $http_code)"
+              echo "$body"
+              exit 0
+            fi
+            
+            # Rate limited (429) - wait longer
+            if [ "$http_code" -eq 429 ]; then
+              wait_time=$((RETRY_DELAY * 60))
+              echo "⏳ Rate limited (429). Waiting ${wait_time}s before retry..."
+              sleep $wait_time
+              continue
+            fi
+            
+            # Server error (5xx) - exponential backoff
+            if [ "$http_code" -ge 500 ]; then
+              wait_time=$((RETRY_DELAY * attempt * 2))
+              echo "⚠️ Server error (HTTP $http_code). Waiting ${wait_time}s before retry..."
+              sleep $wait_time
+              continue
+            fi
+            
+            # Client error (4xx except 429) - don't retry
+            if [ "$http_code" -ge 400 ] && [ "$http_code" -lt 500 ]; then
+              echo "❌ Client error (HTTP $http_code) - not retrying"
+              echo "$body"
+              exit 1
+            fi
+            
+            # Unknown error - retry with backoff
+            wait_time=$((RETRY_DELAY * attempt))
+            echo "⚠️ Unknown response (HTTP $http_code). Waiting ${wait_time}s before retry..."
+            sleep $wait_time
+          done
+          
+          echo "❌ Failed after $MAX_RETRIES attempts"
+          echo "$body"
+          exit 1
+          RETRY_SCRIPT
+          chmod +x /tmp/aem_retry.sh
 
       - name: Find markdown file
         id: find_md
@@ -136,27 +214,10 @@ jobs:
           
           echo "📋 Copying base CF to: $dest_path/$cf_name"
           
-          response=$(curl -s -w "\n%{http_code}" -X POST \
-            "${AEM_URL}${BASE_CF_PATH}" \
-            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d ":operation=copy" \
-            -d ":dest=${dest_path}/${cf_name}" \
-            -d ":replace=true" \
-            -d "depth=infinity")
+          /tmp/aem_retry.sh POST "${AEM_URL}${BASE_CF_PATH}" \
+            ":operation=copy&:dest=${dest_path}/${cf_name}&:replace=true&depth=infinity"
           
-          http_code=$(echo "$response" | tail -n1)
-          body=$(echo "$response" | sed '$d')
-          echo "HTTP Status: $http_code"
-          
-          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
-            echo "✅ Content fragment copied"
-          else
-            echo "❌ Copy failed"
-            echo "$body"
-            exit 1
-          fi
-          
+          echo "✅ Content fragment copied"
           sleep 3
 
       - name: Update content fragment with parsed content
@@ -168,18 +229,8 @@ jobs:
           echo "📝 Updating content fragment: $cf_path"
           echo "   Title: $(jq -r '.title' parsed_content.json)"
           
-          response=$(curl -s -w "\n%{http_code}" -X POST \
-            "${AEM_URL}${cf_path}/jcr:content" \
-            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            --data-binary @cf_payload.txt)
+          /tmp/aem_retry.sh POST "${AEM_URL}${cf_path}/jcr:content" cf_payload.txt
           
-          http_code=$(echo "$response" | tail -n1)
-          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
-            echo "❌ Failed to update content fragment"
-            echo "$response" | sed '$d'
-            exit 1
-          fi
           echo "✅ Content fragment updated"
 
       - name: Check if image folder exists
@@ -222,6 +273,47 @@ jobs:
             sleep 2
           fi
           
+          upload_image_with_retry() {
+            local img="$1"
+            local filename="$2"
+            local content_type="$3"
+            local dam_folder="$4"
+            local attempt=1
+            
+            while [ $attempt -le $MAX_RETRIES ]; do
+              echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename"
+              
+              response=$(curl -s -w "\n%{http_code}" -X PUT \
+                "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: ${content_type}" \
+                --data-binary "@${img}" 2>&1)
+              
+              http_code=$(echo "$response" | tail -n1)
+              
+              if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+                echo "✅ Upload successful (HTTP $http_code)"
+                return 0
+              elif [ "$http_code" -eq 429 ]; then
+                wait_time=$((RETRY_DELAY * 60))
+                echo "⏳ Rate limited. Waiting ${wait_time}s..."
+                sleep $wait_time
+              elif [ "$http_code" -ge 500 ]; then
+                wait_time=$((RETRY_DELAY * attempt * 2))
+                echo "⚠️ Server error (HTTP $http_code). Waiting ${wait_time}s..."
+                sleep $wait_time
+              else
+                echo "⚠️ Upload failed (HTTP $http_code)"
+                return 1
+              fi
+              
+              attempt=$((attempt + 1))
+            done
+            
+            echo "❌ Upload failed after $MAX_RETRIES attempts"
+            return 1
+          }
+          
           for img in "$assets_dir"/*; do
             [ -f "$img" ] || continue
             
@@ -237,32 +329,19 @@ jobs:
                 [ "$extension_lower" = "jpg" ] && content_type="image/jpeg"
                 [ "$extension_lower" = "svg" ] && content_type="image/svg+xml"
                 
-                curl -s -X PUT \
-                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
-                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-                  -H "Content-Type: ${content_type}" \
-                  --data-binary "@${img}" || echo "⚠️ Warning: Failed to upload $filename"
+                upload_image_with_retry "$img" "$filename" "$content_type" "$dam_folder"
                 
                 sleep 1
                 
                 echo "🔄 Reprocessing: $filename"
-                curl -s -X POST \
-                  "${AEM_URL}/bin/asynccommand" \
-                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-                  -H "Content-Type: application/x-www-form-urlencoded" \
-                  -d "operation=PROCESS" \
-                  -d "asset=${dam_folder}/${filename}" \
-                  -d "profile-select=full-process" || true
+                /tmp/aem_retry.sh POST "${AEM_URL}/bin/asynccommand" \
+                  "operation=PROCESS&asset=${dam_folder}/${filename}&profile-select=full-process" || true
                 
                 sleep 1
                 
                 echo "📢 Publishing image: $filename"
-                curl -s -X POST \
-                  "${AEM_URL}/bin/replicate.json" \
-                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-                  -H "Content-Type: application/x-www-form-urlencoded" \
-                  -d "cmd=Activate" \
-                  -d "path=${dam_folder}/${filename}" || true
+                /tmp/aem_retry.sh POST "${AEM_URL}/bin/replicate.json" \
+                  "cmd=Activate&path=${dam_folder}/${filename}" || true
                 ;;
               *)
                 echo "⏭️ Skipping non-image file: $filename"
@@ -281,15 +360,9 @@ jobs:
           
           echo "📢 Publishing content fragment: $cf_path"
           
-          response=$(curl -s -w "\n%{http_code}" -X POST \
-            "${AEM_URL}/bin/replicate.json" \
-            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "cmd=Activate" \
-            -d "path=${cf_path}")
+          /tmp/aem_retry.sh POST "${AEM_URL}/bin/replicate.json" \
+            "cmd=Activate&path=${cf_path}"
           
-          http_code=$(echo "$response" | tail -n1)
-          echo "HTTP Status: $http_code"
           echo "✅ Content fragment published"
 
       - name: Check if page exists
@@ -321,22 +394,8 @@ jobs:
           echo "📄 Creating page: $page_path"
           echo "   Source: ${PAGE_BASE_PATH}"
           
-          response=$(curl -s -w "\n%{http_code}" -X POST \
-            "${AEM_URL}${PAGE_BASE_PATH}" \
-            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d ":operation=copy" \
-            -d ":dest=${page_path}" \
-            -d ":replace=true")
-          
-          http_code=$(echo "$response" | tail -n1)
-          echo "   Copy HTTP: $http_code"
-          
-          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
-            echo "❌ Page copy failed"
-            echo "$response" | sed '$d'
-            exit 1
-          fi
+          /tmp/aem_retry.sh POST "${AEM_URL}${PAGE_BASE_PATH}" \
+            ":operation=copy&:dest=${page_path}&:replace=true"
           
           echo "✅ Page created"
           sleep 8
@@ -349,19 +408,7 @@ jobs:
           
           echo "🔗 Updating page: $page_path"
           
-          response=$(curl -s -w "\n%{http_code}" -X POST \
-            "${AEM_URL}${page_path}" \
-            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            --data-binary @page_payload.txt)
-          
-          http_code=$(echo "$response" | tail -n1)
-          echo "   Update HTTP: $http_code"
-          
-          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
-            echo "⚠️ Warning: Page update may have failed"
-            echo "$response" | sed '$d'
-          fi
+          /tmp/aem_retry.sh POST "${AEM_URL}${page_path}" page_payload.txt
           
           echo "✅ Page updated"
 
@@ -378,15 +425,9 @@ jobs:
           if [ "$status" = "Published" ]; then
             echo "📢 Publishing page: $page_path"
             
-            response=$(curl -s -w "\n%{http_code}" -X POST \
-              "${AEM_URL}/bin/replicate.json" \
-              -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-              -H "Content-Type: application/x-www-form-urlencoded" \
-              -d "cmd=Activate" \
-              -d "path=${page_path}")
+            /tmp/aem_retry.sh POST "${AEM_URL}/bin/replicate.json" \
+              "cmd=Activate&path=${page_path}"
             
-            http_code=$(echo "$response" | tail -n1)
-            echo "HTTP Status: $http_code"
             echo "✅ Page published"
           else
             echo "⏭️ Skipping page publish (status is not Published)"
