@@ -412,6 +412,22 @@ Debug why MY_AGENT answered incorrectly for: "What was Q3 revenue?"
 Test my agent with some sample questions
 Create an evaluation dataset from production logs
 ```
+
+**Evaluation approaches:**
+
+| Approach | Best For | Description |
+|----------|----------|-------------|
+| **Native Snowflake Evaluations** | Formal benchmarking, Snowsight tracking | Built-in metrics: `answer_correctness`, `tool_selection_accuracy`, `logical_consistency`. |
+| **Script-based (LLM-as-judge)** | Quick iteration, local analysis | Uses `SNOWFLAKE.CORTEX.COMPLETE`. Results stored locally in JSON. |
+| **TruLens Agent GPA** | Trace-level scoring | Measures goal fulfillment, plan quality, execution efficiency. [Learn more](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/). |
+
+**Best practices:**
+- Start with a real eval set (user trials, agent logs, edge cases)
+- Score the trace, not just the output
+- Set pass thresholds and run evals in CI/CD to gate releases
+
+Learn more: [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/).
+
 ---
 
 ### Deploy to Snowflake Intelligence
@@ -422,7 +438,6 @@ Deploy your optimized agent to [Snowflake Intelligence](https://ai.snowflake.com
 Deploy <DATABASE.SCHEMA.AGENT_NAME> to Snowflake Intelligence
 ```
 
----
 ---
 
 ### Example: Build a Telecom Retention Agent
@@ -487,21 +502,6 @@ Optimize my agent <DATABASE.SCHEMA.AGENT_NAME> for production readiness.
   until we hit agreed pass thresholds.
 - Set up weekly evaluations to catch drift over time.
 ```
-
-**Evaluation approaches:**
-
-| Approach | Best For | Description |
-|----------|----------|-------------|
-| **Native Snowflake Evaluations** | Formal benchmarking, Snowsight tracking | Built-in metrics: `answer_correctness`, `tool_selection_accuracy`, `logical_consistency`. |
-| **Script-based (LLM-as-judge)** | Quick iteration, local analysis | Uses `SNOWFLAKE.CORTEX.COMPLETE`. Results stored locally in JSON. |
-| **TruLens Agent GPA** | Trace-level scoring | Measures goal fulfillment, plan quality, execution efficiency. [Learn more](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/). |
-
-**Best practices:**
-- Start with a real eval set (user trials, agent logs, edge cases)
-- Score the trace, not just the output
-- Set pass thresholds and run evals in CI/CD to gate releases
-
-Learn more: [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/).
 
 ## Conclusion and resources
 
