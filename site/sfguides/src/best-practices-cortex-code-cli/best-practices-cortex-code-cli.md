@@ -27,12 +27,21 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 
 > **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code). 
 
+After installing, run `cortex` and follow the setup wizard to connect to your Snowflake account.
+
 For more details on setup, connections, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
+
+### What you'll learn
+
+- Best practices for effective prompting and safe execution
+- How to explore data and build interactive Streamlit dashboards
+- How to create and manage dbt projects and debug Apache Airflow® orchestration
+- How to add semantic views on gold tables and build production-ready Cortex Agents (for Snowflake Intelligence and external apps)
 
 ## Terminology
 
 - **[Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)** is an AI-powered coding agent for building, debugging, and working in Snowflake through natural language conversations.
-- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: reusable instruction packs (playbooks) that guide Cortex Code through specific workflows (e.g., `agent-optimization`, `semantic-view-optimization`).
+- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: reusable instruction packs (playbooks) that guide Cortex Code through specific workflows (for example, `cortex-agent` and `semantic-view-optimization`).
 - **[Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)**: conversational AI assistants you build in Snowflake that can autonomously answer questions, use tools, and interact with your data.
 - **[Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)**: Snowflake service that translates natural language questions into SQL queries, using semantic models to understand business logic.
 - **[Semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)**: schema-level objects that combine data with business context (definitions, relationships, and metrics) to power consistent analytics and natural-language-to-SQL experiences.
@@ -77,7 +86,7 @@ Everyone can start with [data exploration](#data-exploration) to find data you c
 Then, discover use cases that best match your goal:
 
 - **Data engineering (pipelines and operations)**: explore how to [create and manage dbt projects](#create-and-manage-dbt-projects), or operationalize runs with [Apache Airflow® orchestration](#apache-airflow-orchestration). Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you're ready to standardize metrics and definitions for downstream users.
-- **Analytics and app builders (interactive experiences)**: learn how to [build interactive dashboards](#build-interactive-dashboards) using Streamlit, or configure production-ready [Cortex Agents for Snowflake Intelligence](#cortex-agents-for-snowflake-intelligence) so end users can self-serve answers and insights, grounded in governed data and the right tools.
+- **Analytics and app builders (interactive experiences)**: learn how to [build interactive dashboards](#build-interactive-dashboards) using Streamlit, or configure production-ready [Cortex Agents](#production-ready-cortex-agents) so end users can self-serve answers and insights in Snowflake Intelligence (or your own app), grounded in governed data and the right tools.
 
 ## Data exploration
 
@@ -173,84 +182,7 @@ Give me a link to access the dashboard when it's done.
 
 Congratulations! You should now have a working Streamlit dashboard that displays the dataset you created!
 
-## Cortex Agents for Snowflake Intelligence
-
-Now, let's make this more interactive by creating a Cortex Agent to answer questions about this data in Snowflake Intelligence. In this process, we'll augment the existing synthetic data with some synthetic data of customer calls. 
-
-Check out [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/) for additional guidance as you configure your agent's design, tooling, and orchestration instructions for optimal reliability.
-
-We’ll set up two building blocks: one for structured analytics and one for unstructured text, then combine them into a single agent experience.
-
-### Create a semantic view for Cortex Analyst
-
-Now let's create a semantic view so that you can use Cortex Analyst with this data. Try the prompt below and use the defaults for all the questions it asks. 
-
-```
-Write a Semantic View named DEMO_TELECOM_CHURN_ANALYTICS for Cortex Analyst 
-based on this data. Use the semantic-view-optimization skill.
-```
-
-### Create a Cortex Search service
-
-Step 1: Generate some synthetic data containing customer service calls 
-
-```
-Generate a new table called customer_call_logs. Generate 50 realistic customer
-service transcripts (2-3 sentences each) as PDF files. Some should be angry
-complaints about coverage, others should be questions about billing. Then 
-Use the AI_PARSE_DOCUMENT function to extract the text and layout information
-from the PDFs into the TRANSCRIPT_TEXT column. Split text into chunks for better
-search quality. 
-``` 
-
-Step 2: Create a Cortex Search service to index it: 
-
-```
-Create a Cortex Search Service named CALL_LOGS_SEARCH that indexes these
-transcripts. It should index the TRANSCRIPT_TEXT column and filter by CUSTOMER_ID
-```
-
-### Create a Cortex Agent
-
-Finally, let's create a Cortex Agent that uses these two services and add it to Snowflake Intelligence:
-
-```
-Build a Cortex Agent that has access to two tools:
-cortex_analyst: For querying the TELECOM_CUSTOMERS SQL table.
-cortex_search: For searching the CALL_LOGS_SEARCH service. Write a system prompt for this agent. 
-Persona: You are a Senior Retention Specialist.
-Routing Logic: If the user asks for 'metrics', 'counts', or 'averages', 
-use the Analyst tool. If the user asks for 'sentiment', 'reasons', or 
-'summaries of calls', use the Search tool.
-Output Format: Always verify the customer ID before answering. 
-If the risk score is high, end the response with a recommended retention offer 
-(e.g., 'Offer 10% discount').
-Constraint: Never reveal the raw CHURN_RISK_SCORE to the user; interpret it as
-'Low', 'Medium', or 'High'.
-```
-
-### Optimize your Cortex Agent
-
-Once the agent is created, iterate on reliability and usefulness with the `agent-optimization` skill:
-
-```
-Use the agent-optimization skill to review and improve this Cortex Agent configuration (system prompt, tool routing logic, and guardrails). Make it more reliable, reduce unnecessary tool calls, and add any missing constraints or clarifying questions for edge cases.
-```
-
-### Deploy to Snowflake Intelligence
-
-Finally, we can deploy the agent to [Snowflake Intelligence](https://ai.snowflake.com/)
-
-```
-Let's deploy this agent to Snowflake Intelligence
-```
-
-Ta-da! You have successfully created and deployed a Snowflake Intelligence agent. 
-
-Now you should be able to access this agent in Snowflake Intelligence and ask it questions like: 
-
-- *"What are customers complaining about in their calls?"*
-- *"Show me high-risk customers with monthly charges over $100."*
+Want to make this experience self-serve for end users (not just a dashboard)? Jump to [Production-Ready Cortex Agents](#production-ready-cortex-agents) to build an agent you can use in Snowflake Intelligence or call from an external application.
 
 ## Create and manage dbt projects
 
@@ -410,6 +342,161 @@ Semantic view design principles to keep in mind:
 - **Use assisted creation where possible**: Snowflake **Semantic View Autopilot** can accelerate scaffolding, then refine by hand.
 
 Check out more [best practices and semantic view design principles](https://www.snowflake.com/en/developers/guides/best-practices-semantic-views-cortex-analyst/#semantic-view-design-principles).
+
+## Production-ready Cortex Agents
+
+Use [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) to create self-serve experiences in Snowflake Intelligence, and to power external applications by calling the [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run).
+
+More guidance: [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/).
+
+In Cortex Code CLI, use the `cortex-agent` skill as the required entry point for agent work in Snowflake. It detects your intent and routes to the right workflow.
+
+At a high level, all production-ready Cortex Agents should include these core building blocks:
+
+1. **Semantic layer (semantic views)**: governed definitions and context for structured metrics (plus a Cortex Search service for unstructured content).
+2. **Tools**: what the agent is allowed to call (for example, Cortex Analyst and Cortex Search), including any parameters, filters, and constraints.
+3. **Orchestration instructions**: the system prompt, tool-routing rules, and guardrails that control how the agent plans and acts.
+4. **Evaluations + observability**: trace-level scoring and regression runs you can use to gate releases and monitor drift over time.
+
+---
+
+### Skill capabilities
+
+#### Discovery & management
+
+| Workflow | What it does |
+|----------|--------------|
+| **List** | Discover agents in a database/schema |
+| **Download** | Export agent specification to JSON |
+| **Delete** | Remove an agent (with production safety checks and backup) |
+
+```
+List my Cortex agents
+Show agents in the ANALYTICS database
+Download the configuration for my sales_agent
+Delete the test agent in DEV.SANDBOX
+```
+
+#### Building & Editing
+
+| Workflow | What it does |
+|----------|--------------|
+| **Create** | Build a new agent with tools, instructions, and configuration |
+| **Edit** | Modify an existing agent's instructions, tools, or settings |
+
+```
+Create a new Cortex Agent named SALES_AGENT in DB.SCHEMA with Cortex Analyst and Cortex Search tools
+Edit my agent's instructions to handle billing questions better
+Add a Cortex Search tool to my existing agent
+Update the system prompt for DB.SCHEMA.MY_AGENT
+```
+
+#### Testing & Production Readiness
+
+| Workflow | What it does |
+|----------|--------------|
+| **Evaluate** | Run benchmarks using native Snowflake evaluations or LLM-as-judge |
+| **Optimize** | Full workflow: benchmark → identify issues → improve → validate |
+| **Debug** | Deep-dive analysis of a single query failure |
+| **Ad hoc testing** | Try questions interactively without formal evaluation |
+| **Dataset curation** | Build and manage evaluation sets from scratch or production logs |
+
+```
+Evaluate DB.SCHEMA.MY_AGENT on my eval set and summarize failures
+Optimize DB.SCHEMA.MY_AGENT for production readiness
+Debug why MY_AGENT answered incorrectly for: "What was Q3 revenue?"
+Test my agent with some sample questions
+Create an evaluation dataset from production logs
+```
+
+---
+
+### Walkthrough: Build a Telecom Retention Agent
+
+In this walkthrough, you'll set up two tools for structured analytics using **Cortex Analyst** grounded by your semantic definitions and unstructured retrieval using **Cortex Search** over customer call transcripts, then combine them into a single agent experience.
+
+#### Step 1: Create a semantic view for Cortex Analyst
+
+Create a semantic view so you can use Cortex Analyst with this data:
+
+```
+Write a Semantic View named DEMO_TELECOM_CHURN_ANALYTICS for Cortex Analyst 
+based on this data.
+```
+
+#### Step 2: Create a Cortex Search service
+
+```
+Generate a new table called customer_call_logs. Generate 50 realistic customer
+service transcripts (2-3 sentences each) as PDF files. Some should be angry
+complaints about coverage, others should be questions about billing. Then 
+use the AI_PARSE_DOCUMENT function to extract the text and layout information
+from the PDFs into the TRANSCRIPT_TEXT column. Split text into chunks for better
+search quality. 
+``` 
+
+```
+Create a Cortex Search Service named CALL_LOGS_SEARCH that indexes these
+transcripts. It should index the TRANSCRIPT_TEXT column and filter by CUSTOMER_ID
+```
+
+#### Step 3: Create a Cortex Agent
+
+Create a Cortex Agent that uses these two services:
+
+```
+Create a new Cortex Agent in <DATABASE>.<SCHEMA> named TELECOM_RETENTION_AGENT that has access to two tools:
+- cortex_analyst: query the TELECOM_CUSTOMERS table via the DEMO_TELECOM_CHURN_ANALYTICS semantic view
+- cortex_search: search the CALL_LOGS_SEARCH service
+
+Write the system prompt and tool-routing rules.
+Persona: You are a Senior Retention Specialist.
+Routing Logic: If the user asks for 'metrics', 'counts', or 'averages', 
+use the Analyst tool. If the user asks for 'sentiment', 'reasons', or 
+'summaries of calls', use the Search tool.
+Output Format: Always verify the customer ID before answering. 
+If the risk score is high, end the response with a recommended retention offer 
+(e.g., 'Offer 10% discount').
+Constraint: Never reveal the raw CHURN_RISK_SCORE to the user; interpret it as
+'Low', 'Medium', or 'High'.
+```
+
+#### Step 4: Optimize and evaluate
+
+Use the optimization workflow to improve your agent (baseline → improve → validate), then set up ongoing evaluations to catch drift:
+
+```
+Optimize my agent <DATABASE.SCHEMA.AGENT_NAME> for production readiness.
+
+- Create a 15–20 question eval set (include edge cases) and run a baseline.
+- Identify failure patterns, then iterate with ALTER AGENT (one change at a time) 
+  until we hit agreed pass thresholds.
+- Set up weekly evaluations to catch drift over time.
+```
+
+**Evaluation approaches:**
+
+| Approach | Best For | Description |
+|----------|----------|-------------|
+| **Native Snowflake Evaluations** | Formal benchmarking, Snowsight tracking | Built-in metrics: `answer_correctness`, `tool_selection_accuracy`, `logical_consistency`. |
+| **Script-based (LLM-as-judge)** | Quick iteration, local analysis | Uses `SNOWFLAKE.CORTEX.COMPLETE`. Results stored locally in JSON. |
+| **TruLens Agent GPA** | Trace-level scoring | Measures goal fulfillment, plan quality, execution efficiency. [Learn more](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/). |
+
+**Best practices:**
+- Start with a real eval set (user trials, agent logs, edge cases)
+- Score the trace, not just the output
+- Set pass thresholds and run evals in CI/CD to gate releases
+
+Learn more: [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/).
+
+#### Step 5: Deploy to Snowflake intelligence
+
+Deploy your optimized agent to [Snowflake Intelligence](https://ai.snowflake.com/) to enable self-serve access. Business users can then ask questions like:
+
+- *"What are customers complaining about in their calls?"*
+- *"Show me high-risk customers with monthly charges over $100."*
+
+To integrate with external apps, use the [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run).
 
 ## Conclusion and resources
 
