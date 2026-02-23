@@ -37,7 +37,7 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 ### What You’ll Build 
 Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
-### Test Images 2 (Update image)
+### Test Images 3 (Update image)
 ![Synthetic Data Generator Demo](assets/puppy.jpg)
 
 ### Test Images 3 (New Image)
