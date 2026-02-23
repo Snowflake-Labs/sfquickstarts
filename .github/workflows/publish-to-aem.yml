@@ -337,21 +337,38 @@ jobs:
             
             case "$extension_lower" in
               jpg|jpeg|png|gif|svg|webp|bmp|ico|tiff)
-                echo "📤 Uploading: $filename (PUT to overwrite if exists)"
+                echo "📤 Uploading: $filename"
                 
                 content_type="image/$extension_lower"
                 [ "$extension_lower" = "jpg" ] && content_type="image/jpeg"
                 [ "$extension_lower" = "svg" ] && content_type="image/svg+xml"
                 
-                upload_image_with_retry "$img" "$filename" "$content_type" "$dam_folder"
+                # Check if asset exists first
+                check_code=$(curl -s -o /dev/null -w "%{http_code}" \
+                  "${AEM_URL}${dam_folder}/${filename}" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}")
                 
-                sleep 1
+                is_new_asset="false"
+                if [ "$check_code" -ne 200 ]; then
+                  is_new_asset="true"
+                  echo "   📋 New asset - will use POST"
+                else
+                  echo "   📋 Existing asset - will use PUT"
+                fi
+                
+                upload_image_with_retry "$img" "$filename" "$content_type" "$dam_folder"
                 
                 echo "🔄 Reprocessing: $filename"
                 /tmp/aem_retry.sh POST "${AEM_URL}/bin/asynccommand" \
                   "operation=PROCESS&asset=${dam_folder}/${filename}&profile-select=full-process" || true
                 
-                sleep 1
+                # New assets need more time to be fully indexed before publish
+                if [ "$is_new_asset" = "true" ]; then
+                  echo "⏳ Waiting 10s for new asset to be indexed..."
+                  sleep 10
+                else
+                  sleep 2
+                fi
                 
                 echo "📢 Publishing image: $filename"
                 /tmp/aem_retry.sh POST "${AEM_URL}/bin/replicate.json" \
