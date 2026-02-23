@@ -279,21 +279,34 @@ jobs:
             local content_type="$3"
             local dam_folder="$4"
             local attempt=1
+            local use_post=false
             
             while [ $attempt -le $MAX_RETRIES ]; do
-              echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename"
-              
-              response=$(curl -s -w "\n%{http_code}" -X PUT \
-                "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
-                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-                -H "Content-Type: ${content_type}" \
-                --data-binary "@${img}" 2>&1)
+              if [ "$use_post" = "true" ]; then
+                echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (POST - new asset)"
+                response=$(curl -s -w "\n%{http_code}" -X POST \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                  -F "file=@${img};type=${content_type}" \
+                  -F "name=${filename}" 2>&1)
+              else
+                echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (PUT - update)"
+                response=$(curl -s -w "\n%{http_code}" -X PUT \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                  -H "Content-Type: ${content_type}" \
+                  --data-binary "@${img}" 2>&1)
+              fi
               
               http_code=$(echo "$response" | tail -n1)
               
               if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
                 echo "✅ Upload successful (HTTP $http_code)"
                 return 0
+              elif [ "$http_code" -eq 404 ] && [ "$use_post" = "false" ]; then
+                echo "📋 Asset doesn't exist, switching to POST for creation"
+                use_post=true
+                continue
               elif [ "$http_code" -eq 429 ]; then
                 wait_time=$((RETRY_DELAY * 60))
                 echo "⏳ Rate limited. Waiting ${wait_time}s..."
@@ -304,6 +317,7 @@ jobs:
                 sleep $wait_time
               else
                 echo "⚠️ Upload failed (HTTP $http_code)"
+                echo "$response" | sed '$d'
                 return 1
               fi
               
