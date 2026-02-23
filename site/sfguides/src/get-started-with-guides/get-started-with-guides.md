@@ -34,15 +34,13 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 - A [GitHub](https://github.com/) Account 
 - (OPTIONAL) A code editor like [VSCode](https://code.visualstudio.com/download) if you choose to edit locally
 
-
 ### What You’ll Build 
 Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
-Test line
 
-### Test Images
+### Test Images (Update image)
 ![Synthetic Data Generator Demo](assets/puppy.jpg)
 
-### Test Image3
+### Test Images 2 (New Image)
 ![Test Image](assets/puppy01.jpg)
 
 At a minimum, the Guide should include the following headings and subheadings. A single sfguide consists of multiple steps. 
