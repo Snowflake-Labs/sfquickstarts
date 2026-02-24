@@ -34,6 +34,8 @@ The solution creates a fictional asset management firm called **Simulated Asset 
 
 This solution leverages Snowflake's native AI features to create a seamless, end-to-end workflow without the need for external tools or data movement.
 
+![Snowflake Native AI Workflow](assets/how-it-works.png)
+
 **Data Foundation**: The solution creates a complete dimensional data model with dimension tables (securities, issuers, portfolios, benchmarks) and fact tables (positions, transactions, stock prices, ESG scores). Real securities are sourced from SEC filings via the Snowflake Marketplace.
 
 **Document Generation**: Synthetic documents (broker research, press releases, NGO reports, policy documents) are generated using a template hydration engine that fills placeholders with contextually appropriate content, creating realistic research materials.

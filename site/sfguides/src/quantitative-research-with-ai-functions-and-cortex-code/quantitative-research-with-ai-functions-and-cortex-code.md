@@ -8,7 +8,7 @@ authors: Harry Yu, Serena Zou, Constantin Stanca, Dureti Shemsi
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-quantitative-research-aisql-cortex
 
-# Quantitative Research with Cortex Code and AI Functions using Snowflake Public Data
+# Quant Research and Data Science with Cortex Code and AI Functions using Snowflake Public Data
 
 ## Overview 
 
@@ -25,7 +25,7 @@ This guide uses publicly available earnings call data from Dow Jones 30 companie
 - Build and deploy predictive Machine Learning (ML) models in minutes with the conversational power of Cortex Code.
 - Create an intelligent, unified conversational agent accessible through Snowflake Intelligence.
 
-**Snowflake Marketplace for Financial Data**: Beyond the public earnings data used in this guide, Snowflake Marketplace offers a vast ecosystem of additional financial datasets—market data, fundamental data, alternative data, and more—that customers can discover and seamlessly integrate into their AI-native analytical workflows for broader financial analysis.
+**Snowflake Public Data Products**: Provides the entirety of the broad suite of public domain datasets, curated and maintained by Snowflake to ensure long-term stability and access. The data product provides a foundational layer of financial market, economic, and demographic data published by reliable sources, saving organizations countless hours of data preparation and pipeline management.
 
 ## Architecture
 
