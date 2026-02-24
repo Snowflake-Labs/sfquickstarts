@@ -127,7 +127,7 @@ You'll notice that an in-memory cache is used to cache responses for 180 seconds
 
 Later on, we'll have the opportunity to test the endpoint with and without the in-memory cache.
 
-While this is only a single endpoint, you can easily add other endpoints as well. Check out how to create other endpoints in a similar version to this guide [here](https://github.com/sfc-gh-bculberson/lab_data_api_python).
+While this is only a single endpoint, you can easily add other endpoints as well. Check out how to create other endpoints in a similar version to this guide [here](https://github.com/snowflake-labs/lab_data_api_python).
 
 <!-- ------------------------ -->
 ## Building the Application Container
