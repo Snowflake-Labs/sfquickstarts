@@ -17,26 +17,32 @@ Duration: 5
 
 Building AI agents is just the beginning—understanding how well they perform is critical for delivering reliable, production-ready applications. Snowflake Cortex Agent Evaluations provides a comprehensive framework for measuring agent performance across multiple dimensions, helping you identify issues and iterate toward better outcomes.
 
-This quickstart guides you through setting up and running evaluations on Cortex Agents, building evaluation datasets, and comparing agent configurations to optimize performance.
-
-> **Preview Feature — Private**: Support for this feature is currently not in production and is available only to selected accounts.
+This quickstart guides you through setting up and running evaluations on Cortex Agents, building evaluation datasets, defining custom metrics via YAML, and comparing agent configurations to optimize performance.
 
 If you are building external agents, such as in python or a framework like LangGraph, please check out [Getting Started with AI Observability](https://www.snowflake.com/en/developers/guides/getting-started-with-ai-observability/) instead. This guide is entirely focused on evaluation of Cortex Agents.
 
 ### What is Cortex Agent Evaluations?
 
-Cortex Agent Evaluations is a feature within Snowflake Cortex that enables you to systematically measure and improve your AI agents. It provides:
+Cortex Agent Evaluations is a feature within Snowflake Cortex that enables you to systematically measure and improve your AI agents. It provides built-in metrics and support for custom metrics:
+
+**Built-in Metrics:**
 
 - **Tool Selection Accuracy**: Measures whether the agent selects the correct tools for a given query
-- **Tool Execution Accuracy**: Evaluates whether tool calls are executed correctly with proper parameters
 - **Answer Correctness**: Assesses the quality and accuracy of the agent's final response
-- **Logical Consistency**: Assesses the agent trace for redundancies, superfluous tool calls or inefficient use of resources.
+- **Logical Consistency**: Assesses the agent trace for redundancies, superfluous tool calls or inefficient use of resources
+
+**Custom Metrics via YAML:**
+
+- Define your own evaluation criteria with custom prompts and scoring rubrics
+- Examples include **Groundedness** (is the response supported by tool outputs?) and **Execution Efficiency** (did the agent use tools optimally?)
 
 ### What You'll Learn
 
 - How to set up sample marketing data and agents for evaluation
 - How to create evaluation datasets with ground truth data
-- How to run evaluations and interpret metrics
+- How to define built-in and custom metrics via a YAML configuration file
+- How to run evaluations programmatically using the SQL API
+- How to run evaluations using the Snowsight UI
 - How to compare agent configurations to identify improvements
 - How to use the Evalset Generator app to build custom evaluation datasets
 
@@ -45,13 +51,14 @@ Cortex Agent Evaluations is a feature within Snowflake Cortex that enables you t
 A complete evaluation workflow that enables you to:
 
 - Create evaluation datasets from agent logs or manual input
-- Run evaluations across multiple metrics
+- Configure built-in and custom evaluation metrics via YAML
+- Run evaluations programmatically with `EXECUTE_AI_EVALUATION` or through the Snowsight UI
 - Compare different agent configurations
 - Iterate on agent design based on evaluation insights
 
 ### Prerequisites
 
-- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with access to Cortex Agent Evaluations (Private Preview)
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with access to Cortex Agent Evaluations
 - A role with privileges to create databases, schemas, tables, and stages
 - Python 3.8+ (for optional local Streamlit app)
 - Basic familiarity with Snowflake SQL and Cortex Agents
@@ -76,6 +83,7 @@ cd sfguide-getting-started-with-cortex-agent-evaluations
 | File | Description |
 |------|-------------|
 | `SETUP.sql` | SQL script to create sample database, tables, agents, and services |
+| `marketing_campaign_eval_config.yaml` | YAML configuration for evaluation metrics (built-in + custom) |
 | `agent_evalset_generator.py` | Streamlit app for building evaluation datasets |
 | `requirements.txt` | Python dependencies for the Streamlit app |
 | `README.md` | Repository documentation |
@@ -86,7 +94,7 @@ cd sfguide-getting-started-with-cortex-agent-evaluations
 
 **Step 2.** Copy and paste the contents of `SETUP.sql` into the worksheet.
 
-**Step 3.** Execute all statements in order from top to bottom.
+**Step 3.** Execute all statements in order from top to bottom (through Section 10).
 
 This script will create:
 
@@ -96,7 +104,7 @@ This script will create:
 - **Semantic View**: For Cortex Analyst Service on campaign performance and feedback data
 - **Cortex Search Service**: On campaign content for semantic search capabilities
 - **Stored Procedure**: Custom agent tool for specialized operations
-- **Cortex Agents**: Pre-configured agents with the above services attached
+- **Cortex Agent**: Pre-configured agent with the above services attached
 
 ### Understanding the Role Configuration
 
@@ -104,8 +112,8 @@ The setup script creates a new role called `AGENT_EVAL_ROLE` with all the necess
 
 | Permission Type | Description |
 |-----------------|-------------|
-| Database/Schema Usage | Access to the `MARKETING_CAMPAIGNS_DB` database and `AGENTS` schema |
-| Database Roles | `SNOWFLAKE.CORTEX_USER` for Cortex features |
+| Database/Schema Usage | Access to the `MARKETING_CAMPAIGNS_DB` database and `AGENTS_DEV` schema |
+| Database Roles | `SNOWFLAKE.CORTEX_USER` for Cortex features and `SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP` for accessing agent traces |
 | Dataset Creation | Ability to create datasets, file formats, tables, and stages |
 | Task Management | Create and execute tasks for scheduled evaluations |
 | Agent Monitoring | Monitor permissions on agents in the schema |
@@ -136,11 +144,11 @@ Your evaluation dataset should follow this structure:
 | Column | Type | Description |
 |--------|------|-------------|
 | `INPUT_QUERY` | VARCHAR | The natural language query to send to the agent |
-| `EXPECTED_TOOLS` | VARIANT | JSON object containing ground truth data |
+| `GROUND_TRUTH_DATA` | VARIANT | JSON object containing ground truth data |
 
-### Expected Tools Format
+### Ground Truth Data Format
 
-The `EXPECTED_TOOLS` column contains a JSON object with the following structure:
+The `GROUND_TRUTH_DATA` column contains a JSON object with the following structure:
 
 ```json
 {
@@ -157,7 +165,7 @@ The `EXPECTED_TOOLS` column contains a JSON object with the following structure:
 ### Example Dataset Row
 
 ```sql
-INSERT INTO EVALS_TABLE (INPUT_QUERY, EXPECTED_TOOLS)
+INSERT INTO EVALS_TABLE (INPUT_QUERY, GROUND_TRUTH_DATA)
 VALUES (
   'What was the total spend on our summer campaign?',
   PARSE_JSON('{
@@ -171,62 +179,161 @@ VALUES (
 
 <!-- ------------------------ -->
 
-## Create Your First Evaluation
+## Understanding the YAML Evaluation Config
+
+Duration: 5
+
+Cortex Agent Evaluations uses a YAML configuration file to define the agent being evaluated, the dataset to use, and the metrics to compute — including custom metrics with LLM-as-judge prompts.
+
+### YAML Config Structure
+
+The config file has three main sections:
+
+**1. Evaluation** — specifies the agent, run metadata, and dataset:
+
+```yaml
+evaluation:
+  agent_params:
+    agent_name: MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGNS_AGENT
+    agent_type: CORTEX AGENT
+  run_params:
+    label: Marketing Campaign Agent Evaluation
+    description: Evaluating metrics for the marketing campaign analytics agent
+  source_metadata:
+    type: dataset
+    dataset_name: MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGN_EVALSET
+```
+
+**2. Built-in Metrics** — referenced by name:
+
+```yaml
+metrics:
+  - correctness
+  - logical_consistency
+  - tool_selection_accuracy
+```
+
+**3. Custom Metrics** — defined inline with a name, scoring rubric, and LLM-as-judge prompt:
+
+```yaml
+metrics:
+  # ... built-in metrics above ...
+
+  - name: groundedness
+    score_ranges:
+      min_score: [0, 0.33]
+      median_score: [0.34, 0.66]
+      max_score: [0.67, 1]
+    prompt: |
+      You are evaluating the groundedness of an AI agent's response...
+      Agent Response to Evaluate:
+      {{output}}
+      ...
+```
+
+### Custom Metric Template Variables
+
+Custom metric prompts can use template variables that are automatically populated from the evaluation run:
+
+| Variable | Description |
+|----------|-------------|
+| `{{output}}` | The agent's final response text |
+| `{{duration}}` | Execution duration in milliseconds |
+| `{{error}}` | Any errors encountered during execution |
+| `{{status}}` | Execution status of the agent run |
+
+### Custom Metrics in This Quickstart
+
+The included `marketing_campaign_eval_config.yaml` defines two custom metrics in addition to the three built-in metrics:
+
+- **Groundedness**: Evaluates whether each statement in the agent's response is supported by information from the execution trace (tool outputs, retrieved data). Scores range from 0 (fabricated content) to 1 (all claims traceable to tool outputs).
+
+- **Execution Efficiency**: Evaluates how optimally the agent uses its available tools. Considers whether the right tools were selected, whether there were redundant calls, and whether the execution path was direct. Scores range from 0 (inefficient) to 1 (optimal tool usage).
+
+<!-- ------------------------ -->
+
+## Run Your First Evaluation
 
 Duration: 15
 
-Now let's create and run your first agent evaluation.
+Now let's create and run your first agent evaluation. We'll cover both the programmatic SQL API and the Snowsight UI approach.
 
-### Step 1: Navigate to the Agent Evaluations Tab
+### Step 1: Create an Evaluation Dataset
 
-**1.** In Snowsight, navigate to **AI & ML » Agents**
+First, create a dataset from the evaluation table that was populated by the setup script.
 
-**2.** Click on the agent you created during setup (from `SETUP.sql`)
+**Using the SQL API:**
 
-**3.** Click the **Evaluations** tab
+```sql
+CALL SYSTEM$CREATE_EVALUATION_DATASET(
+    'Cortex Agent',
+    'MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVALS_TABLE',
+    'MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGN_EVALSET',
+    OBJECT_CONSTRUCT('query_text', 'INPUT_QUERY', 'expected_tools', 'GROUND_TRUTH_DATA'));
+```
+
+Confirm the dataset was created:
+
+```sql
+SHOW DATASETS;
+```
+
+**Using the UI:** In Snowsight, navigate to **AI & ML > Agents**, click on your agent, then click the **Evaluations** tab. Click **Create New Evaluation**, enter a name (e.g., "marketing-campaign-agent-baseline"), and click **Next**. Select **Create New Dataset**, choose `MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVALS_TABLE` as the input table, and specify `MARKETING_CAMPAIGNS_DB.AGENTS_DEV` as the destination with dataset name `MARKETING_CAMPAIGN_EVAL_DATASET`.
 
 ![Agent Evaluations Tab](assets/agent-evaluations-page.png)
 
-### Step 2: Configure the Evaluation Run
+### Step 2: Upload the YAML Config
 
-**1.** Click **Create New Evaluation**
+Create a stage to store the evaluation configuration file, then copy the YAML from the Git repository:
 
-**2.** Enter a name for your evaluation run (e.g., "marketing-campaign-agent-baseline")
+```sql
+CREATE OR REPLACE STAGE MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE
+  DIRECTORY = (ENABLE = TRUE)
+  COMMENT = 'Internal stage to host evaluation config files';
 
-**3.** Optionally add a description to document your evaluation purpose
+COPY FILES INTO @MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE
+FROM @CORTEX_AGENT_QUICKSTART_REPO/branches/main/
+FILES = ('marketing_campaign_eval_config.yaml');
+```
 
-**4.** Click **Next**
+Confirm the YAML was uploaded:
 
-![Configure Evaluation Run](assets/new-evaluations-run.png)
+```sql
+LS @MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE;
+```
 
-### Step 3: Select or Create a Dataset
+### Step 3: Start the Evaluation Run
 
-- Select **Create New Dataset**
-- Choose your input table containing queries and expected outputs
-- Specify a destination database amd schema `MARKETING_CAMPAIGNS_DB.AGENTS`
-- Specify a dataset name `MARKETING_CAMPAIGN_EVAL_DATASET`
+**Using the SQL API:**
 
-**5.** Click **Next**
+```sql
+CALL EXECUTE_AI_EVALUATION(
+  'START',
+  OBJECT_CONSTRUCT('run_name', 'BASELINE_MARKETING_AGENT_EVAL_RUN'),
+  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+);
+```
 
-![Select Dataset](assets/select-dataset.png)
+Check the status of the run (re-run periodically until complete):
 
-### Step 4: Configure Metrics
+```sql
+CALL EXECUTE_AI_EVALUATION(
+  'STATUS',
+  OBJECT_CONSTRUCT('run_name', 'BASELINE_MARKETING_AGENT_EVAL_RUN'),
+  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+);
+```
 
-**1.** Select `INPUT_QUERY` as your Query Text column
+The evaluation will execute your queries and compute all metrics (built-in and custom). This typically takes **3-5 minutes** depending on dataset size.
 
-**2.** Enable the evaluation metrics you want to measure:
+**Using the UI:** After selecting your dataset in the evaluation wizard, select `INPUT_QUERY` as the Query Text column and enable the metrics you want to measure:
 
-- ☑️ **Tool Selection Accuracy** - Reference the `EXPECTED_TOOLS` column
-- ☑️ **Tool Execution Accuracy** - Reference the `EXPECTED_TOOLS` column
-- ☑️ **Answer Correctness** - Reference the `EXPECTED_TOOLS` column
+- **Tool Selection Accuracy** — Reference the `GROUND_TRUTH_DATA` column
+- **Answer Correctness** — Reference the `GROUND_TRUTH_DATA` column
 
-**3.** Click **Create Evaluation**
+Click **Create Evaluation** to start the run.
 
 ![Configure Metrics](assets/select-metrics.png)
-
-### Step 5: Wait for Results
-
-The evaluation will now execute your queries and compute metrics. This typically takes **3-5 minutes** depending on dataset size.
 
 ![Run in progress](assets/run-in-progress.png)
 
@@ -238,7 +345,7 @@ Duration: 10
 
 Now that you've completed your first Cortex Agents Evaluation Run, you can view the results to understand how your agent is performing.
 
-On the `Evaluations` page, we can view overal metrics aggregated by run. So far, we just have one run to view here.
+On the `Evaluations` page, we can view overall metrics aggregated by run. So far, we just have one run to view here.
 
 ![Evaluation Runs](assets/evaluation-runs.png)
 
@@ -249,7 +356,8 @@ On this page, you can see metrics including:
 - AC (Answer Correctness)
 - LC (Logical Consistency)
 - TSA (Tool Selection Accuracy)
-- TEA (Tool Execution Accuracy)
+
+If you ran via the YAML config, you'll also see your custom metrics: **Groundedness** and **Execution Efficiency**.
 
 Then, by clicking on the run you can view all of the records that make up the run. This allows you to see which records the agent performed well on and which ones it did not perform as well.
 
@@ -290,77 +398,128 @@ Common improvements to test include:
 - Different tool configurations
 - Modified semantic models
 
-For this example, we'll improve the agent by adding orchestration and response instructions to help guide the agent to a proper workflow and call the expected tools.
+For this example, we'll improve the agent by updating its specification with detailed orchestration instructions, response formatting guidelines, and richer tool descriptions.
 
-### Create an Improved Agent
+### Update the Agent Specification
 
-Navigate back to the agents page and choose edit. Then update the orchestration instructions by copying and pasting the below text.
+**Using SQL**, run the following `ALTER AGENT` statement to update the live agent with improved instructions and tool descriptions:
 
+```sql
+ALTER AGENT MARKETING_CAMPAIGNS_AGENT
+MODIFY LIVE VERSION SET SPECIFICATION = $$
+{
+  "models": {
+    "orchestration": "auto"
+  },
+  "instructions": {
+    "orchestration": "You are the Marketing Campaigns Analyst, a specialized assistant for analyzing marketing campaign performance, customer feedback, and generating comprehensive reports.\n\n## Tool Selection Guidelines\n\n**For QUANTITATIVE questions (metrics, numbers, trends, comparisons):**\nUse `query_performance_metrics` FIRST.\nExamples: ROI, revenue, conversions, impressions, clicks, engagement rates, cost metrics, time series trends, campaign comparisons by numbers.\n\n**For QUALITATIVE questions (content, feedback, strategy, themes):**\nUse `search_campaign_content` FIRST.\nExamples: Customer feedback, marketing copy, A/B test results, campaign descriptions, recommendations, strategy insights.\n\n**For questions requiring BOTH quantitative AND qualitative data:**\n1. Start with `search_campaign_content` to identify the campaign and understand context\n2. Then use `query_performance_metrics` to get specific metrics\nExamples: \"What are key themes AND financial metrics for X campaign?\"\n\n**For REPORT GENERATION requests:**\n1. FIRST use `query_performance_metrics` to get the campaign_id by querying for the campaign name\n2. Then call `generate_campaign_report` with the campaign_id\n3. If generate_campaign_report fails, fall back to manually assembling the report using query_performance_metrics and search_campaign_content\n\n## Critical Rules\n\n1. **Minimize tool calls**: Aim for 1-2 tool calls per question. Do NOT make redundant calls.\n2. **Get campaign_id correctly**: When generating reports, query for campaign_id by campaign_name FIRST.\n3. **Handle errors gracefully**: If a tool fails, acknowledge the error and try an alternative approach.\n4. **Be specific in queries**: Use exact campaign names when filtering. Avoid overly broad queries.\n5. **For similarity/comparison questions**: Search ALL campaigns first to understand the full landscape before making comparisons. Consider content themes, target audience, and strategy - not just metrics.",
+    "response": "## Response Format\n\n- Lead with the direct answer, then provide supporting details\n- Use markdown formatting: headers (##), bold (**), and bullet points\n- For metrics, always include the specific numbers and units (%, $, count)\n- Use tables for multi-row data (3+ items)\n- Include campaign dates/duration when relevant\n\n## Tone\n- Be concise and professional\n- State facts directly without hedging (\"it appears\", \"it seems\")\n- When data is unavailable, clearly state what's missing and suggest alternatives\n\n## Error Handling\n- If a query returns no results, explain why and suggest alternative approaches\n- If a tool fails, acknowledge the error before trying alternatives\n- Never fabricate data - only report what was retrieved from tools",
+    "sample_questions": [
+      {
+        "question": "What campaigns have the highest ROI?"
+      },
+      {
+        "question": "What was the customer feedback on our mobile app campaign?"
+      },
+      {
+        "question": "Generate a report for the Black Friday campaign"
+      },
+      {
+        "question": "Are there any temporal trends around revenue?"
+      }
+    ]
+  },
+  "tools": [
+    {
+      "tool_spec": {
+        "type": "cortex_analyst_text_to_sql",
+        "name": "query_performance_metrics",
+        "description": "Query structured campaign performance data from the data warehouse using natural language.\n\n## Data Available\n- Campaign metadata: campaign_id, campaign_name, campaign_type, channel, start_date, end_date, budget\n- Financial metrics: revenue, ROI, cost_per_click, cost_per_acquisition\n- Engagement metrics: impressions, clicks, conversions, engagement_rate\n- Time-series data: daily performance breakdowns\n\n## When to Use\n- Questions about numbers, metrics, KPIs, or performance data\n- Comparing campaigns by quantitative measures\n- Analyzing trends over time (temporal analysis)\n- Getting campaign IDs for report generation\n- Aggregations, rankings, and statistical summaries\n\n## When NOT to Use\n- Questions about marketing copy, strategy, or campaign descriptions (use search_campaign_content)\n- Questions about customer feedback or qualitative insights (use search_campaign_content)\n- Questions about A/B test learnings or recommendations (use search_campaign_content)\n\n## Query Best Practices\n- Be specific with campaign names when filtering\n- Specify date ranges explicitly (e.g., \"in Q4 2024\", \"November 2024\")\n- Request specific metrics by name: ROI, revenue, conversions, engagement_rate\n- For campaign lookups, query by campaign_name to get campaign_id"
+      }
+    },
+    {
+      "tool_spec": {
+        "type": "cortex_search",
+        "name": "search_campaign_content",
+        "description": "Search unstructured campaign content including descriptions, marketing copy, A/B test results, customer feedback, and strategic recommendations.\n\n## Data Available\n- Campaign descriptions and objectives\n- Marketing copy and messaging\n- A/B testing results and learnings\n- Customer feedback (satisfaction scores, comments, improvement requests)\n- Strategic recommendations and insights\n- Target audience information\n\n## When to Use\n- Questions about customer feedback or satisfaction\n- Finding campaign descriptions, themes, or strategies\n- Understanding marketing copy and messaging approaches\n- Discovering A/B test results and learnings\n- Comparing campaigns by qualitative attributes (themes, audience, approach)\n- Finding recommendations or improvement suggestions\n\n## When NOT to Use\n- Questions requiring specific numbers or metrics (use query_performance_metrics)\n- Calculating ROI, revenue, or engagement rates (use query_performance_metrics)\n- Time-series analysis or trend calculations (use query_performance_metrics)\n\n## Search Best Practices\n- Use specific campaign names: \"Mobile App Download Campaign\", \"Black Friday Mega Sale\"\n- Include relevant keywords: \"customer feedback\", \"A/B test\", \"marketing copy\"\n- For similarity comparisons, search broadly first to understand all campaigns"
+      }
+    },
+    {
+      "tool_spec": {
+        "type": "generic",
+        "name": "generate_campaign_report",
+        "description": "Generate a comprehensive HTML report for a specific campaign. The report includes all performance metrics, customer feedback, and key insights formatted for presentation.\n\n## When to Use\n- User explicitly asks to \"generate a report\" for a campaign\n- User asks for a \"comprehensive report\" or \"full report\"\n- User wants a formatted document they can share or export\n\n## When NOT to Use\n- User just wants to see metrics (use query_performance_metrics instead)\n- User just wants feedback or content info (use search_campaign_content instead)\n- User wants to compare multiple campaigns (use the other tools)\n\n## Required Input\n- campaign_id (integer): The unique identifier of the campaign\n\n## How to Get campaign_id\nBEFORE calling this tool, you MUST first use query_performance_metrics to look up the campaign_id by campaign_name. Example query: \"What is the campaign_id for the Holiday Gift Guide campaign?\"\n\n## Error Handling\nIf this tool fails with an internal error, fall back to manually assembling the report by:\n1. Using query_performance_metrics to get all performance data\n2. Using search_campaign_content to get qualitative insights\n3. Combining into a structured markdown response",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "campaign_id": {
+              "type": "integer",
+              "description": "The unique identifier of the campaign to generate a report for. Get this by first querying for the campaign by name using query_performance_metrics."
+            }
+          },
+          "required": [
+            "campaign_id"
+          ]
+        }
+      }
+    }
+  ],
+  "tool_resources": {
+    "query_performance_metrics": {
+      "execution_environment": {
+        "query_timeout": 299,
+        "type": "warehouse",
+        "warehouse": "COMPUTE_WH"
+      },
+      "semantic_view": "MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_PERFORMANCE_ANALYST"
+    },
+    "search_campaign_content": {
+      "execution_environment": {
+        "query_timeout": 299,
+        "type": "warehouse",
+        "warehouse": "COMPUTE_WH"
+      },
+      "search_service": "MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGNS_SEARCH"
+    },
+    "generate_campaign_report": {
+      "type": "procedure",
+      "identifier": "MARKETING_CAMPAIGNS_DB.AGENTS_DEV.GENERATE_CAMPAIGN_REPORT_HTML",
+      "execution_environment": {
+        "type": "warehouse",
+        "warehouse": "COMPUTE_WH",
+        "query_timeout": 300
+      }
+    }
+  }
+}
+$$;
 ```
-You are a marketing campaigns analytics agent with three specialized tools. Follow these STRICT routing rules to ensure consistent tool selection:
 
-## TOOL ROUTING RULES (Apply in order)
+**Using the UI:** Navigate to your agent in **AI & ML > Agents** and click **Edit**. Update the orchestration and response instructions fields with the content from the specification above, then save.
 
-### Rule 1: Quantitative Analysis (Use query_performance_metrics) Use query_performance_metrics when the query involves: - NUMERICAL METRICS: revenue, ROI, conversions, clicks, impressions, costs, budget, engagement rates - CALCULATIONS: totals, averages, percentages, ratios, growth rates, trends over time - COMPARISONS: top/bottom campaigns, ranking, channel comparison, time period analysis - AGGREGATIONS: sum, count, average, min, max by dimensions like channel, type, audience - PERFORMANCE QUESTIONS: 'how much', 'how many', 'what is the rate', 'calculate' - Keywords: 'revenue', 'ROI', 'cost', 'conversions', 'clicks', 'performance', 'metrics', 'total', 'average', 'rate', 'top', 'bottom', 'best', 'worst', 'compare' - Examples: 'What was total revenue by channel?', 'Which campaigns had highest ROI?', 'Show me conversion rates over time', 'Compare email vs social performance'
-### Rule 3: Qualitative Analysis (Use search_campaign_content) Use search_campaign_content when the query involves: - TEXT CONTENT: campaign descriptions, marketing copy, messaging, creative elements - CUSTOMER FEEDBACK: comments, reviews, satisfaction, sentiment, recommendations - STRATEGY INSIGHTS: A/B testing notes, tactics, approaches, best practices, lessons learned - CONTENT DISCOVERY: finding campaigns by theme, approach, or content similarity - QUALITATIVE QUESTIONS: 'what did customers say', 'what was the strategy', 'find campaigns about' - Keywords: 'feedback', 'comments', 'description', 'copy', 'content', 'strategy', 'A/B test', 'customer said', 'testimonials', 'improvements', 'about', 'similar to', 'messaging' - Examples: 'What feedback did we get on email campaigns?', 'Find campaigns about sustainability', 'What was the messaging strategy?', 'Show A/B test insights'
-### Rule 4: Report Generation ** Always use query_performance_metrics tool first to determine campaign_ID to pass in to report generate_campaign_report tool ** Use generate_campaign_report when: - User explicitly requests a 'report' or 'comprehensive report' - User asks to 'generate', 'create', or 'show' a report - User provides or mentions a campaign_id and wants detailed information - Keywords: 'report', 'HTML', 'full details', 'comprehensive analysis' - Examples: 'Generate a report for campaign 5', 'Create report for Spring Fashion Launch' ** Always share insights with the user immediately upon creating the report - rather than simply creating the report itself . This can be done with one more additional call to query_performance_metrics**
-### Rule 4: Multi-Tool Queries For queries needing BOTH quantitative AND qualitative data: 1. FIRST use query_performance_metrics for numerical data 2. THEN use search_campaign_content for qualitative insights 3. Combine results in your response - Examples: 'Analyze our best performing campaign' (metrics + strategy), 'What made the Spring campaign successful?' (ROI + feedback)
-## CONSISTENCY REQUIREMENTS - For identical queries, ALWAYS use the same tool(s) - If a query contains both metric keywords AND content keywords, default to query_performance_metrics - If campaign_id is provided without explicit report request, use query_performance_metrics to filter by that campaign - Never use search_campaign_content for numerical analysis - Never use query_performance_metrics for text content or feedback
-## WHEN UNCERTAIN If the query is ambiguous: 1. Check for numerical keywords → use query_performance_metrics 2. Check for content keywords → use search_campaign_content 3. If still unclear, ask the user to clarify whether they want metrics or content insights
+### Run Evaluation on the Improved Agent
+
+Kick off a new evaluation run against the same dataset using the same YAML config:
+
+```sql
+CALL EXECUTE_AI_EVALUATION(
+  'START',
+  OBJECT_CONSTRUCT('run_name', 'OPTIMIZED_MARKETING_AGENT_EVAL_RUN'),
+  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+);
 ```
 
-Additionally, copy-paste the following response instructions.
+Check the status:
 
-```
-Follow these response formatting rules for consistency:
-
-1. STRUCTURE:
-   - Start with a direct answer to the question
-   - Present data in clear, organized format (tables, lists, or sections)
-   - End with actionable insights or recommendations
-
-2. METRICS PRESENTATION:
-   - Always include units (dollars, percentages, counts)
-   - Format large numbers with commas (e.g., 1,234,567)
-   - Round percentages to 2 decimal places
-   - Provide context (e.g., 'X% higher than average')
-
-3. CONTENT SUMMARIZATION:
-   - Quote key phrases from original content
-   - Identify themes across multiple results
-   - Highlight actionable recommendations
-   - Mention specific campaign names when relevant
-
-4. CITATIONS:
-   - Always cite specific campaigns by name
-   - Include dates when discussing time-based data
-   - Reference specific metrics by name
-
-5. TONE:
-   - Professional and data-driven
-   - Concise but complete
-   - Actionable and insight-focused
-   - Avoid speculation; base all statements on data
-
-6. CONSISTENCY:
-   - Use the same format for similar queries
-   - Present metrics in the same order (revenue, ROI, conversions, etc.)
-   - Use consistent terminology (e.g., always 'ROI' not 'return on investment')
+```sql
+CALL EXECUTE_AI_EVALUATION(
+  'STATUS',
+  OBJECT_CONSTRUCT('run_name', 'OPTIMIZED_MARKETING_AGENT_EVAL_RUN'),
+  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+);
 ```
 
-### Run Evaluation on Improved Agent
-
-**1.** Navigate to your improved agent in **AI & ML » Agents**
-
-**2.** Click the **Evaluations** tab
-
-**3.** Follow the same steps as the first evaluation:
-
-- Name your evaluation (e.g., "marketing-campaign-agent-improved-instructions")
-- **Reuse the same dataset** you created in the previous evaluation by choosing `Existing Dataset`
-- Select the same metrics for an apples-to-apples comparison
-
-**4.** Click **Create Evaluation**
+**Using the UI:** Navigate to the **Evaluations** tab on your agent, click **Create New Evaluation**, name it (e.g., "marketing-campaign-agent-improved-instructions"), select **Existing Dataset** and reuse the same dataset, then enable the same metrics for an apples-to-apples comparison.
 
 ### Analyze Comparison Results
 
@@ -373,8 +532,9 @@ Once both evaluations complete, you can compare results:
 **3.** Investigate cases where added orchestration and response instructions led to:
 
 - Higher tool selection accuracy
-- Better tool execution accuracy
 - More correct answers
+- Better logical consistency
+- Improved custom metric scores (groundedness, execution efficiency)
 
 ![Comparison Results](assets/comparison-results.png)
 
@@ -502,6 +662,14 @@ Duration: 5
 - Expand coverage based on failure analysis
 - Balance breadth and depth
 
+### Custom Metrics Design
+
+- Start with the built-in metrics and add custom metrics for domain-specific concerns
+- Keep scoring rubrics clear and unambiguous — the LLM judge needs concrete criteria
+- Use the `score_ranges` field to define meaningful thresholds (e.g., min/median/max)
+- Test your custom metric prompts on a few examples before running full evaluations
+- Leverage template variables (`{{output}}`, `{{duration}}`, `{{error}}`, `{{status}}`) to give the judge relevant context
+
 ### Iterative Improvement
 
 #### 1. Establish Baseline
@@ -551,8 +719,9 @@ Congratulations! You've successfully set up and run Cortex Agent Evaluations. Yo
 ### What You Learned
 
 - **Environment Setup**: How to configure sample agents and data for evaluation
-- **Evaluation Creation**: How to build and run evaluation datasets
-- **Metrics Interpretation**: Understanding tool selection, execution, and answer correctness
+- **Evaluation Creation**: How to build datasets and run evaluations via the SQL API and Snowsight UI
+- **Custom Metrics**: How to define custom evaluation metrics via YAML with LLM-as-judge prompts
+- **Metrics Interpretation**: Understanding tool selection accuracy, answer correctness, logical consistency, and custom metrics
 - **Agent Comparison**: How to compare configurations and identify improvements
 - **Dataset Building**: Using the Evalset Generator app for custom datasets
 
@@ -560,12 +729,13 @@ Congratulations! You've successfully set up and run Cortex Agent Evaluations. Yo
 
 - Evaluate your own production agents
 - Build comprehensive evaluation datasets covering your specific use cases
+- Design custom metrics tailored to your domain and quality requirements
 - Establish an evaluation workflow as part of your agent development process
 - Set up automated evaluation runs for continuous monitoring
 
 ### Related Resources
 
-- [Cortex Agent Evaluations Documentation](https://docs.snowflake.com/LIMITEDACCESS/cortex-agent-evaluations)
+- [Cortex Agent Evaluations Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent-evaluations)
 - [Cortex Agents Guide](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents)
 - [Getting Started with Cortex Agents](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-agents)
 - [What's Your Agent's GPA? A Framework for Evaluating AI Agent Reliability](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/)
@@ -573,4 +743,3 @@ Congratulations! You've successfully set up and run Cortex Agent Evaluations. Yo
 ### Repository
 
 - [sfguide-getting-started-with-cortex-agent-evaluations on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agent-evaluations)
-
