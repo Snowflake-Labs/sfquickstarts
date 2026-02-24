@@ -364,15 +364,36 @@ jobs:
                 
                 # New assets need more time to be fully indexed before publish
                 if [ "$is_new_asset" = "true" ]; then
-                  echo "⏳ Waiting 10s for new asset to be indexed..."
-                  sleep 10
+                  echo "⏳ Waiting 30s for new asset to be processed..."
+                  sleep 30
                 else
                   sleep 2
                 fi
                 
                 echo "📢 Publishing image: $filename"
-                /tmp/aem_retry.sh POST "${AEM_URL}/bin/replicate.json" \
-                  "cmd=Activate&path=${dam_folder}/${filename}" || true
+                # Replicate with retry - 400 means asset not ready yet
+                for pub_attempt in 1 2 3; do
+                  pub_response=$(curl -s -w "\n%{http_code}" -X POST \
+                    "${AEM_URL}/bin/replicate.json" \
+                    -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                    -H "Content-Type: application/x-www-form-urlencoded" \
+                    -d "cmd=Activate" \
+                    -d "path=${dam_folder}/${filename}")
+                  
+                  pub_code=$(echo "$pub_response" | tail -n1)
+                  
+                  if [ "$pub_code" -ge 200 ] && [ "$pub_code" -lt 300 ]; then
+                    echo "✅ Image published (HTTP $pub_code)"
+                    break
+                  elif [ "$pub_code" -eq 400 ] && [ "$pub_attempt" -lt 3 ]; then
+                    echo "⏳ Publish not ready (400), waiting 15s... (attempt $pub_attempt/3)"
+                    sleep 15
+                  else
+                    echo "⚠️ Publish failed (HTTP $pub_code) - continuing"
+                    echo "$pub_response" | sed '$d'
+                    break
+                  fi
+                done
                 ;;
               *)
                 echo "⏭️ Skipping non-image file: $filename"
