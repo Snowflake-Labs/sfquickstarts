@@ -358,6 +358,8 @@ The evaluation will execute your queries and compute all metrics (built-in and c
 
 Click **Create Evaluation** to start the run.
 
+> **Note**: Custom metrics are only available via the programmatic YAML/SQL path. The Snowsight UI supports built-in metrics only.
+
 ![Configure Metrics](assets/select-metrics.png)
 
 ![Run in progress](assets/run-in-progress.png)
@@ -602,8 +604,6 @@ Once both evaluations complete, you can compare results:
 - More correct answers
 - Better logical consistency
 - Improved custom metric scores (groundedness, execution efficiency)
-
-![Comparison Results](assets/comparison-results.png)
 
 ### Key Questions to Answer
 
