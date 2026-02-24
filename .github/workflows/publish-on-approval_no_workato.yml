@@ -110,6 +110,7 @@ jobs:
       quickstart_name: ${{ matrix.quickstart.name }}
       language: ${{ matrix.quickstart.language || 'en' }}
       commit_sha: ${{ github.sha }}
+      base_image_url: "https://publish-p57963-e462108.adobeaemcloud.com/content/dam/snowflake-site/developers/guides"
     secrets:
       AEM_USERNAME: ${{ secrets.AEM_USERNAME_DEV }}
       AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_DEV }}

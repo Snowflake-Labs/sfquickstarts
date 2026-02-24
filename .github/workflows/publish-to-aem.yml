@@ -15,6 +15,10 @@ on:
         description: 'Commit SHA for reference'
         required: true
         type: string
+      base_image_url:
+        description: 'Base URL for image references (e.g., CDN URL for prod, publish URL for dev/staging)'
+        required: true
+        type: string
     secrets:
       AEM_USERNAME:
         description: 'AEM username for basic auth'
@@ -155,7 +159,7 @@ jobs:
         env:
           COMMIT_SHA: ${{ inputs.commit_sha }}
           QUICKSTART_NAME: ${{ inputs.quickstart_name }}
-          BASE_IMAGE_URL: "https://www.snowflake.com/content/dam/snowflake-site/developers/guides"
+          BASE_IMAGE_URL: "${{ inputs.base_image_url }}"
         run: |
           python3 scripts/aem-staging/parse_markdown.py \
             "${{ steps.find_md.outputs.md_file }}" \
