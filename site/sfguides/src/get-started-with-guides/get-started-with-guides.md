@@ -37,11 +37,14 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 ### What You’ll Build 
 Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
-### Test Images 7 (Update image)
+### Test Images 8 (Update image)
 ![Synthetic Data Generator Demo](assets/puppy.jpg)
 
-### Test Images 7 (New Image)
+### Test Images 8 (New Image)
 ![Test Image](assets/puppy01.jpg)
+
+### Test Images 8 (New Image)
+![Test Image](assets/puppy02.jpg)
 
 At a minimum, the Guide should include the following headings and subheadings. A single sfguide consists of multiple steps. 
 These steps are defined in Markdown using Header 2 tag `##`. Sub-steps will use a Header 3 tag `###` and so forth.  Please avoid going beyond H4 `####`.
