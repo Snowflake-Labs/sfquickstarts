@@ -37,10 +37,10 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 ### What You’ll Build 
 Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
-### Test Images 4 (Update image)
+### Test Images 5 (Update image)
 ![Synthetic Data Generator Demo](assets/puppy.jpg)
 
-### Test Images 4 (New Image)
+### Test Images 5 (New Image)
 ![Test Image](assets/puppy01.jpg)
 
 At a minimum, the Guide should include the following headings and subheadings. A single sfguide consists of multiple steps. 
