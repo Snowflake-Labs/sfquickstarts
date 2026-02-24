@@ -283,12 +283,12 @@ jobs:
             
             while [ $attempt -le $MAX_RETRIES ]; do
               if [ "$use_post" = "true" ]; then
-                echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (POST - new asset)"
+                echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (POST - new asset via Assets API)"
                 response=$(curl -s -w "\n%{http_code}" -X POST \
-                  "${AEM_URL}${dam_folder}" \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
                   -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-                  -F "file=@${img};type=${content_type};filename=${filename}" \
-                  -F "./jcr:content/jcr:mimeType=${content_type}" 2>&1)
+                  -H "Content-Type: ${content_type}" \
+                  --data-binary "@${img}" 2>&1)
               else
                 echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (PUT - update)"
                 response=$(curl -s -w "\n%{http_code}" -X PUT \
