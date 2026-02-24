@@ -60,8 +60,18 @@ A complete evaluation workflow that enables you to:
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with access to Cortex Agent Evaluations
 - A role with privileges to create databases, schemas, tables, and stages
+- [Cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-suite-cross-region) enabled for your account (required for evaluation LLM judge models — see Model Availability below)
 - Python 3.8+ (for optional local Streamlit app)
 - Basic familiarity with Snowflake SQL and Cortex Agents
+
+### Model Availability
+
+Cortex Agent Evaluations uses **claude-4-sonnet** or **claude-3-5-sonnet** as the LLM judge for computing metrics. The system automatically selects from these models based on your account settings.
+
+**Cross-region inference** is required:
+
+- **claude-4-sonnet**: Requires cross-region inference enabled for at least one of: Any Region, AWS US, AWS US Commercial Gov, AWS EU, or AWS APJ
+- **claude-3-5-sonnet**: Requires cross-region inference for AWS US, or your account must be in an AWS cluster
 
 <!-- ------------------------ -->
 
@@ -114,10 +124,11 @@ The setup script creates a new role called `AGENT_EVAL_ROLE` with all the necess
 |-----------------|-------------|
 | Database/Schema Usage | Access to the `MARKETING_CAMPAIGNS_DB` database and `AGENTS_DEV` schema |
 | Database Roles | `SNOWFLAKE.CORTEX_USER` for Cortex features and `SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP` for accessing agent traces |
-| Dataset Creation | Ability to create datasets, file formats, tables, and stages |
-| Task Management | Create and execute tasks for scheduled evaluations |
-| Agent Monitoring | Monitor permissions on agents in the schema |
-| User Impersonation | Required for executing evaluation runs on behalf of users |
+| Dataset Creation | `CREATE DATASET`, `CREATE FILE FORMAT`, `CREATE TABLE`, and `CREATE STAGE` on the schema |
+| Task Management | `CREATE TASK` on the schema and `EXECUTE TASK` on the account |
+| Agent Monitoring | `OWNERSHIP` or `MONITOR` privilege on agents in the schema |
+| Warehouse | `USAGE` on the warehouse used for evaluations |
+| Stage Access | `READ` privileges on the stage containing the YAML config |
 | Git Integration | Create API integrations and Git repositories for loading sample data |
 | Service Creation | Create semantic views, Cortex Search services, procedures, and agents |
 
@@ -225,22 +236,34 @@ metrics:
       median_score: [0.34, 0.66]
       max_score: [0.67, 1]
     prompt: |
-      You are evaluating the groundedness of an AI agent's response...
-      Agent Response to Evaluate:
-      {{output}}
-      ...
+      You are evaluating the groundedness of an AI agent's response.
+      
+      User Query: {{input}}
+      Agent Response: {{output}}
+      Expected Answer: {{ground_truth}}
+      
+      Rate whether each statement in the response is supported
+      by the tool outputs and retrieved data in the execution trace...
 ```
 
-### Custom Metric Template Variables
+### Prompt Template Variables
 
 Custom metric prompts can use template variables that are automatically populated from the evaluation run:
 
 | Variable | Description |
 |----------|-------------|
-| `{{output}}` | The agent's final response text |
-| `{{duration}}` | Execution duration in milliseconds |
-| `{{error}}` | Any errors encountered during execution |
-| `{{status}}` | Execution status of the agent run |
+| `{{input}}` | User query/question sent to the agent |
+| `{{output}}` | Agent's generated response |
+| `{{ground_truth}}` | Expected answer from the dataset |
+| `{{tool_info}}` | Tool information used during execution |
+| `{{start_timestamp}}` | Start timestamp of the span |
+| `{{duration}}` | Duration in milliseconds |
+| `{{span_id}}` | Unique span identifier |
+| `{{span_type}}` | Type of the span |
+| `{{span_name}}` | Name of the span |
+| `{{llm_model}}` | LLM model used |
+| `{{error}}` | Error message (if any) |
+| `{{status}}` | Execution status |
 
 ### Custom Metrics in This Quickstart
 
@@ -382,6 +405,48 @@ However all three were missing and the agent had 0/3 correct positions.
 ![Tool Selection Accuracy](assets/tsa.png)
 
 Given that the agent did not call any tools, it is expected that the `Answer Correctness` metric score is also low.
+
+### Retrieving Results Programmatically
+
+You can also retrieve evaluation results via SQL, which is useful for automation and deeper analysis.
+
+**Get evaluation data for a run:**
+
+```sql
+SELECT * FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_EVALUATION_DATA(
+  'MARKETING_CAMPAIGNS_DB',
+  'AGENTS_DEV',
+  'MARKETING_CAMPAIGNS_AGENT',
+  'cortex agent',
+  'BASELINE_MARKETING_AGENT_EVAL_RUN'
+));
+```
+
+**Get the trace for a specific record** (using a `record_id` from the evaluation data):
+
+```sql
+SELECT * FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_RECORD_TRACE(
+  'MARKETING_CAMPAIGNS_DB',
+  'AGENTS_DEV',
+  'MARKETING_CAMPAIGNS_AGENT',
+  'cortex agent',
+  '<record_id>'
+));
+```
+
+**Get error and warning logs for a run:**
+
+```sql
+SELECT *
+FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_OBSERVABILITY_LOGS(
+  'MARKETING_CAMPAIGNS_DB',
+  'AGENTS_DEV',
+  'MARKETING_CAMPAIGNS_AGENT',
+  'cortex agent'
+))
+WHERE record:"severity_text" IN ('ERROR', 'WARN')
+  AND record_attributes:"snow.ai.observability.run.name" = 'BASELINE_MARKETING_AGENT_EVAL_RUN';
+```
 
 <!-- ------------------------ -->
 
@@ -668,7 +733,7 @@ Duration: 5
 - Keep scoring rubrics clear and unambiguous — the LLM judge needs concrete criteria
 - Use the `score_ranges` field to define meaningful thresholds (e.g., min/median/max)
 - Test your custom metric prompts on a few examples before running full evaluations
-- Leverage template variables (`{{output}}`, `{{duration}}`, `{{error}}`, `{{status}}`) to give the judge relevant context
+- Leverage template variables to give the judge relevant context — `{{input}}`, `{{output}}`, and `{{ground_truth}}` for content comparison; `{{tool_info}}`, `{{duration}}`, `{{llm_model}}` for execution details
 
 ### Iterative Improvement
 
