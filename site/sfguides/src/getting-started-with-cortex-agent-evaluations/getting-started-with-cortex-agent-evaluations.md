@@ -248,7 +248,7 @@ metrics:
 
 ### Prompt Template Variables
 
-Custom metric prompts can use template variables that are automatically populated from the evaluation run:
+Custom metric prompts can use template variables that are automatically populated from the evaluation run. These let you explicitly reference specific fields in your prompt:
 
 | Variable | Description |
 |----------|-------------|
@@ -264,6 +264,8 @@ Custom metric prompts can use template variables that are automatically populate
 | `{{llm_model}}` | LLM model used |
 | `{{error}}` | Error message (if any) |
 | `{{status}}` | Execution status |
+
+> **Note**: The complete agent execution trace is always provided to the LLM judge as context, regardless of which template variables you use in your prompt. Template variables give you a way to explicitly call out specific fields in your scoring rubric, but the judge has access to the full trace — including all tool calls, tool outputs, intermediate reasoning steps, and span details — even if you don't reference them via variables.
 
 ### Custom Metrics in This Quickstart
 
