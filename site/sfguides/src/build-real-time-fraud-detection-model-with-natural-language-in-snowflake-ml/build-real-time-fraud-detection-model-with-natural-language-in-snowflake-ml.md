@@ -44,7 +44,7 @@ Follow the [official installation guide](https://docs.snowflake.com/en/user-guid
 
 ### Verify SPCS Access
 
-Ensure you have access to create and manage compute pools. You can verify this in Snowsight under Admin > Compute Pools.
+Ensure you have access to create and manage compute pools. You can verify this in Snowsight under Compute > Compute pools.
 
 <!-- ------------------------ -->
 ## Generate Synthetic Data
@@ -436,8 +436,8 @@ Articles:
 
 Documentation:
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
-- [XGBoost in Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling)
+- [Snowflake ML Model Development](https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling)
 
 Additional Reading:
-- [Snowflake Quickstarts](https://quickstarts.snowflake.com/) - More hands-on tutorials
+- [Snowflake Developer Guides](https://www.snowflake.com/en/developers/guides/) - More hands-on tutorials
 - [Snowflake Community](https://community.snowflake.com/) - Connect with other developers
