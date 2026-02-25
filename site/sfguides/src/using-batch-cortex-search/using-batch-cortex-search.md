@@ -1,41 +1,37 @@
 author: Lucas Galan, Piotr Paczewski
 id: using-batch-cortex-search
 language: en
-summary: Learn to use Batch Cortex Search over a Cortex Search Service for processing large amounts of queries
+summary: Learn to use Batch Cortex Search over a Cortex Search Service for processing large batches of queries
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis , snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Using Batch Cortex Search to query a Cortex Search Service to tackle batch of queries
+# Using Batch Cortex Search for large batches of queries
 <!-- ------------------------ -->
 ## Overview 
 
-![alt text](assets/search_degradation.png)
-
 **Understand how and when to use Batch Cortex Search to tackle offline, high-throughput workloads over large sets of queries**
 
-This guide walks you step-by-step through creating a **Cortex Search Service** and a query payload. We then run parallel queries on the service at scale, showing that for large amounts of queries, the time taken is impacted significantly by consecutive searches. Finally, we use **Batch Cortex Search** to tackle the entire search in a matter of seconds. We also show how this solution can scale up to thousands of searches without significant impact on the time to process. 
+This guide walks you step-by-step through creating a **Cortex Search Service** and a query payload. We then run parallel queries on the service at scale, showing that for large numbers of queries, consecutive searches significantly increase the time taken. Finally, we use **Batch Cortex Search** to tackle the entire search in a matter of seconds. We also show how this solution can scale up to thousands of searches without significant impact on the time to process. 
 
 At a high level:
 -   A Cortex Search is for interactive, low latency user-facing search (RAG chatbots, search bars)
 -   Batch Cortex Search is for offline, high-throughput workloads over large sets of queries (entity resolution, catalog mapping)
--   Both use the same underlying Cortex Search service and index, no need to create a separate objects to use batch.
+-   Both use the same underlying Cortex Search service and index, no need to create separate objects to use batch.
 
-### Prerequisites
-
-**What You'll Need**:
+### What You'll Need
 
 -   A Snowflake account
 -   An ACCOUNTADMIN role or a custom role with sufficient privileges
--   A dataset to search through (we provide step by step guide to using a free dataset from Snowflake marketplace)
+-   A dataset to search through (we provide a step-by-step guide to using a free dataset from Snowflake marketplace)
 
 ### What You'll Learn
 
 -   How to set up a **Cortex Search Service** over a marketplace dataset
 -   How to run linear queries using Cortex Search Service
 -   The limitations of running multiple queries over a Cortex Search Service
--   How to utilise **Batch Cortex Search** to tackle queries at scale
+-   How to use **Batch Cortex Search** to tackle queries at scale
 
 ### What You'll Build
 
@@ -49,28 +45,22 @@ At a high level:
 
 The Batch Cortex Search function is a table function that allows you to submit a batch of queries to a Cortex Search Service. It is intended for offline use-cases with high throughput requirements, such as entity resolution, deduplication, or clustering tasks.
 
-Jobs submitted to a Cortex Search Service with the CORTEX_SEARCH_BATCH function leverage additional compute resources to provide a significantly higher level of throughput (queries per second) than the interactive (Python, REST or, SEARCH_PREVIEW) API search query surfaces.
+Jobs submitted to a Cortex Search Service with the CORTEX_SEARCH_BATCH function leverage additional compute resources to provide a significantly higher level of throughput (queries per second) than the interactive (Python, REST, SEARCH_PREVIEW) API search query surfaces.
 
-> **_NOTE:_** The throughput of the batch search function may vary depending on the amount of data indexed in the queried Cortex Search Service and the complexity of the search queries. Users are encouraged to run the function on a small number of queries to measure the throughput for their specific workload. In general, queries to larger services with more filter conditions see lower throughput.
+> **_NOTE:_** The throughput of the batch search function may vary depending on the amount of data indexed in the queried Cortex Search Service and the complexity of the search queries. 
 
-> The throughput of the batch search function (the number of search queries processed per second) is not influenced by the size of the warehouse used to query it.
-
-> The batch search function is not optimized for quickly processing a small number of search queries. For sub-second latency on a small number of queries, it is suggested to use the interactive (Python, REST or, SEARCH_PREVIEW) API search query surfaces.
-
-> A single Cortex Search Service can be queried in interactive and batch mode concurrently without any degradation to interactive query performance or throughput. Separate compute resources are used to serve interactive and batch queries.
-
-> There is no limit to the number of concurrent batch queries that can be run at a given time on a given service.  
+> The throughput of the batch search function (the number of search queries processed per second) is not influenced by the size of the warehouse used to query it and there is no limit to the number of concurrent batch queries that can be run at a given time on a given service.  
 
 <!-- ------------------------ -->
 ## Getting Data
-> **_NOTE:_** Skip this if you already have a table with data you wish to use for this demo.  
+> **_NOTE:_** Skip this if you have own data and prefer to use it for this demo instead of the marketplace data.  
 
-You can use whatever data you have in Snowflake for this tutorial, but we want to make sure we have something at least minimally large to showcase the capabilities. For this tutorial, we will be using some of the data found for free on **Snowflake Marketplace**. 
+For this tutorial, we will use a free dataset available on the **Snowflake Marketplace**. 
 
-In your Snowsight account, navigate to Marketplace and search for Wikipedia data. Click 'Get'.
+In your Snowsight account, navigate to the Marketplace and search for Wikipedia data. Click 'Get'.
 ![alt text](assets/marketplace_dataset.png)
 
-You can also import the data set programatically, but please note the global listing name (GZT0Z4C8RF3FT) might be subject to change:
+You can also import the dataset programmatically, please note the Wikipedia global listing name (GZT0Z4C8RF3FT) might be subject to change in the future.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -80,28 +70,26 @@ CREATE DATABASE IF NOT EXISTS AI_TRAINING_DATASET_FROM_WIKIPEDIA
 FROM LISTING 'GZT0Z4C8RF3FT';
 ```
 
-Let's begin by opening a SQL worksheet. Before we do anything else, let's set up our environment. This will ensure that all our work is tidy and we can easily clean everything up afterwards:
+Let's begin by opening a SQL file in Snowflake workspace. Before we do anything else, let's set up our environment.
+![alt text](assets/workspace_intro.png)
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 
---Make a Database and use it
+-- Create database, schema and a warehouse
 CREATE DATABASE IF NOT EXISTS BATCH_DEMO;
-USE DATABASE BATCH_DEMO;
-
---Make a Warehouse and use it
-CREATE WAREHOUSE IF NOT EXISTS BATCH_SEARCH_WH WITH WAREHOUSE_SIZE = 'SMALL' AUTO_SUSPEND = 300 AUTO_RESUME = TRUE;
-USE WAREHOUSE BATCH_SEARCH_WH;
-
---Make a Schema and use it
 CREATE SCHEMA IF NOT EXISTS BATCH_TEST;
-USE SCHEMA BATCH_TEST;
+CREATE WAREHOUSE IF NOT EXISTS BATCH_SEARCH_WH WITH WAREHOUSE_SIZE = 'SMALL' AUTO_SUSPEND = 300 AUTO_RESUME = TRUE;
+
+-- Set context
+USE SCHEMA BATCH_DEMO.BATCH_TEST;
+USE WAREHOUSE BATCH_SEARCH_WH;
 ```
 
-Then, from the data we've downloaded, we want to build a smaller dataset, let's say 100K articles, to test batch search against.
+Then, from the data we've downloaded, we want to build a smaller dataset, let's say 100K articles, to test the Batch Cortex Search against.
 
 ```sql
---make a copy of 100k lines from the data
+-- Create a table based on 100k articles from the source data
 CREATE OR REPLACE TABLE wikipedia_articles AS
 SELECT 
     URL,
@@ -126,11 +114,11 @@ LIMIT 5;
 
 <!-- ------------------------ -->
 ## Setting Up a Cortex Search Service
-Now that we have data we can set up a Cortex Search Service over the top of RAW_TEXT, this will create an vector over the column and allow for extremely fast retrieval over the unstructured text. The service takes a while to create the first time, but once it's been created it is very fast to query.
+Now that we have data, we can set up a Cortex Search Service over the RAW_TEXT column. This will create a vector index over the column and allow for extremely fast retrieval over the unstructured text. The service takes a while to create the first time, but once it's been created, it is very fast to query.
 > **_NOTE:_** This will take around 8 minutes. If you want something faster, simply reduce the table wikipedia_articles to a smaller amount of data, such as 50k. 
 
 ```sql
---create a cortex search service
+-- Create a Cortex Search Service
 CREATE OR REPLACE CORTEX SEARCH SERVICE wikipedia_search_service
 ON RAW_TEXT
 ATTRIBUTES TITLE
@@ -143,7 +131,7 @@ SELECT
 FROM wikipedia_articles;
 ```
 
-Once the service has been created, we can test it. Run a quick search to verify it's working. A single result is a little hard to parse as JSON, so we wrap the whole thing into a table. We can now search for anything we'd like and return the pages (within our subset) that most closely match the results.
+Once the service has been created, we can test it. Run a quick search to verify it's working. We can now search for anything we'd like and return the pages (within our subset) that most closely match the results.
 
 ![alt text](assets/workspace_example.png)
 ```sql
@@ -175,10 +163,10 @@ FROM TABLE(FLATTEN(
 )) AS r;
 ```
 
-This type of search is extremely efficient, and Cortex Search can quickly return results even for extremely large datasets. It is even faster when used directly via Snowflake Python API or REST API, but for now let's look at the SQL for demonstration purposes. In case if we want to run multiple searches using SEARCH_PREVIEW function:
+This type of search is extremely efficient, and Cortex Search can quickly return results even for extremely large datasets. It is even faster when used directly via Snowflake Python API or REST API, but for now let's look at the SQL for demonstration purposes. If we want to run multiple searches using SEARCH_PREVIEW function:
 
 ```sql
--- Example: 10 searches using UNION ALL (more efficient syntax is via Python API, Rest API)
+-- Example: 10 searches using UNION ALL via SEARCH_PREVIEW SQL function
 SELECT 'quantum physics' AS query, PARSE_JSON(SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
     'BATCH_DEMO.BATCH_TEST.WIKIPEDIA_SEARCH_SERVICE',
     '{"query": "quantum physics", "columns": ["TITLE"], "limit": 1}'
@@ -230,11 +218,11 @@ SELECT 'human brain', PARSE_JSON(SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
 )):results[0]:TITLE::VARCHAR;
 ```
 
-It also starts to take longer and longer. So how can we leverage the power of the Cortex Search Service over multiple search queries?
+The query starts to take longer and longer. So how can we leverage the power of the Cortex Search Service over multiple search queries?
 
 <!-- ------------------------ -->
-## Batch Search to the Rescue
-Batch Cortex Search allows us to do just this, it's clean, elegant and easy to deploy. It allows us to push a much larger volume of searches and execute them as a batch. First, let's create a table with the previous searches in it. 
+## Batch Cortex Search to the Rescue
+Batch Cortex Search allows us to do just this, it's clean, elegant and easy to deploy. It allows us to submit a larger number of searches and execute them as a batch. First, let's create a table with the previous searches in it. 
 
 ```sql
 -- First, create a table with our 10 search terms
@@ -270,7 +258,7 @@ LATERAL CORTEX_SEARCH_BATCH(
 ) AS s;
 ```
 
-That's it! But this is just the tip of the iceberg — we can run 1000 searches with virtually no impact on the time taken!
+That's it! And this is just the tip of the iceberg — we can run 1000 searches with virtually no impact on the query execution time!
 
 ```sql
 -- Create a table of 1000 diverse search queries from Wikipedia titles
@@ -303,7 +291,7 @@ Batch Cortex Search is easy to implement, but extremely powerful.
 
 <!-- ------------------------ -->
 ## Cleanup
-Now that you know how to use Batch Cortex Search, let's delete everything and make sure we leave everything as it was!
+Now that you know how to use Batch Cortex Search, let's clean up the environment.
 
 ```sql
 -- Set context
