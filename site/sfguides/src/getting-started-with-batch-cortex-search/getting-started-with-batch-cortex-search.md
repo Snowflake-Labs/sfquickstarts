@@ -1,5 +1,5 @@
 author: Lucas Galan, Piotr Paczewski
-id: using-batch-cortex-search
+id: getting-started-with-batch-cortex-search
 language: en
 summary: Learn to use Batch Cortex Search over a Cortex Search Service for processing large batches of queries
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis , snowflake-site:taxonomy/snowflake-feature/cortex-search
@@ -7,7 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Using Batch Cortex Search for large batches of queries
+# Getting Started with Batch Cortex Search
 <!-- ------------------------ -->
 ## Overview 
 
