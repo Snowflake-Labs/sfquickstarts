@@ -6,7 +6,7 @@ summary: Build an intelligent sales assistant using Snowflake Cortex Agents that
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents/&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
+open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
 # Getting Started with Cortex Agents

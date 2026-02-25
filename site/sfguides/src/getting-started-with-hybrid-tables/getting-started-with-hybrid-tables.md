@@ -790,3 +790,4 @@ Having completed this quickstart you have successfully
 - [Snowflake Unistore Landing Page](/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
 - [Simplify Application Development Hybrid Tables Blog](/blog/simplify-application-development-hybrid-tables)
+- [Getting Started with Snowflake Postgres](/en/developers/guides/getting-started-with-snowflake-postgres/)

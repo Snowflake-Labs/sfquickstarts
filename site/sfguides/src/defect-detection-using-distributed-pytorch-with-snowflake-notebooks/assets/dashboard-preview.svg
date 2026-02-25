@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
+  <defs>
+    <linearGradient id="cardGradDash" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="600" fill="#0f172a"/>
+  
+  <!-- Browser chrome -->
+  <rect x="20" y="20" width="960" height="560" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  
+  <!-- Browser dots -->
+  <circle cx="50" cy="42" r="6" fill="#ef4444"/>
+  <circle cx="72" cy="42" r="6" fill="#eab308"/>
+  <circle cx="94" cy="42" r="6" fill="#22c55e"/>
+  
+  <!-- URL bar -->
+  <rect x="120" y="32" width="300" height="22" rx="4" fill="#0f172a"/>
+  <text x="135" y="47" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="11">snowflake.com/pcb-defect-dashboard</text>
+  
+  <!-- Sidebar -->
+  <rect x="20" y="65" width="200" height="515" fill="#0f172a"/>
+  
+  <!-- Snowflake logo placeholder -->
+  <rect x="40" y="85" width="160" height="30" rx="4" fill="#3b82f6" fill-opacity="0.2"/>
+  <text x="120" y="105" text-anchor="middle" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">❄ Snowflake</text>
+  
+  <!-- App title -->
+  <text x="40" y="145" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">PCB Defect Detection</text>
+  
+  <!-- Nav items -->
+  <rect x="35" y="170" width="170" height="35" rx="6" fill="#3b82f6" fill-opacity="0.3"/>
+  <text x="55" y="193" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="12">📊 Executive Overview</text>
+  
+  <rect x="35" y="215" width="170" height="35" rx="6" fill="transparent"/>
+  <text x="55" y="238" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="12">🔍 Vision Lab</text>
+  
+  <rect x="35" y="260" width="170" height="35" rx="6" fill="transparent"/>
+  <text x="55" y="283" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="12">ℹ️ About</text>
+  
+  <!-- Main content area -->
+  <rect x="230" y="75" width="740" height="500" rx="8" fill="url(#cardGradDash)"/>
+  
+  <!-- Page title -->
+  <text x="260" y="110" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700">Executive Overview</text>
+  <text x="260" y="130" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="12">Real-time quality metrics across all production lines</text>
+  
+  <!-- KPI Cards row -->
+  <!-- Card 1: Yield Rate -->
+  <rect x="260" y="150" width="170" height="90" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="280" y="175" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">YIELD RATE</text>
+  <text x="280" y="210" fill="#22c55e" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700">97.0%</text>
+  <text x="365" y="210" fill="#4ade80" font-family="system-ui, -apple-system, sans-serif" font-size="12">↑ 0.5%</text>
+  
+  <!-- Card 2: Defect Rate -->
+  <rect x="445" y="150" width="170" height="90" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="465" y="175" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">DEFECT RATE</text>
+  <text x="465" y="210" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700">3.0%</text>
+  <text x="540" y="210" fill="#f87171" font-family="system-ui, -apple-system, sans-serif" font-size="12">→ stable</text>
+  
+  <!-- Card 3: FPR -->
+  <rect x="630" y="150" width="170" height="90" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="650" y="175" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">FALSE POSITIVE RATE</text>
+  <text x="650" y="210" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700">15%</text>
+  <text x="710" y="210" fill="#4ade80" font-family="system-ui, -apple-system, sans-serif" font-size="12">↓ 5%</text>
+  
+  <!-- Card 4: Boards Today -->
+  <rect x="815" y="150" width="145" height="90" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="835" y="175" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">BOARDS TODAY</text>
+  <text x="835" y="210" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700">4,521</text>
+  
+  <!-- Defect Pareto Chart -->
+  <rect x="260" y="260" width="350" height="220" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="280" y="290" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">Defect Pareto Analysis</text>
+  
+  <!-- Bar chart -->
+  <rect x="290" y="320" width="120" height="15" rx="2" fill="#ef4444"/>
+  <text x="420" y="332" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Open (42%)</text>
+  
+  <rect x="290" y="345" width="85" height="15" rx="2" fill="#f97316"/>
+  <text x="385" y="357" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Short (28%)</text>
+  
+  <rect x="290" y="370" width="50" height="15" rx="2" fill="#eab308"/>
+  <text x="350" y="382" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Mousebite (15%)</text>
+  
+  <rect x="290" y="395" width="25" height="15" rx="2" fill="#22c55e"/>
+  <text x="325" y="407" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Spur (8%)</text>
+  
+  <rect x="290" y="420" width="15" height="15" rx="2" fill="#3b82f6"/>
+  <text x="315" y="432" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Copper (5%)</text>
+  
+  <rect x="290" y="445" width="8" height="15" rx="2" fill="#a855f7"/>
+  <text x="308" y="457" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Pin-hole (2%)</text>
+  
+  <!-- Line by Factory -->
+  <rect x="630" y="260" width="330" height="220" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="650" y="290" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">Defect Rate by Factory Line</text>
+  
+  <!-- Simple line chart representation -->
+  <polyline points="670,400 720,380 770,395 820,360 870,340 920,350" stroke="#3b82f6" stroke-width="2" fill="none"/>
+  <circle cx="670" cy="400" r="4" fill="#3b82f6"/>
+  <circle cx="720" cy="380" r="4" fill="#3b82f6"/>
+  <circle cx="770" cy="395" r="4" fill="#3b82f6"/>
+  <circle cx="820" cy="360" r="4" fill="#3b82f6"/>
+  <circle cx="870" cy="340" r="4" fill="#3b82f6"/>
+  <circle cx="920" cy="350" r="4" fill="#3b82f6"/>
+  
+  <!-- X-axis labels -->
+  <text x="670" y="430" text-anchor="middle" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">Line 1</text>
+  <text x="720" y="430" text-anchor="middle" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">Line 2</text>
+  <text x="770" y="430" text-anchor="middle" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">Line 3</text>
+  <text x="820" y="430" text-anchor="middle" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">Line 4</text>
+  <text x="870" y="430" text-anchor="middle" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">Line 5</text>
+  <text x="920" y="430" text-anchor="middle" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">Line 6</text>
+  
+  <!-- Y-axis labels -->
+  <text x="655" y="345" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">5%</text>
+  <text x="655" y="375" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">3%</text>
+  <text x="655" y="405" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="9">1%</text>
+  
+  <!-- Recent Detections -->
+  <rect x="260" y="495" width="700" height="70" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="280" y="520" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">Recent Detections</text>
+  
+  <!-- Detection items -->
+  <rect x="280" y="535" width="150" height="22" rx="4" fill="#ef4444" fill-opacity="0.2"/>
+  <text x="290" y="550" fill="#f87171" font-family="system-ui, -apple-system, sans-serif" font-size="10">🔴 Open - Line 3 - 2m ago</text>
+  
+  <rect x="450" y="535" width="160" height="22" rx="4" fill="#f97316" fill-opacity="0.2"/>
+  <text x="460" y="550" fill="#fb923c" font-family="system-ui, -apple-system, sans-serif" font-size="10">🟠 Short - Line 1 - 5m ago</text>
+  
+  <rect x="630" y="535" width="180" height="22" rx="4" fill="#eab308" fill-opacity="0.2"/>
+  <text x="640" y="550" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-size="10">🟡 Mousebite - Line 4 - 8m ago</text>
+  
+  <rect x="830" y="535" width="120" height="22" rx="4" fill="#22c55e" fill-opacity="0.2"/>
+  <text x="840" y="550" fill="#4ade80" font-family="system-ui, -apple-system, sans-serif" font-size="10">✅ All clear - Line 2</text>
+</svg>
+
