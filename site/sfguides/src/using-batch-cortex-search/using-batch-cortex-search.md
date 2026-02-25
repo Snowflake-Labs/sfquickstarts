@@ -58,7 +58,7 @@ Jobs submitted to a Cortex Search Service with the CORTEX_SEARCH_BATCH function 
 For this tutorial, we will use a free dataset available on the **Snowflake Marketplace**. 
 
 In your Snowsight account, navigate to the Marketplace and search for Wikipedia data. Click 'Get'.
-![alt text](assets/marketplace_dataset.png)
+![alt text](assets/marketplace_dataset.jpeg)
 
 You can also import the dataset programmatically, please note the Wikipedia global listing name (GZT0Z4C8RF3FT) might be subject to change in the future.
 
