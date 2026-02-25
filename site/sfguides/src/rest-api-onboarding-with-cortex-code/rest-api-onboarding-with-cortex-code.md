@@ -567,16 +567,35 @@ else:
 <!-- ------------------------ -->
 ## REST API Endpoints
 
-The Flask API serves as the backend for both AdminApp and UserApp, providing programmatic access to onboarding functions.
+The Flask API serves as the backend for both AdminApp and UserApp, providing programmatic access to onboarding functions via Snowflake REST API.
 
 ### API Server Setup
 
 ```python
 from flask import Flask, request, jsonify
-import sqlite3
+import os
 from datetime import datetime
 
 app = Flask(__name__)
+
+# Initialize Snowflake client for API server
+api_config = SnowflakeConfig(
+    account_locator=os.getenv("SNOWFLAKE_ACCOUNT_LOCATOR"),
+    region=os.getenv("SNOWFLAKE_REGION", "us-west-2"),
+    admin_user=os.getenv("SNOWFLAKE_ADMIN_USER"),
+    admin_password=os.getenv("SNOWFLAKE_ADMIN_PASSWORD"),
+    warehouse=os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH")
+)
+
+# Global Snowflake client (initialized on first request)
+sf_client = None
+
+def get_sf_client():
+    global sf_client
+    if sf_client is None:
+        sf_client = SnowflakeClient(api_config)
+        sf_client.authenticate()
+    return sf_client
 
 # ============== User Endpoints ==============
 
@@ -584,19 +603,17 @@ app = Flask(__name__)
 def user_lookup():
     """Look up a user by email."""
     email = request.args.get('email')
+    sf = get_sf_client()
     
-    conn = sqlite3.connect('onboarding.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
-    user = cursor.fetchone()
-    conn.close()
+    result = sf.query(f"SELECT * FROM USERS WHERE EMAIL = '{email}'")
     
-    if user:
+    if result:
+        user = result[0]
         return jsonify({
-            "id": user[0],
-            "email": user[1],
-            "name": user[2],
-            "role": user[3]
+            "id": user['ID'],
+            "email": user['EMAIL'],
+            "name": user['NAME'],
+            "role": user['ROLE']
         })
     return jsonify({"error": "User not found"}), 404
 
@@ -604,90 +621,117 @@ def user_lookup():
 def user_progress():
     """Get onboarding progress for a user."""
     email = request.args.get('email')
-    
-    conn = sqlite3.connect('onboarding.db')
-    cursor = conn.cursor()
+    sf = get_sf_client()
     
     # Get user
-    cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
-    user = cursor.fetchone()
+    user_result = sf.query(f"SELECT ID FROM USERS WHERE EMAIL = '{email}'")
     
-    if not user:
-        conn.close()
+    if not user_result:
         return jsonify({"error": "User not found"}), 404
     
+    user_id = user_result[0]['ID']
+    
     # Get progress
-    cursor.execute("""
-        SELECT step_name, completed, completed_at, details
-        FROM onboarding_progress
-        WHERE user_id = ?
-    """, (user[0],))
+    progress = sf.query(f"""
+        SELECT STEP_NAME, COMPLETED, COMPLETED_AT, DETAILS
+        FROM ONBOARDING_PROGRESS
+        WHERE USER_ID = {user_id}
+    """)
     
     steps = []
-    for row in cursor.fetchall():
+    for row in progress:
         step_info = next(
-            (s for s in ONBOARDING_STEPS if s['name'] == row[0]), 
+            (s for s in ONBOARDING_STEPS if s['name'] == row['STEP_NAME']), 
             {}
         )
         steps.append({
-            "name": row[0],
-            "title": step_info.get('title', row[0]),
+            "name": row['STEP_NAME'],
+            "title": step_info.get('title', row['STEP_NAME']),
             "description": step_info.get('description', ''),
-            "completed": bool(row[1]),
-            "completed_at": row[2],
-            "details": row[3]
+            "completed": row['COMPLETED'],
+            "completed_at": str(row['COMPLETED_AT']) if row['COMPLETED_AT'] else None,
+            "details": row['DETAILS']
         })
     
-    conn.close()
     return jsonify({"steps": steps})
 
 # ============== Admin Endpoints ==============
 
 @app.route('/api/register_pat', methods=['POST'])
 def register_pat():
-    """Register a PAT for a user."""
+    """Register a PAT for a user and update onboarding progress."""
     data = request.get_json()
     email = data.get('email')
     pat_token = data.get('pat_token')
+    sf = get_sf_client()
     
     # Validate PAT by testing Cortex API
-    # Then update onboarding progress
+    import requests
+    test_response = requests.post(
+        f"{api_config.base_url}/api/v2/cortex/inference:complete",
+        headers={
+            "Authorization": f"Bearer {pat_token}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": "claude-sonnet-4-5",
+            "messages": [{"role": "user", "content": "test"}],
+            "max_tokens": 10
+        }
+    )
+    
+    if test_response.status_code != 200:
+        return jsonify({"success": False, "error": "Invalid PAT token"}), 400
+    
+    # Update onboarding progress
+    user_result = sf.query(f"SELECT ID FROM USERS WHERE EMAIL = '{email}'")
+    if user_result:
+        user_id = user_result[0]['ID']
+        sf.execute_sql(f"""
+            UPDATE ONBOARDING_PROGRESS 
+            SET COMPLETED = TRUE, COMPLETED_AT = CURRENT_TIMESTAMP()
+            WHERE USER_ID = {user_id} AND STEP_NAME = 'pat_created'
+        """)
+        
+        # Log activity
+        sf.execute_sql(f"""
+            INSERT INTO ACTIVITY_LOG (USER_ID, ACTION, DETAILS)
+            VALUES ({user_id}, 'pat_registered', 'PAT validated via Cortex API')
+        """)
     
     return jsonify({"success": True})
 
 @app.route('/api/service-admin/users', methods=['GET'])
 def list_users():
     """List all users with onboarding status."""
-    conn = sqlite3.connect('onboarding.db')
-    cursor = conn.cursor()
+    sf = get_sf_client()
     
-    cursor.execute("""
+    users = sf.query("""
         SELECT u.*, 
-               (SELECT COUNT(*) FROM onboarding_progress op 
-                WHERE op.user_id = u.id AND op.completed = 1) as completed_steps
-        FROM users u
-        ORDER BY u.created_at DESC
+               (SELECT COUNT(*) FROM ONBOARDING_PROGRESS op 
+                WHERE op.USER_ID = u.ID AND op.COMPLETED = TRUE) as COMPLETED_STEPS
+        FROM USERS u
+        ORDER BY u.CREATED_AT DESC
     """)
     
-    users = []
-    for row in cursor.fetchall():
-        users.append({
-            "id": row[0],
-            "email": row[1],
-            "name": row[2],
-            "role": row[3],
-            "created_at": row[4],
-            "completed_steps": row[6],
-            "onboarding_complete": row[6] == 5
+    result = []
+    for user in users:
+        result.append({
+            "id": user['ID'],
+            "email": user['EMAIL'],
+            "name": user['NAME'],
+            "role": user['ROLE'],
+            "created_at": str(user['CREATED_AT']),
+            "completed_steps": user['COMPLETED_STEPS'],
+            "onboarding_complete": user['COMPLETED_STEPS'] == 5
         })
     
-    conn.close()
-    return jsonify({"users": users})
+    return jsonify({"users": result})
 
 @app.route('/api/service-admin/stats', methods=['GET'])
 def admin_stats():
     """Get onboarding statistics."""
-    conn = sqlite3.connect('onboarding.db')
+    sf = get_sf_client()
     
     stats = {
         "total_users": 0,
@@ -696,21 +740,25 @@ def admin_stats():
         "recent_activity": 0
     }
     
-    cursor = conn.cursor()
-    
     # Total users
-    cursor.execute("SELECT COUNT(*) FROM users")
-    stats["total_users"] = cursor.fetchone()[0]
+    result = sf.query("SELECT COUNT(*) as CNT FROM USERS")
+    stats["total_users"] = result[0]['CNT'] if result else 0
     
     # Fully onboarded
-    cursor.execute("""
-        SELECT COUNT(DISTINCT u.id) FROM users u
-        WHERE (SELECT COUNT(*) FROM onboarding_progress op 
-               WHERE op.user_id = u.id AND op.completed = 1) = 5
+    result = sf.query("""
+        SELECT COUNT(DISTINCT u.ID) as CNT FROM USERS u
+        WHERE (SELECT COUNT(*) FROM ONBOARDING_PROGRESS op 
+               WHERE op.USER_ID = u.ID AND op.COMPLETED = TRUE) = 5
     """)
-    stats["fully_onboarded"] = cursor.fetchone()[0]
+    stats["fully_onboarded"] = result[0]['CNT'] if result else 0
     
-    conn.close()
+    # Recent activity (last 24 hours)
+    result = sf.query("""
+        SELECT COUNT(*) as CNT FROM ACTIVITY_LOG 
+        WHERE TIMESTAMP > DATEADD(hour, -24, CURRENT_TIMESTAMP())
+    """)
+    stats["recent_activity"] = result[0]['CNT'] if result else 0
+    
     return jsonify(stats)
 
 # ============== Bulk Import Endpoint ==============
@@ -720,6 +768,8 @@ def bulk_import():
     """Bulk import users from CSV data."""
     import csv
     import io
+    
+    sf = get_sf_client()
     
     # Handle CSV data from request
     if 'file' in request.files:
@@ -733,15 +783,12 @@ def bulk_import():
     
     results = {"created": [], "skipped": [], "errors": []}
     
-    conn = sqlite3.connect('onboarding.db')
-    cursor = conn.cursor()
-    
     for row in reader:
         try:
             firstname = row.get('userfirstname', '').strip()
             lastname = row.get('userlastname', '').strip()
             email = row.get('useremail', '').strip()
-            tags = row.get('additionalTags', '').strip()
+            tags = row.get('additionalTags', '').strip().replace("'", "''")  # Escape quotes
             role = row.get('roletype', 'user').strip()
             
             if not all([firstname, lastname, email]):
@@ -754,35 +801,36 @@ def bulk_import():
             name = f"{firstname} {lastname}"
             
             # Check if user exists
-            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
-            if cursor.fetchone():
+            existing = sf.query(f"SELECT ID FROM USERS WHERE EMAIL = '{email}'")
+            if existing:
                 results["skipped"].append({"email": email, "reason": "Already exists"})
                 continue
             
-            # Insert user
-            cursor.execute(
-                "INSERT INTO users (email, name, role, tags) VALUES (?, ?, ?, ?)",
-                (email, name, role, tags)
-            )
-            user_id = cursor.lastrowid
+            # Insert user via Snowflake REST API
+            sf.execute_sql(f"""
+                INSERT INTO USERS (EMAIL, NAME, ROLE, TAGS) 
+                VALUES ('{email}', '{name}', '{role}', '{tags}')
+            """)
             
-            # Initialize onboarding steps
-            for step in ONBOARDING_STEPS:
-                cursor.execute(
-                    "INSERT INTO onboarding_progress (user_id, step_name) VALUES (?, ?)",
-                    (user_id, step['name'])
-                )
-            
-            results["created"].append({"email": email, "id": user_id})
+            # Get the new user ID
+            user_result = sf.query(f"SELECT ID FROM USERS WHERE EMAIL = '{email}'")
+            if user_result:
+                user_id = user_result[0]['ID']
+                
+                # Initialize onboarding steps
+                for step in ONBOARDING_STEPS:
+                    sf.execute_sql(f"""
+                        INSERT INTO ONBOARDING_PROGRESS (USER_ID, STEP_NAME) 
+                        VALUES ({user_id}, '{step['name']}')
+                    """)
+                
+                results["created"].append({"email": email, "id": user_id})
             
         except Exception as e:
             results["errors"].append({
                 "email": row.get('useremail', 'unknown'),
                 "error": str(e)
             })
-    
-    conn.commit()
-    conn.close()
     
     return jsonify({
         "success": True,
