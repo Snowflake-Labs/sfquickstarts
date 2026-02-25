@@ -1,5 +1,5 @@
 summary: This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.
-id: get-started-with-guides
+id: get-started-with-guides2
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
