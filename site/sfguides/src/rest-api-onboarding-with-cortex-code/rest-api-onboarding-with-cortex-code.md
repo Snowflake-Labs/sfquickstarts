@@ -72,7 +72,7 @@ Create a virtual environment and install the required packages:
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-pip install streamlit flask requests pandas sqlite3
+pip install streamlit flask requests pandas snowflake-connector-python
 ```
 
 ### Step 2: Configure Snowflake Connection
@@ -128,58 +128,140 @@ The AdminApp provides administrators with tools to manage user onboarding, track
 4. **Bulk Import**: Import users from CSV files
 5. **Activity Logging**: Track all admin and user actions
 
-### Database Schema
+### Snowflake Schema Setup
 
-Create a SQLite database for tracking onboarding state:
+All onboarding state is stored in Snowflake tables, accessed via REST API. Create the schema:
+
+```sql
+-- Create database and schema for onboarding state
+CREATE DATABASE IF NOT EXISTS ONBOARDING_DB;
+CREATE SCHEMA IF NOT EXISTS ONBOARDING_DB.STATE;
+
+USE SCHEMA ONBOARDING_DB.STATE;
+
+-- Users table
+CREATE TABLE IF NOT EXISTS USERS (
+    ID NUMBER AUTOINCREMENT PRIMARY KEY,
+    EMAIL VARCHAR(255) UNIQUE NOT NULL,
+    NAME VARCHAR(255) NOT NULL,
+    ROLE VARCHAR(50) DEFAULT 'user',
+    CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    SNOWFLAKE_USERNAME VARCHAR(255),
+    TAGS VARCHAR(1000)
+);
+
+-- Onboarding progress table
+CREATE TABLE IF NOT EXISTS ONBOARDING_PROGRESS (
+    ID NUMBER AUTOINCREMENT PRIMARY KEY,
+    USER_ID NUMBER NOT NULL REFERENCES USERS(ID),
+    STEP_NAME VARCHAR(100) NOT NULL,
+    COMPLETED BOOLEAN DEFAULT FALSE,
+    COMPLETED_AT TIMESTAMP_NTZ,
+    DETAILS VARCHAR(2000),
+    UNIQUE(USER_ID, STEP_NAME)
+);
+
+-- Activity log table
+CREATE TABLE IF NOT EXISTS ACTIVITY_LOG (
+    ID NUMBER AUTOINCREMENT PRIMARY KEY,
+    USER_ID NUMBER,
+    ACTION VARCHAR(100) NOT NULL,
+    DETAILS VARCHAR(2000),
+    TIMESTAMP TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+);
+```
+
+### Snowflake REST API Client
+
+Use the Snowflake REST API (`/api/v2/statements`) to execute SQL:
 
 ```python
-import sqlite3
-from datetime import datetime
+import os
+import requests
+from dataclasses import dataclass
+from typing import Optional, Dict, Any, List
 
-def init_db():
-    conn = sqlite3.connect("onboarding.db")
-    cursor = conn.cursor()
+@dataclass
+class SnowflakeConfig:
+    """Snowflake connection configuration."""
+    account_locator: str
+    region: str
+    admin_user: str
+    admin_password: Optional[str] = None
+    warehouse: str = "COMPUTE_WH"
+    database: str = "ONBOARDING_DB"
+    schema: str = "STATE"
     
-    # Users table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            role TEXT DEFAULT 'user',
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-            snowflake_username TEXT,
-            tags TEXT
-        )
-    """)
+    @property
+    def base_url(self) -> str:
+        return f"https://{self.account_locator}.{self.region}.snowflakecomputing.com"
     
-    # Onboarding progress table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS onboarding_progress (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            step_name TEXT NOT NULL,
-            completed INTEGER DEFAULT 0,
-            completed_at TEXT,
-            details TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id),
-            UNIQUE(user_id, step_name)
-        )
-    """)
+    @property
+    def api_url(self) -> str:
+        return f"{self.base_url}/api/v2"
+
+
+class SnowflakeClient:
+    """Client for Snowflake REST API operations."""
     
-    # Activity log table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS activity_log (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            action TEXT NOT NULL,
-            details TEXT,
-            timestamp TEXT DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+    def __init__(self, config: SnowflakeConfig):
+        self.config = config
+        self.session = requests.Session()
+        self._token: Optional[str] = None
     
-    conn.commit()
-    conn.close()
+    def authenticate(self) -> bool:
+        """Authenticate and get session token."""
+        auth_url = f"{self.config.base_url}/session/v1/login-request"
+        payload = {
+            "data": {
+                "ACCOUNT_NAME": self.config.account_locator,
+                "LOGIN_NAME": self.config.admin_user,
+                "PASSWORD": self.config.admin_password,
+            }
+        }
+        
+        response = self.session.post(auth_url, json=payload)
+        if response.status_code == 200:
+            data = response.json()
+            self._token = data.get("data", {}).get("token")
+            return True
+        return False
+    
+    def execute_sql(self, sql: str) -> Dict[str, Any]:
+        """Execute SQL via REST API."""
+        url = f"{self.config.api_url}/statements"
+        payload = {
+            "statement": sql,
+            "timeout": 60,
+            "warehouse": self.config.warehouse,
+            "database": self.config.database,
+            "schema": self.config.schema,
+        }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": f"Bearer {self._token}"
+        }
+        
+        response = self.session.post(url, json=payload, headers=headers)
+        return {
+            "success": response.status_code in [200, 202],
+            "status_code": response.status_code,
+            "data": response.json() if response.text else None
+        }
+    
+    def query(self, sql: str) -> List[Dict]:
+        """Execute query and return rows as dicts."""
+        result = self.execute_sql(sql)
+        if not result.get("success"):
+            return []
+        
+        data = result.get("data", {})
+        rows = data.get("data", [])
+        columns = [col.get("name") for col in data.get("resultSetMetaData", {}).get("rowType", [])]
+        
+        return [dict(zip(columns, row)) for row in rows]
 ```
 
 ### Onboarding Steps
@@ -221,9 +303,25 @@ ONBOARDING_STEPS = [
 ```python
 import streamlit as st
 import pandas as pd
-import sqlite3
+import os
 from datetime import datetime
-import json
+
+# Initialize Snowflake client
+config = SnowflakeConfig(
+    account_locator=os.getenv("SNOWFLAKE_ACCOUNT_LOCATOR"),
+    region=os.getenv("SNOWFLAKE_REGION", "us-west-2"),
+    admin_user=os.getenv("SNOWFLAKE_ADMIN_USER"),
+    admin_password=os.getenv("SNOWFLAKE_ADMIN_PASSWORD"),
+    warehouse=os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH")
+)
+
+@st.cache_resource
+def get_sf_client():
+    client = SnowflakeClient(config)
+    client.authenticate()
+    return client
+
+sf = get_sf_client()
 
 # Page config
 st.set_page_config(
@@ -243,46 +341,50 @@ page = st.sidebar.selectbox(
 if page == "Dashboard":
     st.header("Onboarding Dashboard")
     
-    # Summary metrics
-    conn = sqlite3.connect("onboarding.db")
-    
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        total_users = pd.read_sql("SELECT COUNT(*) as cnt FROM users", conn)
-        st.metric("Total Users", total_users['cnt'].iloc[0])
+        result = sf.query("SELECT COUNT(*) as CNT FROM USERS")
+        st.metric("Total Users", result[0]['CNT'] if result else 0)
     
     with col2:
         # Users with all steps complete
-        complete_sql = """
-            SELECT COUNT(DISTINCT u.id) as cnt 
-            FROM users u
-            WHERE (SELECT COUNT(*) FROM onboarding_progress op 
-                   WHERE op.user_id = u.id AND op.completed = 1) = 5
-        """
-        fully_onboarded = pd.read_sql(complete_sql, conn)
-        st.metric("Fully Onboarded", fully_onboarded['cnt'].iloc[0])
+        result = sf.query("""
+            SELECT COUNT(DISTINCT u.ID) as CNT 
+            FROM USERS u
+            WHERE (SELECT COUNT(*) FROM ONBOARDING_PROGRESS op 
+                   WHERE op.USER_ID = u.ID AND op.COMPLETED = TRUE) = 5
+        """)
+        st.metric("Fully Onboarded", result[0]['CNT'] if result else 0)
     
     with col3:
-        in_progress = pd.read_sql("""
-            SELECT COUNT(DISTINCT user_id) as cnt 
-            FROM onboarding_progress 
-            WHERE completed = 1
-        """, conn)
-        st.metric("In Progress", in_progress['cnt'].iloc[0])
+        result = sf.query("""
+            SELECT COUNT(DISTINCT USER_ID) as CNT 
+            FROM ONBOARDING_PROGRESS 
+            WHERE COMPLETED = TRUE
+        """)
+        st.metric("In Progress", result[0]['CNT'] if result else 0)
     
     with col4:
-        recent = pd.read_sql("""
-            SELECT COUNT(*) as cnt FROM activity_log 
-            WHERE timestamp > datetime('now', '-24 hours')
-        """, conn)
-        st.metric("24h Activity", recent['cnt'].iloc[0])
-    
-    conn.close()
+        result = sf.query("""
+            SELECT COUNT(*) as CNT FROM ACTIVITY_LOG 
+            WHERE TIMESTAMP > DATEADD(hour, -24, CURRENT_TIMESTAMP())
+        """)
+        st.metric("24h Activity", result[0]['CNT'] if result else 0)
     
     # Progress chart
     st.subheader("Step Completion Rates")
-    # Add visualization code here
+    step_stats = sf.query("""
+        SELECT STEP_NAME, 
+               COUNT(*) as TOTAL,
+               SUM(CASE WHEN COMPLETED THEN 1 ELSE 0 END) as COMPLETED_COUNT
+        FROM ONBOARDING_PROGRESS
+        GROUP BY STEP_NAME
+    """)
+    if step_stats:
+        df = pd.DataFrame(step_stats)
+        df['COMPLETION_RATE'] = df['COMPLETED_COUNT'] / df['TOTAL'] * 100
+        st.bar_chart(df.set_index('STEP_NAME')['COMPLETION_RATE'])
 
 elif page == "User Management":
     st.header("User Management")
@@ -299,25 +401,25 @@ elif page == "User Management":
                 tags = st.text_input("Tags (comma-separated)")
             
             if st.form_submit_button("Add User"):
-                # Insert user into database
-                conn = sqlite3.connect("onboarding.db")
-                cursor = conn.cursor()
-                cursor.execute(
-                    "INSERT INTO users (email, name, role, tags) VALUES (?, ?, ?, ?)",
-                    (email, name, role, tags)
-                )
-                user_id = cursor.lastrowid
+                # Insert user via Snowflake REST API
+                sf.execute_sql(f"""
+                    INSERT INTO USERS (EMAIL, NAME, ROLE, TAGS) 
+                    VALUES ('{email}', '{name}', '{role}', '{tags}')
+                """)
                 
-                # Initialize onboarding steps
-                for step in ONBOARDING_STEPS:
-                    cursor.execute(
-                        "INSERT INTO onboarding_progress (user_id, step_name) VALUES (?, ?)",
-                        (user_id, step['name'])
-                    )
-                
-                conn.commit()
-                conn.close()
-                st.success(f"User {email} added successfully!")
+                # Get the new user ID
+                result = sf.query(f"SELECT ID FROM USERS WHERE EMAIL = '{email}'")
+                if result:
+                    user_id = result[0]['ID']
+                    
+                    # Initialize onboarding steps
+                    for step in ONBOARDING_STEPS:
+                        sf.execute_sql(f"""
+                            INSERT INTO ONBOARDING_PROGRESS (USER_ID, STEP_NAME) 
+                            VALUES ({user_id}, '{step['name']}')
+                        """)
+                    
+                    st.success(f"User {email} added successfully!")
 
 elif page == "Bulk Import":
     st.header("Bulk User Import")
@@ -345,17 +447,18 @@ elif page == "Bulk Import":
 elif page == "Activity Log":
     st.header("Activity Log")
     
-    conn = sqlite3.connect("onboarding.db")
-    logs = pd.read_sql("""
-        SELECT al.*, u.email 
-        FROM activity_log al
-        LEFT JOIN users u ON al.user_id = u.id
-        ORDER BY timestamp DESC
+    logs = sf.query("""
+        SELECT al.*, u.EMAIL 
+        FROM ACTIVITY_LOG al
+        LEFT JOIN USERS u ON al.USER_ID = u.ID
+        ORDER BY TIMESTAMP DESC
         LIMIT 100
-    """, conn)
-    conn.close()
+    """)
     
-    st.dataframe(logs)
+    if logs:
+        st.dataframe(pd.DataFrame(logs))
+    else:
+        st.info("No activity logged yet.")
 ```
 
 <!-- ------------------------ -->
