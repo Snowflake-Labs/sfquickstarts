@@ -7,9 +7,6 @@ environments: web
 status: Published
 language: en
 
-
-
-
 # Getting Started with Snowflake Interactive Tables
 
 ## Overview
@@ -116,7 +113,7 @@ CREATE OR REPLACE STAGE my_csv_stage
 
 #### Step 3: Upload CSV to a stage
 
-1. In the Snowflake UI, navigate to the database you created (`MY_DEMO_DB`).
+1. In the Snowflake UI, navigate to the database/schema that you've created (`MY_DEMO_DB.BENCHMARK_FDN`).
 2. Go to the `my_csv_stage` stage
 3. Upload the [`synthetic_hits_data.csv`](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/synthetic_hits_data.csv) file to this stage.
 
