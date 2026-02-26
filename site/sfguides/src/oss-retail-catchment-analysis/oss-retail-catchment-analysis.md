@@ -38,7 +38,7 @@ This quickstart deploys a Streamlit application that performs catchment zone ana
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Building a Routing Solution Native App](../oss-build-routing-solution-in-snowflake/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't built it yet, complete the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
@@ -59,12 +59,19 @@ This quickstart deploys a Streamlit application that performs catchment zone ana
 
 Use Cortex Code to deploy the Retail Catchment Analysis solution including Marketplace data and the Streamlit application.
 
-### Run the Deploy Skill
+### Clone Repository and Deploy Skill
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+```
 
 In the Cortex Code CLI, type:
 
 ```
-deploy retail catchment demo
+$deploy-retail-catchment-demo
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
@@ -258,28 +265,24 @@ The H3 resolution affects visualization granularity:
 | 10 | Site selection at specific locations |
 
 <!-- ------------------------ -->
-## Uninstall the Demo
+## Uninstall the Solution
 
-To remove the Retail Catchment demo:
+To remove the Retail Catchment solution execute:
 
 ```
-uninstall retail catchment demo
+DROP SCHEMA OPENROUTESERVICE_SETUP.RETAIL_CATCHMENT_DEMO;
 ```
 
-This will:
-- Remove the `OPENROUTESERVICE_SETUP.RETAIL_CATCHMENT_DEMO` schema and Streamlit app
-- Optionally remove Carto Overture Maps marketplace data
-- Optionally remove the warehouse
+This will remove the `OPENROUTESERVICE_SETUP.RETAIL_CATCHMENT_DEMO` schema and its contents.
 
-> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately using the [Building a Routing Solution](../oss-build-routing-solution-in-snowflake/) quickstart.
+> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately.
 
 <!-- ------------------------ -->
 ## Available Cortex Code Skills
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| Deploy Demo | Deploy the full Retail Catchment solution | `deploy retail catchment demo` |
-| Uninstall Demo | Remove the demo and optionally marketplace data | `uninstall retail catchment demo` |
+| Deploy Demo | Deploy the full Retail Catchment solution | `$deploy-retail-catchment-demo$` |
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -341,9 +344,11 @@ The AI analysis also provides **optimal store location recommendations**:
 
 ### Related Quickstarts
 
-- [Building a Routing Solution Native App](../oss-build-routing-solution-in-snowflake/) - Install the routing engine (prerequisite)
-- [Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/) - Build a delivery route optimization simulator
-- [Deploy Fleet Intelligence Solution for Taxis](../oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Build a taxi fleet control center
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) - Build and customize the routing solution (prerequisite for this demo)
+- [Deploy Route Optimization Demo](https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/) - Build a visual route optimization simulator
+- [Deploy Fleet Intelligence Solution for Taxis](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations
+- [Deploy Snowflake Intelligence Routing Agent](https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/) - Build an AI-powered route planning assistant that understands natural language locations - powered by OpenRouteService and Snowflake Intelligence
+
 
 ### Source Code
 

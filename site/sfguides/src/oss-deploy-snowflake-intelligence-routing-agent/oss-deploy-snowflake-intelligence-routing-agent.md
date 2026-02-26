@@ -37,13 +37,13 @@ This quickstart deploys a **Snowflake Intelligence Agent** that wraps OpenRouteS
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Install OpenRouteService Native App](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) installed and configured
 - Active Snowflake connection with ACCOUNTADMIN access
-- Cortex AI access (claude-sonnet-4-5 model for geocoding)
+- Cortex AI access (claude-sonnet-4-5 model for geocoding), other LLM models can be used as well
 
 ### What You'll Learn 
 
@@ -79,12 +79,19 @@ This architecture enables truly conversational route planning - no coordinates, 
 
 Use Cortex Code to deploy the Routing Agent including tool procedures and agent registration.
 
-### Run the Deploy Skill
+### Clone Repository and Deploy Skill
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+```
 
 In the Cortex Code CLI, type:
 
 ```
-deploy snowflake intelligence routing agent
+$deploy-snowflake-intelligence-routing-agent$
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. 
@@ -256,12 +263,30 @@ CALL OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_OPTIMIZATION(
 <!-- ------------------------ -->
 ## Customization
 
-### Changing the Map Region
+### Change Location or Routing Profiles
 
-To use the agent with a different city or region, update your OpenRouteService Native App. More details here: [Install OpenRouteService Native App](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/)
+In the Cortex Code CLI, type:
 
-After changing the region, the agent will automatically work with locations in the new area.
+```
+$customize-main
+```
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart for more content about location customization.
 
+Cortex Code automatically finds the relevant skill and guides you through the options.
+
+You can change the geographic region (e.g., San Francisco to Paris) or update routing profiles (enable/disable car, truck, bicycle, walking).
+
+## Uninstall the Solution
+
+To remove the Snowflake Intelligence Routing Agent solution execute:
+
+```
+DROP SCHEMA OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT;
+```
+
+This will remove the `OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT` schema and its contents.
+
+> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately.
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
@@ -288,9 +313,10 @@ The agent enables truly natural route planning - users simply describe locations
 
 ### Related Quickstarts
 
-- [Install OpenRouteService Native App](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/) - Install the routing engine (prerequisite)
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) - Build and customize the routing solution (prerequisite for this demo)
 - [Deploy Route Optimization Demo](https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/) - Build a visual route optimization simulator
-- [Deploy Fleet Intelligence Solution](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations
+- [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake.
+- [Deploy Fleet Intelligence Solution for Taxis](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations
 
 ### Snowflake Intelligence Resources
 

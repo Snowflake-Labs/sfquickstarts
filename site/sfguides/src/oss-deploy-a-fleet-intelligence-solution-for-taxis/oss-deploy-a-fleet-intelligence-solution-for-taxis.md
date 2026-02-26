@@ -37,7 +37,7 @@ This quickstart deploys a multi-page Streamlit application that simulates a taxi
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't built it yet, complete the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
@@ -64,7 +64,7 @@ Use Cortex Code to deploy the Fleet Intelligence solution including database set
 In the Cortex Code CLI, type:
 
 ```
-deploy fleet intelligence dashboard
+$deploy-fleet-intelligence-taxis
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
@@ -78,8 +78,7 @@ The skill uses interactive prompting to gather required information:
 Cortex Code will automatically:
 - **Detect ORS Configuration** - Reads the current OpenRouteService map region and enabled routing profiles, then recommends a matching city. If the selected city doesn't match the configured region, it will guide you through changing the map
 - **Verify** OpenRouteService Native App is installed and running
-- **Acquire Marketplace Data** - Gets Carto Overture Maps Places and Addresses
-- **Create Database** - Sets up `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` with required objects
+- **Create Schema** - Sets up `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` with required objects
 - **Generate Sample Data** - Creates drivers, trips, and routes using ORS
 - **Deploy Dashboard** - Creates the Taxi Control Center Streamlit app
 
@@ -134,7 +133,7 @@ The deploy skill creates the following Snowflake objects:
 Once deployment completes, navigate to the Fleet Intelligence Control Center:
 
 1. Go to **Projects > Streamlits** in Snowsight
-2. Click on **TAXI_CONTROL_CENTER**
+2. Click on **Taxi Control Center**
 
 ### Main Dashboard
 
@@ -162,6 +161,8 @@ Track individual driver journeys:
    - Trip duration
    - Average speed
    - AI-generated trip summary using Cortex
+
+> **_NOTE:_** The AI trip analysis feature uses Snowflake Cortex AI (by default `claude-3-5-sonnet`). Other LLM models available in your account can also be used. Ensure Cortex AI is enabled in your Snowflake region.
 
 ![Individual Route Visualization](assets/individual-route.png)
 
@@ -245,21 +246,15 @@ SELECT 4, 'Day', 11, 19, 18 UNION ALL
 SELECT 5, 'Evening', 15, 23, 14
 ```
 
-### Change City
+### Change Location or Map
 
-The solution comes pre-configured with 5 cities. Change the bounding box in the data generation:
+In the Cortex Code CLI, type:
 
-| City | Longitude Range | Latitude Range |
-|------|-----------------|----------------|
-| San Francisco | -122.52 to -122.35 | 37.70 to 37.82 |
-| New York City | -74.05 to -73.90 | 40.65 to 40.85 |
-| London | -0.20 to 0.05 | 51.45 to 51.55 |
-| Paris | 2.25 to 2.42 | 48.82 to 48.90 |
-| Chicago | -87.75 to -87.55 | 41.80 to 41.95 |
+```
+$customize-main
+```
 
-You can also extend this to **any city worldwide** by adding a new entry to `city_config.py` with the city name, center coordinates, and zoom level, and providing a custom bounding box during data generation. See the [skill documentation](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator) for details on using custom locations.
-
-> **_NOTE:_** When changing cities, ensure your OpenRouteService Native App has the corresponding map data installed. See the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart for location customization.
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart for more content about location customization.
 
 ### Scaling Recommendations
 
@@ -273,28 +268,15 @@ You can also extend this to **any city worldwide** by adding a new entry to `cit
 | 500 | 7 | ~800K | XLARGE | 2-3 hours |
 
 <!-- ------------------------ -->
-## Generate Additional Data
-
-### Regenerate Driver Locations
-
-To regenerate driver location data with different parameters (e.g., more drivers, different city, more days), simply re-run the deploy skill in Cortex Code:
-
-```
-deploy fleet intelligence dashboard
-```
-
-The skill will prompt you for the new configuration and regenerate all data tables and routes.
-
-<!-- ------------------------ -->
 ## Uninstall the Solution
 
-To remove the Fleet Intelligence solution, ask Cortex Code to clean up the objects:
+To remove the Fleet Intelligence solution execute:
 
 ```
-uninstall all objects created as part of the fleet intelligence skill
+DROP SCHEMA OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS;
 ```
 
-This will remove the `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` schema and its contents, and optionally remove the Overture Maps marketplace data and the warehouse.
+This will remove the `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` schema and its contents.
 
 > **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately.
 
@@ -303,7 +285,7 @@ This will remove the `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` schema an
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| `deploy-fleet-intelligence-taxis` | Deploy the full solution (data generation, routes, and Streamlit app) | `deploy fleet intelligence dashboard` |
+| `deploy-fleet-intelligence-taxis` | Deploy the full solution (data generation, routes, and Streamlit app) | `$deploy fleet intelligence dashboard$` |
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -312,7 +294,6 @@ This will remove the `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` schema an
 
 You've deployed a complete Fleet Intelligence Control Center that demonstrates:
 - **OpenRouteService Native App** - Real road-following route generation
-- **Carto Overture Maps** - Realistic city locations for simulation
 - **Snowflake Cortex AI** - AI-powered trip summaries and analysis
 - **Pydeck Visualization** - Interactive maps with multiple layer types
 - **H3 Hexagons** - Spatial aggregation for density analysis
@@ -327,8 +308,10 @@ You've deployed a complete Fleet Intelligence Control Center that demonstrates:
 
 ### Related Quickstarts
 
-- [Install OpenRouteService Native App](/guide/oss-install-openrouteservice-native-app/) - Install the routing engine (prerequisite)
-- [Deploy Route Optimization Demo](/guide/oss-deploy-route-optimization-demo/) - Build a delivery route optimization simulator
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) - Build and customize the routing solution (prerequisite)
+- [Deploy Route Optimization Demo](https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/) - Build a visual route optimization simulator (prerequisite)
+- [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake
+- [Deploy Snowflake Intelligence Routing Agent](https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/) - Build an AI-powered route planning assistant that understands natural language locations - powered by OpenRouteService and Snowflake Intelligence
 
 ### Source Code
 

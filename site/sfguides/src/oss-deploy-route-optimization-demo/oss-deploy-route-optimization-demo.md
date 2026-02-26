@@ -36,7 +36,7 @@ This quickstart deploys a demo application that simulates vehicle routing scenar
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
@@ -58,7 +58,14 @@ This quickstart deploys a demo application that simulates vehicle routing scenar
 
 Use Cortex Code to deploy the demo including Marketplace data, notebooks, and the Streamlit simulator.
 
-### Run the Deploy Demo Skill
+### Clone Repository and Deploy Skill
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+```
 
 In the Cortex Code CLI, type:
 
@@ -202,66 +209,37 @@ Each vehicle tab shows detailed turn-by-turn instructions for the entire journey
 
 You can customize the demo for different regions using the customization skills:
 
-### Change Location or Map
+### Change Location or Routing Profiles
 
-Simply type a natural language command like:
+In the Cortex Code CLI, type:
 
 ```
-change location
+$customize-main
 ```
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart for more content about location customization.
 
-Cortex Code automatically finds the relevant skill and guides you through the options:
-
-![Change Industry](assets/change-industry.png)
+Cortex Code automatically finds the relevant skill and guides you through the options.
 
 You can change the geographic region (e.g., San Francisco to Paris) or update routing profiles (enable/disable car, truck, bicycle, walking).
-
-Alternatively, you can use the full skill paths:
-
-```
-$customize-main/location
-$customize-main/routing-profiles
-```
 
 ### Change Industries
 
 During the initial deployment (`$deploy-route-optimization-demo`), the skill will ask if you want to customize industries. You can re-run the deploy skill to change industries at any time.
 
-> **_NOTE:_** To change the map region or routing profiles, you need to update the OpenRouteService Native App. See the [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution/) quickstart for location customization.
+> **_NOTE:_** To change the map region or routing profiles, you need to update the OpenRouteService Native App. See the [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) quickstart for location customization.
 
 <!-- ------------------------ -->
-## Uninstall the Demo
+## Uninstall the Solution
 
-Cortex Code makes uninstallation simple with natural language commands.
-
-### Uninstall Demo Only
-
-To remove just the demo resources (notebooks, Streamlit simulator) while keeping the OpenRouteService Native App:
+To remove the Route Optimization Demo solution execute:
 
 ```
-uninstall all Snowflake objects created as part of skill $deploy-route-optimization-demo
+DROP SCHEMA OPENROUTESERVICE_SETUP.VEHICLE_ROUTING_SIMULATOR;
 ```
 
-This will:
-- Remove the database and schema (`OPENROUTESERVICE_SETUP.VEHICLE_ROUTING_SIMULATOR`) including notebooks and Streamlit apps
-- Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
-- Optionally remove the warehouse (`ROUTING_ANALYTICS`)
+This will remove the `OPENROUTESERVICE_SETUP.VEHICLE_ROUTING_SIMULATOR` schema and its contents.
 
-![Demo Uninstalled](assets/demo-uninstalled.png)
-
-> **_NOTE:_** The OpenRouteService Native App remains installed and functional. You can redeploy the demo at any time.
-
-### Uninstall Everything
-
-To remove both the demo AND the OpenRouteService Native App:
-
-```
-uninstall all Snowflake objects created as part of skill $build-routing-solution and $deploy-route-optimization-demo
-```
-
-Cortex Code will run both uninstall skills in sequence, removing all resources from your Snowflake account.
-
-![Uninstall Complete](assets/uninstalled-all.png)
+> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately.
 
 <!-- ------------------------ -->
 ## Available Cortex Code Skills
@@ -278,12 +256,14 @@ For reference, here are the Cortex Code skills for the Route Optimization Demo:
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| `customize-main/location` | Change the geographic region | `$customize-main/location` |
-| `customize-main/routing-profiles` | Enable/disable routing profiles | `$customize-main/routing-profiles` |
+| `customize-main` | Route customization requests (location and routing profiles) | `$customize-main` |
+| `customize-main/location` | Route customization requests (location and routing profiles)|  Subskill, not to be invoked separately |
+| `customize-main/routing-profiles` | Enable/disable vehicle routing profiles (sub-skill, do not invoke separately) | Subskill, not to be invoked separately |
+| `customize-main/read-ors-configuration` | Read current ORS configuration (sub-skill, do not invoke separately) | Subskill, not to be invoked separately |
 
 ### ORS Skills
 
-For OpenRouteService Native App skills (installation, location/vehicle customization, uninstall), see the **[Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution/)** quickstart.
+For OpenRouteService Native App skills (installation, location/vehicle customization, uninstall), see the **[Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/)** quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -306,7 +286,10 @@ You've deployed a complete Route Optimization Simulator that demonstrates the po
 
 ### Related Quickstart
 
-- [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution/) - Build and customize the routing solution (prerequisite for this demo)
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) - Build and customize the routing solution (prerequisite for this demo)
+- [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake.
+- [Deploy Fleet Intelligence Solution for Taxis](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations
+- [Deploy Snowflake Intelligence Routing Agent](https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/) - Build an AI-powered route planning assistant that understands natural language locations - powered by OpenRouteService and Snowflake Intelligence
 
 ### Source Code
 
