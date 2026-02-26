@@ -37,7 +37,7 @@ This quickstart deploys a **Snowflake Intelligence Agent** that wraps OpenRouteS
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
@@ -270,7 +270,7 @@ In the Cortex Code CLI, type:
 ```
 $customize-main
 ```
-> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart for more content about location customization.
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-install-openrouteservice-native-app/) quickstart for more content about location customization.
 
 Cortex Code automatically finds the relevant skill and guides you through the options.
 
@@ -313,7 +313,7 @@ The agent enables truly natural route planning - users simply describe locations
 
 ### Related Quickstarts
 
-- [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) - Build and customize the routing solution (prerequisite for this demo)
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) - Build and customize the routing solution (prerequisite for this demo)
 - [Deploy Route Optimization Demo](https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/) - Build a visual route optimization simulator
 - [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake.
 - [Deploy Fleet Intelligence Solution for Taxis](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations

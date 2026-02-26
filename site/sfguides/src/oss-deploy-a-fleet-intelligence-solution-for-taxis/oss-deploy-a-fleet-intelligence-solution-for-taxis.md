@@ -37,7 +37,7 @@ This quickstart deploys a multi-page Streamlit application that simulates a taxi
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't built it yet, complete the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't built it yet, complete the [Build Routing Solution in Snowflake](../oss-install-openrouteservice-native-app/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
@@ -261,7 +261,7 @@ In the Cortex Code CLI, type:
 $customize-main
 ```
 
-> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-build-routing-solution-in-snowflake/) quickstart for more content about location customization.
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-install-openrouteservice-native-app/) quickstart for more content about location customization.
 
 ### Scaling Recommendations
 
@@ -315,7 +315,7 @@ You've deployed a complete Fleet Intelligence Control Center that demonstrates:
 
 ### Related Quickstarts
 
-- [Build Routing Solution in Snowflake with Cortex Code](../oss-build-routing-solution-in-snowflake/) - Build and customize the routing solution (prerequisite)
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) - Build and customize the routing solution (prerequisite)
 - [Deploy Route Optimization Demo](https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/) - Build a visual route optimization simulator (prerequisite)
 - [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake
 - [Deploy Snowflake Intelligence Routing Agent](https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/) - Build an AI-powered route planning assistant that understands natural language locations - powered by OpenRouteService and Snowflake Intelligence
