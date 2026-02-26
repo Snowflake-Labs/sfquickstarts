@@ -1,0 +1,501 @@
+name: Stage Quickstart to AEM
+
+on:
+  workflow_call:
+    inputs:
+      quickstart_name:
+        description: 'Name of the quickstart folder'
+        required: true
+        type: string
+      language:
+        description: 'Language code (en, es, it, fr, de, ja, ko, pt_br)'
+        required: true
+        type: string
+      commit_sha:
+        description: 'Commit SHA for unique staging URL'
+        required: true
+        type: string
+      pr_number:
+        description: 'PR number for commenting'
+        required: true
+        type: number
+    secrets:
+      AEM_USERNAME:
+        description: 'AEM username for basic auth'
+        required: true
+      AEM_PASSWORD:
+        description: 'AEM password for basic auth'
+        required: true
+      AEM_AUTHOR_URL:
+        description: 'AEM author instance URL'
+        required: true
+      AEM_PUBLISH_URL:
+        description: 'AEM publish instance URL'
+        required: true
+
+env:
+  BASE_CF_PATH: /content/dam/snowflake-site/en/content-fragments/base-fragments/base-quickstart-cf
+  CF_DEST_PATH: /content/dam/snowflake-site
+  PAGE_BASE_PATH: /content/snowflake-site/global/en/developers/guides/quickstart-base
+  DAM_GUIDES_PATH: /content/dam/snowflake-site/developers/guides
+
+jobs:
+  stage_quickstart:
+    runs-on: ubuntu-latest
+    env:
+      AEM_USERNAME: ${{ secrets.AEM_USERNAME }}
+      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD }}
+      AEM_URL: ${{ secrets.AEM_AUTHOR_URL }}
+      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha }}
+          sparse-checkout: |
+            site/sfguides/src/${{ inputs.quickstart_name }}
+            scripts/aem-staging
+          sparse-checkout-cone-mode: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Find markdown file
+        id: find_md
+        run: |
+          md_file=$(find "site/sfguides/src/${{ inputs.quickstart_name }}" -maxdepth 1 -name "*.md" -type f | head -n1)
+          if [ -z "$md_file" ]; then
+            echo "❌ No markdown file found in ${{ inputs.quickstart_name }}"
+            exit 1
+          fi
+          echo "md_file=$md_file" >> $GITHUB_OUTPUT
+          echo "📄 Found markdown: $md_file"
+
+      - name: Parse markdown
+        id: parse_md
+        env:
+          COMMIT_SHA: ${{ inputs.commit_sha }}
+          QUICKSTART_NAME: ${{ inputs.quickstart_name }}
+          BASE_IMAGE_URL: "https://raw.githubusercontent.com/${{ github.repository }}/${{ inputs.commit_sha }}/site/sfguides/src"
+        run: |
+          python3 scripts/aem-staging/parse_markdown.py \
+            "${{ steps.find_md.outputs.md_file }}" \
+            --commit-sha "$COMMIT_SHA" \
+            --quickstart-name "$QUICKSTART_NAME" \
+            --base-image-url "$BASE_IMAGE_URL" \
+            --output-json parsed_content.json
+          
+          echo "📄 Parsed markdown content:"
+          cat parsed_content.json
+
+      - name: Prepare AEM payload
+        id: prepare_payload
+        env:
+          LANGUAGE: ${{ inputs.language }}
+        run: |
+          cf_name="${{ inputs.quickstart_name }}-${{ inputs.commit_sha }}"
+          cf_path="${CF_DEST_PATH}/${LANGUAGE}/content-fragments/quickstarts/${cf_name}"
+          
+          python3 scripts/aem-staging/prepare_aem_payload.py \
+            parsed_content.json \
+            --content-fragment-path "$cf_path" \
+            --language "$LANGUAGE" \
+            --output-json aem_payload.json
+          
+          echo "📦 AEM payload prepared:"
+          cat aem_payload.json
+
+      - name: Test AEM authentication
+        run: |
+          echo "🔐 Testing AEM authentication..."
+          echo "   URL: ${AEM_URL}"
+          echo "   Username length: ${#AEM_USERNAME}"
+          
+          # Test the exact base CF path
+          echo ""
+          echo "📋 Testing base CF path:"
+          curl -s -w "\n   HTTP: %{http_code}\n" \
+            "${AEM_URL}${BASE_CF_PATH}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" | tail -5
+          
+          # Test without .json
+          echo ""
+          echo "📋 Testing base CF path (no .json):"
+          curl -s -o /dev/null -w "   HTTP: %{http_code}\n" \
+            "${AEM_URL}${BASE_CF_PATH}" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}"
+          
+          # Test root dam
+          echo ""
+          echo "📋 Testing /content/dam:"
+          curl -s -o /dev/null -w "   HTTP: %{http_code}\n" \
+            "${AEM_URL}/content/dam.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}"
+          
+          # Test with different path format
+          echo ""
+          echo "📋 Testing /api/assets:"
+          curl -s -w "\n   HTTP: %{http_code}\n" \
+            "${AEM_URL}/api/assets.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" | tail -3
+
+      - name: Ensure destination folder hierarchy exists
+        run: |
+          lang="${{ inputs.language }}"
+          
+          # First, let's check what actually exists
+          echo "🔍 Checking existing structure..."
+          
+          echo "   Base CF path check:"
+          curl -s -o /dev/null -w "   %{http_code} ${BASE_CF_PATH}\n" \
+            "${AEM_URL}${BASE_CF_PATH}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}"
+          
+          echo "   snowflake-site:"
+          curl -s -o /dev/null -w "   %{http_code} /content/dam/snowflake-site\n" \
+            "${AEM_URL}/content/dam/snowflake-site.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}"
+          
+          echo "   snowflake-site/${lang}:"
+          curl -s -o /dev/null -w "   %{http_code} /content/dam/snowflake-site/${lang}\n" \
+            "${AEM_URL}/content/dam/snowflake-site/${lang}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}"
+          
+          echo "   content-fragments:"
+          curl -s -o /dev/null -w "   %{http_code} /content/dam/snowflake-site/${lang}/content-fragments\n" \
+            "${AEM_URL}/content/dam/snowflake-site/${lang}/content-fragments.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}"
+          
+          # Now create the quickstarts folder using AEM Assets HTTP API
+          dest_folder="/content/dam/snowflake-site/${lang}/content-fragments/quickstarts"
+          
+          echo ""
+          echo "📁 Checking quickstarts folder: $dest_folder"
+          
+          check_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${AEM_URL}${dest_folder}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+          
+          if [ "$check_code" -eq 200 ]; then
+            echo "✅ Folder already exists"
+          else
+            echo "📁 Creating quickstarts folder via AEM Assets API..."
+            
+            # AEM Assets HTTP API for folder creation
+            create_response=$(curl -s -w "\n%{http_code}" -X POST \
+              "${AEM_URL}/api/assets/snowflake-site/${lang}/content-fragments/*" \
+              -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+              -H "Content-Type: application/json" \
+              -d '{"class":"assetFolder","properties":{"name":"quickstarts","title":"quickstarts"}}')
+            
+            create_code=$(echo "$create_response" | tail -n1)
+            create_body=$(echo "$create_response" | sed '$d')
+            
+            echo "Response code: $create_code"
+            echo "Response: $create_body"
+            
+            sleep 2
+            
+            # Verify
+            verify_code=$(curl -s -o /dev/null -w "%{http_code}" \
+              "${AEM_URL}${dest_folder}.json" \
+              -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+            
+            if [ "$verify_code" -eq 200 ]; then
+              echo "✅ Folder created"
+            else
+              echo "⚠️ Could not verify folder creation (code: $verify_code)"
+              echo "   Proceeding anyway - copy operation may create it"
+            fi
+          fi
+
+      - name: Copy base content fragment to staging
+        id: copy_cf
+        run: |
+          cf_name="${{ inputs.quickstart_name }}-${{ inputs.commit_sha }}"
+          dest_path="${CF_DEST_PATH}/${{ inputs.language }}/content-fragments/quickstarts"
+          
+          echo "📋 Copying base CF to: $dest_path/$cf_name"
+          
+          # Use AEM Assets HTTP API - POST to source with copy operation
+          # This mimics Workato's copy_folder_asset action
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${AEM_URL}${BASE_CF_PATH}" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d ":operation=copy" \
+            -d ":dest=${dest_path}/${cf_name}" \
+            -d ":replace=true" \
+            -d "depth=infinity")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+          
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "✅ Content fragment copied"
+            echo "cf_path=${dest_path}/${cf_name}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "❌ Copy failed"
+          exit 1
+
+      - name: Wait for AEM processing
+        run: sleep 3
+
+      - name: Update content fragment with parsed content
+        run: |
+          cf_path="${{ steps.copy_cf.outputs.cf_path }}"
+          
+          # Write payload to file to avoid "Argument list too long" error for large content
+          jq -r '.content_fragment_payload' aem_payload.json > cf_payload.txt
+          
+          echo "📝 Updating content fragment: $cf_path"
+          echo "   Title: $(jq -r '.title' parsed_content.json)"
+          echo "   Slug: $(jq -r '.id' parsed_content.json)"
+          
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${AEM_URL}${cf_path}/jcr:content" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-binary @cf_payload.txt)
+          
+          http_code=$(echo "$response" | tail -n1)
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "❌ Failed to update content fragment"
+            echo "$response" | sed '$d'
+            exit 1
+          fi
+          echo "✅ Content fragment updated"
+
+      - name: Collect and upload images
+        run: |
+          assets_dir="site/sfguides/src/${{ inputs.quickstart_name }}/assets"
+          dam_folder="${DAM_GUIDES_PATH}/${{ inputs.quickstart_name }}"
+          
+          if [ ! -d "$assets_dir" ]; then
+            echo "📁 No assets folder found, skipping image upload"
+            exit 0
+          fi
+          
+          echo "📁 Creating DAM folder: $dam_folder"
+          curl -s -X POST \
+            "${AEM_URL}${DAM_GUIDES_PATH}" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "./jcr:primaryType=sling:Folder" \
+            -d ":name=${{ inputs.quickstart_name }}" || true
+          
+          sleep 2
+          
+          for img in "$assets_dir"/*; do
+            [ -f "$img" ] || continue
+            
+            filename=$(basename "$img")
+            extension="${filename##*.}"
+            
+            case "$extension" in
+              jpg|jpeg|png|gif|svg|webp|bmp|ico|tiff)
+                echo "📤 Uploading: $filename"
+                
+                content_type="image/$extension"
+                [ "$extension" = "jpg" ] && content_type="image/jpeg"
+                [ "$extension" = "svg" ] && content_type="image/svg+xml"
+                
+                curl -s -X POST \
+                  "${AEM_URL}${dam_folder}.createasset.html" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                  -F "file=@${img};type=${content_type}" \
+                  -F "fileName=${filename}" || echo "⚠️ Warning: Failed to upload $filename"
+                
+                sleep 1
+                
+                echo "🔄 Reprocessing: $filename"
+                curl -s -X POST \
+                  "${AEM_URL}/bin/asynccommand" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                  -H "Content-Type: application/x-www-form-urlencoded" \
+                  -d "operation=PROCESS" \
+                  -d "asset=${dam_folder}/${filename}" \
+                  -d "profile-select=full-process" || true
+                
+                sleep 1
+                
+                echo "📢 Publishing: $filename"
+                curl -s -X POST \
+                  "${AEM_URL}/bin/replicate.json" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                  -H "Content-Type: application/x-www-form-urlencoded" \
+                  -d "cmd=Activate" \
+                  -d "path=${dam_folder}/${filename}" || true
+                ;;
+              *)
+                echo "⏭️ Skipping non-image file: $filename"
+                ;;
+            esac
+          done
+          
+          echo "✅ Image upload complete"
+
+      - name: Wait for image processing
+        run: sleep 15
+
+      - name: Publish content fragment
+        run: |
+          cf_path="${{ steps.copy_cf.outputs.cf_path }}"
+          
+          echo "📢 Publishing content fragment: $cf_path"
+          
+          curl -s -X POST \
+            "${AEM_URL}/bin/replicate.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "cmd=Activate" \
+            -d "path=${cf_path}"
+          
+          echo "✅ Content fragment published"
+
+      - name: Create staging page from base
+        id: create_page
+        run: |
+          page_name="${{ inputs.quickstart_name }}-${{ inputs.commit_sha }}"
+          page_path="/content/snowflake-site/global/${{ inputs.language }}/developers/guides/${page_name}"
+          title=$(jq -r '.title' parsed_content.json)
+          
+          echo "📄 Creating page: $page_path"
+          echo "   Source: ${PAGE_BASE_PATH}"
+          
+          # First verify base page exists
+          base_check=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${AEM_URL}${PAGE_BASE_PATH}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+          echo "   Base page check: HTTP $base_check"
+          
+          if [ "$base_check" != "200" ]; then
+            echo "❌ Base page does not exist at ${PAGE_BASE_PATH}"
+            exit 1
+          fi
+          
+          # Copy base page
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${AEM_URL}${PAGE_BASE_PATH}" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d ":operation=copy" \
+            -d ":dest=${page_path}" \
+            -d ":replace=true")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          echo "   Copy HTTP: $http_code"
+          
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "❌ Page copy failed"
+            echo "$body"
+            exit 1
+          fi
+          
+          echo "✅ Page copied successfully"
+          
+          # Wait for AEM to fully process the copy
+          echo "   Waiting for AEM to process copy..."
+          sleep 8
+          
+          # Verify page was created
+          page_check=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${AEM_URL}${page_path}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+          echo "   New page check: HTTP $page_check"
+          
+          # Check jcr:content node exists
+          jcr_check=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${AEM_URL}${page_path}/jcr:content.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+          echo "   jcr:content check: HTTP $jcr_check"
+          
+          if [ "$page_check" != "200" ]; then
+            echo "⚠️ Warning: Page may not have been created properly"
+          fi
+          
+          # Write page payload to file to avoid potential "Argument list too long" error
+          jq -r '.page_payload' aem_payload.json > page_payload.txt
+          
+          echo "🔗 Updating page with content fragment reference and tags"
+          echo "   Payload: $(head -c 200 page_payload.txt)..."
+          
+          update_response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${AEM_URL}${page_path}" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-binary @page_payload.txt)
+          
+          update_code=$(echo "$update_response" | tail -n1)
+          echo "   Update HTTP: $update_code"
+          
+          if [ "$update_code" -lt 200 ] || [ "$update_code" -ge 300 ]; then
+            echo "⚠️ Warning: Page update may have failed"
+            echo "$update_response" | sed '$d'
+          fi
+          
+          echo "page_path=${page_path}" >> $GITHUB_OUTPUT
+          echo "✅ Page created"
+
+      - name: Wait for page processing
+        run: sleep 60
+
+      - name: Publish staging page
+        run: |
+          page_path="${{ steps.create_page.outputs.page_path }}"
+          
+          echo "📢 Publishing page: $page_path"
+          
+          curl -s -X POST \
+            "${AEM_URL}/bin/replicate.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "cmd=Activate" \
+            -d "path=${page_path}"
+          
+          echo "✅ Page published"
+
+      - name: Comment PR with staging URL
+        uses: actions/github-script@v7
+        env:
+          PUBLISH_URL: ${{ env.AEM_PUBLISH_URL }}
+        with:
+          script: |
+            const publishUrl = process.env.PUBLISH_URL;
+            const language = '${{ inputs.language }}';
+            const quickstartName = '${{ inputs.quickstart_name }}';
+            const commitSha = '${{ inputs.commit_sha }}';
+            
+            const stagingUrl = `${publishUrl}/${language}/developers/guides/${quickstartName}-${commitSha}`;
+            
+            const body = `## 🔗 Staging Preview Ready
+            
+            **Quickstart:** \`${quickstartName}\`
+            **Language:** ${language}
+            
+            👉 **Preview URL:** ${stagingUrl}
+            
+            > **Note:** Images are uploaded asynchronously. If images are missing, wait a few minutes and refresh.
+            
+            ---
+            *Generated by GitHub Actions*`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ inputs.pr_number }},
+              body
+            });
+
+# test

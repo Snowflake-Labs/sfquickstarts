@@ -1,0 +1,644 @@
+name: Validate markdown and stage (Without Workato)
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches: [workato_replacement_master]
+
+jobs:
+  validate_and_stage_no_workato:
+    # Only run for PRs from branches in this repo (not forks) into master
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    outputs:
+      has_relevant_changes: ${{ steps.check_relevant.outputs.has_relevant_changes }}
+      quickstart_names_json: ${{ steps.prepare_webhooks.outputs.quickstart_names_json }}
+      all_validations_passed: ${{ steps.validation_check.outputs.all_passed }}
+      md_file_count: ${{ steps.detect.outputs.md_file_count }}
+      
+    steps:
+      - name: Check for relevant changes (early exit)
+        id: check_relevant
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+
+          # Quick check if any files are under site/sfguides/src/ (excluding _* folders)
+          relevant_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(test("/_") | not)')
+          if [ -z "$relevant_files" ]; then
+            echo "has_relevant_changes=false" >> $GITHUB_OUTPUT
+            echo ":information_source: No changes in site/sfguides/src/, skipping checkout and validation"
+            exit 0
+          fi
+          echo "has_relevant_changes=true" >> $GITHUB_OUTPUT
+
+      - name: Checkout base repository (trusted)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: |
+            scripts/validate-and-stage/
+          sparse-checkout-cone-mode: true
+
+      - name: Download changed files from PR (untrusted)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: download
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          bash scripts/validate-and-stage/download-pr-files.sh \
+            "${{ github.repository }}" \
+            "${{ github.event.pull_request.number }}" \
+            "${{ github.event.pull_request.head.repo.full_name }}" \
+            "${{ github.event.pull_request.head.ref }}"
+
+      - name: Check for renamed folders (blocking)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_renamed_folders
+        continue-on-error: true
+        run: |
+          bash scripts/validate-and-stage/check-renamed-folders.sh pr_files.json
+
+      - name: Setup Node.js
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache npm dependencies
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-badwords-graymatter-v1
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install validator dependencies
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        run: |
+          # Create package.json if it doesn't exist
+          if [ ! -f package.json ]; then
+            npm init -y >/dev/null 2>&1
+          fi
+          # Install both packages in a single command (faster than separate installs)
+          npm install --no-audit --no-fund badwords-list@1.0.0 gray-matter@4.0.3
+          # Verify installation
+          node -e "require('badwords-list'); require('gray-matter'); console.log('Dependencies installed successfully')"
+
+      - name: Determine changed files in quickstarts (from PR)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: detect
+        run: |
+          bash scripts/validate-and-stage/detect-changed-files.sh changed_files.txt downloaded_files.txt
+
+      - name: Validate single markdown file per folder
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate_single_markdown
+        continue-on-error: true
+        run: |
+          # Define error message once
+          ERROR_MESSAGE="Each quickstart folder should contain only one markdown file in the root. Did you mean to add this additional .md file to the /assets folder?"
+          
+          # Extract all downloaded markdown files (including unchanged ones for thorough validation)
+          downloaded_files=$(cat downloaded_files.txt)
+          md_files=$(echo "$downloaded_files" | grep '\.md$' | grep -v '/assets/' || true)
+          
+          if [ -z "$md_files" ]; then
+            echo "No markdown files to validate"
+            exit 0
+          fi
+          
+          quickstart_folders=$(echo "$md_files" | sed -E 's|^site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          multiple_files_errors='[]'
+          
+          # For each folder with markdown changes, check if multiple markdown files exist
+          while IFS= read -r folder; do
+            [ -z "$folder" ] && continue
+            
+            # Get ALL markdown files in this quickstart folder
+            folder_md_files=$(find "pr/site/sfguides/src/$folder" -maxdepth 1 -type f -name "*.md" 2>/dev/null | sed 's|^pr/||' || echo "")
+            file_count=$(echo "$folder_md_files" | grep -c '^' || echo 0)
+            
+            # Check if more than one markdown file exists
+            if [ "$file_count" -gt 1 ]; then
+              # Convert files to JSON array
+              files_array=$(echo "$folder_md_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+              multiple_files_errors=$(echo "$multiple_files_errors" | jq -c --arg folder "$folder" --argjson files "$files_array" '. + [{folder:$folder, files:$files}]')
+            fi
+          done <<< "$quickstart_folders"
+          
+          # Check if any folders have multiple markdown files
+          error_count=$(echo "$multiple_files_errors" | jq 'length')
+          if [ "$error_count" -ne 0 ]; then
+            echo "❌ Error: Multiple markdown files found in the following folders:" >&2
+            echo "$multiple_files_errors" | jq -r '.[] | "  - \(.folder): \(.files | length) files - \(.files | join(", "))"' >&2
+            jq -n --argjson errors "$multiple_files_errors" --arg msg "$ERROR_MESSAGE" '{type:"multiple_markdown_files", message:$msg, errors:$errors}' > multiple-md-error.json
+            exit 1
+          else
+            echo "✅ Single markdown file validation passed"
+            exit 0
+          fi
+
+      - name: Check for non-markdown files outside assets (informational)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_file_types
+        run: |
+          # Define message once
+          INFO_MESSAGE="Only markdown files (.md) are typically placed in the root of quickstart folders. Other file types should be placed in the /assets folder for better organization."
+          
+          # Read downloaded files
+          downloaded_files=$(cat downloaded_files.txt)
+          
+          if [ -z "$downloaded_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          # Find non-markdown files outside of assets folder (in root of quickstart folders)
+          # Pattern: site/sfguides/src/{folder}/{filename} where filename is not .md and path doesn't contain /assets/
+          non_md_files=$(echo "$downloaded_files" | grep '^site/sfguides/src/[^/]\+/[^/]\+$' | grep -v '\.md$' || true)
+          
+          if [ -n "$non_md_files" ]; then
+            echo "💡 Info: Non-markdown files found outside assets folder:"
+            echo "$non_md_files"
+            
+            # Build info JSON
+            files_array=$(echo "$non_md_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
+            jq -n --argjson files "$files_array" --arg msg "$INFO_MESSAGE" '{type:"non_markdown_root", message:$msg, files:$files}' > non-markdown-root-info.json
+            echo "Info file created for PR comment"
+          else
+            echo "✅ All files in root are markdown files"
+          fi
+          
+          # Always exit 0 - this is informational, not an error
+          exit 0
+
+      - name: Check for non-image files in assets folder (informational)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_assets_files
+        run: |
+          # Define warning message once
+          WARNING_MESSAGE="Non-image files found in /assets folders will **NOT** be uploaded to snowflake.com. If you are referencing them in your guide, you should link to them directly (e.g. [using permanent GitHub links](https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files))."
+          
+          # Read downloaded files
+          downloaded_files=$(cat downloaded_files.txt)
+          
+          if [ -z "$downloaded_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          # Find non-image files in assets folders
+          non_image_assets=$(echo "$downloaded_files" | grep '/assets/' | grep -v -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
+          
+          if [ -n "$non_image_assets" ]; then
+            echo "💡 Info: Non-image files found in assets folder:"
+            echo "$non_image_assets"
+            
+            # Build warning JSON
+            files_array=$(echo "$non_image_assets" | jq -R -s -c 'split("\n") | map(select(length>0))')
+            jq -n --argjson files "$files_array" --arg msg "$WARNING_MESSAGE" '{type:"non_image_assets", message:$msg, files:$files}' > non-image-assets-warning.json
+            echo "Warning file created for PR comment"
+          else
+            echo "✅ No non-image files in assets folders"
+          fi
+          
+          # Always exit 0 - this is a warning, not an error
+          exit 0
+
+      - name: Check for large files in assets (blocking)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: check_large_files
+        continue-on-error: true
+        env:
+          CHANGED_FILES_JSON: ${{ steps.detect.outputs.all_changed_files_json }}
+        run: |
+          # Check only image files in assets folders
+          large_files=()
+          changed_files=$(echo "$CHANGED_FILES_JSON" | jq -r '.[]')
+          
+          if [ -z "$changed_files" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+          
+          # Filter for only image files in /assets/ folders
+          assets_images=$(echo "$changed_files" | grep '/assets/' | grep -E '\.(jpg|jpeg|png|gif|svg|webp|bmp|ico)$' || true)
+          
+          if [ -z "$assets_images" ]; then
+            echo "No image files in assets to check"
+            echo "large_files_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            
+            file_path="pr/$file"
+            
+            if [ -f "$file_path" ]; then
+              file_size=$(stat -f%z "$file_path" 2>/dev/null || stat -c%s "$file_path" 2>/dev/null || echo "0")
+              if [ "$file_size" -gt 1000000 ]; then
+                large_files+=("$file")
+              fi
+            fi
+          done <<< "$assets_images"
+          
+          if [ ${#large_files[@]} -gt 0 ]; then
+            echo "Large files found:"
+            printf '%s\n' "${large_files[@]}"
+            # Output large files as JSON array for use in next step
+            printf '%s\n' "${large_files[@]}" | jq -R -s -c 'split("\n") | map(select(length>0))' > large_files.json
+            echo "large_files_json=$(cat large_files.json)" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "No large files found"
+            echo "large_files_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+      - name: Validate abusive words in markdown (warning)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate
+        continue-on-error: true
+        env:
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
+          BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
+        run: |
+          node scripts/validate-and-stage/validate-profanity.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f profanity-report.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' profanity-report.json > profanity-report.tmp.json
+              mv profanity-report.tmp.json profanity-report.json
+            fi
+            echo "Abusive words detected. See 'profanity-report.json' for details." >&2
+            exit 1
+          }
+
+      - name: Validate categories syntax in markdown (blocking)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate_categories
+        continue-on-error: true
+        env:
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
+        run: |
+          node scripts/validate-and-stage/validate-categories.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f categories-error.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' categories-error.json > categories-error.tmp.json
+              mv categories-error.tmp.json categories-error.json
+            fi
+            echo "Category syntax validation failed. See 'categories-error.json' for details." >&2
+            exit 1
+          }
+
+      - name: Validate frontmatter id and path (blocking)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate_frontmatter
+        continue-on-error: true
+        env:
+          FILE_LIST_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
+        run: |
+          node scripts/validate-and-stage/validate-frontmatter.js || {
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f frontmatter-error.json ]; then
+              jq '.issues |= map(.file |= sub("^pr/"; ""))' frontmatter-error.json > frontmatter-error.tmp.json
+              mv frontmatter-error.tmp.json frontmatter-error.json
+            fi
+            echo "Frontmatter validation failed. See 'frontmatter-error.json' for details." >&2
+            exit 1
+          }
+
+      - name: Validate language tags (blocking)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true'
+        id: validate_language
+        continue-on-error: true
+        env:
+          MARKDOWN_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
+        run: |
+          # Validate languages in individual markdown files
+          markdown_files="$MARKDOWN_JSON"
+          if [ -z "$markdown_files" ] || [ "$markdown_files" = "[]" ]; then
+            echo "No markdown files to validate"
+            exit 0
+          fi
+          
+          allowed_languages=("en" "es" "it" "fr" "de" "ja" "ko" "pt_br")
+          invalid_files='[]'
+          
+          # Loop through each markdown file
+          while IFS= read -r file_path; do
+            [ -z "$file_path" ] && continue
+            
+            # Extract language from file
+            lang=""
+            if [ -f "$file_path" ]; then
+              lang=$(sed -n '1,50p' "$file_path" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+              if [ -n "$lang" ]; then
+                # Trim and remove quotes
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+            fi
+            
+            # Check if language is valid
+            lang_lower=$(echo "$lang" | tr '[:upper:]' '[:lower:]')
+            is_valid=false
+            
+            if [ -n "$lang_lower" ]; then
+              for allowed in "${allowed_languages[@]}"; do
+                if [ "$lang_lower" = "$allowed" ]; then
+                  is_valid=true
+                  break
+                fi
+              done
+            fi
+            
+            # Add to invalid list if not valid
+            if [ "$is_valid" = false ]; then
+              invalid_files=$(echo "$invalid_files" | jq -c --arg file "$file_path" --arg lang "$lang" '. + [{file:$file, language:$lang}]')
+            fi
+          done < <(echo "$markdown_files" | jq -r '.[]')
+          
+          invalid_count=$(echo "$invalid_files" | jq 'length')
+          
+          if [ "$invalid_count" -ne 0 ]; then
+            echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
+            echo "$invalid_files" | jq . >&2
+            jq -n --argjson files "$invalid_files" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, files:$files}' > validation-error.json
+            # Strip 'pr/' prefix from file paths in error output for cleaner display
+            if [ -f validation-error.json ]; then
+              jq '.files |= map(.file |= sub("^pr/"; ""))' validation-error.json > validation-error.tmp.json
+              mv validation-error.tmp.json validation-error.json
+            fi
+            exit 1
+          else
+            echo "Language validation passed"
+            exit 0
+          fi
+
+      - name: Comment PR with validation findings (on failure)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && (steps.check_renamed_folders.outcome == 'failure' || steps.validate_single_markdown.outcome == 'failure' || steps.check_large_files.outcome == 'failure' || steps.validate_categories.outcome == 'failure' || steps.validate_frontmatter.outcome == 'failure' || steps.validate_language.outcome == 'failure') 
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          LARGE_FILES_JSON: ${{ steps.check_large_files.outputs.large_files_json }}
+        run: |
+          node scripts/validate-and-stage/comment-pr-validation-failures.js \
+            "${{ github.repository_owner }}" \
+            "${{ github.event.repository.name }}" \
+            "${{ github.event.pull_request.number }}"
+
+      - name: Comment PR with informational messages (when present)
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const warnings = [];
+            
+            // Check for profanity in markdown files
+            if (fs.existsSync('profanity-report.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('profanity-report.json', 'utf8'));
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                if (data.error) {
+                  warnings.push(`### ⚠️ Profanity Check Notice\n\n${data.error}`);
+                } else if (issues.length) {
+                  const lines = issues.map(issue => `- \`${issue.file}\`: ${(issue.words || []).join(', ')}`);
+                  warnings.push(`### ⚠️ Profanity Check Notice\n\nPotentially inappropriate words were detected in the following files:\n\n${lines.join('\n')}\n\nPlease review and consider revising if appropriate.`);
+                }
+              } catch {}
+            }
+            
+            // Check for non-image files in assets folders
+            if (fs.existsSync('non-image-assets-warning.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('non-image-assets-warning.json','utf8'));
+                if (data && data.type === 'non_image_assets') {
+                  const files = Array.isArray(data.files) ? data.files : [];
+                  if (files.length) {
+                    const fileList = files.map(f => `- \`${f}\``).join('\n');
+                    warnings.push(`### 💡 Non-Image Files in Assets Folder\n\n${data.message}\n\n${fileList}`);
+                  }
+                }
+              } catch {}
+            }
+            
+            // 2. Non-markdown files in root folder
+            if (fs.existsSync('non-markdown-root-info.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('non-markdown-root-info.json','utf8'));
+                if (data && data.type === 'non_markdown_root') {
+                  const files = Array.isArray(data.files) ? data.files : [];
+                  if (files.length) {
+                    const fileList = files.map(f => `- \`${f}\``).join('\n');
+                    warnings.push(`### 💡 Non-Markdown Files in Quickstart Root\n\n${data.message}\n\n${fileList}`);
+                  }
+                }
+              } catch {}
+            }
+            
+            // Post warning comment if any warnings exist
+            if (warnings.length > 0) {
+              const body = `## 👋 Helpful Information\n\n${warnings.join('\n\n---\n\n')}\n\nThese are informational messages and will not block your PR from being merged.`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body
+              });
+            }
+
+      - name: Upload validation artifacts
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-artifacts
+          path: |
+            profanity-report.json
+            validation-error.json
+            categories-error.json
+            frontmatter-error.json
+            multiple-md-error.json
+            non-markdown-root-info.json
+            non-image-assets-warning.json
+            folder-rename-error.json
+          if-no-files-found: ignore
+
+      - name: Check validation results and fail if needed
+        id: validation_check
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && always()
+        run: |
+          # Check each validation step and report which ones failed
+          all_passed=true
+          failed_checks=""
+          
+          if [ "${{ steps.check_renamed_folders.outcome }}" == "failure" ]; then
+            failed_checks="${failed_checks}\n  - ❌ Renamed folders check"
+            all_passed=false
+            if [ -f folder-rename-error.json ]; then
+              echo "::group::Renamed folders error details"
+              cat folder-rename-error.json | jq -r '.message // "See error file"'
+              echo "::endgroup::"
+            fi
+          fi
+          if [ "${{ steps.validate_single_markdown.outcome }}" == "failure" ]; then
+            failed_checks="${failed_checks}\n  - ❌ Single markdown file per folder"
+            all_passed=false
+            if [ -f multiple-md-error.json ]; then
+              echo "::group::Multiple markdown files error"
+              cat multiple-md-error.json | jq -r '.message // "See error file"'
+              cat multiple-md-error.json | jq -r '.errors[]? | "  File: \(.folder) - \(.files | join(", "))"'
+              echo "::endgroup::"
+            fi
+          fi
+          if [ "${{ steps.check_large_files.outcome }}" == "failure" ]; then
+            failed_checks="${failed_checks}\n  - ❌ Large files check (>1MB)"
+            all_passed=false
+            if [ -f large_files.json ]; then
+              echo "::group::Large files"
+              cat large_files.json | jq -r '.[]'
+              echo "::endgroup::"
+            fi
+          fi
+          if [ "${{ steps.validate_categories.outcome }}" == "failure" ]; then
+            failed_checks="${failed_checks}\n  - ❌ Categories syntax validation"
+            all_passed=false
+            if [ -f categories-error.json ]; then
+              echo "::group::Categories error details"
+              cat categories-error.json | jq -r '.issues[]? | "  File: \(.file)\n  Error: \(.error // .message // "Invalid categories")"'
+              echo "::endgroup::"
+            fi
+          fi
+          if [ "${{ steps.validate_frontmatter.outcome }}" == "failure" ]; then
+            failed_checks="${failed_checks}\n  - ❌ Frontmatter validation (id must match folder name)"
+            all_passed=false
+            if [ -f frontmatter-error.json ]; then
+              echo "::group::Frontmatter error details"
+              cat frontmatter-error.json | jq -r '.issues[]? | "  File: \(.file)\n  Error: \(.error // .message // "Invalid frontmatter")"'
+              echo "::endgroup::"
+            fi
+          fi
+          if [ "${{ steps.validate_language.outcome }}" == "failure" ]; then
+            failed_checks="${failed_checks}\n  - ❌ Language validation (allowed: en, es, it, fr, de, ja, ko, pt_br)"
+            all_passed=false
+            if [ -f validation-error.json ]; then
+              echo "::group::Language error details"
+              cat validation-error.json | jq -r '.files[]? | "  File: \(.file)\n  Found: \(.language | if . == "" then "(missing)" else . end)"'
+              echo "::endgroup::"
+            fi
+          fi
+          
+          # Set output for matrix job to use
+          echo "all_passed=$all_passed" >> $GITHUB_OUTPUT
+          
+          if [ "$all_passed" == "true" ]; then
+            echo "✅ All validations passed"
+          else
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "VALIDATION FAILURES:"
+            echo -e "$failed_checks"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "See PR comment for detailed error messages."
+            exit 1
+          fi
+
+      - name: Prepare webhook data
+        if: steps.check_relevant.outputs.has_relevant_changes == 'true' && steps.validation_check.outputs.all_passed == 'true'
+        id: prepare_webhooks
+        env:
+          CHANGED_MARKDOWN_JSON: ${{ steps.detect.outputs.changed_markdown_json }}
+        run: |
+          # Use the already-computed changed markdown files from detect step (with pr/ prefix)
+          changed_md_files=$(echo "$CHANGED_MARKDOWN_JSON" | jq -r '.[]')
+          
+          if [ -z "$changed_md_files" ]; then
+            echo "No changed markdown files for webhooks"
+            echo "quickstart_names_json=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Extract quickstart names from paths (handles pr/ prefix)
+          quickstart_names=$(echo "$changed_md_files" | sed -E 's|^pr/site/sfguides/src/([^/]+)/.*|\1|' | sort -u)
+          objs='[]'
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Preparing webhook data for quickstarts:"
+          echo "$quickstart_names"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          while IFS= read -r name; do
+            [ -z "$name" ] && continue
+            
+            lang=""
+            # Prefer a markdown file that matches the folder name
+            candidate="pr/site/sfguides/src/$name/$name.md"
+            if echo "$changed_md_files" | grep -q "^$candidate$"; then
+              md_file="$candidate"
+            else
+              # Fallback: use the first markdown file in this quickstart
+              md_file=$(echo "$changed_md_files" | grep "^pr/site/sfguides/src/$name/" | head -n1)
+            fi
+            
+            # Extract language from the markdown file
+            if [ -n "$md_file" ] && [ -f "$md_file" ]; then
+              lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+              if [ -n "$lang" ]; then
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+            fi
+            
+            echo "  - $name (language: ${lang:-not specified})"
+            objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
+          done <<< "$quickstart_names"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Webhook data prepared:"
+          echo "$objs" | jq '.'
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          echo "quickstart_names_json=$objs" >> $GITHUB_OUTPUT
+
+  stage_to_aem:
+    needs: validate_and_stage_no_workato
+    if: |
+      needs.validate_and_stage_no_workato.outputs.has_relevant_changes == 'true' && 
+      needs.validate_and_stage_no_workato.outputs.all_validations_passed == 'true' &&
+      needs.validate_and_stage_no_workato.outputs.md_file_count < 7
+    strategy:
+      matrix:
+        quickstart: ${{ fromJson(needs.validate_and_stage_no_workato.outputs.quickstart_names_json) }}
+      max-parallel: 1
+      fail-fast: false
+    uses: ./.github/workflows/stage-to-aem.yml
+    with:
+      quickstart_name: ${{ matrix.quickstart.name }}
+      language: ${{ matrix.quickstart.language || 'en' }}
+      commit_sha: ${{ github.event.pull_request.head.sha }}
+      pr_number: ${{ github.event.pull_request.number }}
+    secrets:
+      AEM_USERNAME: ${{ secrets.AEM_USERNAME_STAGING }}
+      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_STAGING }}
+      AEM_AUTHOR_URL: ${{ secrets.AEM_AUTHOR_URL_STAGING }}
+      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL_STAGING }}
+
+# test
+# test2
