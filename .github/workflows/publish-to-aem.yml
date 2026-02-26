@@ -266,15 +266,24 @@ jobs:
           fi
           
           if [ "$folder_exists" = "false" ]; then
-            echo "📁 Creating DAM folder: $dam_folder"
-            curl -s -X POST \
-              "${AEM_URL}${DAM_GUIDES_PATH}" \
+            echo "📁 Creating DAM folder via Assets API: $dam_folder"
+            folder_response=$(curl -s -w "\n%{http_code}" -X POST \
+              "${AEM_URL}/api/assets/snowflake-site/developers/guides/*" \
               -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
-              -H "Content-Type: application/x-www-form-urlencoded" \
-              -d "./jcr:primaryType=sling:Folder" \
-              -d ":name=${{ inputs.quickstart_name }}" || true
-            
-            sleep 2
+              -H "Content-Type: application/json" \
+              -d '{"class":"assetFolder","properties":{"name":"${{ inputs.quickstart_name }}","title":"${{ inputs.quickstart_name }}"}}')
+            folder_code=$(echo "$folder_response" | tail -n1)
+            echo "   Folder creation HTTP: $folder_code"
+            if [ "$folder_code" -lt 200 ] || [ "$folder_code" -ge 300 ]; then
+              echo "⚠️ Assets API folder creation returned $folder_code, trying Sling POST fallback..."
+              curl -s -X POST \
+                "${AEM_URL}${DAM_GUIDES_PATH}" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "./jcr:primaryType=sling:OrderedFolder" \
+                -d ":name=${{ inputs.quickstart_name }}" || true
+            fi
+            sleep 3
           fi
           
           upload_image_with_retry() {
