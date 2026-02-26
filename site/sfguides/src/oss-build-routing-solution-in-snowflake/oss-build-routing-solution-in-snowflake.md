@@ -1,34 +1,35 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
-id: oss-install-openrouteservice-native-app
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+id: oss-build-routing-solution-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: Install a self-contained OpenRouteService Native App in Snowflake using Cortex Code AI-powered skills. Deploy routing functions (Directions, Optimization, Isochrones) via Snowpark Container Services with no external APIs - customize for any city worldwide.
+summary: Build Routing Solution in Snowflake using Cortex Code AI-powered skills. Deploy routing functions (Directions, Optimization, Isochrones, Time-Distance Matrix) via Snowpark Container Services with no external APIs - customize for any city worldwide.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
-# Install OpenRouteService Native App with Cortex Code
+# Build Routing Solution in Snowflake with Cortex Code
 
-> 🚀 **Install. Customize. Optimize.** Use natural language to deploy a complete route optimization solution in Snowflake - no code, no external APIs, just results.
+> 🚀 **Build. Customize. Optimize.** Use natural language to deploy a complete route optimization solution in Snowflake - no code, no external APIs, just results.
 
 <!-- ------------------------ -->
 ## Overview 
 
 ![alt text](assets/overview-map.png)
 
-**Deploy a complete route optimization platform in minutes using just natural language commands.**
+**Build a complete route optimization platform in minutes using just natural language commands.**
 
-This solution installs an [Open Route Service](https://openrouteservice.org/) Native App directly in your Snowflake account using **Cortex Code** - Snowflake's AI-powered CLI. No complex setup, no external APIs, no data leaving Snowflake.
+This solution builds an [Open Route Service](https://openrouteservice.org/) Native App directly in your Snowflake account using **Cortex Code** - Snowflake's AI-powered CLI. No complex setup, no external APIs, no data leaving Snowflake.
 
 ### What You'll Build
 
 🔧 **OpenRouteService Native App** - A self-contained routing engine running in Snowpark Container Services with SQL-callable functions.
 
-📍 **Three Powerful Routing Functions:**
+📍 **Four Powerful Routing Functions:**
 - **Directions** - Calculate optimal routes between multiple waypoints
 - **Optimization** - Match delivery jobs to vehicles based on time windows, capacity, and skills
 - **Isochrones** - Generate catchment polygons showing reachable areas within a given drive time
+- **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
 
 🗺️ **Any Location** - Customize to Paris, London, New York, or anywhere in the world with downloadable OpenStreetMap data.
 
@@ -56,7 +57,9 @@ This solution installs an [Open Route Service](https://openrouteservice.org/) Na
 
 -   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) - Required to download map files from provider account
 
--   **[Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)** installed and configured
+-   **Cortex Code CLI** installed and configured
+    - Installation: See the [Cortex Code documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) for setup instructions
+    - Add to your PATH: `export PATH="$HOME/.local/bin:$PATH"` (add to `~/.zshrc` or `~/.bashrc`)
     - Verify: `cortex --version`
 
 -   **Container Runtime** - One of the following:
@@ -71,22 +74,23 @@ The architecture below shows the solution which uses a native app and container 
 
 ![alt text](assets/architecture-diagram.png)
 
-This is a self-contained service which is managed by you. There are no API calls outside of Snowflake and no API limitations. This solution uses a medium CPU pool which is capable of running unlimited service calls within **San Francisco** (the default map). If you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
+This is a self-contained service which is managed by you. There are no API calls outside of Snowflake and no API limitations. This solution uses a small high-memory pool (HIGHMEM_X64_S) which is capable of running unlimited service calls within **San Francisco** (the default map). If you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
 
 ### What You'll Learn 
 
-- Deploy a Snowflake Native App using **Cortex Code** AI-powered CLI with natural language commands
+- Build a Snowflake Native App using **Cortex Code** AI-powered CLI with natural language commands
 - Use **Snowpark Container Services** to run OpenRouteService as a self-managed routing engine
 - Understand **Geospatial** data in Snowflake and how it integrates with routing functions
-- Work with 3 routing functions deployed via the Native App:
+- Work with 4 routing functions deployed via the Native App:
   - **Directions** - Simple and multi-waypoint routing based on road network and vehicle profile
   - **Optimization** - Route optimization matching demands with vehicle availability
   - **Isochrones** - Catchment area analysis based on travel time
+  - **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
 - Customize map regions and vehicle profiles for your specific use case
 
 <!-- ------------------------ -->
-## Deploy the Route Optimizer
+## Build the Routing Solution
 
 ![Cortex Code Deployment](assets/architecture-diagram.png)
 
@@ -140,42 +144,43 @@ Skills are structured specifications that instruct Cortex Code how to perform a 
 
 **How This Solution Uses Skills**
 
-This repository demonstrates how skills can manage the **complete lifecycle** of an end-to-end Snowflake analytical solution - from installation through customization to uninstallation. The 6 pre-built skills in the `skills/` folder cover every stage:
+This repository demonstrates how skills can manage the **complete lifecycle** of an end-to-end Snowflake analytical solution - from installation through customization to uninstallation. There are multiple pre-built skills in the `.cortex/skills/skill_name/SKILL.md`:
 
 | Stage | Skills | What They Do |
 |-------|--------|--------------|
-| **🔍 Prerequisites** | `check-prerequisites` | Verify dependencies, container runtime, and Snowflake access |
-| **📦 Install** | `deploy-route-optimizer` | Deploy Native App and container services |
-| **⚙️ Customize** | `customizations` (with 2 sub-skills) | Change map region and vehicle types |
-| **🗑️ Uninstall** | `uninstall-route-optimizer` | Cleanly remove all resources from your Snowflake account |
+| **📦 Build** | `build-routing-solution` | Deploy Routing Solution based on Native App and container services |
+| **⚙️ Customize** | `customize-main` | Route customization requests (location and routing profiles) |
+| | ↳ `customize-main/location` | Change the geographic region (sub-skill, do not invoke separately) |
+| | ↳ `customize-main/routing-profiles` | Enable/disable vehicle routing profiles (sub-skill, do not invoke separately) |
+| | ↳ `customize-main/read-ors-configuration` | Read current ORS configuration (sub-skill, do not invoke separately) |
 
 To run any skill, simply tell Cortex Code:
 ```
-use the local skill from skills/<skill-name>
+$<skill-name>
 ```
 
 For example:
 ```
-use the local skill from oss-install-openrouteservice-native-app/skills/deploy-route-optimizer
+$build-routing-solution
 ```
 
 Cortex Code reads the skill's markdown file and executes each step, asking for input when needed and verifying success before moving on.
 
-> **_TIP:_** Want to see what a skill does before running it? Open the skill's `.md` file in the `skills/` folder to review the exact steps.
+> **_TIP:_** Want to see what a skill does before running it? Open the skill's `.md` file in the `.cortex/skills/skill_name/` folder to review the exact steps.
 
 ### Verify Prerequisites (Optional)
 
 Run the prerequisites check skill to ensure all dependencies are installed:
    ```
-   use the local skill from oss-install-openrouteservice-native-app/skills/check-prerequisites
+   $prerequisites-build-routing-solution
    ```
 
-### Deploy the Native App
+### Build the Routing Solution
 
 Simply type the following command in Cortex Code:
 
 ```
-use the local skill from oss-install-openrouteservice-native-app/skills/deploy-route-optimizer
+$build-routing-solution
 ```
 
 Cortex Code will automatically:
@@ -283,7 +288,7 @@ The default deployment uses San Francisco. When you customize the map region, th
 
 **Routing Profiles**
 
-The configuration defines which vehicle types are available for routing:
+The configuration defines which routing profiles are available for routing:
 
 | Profile | Description | Default |
 |---------|-------------|---------|
@@ -320,7 +325,7 @@ To access the Function Tester:
 1. Open **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP** in Snowsight
 2. Navigate to the **Function Tester** page in the app
 
-The Function Tester allows you to test all three routing functions:
+The Function Tester allows you to test all four routing functions:
 
 **🗺️ DIRECTIONS**
 - Select start and end locations from preset addresses
@@ -346,79 +351,59 @@ The Function Tester allows you to test all three routing functions:
 - Generate a catchment polygon showing how far you can travel
 - Useful for delivery zone planning and coverage analysis
 
+**🗺️ TIME-DISTANCE MATRIX**
+- Calculate travel time and distance matrices between multiple locations
+
 > **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses and default vehicle profiles (car, HGV, road bicycle). When you customize the deployment, the Function Tester is automatically updated with region-specific addresses and your enabled vehicle profiles.
 
 <!-- ------------------------ -->
 ## Customize Your Deployment
 
-The default deployment uses San Francisco with standard vehicle types. You can customize **two key areas** for the ORS Native App:
+The default deployment uses San Francisco with standard routing profiles. You can customize **two key areas** for the ORS Native App:
 
 | Customization | Default | Example Custom |
 |---------------|---------|----------------|
 | 🗺️ **Map Region** | San Francisco | Paris, London, Tokyo, etc. |
-| 🚚 **Vehicle Types** | Car, HGV, Road Bicycle | Add walking, wheelchair, electric bicycle |
+| 🚚 **Routing Profiles** | Car, HGV, Road Bicycle | Add walking, wheelchair, electric bicycle |
 
 > **_NOTE:_** This step is optional. If you skip customization, the Native App will use the San Francisco defaults.
-
-To customize, run:
-
-```
-use the local skill from oss-install-openrouteservice-native-app/skills/customizations
-```
 
 ### ORS Customization Skills
 
 ```
-oss-install-openrouteservice-native-app/skills/customizations/
-├── customizations.md    ← Main orchestrator (entry point)
-├── location.md          ← Download new map, rebuild graphs
-└── vehicles.md          ← Configure routing profiles  
+.cortex/skills/customize-main/
+├── location.md           ← Customize map
+└── routing-profiles.md   ← Customize routing profile
+...  
+```
+
+To customize, run:
+
+```
+$customize-main
 ```
 
 ### How the Customization Works
 
-The main `customizations` skill orchestrates the process by asking **two yes/no questions**, then runs only the relevant sub-skills:
+The main `$customize-main` skill orchestrates the process by asking **two questions**, then runs only the relevant sub-skills:
 
 1. **"Do you want to customize the LOCATION (map region)?"**
-   - If YES → Runs `location.md` → `vehicles.md`
+   - If YES → Runs `$customize-main/location` `
    - If NO → Skips map download entirely
 
-2. **"Do you want to customize VEHICLE TYPES (routing profiles)?"**
-   - If YES → Runs `vehicles.md`
+2. **"Do you want to customize ROUTING PROFILES (vehicle types)?"**
+   - If YES → Runs `$customize-main/routing-profiles`
    - If NO → Keeps default profiles (car, HGV, road bicycle)
-
-### Which Sub-Skills Run Based on Your Choices
-
-| Your Choices | Sub-Skills Executed | What Gets Updated |
-|--------------|---------------------|-------------------|
-| **Location = YES** | `location` → `vehicles` → **deploy-route-optimizer** | Map downloaded, graphs rebuilt, Native App updated |
-| **Vehicles = YES** | `vehicles` → **deploy-route-optimizer** | Routing profiles modified, Native App updated |
-| **Location + Vehicles** | `location` → `vehicles` → **deploy-route-optimizer** | Everything updated |
-| **Nothing** | None | Exit (no changes) |
-
-### Running Individual Sub-Skills
-
-You can also run specific customizations directly:
-
-```bash
-# Just change the map region
-use the local skill from oss-install-openrouteservice-native-app/skills/customizations/location
-
-# Just modify vehicle profiles
-use the local skill from oss-install-openrouteservice-native-app/skills/customizations/vehicles
-```
-
-> **_IMPORTANT:_** When running sub-skills independently, be aware of dependencies:
-> - After running `location`, you should also run `vehicles` → **deploy-route-optimizer**
-> - After running `vehicles`, you should also run **deploy-route-optimizer**
 
 ### Example: Customizing to Paris
 
 Let's try changing the location to Paris. In Cortex Code, simply type:
 
 ```
-change the location to paris
+$customize-main
 ```
+
+then select location: Paris as part of the workflow.
 
 Cortex Code will find the appropriate skill and guide you through the process:
 
@@ -427,7 +412,7 @@ Cortex Code will find the appropriate skill and guide you through the process:
 - Uploads the OpenStreetMap data to Snowflake
 - Updates `ors-config.yml` with the new map path
 
-**Step 2: Vehicle Profiles**
+**Step 2: Routing Profiles**
 - Choose which routing profiles to enable for Paris:
   - `driving-car` - Standard passenger vehicle ✅
   - `driving-hgv` - Heavy goods vehicle (trucks) ✅
@@ -439,8 +424,8 @@ Cortex Code will find the appropriate skill and guide you through the process:
 - Updates Function Tester with Paris addresses
 - Updates available vehicle profiles dropdown to match your configuration
 
-**Step 4: Rebuild Graphs**
-- Services restart to rebuild routing graphs for Paris
+**Step 4: Build Graphs**
+- Services restart to update routing graphs for Paris
 - Changes are applied directly to your local files
 
 Once the customization completes, Cortex Code shows a summary of everything that was updated:
@@ -453,16 +438,10 @@ The summary confirms:
 3. ✅ **Service spec updated** - Volume paths configured for Paris
 4. ✅ **Services resumed** - ORS_SERVICE is rebuilding routing graphs (this takes 15-30 minutes depending on map size)
 5. ✅ **Streamlit updated** - Default location changed to "Eiffel Tower, Paris"
-6. ✅ **AISQL notebook updated** - AI prompts now reference Paris
-7. ✅ **Carto notebook updated** - Geohash filter set for Paris region
-
-> **_NOTE:_** If the demo is installed, Cortex Code will ask if you want to run `deploy-demo` to push the updated Streamlit and notebooks to Snowflake. If the demo is not yet installed, these updates will be applied automatically when you deploy the demo later.
-
-> **_NOTE:_** Demo-related customizations (industries, notebooks, Simulator) are handled by the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart after installing ORS.
 
 **⏳ Wait for Services to Restart**
 
-After the map is uploaded (if location was changed) or profiles were modified (if vehicles were changed), the services need to rebuild the routing graphs. You can monitor progress in the Service Manager:
+After the map is uploaded (if location was changed) or profiles were modified (if vehicles were changed), the services need to update the routing graphs. You can monitor progress in the Service Manager:
 
 1. Navigate to **Data Products > Apps > OPENROUTESERVICE_NATIVE_APP**
 2. Check the **Service Manager** - all 4 services should show ✅ RUNNING
@@ -541,19 +520,16 @@ The skill automatically updates the **Function Tester Streamlit** with:
 
 This ensures test addresses are valid for your map region and vehicle options match your configuration.
 
-> **_NOTE:_** Demo-related customizations (AISQL notebooks, industry categories) are covered in the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart.
-
 > **_TIP:_** Customizations modify your local files directly. If you want to preserve the original San Francisco configuration, make a backup before customizing.
 
 Once your services are running with the new map (or if you skipped customization), you're ready to deploy the demo!
 
 <!-- ------------------------ -->
-## Next Steps: Deploy the Demo
+## Next Steps
 
-🎉 **Congratulations!** Your OpenRouteService Native App is now installed and configured.
+🎉 **Congratulations!** Your Routing Solution is now installed and configured.
 
-To deploy the Route Optimization Simulator demo with real-world POI data and interactive notebooks, continue to the next quickstart:
-
+To deploy the Route Optimization demo with real-world POI data and interactive notebooks, continue to the next quickstart:
 👉 **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)**
 
 The demo quickstart will:
@@ -564,44 +540,16 @@ The demo quickstart will:
 All demo content will use your configured map region (San Francisco by default, or your customized region like Paris).
 
 <!-- ------------------------ -->
-## Available Cortex Code Skills
-
-For reference, here are the Cortex Code skills for the OpenRouteService Native App:
-
-### OpenRouteService Skills
-
-| Skill | Description | Command |
-|-------|-------------|---------|
-| `check-prerequisites` | Verify and install dependencies | `use the local skill from oss-install-openrouteservice-native-app/skills/check-prerequisites` |
-| `deploy-route-optimizer` | Deploy the ORS Native App | `use the local skill from oss-install-openrouteservice-native-app/skills/deploy-route-optimizer` |
-| `uninstall-route-optimizer` | Remove app and all dependencies | `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer` |
-
-### Customization Sub-Skills
-
-These can be run individually for targeted updates to the Native App:
-
-| Sub-Skill | Description | Command |
-|-----------|-------------|---------|
-| `location` | Download new map, rebuild graphs | `use the local skill from oss-install-openrouteservice-native-app/skills/customizations/location` |
-| `vehicles` | Configure routing profiles | `use the local skill from oss-install-openrouteservice-native-app/skills/customizations/vehicles` |
-
-> **_TIP:_** Use the main `customizations` skill to let Cortex Code orchestrate the process: `use the local skill from oss-install-openrouteservice-native-app/skills/customizations`
-
-### Demo Skills
-
-For demo-related skills (deploying notebooks, Streamlit simulator, and demo customizations), see the **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)** quickstart.
-
-<!-- ------------------------ -->
 ## Uninstall the Route Optimizer
 
 Cortex Code makes uninstallation simple with natural language commands.
 
-### Uninstall ORS Only
+### Uninstall demo
 
-To remove the OpenRouteService Native App and ORS resources:
+To remove the Snowflake objects installed as part of the demo you can type in Cortex Code CLI:
 
 ```
-uninstall route optimizer
+uninstall all Snowflake objects created as part of skill $build-routing-solution
 ```
 
 This will:
@@ -610,28 +558,11 @@ This will:
 - Delete the setup database (`OPENROUTESERVICE_SETUP`) including all stages and image repository
 - Optionally remove local container images
 
-> **_NOTE:_** This only removes ORS components. Demo content (notebooks, Streamlit simulator) will remain if deployed.
-
-### Uninstall Everything
-
-If you also deployed the demo and want to remove everything:
-
-```
-uninstall demo and optimizer
-```
-
-Cortex Code will run both uninstall skills, removing all demo and ORS resources from your Snowflake account.
-
-> **_TIP:_** You can also use the full skill path if preferred:
-> `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer`
-
-> **_NOTE:_** The uninstall skill will ask for confirmation before removing resources. This is a destructive operation that cannot be undone.
-
 <!-- ------------------------ -->
 ## Conclusion and Resources
 ### Conclusion
 
-You've just deployed a **self-contained routing engine** in Snowflake using natural language commands - no complex configuration files, no external API dependencies, and no data leaving your Snowflake environment.
+You've just deployed a **self-contained routing solution** in Snowflake using natural language commands - no complex configuration files, no external API dependencies, and no data leaving your Snowflake environment.
 
 This solution demonstrates the power of combining:
 - **Cortex Code** - AI-powered CLI that turns natural language into automated workflows
@@ -648,10 +579,11 @@ The key advantage of this approach is **flexibility without complexity**. Want t
 
 - **Flexible Customization** - Use skills to customize location (any city in the world) and vehicle types (car, HGV, bicycle, walking)
 
-- **Three Routing Functions:**
+- **Four Routing Functions:**
     - **Directions** - Point-to-point and multi-waypoint routing
     - **Optimization** - Match delivery jobs to vehicles based on time windows, capacity, and skills
     - **Isochrones** - Generate catchment polygons showing reachable areas
+    - **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
 
 ### Next Steps
 
@@ -659,14 +591,11 @@ Deploy the demo to see the routing functions in action with real-world POI data:
 
 👉 **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)**
 
-
 ### Related Resources
-
 
 #### Source code
 
 - [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
-
 
 #### Continue Your Journey
 
@@ -680,7 +609,7 @@ Deploy the demo to see the routing functions in action with real-world POI data:
 
 #### Cortex Code
 
-- [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) - AI-powered features in Snowflake
+- [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) - Snowflake's AI-powered CLI and agentic interface
 - [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about) - Build and distribute applications within Snowflake
 
 #### Map Data Sources

@@ -1,6 +1,6 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-retail-catchment-analysis
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Build a Retail Catchment Analysis application using OpenRouteService and Carto Overture Maps. Deploy a Streamlit app that analyzes store catchment zones with isochrones, identifies competitors, and visualizes address density using H3 hexagons.
 environments: web
@@ -38,7 +38,7 @@ This quickstart deploys a Streamlit application that performs catchment zone ana
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Building a Routing Solution Native App](../oss-build-routing-solution-in-snowflake/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
@@ -64,7 +64,7 @@ Use Cortex Code to deploy the Retail Catchment Analysis solution including Marke
 In the Cortex Code CLI, type:
 
 ```
-use the local skill from oss-retail-catchment-analysis/skills/deploy-demo
+deploy retail catchment demo
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
@@ -77,7 +77,7 @@ The skill uses interactive prompting to gather required information:
 Cortex Code will automatically:
 - **Verify** OpenRouteService Native App is installed and running
 - **Acquire Marketplace Data** - Gets Carto Overture Maps Places and Addresses datasets
-- **Create Demo Database** - Sets up `RETAIL_CATCHMENT_DEMO` with required schemas
+- **Create Demo Database** - Sets up `OPENROUTESERVICE_SETUP.RETAIL_CATCHMENT_DEMO` schema
 - **Prepare POI Data** - Filters and indexes retail locations for fast querying
 - **Deploy Streamlit App** - Creates the Retail Catchment Analysis application
 
@@ -94,8 +94,8 @@ The deploy skill creates the following Snowflake objects:
 **Demo Database & Infrastructure**
 | Component | Name | Description |
 |-----------|------|-------------|
-| Database | `RETAIL_CATCHMENT_DEMO` | Main demo database |
-| Schema | `RETAIL_CATCHMENT_DEMO.PUBLIC` | POI data and analytics tables |
+| Database | `OPENROUTESERVICE_SETUP` | Main demo database |
+| Schema | `OPENROUTESERVICE_SETUP.RETAIL_CATCHMENT_DEMO` | POI data and analytics tables |
 | Warehouse | `ROUTING_ANALYTICS` | Compute warehouse (auto-suspend 60s) |
 | Stage | `STREAMLIT_STAGE` | Stage for Streamlit application files |
 
@@ -105,6 +105,7 @@ The deploy skill creates the following Snowflake objects:
 | `RETAIL_POIS` | Filtered retail POIs with categories, addresses, and geometry |
 | `REGIONAL_ADDRESSES` | Address data for H3 density visualization |
 | `CITIES_BY_STATE` | City lookup for region filtering |
+| `REGION_CONFIG` | Bounding box configuration for the deployed region |
 
 **Streamlit Application**
 | Component | Name | Description |
@@ -240,10 +241,7 @@ RETAIL_CATEGORIES = [
 
 To support additional cities:
 
-1. **Update OpenRouteService** with the appropriate map region using:
-   ```
-   use the local skill from oss-install-openrouteservice-native-app/skills/deploy-route-optimizer
-   ```
+1. **Update OpenRouteService** with the appropriate map region using the [Building a Routing Solution](../oss-build-routing-solution-in-snowflake/) quickstart
 
 2. **Filter POI data** for the new region in the database setup script
 
@@ -269,20 +267,19 @@ uninstall retail catchment demo
 ```
 
 This will:
-- Remove the `RETAIL_CATCHMENT_DEMO` database and Streamlit app
+- Remove the `OPENROUTESERVICE_SETUP.RETAIL_CATCHMENT_DEMO` schema and Streamlit app
 - Optionally remove Carto Overture Maps marketplace data
 - Optionally remove the warehouse
 
-> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately using:
-> `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer`
+> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately using the [Building a Routing Solution](../oss-build-routing-solution-in-snowflake/) quickstart.
 
 <!-- ------------------------ -->
 ## Available Cortex Code Skills
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| `deploy-demo` | Deploy the full Retail Catchment solution | `use the local skill from oss-retail-catchment-analysis/skills/deploy-demo` |
-| `uninstall-demo` | Remove the demo and optionally marketplace data | `use the local skill from oss-retail-catchment-analysis/skills/uninstall-demo` |
+| Deploy Demo | Deploy the full Retail Catchment solution | `deploy retail catchment demo` |
+| Uninstall Demo | Remove the demo and optionally marketplace data | `uninstall retail catchment demo` |
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -344,9 +341,9 @@ The AI analysis also provides **optimal store location recommendations**:
 
 ### Related Quickstarts
 
-- [Install OpenRouteService Native App](/guide/oss-install-openrouteservice-native-app/) - Install the routing engine (prerequisite)
-- [Deploy Route Optimization Demo](/guide/oss-deploy-route-optimization-demo/) - Build a delivery route optimization simulator
-- [Deploy Fleet Intelligence Solution for Taxis](/guide/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Build a taxi fleet control center
+- [Building a Routing Solution Native App](../oss-build-routing-solution-in-snowflake/) - Install the routing engine (prerequisite)
+- [Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/) - Build a delivery route optimization simulator
+- [Deploy Fleet Intelligence Solution for Taxis](../oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Build a taxi fleet control center
 
 ### Source Code
 
