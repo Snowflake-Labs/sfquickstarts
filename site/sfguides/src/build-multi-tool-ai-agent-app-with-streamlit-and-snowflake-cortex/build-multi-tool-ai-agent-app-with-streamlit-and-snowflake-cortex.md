@@ -12,16 +12,21 @@ tags: Streamlit, Cortex Agent, Multi-Tool, Orchestration, AI
 <!-- ------------------------ -->
 ## Overview
 
+AI agents represent a significant evolution in how we interact with data. Unlike traditional chatbots that simply respond to queries, agents can reason about user intent, select appropriate tools, and orchestrate complex workflows autonomously. This capability is transformative for enterprise applications where users need to access multiple data sources (*e.g.* structured databases, unstructured documents, APIs) through a single conversational interface. By delegating tool selection to the agent, organizations can build intelligent assistants that adapt to diverse questions without requiring users to know which system holds the answer.
+
 In this quickstart, you'll build a multi-tool Cortex Agent that intelligently orchestrates between different data sources. The agent uses Cortex Search for conversation transcripts and Cortex Analyst for structured sales metrics, automatically choosing the right tool based on user questions.
 
+This tutorial is based on the [#30DaysOfAI learning challenge](https://github.com/streamlit/30DaysOfAI), a month-long journey exploring AI capabilities in Streamlit and Snowflake. The content here adapts Days 26-27 of the challenge into a self-contained quickstart guide.
+
 ### What You'll Learn
+
 - How to prepare data for Cortex Agents (search service + semantic model) (Day 26)
 - How to create a Cortex Agent with multiple tools (Day 26)
 - How to build a chat interface that displays agent thinking and tool usage (Day 27)
 - How to handle agent API responses and display results (Day 27)
 
 ### What You'll Build
-A sales intelligence assistant that can answer questions about sales conversations (using Cortex Search) and sales metrics (using Cortex Analyst text-to-SQL).
+A sales intelligence agent that can answer questions about sales conversations (using Cortex Search) and sales metrics (using Cortex Analyst text-to-SQL).
 
 ### Prerequisites
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
@@ -63,7 +68,7 @@ USE WAREHOUSE COMPUTE_WH;
 
 ### Create Sales Conversations Table
 
-Next, create a table to store sales conversation transcripts. Each record contains the full transcript text along with metadata like customer name, deal stage, sales rep, and product line. This unstructured text data will be indexed by Cortex Search for semantic retrieval, allowing the agent to find relevant conversations based on meaning rather than exact keyword matches.
+Next, create a table to store sales conversation transcripts. Each record contains the full transcript text along with metadata like `customer_name`, `deal_stage`, `sales_rep`, and `product_line`. This unstructured text data will be indexed by Cortex Search for semantic retrieval, allowing the agent to find relevant conversations based on meaning rather than exact keyword matches.
 
 ```sql
 CREATE OR REPLACE TABLE SALES_INTELLIGENCE.DATA.SALES_CONVERSATIONS (
@@ -126,8 +131,6 @@ INSERT INTO SALES_INTELLIGENCE.DATA.SALES_METRICS VALUES
 
 With the data tables in place, you can now create a Cortex Search service to enable semantic search over the conversation transcripts. This service will index the transcript text and allow the agent to find relevant conversations based on the meaning of user queries.
 
-> Note: This section is repurposed from Day 26 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=26).
-
 ### Enable Change Tracking
 
 Before creating the search service, you must enable change tracking on the source table. This allows Cortex Search to detect when new records are added or existing records are modified, ensuring the search index stays up to date.
@@ -170,8 +173,6 @@ SHOW CORTEX SEARCH SERVICES IN SCHEMA SALES_INTELLIGENCE.DATA;
 ## Create Semantic Model
 
 Cortex Analyst requires a semantic model to understand your data schema and generate accurate SQL queries. The semantic model is a YAML file that describes your tables, columns, data types, and provides helpful metadata like descriptions and synonyms.
-
-> Note: This section is repurposed from Day 26 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=26).
 
 ### Create Stage for Model
 
@@ -265,8 +266,6 @@ PUT file:///path/to/sales_metrics_model.yaml @SALES_INTELLIGENCE.DATA.MODELS AUT
 
 Now you're ready to create the Cortex Agent itself. The agent combines the Cortex Search service and Cortex Analyst with semantic model into a unified interface that can intelligently route user questions to the appropriate tool.
 
-> Note: This section is repurposed from Day 26 of the [#30DaysOfAI learning challenge](https://30daysofai.streamlit.app/?day=26).
-
 ### Agent Creation SQL
 
 The agent is defined using a YAML specification that includes:
@@ -276,7 +275,7 @@ The agent is defined using a YAML specification that includes:
 - **Tools**: The Cortex Search and Cortex Analyst services the agent can invoke
 - **Tool resources**: Configuration for each tool including data sources and execution settings
 
-The orchestration instruction is particularly important—it tells the agent to use SalesAnalyst for quantitative questions (totals, averages, counts) and ConversationSearch for qualitative questions (summaries, discussions).
+The orchestration instruction is particularly important as it tells the agent to use `SalesAnalyst` for quantitative questions (*e.g.* totals, averages, counts) and `ConversationSearch` for qualitative questions (*e.g.* summaries, discussions).
 
 ```sql
 CREATE OR REPLACE AGENT SALES_INTELLIGENCE.DATA.SALES_CONVERSATION_AGENT
@@ -949,7 +948,7 @@ st.divider()
 st.caption("Day 27: Multi-Tool Agent Orchestration | Chat with Sales Data | 30 Days of AI with Streamlit")
 ```
 
-### Deploy the App
+## Deploy the App
 
 Once you've created the application file, you have several options for deployment depending on your needs:
 
