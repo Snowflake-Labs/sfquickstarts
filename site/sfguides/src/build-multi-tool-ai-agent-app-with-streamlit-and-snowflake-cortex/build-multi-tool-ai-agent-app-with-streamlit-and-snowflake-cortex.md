@@ -336,7 +336,7 @@ Each section of the app corresponds to a step in the setup process: creating the
 
 ![Day 26: Data Setup Tab](assets/day26a.png)
 
-![Day 26: Create Agent Tab](assets/day26b.png)
+![Day 26: Create Agent Tab](assets/day26b.jpg)
 
 ```python
 import streamlit as st
