@@ -1,4 +1,9 @@
 {
+  "dashboard": {
+    "port": 8534,
+    "description": "Agent Verbosity Comparison Dashboard",
+    "title": "Cross-Model Verbosity Comparison"
+  },
   "mcp_servers": {
     "WikiMCP": {
       "port": 8531,

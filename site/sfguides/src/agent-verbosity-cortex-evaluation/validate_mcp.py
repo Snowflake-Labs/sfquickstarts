@@ -150,6 +150,9 @@ def validate_config():
     
     config = load_config()
     
+    print("\n🖥️  Dashboard:")
+    print(f"   Port {config['dashboard']['port']}: {config['dashboard']['description']}")
+    
     print("\n📋 MCP Servers from config:")
     for name, cfg in config["mcp_servers"].items():
         print(f"   {name}: port {cfg['port']} - {cfg['description']}")
