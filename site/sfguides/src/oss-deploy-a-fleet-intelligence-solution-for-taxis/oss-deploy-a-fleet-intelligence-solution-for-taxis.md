@@ -59,7 +59,14 @@ This quickstart deploys a multi-page Streamlit application that simulates a taxi
 
 Use Cortex Code to deploy the Fleet Intelligence solution including database setup, data generation, and the Streamlit dashboard.
 
-### Run the Deploy Skill
+### Clone Repository and Deploy Skill
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+```
 
 In the Cortex Code CLI, type:
 
