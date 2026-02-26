@@ -50,10 +50,10 @@ The MONAI medical image processing solution consists of one setup script and thr
 
 | File | Description |
 |------|-------------|
-| `assets/01_setup.sql` | Snowflake infrastructure setup (roles, warehouse, compute pool, stages) |
-| `assets/02_ingest_data.ipynb` | Download and upload paired lung CT scans to Snowflake stages |
-| `assets/03_train_and_register.ipynb` | Train LocalNet model on GPU, log to Snowflake Model Registry |
-| `assets/04_batch_inference.ipynb` | Run distributed batch inference using `run_batch()` API |
+| [01_setup.sql](assets/01_setup.sql) | Snowflake infrastructure setup (roles, warehouse, compute pool, stages) |
+| [02_ingest_data.ipynb](assets/02_ingest_data.ipynb) | Download and upload paired lung CT scans to Snowflake stages |
+| [03_train_and_register.ipynb](assets/03_train_and_register.ipynb) | Train LocalNet model on GPU, log to Snowflake Model Registry |
+| [04_batch_inference.ipynb](assets/04_batch_inference.ipynb) | Run distributed batch inference using `run_batch()` API |
 
 ### Model Architecture
 
@@ -99,7 +99,7 @@ authenticator = "externalbrowser"  # or use password/key-pair
 
 1. In Snowsight, click `Projects`, then `Worksheets` in the left navigation
 2. Click `+ Worksheet` to create a new SQL worksheet
-3. Copy the contents of `assets/01_setup.sql` and paste into the worksheet
+3. Copy the contents of [01_setup.sql](assets/01_setup.sql) and paste into the worksheet
 4. Run the script as ACCOUNTADMIN
 
 The setup script creates:
@@ -124,7 +124,7 @@ SHOW COMPUTE POOLS;
 
 ### Step 1: Open the Notebook
 
-Open `assets/02_ingest_data.ipynb` in your preferred Jupyter environment (VS Code, JupyterLab, or Snowflake Notebooks).
+Open [02_ingest_data.ipynb](assets/02_ingest_data.ipynb) in your preferred Jupyter environment (VS Code, JupyterLab, or Snowflake Notebooks).
 
 ### Step 2: Update Configuration
 
@@ -163,7 +163,7 @@ Files in stage: 80
 
 ### Step 1: Open the Training Notebook
 
-Open `assets/03_train_and_register.ipynb` in your Jupyter environment.
+Open [03_train_and_register.ipynb](assets/03_train_and_register.ipynb) in your Jupyter environment.
 
 ### Step 2: Update Configuration
 
@@ -239,7 +239,7 @@ Function: FORWARD
 
 ### Step 1: Open the Inference Notebook
 
-Open `assets/04_batch_inference.ipynb` in your Jupyter environment.
+Open [04_batch_inference.ipynb](assets/04_batch_inference.ipynb) in your Jupyter environment.
 
 ### Step 2: Load Model from Registry
 
