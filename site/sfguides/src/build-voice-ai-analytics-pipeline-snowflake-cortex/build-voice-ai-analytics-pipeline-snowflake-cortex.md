@@ -18,7 +18,7 @@ You'll use Snowflake's built-in AI functions to transcribe audio, extract struct
 
 ### Architecture
 
-![Voice Order Processing Architecture](assets/architecture.jpeg)
+![Voice Order Processing Pipeline](assets/voice-order-pipeline.png)
 
 ### Prerequisites
 
