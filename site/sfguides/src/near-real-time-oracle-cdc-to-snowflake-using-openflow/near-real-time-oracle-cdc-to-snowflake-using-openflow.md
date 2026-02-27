@@ -53,14 +53,14 @@ By the end of this guide, you'll have a working near real-time CDC pipeline that
 ### Prerequisites
 - A [Snowflake account](https://signup.snowflake.com/) in an AWS or Azure commercial region
 - An Oracle Database (12c R2, 18c, 19c, 21c, 23ai, or 26ai) with SYSDBA access
-- Network connectivity between Snowflake (SPCS) and the Oracle database (port 1521)
+- Network connectivity between Snowflake (SPCS) and the Oracle database
 - Snowflake `ACCOUNTADMIN` or a role with Openflow admin privileges
 - All Oracle source tables must have a **primary key** — tables without primary keys will silently fail to replicate
 
 <!-- ------------------------ -->
 ## Architecture
 
-The Openflow Connector reads logical change records (LCRs) directly from the XStream outbound server queue in near real time. These change events are then streamed immediately into Snowflake target tables using Snowpipe Streaming. This direct, memory-to-memory pipeline avoids landing data in intermediate files, resulting in fewer hops and points of failure.
+The Openflow Connector reads logical change records (LCRs) directly from the XStream outbound server queue in near real time. These change events are processed through the Openflow runtime as FlowFiles and loaded into Snowflake target tables using Snowpipe Streaming, delivering low-latency replication with minimal impact on the source database.
 
 ![Real-time Oracle CDC to Snowflake via Openflow architecture](assets/cdc-architecture.png)
 
@@ -298,20 +298,13 @@ END;
 
 > **Note:** Replace `HR` and `CO` with the schemas you want to replicate.
 
-### Assign Users to the Outbound Server
+### Assign Connect User to the Outbound Server
 
 ```sql
 BEGIN
     DBMS_XSTREAM_ADM.ALTER_OUTBOUND(
         server_name  => 'XOUT1',
         connect_user => 'c##connectuser');
-END;
-/
-
-BEGIN
-    DBMS_XSTREAM_ADM.ALTER_OUTBOUND(
-        server_name  => 'XOUT1',
-        capture_user => 'c##xstreamadmin');
 END;
 /
 ```
@@ -608,7 +601,7 @@ ALTER SYSTEM SET enable_goldengate_replication=FALSE SCOPE=BOTH;
 <!-- ------------------------ -->
 ## Tips for Production
 
-The steps above are sufficient for a proof-of-concept. For production deployments, consider the following DBA best practices:
+For production deployments, consider the following DBA best practices:
 
 ### Check I/O Headroom
 
