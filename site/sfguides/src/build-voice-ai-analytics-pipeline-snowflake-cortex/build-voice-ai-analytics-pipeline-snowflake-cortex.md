@@ -53,7 +53,7 @@ An automated voice-to-order processing system that:
 
 ## Run the Setup Script
 
-Open a SQL worksheet in Snowsight and paste the contents of `setup.sql`. Run the entire script. This creates:
+Open a SQL worksheet in Snowsight and paste the contents of [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-voice-ai-analytics-pipeline-snowflake-cortex/assets/setup.sql). Run the entire script. This creates:
 
 - **Warehouse:** `TASTY_AUDIO_WH`
 - **Database/Schema:** `TASTY_AUDIO_DB.ORDERS`
@@ -65,7 +65,7 @@ Open a SQL worksheet in Snowsight and paste the contents of `setup.sql`. Run the
 
 1. In Snowsight, go to **Projects > Notebooks**
 2. Click the **down arrow** next to **+ Notebook** and select **Import .ipynb file**
-3. Upload `voice_order_processing.ipynb` from this repo
+3. Download and upload [voice_order_processing.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-voice-ai-analytics-pipeline-snowflake-cortex/assets/voice_order_processing.ipynb)
 4. Select database `TASTY_AUDIO_DB` and schema `ORDERS`
 5. Select warehouse `TASTY_AUDIO_WH`
 6. Go to **Settings > External access** and add `GOOGLE_TTS_INTEGRATION`
