@@ -55,6 +55,7 @@ By the end of this guide, you'll have a working near real-time CDC pipeline that
 - An Oracle Database (12c R2, 18c, 19c, 21c, 23ai, or 26ai) with SYSDBA access
 - Network connectivity between Snowflake (SPCS) and the Oracle database (port 1521)
 - Snowflake `ACCOUNTADMIN` or a role with Openflow admin privileges
+- All Oracle source tables must have a **primary key** — tables without primary keys will silently fail to replicate
 
 <!-- ------------------------ -->
 ## Architecture
@@ -75,6 +76,36 @@ The Openflow Connector reads logical change records (LCRs) directly from the XSt
 The connector supports Oracle Database versions 12c R2 (12.2), 18c, 19c, 21c, 23ai, and 26ai running on-premises, on Oracle Exadata, in OCI (VM/Bare Metal), and on AWS RDS Custom for Oracle.
 
 For unique requirements, the replication flow is built on the flexible Openflow framework. Teams can open the Apache NiFi canvas to expand pipelines — for example, enriching data with lookups or masking sensitive PII before it reaches Snowflake.
+
+<!-- ------------------------ -->
+## Accept Oracle Connector Terms (ORGADMIN)
+
+Before the Oracle connector is visible in the Openflow connector catalog, an organization administrator must accept the Oracle Connector commercial terms. This is a one-time step that is unique to the Oracle connector and is a prerequisite for every deployment.
+
+### Steps
+
+1. Sign in to Snowsight with a user that has the `ORGADMIN` role
+2. Switch to the `ORGADMIN` role using the role selector
+3. Navigate to **Admin > Terms**
+4. Locate the **Openflow Connector for Oracle** terms entry
+5. Review and accept the commercial terms
+
+> **Important:** If the Oracle connector does not appear in the Openflow connector catalog when you reach the connector deployment step, it is almost certainly because this step was skipped. The connector will remain hidden until the ORGADMIN accepts the terms.
+
+> **Note:** If you do not have access to the `ORGADMIN` role, contact your Snowflake organization administrator to complete this step.
+
+### Choose Your Licensing Model
+
+The Oracle connector offers two licensing models. You must select a model during the ORGADMIN terms acceptance step — this choice affects cost structure and contractual obligations.
+
+| Model | Who It's For | Connector Fee | Trial | Commitment |
+|-------|-------------|---------------|-------|------------|
+| **Embedded** | Customers without an existing Oracle GoldenGate or XStream license | $110 per core per month | 60-day free trial | Auto-converts to a non-cancelable 36-month commitment on Day 61 |
+| **Independent (BYOL)** | Customers with an existing Oracle GoldenGate or XStream license | $0 | N/A | None beyond existing Oracle license |
+
+> **Warning:** The Embedded license 60-day trial automatically converts to a 36-month non-cancelable commitment if not cancelled before Day 61. Ensure you have internal approval before the trial expires.
+
+For full licensing details, refer to the [Openflow Connector for Oracle documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/about-openflow-connectors).
 
 <!-- ------------------------ -->
 ## Setup Oracle Config
@@ -109,6 +140,16 @@ XStream requires GoldenGate replication to be enabled:
 ```sql
 ALTER SYSTEM SET enable_goldengate_replication=TRUE SCOPE=BOTH;
 ```
+
+### Set Streams Pool Size
+
+Set an explicit memory allocation for the Streams pool to isolate XStream memory from the Buffer Cache. Without this, XStream dynamically borrows from the shared pool and can starve the Buffer Cache under load, risking instance instability.
+
+```sql
+ALTER SYSTEM SET STREAMS_POOL_SIZE = 2560M;
+```
+
+> **Important:** This is critical for production databases. The `STREAMS_POOL_SIZE` parameter reserves a dedicated memory region for XStream capture and apply processes. The 2560 MB value is a recommended starting point — adjust based on the number of schemas, transaction volume, and available SGA memory. Monitor usage with `SELECT * FROM V$SGASTAT WHERE pool = 'streams pool';`.
 
 ### Enable Supplemental Logging
 
@@ -156,20 +197,37 @@ Grant the required privileges:
 GRANT CREATE SESSION, SET CONTAINER, EXECUTE ANY PROCEDURE, LOGMINING
   TO c##xstreamadmin CONTAINER=ALL;
 
-GRANT XSTREAM_CAPTURE TO c##xstreamadmin CONTAINER=ALL;
-
 GRANT SELECT ANY TABLE TO c##xstreamadmin CONTAINER=ALL;
 GRANT FLASHBACK ANY TABLE TO c##xstreamadmin CONTAINER=ALL;
 GRANT SELECT ANY TRANSACTION TO c##xstreamadmin CONTAINER=ALL;
+```
 
+Grant XStream admin privileges. The correct approach depends on your Oracle version:
+
+**Oracle 23ai / 26ai:**
+
+```sql
+GRANT XSTREAM_CAPTURE TO c##xstreamadmin CONTAINER=ALL;
+GRANT XSTREAM_ADMIN TO c##xstreamadmin CONTAINER=ALL;
+```
+
+**Oracle 19c / 21c:**
+
+The `XSTREAM_CAPTURE` and `XSTREAM_ADMIN` roles do not exist on 19c and 21c. Using `GRANT XSTREAM_CAPTURE` on these versions will silently fail. Use the `DBMS_XSTREAM_AUTH` package instead:
+
+```sql
 BEGIN
-    EXECUTE IMMEDIATE 'GRANT XSTREAM_ADMIN TO c##xstreamadmin CONTAINER=ALL';
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('XSTREAM_ADMIN role not available, continuing with XSTREAM_CAPTURE');
+  DBMS_XSTREAM_AUTH.GRANT_ADMIN_PRIVILEGE(
+    grantee                => 'c##xstreamadmin',
+    privilege_type         => 'CAPTURE',
+    grant_select_privileges => TRUE,
+    container              => 'ALL'
+  );
 END;
 /
 ```
+
+> **Important:** The majority of production Oracle deployments run 19c or 21c. If you use the 23ai-style `GRANT XSTREAM_CAPTURE` on these versions, the grant silently fails and the XStream outbound server will not start. Verify your Oracle version with `SELECT * FROM v$version;` before proceeding.
 
 ### Create XStream Connect User
 
@@ -204,7 +262,8 @@ BEGIN
         server_name           => 'XOUT1',
         table_names           => tables,
         schema_names          => schemas,
-        source_container_name => 'FREEPDB1'
+        source_container_name => 'FREEPDB1',
+        include_ddl           => TRUE
     );
 END;
 /
@@ -308,12 +367,12 @@ For detailed deployment steps, refer to the [Set up Openflow - Snowflake Deploym
 ```sql
 CREATE ROLE IF NOT EXISTS openflow_oracle_role;
 
-GRANT USAGE ON DATABASE <target_db> TO ROLE openflow_oracle_role;
-GRANT USAGE ON SCHEMA <target_db>.<target_schema> TO ROLE openflow_oracle_role;
-GRANT CREATE TABLE ON SCHEMA <target_db>.<target_schema> TO ROLE openflow_oracle_role;
-GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA <target_db>.<target_schema>
-  TO ROLE openflow_oracle_role;
+GRANT USAGE ON DATABASE <destination_database> TO ROLE openflow_oracle_role;
+GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE openflow_oracle_role;
+GRANT USAGE ON WAREHOUSE <warehouse_name> TO ROLE openflow_oracle_role;
 ```
+
+> **Note:** The connector automatically creates target schemas and tables at runtime. Database-level `CREATE SCHEMA` is required — schema-level grants alone will cause permission errors because the schemas do not exist yet when the connector starts.
 
 ### Configure Network Access
 
