@@ -12,25 +12,25 @@ tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Regis
 <!-- ------------------------ -->
 ## Overview
 
-Detect fraudulent transactions in real-time using a natural language first approach. This quickstart demonstrates how to go from raw idea to production-grade REST API in minutes, not weeks, using only natural language prompts with Cortex Code CLI.
+[Snowflake ML](http://www.snowflake.com/ml) is changing how teams work with agentic ML, an autonomous, reasoning-based system that enables developers to use agents to plan and execute tasks across the entire ML pipeline. In this quickstart, learn how to build and run a real-time fraud detection model with only a handful of prompts so that you can go from raw idea to production-grade REST API in minutes, not weeks, with [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/), Snowflake’s AI native coding agent.
 
 ### What You'll Learn
 - Generate realistic synthetic fraud data with natural language prompts
 - Train an XGBoost machine learning model for fraud detection
-- Deploy models to Snowpark Container Services (SPCS) with one-click deployment
+- Deploy models for scalable inference with one-click deployment
 - Create REST API endpoints for real-time online inference
 
 ### What You'll Build
 A complete fraud detection pipeline featuring:
 - Synthetic transaction dataset with realistic fraud patterns
 - Trained XGBoost classification model
-- Live REST API endpoint running on SPCS
+- Live REST API endpoint running on Snowpark Container Services (SPCS)
 - Performance benchmarking with latency profiling
 
 ![End-to-end fraud detection pipeline](assets/diagram.png)
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` role (or a role with permissions for Snowflake ML and SPCS)
+- Sign up for the 30-day [free trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) OR access to a [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` role (or a role with permissions for Snowflake ML and Snowpark Container Services)
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured
 - A dedicated Snowflake warehouse
 - A compute pool configured for SPCS
@@ -42,7 +42,7 @@ A complete fraud detection pipeline featuring:
 
 Follow the [official installation guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to install and configure Cortex Code CLI.
 
-### Verify SPCS Access
+### Verify Snowpark Container Services Access
 
 Ensure you have access to create and manage compute pools. You can verify this in Snowsight under Compute > Compute pools.
 
@@ -114,7 +114,7 @@ Before training a model, we need to understand our data patterns. Cortex Code ca
 ### Prompt
 
 ```
-Create a Snowflake notebook and do exploratory data analysis and recommend 
+Do exploratory data analysis and recommend 
 the features needed to train a model that can predict fraud.
 ```
 
@@ -226,7 +226,7 @@ Mean AUC: 0.9307 (+/- 0.0352)
 The model achieves a ROC-AUC of 0.9723 with 80% recall on fraud cases.
 
 <!-- ------------------------ -->
-## Deploy to SPCS
+## Deploy to Snowpark Container Services
 
 Now comes the powerful part: deploying our trained model to production with a single prompt. This would traditionally require containerization, infrastructure setup, and API development.
 
@@ -256,7 +256,7 @@ Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V2...
   └─────┴───────────────┴──────────────┴───────────────────┘
 ```
 
-Then deployed to SPCS (this takes several minutes as it builds the container):
+Then deployed to SPCS (this this can take a few minutes as it builds the container):
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Check if service exists now
@@ -309,45 +309,72 @@ Inference running on SPCS and show the latency profile.
 
 ### What Gets Generated
 
-Cortex Code will generate test transactions and run predictions through the SPCS service:
+Cortex Code will generate 1,000 synthetic transactions, send them to the SPCS endpoint, and report a latency profile:
 
 ```
-✓  SNOWFLAKE_SQL_EXECUTE  Test PREDICT_PROBA on fraud transactions
-  SQL Result (10 rows × 4 cols)
-  ┌──────┬────────────────┬──────────────┬────────┬────────────────────────────────┐
-  │    # │ TRANSACTION_ID │ ACTUAL_FRAUD │ AMOUNT │ FRAUD_PROBABILITY              │
-  ├──────┼────────────────┼──────────────┼────────┼────────────────────────────────┤
-  │    1 │ TXN-000041     │ 1            │ 21.93  │ {"output_feature_0":0.43...    │
-  │    2 │ TXN-000037     │ 1            │ 22.21  │ {"output_feature_0":0.36...    │
-  │    3 │ TXN-000048     │ 1            │ 48.2   │ {"output_feature_0":0.63...    │
-  └──────┴────────────────┴──────────────┴────────┴────────────────────────────────┘
-```
-
-For well-configured SPCS deployments, expect sub-second response times (mean: 50-150ms, p95: less than 300ms).
-
-Cortex Code also outputs the SQL syntax for calling the service directly.
-
-```
-Service Functions (callable from SQL):
-
-  -- Binary prediction (0/1)
-  SELECT ML.PROJECTS.FRAUD_INFERENCE_SERVICE!PREDICT(
-      AMOUNT, LOG_AMOUNT, AMOUNT_ZSCORE, AMOUNT_PERCENTILE,
-      HOUR, IS_NIGHT, IS_WEEKEND, DAY_OF_WEEK, HOUR_SIN, HOUR_COS,
-      IS_DOMESTIC, COUNTRY_RISK_SCORE, CITY_FRAUD_RATE,
-      CATEGORY_RISK_SCORE, MERCHANT_FRAUD_RATE, IS_HIGH_RISK_CATEGORY,
-      CARD_VISA, CARD_MASTERCARD, CARD_AMEX, CARD_DISCOVER,
-      HIGH_AMOUNT_X_FOREIGN, HIGH_RISK_CAT_X_NIGHT, AMOUNT_X_COUNTRY_RISK, FOREIGN_X_NIGHT
-  );
+SPCS REST API Latency Profile
   
-  -- Probability scores (output_feature_1 = fraud probability)
-  SELECT ML.PROJECTS.FRAUD_INFERENCE_SERVICE!PREDICT_PROBA(...);
+  Endpoint: https://cl2eaai4s-pm-pm-aws-us-west-2.snowflakecomputing.app/predict-proba
+  Total requests: 1,000 | Errors: 0 | Wall time: 63.8s | Throughput: 15.7 req/s
+  
+  Latency Percentiles
+  
+  ┌──────────────┬──────────────┐
+  │ Metric       │ Latency (ms) │
+  ├──────────────┼──────────────┤
+  │ Min          │ 39.8         │
+  ├──────────────┼──────────────┤
+  │ Mean         │ 63.7         │
+  ├──────────────┼──────────────┤
+  │ Median (P50) │ 59.6         │
+  ├──────────────┼──────────────┤
+  │ P75          │ 65.3         │
+  ├──────────────┼──────────────┤
+  │ P90          │ 73.4         │
+  ├──────────────┼──────────────┤
+  │ P95          │ 81.5         │
+  ├──────────────┼──────────────┤
+  │ P99          │ 141.9        │
+  ├──────────────┼──────────────┤
+  │ Max          │ 482.9        │
+  ├──────────────┼──────────────┤
+  │ Std Dev      │ 32.6         │
+  └──────────────┴──────────────┘
+  
+  Latency Distribution
+  
+  • 86.3% of requests completed in 50-100ms
+  • 11.5% completed under 50ms
+  • Only 2.2% exceeded 100ms (mostly outliers)
+```
+
+It also breaks down the predictions by risk tier so you can verify the model behaves as expected:
+
+```
+  Prediction Results
+  
+  ┌───────────┬───────┬──────────────┬──────────────┬──────────────┐
+  │ Risk Tier │ Count │ Avg P(fraud) │ Flagged >50% │ Flagged >10% │
+  ├───────────┼───────┼──────────────┼──────────────┼──────────────┤
+  │ HIGH      │ 60    │ 0.9945       │ 60 (100%)    │ 60 (100%)    │
+  ├───────────┼───────┼──────────────┼──────────────┼──────────────┤
+  │ MEDIUM    │ 135   │ 0.0970       │ 10 (7%)      │ 24 (18%)     │
+  ├───────────┼───────┼──────────────┼──────────────┼──────────────┤
+  │ LOW       │ 805   │ 0.0077       │ 4 (0.5%)     │ 9 (1%)       │
+  └───────────┴───────┴──────────────┴──────────────┴──────────────┘
+  
+  Key Takeaways
+  
+  • ~60ms median latency per individual REST request — suitable for real-time fraud screening
+  • Latency is consistent across risk tiers (no payload-dependent variation)
+  • The model correctly flags 100% of high-risk transactions and has very low false-positive rates on low-risk ones
+  • With connection pooling, throughput reaches ~15.7 req/s on a single thread. Parallel requests would scale linearly.
 ```
 
 <!-- ------------------------ -->
-## Handle Errors Gracefully
+## Debug and Recover from Errors
 
-During any natural language coding session, errors are inevitable. The great thing about Cortex Code is its ability to assess the situation, environment, and error in order to fix issues automatically.
+During any natural language coding session, errors are inevitable. The great thing about Cortex Code is its ability to self-correct by assessing the situation, environment, and error to fix issues automatically.
 
 ### Common Scenarios
 
@@ -418,26 +445,25 @@ When training fails due to parameter issues, Cortex Code diagnoses and fixes the
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've successfully built a complete fraud detection system with real-time inference capabilities, all using natural language prompts. You went from raw idea to production-grade REST API running on Snowpark Container Services.
+Congratulations! You've successfully built a complete real-time fraud detection model with using only a handful of natural language prompts in [Snowflake ML](http://www.snowflake.com/ml).
 
 ### What You Learned
 - Generate realistic synthetic fraud data with natural language prompts
-- Perform comprehensive exploratory data analysis in Snowflake notebooks
+- Perform comprehensive exploratory data analysis in Jupyter-based [Snowflake Notebooks in Workspaces](https://www.snowflake.com/en/product/features/notebooks/)
 - Train an XGBoost model optimized for imbalanced fraud detection
 - Deploy models to SPCS with automatic containerization
 - Create and test REST API endpoints for real-time inference
 
 ### Related Resources
 
-Articles:
-- [Snowflake ML Overview](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview) - Complete guide to machine learning in Snowflake
-- [SPCS Overview](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) - Container services for model deployment
-- [Cortex Code CLI Guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) - Natural language coding interface
+Web pages:
+- [Snowflake ML](http://www.snowflake.com/ml) - Integrated set of capabilities for development, MLOps and inference leading with agentic ML
+- [Snowflake Notebooks](https://www.snowflake.com/en/product/features/notebooks/) - Jupyter-based notebooks in Snowflake Workspaces 
+- [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/) - Snowflake’s AI native coding agent that boosts ML productivity 
 
-Documentation:
-- [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
-- [Snowflake ML Model Development](https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling)
+Technical Documentation:
+- [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
+- [Cortex Code CLI Docs](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 
-Additional Reading:
-- [Snowflake Developer Guides](https://www.snowflake.com/en/developers/guides/) - More hands-on tutorials
-- [Snowflake Community](https://community.snowflake.com/) - Connect with other developers
+More quickstarts:
+- Follow along these intro guides to Snowflake ML [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
