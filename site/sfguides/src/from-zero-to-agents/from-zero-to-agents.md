@@ -91,12 +91,27 @@ AI Enrichment is the "Preprocessing" step. By enriching your data first:
 Transform "dark data" (raw transcripts) into analytical trends using Cortex AI Functions. Run sentiment analysis on customer feedback to create measurable features:
 
 ```sql
+UPDATE support_cases SET product = 'Fitness Wear' WHERE product = 'ThermoJacket Pro';
 SELECT 
     title,
     SNOWFLAKE.CORTEX.AI_SENTIMENT(transcript) AS sentiment_score,
     SNOWFLAKE.CORTEX.AI_CLASSIFY(transcript, ['Return', 'Quality', 'Shipping']) AS issue_category
 FROM support_cases;
 ```
+![Extract trends](assets/extracttrends.png)
+
+
+### Updating Marketing Data
+Confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` by clicking on your profile in the bottom left corner.
+1. Download the [marketing_data.csv](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/from-zero-to-agents/assets/marketing_data.csv)
+2. Navigate to `Catalog` > `Database Explorer`
+3. Open `DASH_DB_SI.RETAIL.Tables.MARKETING_CAMPAIGN_METRICS`. If you do not see the database, refresh the data.
+4. Click on `Load Data` in the top right hand corner
+5. Upload the marketing_data.csv and click `next` then load
+6. Click `View table detail` to see the new data uploaded
+
+![Updating marketing data](assets/Updatingmarketing.png)
+
 
 <!-- ------------------------ -->
 
@@ -114,14 +129,17 @@ Create a Dynamic Table that automatically joins campaign metrics with AI-generat
 
 ```sql
 CREATE OR REPLACE DYNAMIC TABLE enriched_marketing_intelligence
-TARGET_LAG = '1 minute'
+TARGET_LAG = '1 hours'
 WAREHOUSE = dash_wh_si
 AS
-SELECT m.campaign_name, m.clicks, 
-       SNOWFLAKE.CORTEX.AI_SENTIMENT(s.transcript) AS avg_sentiment
+SELECT m.campaign_name, m.clicks, s.product AS product_name,
+       SNOWFLAKE.CORTEX.SENTIMENT(s.transcript) AS avg_sentiment
 FROM marketing_campaign_metrics m
 JOIN support_cases s ON m.category = s.product;
 ```
+Confirm the creation of the Dynamic Table by navigating to `Catalog` > `Database Explorer` > `DASH_DB_SI.RETAIL.DYNAMIC TABLES.ENRICHED_MARKETING_INTELLIGENCE`. If you do not see your table, click on the refresh button and the table should appear. 
+
+![Dynamic tbales](assets/dynamictable.png)
 
 <!-- ------------------------ -->
 
@@ -129,20 +147,38 @@ JOIN support_cases s ON m.category = s.product;
 
 Provide the agent with a "map" to understand your business logic through a **Semantic View**.
 
-### Create a Semantic View
-
-Map technical columns to natural business terms like **"Ad Campaign"** and **"Customer Sentiment."**
+### Create a Cortex Analyst
+This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
 
 1. Navigate to **AI & ML > Analyst** in Snowsight
-2. Configure the following settings:
+2. Confrim the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` and warehouse to `DASH_WH_SI`. Then click `Create new` > `Create new Semantic View`
+3. Configure the following settings:
    - **Role:** `SNOWFLAKE_INTELLIGENCE_ADMIN`
    - **Warehouse:** `DASH_WH_SI`
    - **Location to store:** `DASH_DB_SI.Retail`
    - **Name:** `SEMANTIC_VIEW`
-   - **Select tables:** `DASH_DB_SI.Retail`
-   - **Select Columns:** Marketing Metrics
+   - **Select tables:** Select all tables `DASH_DB_SI.Retail` (there should be 5 tables and 1 dynamic table)
+   - **Select Columns:** Select all columns
+4. Click `Create and Save`
+5. Scroll to the `MARKETING_CAMPAIGN_METRICS` section and click `Edit`
+6. Set `+ Primary Key` to `Category` and click `Save`
 
+![Primary key](assets/primarykey.png)
+
+7. Scroll down and click + on `Relationships`
+8. Configure the following settings:
+   - **Relationship Name:** `Products`
+   - **Left Table:** `ENRICHED_MARKETING_INTELLIGENCE`
+   - **Right Table:** `MARKETING_CAMPAIGN_METRICS`
+   - **Left Column:** `PRODUCT_NAME`
+   - **Right Column:** `CATEGORY`
+9. Add the relationship, then save the Analyst in the top right corner
+
+![Relationship](assets/relationship.png)
+
+   
 ### Create a Cortex Search Service
+This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
 1. Navigate to **AI & ML > Search** in Snowsight
 2. Switch role to `SNOWFLAKE_INTELLIGENCE_ADMIN`
@@ -152,19 +188,80 @@ Map technical columns to natural business terms like **"Ad Campaign"** and **"Cu
    - **Service name:** `campaign_search`
    - **Select Data:** `marketing_campaign_metrics`
    - **Select search column:** `campaign name`
-   - **Select attribute columns:** Select all
+   - **Select attribute columns:** `Select all`
+   - **Warehouse for indexing:** `DASH_DB_SI`
+5. Click `create` and click the refresh icon in the top right corner. `Serving` will update from `INITALIZING` to `ACTIVE`
 
-### Create the Agent
+![Active Cortex Search](assets/servingactive.png)
+
+
+## Create the Agent
+An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data.
 
 1. Navigate to **AI & ML > Agents** in Snowsight
-2. Add the **Analyst Tool** (using your Semantic View) and the **Search Tool** (for transcript retrieval)
-3. Configure the agent:
-   - **Agent Name:** `agent`
-   - **Agent Description:** 
-   
-   > I am a specialized Marketing & Sales Intelligence Assistant. My primary role is to provide accurate, data-driven insights by analyzing structured marketing metrics (spend, clicks, conversions) and unstructured customer feedback (support transcripts). I bridge the gap between 'what happened' (the numbers) and 'why it happened' (customer sentiment). Always maintain a professional, analytical tone and provide clear citations for information retrieved from support transcripts.
+2. On the top right, click on **Create agent**
+   - **Database and schema**: `DASH_DB_SI.Retail`
+   - **Agent object name**: `MarketingAgent`
+3. Create the agent
 
-4. **Agent Tools:** Add Cortex Analyst & Cortex Search
+![Creating agent](assets/marketingagent.png)
+
+
+### Add Instructions: 
+Configure to the following:
+- **Description**: I am a specialized Marketing & Sales Intelligence Assistant. My  primary role is to provide accurate, data-driven insights by analyzing structured marketing metrics (spend, clicks, conversions) and unstructured customer feedback (support transcripts). I bridge the gap between 'what happened' (the numbers) and 'why it happened' (customer sentiment). Always maintain a professional, analytical tone and provide clear citations for information retrieved from support transcripts.
+- **Example question**: What are the top 5 campaigns by clicks?
+
+![Instructions](assets/Instructions.png)
+
+
+### Add Tools
+Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
+
+**Cortex Analyst**
+1. Click on **+Add**
+2. Configure the following settings:
+- **Service database & schema:** `DASH_DB_SI.Retail`
+- **Select semantic view:** `SEMANTIC_VIEW`
+- **Name:** `semantic_view`
+- **Description:** Click on `Generate with Cortex`
+- **Warehouse:** `Custom` > `DASH_WH_SI`
+- **Query timeout:** 60
+
+**Cortex Search Services**
+1. Click on **+Add**
+2. Configure the following settings:
+- **Service database & schema:** `DASH_DB_SI.Retail`
+- **Cortex Search Services:** `DASH_DB_SI.RETAIL.CAMPAIGN_SEARCH`
+- **Max Results:** `4`
+- **ID Column:** `CAMPAIGN_NAME`
+- **Title Column:** `CLICKS`
+- **Name:** `Search`
+
+![Cortex Search Tool](assets/cortexsearchtool.png)
+
+
+**Custom tools**
+1. Click on **+Add**
+2. Configure the following settings:
+- **Resource type:** `procedure`
+- **Service database & schema:** `DASH_DB_SI.Retail`
+- **Custom tool identifier:** `DASH_DB_SI.RETAIL.SEND_EMAIL()`
+- **Name:** `Send_Email`
+- **Warehouse:** `Custom` > `DASH_WH_SI`
+- **Query timeout:** 60
+- **Paramter: body**
+  - Description: Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email.
+- **Paramter: recipient_email**
+  - Description: If the email is not provided, send it to the current user's email address.
+- **Paramter: subject**
+  - Description: If the subject is not provided, use "Snowflake Intelligence".
+ 
+**Orchestration Instructions:** Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.
+
+**Access:** `SNOWFLAKE_INTELLIGENCE_ADMIN`
+
+**Click `Save` in the top right corner**
 
 <!-- ------------------------ -->
 
@@ -178,7 +275,10 @@ Once your agent is created and enabled for **Snowflake Intelligence**, it appear
 
 1. In Snowsight, go to **AI & ML > Snowflake Intelligence**
 2. You will see a list of agents you have access to
-3. Select your **Marketing Intelligence Agent**
+3. Select your **MarketingAgent**
+
+![Snowflake Intelligence](assets/SI.png)
+
 
 ### The Conversational Interface
 
@@ -187,6 +287,25 @@ The UI is designed to handle natural language queries. It doesn't just return da
 - **Natural Language Input:** Users type questions like, *"Which campaigns had a low budget but high customer sentiment last month?"*
 - **Suggested Prompts:** Based on your Semantic View and Agent Description, the UI often provides "starter" questions to guide the user
 - **Multimodal Answers:** The agent will combine text (summarizing feedback from Cortex Search) with tables or charts (visualizing metrics from Cortex Analyst)
+
+Let's ask the following questions
+
+### Q1. What are the top 5 campaigns by clicks?
+
+![Top 5](assets/top5clicks.png)
+
+### Q2. Show me all campaign performance metrics and it's relationship to the product
+
+![Metrics](assets/metricsproduct.png)
+
+### Q3. What is the relationship between campaign clicks and customer satisfaction by category?
+
+![Click Satisfaction](assets/clicksatisficiation.png)
+
+### Q4. What are the main customer complains in support cases?
+
+![Support cases](assets/supportcases.png)
+
 
 ## Security (optional)
 ### Trace Monitoring
