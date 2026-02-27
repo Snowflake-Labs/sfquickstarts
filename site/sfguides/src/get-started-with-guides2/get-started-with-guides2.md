@@ -1,5 +1,5 @@
 summary: This guide outlines the updates and changes to Snowflake Guides creation process and formatting updates.
-id: get-started-with-guides
+id: get-started-with-guides2
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
@@ -22,10 +22,10 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 ### Prerequisites
 - Familiarity with Markdown syntax
 
-Staging Test 2
+Staging Test 3
 ![puppy](assets/puppy.jpg)
 
-Staging Test 2
+Staging Test 3
 ![puppy](assets/puppy01.jpg)
 
 ### What You’ll Learn 
