@@ -16,7 +16,6 @@ In this guide, you’ll take a Power BI semantic layer and turn it into a **Snow
 
 - Cortex Analyst (natural language analytics)
 - Snowflake Intelligence (agentic/assistant experiences, where available)
-- Power BI (so dashboards and AI stay consistent)
 
 ## Prerequisites
 
@@ -25,48 +24,47 @@ In this guide, you’ll take a Power BI semantic layer and turn it into a **Snow
   - `CREATE SEMANTIC VIEW` on the target schema
   - `USAGE` on the database and schema
   - `SELECT` on the underlying tables/views
-- Power BI Desktop (or access to a Power BI workspace that allows downloading a `.pbix`)
-- A Power BI report/model you can export/download as a `.pbix`
+- Power BI Desktop (or access to a Power BI workspace that allows downloading a template)
+- A Power BI report/model you can export/download as a `.pbit`
 
 ## What you will learn
 
-- How to export a Power BI model as a `.pbix`
+- How to export a Power BI model as a `.pbit`
 - How to create a Snowflake Semantic View from BI context
 - How to validate semantic metrics/dimensions and query the semantic view
-- How to consume consistent definitions from both Cortex Analyst and Power BI
 
 ## Part 1: Export your semantic layer from Power BI
 
 1. Open the report in **Power BI Desktop**.
-2. Save the report as a `.pbix` file:
-   - **File** → **Save** (or **Save As**)
+2. Export the report as a Power BI template (`.pbit`):
+   - **File** → **Export** → **Power BI template**
 3. Confirm your model contains meaningful semantic logic you want to reuse:
    - Relationships between tables
    - Measures (DAX)
    - Calculated columns (optional)
 
-If you’re starting from the Power BI service, your org policies must allow downloading the `.pbix`.
+If you’re starting from the Power BI service, your org policies must allow downloading the `.pbit`.
 
 ## Part 2: Create a semantic view in Snowflake
 
 There are two ways to provide “BI context” to Snowflake when creating the semantic view:
 
-- **Option A (Lab/preview)**: Import a `.pbix` file directly (only if your account has this capability enabled).
+- **Option A (Private Preview)**: Import a `.pbit` file directly (only if your account has this capability enabled).
 - **Option B (GA)**: Use **Semantic View Autopilot** with example SQL queries and table metadata (works in any account with semantic views).
 
-### Option A: Import a `.pbix` (if enabled in your account)
+### Option A: Import a `.pbit` (if enabled in your account)
 
 1. Sign in to **Snowsight**.
 2. Navigate to **AI & ML** → **Cortex Analyst**.
 3. Select **Create new** → **Create new Semantic View**.
-4. If you see a Power BI import/upload option, choose it and upload your `.pbix`.
+4. If you see a Power BI import/upload option, choose it and upload your `.pbit`.
 5. In the review steps, confirm Snowflake extracted:
    - The tables/columns referenced by the model
    - Relationships (joins) between tables
    - Measures/metrics derived from DAX (review carefully—some DAX patterns may need refinement)
 6. Create and save the semantic view.
 
-If you don’t see a `.pbix` import option, use Option B.
+If you don’t see a `.pbit` import option, use Option B.
 
 ### Option B: Use Semantic View Autopilot (recommended GA path)
 
@@ -89,6 +87,20 @@ If you don’t see a `.pbix` import option, use Option B.
 ## Part 3: Validate and query your semantic view
 
 After creation, validate what Snowflake generated.
+
+### Add custom instructions to reflect Power BI defaults (recommended)
+
+If your Power BI report applies default filters, slicers, or “implicit” measure behavior, capture those assumptions as semantic view custom instructions so Cortex Analyst results align with what users see in Power BI.
+
+In Snowsight, open your semantic view and add custom instructions similar to the following (edit to match your report defaults):
+
+```
+When answering questions, mirror the default Power BI report settings:
+- Apply the report’s default date range (for example: last 12 full months, excluding the current partial month).
+- Respect default filters/slicers (for example: exclude blank/unknown categories; include only Active customers = true).
+- Unless the user asks otherwise, use the same default aggregation/format as Power BI visuals (for example: revenue is SUM, rounded to whole currency units).
+- If Power BI uses a specific “as of” date or snapshot logic, use that same definition consistently.
+```
 
 ### Inspect the semantic view objects
 
@@ -148,34 +160,10 @@ If you see suggestions/verified-query recommendations, review and apply the ones
 
 If your org uses Snowflake Intelligence with semantic views enabled, connect your assistant/agent experience to the semantic view you created and reuse the same questions above. The key check is that the assistant uses the governed metrics/dimensions from the semantic view (not ad hoc SQL against raw tables).
 
-## Part 5: Consume the same definitions from Power BI
-
-Power BI can connect to Snowflake using the native Snowflake connector (Import or DirectQuery). To ensure **metric consistency**, consider one of these approaches:
-
-### Approach A: Power BI connects to a Snowflake view that wraps the semantic view query
-
-Create a standard Snowflake view that exposes a curated query based on the semantic view:
-
-```sql
-CREATE OR REPLACE VIEW <DB>.<SCHEMA>.POWERBI_REVENUE_BY_MONTH AS
-SELECT *
-FROM SEMANTIC_VIEW(
-  <DB>.<SCHEMA>.<SEMANTIC_VIEW_NAME>
-  METRICS <LOGICAL_TABLE>.TOTAL_REVENUE
-  DIMENSIONS <LOGICAL_TABLE>.MONTH
-);
-```
-
-Then in Power BI, connect to Snowflake and select `POWERBI_REVENUE_BY_MONTH` as your dataset for visuals.
-
-### Approach B: Power BI uses a native SQL statement against the semantic view
-
-If you prefer not to create wrapper views, use **Get Data → Snowflake**, then (where supported) provide a SQL statement that uses the `SEMANTIC_VIEW(...)` form.
-
 ## Troubleshooting
 
-- **No `.pbix` import option in Snowsight**: Use Semantic View Autopilot with SQL queries (Option B). `.pbix` ingestion may require an enablement/preview flag.
-- **Metrics don’t match Power BI**: Review generated metrics and relationships. DAX-to-SQL translation can require adjustments, especially around filter context and time intelligence.
+- **No `.pbit` import option in Snowsight**: Use Semantic View Autopilot with SQL queries (Option B). `.pbit` ingestion may require an enablement/preview flag.
+- **Metrics don’t match Power BI**: Check whether Power BI applies default report/page/visual filters or implicit measure behavior (for example: default date windows, slicers, “(Blank)” handling, visual-level filters, rounding/formatting, or “Summarize by” defaults). Then review generated metrics and relationships, and add custom instructions to reflect those default settings.
 - **Wrong joins or fan-out**: Ensure primary/unique keys are set correctly in logical tables and relationships. Add or correct relationships in the semantic view editor.
 - **Poor natural-language accuracy**: Add sample values, improve descriptions/synonyms, and add verified queries that reflect how users ask questions.
 
