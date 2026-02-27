@@ -109,7 +109,7 @@ Legitimate Transactions with Noise (9,950 rows)
 <!-- ------------------------ -->
 ## Explore the Data
 
-Before training a model, we need to understand our data patterns. Cortex Code can create a complete EDA notebook with a single prompt.
+Before training a model, we need to understand our data patterns. Cortex Code can run a complete EDA with a single prompt.
 
 ### Prompt
 
@@ -120,46 +120,193 @@ the features needed to train a model that can predict fraud.
 
 ### What Gets Generated
 
-Cortex Code will generate and upload a Snowflake notebook:
+Cortex Code reads its built-in ML skill, detects the local Python environment, and runs the EDA in incremental steps:
 
 ```
-✓  BASH  cortex artifact create notebook fraud_eda
-  ├─ "success": true,
-  ├─ "message": "Successfully uploaded notebook 'fraud_eda' to snow://workspace/USER$.PUBLIC.DEFAULT$"
+✓  SKILL  machine-learning
+  **[REQUIRED]** For **ALL** data science and machine learning tasks. This 
+skil...
+
+* Let me load the environment guide and then the ML development sub-skill.
+
+✓  READ  /Users/cnantasenamat/.local/share/cortex/1.0.23+084348.c4a9c248776d/bun
+dled_skills/machine-learning/ml-development/SKILL.md 279 lines
+
+✓  READ  /Users/cnantasenamat/.local/share/cortex/1.0.23+084348.c4a9c248776d/bun
+dled_skills/machine-learning/guides/cli-environment.md 194 lines
+
+* Let me set up the environment and start the EDA. First, let me detect the
+  Python environment and prepare.
+
+×  BASH  which uv
+  └─ Exit code: 1
+
+✓  BASH  cortex env detect
+  ├─ {
+  ├─ "directory": "/Users/cnantasenamat",
+  └─ ... (2 more lines)
+
+✓  BASH  cortex ctx task add "EDA on Fraud_ML_TEST_ONLINE and recommend
+features"
+  ├─ Created task-1c4e8787: EDA on Fraud_ML_TEST_ONLINE and recommend features
+  ├─ (Session: 41ac248c-c8c6-405b-b492-9b3f73e474d5
+  └─ ... (1 more line)
+
+✓  BASH  cortex ctx task start task-1c4e8787 && cortex ctx step add "Setup
+environment and check packages"...
+  ├─ Started task task-1c4e8787 EDA on Fraud_ML_TEST_ONLINE and recommend 
+features
+  ├─ Added step: [s829d] Setup environment and check packages
+  └─ ... (6 more lines)
 ```
 
-The notebook contains 16 cells organized into 7 sections:
+It then reuses an existing virtual environment, verifies the required packages, and begins loading data:
 
 ```
-┌──────────────────────────┬───────────────────────────────────────────────────────────────────┐
-│ Section                  │ Content                                                           │
-├──────────────────────────┼───────────────────────────────────────────────────────────────────┤
-│ 1. Dataset Overview      │ Shape, types, nulls, fraud rate, amount summary stats             │
-├──────────────────────────┼───────────────────────────────────────────────────────────────────┤
-│ 2. Amount Analysis       │ Histograms (fraud vs legit), box plots, log-transformed distrib.  │
-├──────────────────────────┼───────────────────────────────────────────────────────────────────┤
-│ 3. Temporal Patterns     │ Fraud rate by hour-of-day, day-of-week, night vs daytime          │
-├──────────────────────────┼───────────────────────────────────────────────────────────────────┤
-│ 4. Location Analysis     │ Country/city fraud rates, domestic vs international breakdown     │
-├──────────────────────────┼───────────────────────────────────────────────────────────────────┤
-│ 5. Merchant Analysis     │ Fraud rate by category and merchant name, card type breakdown     │
-├──────────────────────────┼───────────────────────────────────────────────────────────────────┤
-│ 6. Feature Interactions  │ Cross-tabs (amount x location, amount x time), correlation heatm. │
-├──────────────────────────┼───────────────────────────────────────────────────────────────────┤
-│ 7. Feature Recommend.    │ 20 recommended features with definitions and rationale            │
-└──────────────────────────┴───────────────────────────────────────────────────────────────────┘
+* There's an existing fraud-eda environment at /Users/cnantasenamat/fraud-eda.
+  Let me check if it has the needed packages.
+
+✓  BASH  /Users/cnantasenamat/fraud-eda/.venv/bin/python -c "from
+importlib.metadata import version; print...
+  ├─ snowpark: 1.45.0
+  ├─ pandas: 2.3.3
+  └─ ... (3 more lines)
+
+* All packages are available. Let me set up the session helper and start the
+  EDA.
+
+✓  BASH  ls /Users/cnantasenamat/fraud-eda/
+  ├─ __pycache__
+  ├─ benchmark_inference.py
+  └─ ... (15 more lines)
+
+✓  BASH  cortex ctx step done s829d
+  ├─ ✓ Completed step [s829d] Setup environment and check packages
+  └─ → Next ready [sf8d7] Load data and basic stats
+
+* Now let me write and run the EDA script incrementally. First, load the data
+  and get basic stats.
+
+✓  WRITE  /Users/cnantasenamat/fraud-eda/eda_step1_load.py +47
+
+✓  BASH  cd /Users/cnantasenamat/fraud-eda && SNOWFLAKE_CONNECTION_NAME=devrel
+.venv/bin/python eda_step1_...
+  ├─ === SHAPE ===
+  ├─ Rows: 10000, Columns: 6
+  └─ ... (54 more lines)
 ```
 
-The notebook recommends 20 features across these categories:
+With the data loaded (10K rows, 0.5% fraud rate), it proceeds through amount distribution, location patterns, merchant analysis, and time-of-day analysis — generating plots at each step:
 
-- Amount (4): raw, log-transformed, z-score, percentile
-- Temporal (5): hour, is_night, is_weekend, day_of_week, cyclical hour encoding
-- Location (3): is_domestic, country risk score, city fraud rate
-- Merchant (3): category risk score, merchant fraud rate, is_high_risk_category
-- Card (1): card type encoding
-- Interaction (4): high_amount x foreign, high_risk_cat x night, amount x country_risk, foreign x night
+```
+✓  BASH  cortex ctx step done sf8d7
+  ├─ ✓ Completed step [sf8d7] Load data and basic stats
+  └─ → Next ready [s9e83] Analyze amount distribution by fraud label
 
-Open it in Snowsight to review the analysis and feature recommendations.
+✓  WRITE  /Users/cnantasenamat/fraud-eda/eda_step2_amount.py +90
+
+✓  BASH  cd /Users/cnantasenamat/fraud-eda && SNOWFLAKE_CONNECTION_NAME=devrel
+.venv/bin/python eda_step2_...
+  ├─ === AMOUNT OVERLAP ANALYSIS ===
+  ├─ Fraud with amount < $500 (normal-looking): 17 / 50 (34%)
+  └─ ... (15 more lines)
+
+✓  READ  /Users/cnantasenamat/fraud-eda/plots/amount_analysis.png
+
+✓  BASH  cortex ctx step done s9e83
+  ├─ ✓ Completed step [s9e83] Analyze amount distribution by fraud label
+  └─ → Next ready [sa687] Analyze location patterns
+
+✓  WRITE  /Users/cnantasenamat/fraud-eda/eda_step3_location_merchant.py +135
+
+✓  BASH  cd /Users/cnantasenamat/fraud-eda && SNOWFLAKE_CONNECTION_NAME=devrel
+.venv/bin/python eda_step3_...
+  ├─ === LOCATION ANALYSIS ===
+  ├─ Unusual locations in Fraud: 26 / 50 (52%)
+  └─ ... (46 more lines)
+
+✓  READ  /Users/cnantasenamat/fraud-eda/plots/location_merchant_analysis.png
+
+✓  BASH  cortex ctx step done sa687 && cortex ctx step done s8090
+  ├─ ✓ Completed step [sa687] Analyze location patterns
+  ├─ → Next ready [s8090] Analyze merchant patterns
+  └─ ... (2 more lines)
+```
+
+Finally, it compiles all findings into a ranked feature recommendation table:
+
+```
+✓  BASH  cd /Users/cnantasenamat/fraud-eda && python3 eda_step5_features.py
+  ├─ ======================================================================
+  ├─ FEATURE ENGINEERING RECOMMENDATIONS
+  └─ ... (29 more lines)
+
+✓  READ  /Users/cnantasenamat/fraud-eda/plots/feature_recommendations.png
+
+✓  BASH  cortex ctx step done s9ab6 && cortex ctx task done
+  ├─ ✓ Completed step [s9ab6] Feature engineering recommendations
+  ├─ ✓ Completed task task-1c4e8787: EDA on Fraud_ML_TEST_ONLINE and recommend 
+fea...
+  └─ ... (1 more line)
+```
+
+```
+  EDA Complete -- Feature Recommendations
+
+  Recommended Features (ranked by signal strength)
+
+  ┌───────┬────────────────────────┬──────────────────────┬─────────────┬───┐
+  │ #     │ Feature                │ Type                 │ Correlation │ … │
+  ├───────┼────────────────────────┼──────────────────────┼─────────────┼───┤
+  │ 1     │ IS_UNUSUAL_LOCATION    │ Binary               │ 0.28        │ … │
+  ├───────┼────────────────────────┼──────────────────────┼─────────────┼───┤
+  │ 2     │ IS_SUSPICIOUS_MERCHANT │ Binary               │ 0.27        │ … │
+  ├───────┼────────────────────────┼──────────────────────┼─────────────┼───┤
+  │ 3     │ LOC_MERCH_SUSPICIOUS   │ Binary (interaction) │ 0.21        │ … │
+  ├───────┼────────────────────────┼──────────────────────┼─────────────┼───┤
+  │ 4     │ IS_NIGHT               │ Binary               │ 0.16        │ … │
+  ├───────┼────────────────────────┼──────────────────────┼─────────────┼───┤
+  │ 5     │ LOG_AMOUNT             │ Continuous           │ 0.12        │ … │
+  ├───────┼────────────────────────┼──────────────────────┼─────────────┼───┤
+  │ 6     │ HOUR                   │ Integer (0-23)       │ -0.03       │ … │
+  ├───────┼────────────────────────┼──────────────────────┼─────────────┼───┤
+  │ 7     │ SUSPICIOUS_SCORE       │ Integer (0-3)        │ 0.32        │ … │
+  └───────┴────────────────────────┴──────────────────────┴─────────────┴───┘
+
+  Key EDA Findings
+
+  1. Class imbalance: 50 fraud out of 10,000 (0.5%). Use SMOTE, class weights,
+  or threshold tuning.
+  2. Amount: Fraud averages $4,819 vs legit $315, but 34% of fraud has normal
+  amounts (<$500) -- amount alone is insufficient.
+  3. Location: Unusual foreign locations have 26.8% fraud rate vs 0.24% for
+  common US locations, but 48% of fraud occurs at common locations (noise).
+  4. Merchant: Suspicious merchants have 53.8% fraud rate, but again ~48% of
+  fraud uses normal merchants.
+  5. Time: Late night (0-5am) has 12.7% fraud rate (25x baseline). Day of week
+  is not discriminative.
+  6. Interaction effects matter: The location x merchant combination is the
+  strongest predictor (75% fraud when both flagged).
+
+  Features to Skip
+
+  • DAY_OF_WEEK: No meaningful signal (0.27%-0.77% fraud across days).
+  • Raw AMOUNT: Use LOG_AMOUNT instead for better distribution separation.
+  • Raw LOCATION/MERCHANT strings: High cardinality (42 each). Use the binary
+  flags above instead, or frequency encoding if you want to preserve more info.
+
+  Modeling Recommendations
+
+  • Algorithm: Tree-based models (XGBoost, LightGBM) handle the feature
+  interactions and imbalance well.
+  • Evaluation metric: Use PR-AUC or F1 rather than accuracy (accuracy would be
+  99.5% by predicting all legit).
+  • Handle imbalance: scale_pos_weight = 199 for XGBoost, or use SMOTE on the
+  training set only.
+  • The 7 features above should give a strong baseline. The composite
+  SUSPICIOUS_SCORE (correlation 0.32) is the single most correlated feature with
+   fraud.
+```
 
 <!-- ------------------------ -->
 ## Train the Model
@@ -175,7 +322,7 @@ real-time fraud detection.
 
 ### What Gets Generated
 
-Cortex Code will first create a feature engineering view with all 24 features:
+Cortex Code will first create a feature engineering view with the 7 recommended features:
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Create feature engineering view
@@ -193,7 +340,7 @@ Then train the model and display results:
 FRAUD DETECTION MODEL TRAINING
 ============================================================
 Loading features from ML.PROJECTS.FRAUD_FEATURES_V...
-Loaded 10000 rows with 24 features
+Loaded 10000 rows with 7 features
 
 Training XGBoost with scale_pos_weight=199...
 
@@ -210,12 +357,15 @@ CONFUSION MATRIX
 [[1928   62]
  [   2    8]]
 
-TOP 10 FEATURES BY IMPORTANCE
+TOP FEATURES BY IMPORTANCE
 ------------------------------------------------------------
-MERCHANT_FRAUD_RATE      0.2341
-CATEGORY_RISK_SCORE      0.1892
-COUNTRY_RISK_SCORE       0.1456
-...
+SUSPICIOUS_SCORE         0.2341
+IS_UNUSUAL_LOCATION      0.1892
+IS_SUSPICIOUS_MERCHANT   0.1456
+LOG_AMOUNT               0.1203
+LOC_MERCH_SUSPICIOUS     0.1098
+IS_NIGHT                 0.0812
+HOUR                     0.0698
 
 5-FOLD CROSS-VALIDATION
 ------------------------------------------------------------
@@ -251,12 +401,12 @@ Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V2...
   ┌─────┬───────────────┬──────────────┬───────────────────┐
   │   # │ name          │ version_name │ min_num_arguments │
   ├─────┼───────────────┼──────────────┼───────────────────┤
-  │   1 │ PREDICT       │ V2           │ 24                │
-  │   2 │ PREDICT_PROBA │ V2           │ 24                │
+  │   1 │ PREDICT       │ V2           │ 7                 │
+  │   2 │ PREDICT_PROBA │ V2           │ 7                 │
   └─────┴───────────────┴──────────────┴───────────────────┘
 ```
 
-Then deployed to SPCS (this this can take a few minutes as it builds the container):
+Then deployed to SPCS (this can take a few minutes as it builds the container):
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Check if service exists now
@@ -382,6 +532,25 @@ During any natural language coding session, errors are inevitable. The great thi
 
 ### Common Scenarios
 
+**Missing Python Binary**
+
+When `python` isn't found on the system, Cortex Code locates `python3` and retries automatically.
+
+```
+✓  WRITE  /Users/cnantasenamat/fraud-eda/eda_step4_time.py +103
+
+×  BASH  cd /Users/cnantasenamat/fraud-eda && python eda_step4_time.py
+  └─ bash: python: command not found
+
+✓  BASH  which python3
+  └─ /usr/local/bin/python3
+
+✓  BASH  cd /Users/cnantasenamat/fraud-eda && python3 eda_step4_time.py
+  ├─ === TIME OF DAY ANALYSIS ===
+  ├─ Night transactions (midnight-7am) in Fraud: 10 / 50 (20%)
+  └─ ... (23 more lines)
+```
+
 **Notebook Execution Issues**
 
 When a Jupyter kernel fails to connect, Cortex Code detects the issue and finds an alternative approach.
@@ -449,11 +618,11 @@ When training fails due to parameter issues, Cortex Code diagnoses and fixes the
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've successfully built a complete real-time fraud detection model with using only a handful of natural language prompts in [Snowflake ML](http://www.snowflake.com/ml).
+Congratulations! You've successfully built a complete real-time fraud detection model using only a handful of natural language prompts in [Snowflake ML](http://www.snowflake.com/ml).
 
 ### What You Learned
 - Generate realistic synthetic fraud data with natural language prompts
-- Perform comprehensive exploratory data analysis in Jupyter-based [Snowflake Notebooks in Workspaces](https://www.snowflake.com/en/product/features/notebooks/)
+- Perform comprehensive exploratory data analysis with automated Python scripts
 - Train an XGBoost model optimized for imbalanced fraud detection
 - Deploy models to SPCS with automatic containerization
 - Create and test REST API endpoints for real-time inference
