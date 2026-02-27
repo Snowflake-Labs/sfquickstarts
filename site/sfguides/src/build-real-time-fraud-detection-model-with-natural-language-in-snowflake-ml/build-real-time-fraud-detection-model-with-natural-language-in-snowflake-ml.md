@@ -422,7 +422,7 @@ Then deployed to SPCS (this can take a few minutes as it builds the container):
   ┌─────┬───────────┬───────┬──────────┬───────────┬────────────────────────────────────────────┐
   │   # │ name      │ port  │ protocol │ is_public │ ingress_url                                │
   ├─────┼───────────┼───────┼──────────┼───────────┼────────────────────────────────────────────┤
-  │   1 │ inference │ 5000  │ HTTP     │ true      │ at5vt3-sriwlcc-ayb38567.snowflakecomputing │
+  │   1 │ inference │ 5000  │ HTTP     │ true      │ xk7rbf2q-ml-proj-aws-us-west-2.snowflakecomputing │
   └─────┴───────────┴───────┴──────────┴───────────┴────────────────────────────────────────────┘
 ```
 
@@ -467,7 +467,7 @@ Cortex Code will generate 1,000 synthetic transactions, send them to the SPCS en
 ```
 SPCS REST API Latency Profile
   
-  Endpoint: https://cl2eaai4s-pm-pm-aws-us-west-2.snowflakecomputing.app/predict-proba
+  Endpoint: https://xk7rbf2q-ml-proj-aws-us-west-2.snowflakecomputing.app/predict-proba
   Total requests: 1,000 | Errors: 0 | Wall time: 63.8s | Throughput: 15.7 req/s
   
   Latency Percentiles
