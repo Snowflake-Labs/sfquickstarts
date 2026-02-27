@@ -56,6 +56,7 @@ By the end of this guide, you'll have a working near real-time CDC pipeline that
 - Network connectivity between Snowflake (SPCS) and the Oracle database
 - Snowflake `ACCOUNTADMIN` or a role with Openflow admin privileges
 - All Oracle source tables must have a **primary key** — tables without primary keys will silently fail to replicate
+- Each Openflow runtime supports **one connector only** — if you need multiple connectors, create a separate runtime for each
 
 <!-- ------------------------ -->
 ## Architecture
@@ -438,21 +439,23 @@ Navigate to **Snowsight > Ingestion > Openflow**, select your deployment, and op
 
 ### Deploy the Connector
 
-1. In the Openflow UI, select **Add Connector**
-2. Choose **Openflow Connector for Oracle**
+1. On the Openflow overview page, in the **Featured connectors** section, select **View more connectors**
+2. Find **Openflow Connector for Oracle** and select **Add to runtime**
+3. In the **Select runtime** dialog, choose your runtime from the **Available runtimes** drop-down and click **Add**
 
 ### Configure the Connection
 
-Provide the Oracle connection parameters recorded during the verification step:
+Provide the Oracle Source Parameters recorded during the verification step. The connector requires **two** JDBC URLs — a thin-driver URL for snapshot reads and an OCI-driver URL for the XStream CDC stream:
 
 | Parameter | Value |
 |-----------|-------|
-| Host | `<oracle_host_ip_or_dns>` |
-| Port | `1521` |
-| Service Name | `FREEPDB1` |
-| Username | `c##connectuser` |
-| Password | `ConnectUser123!` |
-| XStream Outbound Server | `XOUT1` |
+| Oracle Connection URL | `jdbc:oracle:thin:@<oracle_host_ip_or_dns>:1521/FREEPDB1` |
+| XStream Out Server URL | `jdbc:oracle:oci:@<oracle_host_ip_or_dns>:1521/FREEPDB1` |
+| Oracle Username | `c##connectuser` |
+| Oracle Password | `ConnectUser123!` |
+| XStream Out Server Name | `XOUT1` |
+
+> **Important:** The **Oracle Connection URL** uses the thin JDBC driver (`jdbc:oracle:thin:@`) and is used for snapshot operations. The **XStream Out Server URL** uses the OCI JDBC driver (`jdbc:oracle:oci:@`) and is used for the CDC stream. Both are required — omitting the XStream Out Server URL will cause errors once the snapshot phase completes and incremental replication begins.
 
 ### Configure the Replication Scope
 
@@ -516,6 +519,8 @@ COMMIT;
 SELECT * FROM <target_db>.<target_schema>.employees
 WHERE employee_id = 9999;
 ```
+
+> **Note:** Deletes in Oracle are replicated as **soft deletes** in Snowflake. The row remains in the target table with the metadata column `_SNOWFLAKE_DELETED` set to `TRUE` rather than being physically removed.
 
 ### Monitor the Pipeline
 
