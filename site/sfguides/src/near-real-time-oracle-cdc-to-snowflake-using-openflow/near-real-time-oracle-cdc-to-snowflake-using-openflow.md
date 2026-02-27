@@ -12,9 +12,33 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-The Snowflake Openflow Connector for Oracle uses Oracle's native XStream API to capture committed inserts, updates, and deletes directly from the database's redo logs. Changes are streamed into Snowflake target tables using Snowpipe Streaming, delivering end-to-end latency in seconds with minimal impact on the source OLTP system.
+Organizations running mission-critical workloads on Oracle databases face a common challenge: how to make transactional data available for analytics and AI in near real time without impacting source system performance. Traditional batch ETL processes introduce hours or even days of latency, making real-time analytics and AI applications difficult to implement.
+
+Change Data Capture (CDC) solves this by capturing only the data that has changed — inserts, updates, and deletes — directly from the database's transaction logs, rather than repeatedly scanning entire tables. This approach is lightweight, low-latency, and non-intrusive to the source system.
+
+The [Snowflake Openflow Connector for Oracle](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/about-openflow-connectors) brings CDC natively into Snowflake.
+
+> **Note:** The Openflow Connector for Oracle may require contacting your Snowflake account team for access. Check the [Openflow connectors](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/about-openflow-connectors) page for the latest availability. Built on Oracle's XStream API and Snowflake's Openflow framework, the connector streams committed changes from Oracle redo logs into Snowflake target tables using Snowpipe Streaming, delivering end-to-end latency in seconds.
 
 This guide walks you through the complete setup process, from configuring the Oracle database for XStream to deploying the Openflow connector in Snowflake.
+
+### What is Change Data Capture (CDC)?
+
+Change Data Capture is a design pattern that identifies and tracks changes made to data in a source database so that downstream systems can act on those changes. Instead of performing full table scans or scheduled bulk loads, CDC reads the database's transaction log to detect row-level inserts, updates, and deletes as they are committed.
+
+| CDC Approach | How It Works | Trade-offs |
+|-------------|-------------|------------|
+| **Log-based** | Reads the database transaction/redo logs | Lowest latency, minimal source impact, captures all changes |
+| **Trigger-based** | Database triggers fire on DML events | Adds overhead to every write operation |
+| **Query-based** | Polls tables using timestamps or version columns | Misses deletes, adds query load to source |
+
+The Openflow Connector for Oracle uses **log-based CDC** via Oracle's XStream API, which shares the same underlying technology as Oracle GoldenGate. This is the most efficient approach because it reads committed transactions directly from the redo logs without adding any load to the source database's query engine.
+
+### What is Snowflake Openflow?
+
+[Snowflake Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about) is an open, extensible, managed data integration service built on Apache NiFi. It runs natively on Snowpark Container Services (SPCS) and provides curated connectors for streaming data from various sources into Snowflake.
+
+For Oracle CDC, Openflow provides a zero-footprint, agentless architecture — there are no agents to install, manage, or patch on Oracle servers. The setup on the Oracle side is accomplished by a DBA running standard SQL commands, and from there, all integration is controlled within Snowflake.
 
 ### What You'll Learn
 - How to configure Oracle Database for XStream-based CDC
@@ -35,32 +59,27 @@ By the end of this guide, you'll have a working near real-time CDC pipeline that
 <!-- ------------------------ -->
 ## Architecture
 
-The Openflow Connector reads logical change records (LCRs) directly from the XStream outbound server queue in near real time. These change events are then streamed into Snowflake target tables using Snowpipe Streaming.
+The Openflow Connector reads logical change records (LCRs) directly from the XStream outbound server queue in near real time. These change events are then streamed immediately into Snowflake target tables using Snowpipe Streaming. This direct, memory-to-memory pipeline avoids landing data in intermediate files, resulting in fewer hops and points of failure.
 
-```
-Oracle DB (XStream Outbound Server)
-    |
-    | Logical Change Records (LCRs)
-    v
-Openflow (Apache NiFi-based runtime on SPCS)
-    |
-    | Snowpipe Streaming
-    v
-Snowflake Target Tables
-```
+![Real-time Oracle CDC to Snowflake via Openflow architecture](assets/cdc-architecture.png)
 
 | Component | Description |
 |-----------|-------------|
-| **XStream Outbound Server** | Captures committed changes from Oracle redo logs |
-| **Openflow Runtime** | Apache NiFi-based service running on Snowpark Container Services |
-| **Snowpipe Streaming** | Low-latency ingestion into Snowflake target tables |
+| **Oracle Redo Logs** | Transaction logs that record every committed change in the database |
+| **XStream Outbound Server** | Reads redo logs and exposes changes as logical change records (LCRs) |
+| **Openflow Runtime** | Apache NiFi-based service running on Snowpark Container Services that consumes LCRs |
+| **Snowpipe Streaming** | Low-latency ingestion API that loads change events into Snowflake target tables |
 
 ### Supported Environments
 
-The connector supports Oracle Database running on-premises, on Oracle Exadata, in OCI (VM/Bare Metal), and on AWS RDS Custom for Oracle.
+The connector supports Oracle Database versions 12c R2 (12.2), 18c, 19c, 21c, 23ai, and 26ai running on-premises, on Oracle Exadata, in OCI (VM/Bare Metal), and on AWS RDS Custom for Oracle.
+
+For unique requirements, the replication flow is built on the flexible Openflow framework. Teams can open the Apache NiFi canvas to expand pipelines — for example, enriching data with lookups or masking sensitive PII before it reaches Snowflake.
 
 <!-- ------------------------ -->
-## Enable ARCHIVELOG Mode
+## Setup Oracle Config
+
+### Enable ARCHIVELOG Mode
 
 Connect to Oracle as SYSDBA and verify that the database is in `ARCHIVELOG` mode. XStream requires this to read the redo logs.
 
@@ -83,9 +102,6 @@ SELECT log_mode FROM v$database;
 
 > **Note:** Enabling `ARCHIVELOG` mode requires a database restart. Plan accordingly for production systems.
 
-<!-- ------------------------ -->
-## Enable GoldenGate and Logging
-
 ### Enable GoldenGate Replication
 
 XStream requires GoldenGate replication to be enabled:
@@ -103,8 +119,7 @@ ALTER SESSION SET CONTAINER = CDB$ROOT;
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS;
 ```
 
-<!-- ------------------------ -->
-## Create XStream Tablespaces
+### Create XStream Tablespaces
 
 Create tablespaces in both the root container and the pluggable database for the XStream administrator:
 
@@ -124,10 +139,7 @@ ALTER SESSION SET CONTAINER = CDB$ROOT;
 
 > **Note:** Replace `FREEPDB1` and file paths with your actual PDB name and Oracle data directory.
 
-<!-- ------------------------ -->
-## Create XStream Users
-
-### XStream Administrator
+### Create XStream Administrator
 
 Create a common user (prefixed with `c##`) that will administer XStream:
 
@@ -159,7 +171,7 @@ END;
 /
 ```
 
-### XStream Connect User
+### Create XStream Connect User
 
 Create the user that the Openflow connector will use to connect:
 
@@ -173,8 +185,7 @@ GRANT LOCK ANY TABLE TO c##connectuser CONTAINER=ALL;
 GRANT SELECT ANY DICTIONARY TO c##connectuser CONTAINER=ALL;
 ```
 
-<!-- ------------------------ -->
-## Create XStream Outbound Server
+### Create XStream Outbound Server
 
 Create an XStream outbound server that captures changes from the schemas you want to replicate:
 
@@ -219,8 +230,7 @@ END;
 /
 ```
 
-<!-- ------------------------ -->
-## Verify Oracle Configuration
+### Verify Oracle Configuration
 
 Run the following queries to confirm the Oracle database is correctly configured:
 
@@ -270,18 +280,26 @@ Record these values for use when configuring the Openflow connector:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-CREATE ROLE IF NOT EXISTS openflow_admin_role;
-GRANT ROLE openflow_admin_role TO ROLE ACCOUNTADMIN;
 
-GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE openflow_admin_role;
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE openflow_admin_role;
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE openflow_admin_role;
-GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE openflow_admin_role;
+CREATE ROLE IF NOT EXISTS OPENFLOW_ADMIN;
+GRANT ROLE OPENFLOW_ADMIN TO USER <OPENFLOW_USER>;
+
+GRANT CREATE OPENFLOW DATA PLANE INTEGRATION ON ACCOUNT TO ROLE OPENFLOW_ADMIN;
+GRANT CREATE OPENFLOW RUNTIME INTEGRATION ON ACCOUNT TO ROLE OPENFLOW_ADMIN;
+GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE OPENFLOW_ADMIN;
 ```
+
+> **Note:** Users with a default role of `ACCOUNTADMIN` cannot log in to Openflow runtimes. Set a different default role for Openflow users.
 
 ### Create an Openflow Deployment
 
-Navigate to **Snowsight > Data > Openflow** and create a new Openflow - Snowflake Deployment. This provisions the Openflow runtime (NiFi-based) on Snowpark Container Services (SPCS).
+Navigate to **Snowsight > Ingestion > Openflow** and create a new Openflow - Snowflake Deployment. This provisions the Openflow infrastructure on Snowpark Container Services (SPCS).
+
+After creating the deployment, you must:
+
+1. **Create a Snowflake role** for the connector (see next section)
+2. **Create a runtime** within the deployment — this is where your data flows execute
+3. **Configure allowed domains** so the runtime can reach your Oracle host
 
 For detailed deployment steps, refer to the [Set up Openflow - Snowflake Deployment](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs) documentation.
 
@@ -313,7 +331,7 @@ CREATE OR REPLACE NETWORK RULE oracle_network_rule
 
 ### Open the Openflow UI
 
-Navigate to **Snowsight > Data > Openflow**, select your deployment, and open the Openflow runtime UI.
+Navigate to **Snowsight > Ingestion > Openflow**, select your deployment, and open the Openflow runtime UI.
 
 ### Deploy the Connector
 
