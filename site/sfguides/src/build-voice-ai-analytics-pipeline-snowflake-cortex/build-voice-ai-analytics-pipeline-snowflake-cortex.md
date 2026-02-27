@@ -228,7 +228,7 @@ LATERAL FLATTEN(input => PARSE_JSON(extracted_json):order_items) f;
 | `staged_files` | `DIRECTORY()` | Lists all MP3 files from the stage |
 | `transcriptions` | `AI_TRANSCRIBE` | Converts each audio file to text |
 | `extracted` | `AI_COMPLETE` | Extracts structured JSON (item, qty, size, instructions) using `mistral-large2` |
-| Final SELECT | `LATERAL FLATTEN` | Expands the `order_items` array into individual rows |
+| `Final SELECT` | `LATERAL FLATTEN` | Expands the `order_items` array into individual rows |
 
 Verify the results:
 
