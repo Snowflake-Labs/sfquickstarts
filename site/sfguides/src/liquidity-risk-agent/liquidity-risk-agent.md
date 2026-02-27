@@ -32,7 +32,7 @@ The solution implements a complete liquidity risk management system that calcula
 
 ## How It Works
 
-This solution leverages Snowflake's native capabilities to create a seamless, end-to-end liquidity risk workflow without external tools or data movement.
+![How It Works](assets/howitworks.png)
 
 **Data Foundation**: The solution creates a comprehensive data model with position tables (580K+ records), cash flow tables (200K+ inflows and outflows), market data (3.6M+ records), and counterparty information (2K+ records) across multiple business units and regions.
 

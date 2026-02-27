@@ -3,7 +3,7 @@ id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
-status: Published
+status: Hidden
 author:  Snowflake DevRel Team
 
 # Snowflake Guide Basics
@@ -14,7 +14,7 @@ The following sections explain the various headings of a guide that are required
 
 Your guide will reside in this [sfguides/src folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src)
 
-### Overview TEST Images upload
+### Overview 
 
 Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
@@ -34,17 +34,12 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 - A [GitHub](https://github.com/) Account 
 - (OPTIONAL) A code editor like [VSCode](https://code.visualstudio.com/download) if you choose to edit locally
 
+
 ### What You’ll Build 
 Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
-### Test Images 11 (Update image)
-![Synthetic Data Generator Demo](assets/puppy.jpg)
 
-### Test Images 11 (New Image)
-![Test Image](assets/puppy01.jpg)
-
-### Test Images 11 (New Image)
-![Test Image](assets/puppy02.jpg)
+### Layout Basics
 
 At a minimum, the Guide should include the following headings and subheadings. A single sfguide consists of multiple steps. 
 These steps are defined in Markdown using Header 2 tag `##`. Sub-steps will use a Header 3 tag `###` and so forth.  Please avoid going beyond H4 `####`.
@@ -382,4 +377,3 @@ You can use the Google Docs feature of saving to Markdown, however **please revi
 - Video on [How to Fork a Repo](https://youtu.be/ePRJHFXU6n4)
 - [Markdown template that can be used](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template).
 - Video on [How to Edit a Guide](https://youtu.be/yd9LXsvTSTU)
-
