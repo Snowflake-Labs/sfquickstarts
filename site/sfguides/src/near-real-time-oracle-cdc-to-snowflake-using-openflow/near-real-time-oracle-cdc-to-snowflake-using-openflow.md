@@ -18,7 +18,7 @@ Change Data Capture (CDC) solves this by capturing only the data that has change
 
 The [Snowflake Openflow Connector for Oracle](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/about-openflow-connectors) brings CDC natively into Snowflake.
 
-> **Note:** The Openflow Connector for Oracle may require contacting your Snowflake account team for access. Check the [Openflow connectors](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/about-openflow-connectors) page for the latest availability. Built on Oracle's XStream API and Snowflake's Openflow framework, the connector streams committed changes from Oracle redo logs into Snowflake target tables using Snowpipe Streaming, delivering end-to-end latency in seconds.
+Built on Oracle's XStream API and Snowflake's Openflow framework, the connector streams committed changes from Oracle redo logs into Snowflake target tables using Snowpipe Streaming, delivering end-to-end latency in seconds.
 
 This guide walks you through the complete setup process, from configuring the Oracle database for XStream to deploying the Openflow connector in Snowflake.
 
