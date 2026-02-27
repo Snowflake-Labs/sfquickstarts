@@ -307,6 +307,10 @@ transactions and run the predictions using the REST API for online
 Inference running on SPCS and show the latency profile.
 ```
 
+> Note: 
+> Cortex Code may suggest a hybrid approach instead (e.g., using the Python SDK `mv.run()` or SQL service functions).
+> If that happens, prompt it with: *"Ask for the PAT token so that you can call the REST API"*. It will then guide you through generating one via Snowsight and proceed with direct REST calls.
+
 ### What Gets Generated
 
 Cortex Code will generate 1,000 synthetic transactions, send them to the SPCS endpoint, and report a latency profile:
