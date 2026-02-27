@@ -71,9 +71,28 @@ The Openflow Connector reads logical change records (LCRs) directly from the XSt
 | **Openflow Runtime** | Apache NiFi-based service running on Snowpark Container Services that consumes LCRs |
 | **Snowpipe Streaming** | Low-latency ingestion API that loads change events into Snowflake target tables |
 
+### Journal Table and Merge Pattern
+
+The connector uses a two-stage landing pattern. Change events are first written to a **journal table** — an append-only staging table that records every insert, update, and delete operation with metadata such as operation type and timestamp. A scheduled **merge task** then applies those changes to the final **target table**, collapsing multiple operations on the same row into the latest state.
+
+This separation ensures that no change events are lost during ingestion and that the target table always reflects a consistent, deduplicated view of the source. The merge runs on a configurable schedule — the default interval is typically sufficient for near real-time use cases, but you can adjust it in the connector settings to balance freshness against compute cost.
+
 ### Supported Environments
 
-The connector supports Oracle Database versions 12c R2 (12.2), 18c, 19c, 21c, 23ai, and 26ai running on-premises, on Oracle Exadata, in OCI (VM/Bare Metal), and on AWS RDS Custom for Oracle.
+The connector supports Oracle Database versions 12c R2 (12.2), 18c, 19c, 21c, 23ai, and 26ai in the following environments:
+
+| Status | Environment |
+|--------|-------------|
+| **Supported** | On-premises |
+| **Supported** | Oracle Exadata |
+| **Supported** | OCI VM / Bare Metal |
+| **Supported** | AWS RDS Custom for Oracle |
+| **Supported** | AWS RDS Standard Single-tenant |
+| **Not Supported** | AWS RDS Standard Multi-tenant |
+| **Not Supported** | Oracle Autonomous Database (ATP / ADW) |
+| **Not Supported** | Oracle SaaS (Fusion, NetSuite) |
+
+> **Note:** XStream requires SYSDBA-level access and control over redo log configuration. Environments that restrict DBA privileges or do not expose redo logs (multi-tenant RDS, Autonomous, SaaS) are not compatible.
 
 For unique requirements, the replication flow is built on the flexible Openflow framework. Teams can open the Apache NiFi canvas to expand pipelines — for example, enriching data with lookups or masking sensitive PII before it reaches Snowflake.
 
@@ -159,6 +178,14 @@ Switch to the root container and enable supplemental logging for all columns:
 ALTER SESSION SET CONTAINER = CDB$ROOT;
 ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS;
 ```
+
+> **Production Recommendation:** Database-wide supplemental logging captures all columns on every table, which increases redo log volume. For production systems, consider enabling supplemental logging only on the specific tables you plan to replicate:
+>
+> ```sql
+> ALTER TABLE schema_name.table_name ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS;
+> ```
+>
+> This reduces redo generation overhead on tables that are not part of the replication scope.
 
 ### Create XStream Tablespaces
 
@@ -332,6 +359,8 @@ Record these values for use when configuring the Openflow connector:
 | **Password** | `ConnectUser123!` |
 | **XStream Server** | `XOUT1` |
 
+> **Tip:** The XStream outbound server URL requires the Oracle SID, not the `GLOBAL_DB_NAME`. If your `GLOBAL_DB_NAME` includes a domain suffix (e.g., `ORCL.WORLD`), strip the domain and use only the SID portion (e.g., `ORCL`). The connection will fail if the domain suffix is included.
+
 <!-- ------------------------ -->
 ## Set Up Openflow in Snowflake
 
@@ -354,6 +383,8 @@ GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE OPENFLOW_ADMIN;
 
 Navigate to **Snowsight > Ingestion > Openflow** and create a new Openflow - Snowflake Deployment. This provisions the Openflow infrastructure on Snowpark Container Services (SPCS).
 
+> **Alternative — BYOC Deployment:** Enterprise customers who need to run Openflow in their own cloud environment can use a Bring Your Own Cloud (BYOC) deployment instead of SPCS. BYOC requires Openflow version 0.55.0 or later. This guide covers the SPCS deployment model; for BYOC setup, refer to the [Openflow documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about).
+
 After creating the deployment, you must:
 
 1. **Create a Snowflake role** for the connector (see next section)
@@ -361,6 +392,8 @@ After creating the deployment, you must:
 3. **Configure allowed domains** so the runtime can reach your Oracle host
 
 For detailed deployment steps, refer to the [Set up Openflow - Snowflake Deployment](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs) documentation.
+
+> **Important — Runtime Sizing:** The Oracle connector requires a **Medium** runtime at minimum. Small runtimes do not have sufficient resources and will fail. Multi-node runtimes are also not supported — set both minimum and maximum nodes to **1**. Do not enable auto-scaling.
 
 ### Create a Snowflake Role for the Connector
 
@@ -384,6 +417,24 @@ CREATE OR REPLACE NETWORK RULE oracle_network_rule
   TYPE = HOST_PORT
   VALUE_LIST = ('<oracle_host>:1521');
 ```
+
+### Create External Access Integration
+
+A network rule alone is not sufficient — SPCS requires an External Access Integration (EAI) to allow outbound traffic. Create the EAI and attach the network rule:
+
+```sql
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION oracle_eai
+  ALLOWED_NETWORK_RULES = (oracle_network_rule)
+  ENABLED = TRUE;
+```
+
+Grant the Openflow admin role permission to use the integration:
+
+```sql
+GRANT USAGE ON INTEGRATION oracle_eai TO ROLE OPENFLOW_ADMIN;
+```
+
+> **Note:** Attach this EAI to your Openflow runtime when creating or updating the runtime configuration. Without it, the connector will fail to connect to the Oracle host at runtime. See [Create runtime](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs-create-runtime) for details on configuring external access integrations for an Openflow runtime.
 
 <!-- ------------------------ -->
 ## Configure the Oracle Connector
@@ -417,6 +468,8 @@ Select which schemas and tables to replicate:
 - **Schemas:** `HR`, `CO` (or whichever schemas you configured in the XStream outbound server)
 - **Tables:** Select specific tables or replicate all tables within the selected schemas
 
+> **Tip:** Snowflake target tables in the connector ingestion parameters must be specified as three-part fully qualified names: `DATABASE.SCHEMA.TABLE`. Two-part names (e.g., `SCHEMA.TABLE`) will cause errors.
+
 ### Configure the Snowflake Target
 
 | Parameter | Value |
@@ -424,6 +477,16 @@ Select which schemas and tables to replicate:
 | Target Database | `<your_target_database>` |
 | Target Schema | `<your_target_schema>` |
 | Table Naming | Match source table names (default) |
+
+### Verify Configuration Before Starting
+
+Before enabling the connector, run **Verify Config** on the controller services and processors to catch configuration errors early:
+
+1. In the Openflow UI, right-click each **controller service** (e.g., the Oracle connection pool) and select **Verify Config**
+2. Right-click each **processor** in the flow and select **Verify Config**
+3. Resolve any reported errors — common issues include bad credentials, unreachable Oracle host, incorrect XStream server name, or missing EAI configuration
+
+> **Tip:** Fixing issues at this stage is far easier than debugging a failed flow at runtime. Verify Config validates connectivity and credentials without starting data movement.
 
 ### Start the Connector
 
@@ -521,6 +584,11 @@ ALTER DATABASE ADD SUPPLEMENTAL LOG DATA (PRIMARY KEY) COLUMNS;
 <!-- ------------------------ -->
 ## Cleanup
 
+> **Caution:** The commands below permanently remove the XStream configuration, users, and supplemental logging. Before proceeding:
+> - **Stop the Openflow connector** in the Openflow UI first. Dropping the outbound server while the connector is running will cause unrecoverable errors and may require a full re-snapshot.
+> - **Verify licensing implications.** If you are using the Embedded licensing model, dropping and re-creating the XStream outbound server may require re-provisioning the Oracle license at additional cost.
+> - **Confirm no other applications** depend on the XStream outbound server, supplemental logging, or GoldenGate replication settings before disabling them.
+
 To remove the XStream configuration from Oracle:
 
 ```sql
@@ -536,6 +604,43 @@ ALTER DATABASE DROP SUPPLEMENTAL LOG DATA (ALL) COLUMNS;
 
 ALTER SYSTEM SET enable_goldengate_replication=FALSE SCOPE=BOTH;
 ```
+
+<!-- ------------------------ -->
+## Tips for Production
+
+The steps above are sufficient for a proof-of-concept. For production deployments, consider the following DBA best practices:
+
+### Check I/O Headroom
+
+XStream capture reads redo logs continuously. Before enabling CDC on a busy database, verify that the storage subsystem has sufficient I/O headroom to handle the additional sequential read load. Monitor with `V$IOSTAT_FILE` and your OS-level I/O metrics.
+
+### Resize Redo Logs
+
+Default redo log sizes (50–200 MB) cause frequent log switches under CDC workloads, which increases checkpoint overhead. Resize redo logs to **4–8 GB** to reduce switch frequency:
+
+```sql
+-- Check current redo log sizes
+SELECT group#, bytes/1024/1024 AS size_mb, status FROM v$log;
+```
+
+Consult Oracle documentation for the redo log resize procedure, as it requires cycling log groups.
+
+### Monitor V$XSTREAM_CAPTURE
+
+Regularly monitor the capture process to detect lag or bottlenecks:
+
+```sql
+SELECT CAPTURE_NAME, STATE, TOTAL_MESSAGES_CAPTURED,
+       TOTAL_MESSAGES_ENQUEUED, CAPTURE_MESSAGE_CREATE_TIME,
+       ENQUEUE_MESSAGE_CREATE_TIME
+FROM V$XSTREAM_CAPTURE;
+```
+
+A growing gap between `CAPTURE_MESSAGE_CREATE_TIME` and `ENQUEUE_MESSAGE_CREATE_TIME` indicates the capture process is falling behind.
+
+### Consider Downstream Capture for Extreme Scale
+
+For very high-throughput databases where the redo read overhead is a concern, Oracle supports **downstream capture** — mining redo logs on a separate server rather than the production instance. This offloads all CDC processing from the primary database at the cost of additional infrastructure.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
