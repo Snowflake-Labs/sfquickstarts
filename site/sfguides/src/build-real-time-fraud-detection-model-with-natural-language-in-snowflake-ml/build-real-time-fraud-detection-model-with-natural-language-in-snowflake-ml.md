@@ -114,8 +114,7 @@ Before training a model, we need to understand our data patterns. Cortex Code ca
 ### Prompt
 
 ```
-Do exploratory data analysis and recommend 
-the features needed to train a model that can predict fraud.
+Do exploratory data analysis and recommend the features needed to train a model that can predict fraud.
 ```
 
 ### What Gets Generated
