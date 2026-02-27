@@ -18,24 +18,7 @@ You'll use Snowflake's built-in AI functions to transcribe audio, extract struct
 
 ### Architecture
 
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Order Text    │────▶│  Google TTS     │────▶│   Audio Stage   │
-│   (Phrases)     │     │  Generate MP3   │     │   @AUDIO_STAGE  │
-└─────────────────┘     └─────────────────┘     └────────┬────────┘
-                                                         │
-                                                         ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│ CUSTOMER_ORDERS │◀────│  AI_COMPLETE    │◀────│  AI_TRANSCRIBE  │
-│    (Table)      │     │  Extract JSON   │     │  Speech-to-Text │
-└────────┬────────┘     └─────────────────┘     └─────────────────┘
-         │
-         ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Semantic View  │────▶│  Cortex Agent   │────▶│   Natural Lang  │
-│   (Analytics)   │     │ (Orchestration) │     │    Queries      │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
+![Voice Order Processing Architecture](assets/architecture.jpeg)
 
 ### Prerequisites
 
