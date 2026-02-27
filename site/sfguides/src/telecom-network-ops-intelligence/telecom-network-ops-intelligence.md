@@ -1,7 +1,7 @@
 author: Sreedhar Rao, Pedro Jose, Siddharth Pandit, Joviane Bellegarde
 id: telecom-network-ops-intelligence
 summary: Build an end-to-end telecom network operations solution with 4 persona dashboards, 3D visualization, and Snowflake Intelligence for natural language queries
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/telecommunications, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/streamlit-in-snowflake, snowflake-site:taxonomy/snowflake-feature/cortex-ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/telecom, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/streamlit-in-snowflake, snowflake-site:taxonomy/snowflake-feature/cortex-ai
 environments: web
 language: en
 status: Published
@@ -198,13 +198,13 @@ In Snowsight, click **AI & ML**, then **Snowflake Intelligence** in the left nav
 
 The setup script automatically creates the Semantic View and Snowflake Intelligence Agent:
 
-**Semantic View** (**NETWORK_SEMANTIC_VIEW**)::
+**Semantic View** (**NETWORK_SEMANTIC_VIEW**):
 - Table definitions for DIM_CELL_SITE and FACT_RAN_PERFORMANCE
 - Column descriptions for natural language understanding
 - Relationships between dimension and fact tables
 - Verified queries for common analysis patterns
 
-**Snowflake Intelligence Agent** (**NETWORK_OPERATIONS_AGENT**)::
+**Snowflake Intelligence Agent** (**NETWORK_OPERATIONS_AGENT**):
 - Uses Snowflake's default orchestration model for natural language understanding
 - System prompt configured for telecom domain expertise
 - Semantic View tool for data access
@@ -233,6 +233,8 @@ Identify 5G cells with PDU session establishment problems.
 
 **`Which 5G cells in Lisboa have PDU session issues?`**
 
+---
+
 ### Network Performance
 
 **1. Technology Comparison**
@@ -253,6 +255,8 @@ Identify regions with the highest congestion risk based on utilization patterns.
 
 **`Which regions have the highest congestion risk?`**
 
+---
+
 ### Network Manager (Operations)
 
 **1. SLA Compliance Overview**
@@ -272,6 +276,8 @@ Review availability metrics by city to inform capacity planning.
 Determine which region has the most sites needing attention.
 
 **`Which region has the most sites needing attention?`**
+
+---
 
 ### Executive (C-Level)
 
@@ -331,5 +337,5 @@ Congratulations! You have successfully built a comprehensive telecom network ope
 ### Related Resources
 
 **Snowflake Documentation:**
-- <a href="https://docs.snowflake.com/en/user-guide/snowflake-intelligence/overview" target="_blank">Snowflake Intelligence</a>
+- <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence" target="_blank">Snowflake Intelligence</a>
 - <a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a>

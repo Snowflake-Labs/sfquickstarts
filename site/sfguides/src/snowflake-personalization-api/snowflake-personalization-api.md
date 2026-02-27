@@ -454,4 +454,4 @@ To get more comfortable with this solution, implement new endpoints with new dat
 
 ### Resources
 
-If you want to build a Data API using Snowflake standard tables for analytical queries, be sure to check out the previous version of this [here](https://github.com/sfc-gh-bculberson/lab_data_api_python). 
+If you want to build a Data API using Snowflake standard tables for analytical queries, be sure to check out the previous version of this [here](https://github.com/Snowflake-Labs/lab_data_api_python). 
