@@ -23,6 +23,8 @@ The system includes:
 
 ![Cross-Model Comparison Dashboard](assets/persona_comparison.png)
 
+![Model Compare - Cortex REST & SQL](assets/ModelCompare.png)
+
 ### Prerequisites
 - Snowflake account with ACCOUNTADMIN role
 - Python 3.9+ installed
@@ -105,12 +107,25 @@ Create a virtual environment and install the required packages:
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-pip install streamlit pandas altair snowflake-connector-python requests numpy
+pip install -r requirements.txt
 ```
 
-### Step 2: Configure PAT Token
+This installs all dependencies including:
+- **Streamlit, Pandas, Altair** - Dashboard UI
+- **Snowflake Connector** - Database connectivity
+- **LiteLLM** - Unified API for OpenAI, Anthropic, Mistral models
 
-Ensure your PAT is configured in `~/.snowflake/config.toml`:
+### Step 2: Configure Snowflake Connection
+
+Connect using Snow CLI for interactive authentication:
+
+```bash
+snow connection add myaccount
+snow connection set-default myaccount
+snow connection test myaccount
+```
+
+Alternatively, configure PAT token in `~/.snowflake/config.toml`:
 
 ```toml
 [connections.myaccount]
@@ -121,6 +136,30 @@ warehouse = "COMPUTE_WH"
 database = "CORTEX_DB"
 schema = "AGENTS"
 ```
+
+> **Note:** If you see "Authentication token has expired" errors, run `snow connection test myaccount` to refresh the connection.
+
+### Troubleshooting: Authentication Token Expired (Error 390114)
+
+If you encounter this error in the dashboard:
+
+```
+390114 (08001): Authentication token has expired. The user must authenticate again.
+```
+
+**Solution:** Run the following command in your terminal to refresh the authentication token:
+
+```bash
+snow connection test myaccount
+```
+
+This will re-authenticate with Snowflake and refresh your session token. Then restart the Streamlit dashboard:
+
+```bash
+streamlit run dashboard.py
+```
+
+The dashboard includes auto-reconnect logic that will attempt to refresh the connection automatically, but if the token is fully expired, a manual refresh via Snow CLI is required.
 
 ### Step 3: Verify Cortex Access
 
@@ -1116,6 +1155,96 @@ workflow.add_edge("record", END)
 
 app = workflow.compile()
 ```
+
+<!-- ------------------------ -->
+## Multimodal Vision with Cortex
+
+Use the **Cortex Chat Completions API** for image understanding with Claude and GPT-4o vision models. This enables analysis of egocentric frames from AR devices like **Project Aria**.
+
+![Multimodal Egocentric Analysis](assets/MultimodalEgocentric1.png)
+
+### Vision API Call
+
+The Cortex Chat Completions API supports OpenAI-compatible format with base64-encoded images:
+
+```python
+import requests
+import base64
+import tomllib
+import os
+
+def call_vision_model(model: str, prompt: str, image_path: str):
+    """Call Cortex vision model with an image."""
+    # Load credentials
+    with open(os.path.expanduser("~/.snowflake/config.toml"), "rb") as f:
+        config = tomllib.load(f)
+    pat = config["connections"]["myaccount"]["password"]
+    account = config["connections"]["myaccount"]["account"].lower().replace("_", "-")
+    
+    # Encode image to base64
+    with open(image_path, "rb") as img_file:
+        image_base64 = base64.b64encode(img_file.read()).decode("utf-8")
+    
+    url = f"https://{account}.snowflakecomputing.com/api/v2/cortex/v1/chat/completions"
+    
+    payload = {
+        "model": model,  # claude-sonnet-4-5, gpt-4o, etc.
+        "messages": [{
+            "role": "user",
+            "content": [
+                {"type": "text", "text": prompt},
+                {"type": "image_url", "image_url": {
+                    "url": f"data:image/jpeg;base64,{image_base64}"
+                }}
+            ]
+        }],
+        "max_completion_tokens": 1024
+    }
+    
+    headers = {"Authorization": f"Bearer {pat}", "Content-Type": "application/json"}
+    response = requests.post(url, headers=headers, json=payload)
+    return response.json()["choices"][0]["message"]["content"]
+
+# Analyze an egocentric image
+result = call_vision_model(
+    model="claude-sonnet-4-5",
+    prompt="This is an egocentric view from AR glasses. Describe the scene.",
+    image_path="egocentric_frame.jpg"
+)
+print(result)
+```
+
+### Project Aria Integration
+
+[Project Aria](https://facebookresearch.github.io/projectaria_tools/gen2/) is Meta's AR research glasses with a 12MP RGB camera. Extract frames from Aria VRS recordings for vision analysis:
+
+```python
+# pip install projectaria-tools[all]
+from projectaria_tools.core import data_provider
+
+# Load VRS recording
+provider = data_provider.create_vrs_data_provider("recording.vrs")
+rgb_stream = provider.get_stream_id_from_label("camera-rgb")
+
+# Extract RGB frame
+image_data = provider.get_image_data_by_index(rgb_stream, 0)
+image_array = image_data[0].to_numpy_array()
+
+# Save frame for vision analysis
+from PIL import Image
+Image.fromarray(image_array).save("aria_frame.jpg")
+```
+
+![Multimodal Vision Comparison](assets/MultimodalEgocentric2.png)
+
+### Supported Vision Models
+
+| Model | Provider | Use Case |
+|-------|----------|----------|
+| claude-sonnet-4-5 | Cortex | Scene understanding, detailed analysis |
+| claude-sonnet-4-6 | Cortex | Latest Claude vision capabilities |
+| gpt-4o | Cortex | Fast, accurate image understanding |
+| gpt-4o-mini | Cortex | Cost-effective vision tasks |
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
