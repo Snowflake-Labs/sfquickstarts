@@ -42,7 +42,15 @@ A interactive analytics dashboard, also known as a Plotly Studio app
  3. Once Plotly Studio instructs you, click the `Configure Credentials` button, fill out your credentials, and click the `Save Credentials` button.
 ![Alt text](assets/fill-credentials.jpg)
  
- 4. Using the chat feature on the left side of the screen, answer Plotly Studio's questions so you can connect to your table of interest. In most cases you will have to guide it by telling it that you would like to connect to your `table name` with your `database name`.
+ 4. Using the chat feature on the left side of the screen, answer Plotly Studio's questions so you can connect to your table of interest. In most cases you will have to guide Plotly Studio by telling it that you would like to connect to your `table name` with your `database name`. In our example, we ask Plotly Studio the following: `Please connect to the "ALL_STOCKS_5YR" table that is located in the "DASH_TUTORIALS_FINANCE" database'.
+![Alt text](assets/connection-prompt.jpg)
+ 
+ 5. Once you see a preview of you table, cick the `Continue` button to start building your dashbaord.
+![Alt text](assets/continue-button.jpg)
 
+
+## Build your Dashboard
+
+1. 
 
 
