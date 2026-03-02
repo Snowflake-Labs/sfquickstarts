@@ -51,6 +51,20 @@ A interactive analytics dashboard, also known as a Plotly Studio app
 
 ## Build your Dashboard
 
-1. 
+1. Click the `Generate Charts` button to generate the first set of charts.
+![Alt text](assets/generate-charts.jpg)
 
+2. You'll see the charts generating with the spinner icon next to each chart, located on the left side of the screen. Once the spinner disappears, you can enter the chart and review it.
 
+3. You can also edit the chart or the corresponding controls by updating the prompt in the `Editable Prompt` section, then clicking the purple submit button.
+![Alt text](assets/edit-chart.jpg)
+
+4. If you'd like suggestions for various other charts, simply go to the `Explore` tab, located in the top left. And once you find a chart suggestion that interests you, click the `Generate` button.
+![Alt text](assets/explore-tab.jpg)
+
+5. Go back to the `App` tab and review your app. Once you're happy with your app, click the `Publish` button, located in the top right. This will publish the app to the Cloud.
+![Alt text](assets/app-publish.jpg)
+![Alt text](assets/publish.jpg)
+
+6. Share your app by going to Plotly Cloud and clicking the eye icon next to your app name.
+![Alt text](assets/cloud.jpg)
