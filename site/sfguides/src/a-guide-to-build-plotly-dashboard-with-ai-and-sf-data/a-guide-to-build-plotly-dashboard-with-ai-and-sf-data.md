@@ -39,7 +39,10 @@ A interactive analytics dashboard, also known as a Plotly Studio app
  2. Click the `Connect to Snowflake` button
 ![Alt text](assets/connect-to-snowflake.jpg)
  
- 3. asdfasf
+ 3. Once Plotly Studio instructs you, click the `Configure Credentials` button, fill out your credentials, and click the `Save Credentials` button.
+![Alt text](assets/fill-credentials.jpg)
+ 
+ 4. Using the chat feature on the left side of the screen, answer Plotly Studio's questions so you can connect to your table of interest. In most cases you will have to guide it by telling it that you would like to connect to your `table name` with your `database name`.
 
 
 
