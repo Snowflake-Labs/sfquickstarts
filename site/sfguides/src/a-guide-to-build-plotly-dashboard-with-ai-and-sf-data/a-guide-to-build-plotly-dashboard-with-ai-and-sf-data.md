@@ -37,7 +37,7 @@ A interactive analytics dashboard, also known as a Plotly Studio app
  1. Launch Plotly Studio and click the `New Project` button
 
  2. Click the `Connect to Snowflake` button
-
+![Alt text](assets/connect-to-snowflake.jpg)
  
  3. asdfasf
 
