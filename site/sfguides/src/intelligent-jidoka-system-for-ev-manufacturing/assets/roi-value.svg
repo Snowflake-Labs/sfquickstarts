@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 350" width="900" height="350">
+  <defs>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:0.1" />
+    </linearGradient>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#29b5e8;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#0ea5e9;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="350" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" text-anchor="middle">Business Value: Quantified Outcomes</text>
+  <text x="450" y="60" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="14" text-anchor="middle">Measurable improvements tied to production KPIs</text>
+  
+  <!-- Metric Cards Row -->
+  <!-- Card 1: Speed -->
+  <rect x="40" y="90" width="195" height="160" rx="12" fill="url(#greenGradient)" stroke="#10b981" stroke-width="2"/>
+  <text x="137" y="120" fill="#10b981" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">TIME TO DECISION</text>
+  <text x="137" y="165" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="42" font-weight="700" text-anchor="middle">98%</text>
+  <text x="137" y="195" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">FASTER</text>
+  <text x="137" y="225" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">4 hours → 5 minutes</text>
+  <text x="137" y="242" fill="#64748b" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">Root cause analysis</text>
+  
+  <!-- Card 2: Efficiency -->
+  <rect x="255" y="90" width="195" height="160" rx="12" fill="url(#greenGradient)" stroke="#10b981" stroke-width="2"/>
+  <text x="352" y="120" fill="#10b981" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">PROCESS EFFICIENCY</text>
+  <text x="352" y="165" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="42" font-weight="700" text-anchor="middle">+15%</text>
+  <text x="352" y="195" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">OPE IMPROVEMENT</text>
+  <text x="352" y="225" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">65% → 80% throughput</text>
+  <text x="352" y="242" fill="#64748b" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">Hidden capacity recovered</text>
+  
+  <!-- Card 3: Downtime -->
+  <rect x="470" y="90" width="195" height="160" rx="12" fill="url(#greenGradient)" stroke="#10b981" stroke-width="2"/>
+  <text x="567" y="120" fill="#10b981" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">STARVATION EVENTS</text>
+  <text x="567" y="165" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="42" font-weight="700" text-anchor="middle">-20%</text>
+  <text x="567" y="195" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">REDUCTION</text>
+  <text x="567" y="225" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">Fewer AGV-related stops</text>
+  <text x="567" y="242" fill="#64748b" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">Predictive maintenance</text>
+  
+  <!-- Card 4: Financial -->
+  <rect x="685" y="90" width="175" height="160" rx="12" fill="url(#blueGradient)" stroke="#29b5e8" stroke-width="2"/>
+  <text x="772" y="120" fill="#29b5e8" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">THROUGHPUT VALUE</text>
+  <text x="772" y="165" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="36" font-weight="700" text-anchor="middle">$42.5K</text>
+  <text x="772" y="195" fill="#29b5e8" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">PER HOUR</text>
+  <text x="772" y="225" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">Real-time visibility</text>
+  <text x="772" y="242" fill="#64748b" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">Financial impact tracking</text>
+  
+  <!-- Bottom Summary -->
+  <rect x="40" y="270" width="820" height="60" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="450" y="300" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">Annual Impact: Millions in recovered production value for a typical Gigafactory</text>
+  <text x="450" y="320" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">ROI model built on transparent, auditable calculations tied to actual production metrics</text>
+</svg>
+
