@@ -1,0 +1,50 @@
+[
+  {
+    "log_id": "LOG-2026-003-001",
+    "vehicle_id": "VH-0089",
+    "log_timestamp": "2026-01-17T08:15:00",
+    "event_type": "COOLING_SYSTEM",
+    "severity": "CRITICAL",
+    "description": "Engine overheating reported. Found failed thermostat and minor coolant leak at water pump.",
+    "technician": "David Thompson",
+    "service_center": "Denver Mountain Fleet",
+    "parts_replaced": ["thermostat", "water pump", "coolant"],
+    "diagnostic_codes": ["P0128", "P0217"],
+    "labor_hours": 6.0,
+    "total_cost": 890.00,
+    "odometer_reading": 156780,
+    "next_service_date": "2026-01-24"
+  },
+  {
+    "log_id": "LOG-2026-003-002",
+    "vehicle_id": "VH-0067",
+    "log_timestamp": "2026-01-17T10:30:00",
+    "event_type": "ELECTRICAL_REPAIR",
+    "severity": "MEDIUM",
+    "description": "Intermittent power window failure. Replaced driver side window motor and switch.",
+    "technician": "Jennifer Adams",
+    "service_center": "Denver Mountain Fleet",
+    "parts_replaced": ["window motor - driver", "window switch assembly"],
+    "diagnostic_codes": [],
+    "labor_hours": 2.5,
+    "total_cost": 345.00,
+    "odometer_reading": 89230,
+    "next_service_date": "2026-04-17"
+  },
+  {
+    "log_id": "LOG-2026-003-003",
+    "vehicle_id": "VH-0001",
+    "log_timestamp": "2026-01-17T14:45:00",
+    "event_type": "FUEL_SYSTEM",
+    "severity": "HIGH",
+    "description": "Poor fuel economy investigation. Fuel injector cleaning performed. One injector replaced.",
+    "technician": "Mark Stevens",
+    "service_center": "Salt Lake City Hub",
+    "parts_replaced": ["fuel injector - cylinder 3", "fuel filter"],
+    "diagnostic_codes": ["P0171", "P0174", "P0303"],
+    "labor_hours": 4.5,
+    "total_cost": 520.00,
+    "odometer_reading": 201450,
+    "next_service_date": "2026-02-17"
+  }
+]

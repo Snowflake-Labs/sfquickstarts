@@ -168,6 +168,25 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Agentic AI for Asset Management using Snowflake Public Data",
+      "categories": [
+        "snowflake-site:taxonomy/industry/financial-services",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants",
+        "snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-search",
+        "snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence",
+        "snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/agentic-ai-for-asset-management/",
+      "summary": "Cortex-powered asset management agents in Snowflake Intelligence",
+      "lastUpdatedAt": "2026-01-27"
+    },
+    {
       "title": "Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -211,6 +230,27 @@
       "url": "https://www.snowflake.com/en/developers/guides/ai-powered-embedded-analytics-using-thoughtspot/",
       "summary": "Embed AI-powered analytics with ThoughtSpot and Snowflake for natural language search and self-service business intelligence.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "AI-Powered Predictive Grid Maintenance",
+      "categories": [
+        "snowflake-site:taxonomy/industry/manufacturing",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants",
+        "snowflake-site:taxonomy/snowflake-feature/model-development",
+        "snowflake-site:taxonomy/snowflake-feature/applied-analytics",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-search",
+        "snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark",
+        "snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions",
+        "snowflake-site:taxonomy/solution-center/certification/certified-solution"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/ai-powered-predictive-grid-maintenance/",
+      "summary": "AI-powered predictive maintenance solution for power grid transformers built on Snowflake",
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "AI Video Search with Snowflake and Twelve Labs",
@@ -444,12 +484,36 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Best Practices for Creating Semantic Views for Cortex Analyst",
+      "categories": [
+        "quickstart"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/best-practices-semantic-views-cortex-analyst/",
+      "summary": "Learn best practices for designing high-quality semantic views for Cortex Analyst using Snowflake’s AI-assisted “autopilot” workflow.",
+      "lastUpdatedAt": "2026-01-27"
+    },
+    {
       "title": "Best Practices for Building Cortex Agents",
       "categories": [],
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/",
       "summary": "",
       "lastUpdatedAt": "2025-12-11"
+    },
+    {
+      "title": "Better Together: Unleash AI-Powered BI with Snowflake and Amazon Quick",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/business-intelligence",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/better-together-snowflake-sv-amazon-quicksight/",
+      "summary": "This is a Quickstart for building Snowflake and Amazon Quicksight highlight Snowflake Semantic View as part of better together enablement",
+      "lastUpdatedAt": "2026-01-28"
     },
     {
       "title": "Build a Bioinformatics Solubility Dashboard in Snowflake",
@@ -598,7 +662,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-private-custom-api-in-python/",
       "summary": "Use Ockam and Python/Flask to create private Python APIs for Snowflake with VPC connectivity for secure internal application access and integrations.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Build a Streaming Data Pipeine in Python",
@@ -609,7 +673,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-a-streaming-data-pipeline-in-python/",
       "summary": "Build streaming data pipelines in Python with Rowset API, Snowflake Dynamic Tables, and Streamlit for real-time data ingestion.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Build a Visual Concept/Idea Generator using a Text-to-Image AI Model",
@@ -625,6 +689,18 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Build Agent-Powered Workflows Using Cortex AI and Managed MCP Servers",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/build-agent-powered-workflows/",
+      "summary": "building agent-powered workflows using Snowflake Cortex AI and Managed MCP Servers",
+      "lastUpdatedAt": "2026-01-22"
+    },
+    {
       "title": "Build Agentic Application with Anthropic In Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -635,7 +711,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/build-agentic-application-in-snowflake/",
       "summary": "Build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI for autonomous task execution and intelligent workflows.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-26"
     },
     {
       "title": "Build Agentic Workflows with Hugging Face Smolagents in Snowflake",
@@ -678,6 +754,25 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Build an AI Assistant for Telco using AI SQL and Snowflake Intelligence",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence",
+        "snowflake-site:taxonomy/industry/telecommunications",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-search",
+        "snowflake-site:taxonomy/snowflake-feature/document-ai",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions",
+        "snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis",
+        "snowflake-site:taxonomy/solution-center/certification/certified-solution"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/",
+      "summary": "Build an AI-powered Telco Operations Agent with Snowflake AI Functions and Snowflake Intelligence for natural language analytics on network performance, customer feedback, and call center data.",
+      "lastUpdatedAt": "2026-01-26"
+    },
+    {
       "title": "Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -691,6 +786,20 @@
       "url": "https://www.snowflake.com/en/developers/guides/build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/",
       "summary": "Build and deploy Snowpark ML models with Streamlit apps using Snowflake Notebooks for end-to-end ML development.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Build and Evaluate Multi-Agent Systems with Snowflake and LangGraph",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/platform",
+        "snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/build-and-evaluate-agents-with-langgraph-and-snowflake/",
+      "summary": "Build and evaluate a multi-agent supervisor system using LangGraph and Snowflake Cortex Agents",
+      "lastUpdatedAt": "2026-01-22"
     },
     {
       "title": "Recommender Systems with RelationalAI’s Snowflake Native App",
@@ -938,7 +1047,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/building-scalable-time-series-forecasting-models-on-snowflake/",
       "summary": "Build scalable time-series forecasting with Snowflake ML for demand planning, inventory optimization, and trend prediction.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2025-12-29"
     },
     {
       "title": "Building Snowflake LLM Based Functions using Coalesce and Iceberg",
@@ -1170,7 +1279,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/cortex-agent-ipo-research-assistant/",
       "summary": "This is a guide to setup a IPO Research Assistant Cortex Agent.  Tools include AI_EXTRACT over SEC S1 Filings, A Semantic View on company information, Cortex Search over market trend PDFs, and Finnhub API for real-time stock information.",
-      "lastUpdatedAt": "2026-01-06"
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Sentiment Analysis Using Snowflake Cortex AI on Iceberg Tables",
@@ -1188,6 +1297,18 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Create a Document Processing Pipeline with AI_EXTRACT",
+      "categories": [
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/create-a-document-processing-pipeline-with-ai-extract/",
+      "summary": "Learn how to create an automated document processing pipeline using AI_EXTRACT to extract structured data from documents.",
+      "lastUpdatedAt": "2026-01-09"
+    },
+    {
       "title": "Create a Route Optimization and Vehicle Route Plan Simulator",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -1197,7 +1318,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/create-a-route-optimisation-and-vehicle-route-plan-simulator/",
       "summary": "This tutorial leverages Snowflake Container Services, native apps, Geospatial Analytics, Streamlit, Cortex and the Open Route Service to optimize vehicle routes in order to distribute goods to chosen destinations on time.",
-      "lastUpdatedAt": "2025-11-03"
+      "lastUpdatedAt": "2026-01-19"
     },
     {
       "title": "Create AI Agents on Snowflake with Lang.ai",
@@ -1212,6 +1333,17 @@
       "url": "https://www.snowflake.com/en/developers/guides/create-ai-agents-on-snowflake-with-lang-ai/",
       "summary": "Build AI agents with Lang.ai on Snowflake for conversational interfaces, automated workflows, and intelligent data access.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Create Snowflake Guides with AGENTS.md",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/create-snowflake-guides-with-agents-md/",
+      "summary": "Learn how to use the AGENTS.md file with AI assistants to convert Jupyter notebooks into properly formatted Snowflake Guides.",
+      "lastUpdatedAt": "2026-01-16"
     },
     {
       "title": "Credit Card Fraud Detection using Snowflake ML Functions",
@@ -1588,8 +1720,8 @@
       ],
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/",
-      "summary": "Build open table format data lakes with Apache Iceberg using Snowflake External Volumes, AWS S3 and Glue Data Catalog.",
-      "lastUpdatedAt": "2025-12-19"
+      "summary": "Build open table format data lakes with Apache Iceberg using Snowflake Catalog-Linked Datbases, Vended Credentials, AWS S3, Lake Formation and Glue Data Catalog.",
+      "lastUpdatedAt": "2026-01-27"
     },
     {
       "title": "Data Modeling With Snowflake + SqlDBM",
@@ -1624,7 +1756,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/database-modeling-with-sqldbm/",
       "summary": "Design database schemas visually with SqlDBM for collaborative data modeling, documentation, and direct Snowflake deployment.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-26"
     },
     {
       "title": "Exploring dbt Projects on Snowflake",
@@ -1824,6 +1956,21 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Distributed Medical Image Processing with MONAI on Snowflake",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/solution-center/certification/certified-solution",
+        "snowflake-site:taxonomy/industry/healthcare-and-life-sciences",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/snowflake-feature/model-development",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark-container-services"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/distributed-medical-image-processing-with-monai/",
+      "summary": "Build a distributed medical image registration pipeline using MONAI on Snowflake's Container Runtime with GPU acceleration",
+      "lastUpdatedAt": "2026-01-26"
+    },
+    {
       "title": "Document AI Invoice Reconciliation",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -1862,6 +2009,21 @@
       "url": "https://www.snowflake.com/en/developers/guides/domo-marketing-attribution-quickstart/",
       "summary": "Build marketing attribution and media mix models with Domo and Snowflake for campaign ROI and spend optimization.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Getting Started with Domo Marketing Mix Modelling",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
+        "snowflake-site:taxonomy/industry/advertising-media-and-entertainment",
+        "snowflake-site:taxonomy/product/data-engineering",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/domo-mmm-guide/",
+      "summary": "Build Marketing Mix Models with Domo MMM and Snowflake Cortex AI to measure channel incrementality, optimize budgets, and maximize marketing ROI.",
+      "lastUpdatedAt": "2026-01-22"
     },
     {
       "title": "Orchestrate ML Pipelines with ML Jobs and Task Graphs",
@@ -2011,6 +2173,20 @@
       "url": "https://www.snowflake.com/en/developers/guides/extracting-insights-from-video-with-multimodal-ai-analysis/",
       "summary": "Extract insights from video content and automate media tagging using multimodal AI analysis in Snowflake Cortex.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Getting Started with Snowflake Notebooks for the EY AI & Data Challenge",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/applied-analytics",
+        "snowflake-site:taxonomy/snowflake-feature/model-development"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/ey-ai-and-data-challenge/",
+      "summary": "Getting Started with Snowflake Notebooks and Workspaces for the EY AI & Data Challenge",
+      "lastUpdatedAt": "2026-01-23"
     },
     {
       "title": "Financial Advisor for Wealth Management",
@@ -2518,7 +2694,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agents/",
       "summary": "Build an intelligent sales assistant using Snowflake Cortex Agents that combines Cortex Search and Analyst for both structured and unstructured data.",
-      "lastUpdatedAt": "2026-01-07"
+      "lastUpdatedAt": "2026-01-26"
     },
     {
       "title": "Getting Started with Cortex Agents and Amazon Q",
@@ -2558,6 +2734,20 @@
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-aisql/",
       "summary": "This guide outlines the process for getting started with Cortex AI Functions.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "はじめての Cortex AI 関数（日本語版）",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/solution-center/certification/certified-solution",
+        "snowflake-site:taxonomy/solution-center/includes/architecture",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-aisql-ja/",
+      "summary": "このガイドは Cortex AI 関数をはじめるうえでのガイドラインを提供します。",
+      "lastUpdatedAt": "2026-01-22"
     },
     {
       "title": "Getting Started with Cortex Analyst: Augment BI with AI",
@@ -2814,7 +3004,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/",
       "summary": "Follow this tutorial to learn the basics of hybrid tables",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-15"
     },
     {
       "title": "Building an Iceberg Lakehouse with Snowflake and Microsoft OneLake",
@@ -3653,7 +3843,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-the-microsoft-teams-and-365-copilot-cortex-app/",
       "summary": "This is a quickstart showing users how use the Microsoft Teams and M365 Copilot Cortex App",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-30"
     },
     {
       "title": "Getting Started with Time Series Analytics with Pricing Data on Snowflake",
@@ -3752,6 +3942,18 @@
       "url": "https://www.snowflake.com/en/developers/guides/google-analytics-4-template-setup/",
       "summary": "This QuickStart provides instructions on how to set up Sigma's Google Analytics 4 template.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Getting Started with Governing your Lakehouse for AI use-cases",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering",
+        "snowflake-site:taxonomy/snowflake-feature/iceberg"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/govern-your-lakehouse-for-ai/",
+      "summary": "This QuickStart provides instructions on how to set up governance using Snowflake for your lakehouse for AI use-cases",
+      "lastUpdatedAt": "2026-01-21"
     },
     {
       "title": "Build a Lakehouse with Apache Iceberg and Snowflake Open Catalog",
@@ -4050,6 +4252,18 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Interoperable Lakehouse with AWS Glue, Snowflake Iceberg Tables, and Snowpark Connect for Apache Spark",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering",
+        "snowflake-site:taxonomy/snowflake-feature/apache-iceberg"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/interoperable-lakehouse-with-aws-glue-snowflake-iceberg-tables-and-snowpark-connect-for-apache-spark/",
+      "summary": "Build an interoperable lakehouse architecture using Apache Iceberg with AWS Glue, Catalog-Linked Databases, and Snowpark Connect for true code portability.",
+      "lastUpdatedAt": "2026-01-29"
+    },
+    {
       "title": "Intro to Data Engineering using Python in Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4117,7 +4331,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/intro-to-snowpark-connect-for-apache-spark/",
       "summary": "Learn how to build production-ready PySpark pipelines on Snowflake using Snowpark Connect for Apache Spark.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-23"
     },
     {
       "title": "Intro to Snowpark Container Services",
@@ -4154,6 +4368,20 @@
       "url": "https://www.snowflake.com/en/developers/guides/java-trace-events/",
       "summary": "An example of emitting trace events from Java, and analyzing them",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Real-Time Analytics with Kafka, Interactive Tables, and Snowpipe Streaming v2",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/snowflake-feature/ingestion",
+        "snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/kafka-interactive-tables-streaming/",
+      "summary": "Learn how to use Snowflake's Interactive Tables and Interactive Warehouses with real-time data from Kafka using Snowpipe Streaming v2.",
+      "lastUpdatedAt": "2026-01-16"
     },
     {
       "title": "Intro to Kafka and Snowflake Managed Iceberg",
@@ -4273,6 +4501,16 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
+      "title": "Distributed Text Classification with Mango HPO and Snowflake DPF",
+      "categories": [
+        "data-science-ml"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/mango-hpo-modernbert-text-classification/",
+      "summary": "Distributed Text Classification with Mango HPO, TF-IDF, and Snowflake DPF for CFPB Consumer Complaints",
+      "lastUpdatedAt": "2026-01-21"
+    },
+    {
       "title": "Many Model Inference in Snowflake",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4350,6 +4588,17 @@
       "url": "https://www.snowflake.com/en/developers/guides/mfa-audit/",
       "summary": "Learn how to build a Streamlit app in Snowflake Notebooks to audit and monitor Multi-Factor Authentication (MFA) status of users, with automated email notifications for non-compliant users.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Migrate to Snowflake Postgres Using Logical Replication",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/platform"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/migrate-to-snowflake-postgres-using-logical-replication/",
+      "summary": "Learn how to lift and shift existing PostgreSQL workloads into Snowflake Postgres using logical replication for minimal downtime environments",
+      "lastUpdatedAt": "2026-01-22"
     },
     {
       "title": "Automated Model Retraining & Deployment In Snowflake",
@@ -4451,7 +4700,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/multi-agent-orchestration-snowflake-intelligence/",
       "summary": "This guide describes how to configure a master agent that routes user queries to multiple, specialized Cortex Agents using custom tools.",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-26"
     },
     {
       "title": "Multi-Agent RAG with Gen2 Warehouses and Cortex",
@@ -4576,6 +4825,23 @@
       "lastUpdatedAt": "2025-12-11"
     },
     {
+      "title": "Orchestrate Your Workflows with UiPath and Snowflake",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/includes/architecture",
+        "snowflake-site:taxonomy/solution-center/certification/partner-solution",
+        "snowflake-site:taxonomy/solution-center/certification/certified-solution",
+        "snowflake-site:taxonomy/product/applications-and-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants",
+        "snowflake-site:taxonomy/snowflake-feature/external-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-analyst",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/orchestrate-your-workflows-with-uipath-and-snowflake/",
+      "summary": "Integration Patterns : UiPath to Snowflake Workflow Orchestration",
+      "lastUpdatedAt": "2026-01-30"
+    },
+    {
       "title": "Building Orchestration Framework for Running Containerized Jobs in Parallel",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -4585,6 +4851,71 @@
       "url": "https://www.snowflake.com/en/developers/guides/orchestration-framework-running-multiple-containerized-jobs-parallel/",
       "summary": "Building custom orchestration framework for running containerized jobs in parallel",
       "lastUpdatedAt": "2025-11-01"
+    },
+    {
+      "title": "Deploy Fleet Intelligence Solution for Taxis",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/applications-and-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/native-apps",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark-container-services",
+        "snowflake-site:taxonomy/snowflake-feature/geospatial",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/",
+      "summary": "Build a Fleet Intelligence Control Center for taxi operations using OpenRouteService. Deploy a multi-page Streamlit app with real-time driver tracking, route visualization, and H3 heat maps - powered by Snowflake Cortex AI and geospatial analytics.",
+      "lastUpdatedAt": "2026-01-21"
+    },
+    {
+      "title": "Deploy Route Optimization Demo with Cortex Code",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/applications-and-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/native-apps",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark-container-services",
+        "snowflake-site:taxonomy/snowflake-feature/geospatial",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/",
+      "summary": "Build an interactive Route Optimization Simulator using the OpenRouteService Native App. Deploy AISQL notebooks and a Streamlit app that simulates vehicle routing with real-world POI data from Carto Overture Maps - requires ORS Native App as prerequisite.",
+      "lastUpdatedAt": "2026-01-21"
+    },
+    {
+      "title": "Deploy Snowflake Intelligence Routing Agent",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/applications-and-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/native-apps",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark-container-services",
+        "snowflake-site:taxonomy/snowflake-feature/geospatial",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions",
+        "snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/",
+      "summary": "Deploy a Snowflake Intelligence Agent for AI-powered route planning using OpenRouteService. Create a conversational assistant that handles directions, isochrones, and multi-stop delivery optimization - all with natural language location input and Cortex AI geocoding.",
+      "lastUpdatedAt": "2026-01-29"
+    },
+    {
+      "title": "Install OpenRouteService Native App with Cortex Code",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/applications-and-collaboration",
+        "snowflake-site:taxonomy/snowflake-feature/native-apps",
+        "snowflake-site:taxonomy/snowflake-feature/snowpark-container-services",
+        "snowflake-site:taxonomy/snowflake-feature/geospatial",
+        "snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/",
+      "summary": "Install a self-contained OpenRouteService Native App in Snowflake using Cortex Code AI-powered skills. Deploy routing functions (Directions, Optimization, Isochrones) via Snowpark Container Services with no external APIs - customize for any city worldwide.",
+      "lastUpdatedAt": "2026-01-21"
     },
     {
       "title": "Getting Started with Snowflake Feature Store API",
@@ -4642,7 +4973,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/power-apps-snowflake/",
       "summary": "This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake",
-      "lastUpdatedAt": "2025-12-19"
+      "lastUpdatedAt": "2026-01-28"
     },
     {
       "title": "Predict Ad Impressions with ML-Powered Analysis",
@@ -5061,6 +5392,18 @@
       "lastUpdatedAt": "2025-11-01"
     },
     {
+      "title": "Build Declarative Data Pipelines with Dynamic Tables",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering",
+        "snowflake-site:taxonomy/snowflake-feature/transformation"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/snowflake-dynamic-tables-data-pipeline/",
+      "summary": "Learn how to build declarative data pipelines using Snowflake Dynamic Tables with incremental refresh, monitoring, and intelligent querying capabilities.",
+      "lastUpdatedAt": "2026-01-26"
+    },
+    {
       "title": "Looker and Snowflake Quickstart",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
@@ -5093,6 +5436,39 @@
       "url": "https://www.snowflake.com/en/developers/guides/snowflake-personalization-api/",
       "summary": "A guide to building and running a custom point-lookup API Powered by Snowflake and Python/Flask",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Postgres Execution Plan",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/platform"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/snowflake-postgres-execution-plan/",
+      "summary": "Using Postgres EXPLAIN to understand query execution",
+      "lastUpdatedAt": "2026-01-16"
+    },
+    {
+      "title": "Getting Started with Snowflake Postgres Tables",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/platform"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/snowflake-postgres-getting-started-with-tables/",
+      "summary": "Follow this tutorial to learn the basics of PostgreSQL for transactional workloads",
+      "lastUpdatedAt": "2026-01-21"
+    },
+    {
+      "title": "Comparing INSERT and COPY Performance",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/platform"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/snowflake-postgres-insert-vs-copy/",
+      "summary": "Comparing INSERT, batch INSERT, and COPY performance in Postgres",
+      "lastUpdatedAt": "2026-01-21"
     },
     {
       "title": "Build a Real-Time Recommendation Engine",
@@ -5130,6 +5506,30 @@
       "url": "https://www.snowflake.com/en/developers/guides/snowflake-semantic-view-agentic-analytics/",
       "summary": "Learn how to build business-friendly semantic views over an enterprise data warehouse and enable cross-functional, AI-powered natural language querying using Snowflake Cortex Analyst and Snowflake Intelligence Agents.",
       "lastUpdatedAt": "2025-12-19"
+    },
+    {
+      "title": "Build Semantic Views and Connect to Tableau with Snowflake",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai",
+        "snowflake-site:taxonomy/product/analytics"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/snowflake-semantic-view-autopilot/",
+      "summary": "Learn how to go from raw campaign data to a fully usable Snowflake Semantic View and seamlessly consume it in Tableau.",
+      "lastUpdatedAt": "2026-01-28"
+    },
+    {
+      "title": "Build Business-Ready Queries with Snowflake Semantic Views",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/analytics",
+        "snowflake-site:taxonomy/product/ai"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/snowflake-semantic-view-business-ready-queries/",
+      "summary": "Learn how to create Semantic Views in Snowflake to abstract complex SQL, centralize business logic, and expose consistent, reusable data models for analytics and BI.",
+      "lastUpdatedAt": "2026-01-16"
     },
     {
       "title": "Getting Started with Model Serving in Snowpark Container Services",
@@ -5930,7 +6330,7 @@
       "contentType": "quickstart",
       "url": "https://www.snowflake.com/en/developers/guides/viewing-location-data-on-an-interactive-map/",
       "summary": "This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.",
-      "lastUpdatedAt": "2026-01-08"
+      "lastUpdatedAt": "2026-01-13"
     },
     {
       "title": "Visual Analytics Powered by Snowflake and Tableau",

@@ -110,11 +110,14 @@ There's no need to authenticate when you access a public github repo.
 ## Upload Notebooks to your Workspace
 If you have any trouble with the git integration, don't worry! 
 
-The notebook is located in the [Snowflake-Labs repo on Github](https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge/getting_started_notebook.ipynb)
+The notebook is located in the [Snowflake-Labs repo on Github](https://github.com/Snowflake-Labs/EY-AI-and-Data-Challenge/blob/main/getting_started_notebook.ipynb)
 
-You can download it from Github, and then upload the notebook into "My Workspace" by clicking the "Add New" button and choosing "Upload Files".
+You can download it from Github, and then upload the notebook into "My Workspace" by clicking the "Add New" button and choosing "Upload Files"
 
-    ![img](assets/add_new_upload_files.png)
+#### Upload Files or Upload Folder
+![img](assets/add_new_upload_files.png)
+
+
 
 ## Start running the Notebook
 
