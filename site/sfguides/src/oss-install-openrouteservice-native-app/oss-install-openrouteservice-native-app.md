@@ -89,7 +89,6 @@ This is a self-contained service which is managed by you. There are no API calls
   - **Optimization** - Route optimization matching demands with vehicle availability
   - **Isochrones** - Catchment area analysis based on travel time
   - **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
-- Use **GeoFunctions** (`_GEO` variants) that return native `GEOGRAPHY` columns for direct geospatial analysis
 - Call all routing functions directly via **SQL** — including concrete query examples you can run immediately
 - Customize map regions and vehicle profiles for your specific use case
 
@@ -499,29 +498,15 @@ SELECT OPENROUTESERVICE_NATIVE_APP.CORE.MATRIX(
 ) AS matrix;
 ```
 
-**ORS Status**
-
-Check the service health and see which routing profiles are available:
-
-```sql
-SELECT OPENROUTESERVICE_NATIVE_APP.CORE.ORS_STATUS() AS status;
-```
-
 ### GeoFunctions — Native GEOGRAPHY Output
 
-The `_GEO` functions are **thin SQL wrappers** around the base functions above. They call the exact same routing engine under the hood — no different API, no extra logic. All they do is:
+The `_GEO` functions are **SQL wrappers** around the base functions above. All they do is:
 
 1. Call the base function (e.g. `DIRECTIONS`)
 2. Use `TO_GEOGRAPHY()` to parse the GeoJSON geometry from the VARIANT response into a native Snowflake `GEOGRAPHY` column
 3. Extract key summary fields (distance, duration, vehicle ID, etc.) into their own columns
 
-**Why this matters:** The base functions return a single `VARIANT` column where the route geometry is buried inside `response:features[0]:geometry`. The GeoFunctions extract that geometry into a dedicated `GEOJSON GEOGRAPHY` column so you can immediately:
-- Visualize routes and isochrones in Snowsight map views
-- Use Snowflake geospatial functions (`ST_AREA`, `ST_LENGTH`, `ST_WITHIN`, `ST_DISTANCE`, etc.)
-- Join routing results with other geospatial tables without manual JSON parsing
-- Build analytics and dashboards on top of routing outputs
-
-Because GeoFunctions return `TABLE(...)`, they are called using `SELECT * FROM TABLE(...)` syntax.
+**Why this matters:** The base functions return a single `VARIANT` column where the route geometry is buried inside `response:features[0]:geometry`. The GeoFunctions extract that geometry into a dedicated `GEOJSON GEOGRAPHY` column for user convenience.
 
 **DIRECTIONS_GEO: Point-to-Point**
 
@@ -601,7 +586,7 @@ SELECT * FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.OPTIMIZATION_GEO(
 
 ### Geospatial Integration Patterns
 
-Once you have `GEOGRAPHY` columns from the GeoFunctions, you can chain them with Snowflake's built-in geospatial functions:
+Once you have `GEOGRAPHY` columns from the Geofunctions, you can chain them with Snowflake's built-in geospatial functions:
 
 **Route length in kilometers:**
 
@@ -850,7 +835,6 @@ This solution demonstrates the power of combining:
 - **Cortex Code** - AI-powered CLI that turns natural language into automated workflows
 - **Snowpark Container Services** - Running OpenRouteService as a self-managed Native App
 - **Native App Functions** - SQL-callable routing functions for directions, optimization, isochrones, and time-distance matrix
-- **GeoFunctions** - `_GEO` wrapper functions that return native `GEOGRAPHY` columns for direct geospatial analysis
 
 The key advantage of this approach is **flexibility without complexity**. Want to switch from San Francisco to Paris? Just run the location customization skill. Need to add walking or cycling routes? Enable additional routing profiles. The skill-based approach means you only run the steps you need.
 
