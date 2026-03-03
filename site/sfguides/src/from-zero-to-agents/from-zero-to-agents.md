@@ -110,7 +110,7 @@ Confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` by clicking on yo
 5. Upload the marketing_data.csv and click `next` then load
 6. Click `View table detail` to see the new data uploaded
 
-![Updating marketing data](assets/Updatingmarketing.png)
+![Updating marketing data](assets/updatingmarketing.png)
 
 
 <!-- ------------------------ -->
@@ -292,7 +292,7 @@ Let's ask the following questions
 
 ### Q1. What are the top 5 campaigns by clicks?
 
-![Top 5](assets/top5clicks.png)
+![Top 5](assets/topclicks.png)
 
 ### Q2. Show me all campaign performance metrics and it's relationship to the product
 
@@ -304,7 +304,7 @@ Let's ask the following questions
 
 ### Q4. What are the main customer complains in support cases?
 
-![Support cases](assets/supportcases.png)
+![Support cases](assets/supportcase.png)
 
 
 ## Security (optional)
