@@ -61,33 +61,6 @@ Make sure to save the token before leaving the page, as we will be using it a co
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering with Snowflake Notebooks associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
-### Configure GitHub Actions
-By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
-
-![assets/github_actions_activate.png](assets/github_actions_activate.png)
-
-The last step to enable your GitHub Actions workflow is to create the required secrets. In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used to connect to your Snowflake account.
-
-From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
-
-| Secret name | Secret value |
-|-------------|--------------|
-| SNOWFLAKE_ACCOUNT | myaccount |
-| SNOWFLAKE_USER | myusername |
-| SNOWFLAKE_PASSWORD | mypassword |
-| SNOWFLAKE_ROLE | DEMO_ROLE |
-| SNOWFLAKE_WAREHOUSE | DEMO_WH |
-| SNOWFLAKE_DATABASE | DEMO_DB |
-| SNOWFLAKE_SCHEMA | INTEGRATIONS |
-
->  **Tip** - For more details on how to structure the account name in SNOWFLAKE_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
-
-When you’re finished adding all the secrets, the page should look like this:
-
-![assets/github_actions_secrets.png](assets/github_actions_secrets.png)
-
->  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
-
 
 <!-- ------------------------ -->
 ## Setup Snowflake
@@ -106,36 +79,11 @@ CREATE OR REPLACE API INTEGRATION GITHUB_API_INTEGRATION
     API_ALLOWED_PREFIXES = ('https://github.com/')
     ALLOWED_AUTHENTICATION_SECRETS = ALL
     ENABLED = TRUE;
-
---GRANT USAGE ON INTEGRATION github_api_integration TO ROLE DEMO_ROLE;
 ```
 
 This API integration allows Snowflake to access GitHub repositories. The `ALLOWED_AUTHENTICATION_SECRETS = ALL` setting allows the integration to use any secret for authentication, which we'll need for private repositories or to push changes back to GitHub.
 
 > **Note**: Only users with ACCOUNTADMIN privileges (or the CREATE INTEGRATION privilege) can create API integrations. If you don't have these privileges, ask your Snowflake administrator to create this integration for you.
-
-### Create External Access Integration for PyPI
-
-Notebooks in Workspaces may need to install Python packages from PyPI (the Python Package Index). To allow this, we need to create a network rule and an external access integration. This integration will be used by the `01_load_excel_files.ipynb` notebook to install the `openpyxl` package for reading Excel files.
-
-Run the following SQL script in your default Workspace:
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
--- This is a schema level object
-CREATE OR REPLACE NETWORK RULE USER$.PUBLIC.PYPI_NETWORK_RULE
-MODE = EGRESS
-TYPE = HOST_PORT
-VALUE_LIST = ('pypi.org', 'pypi.python.org', 'pythonhosted.org', 'files.pythonhosted.org');
-
--- This is an account level object
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION PYPI_ACCESS_INTEGRATION
-ALLOWED_NETWORK_RULES = (PYPI_NETWORK_RULE)
-ENABLED = true;
-```
-
-The network rule defines which external hosts the notebook can connect to, and the external access integration makes this rule available to notebook services. When creating your notebook service later, you'll be able to select this integration to enable PyPI access.
 
 ### Create Workspace
 
@@ -158,7 +106,12 @@ Snowflake will now clone the repository and create your workspace. This may take
 
 > **Note** - The Workspace provides a Jupyter-compatible notebook experience with direct access to governed Snowflake data. Notebooks run in a pre-built container environment optimized for AI/ML development with fully-managed access to CPUs and GPUs.
 
-Throughout this Quickstart, when we reference a file (like "Open **00_start_here.ipynb**"), you'll open it from your Workspace rather than from a local clone.
+### Create Demo Objects in Snowflake
+
+Next we will create the Snowflake objects used during this Guide. Do do that we will run a SQL script from our new Workspace:
+
+1. In your Workspace, in the left "Files" pane, open the file `scripts/setup.sql`
+1. Run all of the SQL statements in this script by clicking on the blue down arrow and "Run all", next to play button at the top of the script, or using the shortcut CMD/CTRL+Shift+Enter
 
 ### Create and Switch to Dev Branch
 
@@ -204,10 +157,6 @@ The notebook service will start up, which may take a minute or two for the first
 
 > **Tip** - Since notebook services can be shared across multiple notebooks, you only need to create one service. When you open other notebooks in your workspace, you can connect them to the same `NOTEBOOK_SERVICE` to share compute resources.
 
-### Run the 00 Setup Snowflake Step
-
-Now that you're connected to your notebook service, you're ready to run cells in the Notebook. Scroll down to the "Step 01 Setup Snowflake" section and run the cells in this section to create the required database objects. To run a given cell simply click anywhere in the cell to select it and press CMD/CTRL+Enter. You can alternatively click on the Run arrow near the top right of the cell.
-
 
 <!-- ------------------------ -->
 ## Load Weather
@@ -246,8 +195,6 @@ To put this in context, we are on step **#3** in our data flow overview:
 ### Run the Notebook
 
 In Workspaces, open the `01_load_excel_files` notebook,  click on the "Run all" button near the top right of the window. This will execute all cells in the notebook, in order.
-
->  **Tip** - Since we will be going back to the `00_start_here` Notebook later, it might be easier to open a new Snowsight tab and set the default role to `DEMO_ROLE` there, and leave your current tab with the `00_start_here` Notebook open as well.
 
 ### Notebook Git Integration
 
@@ -380,6 +327,22 @@ In addition to custom logging, Snowflake is instrumenting all services/features 
 
 All of your log messages can be found in your default logging table, which we created in step 1. If you look back at the code from step 1 you'll find that we created an event table named `DEMO_DB.INTEGRATIONS.DEMO_EVENTS` and then set that as the default event table for the account. You can now use this table just like any other table in Snowflake to query and act on the log data.
 
+Let's view the logs that have been created so far by running the query in Step 04 of the `00_start_here` Notebook. Here's the query to do that:
+
+```python
+SELECT 
+    TIMESTAMP,
+    VALUE AS LOG_MESSAGE,
+    RESOURCE_ATTRIBUTES:"snow.service.name"::string AS SERVICE_NAME,
+    RECORD_ATTRIBUTES:"severity_text"::string AS SEVERITY
+FROM DEMO_DB.INTEGRATIONS.DEMO_EVENTS
+WHERE RECORD_TYPE = 'LOG'
+--  AND RESOURCE_ATTRIBUTES:"snow.service.name" = 'NOTEBOOK_SERVICE'
+  AND TIMESTAMP > DATEADD(hour, -1, CURRENT_TIMESTAMP())
+ORDER BY TIMESTAMP DESC
+LIMIT 100;
+```
+
 
 <!-- ------------------------ -->
 ## Deploy Notebook Project to Dev
@@ -454,6 +417,8 @@ with DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name) as dag:
             COMPUTE_POOL = {compute_pool}
             RUNTIME = '{runtime}'
             QUERY_WAREHOUSE = {warehouse_name}
+            EXTERNAL_ACCESS_INTEGRATIONS = ('{external_access_integration}')
+            ARGUMENTS = '--database-name {database_name} --schema-name {schema_name}'
         ''', warehouse=warehouse_name)
     dag_task2 = DAGTask("LOAD_DAILY_CITY_METRICS", definition=f'''
         EXECUTE NOTEBOOK PROJECT {database_name}.{schema_name}.{notebook_project_name}
@@ -461,6 +426,7 @@ with DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name) as dag:
             COMPUTE_POOL = {compute_pool}
             RUNTIME = '{runtime}'
             QUERY_WAREHOUSE = {warehouse_name}
+            ARGUMENTS = '--database-name {database_name} --schema-name {schema_name}'
         ''', warehouse=warehouse_name)
 
     # Define the dependencies between the tasks
@@ -498,7 +464,7 @@ Here's what the task graph looks like:
 
 ![assets/snowsight_task_graph.png](assets/snowsight_task_graph.png)
 
-And here's an example of the task run history:
+And here's an example of the task run history (shown after a few executions have taken place):
 
 ![assets/snowsight_task_run_history.png](assets/snowsight_task_run_history.png)
 
@@ -541,6 +507,38 @@ ORDER BY COMPLETED_TIME DESC;
 During this step we will be deploying our Notebooks to production using a CI/CD pipeline. We will make a small change to a Notebook and then commit that change to our Git repo all within Snowsight. After that we will create a Pull Request (or PR), merge our changes to `main` and deploy with GitHub Actions. To put this in context, we are on step **#7** in our data flow overview:
 
 ![assets/quickstart_overview.png](assets/quickstart_overview.png)
+
+### Create a Snowflake Personal Access Token
+In order to connect to your Snowflake account from GitHub Actions, we will use a Snowflake Personal Access Token (or PAT). Please follow the steps in [Generating a programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens#generating-a-programmatic-access-token) to create a Snowflake PAT for your user. When choosing which role to grant the PAT access to, select the `DEMO_ROLE` role.
+
+Make sure to save the PAT before leaving the page, as you won't be able to view it again.
+
+### Configure GitHub Actions
+By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
+
+![assets/github_actions_activate.png](assets/github_actions_activate.png)
+
+The last step to enable your GitHub Actions workflow is to create the required secrets. In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used to connect to your Snowflake account.
+
+From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
+
+| Secret name | Secret value |
+|-------------|--------------|
+| SNOWFLAKE_ACCOUNT | &lt;your account name&gt; |
+| SNOWFLAKE_USER | &lt;your user name&gt; |
+| SNOWFLAKE_PASSWORD | &lt;your PAT&gt; |
+| SNOWFLAKE_ROLE | DEMO_ROLE |
+| SNOWFLAKE_WAREHOUSE | DEMO_WH |
+| SNOWFLAKE_DATABASE | DEMO_DB |
+| SNOWFLAKE_SCHEMA | INTEGRATIONS |
+
+>  **Tip** - For more details on how to structure the account name in SNOWFLAKE_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
+
+When you’re finished adding all the secrets, the page should look like this:
+
+![assets/github_actions_secrets.png](assets/github_actions_secrets.png)
+
+>  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
 ### Update the 01 Notebook
 

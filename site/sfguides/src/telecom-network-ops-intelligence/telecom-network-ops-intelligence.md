@@ -47,7 +47,7 @@ In this Guide, you will build a complete network operations platform that:
 
 The Network Operations solution provides end-to-end visibility across telecom infrastructure:
 
-![Architecture Diagram](assets/img/architecture.png)
+![Architecture Diagram](assets/architecture.png)
 
 **Data Layer:**
 - **RAN_4G / RAN_5G**: Radio Access Network metrics (eNodeB, gNodeB)
@@ -136,7 +136,7 @@ The script creates a **LOAD_STREAMLIT_FROM_GITHUB()** procedure that:
 
 In Snowsight, click **Projects**, then **Streamlit** in the left navigation and select **NETWORK_OPS_DASHBOARD**, or <a href="https://app.snowflake.com/_deeplink/#/streamlit-apps/NETWORK_OPERATIONS.ANALYTICS.NETWORK_OPS_DASHBOARD" target="_blank">click here</a> to go there directly.
 
-![Streamlit Dashboard](assets/img/streamlit_dashboard.png)
+![Streamlit Dashboard](assets/streamlit_dashboard.png)
 
 <!-- ------------------------ -->
 ## Explore the Dashboards
@@ -151,7 +151,7 @@ The Network Engineer dashboard focuses on real-time troubleshooting:
 - **Cell Site Map**: 3D visualization of network topology
 - **Drill-down Analysis**: Click any site for detailed metrics
 
-![Network Engineer Dashboard](assets/img/dashboard_network_engineer.png)
+![Network Engineer Dashboard](assets/dashboard_network_engineer.png)
 
 ### Network Performance View
 
@@ -163,7 +163,7 @@ The Network Performance dashboard focuses on capacity planning:
 - **Capacity Forecasting**: Predictive capacity trends
 - **Comparative Analysis**: Site-to-site performance comparison
 
-![Network Performance Dashboard](assets/img/dashboard_analyst.png)
+![Network Performance Dashboard](assets/dashboard_analyst.png)
 
 ### Network Manager View
 
@@ -175,7 +175,7 @@ The Network Manager dashboard focuses on SLA management:
 - **Coverage Analysis**: Network coverage gaps
 - **Executive Summary**: High-level operational status
 
-![Network Manager Dashboard](assets/img/dashboard_manager.png)
+![Network Manager Dashboard](assets/dashboard_manager.png)
 
 ### Executive View
 
@@ -187,14 +187,14 @@ The Executive dashboard focuses on business impact:
 - **Strategic KPIs**: High-level performance indicators
 - **Trend Analysis**: Month-over-month comparisons
 
-![Executive Dashboard](assets/img/dashboard_executive.png)
+![Executive Dashboard](assets/dashboard_executive.png)
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
 
 In Snowsight, click **AI & ML**, then **Snowflake Intelligence** in the left navigation.
 
-![Navigate to Snowflake Intelligence](assets/img/snowflake-intelligence-nav.png)
+![Navigate to Snowflake Intelligence](assets/snowflake-intelligence-nav.png)
 
 The setup script automatically creates the Semantic View and Snowflake Intelligence Agent:
 
