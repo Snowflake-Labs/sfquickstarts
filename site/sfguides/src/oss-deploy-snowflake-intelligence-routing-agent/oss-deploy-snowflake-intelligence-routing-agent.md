@@ -1,6 +1,6 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-deploy-snowflake-intelligence-routing-agent
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/product/analytics,snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
 language: en
 summary: Deploy a Snowflake Intelligence Agent for AI-powered route planning using OpenRouteService. Create a conversational assistant that handles directions, isochrones, and multi-stop delivery optimization - all with natural language location input and Cortex AI geocoding.
 environments: web
@@ -37,13 +37,13 @@ This quickstart deploys a **Snowflake Intelligence Agent** that wraps OpenRouteS
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Install OpenRouteService Native App](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) installed and configured
 - Active Snowflake connection with ACCOUNTADMIN access
-- Cortex AI access (claude-sonnet-4-5 model for geocoding)
+- Cortex AI access (claude-sonnet-4-5 model for geocoding), other LLM models can be used as well
 
 ### What You'll Learn 
 
@@ -79,12 +79,19 @@ This architecture enables truly conversational route planning - no coordinates, 
 
 Use Cortex Code to deploy the Routing Agent including tool procedures and agent registration.
 
-### Run the Deploy Skill
+### Clone Repository and Deploy Skill
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+```
 
 In the Cortex Code CLI, type:
 
 ```
-use the local skill from oss-deploy-snowflake-intelligence-routing-agent/skills/deploy_snowflake_intelligence_routing_agent
+$deploy-snowflake-intelligence-routing-agent$
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. 
@@ -103,14 +110,14 @@ The deploy skill creates the following Snowflake objects:
 **Stored Procedures (AI-Enhanced Tools)**
 | Procedure | Description |
 |-----------|-------------|
-| `OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_DIRECTIONS` | Directions with AI geocoding for natural language locations |
-| `OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_ISOCHRONE` | Isochrone generation with AI geocoding |
-| `OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_OPTIMIZATION` | Multi-vehicle route optimization with AI geocoding |
+| `OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_DIRECTIONS` | Directions with AI geocoding for natural language locations |
+| `OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_ISOCHRONE` | Isochrone generation with AI geocoding |
+| `OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_OPTIMIZATION` | Multi-vehicle route optimization with AI geocoding |
 
 **Snowflake Intelligence Agent**
 | Component | Name | Description |
 |-----------|------|-------------|
-| Agent | `OPENROUTESERVICE_NATIVE_APP.CORE.ROUTING_AGENT` | Conversational route planning assistant |
+| Agent | `OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.ROUTING_AGENT` | Conversational route planning assistant |
 
 <!-- ------------------------ -->
 ## Understanding the Tool Procedures
@@ -129,7 +136,7 @@ Each tool procedure combines Cortex AI geocoding with OpenRouteService functions
 
 **Example Usage:**
 ```sql
-CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_DIRECTIONS(
+CALL OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_DIRECTIONS(
     'from Union Square San Francisco to Golden Gate Bridge',
     'driving-car'
 );
@@ -148,7 +155,7 @@ CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_DIRECTIONS(
 
 **Example Usage:**
 ```sql
-CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_ISOCHRONE(
+CALL OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_ISOCHRONE(
     'Fisherman''s Wharf San Francisco',
     15,
     'driving-car'
@@ -169,7 +176,7 @@ CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_ISOCHRONE(
 
 **Example Usage:**
 ```sql
-CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_OPTIMIZATION(
+CALL OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_OPTIMIZATION(
     'Ferry Building San Francisco, Pier 39 San Francisco, Ghirardelli Square San Francisco',
     'Union Square, San Francisco',
     2,
@@ -232,20 +239,20 @@ You can test each tool procedure directly:
 
 ```sql
 -- Test directions
-CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_DIRECTIONS(
+CALL OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_DIRECTIONS(
     'from Union Square to Fisherman''s Wharf',
     'driving-car'
 );
 
 -- Test isochrone
-CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_ISOCHRONE(
+CALL OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_ISOCHRONE(
     'Golden Gate Bridge',
     10,
     'driving-car'
 );
 
 -- Test optimization
-CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_OPTIMIZATION(
+CALL OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT.TOOL_OPTIMIZATION(
     'Pier 39, Coit Tower, Ferry Building',
     'Union Square',
     2,
@@ -256,12 +263,30 @@ CALL OPENROUTESERVICE_NATIVE_APP.CORE.TOOL_OPTIMIZATION(
 <!-- ------------------------ -->
 ## Customization
 
-### Changing the Map Region
+### Change Location or Routing Profiles
 
-To use the agent with a different city or region, update your OpenRouteService Native App. More details here: [Install OpenRouteService Native App](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/)
+In the Cortex Code CLI, type:
 
-After changing the region, the agent will automatically work with locations in the new area.
+```
+$customize-main
+```
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-install-openrouteservice-native-app/) quickstart for more content about location customization.
 
+Cortex Code automatically finds the relevant skill and guides you through the options.
+
+You can change the geographic region (e.g., San Francisco to Paris) or update routing profiles (enable/disable car, truck, bicycle, walking).
+
+## Uninstall the Solution
+
+To remove the Snowflake Intelligence Routing Agent solution execute:
+
+```
+DROP SCHEMA OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT;
+```
+
+This will remove the `OPENROUTESERVICE_SETUP.SI_ROUTING_AGENT` schema and its contents.
+
+> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately.
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
@@ -288,12 +313,13 @@ The agent enables truly natural route planning - users simply describe locations
 
 ### Related Quickstarts
 
-- [Install OpenRouteService Native App](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/) - Install the routing engine (prerequisite)
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) - Build and customize the routing solution (prerequisite for this demo)
 - [Deploy Route Optimization Demo](https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/) - Build a visual route optimization simulator
-- [Deploy Fleet Intelligence Solution](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations
+- [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake.
+- [Deploy Fleet Intelligence Solution for Taxis](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations
 
 ### Snowflake Intelligence Resources
 
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-intelligence) - Official documentation
 - [Snowflake Cortex AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview) - AI-powered features in Snowflake
-- [Creating Agents](https://docs.snowflake.com/en/user-guide/snowflake-intelligence/agents) - Agent creation guide
+- [Creating Agents](https://docs.snowflake.com/en/user-guide/snowflake-intelligence/agents) - Agent creation and configuration guide
