@@ -1,0 +1,66 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#29B5E8', 'primaryTextColor': '#fff', 'primaryBorderColor': '#1a8bc4', 'lineColor': '#333', 'secondaryColor': '#f4f4f4', 'tertiaryColor': '#e8f4f8'}}}%%
+
+flowchart TB
+    subgraph SNOW["☁️ SNOWFLAKE CONTAINER RUNTIME"]
+        direction TB
+        
+        subgraph DATA["📊 Data Layer"]
+            CSV["📁 complaints100K.csv"]
+            STAGE["📦 RAW_DATA_STAGE"]
+            TABLE["🗃️ CFPB_COMPLAINTS<br/>100K Records"]
+        end
+        
+        subgraph DPF["⚡ Distributed Partition Function"]
+            direction LR
+            
+            subgraph W1["Worker 1"]
+                P1["Credit Reporting<br/>24K records"]
+                M1["TF-IDF → Mango HPO → MLP"]
+            end
+            
+            subgraph W2["Worker 2"]
+                P2["Debt Collection<br/>18K records"]
+                M2["TF-IDF → Mango HPO → MLP"]
+            end
+            
+            subgraph W3["Worker 3"]
+                P3["Mortgage<br/>16K records"]
+                M3["TF-IDF → Mango HPO → MLP"]
+            end
+            
+            subgraph W4["Worker N"]
+                P4["Other Products<br/>..."]
+                M4["TF-IDF → Mango HPO → MLP"]
+            end
+        end
+        
+        subgraph OUTPUT["📈 Results"]
+            ARTIFACTS["🎯 ML_ARTIFACTS_STAGE<br/>Models & Metrics"]
+            RESULTS["📋 CLASSIFICATION_RESULTS<br/>Best Params & Scores"]
+        end
+    end
+    
+    CSV --> STAGE
+    STAGE --> TABLE
+    TABLE --> DPF
+    
+    P1 --> M1
+    P2 --> M2
+    P3 --> M3
+    P4 --> M4
+    
+    M1 --> ARTIFACTS
+    M2 --> ARTIFACTS
+    M3 --> ARTIFACTS
+    M4 --> ARTIFACTS
+    
+    ARTIFACTS --> RESULTS
+
+    style SNOW fill:#e8f4f8,stroke:#29B5E8,stroke-width:3px
+    style DATA fill:#fff,stroke:#29B5E8,stroke-width:2px
+    style DPF fill:#f0f9ff,stroke:#1a8bc4,stroke-width:2px
+    style OUTPUT fill:#fff,stroke:#29B5E8,stroke-width:2px
+    style W1 fill:#e3f2fd,stroke:#1976d2
+    style W2 fill:#e3f2fd,stroke:#1976d2
+    style W3 fill:#e3f2fd,stroke:#1976d2
+    style W4 fill:#e3f2fd,stroke:#1976d2

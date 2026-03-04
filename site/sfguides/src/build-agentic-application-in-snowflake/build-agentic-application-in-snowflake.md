@@ -5,6 +5,7 @@ summary: Build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+fork repo link: https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai
 authors: Dash Desai
 
 

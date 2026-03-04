@@ -1,0 +1,219 @@
+name: telco-agent-uninstall
+description: |
+  Uninstall and teardown the NovaConnect Telco Operations AI Agent and all related components.
+  This skill guides you through completely removing the quickstart from your Snowflake account.
+  
+  Use this skill when:
+  - Cleaning up after completing the Telco Operations AI quickstart
+  - Removing the NovaConnect Intelligence Agent
+  - Freeing up resources used by the quickstart
+  - Starting fresh with a new deployment
+
+version: 1.0.0
+author: Snowflake
+tags:
+  - quickstart
+  - telco
+  - teardown
+  - uninstall
+  - cleanup
+
+instructions: |
+  # NovaConnect Telco Operations AI - Uninstall Guide
+  
+  You are helping the user **completely remove** the NovaConnect Telco Operations AI quickstart 
+  from their Snowflake account. This will permanently delete all data and objects.
+  
+  ## ⚠️ WARNING: Destructive Operation
+  
+  **Before proceeding, confirm with the user that they want to remove:**
+  - All telco data (network performance, customer details, call transcripts, etc.)
+  - The Snowflake Intelligence Agent
+  - All Cortex Search Services
+  - All Notebooks
+  - The SnowMail Native Application
+  - The TELCO_WH warehouse
+  - The TELCO_ANALYST_ROLE role
+  
+  ## Components to Remove
+  
+  The teardown process removes these components in order:
+  
+  ### 1. SnowMail Native Application
+  - Application: `SNOWMAIL`
+  - Application Package: `SNOWMAIL_PKG`
+  - Package Database: `TELCO_OPERATIONS_AI_SNOWMAIL_PKG`
+  
+  ### 2. Snowflake Intelligence Agent
+  - Agent: `SNOWFLAKE_INTELLIGENCE.AGENTS."Telco Operations AI Agent"`
+  
+  ### 3. Cortex Search Services
+  - `TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CALL_TRANSCRIPT_SEARCH`
+  - `TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKET_SEARCH`
+  
+  ### 4. Notebooks and Notebook Stages
+  - `TELCO_OPERATIONS_AI.NOTEBOOKS."1_DATA_PROCESSING"`
+  - `TELCO_OPERATIONS_AI.NOTEBOOKS."2_ANALYZE_CALL_AUDIO"`
+  - `TELCO_OPERATIONS_AI.NOTEBOOKS."3_INTELLIGENCE_LAB"`
+  - `TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING`
+  - `TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO`
+  - `TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB`
+  
+  ### 5. Database (includes all tables, views, stages, data)
+  - `TELCO_OPERATIONS_AI`
+  
+  ### 6. Warehouse
+  - `TELCO_WH`
+  
+  ### 7. Role
+  - `TELCO_ANALYST_ROLE`
+  
+  ## Teardown Methods
+  
+  ### Option A: Run the Teardown SQL Script
+  
+  The quickstart includes a teardown script at:
+  ```
+  assets/sql/99_teardown.sql
+  ```
+  
+  To run it:
+  ```bash
+  snow sql -f assets/sql/99_teardown.sql --connection <connection_name>
+  ```
+  
+  Or execute in Snowsight:
+  1. Open a SQL worksheet
+  2. Copy and paste the contents of 99_teardown.sql
+  3. Run all statements
+  
+  ### Option B: Manual Step-by-Step Teardown
+  
+  If you prefer to run commands individually, execute these in order:
+  
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  
+  -- Step 1: Drop SnowMail Native Application
+  DROP APPLICATION IF EXISTS SNOWMAIL CASCADE;
+  DROP APPLICATION PACKAGE IF EXISTS SNOWMAIL_PKG;
+  DROP DATABASE IF EXISTS TELCO_OPERATIONS_AI_SNOWMAIL_PKG;
+  
+  -- Step 2: Drop Snowflake Intelligence Agent
+  DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS."Telco Operations AI Agent";
+  
+  -- Step 3: Drop Cortex Search Services
+  DROP CORTEX SEARCH SERVICE IF EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CALL_TRANSCRIPT_SEARCH;
+  DROP CORTEX SEARCH SERVICE IF EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKET_SEARCH;
+  
+  -- Step 4: Drop Notebooks and their stages
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."1_DATA_PROCESSING";
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."2_ANALYZE_CALL_AUDIO";
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."3_INTELLIGENCE_LAB";
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING;
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO;
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB;
+  
+  -- Step 5: Drop Database (removes all tables, views, stages, data)
+  DROP DATABASE IF EXISTS TELCO_OPERATIONS_AI CASCADE;
+  
+  -- Step 6: Drop Warehouse
+  DROP WAREHOUSE IF EXISTS TELCO_WH;
+  
+  -- Step 7: Revoke privileges and drop role
+  REVOKE DATABASE ROLE SNOWFLAKE.INTELLIGENCE_MODIFY FROM ROLE TELCO_ANALYST_ROLE;
+  REVOKE DATABASE ROLE SNOWFLAKE.INTELLIGENCE_USER FROM ROLE TELCO_ANALYST_ROLE;
+  REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_USER FROM ROLE TELCO_ANALYST_ROLE;
+  DROP ROLE IF EXISTS TELCO_ANALYST_ROLE;
+  ```
+  
+  ## Verification
+  
+  After teardown, verify all components are removed:
+  
+  ```sql
+  -- Should return no results
+  SHOW DATABASES LIKE 'TELCO_OPERATIONS_AI%';
+  SHOW WAREHOUSES LIKE 'TELCO_WH';
+  SHOW ROLES LIKE 'TELCO_ANALYST_ROLE';
+  SHOW APPLICATIONS LIKE 'SNOWMAIL';
+  SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;
+  ```
+  
+  ## Partial Cleanup Options
+  
+  If the user only wants to remove specific components:
+  
+  ### Remove Only the Agent
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS."Telco Operations AI Agent";
+  ```
+  
+  ### Remove Only SnowMail
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  DROP APPLICATION IF EXISTS SNOWMAIL CASCADE;
+  DROP APPLICATION PACKAGE IF EXISTS SNOWMAIL_PKG;
+  DROP DATABASE IF EXISTS TELCO_OPERATIONS_AI_SNOWMAIL_PKG;
+  ```
+  
+  ### Remove Only Cortex Search Services
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  DROP CORTEX SEARCH SERVICE IF EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CALL_TRANSCRIPT_SEARCH;
+  DROP CORTEX SEARCH SERVICE IF EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKET_SEARCH;
+  ```
+  
+  ### Remove Only Notebooks
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."1_DATA_PROCESSING";
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."2_ANALYZE_CALL_AUDIO";
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."3_INTELLIGENCE_LAB";
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING;
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO;
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB;
+  ```
+  
+  ### Keep Data, Remove AI Components
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  -- Remove agent, search services, and notebooks but keep database
+  DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS."Telco Operations AI Agent";
+  DROP CORTEX SEARCH SERVICE IF EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CALL_TRANSCRIPT_SEARCH;
+  DROP CORTEX SEARCH SERVICE IF EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKET_SEARCH;
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."1_DATA_PROCESSING";
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."2_ANALYZE_CALL_AUDIO";
+  DROP NOTEBOOK IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS."3_INTELLIGENCE_LAB";
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING;
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO;
+  DROP STAGE IF EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB;
+  ```
+  
+  ## Troubleshooting
+  
+  **Permission denied errors:**
+  - Ensure you're using ACCOUNTADMIN role
+  - Some objects may be owned by different roles
+  
+  **Object does not exist errors:**
+  - This is expected if the component was already removed or never created
+  - The IF EXISTS clause prevents errors
+  
+  **Cannot drop database with active sessions:**
+  - Ensure no worksheets or notebooks are connected to TELCO_OPERATIONS_AI
+  - Close any running notebooks first
+  
+  **Warehouse in use errors:**
+  - Wait for any running queries to complete
+  - Or use: `ALTER WAREHOUSE TELCO_WH SUSPEND;` before dropping
+
+triggers:
+  - uninstall telco
+  - teardown telco
+  - remove telco agent
+  - cleanup telco
+  - delete telco quickstart
+  - remove novaconnect
+  - uninstall novaconnect

@@ -91,7 +91,7 @@ Snowflake Notebook that helps you get started with using Cortex AI Functions wit
 
 **Step 5.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [audio.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/audio.sql) to execute all statements in order from top to bottom to create VOICEMAILS table.
 
-**Step 6.** Click on [cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions/blob/dd715f1e87644f41ca0a0fa8a8621f2b66a926ba/CORTEX_AI_FUNCTIONS.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+**Step 6.** Click on [cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions/blob/main/CORTEX_AI_FUNCTIONS.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 
 **Step 7.** In Snowsight:
 
@@ -119,7 +119,7 @@ Snowflake Notebook that helps you get started with using Cortex AI Functions wit
 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Here's the code walkthrough of the [cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions/blob/dd715f1e87644f41ca0a0fa8a8621f2b66a926ba/CORTEX_AI_FUNCTIONS.ipynb) notebook that you downloaded and imported into your Snowflake account. 
+Here's the code walkthrough of the [cortex_ai_functions.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions/blob/main/CORTEX_AI_FUNCTIONS.ipynb) notebook that you downloaded and imported into your Snowflake account. 
 
 Once the status changes from **Starting** to **Active**, run through all the cells from top to bottom.
 

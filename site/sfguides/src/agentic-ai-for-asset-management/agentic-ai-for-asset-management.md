@@ -8,7 +8,7 @@ authors: Mats Stellwall, Constantin Stanca, Dureti Shemsi
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management
 
-# Agentic AI for Asset Management
+# Agentic AI for Asset Management using Snowflake Public Data
 
 ## Overview
 
@@ -33,6 +33,8 @@ The solution creates a fictional asset management firm called **Simulated Asset 
 ## How It Works
 
 This solution leverages Snowflake's native AI features to create a seamless, end-to-end workflow without the need for external tools or data movement.
+
+![Snowflake Native AI Workflow](assets/how_it_works.png)
 
 **Data Foundation**: The solution creates a complete dimensional data model with dimension tables (securities, issuers, portfolios, benchmarks) and fact tables (positions, transactions, stock prices, ESG scores). Real securities are sourced from SEC filings via the Snowflake Marketplace.
 
