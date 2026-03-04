@@ -418,8 +418,8 @@ Congratulations! You've successfully built an end-to-end data pipeline for an AI
 - How to implement enterprise security using Dynamic Data Masking and RBAC
 
 ### Related Resources
-- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex)
+- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
 - [Dynamic Tables Overview](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
-- [Semantic Views Documentation](https://docs.snowflake.com/en/user-guide/views-semantic)
+- [Semantic Views Documentation](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [Getting Started with Snowflake Intelligence](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence)
 - [Snowflake Documentation](https://docs.snowflake.com/)
