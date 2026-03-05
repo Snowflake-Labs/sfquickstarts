@@ -6,6 +6,8 @@ summary: Build data engineering pipelines using Snowflake Notebooks with Python 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks
+
 
 # Getting Started with Data Engineering using Snowflake Notebooks
 <!-- ------------------------ -->
