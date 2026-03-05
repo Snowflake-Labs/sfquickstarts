@@ -23,14 +23,15 @@ This Quickstart will focus on how to build Python data engineering pipelines usi
 * How to use Snowflake Notebooks and the Snowpark DataFrame API to build data engineering pipelines
 * How to add logging to your Python data engineering code and monitor from within Snowsight
 * How to use the Snowflake Python Management API to programmatically work with Snowflake objects
-* How to use the Python Task DAG API to programatically manage Snowflake Tasks
+* How to use the Python Task DAG API to programmatically manage Snowflake Tasks
+* How to use Cortex Code to accelerate data engineering development directly in Snowsight
 * How to build CI/CD pipelines using Snowflake's Git Integration, the Snowflake CLI, and GitHub Actions
 * How to deploy Snowflake Notebooks from dev to production
 
 ### What You'll Build
 * A data share from the Snowflake Marketplace to access weather data
 * A data engineering pipeline with a Notebook to ingest Excel files into Snowflake
-* A data engineering pipeline with a Notebook to transform and aggreggate data
+* A data engineering pipeline with a Notebook to transform and aggregate data
 * A DAG (or Directed Acyclic Graph) of Tasks to orchestrate/schedule the pipelines
 * A CI/CD pipeline to deploy the Notebooks to production
 
@@ -61,33 +62,6 @@ Make sure to save the token before leaving the page, as we will be using it a co
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering with Snowflake Notebooks associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
-### Configure GitHub Actions
-By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
-
-![assets/github_actions_activate.png](assets/github_actions_activate.png)
-
-The last step to enable your GitHub Actions workflow is to create the required secrets. In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used to connect to your Snowflake account.
-
-From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
-
-| Secret name | Secret value |
-|-------------|--------------|
-| SNOWFLAKE_ACCOUNT | myaccount |
-| SNOWFLAKE_USER | myusername |
-| SNOWFLAKE_PASSWORD | mypassword |
-| SNOWFLAKE_ROLE | DEMO_ROLE |
-| SNOWFLAKE_WAREHOUSE | DEMO_WH |
-| SNOWFLAKE_DATABASE | DEMO_DB |
-| SNOWFLAKE_SCHEMA | INTEGRATIONS |
-
->  **Tip** - For more details on how to structure the account name in SNOWFLAKE_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
-
-When you’re finished adding all the secrets, the page should look like this:
-
-![assets/github_actions_secrets.png](assets/github_actions_secrets.png)
-
->  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
-
 
 <!-- ------------------------ -->
 ## Setup Snowflake
@@ -106,36 +80,11 @@ CREATE OR REPLACE API INTEGRATION GITHUB_API_INTEGRATION
     API_ALLOWED_PREFIXES = ('https://github.com/')
     ALLOWED_AUTHENTICATION_SECRETS = ALL
     ENABLED = TRUE;
-
---GRANT USAGE ON INTEGRATION github_api_integration TO ROLE DEMO_ROLE;
 ```
 
 This API integration allows Snowflake to access GitHub repositories. The `ALLOWED_AUTHENTICATION_SECRETS = ALL` setting allows the integration to use any secret for authentication, which we'll need for private repositories or to push changes back to GitHub.
 
 > **Note**: Only users with ACCOUNTADMIN privileges (or the CREATE INTEGRATION privilege) can create API integrations. If you don't have these privileges, ask your Snowflake administrator to create this integration for you.
-
-### Create External Access Integration for PyPI
-
-Notebooks in Workspaces may need to install Python packages from PyPI (the Python Package Index). To allow this, we need to create a network rule and an external access integration. This integration will be used by the `01_load_excel_files.ipynb` notebook to install the `openpyxl` package for reading Excel files.
-
-Run the following SQL script in your default Workspace:
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
--- This is a schema level object
-CREATE OR REPLACE NETWORK RULE USER$.PUBLIC.PYPI_NETWORK_RULE
-MODE = EGRESS
-TYPE = HOST_PORT
-VALUE_LIST = ('pypi.org', 'pypi.python.org', 'pythonhosted.org', 'files.pythonhosted.org');
-
--- This is an account level object
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION PYPI_ACCESS_INTEGRATION
-ALLOWED_NETWORK_RULES = (PYPI_NETWORK_RULE)
-ENABLED = true;
-```
-
-The network rule defines which external hosts the notebook can connect to, and the external access integration makes this rule available to notebook services. When creating your notebook service later, you'll be able to select this integration to enable PyPI access.
 
 ### Create Workspace
 
@@ -158,7 +107,12 @@ Snowflake will now clone the repository and create your workspace. This may take
 
 > **Note** - The Workspace provides a Jupyter-compatible notebook experience with direct access to governed Snowflake data. Notebooks run in a pre-built container environment optimized for AI/ML development with fully-managed access to CPUs and GPUs.
 
-Throughout this Quickstart, when we reference a file (like "Open **00_start_here.ipynb**"), you'll open it from your Workspace rather than from a local clone.
+### Create Demo Objects in Snowflake
+
+Next we will create the Snowflake objects used during this Guide. To do that we will run a SQL script from our new Workspace:
+
+1. In your Workspace, in the left "Files" pane, open the file `scripts/setup.sql`
+1. Run all of the SQL statements in this script by clicking on the blue down arrow and "Run all", next to play button at the top of the script, or using the shortcut CMD/CTRL+Shift+Enter
 
 ### Create and Switch to Dev Branch
 
@@ -204,15 +158,11 @@ The notebook service will start up, which may take a minute or two for the first
 
 > **Tip** - Since notebook services can be shared across multiple notebooks, you only need to create one service. When you open other notebooks in your workspace, you can connect them to the same `NOTEBOOK_SERVICE` to share compute resources.
 
-### Run the 00 Setup Snowflake Step
-
-Now that you're connected to your notebook service, you're ready to run cells in the Notebook. Scroll down to the "Step 01 Setup Snowflake" section and run the cells in this section to create the required database objects. To run a given cell simply click anywhere in the cell to select it and press CMD/CTRL+Enter. You can alternatively click on the Run arrow near the top right of the cell.
-
 
 <!-- ------------------------ -->
 ## Load Weather
 
-During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
 
 ![assets/quickstart_overview.png](assets/quickstart_overview.png)
 
@@ -246,8 +196,6 @@ To put this in context, we are on step **#3** in our data flow overview:
 ### Run the Notebook
 
 In Workspaces, open the `01_load_excel_files` notebook,  click on the "Run all" button near the top right of the window. This will execute all cells in the notebook, in order.
-
->  **Tip** - Since we will be going back to the `00_start_here` Notebook later, it might be easier to open a new Snowsight tab and set the default role to `DEMO_ROLE` there, and leave your current tab with the `00_start_here` Notebook open as well.
 
 ### Notebook Git Integration
 
@@ -301,7 +249,7 @@ Open the `02_load_daily_city_metrics` Notebook click on the "Run all" button nea
 
 In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like in PySpark, this can be accomplished with the `Session.builder.configs().create()` methods. But within a Snowflake Notebook this is simplified and can be accomplished with just `session = get_active_session()`.
 
-One you have a Snowpark session you can begin working with data. In this Notebook we're using DataFrames to join the data from different tables into an `order_detail` DataFrame using the `join()` API.
+Once you have a Snowpark session you can begin working with data. In this Notebook we're using DataFrames to join the data from different tables into an `order_detail` DataFrame using the `join()` API.
 
 ```python
 order_detail = order_detail.join(location, order_detail['LOCATION_ID'] == location['LOCATION_ID'])
@@ -324,7 +272,7 @@ final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F
                         )
 ```
 
-And finally if the target table exists we're using the `merge()` DataFrame API to perform and Upsert operation on the target table. This is what enables us to perform incremental processing.
+And finally if the target table exists we're using the `merge()` DataFrame API to perform an Upsert operation on the target table. This is what enables us to perform incremental processing.
 
 ```python
     dcm.merge(final_agg, (dcm['DATE'] == final_agg['DATE']) & (dcm['CITY_NAME'] == final_agg['CITY_NAME']) & (dcm['COUNTRY_DESC'] == final_agg['COUNTRY_DESC']), \
@@ -335,7 +283,7 @@ For more details about the Snowpark Python DataFrame API, please check out our [
 
 ### Python Management API
 
-The new Python Management API allows us to programmatically interact with Snowflake with native Python objects. This API can be used to both inspect and manage Snowflake objects. In the previous Quickstart we checked for the existing of an object by using SQL like this:
+The new Python Management API allows us to programmatically interact with Snowflake with native Python objects. This API can be used to both inspect and manage Snowflake objects. In the previous Quickstart we checked for the existence of an object by using SQL like this:
 
 ```sql
 def table_exists(session, database_name='', schema_name='', table_name=''):
@@ -379,6 +327,49 @@ logger.info(f"Begin executing notebook {notebook_name}", extra = {'logger_name':
 In addition to custom logging, Snowflake is instrumenting all services/features to take advantage of logging and tracing as well. For example, when you ran this Notebook earlier it logged a number of messages by default, like when each cell executed.
 
 All of your log messages can be found in your default logging table, which we created in step 1. If you look back at the code from step 1 you'll find that we created an event table named `DEMO_DB.INTEGRATIONS.DEMO_EVENTS` and then set that as the default event table for the account. You can now use this table just like any other table in Snowflake to query and act on the log data.
+
+Let's view the logs that have been created so far by running the query in Step 04 of the `00_start_here` Notebook. Here's the query to do that:
+
+```python
+SELECT 
+    TIMESTAMP,
+    VALUE AS LOG_MESSAGE,
+    RESOURCE_ATTRIBUTES:"snow.service.name"::string AS SERVICE_NAME,
+    RECORD_ATTRIBUTES:"severity_text"::string AS SEVERITY
+FROM DEMO_DB.INTEGRATIONS.DEMO_EVENTS
+WHERE RECORD_TYPE = 'LOG'
+--  AND RESOURCE_ATTRIBUTES:"snow.service.name" = 'NOTEBOOK_SERVICE'
+  AND TIMESTAMP > DATEADD(hour, -1, CURRENT_TIMESTAMP())
+ORDER BY TIMESTAMP DESC
+LIMIT 100;
+```
+
+
+<!-- ------------------------ -->
+## Using Cortex Code
+
+Now that we've built our data engineering pipelines, let's look at a tool that can help accelerate your development workflow significantly. [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) is an AI-powered coding assistant built directly into Snowsight that understands your Snowflake environment, including SQL worksheets, dbt Projects, and Notebooks. It can generate and modify code, explain existing logic, and even run notebooks — all from a conversational interface without ever leaving Snowsight.
+
+For data engineers, this is a game changer. Instead of manually writing your Python DataFrame (or SQL) queries, you can describe what you want in plain English and Cortex Code will generate context-aware code that follows Snowflake best practices. Whether you're building a new transformation, adding a debugging query, or exploring unfamiliar data, Cortex Code helps you move faster while staying in your flow.
+
+> **Note** - Cortex Code requires the `SNOWFLAKE.COPILOT_USER` database role and either the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role. It also requires [Cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) to be enabled. See the [Cortex Code documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) for full details.
+
+### Cortex Code in Action
+
+Let's see Cortex Code in action with the Notebook we just ran. Open the `02_load_daily_city_metrics` Notebook in your Workspace and then follow these steps:
+
+1. Click the Cortex Code icon in the lower-right corner of the Workspace to open the assistant panel
+2. In the message box, enter the following prompt and press Enter:
+
+```
+Add a Python cell under the debugging section that uses Snowpark DataFrame to query the DAILY_CITY_METRICS table and show the top 10 cities by total sales, including total days and average temperature.
+```
+
+Cortex Code will analyze the context of your Notebook and generate a new Python cell with the appropriate Snowpark DataFrame code. You'll be able to review the suggested change before applying it. Once you're happy with it, apply the change and run the new cell to see the results.
+
+![assets/cortex_code_snowsight.png](assets/cortex_code_snowsight.png)
+
+While this was just a simple debugging cell, we can leverage Cortex Code to write any part (or all) of our pipelines for us! As you continue building out your data engineering pipelines, Cortex Code can help you iterate faster — from prototyping new transformations to troubleshooting issues in production.
 
 
 <!-- ------------------------ -->
@@ -454,6 +445,8 @@ with DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name) as dag:
             COMPUTE_POOL = {compute_pool}
             RUNTIME = '{runtime}'
             QUERY_WAREHOUSE = {warehouse_name}
+            EXTERNAL_ACCESS_INTEGRATIONS = ('{external_access_integration}')
+            ARGUMENTS = '--database-name {database_name} --schema-name {schema_name}'
         ''', warehouse=warehouse_name)
     dag_task2 = DAGTask("LOAD_DAILY_CITY_METRICS", definition=f'''
         EXECUTE NOTEBOOK PROJECT {database_name}.{schema_name}.{notebook_project_name}
@@ -461,6 +454,7 @@ with DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name) as dag:
             COMPUTE_POOL = {compute_pool}
             RUNTIME = '{runtime}'
             QUERY_WAREHOUSE = {warehouse_name}
+            ARGUMENTS = '--database-name {database_name} --schema-name {schema_name}'
         ''', warehouse=warehouse_name)
 
     # Define the dependencies between the tasks
@@ -498,7 +492,7 @@ Here's what the task graph looks like:
 
 ![assets/snowsight_task_graph.png](assets/snowsight_task_graph.png)
 
-And here's an example of the task run history:
+And here's an example of the task run history (shown after a few executions have taken place):
 
 ![assets/snowsight_task_run_history.png](assets/snowsight_task_run_history.png)
 
@@ -541,6 +535,38 @@ ORDER BY COMPLETED_TIME DESC;
 During this step we will be deploying our Notebooks to production using a CI/CD pipeline. We will make a small change to a Notebook and then commit that change to our Git repo all within Snowsight. After that we will create a Pull Request (or PR), merge our changes to `main` and deploy with GitHub Actions. To put this in context, we are on step **#7** in our data flow overview:
 
 ![assets/quickstart_overview.png](assets/quickstart_overview.png)
+
+### Create a Snowflake Personal Access Token
+In order to connect to your Snowflake account from GitHub Actions, we will use a Snowflake Personal Access Token (or PAT). Please follow the steps in [Generating a programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens#generating-a-programmatic-access-token) to create a Snowflake PAT for your user. When choosing which role to grant the PAT access to, select the `DEMO_ROLE` role.
+
+Make sure to save the PAT before leaving the page, as you won't be able to view it again.
+
+### Configure GitHub Actions
+By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
+
+![assets/github_actions_activate.png](assets/github_actions_activate.png)
+
+The last step to enable your GitHub Actions workflow is to create the required secrets. In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used to connect to your Snowflake account.
+
+From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
+
+| Secret name | Secret value |
+|-------------|--------------|
+| SNOWFLAKE_ACCOUNT | &lt;your account name&gt; |
+| SNOWFLAKE_USER | &lt;your user name&gt; |
+| SNOWFLAKE_PASSWORD | &lt;your PAT&gt; |
+| SNOWFLAKE_ROLE | DEMO_ROLE |
+| SNOWFLAKE_WAREHOUSE | DEMO_WH |
+| SNOWFLAKE_DATABASE | DEMO_DB |
+| SNOWFLAKE_SCHEMA | INTEGRATIONS |
+
+>  **Tip** - For more details on how to structure the account name in SNOWFLAKE_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
+
+When you’re finished adding all the secrets, the page should look like this:
+
+![assets/github_actions_secrets.png](assets/github_actions_secrets.png)
+
+>  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
 ### Update the 01 Notebook
 
@@ -673,7 +699,8 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 * How to use Snowflake Notebooks and the Snowpark DataFrame API to build data engineering pipelines
 * How to add logging to your Python data engineering code and monitor from within Snowsight
 * How to use the Snowflake Python Management API to programmatically work with Snowflake objects
-* How to use the Python Task DAG API to programatically manage Snowflake Tasks
+* How to use the Python Task DAG API to programmatically manage Snowflake Tasks
+* How to use Cortex Code to accelerate data engineering development directly in Snowsight
 * How to build CI/CD pipelines using Snowflake's Git Integration, the Snowflake CLI, and GitHub Actions
 * How to deploy Snowflake Notebooks from dev to production
 
