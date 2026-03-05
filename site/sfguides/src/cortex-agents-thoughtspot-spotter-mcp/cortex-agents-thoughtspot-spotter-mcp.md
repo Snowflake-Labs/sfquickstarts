@@ -1,7 +1,7 @@
 author: Ali Alladin
 id: cortex-agents-thoughtspot-spotter-mcp
 summary: Use Snowflake Cortex Agents and the managed MCP server to power ThoughtSpot Spotter with agentic analytics on Snowflake data.
-categories: getting-started,cortex
+categories: cortex
 environments: web
 status: Published
 language:en
