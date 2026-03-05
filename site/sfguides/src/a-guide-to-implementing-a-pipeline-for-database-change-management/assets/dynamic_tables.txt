@@ -1,0 +1,68 @@
+1) DAY_DIM
+
+DEFINE DYNAMIC TABLE {{target_db}}.{{target_schema}}.DAY_DIM
+    TARGET_LAG = '10 minutes'
+    WAREHOUSE = {{warehouse}}
+AS
+
+with all_dates as (select distinct order_date as date from {{source_db}}.{{source_schema}}.orders
+union
+select distinct required_date from {{source_db}}.{{source_schema}}.orders)
+select date, dayname(date) as dayname, weekofyear(date) as weekofyear, monthname(date) as monthname, quarter(date) as quarter, year(date) as year 
+from all_dates order by 1;
+
+2) EMPLOYEE_DIM
+
+DEFINE DYNAMIC TABLE {{target_db}}.{{target_schema}}.EMPLOYEE_DIM
+    TARGET_LAG = '10 minutes'
+    WAREHOUSE = {{warehouse}}
+AS
+
+with employee_join as (
+select e.employee_id as employeeid, e.last_name || ', ' || e.first_name as employeename, e.title, e.city as officelocation, e.reports_to
+, r.region_description as salesregionname
+from {{source_db}}.{{source_schema}}.employees e, {{source_db}}.{{source_schema}}.employee_territories et, {{source_db}}.{{source_schema}}.territories t, {{source_db}}.{{source_schema}}.region r
+where e.employee_id = et.employee_id
+and et.territory_id = t.territory_id
+and t.region_id = r.region_id
+),
+distinct_employee as (select distinct * from employee_join)
+select distinct_employee.employeeid, distinct_employee.employeename, distinct_employee.title, distinct_employee.officelocation, distinct_employee.salesregionname, 
+coalesce(mgr.last_name || ', ' || mgr.first_name, distinct_employee.employeename) as managername, coalesce(mgr.title, distinct_employee.title) as managertitle
+from distinct_employee
+left join {{source_db}}.{{source_schema}}.employees mgr on mgr.employee_id = distinct_employee.reports_to;
+
+3) PRODUCT_DIM
+
+DEFINE DYNAMIC TABLE {{target_db}}.{{target_schema}}.PRODUCT_DIM
+    TARGET_LAG = '10 minutes'
+    WAREHOUSE = {{warehouse}}
+AS
+    select p.product_id as productid, p.product_name as productname, p.quantity_per_unit as quantityperunit, c.category_name as categoryname, c.description as categorydesc, p.discontinued as discontinuedflag
+    from {{source_db}}.{{source_schema}}.products p
+    join {{source_db}}.{{source_schema}}.categories c on p.category_id = c.category_id;
+
+
+4) SHIPPER_DIM
+
+DEFINE DYNAMIC TABLE {{target_db}}.{{target_schema}}.SHIPPER_DIM
+    TARGET_LAG = '10 minutes'
+    WAREHOUSE = {{warehouse}}
+AS
+
+select shipper_id as shipperid, company_name::varchar(40) as shippername from {{source_db}}.{{source_schema}}.shippers;
+
+5) Update ORDER_FACT by adding shipper_id to Order_fact table 
+
+define DYNAMIC TABLE {{target_db}}.{{target_schema}}.ORDER_FACT
+    TARGET_LAG = '10 minutes'
+    WAREHOUSE = {{warehouse}}
+AS
+    select o.order_id as orderid, o.customer_id as customerid, o.employee_id as employeeid, o.order_date as orderdate, o.required_date as requireddate, o.shipped_date as shippeddate, od.product_id as productid, 
+    o.freight, od.quantity, od.unit_price as unitprice, od.discount, o.ship_via as shipperid
+    from {{source_db}}.{{source_schema}}.order_details od
+    join {{source_db}}.{{source_schema}}.orders o on o.order_id = od.order_id;
+
+
+
+
