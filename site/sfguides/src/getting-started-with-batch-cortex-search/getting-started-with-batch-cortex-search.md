@@ -20,7 +20,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 This guide walks you step-by-step through creating a **Cortex Search Service** and running queries against it. We show that for large numbers of queries, consecutive searches significantly increase the time taken. Finally, we use **Batch Cortex Search** to tackle the entire search in a matter of seconds. We also show how this solution can scale up to thousands of searches without significant impact on the time to process. 
 
 At a high level:
--   A Cortex Search is for interactive, low latency user-facing search (RAG chatbots, search bars)
+-   Cortex Search is for interactive, low latency user-facing search (RAG chatbots, search bars)
 -   Batch Cortex Search is for offline, high-throughput workloads over large sets of queries (entity resolution, catalog mapping)
 -   Both use the same underlying Cortex Search service and index, no need to create separate objects to use batch.
 
@@ -49,7 +49,7 @@ At a high level:
 <!-- ------------------------ -->
 ## What is Batch Cortex Search?
 
-The Batch Cortex Search function is a table function that allows you to submit a batch of queries to a Cortex Search Service. It is intended for offline use-cases with high throughput requirements, such as entity resolution, deduplication, or clustering tasks.
+The Batch Cortex Search function is a table function that allows you to submit a batch of queries to a Cortex Search Service. It is intended for offline use cases with high throughput requirements, such as entity resolution, deduplication, or clustering tasks.
 
 Jobs submitted to a Cortex Search Service with the CORTEX_SEARCH_BATCH function leverage additional compute resources to provide a significantly higher level of throughput (queries per second) than the interactive (Python, REST, SEARCH_PREVIEW) API search query surfaces.
 
@@ -66,7 +66,7 @@ For this tutorial, we will use a free dataset available on the **Snowflake Marke
 In your Snowsight account, navigate to the Marketplace and search for Wikipedia data. Click 'Get'.
 ![alt text](assets/marketplace_dataset.jpg)
 
-You can also import the dataset programmatically, please note the Wikipedia global listing name (GZT0Z4C8RF3FT) might be subject to change in the future.
+You can also import the dataset programmatically. Please note the Wikipedia global listing name (GZT0Z4C8RF3FT) might be subject to change in the future.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -76,7 +76,7 @@ CREATE DATABASE IF NOT EXISTS AI_TRAINING_DATASET_FROM_WIKIPEDIA
 FROM LISTING 'GZT0Z4C8RF3FT';
 ```
 
-Let's begin by opening a SQL file in Snowflake workspace. Before we do anything else, let's set up our environment.
+Let's begin by opening a SQL file in Snowflake Workspace. Before we do anything else, let's set up our environment.
 ![alt text](assets/workspace_intro.png)
 
 ```sql
@@ -174,13 +174,13 @@ FROM TABLE(FLATTEN(
 )) AS r;
 ```
 
-This type of search is extremely efficient, and Cortex Search can quickly return results even for extremely large datasets. It is even faster when used directly via Snowflake Python API or REST API, but for now let's look at the SQL for demonstration purposes. 
+This type of search is extremely efficient, and Cortex Search can quickly return results even for extremely large datasets. It is even faster when used directly via Snowflake Python API or REST API, but for now, let's look at the SQL for demonstration purposes. 
 
 ### The Problem: No Elegant Way to Do Multiple Searches
 
-SEARCH_PREVIEW requires constant strings. To search 10 terms, you must either:
+Function SEARCH_PREVIEW requires constant strings. To search 10 terms using SQL, you must either:
 1. Write 10 separate SELECT statements
-2. Use ugly UNION ALL with hardcoded queries  
+2. Use verbose UNION ALL with hardcoded queries  
 3. Build a stored procedure with a loop
 
 None of these scale to 100, 1000, or 10000 searches.
@@ -283,7 +283,7 @@ LATERAL CORTEX_SEARCH_BATCH(
 ### Scale to 1000 Searches
 
 That's it! And this is just the tip of the iceberg — we can run 1000 searches with virtually no impact on the query execution time!
-However, the real use-case for Cortex Batch Search is when we increase the number of searches. Because of the stratup overhead, Batch Search is actually SLOWER when processing a small amount of queries. As soon as we need to process a lot of searches, that's when Batch really shines.  
+However, the real use case for Cortex Batch Search is when we increase the number of searches. Because of the *startup overhead*, Batch Cortex Search is actually SLOWER when processing a small number of queries. As soon as we need to process a lot of searches, that's when Batch Cortex Search really shines.  
 
 > **_NOTE:_** Run these statements together as one block.
 
@@ -317,9 +317,11 @@ Batch Cortex Search is easy to implement, but extremely powerful. Running 1000 s
 <!-- ------------------------ -->
 ## Bonus: Python SDK Comparison
 
-For a more elegant approach, you can use the **Snowflake Python SDK** to compare interactive search vs batch search performance. This section uses a Snowflake Notebook to benchmark both approaches.
+So far, this guide has focused on using SQL. You can also use the **Snowflake Python SDK** to compare Cortex Search (interactive) vs Batch Cortex Search performance. This section uses Python in a Snowflake Notebook within Workspaces to benchmark both approaches.
 
-> **_NOTE:_** This section requires running in a Snowflake Notebook environment. Create a new notebook in Snowsight and copy these cells.
+![Create Notebook](assets/create_notebook.png)
+
+> **_NOTE:_** This section requires running in a Snowflake Notebook environment. Create a new notebook in Workspaces and copy cells below.
 
 ### Setup
 
@@ -618,7 +620,9 @@ We ran the Python SDK comparison from the previous section to measure the real-w
 | 5,000 | ~29 min | ~68s | **Batch** | 25.7x |
 | 10,000 | ~58 min | 73.6s | **Batch** | 47.5x |
 
-> **_NOTE:_** Interactive search runs at a consistent ~350ms per query regardless of batch size. The 5,000 and 10,000 interactive times are extrapolated from this rate.
+> **_NOTE:_** These results are provided for illustrative purposes only and should not be considered official performance figures.
+
+The 5,000 and 10,000-queries interactive times are extrapolated based on Cortex Search performance for 100, 500 and 1,000 queries.
 
 ### The Crossover Point
 
@@ -655,10 +659,12 @@ The pattern is clear: **the more queries you have, the more batch search pays of
 |----------|---------------------|-----|
 | Real-time search (chatbots, search bars) | Interactive SDK | Optimized for single-query latency |
 | Small batch (<100 queries) | Either | Similar performance |
-| Medium batch (100-1000 queries) | **Batch** | 3-6x faster |
-| Large batch (1000+ queries) | **Always Batch** | 10-50x faster |
+| Medium batch (100-1000 queries) | **Batch** | 3-10x faster |
+| Large batch (1000+ queries) | **Always Batch** | 10-100x faster |
 
-> **_KEY TAKEAWAY:_** Interactive search has consistent per-query latency (~350ms), making it ideal for user-facing applications. Batch search has a small startup cost but achieves dramatically higher throughput by processing queries in parallel. For any workload over 100 queries, batch is the clear winner — and at 10,000+ queries, it can be **47x faster**.
+Interactive search has consistent per-query latency (~350ms), making it ideal for user-facing applications. Batch search has a small startup cost but achieves dramatically higher throughput by processing queries in parallel. For any workload over 100 queries, batch is the clear winner — and at 10,000+ queries for the tested dataset, it is **47x faster**.
+
+> **_NOTE:_** Since there is no limit to the number of concurrent batch queries that can be run at a given time on a given service, you could, for example, run 10 Batch Cortex Search jobs in parallel, achieving up to **1000x higher** throughput than Cortex Search.
 
 <!-- ------------------------ -->
 ## Cleanup
