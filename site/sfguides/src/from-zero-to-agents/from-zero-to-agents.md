@@ -110,7 +110,7 @@ Confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` by clicking on yo
 5. Upload the marketing_data.csv and click `next` then load
 6. Click `View table detail` to see the new data uploaded
 
-![Updating marketing data](assets/Updatingmarketing.png)
+![Updating marketing data](assets/updatingmarketing.png)
 
 
 <!-- ------------------------ -->
@@ -292,7 +292,7 @@ Let's ask the following questions
 
 ### Q1. What are the top 5 campaigns by clicks?
 
-![Top 5](assets/top5clicks.png)
+![Top 5](assets/topclicks.png)
 
 ### Q2. Show me all campaign performance metrics and it's relationship to the product
 
@@ -304,7 +304,7 @@ Let's ask the following questions
 
 ### Q4. What are the main customer complains in support cases?
 
-![Support cases](assets/supportcases.png)
+![Support cases](assets/supportcase.png)
 
 
 ## Security (optional)
@@ -418,8 +418,8 @@ Congratulations! You've successfully built an end-to-end data pipeline for an AI
 - How to implement enterprise security using Dynamic Data Masking and RBAC
 
 ### Related Resources
-- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex)
+- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
 - [Dynamic Tables Overview](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
-- [Semantic Views Documentation](https://docs.snowflake.com/en/user-guide/views-semantic)
+- [Semantic Views Documentation](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [Getting Started with Snowflake Intelligence](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence)
 - [Snowflake Documentation](https://docs.snowflake.com/)
