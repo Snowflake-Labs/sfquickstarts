@@ -4,7 +4,7 @@ summary: Stream thousands of arcade game scores into Snowflake in real time usin
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/interactive-tables, snowflake-site:taxonomy/snowflake-feature/interactive-warehouse
 environments: web
 language: en
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/interactive-tables-snowpipe-streaming-arcade-lab
 
@@ -750,7 +750,7 @@ cortex --version
 The Cortex CLI uses the **`snow` CLI** under the hood to deploy the Streamlit app to Snowflake. `snow` requires a **Programmatic Access Token (PAT)** registered as a named connection — this is completely separate from the RSA key pair used by the Python streamer, which is not involved here at all.
 
 1. Open **`sql/04_generate_pat.sql`** in Snowsight and run it as the user who will deploy the dashboard
-2. Copy the `SETUP_COMMAND` result that is printed, and run it in the Codespace terminal — it writes `snow_pat.txt` and runs `snow connection add` in a single step
+2. Copy the `SETUP_COMMAND` result that is printed, and run it in the Codespace terminal — it registers the `snow` connection in a single step
 
 Verify the `snow` connection works:
 
