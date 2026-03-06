@@ -171,6 +171,9 @@ Now create the Snowflake storage integrations and generate the trust policy for 
 Run the following in Snowflake, replacing `<YOUR_ROLE_ARN>` and `<YOUR_BUCKET>` with your values from the previous section:
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
+USE ROLE ACCOUNTADMIN;
+
 CREATE STORAGE INTEGRATION PG_IOT_S3_INTEGRATION
     TYPE = POSTGRES_EXTERNAL_STORAGE
     STORAGE_PROVIDER = 'S3'
@@ -191,6 +194,7 @@ CREATE STORAGE INTEGRATION SF_IOT_S3_INTEGRATION
 Retrieve the IAM user ARN and external ID from each integration:
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 DESCRIBE INTEGRATION PG_IOT_S3_INTEGRATION;
 ```
 
@@ -199,6 +203,7 @@ Record the values for:
 - `STORAGE_AWS_EXTERNAL_ID`
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 DESCRIBE INTEGRATION SF_IOT_S3_INTEGRATION;
 ```
 
@@ -242,6 +247,7 @@ Create the Snowflake database objects that will receive data from Postgres and s
 ### Step 1: Create Database and Warehouse
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 USE ROLE ACCOUNTADMIN;
 
 CREATE DATABASE IF NOT EXISTS IOT_LAB;
@@ -260,6 +266,7 @@ USE WAREHOUSE IOT_WH;
 ### Step 2: Create File Format and Stage
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 CREATE OR REPLACE FILE FORMAT CSV_FORMAT
     TYPE = 'CSV'
     FIELD_OPTIONALLY_ENCLOSED_BY = '"'
@@ -275,6 +282,7 @@ CREATE OR REPLACE STAGE IOT_STAGE
 ### Step 3: Create Tables
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 CREATE OR REPLACE TABLE SENSOR_READINGS (
     READING_ID       INT,
     SENSOR_NAME      VARCHAR(50),
@@ -303,6 +311,7 @@ CREATE OR REPLACE TABLE SENSOR_ANOMALIES (
 Streams in Snowflake track changes to tables, enabling efficient incremental processing. This stream will capture new anomalies for export back to Postgres.
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 CREATE OR REPLACE STREAM ANOMALIES_STREAM ON TABLE SENSOR_ANOMALIES
     APPEND_ONLY = TRUE;
 ```
@@ -310,6 +319,7 @@ CREATE OR REPLACE STREAM ANOMALIES_STREAM ON TABLE SENSOR_ANOMALIES
 ### Step 5: Verify Stage Access
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 LIST @IOT_STAGE/;
 ```
 
@@ -325,6 +335,7 @@ Create a Snowflake Postgres instance with pg_lake enabled.
 Snowflake Postgres requires a network policy to allow client connections.  Replace `nnn.nnn.nnn.nnn/32` with specific IP (or subnet) and CIDR for your organization.
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 CREATE DATABASE IF NOT EXISTS PG_NETWORK_DB;
 CREATE SCHEMA IF NOT EXISTS PG_NETWORK_DB.PG_NETWORK;
 USE DATABASE PG_NETWORK_DB;
@@ -348,6 +359,7 @@ CREATE OR REPLACE NETWORK POLICY PG_IOT_NETWORK_POLICY
 ### Step 2: Create Postgres Instance
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 CREATE POSTGRES INSTANCE IOT_PG
     AUTHENTICATION_AUTHORITY = POSTGRES
     COMPUTE_FAMILY = 'STANDARD_L'
@@ -366,6 +378,7 @@ CREATE POSTGRES INSTANCE IOT_PG
 Wait for the instance to reach READY state:
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 SHOW POSTGRES INSTANCES;
 
 DESCRIBE POSTGRES INSTANCE IOT_PG;
@@ -399,13 +412,16 @@ Create the IoT sensor tables and generate sample data in Postgres.
 
 ### Step 1: Enable Extensions
 
-Connect to Postgres and enable pg_lake:
+[psql](https://www.postgresql.org/docs/current/app-psql.html) is the interactive terminal for PostgreSQL, allowing you to enter queries, execute SQL commands, and manage the database from the command line.
+
+Connect to Postgres via `psql` and enable pg_lake:
 
 ```bash
 psql
 ```
 
-```sql title="psql (Postgres)"
+```sql
+-- Execute in: psql (Postgres)
 CREATE EXTENSION IF NOT EXISTS pg_lake CASCADE;
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 CREATE EXTENSION IF NOT EXISTS pg_incremental;
@@ -416,6 +432,7 @@ The `CASCADE` option automatically creates required dependencies like the `pg_la
 ### Step 2: Create Sensor Readings Table
 
 ```sql
+-- Execute in: psql (Postgres)
 CREATE TABLE sensor_readings (
     reading_id   BIGSERIAL PRIMARY KEY,
     sensor_name  TEXT NOT NULL,
@@ -435,6 +452,7 @@ CREATE INDEX idx_readings_sensor ON sensor_readings (sensor_name, reading_ts);
 This generates approximately 100,000 readings from 10 sensors over several months:
 
 ```sql
+-- Execute in: psql (Postgres)
 INSERT INTO sensor_readings (sensor_name, sensor_type, reading_ts, value, unit)
 SELECT   sensor_name,
          sensor_type,
@@ -470,6 +488,7 @@ CROSS JOIN LATERAL (
 ### Step 4: Verify Data Load
 
 ```sql
+-- Execute in: psql (Postgres)
 SELECT   sensor_type,
          count(*) AS readings,
          round(avg(value), 2) AS avg_value,
@@ -487,6 +506,7 @@ You should see approximately 50,000 readings per sensor type.
 This table will receive AI-enriched anomaly data from Snowflake:
 
 ```sql
+-- Execute in: psql (Postgres)
 CREATE TABLE sensor_anomalies (
     anomaly_id       BIGSERIAL PRIMARY KEY,
     sensor_name      TEXT NOT NULL,
@@ -505,6 +525,7 @@ CREATE TABLE sensor_anomalies (
 This foreign table will read anomaly files exported from Snowflake (replacing `<YOUR_BUCKET>` with your value):
 
 ```sql
+-- Execute in: psql (Postgres)
 CREATE FOREIGN TABLE sync_anomalies (
     sensor_name      TEXT,
     sensor_type      TEXT,
@@ -538,6 +559,7 @@ The pg_lake extension extends Postgres's standard `COPY` command to support S3 d
 ### Step 1: Check Data to Export
 
 ```sql
+-- Execute in: psql (Postgres)
 SELECT   sensor_type, count(1) AS cnt
 FROM     sensor_readings
 GROUP BY sensor_type;
@@ -548,6 +570,7 @@ GROUP BY sensor_type;
 Export sensor readings to S3 in compressed CSV format (replacing `<YOUR_BUCKET>` with your value):
 
 ```sql
+-- Execute in: psql (Postgres)
 COPY (
     SELECT   reading_id, sensor_name, sensor_type, reading_ts, value, unit
     FROM     sensor_readings
@@ -564,6 +587,7 @@ A sub select was used to show how you could be more selective in the data that w
 Use `lake_file.list()` to browse S3 contents directly from Postgres (replacing `<YOUR_BUCKET>` with your value):
 
 ```sql
+-- Execute in: psql (Postgres)
 SELECT * FROM lake_file.list('s3://<YOUR_BUCKET>/iot/export/*');
 ```
 
@@ -586,6 +610,7 @@ Foreign tables in pg_lake create a virtual table that reads from S3 on demand. T
 Create the `readings_csv` foreign table (replacing `<YOUR_BUCKET>` with your value):
 
 ```sql
+-- Execute in: psql (Postgres)
 CREATE FOREIGN TABLE readings_csv()
 SERVER pg_lake
 OPTIONS (
@@ -601,6 +626,7 @@ The empty parentheses `()` tell pg_lake to infer the schema from the file. The `
 ### Step 2: Query the Foreign Table
 
 ```sql
+-- Execute in: psql (Postgres)
 SELECT * FROM readings_csv LIMIT 10;
 ```
 
@@ -611,6 +637,7 @@ This reads directly from S3 - no data is stored in Postgres.
 Foreign tables support standard SQL operations:
 
 ```sql
+-- Execute in: psql (Postgres)
 SELECT   sensor_type, 
          count(*) AS readings, 
          round(avg(value::numeric), 2) AS avg_value
@@ -628,6 +655,7 @@ Load the exported sensor data from S3 into Snowflake for analytics processing.
 In Snowflake:
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 USE ROLE ACCOUNTADMIN;
 USE DATABASE IOT_LAB;
 USE SCHEMA IOT_LAB.SENSORS;
@@ -643,6 +671,7 @@ You should see the CSV file exported from Postgres.
 Verify the data format before loading:
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 SELECT   $1, $2, $3, $4, $5, $6
 FROM     @IOT_STAGE/export/sensor_readings.csv.gz
          (FILE_FORMAT => 'CSV_FORMAT')
@@ -652,6 +681,7 @@ LIMIT    10;
 ### Step 3: Load CSV Data
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 COPY INTO SENSOR_READINGS (READING_ID, SENSOR_NAME, SENSOR_TYPE, READING_TS, VALUE, UNIT)
 FROM @IOT_STAGE/export/
 FILE_FORMAT = CSV_FORMAT
@@ -669,6 +699,7 @@ ON_ERROR = 'CONTINUE';
 ### Step 4: Verify Load
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 SELECT   SENSOR_TYPE,
          COUNT(*) AS READINGS,
          ROUND(AVG(VALUE), 2) AS AVG_VALUE,
@@ -693,6 +724,7 @@ Snowflake Cortex provides access to large language models (LLMs) directly within
 This single statement simulates anomalies (using a simplified scoring approach for this lab) and generates natural language explanations using Cortex:
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 INSERT INTO SENSOR_ANOMALIES (SENSOR_NAME, SENSOR_TYPE, READING_TS, PREDICTED_VALUE, ACTUAL_VALUE, ANOMALY_SCORE, AI_EXPLANATION)
 SELECT   SENSOR_NAME, 
          SENSOR_TYPE, 
@@ -714,6 +746,7 @@ This generates 100 sample anomalies with AI explanations. In production, you wou
 ### Step 2: View AI-Explained Anomalies
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 SELECT   ANOMALY_ID, 
          SENSOR_NAME, 
          SENSOR_TYPE, 
@@ -739,6 +772,7 @@ The `ANOMALIES_STREAM` created earlier tracks new rows inserted into `SENSOR_ANO
 ### Step 1: Check Stream for Changes
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 SELECT COUNT(1) FROM ANOMALIES_STREAM;
 ```
 
@@ -747,6 +781,7 @@ This shows how many new anomalies are ready for export.
 ### Step 2: Export to S3
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 COPY INTO @IOT_STAGE/sync/
 FROM (
         SELECT SENSOR_NAME, SENSOR_TYPE, READING_TS, PREDICTED_VALUE, 
@@ -776,6 +811,7 @@ FROM (
 ### Step 3: Verify Export
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 LIST @IOT_STAGE/sync/;
 ```
 
@@ -791,6 +827,7 @@ Import the AI-enriched anomaly data back into Postgres, completing the round tri
 In Postgres, use the list function to check for files from Snowflake:
 
 ```sql
+-- Execute in: psql (Postgres)
 SELECT * FROM lake_file.list('s3://<YOUR_BUCKET>/iot/sync/*');
 ```
 
@@ -799,6 +836,7 @@ SELECT * FROM lake_file.list('s3://<YOUR_BUCKET>/iot/sync/*');
 Load the anomaly data using the pre-configured foreign table (replacing `<YOUR_BUCKET>` with your value):
 
 ```sql
+-- Execute in: psql (Postgres)
 INSERT INTO sensor_anomalies (sensor_name, sensor_type, reading_ts, predicted_value, actual_value, anomaly_score, ai_explanation)
 (SELECT   sensor_name::text, 
           sensor_type::text, 
@@ -817,6 +855,7 @@ The `ON CONFLICT DO NOTHING` clause ensures idempotent processing - running this
 ### Step 3: View AI-Enriched Anomalies in Postgres
 
 ```sql
+-- Execute in: psql (Postgres)
 SELECT   sensor_name, 
          sensor_type, 
          reading_ts, 
@@ -836,6 +875,7 @@ The anomalies detected in Snowflake with AI explanations are now available in Po
 ### Postgres Cleanup
 
 ```sql
+-- Execute in: psql (Postgres)
 DROP TABLE IF EXISTS sensor_anomalies CASCADE;
 DROP TABLE IF EXISTS sensor_readings CASCADE;
 
@@ -846,6 +886,7 @@ DROP FOREIGN TABLE IF EXISTS readings_csv CASCADE;
 ### Snowflake Cleanup
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 USE ROLE ACCOUNTADMIN;
 USE DATABASE IOT_LAB;
 USE SCHEMA IOT_LAB.SENSORS;
@@ -868,6 +909,7 @@ DROP WAREHOUSE IF EXISTS IOT_WH;
 To fully remove all infrastructure including the Postgres instance:
 
 ```sql
+-- Execute in: Snowsight (Snowflake)
 USE ROLE ACCOUNTADMIN;
 
 DROP POSTGRES INSTANCE IF EXISTS IOT_PG;
