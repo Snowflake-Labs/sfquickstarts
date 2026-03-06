@@ -6,7 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 tags: Cortex, MCP, ThoughtSpot, AI, Agents, OAuth, Spotter
-language: en
+languages: en
 
 # Integrating Snowflake Cortex Agents with ThoughtSpot Spotter via MCP
 <!-- ------------------------ -->
