@@ -195,6 +195,8 @@ Retrieve the IAM user ARN and external ID from each integration:
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE ACCOUNTADMIN;
+
 DESCRIBE INTEGRATION PG_IOT_S3_INTEGRATION;
 ```
 
@@ -204,6 +206,8 @@ Record the values for:
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE ACCOUNTADMIN;
+
 DESCRIBE INTEGRATION SF_IOT_S3_INTEGRATION;
 ```
 
@@ -248,7 +252,7 @@ Create the Snowflake database objects that will receive data from Postgres and s
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
-USE ROLE ACCOUNTADMIN;
+USE ROLE SYSADMIN;
 
 CREATE DATABASE IF NOT EXISTS IOT_LAB;
 CREATE SCHEMA IF NOT EXISTS IOT_LAB.SENSORS;
@@ -267,6 +271,9 @@ USE WAREHOUSE IOT_WH;
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 CREATE OR REPLACE FILE FORMAT CSV_FORMAT
     TYPE = 'CSV'
     FIELD_OPTIONALLY_ENCLOSED_BY = '"'
@@ -283,6 +290,9 @@ CREATE OR REPLACE STAGE IOT_STAGE
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 CREATE OR REPLACE TABLE SENSOR_READINGS (
     READING_ID       INT,
     SENSOR_NAME      VARCHAR(50),
@@ -312,6 +322,9 @@ Streams in Snowflake track changes to tables, enabling efficient incremental pro
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 CREATE OR REPLACE STREAM ANOMALIES_STREAM ON TABLE SENSOR_ANOMALIES
     APPEND_ONLY = TRUE;
 ```
@@ -320,6 +333,9 @@ CREATE OR REPLACE STREAM ANOMALIES_STREAM ON TABLE SENSOR_ANOMALIES
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 LIST @IOT_STAGE/;
 ```
 
@@ -336,9 +352,11 @@ Snowflake Postgres requires a network policy to allow client connections.  Repla
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE ACCOUNTADMIN;
+
 CREATE DATABASE IF NOT EXISTS PG_NETWORK_DB;
 CREATE SCHEMA IF NOT EXISTS PG_NETWORK_DB.PG_NETWORK;
-USE DATABASE PG_NETWORK_DB;
+
 USE SCHEMA PG_NETWORK_DB.PG_NETWORK;
 
 -- Get current IP if needed for Network Rule.  
@@ -360,6 +378,8 @@ CREATE OR REPLACE NETWORK POLICY PG_IOT_NETWORK_POLICY
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE ACCOUNTADMIN;
+
 CREATE POSTGRES INSTANCE IOT_PG
     AUTHENTICATION_AUTHORITY = POSTGRES
     COMPUTE_FAMILY = 'STANDARD_L'
@@ -379,6 +399,8 @@ Wait for the instance to reach READY state:
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE ACCOUNTADMIN;
+
 SHOW POSTGRES INSTANCES;
 
 DESCRIBE POSTGRES INSTANCE IOT_PG;
@@ -656,9 +678,9 @@ In Snowflake:
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
-USE ROLE ACCOUNTADMIN;
+USE ROLE SYSADMIN;
 USE DATABASE IOT_LAB;
-USE SCHEMA IOT_LAB.SENSORS;
+USE SCHEMA SENSORS;
 USE WAREHOUSE IOT_WH;
 
 LIST @IOT_STAGE/export/;
@@ -672,6 +694,9 @@ Verify the data format before loading:
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 SELECT   $1, $2, $3, $4, $5, $6
 FROM     @IOT_STAGE/export/sensor_readings.csv.gz
          (FILE_FORMAT => 'CSV_FORMAT')
@@ -682,6 +707,9 @@ LIMIT    10;
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 COPY INTO SENSOR_READINGS (READING_ID, SENSOR_NAME, SENSOR_TYPE, READING_TS, VALUE, UNIT)
 FROM @IOT_STAGE/export/
 FILE_FORMAT = CSV_FORMAT
@@ -700,6 +728,9 @@ ON_ERROR = 'CONTINUE';
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 SELECT   SENSOR_TYPE,
          COUNT(*) AS READINGS,
          ROUND(AVG(VALUE), 2) AS AVG_VALUE,
@@ -725,6 +756,9 @@ This single statement simulates anomalies (using a simplified scoring approach f
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 INSERT INTO SENSOR_ANOMALIES (SENSOR_NAME, SENSOR_TYPE, READING_TS, PREDICTED_VALUE, ACTUAL_VALUE, ANOMALY_SCORE, AI_EXPLANATION)
 SELECT   SENSOR_NAME, 
          SENSOR_TYPE, 
@@ -747,6 +781,9 @@ This generates 100 sample anomalies with AI explanations. In production, you wou
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 SELECT   ANOMALY_ID, 
          SENSOR_NAME, 
          SENSOR_TYPE, 
@@ -773,6 +810,9 @@ The `ANOMALIES_STREAM` created earlier tracks new rows inserted into `SENSOR_ANO
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 SELECT COUNT(1) FROM ANOMALIES_STREAM;
 ```
 
@@ -782,6 +822,9 @@ This shows how many new anomalies are ready for export.
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 COPY INTO @IOT_STAGE/sync/
 FROM (
         SELECT SENSOR_NAME, SENSOR_TYPE, READING_TS, PREDICTED_VALUE, 
@@ -812,6 +855,9 @@ FROM (
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
+USE ROLE SYSADMIN;
+USE SCHEMA IOT_LAB.SENSORS;
+
 LIST @IOT_STAGE/sync/;
 ```
 
@@ -887,8 +933,7 @@ DROP FOREIGN TABLE IF EXISTS readings_csv CASCADE;
 
 ```sql
 -- Execute in: Snowsight (Snowflake)
-USE ROLE ACCOUNTADMIN;
-USE DATABASE IOT_LAB;
+USE ROLE SYSADMIN;
 USE SCHEMA IOT_LAB.SENSORS;
 
 DROP STREAM IF EXISTS ANOMALIES_STREAM;
@@ -914,14 +959,10 @@ USE ROLE ACCOUNTADMIN;
 
 DROP POSTGRES INSTANCE IF EXISTS IOT_PG;
 
-USE DATABASE PG_NETWORK_DB;
-USE SCHEMA PG_NETWORK;
+USE SCHEMA PG_NETWORK_DB.PG_NETWORK;
 
 DROP NETWORK POLICY IF EXISTS PG_IOT_NETWORK_POLICY;
 DROP NETWORK RULE IF EXISTS PG_IOT_INGRESS_RULE;
-
-DROP SCHEMA IF EXISTS PG_NETWORK_DB.PG_NETWORK;
-DROP DATABASE IF EXISTS PG_NETWORK_DB;
 
 DROP STORAGE INTEGRATION IF EXISTS PG_IOT_S3_INTEGRATION;
 DROP STORAGE INTEGRATION IF EXISTS SF_IOT_S3_INTEGRATION;
