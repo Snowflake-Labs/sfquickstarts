@@ -705,8 +705,7 @@ In Snowflake:
 -- Load Data into Snowflake: Step 1 - Verify Files in Stage
 -- Execute in: Snowsight (Snowflake)
 USE ROLE SYSADMIN;
-USE DATABASE IOT_LAB;
-USE SCHEMA SENSORS;
+USE SCHEMA IOT_LAB.SENSORS;
 USE WAREHOUSE IOT_WH;
 
 LIST @IOT_STAGE/export/;
