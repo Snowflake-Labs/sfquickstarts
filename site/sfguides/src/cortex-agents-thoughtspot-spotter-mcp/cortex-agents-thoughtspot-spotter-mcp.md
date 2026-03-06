@@ -1,5 +1,5 @@
 author: Ali Alladin
-id: integrating-snowflake-cortex-agents-with-thoughtspot-spotter-via-mcp
+id: cortex-agents-thoughtspot-spotter-mcp 
 summary: Learn how to integrate Snowflake Cortex Agents into ThoughtSpot Spotter as custom tools using the Model Context Protocol (MCP) for enhanced analytical insights and automated workflows.
 categories: Getting-Started, Partner-Integrations
 environments: web
