@@ -72,7 +72,6 @@ All lab code lives in a public GitHub repository. GitHub Codespaces gives you a 
 GitHub will build the container and open VS Code in your browser. This takes about 1–2 minutes on first launch.
 
 > aside positive
->
 > The Codespace automatically installs the `snowpipe-streaming` Python package and all other dependencies from `requirements.txt` — no manual `pip install` needed.
 
 ### Step 2 — Explore the repository structure
@@ -126,7 +125,6 @@ Log in to your Snowflake account at [app.snowflake.com](https://app.snowflake.co
 3. In Snowsight, open a new SQL worksheet, paste, and click **Run All**
 
 > aside negative
->
 > **Important:** Run the script with a **Standard** warehouse session (e.g. `SUMMIT_TRAD_WH` once created, or any existing standard warehouse). `CREATE INTERACTIVE TABLE` is not supported from an Interactive Warehouse session.
 
 When the script completes you will see:
@@ -175,7 +173,6 @@ ALTER USER ARCADE_STREAMING_USER SET RSA_PUBLIC_KEY='MIIBIjANBgkqhkiG9w0BAQEFAAO
 Copy the printed `ALTER USER` statement and run it in a Snowsight worksheet as `ACCOUNTADMIN`.
 
 > aside positive
->
 > `rsa_key.p8` is listed in `.gitignore` and will never be committed to the repository.
 
 <!-- ------------------------ -->
@@ -204,13 +201,11 @@ The script in the previous step printed a pre-filled JSON block. Copy it, or edi
 ```
 
 > aside positive
->
 > **Finding your account identifier**
 >
 > In Snowsight, click your username in the bottom-left corner. Your account identifier appears under the account name in `ORG-ACCOUNT` format (e.g. `myorg-myaccount`).
 
 > aside negative
->
 > `private_key_file` must be an **absolute path**. The `02_service_auth.sh` script prints the exact path for your Codespace environment.
 
 <!-- ------------------------ -->
@@ -323,7 +318,6 @@ for name, st in statuses.items():
 This is the `[latency]` line you will see in the console once the streamer is running.
 
 > aside positive
->
 > **Preview the data without connecting to Snowflake**
 >
 > Before starting the real streamer you can preview a few generated rows to confirm the generator is working:
@@ -382,7 +376,6 @@ python arcade_streamer.py --dry-run --rows 5
 ### Wait for cache warm-up
 
 > aside positive
->
 > After the streamer starts, wait **2–3 minutes** before running lab queries. The `SUMMIT_INT_WH` Interactive Warehouse needs this time to populate its local SSD cache. Queries run before warm-up will still succeed but will be slower.
 
 <!-- ------------------------ -->
@@ -447,7 +440,6 @@ WHERE GAME_ENDED_AT >= DATEADD('minute', -5,
 `GAME_ENDED_AT` is the UTC timestamp when the Python generator emitted the row. `FRESHNESS_SEC` is how many seconds ago that was — the end-to-end pipeline latency from the Python process to a queryable row in Snowflake.
 
 > aside positive
->
 > **`CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ`** normalises the session-local `CURRENT_TIMESTAMP()` to UTC so it compares correctly against the UTC `TIMESTAMP_NTZ` values in `GAME_ENDED_AT`.
 
 With a healthy streamer you should see freshness values in the range of **0.3 – 2 seconds**, depending on Snowflake region and network latency.
@@ -482,7 +474,6 @@ Notice the query execution time in Snowsight's query history — it should be **
 This is the `CLUSTER BY (GAME_ENDED_AT)` effect: the Interactive Warehouse knows exactly which micro-partitions contain rows from the last 24 hours and skips everything else. No full table scan occurs.
 
 > aside positive
->
 > **Try it without the `WHERE` clause.** Remove the `GAME_ENDED_AT` filter and re-run. Snowsight will show the query hitting the 5-second Interactive Warehouse timeout — which is the expected, by-design behaviour that enforces efficient query patterns.
 
 <!-- ------------------------ -->
@@ -660,7 +651,6 @@ Open **Activity → Query History** in Snowsight and compare the two query durat
 The Interactive Warehouse achieves significantly higher throughput and lower latency at high concurrency because it uses a dedicated shared SSD cache and pre-computed index metadata that survives between queries.
 
 > aside positive
->
 > **Switch back to the Interactive Warehouse** before continuing:
 > ```sql
 > USE WAREHOUSE SUMMIT_INT_WH;
@@ -737,7 +727,6 @@ LIMIT 5;
 Deploy a live multi-page dashboard against `ARCADE_SCORES` using **Snowflake Cortex CLI** — an AI agent that reads your project files, writes the Streamlit app, and deploys it to Snowflake in one shot.
 
 > aside positive
->
 > The compute pool `ARCADE_REPORTING_POOL` (CPU_X64_XS) was provisioned by `sql/01_setup.sql` and is ready to use. No additional Snowflake setup is required.
 
 ### Step 1 — Install the Snowflake CLI
@@ -814,7 +803,6 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
 Cortex will write the Streamlit app file and deploy it to Snowflake. Once complete, open the dashboard from **Snowsight → Streamlit → ARCADE_SCORES_DASHBOARD**.
 
 > aside positive
->
 > The dashboard queries `ARCADE_SCORES` through `SUMMIT_INT_WH` — the same Interactive Warehouse used in the lab exercises. All nine pages will refresh with live data as long as the Python streamer is running.
 
 <!-- ------------------------ -->
@@ -828,7 +816,6 @@ When you are done with the lab, run the teardown script to remove all Snowflake 
 This drops (in order): the Streamlit dashboard, compute pool, both warehouses, the `ARCADE_DB` database (which cascades to the Interactive Table and all pipes), the service user, and both roles.
 
 > aside negative
->
 > The Interactive Warehouse (`SUMMIT_INT_WH`) bills a **minimum of 1 hour** from the time it is created, then per-second thereafter. Run cleanup as soon as you are finished with the lab to avoid unnecessary charges.
 
 You can also stop the Python streamer at any time with **Ctrl-C** in the Codespace terminal.
