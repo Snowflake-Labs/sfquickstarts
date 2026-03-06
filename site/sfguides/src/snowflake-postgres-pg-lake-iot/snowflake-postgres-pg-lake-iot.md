@@ -13,16 +13,18 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### What is pg_lake?
 
-[pg_lake](https://docs.snowflake.com/en/user-guide/postgres/pg-lake) is a powerful PostgreSQL extension available in Snowflake Postgres that enables direct reading and writing of data lake files stored in cloud object storage like Amazon S3. With pg_lake, you can export data from PostgreSQL tables directly to S3 in various formats (CSV, Parquet, JSON), query files in S3 using foreign tables without importing the data, and create Iceberg tables for open table format storage.
+PostgreSQL (Postgres) extensions are loadable modules that add new functionality to the database—such as data types, functions, operators, and storage engines—without modifying the core Postgres code. For more details, see the [Postgres Extensions documentation](https://www.postgresql.org/docs/current/extend-extensions.html).
 
-When combined with Snowflake's data platform, pg_lake enables sophisticated bidirectional data pipelines that leverage the operational strengths of PostgreSQL alongside Snowflake's powerful analytics and AI capabilities.
+[pg_lake](https://docs.snowflake.com/en/user-guide/postgres/pg-lake) is a powerful Postgres extension available in Snowflake Postgres that enables direct reading and writing of data lake files stored in cloud object storage like Amazon S3. With pg_lake, you can export data from Postgres tables directly to S3 in various formats (CSV, Parquet, JSON), query files in S3 using foreign tables without importing the data, and create Iceberg tables for open table format storage.
+
+When combined with Snowflake's data platform, pg_lake enables sophisticated bidirectional data pipelines that leverage the operational strengths of Postgres alongside Snowflake's powerful analytics and AI capabilities.
 
 ### Use Case: IoT Sensor Monitoring
 
 This quickstart demonstrates a practical IoT sensor monitoring scenario where:
-- **PostgreSQL** handles real-time sensor data ingestion from building systems (HVAC, power meters, etc.)
+- **Postgres** handles real-time sensor data ingestion from building systems (HVAC, power meters, etc.)
 - **S3** serves as the data exchange layer between systems
-- **Snowflake** performs AI-powered anomaly detection using Cortex and returns insights back to PostgreSQL
+- **Snowflake** performs AI-powered anomaly detection using Cortex and returns insights back to Postgres
 
 This pattern is common in operational scenarios where transactional systems need to share data with analytical platforms while receiving enriched results back.
 
@@ -49,11 +51,11 @@ This pattern is common in operational scenarios where transactional systems need
 
 ### What You Will Learn 
 
-- Export data from PostgreSQL to S3 in multiple formats using pg_lake's COPY command
-- Query S3 files directly from PostgreSQL using foreign tables (no data import required)
+- Export data from Postgres to S3 in multiple formats using Postgres's COPY command
+- Query S3 files directly from Postgres using foreign tables (no data import required)
 - Load data into Snowflake from S3 using COPY INTO
 - Detect anomalies and generate AI explanations using Snowflake Cortex
-- Sync analytical results back to PostgreSQL via S3
+- Sync analytical results back to Postgres via S3
 
 ### Data Model
 
@@ -69,18 +71,19 @@ The lab generates approximately 100,000 sensor readings spanning several months 
 ### Prerequisites
 
 - Snowflake account with ACCOUNTADMIN access
-- AWS account with permissions to create S3 buckets and IAM roles
+- AWS account with permissions to create S3 buckets, policies, and IAM roles
+- Local terminal session to run `psql`
 - `psql` client installed locally (install with `brew install postgresql` on macOS)
-- Familiarity with SQL and basic PostgreSQL concepts
+- Familiarity with SQL and basic Postgres concepts
 
 <!-- ------------------------ -->
 ## S3 Storage Configuration
 
-Before using pg_lake to move data between PostgreSQL and Snowflake, you need to configure S3 access. Both platforms need access to the same S3 location, but they use different storage integration types.
+Before using pg_lake to move data between Postgres and Snowflake, you need to configure S3 access. Both platforms need access to the same S3 location, but they use different storage integration types.
 
 ### Understanding Storage Integrations
 
-Snowflake requires two separate storage integrations because PostgreSQL and Snowflake access S3 through different mechanisms:
+Snowflake requires two separate storage integrations because Postgres and Snowflake access S3 through different mechanisms:
 
 | Platform | Integration Type | Purpose |
 |----------|-----------------|---------|
@@ -168,8 +171,6 @@ Now create the Snowflake storage integrations and generate the trust policy for 
 Run the following in Snowflake, replacing `<YOUR_ROLE_ARN>` and `<YOUR_BUCKET>` with your values from the previous section:
 
 ```sql
-USE ROLE ACCOUNTADMIN;
-
 CREATE STORAGE INTEGRATION PG_IOT_S3_INTEGRATION
     TYPE = POSTGRES_EXTERNAL_STORAGE
     STORAGE_PROVIDER = 'S3'
@@ -201,7 +202,7 @@ Record the values for:
 DESCRIBE INTEGRATION SF_IOT_S3_INTEGRATION;
 ```
 
-Record these values as well (they will be different from the PostgreSQL integration).
+Record these values as well (they will be different from the Postgres integration).
 
 ### Step 3: Update IAM Role Trust Policy
 
@@ -236,7 +237,7 @@ Click **Update policy**.
 <!-- ------------------------ -->
 ## Snowflake Setup
 
-Create the Snowflake database objects that will receive data from PostgreSQL and store anomaly detection results.
+Create the Snowflake database objects that will receive data from Postgres and store anomaly detection results.
 
 ### Step 1: Create Database and Warehouse
 
@@ -245,11 +246,11 @@ USE ROLE ACCOUNTADMIN;
 
 CREATE DATABASE IF NOT EXISTS IOT_LAB;
 CREATE SCHEMA IF NOT EXISTS IOT_LAB.SENSORS;
-USE DATABASE IOT_LAB;
+
 USE SCHEMA IOT_LAB.SENSORS;
 
 CREATE WAREHOUSE IF NOT EXISTS IOT_WH
-    WAREHOUSE_SIZE = 'MEDIUM'
+    WAREHOUSE_SIZE = 'XSMALL'
     AUTO_SUSPEND = 60
     AUTO_RESUME = TRUE;
 
@@ -299,7 +300,7 @@ CREATE OR REPLACE TABLE SENSOR_ANOMALIES (
 
 ### Step 4: Create Stream for Change Capture
 
-Streams in Snowflake track changes to tables, enabling efficient incremental processing. This stream will capture new anomalies for export back to PostgreSQL.
+Streams in Snowflake track changes to tables, enabling efficient incremental processing. This stream will capture new anomalies for export back to Postgres.
 
 ```sql
 CREATE OR REPLACE STREAM ANOMALIES_STREAM ON TABLE SENSOR_ANOMALIES
@@ -321,11 +322,9 @@ Create a Snowflake Postgres instance with pg_lake enabled.
 
 ### Step 1: Create Network Policy
 
-Snowflake Postgres requires a network policy to allow client connections.  Replace `nnn.nnn.nnn.nnn/32` with specific IP ranges and CIDR for your organization.
+Snowflake Postgres requires a network policy to allow client connections.  Replace `nnn.nnn.nnn.nnn/32` with specific IP (or subnet) and CIDR for your organization.
 
 ```sql
-USE ROLE ACCOUNTADMIN;
-
 CREATE DATABASE IF NOT EXISTS PG_NETWORK_DB;
 CREATE SCHEMA IF NOT EXISTS PG_NETWORK_DB.PG_NETWORK;
 USE DATABASE PG_NETWORK_DB;
@@ -394,19 +393,19 @@ psql -c "SELECT version();"
 ```
 
 <!-- ------------------------ -->
-## PostgreSQL Setup
+## Postgres Setup
 
-Create the IoT sensor tables and generate sample data in PostgreSQL.
+Create the IoT sensor tables and generate sample data in Postgres.
 
 ### Step 1: Enable Extensions
 
-Connect to PostgreSQL and enable pg_lake:
+Connect to Postgres and enable pg_lake:
 
 ```bash
 psql
 ```
 
-```sql
+```sql title="psql (Postgres)"
 CREATE EXTENSION IF NOT EXISTS pg_lake CASCADE;
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 CREATE EXTENSION IF NOT EXISTS pg_incremental;
@@ -528,13 +527,13 @@ OPTIONS (
 ```
 
 <!-- ------------------------ -->
-## Export Data from PostgreSQL
+## Export Data from Postgres
 
-Use pg_lake to export sensor data from PostgreSQL to S3. This demonstrates the first half of bidirectional data movement.
+Use pg_lake to export sensor data from Postgres to S3. This demonstrates the first half of bidirectional data movement.
 
 ### Understanding pg_lake COPY
 
-The pg_lake extension extends PostgreSQL's standard `COPY` command to support S3 destinations. The syntax is similar to standard COPY but writes directly to cloud storage instead of local files.
+The pg_lake extension extends Postgres's standard `COPY` command to support S3 destinations. The syntax is similar to standard COPY but writes directly to cloud storage instead of local files.
 
 ### Step 1: Check Data to Export
 
@@ -556,11 +555,13 @@ COPY (
 WITH (header true, compression gzip, format csv);
 ```
 
+A sub select was used to show how you could be more selective in the data that was copied.  By using the sub select you could have filtered specific rows, columns, or even joined to another table.  As an alternative, you could have left out the sub select and just used the table name to copy the entire table.
+
 > **Format Note:** pg_lake supports multiple output formats. You can specify the format either through the file extension (`.csv`, `.parquet`, `.json`) or explicitly in the `WITH` clause using `format csv|json|parquet`. Additional options like `compression gzip` can reduce file sizes significantly.
 
 ### Step 3: Verify Export
 
-Use `lake_file.list()` to browse S3 contents directly from PostgreSQL (replacing `<YOUR_BUCKET>` with your value):
+Use `lake_file.list()` to browse S3 contents directly from Postgres (replacing `<YOUR_BUCKET>` with your value):
 
 ```sql
 SELECT * FROM lake_file.list('s3://<YOUR_BUCKET>/iot/export/*');
@@ -571,7 +572,7 @@ You should see the exported CSV file with its size and modification timestamp.
 <!-- ------------------------ -->
 ## Query S3 with Foreign Tables
 
-pg_lake enables querying S3 files directly without importing data into PostgreSQL tables. This is useful for ad-hoc analysis of exported data or for building data pipelines.
+pg_lake enables querying S3 files directly without importing data into Postgres tables. This is useful for ad-hoc analysis of exported data or for building data pipelines.
 
 ### Understanding Foreign Tables
 
@@ -603,7 +604,7 @@ The empty parentheses `()` tell pg_lake to infer the schema from the file. The `
 SELECT * FROM readings_csv LIMIT 10;
 ```
 
-This reads directly from S3 - no data is stored in PostgreSQL.
+This reads directly from S3 - no data is stored in Postgres.
 
 ### Step 3: Aggregate Data from S3
 
@@ -635,7 +636,7 @@ USE WAREHOUSE IOT_WH;
 LIST @IOT_STAGE/export/;
 ```
 
-You should see the CSV file exported from PostgreSQL.
+You should see the CSV file exported from Postgres.
 
 ### Step 2: Preview Data
 
@@ -727,9 +728,9 @@ LIMIT    10;
 Each anomaly now has a human-readable explanation generated by the LLM, making it easier for operators to understand and act on alerts.
 
 <!-- ------------------------ -->
-## Sync Anomalies to PostgreSQL
+## Sync Anomalies to Postgres
 
-Export the AI-enriched anomalies back to S3 for PostgreSQL to consume, completing the bidirectional data flow.
+Export the AI-enriched anomalies back to S3 for Postgres to consume, completing the bidirectional data flow.
 
 ### Understanding Streams for Change Capture
 
@@ -781,13 +782,13 @@ LIST @IOT_STAGE/sync/;
 You should see one or more CSV files containing the anomaly data.
 
 <!-- ------------------------ -->
-## Receive Anomalies in PostgreSQL
+## Receive Anomalies in Postgres
 
-Import the AI-enriched anomaly data back into PostgreSQL, completing the round trip.
+Import the AI-enriched anomaly data back into Postgres, completing the round trip.
 
 ### Step 1: Check for Sync Files
 
-In PostgreSQL, use the list function to check for files from Snowflake:
+In Postgres, use the list function to check for files from Snowflake:
 
 ```sql
 SELECT * FROM lake_file.list('s3://<YOUR_BUCKET>/iot/sync/*');
@@ -813,7 +814,7 @@ ON CONFLICT DO NOTHING;
 
 The `ON CONFLICT DO NOTHING` clause ensures idempotent processing - running this multiple times won't create duplicates.
 
-### Step 3: View AI-Enriched Anomalies in PostgreSQL
+### Step 3: View AI-Enriched Anomalies in Postgres
 
 ```sql
 SELECT   sensor_name, 
@@ -827,12 +828,12 @@ ORDER BY detected_at DESC
 LIMIT    10;
 ```
 
-The anomalies detected in Snowflake with AI explanations are now available in PostgreSQL for operational use.
+The anomalies detected in Snowflake with AI explanations are now available in Postgres for operational use.
 
 <!-- ------------------------ -->
 ## Cleanup
 
-### PostgreSQL Cleanup
+### Postgres Cleanup
 
 ```sql
 DROP TABLE IF EXISTS sensor_anomalies CASCADE;
@@ -901,15 +902,15 @@ Congratulations! You have successfully:
 
 - Configured S3 storage integration for both pg_lake and Snowflake
 - Created a Snowflake Postgres instance with pg_lake enabled
-- Exported data from PostgreSQL to S3 in CSV format using pg_lake
+- Exported data from Postgres to S3 in CSV format using pg_lake
 - Queried S3 files directly using pg_lake foreign tables
 - Loaded data into Snowflake using COPY INTO
 - Generated AI-powered anomaly explanations using Snowflake Cortex
-- Synchronized analytical results back to PostgreSQL via S3
+- Synchronized analytical results back to Postgres via S3
 
 ### Key Capabilities Demonstrated
 
-| PostgreSQL (pg_lake) | Snowflake |
+| Postgres (pg_lake) | Snowflake |
 |---------------------|-----------|
 | COPY TO S3 (CSV, Parquet, JSON) | External Stage with S3 |
 | Foreign Tables for S3 queries | COPY INTO for data loading |
