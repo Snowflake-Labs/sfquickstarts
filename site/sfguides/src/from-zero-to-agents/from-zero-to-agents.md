@@ -40,7 +40,7 @@ Establish the secure foundation using the provided `setup.sql` script. This scri
 
 ### Setup Instructions
 
-Run [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/setup.sql) in a Snowsight SQL Worksheet.
+Run [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/from-zero-to-agents/assets/setup.sql) in a Snowsight SQL Worksheet.
 
 ### What Gets Provisioned
 
@@ -91,6 +91,8 @@ AI Enrichment is the "Preprocessing" step. By enriching your data first:
 Transform "dark data" (raw transcripts) into analytical trends using Cortex AI Functions. Run sentiment analysis on customer feedback to create measurable features:
 
 ```sql
+USE DATABASE DASH_DB_SI;
+USE SCHEMA RETAIL;
 UPDATE support_cases SET product = 'Fitness Wear' WHERE product = 'ThermoJacket Pro';
 SELECT 
     title,
@@ -107,7 +109,7 @@ Confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` by clicking on yo
 2. Navigate to `Catalog` > `Database Explorer`
 3. Open `DASH_DB_SI.RETAIL.Tables.MARKETING_CAMPAIGN_METRICS`. If you do not see the database, refresh the data.
 4. Click on `Load Data` in the top right hand corner
-5. Upload the marketing_data.csv and click `next` then load
+5. Upload the marketing_data.csv and click `next` then `load`
 6. Click `View table detail` to see the new data uploaded
 
 ![Updating marketing data](assets/updatingmarketing.png)
@@ -128,6 +130,8 @@ Instead of running a one-time enrichment, you define a **Dynamic Table**. This t
 Create a Dynamic Table that automatically joins campaign metrics with AI-generated sentiment scores:
 
 ```sql
+USE DATABASE DASH_DB_SI;
+USE SCHEMA RETAIL;
 CREATE OR REPLACE DYNAMIC TABLE enriched_marketing_intelligence
 TARGET_LAG = '1 hours'
 WAREHOUSE = dash_wh_si
@@ -189,7 +193,7 @@ This tool allows the agent to search and retrieve information from unstructured 
    - **Select Data:** `marketing_campaign_metrics`
    - **Select search column:** `campaign name`
    - **Select attribute columns:** `Select all`
-   - **Warehouse for indexing:** `DASH_DB_SI`
+   - **Warehouse for indexing:** `DASH_WH_SI`
 5. Click `create` and click the refresh icon in the top right corner. `Serving` will update from `INITALIZING` to `ACTIVE`
 
 ![Active Cortex Search](assets/servingactive.png)
