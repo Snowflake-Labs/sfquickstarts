@@ -36,9 +36,22 @@ This hands-on lab guides you through transforming raw data into actionable insig
 
 ## Environment and Data Loading
 
-Establish the secure foundation using the provided `setup.sql` script. This script automates the creation of roles, warehouses, and the ingestion of marketing data from public S3 buckets.
+Imagine you are on a marketing team at a fictional retail company selling sports and outdoor gear. The company has plenty of data from campaign performance from paid ads to customer feedback. 
+
+The problem the team faces:
+1. Campaign performance data is siloed from customer feedback
+2. Customer feedback is unstructured and unanalyzed
+3. Analysts can’t self-serve insights from these data
+
+What you’ll build to solve these issues:
+1. Cortex AI turns raw transcripts into structured sentiment scores
+2. Dynamic Tables automate so that data stays current as new feedback arrives
+3. Semantic View bridges campaign metrics and customer feedback into one model
+4. Snowflake Intelligence that allows analysts to ask natural language questions 
+
 
 ### Setup Instructions
+Establish the secure foundation using the provided `setup.sql` script. This script automates the creation of roles, warehouses, and the ingestion of marketing data from public S3 buckets.
 
 Run [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/from-zero-to-agents/assets/setup.sql) in a Snowsight SQL Worksheet.
 
@@ -418,6 +431,8 @@ USE SCHEMA dash_db_si.retail;
 -- You should see numbers like 11103
 SELECT "Ad Campaign", "Engagement Clicks" FROM marketing_intelligence_view;
 ```
+![Admin Role](assets/engagementclicks.png)
+
 
 ### Verify as Marketing Role
 
@@ -427,6 +442,9 @@ USE SCHEMA dash_db_si.retail;
 -- You should see 0 for all clicks
 SELECT "Ad Campaign", "Engagement Clicks" FROM marketing_intelligence_view;
 ```
+![Marketing Role](assets/zeroclicks.png)
+
+By applying Dynamic Data Masking alongside RBAC, you ensured that the data serves different teams with appropriate access — admins see real click data while the marketing role sees masked values.
 
 
 <!-- ------------------------ -->
