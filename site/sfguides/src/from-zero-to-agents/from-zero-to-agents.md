@@ -325,11 +325,37 @@ For lab participants, the Trace is the most critical UI interaction. It allows y
 
 Apply **Dynamic Data Masking** to specific metrics to ensure the agent respects **RBAC** (Role-Based Access Control).
 
-### Create the Marketing Role
+### Create the Marketing Role and Granting Access
 
-If you ran the `setup.sql` exactly as provided in the GitHub repo, it created `snowflake_intelligence_admin`. Let's create the `marketing_intelligence_role` to represent your "Restricted Team" and give it the necessary access.
+If you ran the `setup.sql` exactly as provided in the GitHub repo, it created `snowflake_intelligence_admin`. Let's create the `marketing_intelligence_role` to represent your "Restricted Team" and give it the necessary access. Be sure to have your role set to `snowflake_intelligence_admin` and warehouse to `DASH_WH_SI`.
 
 ```sql
+USE DATABASE DASH_DB_SI;
+USE SCHEMA RETAIL;
+
+-- Create the Semantic View
+CREATE OR REPLACE SECURE VIEW marketing_intelligence_view AS
+SELECT 
+    campaign_name AS "Ad Campaign",
+    category AS "Product Category",
+    clicks AS "Engagement Clicks",
+    -- avg_sentiment will come from the Dynamic Table
+    0 AS "Customer Sentiment Score" 
+FROM marketing_campaign_metrics;
+
+-- Check which roles have access to your database and schema
+SHOW GRANTS ON DATABASE dash_db_si;
+SHOW GRANTS ON SCHEMA dash_db_si.retail;
+
+-- Check specifically for your Semantic View
+SHOW GRANTS ON VIEW marketing_intelligence_view;
+
+USE ROLE snowflake_intelligence_admin;
+USE WAREHOUSE dash_wh_si;
+
+-- You should see the actual budget/click numbers
+SELECT * FROM marketing_intelligence_view LIMIT 5;
+
 USE ROLE ACCOUNTADMIN;
 
 -- Create the role
@@ -345,6 +371,7 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE marketing_intelligence_role;
 GRANT SELECT ON VIEW dash_db_si.retail.marketing_intelligence_view TO ROLE marketing_intelligence_role;
 
 -- Assign to yourself for testing
+SET current_user = CURRENT_USER();
 GRANT ROLE marketing_intelligence_role TO USER IDENTIFIER($CURRENT_USER);
 ```
 
@@ -387,6 +414,7 @@ SELECT
 FROM marketing_campaign_metrics;
 
 USE ROLE snowflake_intelligence_admin;
+USE SCHEMA dash_db_si.retail;
 -- You should see numbers like 11103
 SELECT "Ad Campaign", "Engagement Clicks" FROM marketing_intelligence_view;
 ```
@@ -395,18 +423,11 @@ SELECT "Ad Campaign", "Engagement Clicks" FROM marketing_intelligence_view;
 
 ```sql
 USE ROLE marketing_intelligence_role;
+USE SCHEMA dash_db_si.retail;
 -- You should see 0 for all clicks
 SELECT "Ad Campaign", "Engagement Clicks" FROM marketing_intelligence_view;
 ```
 
-### Agent Interaction Verification
-
-Now that the data is masked at the source, the **Agent** will automatically respect it.
-
-1. Switch your UI role to `marketing_intelligence_role`
-2. Ask the Agent: *"How many clicks did the Summer Fitness campaign get?"*
-3. The Agent will query the view, receive `0` from the database engine, and reply: *"The Summer Fitness campaign received 0 clicks."*
-4. **Show Reasoning:** Open the trace to prove the SQL was correct, but the **Data Engine** protected the values
 
 <!-- ------------------------ -->
 
