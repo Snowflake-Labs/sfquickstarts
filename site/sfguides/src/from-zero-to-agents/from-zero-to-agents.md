@@ -36,11 +36,24 @@ This hands-on lab guides you through transforming raw data into actionable insig
 
 ## Environment and Data Loading
 
-Establish the secure foundation using the provided `setup.sql` script. This script automates the creation of roles, warehouses, and the ingestion of marketing data from public S3 buckets.
+Imagine you are on a marketing team at a fictional retail company selling sports and outdoor gear. The company has plenty of data from campaign performance from paid ads to customer feedback. 
+
+The problem the team faces:
+1. Campaign performance data is siloed from customer feedback
+2. Customer feedback is unstructured and unanalyzed
+3. Analysts can’t self-serve insights from these data
+
+What you’ll build to solve these issues:
+1. Cortex AI turns raw transcripts into structured sentiment scores
+2. Dynamic Tables automate so that data stays current as new feedback arrives
+3. Semantic View bridges campaign metrics and customer feedback into one model
+4. Snowflake Intelligence that allows analysts to ask natural language questions 
+
 
 ### Setup Instructions
+Establish the secure foundation using the provided `setup.sql` script. This script automates the creation of roles, warehouses, and the ingestion of marketing data from public S3 buckets.
 
-Run [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/setup.sql) in a Snowsight SQL Worksheet.
+Run [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/from-zero-to-agents/assets/setup.sql) in a Snowsight SQL Worksheet.
 
 ### What Gets Provisioned
 
@@ -91,6 +104,8 @@ AI Enrichment is the "Preprocessing" step. By enriching your data first:
 Transform "dark data" (raw transcripts) into analytical trends using Cortex AI Functions. Run sentiment analysis on customer feedback to create measurable features:
 
 ```sql
+USE DATABASE DASH_DB_SI;
+USE SCHEMA RETAIL;
 UPDATE support_cases SET product = 'Fitness Wear' WHERE product = 'ThermoJacket Pro';
 SELECT 
     title,
@@ -107,7 +122,7 @@ Confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` by clicking on yo
 2. Navigate to `Catalog` > `Database Explorer`
 3. Open `DASH_DB_SI.RETAIL.Tables.MARKETING_CAMPAIGN_METRICS`. If you do not see the database, refresh the data.
 4. Click on `Load Data` in the top right hand corner
-5. Upload the marketing_data.csv and click `next` then load
+5. Upload the marketing_data.csv and click `next` then `load`
 6. Click `View table detail` to see the new data uploaded
 
 ![Updating marketing data](assets/updatingmarketing.png)
@@ -128,6 +143,8 @@ Instead of running a one-time enrichment, you define a **Dynamic Table**. This t
 Create a Dynamic Table that automatically joins campaign metrics with AI-generated sentiment scores:
 
 ```sql
+USE DATABASE DASH_DB_SI;
+USE SCHEMA RETAIL;
 CREATE OR REPLACE DYNAMIC TABLE enriched_marketing_intelligence
 TARGET_LAG = '1 hours'
 WAREHOUSE = dash_wh_si
@@ -189,7 +206,7 @@ This tool allows the agent to search and retrieve information from unstructured 
    - **Select Data:** `marketing_campaign_metrics`
    - **Select search column:** `campaign name`
    - **Select attribute columns:** `Select all`
-   - **Warehouse for indexing:** `DASH_DB_SI`
+   - **Warehouse for indexing:** `DASH_WH_SI`
 5. Click `create` and click the refresh icon in the top right corner. `Serving` will update from `INITALIZING` to `ACTIVE`
 
 ![Active Cortex Search](assets/servingactive.png)
@@ -321,11 +338,37 @@ For lab participants, the Trace is the most critical UI interaction. It allows y
 
 Apply **Dynamic Data Masking** to specific metrics to ensure the agent respects **RBAC** (Role-Based Access Control).
 
-### Create the Marketing Role
+### Create the Marketing Role and Granting Access
 
-If you ran the `setup.sql` exactly as provided in the GitHub repo, it created `snowflake_intelligence_admin`. Let's create the `marketing_intelligence_role` to represent your "Restricted Team" and give it the necessary access.
+If you ran the `setup.sql` exactly as provided in the GitHub repo, it created `snowflake_intelligence_admin`. Let's create the `marketing_intelligence_role` to represent your "Restricted Team" and give it the necessary access. Be sure to have your role set to `snowflake_intelligence_admin` and warehouse to `DASH_WH_SI`.
 
 ```sql
+USE DATABASE DASH_DB_SI;
+USE SCHEMA RETAIL;
+
+-- Create the Semantic View
+CREATE OR REPLACE SECURE VIEW marketing_intelligence_view AS
+SELECT 
+    campaign_name AS "Ad Campaign",
+    category AS "Product Category",
+    clicks AS "Engagement Clicks",
+    -- avg_sentiment will come from the Dynamic Table
+    0 AS "Customer Sentiment Score" 
+FROM marketing_campaign_metrics;
+
+-- Check which roles have access to your database and schema
+SHOW GRANTS ON DATABASE dash_db_si;
+SHOW GRANTS ON SCHEMA dash_db_si.retail;
+
+-- Check specifically for your Semantic View
+SHOW GRANTS ON VIEW marketing_intelligence_view;
+
+USE ROLE snowflake_intelligence_admin;
+USE WAREHOUSE dash_wh_si;
+
+-- You should see the actual budget/click numbers
+SELECT * FROM marketing_intelligence_view LIMIT 5;
+
 USE ROLE ACCOUNTADMIN;
 
 -- Create the role
@@ -341,6 +384,7 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE marketing_intelligence_role;
 GRANT SELECT ON VIEW dash_db_si.retail.marketing_intelligence_view TO ROLE marketing_intelligence_role;
 
 -- Assign to yourself for testing
+SET current_user = CURRENT_USER();
 GRANT ROLE marketing_intelligence_role TO USER IDENTIFIER($CURRENT_USER);
 ```
 
@@ -383,26 +427,25 @@ SELECT
 FROM marketing_campaign_metrics;
 
 USE ROLE snowflake_intelligence_admin;
+USE SCHEMA dash_db_si.retail;
 -- You should see numbers like 11103
 SELECT "Ad Campaign", "Engagement Clicks" FROM marketing_intelligence_view;
 ```
+![Admin Role](assets/engagementclicks.png)
+
 
 ### Verify as Marketing Role
 
 ```sql
 USE ROLE marketing_intelligence_role;
+USE SCHEMA dash_db_si.retail;
 -- You should see 0 for all clicks
 SELECT "Ad Campaign", "Engagement Clicks" FROM marketing_intelligence_view;
 ```
+![Marketing Role](assets/zeroclicks.png)
 
-### Agent Interaction Verification
+By applying Dynamic Data Masking alongside RBAC, you ensured that the data serves different teams with appropriate access — admins see real click data while the marketing role sees masked values.
 
-Now that the data is masked at the source, the **Agent** will automatically respect it.
-
-1. Switch your UI role to `marketing_intelligence_role`
-2. Ask the Agent: *"How many clicks did the Summer Fitness campaign get?"*
-3. The Agent will query the view, receive `0` from the database engine, and reply: *"The Summer Fitness campaign received 0 clicks."*
-4. **Show Reasoning:** Open the trace to prove the SQL was correct, but the **Data Engine** protected the values
 
 <!-- ------------------------ -->
 

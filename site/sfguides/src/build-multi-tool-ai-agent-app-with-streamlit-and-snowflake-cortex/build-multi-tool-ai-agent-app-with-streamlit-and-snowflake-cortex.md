@@ -28,6 +28,8 @@ This tutorial is based on the [#30DaysOfAI learning challenge](https://github.co
 ### What You'll Build
 A sales intelligence agent that can answer questions about sales conversations (using Cortex Search) and sales metrics (using Cortex Analyst text-to-SQL).
 
+![](assets/diagram.png)
+
 ### Prerequisites
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic knowledge of Python and Streamlit
