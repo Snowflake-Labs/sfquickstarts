@@ -235,7 +235,7 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - Permission mode: Select **Lake Formation**
    - Click **Register location**
 
-   ![Register Data Lake Location](register_data_lake_location.png)
+   ![Register Data Lake Location](assets/register_data_lake_location.png)
 
 3. **Grant Data Permissions to the IAM Role**
    - Navigate to **Lake Formation → Data permissions → Grant**
@@ -246,21 +246,113 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - Table permissions: **Select**, **Describe**
    - Click **Grant**
 
-   ![Grant Permissions on Glue Database 1](Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_1.png)
-   ![Grant Permissions on Glue Database 2](Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
-   ![Grant Permissions on Glue Database 3](Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
+   ![Grant Permissions on Glue Database 1](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_1.png)
+   ![Grant Permissions on Glue Database 2](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
+   ![Grant Permissions on Glue Database 3](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
 
 4. **Verify Lake Formation Permissions**
    - Navigate to **Lake Formation → Data permissions**
    - Confirm that `insurance-claims-iceberg-data-role` has **Select** and **Describe** permissions on all tables in `insurance_claims_iceberg_glue_db`
-     
-### Step 3: Provision Snowflake Objects (Database, Schema, Stages, Tables)
 
-### Step 4: Stage Data and the Fraud Detection Model
+### Step 2: Connect Snowflake to AWS Glue via Catalog Integration
 
-### Step 5: Run Feature Engineering with Snowpark Connect for Apache Spark
+1. **Create the Catalog Integration**
 
-### Step 6: Enable Cortex Analyst, Cortex Agent, and Snowflake Intelligence
+   Run the following SQL in Snowflake (via Cortex Code CLI, Snowsight, or SnowSQL). Replace the placeholder values with your AWS account details:
+
+   ```sql
+   CREATE OR REPLACE CATALOG INTEGRATION glue_db_catalog_integration
+     CATALOG_SOURCE = ICEBERG_REST
+     TABLE_FORMAT = ICEBERG
+     REST_CONFIG = (
+       CATALOG_URI = 'https://glue.<region>.amazonaws.com/iceberg'
+       CATALOG_API_TYPE = AWS_GLUE
+       CATALOG_NAME = '<12_digit_aws_account_id>'
+       ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
+     )
+     REST_AUTHENTICATION = (
+       TYPE = SIGV4
+       SIGV4_IAM_ROLE = 'arn:aws:iam::<account_id>:role/insurance-claims-iceberg-data-role'
+       SIGV4_SIGNING_REGION = '<region>'
+     )
+     ENABLED = TRUE;
+   ```
+
+2. **Retrieve Snowflake's IAM User ARN and External ID**
+
+   Run the following to get the values needed for the AWS trust policy:
+
+   ```sql
+   DESCRIBE CATALOG INTEGRATION glue_db_catalog_integration;
+   ```
+
+   Note the values for:
+   - **IAM_USER_ARN** — e.g., `arn:aws:iam::<aws-account-id>:user/gqx31000-s`
+   - **EXTERNAL_ID** — e.g., `IWB03796_SFCRole=7_Hz7Ebsyt1q+08P9P7WGEf1x9YrQ=`
+
+3. **Update the AWS IAM Trust Policy**
+
+   Go back to **AWS Console → IAM → Roles → `insurance-claims-iceberg-data-role` → Trust relationships → Edit trust policy** and replace the `<SNOWFLAKE_IAM_USER_ARN>` and `<SNOWFLAKE_EXTERNAL_ID>` placeholders with the values from the previous step (see Step 1, Section 3 for the trust policy template).
+
+4. **Verify the Integration**
+
+   ```sql
+   SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('glue_db_catalog_integration');
+   SELECT SYSTEM$LIST_NAMESPACES_FROM_CATALOG('glue_db_catalog_integration');
+   ```
+
+   - The first command should return a success status confirming Snowflake can connect to AWS Glue
+   - The second command should list the `insurance_claims_iceberg_glue_db` namespace
+
+### Step 3: Provision Iceberg Tables & Snowflake Objects (Database, Schema, Stages, Tables)
+
+> All SQL commands for this step are in [`setup.sql`](setup.sql). Before running, update `<account-id>` with your AWS account ID and `<path-to-repo>` with your local repo path. Execute the script using Cortex Code CLI.
+
+The setup script performs the following sub-steps in order:
+
+| Sub-step | What it does |
+|----------|-------------|
+| **3a** | Creates the `INSURANCE_CLAIMS_WH` warehouse, `INSURANCE_CLAIMS_INSIGHTS_DB` database, `CLAIMS_ANALYTICS` schema, and two stages (`DATA_STAGE`, `ML_MODELS`) |
+| **3b** | Creates the Catalog Linked Database (`glue_database_linked_db`) that connects to AWS Glue via the catalog integration from Step 2 |
+| **3c** | Uploads sample CSV/Parquet data files and the fraud detection model to the Snowflake stages using `PUT` commands |
+| **3d** | Creates three Iceberg tables (`fnol_reports`, `adjuster_notes`, `initial_estimates`) in the linked database with S3 base locations and auto-refresh enabled |
+| **3e** | Loads the staged Parquet files into the Iceberg tables using `COPY INTO` with column name matching |
+| **3f** | Creates two Snowflake native tables (`FRAUD_FLAGS`, `POLICY_DETAILS`) in the `CLAIMS_ANALYTICS` schema |
+| **3g** | Loads the staged CSV files into the native tables |
+| **3h** | Runs verification queries to confirm row counts across all five tables |
+
+### Step 4: Run Feature Engineering with Snowpark Connect for Apache Spark
+
+1. **Create a Notebook in Snowsight**
+   - Navigate to **Snowsight → Notebooks → Create Notebook**
+   - Upload the `fraud_model.py` script to the notebook environment
+
+2. **Install the Snowpark Connect package**
+   - In the notebook, install the `snowpark-connect` package from the Packages panel
+
+3. **Run the Feature Engineering notebook**
+   - Open and execute the [`spark_jobs/Insurance-Claims-Feature-Engineering.ipynb`](spark_jobs/Insurance-Claims-Feature-Engineering.ipynb) notebook
+   - This notebook reads from both Iceberg tables (via Catalog Linked Database) and Native tables, performs feature engineering and fraud scoring, and writes the enriched output to the `CLAIMS_PROCESSED_FEATURES` table
+
+### Step 5: Enable Cortex Analyst, Cortex Agent, and Snowflake Intelligence
+
+Run through the [`cortex_analyst_snowflake_intelligence_setup.sql`](cortex_analyst_snowflake_intelligence_setup.sql) script which handles:
+
+1. **Upload the semantic model YAML** to `SEMANTIC_MODEL_STAGE`
+2. **Create the Semantic View** using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML`
+3. **Create the Snowflake Intelligence database and schema** (`SNOWFLAKE_INTELLIGENCE.AGENTS`)
+4. **Create the Cortex Agent** with the `cortex_analyst_text_to_sql` tool pointing to the semantic view
+5. **Grant access permissions** to the agent, semantic view, and underlying table
+6. **Verify** by navigating to **Snowsight → AI & ML → Snowflake Intelligence** and selecting the "Insurance Claims Analyst" agent
+7. **Ask Questions**
+--   1. Ask: "Show me all high risk fraud claims"
+--   2. Ask: "What is the total claim amount by loss type?"
+--   3. Ask: "How many claims are under SIU investigation?"
+
+
+  
+
+
 
 
 
