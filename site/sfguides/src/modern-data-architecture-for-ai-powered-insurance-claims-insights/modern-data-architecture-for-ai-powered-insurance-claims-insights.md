@@ -71,8 +71,189 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
 
 ### Step 1: Configure AWS Infrastructure (S3, Glue, IAM, Lake Formation)
 
-### Step 2: Connect Snowflake to AWS Glue via Catalog Integration
+#### S3 Bucket for Iceberg Data Files
 
+1. Navigate to **AWS Console → S3 → Create bucket**
+2. Enter the bucket name: `<account-id>-us-west-2-insurance-claims-iceberg-data`
+3. Select the AWS Region: `us-west-2` (must match your Glue catalog region)
+4. Leave **Block all public access** enabled (default)
+5. Enable **Bucket Versioning** (recommended for Iceberg table consistency)
+6. Click **Create bucket**
+7. Once created, create the following folder structure inside the bucket:
+   - `fnol_reports/` — First Notice of Loss reports
+   - `adjuster_notes/` — Adjuster notes and assessments
+   - `initial_estimates/` — Initial claim estimates
+
+#### AWS Glue Data Catalog
+
+1. Verify that the Glue Data Catalog is enabled in your region (enabled by default in most regions)
+   - Navigate to **AWS Console → Glue → Data Catalog → Databases**
+2. Create a Glue Database
+   - Navigate to **AWS Console → Glue → Databases → Add database**
+   - Database name: `insurance_claims_iceberg_glue_db`
+   - Location: `s3://<account-id>-us-west-2-insurance-claims-iceberg-data/`
+   - Click **Create database**
+
+#### IAM Role with Glue/Lake Formation Permissions
+
+1. **Create an IAM Policy**
+   - Navigate to **AWS Console → IAM → Policies → Create policy**
+   - Select the **JSON** tab and paste the following policy
+   - Policy name: `insurance-claims-iceberg-data-policy`
+
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Sid": "GlueAndS3ScopedAccess",
+               "Effect": "Allow",
+               "Action": [
+                   "glue:CreateTable",
+                   "glue:DeleteDatabase",
+                   "glue:GetTables",
+                   "glue:GetPartitions",
+                   "glue:UpdateTable",
+                   "glue:DeleteTable",
+                   "glue:GetDatabases",
+                   "glue:GetTable",
+                   "glue:GetDatabase",
+                   "glue:GetPartition",
+                   "glue:GetCatalogs",
+                   "glue:CreateDatabase",
+                   "glue:GetCatalog",
+                   "s3:ListBucket",
+                   "s3:GetBucketLocation"
+               ],
+               "Resource": [
+                   "arn:aws:glue:*:*:table/*/*",
+                   "arn:aws:glue:*:*:catalog",
+                   "arn:aws:glue:*:*:database/insurance_claims_iceberg_glue_db",
+                   "arn:aws:s3:::<account-id>-us-west-2-insurance-claims-iceberg-data"
+               ]
+           },
+           {
+               "Sid": "GlueAndS3GlobalAccess",
+               "Effect": "Allow",
+               "Action": [
+                   "glue:GetTables",
+                   "glue:GetCatalog",
+                   "glue:GetTable",
+                   "s3:ListAllMyBuckets",
+                   "s3:AbortMultipartUpload",
+                   "s3:ListMultipartUploadParts",
+                   "s3:GetBucketCors",
+                   "s3:GetBucketVersioning",
+                   "s3:GetBucketAcl",
+                   "s3:GetBucketNotification",
+                   "s3:GetBucketPolicy",
+                   "lakeformation:GetDataAccess"
+               ],
+               "Resource": "*"
+           },
+           {
+               "Sid": "S3DataAccess",
+               "Effect": "Allow",
+               "Action": [
+                   "s3:GetObject",
+                   "s3:PutObject",
+                   "s3:DeleteObject",
+                   "s3:ListBucket",
+                   "s3:GetBucketLocation",
+                   "s3:ListAllMyBuckets"
+               ],
+               "Resource": [
+                   "arn:aws:s3:::<account-id>-us-west-2-insurance-claims-iceberg-data",
+                   "arn:aws:s3:::<account-id>-us-west-2-insurance-claims-iceberg-data/*"
+               ]
+           }
+       ]
+   }
+   ```
+
+2. **Create an IAM Role**
+   - Navigate to **AWS Console → IAM → Roles → Create role**
+   - Trusted entity type: **AWS account**
+   - Select **Another AWS account** (enter a placeholder account ID for now; this will be updated after the Snowflake catalog integration is created)
+   - Role name: `insurance-claims-iceberg-data-role`
+   - Attach the `insurance-claims-iceberg-data-policy` created above
+   - Click **Create role**
+
+3. **Update the Trust Policy**
+
+   After creating the Snowflake catalog integration (Step 2), retrieve the IAM user ARN and external ID using `DESCRIBE CATALOG INTEGRATION`, then update the role's trust policy:
+
+   - Navigate to **AWS Console → IAM → Roles → `insurance-claims-iceberg-data-role` → Trust relationships → Edit trust policy**
+   - Replace the trust policy with the following (substituting the values from Snowflake):
+
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Sid": "SnowflakeAccess",
+               "Effect": "Allow",
+               "Principal": {
+                   "AWS": "<SNOWFLAKE_IAM_USER_ARN>"
+               },
+               "Action": "sts:AssumeRole",
+               "Condition": {
+                   "StringEquals": {
+                       "sts:ExternalId": "<SNOWFLAKE_EXTERNAL_ID>"
+                   }
+               }
+           },
+           {
+               "Sid": "GlueAndLakeFormationAccess",
+               "Effect": "Allow",
+               "Principal": {
+                   "Service": [
+                       "lakeformation.amazonaws.com",
+                       "glue.amazonaws.com"
+                   ]
+               },
+               "Action": [
+                   "sts:AssumeRole",
+                   "sts:SetContext"
+               ]
+           }
+       ]
+   }
+   ```
+#### Lake Formation Setup
+
+> **Note:** This section uses `ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS` in your Snowflake catalog integration. Vended credentials allow Snowflake to obtain temporary, scoped credentials from Lake Formation to access S3 data directly.
+
+1. **Enable Lake Formation**
+   - Navigate to **AWS Console → Lake Formation → Get started**
+   - Accept the default settings to initialize Lake Formation in your account
+
+2. **Register the S3 Data Lake Location**
+   - Navigate to **Lake Formation → Data lake locations → Register location**
+   - S3 path: `s3://<account-id>-us-west-2-insurance-claims-iceberg-data/`
+   - IAM role: Select `insurance-claims-iceberg-data-role` (created in the previous step)
+   - Permission mode: Select **Lake Formation**
+   - Click **Register location**
+
+   ![Register Data Lake Location](register_data_lake_location.png)
+
+3. **Grant Data Permissions to the IAM Role**
+   - Navigate to **Lake Formation → Data permissions → Grant**
+   - Principal type: **IAM users and roles**
+   - IAM role: `insurance-claims-iceberg-data-role`
+   - Database: `insurance_claims_iceberg_glue_db`
+   - Table: **All tables**
+   - Table permissions: **Select**, **Describe**
+   - Click **Grant**
+
+   ![Grant Permissions on Glue Database 1](Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_1.png)
+   ![Grant Permissions on Glue Database 2](Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
+   ![Grant Permissions on Glue Database 3](Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
+
+4. **Verify Lake Formation Permissions**
+   - Navigate to **Lake Formation → Data permissions**
+   - Confirm that `insurance-claims-iceberg-data-role` has **Select** and **Describe** permissions on all tables in `insurance_claims_iceberg_glue_db`
+     
 ### Step 3: Provision Snowflake Objects (Database, Schema, Stages, Tables)
 
 ### Step 4: Stage Data and the Fraud Detection Model
