@@ -83,6 +83,9 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - `fnol_reports/` — First Notice of Loss reports
    - `adjuster_notes/` — Adjuster notes and assessments
    - `initial_estimates/` — Initial claim estimates
+  
+The folder structure should look as below once the S3 Bucket and Prefixes are created
+![S3 Bucket with Prefixes](assets/screenshots/s3-bucket-prefixes.png)
 
 #### AWS Glue Data Catalog
 
@@ -93,12 +96,13 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - Database name: `insurance_claims_iceberg_glue_db`
    - Location: `s3://<account-id>-us-west-2-insurance-claims-iceberg-data/`
    - Click **Create database**
+![Glue Database](assets/screenshots/create-glue-database.png) 
 
 #### IAM Role with Glue/Lake Formation Permissions
 
 1. **Create an IAM Policy**
    - Navigate to **AWS Console → IAM → Policies → Create policy**
-   - Select the **JSON** tab and paste the following policy
+   - Select the **JSON** tab and paste the following policy. Update the `account-id` placeholder before saving the policy.
    - Policy name: `insurance-claims-iceberg-data-policy`
 
    ```json
@@ -179,47 +183,6 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - Attach the `insurance-claims-iceberg-data-policy` created above
    - Click **Create role**
 
-3. **Update the Trust Policy**
-
-   After creating the Snowflake catalog integration (Step 2), retrieve the IAM user ARN and external ID using `DESCRIBE CATALOG INTEGRATION`, then update the role's trust policy:
-
-   - Navigate to **AWS Console → IAM → Roles → `insurance-claims-iceberg-data-role` → Trust relationships → Edit trust policy**
-   - Replace the trust policy with the following (substituting the values from Snowflake):
-
-   ```json
-   {
-       "Version": "2012-10-17",
-       "Statement": [
-           {
-               "Sid": "SnowflakeAccess",
-               "Effect": "Allow",
-               "Principal": {
-                   "AWS": "<SNOWFLAKE_IAM_USER_ARN>"
-               },
-               "Action": "sts:AssumeRole",
-               "Condition": {
-                   "StringEquals": {
-                       "sts:ExternalId": "<SNOWFLAKE_EXTERNAL_ID>"
-                   }
-               }
-           },
-           {
-               "Sid": "GlueAndLakeFormationAccess",
-               "Effect": "Allow",
-               "Principal": {
-                   "Service": [
-                       "lakeformation.amazonaws.com",
-                       "glue.amazonaws.com"
-                   ]
-               },
-               "Action": [
-                   "sts:AssumeRole",
-                   "sts:SetContext"
-               ]
-           }
-       ]
-   }
-   ```
 #### Lake Formation Setup
 
 > **Note:** This section uses `ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS` in your Snowflake catalog integration. Vended credentials allow Snowflake to obtain temporary, scoped credentials from Lake Formation to access S3 data directly.
@@ -292,9 +255,44 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
 
 3. **Update the AWS IAM Trust Policy**
 
-   Go back to **AWS Console → IAM → Roles → `insurance-claims-iceberg-data-role` → Trust relationships → Edit trust policy** and replace the `<SNOWFLAKE_IAM_USER_ARN>` and `<SNOWFLAKE_EXTERNAL_ID>` placeholders with the values from the previous step (see Step 1, Section 3 for the trust policy template).
+   Go back to **AWS Console → IAM → Roles → `insurance-claims-iceberg-data-role` → Trust relationships → Edit trust policy** and replace the `<SNOWFLAKE_IAM_USER_ARN>` and `<SNOWFLAKE_EXTERNAL_ID>` placeholders with the values from the previous step.
 
-4. **Verify the Integration**
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Sid": "SnowflakeAccess",
+               "Effect": "Allow",
+               "Principal": {
+                   "AWS": "<SNOWFLAKE_IAM_USER_ARN>"
+               },
+               "Action": "sts:AssumeRole",
+               "Condition": {
+                   "StringEquals": {
+                       "sts:ExternalId": "<SNOWFLAKE_EXTERNAL_ID>"
+                   }
+               }
+           },
+           {
+               "Sid": "GlueAndLakeFormationAccess",
+               "Effect": "Allow",
+               "Principal": {
+                   "Service": [
+                       "lakeformation.amazonaws.com",
+                       "glue.amazonaws.com"
+                   ]
+               },
+               "Action": [
+                   "sts:AssumeRole",
+                   "sts:SetContext"
+               ]
+           }
+       ]
+   }
+   ```
+
+5. **Verify the Integration**
 
    ```sql
    SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('glue_db_catalog_integration');
