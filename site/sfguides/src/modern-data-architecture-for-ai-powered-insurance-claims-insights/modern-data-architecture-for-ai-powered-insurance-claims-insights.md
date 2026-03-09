@@ -235,7 +235,7 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - Permission mode: Select **Lake Formation**
    - Click **Register location**
 
-   ![Register Data Lake Location](assets/register_data_lake_location.png)
+   ![Register Data Lake Location](assets/screenshots/register_data_lake_location.png)
 
 3. **Grant Data Permissions to the IAM Role**
    - Navigate to **Lake Formation → Data permissions → Grant**
@@ -246,9 +246,9 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - Table permissions: **Select**, **Describe**
    - Click **Grant**
 
-   ![Grant Permissions on Glue Database 1](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_1.png)
-   ![Grant Permissions on Glue Database 2](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
-   ![Grant Permissions on Glue Database 3](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
+   ![Grant Permissions on Glue Database 1](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_1.png)
+   ![Grant Permissions on Glue Database 2](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
+   ![Grant Permissions on Glue Database 3](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
 
 4. **Verify Lake Formation Permissions**
    - Navigate to **Lake Formation → Data permissions**
@@ -288,7 +288,7 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
 
    Note the values for:
    - **IAM_USER_ARN** — e.g., `arn:aws:iam::<aws-account-id>:user/gqx31000-s`
-   - **EXTERNAL_ID** — e.g., `IWB03796_SFCRole=7_Hz7Ebsyt1q+08P9P7WGEf1x9YrQ=`
+   - **EXTERNAL_ID** — e.g., `IWB00000_SFCRole=7_Hz7Ebsyt1q+08P9P7XXXXXXX=`
 
 3. **Update the AWS IAM Trust Policy**
 
@@ -306,7 +306,7 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
 
 ### Step 3: Provision Iceberg Tables & Snowflake Objects (Database, Schema, Stages, Tables)
 
-> All SQL commands for this step are in [`setup.sql`](setup.sql). Before running, update `<account-id>` with your AWS account ID and `<path-to-repo>` with your local repo path. Execute the script using Cortex Code CLI.
+> All SQL commands for this step are in [`assets/setup.sql`](assets/setup.sql). Before running, update `<account-id>` with your AWS account ID and `<path-to-repo>` with your local repo path. Execute the script using Cortex Code CLI.
 
 The setup script performs the following sub-steps in order:
 
@@ -331,12 +331,12 @@ The setup script performs the following sub-steps in order:
    - In the notebook, install the `snowpark-connect` package from the Packages panel
 
 3. **Run the Feature Engineering notebook**
-   - Open and execute the [`spark_jobs/Insurance-Claims-Feature-Engineering.ipynb`](spark_jobs/Insurance-Claims-Feature-Engineering.ipynb) notebook
+   - Open and execute the [`assets/spark_jobs/Insurance-Claims-Feature-Engineering.ipynb`](assets/spark_jobs/Insurance-Claims-Feature-Engineering.ipynb) notebook
    - This notebook reads from both Iceberg tables (via Catalog Linked Database) and Native tables, performs feature engineering and fraud scoring, and writes the enriched output to the `CLAIMS_PROCESSED_FEATURES` table
 
 ### Step 5: Enable Cortex Analyst, Cortex Agent, and Snowflake Intelligence
 
-Run through the [`cortex_analyst_snowflake_intelligence_setup.sql`](cortex_analyst_snowflake_intelligence_setup.sql) script which handles:
+Run through the [`assets/cortex_analyst_snowflake_intelligence_setup.sql`](assets/cortex_analyst_snowflake_intelligence_setup.sql) script which handles:
 
 1. **Upload the semantic model YAML** to `SEMANTIC_MODEL_STAGE`
 2. **Create the Semantic View** using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML`
@@ -345,9 +345,9 @@ Run through the [`cortex_analyst_snowflake_intelligence_setup.sql`](cortex_analy
 5. **Grant access permissions** to the agent, semantic view, and underlying table
 6. **Verify** by navigating to **Snowsight → AI & ML → Snowflake Intelligence** and selecting the "Insurance Claims Analyst" agent
 7. **Ask Questions**
---   1. Ask: "Show me all high risk fraud claims"
---   2. Ask: "What is the total claim amount by loss type?"
---   3. Ask: "How many claims are under SIU investigation?"
+  1. Ask: "Show me all high risk fraud claims"
+  2. Ask: "What is the total claim amount by loss type?"
+  3. Ask: "How many claims are under SIU investigation?"
 
 
   
