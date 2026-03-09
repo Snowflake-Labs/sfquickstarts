@@ -31,6 +31,8 @@ This solution builds an [Open Route Service](https://openrouteservice.org/) Nati
 - **Isochrones** - Generate catchment polygons showing reachable areas within a given drive time
 - **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
 
+📐 **GeoFunctions** — Each routing function also has a `_GEO` variant (e.g. `DIRECTIONS_GEO`, `ISOCHRONES_GEO`, `OPTIMIZATION_GEO`) that wraps the base function and returns the route/polygon geometry as a native Snowflake `GEOGRAPHY` column — ready for geospatial analysis with `ST_LENGTH`, `ST_AREA`, `ST_WITHIN`, and more.
+
 🗺️ **Any Location** - Customize to Paris, London, New York, or anywhere in the world with downloadable OpenStreetMap data.
 
 🧪 **Function Tester** - An interactive Streamlit app to test the routing functions with sample addresses.
@@ -87,6 +89,7 @@ This is a self-contained service which is managed by you. There are no API calls
   - **Optimization** - Route optimization matching demands with vehicle availability
   - **Isochrones** - Catchment area analysis based on travel time
   - **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
+- Call all routing functions directly via **SQL** — including concrete query examples you can run immediately
 - Customize map regions and vehicle profiles for your specific use case
 
 <!-- ------------------------ -->
@@ -294,10 +297,10 @@ The configuration defines which routing profiles are available for routing:
 |---------|-------------|---------|
 | `driving-car` | Standard passenger vehicle | ✅ Enabled |
 | `driving-hgv` | Heavy goods vehicle (trucks) | ✅ Enabled |
-| `cycling-road` | Road bicycle | ✅ Enabled |
+| `cycling-road` | Road bicycle | ❌ Disabled |
 | `cycling-regular` | Regular bicycle | ❌ Disabled |
 | `cycling-mountain` | Mountain bicycle | ❌ Disabled |
-| `cycling-electric` | Electric bicycle | ❌ Disabled |
+| `cycling-electric` | Electric bicycle | ✅ Enabled |
 | `foot-walking` | Pedestrian walking | ❌ Disabled |
 | `foot-hiking` | Hiking trails | ❌ Disabled |
 | `wheelchair` | Wheelchair accessible | ❌ Disabled |
@@ -354,7 +357,271 @@ The Function Tester allows you to test all four routing functions:
 **🗺️ TIME-DISTANCE MATRIX**
 - Calculate travel time and distance matrices between multiple locations
 
-> **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses and default vehicle profiles (car, HGV, road bicycle). When you customize the deployment, the Function Tester is automatically updated with region-specific addresses and your enabled vehicle profiles.
+> **_TIP:_** The Function Tester comes pre-configured with San Francisco addresses and default vehicle profiles (car, HGV, electric bicycle). When you customize the deployment, the Function Tester is automatically updated with region-specific addresses and your enabled vehicle profiles.
+
+<!-- ------------------------ -->
+## SQL Function Reference
+
+All routing functions are deployed as SQL functions inside the Native App and can be called directly from any Snowflake worksheet, notebook, or application. The functions live under `OPENROUTESERVICE_NATIVE_APP.CORE`.
+
+### Function Overview
+
+| Function | Signature | Returns | Description |
+|----------|-----------|---------|-------------|
+| `DIRECTIONS` | `(method VARCHAR, jstart ARRAY, jend ARRAY)` | `VARIANT` | Point-to-point directions |
+| `DIRECTIONS` | `(method VARCHAR, locations VARIANT)` | `VARIANT` | Multi-waypoint directions |
+| `ISOCHRONES` | `(method TEXT, lon FLOAT, lat FLOAT, range INT)` | `VARIANT` | Catchment area polygon |
+| `OPTIMIZATION` | `(jobs ARRAY, vehicles ARRAY, matrices ARRAY)` | `VARIANT` | Route optimization (tabular) |
+| `OPTIMIZATION` | `(challenge VARIANT)` | `VARIANT` | Route optimization (raw) |
+| `MATRIX` | `(method VARCHAR, locations ARRAY)` | `VARIANT` | Time-distance matrix (tabular) |
+| `MATRIX` | `(method VARCHAR, options VARIANT)` | `VARIANT` | Time-distance matrix (raw) |
+| `ORS_STATUS` | `()` | `VARIANT` | Service health and graph info |
+| `DIRECTIONS_GEO` | `(method VARCHAR, jstart ARRAY, jend ARRAY)` | `TABLE(RESPONSE, GEOJSON, DISTANCE, DURATION)` | Directions with GEOGRAPHY |
+| `DIRECTIONS_GEO` | `(method VARCHAR, locations VARIANT)` | `TABLE(RESPONSE, GEOJSON, DISTANCE, DURATION)` | Multi-waypoint with GEOGRAPHY |
+| `ISOCHRONES_GEO` | `(method TEXT, lon FLOAT, lat FLOAT, range INT)` | `TABLE(RESPONSE, GEOJSON)` | Isochrone with GEOGRAPHY |
+| `OPTIMIZATION_GEO` | `(jobs ARRAY, vehicles ARRAY, matrices ARRAY)` | `TABLE(RESPONSE, GEOJSON, VEHICLE, DURATION, STEPS)` | Optimization with GEOGRAPHY |
+| `OPTIMIZATION_GEO` | `(challenge VARIANT)` | `TABLE(RESPONSE, GEOJSON, VEHICLE, DURATION, STEPS)` | Optimization (raw) with GEOGRAPHY |
+
+### Base Functions — SQL Examples
+
+**Directions: Point-to-Point**
+
+Calculate a driving route between two coordinates (longitude, latitude):
+
+```sql
+SELECT OPENROUTESERVICE_NATIVE_APP.CORE.DIRECTIONS(
+    'driving-car',
+    [-122.4194, 37.7749],   -- start: [lon, lat]
+    [-122.4783, 37.8199]    -- end:   [lon, lat]
+) AS route;
+```
+
+**Directions: Multi-Waypoint**
+
+Route through multiple stops by passing a `locations` object:
+
+```sql
+SELECT OPENROUTESERVICE_NATIVE_APP.CORE.DIRECTIONS(
+    'driving-car',
+    OBJECT_CONSTRUCT('coordinates', 
+        ARRAY_CONSTRUCT(
+            ARRAY_CONSTRUCT(-122.4194, 37.7749),   -- stop 1
+            ARRAY_CONSTRUCT(-122.4078, 37.7941),   -- stop 2
+            ARRAY_CONSTRUCT(-122.4783, 37.8199)    -- stop 3
+        )
+    )
+) AS route;
+```
+
+**Isochrones**
+
+Generate a polygon showing the area reachable within 10 minutes of driving:
+
+```sql
+SELECT OPENROUTESERVICE_NATIVE_APP.CORE.ISOCHRONES(
+    'driving-car',
+    -122.4194,   -- longitude
+    37.7749,     -- latitude
+    10           -- range in minutes
+) AS isochrone;
+```
+
+**Optimization: Tabular**
+
+Match delivery jobs to vehicles using arrays of jobs and vehicles:
+
+```sql
+SELECT OPENROUTESERVICE_NATIVE_APP.CORE.OPTIMIZATION(
+    -- jobs: array of delivery tasks
+    [
+        {'id': 1, 'location': [-122.4194, 37.7749], 'service': 300},
+        {'id': 2, 'location': [-122.4078, 37.7941], 'service': 300},
+        {'id': 3, 'location': [-122.4350, 37.7609], 'service': 300}
+    ],
+    -- vehicles: array of available vehicles
+    [
+        {'id': 1, 'profile': 'driving-car', 'start': [-122.4177, 37.8080], 'end': [-122.4177, 37.8080], 'capacity': [4], 'time_window': [28800, 43200]},
+        {'id': 2, 'profile': 'driving-car', 'start': [-122.3950, 37.7785], 'end': [-122.3950, 37.7785], 'capacity': [4], 'time_window': [28800, 43200]}
+    ],
+    -- matrices (optional, empty array uses ORS to calculate)
+    []
+) AS optimized_routes;
+```
+
+**Optimization: Raw Variant**
+
+Pass a full VROOM-compatible JSON challenge:
+
+```sql
+SELECT OPENROUTESERVICE_NATIVE_APP.CORE.OPTIMIZATION(
+    PARSE_JSON('{
+        "jobs": [
+            {"id": 1, "location": [-122.4194, 37.7749], "service": 300},
+            {"id": 2, "location": [-122.4078, 37.7941], "service": 300}
+        ],
+        "vehicles": [
+            {"id": 1, "profile": "driving-car", "start": [-122.4177, 37.8080], "end": [-122.4177, 37.8080], "capacity": [4]}
+        ]
+    }')
+) AS optimized_routes;
+```
+
+**Matrix: Tabular**
+
+Calculate the time and distance matrix between multiple locations:
+
+```sql
+SELECT OPENROUTESERVICE_NATIVE_APP.CORE.MATRIX(
+    'driving-car',
+    ARRAY_CONSTRUCT(
+        ARRAY_CONSTRUCT(-122.4194, 37.7749),
+        ARRAY_CONSTRUCT(-122.4078, 37.7941),
+        ARRAY_CONSTRUCT(-122.4783, 37.8199)
+    )
+) AS matrix;
+```
+
+**Matrix: Raw Variant**
+
+Pass full matrix options for advanced control (sources, destinations, metrics):
+
+```sql
+SELECT OPENROUTESERVICE_NATIVE_APP.CORE.MATRIX(
+    'driving-car',
+    PARSE_JSON('{
+        "locations": [[-122.4194, 37.7749], [-122.4078, 37.7941], [-122.4783, 37.8199]],
+        "metrics": ["distance", "duration"],
+        "resolve_locations": true,
+        "sources": [0],
+        "destinations": [1, 2]
+    }')
+) AS matrix;
+```
+
+### GeoFunctions — Native GEOGRAPHY Output
+
+The `_GEO` functions are **SQL wrappers** around the base functions above. All they do is:
+
+1. Call the base function (e.g. `DIRECTIONS`)
+2. Use `TO_GEOGRAPHY()` to parse the GeoJSON geometry from the VARIANT response into a native Snowflake `GEOGRAPHY` column
+3. Extract key summary fields (distance, duration, vehicle ID, etc.) into their own columns
+
+**Why this matters:** The base functions return a single `VARIANT` column where the route geometry is buried inside `response:features[0]:geometry`. The GeoFunctions extract that geometry into a dedicated `GEOJSON GEOGRAPHY` column for user convenience.
+
+**DIRECTIONS_GEO: Point-to-Point**
+
+```sql
+SELECT * FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.DIRECTIONS_GEO(
+    'driving-car',
+    [-122.4194, 37.7749],
+    [-122.4783, 37.8199]
+));
+-- Returns: RESPONSE (variant), GEOJSON (geography), DISTANCE (float, meters), DURATION (float, seconds)
+```
+
+**DIRECTIONS_GEO: Multi-Waypoint**
+
+```sql
+SELECT * FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.DIRECTIONS_GEO(
+    'driving-car',
+    OBJECT_CONSTRUCT('coordinates',
+        ARRAY_CONSTRUCT(
+            ARRAY_CONSTRUCT(-122.4194, 37.7749),
+            ARRAY_CONSTRUCT(-122.4078, 37.7941),
+            ARRAY_CONSTRUCT(-122.4783, 37.8199)
+        )
+    )
+));
+-- Returns: RESPONSE (variant), GEOJSON (geography), DISTANCE (float, meters), DURATION (float, seconds)
+```
+
+**ISOCHRONES_GEO**
+
+```sql
+SELECT * FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.ISOCHRONES_GEO(
+    'driving-car',
+    -122.4194,
+    37.7749,
+    10
+));
+-- Returns: RESPONSE (variant), GEOJSON (geography)
+```
+
+**OPTIMIZATION_GEO: Tabular**
+
+Returns one row per vehicle route with the route geometry as a `GEOGRAPHY` LineString:
+
+```sql
+SELECT * FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.OPTIMIZATION_GEO(
+    [
+        {'id': 1, 'location': [-122.4194, 37.7749], 'service': 300},
+        {'id': 2, 'location': [-122.4078, 37.7941], 'service': 300},
+        {'id': 3, 'location': [-122.4350, 37.7609], 'service': 300}
+    ],
+    [
+        {'id': 1, 'profile': 'driving-car', 'start': [-122.4177, 37.8080], 'end': [-122.4177, 37.8080], 'capacity': [4], 'time_window': [28800, 43200]},
+        {'id': 2, 'profile': 'driving-car', 'start': [-122.3950, 37.7785], 'end': [-122.3950, 37.7785], 'capacity': [4], 'time_window': [28800, 43200]}
+    ],
+    []
+));
+-- Returns: RESPONSE (variant), GEOJSON (geography), VEHICLE (int), DURATION (int), STEPS (variant)
+```
+
+**OPTIMIZATION_GEO: Raw Variant**
+
+```sql
+SELECT * FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.OPTIMIZATION_GEO(
+    PARSE_JSON('{
+        "jobs": [
+            {"id": 1, "location": [-122.4194, 37.7749], "service": 300},
+            {"id": 2, "location": [-122.4078, 37.7941], "service": 300}
+        ],
+        "vehicles": [
+            {"id": 1, "profile": "driving-car", "start": [-122.4177, 37.8080], "end": [-122.4177, 37.8080], "capacity": [4]}
+        ]
+    }')
+));
+-- Returns: RESPONSE (variant), GEOJSON (geography), VEHICLE (int), DURATION (int), STEPS (variant)
+```
+
+### Geospatial Integration Patterns
+
+Once you have `GEOGRAPHY` columns from the Geofunctions, you can chain them with Snowflake's built-in geospatial functions:
+
+**Route length in kilometers:**
+
+```sql
+SELECT
+    ST_LENGTH(GEOJSON) / 1000 AS route_length_km,
+    DISTANCE / 1000 AS ors_distance_km,
+    DURATION / 60 AS duration_minutes
+FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.DIRECTIONS_GEO(
+    'driving-car', [-122.4194, 37.7749], [-122.4783, 37.8199]
+));
+```
+
+**Isochrone area in square kilometers:**
+
+```sql
+SELECT
+    ST_AREA(GEOJSON) / 1000000 AS catchment_area_sq_km
+FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.ISOCHRONES_GEO(
+    'driving-car', -122.4194, 37.7749, 15
+));
+```
+
+**Check if a point falls within an isochrone:**
+
+```sql
+SELECT
+    ST_WITHIN(
+        ST_MAKEPOINT(-122.4078, 37.7941),
+        GEOJSON
+    ) AS is_reachable
+FROM TABLE(OPENROUTESERVICE_NATIVE_APP.CORE.ISOCHRONES_GEO(
+    'driving-car', -122.4194, 37.7749, 10
+));
+```
 
 <!-- ------------------------ -->
 ## Customize Your Deployment
@@ -364,7 +631,7 @@ The default deployment uses San Francisco with standard routing profiles. You ca
 | Customization | Default | Example Custom |
 |---------------|---------|----------------|
 | 🗺️ **Map Region** | San Francisco | Paris, London, Tokyo, etc. |
-| 🚚 **Routing Profiles** | Car, HGV, Road Bicycle | Add walking, wheelchair, electric bicycle |
+| 🚚 **Routing Profiles** | Car, HGV, Electric Bicycle | Add walking, wheelchair, road bicycle |
 
 > **_NOTE:_** This step is optional. If you skip customization, the Native App will use the San Francisco defaults.
 
@@ -393,7 +660,7 @@ The main `$customize-main` skill orchestrates the process by asking **two questi
 
 2. **"Do you want to customize ROUTING PROFILES (vehicle types)?"**
    - If YES → Runs `$customize-main/routing-profiles`
-   - If NO → Keeps default profiles (car, HGV, road bicycle)
+   - If NO → Keeps default profiles (car, HGV, electric bicycle)
 
 ### Example: Customizing to Paris
 
@@ -416,7 +683,7 @@ Cortex Code will find the appropriate skill and guide you through the process:
 - Choose which routing profiles to enable for Paris:
   - `driving-car` - Standard passenger vehicle ✅
   - `driving-hgv` - Heavy goods vehicle (trucks) ✅
-  - `cycling-road` - Road bicycles ✅
+  - `cycling-electric` - Electric bicycles ✅
   - `foot-walking` - Pedestrian (optional)
   - `wheelchair` - Wheelchair accessible (optional)
 
@@ -503,7 +770,7 @@ The skill presents available routing profiles and lets you enable/disable them:
 | `foot-hiking` | Foot | Hiking trails |
 | `wheelchair` | Wheelchair | Wheelchair accessible routes |
 
-> **_NOTE:_** Enabling more profiles increases graph build time. The default (driving-car, driving-hgv, cycling-road) covers most logistics use cases.
+> **_NOTE:_** Enabling more profiles increases graph build time. The default (driving-car, driving-hgv, cycling-electric) covers most logistics use cases.
 
 **Function Tester Customization**
 
@@ -567,7 +834,7 @@ You've just deployed a **self-contained routing solution** in Snowflake using na
 This solution demonstrates the power of combining:
 - **Cortex Code** - AI-powered CLI that turns natural language into automated workflows
 - **Snowpark Container Services** - Running OpenRouteService as a self-managed Native App
-- **Native App Functions** - SQL-callable routing functions for directions, optimization, and isochrones
+- **Native App Functions** - SQL-callable routing functions for directions, optimization, isochrones, and time-distance matrix
 
 The key advantage of this approach is **flexibility without complexity**. Want to switch from San Francisco to Paris? Just run the location customization skill. Need to add walking or cycling routes? Enable additional routing profiles. The skill-based approach means you only run the steps you need.
 
@@ -584,6 +851,8 @@ The key advantage of this approach is **flexibility without complexity**. Want t
     - **Optimization** - Match delivery jobs to vehicles based on time windows, capacity, and skills
     - **Isochrones** - Generate catchment polygons showing reachable areas
     - **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
+
+- **GeoFunctions for Geospatial Analysis** - Use `_GEO` variants (`DIRECTIONS_GEO`, `ISOCHRONES_GEO`, `OPTIMIZATION_GEO`) that wrap the base functions and return native `GEOGRAPHY` columns — no manual JSON parsing needed
 
 ### Next Steps
 
@@ -618,5 +887,3 @@ Deploy the demo to see the routing functions in action with real-world POI data:
 
 - [Geofabrik Downloads](https://download.geofabrik.de/) - Country and region OpenStreetMap extracts
 - [BBBike Extracts](https://extract.bbbike.org/) - City-specific OpenStreetMap extracts for faster processing
-
-
