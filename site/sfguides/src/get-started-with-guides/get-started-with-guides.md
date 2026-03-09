@@ -3,7 +3,7 @@ id: get-started-with-guides
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
-status: Published
+status: Hidden
 author:  Snowflake DevRel Team
 
 # Snowflake Guide Basics
@@ -21,12 +21,6 @@ Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/
 
 ### Prerequisites
 - Familiarity with Markdown syntax
-
-Staging Test 2
-![puppy](assets/puppy.jpg)
-
-Staging Test 2
-![puppy](assets/puppy01.jpg)
 
 ### What You’ll Learn 
 - Components of a Guide
