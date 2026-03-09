@@ -85,7 +85,7 @@ The pipeline uses a serialized fraud detection model (`fraud_model.py`) that sim
 ## Data Sources
 
 ### Snowflake Tables (Default)
-The pipeline reads directly from Snowflake tables:
+The pipeline reads directly from tables:
 
 | Table | Description |
 |-------|-------------|
@@ -95,21 +95,11 @@ The pipeline reads directly from Snowflake tables:
 | `FRAUD_FLAGS` | Historical fraud indicators |
 | `POLICY_DETAILS` | Policy coverage information |
 
-### CSV Files (Fallback)
-If Snowflake is unavailable or `USE_SNOWFLAKE_SOURCE=false`:
-
-| File | Description |
-|------|-------------|
-| `fnol_reports.csv` | First Notice of Loss reports |
-| `adjuster_notes.csv` | Adjuster investigation notes |
-| `initial_estimates.csv` | Repair/total loss estimates |
-| `fraud_flags.csv` | Historical fraud indicators |
-| `policy_details.csv` | Policy coverage information |
 
 ## Project Structure
 ```
 spark_jobs/
-├── claims_feature_engineering.py   # Main Spark pipeline
+├── Insurance-Claims-Feature-Engineering.ipynb   # Main Spark Notebook
 ├── fraud_model.py                  # Pre-trained model definition
 ├── models/
 │   └── fraud_detection_model.pkl   # Serialized model file
@@ -121,105 +111,13 @@ spark_jobs/
 
 ### Prerequisites
 - Python 3.10+
-- Java 8+ (same architecture as Python)
 - Snowflake account with Snowpark Connect enabled
-
-### Installation
-```bash
-cd spark_jobs
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
 
 ### Create Pre-trained Model
 ```bash
 # Generate and save the pre-trained model
 python fraud_model.py
 ```
-
-### Configure Snowflake Connection
-Create `~/.snowflake/connections.toml`:
-```toml
-[spark-connect]
-host="your_account.snowflakecomputing.com"
-account="your_account"
-user="your_user"
-password="your_password"
-warehouse="COMPUTE_WH"
-database="INSURANCE_CLAIMS_DB"
-schema="CLAIMS_ANALYTICS"
-```
-
-## Usage
-
-### Run with Snowpark Connect
-```bash
-python claims_feature_engineering.py
-```
-
-### Run with Custom Paths
-```bash
-DATA_PATH=/path/to/data \
-OUTPUT_PATH=/path/to/output \
-FRAUD_MODEL_PATH=/path/to/model.pkl \
-SNOWFLAKE_DATABASE=MY_DB \
-SNOWFLAKE_SCHEMA=MY_SCHEMA \
-SNOWFLAKE_TABLE=MY_FEATURES_TABLE \
-python claims_feature_engineering.py
-```
-
-### Environment Variables
-| Variable | Default | Description |
-|----------|---------|-------------|
-| USE_SNOWFLAKE_SOURCE | true | Read from Snowflake tables (false=CSV) |
-| DATA_PATH | ./data | CSV files location (when not using Snowflake) |
-| OUTPUT_PATH | ./output | CSV backup location |
-| FRAUD_MODEL_PATH | ./models/fraud_detection_model.pkl | Pre-trained model |
-| SNOWFLAKE_DATABASE | INSURANCE_CLAIMS_DB | Target database |
-| SNOWFLAKE_SCHEMA | CLAIMS_ANALYTICS | Target schema |
-| SNOWFLAKE_OUTPUT_TABLE | CLAIMS_PROCESSED_FEATURES | Output table name |
-| FNOL_TABLE | FNOL_REPORTS | Source FNOL table name |
-| ADJUSTER_NOTES_TABLE | ADJUSTER_NOTES | Source adjuster notes table |
-| INITIAL_ESTIMATES_TABLE | INITIAL_ESTIMATES | Source estimates table |
-| FRAUD_FLAGS_TABLE | FRAUD_FLAGS | Source fraud flags table |
-| POLICY_DETAILS_TABLE | POLICY_DETAILS | Source policy details table |
-
-### Run via Snowpark Submit (Production)
-```bash
-snow spark submit claims_feature_engineering.py \
-    --warehouse COMPUTE_WH \
-    --database INSURANCE_CLAIMS_DB \
-    --schema CLAIMS_ANALYTICS \
-    --py-files fraud_model.py
-```
-
-## Output
-
-### Snowflake Native Table
-The pipeline writes enriched data to:
-```
-INSURANCE_CLAIMS_DB.CLAIMS_ANALYTICS.CLAIMS_PROCESSED_FEATURES
-```
-
-This table is optimized for:
-- **Reporting**: Clean column names, categorized fields, pre-computed metrics
-- **AI/ML Consumption**: Numeric features, normalized scores, embeddings-ready
-- **Analytics**: Timestamp tracking, full audit trail
-
-### Table Schema (50+ columns)
-| Column | Type | Description |
-|--------|------|-------------|
-| CLAIM_ID | VARCHAR | Primary key |
-| ML_FRAUD_RISK_SCORE | FLOAT | Pre-trained model score (0-100) |
-| FRAUD_RISK_CATEGORY | VARCHAR | High/Medium/Low/Minimal Risk |
-| COMPLEXITY_SCORE | INT | Claim complexity metric |
-| ESTIMATE_TO_PREMIUM_RATIO | FLOAT | Anomaly detection feature |
-| PROCESSED_AT | TIMESTAMP | Pipeline execution time |
-| ... | ... | 45+ additional features |
-
-### CSV Backup
-Also writes to `output/enriched_claims_features/` as CSV backup.
 
 ## Model Retraining
 To retrain the fraud model with new data:
