@@ -325,7 +325,7 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
 
 > All SQL commands for this step are in [`assets/setup.sql`](assets/setup.sql). Before running, update `<account-id>` with your AWS account ID. Clone the repository in your local machine, go to the assets folder and run the following prompt using Cortex Code CLI (replace the AWS ACCOUNT ID with yours.
 
-`Run the setup.sql script by replacing the <account-id> with <01234554634> and access the data to             upload into the stage from the data folder in this path`
+`Run the setup.sql script by replacing the <account-id> with <01234554634> and access the data to upload into the stage from the data folder in this path`
 
 <video width="800" controls>
   <source src="assets/screenshots/setup_script_with_coco_cli.gif" type="video/mp4">
