@@ -29,19 +29,19 @@ CREATE DATABASE IF NOT EXISTS glue_database_linked_db
 
 -- Step 3c: Upload data and model files to stages (update <path-to-repo> with your local repo path)
 
-PUT file:///<path-to-repo>/data/policy_details.csv @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file:///<path-to-repo>/data/fraud_flags.csv @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file:///<path-to-repo>/data/parquet/adjuster_notes.parquet @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file:///<path-to-repo>/data/parquet/fnol_reports.parquet @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file:///<path-to-repo>/data/parquet/initial_estimates.parquet @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file:///<path-to-repo>/spark_jobs/models/fraud_detection_model.pkl @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.ML_MODELS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file:///<path-to-repo>/spark_jobs/fraud_model.py @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.ML_MODELS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+PUT data/policy_details.csv @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+PUT data/fraud_flags.csv @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+PUT data/parquet/adjuster_notes.parquet @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+PUT data/parquet/fnol_reports.parquet @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+PUT data/parquet/initial_estimates.parquet @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.DATA_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+PUT spark_jobs/models/fraud_detection_model.pkl @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.ML_MODELS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+PUT spark_jobs/fraud_model.py @INSURANCE_CLAIMS_INSIGHTS_DB.CLAIMS_ANALYTICS.ML_MODELS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
 
 -- Step 3d: Create Iceberg Tables in the Catalog Linked Database
 
 USE DATABASE GLUE_DATABASE_LINKED_DB;
 USE SCHEMA INSURANCE_CLAIMS_ICEBERG_GLUE_DB;
-CREATE OR REPLACE ICEBERG TABLE "fnol_reports" (
+CREATE ICEBERG TABLE IF NOT EXISTS "fnol_reports" (
     "claim_id" STRING,
     "policy_number" STRING,
     "date_of_loss" DATE,
@@ -76,7 +76,7 @@ BASE_LOCATION = 's3://<account-id>-us-west-2-insurance-claims-iceberg-data/fnol_
 AUTO_REFRESH = TRUE;
 
 
-CREATE OR REPLACE ICEBERG TABLE "adjuster_notes" (
+CREATE ICEBERG TABLE IF NOT EXISTS "adjuster_notes" (
     "note_id" STRING,
     "claim_id" STRING,
     "adjuster_id" STRING,
@@ -90,7 +90,7 @@ BASE_LOCATION = 's3://<account-id>-us-west-2-insurance-claims-iceberg-data/adjus
 AUTO_REFRESH = TRUE;
 
 
-CREATE OR REPLACE ICEBERG TABLE "initial_estimates" (
+CREATE ICEBERG TABLE IF NOT EXISTS "initial_estimates" (
     "estimate_id" STRING,
     "claim_id" STRING,
     "estimate_date" DATE,
