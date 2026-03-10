@@ -213,6 +213,16 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
    ![Grant Permissions on Glue Database 2](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
    ![Grant Permissions on Glue Database 3](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
 
+2. **Register the S3 Data Location**
+   - Navigate to **Lake Formation → Data locations → Grant**
+   - Storage locations: `s3://<account-id>-us-west-2-insurance-claims-iceberg-data/`
+   - IAM users and roles: Select `insurance-claims-iceberg-data-role` (created in the previous step)
+   - Registered account location should be the **AWS Account ID**
+   - Checkmark **Grantable**
+   - Click **Grant**
+
+   ![Register Data Location](assets/screenshots/register_data_location.png)
+
 6. **Verify Lake Formation Permissions**
    - Navigate to **Lake Formation → Data permissions**
    - Confirm that `insurance-claims-iceberg-data-role` has all the permissions on all tables in `insurance_claims_iceberg_glue_db`
@@ -306,7 +316,11 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
 
 > All SQL commands for this step are in [`assets/setup.sql`](assets/setup.sql). Before running, update `<account-id>` with your AWS account ID. Clone the repository in your local machine, go to the assets folder and run the following prompt using Cortex Code CLI (replace the AWS ACCOUNT ID with yours.
 
-`Run the setup.sql script by replacing the <account-id> with 01234554634`
+`Run the setup.sql script by replacing the <account-id> with <01234554634> and access the data to             upload into the stage from the data folder in this path`
+
+<video width="800" controls>
+  <source src="assets/screenshots/setup_script_with_coco_cli.mov" type="video/mp4">
+</video>
 
 The setup script performs the following sub-steps in order:
 
@@ -325,10 +339,13 @@ The setup script performs the following sub-steps in order:
 
 1. **Create a Notebook in Snowsight**
    - Navigate to **Snowsight → Notebooks → Create Notebook**
-   - Upload the `fraud_model.py` script to the notebook environment
+   - Upload the notebook from the cloned repository located in **spark-jobs** folder
+    ![Upload Notebook](assets/screenshots/upload_notebook_into_snowsight.png)
+   - Also, Upload the `fraud_model.py` script to the notebook environment
 
 2. **Install the Snowpark Connect package**
    - In the notebook, install the `snowpark-connect` package from the Packages panel
+     ![Install Package in Notebook](assets/screenshots/install_packages_into_notebook.png)
 
 3. **Run the Feature Engineering notebook**
    - Open and execute the [`assets/spark_jobs/Insurance-Claims-Feature-Engineering.ipynb`](assets/spark_jobs/Insurance-Claims-Feature-Engineering.ipynb) notebook
@@ -336,21 +353,31 @@ The setup script performs the following sub-steps in order:
 
 ### Step 5: Enable Cortex Analyst, Cortex Agent, and Snowflake Intelligence
 
-Run through the [`assets/cortex_analyst_snowflake_intelligence_setup.sql`](assets/cortex_analyst_snowflake_intelligence_setup.sql) script which handles:
+Run through the [`assets/cortex_analyst_snowflake_intelligence_setup.sql`](assets/cortex_analyst_snowflake_intelligence_setup.sql) script using CoCo CLI with the following prompt:
+
+`Run the cortex_analyst_snowflake_intelligence_setup.sql script to create the semantic view by uploading the claims_semantic_view.yaml from the semantic_models folder, setup Cortex Analyst,
+Cortex Agent and enable Snowflake Intelligence` 
+
+This runs through the following steps:
 
 1. **Upload the semantic model YAML** to `SEMANTIC_MODEL_STAGE`
 2. **Create the Semantic View** using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML`
 3. **Create the Snowflake Intelligence database and schema** (`SNOWFLAKE_INTELLIGENCE.AGENTS`)
 4. **Create the Cortex Agent** with the `cortex_analyst_text_to_sql` tool pointing to the semantic view
 5. **Grant access permissions** to the agent, semantic view, and underlying table
-6. **Verify** by navigating to **Snowsight → AI & ML → Snowflake Intelligence** and selecting the "Insurance Claims Analyst" agent
-7. **Ask Questions**
+
+### Step 6: Query Claims Data with Snowflake Intelligence
+
+1. **Verify** by navigating to **Snowsight → AI & ML → Snowflake Intelligence** and selecting the "Insurance Claims Analyst" agent
+2. **Ask Questions**
   1. Ask: "Show me all high risk fraud claims"
   2. Ask: "What is the total claim amount by loss type?"
   3. Ask: "How many claims are under SIU investigation?"
 
 
-  
+<video width="800" controls>
+  <source src="assets/screenshots/snowflake_intelligence_claims_data_questions.mov" type="video/mp4">
+</video>
 
 
 
