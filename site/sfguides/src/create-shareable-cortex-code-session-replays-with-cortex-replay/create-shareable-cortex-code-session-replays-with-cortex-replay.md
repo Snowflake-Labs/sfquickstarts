@@ -29,7 +29,7 @@ Cortex Code is Snowflake's AI coding assistant that helps you write code, query 
 ### What You'll Build
 A fully interactive, self-contained HTML replay of a Cortex Code session that you can open in any browser, share with colleagues, or embed in a webpage. See a [live example](https://dataprofessor.github.io/cortex-replay/).
 
-![](assets/cortex-replay.gif)
+![](assets/screencast.gif)
 
 ### Prerequisites
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
