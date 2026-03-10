@@ -1,3 +1,5 @@
+author: Gayatri Ghanakota id: modern-data-architecture-for-ai-powered-insurance-claims-insights categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion language: en summary: Lab to demonstrate how to build a modern data architecture on Snowflake and AWS while using Snowflake Features like Catalog Linked Database, Snowpark Connect for Apache Spark, Snowflake Intelligence and Cortex Code CLI environments: web status: Published feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 # Unlocking Hidden Value: The Modern Data Architecture for AI-Powered Insurance Claims Insights
 
 ## Overview
@@ -319,7 +321,7 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
 `Run the setup.sql script by replacing the <account-id> with <01234554634> and access the data to             upload into the stage from the data folder in this path`
 
 <video width="800" controls>
-  <source src="assets/screenshots/setup_script_with_coco_cli.mov" type="video/mp4">
+  <source src="assets/screenshots/setup_script_with_coco_cli.gif" type="video/mp4">
 </video>
 
 The setup script performs the following sub-steps in order:
@@ -376,7 +378,7 @@ This runs through the following steps:
 
 
 <video width="800" controls>
-  <source src="assets/screenshots/snowflake_intelligence_claims_data_questions.mov" type="video/mp4">
+  <source src="assets/screenshots/snowflake_intelligence_claims_data_questions.gif" type="video/mp4">
 </video>
 
 
