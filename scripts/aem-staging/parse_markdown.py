@@ -74,12 +74,17 @@ def parse_frontmatter_manually(fm_text: str) -> dict:
     return result
 
 
-def transform_image_urls(markdown: str, base_url: str, quickstart_name: str) -> tuple[str, int]:
+def transform_image_urls(markdown: str, base_url: str, quickstart_name: str, strip_assets_prefix: bool = False, cache_bust: str = '') -> tuple[str, int]:
     """
-    Transform relative image URLs to absolute GitHub raw URLs.
+    Transform relative image URLs to absolute URLs.
     Returns (transformed_markdown, count_of_replacements)
+    
+    Args:
+        strip_assets_prefix: If True, removes 'assets/' from paths (for AEM DAM).
+        cache_bust: If set, appended as ?v=<value> to bust dispatcher/CDN cache.
     """
     count = 0
+    suffix = f"?v={cache_bust}" if cache_bust else ''
     
     def replace_image(match):
         nonlocal count
@@ -91,10 +96,13 @@ def transform_image_urls(markdown: str, base_url: str, quickstart_name: str) -> 
         
         url = url.lstrip('./')
         
-        if url.startswith('assets/'):
-            new_url = f"{base_url}/{quickstart_name}/{url}"
+        if strip_assets_prefix and url.startswith('assets/'):
+            filename = url[7:]  # Remove 'assets/' prefix
+            new_url = f"{base_url}/{quickstart_name}/{filename}{suffix}"
+        elif url.startswith('assets/'):
+            new_url = f"{base_url}/{quickstart_name}/{url}{suffix}"
         else:
-            new_url = f"{base_url}/{quickstart_name}/assets/{url}"
+            new_url = f"{base_url}/{quickstart_name}/assets/{url}{suffix}"
         
         count += 1
         return f"![{alt_text}]({new_url})"
@@ -141,7 +149,8 @@ def parse_markdown(
     file_path: str,
     commit_sha: str,
     quickstart_name: str,
-    base_image_url: str
+    base_image_url: str,
+    strip_assets_prefix: bool = False
 ) -> dict:
     """
     Parse markdown file and return structured data for AEM.
@@ -154,8 +163,9 @@ def parse_markdown(
     # Strip H1 header from content since title is displayed in hero section
     content_without_h1 = re.sub(r'^#\s+.+\n*', '', content, count=1)
     
+    cache_bust = commit_sha[:8] if strip_assets_prefix and commit_sha else ''
     transformed_content, images_count = transform_image_urls(
-        content_without_h1, base_image_url, quickstart_name
+        content_without_h1, base_image_url, quickstart_name, strip_assets_prefix, cache_bust
     )
     
     qid = frontmatter.get('id', quickstart_name)
@@ -244,6 +254,11 @@ def main():
         help='Base URL for image references'
     )
     parser.add_argument('--output-json', help='Output file path (default: stdout)')
+    parser.add_argument(
+        '--strip-assets-prefix',
+        action='store_true',
+        help='Strip assets/ prefix from image paths (for AEM DAM)'
+    )
     
     args = parser.parse_args()
     
@@ -252,7 +267,8 @@ def main():
             args.file_path,
             args.commit_sha,
             args.quickstart_name,
-            args.base_image_url
+            args.base_image_url,
+            args.strip_assets_prefix
         )
         
         output = json.dumps(result, indent=2, ensure_ascii=False)
