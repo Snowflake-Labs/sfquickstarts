@@ -94,11 +94,13 @@ You can also point cortex-replay at any JSON file directly by passing the file p
 
 ### Basic Usage
 
-Generate a replay from a session ID. You only need the first few characters of the ID (enough to be unique):
+Generate a replay by passing a session ID (from `--list-sessions`) as the first argument. You don't need the full UUID — the first 4–6 characters are usually enough for cortex-replay to find a unique match:
 
 ```bash
-cortex-replay abc123 -o replay.html
+cortex-replay 6868f -o replay.html
 ```
+
+Here `6868f` is the first 5 characters of the full session ID `6868f059-3b8a-423d-8a51-ef0397c7f469`. That's all cortex-replay needs to find a unique match.
 
 By default, cortex-replay outputs to stdout. Use `-o` to write to a file.
 
@@ -107,7 +109,7 @@ By default, cortex-replay outputs to stdout. Use `-o` to write to a file.
 Control where the HTML file is saved:
 
 ```bash
-cortex-replay abc123 -o ~/Desktop/my-replay.html
+cortex-replay 6868f -o ~/Desktop/my-replay.html
 ```
 
 ### Use a Custom Input File
@@ -123,7 +125,7 @@ cortex-replay /path/to/session.json -o replay.html
 Override the default title shown in the replay header:
 
 ```bash
-cortex-replay abc123 --title "Building a Data Pipeline"
+cortex-replay 6868f --title "Building a Data Pipeline"
 ```
 
 ### View the Replay
@@ -181,7 +183,7 @@ cortex-replay includes six built-in themes and supports fully custom themes.
 Apply a theme with the `--theme` flag:
 
 ```bash
-cortex-replay abc123 --theme tokyo-night
+cortex-replay 6868f --theme tokyo-night
 ```
 
 Available built-in themes:
@@ -223,7 +225,7 @@ Create a JSON file with any combination of the 16 CSS variables:
 You only need to include the variables you want to override. Apply it with:
 
 ```bash
-cortex-replay abc123 --theme-file my-theme.json
+cortex-replay 6868f --theme-file my-theme.json
 ```
 
 <!-- ------------------------ -->
@@ -236,7 +238,7 @@ Bookmarks let you mark key moments in a session so viewers can jump directly to 
 Pass bookmark labels keyed to turn numbers using the `--mark` flag:
 
 ```bash
-cortex-replay abc123 \
+cortex-replay 6868f \
   --mark "1:Setup" \
   --mark "5:Data Loading" \
   --mark "12:Model Training" \
@@ -259,7 +261,7 @@ For long sessions, you may want to include only a subset of turns in the replay.
 Use the `--turns` flag to include a range of turns (1-based):
 
 ```bash
-cortex-replay abc123 --turns 5-15
+cortex-replay 6868f --turns 5-15
 ```
 
 This includes turns 5 through 15 in the replay.
@@ -303,7 +305,7 @@ Each detected secret is replaced with `[REDACTED]` in the output.
 If you are working in a controlled environment and want to skip the redaction step:
 
 ```bash
-cortex-replay abc123 --no-redact
+cortex-replay 6868f --no-redact
 ```
 
 Use this with caution. Always review the output before sharing if you skip redaction.
@@ -316,7 +318,7 @@ Use this with caution. Always review the output before sharing if you skip redac
 Override the default playback speed multiplier:
 
 ```bash
-cortex-replay abc123 --speed 2
+cortex-replay 6868f --speed 2
 ```
 
 The default is 1.0. Higher values mean faster auto-playback.
@@ -330,7 +332,7 @@ The replay header automatically shows the session ID. When combined with `--titl
 All options can be combined freely:
 
 ```bash
-cortex-replay abc123 \
+cortex-replay 6868f \
   --title "Building a RAG Pipeline" \
   --theme tokyo-night \
   --turns 1-20 \
