@@ -213,9 +213,9 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
    ![Grant Permissions on Glue Database 2](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
    ![Grant Permissions on Glue Database 3](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
 
-4. **Verify Lake Formation Permissions**
+6. **Verify Lake Formation Permissions**
    - Navigate to **Lake Formation → Data permissions**
-   - Confirm that `insurance-claims-iceberg-data-role` has **Select** and **Describe** permissions on all tables in `insurance_claims_iceberg_glue_db`
+   - Confirm that `insurance-claims-iceberg-data-role` has all the permissions on all tables in `insurance_claims_iceberg_glue_db`
 
 ### Step 2: Connect Snowflake to AWS Glue via Catalog Integration
 
@@ -304,7 +304,9 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
 
 ### Step 3: Provision Iceberg Tables & Snowflake Objects (Database, Schema, Stages, Tables)
 
-> All SQL commands for this step are in [`assets/setup.sql`](assets/setup.sql). Before running, update `<account-id>` with your AWS account ID and `<path-to-repo>` with your local repo path. Execute the script using Cortex Code CLI.
+> All SQL commands for this step are in [`assets/setup.sql`](assets/setup.sql). Before running, update `<account-id>` with your AWS account ID. Clone the repository in your local machine, go to the assets folder and run the following prompt using Cortex Code CLI (replace the AWS ACCOUNT ID with yours.
+
+`Run the setup.sql script by replacing the <account-id> with 01234554634`
 
 The setup script performs the following sub-steps in order:
 
