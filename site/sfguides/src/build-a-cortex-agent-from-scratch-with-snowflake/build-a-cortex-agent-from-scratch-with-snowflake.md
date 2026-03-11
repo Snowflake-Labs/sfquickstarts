@@ -12,13 +12,13 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Every organization sits on two kinds of data: **structured data** (numbers in tables -- sales figures, inventory counts, transaction logs) and **unstructured data** (text in documents -- product manuals, troubleshooting guides, policy documents). Traditionally, getting answers from these two worlds required completely different tools and skills. Want to know last quarter's revenue? Write a SQL query. Need to find the assembly instructions for a product? Search through a document repository. Want both in one conversation? Good luck stitching those workflows together manually.
+Every organization sits on two kinds of data: **structured data** (numbers in tables like sales figures, inventory counts, and transaction logs) and **unstructured data** (text in documents like product manuals, troubleshooting guides, and policy documents). Traditionally, getting answers from these two worlds required completely different tools and skills. Want to know last quarter's revenue? Write a SQL query. Need to find the assembly instructions for a product? Search through a document repository. Want both in one conversation? Good luck stitching those workflows together manually.
 
 This is the problem **AI agents** solve. An AI agent doesn't just generate text like a basic LLM call. It *reasons* about your question, *decides* which tool to use, *executes* that tool, and *synthesizes* the results into a coherent answer. Ask it "What are total sales by region?" and it routes to a SQL engine. Ask it "How do I fix laptop overheating?" and it searches your documentation. Ask both in the same conversation, and it handles each seamlessly.
 
-**Cortex Agents** bring this capability directly into Snowflake. You don't need to set up external orchestration frameworks, manage API keys for third-party services, or write complex routing logic. Everything -- the agent, its tools, and the data it accesses -- lives inside your Snowflake account, governed by the same roles and permissions you already use.
+**Cortex Agents** bring this capability directly into Snowflake. You don't need to set up external orchestration frameworks, manage API keys for third-party services, or write complex routing logic. Everything (the agent, its tools, and the data it accesses) lives inside your Snowflake account, governed by the same roles and permissions you already use.
 
-In this guide, you'll build an end-to-end pipeline from scratch, starting with the data. You'll create and load sample data into tables, create a **semantic view** that lets the agent translate natural language into SQL, build a **Cortex Search service** that lets it retrieve relevant documentation, and wire both into a **Cortex Agent** that answers questions about sales data and product documentation -- all with standard SQL.
+In this guide, you'll build an end-to-end pipeline from scratch, starting with the data. You'll create and load sample data into tables, create a **semantic view** that lets the agent translate natural language into SQL, build a **Cortex Search service** that lets it retrieve relevant documentation, and wire both into a **Cortex Agent** that answers questions about sales data and product documentation, all with standard SQL.
 
 ### What You'll Learn
 - What Cortex Agents are and how they orchestrate across structured and unstructured data
@@ -30,10 +30,10 @@ In this guide, you'll build an end-to-end pipeline from scratch, starting with t
 
 ### What You'll Build
 A Cortex Agent with two tools:
-- **Cortex Analyst** -- takes natural language questions like "What are total sales by region?" and automatically converts them into SQL queries that run against your sales data
-- **Cortex Search** -- takes questions like "How do I assemble the standing desk?" and retrieves the most relevant product documentation using semantic search
+- **Cortex Analyst**: takes natural language questions like "What are total sales by region?" and automatically converts them into SQL queries that run against your sales data
+- **Cortex Search**: takes questions like "How do I assemble the standing desk?" and retrieves the most relevant product documentation using semantic search
 
-The agent automatically decides which tool to use based on what the user asks. You don't write any routing logic -- the agent figures it out.
+The agent automatically decides which tool to use based on what the user asks. You don't write any routing logic; the agent figures it out.
 
 <!-- Workflow diagram (editable): https://excalidraw.com/#json=MioFuiqlV9qvS_486Ezdl,ui60jdFQ8rz79OBXlQABcg -->
 ![Cortex Agent workflow diagram](assets/diagram.png)
@@ -55,7 +55,7 @@ You'll also verify that Cortex AI is available on your account, since the agent 
 
 You can run all the SQL in this guide in either:
 - **SQL Worksheet**: In Snowsight, click **+ > SQL Worksheet** in the top left
-- **Snowflake Notebook**: In Snowsight, click **+ > Notebook** (useful if you want to mix SQL and Python cells -- you'll need Python for the testing section later)
+- **Snowflake Notebook**: In Snowsight, click **+ > Notebook** (useful if you want to mix SQL and Python cells, since you'll need Python for the testing section later)
 
 ### Set Up Database and Schema
 
@@ -78,9 +78,9 @@ USE SCHEMA TUTORIAL;
 ```
 
 **What each command does:**
-- `USE ROLE ACCOUNTADMIN` -- sets your active role. `ACCOUNTADMIN` has all privileges, which simplifies this tutorial. In production, you'd use a more restricted role.
-- `USE WAREHOUSE COMPUTE_WH` -- selects which compute resource runs your queries. If your warehouse has a different name, replace `COMPUTE_WH` with your warehouse name.
-- `CREATE DATABASE` / `CREATE SCHEMA` -- creates the containers for all the objects you'll build. `IF NOT EXISTS` means it won't error if they already exist.
+- `USE ROLE ACCOUNTADMIN` sets your active role. `ACCOUNTADMIN` has all privileges, which simplifies this tutorial. In production, you'd use a more restricted role.
+- `USE WAREHOUSE COMPUTE_WH` selects which compute resource runs your queries. If your warehouse has a different name, replace `COMPUTE_WH` with your warehouse name.
+- `CREATE DATABASE` / `CREATE SCHEMA` creates the containers for all the objects you'll build. `IF NOT EXISTS` means it won't error if they already exist.
 
 ### Verify Cortex Access
 
@@ -99,8 +99,8 @@ SELECT SNOWFLAKE.CORTEX.COMPLETE('claude-3-5-sonnet', 'Say hello in one word');
 
 Now you'll create the data that your agent will work with. You need two types:
 
-1. **Structured data** (a sales table with numbers and categories) -- this is what Cortex Analyst will query with SQL
-2. **Unstructured data** (product documentation as free-form text) -- this is what Cortex Search will index and retrieve
+1. **Structured data** (a sales table with numbers and categories) that Cortex Analyst will query with SQL
+2. **Unstructured data** (product documentation as free-form text) that Cortex Search will index and retrieve
 
 You'll also create an inventory table that's useful for exploring the data, though the agent in this tutorial focuses on sales and documentation.
 
@@ -139,7 +139,7 @@ VALUES
 
 **What this creates:** 12 sales transactions across 3 regions (North America, Europe, Asia Pacific), 2 categories (Electronics, Furniture), and 3 customer segments (Enterprise, SMB, Consumer). The `AUTOINCREMENT` on `sale_id` means Snowflake automatically assigns an incrementing ID to each row.
 
-**Quick check** -- preview the data to see what you loaded:
+**Quick check:** Preview the data to see what you loaded:
 
 ```sql
 SELECT * FROM sales ORDER BY sale_date LIMIT 5;
@@ -170,7 +170,7 @@ INSERT INTO inventory VALUES
 
 ### Create Product Documentation
 
-This is the **unstructured data** that Cortex Search will index. Each row contains a text document about a product -- things like specifications, troubleshooting guides, assembly instructions, and care tips.
+This is the **unstructured data** that Cortex Search will index. Each row contains a text document about a product, covering things like specifications, troubleshooting guides, assembly instructions, and care tips.
 
 Unlike the sales table (which has clean numeric columns you can aggregate), this data is free-form text that requires semantic search to be useful.
 
@@ -205,7 +205,7 @@ VALUES
      '2024-02-01');
 ```
 
-**What this creates:** 6 documents covering 3 products. Notice the `content` column -- it contains plain English text, not structured data. This is exactly the kind of data that's hard to query with SQL (you can't `SUM` or `GROUP BY` a paragraph of text) but perfect for semantic search.
+**What this creates:** 6 documents covering 3 products. Notice the `content` column: it contains plain English text, not structured data. This is exactly the kind of data that's hard to query with SQL (you can't `SUM` or `GROUP BY` a paragraph of text) but perfect for semantic search.
 
 ### Verify All Data
 
@@ -224,12 +224,12 @@ UNION ALL SELECT 'product_docs', COUNT(*) FROM product_docs;
 
 Now you'll create the first tool the agent will use: **Cortex Analyst**, which converts natural language questions into SQL queries.
 
-But there's a challenge -- how does an LLM know that "revenue" means `SUM(total_amount)` or that "region" refers to the `region` column? It doesn't, unless you tell it. That's what a **semantic view** does.
+But there's a challenge: how does an LLM know that "revenue" means `SUM(total_amount)` or that "region" refers to the `region` column? It doesn't, unless you tell it. That's what a **semantic view** does.
 
 A semantic view is a layer on top of your table that defines the **business meaning** of your data:
-- **Dimensions** -- the categorical columns you group by (product name, region, customer segment)
-- **Metrics** -- the calculations users care about (total sales, units sold, transaction count)
-- **Comments** -- plain English descriptions that help the LLM understand each field
+- **Dimensions**: the categorical columns you group by (product name, region, customer segment)
+- **Metrics**: the calculations users care about (total sales, units sold, transaction count)
+- **Comments**: plain English descriptions that help the LLM understand each field
 
 Think of it as a data dictionary that the LLM reads to write correct SQL.
 
@@ -266,10 +266,10 @@ CREATE OR REPLACE SEMANTIC VIEW sales_semantic_view
 ```
 
 **Breaking this down:**
-- **`TABLES`** -- tells the semantic view which physical table to query. The `AS CORTEX_AGENTS_LAB.TUTORIAL.SALES` part uses the fully qualified table name (database.schema.table).
-- **`DIMENSIONS`** -- lists the columns that users can filter or group by. Each one has a `COMMENT` that the LLM reads to understand what it represents.
-- **`METRICS`** -- defines named calculations. When a user asks about "total sales," the LLM knows to use `SUM(total_amount)`. This is where you encode your business logic.
-- **`COMMENT`** at the view level -- describes the overall purpose. This helps the agent decide whether to route a question to this tool.
+- **`TABLES`** tells the semantic view which physical table to query. The `AS CORTEX_AGENTS_LAB.TUTORIAL.SALES` part uses the fully qualified table name (database.schema.table).
+- **`DIMENSIONS`** lists the columns that users can filter or group by. Each one has a `COMMENT` that the LLM reads to understand what it represents.
+- **`METRICS`** defines named calculations. When a user asks about "total sales," the LLM knows to use `SUM(total_amount)`. This is where you encode your business logic.
+- **`COMMENT`** at the view level describes the overall purpose. This helps the agent decide whether to route a question to this tool.
 
 ### Verify the Semantic View
 
@@ -283,7 +283,7 @@ You should see `SALES_SEMANTIC_VIEW` in the results.
 
 ### Test the Semantic View
 
-Before wiring it into the agent, query the semantic view directly to make sure it works. This is a good debugging practice -- if the semantic view doesn't return correct data, the agent won't either.
+Before wiring it into the agent, query the semantic view directly to make sure it works. This is a good debugging practice: if the semantic view doesn't return correct data, the agent won't either.
 
 ```sql
 SELECT * FROM SEMANTIC_VIEW(
@@ -307,7 +307,7 @@ SELECT SNOWFLAKE.CORTEX.COMPLETE(
 );
 ```
 
-**Why this matters:** This is essentially what Cortex Analyst does under the hood -- it takes your natural language question, reads the semantic view's definitions, and generates a SQL query. The semantic view just makes it far more accurate by giving the LLM explicit business context instead of making it guess.
+**Why this matters:** This is essentially what Cortex Analyst does under the hood. It takes your natural language question, reads the semantic view's definitions, and generates a SQL query. The semantic view just makes it far more accurate by giving the LLM explicit business context instead of making it guess.
 
 <!-- ------------------------ -->
 ## Create Search Service
@@ -316,7 +316,7 @@ Now you'll create the second tool: **Cortex Search**, which enables the agent to
 
 ### What is Semantic Search?
 
-Traditional SQL search requires exact matches -- `WHERE content LIKE '%overheating%'` only finds documents containing that exact word. But what if a user asks "my laptop is getting too hot"? A `LIKE` query would miss the troubleshooting document because it uses the word "overheating," not "too hot."
+Traditional SQL search requires exact matches. `WHERE content LIKE '%overheating%'` only finds documents containing that exact word. But what if a user asks "my laptop is getting too hot"? A `LIKE` query would miss the troubleshooting document because it uses the word "overheating," not "too hot."
 
 **Semantic search** understands the *meaning* behind words. It converts text into numerical vectors (embeddings) and finds documents that are conceptually similar to the query, even if they use different words.
 
@@ -350,11 +350,11 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE product_search_service
 ```
 
 **Breaking this down:**
-- **`ON content`** -- tells Cortex Search which column contains the text to index for semantic search. This is the column users will be searching against.
-- **`ATTRIBUTES product_name, doc_type`** -- additional columns that can be returned alongside search results and used for filtering (e.g., "only show results for Laptop Pro").
-- **`WAREHOUSE = COMPUTE_WH`** -- the compute resource used to build and refresh the search index.
-- **`TARGET_LAG = '1 hour'`** -- how frequently the index refreshes when the underlying data changes. For this tutorial, 1 hour is fine. In production, you might set this shorter for frequently updated data.
-- **`AS (SELECT ...)`** -- the source query that feeds data into the index.
+- **`ON content`** tells Cortex Search which column contains the text to index for semantic search. This is the column users will be searching against.
+- **`ATTRIBUTES product_name, doc_type`** are additional columns that can be returned alongside search results and used for filtering (e.g., "only show results for Laptop Pro").
+- **`WAREHOUSE = COMPUTE_WH`** is the compute resource used to build and refresh the search index.
+- **`TARGET_LAG = '1 hour'`** controls how frequently the index refreshes when the underlying data changes. For this tutorial, 1 hour is fine. In production, you might set this shorter for frequently updated data.
+- **`AS (SELECT ...)`** is the source query that feeds data into the index.
 
 ### Verify the Search Service
 
@@ -385,11 +385,11 @@ FROM TABLE(FLATTEN(
 ```
 
 **What's happening here (inside out):**
-1. `SEARCH_PREVIEW()` -- sends the query "laptop overheating fix" to the search service and returns matching documents as a JSON string
-2. `PARSE_JSON()` -- converts the JSON string into a Snowflake VARIANT object
-3. `['results']` -- extracts the results array from the JSON
-4. `TABLE(FLATTEN(...))` -- expands the JSON array into rows (one row per search result)
-5. `r.value:product_name::STRING` -- extracts specific fields from each result
+1. `SEARCH_PREVIEW()` sends the query "laptop overheating fix" to the search service and returns matching documents as a JSON string
+2. `PARSE_JSON()` converts the JSON string into a Snowflake VARIANT object
+3. `['results']` extracts the results array from the JSON
+4. `TABLE(FLATTEN(...))` expands the JSON array into rows (one row per search result)
+5. `r.value:product_name::STRING` extracts specific fields from each result
 
 You should see the Laptop Pro troubleshooting document returned, even though the search query ("laptop overheating fix") doesn't exactly match the document text.
 
@@ -415,7 +415,7 @@ SELECT SNOWFLAKE.CORTEX.COMPLETE(
 
 **What this does:** Retrieves the top 2 documents matching "laptop overheating," concatenates their content together using `LISTAGG`, then passes that as context to the LLM along with the question. The LLM's answer is grounded in your actual product documentation rather than its general training data.
 
-This is exactly the pattern the Cortex Agent automates -- it decides when to search, what to search for, and how to present the results, all without you having to write this query manually each time.
+This is exactly the pattern the Cortex Agent automates. It decides when to search, what to search for, and how to present the results, all without you having to write this query manually each time.
 
 <!-- ------------------------ -->
 ## Build the Agent
@@ -424,18 +424,18 @@ You've now built both tools independently:
 - A **semantic view** that Cortex Analyst uses to translate questions into SQL
 - A **search service** that Cortex Search uses to find relevant documents
 
-Now you'll create a **Cortex Agent** that sits on top of both tools and automatically routes each question to the right one. The agent is the orchestration layer -- it reads the user's question, decides which tool to call, executes it, and synthesizes a final answer.
+Now you'll create a **Cortex Agent** that sits on top of both tools and automatically routes each question to the right one. The agent is the orchestration layer that reads the user's question, decides which tool to call, executes it, and synthesizes a final answer.
 
 ### How the Agent Works
 
 When you ask the agent a question, here's what happens behind the scenes:
 
-1. **Thinking** -- the agent's LLM reads your question and decides which tool is most appropriate
-2. **Tool call** -- the agent invokes the chosen tool (Analyst for SQL queries, Search for document retrieval)
-3. **Tool result** -- the tool returns its results (SQL + data, or matching documents)
-4. **Answer** -- the agent synthesizes the tool's results into a natural language response
+1. **Thinking**: the agent's LLM reads your question and decides which tool is most appropriate
+2. **Tool call**: the agent invokes the chosen tool (Analyst for SQL queries, Search for document retrieval)
+3. **Tool result**: the tool returns its results (SQL + data, or matching documents)
+4. **Answer**: the agent synthesizes the tool's results into a natural language response
 
-All of this happens in a single call -- you don't need to build this orchestration logic yourself.
+All of this happens in a single call. You don't need to build this orchestration logic yourself.
 
 ### Create the Agent
 
@@ -478,24 +478,24 @@ $$;
 
 **Breaking down the YAML spec section by section:**
 
-**`models`** -- which LLM the agent uses for reasoning and tool selection:
-- `orchestration: claude-4-sonnet` -- the model that decides which tool to call and synthesizes final answers
+**`models`** specifies which LLM the agent uses for reasoning and tool selection:
+- `orchestration: claude-4-sonnet` is the model that decides which tool to call and synthesizes final answers
 
-**`orchestration`** -- resource limits to prevent runaway queries:
-- `budget.seconds: 30` -- maximum time the agent can spend on a single request
-- `budget.tokens: 16000` -- maximum tokens the LLM can generate
+**`orchestration`** sets resource limits to prevent runaway queries:
+- `budget.seconds: 30` is the maximum time the agent can spend on a single request
+- `budget.tokens: 16000` is the maximum tokens the LLM can generate
 
-**`instructions`** -- three types of instructions that shape the agent's behavior:
-- `system` -- defines the agent's persona ("You are a helpful assistant for a retail business")
-- `orchestration` -- tells the agent **when to use each tool**. This is the most important instruction -- it's how the agent knows that "total sales" should go to Analyst while "assembly instructions" should go to Search
-- `response` -- controls the output format ("Be concise and include relevant numbers")
+**`instructions`** contains three types of instructions that shape the agent's behavior:
+- `system` defines the agent's persona ("You are a helpful assistant for a retail business")
+- `orchestration` tells the agent **when to use each tool**. This is the most important instruction because it's how the agent knows that "total sales" should go to Analyst while "assembly instructions" should go to Search
+- `response` controls the output format ("Be concise and include relevant numbers")
 
-**`tools`** -- declares what tools are available. Each tool has:
-- `type` -- the kind of tool (`cortex_analyst_text_to_sql` or `cortex_search`)
-- `name` -- a label used to reference the tool in `tool_resources` and `instructions`
-- `description` -- helps the LLM understand what the tool does
+**`tools`** declares what tools are available. Each tool has:
+- `type`: the kind of tool (`cortex_analyst_text_to_sql` or `cortex_search`)
+- `name`: a label used to reference the tool in `tool_resources` and `instructions`
+- `description`: helps the LLM understand what the tool does
 
-**`tool_resources`** -- connects each tool to its underlying data source:
+**`tool_resources`** connects each tool to its underlying data source:
 - **Analyst** points to the semantic view and specifies an `execution_environment` (the warehouse that will run the generated SQL)
 - **Search** points to the search service and sets `max_results` to limit how many documents are returned
 
@@ -545,7 +545,7 @@ from snowflake.snowpark.context import get_active_session
 
 session = get_active_session()
 
-# Ask a structured data question -- routes to Cortex Analyst
+# Ask a structured data question (routes to Cortex Analyst)
 result = session.sql("""
   SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
     'CORTEX_AGENTS_LAB.TUTORIAL.TUTORIAL_AGENT',
@@ -598,17 +598,17 @@ for item in resp.get("content", []):
 ```
 
 **What to expect in the output:**
-1. **THINKING** -- the agent recognizes this is a sales metrics question and chooses the Analyst tool
-2. **TOOL CALL** -- shows the agent called the "Analyst" tool
-3. **TOOL RESULT** -- displays the SQL query the Analyst generated (e.g., `SELECT region, SUM(total_amount) FROM sales GROUP BY region`) and the actual data rows
-4. **ANSWER** -- a natural language summary like "Total sales by region: North America had the highest at $69,497..."
+1. **THINKING**: the agent recognizes this is a sales metrics question and chooses the Analyst tool
+2. **TOOL CALL**: shows the agent called the "Analyst" tool
+3. **TOOL RESULT**: displays the SQL query the Analyst generated (e.g., `SELECT region, SUM(total_amount) FROM sales GROUP BY region`) and the actual data rows
+4. **ANSWER**: a natural language summary like "Total sales by region: North America had the highest at $69,497..."
 
 ### Test with a Documentation Question
 
 Now ask about product documentation, which should route to the **Search** tool:
 
 ```python
-# Ask an unstructured data question -- routes to Cortex Search
+# Ask an unstructured data question (routes to Cortex Search)
 result = session.sql("""
   SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
     'CORTEX_AGENTS_LAB.TUTORIAL.TUTORIAL_AGENT',
@@ -654,7 +654,7 @@ The agent handled the routing, tool execution, and response formatting automatic
 <!-- ------------------------ -->
 ## Snowflake Intelligence
 
-So far you've tested the agent programmatically with Python. But you don't always need to write code to use an agent. **Snowflake Intelligence** provides a chat interface where you can talk to any agent created with `CREATE AGENT` -- no additional setup required.
+So far you've tested the agent programmatically with Python. But you don't always need to write code to use an agent. **Snowflake Intelligence** provides a chat interface where you can talk to any agent created with `CREATE AGENT`, with no additional setup required.
 
 This is especially useful for non-technical users (business analysts, product managers, support teams) who want to ask questions without writing SQL or Python.
 
@@ -685,14 +685,14 @@ Test both tools to see the agent route questions automatically:
 
 **Try a follow-up question** to test multi-turn conversation:
 1. First ask: "What are total sales by region?"
-2. Then follow up: "Which region had the lowest?" -- the agent remembers the previous context
+2. Then follow up: "Which region had the lowest?" The agent remembers the previous context
 
 ### What Snowflake Intelligence Provides
 
-- **Streaming responses** -- watch the agent think and call tools in real time, so you can see its reasoning process
-- **Multi-turn conversations** -- ask follow-up questions that build on previous context without re-stating the original question
-- **Tool call visibility** -- expand the tool call section to see which tool was chosen, the generated SQL, or the search results
-- **Shareable** -- other users with access to the agent can use the same interface
+- **Streaming responses**: watch the agent think and call tools in real time, so you can see its reasoning process
+- **Multi-turn conversations**: ask follow-up questions that build on previous context without re-stating the original question
+- **Tool call visibility**: expand the tool call section to see which tool was chosen, the generated SQL, or the search results
+- **Shareable**: other users with access to the agent can use the same interface
 
 This is the fastest way to interact with any agent built with `CREATE AGENT`, and it's what most end users will use in practice.
 
@@ -707,7 +707,7 @@ Here's a recap of the key concepts and skills you picked up:
 
 - **Semantic views** define the business meaning of your data (dimensions, metrics, comments) so that an LLM can translate natural language questions into accurate SQL
 - **Cortex Search services** index unstructured text for semantic search, enabling retrieval-augmented generation (RAG) where answers are grounded in your actual documents
-- **Cortex Agents** orchestrate across multiple tools automatically -- you write the instructions, and the agent handles routing, execution, and response synthesis
+- **Cortex Agents** orchestrate across multiple tools automatically. You write the instructions, and the agent handles routing, execution, and response synthesis
 - **`CREATE AGENT ... FROM SPECIFICATION`** lets you define an entire agent (model, instructions, tools, resources) in a single SQL statement with embedded YAML
 - **`DATA_AGENT_RUN`** lets you call the agent programmatically and parse the full response (thinking, tool calls, results, answer) with Python
 - **Snowflake Intelligence** provides a no-code chat interface for any agent, making it accessible to non-technical users
@@ -727,14 +727,14 @@ Here's a recap of the key concepts and skills you picked up:
 
 Now that you have a working agent, here are ways to extend it:
 
-- **Add custom tools** -- create stored procedures for business logic (e.g., inventory lookups, price calculations) and register them as generic tools in the agent spec
-- **Add web search** -- enable the agent to search the web for real-time external information
-- **Build a Streamlit app** -- use `DATA_AGENT_RUN` as the backend for a custom chat UI built with Streamlit
-- **Configure access control** -- use Snowflake's role-based access control (RBAC) to manage who can use the agent and what data they can access through it
+- **Add custom tools**: create stored procedures for business logic (e.g., inventory lookups, price calculations) and register them as generic tools in the agent spec
+- **Add web search**: enable the agent to search the web for real-time external information
+- **Build a Streamlit app**: use `DATA_AGENT_RUN` as the backend for a custom chat UI built with Streamlit
+- **Configure access control**: use Snowflake's role-based access control (RBAC) to manage who can use the agent and what data they can access through it
 
 ### Cleanup
 
-To remove all objects created in this guide, run the following. The commented-out lines at the bottom drop the entire database and schema -- uncomment them only if you want to remove everything.
+To remove all objects created in this guide, run the following. The commented-out lines at the bottom drop the entire database and schema; uncomment them only if you want to remove everything.
 
 ```sql
 -- Drop the agent and its tools
@@ -754,8 +754,8 @@ DROP TABLE IF EXISTS product_docs;
 
 ### Related Resources
 
-- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) -- concepts and architecture
-- [CREATE AGENT](https://docs.snowflake.com/en/sql-reference/sql/create-agent) -- full SQL reference
-- [CREATE SEMANTIC VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-semantic-view) -- how to define semantic views
-- [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) -- building search services
-- [Overview of Snowflake Intelligence](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence) -- chat interface for agents
+- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents): concepts and architecture
+- [CREATE AGENT](https://docs.snowflake.com/en/sql-reference/sql/create-agent): full SQL reference
+- [CREATE SEMANTIC VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-semantic-view): how to define semantic views
+- [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview): building search services
+- [Overview of Snowflake Intelligence](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence): chat interface for agents
