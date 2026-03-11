@@ -4,7 +4,7 @@ language: en
 summary: Learn to use Batch Cortex Search over a Cortex Search Service for processing large batches of queries
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis , snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Batch Cortex Search

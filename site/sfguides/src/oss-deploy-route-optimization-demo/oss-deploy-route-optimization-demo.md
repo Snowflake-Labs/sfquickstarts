@@ -1,6 +1,6 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-deploy-route-optimization-demo
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/product/analytics,snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Build an interactive Route Optimization Simulator using the OpenRouteService Native App. Deploy AISQL notebooks and a Streamlit app that simulates vehicle routing with real-world POI data from Carto Overture Maps - requires ORS Native App as prerequisite.
 environments: web
@@ -36,12 +36,14 @@ This quickstart deploys a demo application that simulates vehicle routing scenar
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) installed and configured
 - Active Snowflake connection with ACCOUNTADMIN access
+
+> **_NOTE:_** The deploy skill enables cross-region Cortex AI access (`CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'`) on your account to ensure the Claude model used by the AISQL notebook is available in your region. If you prefer not to enable cross-region inference, you can modify the notebook to use a different LLM model that is available locally in your region.
 
 ### What You'll Learn 
 
@@ -56,12 +58,19 @@ This quickstart deploys a demo application that simulates vehicle routing scenar
 
 Use Cortex Code to deploy the demo including Marketplace data, notebooks, and the Streamlit simulator.
 
-### Run the Deploy Demo Skill
+### Clone Repository and Deploy Skill
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+```
 
 In the Cortex Code CLI, type:
 
 ```
-use the local skill from oss-deploy-route-optimization-demo/skills/deploy-demo
+$deploy-route-optimization-demo
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
@@ -79,7 +88,7 @@ The skill then uses interactive prompting to gather required information:
 Cortex Code will automatically:
 - **Verify** OpenRouteService Native App is installed and running
 - **Acquire Marketplace Data** - Gets the **Carto Overture Maps Places** dataset with 50+ million POIs worldwide
-- **Create Demo Database** - Sets up `VEHICLE_ROUTING_SIMULATOR` with required schemas
+- **Create Demo Schema** - Sets up `OPENROUTESERVICE_SETUP.VEHICLE_ROUTING_SIMULATOR` schema
 - **Deploy Notebooks** - Provisions the AISQL notebook customized for your chosen city
 - **Deploy Simulator** - Creates the Route Optimization Streamlit app with real POI data
 
@@ -92,27 +101,25 @@ The demo skill creates the following Snowflake objects:
 |-----------|------|-------------|
 | Database | `OVERTURE_MAPS__PLACES` | Carto Overture Maps Places dataset with 50M+ POIs worldwide |
 
-**Demo Database & Infrastructure**
+**Demo Schemas & Infrastructure**
 | Component | Name | Description |
 |-----------|------|-------------|
-| Database | `VEHICLE_ROUTING_SIMULATOR` | Main demo database |
-| Schema | `VEHICLE_ROUTING_SIMULATOR.DATA` | Prepared POI data for the simulator |
-| Schema | `VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS` | Notebook storage and stages |
-| Schema | `VEHICLE_ROUTING_SIMULATOR.STREAMLITS` | Streamlit app storage |
+| Database | `OPENROUTESERVICE_SETUP` | Demo database for simulator objects |
+| Schema | `OPENROUTESERVICE_SETUP.VEHICLE_ROUTING_SIMULATOR` | Prepared POI data, notebooks, and Streamlit app |
 | Warehouse | `ROUTING_ANALYTICS` | Compute warehouse for queries (auto-suspend 60s) |
-| Stage | `NOTEBOOKS.notebook` | Stage for notebook files |
-| Stage | `STREAMLITS.STREAMLIT` | Stage for Streamlit files |
+| Stage | `VEHICLE_ROUTING_SIMULATOR.NOTEBOOK` | Stage for notebook files |
+| Stage | `VEHICLE_ROUTING_SIMULATOR.STREAMLIT` | Stage for Streamlit files |
 
 **Notebooks**
 | Component | Name | Description |
 |-----------|------|-------------|
-| Notebook | `NOTEBOOKS.ADD_CARTO_DATA` | Prepares POI data from Carto Overture for the demo |
-| Notebook | `NOTEBOOKS.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of Directions, Optimization, and Isochrones |
+| Notebook | `VEHICLE_ROUTING_SIMULATOR.ADD_CARTO_DATA` | Prepares POI data from Carto Overture for the demo |
+| Notebook | `VEHICLE_ROUTING_SIMULATOR.ROUTING_FUNCTIONS_AISQL` | Interactive exploration of Directions, Optimization, and Isochrones |
 
 **Streamlit Application**
 | Component | Name | Description |
 |-----------|------|-------------|
-| Streamlit | `STREAMLITS.SIMULATOR` | Route Optimization Simulator with real POI data |
+| Streamlit | `VEHICLE_ROUTING_SIMULATOR.SIMULATOR` | Route Optimization Simulator with real POI data |
 
 Once deployment completes successfully, you'll see a summary with direct links to your resources:
 
@@ -155,8 +162,7 @@ Navigate to the Simulator Streamlit app:
 
 Open the sidebar to configure:
 - **Industry Type** - Food, Health, or Cosmetics
-- **LLM Model** - For location search (recommend mistral-large2)
-- **Search Location** - Free text like "Fisherman's Wharf" or "Golden Gate Bridge"
+- **Search Location** - Automatically set based on the map region configured in the ORS Native App. Override with free text (e.g., "Fisherman's Wharf")
 - **Distance Radius** - How far to search for distributors
 
 ![Sidebar Menu](assets/sidebar-menu.png)
@@ -201,88 +207,39 @@ Each vehicle tab shows detailed turn-by-turn instructions for the entire journey
 <!-- ------------------------ -->
 ## Customize the Demo
 
-You can customize the demo for different industries or regions using the customization skills:
+You can customize the demo for different regions using the customization skills:
+
+### Change Location or Routing Profiles
+
+In the Cortex Code CLI, type:
+
+```
+$customize-main
+```
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-install-openrouteservice-native-app/) quickstart for more content about location customization.
+
+Cortex Code automatically finds the relevant skill and guides you through the options.
+
+You can change the geographic region (e.g., San Francisco to Paris) or update routing profiles (enable/disable car, truck, bicycle, walking).
 
 ### Change Industries
 
-Simply type a natural language command like:
+During the initial deployment (`$deploy-route-optimization-demo`), the skill will ask if you want to customize industries. You can re-run the deploy skill to change industries at any time.
 
-```
-change industry
-```
-
-Cortex Code automatically finds the relevant skill and guides you through the options:
-
-![Change Industry](assets/change-industry.png)
-
-You can add a new industry, modify an existing one, or replace one with something different. The skill updates the Streamlit simulator with your customized industry categories (product types, customer types, vehicle skills).
-
-Once the wizard completes, the Streamlit app is automatically refreshed with your new industry:
-
-![Change Industry Result](assets/change-industry.png)
-
-Alternatively, you can use the full skill path:
-
-```
-use the local skill from oss-deploy-route-optimization-demo/skills/customizations/industries
-```
-
-### Update Streamlit Apps
-
-```
-use the local skill from oss-deploy-route-optimization-demo/skills/customizations/streamlits
-```
-
-Update the Simulator with region-specific coordinates.
-
-### Update Notebooks
-
-```
-use the local skill from oss-deploy-route-optimization-demo/skills/customizations/aisql-notebook
-use the local skill from oss-deploy-route-optimization-demo/skills/customizations/carto-notebook
-```
-
-Update the notebooks with city-specific AI prompts and POI data filters.
-
-> **_NOTE:_** To change the map region (e.g., San Francisco to Paris), you need to update the OpenRouteService Native App first. See the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart for location customization.
+> **_NOTE:_** To change the map region or routing profiles, you need to update the OpenRouteService Native App. See the [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) quickstart for location customization.
 
 <!-- ------------------------ -->
-## Uninstall the Demo
+## Uninstall the Solution
 
-Cortex Code makes uninstallation simple with natural language commands.
-
-### Uninstall Demo Only
-
-To remove just the demo resources (notebooks, Streamlit simulator) while keeping the OpenRouteService Native App:
+To remove the Route Optimization Demo solution execute:
 
 ```
-uninstall demo
+DROP SCHEMA OPENROUTESERVICE_SETUP.VEHICLE_ROUTING_SIMULATOR;
 ```
 
-This will:
-- Remove the demo database (`VEHICLE_ROUTING_SIMULATOR`) including notebooks and Streamlit apps
-- Optionally remove the Carto Overture Maps marketplace data (`OVERTURE_MAPS__PLACES`)
-- Optionally remove the warehouse (`ROUTING_ANALYTICS`)
+This will remove the `OPENROUTESERVICE_SETUP.VEHICLE_ROUTING_SIMULATOR` schema and its contents.
 
-![Demo Uninstalled](assets/demo-uninstalled.png)
-
-> **_NOTE:_** The OpenRouteService Native App remains installed and functional. You can redeploy the demo at any time.
-
-### Uninstall Everything
-
-To remove both the demo AND the OpenRouteService Native App:
-
-```
-uninstall demo and optimizer
-```
-
-Cortex Code will run both uninstall skills in sequence, removing all resources from your Snowflake account.
-
-![Uninstall Complete](assets/uninstalled-all.png)
-
-> **_TIP:_** You can also use the full skill paths if preferred:
-> - `use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo`
-> - `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer`
+> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately.
 
 <!-- ------------------------ -->
 ## Available Cortex Code Skills
@@ -293,22 +250,20 @@ For reference, here are the Cortex Code skills for the Route Optimization Demo:
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| `check-ors-prerequisite` | Verify ORS Native App is installed | `use the local skill from oss-deploy-route-optimization-demo/skills/check-ors-prerequisite` |
-| `deploy-demo` | Deploy notebooks and Simulator Streamlit | `use the local skill from oss-deploy-route-optimization-demo/skills/deploy-demo` |
-| `uninstall-demo` | Remove demo database, optionally marketplace data | `use the local skill from oss-deploy-route-optimization-demo/skills/uninstall-demo` |
+| `deploy-route-optimization-demo` | Deploy notebooks and Simulator Streamlit | `$deploy-route-optimization-demo` |
 
-### Customization Sub-Skills
+### Customization Skills
 
-| Sub-Skill | Description | Command |
-|-----------|-------------|---------|
-| `industries` | Customize industry categories | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/industries` |
-| `streamlits` | Update Simulator with region coordinates | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/streamlits` |
-| `aisql-notebook` | Update AI prompts for your region | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/aisql-notebook` |
-| `carto-notebook` | Update POI data source | `use the local skill from oss-deploy-route-optimization-demo/skills/customizations/carto-notebook` |
+| Skill | Description | Command |
+|-------|-------------|---------|
+| `customize-main` | Route customization requests (location and routing profiles) | `$customize-main` |
+| `customize-main/location` | Route customization requests (location and routing profiles)|  Subskill, not to be invoked separately |
+| `customize-main/routing-profiles` | Enable/disable vehicle routing profiles (sub-skill, do not invoke separately) | Subskill, not to be invoked separately |
+| `customize-main/read-ors-configuration` | Read current ORS configuration (sub-skill, do not invoke separately) | Subskill, not to be invoked separately |
 
 ### ORS Skills
 
-For OpenRouteService Native App skills (installation, location/vehicle customization, uninstall), see the **[Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/)** quickstart.
+For OpenRouteService Native App skills (installation, location/vehicle customization, uninstall), see the **[Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/)** quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -331,7 +286,10 @@ You've deployed a complete Route Optimization Simulator that demonstrates the po
 
 ### Related Quickstart
 
-- [Install OpenRouteService Native App](/guide/oss-install-openrouteservice-native-app/) - Install and customize the routing engine (prerequisite for this demo)
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) - Build and customize the routing solution (prerequisite for this demo)
+- [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake.
+- [Deploy Fleet Intelligence Solution for Taxis](https://www.snowflake.com/en/developers/guides/oss-deploy-a-fleet-intelligence-solution-for-taxis/) - Track and analyze taxi fleet operations
+- [Deploy Snowflake Intelligence Routing Agent](https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/) - Build an AI-powered route planning assistant that understands natural language locations - powered by OpenRouteService and Snowflake Intelligence
 
 ### Source Code
 
