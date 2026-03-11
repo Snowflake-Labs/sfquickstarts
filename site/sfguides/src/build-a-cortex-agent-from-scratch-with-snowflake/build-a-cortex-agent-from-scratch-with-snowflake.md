@@ -1,5 +1,5 @@
 author: Chanin Nantasenamat
-id: build-a-cortex-agent-with-snowflake
+id: build-a-cortex-agent-from-scratch-with-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: Build a Cortex Agent that orchestrates across structured and unstructured data using Cortex Analyst, Cortex Search, and Snowflake Intelligence.
@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Build a Cortex Agent with Snowflake
+# Build a Cortex Agent from Scratch with Snowflake
 <!-- ------------------------ -->
 ## Overview
 
