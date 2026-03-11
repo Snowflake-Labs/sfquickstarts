@@ -1,0 +1,58 @@
+-- VQA Quickstart Setup
+-- Run this script to set up the required Snowflake objects
+
+-- 1. Create Database and Schema
+CREATE DATABASE IF NOT EXISTS VQA_DEMO_DB;
+CREATE SCHEMA IF NOT EXISTS VQA_DEMO_DB.VQA;
+
+USE DATABASE VQA_DEMO_DB;
+USE SCHEMA VQA;
+
+-- 2. Create External Stage for S3 source data
+CREATE OR REPLACE STAGE VQA_DEMO_DB.VQA.S3_DATA_STAGE
+    URL = 's3://sfquickstarts/sfguide_ml_batch_inference_with_vision_models/'
+    DIRECTORY = (ENABLE = TRUE AUTO_REFRESH = FALSE);
+
+-- 3. Create Internal Stages for data and images
+CREATE STAGE IF NOT EXISTS VQA_DEMO_DB.VQA.DATA_STAGE
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+
+CREATE STAGE IF NOT EXISTS VQA_DEMO_DB.VQA.IMAGES_STAGE
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+
+-- 4. Create Compute Pool for GPU inference
+CREATE COMPUTE POOL IF NOT EXISTS GPU_INFERENCE_POOL
+    MIN_NODES = 1
+    MAX_NODES = 1
+    INSTANCE_FAMILY = GPU_NV_M
+    AUTO_RESUME = TRUE
+    AUTO_SUSPEND_SECS = 300;
+
+-- 5. Create CSV file format for S3 data
+CREATE FILE FORMAT IF NOT EXISTS VQA_DEMO_DB.VQA.CSV_FORMAT
+    TYPE = 'CSV'
+    SKIP_HEADER = 1
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    ESCAPE_UNENCLOSED_FIELD = NONE;
+
+-- 6. Create table for inference results  
+CREATE TABLE IF NOT EXISTS VQA_DEMO_DB.VQA.INFERENCE_RESULTS (
+    ID INT,
+    QUESTION VARCHAR,
+    EXPECTED_ANSWER VARCHAR,
+    PREDICTED_ANSWER VARCHAR,
+    QUESTION_TYPE VARCHAR,
+    IS_CORRECT BOOLEAN
+);
+
+-- 7. Create file format for parquet output
+CREATE FILE FORMAT IF NOT EXISTS VQA_DEMO_DB.VQA.PARQUET_FORMAT
+    TYPE = 'PARQUET';
+
+-- Verify setup
+SHOW STAGES IN SCHEMA VQA_DEMO_DB.VQA;
+SHOW COMPUTE POOLS LIKE 'GPU_INFERENCE_POOL';
+
+SELECT 'Setup complete! You can now proceed with the notebooks.' AS STATUS;
