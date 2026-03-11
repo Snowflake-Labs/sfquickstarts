@@ -5,7 +5,7 @@ summary: Learn how to run batch inference on images using Vision Models in Snowf
 categories: snowflake-site:taxonomy/solution-center/partners/featured,getting-started,data-science-&-ml,gen-ai
 environments: web
 status: Published
-fork repo link: 
+fork repo link: https://github.com/sfc-gh-avjain/sfquickstarts/tree/ajain-ml-batch-inference-with-vision-models/site/sfguides/src/ml-batch-inference-with-vision-models
 
 
 # ML Batch Inference with Vision Models in Snowflake
