@@ -375,7 +375,7 @@ If you ran via the YAML config, you'll also see your custom metrics: **Groundedn
 
 Then, by clicking on the run you can view all of the records that make up the run. This allows you to see which records the agent performed well on and which ones it did not perform as well.
 
-From here, you should select a record with low evaluation scores. We'll start by choosing the query "Generate a report for the holiday gift guide" that scored low on both Answer Correctness (AC) and Tool Selection Accuracy (TSA).
+From here, you should select a record with low evaluation scores. We'll start by choosing the query "Generate a report for the holiday gift guide" that scored low on both Answer Correctness (AC) and our custom Tool Selection metric (T).
 
 ![Run Records](assets/run-records.png)
 
