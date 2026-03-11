@@ -2,7 +2,7 @@ author: Avni Jain, Sarathi Balakrishnan, and Avinash Joshi
 id: ml-batch-inference-with-vision-models
 language: en
 summary: Learn how to run batch inference on images using Vision Models in Snowflake
-categories: snowflake-site:taxonomy/solution-center/partners/featured,getting-started,data-science-&-ml,gen-ai
+categories: snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
 environments: web
 status: Published
 fork repo link: https://github.com/sfc-gh-avjain/sfquickstarts/tree/ajain-ml-batch-inference-with-vision-models/site/sfguides/src/ml-batch-inference-with-vision-models
