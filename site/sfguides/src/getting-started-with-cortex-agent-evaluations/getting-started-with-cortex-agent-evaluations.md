@@ -382,7 +382,6 @@ On this page, you can see metrics including:
 - AVG DURATION (Average time the agent executed for a single record)
 - AC (Answer Correctness)
 - LC (Logical Consistency)
-- TSA (Tool Selection Accuracy)
 
 If you ran via the YAML config, you'll also see your custom metrics: **Groundedness** and **Execution Efficiency**.
 
