@@ -13,8 +13,6 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-c
 
 ## Overview
 
-Duration: 5
-
 Building AI agents is just the beginning—understanding how well they perform is critical for delivering reliable, production-ready applications. Snowflake Cortex Agent Evaluations provides a comprehensive framework for measuring agent performance across multiple dimensions, helping you identify issues and iterate toward better outcomes.
 
 This quickstart guides you through setting up and running evaluations on Cortex Agents, building evaluation datasets, defining custom metrics via YAML, and comparing agent configurations to optimize performance.
@@ -76,8 +74,6 @@ Cortex Agent Evaluations uses **claude-4-sonnet** or **claude-3-5-sonnet** as th
 <!-- ------------------------ -->
 
 ## Setup Environment
-
-Duration: 10
 
 ### Clone the Repository
 
@@ -144,8 +140,6 @@ USE ROLE AGENT_EVAL_ROLE;
 
 ## Understanding the Evaluation Schema
 
-Duration: 5
-
 Before creating evaluations, it's important to understand the expected dataset schema that Cortex Agent Evaluations uses.
 
 ### Evaluation Dataset Schema
@@ -191,8 +185,6 @@ VALUES (
 <!-- ------------------------ -->
 
 ## Understanding the YAML Evaluation Config
-
-Duration: 5
 
 Cortex Agent Evaluations uses a YAML configuration file to define the agent being evaluated, the dataset to use, and the metrics to compute — including custom metrics with LLM-as-judge prompts.
 
@@ -278,8 +270,6 @@ The included `marketing_campaign_eval_config.yaml` defines two custom metrics in
 <!-- ------------------------ -->
 
 ## Run Your First Evaluation
-
-Duration: 15
 
 Now let's create and run your first agent evaluation. We'll cover both the programmatic SQL API and the Snowsight UI approach.
 
@@ -368,8 +358,6 @@ Click **Create Evaluation** to start the run.
 
 ## Examine Evaluation Results
 
-Duration: 10
-
 Now that you've completed your first Cortex Agents Evaluation Run, you can view the results to understand how your agent is performing.
 
 On the `Evaluations` page, we can view overall metrics aggregated by run. So far, we just have one run to view here.
@@ -450,8 +438,6 @@ WHERE record:"severity_text" IN ('ERROR', 'WARN')
 <!-- ------------------------ -->
 
 ## Improving the Agent
-
-Duration: 10
 
 One of the most powerful features of Cortex Agent Evaluations is the ability to compare different agent configurations to identify improvements. 
 
@@ -611,8 +597,6 @@ Once both evaluations complete, you can compare results:
 
 ## (Optional) Using the Evalset Generator Streamlit App
 
-Duration: 15
-
 The Evalset Generator is a Streamlit application that helps you build evaluation datasets interactively.
 
 ### Install Dependencies
@@ -701,9 +685,6 @@ The Evalset Generator helps you build evaluation datasets through four main work
 <!-- ------------------------ -->
 
 ## Best Practices
-
-Duration: 5
-
 ### Evaluation Dataset Design
 
 #### Diverse Query Coverage
@@ -773,8 +754,6 @@ Duration: 5
 <!-- ------------------------ -->
 
 ## Conclusion and Resources
-
-Duration: 2
 
 Congratulations! You've successfully set up and run Cortex Agent Evaluations. You now have the tools to systematically measure and improve your AI agents.
 
