@@ -1,6 +1,6 @@
 author: Gayatri Ghanakota
 id: modern-data-architecture-for-ai-powered-insurance-claims-insights
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Lab to demonstrate how to build a modern data architecture on Snowflake and AWS while using Snowflake Features like Catalog Linked Database, Snowpark Connect for Apache Spark, Snowflake Intelligence and Cortex Code CLI
 environments: web
