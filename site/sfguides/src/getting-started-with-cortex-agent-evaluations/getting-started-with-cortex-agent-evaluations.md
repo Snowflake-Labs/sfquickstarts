@@ -398,17 +398,13 @@ On this page you will see three columns:
 - In the middle column, you can see the agent trace. This view is interactive and you can examine individual spans of the trace by clicking, and their attributes will display on the right.
 - On the right column, you can see the span information for the selected part of the trace, including fields like `Messages`, `Conversation History`, `Output`, `Model Name`, `Token Count`, and more.
 
-Returning to the left side is how we can examine the metrics. By expanding Tool Selection Accuracy, we can see that the expected tools were the following:
-
-1. query_performance_metrics
-2. generate_campaign_report
-3. query_performance_metrics
-
-However all three were missing and the agent had 0/3 correct positions.
+Returning to the left side is how we can examine the metrics. By expanding the custom metric Tool Selection results, we can see in the *Weaknesses* section that the `query_performance_metrics` tool call was missing in the agent trace.
 
 ![Tool Selection Accuracy](assets/tsa.png)
 
-Given that the agent did not call any tools, it is expected that the `Answer Correctness` metric score is also low.
+By missing this tool call, the final answer lost the comprehensive performance data and detailed metrics expected in the response.
+
+![Answer Correctness](assets/ac.png)
 
 ### Retrieving Results Programmatically
 
