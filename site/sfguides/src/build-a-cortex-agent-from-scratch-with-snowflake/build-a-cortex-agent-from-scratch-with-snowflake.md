@@ -57,6 +57,8 @@ You can run all the SQL in this guide in either:
 - **SQL Worksheet**: In Snowsight, click **+ > SQL Worksheet** in the top left
 - **Snowflake Notebook**: In Snowsight, click **+ > Notebook** (useful if you want to mix SQL and Python cells, since you'll need Python for the testing section later)
 
+> **Want everything in one notebook?** Download the [companion notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Build-a-Cortex-Agent-from-Scratch-with-Snowflake/build-a-cortex-agent-from-scratch-with-snowflake.ipynb) and import it into Snowsight (**+ > Notebook > Import .ipynb file**).
+
 ### Set Up Database and Schema
 
 Copy and paste the following SQL and run it. Each line is explained below:
@@ -652,7 +654,7 @@ With the same agent and no routing code on your part:
 The agent handled the routing, tool execution, and response formatting automatically based on the instructions you provided in the YAML spec.
 
 <!-- ------------------------ -->
-## Snowflake Intelligence
+## Ask Questions with Snowflake Intelligence
 
 So far you've tested the agent programmatically with Python. But you don't always need to write code to use an agent. **Snowflake Intelligence** provides a chat interface where you can talk to any agent created with `CREATE AGENT`, with no additional setup required.
 
@@ -695,6 +697,34 @@ Test both tools to see the agent route questions automatically:
 - **Shareable**: other users with access to the agent can use the same interface
 
 This is the fastest way to interact with any agent built with `CREATE AGENT`, and it's what most end users will use in practice.
+
+<!-- ------------------------ -->
+## Ask Questions with Cortex Code
+
+You can also interact with the objects you built in this guide directly from a Snowflake Notebook using **Cortex Code**, an AI coding assistant built into Snowsight.
+
+Because the agent, semantic view, search service, and tables all persist as first-class objects in your Snowflake account, Cortex Code is context-aware and can discover and use them to answer questions without any extra configuration.
+
+### Open Cortex Code
+
+1. Open any Snowflake Notebook (or the companion notebook from this guide)
+2. Click the **Cortex Code toggle** in the bottom-right corner of the notebook
+3. Type a question in the chat panel
+
+### Provide Context in Your Questions
+
+Cortex Code works best when your question includes enough context for it to identify the right objects. Mention the relevant table name, semantic view, or agent so Cortex Code can route your request accurately.
+
+**Examples with context:**
+
+- "Using the `tutorial_agent` agent, what are total sales by region?"
+- "Query the `sales_semantic_view` semantic view to show revenue by product category"
+- "What product documentation is indexed in the `product_search_service` search service?"
+- "What are the top-selling products in the `CORTEX_AGENTS_LAB.TUTORIAL.SALES` table?"
+
+### Why This Works
+
+When you created the agent, semantic view, and search service earlier in this guide, those objects became persistent resources in your Snowflake account. Cortex Code can detect these objects and use them to answer your questions, just like Snowflake Intelligence does. The difference is that Cortex Code lives inside the notebook environment, so you can ask questions and get answers without leaving your development workflow.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
