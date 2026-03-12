@@ -25,14 +25,13 @@ Cortex Agent Evaluations is a feature within Snowflake Cortex that enables you t
 
 **Built-in Metrics:**
 
-- **Tool Selection Accuracy**: Measures whether the agent selects the correct tools for a given query
 - **Answer Correctness**: Assesses the quality and accuracy of the agent's final response
 - **Logical Consistency**: Assesses the agent trace for redundancies, superfluous tool calls or inefficient use of resources
 
 **Custom Metrics via YAML:**
 
 - Define your own evaluation criteria with custom prompts and scoring rubrics
-- Examples include **Groundedness** (is the response supported by tool outputs?) and **Execution Efficiency** (did the agent use tools optimally?)
+- Examples included in this guide are **Groundedness** (is the response supported by tool outputs?), **Execution Efficiency** (are the agent's actions streamlined?), and **Tool Selection** (did the agent call the right tools at the right time?)
 
 ### What You'll Learn
 
@@ -343,12 +342,11 @@ The evaluation will execute your queries and compute all metrics (built-in and c
 
 **Using the UI:** After selecting your dataset in the evaluation wizard, select `INPUT_QUERY` as the Query Text column and enable the metrics you want to measure:
 
-- **Tool Selection Accuracy** — Reference the `GROUND_TRUTH_DATA` column
 - **Answer Correctness** — Reference the `GROUND_TRUTH_DATA` column
 
 Click **Create Evaluation** to start the run.
 
-> **Note**: Custom metrics are only available via the programmatic YAML/SQL path. The Snowsight UI supports built-in metrics only.
+> **Note**: Custom metrics are only available via the programmatic YAML.
 
 ![Configure Metrics](assets/select-metrics.png)
 
@@ -387,7 +385,7 @@ On this page you will see three columns:
 
 Returning to the left side is how we can examine the metrics. By expanding the custom metric Tool Selection results, we can see in the *Weaknesses* section that the `query_performance_metrics` tool call was missing in the agent trace.
 
-![Tool Selection Accuracy](assets/tsa.png)
+![Tool Selection](assets/tsa.png)
 
 By missing this tool call, the final answer lost the comprehensive performance data and detailed metrics expected in the response.
 
@@ -581,10 +579,9 @@ Once both evaluations complete, you can compare results:
 
 **3.** Investigate cases where added orchestration and response instructions led to:
 
-- Higher tool selection accuracy
 - More correct answers
 - Better logical consistency
-- Improved custom metric scores (groundedness, execution efficiency)
+- Improved custom metric scores (groundedness, execution efficiency, tool selection)
 
 ### Key Questions to Answer
 
@@ -674,7 +671,7 @@ Congratulations! You've successfully set up and run Cortex Agent Evaluations. Yo
 - **Environment Setup**: How to configure sample agents and data for evaluation
 - **Evaluation Creation**: How to build datasets and run evaluations via the SQL API and Snowsight UI
 - **Custom Metrics**: How to define custom evaluation metrics via YAML with LLM-as-judge prompts
-- **Metrics Interpretation**: Understanding tool selection accuracy, answer correctness, logical consistency, and custom metrics
+- **Metrics Interpretation**: Understanding answer correctness, logical consistency, and custom metrics
 - **Agent Comparison**: How to compare configurations and identify improvements
 - **Dataset Building**: Using the Evalset Generator app for custom datasets
 
