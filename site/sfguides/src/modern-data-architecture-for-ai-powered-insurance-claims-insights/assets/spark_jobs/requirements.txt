@@ -1,0 +1,12 @@
+# Snowpark Connect for Apache Spark
+snowpark-connect[jdk]>=0.1.0
+
+# PySpark (required for local testing)
+pyspark[connect]>=3.5.0,<4
+
+# ML Model dependencies
+numpy>=1.24.0
+scikit-learn>=1.3.0
+
+# Additional dependencies
+pandas>=2.0.0
