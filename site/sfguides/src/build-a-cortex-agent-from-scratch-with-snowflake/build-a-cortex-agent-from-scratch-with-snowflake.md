@@ -685,6 +685,12 @@ Test both tools to see the agent route questions automatically:
 - "How do I fix laptop overheating?"
 - "What are the care instructions for the office chair?"
 
+Snowflake Intelligence can present the agent's responses as tables or charts depending on the question:
+
+![Snowflake Intelligence response with tabular data](assets/si-1.png)
+
+![Snowflake Intelligence response with a chart](assets/si-2.png)
+
 **Try a follow-up question** to test multi-turn conversation:
 1. First ask: "What are total sales by region?"
 2. Then follow up: "Which region had the lowest?" The agent remembers the previous context
@@ -701,7 +707,9 @@ This is the fastest way to interact with any agent built with `CREATE AGENT`, an
 <!-- ------------------------ -->
 ## Ask Questions with Cortex Code
 
-You can also interact with the objects you built in this guide directly from a Snowflake Notebook using **Cortex Code**, an AI coding assistant built into Snowsight.
+You can also interact with the objects you built in this guide directly from a Snowflake Notebook using **Cortex Code**, an AI coding assistant built into Snowsight (also available as [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) for terminal-based workflows).
+
+![Cortex Code in a Snowflake Notebook](assets/cortex-code.png)
 
 Because the agent, semantic view, search service, and tables all persist as first-class objects in your Snowflake account, Cortex Code is context-aware and can discover and use them to answer questions without any extra configuration.
 
