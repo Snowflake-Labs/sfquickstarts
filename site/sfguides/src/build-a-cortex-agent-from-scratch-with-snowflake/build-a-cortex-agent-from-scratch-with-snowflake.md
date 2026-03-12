@@ -709,8 +709,6 @@ This is the fastest way to interact with any agent built with `CREATE AGENT`, an
 
 You can also interact with the objects you built in this guide directly from a Snowflake Notebook using **Cortex Code**, an AI coding assistant built into Snowsight (also available as [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) for terminal-based workflows).
 
-![Cortex Code in a Snowflake Notebook](assets/cortex-code.png)
-
 Because the agent, semantic view, search service, and tables all persist as first-class objects in your Snowflake account, Cortex Code is context-aware and can discover and use them to answer questions without any extra configuration.
 
 ### Open Cortex Code
@@ -718,6 +716,8 @@ Because the agent, semantic view, search service, and tables all persist as firs
 1. Open any Snowflake Notebook (or the companion notebook from this guide)
 2. Click the **Cortex Code toggle** in the bottom-right corner of the notebook
 3. Type a question in the chat panel
+
+![Cortex Code in a Snowflake Notebook](assets/cortex-code.png)
 
 ### Provide Context in Your Questions
 
@@ -792,8 +792,8 @@ DROP TABLE IF EXISTS product_docs;
 
 ### Related Resources
 
-- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents): concepts and architecture
-- [CREATE AGENT](https://docs.snowflake.com/en/sql-reference/sql/create-agent): full SQL reference
-- [CREATE SEMANTIC VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-semantic-view): how to define semantic views
-- [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview): building search services
+- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents): concepts and architecture of Cortex Agents
+- [CREATE AGENT](https://docs.snowflake.com/en/sql-reference/sql/create-agent): create Cortex Agents
+- [CREATE SEMANTIC VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-semantic-view): define semantic views
+- [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview): build Cortex Search services
 - [Overview of Snowflake Intelligence](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence): chat interface for agents
