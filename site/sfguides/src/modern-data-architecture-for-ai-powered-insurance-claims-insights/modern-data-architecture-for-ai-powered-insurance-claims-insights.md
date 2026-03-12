@@ -377,9 +377,9 @@ This runs through the following steps:
 
 1. **Verify** by navigating to **Snowsight → AI & ML → Snowflake Intelligence** and selecting the "Insurance Claims Analyst" agent
 2. **Ask Questions**
-  1. Ask: "Show me all high risk fraud claims"
-  2. Ask: "What is the total claim amount by loss type?"
-  3. Ask: "How many claims are under SIU investigation?"
+   - "Show me all high risk fraud claims"
+   - "What is the total claim amount by loss type?"
+   - "How many claims are under SIU investigation?"
 
 
  ![Run Snowflake  Intelligence](assets/screenshots/snowflake_intelligence_claims_data_questions.gif)
