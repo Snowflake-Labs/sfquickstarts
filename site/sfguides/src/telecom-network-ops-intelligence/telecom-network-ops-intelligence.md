@@ -1,7 +1,7 @@
 author: Sreedhar Rao, Pedro Jose, Siddharth Pandit, Joviane Bellegarde
 id: telecom-network-ops-intelligence
 summary: Build an end-to-end telecom network operations solution with 4 persona dashboards, 3D visualization, and Snowflake Intelligence for natural language queries
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/telecommunications, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/streamlit-in-snowflake, snowflake-site:taxonomy/snowflake-feature/cortex-ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/industry/telecom, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/streamlit-in-snowflake, snowflake-site:taxonomy/snowflake-feature/cortex-ai
 environments: web
 language: en
 status: Published
@@ -47,7 +47,7 @@ In this Guide, you will build a complete network operations platform that:
 
 The Network Operations solution provides end-to-end visibility across telecom infrastructure:
 
-![Architecture Diagram](assets/img/architecture.png)
+![Architecture Diagram](assets/architecture.png)
 
 **Data Layer:**
 - **RAN_4G / RAN_5G**: Radio Access Network metrics (eNodeB, gNodeB)
@@ -136,7 +136,7 @@ The script creates a **LOAD_STREAMLIT_FROM_GITHUB()** procedure that:
 
 In Snowsight, click **Projects**, then **Streamlit** in the left navigation and select **NETWORK_OPS_DASHBOARD**, or <a href="https://app.snowflake.com/_deeplink/#/streamlit-apps/NETWORK_OPERATIONS.ANALYTICS.NETWORK_OPS_DASHBOARD" target="_blank">click here</a> to go there directly.
 
-![Streamlit Dashboard](assets/img/streamlit_dashboard.png)
+![Streamlit Dashboard](assets/streamlit_dashboard.png)
 
 <!-- ------------------------ -->
 ## Explore the Dashboards
@@ -151,7 +151,7 @@ The Network Engineer dashboard focuses on real-time troubleshooting:
 - **Cell Site Map**: 3D visualization of network topology
 - **Drill-down Analysis**: Click any site for detailed metrics
 
-![Network Engineer Dashboard](assets/img/dashboard_network_engineer.png)
+![Network Engineer Dashboard](assets/dashboard_network_engineer.png)
 
 ### Network Performance View
 
@@ -163,7 +163,7 @@ The Network Performance dashboard focuses on capacity planning:
 - **Capacity Forecasting**: Predictive capacity trends
 - **Comparative Analysis**: Site-to-site performance comparison
 
-![Network Performance Dashboard](assets/img/dashboard_analyst.png)
+![Network Performance Dashboard](assets/dashboard_analyst.png)
 
 ### Network Manager View
 
@@ -175,7 +175,7 @@ The Network Manager dashboard focuses on SLA management:
 - **Coverage Analysis**: Network coverage gaps
 - **Executive Summary**: High-level operational status
 
-![Network Manager Dashboard](assets/img/dashboard_manager.png)
+![Network Manager Dashboard](assets/dashboard_manager.png)
 
 ### Executive View
 
@@ -187,24 +187,24 @@ The Executive dashboard focuses on business impact:
 - **Strategic KPIs**: High-level performance indicators
 - **Trend Analysis**: Month-over-month comparisons
 
-![Executive Dashboard](assets/img/dashboard_executive.png)
+![Executive Dashboard](assets/dashboard_executive.png)
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
 
 In Snowsight, click **AI & ML**, then **Snowflake Intelligence** in the left navigation.
 
-![Navigate to Snowflake Intelligence](assets/img/snowflake-intelligence-nav.png)
+![Navigate to Snowflake Intelligence](assets/snowflake-intelligence-nav.png)
 
 The setup script automatically creates the Semantic View and Snowflake Intelligence Agent:
 
-**Semantic View** (**NETWORK_SEMANTIC_VIEW**)::
+**Semantic View** (**NETWORK_SEMANTIC_VIEW**):
 - Table definitions for DIM_CELL_SITE and FACT_RAN_PERFORMANCE
 - Column descriptions for natural language understanding
 - Relationships between dimension and fact tables
 - Verified queries for common analysis patterns
 
-**Snowflake Intelligence Agent** (**NETWORK_OPERATIONS_AGENT**)::
+**Snowflake Intelligence Agent** (**NETWORK_OPERATIONS_AGENT**):
 - Uses Snowflake's default orchestration model for natural language understanding
 - System prompt configured for telecom domain expertise
 - Semantic View tool for data access
@@ -233,6 +233,8 @@ Identify 5G cells with PDU session establishment problems.
 
 **`Which 5G cells in Lisboa have PDU session issues?`**
 
+---
+
 ### Network Performance
 
 **1. Technology Comparison**
@@ -253,6 +255,8 @@ Identify regions with the highest congestion risk based on utilization patterns.
 
 **`Which regions have the highest congestion risk?`**
 
+---
+
 ### Network Manager (Operations)
 
 **1. SLA Compliance Overview**
@@ -272,6 +276,8 @@ Review availability metrics by city to inform capacity planning.
 Determine which region has the most sites needing attention.
 
 **`Which region has the most sites needing attention?`**
+
+---
 
 ### Executive (C-Level)
 
@@ -331,5 +337,5 @@ Congratulations! You have successfully built a comprehensive telecom network ope
 ### Related Resources
 
 **Snowflake Documentation:**
-- <a href="https://docs.snowflake.com/en/user-guide/snowflake-intelligence/overview" target="_blank">Snowflake Intelligence</a>
+- <a href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence" target="_blank">Snowflake Intelligence</a>
 - <a href="https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit" target="_blank">Streamlit in Snowflake</a>

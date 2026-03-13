@@ -48,7 +48,7 @@ This framework leverages Snowflake's unified data platform and its advanced AI/M
 <!-- ------------------------ -->
 ## How It Works
 
-The solution provides an integrated, governed analytical stack built on the high-performance capabilities of the Snowflake Data Cloud:
+![How It Works](assets/how-it-works.png)
 
 1. **User Input:** A banking professional submits a natural language business question (e.g., "Calculate total exposure per customer for cross-sell campaigns") via the integrated Snowflake Intelligence chat interface.
 2. **Agent Orchestration:** The CONSUMER_BANK_AGENT receives and parses the request, intelligently determining the necessary internal tools—Auto Loans, Credit Cards, or a combined cross-portfolio analysis.
@@ -67,7 +67,7 @@ The adoption of conversational analytics with a solid data foundation on Snowfla
 - **Data Governance for Trust and Compliance:** Standardized data access via Semantic Views and Agent governance ensures consistent, auditable, and reliable results, which is paramount for internal analysis and external regulatory reporting.
 - **Foundation for New Product Development:** The unified data model and semantic layer act as a robust engine, significantly reducing the friction and time required to prototype and launch innovative, data-centric financial products.
 
-![solution architecture](./assets/cortex.jpg)
+![solution architecture](assets/cortex.png)
 
 <!-- ------------------------ -->
 ## Use Cases and Applications
@@ -160,8 +160,8 @@ The solution deploys a single orchestrating agent with specialized analytical to
 
 To get started with this solution:
 
-1. Review the **[README](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/retail-banking-credit-card-and-loan-analyst/assets/README.md)** for detailed deployment instructions
-2. Open **[setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/retail-banking-credit-card-and-loan-analyst/assets/setup.sql)** in a Snowflake SQL Worksheet and execute all statements to deploy the solution
+1. Review the **[README](https://github.com/Snowflake-Labs/sfguide-retail-banking-credit-card-and-loan-analyst/blob/main/README.md)** for detailed deployment instructions
+2. Open **[setup.sql](https://github.com/Snowflake-Labs/sfguide-retail-banking-credit-card-and-loan-analyst/blob/main/scripts/setup.sql)** in a Snowflake SQL Worksheet and execute all statements to deploy the solution
 
 The following objects are deployed within the secure and governed Snowflake environment to enable the solution:
 

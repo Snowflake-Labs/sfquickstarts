@@ -1,6 +1,6 @@
 author: Becky O'Connor, Piotr Paczewski, Oleksii Bielov
 id: oss-deploy-a-fleet-intelligence-solution-for-taxis
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/geospatial, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Build a Fleet Intelligence Control Center for taxi operations using OpenRouteService. Deploy a multi-page Streamlit app with real-time driver tracking, route visualization, and H3 heat maps - powered by Snowflake Cortex AI and geospatial analytics.
 environments: web
@@ -37,7 +37,7 @@ This quickstart deploys a multi-page Streamlit application that simulates a taxi
 
 ### Prerequisites
 
-> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't installed it yet, complete the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart first.
+> **_IMPORTANT:_** This demo requires the **OpenRouteService Native App** to be installed and running. If you haven't built it yet, complete the [Build Routing Solution in Snowflake](../oss-install-openrouteservice-native-app/) quickstart first.
 
 **Required:**
 - OpenRouteService Native App deployed and activated
@@ -49,7 +49,7 @@ This quickstart deploys a multi-page Streamlit application that simulates a taxi
 
 - Deploy fleet analytics dashboards using Cortex Code skills
 - Work with **Carto Overture Maps** datasets for realistic location data
-- Use **Snowflake Cortex AI** to generate sample addresses
+- Use **Snowflake Cortex AI** for trip summaries and analysis
 - Build multi-layer geospatial visualizations with Pydeck
 - Create H3 hexagon heat maps for density analysis
 - Track driver states (waiting, pickup, driving, dropoff, idle)
@@ -59,12 +59,19 @@ This quickstart deploys a multi-page Streamlit application that simulates a taxi
 
 Use Cortex Code to deploy the Fleet Intelligence solution including database setup, data generation, and the Streamlit dashboard.
 
-### Run the Deploy Skill
+### Clone Repository and Deploy Skill
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+cd sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
+```
 
 In the Cortex Code CLI, type:
 
 ```
-use the local skill from oss-deploy-a-fleet-intelligence-solution-for-taxis/skills/deploy-fleet-intelligence
+$deploy-fleet-intelligence-taxis
 ```
 
 > **_NOTE:_** The skill will first verify that the OpenRouteService Native App is installed. If it's not found, it will provide instructions to install it first.
@@ -73,14 +80,14 @@ The skill uses interactive prompting to gather required information:
 
 - **Number of drivers**: 20 to 500+ (default: 80)
 - **Number of days**: 1 to 30+ (default: 1)
-- **City**: San Francisco (default), New York, London, or Paris
+- **City**: San Francisco (default), New York, London, Paris, Chicago, or any custom city
 
 Cortex Code will automatically:
+- **Detect ORS Configuration** - Reads the current OpenRouteService map region and enabled routing profiles, then recommends a matching city. If the selected city doesn't match the configured region, it will guide you through changing the map
 - **Verify** OpenRouteService Native App is installed and running
-- **Acquire Marketplace Data** - Gets Carto Overture Maps Places and Addresses
-- **Create Database** - Sets up `FLEET_INTELLIGENCE` with required schemas
+- **Create Schema** - Sets up `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` with required objects
 - **Generate Sample Data** - Creates drivers, trips, and routes using ORS
-- **Deploy Dashboard** - Creates the Fleet Intelligence Control Center Streamlit app
+- **Deploy Dashboard** - Creates the Taxi Control Center Streamlit app
 
 ### What Gets Installed
 
@@ -95,34 +102,37 @@ The deploy skill creates the following Snowflake objects:
 **Fleet Intelligence Database**
 | Component | Name | Description |
 |-----------|------|-------------|
-| Database | `FLEET_INTELLIGENCE` | Main fleet database |
-| Schema | `FLEET_INTELLIGENCE.PUBLIC` | Core data tables |
-| Schema | `FLEET_INTELLIGENCE.ANALYTICS` | Analytics views for Streamlit |
-| Warehouse | `DEFAULT_WH` | Compute warehouse (auto-suspend 60s) |
+| Database | `OPENROUTESERVICE_SETUP` | Main setup database |
+| Schema | `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` | Core data tables and views |
+| Warehouse | `ROUTING_ANALYTICS` | Compute warehouse, XSMALL (auto-suspend 60s) |
 | Stage | `STREAMLIT_STAGE` | Stage for Streamlit files |
 
 **Data Tables**
 | Table | Description |
 |-------|-------------|
-| `SF_ADDRESSES` | AI-generated city addresses (150+ locations) |
-| `DRIVERS` | Driver master data with shift patterns |
+| `TAXI_LOCATIONS` | POIs and addresses from Overture Maps for the target city |
+| `TAXI_LOCATIONS_NUMBERED` | Indexed location pool for deterministic trip assignment |
+| `TAXI_DRIVERS` | Configured drivers with shift assignments |
 | `DRIVER_TRIPS` | Trip assignments per driver |
+| `DRIVER_TRIPS_WITH_COORDS` | Trips with pickup/dropoff coordinates |
 | `DRIVER_ROUTES` | Raw ORS route responses |
+| `DRIVER_ROUTES_PARSED` | Parsed route geometries and distances |
+| `DRIVER_ROUTE_GEOMETRIES` | Routes with timing data |
 | `DRIVER_LOCATIONS` | Interpolated GPS positions with driver states |
 
 **Analytics Views**
 | View | Description |
 |------|-------------|
-| `ANALYTICS.DRIVERS` | Driver display information |
-| `ANALYTICS.DRIVER_LOCATIONS` | Location points with LON/LAT and state |
-| `ANALYTICS.TRIPS_ASSIGNED_TO_DRIVERS` | Trip routes with geometry |
-| `ANALYTICS.ROUTE_NAMES` | Human-readable route descriptions |
-| `ANALYTICS.TRIP_SUMMARY` | Trip statistics and metrics |
+| `DRIVER_LOCATIONS_V` | Location points with LON/LAT and state |
+| `TRIPS_ASSIGNED_TO_DRIVERS` | Trip routes with geometry |
+| `ROUTE_NAMES` | Human-readable route descriptions |
+| `TRIP_ROUTE_PLAN` | Route data for Heat Map page |
+| `TRIP_SUMMARY` | Trip statistics and speed metrics |
 
 **Streamlit Application**
 | Component | Name | Description |
 |-----------|------|-------------|
-| Streamlit | `FLEET_INTELLIGENCE_CONTROL_CENTER` | Multi-page fleet dashboard |
+| Streamlit | `TAXI_CONTROL_CENTER` | Multi-page fleet dashboard |
 
 <!-- ------------------------ -->
 ## Explore the Control Center
@@ -130,15 +140,15 @@ The deploy skill creates the following Snowflake objects:
 Once deployment completes, navigate to the Fleet Intelligence Control Center:
 
 1. Go to **Projects > Streamlits** in Snowsight
-2. Click on **FLEET_INTELLIGENCE_CONTROL_CENTER**
+2. Click on **Taxi Control Center**
 
 ### Main Dashboard
 
 The main page shows fleet overview statistics:
 - **Total Trips** - Number of trips in the simulation
 - **Active Drivers** - Drivers with assigned trips
-- **Route Plans** - Generated route geometries
-- **Data Source** - City being simulated
+- **Total Distance** - Combined distance driven across all routes
+- **Location Points** - Number of location data points in the simulation
 
 ### Driver Routes Page
 
@@ -149,10 +159,9 @@ Track individual driver journeys:
 1. **Select a Driver** from the sidebar dropdown
 2. **Choose a Trip** to visualize the route
 3. **View the Map** with:
-   - Route geometry (blue line)
-   - Pickup location (green marker)
-   - Dropoff location (red marker)
-   - Driver position points along the route
+   - Route geometry (orange line)
+   - Pickup and dropoff locations (blue markers)
+   - Current driver position (dark marker) controlled by a time slider
 
 4. **Analyze Trip Details**:
    - Total distance traveled
@@ -160,24 +169,33 @@ Track individual driver journeys:
    - Average speed
    - AI-generated trip summary using Cortex
 
+> **_NOTE:_** The AI trip analysis feature uses Snowflake Cortex AI (by default `claude-3-5-sonnet`). Other LLM models available in your account can also be used. Ensure Cortex AI is enabled in your Snowflake region.
+
 ![Individual Route Visualization](assets/individual-route.png)
 
 ### Fleet Heat Map Page
 
 ![Fleet Heat Map](assets/heatmap.png)
 
-Analyze driver density across the city:
+This page combines fleet statistics with an interactive density map.
 
-1. **Select Time of Day** using the hour slider (0-23)
-2. **Choose View Type**:
-   - **Heat Map** - Traditional heat map visualization
-   - **Point Cloud** - Individual driver positions
-   - **H3 Hexagons** - Aggregated hexagon bins
+**Top Section - Fleet Statistics:**
+- **Top Streets** - Most popular pickup and dropoff locations
+- **Route Distances** - Shortest and longest routes across all drivers
 
-3. **Analyze Patterns**:
-   - Peak hour driver concentrations
-   - Popular pickup/dropoff zones
-   - Coverage gaps in the fleet
+**Map Section - Driver Density:**
+
+Use the sidebar controls to explore fleet distribution:
+
+1. **Time Slice** - Select both **Hour** (0-23) and **Minute** (0-59) to see each driver's latest position at that moment
+2. **Show Driver Locations** - Toggle clickable dots showing individual driver positions. Click a dot to display its route on the map
+3. **H3 Resolution** - Adjust hexagon granularity (6-9) for density aggregation
+4. **Colour Scheme** - Choose between "Contrast" and "Snowflake" palettes
+
+**Analyze Patterns:**
+- Peak hour driver concentrations via H3 hexagons
+- Popular pickup/dropoff zones from the Top Streets charts
+- Coverage gaps in the fleet
 
 <!-- ------------------------ -->
 ## Understanding the Data Model
@@ -235,18 +253,15 @@ SELECT 4, 'Day', 11, 19, 18 UNION ALL
 SELECT 5, 'Evening', 15, 23, 14
 ```
 
-### Change City
+### Change Location or Map
 
-The solution supports multiple cities. Change the bounding box in the data generation:
+In the Cortex Code CLI, type:
 
-| City | Longitude Range | Latitude Range |
-|------|-----------------|----------------|
-| San Francisco | -122.52 to -122.35 | 37.70 to 37.82 |
-| New York City | -74.05 to -73.90 | 40.65 to 40.85 |
-| London | -0.20 to 0.05 | 51.45 to 51.55 |
-| Paris | 2.25 to 2.42 | 48.82 to 48.90 |
+```
+$customize-main
+```
 
-> **_NOTE:_** When changing cities, ensure your OpenRouteService Native App has the corresponding map data installed. See the [Install OpenRouteService Native App](../oss-install-openrouteservice-native-app/) quickstart for location customization.
+> **_NOTE:_** See the [Build Routing Solution in Snowflake](../oss-install-openrouteservice-native-app/) quickstart for more content about location customization.
 
 ### Scaling Recommendations
 
@@ -260,47 +275,24 @@ The solution supports multiple cities. Change the bounding box in the data gener
 | 500 | 7 | ~800K | XLARGE | 2-3 hours |
 
 <!-- ------------------------ -->
-## Generate Additional Data
-
-### Generate Driver Locations Skill
-
-To regenerate driver location data with different parameters:
-
-```
-use the local skill from oss-deploy-a-fleet-intelligence-solution-for-taxis/skills/generate-driver-locations
-```
-
-This skill will:
-- Interpolate GPS points along each route
-- Assign realistic driver states
-- Apply traffic-based speed variations
-- Create time-series location data
-
-<!-- ------------------------ -->
 ## Uninstall the Solution
 
-To remove the Fleet Intelligence solution:
+To remove the Fleet Intelligence solution execute:
 
 ```
-uninstall fleet intelligence
+DROP SCHEMA OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS;
 ```
 
-This will:
-- Remove the `FLEET_INTELLIGENCE` database
-- Optionally remove Overture Maps marketplace data
-- Optionally remove the warehouse
+This will remove the `OPENROUTESERVICE_SETUP.FLEET_INTELLIGENCE_TAXIS` schema and its contents.
 
-> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately using:
-> `use the local skill from oss-install-openrouteservice-native-app/skills/uninstall-route-optimizer`
+> **_NOTE:_** The OpenRouteService Native App remains installed. You can uninstall it separately.
 
 <!-- ------------------------ -->
 ## Available Cortex Code Skills
 
 | Skill | Description | Command |
 |-------|-------------|---------|
-| `deploy-fleet-intelligence` | Deploy the full solution | `use the local skill from oss-deploy-a-fleet-intelligence-solution-for-taxis/skills/deploy-fleet-intelligence` |
-| `generate-driver-locations` | Regenerate location data | `use the local skill from oss-deploy-a-fleet-intelligence-solution-for-taxis/skills/generate-driver-locations` |
-| `uninstall-fleet-intelligence` | Remove the solution | `use the local skill from oss-deploy-a-fleet-intelligence-solution-for-taxis/skills/uninstall-fleet-intelligence` |
+| `deploy-fleet-intelligence-taxis` | Deploy the full solution (data generation, routes, and Streamlit app) | `$deploy fleet intelligence dashboard$` |
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -309,8 +301,7 @@ This will:
 
 You've deployed a complete Fleet Intelligence Control Center that demonstrates:
 - **OpenRouteService Native App** - Real road-following route generation
-- **Carto Overture Maps** - Realistic city locations for simulation
-- **Snowflake Cortex AI** - AI-generated addresses and trip summaries
+- **Snowflake Cortex AI** - AI-powered trip summaries and analysis
 - **Pydeck Visualization** - Interactive maps with multiple layer types
 - **H3 Hexagons** - Spatial aggregation for density analysis
 
@@ -320,12 +311,14 @@ You've deployed a complete Fleet Intelligence Control Center that demonstrates:
 - Generate simulated taxi fleet data with realistic patterns
 - Track driver states and positions over time
 - Build heat maps with H3 hexagon visualization
-- Use AI for generating sample data and trip analysis
+- Use AI for trip analysis and fleet insights
 
 ### Related Quickstarts
 
-- [Install OpenRouteService Native App](/guide/oss-install-openrouteservice-native-app/) - Install the routing engine (prerequisite)
-- [Deploy Route Optimization Demo](/guide/oss-deploy-route-optimization-demo/) - Build a delivery route optimization simulator
+- [Build Routing Solution in Snowflake with Cortex Code](../oss-install-openrouteservice-native-app/) - Build and customize the routing solution (prerequisite)
+- [Deploy Route Optimization Demo](https://www.snowflake.com/en/developers/guides/oss-deploy-route-optimization-demo/) - Build a visual route optimization simulator (prerequisite)
+- [Retail Catchment Analysis with Overture Maps](https://www.snowflake.com/en/developers/guides/oss-retail-catchment-overture-maps/) - Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake
+- [Deploy Snowflake Intelligence Routing Agent](https://www.snowflake.com/en/developers/guides/oss-deploy-snowflake-intelligence-routing-agent/) - Build an AI-powered route planning assistant that understands natural language locations - powered by OpenRouteService and Snowflake Intelligence
 
 ### Source Code
 
