@@ -355,7 +355,7 @@ INSERT INTO customers (first_name, last_name, email, loyalty_tier) VALUES
     ('David',   'Kim',      'david.kim@example.com',     'GOLD'),
     ('Eve',     'Patel',    'eve.patel@example.com',     'PLATINUM'),
     ('Frank',   'Lopez',    'frank.lopez@example.com',   'BRONZE'),
-    ('Grace',   'Wang',     'grace.wang@example.com',    'SILVER'),
+    ('Grace',   'Wu',       'grace.wu@example.com',      'SILVER'),
     ('Hank',    'Brown',    'hank.brown@example.com',    'BRONZE'),
     ('Iris',    'Davis',    'iris.davis@example.com',    'GOLD'),
     ('Jack',    'Wilson',   'jack.wilson@example.com',   'SILVER');
