@@ -1,0 +1,12 @@
+name: snowflake_ml_demo
+channels:
+  - snowflake
+dependencies:
+  - python=3.10
+  - snowflake-ml-python
+  - xgboost
+  - scikit-learn
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
