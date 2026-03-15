@@ -1,12 +1,12 @@
 author: Abhinav Bannerjee
 id: build-an-ai-matching-app-with-snowflake-ml
-summary: Build an AI-powered matching application on Snowflake using Dynamic Tables, Feature Store, Model Registry, SPCS, Cortex Search, and Streamlit.
+summary: Build an AI-powered matching application on Snowflake using Dynamic Tables, Feature Store, Model Registry, SPCS, Cortex Search, Model Monitoring, and Streamlit.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/streamlit, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/industry/advertising-media-and-entertainment
 language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake ML, Model Registry, Feature Store, SPCS, Cortex Search, Dynamic Tables, Streamlit, XGBoost, Machine Learning, Creator Economy
+tags: Snowflake ML, Model Registry, Feature Store, SPCS, Cortex Search, Dynamic Tables, Streamlit, XGBoost, Machine Learning, Creator Economy, Model Monitoring
 fork repo link: https://github.com/Snowflake-Labs/sfguide-build-an-ai-matching-app-with-snowflake-ml
 
 # Build an AI Matching App with Snowflake ML
@@ -46,7 +46,7 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 - An XGBoost match-score model registered in the Model Registry (V1 with auto-endpoints, V2 with custom multi-endpoint)
 - A real-time SPCS inference service with a public REST endpoint
 - A Cortex Search service over 200 creator content records with filtering by category and platform
-- A 5-page Streamlit dashboard: Feature Store explorer, Model Registry viewer, Inference playground, CDP Profiles, and Cortex Search
+- A 6-page Streamlit dashboard: Feature Store explorer, Model Registry viewer, Inference playground, CDP Profiles, Cortex Search, and Model Monitoring
 
 <!-- ------------------------ -->
 ## Set Up Your Environment
@@ -483,7 +483,7 @@ This returns ranked results combining semantic understanding with keyword matchi
 
 ### Deploy the Dashboard
 
-The companion repository includes a 5-page Streamlit app. Deploy it to Snowflake:
+The companion repository includes a 6-page Streamlit app. Deploy it to Snowflake:
 
 1. In Snowsight, navigate to **Projects > Streamlit > + Streamlit App**
 2. Name it `CREATOR_MATCH_DEMO` in the `CC_DEMO.APPS` schema
@@ -501,6 +501,8 @@ The companion repository includes a 5-page Streamlit app. Deploy it to Snowflake
 **Page 4: CDP Profiles** - Creator tier distribution (PREMIUM / STANDARD / EMERGING) based on ML scores. Brand affinity clusters and enriched profile data.
 
 **Page 5: Cortex Search** - Interactive hybrid search over creator content with category and platform filters.
+
+**Page 6: Model Monitoring** - Monitor status, prediction drift (Population Stability Index), prediction volume, and version comparison with metrics side-by-side.
 
 <!-- ------------------------ -->
 ## Run CDP Enrichment
@@ -582,7 +584,7 @@ snowsql -c <your_connection> -f sql/99_teardown.sql
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You have successfully built an AI-powered matching application on Snowflake that covers the full ML lifecycle: feature engineering with Dynamic Tables, training with Feature Store, model versioning in the Registry, real-time deployment via SPCS, semantic search with Cortex Search, and an interactive Streamlit dashboard.
+Congratulations! You have successfully built an AI-powered matching application on Snowflake that covers the full ML lifecycle: feature engineering with Dynamic Tables, training with Feature Store, model versioning in the Registry, real-time deployment via SPCS, semantic search with Cortex Search, model monitoring with drift detection, and an interactive Streamlit dashboard.
 
 ### What You Learned
 
@@ -592,6 +594,7 @@ Congratulations! You have successfully built an AI-powered matching application 
 - How **SPCS** turns any model into a real-time REST API with scale-to-zero cost optimization
 - How **CustomModel** lets you define multiple inference endpoints on a single set of weights
 - How **Cortex Search** provides hybrid semantic search with no infrastructure to manage
+- How **Model Monitors** track prediction drift and volume over time with built-in metric functions
 - How **Streamlit in Snowflake** brings all components together in an interactive dashboard
 
 ### Related Resources
@@ -602,4 +605,5 @@ Congratulations! You have successfully built an AI-powered matching application 
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+- [Model Monitoring](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-monitor)
 - [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
