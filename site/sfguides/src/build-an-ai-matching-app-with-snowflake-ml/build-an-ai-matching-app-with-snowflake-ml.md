@@ -12,7 +12,6 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-build-an-ai-matching-a
 # Build an AI Matching App with Snowflake ML
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this guide, you will build an AI-powered matching application entirely on Snowflake. The use case is **creator-brand matching** for a commerce platform, but the architecture pattern applies to any two-sided matching problem: job candidates to roles, patients to providers, products to customers, and more.
 
@@ -51,7 +50,6 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 
 <!-- ------------------------ -->
 ## Set Up Your Environment
-Duration: 10
 
 ### Clone the Companion Repository
 
@@ -109,7 +107,6 @@ This populates:
 
 <!-- ------------------------ -->
 ## Build Dynamic Features
-Duration: 5
 
 ### How Dynamic Tables Work
 
@@ -159,7 +156,6 @@ The Dynamic Table refreshes automatically every 2 minutes. No scheduling, no ETL
 
 <!-- ------------------------ -->
 ## Register Feature Store
-Duration: 10
 
 ### Create Entity and Feature Views
 
@@ -222,7 +218,6 @@ print(f"Label distribution:\n{training_pd['CONVERTED'].value_counts()}")
 
 <!-- ------------------------ -->
 ## Train the Match Model
-Duration: 10
 
 ### Train XGBoost
 
@@ -300,7 +295,6 @@ V1 automatically gets `PREDICT`, `PREDICT_PROBA`, and `EXPLAIN` endpoints with z
 
 <!-- ------------------------ -->
 ## Deploy Real-Time Inference
-Duration: 10
 
 ### Batch Inference via Warehouse
 
@@ -368,7 +362,6 @@ SELECT CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_PROBA(
 
 <!-- ------------------------ -->
 ## Build Multi-Endpoint Model
-Duration: 10
 
 ### Why a CustomModel
 
@@ -443,7 +436,6 @@ SELECT MV!PREDICT_WITH_FEATURES(10, 0.05, 3, 150.0, 5, 0.7) AS EXPLAINED;
 
 <!-- ------------------------ -->
 ## Add Semantic Search
-Duration: 5
 
 ### Create a Cortex Search Service
 
@@ -488,7 +480,6 @@ This returns ranked results combining semantic understanding with keyword matchi
 
 <!-- ------------------------ -->
 ## Build the Streamlit Dashboard
-Duration: 10
 
 ### Deploy the Dashboard
 
@@ -513,7 +504,6 @@ The companion repository includes a 5-page Streamlit app. Deploy it to Snowflake
 
 <!-- ------------------------ -->
 ## Run CDP Enrichment
-Duration: 5
 
 ### Score All Creators and Assign Tiers
 
@@ -563,7 +553,6 @@ GROUP BY 1 ORDER BY PCT DESC;
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 2
 
 ### Remove All Demo Objects
 
@@ -592,7 +581,6 @@ snowsql -c <your_connection> -f sql/99_teardown.sql
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 Congratulations! You have successfully built an AI-powered matching application on Snowflake that covers the full ML lifecycle: feature engineering with Dynamic Tables, training with Feature Store, model versioning in the Registry, real-time deployment via SPCS, semantic search with Cortex Search, and an interactive Streamlit dashboard.
 
