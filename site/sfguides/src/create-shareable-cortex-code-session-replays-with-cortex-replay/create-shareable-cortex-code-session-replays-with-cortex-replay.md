@@ -32,7 +32,7 @@ A fully interactive, self-contained HTML replay of a Cortex Code session that yo
 ![](assets/screencast.gif)
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
+- Access to a [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured
 - [Node.js](https://nodejs.org/) v18 or later
 - At least one completed Cortex Code session (the tool needs a session transcript to convert)
