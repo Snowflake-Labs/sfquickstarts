@@ -9,6 +9,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake ML, Model Registry, Feature Store, SPCS, Cortex Search, Dynamic Tables, Streamlit, XGBoost, Machine Learning, Creator Economy
 fork repo link: https://github.com/Snowflake-Labs/sfguide-build-an-ai-matching-app-with-snowflake-ml
 
+# Build an AI Matching App with Snowflake ML
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
@@ -19,10 +20,8 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 
 ### Prerequisites
 
-- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_) (Enterprise Edition or higher recommended)
-- A role with privileges to create databases, schemas, warehouses, compute pools, and Streamlit apps
-- Python 3.9+ installed locally with `pip`
 - Basic familiarity with SQL and Python
+- Understanding of machine learning concepts (classification, training/test split, AUC)
 
 ### What You Will Learn
 
@@ -32,6 +31,14 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 - How to deploy a model as a real-time REST API using **Snowpark Container Services (SPCS)** with scale-to-zero
 - How to create a **Cortex Search** service for hybrid semantic search over creator content
 - How to build a multi-page **Streamlit in Snowflake** dashboard that ties all components together
+
+### What You Will Need
+
+- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_) (Enterprise Edition or higher recommended)
+- A role with privileges to create databases, schemas, warehouses, compute pools, and Streamlit apps
+- [Git](https://git-scm.com/downloads) installed to clone the companion repository
+- Python 3.9+ with `pip` ([Miniconda](https://docs.conda.io/en/latest/miniconda.html) recommended)
+- A SQL client or [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) for running setup scripts
 
 ### What You Will Build
 
