@@ -5,8 +5,8 @@ summary: AI-powered Golden Batch process optimization for process manufacturing,
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfguide-golden-batch-process-optimization-with-cortex-ai
+feedback_link: https://github.com/Snowflake-Labs/sfguides/issues
+fork_repo_link: https://github.com/Snowflake-Labs/sfguide-golden-batch-process-optimization-with-cortex-ai
 
 
 # Golden Batch Process Optimization with Cortex AI
@@ -152,7 +152,6 @@ The repository contains the complete SQL setup scripts, ML notebook, Streamlit d
 - [Cortex Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Snowflake ML Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
-- [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
 - [Snowpark Documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 - [Streamlit in Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
