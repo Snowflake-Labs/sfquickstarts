@@ -134,7 +134,7 @@ GROUP BY CREATOR_ID;
 
 ### Verify the Dynamic Table
 
-Upload `notebooks/snowflake_ml_demo.py` to Snowsight as a Python Notebook and run the first few cells:
+Upload `notebooks/creator_brand_match.py` to Snowsight as a Python Notebook and run the first few cells:
 
 ```python
 from snowflake.snowpark.context import get_active_session
@@ -298,22 +298,19 @@ V1 automatically gets `PREDICT`, `PREDICT_PROBA`, and `EXPLAIN` endpoints with z
 
 ### Batch Inference via Warehouse
 
-Score all creators using the warehouse. No infrastructure to manage:
+Score all creators using SQL-based inference. This approach keeps CREATOR_ID in scope and runs entirely on the warehouse:
 
 ```python
-features_df = session.table("CC_DEMO.ML.CREATOR_ENGAGEMENT_FEATURES")
-
-scored = mv.run(
-    features_df.select(feature_cols),
-    function_name="predict_proba",
-)
-
-results = features_df.select("CREATOR_ID").join(
-    scored, how="inner", lsuffix="_L"
-).select(
-    "CREATOR_ID",
-    scored['"output_feature_1"'].alias("MATCH_SCORE"),
-).order_by('"MATCH_SCORE"', ascending=False)
+results = session.sql("""
+    SELECT
+        e.CREATOR_ID,
+        CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_PROBA(
+            e.SESSIONS_7D, e.AVG_CTR_7D, e.PURCHASES_7D,
+            e.GMV_7D, e.UNIQUE_BRANDS_7D, e.AVG_ENGAGEMENT_7D
+        ):"output_feature_1"::FLOAT AS MATCH_SCORE
+    FROM CC_DEMO.ML.CREATOR_ENGAGEMENT_FEATURES e
+    ORDER BY MATCH_SCORE DESC
+""")
 
 print("Top 10 Creators by Match Score:")
 results.show(10)
@@ -426,12 +423,14 @@ mv2 = reg.log_model(
 
 ```sql
 -- Match score only
-WITH MV AS MODEL CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH VERSION V2
-SELECT MV!PREDICT_MATCH_SCORE(10, 0.05, 3, 150.0, 5, 0.7) AS SCORE;
+SELECT CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_MATCH_SCORE(
+    10, 0.05, 3, 150.0, 5, 0.7
+) AS SCORE;
 
 -- Score with per-feature contributions
-WITH MV AS MODEL CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH VERSION V2
-SELECT MV!PREDICT_WITH_FEATURES(10, 0.05, 3, 150.0, 5, 0.7) AS EXPLAINED;
+SELECT CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_WITH_FEATURES(
+    10, 0.05, 3, 150.0, 5, 0.7
+) AS EXPLAINED;
 ```
 
 <!-- ------------------------ -->
@@ -512,27 +511,30 @@ The companion repository includes a 6-page Streamlit app. Deploy it to Snowflake
 Use the model to enrich creator profiles with ML-inferred attributes:
 
 ```python
-# Score all creators
-scored_df = mv.run(
-    features_df.select(feature_cols),
-    function_name="predict_proba",
-)
-
-# Join scores back to creators and assign tiers
+# Score all creators via SQL and build enriched profiles
 session.sql("""
     CREATE OR REPLACE TABLE CC_DEMO.ML.CREATOR_PROFILES AS
+    WITH scored AS (
+        SELECT
+            e.CREATOR_ID,
+            CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_PROBA(
+                e.SESSIONS_7D, e.AVG_CTR_7D, e.PURCHASES_7D,
+                e.GMV_7D, e.UNIQUE_BRANDS_7D, e.AVG_ENGAGEMENT_7D
+            ):"output_feature_1"::FLOAT AS MATCH_SCORE
+        FROM CC_DEMO.ML.CREATOR_ENGAGEMENT_FEATURES e
+    )
     SELECT
         c.CREATOR_ID, c.CREATOR_NAME, c.CATEGORY, c.FOLLOWER_COUNT,
-        s."output_feature_1" AS MATCH_SCORE,
+        s.MATCH_SCORE,
         CASE
-            WHEN s."output_feature_1" >= 0.7 THEN 'PREMIUM'
-            WHEN s."output_feature_1" >= 0.2 THEN 'STANDARD'
+            WHEN s.MATCH_SCORE >= 0.50 THEN 'PREMIUM'
+            WHEN s.MATCH_SCORE >= 0.30 THEN 'STANDARD'
             ELSE 'EMERGING'
         END AS CREATOR_TIER,
-        ROUND(s."output_feature_1" * 100, 1) AS CONTENT_QUALITY_SCORE,
+        ROUND(s.MATCH_SCORE * 100, 1) AS CONTENT_QUALITY_SCORE,
         c.CATEGORY AS BRAND_AFFINITY_CLUSTER
     FROM CC_DEMO.RAW.CREATORS c
-    JOIN scored_results s ON c.CREATOR_ID = s.CREATOR_ID
+    JOIN scored s ON c.CREATOR_ID = s.CREATOR_ID
 """).collect()
 ```
 
@@ -540,9 +542,9 @@ session.sql("""
 
 | Tier | Target % | Description |
 |------|----------|-------------|
-| PREMIUM | ~12% | High-value creators with strong engagement |
-| STANDARD | ~41% | Consistent performers with moderate scores |
-| EMERGING | ~48% | Growing creators with developing engagement |
+| PREMIUM | ~18% | High-value creators with strong engagement |
+| STANDARD | ~25% | Consistent performers with moderate scores |
+| EMERGING | ~57% | Growing creators with developing engagement |
 
 ### Validate
 
