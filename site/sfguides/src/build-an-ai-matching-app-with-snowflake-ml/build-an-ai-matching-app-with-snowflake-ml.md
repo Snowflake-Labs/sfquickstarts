@@ -73,7 +73,7 @@ Or use the provided conda environment file:
 
 ```bash
 conda env create -f notebooks/environment.yml
-conda activate snowflake-ml-demo
+conda activate creator_brand_match
 ```
 
 ### Run the Setup SQL
@@ -374,7 +374,7 @@ V1 provides automatic endpoints, but sometimes you need custom business logic. V
 - `predict_with_features` - Score plus per-feature contributions (SHAP workaround)
 
 ```python
-import tempfile, joblib
+import tempfile, joblib, xgboost as xgb
 from snowflake.ml.model import custom_model
 
 tmp_dir = tempfile.mkdtemp()
@@ -388,7 +388,7 @@ class CreatorMatchMultiEndpoint(custom_model.CustomModel):
         self.model = joblib.load(context.path("xgb_model"))
 
     @custom_model.inference_api
-    def predict_match_score(self, input_df):
+    def predict_match_score(self, input_df: pd.DataFrame) -> pd.DataFrame:
         proba = self.model.predict_proba(input_df)[:, 1]
         return pd.DataFrame({"MATCH_SCORE": proba})
 
@@ -400,11 +400,11 @@ class CreatorMatchMultiEndpoint(custom_model.CustomModel):
         return result.sort_values("MATCH_SCORE", ascending=False).reset_index(drop=True)
 
     @custom_model.inference_api
-    def predict_with_features(self, input_df):
-        import xgboost as xgb
+    def predict_with_features(self, input_df: pd.DataFrame) -> pd.DataFrame:
         proba = self.model.predict_proba(input_df)[:, 1]
+        booster = self.model.get_booster()
         dmat = xgb.DMatrix(input_df)
-        contribs = self.model.get_booster().predict(dmat, pred_contribs=True)
+        contribs = booster.predict(dmat, pred_contribs=True)
         result = pd.DataFrame({"MATCH_SCORE": proba})
         for i, col in enumerate(input_df.columns):
             result[f"{col}_CONTRIB"] = contribs[:, i]
