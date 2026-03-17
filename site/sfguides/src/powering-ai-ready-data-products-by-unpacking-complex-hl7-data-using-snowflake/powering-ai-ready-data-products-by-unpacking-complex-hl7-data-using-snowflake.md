@@ -11,7 +11,6 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-powering-AI-Ready-Data
 # Powering AI-Ready Data Products by Unpacking Complex HL7 Data Using Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 This guide walks you through building a **Unified Healthcare Intelligence Platform** that combines Population Health Analytics with Cancer Pathology Intelligence, all powered by Snowflake Cortex AI.
 
@@ -41,11 +40,10 @@ You will ingest HL7 v2.7 cancer pathology messages (optionally via OpenFlow real
 
 <!-- ------------------------ -->
 ## Setup Infrastructure
-Duration: 5
 
 ### Clone the Repository
 
-Clone or download the GitHub repository:
+Clone or download the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-powering-AI-Ready-Data-Products-by-unpacking-complex-HL7-data-using-Snowflake):
 
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-powering-AI-Ready-Data-Products-by-unpacking-complex-HL7-data-using-Snowflake.git
@@ -66,8 +64,7 @@ This script creates the following objects:
 | Stage | `STAGING.DATA_STAGE` |
 | (Optional) OpenFlow | `OPENFLOW_DB`, `OPENFLOW_ADMIN` role, compute pool |
 
-> aside positive
-> The script must be run with `ACCOUNTADMIN` role. Subsequent scripts use the `HEALTHCARE_ANALYST_ROLE`.
+**Note:** The script must be run with `ACCOUNTADMIN` role. Subsequent scripts use the `HEALTHCARE_ANALYST_ROLE`.
 
 **Verify:**
 
@@ -79,7 +76,6 @@ You should see: `POPULATION_HEALTH`, `CANCER_PATHOLOGY`, `ANALYTICS`, `STAGING`,
 
 <!-- ------------------------ -->
 ## Create Tables and Procedures
-Duration: 5
 
 Execute the contents of `scripts/02_create_tables.sql`.
 
@@ -113,7 +109,6 @@ SHOW TABLES IN SCHEMA HL7_PATHOLOGY_AI.CANCER_PATHOLOGY;
 
 <!-- ------------------------ -->
 ## Upload and Load Data
-Duration: 5
 
 ### Upload CSV Files to Stage
 
@@ -151,7 +146,6 @@ UNION ALL SELECT 'CONDITIONS', COUNT(*) FROM POPULATION_HEALTH.CONDITIONS;
 
 <!-- ------------------------ -->
 ## Load HL7 Data — Choose Your Path
-Duration: 10
 
 At this point, choose **one** of the following methods to load HL7 pathology messages:
 
@@ -234,7 +228,6 @@ SELECT COUNT(*) FROM CANCER_PATHOLOGY.LANDING_HL7_MESSAGES;
 
 <!-- ------------------------ -->
 ## Run HL7 Pathology Pipeline
-Duration: 5
 
 Execute the contents of `scripts/04_run_pipeline.sql`.
 
@@ -272,7 +265,6 @@ LIMIT 10;
 
 <!-- ------------------------ -->
 ## Create Analytics Layer
-Duration: 5
 
 Execute the contents of `scripts/05_setup_analytics.sql`.
 
@@ -309,7 +301,6 @@ SHOW CORTEX SEARCH SERVICES IN SCHEMA ANALYTICS;
 
 <!-- ------------------------ -->
 ## Create Intelligence Agent
-Duration: 5
 
 Execute the contents of `scripts/06_setup_agent.sql`.
 
@@ -332,7 +323,6 @@ DESCRIBE AGENT HL7_PATHOLOGY_AI.ANALYTICS.HL7_PATHOLOGY_AGENT;
 
 <!-- ------------------------ -->
 ## Test the Platform
-Duration: 5
 
 ### Test via SQL
 
@@ -389,7 +379,6 @@ FROM CANCER_PATHOLOGY.GOLD_CANCER_PATHOLOGY_REPORTS;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 When you are done with the guide, you can clean up all objects by executing `scripts/teardown.sql`.
 
@@ -404,12 +393,10 @@ This removes:
 -- Execute the contents of: scripts/teardown.sql
 ```
 
-> aside negative
-> This is a destructive operation. Make sure you no longer need the data before running the teardown script.
+**Warning:** This is a destructive operation. Make sure you no longer need the data before running the teardown script.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You have successfully built a **Unified Healthcare Intelligence Platform** that:
 
