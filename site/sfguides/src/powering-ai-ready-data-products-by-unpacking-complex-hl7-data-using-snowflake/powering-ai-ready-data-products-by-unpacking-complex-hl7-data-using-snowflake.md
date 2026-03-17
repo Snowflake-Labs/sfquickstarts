@@ -6,7 +6,7 @@ summary: Build a unified healthcare intelligence platform that transforms HL7 v2
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfguide-powering-AI-Ready-Data-Products-by-unpacking-complex-HL7-data-using-Snowflake
+fork_repo_link: https://github.com/Snowflake-Labs/sfguide-powering-AI-Ready-Data-Products-by-unpacking-complex-HL7-data-using-Snowflake
 
 # Powering AI-Ready Data Products by Unpacking Complex HL7 Data Using Snowflake
 <!-- ------------------------ -->
