@@ -323,7 +323,9 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
 
 ### Step 3: Provision Iceberg Tables & Snowflake Objects (Database, Schema, Stages, Tables)
 
-> All SQL commands for this step are in [`assets/setup.sql`](assets/setup.sql). Before running, update `<account-id>` with your AWS account ID. Clone the repository in your local machine, go to the assets folder and run the following prompt using Cortex Code CLI (replace the AWS ACCOUNT ID with yours.
+Clone the [`git repository`](https://github.com/Snowflake-Labs/sfquickstarts) into your local machine and navigate to the folder **site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/**
+
+> All SQL commands for this step are in [`assets/setup.sql`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/setup.sql).Run the following prompt using Cortex Code CLI (replace the AWS ACCOUNT ID with yours.
 
 `Run the setup.sql script by replacing the <account-id> with <01234554634> and access the data to upload into the stage from the data folder in this path`
 
@@ -346,7 +348,7 @@ The setup script performs the following sub-steps in order:
 
 1. **Create a Notebook in Snowsight**
    - Navigate to **Snowsight → Notebooks → Create Notebook**
-   - Upload the notebook from the cloned repository located in **spark-jobs** folder
+   - Upload the notebook from the cloned repository located in **assets** folder
     ![Upload Notebook](assets/upload_notebook_into_snowsight.png)
    - Also, Upload the `fraud_model.py` script to the notebook environment
 
@@ -355,14 +357,14 @@ The setup script performs the following sub-steps in order:
      ![Install Package in Notebook](assets/install_packages_into_notebook.png)
 
 3. **Run the Feature Engineering notebook**
-   - Run through [`assets/Insurance-Claims-Feature-Engineering.ipynb`](assets/Insurance-Claims-Feature-Engineering.ipynb) notebook
+   - Run through [`Insurance-Claims-Feature-Engineering.ipynb`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/Insurance-Claims-Feature-Engineering.ipynb) notebook from SnowSight UI
    - This notebook reads from both Iceberg tables (via Catalog Linked Database) and Native tables, performs feature engineering and fraud scoring, and writes the enriched output to the `CLAIMS_PROCESSED_FEATURES` table
 
 ### Step 5: Enable Cortex Analyst, Cortex Agent, and Snowflake Intelligence
 
-Run through the [`assets/cortex_analyst_snowflake_intelligence_setup.sql`](assets/cortex_analyst_snowflake_intelligence_setup.sql) script using CoCo CLI with the following prompt:
+Run through the [`cortex_analyst_snowflake_intelligence_setup.sql`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/cortex_analyst_snowflake_intelligence_setup.sql) script using CoCo CLI with the following prompt:
 
-`Run the cortex_analyst_snowflake_intelligence_setup.sql script to create the semantic view by uploading the claims_semantic_view.yaml from the semantic_models folder, setup Cortex Analyst,
+`Run the cortex_analyst_snowflake_intelligence_setup.sql script to create the semantic view by uploading the claims_semantic_view.yaml from assets folder, setup Cortex Analyst,
 Cortex Agent and enable Snowflake Intelligence` 
 
 This runs through the following steps:
