@@ -181,7 +181,7 @@ fs = FeatureStore(
 creator_entity = Entity(
     name="CREATOR",
     join_keys=["CREATOR_ID"],
-    desc="Creator on the commerce platform",
+    desc="Creator — lifestyle influencer on the platform",
 )
 fs.register_entity(creator_entity)
 
@@ -193,8 +193,16 @@ engagement_fv = FeatureView(
     feature_df=engagement_df,
     timestamp_col="FEATURE_TIMESTAMP",
     refresh_freq="2 minutes",
-    desc="Rolling 7-day creator engagement metrics",
+    desc="Rolling 7-day creator engagement metrics from behavioral events",
 )
+engagement_fv = engagement_fv.attach_feature_desc({
+    "SESSIONS_7D": "Distinct sessions in last 7 days",
+    "AVG_CTR_7D": "Average click-through rate (7d)",
+    "PURCHASES_7D": "Total purchases driven (7d)",
+    "GMV_7D": "Total gross merchandise value driven (7d)",
+    "UNIQUE_BRANDS_7D": "Distinct brands interacted with (7d)",
+    "AVG_ENGAGEMENT_7D": "Average engagement score (7d)",
+})
 engagement_fv = fs.register_feature_view(feature_view=engagement_fv, version="V1")
 ```
 
@@ -230,34 +238,63 @@ Train an XGBoost classifier on the 6 engagement features to predict creator-bran
 
 ```python
 import xgboost as xgb
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import roc_auc_score, f1_score, classification_report
 
 feature_cols = [
     "SESSIONS_7D", "AVG_CTR_7D", "PURCHASES_7D",
     "GMV_7D", "UNIQUE_BRANDS_7D", "AVG_ENGAGEMENT_7D",
 ]
+label_col = "CONVERTED"
 
 df = training_pd.dropna(subset=feature_cols)
 X = df[feature_cols].fillna(0)
-y = df["CONVERTED"].astype(int)
+y = df[label_col].astype(int)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-model = xgb.XGBClassifier(
-    n_estimators=200, max_depth=6, learning_rate=0.1,
+# --- Baseline model (V0) ---
+baseline_model = xgb.XGBClassifier(
+    n_estimators=100, max_depth=4, learning_rate=0.1,
     eval_metric="logloss", random_state=42,
 )
-model.fit(X_train, y_train)
+baseline_model.fit(X_train, y_train)
+baseline_auc = roc_auc_score(y_test, baseline_model.predict_proba(X_test)[:, 1])
+print(f"Baseline AUC-ROC: {baseline_auc:.4f}")
 
+# --- Hyperparameter optimization via GridSearchCV ---
+param_grid = {
+    "max_depth": [4, 6, 8],
+    "n_estimators": [100, 200],
+    "learning_rate": [0.05, 0.1],
+}
+
+grid_search = GridSearchCV(
+    estimator=xgb.XGBClassifier(eval_metric="logloss", random_state=42),
+    param_grid=param_grid,
+    cv=3,
+    scoring="roc_auc",
+    n_jobs=-1,
+    verbose=1,
+)
+grid_search.fit(X_train, y_train)
+
+model = grid_search.best_estimator_
+print(f"\nBest parameters: {grid_search.best_params_}")
+print(f"Best CV AUC-ROC: {grid_search.best_score_:.4f}")
+
+y_pred = model.predict(X_test)
 y_prob = model.predict_proba(X_test)[:, 1]
-auc = roc_auc_score(y_test, y_prob)
-f1 = f1_score(y_test, model.predict(X_test))
 
-print(f"AUC-ROC: {auc:.4f}")
-print(f"F1 Score: {f1:.4f}")
+auc = roc_auc_score(y_test, y_prob)
+f1 = f1_score(y_test, y_pred)
+
+print(f"\nOptimized model — Test AUC-ROC: {auc:.4f}  (baseline: {baseline_auc:.4f})")
+print(f"Optimized model — Test F1 Score: {f1:.4f}")
+print()
+print(classification_report(y_test, y_pred, target_names=["No Match", "Match"]))
 ```
 
 You should see AUC around **0.70** and F1 around **0.65**, indicating the model has learned meaningful patterns from the engagement features.
@@ -272,28 +309,41 @@ from snowflake.ml.model import task
 
 reg = Registry(session=session, database_name="CC_DEMO", schema_name="ML_REGISTRY")
 
-mv = reg.log_model(
-    model=model,
-    model_name="CREATOR_BRAND_MATCH",
-    version_name="V1",
-    conda_dependencies=["xgboost"],
-    sample_input_data=X_test.head(10),
-    comment="XGBoost creator-brand match model",
-    metrics={"auc_roc": round(auc, 4), "f1_score": round(f1, 4)},
-    task=task.Task.TABULAR_BINARY_CLASSIFICATION,
-)
+try:
+    mv = reg.get_model("CREATOR_BRAND_MATCH").version("V1")
+    print("Model CREATOR_BRAND_MATCH V1 already exists — using existing version")
+except:
+    mv = reg.log_model(
+        model=model,
+        model_name="CREATOR_BRAND_MATCH",
+        version_name="V1",
+        conda_dependencies=["xgboost"],
+        sample_input_data=X_test.head(10),
+        comment="XGBoost creator-brand match model",
+        metrics={"auc_roc": round(auc, 4), "f1_score": round(f1, 4)},
+        task=task.Task.TABULAR_BINARY_CLASSIFICATION,
+    )
+    print("Model: CREATOR_BRAND_MATCH V1 — logged to registry")
+print(f"\nAvailable functions:")
+for fn in mv.show_functions():
+    print(f"  {fn['name']} ({fn['target_method_function_type']})")
+print(f"\nStored metrics: {mv.show_metrics()}")
 
 # Set default version and production alias
 m = reg.get_model("CREATOR_BRAND_MATCH")
 m.default = "V1"
 
-session.sql("""
-    ALTER MODEL CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH
-    VERSION V1 SET ALIAS = PRODUCTION
-""").collect()
+try:
+    session.sql("""
+        ALTER MODEL CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH
+        VERSION V1 SET ALIAS = PRODUCTION
+    """).collect()
+    print("Alias 'PRODUCTION' set on V1")
+except:
+    print("Alias 'PRODUCTION' already exists on V1")
 
-print(f"Registered functions: {[fn['name'] for fn in mv.show_functions()]}")
-print(f"Metrics: {mv.show_metrics()}")
+print("\nModel versions:")
+print(m.show_versions().to_string())
 ```
 
 V1 automatically gets `PREDICT`, `PREDICT_PROBA`, and `EXPLAIN` endpoints with zero additional code.
@@ -331,7 +381,7 @@ mv.create_service(
     service_compute_pool="CC_COMPUTE_POOL",
     ingress_enabled=True,
     min_instances=0,   # Scale to zero when idle
-    max_instances=2,
+    max_instances=3,
 )
 ```
 
@@ -448,10 +498,11 @@ Cortex Search provides hybrid semantic search (vector + keyword + reranking) wit
 ```python
 session.sql("""
     CREATE OR REPLACE CORTEX SEARCH SERVICE CC_DEMO.RAW.CREATOR_CONTENT_SEARCH
-    ON CONTENT_TEXT
-    ATTRIBUTES CATEGORY, PLATFORM
-    WAREHOUSE = CC_ML_WH
-    TARGET_LAG = '1 hour'
+        ON content_text
+        ATTRIBUTES category, creator_id, platform
+        WAREHOUSE = CC_ML_WH
+        TARGET_LAG = '1 day'
+        EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
     AS (
         SELECT CREATOR_ID, CONTENT_TEXT, CATEGORY, PLATFORM
         FROM CC_DEMO.RAW.CREATOR_CONTENT
@@ -472,12 +523,12 @@ search_svc = (root
 )
 
 results = search_svc.search(
-    query="sustainable fashion influencer",
-    columns=["content_text", "creator_id", "category", "platform"],
-    filter={"@eq": {"category": "fashion"}},
-    limit=5,
+    query="eco-friendly beauty products",
+    columns=["CREATOR_ID", "CONTENT_TEXT", "CATEGORY"],
+    limit=3,
 )
-print(results.to_json())
+for r in results.results:
+    print(f"  {r['CREATOR_ID']} | {r['CATEGORY']:8s} | {r['CONTENT_TEXT'][:60]}")
 ```
 
 This returns ranked results combining semantic understanding with keyword matching, filtered by category. Response time is typically under 200ms.
@@ -502,7 +553,7 @@ The [assets folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/
 
 **Page 3: Inference & API** - Interactive form to test batch predictions. Enter creator features and get a real-time match score. Includes REST API reference for external integration.
 
-**Page 4: CDP Profiles** - Creator tier distribution (PREMIUM / STANDARD / EMERGING) based on ML scores. Brand affinity clusters and enriched profile data.
+**Page 4: CDP Profiles** - Creator tier distribution (PREMIUM / STANDARD / EMERGING) based on ML scores. Brand affinity clusters (POWER_CONVERTER, NICHE_SPECIALIST, BROAD_REACH, EMERGING_TALENT) and enriched profile data.
 
 **Page 5: Cortex Search** - Interactive hybrid search over creator content with category and platform filters.
 
@@ -513,34 +564,65 @@ The [assets folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/
 
 ### Score All Creators and Assign Tiers
 
-Use the model to enrich creator profiles with ML-inferred attributes:
+Use the model to enrich creator profiles with ML-inferred attributes. This is a two-step process: first score all creators, then build enriched profiles with tier assignments and brand affinity clusters.
 
 ```python
-# Score all creators via SQL and build enriched profiles
+# Step 1: Batch inference — score all creators via SQL function
+print("Step 1: Batch inference on all creators...")
 session.sql("""
-    CREATE OR REPLACE TABLE CC_DEMO.ML.CREATOR_PROFILES AS
+    CREATE OR REPLACE TABLE CC_DEMO.ML.MATCH_PREDICTIONS AS
     WITH scored AS (
         SELECT
             e.CREATOR_ID,
+            e.SESSIONS_7D, e.AVG_CTR_7D, e.PURCHASES_7D,
+            e.GMV_7D, e.UNIQUE_BRANDS_7D, e.AVG_ENGAGEMENT_7D,
             CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_PROBA(
                 e.SESSIONS_7D, e.AVG_CTR_7D, e.PURCHASES_7D,
                 e.GMV_7D, e.UNIQUE_BRANDS_7D, e.AVG_ENGAGEMENT_7D
-            ):"output_feature_1"::FLOAT AS MATCH_SCORE
+            ) AS RAW_SCORE
         FROM CC_DEMO.ML.CREATOR_ENGAGEMENT_FEATURES e
     )
     SELECT
-        c.CREATOR_ID, c.CREATOR_NAME, c.CATEGORY, c.FOLLOWER_COUNT,
-        s.MATCH_SCORE,
-        CASE
-            WHEN s.MATCH_SCORE >= 0.50 THEN 'PREMIUM'
-            WHEN s.MATCH_SCORE >= 0.30 THEN 'STANDARD'
-            ELSE 'EMERGING'
-        END AS CREATOR_TIER,
-        ROUND(s.MATCH_SCORE * 100, 1) AS CONTENT_QUALITY_SCORE,
-        c.CATEGORY AS BRAND_AFFINITY_CLUSTER
-    FROM CC_DEMO.RAW.CREATORS c
-    JOIN scored s ON c.CREATOR_ID = s.CREATOR_ID
+        CREATOR_ID, SESSIONS_7D, AVG_CTR_7D, PURCHASES_7D,
+        GMV_7D, UNIQUE_BRANDS_7D, AVG_ENGAGEMENT_7D,
+        RAW_SCORE:"output_feature_1"::FLOAT AS MATCH_SCORE,
+        CURRENT_TIMESTAMP()::TIMESTAMP_NTZ AS SCORED_AT
+    FROM scored
 """).collect()
+pred_count = session.sql("SELECT COUNT(*) AS N FROM CC_DEMO.ML.MATCH_PREDICTIONS").collect()[0]["N"]
+print(f"  Scored {pred_count} creators → CC_DEMO.ML.MATCH_PREDICTIONS")
+
+# Step 2: Build enriched profile with tiers and clusters
+print("\nStep 2: Building enriched CREATOR_PROFILES...")
+session.sql("""
+    CREATE OR REPLACE TABLE CC_DEMO.ML.CREATOR_PROFILES AS
+    WITH interaction_stats AS (
+        SELECT
+            CREATOR_ID,
+            AVG(CASE WHEN CONVERTED THEN 1 ELSE 0 END) AS CONVERSION_RATE,
+            COUNT(DISTINCT BRAND_ID) AS BRAND_COUNT
+        FROM CC_DEMO.RAW.CREATOR_BRAND_INTERACTIONS
+        GROUP BY CREATOR_ID
+    )
+    SELECT
+        c.CREATOR_ID, c.CREATOR_NAME, c.CATEGORY, c.FOLLOWER_COUNT, c.COUNTRY,
+        s.SESSIONS_7D, s.AVG_CTR_7D, s.AVG_ENGAGEMENT_7D,
+        s.MATCH_SCORE,
+        CASE WHEN s.MATCH_SCORE >= 0.50 THEN 'PREMIUM'
+             WHEN s.MATCH_SCORE >= 0.30 THEN 'STANDARD'
+             ELSE 'EMERGING' END AS CREATOR_TIER,
+        LEAST(100, GREATEST(0, ROUND(s.AVG_ENGAGEMENT_7D * 100 / 0.15, 1)))
+            AS CONTENT_QUALITY_SCORE,
+        CASE WHEN i.CONVERSION_RATE > 0.7 AND i.BRAND_COUNT >= 5 THEN 'POWER_CONVERTER'
+             WHEN i.CONVERSION_RATE > 0.5 AND i.BRAND_COUNT < 5  THEN 'NICHE_SPECIALIST'
+             WHEN i.BRAND_COUNT >= 8                               THEN 'BROAD_REACH'
+             ELSE 'EMERGING_TALENT' END AS BRAND_AFFINITY_CLUSTER
+    FROM CC_DEMO.RAW.CREATORS c
+    JOIN CC_DEMO.ML.MATCH_PREDICTIONS s ON c.CREATOR_ID = s.CREATOR_ID
+    LEFT JOIN interaction_stats i ON c.CREATOR_ID = i.CREATOR_ID
+""").collect()
+profile_count = session.sql("SELECT COUNT(*) AS N FROM CC_DEMO.ML.CREATOR_PROFILES").collect()[0]["N"]
+print(f"  Built {profile_count} enriched profiles → CC_DEMO.ML.CREATOR_PROFILES")
 ```
 
 ### Expected Tier Distribution
