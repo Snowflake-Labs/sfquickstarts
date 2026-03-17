@@ -23,7 +23,7 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 - Basic familiarity with SQL and Python
 - Understanding of machine learning concepts (classification, training/test split, AUC)
 
-### What You Will Learn
+### What You'll Learn
 
 - How to use **Dynamic Tables** for automated feature engineering from behavioral event data
 - How to register entities and feature views in the **Snowflake Feature Store** with online serving
@@ -32,14 +32,14 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 - How to create a **Cortex Search** service for hybrid semantic search over creator content
 - How to build a multi-page **Streamlit in Snowflake** dashboard that ties all components together
 
-### What You Will Need
+### What You'll Need
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_) (Enterprise Edition or higher recommended)
 - A role with privileges to create databases, schemas, warehouses, compute pools, and Streamlit apps
 - Python 3.9+ with `pip` ([Miniconda](https://docs.conda.io/en/latest/miniconda.html) recommended)
 - A SQL client or [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) for running setup scripts
 
-### What You Will Build
+### What You'll Build
 
 - A Dynamic Table that auto-refreshes engagement features from 500K behavioral events
 - A Feature Store with a CREATOR entity and feature views for training and online serving
