@@ -7,7 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake ML, Model Registry, Feature Store, SPCS, Cortex Search, Dynamic Tables, Streamlit, XGBoost, Machine Learning, Creator Economy, Model Monitoring
-Duration: 60
+Duration: 90
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets
 
 # Build an AI Matching App with Snowflake ML
@@ -112,13 +112,13 @@ git sparse-checkout set site/sfguides/src/build-an-ai-matching-app-with-snowflak
 ### Install Python Dependencies
 
 ```bash
-pip install snowflake-ml-python>=1.7.0 snowflake-connector-python xgboost scikit-learn pandas numpy sentence-transformers
+pip install snowflake-ml-python>=1.7.0 snowflake-connector-python xgboost scikit-learn pandas numpy matplotlib sentence-transformers
 ```
 
-Or use the provided conda environment file:
+Or use the provided conda environment file (after the sparse clone above, run from the `sfquickstarts` directory):
 
 ```bash
-conda env create -f notebooks/environment.yml
+conda env create -f site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets/notebooks/environment.yml
 conda activate creator_brand_match
 ```
 
@@ -193,6 +193,12 @@ from snowflake.snowpark.context import get_active_session
 session = get_active_session()
 session.use_database("CC_DEMO")
 session.use_warehouse("CC_ML_WH")
+
+# Quickstart telemetry tag (required for sfguide tracking)
+session.query_tag = {"origin": "sf_sit-is",
+                     "name": "sfguide_creator_brand_match",
+                     "version": {"major": 1, "minor": 0},
+                     "attributes": {"is_quickstart": 1, "source": "notebook"}}
 
 # Check Dynamic Table status
 session.sql("""
@@ -765,10 +771,40 @@ This returns ranked results combining semantic understanding with keyword matchi
 
 The [assets folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets/app) includes a 6-page Streamlit app. Deploy it to Snowflake:
 
+**Option A — Snowsight UI:**
+
 1. In Snowsight, navigate to **Projects > Streamlit > + Streamlit App**
 2. Name it `CREATOR_MATCH_DEMO` in the `CC_DEMO.APPS` schema
 3. Select `CC_ML_WH` as the warehouse
 4. Replace the default code with the contents of [streamlit_app.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets/app/streamlit_app.py)
+
+**Option B — SQL (reproducible):**
+
+```python
+# Upload app files to a stage and create the Streamlit app via SQL
+session.sql("CREATE STAGE IF NOT EXISTS CC_DEMO.APPS.STREAMLIT_STAGE").collect()
+
+session.file.put(
+    "file://app/streamlit_app.py",
+    "@CC_DEMO.APPS.STREAMLIT_STAGE",
+    auto_compress=False, overwrite=True,
+)
+session.file.put(
+    "file://app/environment.yml",
+    "@CC_DEMO.APPS.STREAMLIT_STAGE",
+    auto_compress=False, overwrite=True,
+)
+
+session.sql("""
+    CREATE OR REPLACE STREAMLIT CC_DEMO.APPS.CREATOR_MATCH_DEMO
+        ROOT_LOCATION = '@CC_DEMO.APPS.STREAMLIT_STAGE'
+        MAIN_FILE = 'streamlit_app.py'
+        QUERY_WAREHOUSE = CC_ML_WH
+        TITLE = 'Creator Match ML Demo'
+""").collect()
+print("Streamlit app created: CC_DEMO.APPS.CREATOR_MATCH_DEMO")
+print("Open in Snowsight: Streamlit > CREATOR_MATCH_DEMO")
+```
 
 ### What Each Page Shows
 
@@ -972,6 +1008,12 @@ except Exception as e:
     print(f"Model Monitor note: {e}")
     print("Monitor may already exist or require specific account features.")
 
+# Verify monitor is active
+print("\nMonitor status:")
+session.sql("""
+    DESCRIBE MODEL MONITOR CC_DEMO.ML_REGISTRY.CREATOR_MATCH_MONITOR
+""").show()
+
 # Query drift metrics
 print("\nDrift metrics (POPULATION_STABILITY_INDEX):")
 try:
@@ -1068,10 +1110,10 @@ AS CALL CC_DEMO.ML.RETRAIN_PROCEDURE();
 
 ### Anomaly Detection
 
-The notebook (Cell 32) demonstrates z-score based outlier detection on creator engagement features. Creators with |z| > 2 on `SESSIONS_7D` or `MATCH_SCORE` are flagged as anomalies:
+The notebook's "Anomaly Detection Teaser" section demonstrates z-score based outlier detection on creator engagement features. Creators with |z| > 2 on `SESSIONS_7D` or `MATCH_SCORE` are flagged as anomalies:
 
 ```python
-# From notebook Cell 32 — z-score anomaly detection
+# From notebook — Anomaly Detection Teaser section
 session.sql("""
     WITH stats AS (
         SELECT AVG(SESSIONS_7D) AS mu_s, STDDEV(SESSIONS_7D) AS sd_s,
@@ -1094,7 +1136,7 @@ For production, consider `snowflake.ml.modeling.anomaly_detection` for unsupervi
 
 ### Embedding Backfill Pipeline
 
-The notebook (Cell 29) demonstrates a zero-downtime embedding model upgrade workflow — the customer's #1 operational pain point. The key steps:
+The notebook's "Embedding Backfill Pipeline" section demonstrates a zero-downtime embedding model upgrade workflow. The key steps:
 
 1. Log new embedding model as V2 in Registry (V1 stays immutable)
 2. Run `model.run_batch()` on GPU compute pool to re-embed the entire corpus
@@ -1104,22 +1146,22 @@ The notebook (Cell 29) demonstrates a zero-downtime embedding model upgrade work
 6. Rollback by switching alias back — old version is still intact
 
 ```python
-# From notebook Cell 29 — compare V1 vs V2 embeddings
+# From notebook — Embedding Backfill Pipeline section
 from sentence_transformers import SentenceTransformer
 
 model_v1 = SentenceTransformer("all-MiniLM-L6-v2")      # Current
 model_v2 = SentenceTransformer("paraphrase-MiniLM-L6-v2")  # Candidate
 
 # Encode and compare cosine similarity between versions
-# Full pipeline in notebook Cell 29
+# Full pipeline in notebook's Embedding Backfill Pipeline section
 ```
 
 ### Advanced Feature Engineering
 
-The notebook (Cell 10b) shows the Snowpark Analytics API for lag-based feature enrichment:
+The notebook's "Feature Engineering" section shows the Snowpark Analytics API for lag-based feature enrichment:
 
 ```python
-# From notebook Cell 10b — compute_lag for temporal features
+# From notebook — Feature Engineering section
 enriched_df = engagement_sp_df.analytics.compute_lag(
     cols=["AVG_ENGAGEMENT_7D", "SESSIONS_7D"],
     lags=[1],

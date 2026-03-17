@@ -1529,6 +1529,12 @@ except Exception as e:
     print(f"Model Monitor note: {e}")
     print("Monitor may already exist or require specific account features.")
 
+# Verify monitor is active
+print("\nMonitor status:")
+session.sql("""
+    DESCRIBE MODEL MONITOR CC_DEMO.ML_REGISTRY.CREATOR_MATCH_MONITOR
+""").show()
+
 # Query drift metrics
 print("\nDrift metrics (POPULATION_STABILITY_INDEX):")
 try:
