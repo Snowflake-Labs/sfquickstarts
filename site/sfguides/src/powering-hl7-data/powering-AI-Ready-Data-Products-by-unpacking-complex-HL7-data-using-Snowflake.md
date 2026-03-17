@@ -1,5 +1,5 @@
 author: Sreedhar Bolneni, Jeevan Rag, Cameron Shimmin
-id: powering-AI-Ready-Data-Products-by-unpacking-complex-HL7-data-using-Snowflake
+id: powering-ai-ready-data-products-by-unpacking-complex-hl7-data-using-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/cortex-ai
 language: en
 summary: Build a unified healthcare intelligence platform that transforms HL7 v2.7 cancer pathology messages into AI-ready data products using Snowflake Cortex AI, OpenFlow, Semantic Views, and Snowflake Intelligence Agents.
