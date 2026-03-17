@@ -42,7 +42,7 @@ A complete fraud detection pipeline featuring:
 
 Follow the [official installation guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to install and configure Cortex Code CLI.
 
-> **Prefer a browser-based experience?** You can also use Cortex Code directly in Snowsight with no local installation. Navigate to **Projects & AI** > **Cortex Code** in Snowsight and enter the same prompts shown in this guide. The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces.
+> **Prefer a browser-based experience?** You can also use Cortex Code directly in Snowsight with no local installation. Look for Cortex Code in the lower-right corner of Snowsight or open it from within a Workspace Notebook, then enter the same prompts shown in this guide. The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces.
 
 ### Verify Snowpark Container Services Access
 
@@ -648,4 +648,7 @@ Web pages:
 - [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/) - Snowflake’s AI native coding agent that boosts ML productivity 
 
 Technical Documentation:
-- [Snowf
+- [Snowflake ML Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview) - Official Snowflake ML developer guide
+- [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) - Getting started with Cortex Code
+- [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) - Deploy and manage containerized workloads
+- [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview) - Register, version, and deploy ML models
