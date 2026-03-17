@@ -1506,17 +1506,18 @@ AS
 
 # %% --- Cell 30b: Model Monitor Setup + Drift Queries ---
 # Create Model Monitor for drift detection
+# Note: CREATE MODEL MONITOR requires the model to be in the current schema context
 print("Creating Model Monitor for drift detection...")
+session.sql("USE SCHEMA CC_DEMO.ML_REGISTRY").collect()
 try:
     session.sql("""
-        CREATE OR REPLACE MODEL MONITOR CC_DEMO.ML_REGISTRY.CREATOR_MATCH_MONITOR
+        CREATE OR REPLACE MODEL MONITOR CREATOR_MATCH_MONITOR
         WITH
-            MODEL = CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH
+            MODEL = CREATOR_BRAND_MATCH
             VERSION = 'V1'
             FUNCTION = 'PREDICT_PROBA'
             SOURCE = CC_DEMO.ML.MATCH_PREDICTIONS
             TIMESTAMP_COLUMN = SCORED_AT
-            BASELINE = CC_DEMO.ML.MATCH_PREDICTIONS
             PREDICTION_SCORE_COLUMNS = ('MATCH_SCORE')
             ID_COLUMNS = ('CREATOR_ID')
             WAREHOUSE = CC_ML_WH

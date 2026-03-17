@@ -48,6 +48,51 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 - A Cortex Search service over 200 creator content records with filtering by category and platform
 - A 6-page Streamlit dashboard: Feature Store explorer, Model Registry viewer, Inference playground, CDP Profiles, Cortex Search, and Model Monitoring
 
+### Architecture
+
+```mermaid
+flowchart LR
+    subgraph Ingest
+        A[RAW Events<br/>500K rows]
+    end
+
+    subgraph Features
+        B[Dynamic Table<br/>2-min refresh]
+        C[Feature Store<br/>Entity + Views]
+    end
+
+    subgraph Train
+        D[XGBoost<br/>GridSearchCV]
+        E[Model Registry<br/>V1 + V2]
+    end
+
+    subgraph Serve
+        F[SPCS REST API<br/>scale-to-zero]
+        G[Cortex Search<br/>hybrid semantic]
+    end
+
+    subgraph Observe
+        H[Model Monitor<br/>PSI drift]
+        I[ML Lineage<br/>auto-tracked]
+    end
+
+    subgraph App
+        J[CDP Profiles<br/>Dynamic Table]
+        K[Streamlit<br/>6-page dashboard]
+    end
+
+    A --> B --> C --> D --> E
+    E --> F
+    E --> H
+    E --> I
+    E -->|batch score| J
+    A -->|content| G
+    F --> K
+    G --> K
+    J --> K
+    H --> K
+```
+
 <!-- ------------------------ -->
 ## Set Up Your Environment
 
@@ -160,6 +205,8 @@ session.table("CC_DEMO.ML.CREATOR_ENGAGEMENT_FEATURES").limit(10).show()
 
 The Dynamic Table refreshes automatically every 2 minutes. No scheduling, no ETL pipelines, no infrastructure to maintain.
 
+> **Expected output:** The `SHOW DYNAMIC TABLES` query returns one row with `scheduling_state = ACTIVE` and `rows` showing `~10,000`. The preview shows 6 numeric features per creator.
+
 <!-- ------------------------ -->
 ## Register Feature Store
 
@@ -207,6 +254,8 @@ engagement_fv = engagement_fv.attach_feature_desc({
 engagement_fv = fs.register_feature_view(feature_view=engagement_fv, version="V1")
 ```
 
+> **Expected output:** `"Entity CREATOR registered"` and `"FeatureView CREATOR_ENGAGEMENT_7D/V1 registered"`. If they already exist, you'll see skip messages — this is normal for re-runs.
+
 ### Register an Online Feature View
 
 Online serving delivers creator profile features in under 30ms for real-time inference. Register a `CREATOR_PROFILE` feature view backed by static creator attributes with online serving enabled:
@@ -236,6 +285,8 @@ except Exception as e:
     print("Note: Online feature tables require Snowflake >= 9.26")
 ```
 
+> **Expected output:** `"Online Feature View: CREATOR_PROFILE vV1"`. If your account doesn't support online serving, you'll see `"Online serving not available on this account"` — the feature view is still registered, just without the online endpoint.
+
 ### Generate a Training Dataset
 
 The Feature Store generates training data with **ASOF joins** to prevent data leakage. Each row gets feature values that were available at the time of the interaction:
@@ -258,6 +309,8 @@ training_pd = training_dataset.to_pandas()
 print(f"Training dataset shape: {training_pd.shape}")
 print(f"Label distribution:\n{training_pd['CONVERTED'].value_counts()}")
 ```
+
+> **Expected output:** `"Training dataset shape: (50000, 10)"` with a roughly 37/63 label split (CONVERTED=1 vs 0).
 
 <!-- ------------------------ -->
 ## Train the Match Model
@@ -327,7 +380,7 @@ print()
 print(classification_report(y_test, y_pred, target_names=["No Match", "Match"]))
 ```
 
-You should see AUC around **0.70** and F1 around **0.65**, indicating the model has learned meaningful patterns from the engagement features.
+You should see AUC in the range **0.65–0.75**, indicating the model has learned meaningful patterns from the engagement features. AUC is the primary metric here because match scoring is a ranking problem — we care about ordering creators correctly, not about a specific probability threshold. F1 will vary more across runs since it depends on the default 0.5 cutoff; the classification report shows the full precision/recall breakdown.
 
 ### Log to Model Registry
 
@@ -378,6 +431,8 @@ print(m.show_versions().to_string())
 
 V1 automatically gets `PREDICT`, `PREDICT_PROBA`, and `EXPLAIN` endpoints with zero additional code.
 
+> **Expected output:** `"Model: CREATOR_BRAND_MATCH V1 — logged to registry"` with three listed functions and stored metrics showing your AUC and F1 values. On re-runs, you'll see `"already exists — using existing version"`.
+
 ### Govern Access with RBAC
 
 Models are first-class Snowflake objects with full RBAC. Grant usage to ML engineers for inference and restrict production promotion to senior roles — no external ACL system needed:
@@ -410,6 +465,8 @@ session.sql("""
 """).show()
 ```
 
+> **Expected output:** The grants table shows `OWNERSHIP` held by `ACCOUNTADMIN` and `USAGE` granted to `SYSADMIN`.
+
 ### Trace ML Lineage
 
 Snowflake tracks object-level lineage automatically. Query `ACCOUNT_USAGE.OBJECT_DEPENDENCIES` to see how raw tables feed Dynamic Tables, which feed Feature Views, which feed model training — all without external orchestration or metadata catalogs:
@@ -439,6 +496,8 @@ Lineage chain (auto-tracked by Snowflake):
 No external lineage tool needed — Snowflake knows the full graph.
 """)
 ```
+
+> **Expected output:** The printed lineage chain shows the full dependency path. Note: The `OBJECT_DEPENDENCIES` query may return empty results for newly created objects — `ACCOUNT_USAGE` views have up to 180 minutes of latency. The printed chain description is always accurate.
 
 <!-- ------------------------ -->
 ## Deploy Real-Time Inference
@@ -478,6 +537,8 @@ mv.create_service(
 ```
 
 > **Tip:** `min_instances=0` enables scale-to-zero. The service auto-suspends after 30 minutes of inactivity, costing nothing when idle. First cold-start takes 2-3 minutes.
+
+> **Expected output:** The service begins provisioning. Run `SHOW SERVICES IN COMPUTE POOL CC_COMPUTE_POOL` to check status — it will show `PENDING` initially, then `READY` after 2-3 minutes.
 
 ### Call the REST API
 
@@ -648,6 +709,8 @@ print(llm_result[0]["EXPLANATION"])
 
 Layer 1 gives you the quantitative "which features matter and by how much." Layer 2 uses `CORTEX.AI_COMPLETE()` to translate those numbers into a business-language narrative — prediction, explanation, and recommendation, entirely in Snowflake.
 
+> **Expected output:** Layer 1 shows SHAP values with `GMV_7D` (~0.47) and `AVG_ENGAGEMENT_7D` (~0.40) as the top two features, followed by `AVG_CTR_7D` (~0.31). Layer 2 produces a 3-4 sentence business narrative explaining why a specific creator is or isn't a good brand match, referencing actual feature values and ending with an actionable recommendation.
+
 <!-- ------------------------ -->
 ## Add Semantic Search
 
@@ -692,6 +755,8 @@ for r in results.results:
 ```
 
 This returns ranked results combining semantic understanding with keyword matching, filtered by category. Response time is typically under 200ms.
+
+> **Expected output:** 3 creator content results with CREATOR_ID, CATEGORY, and a content snippet. If the service is still indexing (takes ~60 seconds after creation), retry after a short wait.
 
 <!-- ------------------------ -->
 ## Build the Streamlit Dashboard
@@ -785,6 +850,8 @@ profile_count = session.sql("SELECT COUNT(*) AS N FROM CC_DEMO.ML.CREATOR_PROFIL
 print(f"  Built {profile_count} enriched profiles → CC_DEMO.ML.CREATOR_PROFILES")
 ```
 
+> **Expected output:** Step 1 scores 10,000 creators with scores ranging from ~0.05 to ~0.96. Step 2 builds 10,000 enriched profiles with tier assignments.
+
 ### Expected Tier Distribution
 
 | Tier | Target % | Description |
@@ -871,6 +938,8 @@ except Exception as e:
     print("CREATOR_PROFILES_LIVE requires MATCH_PREDICTIONS or model to be deployed.")
 ```
 
+> **Expected output:** `"CREATOR_PROFILES_LIVE created — auto-refreshes every 10 minutes"` followed by 5 sample rows showing top creators with `CREATOR_TIER = PREMIUM`, match scores above 0.95, and assigned `BRAND_AFFINITY_CLUSTER` values.
+
 <!-- ------------------------ -->
 ## Monitor Model Drift
 
@@ -880,17 +949,18 @@ Now that `MATCH_PREDICTIONS` exists, attach a Model Monitor for automated drift 
 
 ```python
 # Create Model Monitor for drift detection
+# Note: CREATE MODEL MONITOR requires the model to be in the current schema context
 print("Creating Model Monitor for drift detection...")
+session.sql("USE SCHEMA CC_DEMO.ML_REGISTRY").collect()
 try:
     session.sql("""
-        CREATE OR REPLACE MODEL MONITOR CC_DEMO.ML_REGISTRY.CREATOR_MATCH_MONITOR
+        CREATE OR REPLACE MODEL MONITOR CREATOR_MATCH_MONITOR
         WITH
-            MODEL = CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH
+            MODEL = CREATOR_BRAND_MATCH
             VERSION = 'V1'
             FUNCTION = 'PREDICT_PROBA'
             SOURCE = CC_DEMO.ML.MATCH_PREDICTIONS
             TIMESTAMP_COLUMN = SCORED_AT
-            BASELINE = CC_DEMO.ML.MATCH_PREDICTIONS
             PREDICTION_SCORE_COLUMNS = ('MATCH_SCORE')
             ID_COLUMNS = ('CREATOR_ID')
             WAREHOUSE = CC_ML_WH
@@ -946,6 +1016,8 @@ Available metric functions:
 """)
 ```
 
+> **Expected output:** `"Model Monitor created: CREATOR_MATCH_MONITOR"` with `monitor_state = ACTIVE` and `model_task = TABULAR_BINARY_CLASSIFICATION` (auto-detected). Drift and stats metric queries may return empty results until the monitor completes its first refresh cycle. View the monitor dashboard in Snowsight under **AI & ML > Models > CREATOR_BRAND_MATCH > Monitors**.
+
 <!-- ------------------------ -->
 ## Clean Up
 
@@ -973,6 +1045,104 @@ Or run from the command line:
 ```bash
 snowsql -c <your_connection> -f sql/99_teardown.sql
 ```
+
+<!-- ------------------------ -->
+## Going Further
+
+The notebook (`notebooks/creator_brand_match.py`) includes several additional capabilities beyond this guide. Here are pointers to explore next.
+
+### Scheduled Retraining with Snowflake Tasks
+
+Automate model retraining on a schedule using Snowflake Task DAGs. The pattern chains four tasks: data refresh, training, evaluation, and promotion:
+
+```sql
+-- Example Task DAG for automated retraining (not in the demo notebook)
+CREATE OR REPLACE TASK CC_DEMO.ML.RETRAIN_ROOT
+    WAREHOUSE = CC_ML_WH
+    SCHEDULE = 'USING CRON 0 2 * * 0 America/Los_Angeles'  -- Weekly Sunday 2 AM
+AS CALL CC_DEMO.ML.RETRAIN_PROCEDURE();
+
+-- Chain: root_task >> train >> evaluate >> promote
+-- See: https://docs.snowflake.com/en/user-guide/tasks-intro
+```
+
+### Anomaly Detection
+
+The notebook (Cell 32) demonstrates z-score based outlier detection on creator engagement features. Creators with |z| > 2 on `SESSIONS_7D` or `MATCH_SCORE` are flagged as anomalies:
+
+```python
+# From notebook Cell 32 — z-score anomaly detection
+session.sql("""
+    WITH stats AS (
+        SELECT AVG(SESSIONS_7D) AS mu_s, STDDEV(SESSIONS_7D) AS sd_s,
+               AVG(MATCH_SCORE) AS mu_m, STDDEV(MATCH_SCORE) AS sd_m
+        FROM CC_DEMO.ML.CREATOR_PROFILES
+    )
+    SELECT CREATOR_ID, SESSIONS_7D, MATCH_SCORE,
+           ABS((SESSIONS_7D - mu_s) / NULLIF(sd_s, 0)) AS Z_SESSIONS,
+           ABS((MATCH_SCORE - mu_m) / NULLIF(sd_m, 0)) AS Z_SCORE,
+           'ANOMALY' AS FLAG
+    FROM CC_DEMO.ML.CREATOR_PROFILES CROSS JOIN stats
+    WHERE ABS((SESSIONS_7D - mu_s) / NULLIF(sd_s, 0)) > 2
+       OR ABS((MATCH_SCORE - mu_m) / NULLIF(sd_m, 0)) > 2
+    ORDER BY Z_SESSIONS DESC
+    LIMIT 10
+""").show()
+```
+
+For production, consider `snowflake.ml.modeling.anomaly_detection` for unsupervised detection, combined with a Snowflake Task + notification integration for automated alerting.
+
+### Embedding Backfill Pipeline
+
+The notebook (Cell 29) demonstrates a zero-downtime embedding model upgrade workflow — the customer's #1 operational pain point. The key steps:
+
+1. Log new embedding model as V2 in Registry (V1 stays immutable)
+2. Run `model.run_batch()` on GPU compute pool to re-embed the entire corpus
+3. Store new embeddings as a VECTOR column or new Feature View version
+4. A/B test V1 vs V2 via `fs.generate_dataset()` with version parameter
+5. Promote via atomic alias switch: `ALTER MODEL ... SET ALIAS = 'PRODUCTION'`
+6. Rollback by switching alias back — old version is still intact
+
+```python
+# From notebook Cell 29 — compare V1 vs V2 embeddings
+from sentence_transformers import SentenceTransformer
+
+model_v1 = SentenceTransformer("all-MiniLM-L6-v2")      # Current
+model_v2 = SentenceTransformer("paraphrase-MiniLM-L6-v2")  # Candidate
+
+# Encode and compare cosine similarity between versions
+# Full pipeline in notebook Cell 29
+```
+
+### Advanced Feature Engineering
+
+The notebook (Cell 10b) shows the Snowpark Analytics API for lag-based feature enrichment:
+
+```python
+# From notebook Cell 10b — compute_lag for temporal features
+enriched_df = engagement_sp_df.analytics.compute_lag(
+    cols=["AVG_ENGAGEMENT_7D", "SESSIONS_7D"],
+    lags=[1],
+    partition_by=["CREATOR_ID"],
+    order_by=["FEATURE_TIMESTAMP"],
+)
+```
+
+This creates `AVG_ENGAGEMENT_7D_LAG_1` and `SESSIONS_7D_LAG_1` columns — useful for detecting engagement trends. Requires `snowflake-ml-python >= 1.5.0`.
+
+<!-- ------------------------ -->
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| SPCS service stuck in `PENDING` | Compute pool not ready or insufficient capacity | Run `SHOW COMPUTE POOLS` to check status. Wait for `ACTIVE`/`IDLE` state. If `SUSPENDED`, run `ALTER COMPUTE POOL CC_COMPUTE_POOL RESUME`. |
+| Cortex Search returns empty results | Service still indexing after creation | Wait ~60 seconds after `CREATE CORTEX SEARCH SERVICE`, then retry. Check `SHOW CORTEX SEARCH SERVICES` for indexing status. |
+| `Model version already exists` error | Re-running a cell that logs a model | The notebook uses a try/get/except/log pattern for idempotency. If you see this outside the try block, use `reg.get_model("CREATOR_BRAND_MATCH").version("V1")` to get the existing version. |
+| Online Feature View shows `enable: false` | Account doesn't support online feature tables | The feature view is still registered — just without online serving. Online tables require specific account features. The try/except handles this gracefully. |
+| Lineage query returns empty results | `ACCOUNT_USAGE` views have up to 180-minute latency | This is expected for newly created objects. The printed lineage chain description is always accurate. Check back after 3 hours for populated results. |
+| `CREATE MODEL MONITOR` fails with "Model does not exist" | Fully-qualified model name not resolved | Add `session.sql("USE SCHEMA CC_DEMO.ML_REGISTRY").collect()` before the statement and use the unqualified model name `CREATOR_BRAND_MATCH`. |
+| `compute_lag()` raises an error | Snowpark ML version too old | Requires `snowflake-ml-python >= 1.5.0`. Run `pip install --upgrade snowflake-ml-python`. |
+| `GRANT USAGE ON MODEL` fails | Insufficient privileges | You need `OWNERSHIP` on the model or `MANAGE GRANTS` privilege to grant access to other roles. |
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
