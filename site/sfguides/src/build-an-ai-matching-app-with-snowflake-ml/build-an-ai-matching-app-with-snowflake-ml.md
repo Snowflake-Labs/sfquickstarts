@@ -7,7 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake ML, Model Registry, Feature Store, SPCS, Cortex Search, Dynamic Tables, Streamlit, XGBoost, Machine Learning, Creator Economy, Model Monitoring
-fork repo link: https://github.com/Snowflake-Labs/sfguide-build-an-ai-matching-app-with-snowflake-ml
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets
 
 # Build an AI Matching App with Snowflake ML
 <!-- ------------------------ -->
@@ -35,7 +35,6 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_) (Enterprise Edition or higher recommended)
 - A role with privileges to create databases, schemas, warehouses, compute pools, and Streamlit apps
-- [Git](https://git-scm.com/downloads) installed to clone the companion repository
 - Python 3.9+ with `pip` ([Miniconda](https://docs.conda.io/en/latest/miniconda.html) recommended)
 - A SQL client or [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) for running setup scripts
 
@@ -51,11 +50,17 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 <!-- ------------------------ -->
 ## Set Up Your Environment
 
-### Clone the Companion Repository
+### Download the Source Files
+
+Download the source files from the [assets folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets) on GitHub.
+
+Alternatively, use a sparse clone to download only this guide's files (~5 MB):
 
 ```bash
-git clone https://github.com/Snowflake-Labs/sfguide-build-an-ai-matching-app-with-snowflake-ml.git
-cd sfguide-build-an-ai-matching-app-with-snowflake-ml
+git clone --no-checkout --depth 1 --filter=blob:none --sparse \
+  https://github.com/Snowflake-Labs/sfquickstarts.git
+cd sfquickstarts
+git sparse-checkout set site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets
 ```
 
 ### Install Python Dependencies
@@ -73,7 +78,7 @@ conda activate snowflake-ml-demo
 
 ### Run the Setup SQL
 
-Open a SQL worksheet in Snowsight and run `sql/00_setup.sql`. This creates:
+Open a SQL worksheet in Snowsight and paste the contents of [00_setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets/sql/00_setup.sql). This creates:
 
 - **CC_DEMO** database with 5 schemas: `RAW`, `ML`, `ML_REGISTRY`, `FEATURE_STORE`, `APPS`
 - **CC_ML_WH** warehouse (MEDIUM, auto-suspend 120s)
@@ -89,7 +94,7 @@ Open a SQL worksheet in Snowsight and run `sql/00_setup.sql`. This creates:
 
 ### Generate Synthetic Data
 
-The data generator creates realistic creator-brand interaction data using archetype-driven distributions:
+The data generator creates realistic creator-brand interaction data using archetype-driven distributions. Download [generate_synthetic_data.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets/scripts/generate_synthetic_data.py) and run:
 
 ```bash
 export SNOWFLAKE_CONNECTION_NAME=<your_connection>
@@ -388,11 +393,11 @@ class CreatorMatchMultiEndpoint(custom_model.CustomModel):
         return pd.DataFrame({"MATCH_SCORE": proba})
 
     @custom_model.inference_api
-    def predict_ranked(self, input_df, *, top_k=10):
+    def predict_ranked(self, input_df: pd.DataFrame) -> pd.DataFrame:
         proba = self.model.predict_proba(input_df)[:, 1]
         result = input_df.copy()
         result["MATCH_SCORE"] = proba
-        return result.sort_values("MATCH_SCORE", ascending=False).head(top_k)
+        return result.sort_values("MATCH_SCORE", ascending=False).reset_index(drop=True)
 
     @custom_model.inference_api
     def predict_with_features(self, input_df):
@@ -482,12 +487,12 @@ This returns ranked results combining semantic understanding with keyword matchi
 
 ### Deploy the Dashboard
 
-The companion repository includes a 6-page Streamlit app. Deploy it to Snowflake:
+The [assets folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets/app) includes a 6-page Streamlit app. Deploy it to Snowflake:
 
 1. In Snowsight, navigate to **Projects > Streamlit > + Streamlit App**
 2. Name it `CREATOR_MATCH_DEMO` in the `CC_DEMO.APPS` schema
 3. Select `CC_ML_WH` as the warehouse
-4. Replace the default code with the contents of `app/streamlit_app.py`
+4. Replace the default code with the contents of [streamlit_app.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets/app/streamlit_app.py)
 
 ### What Each Page Shows
 
