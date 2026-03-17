@@ -7,6 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake ML, Model Registry, Feature Store, SPCS, Cortex Search, Dynamic Tables, Streamlit, XGBoost, Machine Learning, Creator Economy, Model Monitoring
+Duration: 60
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-an-ai-matching-app-with-snowflake-ml/assets
 
 # Build an AI Matching App with Snowflake ML
@@ -206,6 +207,35 @@ engagement_fv = engagement_fv.attach_feature_desc({
 engagement_fv = fs.register_feature_view(feature_view=engagement_fv, version="V1")
 ```
 
+### Register an Online Feature View
+
+Online serving delivers creator profile features in under 30ms for real-time inference. Register a `CREATOR_PROFILE` feature view backed by static creator attributes with online serving enabled:
+
+```python
+from snowflake.ml.feature_store.feature_view import OnlineConfig
+
+profile_df = session.sql("""
+    SELECT CREATOR_ID, FOLLOWER_COUNT, CATEGORY, COUNTRY,
+           AVG_ENGAGEMENT AS HISTORICAL_ENGAGEMENT
+    FROM CC_DEMO.RAW.CREATORS
+""")
+
+try:
+    profile_fv = FeatureView(
+        name="CREATOR_PROFILE",
+        entities=[creator_entity],
+        feature_df=profile_df,
+        desc="Static creator profile with online serving for real-time lookups",
+        online_config=OnlineConfig(enable=True, target_lag="30 seconds"),
+    )
+    profile_fv = fs.register_feature_view(feature_view=profile_fv, version="V1")
+    print(f"Online Feature View: {profile_fv.name} v{profile_fv.version}")
+    print(f"Online serving enabled: {profile_fv.online}")
+except Exception as e:
+    print(f"Online serving not available on this account: {e}")
+    print("Note: Online feature tables require Snowflake >= 9.26")
+```
+
 ### Generate a Training Dataset
 
 The Feature Store generates training data with **ASOF joins** to prevent data leakage. Each row gets feature values that were available at the time of the interaction:
@@ -348,6 +378,68 @@ print(m.show_versions().to_string())
 
 V1 automatically gets `PREDICT`, `PREDICT_PROBA`, and `EXPLAIN` endpoints with zero additional code.
 
+### Govern Access with RBAC
+
+Models are first-class Snowflake objects with full RBAC. Grant usage to ML engineers for inference and restrict production promotion to senior roles — no external ACL system needed:
+
+```python
+print("Model RBAC — granting access across teams:")
+
+# Grant inference access to a data science role
+session.sql("""
+    GRANT USAGE ON MODEL CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH
+    TO ROLE SYSADMIN
+""").collect()
+print("  GRANT USAGE ON MODEL → SYSADMIN (can run inference)")
+
+# Note: MODEL objects support USAGE and OWNERSHIP privileges
+# MONITOR is not a valid privilege for MODEL objects
+print("  Note: Use USAGE for inference, OWNERSHIP for full control")
+
+print("""
+RBAC patterns for production:
+  GRANT USAGE ON MODEL ... TO ROLE ML_ENGINEER;      -- inference only
+  GRANT OWNERSHIP ON MODEL ... TO ROLE ML_ADMIN;     -- full control
+  -- Version-level: only ML_ADMIN can SET ALIAS = 'PRODUCTION'
+""")
+
+# Show current grants
+print("Current grants on CREATOR_BRAND_MATCH:")
+session.sql("""
+    SHOW GRANTS ON MODEL CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH
+""").show()
+```
+
+### Trace ML Lineage
+
+Snowflake tracks object-level lineage automatically. Query `ACCOUNT_USAGE.OBJECT_DEPENDENCIES` to see how raw tables feed Dynamic Tables, which feed Feature Views, which feed model training — all without external orchestration or metadata catalogs:
+
+```python
+print("ML Lineage — data-to-model dependency chain:")
+lineage_df = session.sql("""
+    SELECT
+        REFERENCING_OBJECT_NAME   AS DOWNSTREAM,
+        REFERENCING_OBJECT_DOMAIN AS DOWNSTREAM_TYPE,
+        REFERENCED_OBJECT_NAME    AS UPSTREAM,
+        REFERENCED_OBJECT_DOMAIN  AS UPSTREAM_TYPE
+    FROM SNOWFLAKE.ACCOUNT_USAGE.OBJECT_DEPENDENCIES
+    WHERE REFERENCED_DATABASE  = 'CC_DEMO'
+       OR REFERENCING_DATABASE = 'CC_DEMO'
+    ORDER BY DOWNSTREAM
+""")
+lineage_df.show()
+
+print("""
+Lineage chain (auto-tracked by Snowflake):
+  RAW.CREATORS ──► ML.CREATOR_PROFILE$V1 (Feature View)
+  RAW.BEHAVIORAL_EVENTS ──► ML.CREATOR_ENGAGEMENT_FEATURES (Dynamic Table)
+  ML.CREATOR_ENGAGEMENT_FEATURES ──► ML.CREATOR_ENGAGEMENT_7D$V1 (Feature View)
+  Feature Views ──► Model Training ──► ML_REGISTRY.CREATOR_BRAND_MATCH
+
+No external lineage tool needed — Snowflake knows the full graph.
+""")
+```
+
 <!-- ------------------------ -->
 ## Deploy Real-Time Inference
 
@@ -487,6 +579,74 @@ SELECT CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_WITH_FEATURES(
     10, 0.05, 3, 150.0, 5, 0.7
 ) AS EXPLAINED;
 ```
+
+<!-- ------------------------ -->
+## Explain Model Predictions
+
+### Two-Layer Explainability
+
+The Model Registry provides a built-in `EXPLAIN` function, but for production dashboards we use a two-layer approach: quantitative feature contributions via XGBoost's native `pred_contribs` (identical Shapley values, zero dependencies), then Cortex LLM to translate those numbers into actionable business narratives:
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# XGBoost native Shapley values via pred_contribs
+booster = model.get_booster()
+dmat = xgb.DMatrix(X_test)
+shap_values = booster.predict(dmat, pred_contribs=True)
+
+# shap_values shape: (n_samples, n_features + 1) — last column is bias
+feature_importance = np.abs(shap_values[:, :-1]).mean(axis=0)
+
+print("Layer 1 — Quantitative Feature Importance (XGBoost native Shapley values):")
+for name, imp in sorted(zip(feature_cols, feature_importance), key=lambda x: -x[1]):
+    print(f"  {name:25s} {imp:.4f}")
+
+# Bar chart of mean |SHAP| values
+fig, ax = plt.subplots(figsize=(8, 4))
+sorted_idx = np.argsort(feature_importance)
+ax.barh([feature_cols[i] for i in sorted_idx], feature_importance[sorted_idx])
+ax.set_xlabel("Mean |SHAP Value|")
+ax.set_title("Feature Importance — XGBoost Shapley Values")
+plt.tight_layout()
+plt.show()
+
+# --- Layer 2: Cortex LLM Business Narrative ---
+print("\nLayer 2 — Cortex LLM Business Narrative:")
+
+# Pick a sample creator and build context for the LLM
+sample_idx = 0
+sample_features = X_test.iloc[sample_idx]
+sample_shap = shap_values[sample_idx, :-1]  # exclude bias
+
+# Build feature context string
+feature_context = "\n".join(
+    f"  - {name}: value={sample_features[name]:.3f}, SHAP contribution={sample_shap[i]:+.4f}"
+    for i, name in enumerate(feature_cols)
+)
+
+prompt = f"""You are a data analyst for a creator commerce platform. A creator-brand match model
+produced a prediction. Explain WHY this creator is or isn't a good match for the brand,
+using the feature values and their SHAP contributions below. Be specific, reference the
+actual numbers, and end with one actionable recommendation. Keep it to 3-4 sentences.
+
+Feature contributions for this creator:
+{feature_context}
+
+Business explanation:"""
+
+# Escape single quotes for SQL
+safe_prompt = prompt.replace("'", "''")
+
+llm_result = session.sql(f"""
+    SELECT SNOWFLAKE.CORTEX.AI_COMPLETE('claude-3-5-sonnet', '{safe_prompt}') AS EXPLANATION
+""").collect()
+
+print(llm_result[0]["EXPLANATION"])
+```
+
+Layer 1 gives you the quantitative "which features matter and by how much." Layer 2 uses `CORTEX.AI_COMPLETE()` to translate those numbers into a business-language narrative — prediction, explanation, and recommendation, entirely in Snowflake.
 
 <!-- ------------------------ -->
 ## Add Semantic Search
@@ -640,6 +800,150 @@ SELECT CREATOR_TIER, COUNT(*) AS CNT,
        ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER(), 1) AS PCT
 FROM CC_DEMO.ML.CREATOR_PROFILES
 GROUP BY 1 ORDER BY PCT DESC;
+```
+
+### Auto-Refreshing Profiles with a Dynamic Table
+
+The static `CREATOR_PROFILES` table is a one-time snapshot. For production, create a Dynamic Table that auto-recomputes tiers as new events arrive — new events produce new features, which produce new scores, which produce new tier assignments, all without scheduling:
+
+```python
+# Create CREATOR_PROFILES_LIVE as a Dynamic Table that auto-refreshes
+# by joining creators + engagement features + model scores.
+# Tier assignments and quality scores are recomputed on each refresh.
+
+print("Creating CREATOR_PROFILES_LIVE Dynamic Table...")
+try:
+    session.sql("""
+        CREATE OR REPLACE DYNAMIC TABLE CC_DEMO.ML.CREATOR_PROFILES_LIVE
+            TARGET_LAG = '10 minutes'
+            WAREHOUSE = CC_ML_WH
+        AS
+            WITH interaction_stats AS (
+                SELECT
+                    CREATOR_ID,
+                    AVG(CASE WHEN CONVERTED THEN 1 ELSE 0 END) AS CONVERSION_RATE,
+                    COUNT(DISTINCT BRAND_ID) AS BRAND_COUNT
+                FROM CC_DEMO.RAW.CREATOR_BRAND_INTERACTIONS
+                GROUP BY CREATOR_ID
+            ),
+            scored AS (
+                SELECT
+                    e.CREATOR_ID,
+                    CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH!PREDICT_PROBA(
+                        e.SESSIONS_7D, e.AVG_CTR_7D, e.PURCHASES_7D,
+                        e.GMV_7D, e.UNIQUE_BRANDS_7D, e.AVG_ENGAGEMENT_7D
+                    ):"output_feature_1"::FLOAT AS MATCH_SCORE
+                FROM CC_DEMO.ML.CREATOR_ENGAGEMENT_FEATURES e
+            )
+            SELECT
+                c.CREATOR_ID, c.CREATOR_NAME, c.CATEGORY,
+                c.FOLLOWER_COUNT, c.COUNTRY,
+                e.SESSIONS_7D, e.AVG_CTR_7D, e.AVG_ENGAGEMENT_7D,
+                s.MATCH_SCORE,
+                CASE WHEN s.MATCH_SCORE >= 0.50 THEN 'PREMIUM'
+                     WHEN s.MATCH_SCORE >= 0.30 THEN 'STANDARD'
+                     ELSE 'EMERGING' END AS CREATOR_TIER,
+                LEAST(100, GREATEST(0, ROUND(e.AVG_ENGAGEMENT_7D * 100 / 0.15, 1)))
+                    AS CONTENT_QUALITY_SCORE,
+                CASE WHEN i.CONVERSION_RATE > 0.7 AND i.BRAND_COUNT >= 5 THEN 'POWER_CONVERTER'
+                     WHEN i.CONVERSION_RATE > 0.5 AND i.BRAND_COUNT < 5  THEN 'NICHE_SPECIALIST'
+                     WHEN i.BRAND_COUNT >= 8                               THEN 'BROAD_REACH'
+                     ELSE 'EMERGING_TALENT' END AS BRAND_AFFINITY_CLUSTER
+            FROM CC_DEMO.RAW.CREATORS c
+            JOIN CC_DEMO.ML.CREATOR_ENGAGEMENT_FEATURES e ON c.CREATOR_ID = e.CREATOR_ID
+            JOIN scored s ON c.CREATOR_ID = s.CREATOR_ID
+            LEFT JOIN interaction_stats i ON c.CREATOR_ID = i.CREATOR_ID
+    """).collect()
+    print("CREATOR_PROFILES_LIVE created — auto-refreshes every 10 minutes.")
+    print("New events → new features → new scores → new tier assignments. Zero scheduling.")
+
+    # Show sample
+    session.sql("""
+        SELECT CREATOR_ID, CREATOR_NAME, CATEGORY, CREATOR_TIER,
+               ROUND(MATCH_SCORE, 3) AS MATCH_SCORE,
+               CONTENT_QUALITY_SCORE, BRAND_AFFINITY_CLUSTER
+        FROM CC_DEMO.ML.CREATOR_PROFILES_LIVE
+        ORDER BY MATCH_SCORE DESC
+        LIMIT 5
+    """).show()
+except Exception as e:
+    print(f"Dynamic Table note: {e}")
+    print("CREATOR_PROFILES_LIVE requires MATCH_PREDICTIONS or model to be deployed.")
+```
+
+<!-- ------------------------ -->
+## Monitor Model Drift
+
+### Create a Model Monitor
+
+Now that `MATCH_PREDICTIONS` exists, attach a Model Monitor for automated drift detection. The monitor compares current predictions against a baseline using Population Stability Index (PSI) and auto-refreshes daily:
+
+```python
+# Create Model Monitor for drift detection
+print("Creating Model Monitor for drift detection...")
+try:
+    session.sql("""
+        CREATE OR REPLACE MODEL MONITOR CC_DEMO.ML_REGISTRY.CREATOR_MATCH_MONITOR
+        WITH
+            MODEL = CC_DEMO.ML_REGISTRY.CREATOR_BRAND_MATCH
+            VERSION = 'V1'
+            FUNCTION = 'PREDICT_PROBA'
+            SOURCE = CC_DEMO.ML.MATCH_PREDICTIONS
+            TIMESTAMP_COLUMN = SCORED_AT
+            BASELINE = CC_DEMO.ML.MATCH_PREDICTIONS
+            PREDICTION_SCORE_COLUMNS = ('MATCH_SCORE')
+            ID_COLUMNS = ('CREATOR_ID')
+            WAREHOUSE = CC_ML_WH
+            REFRESH_INTERVAL = '1 day'
+            AGGREGATION_WINDOW = '1 day'
+    """).collect()
+    print("Model Monitor created: CREATOR_MATCH_MONITOR")
+except Exception as e:
+    print(f"Model Monitor note: {e}")
+    print("Monitor may already exist or require specific account features.")
+
+# Query drift metrics
+print("\nDrift metrics (POPULATION_STABILITY_INDEX):")
+try:
+    drift_df = session.sql("""
+        SELECT *
+        FROM TABLE(MODEL_MONITOR_DRIFT_METRIC(
+            'CC_DEMO.ML_REGISTRY.CREATOR_MATCH_MONITOR', 'POPULATION_STABILITY_INDEX', 'MATCH_SCORE', '1 DAY',
+            DATEADD('DAY', -30, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ),
+            CURRENT_TIMESTAMP()::TIMESTAMP_NTZ
+        ))
+        ORDER BY EVENT_TIMESTAMP DESC
+        LIMIT 5
+    """)
+    drift_df.show()
+except Exception as e:
+    print(f"  Drift query note: {e}")
+    print("  Metrics available after monitor's first refresh cycle.")
+
+# Query performance metrics
+print("\nPerformance tracking:")
+try:
+    perf_df = session.sql("""
+        SELECT *
+        FROM TABLE(MODEL_MONITOR_STAT_METRIC(
+            'CC_DEMO.ML_REGISTRY.CREATOR_MATCH_MONITOR', 'COUNT', 'MATCH_SCORE', '1 DAY',
+            DATEADD('DAY', -30, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ),
+            CURRENT_TIMESTAMP()::TIMESTAMP_NTZ
+        ))
+        ORDER BY EVENT_TIMESTAMP DESC
+        LIMIT 5
+    """)
+    perf_df.show()
+except Exception as e:
+    print(f"  Stats query note: {e}")
+
+print("""
+Monitor dashboards: Snowsight → AI & ML → Models → CREATOR_BRAND_MATCH → Monitors
+Available metric functions:
+  • MODEL_MONITOR_DRIFT_METRIC('POPULATION_STABILITY_INDEX')  — feature drift over time
+  • MODEL_MONITOR_PERFORMANCE_METRIC(...)                     — accuracy, AUC, F1
+  • MODEL_MONITOR_STAT_METRIC('COUNT')                        — prediction volume
+""")
 ```
 
 <!-- ------------------------ -->
