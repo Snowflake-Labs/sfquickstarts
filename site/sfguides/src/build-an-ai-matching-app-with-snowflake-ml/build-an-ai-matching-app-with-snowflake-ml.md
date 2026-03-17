@@ -50,48 +50,7 @@ You will train an XGBoost classification model using Snowflake ML, deploy it for
 
 ### Architecture
 
-```mermaid
-flowchart LR
-    subgraph Ingest
-        A[RAW Events<br/>500K rows]
-    end
-
-    subgraph Features
-        B[Dynamic Table<br/>2-min refresh]
-        C[Feature Store<br/>Entity + Views]
-    end
-
-    subgraph Train
-        D[XGBoost<br/>GridSearchCV]
-        E[Model Registry<br/>V1 + V2]
-    end
-
-    subgraph Serve
-        F[SPCS REST API<br/>scale-to-zero]
-        G[Cortex Search<br/>hybrid semantic]
-    end
-
-    subgraph Observe
-        H[Model Monitor<br/>PSI drift]
-        I[ML Lineage<br/>auto-tracked]
-    end
-
-    subgraph App
-        J[CDP Profiles<br/>Dynamic Table]
-        K[Streamlit<br/>6-page dashboard]
-    end
-
-    A --> B --> C --> D --> E
-    E --> F
-    E --> H
-    E --> I
-    E -->|batch score| J
-    A -->|content| G
-    F --> K
-    G --> K
-    J --> K
-    H --> K
-```
+![Architecture diagram](assets/architecture_diagram.png)
 
 <!-- ------------------------ -->
 ## Set Up Your Environment
