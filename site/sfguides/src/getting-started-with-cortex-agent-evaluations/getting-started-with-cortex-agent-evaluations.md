@@ -117,7 +117,7 @@ The setup script creates a new role called `AGENT_EVAL_ROLE` with all the necess
 
 | Permission Type | Description |
 |-----------------|-------------|
-| Database/Schema Usage | Access to the `MARKETING_CAMPAIGNS_DB` database and `AGENTS_DEV` schema |
+| Database/Schema Usage | Access to the `MARKETING_CAMPAIGNS_DB` database and `AGENTS` schema |
 | Database Roles | `SNOWFLAKE.CORTEX_USER` for Cortex features and `SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP` for accessing agent traces |
 | Dataset Creation | `CREATE DATASET`, `CREATE FILE FORMAT`, `CREATE TABLE`, and `CREATE STAGE` on the schema |
 | Task Management | `CREATE TASK` on the schema and `EXECUTE TASK` on the account |
@@ -196,14 +196,14 @@ The config file has three main sections:
 ```yaml
 evaluation:
   agent_params:
-    agent_name: MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGNS_AGENT
+    agent_name: MARKETING_CAMPAIGNS_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT
     agent_type: CORTEX AGENT
   run_params:
     label: Marketing Campaign Agent Evaluation
     description: Evaluating metrics for the marketing campaign analytics agent
   source_metadata:
     type: dataset
-    dataset_name: MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGN_EVALSET
+    dataset_name: MARKETING_CAMPAIGNS_DB.AGENTS.MARKETING_CAMPAIGN_EVALSET
 ```
 
 **2. Built-in Metrics** — referenced by name:
@@ -281,8 +281,8 @@ First, create a dataset from the evaluation table that was populated by the setu
 ```sql
 CALL SYSTEM$CREATE_EVALUATION_DATASET(
     'Cortex Agent',
-    'MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVALS_TABLE',
-    'MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGN_EVALSET',
+    'MARKETING_CAMPAIGNS_DB.AGENTS.EVALS_TABLE',
+    'MARKETING_CAMPAIGNS_DB.AGENTS.MARKETING_CAMPAIGN_EVALSET',
     OBJECT_CONSTRUCT('query_text', 'INPUT_QUERY', 'expected_tools', 'GROUND_TRUTH_DATA'));
 ```
 
@@ -292,7 +292,7 @@ Confirm the dataset was created:
 SHOW DATASETS;
 ```
 
-**Using the UI:** In Snowsight, navigate to **AI & ML > Agents**, click on your agent, then click the **Evaluations** tab. Click **Create New Evaluation**, enter a name (e.g., "marketing-campaign-agent-baseline"), and click **Next**. Select **Create New Dataset**, choose `MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVALS_TABLE` as the input table, and specify `MARKETING_CAMPAIGNS_DB.AGENTS_DEV` as the destination with dataset name `MARKETING_CAMPAIGN_EVAL_DATASET`.
+**Using the UI:** In Snowsight, navigate to **AI & ML > Agents**, click on your agent, then click the **Evaluations** tab. Click **Create New Evaluation**, enter a name (e.g., "marketing-campaign-agent-baseline"), and click **Next**. Select **Create New Dataset**, choose `MARKETING_CAMPAIGNS_DB.AGENTS.EVALS_TABLE` as the input table, and specify `MARKETING_CAMPAIGNS_DB.AGENTS` as the destination with dataset name `MARKETING_CAMPAIGN_EVAL_DATASET`.
 
 ![Agent Evaluations Tab](assets/agent-evaluations-page.png)
 
@@ -301,11 +301,11 @@ SHOW DATASETS;
 Create a stage to store the evaluation configuration file, then copy the YAML from the Git repository:
 
 ```sql
-CREATE OR REPLACE STAGE MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE
+CREATE OR REPLACE STAGE MARKETING_CAMPAIGNS_DB.AGENTS.EVAL_CONFIG_STAGE
   DIRECTORY = (ENABLE = TRUE)
   COMMENT = 'Internal stage to host evaluation config files';
 
-COPY FILES INTO @MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE
+COPY FILES INTO @MARKETING_CAMPAIGNS_DB.AGENTS.EVAL_CONFIG_STAGE
 FROM @CORTEX_AGENT_QUICKSTART_REPO/branches/main/
 FILES = ('marketing_campaign_eval_config.yaml');
 ```
@@ -313,7 +313,7 @@ FILES = ('marketing_campaign_eval_config.yaml');
 Confirm the YAML was uploaded:
 
 ```sql
-LS @MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE;
+LS @MARKETING_CAMPAIGNS_DB.AGENTS.EVAL_CONFIG_STAGE;
 ```
 
 ### Step 3: Start the Evaluation Run
@@ -324,7 +324,7 @@ LS @MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE;
 CALL EXECUTE_AI_EVALUATION(
   'START',
   OBJECT_CONSTRUCT('run_name', 'BASELINE_MARKETING_AGENT_EVAL_RUN'),
-  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+  '@MARKETING_CAMPAIGNS_DB.AGENTS.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
 );
 ```
 
@@ -334,7 +334,7 @@ Check the status of the run (re-run periodically until complete):
 CALL EXECUTE_AI_EVALUATION(
   'STATUS',
   OBJECT_CONSTRUCT('run_name', 'BASELINE_MARKETING_AGENT_EVAL_RUN'),
-  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+  '@MARKETING_CAMPAIGNS_DB.AGENTS.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
 );
 ```
 
@@ -400,7 +400,7 @@ You can also retrieve evaluation results via SQL, which is useful for automation
 ```sql
 SELECT * FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_EVALUATION_DATA(
   'MARKETING_CAMPAIGNS_DB',
-  'AGENTS_DEV',
+  'AGENTS',
   'MARKETING_CAMPAIGNS_AGENT',
   'cortex agent',
   'BASELINE_MARKETING_AGENT_EVAL_RUN'
@@ -412,7 +412,7 @@ SELECT * FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_EVALUATION_DATA(
 ```sql
 SELECT * FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_RECORD_TRACE(
   'MARKETING_CAMPAIGNS_DB',
-  'AGENTS_DEV',
+  'AGENTS',
   'MARKETING_CAMPAIGNS_AGENT',
   'cortex agent',
   '<record_id>'
@@ -425,7 +425,7 @@ SELECT * FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_RECORD_TRACE(
 SELECT *
 FROM TABLE(SNOWFLAKE.LOCAL.GET_AI_OBSERVABILITY_LOGS(
   'MARKETING_CAMPAIGNS_DB',
-  'AGENTS_DEV',
+  'AGENTS',
   'MARKETING_CAMPAIGNS_AGENT',
   'cortex agent'
 ))
@@ -519,7 +519,7 @@ MODIFY LIVE VERSION SET SPECIFICATION = $$
         "type": "warehouse",
         "warehouse": "COMPUTE_WH"
       },
-      "semantic_view": "MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_PERFORMANCE_ANALYST"
+      "semantic_view": "MARKETING_CAMPAIGNS_DB.AGENTS.MARKETING_PERFORMANCE_ANALYST"
     },
     "search_campaign_content": {
       "execution_environment": {
@@ -527,11 +527,11 @@ MODIFY LIVE VERSION SET SPECIFICATION = $$
         "type": "warehouse",
         "warehouse": "COMPUTE_WH"
       },
-      "search_service": "MARKETING_CAMPAIGNS_DB.AGENTS_DEV.MARKETING_CAMPAIGNS_SEARCH"
+      "search_service": "MARKETING_CAMPAIGNS_DB.AGENTS.MARKETING_CAMPAIGNS_SEARCH"
     },
     "generate_campaign_report": {
       "type": "procedure",
-      "identifier": "MARKETING_CAMPAIGNS_DB.AGENTS_DEV.GENERATE_CAMPAIGN_REPORT_HTML",
+      "identifier": "MARKETING_CAMPAIGNS_DB.AGENTS.GENERATE_CAMPAIGN_REPORT_HTML",
       "execution_environment": {
         "type": "warehouse",
         "warehouse": "COMPUTE_WH",
@@ -553,7 +553,7 @@ Kick off a new evaluation run against the same dataset using the same YAML confi
 CALL EXECUTE_AI_EVALUATION(
   'START',
   OBJECT_CONSTRUCT('run_name', 'OPTIMIZED_MARKETING_AGENT_EVAL_RUN'),
-  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+  '@MARKETING_CAMPAIGNS_DB.AGENTS.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
 );
 ```
 
@@ -563,7 +563,7 @@ Check the status:
 CALL EXECUTE_AI_EVALUATION(
   'STATUS',
   OBJECT_CONSTRUCT('run_name', 'OPTIMIZED_MARKETING_AGENT_EVAL_RUN'),
-  '@MARKETING_CAMPAIGNS_DB.AGENTS_DEV.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
+  '@MARKETING_CAMPAIGNS_DB.AGENTS.EVAL_CONFIG_STAGE/marketing_campaign_eval_config.yaml'
 );
 ```
 
