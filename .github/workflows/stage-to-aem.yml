@@ -296,10 +296,15 @@ jobs:
           
           sleep 2
           
+          url_encode() {
+            python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+          }
+          
           for img in "$assets_dir"/*; do
             [ -f "$img" ] || continue
             
             filename=$(basename "$img")
+            encoded_filename=$(url_encode "$filename")
             extension="${filename##*.}"
             
             case "$extension" in
@@ -324,7 +329,7 @@ jobs:
                   -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
                   -H "Content-Type: application/x-www-form-urlencoded" \
                   -d "operation=PROCESS" \
-                  -d "asset=${dam_folder}/${filename}" \
+                  -d "asset=${dam_folder}/${encoded_filename}" \
                   -d "profile-select=full-process" || true
                 
                 sleep 1
@@ -335,7 +340,7 @@ jobs:
                   -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
                   -H "Content-Type: application/x-www-form-urlencoded" \
                   -d "cmd=Activate" \
-                  -d "path=${dam_folder}/${filename}" || true
+                  -d "path=${dam_folder}/${encoded_filename}" || true
                 ;;
               *)
                 echo "⏭️ Skipping non-image file: $filename"
