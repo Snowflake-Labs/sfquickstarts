@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Regis
 <!-- ------------------------ -->
 ## Overview
 
-[Snowflake ML](http://www.snowflake.com/ml) is changing how teams work with agentic ML, an autonomous, reasoning-based system that enables developers to use agents to plan and execute tasks across the entire ML pipeline. In this quickstart, learn how to build and run a real-time fraud detection model with only a handful of prompts so that you can go from raw idea to production-grade REST API in minutes, not weeks, with [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/), Snowflake’s AI native coding agent.
+[Snowflake ML](http://www.snowflake.com/ml) is changing how teams work with agentic ML, an autonomous, reasoning-based system that enables developers to use agents to plan and execute tasks across the entire ML pipeline. In this quickstart, learn how to build and run a real-time fraud detection model with only a handful of prompts so that you can go from raw idea to production-grade REST API in minutes, not weeks, with [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/), Snowflake’s AI native coding agent. Cortex Code is available both as a CLI and directly in Snowsight, Snowflake's web interface.
 
 ### What You'll Learn
 - Generate realistic synthetic fraud data with natural language prompts
@@ -31,7 +31,7 @@ A complete fraud detection pipeline featuring:
 
 ### Prerequisites
 - Sign up for the 30-day [free trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) OR access to a [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` role (or a role with permissions for Snowflake ML and Snowpark Container Services)
-- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured
+- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured OR [Cortex Code in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) (no local installation required)
 - A dedicated Snowflake warehouse
 - A compute pool configured for SPCS
 
@@ -42,6 +42,8 @@ A complete fraud detection pipeline featuring:
 
 Follow the [official installation guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to install and configure Cortex Code CLI.
 
+> **Prefer a browser-based experience?** You can also use Cortex Code directly in Snowsight with no local installation. Navigate to **Projects & AI** > **Cortex Code** in Snowsight and enter the same prompts shown in this guide. The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces.
+
 ### Verify Snowpark Container Services Access
 
 Ensure you have access to create and manage compute pools. You can verify this in Snowsight under Compute > Compute pools.
@@ -49,11 +51,11 @@ Ensure you have access to create and manage compute pools. You can verify this i
 <!-- ------------------------ -->
 ## Generate Synthetic Data
 
-The first step is creating realistic synthetic data for training our fraud detection model. Using Cortex Code CLI, we can generate this data with a simple natural language prompt.
+The first step is creating realistic synthetic data for training our fraud detection model. Using Cortex Code, we can generate this data with a simple natural language prompt.
 
 ### Prompt
 
-Open Cortex Code CLI and enter the following prompt:
+Open Cortex Code (CLI or Snowsight) and enter the following prompt:
 
 ```
 Generate realistic looking synthetic data in database ML and schema PROJECTS 
@@ -66,9 +68,21 @@ regular hours), and ~2% of legitimate transactions should have suspicious
 characteristics (high amounts, unusual locations, or odd hours).
 ```
 
+If you are using Cortex Code in Snowsight, you will see the prompt in the chat panel on the right. Cortex Code analyzes the request and breaks it into a multi-step plan:
+
+![Cortex Code in Snowsight showing the synthetic data prompt and a 3-step execution plan](assets/snowsight-01.png)
+
+Cortex Code then generates and executes SQL in a stepwise manner — first creating the database and schema, then building the synthetic data:
+
+![Cortex Code in Snowsight generating SQL code step by step, creating the database and schema and then generating the synthetic data](assets/snowsight-02.png)
+
+Once complete, Cortex Code displays a summary of the generated data table along with suggested next prompts:
+
+![Completed synthetic data generation in Snowsight showing a summary of the data table and suggested next prompts](assets/snowsight-03.png)
+
 ### What Gets Generated
 
-Cortex Code will create the database, schema, and table, then insert 10,000 transactions with the specified fraud distribution:
+Cortex Code will create the database, schema, and table, then insert 10,000 transactions with the specified fraud distribution. The CLI output shows:
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Insert 10000 synthetic fraud transactions
@@ -634,8 +648,4 @@ Web pages:
 - [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/) - Snowflake’s AI native coding agent that boosts ML productivity 
 
 Technical Documentation:
-- [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
-- [Cortex Code CLI Docs](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
-
-More quickstarts:
-- Follow along these intro guides to Snowflake ML [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
+- [Snowf
