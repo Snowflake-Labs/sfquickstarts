@@ -27,7 +27,7 @@ A complete fraud detection pipeline featuring:
 - Live REST API endpoint running on Snowpark Container Services (SPCS)
 - Performance benchmarking with latency profiling
 
-![https://excalidraw.com/#json=tutkgtdqhagG226_FhNmy,w4A49gD7GaG2VUpHzQG-qA](assets/schematic-diagram.png)
+![diagram](assets/diagram.png)
 
 ### Prerequisites
 - Sign up for the 30-day [free trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) OR access to a [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` role (or a role with permissions for Snowflake ML and Snowpark Container Services)
