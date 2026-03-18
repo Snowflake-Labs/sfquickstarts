@@ -81,15 +81,15 @@ characteristics (high amounts, unusual locations, or odd hours).
 You can also enter the same prompt in Cortex Code on Snowsight:
 1. Go ahead and enter the prompt in the chat panel on the right. Cortex Code analyzes the request and breaks it into a multi-step plan:
 
-![Cortex Code in Snowsight showing the synthetic data prompt and a 3-step execution plan](assets/snowsight-01.png)
+![Cortex Code in Snowsight showing the synthetic data prompt and a 3-step execution plan](assets/snowsight-1.png)
 
 2. Cortex Code then generates and executes SQL in a stepwise manner; first creating the database and schema, then building the synthetic data:
 
-![Cortex Code in Snowsight generating SQL code step by step, creating the database and schema and then generating the synthetic data](assets/snowsight-02.png)
+![Cortex Code in Snowsight generating SQL code step by step, creating the database and schema and then generating the synthetic data](assets/snowsight-2.png)
 
 3. Once complete, Cortex Code displays a summary of the generated data table along with suggested next prompts:
 
-![Completed synthetic data generation in Snowsight showing a summary of the data table and suggested next prompts](assets/snowsight-03.png)
+![Completed synthetic data generation in Snowsight showing a summary of the data table and suggested next prompts](assets/snowsight-3.png)
 
 ### What Gets Generated
 
