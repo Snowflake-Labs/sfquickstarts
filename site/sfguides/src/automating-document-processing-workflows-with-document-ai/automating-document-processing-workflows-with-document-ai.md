@@ -12,7 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 >**Note:
->The Document AI feature referenced in this guide has been deprecated. Please see [this guide](https://www.snowflake.com/en/developers/guides/create-a-document-processing-pipeline-with-ai-extract/) to learn more about the successor feature AIEXTRACT.**<br> 
+>The Document AI feature referenced in this guide has been deprecated. Please see [this guide](https://www.snowflake.com/en/developers/guides/create-a-document-processing-pipeline-with-ai-extract/) to learn more about the successor feature AI_EXTRACT.**<br> 
 
 ## Overview 
 
