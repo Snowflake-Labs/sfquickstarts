@@ -1,4 +1,4 @@
-author: Sreedhar Bolneni, Jeevan Rag, Cameron Shimmin
+author: Rahul Reddy, Sreedhar Bolneni, Jeevan Rag, Cameron Shimmin
 id: powering-ai-ready-data-products-by-unpacking-complex-hl7-data-using-snowflake
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/cortex-ai
 language: en
