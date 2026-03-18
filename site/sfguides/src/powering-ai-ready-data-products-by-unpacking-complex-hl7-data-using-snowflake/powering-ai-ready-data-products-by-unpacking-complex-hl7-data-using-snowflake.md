@@ -16,19 +16,12 @@ This guide walks you through building a **Unified Healthcare Intelligence Platfo
 
 You will ingest HL7 v2.7 cancer pathology messages (optionally via OpenFlow real-time streaming), parse them through a Bronze → Silver → Gold pipeline, extract 20+ structured clinical fields using Cortex AI, and query the results through a unified Snowflake Intelligence Agent.
 
-### Prerequisites
-- A Snowflake account with [ACCOUNTADMIN](https://docs.snowflake.com/en/user-guide/security-access-control-considerations) role access
-- Cortex AI features enabled in your account
-- Snowflake Intelligence available
-- (Optional) OpenFlow SPCS enabled for real-time HL7 streaming
-
 ### What You'll Learn
 - How to parse complex HL7 v2.7 messages into structured clinical data using a Bronze/Silver/Gold pipeline
 - How to use Cortex AI (Mistral Large 2) to extract 20+ structured fields from unstructured pathology reports
 - How to build a Semantic View for healthcare analytics with Cortex Analyst
 - How to create Cortex Search Services for semantic search over pathology reports, medical transcripts, and conditions
 - How to deploy a unified Snowflake Intelligence Agent with 4 tools (Cortex Analyst + 3 Cortex Search)
-- (Optional) How to set up OpenFlow with a custom NiFi processor for real-time HL7 ingestion
 
 ### What You'll Build
 - A complete HL7 pathology data pipeline (Bronze → Silver → Gold)
@@ -36,7 +29,8 @@ You will ingest HL7 v2.7 cancer pathology messages (optionally via OpenFlow real
 - A Semantic View spanning patients, encounters, conditions, and cancer pathology
 - 3 Cortex Search Services (pathology reports, medical transcripts, conditions)
 - A unified Snowflake Intelligence Agent for natural language healthcare queries
-- (Optional) An OpenFlow real-time HL7 ingestion pipeline
+
+> **Note:** This demo cannot be run in a Snowflake trial account. Trial accounts do not support creating SPCS (Snowpark Container Services) deployments, which are required for OpenFlow ingestion.
 
 <!-- ------------------------ -->
 ## Setup Infrastructure
@@ -200,13 +194,14 @@ Use this path to learn OpenFlow by setting up a NiFi-based ingestion pipeline wi
 #### Step 5: Start Flow and Ingest
 
 1. Right-click canvas → **Start**
-2. Right-click `GenerateFlowFile` → **Run Once**
-3. Verify:
+2. Verify:
 
 ```sql
 SELECT COUNT(*) AS MESSAGE_COUNT FROM CANCER_PATHOLOGY.LANDING_HL7_MESSAGES;
 -- Expected: 28 records
 ```
+
+> Once you see the 28 records in your database, go back into the runtime, right-click the canvas, and select **Stop** to stop the processor.
 
 ### Option B: Batch Ingestion (5 minutes)
 
