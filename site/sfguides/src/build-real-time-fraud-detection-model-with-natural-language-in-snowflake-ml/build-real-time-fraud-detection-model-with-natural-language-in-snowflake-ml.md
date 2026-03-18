@@ -38,11 +38,21 @@ A complete fraud detection pipeline featuring:
 <!-- ------------------------ -->
 ## Setup
 
-### Install Cortex Code CLI
+### Cortex Code
 
-Follow the [official installation guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to install and configure Cortex Code CLI.
+[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) is an AI agent built into Snowflake, designed for data engineering, analytics, ML, and agent-building tasks. It operates autonomously within your Snowflake environment, leveraging deep knowledge of RBAC, schemas, and platform best practices.
 
-> **Prefer a browser-based experience?** You can also use Cortex Code directly in Snowsight with no local installation. Look for Cortex Code in the lower-right corner of Snowsight or open it from within a Workspace Notebook, then enter the same prompts shown in this guide. The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces.
+It is available in two forms: within Snowsight and as a local CLI, bringing AI-assisted capabilities to wherever you work.
+
+#### Install Cortex Code CLI
+
+Follow the [official installation guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) to install and configure Cortex Code CLI.
+
+#### Use Cortex Code in Snowsight
+
+Prefer a browser-based experience? You can also use [Cortex Code directly in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) with no local installation. 
+
+Look for Cortex Code in the lower-right corner of Snowsight then enter the same prompts shown in this guide. The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces. If using in Snowsight, feel free to use it when in the notebook (Projects > Workspaces > Notebook > + Add new > Notebook) so that the generated code can be run in the notebook.
 
 ### Verify Snowpark Container Services Access
 
