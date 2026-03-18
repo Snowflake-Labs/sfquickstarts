@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate architecture diagram using ELK for layout + matplotlib for rendering.
-v14 — ELK-based orthogonal routing with Snowflake-branded visual style.
+v15 — Fix edge crossing and edge-boundary spacing issues.
 
 Pipeline:  Graph spec → ELK (Node.js) → positioned JSON → matplotlib PNG
 """
@@ -152,9 +152,9 @@ def build_elk_graph():
             'elk.layered.spacing.nodeNodeBetweenLayers': '60',
             'elk.spacing.nodeNode': '30',
             'elk.layered.spacing.edgeEdgeBetweenLayers': '15',
-            'elk.layered.spacing.edgeNodeBetweenLayers': '25',
-            'elk.spacing.edgeNode': '20',
-            'elk.spacing.edgeEdge': '12',
+            'elk.layered.spacing.edgeNodeBetweenLayers': '40',
+            'elk.spacing.edgeNode': '35',
+            'elk.spacing.edgeEdge': '15',
             'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
             'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
             'elk.layered.crossingMinimization.semiInteractive': 'true',
@@ -432,6 +432,14 @@ def main():
 
             col0_node_ids = {ch['id'] for ch in col0_group.get('children', [])}
 
+            # Find the bottom Y of all groups (for routing long-span edges below)
+            max_group_bottom = 0
+            for grp in layouted['children']:
+                bottom = grp.get('y', 0) + grp.get('height', 0)
+                if bottom > max_group_bottom:
+                    max_group_bottom = bottom
+            below_y = max_group_bottom + 30  # 30px margin below all groups
+
             # Reconstruct edges connected to col_0 with orthogonal routing
             for edge in layouted.get('edges', []):
                 src = edge['sources'][0]
@@ -454,16 +462,27 @@ def main():
                     new_end_y = old_end['y'] - dy
                     new_end = {'x': old_end['x'], 'y': new_end_y}
 
-                # Build orthogonal route: horizontal out, vertical transition, horizontal in
-                # Use midpoint X between start and end for the vertical segment
-                mid_x = (new_start['x'] + new_end['x']) / 2
                 y_diff = abs(new_start['y'] - new_end['y'])
 
                 if y_diff < 10:
                     # Nearly horizontal — straight line, no bends needed
                     new_bends = []
+                elif abs(new_end['x'] - new_start['x']) > 600:
+                    # Long-span edge (crosses multiple columns) — route BELOW
+                    # all groups to avoid crossing over intermediate nodes.
+                    # Path: right from start → down to below_y → right to
+                    # target X → up to target Y
+                    exit_x = new_start['x'] + 40  # short horizontal stub out
+                    enter_x = new_end['x'] - 40   # short horizontal stub in
+                    new_bends = [
+                        {'x': exit_x,  'y': new_start['y']},
+                        {'x': exit_x,  'y': below_y},
+                        {'x': enter_x, 'y': below_y},
+                        {'x': enter_x, 'y': new_end['y']},
+                    ]
                 else:
-                    # Orthogonal L-route or Z-route
+                    # Short-span edge — Z-route with midpoint vertical segment
+                    mid_x = (new_start['x'] + new_end['x']) / 2
                     new_bends = [
                         {'x': mid_x, 'y': new_start['y']},
                         {'x': mid_x, 'y': new_end['y']},
@@ -476,8 +495,16 @@ def main():
                 # Reposition edge labels at midpoint of new route
                 for lbl in edge.get('labels', []):
                     if 'y' in lbl:
-                        lbl['x'] = mid_x - lbl.get('width', 0) / 2
-                        lbl['y'] = (new_start['y'] + new_end['y']) / 2 - lbl.get('height', 0) / 2
+                        # Place label on the longest horizontal segment
+                        if len(new_bends) >= 3:
+                            # Long-span: label on bottom horizontal segment
+                            seg_mid_x = (new_bends[1]['x'] + new_bends[2]['x']) / 2
+                            lbl['x'] = seg_mid_x - lbl.get('width', 0) / 2
+                            lbl['y'] = below_y + 4
+                        else:
+                            mid_x = (new_start['x'] + new_end['x']) / 2
+                            lbl['x'] = mid_x - lbl.get('width', 0) / 2
+                            lbl['y'] = (new_start['y'] + new_end['y']) / 2 - lbl.get('height', 0) / 2
 
     graph_w = layouted.get('width', 2500)
     graph_h = layouted.get('height', 600)
