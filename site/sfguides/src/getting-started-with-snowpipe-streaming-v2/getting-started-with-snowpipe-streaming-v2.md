@@ -684,3 +684,5 @@ Congratulations! You have successfully built an end-to-end real-time streaming p
 - [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
 - [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 - [SSv2 Cortex Code Skills (GitHub)](https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar)
+- [SSv2 Quickstart Skill Source](https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar/tree/main/skills/ssv2-quickstart)
+- [SSv2 AI Webinar Skill Source](https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar/tree/main/skills/ssv2-AI-webinar)
