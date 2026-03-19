@@ -1,16 +1,16 @@
 id: ai-powered-predictive-grid-maintenance
 language: en
-summary: AI-powered predictive maintenance solution for power grid transformers built on Snowflake
+summary: AI-powered energy utilities predictive maintenance solution for power grid transformers built on Snowflake
 categories: snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
 authors: Sri Subramanian, Tripp Smith, Dureti Shemsi
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Cortex AI, Snowflake Intelligence, Cortex Analyst, Cortex Search, Snowpark ML, Predictive Maintenance, Machine Learning, Energy & Utilities, Streamlit, Unstructured Data, Power Grid, Transformers
-fork repo link: https://github.com/Snowflake-Labs/sfguide-ai-powered-predictive-grid-maintenance
+fork_repo_link: https://github.com/Snowflake-Labs/sfguide-ai-powered-predictive-grid-maintenance
 
 
-# AI-Powered Predictive Grid Maintenance
+# AI-Powered Energy Utilities Predictive Grid Maintenance
 
 ## Overview
 
@@ -28,7 +28,7 @@ The platform demonstrates how utilities can modernize asset management by unifyi
 
 **Regulatory Pressure**: State commissions closely monitor SAIDI/SAIFI metrics with penalties for poor reliability performance, requiring data-driven justification for rate cases and infrastructure investments.
 
-## The Solution: AI-Powered Predictive Maintenance
+## The Solution: AI-Powered Energy Utilities Predictive Maintenance
 
 This platform transforms raw operational data into actionable asset intelligence through Snowflake's unified data cloud.
 
