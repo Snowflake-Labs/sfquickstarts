@@ -221,17 +221,17 @@ BEGIN
       AND table_name IN ('MARKETING_CAMPAIGN_METRICS','PRODUCTS','SALES','SOCIAL_MEDIA','SUPPORT_CASES');
 
     IF (:table_count < 5) THEN
-        RETURN 'SETUP INCOMPLETE: Found ' || :table_count || ' of 5 required tables. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter).';
+        RETURN 'SETUP INCOMPLETE: Found ' || :table_count || ' of 5 required tables. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter) or click on the down arrow next to the Run button and select Run All.';
     END IF;
 
     SELECT COUNT(*) INTO :row_count FROM dash_db_si.retail.sales;
 
     IF (:row_count = 0) THEN
-        RETURN 'SETUP INCOMPLETE: Tables exist but contain no data. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter).';
+        RETURN 'SETUP INCOMPLETE: Tables exist but contain no data. Most likely only ran the last line of code. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter) or click on the down arrow next to the Run button and select Run All.';
     END IF;
 
     RETURN 'Congratulations! Setup has completed successfully! (Verified: 5 tables created and loaded with data)';
 EXCEPTION
     WHEN OTHER THEN
-        RETURN 'SETUP INCOMPLETE: Required objects not found. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter).';
+        RETURN 'SETUP INCOMPLETE: Required objects not found. Most likely only ran the last line of code. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter) or click on the down arrow next to the Run button and select Run All.';
 END;
