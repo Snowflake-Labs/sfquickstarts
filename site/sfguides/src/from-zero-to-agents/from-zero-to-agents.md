@@ -143,6 +143,7 @@ Instead of running a one-time enrichment, you define a **Dynamic Table**. This t
 Create a Dynamic Table that automatically joins campaign metrics with AI-generated sentiment scores:
 
 ```sql
+USE ROLE SNOWFLAKE_INTELLIGENCE_ADMIN;
 USE DATABASE DASH_DB_SI;
 USE SCHEMA RETAIL;
 CREATE OR REPLACE DYNAMIC TABLE enriched_marketing_intelligence
@@ -167,28 +168,28 @@ Provide the agent with a "map" to understand your business logic through a **Sem
 ### Create a Cortex Analyst
 This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
 
-1. Navigate to **AI & ML > Analyst** in Snowsight
-2. Confrim the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` and warehouse to `DASH_WH_SI`. Then click `Create new` > `Create new Semantic View`
-3. Configure the following settings:
-   - **Role:** `SNOWFLAKE_INTELLIGENCE_ADMIN`
-   - **Warehouse:** `DASH_WH_SI`
-   - **Location to store:** `DASH_DB_SI.Retail`
+1. Navigate to **AI & ML > Analyst** in Snowsight then click `Create with Autopilot` in the top right
+2. At the top, confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` and warehouse is set to `DASH_WH_SI`
+3. Click `Skip` on the `Provide context` page 
+5. Configure the following settings:
    - **Name:** `SEMANTIC_VIEW`
+   - **Location to store:** `DASH_DB_SI.Retail`
    - **Select tables:** Select all tables `DASH_DB_SI.Retail` (there should be 5 tables and 1 dynamic table)
    - **Select Columns:** Select all columns
-4. Click `Create and Save`
-5. Scroll to the `MARKETING_CAMPAIGN_METRICS` section and click `Edit`
-6. Set `+ Primary Key` to `Category` and click `Save`
+6. Click `Create`
+7. Scroll to the `MARKETING_CAMPAIGN_METRICS` section and click `Edit`
+8. Set `+ Primary Key` to `Category` and click `Save`
 
 ![Primary key](assets/primarykey.png)
 
 7. Scroll down and click + on `Relationships`
 8. Configure the following settings:
-   - **Relationship Name:** `Products`
-   - **Left Table:** `ENRICHED_MARKETING_INTELLIGENCE`
-   - **Right Table:** `MARKETING_CAMPAIGN_METRICS`
-   - **Left Column:** `PRODUCT_NAME`
-   - **Right Column:** `CATEGORY`
+   - **From Table:** `ENRICHED_MARKETING_INTELLIGENCE`
+   - **To Table:** `MARKETING_CAMPAIGN_METRICS`
+   - **Relationship Type:** `Many to One`
+   - **From Column:** `PRODUCT_NAME`
+   - **To Column:** `CATEGORY`
+
 9. Add the relationship, then save the Analyst in the top right corner
 
 ![Relationship](assets/relationship.png)
@@ -198,14 +199,15 @@ This tool enables the agent to query structured data in Snowflake by generating 
 This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
 1. Navigate to **AI & ML > Search** in Snowsight
-2. Switch role to `SNOWFLAKE_INTELLIGENCE_ADMIN`
+2. Confirm that role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN`
 3. Select **Create**
 4. Configure the following settings:
    - **Service database & schema:** `DASH_DB_SI.Retail`
    - **Service name:** `campaign_search`
-   - **Select Data:** `marketing_campaign_metrics`
+   - **Select data:** `marketing_campaign_metrics`
    - **Select search column:** `campaign name`
-   - **Select attribute columns:** `Select all`
+   - **Select attribute:** `Select all`
+   - **Select columns:** `Select all`
    - **Warehouse for indexing:** `DASH_WH_SI`
 5. Click `create` and click the refresh icon in the top right corner. `Serving` will update from `INITALIZING` to `ACTIVE`
 
@@ -236,7 +238,7 @@ Configure to the following:
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
 
 **Cortex Analyst**
-1. Click on **+Add**
+1. Click on **+ Add > Add semantic view**
 2. Configure the following settings:
 - **Service database & schema:** `DASH_DB_SI.Retail`
 - **Select semantic view:** `SEMANTIC_VIEW`
