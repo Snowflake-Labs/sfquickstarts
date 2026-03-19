@@ -35,6 +35,8 @@ The [streamlit/agent-skills](https://github.com/streamlit/agent-skills) reposito
 
 This guide walks you through installing the skills, understanding what each one does, and using them to build real apps. No prior experience with agent skills is required.
 
+Here's a schematic summary of the Streamlit app creation process using the agent skills:
+
 <!-- Diagram: https://excalidraw.com/#json=U51O43YAwXyA-pFGyDIRX,cBQiyuTWzTpt9-yB8xWISA -->
 ![diagram](assets/diagram.png)
 
@@ -350,6 +352,8 @@ You should see Streamlit start up in your terminal:
 
 Open `http://localhost:8501` in your browser. You should see a dashboard with three KPI cards, a line chart, and a sidebar date filter — all working out of the box.
 
+![](assets/dashboard-app.png)
+
 <!-- ------------------------ -->
 ## Build a Chat App
 
@@ -464,6 +468,8 @@ streamlit run app.py
 ```
 
 Type a message and watch it stream back word by word. Click "Clear chat" in the sidebar to reset the conversation.
+
+![](assets/chatbot-app.png)
 
 <!-- ------------------------ -->
 ## Apply a Theme
