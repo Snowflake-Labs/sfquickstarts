@@ -286,11 +286,17 @@ jobs:
             sleep 3
           fi
           
+          url_encode() {
+            python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+          }
+          
           upload_image_with_retry() {
             local img="$1"
             local filename="$2"
             local content_type="$3"
             local dam_folder="$4"
+            local encoded_filename
+            encoded_filename=$(url_encode "$filename")
             local attempt=1
             local use_post=false
             
@@ -298,14 +304,14 @@ jobs:
               if [ "$use_post" = "true" ]; then
                 echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (POST - new asset via Assets API)"
                 response=$(curl -s -w "\n%{http_code}" -X POST \
-                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${encoded_filename}" \
                   -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
                   -H "Content-Type: ${content_type}" \
                   --data-binary "@${img}" 2>&1)
               else
                 echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (PUT - update)"
                 response=$(curl -s -w "\n%{http_code}" -X PUT \
-                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${filename}" \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${encoded_filename}" \
                   -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
                   -H "Content-Type: ${content_type}" \
                   --data-binary "@${img}" 2>&1)
@@ -357,8 +363,9 @@ jobs:
                 [ "$extension_lower" = "svg" ] && content_type="image/svg+xml"
                 
                 # Check if asset exists first
+                encoded_filename=$(url_encode "$filename")
                 check_code=$(curl -s -o /dev/null -w "%{http_code}" \
-                  "${AEM_URL}${dam_folder}/${filename}" \
+                  "${AEM_URL}${dam_folder}/${encoded_filename}" \
                   -u "${AEM_USERNAME}:${AEM_PASSWORD}")
                 
                 is_new_asset="false"
@@ -373,7 +380,7 @@ jobs:
                 
                 echo "🔄 Reprocessing: $filename"
                 /tmp/aem_retry.sh POST "${AEM_URL}/bin/asynccommand" \
-                  "operation=PROCESS&asset=${dam_folder}/${filename}&profile-select=full-process" || true
+                  "operation=PROCESS&asset=${dam_folder}/${encoded_filename}&profile-select=full-process" || true
                 
                 # New assets need more time to be fully indexed before publish
                 if [ "$is_new_asset" = "true" ]; then
@@ -391,7 +398,7 @@ jobs:
                     -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
                     -H "Content-Type: application/x-www-form-urlencoded" \
                     -d "cmd=Activate" \
-                    -d "path=${dam_folder}/${filename}")
+                    -d "path=${dam_folder}/${encoded_filename}")
                   
                   pub_code=$(echo "$pub_response" | tail -n1)
                   

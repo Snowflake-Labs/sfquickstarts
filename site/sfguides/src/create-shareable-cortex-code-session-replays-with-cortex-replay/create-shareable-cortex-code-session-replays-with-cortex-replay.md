@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Cortex Code is Snowflake's AI coding assistant that helps you write code, query data, and build applications directly from the command line. Every session you run is automatically saved as a JSON transcript on your machine. But what if you want to share a session with a teammate, embed it in documentation, or present it in a talk?
 
-**cortex-replay** is a CLI tool that converts those Cortex Code session JSON transcripts into self-contained, interactive HTML replays. Adapted from [claude-replay](https://github.com/es617/claude-replay) by [es617](https://github.com/es617), cortex-replay builds on that foundation with Cortex Code-specific parsing, turn-based navigation, multi-theme support, and automatic secret redaction. The output is a single HTML file with no external dependencies that anyone can open in a browser. It features turn-by-turn navigation, animated playback, syntax-highlighted code blocks, keyboard shortcuts, theme support, and secret redaction.
+[cortex-replay](https://github.com/dataprofessor/cortex-replay) is a CLI tool that converts those Cortex Code session JSON transcripts into self-contained, interactive HTML replays. Adapted from [claude-replay](https://github.com/es617/claude-replay) by [es617](https://github.com/es617), cortex-replay builds on that foundation with Cortex Code-specific parsing, turn-based navigation, multi-theme support, and automatic secret redaction. The output is a single HTML file with no external dependencies that anyone can open in a browser. It features turn-by-turn navigation, animated playback, syntax-highlighted code blocks, keyboard shortcuts, theme support, and secret redaction.
 
 ### What You'll Learn
 - How to find and list your Cortex Code session transcripts
@@ -32,7 +32,7 @@ A fully interactive, self-contained HTML replay of a Cortex Code session that yo
 ![](assets/screencast.gif)
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
+- Access to a [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured
 - [Node.js](https://nodejs.org/) v18 or later
 - At least one completed Cortex Code session (the tool needs a session transcript to convert)
