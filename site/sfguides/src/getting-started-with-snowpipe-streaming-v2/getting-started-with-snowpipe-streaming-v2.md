@@ -583,6 +583,84 @@ cd ~ && rm -rf ~/ssv2-quickstart
 
 <!---------------------------->
 
+## Automate With Cortex Code
+
+Duration: 5
+
+Everything you did manually in this guide can be fully automated with [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's CLI-based AI coding assistant. Two open-source Cortex Code skills handle the entire pipeline for you, from RSA key generation to live dashboards.
+
+### Install the Skills
+
+The skills live in the [SSv2-AI-Webinar](https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar) repository. Clone the repo and copy the skill directories into your Cortex Code skills folder:
+
+```bash
+git clone https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar.git
+mkdir -p ~/.snowflake/cortex/skills
+cp -r SSv2-AI-Webinar/skills/ssv2-quickstart ~/.snowflake/cortex/skills/
+cp -r SSv2-AI-Webinar/skills/ssv2-AI-webinar ~/.snowflake/cortex/skills/
+```
+
+The skills are automatically discovered by Cortex Code on the next session.
+
+### Available Skills
+
+| Skill | Trigger Phrase | What It Does |
+|---|---|---|
+| **SSv2 Quickstart** | `ssv2 quickstart` | Runs everything in this guide end-to-end (~5 min) |
+| **SSv2 AI Webinar** | `ssv2 ai webinar` | Quickstart + Semantic View + Cortex Agent for live demos |
+
+#### ssv2-quickstart
+
+Automates every step in this guide: platform detection, RSA key-pair generation, Snowflake object creation, Python venv setup, Streamlit dashboard deployment, data streaming, and cleanup. Just type the trigger phrase and confirm.
+
+#### ssv2-AI-webinar
+
+Builds on the quickstart and adds an AI layer for live presentations:
+
+- Streams data **in the background** for 30 minutes so you can keep presenting
+- Creates a **Semantic View** on the streaming table with computed dimensions and metrics
+- Creates a **Cortex Agent** for natural-language queries on live streaming data
+- Runs showcase queries to prove everything works, then hands off to the presenter
+
+### Example Prompts
+
+Start a Cortex Code session and try any of these:
+
+```
+ssv2 quickstart
+```
+
+```
+try snowpipe streaming
+```
+
+```
+ssv2 ai webinar
+```
+
+```
+demo snowpipe streaming
+```
+
+Each skill confirms your intent before creating any resources and asks for your preferences (database name, table name, etc.). When the demo is done, it offers to clean up all Snowflake objects automatically.
+
+### What Gets Automated
+
+Here is how the skill maps to the steps you completed manually in this guide:
+
+| Manual Step | What the Skill Does |
+|---|---|
+| Generate RSA Keys | Runs `openssl` commands in a single batch |
+| Create Snowflake Objects | Executes all CREATE/GRANT statements in one SQL call |
+| Set Up Python | Creates venv, installs SDK and Faker, writes `profile.json` and `ssv2_demo.py` in parallel |
+| Deploy Live Dashboard | Creates stage, uploads Streamlit app, creates Streamlit object — 3 parallel operations |
+| Stream Sample Data | Runs the demo script (foreground for quickstart, background for webinar) |
+| Clean Up | Drops all Snowflake objects in one SQL call |
+
+> **Tip:** The AI Webinar skill is designed for live presentations. It streams data in the background while you build the Semantic View and Cortex Agent on stage. Re-ask the same natural-language question a few minutes later and the numbers will have changed — that's the wow factor.
+
+<!---------------------------->
+
 ## Conclusion And Resources
 
 Duration: 1
@@ -595,6 +673,7 @@ Congratulations! You have successfully built an end-to-end real-time streaming p
 - The default pipe follows the naming convention `<TABLE_NAME>-streaming` (with a **hyphen**)
 - The Python SDK authenticates via **RSA key-pair (JWT)** and streams rows through channels
 - **Streamlit in Snowflake** can be used to build real-time monitoring dashboards with zero local infrastructure
+- **Cortex Code skills** can automate the entire workflow — from key generation to dashboard deployment — with a single prompt
 
 ### Related Resources
 
@@ -603,3 +682,5 @@ Congratulations! You have successfully built an end-to-end real-time streaming p
 - [Key-Pair Authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
+- [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
+- [SSv2 Cortex Code Skills (GitHub)](https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar)
