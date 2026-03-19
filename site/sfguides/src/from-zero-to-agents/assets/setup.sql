@@ -211,4 +211,27 @@ $$;
 
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
-select 'Congratulations! Snowflake Intelligence setup has completed successfully!' as status;
+DECLARE
+    table_count INTEGER DEFAULT 0;
+    row_count INTEGER DEFAULT 0;
+BEGIN
+    SELECT COUNT(*) INTO :table_count
+    FROM dash_db_si.information_schema.tables
+    WHERE table_schema = 'RETAIL'
+      AND table_name IN ('MARKETING_CAMPAIGN_METRICS','PRODUCTS','SALES','SOCIAL_MEDIA','SUPPORT_CASES');
+
+    IF (:table_count < 5) THEN
+        RETURN 'SETUP INCOMPLETE: Found ' || :table_count || ' of 5 required tables. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter).';
+    END IF;
+
+    SELECT COUNT(*) INTO :row_count FROM dash_db_si.retail.sales;
+
+    IF (:row_count = 0) THEN
+        RETURN 'SETUP INCOMPLETE: Tables exist but contain no data. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter).';
+    END IF;
+
+    RETURN 'Congratulations! Setup has completed successfully! (Verified: 5 tables created and loaded with data)';
+EXCEPTION
+    WHEN OTHER THEN
+        RETURN 'SETUP INCOMPLETE: Required objects not found. Please select ALL statements in this worksheet and click Run All (Ctrl+Shift+Enter).';
+END;
