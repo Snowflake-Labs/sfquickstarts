@@ -6,7 +6,7 @@ summary: Accelerate analytics engineering with dbt Cloud and Snowflake for modul
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-
+# test branch
 
 # Accelerating Data Teams with Snowflake and dbt platform Hands On Lab
 <!-- ------------------------ -->
