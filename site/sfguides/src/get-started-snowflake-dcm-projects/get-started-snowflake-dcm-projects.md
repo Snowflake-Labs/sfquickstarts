@@ -48,9 +48,9 @@ Run the following SQL in a Snowsight worksheet:
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE ROLE IF NOT EXISTS DCM_DEVELOPER;
-SET USER_NAME = (SELECT CURRENT_USER());
-GRANT ROLE DCM_DEVELOPER TO USER IDENTIFIER($USER_NAME);
+CREATE ROLE IF NOT EXISTS dcm_developer;
+SET user_name = (SELECT CURRENT_USER());
+GRANT ROLE dcm_developer TO USER IDENTIFIER($user_name);
 ```
 
 ### Grant Infrastructure Privileges
@@ -58,13 +58,13 @@ GRANT ROLE DCM_DEVELOPER TO USER IDENTIFIER($USER_NAME);
 The DCM_DEVELOPER role needs privileges to create infrastructure objects through DCM deployments:
 
 ```sql
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT EXECUTE TASK ON ACCOUNT TO ROLE DCM_DEVELOPER;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE ROLE ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
 
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE DCM_DEVELOPER;
+GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 ```
 
 ### Grant Data Quality Privileges
@@ -72,10 +72,10 @@ GRANT MANAGE GRANTS ON ACCOUNT TO ROLE DCM_DEVELOPER;
 To define and test data quality expectations, grant the following:
 
 ```sql
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE DCM_DEVELOPER;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE DCM_DEVELOPER;
-GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE DCM_DEVELOPER;
-GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE DCM_DEVELOPER;
+GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
+GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE dcm_developer;
+GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
+GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer;
 ```
 
 ### Create a Warehouse (Optional)
@@ -83,7 +83,7 @@ GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE DCM_DEVELOPER;
 If you don't have a warehouse available, create one. DCM commands are mostly metadata changes, so an X-Small warehouse is sufficient:
 
 ```sql
-CREATE WAREHOUSE IF NOT EXISTS DCM_WH
+CREATE WAREHOUSE IF NOT EXISTS dcm_wh
 WITH
     WAREHOUSE_SIZE = 'XSMALL'
     AUTO_SUSPEND = 300
@@ -101,11 +101,13 @@ In this step, you'll create a Snowsight Workspace linked to the sample DCM Proje
 4. Select an API Integration for GitHub (create one if needed).
 5. Select **Public repository**.
 
-![Creating a Workspace from a Git repository](assets/create_workspace_from_git.png)
+![Creating a Workspace from a Git repository](assets/create_workspace.png)
 
 Once the workspace is created, you'll see the repository files in the file explorer. Navigate to **Quickstarts/DCM_Project_Quickstart_1** to find the project files you'll be working with.
 
 Open the `setup.ipynb` notebook file and connect it to a compute pool so you can run the setup commands step by step.
+
+![Connect your notebook to a compute pool](assets/connect_notebook.png)
 
 **Tip:** Use the split-screen feature in Workspaces to keep the manifest and definition files on one side and the setup notebook on the other.
 
@@ -207,17 +209,17 @@ The `sources/definitions/` directory contains SQL files that define your Snowfla
 For example, here's how `raw.sql` defines the database and a table:
 
 ```sql
-DEFINE DATABASE DCM_DEMO_1{{env_suffix}}
+DEFINE DATABASE dcm_demo_1{{env_suffix}}
     COMMENT = 'This is a Quickstart Demo for DCM Projects';
 
-DEFINE SCHEMA DCM_DEMO_1{{env_suffix}}.RAW;
+DEFINE SCHEMA dcm_demo_1{{env_suffix}}.raw;
 
-DEFINE TABLE DCM_DEMO_1{{env_suffix}}.RAW.MENU (
-    MENU_ITEM_ID NUMBER,
-    MENU_ITEM_NAME VARCHAR,
-    ITEM_CATEGORY VARCHAR,
-    COST_OF_GOODS_USD NUMBER(10, 2),
-    SALE_PRICE_USD NUMBER(10, 2)
+DEFINE TABLE dcm_demo_1{{env_suffix}}.raw.menu (
+    menu_item_id NUMBER,
+    menu_item_name VARCHAR,
+    item_category VARCHAR,
+    cost_of_goods_usd NUMBER(10, 2),
+    sale_price_usd NUMBER(10, 2)
 )
 CHANGE_TRACKING = TRUE;
 ```
@@ -227,32 +229,32 @@ The `{{env_suffix}}` variable is replaced at deployment time based on the target
 And here's how `analytics.sql` defines a dynamic table that joins across several raw tables to create enriched order details:
 
 ```sql
-DEFINE DYNAMIC TABLE DCM_DEMO_1{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
-WAREHOUSE = DCM_DEMO_1_WH{{env_suffix}}
+DEFINE DYNAMIC TABLE dcm_demo_1{{env_suffix}}.analytics.enriched_order_details
+WAREHOUSE = dcm_demo_1_wh{{env_suffix}}
 TARGET_LAG = 'DOWNSTREAM'
 INITIALIZE = 'ON_SCHEDULE'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
 AS
 SELECT
-    oh.ORDER_ID,
-    oh.ORDER_TS,
-    od.QUANTITY,
-    m.MENU_ITEM_NAME,
-    m.ITEM_CATEGORY,
-    m.SALE_PRICE_USD,
-    (od.QUANTITY * m.SALE_PRICE_USD) AS LINE_ITEM_REVENUE,
-    (od.QUANTITY * (m.SALE_PRICE_USD - m.COST_OF_GOODS_USD)) AS LINE_ITEM_PROFIT,
-    c.CUSTOMER_ID,
-    c.FIRST_NAME,
-    c.LAST_NAME,
-    INITCAP(c.CITY) AS CUSTOMER_CITY,
-    t.TRUCK_ID,
-    t.TRUCK_BRAND_NAME
-FROM DCM_DEMO_1{{env_suffix}}.RAW.ORDER_HEADER oh
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.ORDER_DETAIL od ON oh.ORDER_ID = od.ORDER_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.MENU m ON od.MENU_ITEM_ID = m.MENU_ITEM_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.CUSTOMER c ON oh.CUSTOMER_ID = c.CUSTOMER_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.TRUCK t ON oh.TRUCK_ID = t.TRUCK_ID;
+    oh.order_id,
+    oh.order_ts,
+    od.quantity,
+    m.menu_item_name,
+    m.item_category,
+    m.sale_price_usd,
+    (od.quantity * m.sale_price_usd) AS line_item_revenue,
+    (od.quantity * (m.sale_price_usd - m.cost_of_goods_usd)) AS line_item_profit,
+    c.customer_id,
+    c.first_name,
+    c.last_name,
+    INITCAP(c.city) AS customer_city,
+    t.truck_id,
+    t.truck_brand_name
+FROM dcm_demo_1{{env_suffix}}.raw.order_header oh
+JOIN dcm_demo_1{{env_suffix}}.raw.order_detail od ON oh.order_id = od.order_id
+JOIN dcm_demo_1{{env_suffix}}.raw.menu m ON od.menu_item_id = m.menu_item_id
+JOIN dcm_demo_1{{env_suffix}}.raw.customer c ON oh.customer_id = c.customer_id
+JOIN dcm_demo_1{{env_suffix}}.raw.truck t ON oh.truck_id = t.truck_id;
 ```
 
 ### Macros
@@ -266,13 +268,13 @@ The `sources/macros/` directory contains reusable Jinja macros. Open `grants_mac
     DEFINE ROLE {{team}}_DEVELOPER{{env_suffix}};
     DEFINE ROLE {{team}}_USAGE{{env_suffix}};
 
-    GRANT USAGE ON DATABASE DCM_DEMO_1{{env_suffix}}
+    GRANT USAGE ON DATABASE dcm_demo_1{{env_suffix}}
         TO ROLE {{team}}_USAGE{{env_suffix}};
-    GRANT OWNERSHIP ON SCHEMA DCM_DEMO_1{{env_suffix}}.{{team}}
+    GRANT OWNERSHIP ON SCHEMA dcm_demo_1{{env_suffix}}.{{team}}
         TO ROLE {{team}}_OWNER{{env_suffix}};
 
     GRANT CREATE DYNAMIC TABLE, CREATE TABLE, CREATE VIEW
-        ON SCHEMA DCM_DEMO_1{{env_suffix}}.{{team}}
+        ON SCHEMA dcm_demo_1{{env_suffix}}.{{team}}
         TO ROLE {{team}}_DEVELOPER{{env_suffix}};
 
     GRANT ROLE {{team}}_USAGE{{env_suffix}} TO ROLE {{team}}_DEVELOPER{{env_suffix}};
@@ -288,14 +290,14 @@ This macro is called in `jinja_demo.sql` inside a `{% for %}` loop that iterates
 {% for team in teams %}
     {% set team_name = team.name | upper %}
 
-    DEFINE SCHEMA DCM_DEMO_1{{env_suffix}}.{{team_name}}
+    DEFINE SCHEMA dcm_demo_1{{env_suffix}}.{{team_name}}
         COMMENT = 'using JINJA dictionary values'
         DATA_RETENTION_TIME_IN_DAYS = {{ team.data_retention_days }};
 
     {{ create_team_roles(team_name) }}
 
     {% if team.needs_sandbox_schema | default(false) %}
-        DEFINE SCHEMA DCM_DEMO_1{{env_suffix}}.{{team_name}}_SANDBOX
+        DEFINE SCHEMA dcm_demo_1{{env_suffix}}.{{team_name}}_SANDBOX
             COMMENT = 'Sandbox schema defined via dictionary flag'
             DATA_RETENTION_TIME_IN_DAYS = 1;
     {% endif %}
@@ -313,16 +315,16 @@ Now that you've explored the project files, create the DCM Project object in Sno
 Run the following in the setup notebook or in a Snowsight worksheet:
 
 ```sql
-USE ROLE DCM_DEVELOPER;
+USE ROLE dcm_developer;
 
-CREATE DATABASE IF NOT EXISTS DCM_DEMO;
-CREATE SCHEMA IF NOT EXISTS DCM_DEMO.PROJECTS;
+CREATE DATABASE IF NOT EXISTS dcm_demo;
+CREATE SCHEMA IF NOT EXISTS dcm_demo.projects;
 
-CREATE OR REPLACE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
+CREATE OR REPLACE DCM PROJECT dcm_demo.projects.dcm_project_dev
     COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
-The DCM Project object `DCM_PROJECT_DEV` is now created in `DCM_DEMO.PROJECTS`. This is the object referenced in the manifest's `DCM_DEV` target.
+The DCM Project object `dcm_project_dev` is now created in `dcm_demo.projects`. This is the object referenced in the manifest's `DCM_DEV` target.
 
 <!-- ------------------------ -->
 ## Plan a Deployment
@@ -336,13 +338,11 @@ Before deploying changes, always run a **Plan** first. A Plan is a dry-run that 
 3. Click on the target profile to verify it uses `DCM_PROJECT_DEV` and the `DEV` templating configuration.
 4. Override the templating value for `user` with your own Snowflake username.
 
-![DCM control panel with project selected](assets/dcm_control_panel.png)
+![DCM control panel with project selected](assets/select_project.png)
 
 ### Execute the Plan
 
-Click **Plan** and wait for the definitions to render, compile, and dry-run.
-
-![Plan results showing planned changes](assets/plan_results.png)
+Click the play button to the right of **Plan** and wait for the definitions to render, compile, and dry-run.
 
 Since none of the defined objects exist yet, the plan will show only **CREATE** statements. You should see planned operations for:
 
@@ -355,11 +355,15 @@ Since none of the defined objects exist yet, the plan will show only **CREATE** 
 - A stage and a task for data ingestion
 - Data quality expectations (Data Metric Functions attached to columns)
 
+![Plan results showing planned changes](assets/plan_results.png)
+
 ### Review the Plan Output
 
 In the file explorer, notice that a new `out` folder was created above `sources`. This contains the **rendered Jinja output** for all definition files.
 
 Open the `jinja_demo.sql` file from the plan output side-by-side with the original `jinja_demo.sql` in `sources/definitions/` to see how the Jinja templating was resolved — loops expanded, conditionals evaluated, and variables replaced with their DEV configuration values.
+
+![Workspace showing rendered plan output files](assets/workspace_files.png)
 
 <!-- ------------------------ -->
 ## Deploy the Project
@@ -370,7 +374,7 @@ If the plan result looks correct and all planned changes match your expectations
 2. Optionally, add a **Deployment alias** — think of it as a commit message that appears in the deployment history of your project.
 3. DCM will create all objects and attach grants and expectations using the owner role of the project object.
 
-![Deploy button in the plan results](assets/deploy_button.png)
+![Deploy confirmation dialog](assets/deploy_dialog.png)
 
 Once the deployment completes successfully, refresh the Database Explorer on the left side of Snowsight. You should see the `DCM_DEMO_1_DEV` database and all of the created objects inside it.
 
@@ -384,7 +388,7 @@ The deployment created the table structures, but they're empty. In this step, yo
 Run the following SQL to insert sample data:
 
 ```sql
-INSERT INTO DCM_DEMO_1_DEV.RAW.TRUCK
+INSERT INTO dcm_demo_1_dev.raw.truck
 VALUES
     (103, 'Taco Titan', 'Mexican Street Food'),
     (104, 'The Rolling Dough', 'Artisan Pizza'),
@@ -395,7 +399,7 @@ VALUES
     (109, 'BBQ Barn', 'Slow-cooked Brisket'),
     (110, 'Sweet Retreat', 'Desserts & Shakes');
 
-INSERT INTO DCM_DEMO_1_DEV.RAW.MENU
+INSERT INTO dcm_demo_1_dev.raw.menu
 VALUES
     (7, 'Beef Birria Tacos', 'Tacos', 3.00, 11.50),
     (8, 'Margherita Pizza', 'Pizza', 4.50, 12.00),
@@ -412,7 +416,7 @@ VALUES
     (19, 'Mango Lassi', 'Drinks', 1.00, 4.50),
     (20, 'Double Pepperoni Pizza', 'Pizza', 5.00, 14.00);
 
-INSERT INTO DCM_DEMO_1_DEV.RAW.CUSTOMER
+INSERT INTO dcm_demo_1_dev.raw.customer
 VALUES
     (4, 'David', 'Miller', 'London'),
     (5, 'Eve', 'Davis', 'New York'),
@@ -432,7 +436,7 @@ VALUES
     (19, 'Sam', 'Clark', 'San Francisco'),
     (20, 'Tina', 'Rodriguez', 'New York');
 
-INSERT INTO DCM_DEMO_1_DEV.RAW.INVENTORY
+INSERT INTO dcm_demo_1_dev.raw.inventory
 VALUES
     (7, 103, 50, '2023-10-27 09:00:00'), (8, 104, 40, '2023-10-27 09:00:00'),
     (9, 105, 30, '2023-10-27 09:00:00'), (10, 106, 45, '2023-10-27 09:00:00'),
@@ -445,7 +449,7 @@ VALUES
     (17, 105, 40, '2023-10-27 08:00:00'), (18, 107, 90, '2023-10-27 08:00:00'),
     (19, 106, 60, '2023-10-27 08:00:00'), (20, 104, 30, '2023-10-27 08:00:00');
 
-INSERT INTO DCM_DEMO_1_DEV.RAW.ORDER_HEADER
+INSERT INTO dcm_demo_1_dev.raw.order_header
 VALUES
     (1006, 4, 103, '2023-10-28 14:00:00'), (1007, 5, 104, '2023-10-28 14:15:00'),
     (1008, 6, 105, '2023-10-28 15:30:00'), (1009, 7, 106, '2023-10-28 16:45:00'),
@@ -458,7 +462,7 @@ VALUES
     (1022, 20, 109, '2023-10-30 11:00:00'), (1023, 1, 110, '2023-10-30 11:30:00'),
     (1024, 2, 103, '2023-10-30 12:15:00'), (1025, 3, 104, '2023-10-30 13:00:00');
 
-INSERT INTO DCM_DEMO_1_DEV.RAW.ORDER_DETAIL
+INSERT INTO dcm_demo_1_dev.raw.order_detail
 VALUES
     (1006, 7, 3), (1006, 15, 2),
     (1007, 8, 1), (1007, 16, 1),
@@ -472,20 +476,28 @@ VALUES
     (1015, 2, 2), (1015, 3, 2);
 ```
 
-After the data is inserted, the dynamic tables defined in `analytics.sql` will automatically refresh based on their target lag settings, and the views in `serve.sql` will reflect the new data.
+Manually refresh the dynamic tables to initialize them:
+
+```sql
+ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS REFRESH;
+ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.MENU_ITEM_POPULARITY REFRESH;
+ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.CUSTOMER_SPENDING_SUMMARY REFRESH;
+```
+
+Beyond this, the dynamic tables defined in `analytics.sql` will automatically refresh based on their target lag settings, and the views in `serve.sql` will reflect the new data.
 
 Verify by querying one of the serving views:
 
 ```sql
-SELECT * FROM DCM_DEMO_1_DEV.SERVE.V_DASHBOARD_DAILY_SALES;
+SELECT * FROM dcm_demo_1_dev.serve.v_dashboard_daily_sales;
 ```
 
 You can also check the dynamic tables directly:
 
 ```sql
-SELECT * FROM DCM_DEMO_1_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS;
-SELECT * FROM DCM_DEMO_1_DEV.ANALYTICS.MENU_ITEM_POPULARITY;
-SELECT * FROM DCM_DEMO_1_DEV.ANALYTICS.CUSTOMER_SPENDING_SUMMARY;
+SELECT * FROM dcm_demo_1_dev.analytics.enriched_order_details;
+SELECT * FROM dcm_demo_1_dev.analytics.menu_item_popularity;
+SELECT * FROM dcm_demo_1_dev.analytics.customer_spending_summary;
 ```
 
 <!-- ------------------------ -->
@@ -494,27 +506,27 @@ SELECT * FROM DCM_DEMO_1_DEV.ANALYTICS.CUSTOMER_SPENDING_SUMMARY;
 To clean up the objects created in this guide, run the following:
 
 ```sql
-USE ROLE DCM_DEVELOPER;
+USE ROLE dcm_developer;
 
 -- Drop the deployed infrastructure
-DROP DATABASE IF EXISTS DCM_DEMO_1_DEV;
-DROP WAREHOUSE IF EXISTS DCM_DEMO_1_WH_DEV;
+DROP DATABASE IF EXISTS dcm_demo_1_dev;
+DROP WAREHOUSE IF EXISTS dcm_demo_1_wh_dev;
 
 -- Drop roles created by the deployment
-DROP ROLE IF EXISTS DCM_DEMO_1_DEV_READ;
-DROP ROLE IF EXISTS DEV_TEAM_1_OWNER_DEV;
-DROP ROLE IF EXISTS DEV_TEAM_1_DEVELOPER_DEV;
-DROP ROLE IF EXISTS DEV_TEAM_1_USAGE_DEV;
+DROP ROLE IF EXISTS dcm_demo_1_dev_read;
+DROP ROLE IF EXISTS dev_team_1_owner_dev;
+DROP ROLE IF EXISTS dev_team_1_developer_dev;
+DROP ROLE IF EXISTS dev_team_1_usage_dev;
 
 -- Drop the DCM Project object
 USE ROLE ACCOUNTADMIN;
-DROP DCM PROJECT IF EXISTS DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
-DROP SCHEMA IF EXISTS DCM_DEMO.PROJECTS;
-DROP DATABASE IF EXISTS DCM_DEMO;
+DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_project_dev;
+DROP SCHEMA IF EXISTS dcm_demo.projects;
+DROP DATABASE IF EXISTS dcm_demo;
 
 -- Drop the DCM Developer role and warehouse (optional)
-DROP ROLE IF EXISTS DCM_DEVELOPER;
-DROP WAREHOUSE IF EXISTS DCM_WH;
+DROP ROLE IF EXISTS dcm_developer;
+DROP WAREHOUSE IF EXISTS dcm_wh;
 ```
 
 <!-- ------------------------ -->
