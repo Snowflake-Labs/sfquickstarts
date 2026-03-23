@@ -871,6 +871,128 @@ comparison = pd.DataFrame({
 })
 print(comparison.to_string(index=False))
 
+print()
+print("=" * 70)
+print("5. Common Network Rule Hosts (Copy-Paste Reference)")
+print("=" * 70)
+common_hosts = pd.DataFrame({
+    "Use Case": [
+        "HuggingFace models",
+        "HuggingFace models",
+        "HuggingFace LFS",
+        "HuggingFace LFS",
+        "HuggingFace LFS",
+        "HuggingFace transfer",
+        "HuggingFace transfer",
+        "HuggingFace transfer",
+        "PyPI packages",
+        "PyPI packages",
+    ],
+    "Host": [
+        "huggingface.co",
+        "hub-ci.huggingface.co",
+        "cdn-lfs.hf.co",
+        "cdn-lfs-us-1.hf.co",
+        "cdn-lfs-eu-1.hf.co",
+        "transfer.xethub.hf.co",
+        "cas-server.xethub.hf.co",
+        "cas-bridge.xethub.hf.co",
+        "pypi.org",
+        "files.pythonhosted.org",
+    ],
+})
+print(common_hosts.to_string(index=False))
+print("""
+-- Example: HuggingFace network rule (all 8 hosts)
+CREATE OR REPLACE NETWORK RULE HF_EGRESS_RULE
+    MODE = EGRESS  TYPE = HOST_PORT
+    VALUE_LIST = (
+        'huggingface.co', 'hub-ci.huggingface.co',
+        'cdn-lfs.hf.co', 'cdn-lfs-us-1.hf.co', 'cdn-lfs-eu-1.hf.co',
+        'transfer.xethub.hf.co', 'cas-server.xethub.hf.co',
+        'cas-bridge.xethub.hf.co'
+    );
+
+Note: These are the official Snowflake-documented HuggingFace endpoints.
+They may change — see docs.snowflake.com for the latest list.
+Wildcards (e.g., *.s3.amazonaws.com) are NOT supported in VALUE_LIST.
+Use specific bucket hostnames like 'my-bucket.s3.us-east-1.amazonaws.com'.
+""")
+
+print("=" * 70)
+print("6. Privilege Requirements (Who Does What)")
+print("=" * 70)
+privs = pd.DataFrame({
+    "Action": [
+        "CREATE NETWORK RULE",
+        "CREATE EXTERNAL ACCESS INTEGRATION",
+        "GRANT USAGE ON INTEGRATION",
+        "create_service() with EAI",
+    ],
+    "Required Role": [
+        "SYSADMIN / schema owner",
+        "ACCOUNTADMIN *",
+        "ACCOUNTADMIN",
+        "Developer role (after GRANT)",
+    ],
+    "Notes": [
+        "Or role with CREATE NETWORK RULE on schema",
+        "Only ACCOUNTADMIN has CREATE INTEGRATION by default",
+        "Grants to the role that will deploy the service",
+        "Pass external_access_integrations=[...] in Python",
+    ],
+})
+print(privs.to_string(index=False))
+print("""
+* ACCOUNTADMIN can delegate by granting CREATE EXTERNAL ACCESS INTEGRATION
+  to another role. This is a narrower privilege than CREATE INTEGRATION.
+
+  GRANT CREATE EXTERNAL ACCESS INTEGRATION ON ACCOUNT TO ROLE ML_ADMIN;
+""")
+
+print("=" * 70)
+print("7. Quick Unblock (Dev/Test Only — NOT for Production)")
+print("=" * 70)
+print("""
+-- If your container crashes and you need to verify it works before
+-- scoping to specific hosts, use this temporary allow-all rule:
+
+USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE NETWORK RULE DEV_ALLOW_ALL_RULE
+    TYPE = HOST_PORT  MODE = EGRESS
+    VALUE_LIST = ('0.0.0.0:443', '0.0.0.0:80')
+    COMMENT = 'DEV ONLY — remove after testing';
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION DEV_ALLOW_ALL_EAI
+    ALLOWED_NETWORK_RULES = (DEV_ALLOW_ALL_RULE)  ENABLED = TRUE;
+
+GRANT USAGE ON INTEGRATION DEV_ALLOW_ALL_EAI TO ROLE <your_role>;
+
+-- Deploy with: external_access_integrations=["DEV_ALLOW_ALL_EAI"]
+-- Once the model works, replace with scoped rules and DROP this one.
+""")
+
+print("=" * 70)
+print("8. Monitor Egress (Debug What Your Container Reaches)")
+print("=" * 70)
+print("""
+-- After deploying with an EAI, query the egress access history
+-- to see exactly which hosts your container contacts:
+
+SELECT
+    DATEADD(MS, LOG_AT, '1970-01-01'::TIMESTAMP) AS event_time,
+    SERVICE_NAME, HOST_NAMES, STATUS, IP_ADDRESS, PORT
+FROM SNOWFLAKE.ACCOUNT_USAGE.SPCS_EGRESS_ACCESS_HISTORY
+WHERE SERVICE_NAME ILIKE '%YOUR_SERVICE%'
+ORDER BY event_time DESC
+LIMIT 50;
+
+-- Use this to: (1) verify your EAI is working,
+-- (2) discover hosts you missed in your network rule,
+-- (3) tighten an allow-all rule down to specific hosts.
+""")
+
 
 # %% [markdown]
 # ### Extension 3: Custom Embeddings
