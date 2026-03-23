@@ -7,6 +7,8 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+# What You Should Know About Snowflake Guides
+
 # A Comprehensive Guide: Creating GraphQL API on Top of Snowflake Using Propel
 
 ## **Introduction**
