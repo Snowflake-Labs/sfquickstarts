@@ -16,8 +16,6 @@ tags: Openflow, Healthcare, Price Transparency, Apache NiFi, Data Ingestion, Sno
 
 ## Overview
 
-Duration: 5
-
 Under the Transparency in Coverage rule, U.S. healthcare payers must publish monthly Machine-Readable Files (MRFs) detailing negotiated rates for covered items and services. These files are large (often 1-50+ GB), deeply nested JSON structures that are difficult to process with traditional tools.
 
 This quickstart demonstrates how to ingest and analyze these MRF files using Snowflake Openflow, which provides a managed Apache NiFi engine for streaming data integration.
@@ -59,8 +57,6 @@ By the end of this quickstart, you'll have deployed:
 <!-- ------------------------ -->
 
 ## Setup Roles, Database, and Tables
-
-Duration: 10
 
 Run the following SQL as **ACCOUNTADMIN** in a Snowflake SQL worksheet. This script creates the Openflow admin role, database, tables, runtime role, network rule, and external access integration.
 
@@ -192,8 +188,6 @@ DESCRIBE INTEGRATION PRICE_TRANSPARENCY_INTEGRATION;
 
 ## Create Openflow Deployment
 
-Duration: 20
-
 An Openflow deployment provisions the underlying compute infrastructure that runs your NiFi runtimes. Only one SPCS deployment can exist per Snowflake account.
 
 1. In Snowsight, navigate to **Ingestion > Openflow**
@@ -214,8 +208,6 @@ An Openflow deployment provisions the underlying compute infrastructure that run
 
 ## Create Openflow Runtime
 
-Duration: 10
-
 A runtime is a NiFi instance running on your deployment where you'll import and execute flow definitions.
 
 1. In the Openflow Control Plane, click the **Runtimes** tab
@@ -234,8 +226,6 @@ A runtime is a NiFi instance running on your deployment where you'll import and 
 <!-- ------------------------ -->
 
 ## Import Flow Definitions
-
-Duration: 10
 
 The repository includes two NiFi flow definition files that handle the MRF parsing:
 
@@ -270,8 +260,6 @@ Data ingestion begins immediately after starting both process groups.
 
 ## Monitor Data Ingestion
 
-Duration: 5
-
 Once the flows are running, MRF data streams into your Snowflake tables via Snowpipe Streaming. Monitor ingestion progress with the following query:
 
 ```sql
@@ -303,8 +291,6 @@ To process a different MRF file after the initial ingestion:
 <!-- ------------------------ -->
 
 ## Run Analytics
-
-Duration: 10
 
 Once data ingestion is complete, run the following analytical queries to explore the healthcare pricing data.
 
@@ -462,8 +448,6 @@ ORDER BY PROVIDER_COUNT DESC;
 
 ## Scaling
 
-Duration: 3
-
 For larger MRF files (10+ GB), you can increase the number of runtime nodes to speed up processing:
 
 1. In the Openflow Control Plane, go to the **Runtimes** tab
@@ -486,8 +470,6 @@ https://mrfstorageprod.blob.core.windows.net/public-mrf/2025-11-01/2025-11-01_Un
 <!-- ------------------------ -->
 
 ## Cleanup
-
-Duration: 5
 
 To remove all resources created by this quickstart, follow this order. You must clean up Openflow components before dropping SQL objects to avoid orphaned deployments.
 
@@ -540,8 +522,6 @@ SHOW ROLES LIKE 'OPENFLOW_RUNTIME_ROLE_PRICE_TRANSPARENCY';
 
 ## Troubleshooting
 
-Duration: 3
-
 ### "Invalid channel" error on PutSnowpipeStreaming
 
 This error is normal during initial writes. As long as data appears in the target tables, it can be safely ignored.
@@ -565,8 +545,6 @@ Ensure the External Access Integration (`PRICE_TRANSPARENCY_INTEGRATION`) is att
 <!-- ------------------------ -->
 
 ## Conclusion
-
-Duration: 1
 
 In this quickstart, you built an end-to-end healthcare price transparency data pipeline using Snowflake Openflow. You created an Openflow deployment and runtime, imported NiFi flow definitions to parse deeply nested MRF JSON files, and streamed the results into Snowflake tables using Snowpipe Streaming. You then ran analytical queries to explore negotiated rates, identify price variability across services, and join rate data with provider information.
 
