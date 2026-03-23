@@ -107,7 +107,7 @@ CREATE SCHEMA IF NOT EXISTS COLM_DB.UNSTRUCTURED;
 
 ### Create S&P 500 Companies Table
 
-This inserts all 503 S&P 500 constituents (as of March 2026). You can copy the full INSERT statement from the [INSTALL.sql](https://github.com/sfc-gh-cmoynihan/holly_4_trial_accounts/blob/main/INSTALL.sql) file, or run the complete script directly.
+This inserts all 503 S&P 500 constituents (as of March 2026). You can copy the full INSERT statement from the [INSTALL.sql](assets/INSTALL.sql) file, or run the complete script directly.
 
 ```sql
 CREATE OR REPLACE TABLE COLM_DB.STRUCTURED.SP500_COMPANIES (
