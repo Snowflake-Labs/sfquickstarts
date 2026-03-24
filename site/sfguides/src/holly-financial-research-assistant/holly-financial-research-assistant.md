@@ -1,5 +1,5 @@
 id: holly-financial-research-assistant
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations, snowflake-site:taxonomy/industry/financial-services
 language: en
 summary: Build Holly, an AI-powered financial research assistant using Snowflake Intelligence with Cortex Agent, Cortex Analyst, and Cortex Search to analyze S&P 500 stocks, SEC filings, and earnings transcripts.
 environments: web
@@ -624,9 +624,8 @@ Congratulations! You have successfully built **Holly**, an AI-powered financial 
 
 ### Related Resources
 
-- [Source Repository](https://github.com/sfc-gh-cmoynihan/holly_4_trial_accounts)
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)
 - [Cortex Agent Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Cortex Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
-- [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search)
-- [Snowflake Marketplace](https://app.snowflake.com/marketplace)
+- [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+- [Build an AI Assistant for FSI](https://www.snowflake.com/en/developers/guides/build-an-ai-assistant-for-fsi-with-aisql-and-snowflake-intelligence)
