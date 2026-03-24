@@ -30,7 +30,7 @@ A complete fraud detection pipeline featuring:
 ![diagram](assets/diagram.png)
 
 ### Prerequisites
-- Sign up for the 30-day [free trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) OR access to a [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` role (or a role with permissions for Snowflake ML and Snowpark Container Services)
+- Sign up for the 30-day [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) of Snowflake. Have `ACCOUNTADMIN` role or a role with permissions for Snowflake ML and Snowpark Container Services
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured OR [Cortex Code in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) (no local installation required)
 - A dedicated Snowflake warehouse
 - A compute pool configured for SPCS
@@ -52,7 +52,13 @@ Follow the [official installation guide](https://docs.snowflake.com/en/user-guid
 
 Prefer a browser-based experience? You can also use [Cortex Code directly in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) with no local installation. 
 
-Look for Cortex Code in the lower-right corner of Snowsight then enter the same prompts shown in this guide. The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces. If using in Snowsight, feel free to use it when in the notebook (Projects > Workspaces > Notebook > + Add new > Notebook) so that the generated code can be run in the notebook.
+1. Open Workspace Notebook by going to the sidebar and click on Projects > Workspaces; then in the "My Workspace" panel, click on "+ Add new" > Notebook
+
+2. Once the notebook loads, look for Cortex Code in the lower-right corner of Snowsight.
+
+The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces. 
+
+> Note: Cortex Code is environment aware so using it in a Workspace Notebook will give the best results as it will have access to all the tools provided by the notebook. When relevant, generated code will be inserted into the notebook and run on your behalf.
 
 ### Verify Snowpark Container Services Access
 
@@ -78,22 +84,17 @@ regular hours), and ~2% of legitimate transactions should have suspicious
 characteristics (high amounts, unusual locations, or odd hours).
 ```
 
-You can also enter the same prompt in Cortex Code on Snowsight:
-1. Go ahead and enter the prompt in the chat panel on the right. Cortex Code analyzes the request and breaks it into a multi-step plan:
+If running Cortex Code CLI, paste the prompt directly into the terminal session. Cortex Code will analyze the request, generate a multi-step plan, and execute each step automatically.
+
+If running Cortex Code on Snowsight, go ahead and enter the prompt in the chat panel on the right. Cortex Code analyzes the request and breaks it into a multi-step plan:
 
 ![Cortex Code in Snowsight showing the synthetic data prompt and a 3-step execution plan](assets/snowsight-1.png)
 
-2. Cortex Code then generates and executes SQL in a stepwise manner; first creating the database and schema, then building the synthetic data:
-
-![Cortex Code in Snowsight generating SQL code step by step, creating the database and schema and then generating the synthetic data](assets/snowsight-2.png)
-
-3. Once complete, Cortex Code displays a summary of the generated data table along with suggested next prompts:
-
-![Completed synthetic data generation in Snowsight showing a summary of the data table and suggested next prompts](assets/snowsight-3.png)
-
 ### What Gets Generated
 
-Cortex Code will create the database, schema, and table, then insert 10,000 transactions with the specified fraud distribution. The CLI output shows:
+Cortex Code will create the database, schema, and table, then insert 10,000 transactions with the specified fraud distribution. 
+
+The Cortex Code CLI output shows:
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Insert 10000 synthetic fraud transactions
@@ -130,6 +131,18 @@ Legitimate Transactions with Noise (9,950 rows)
 │ Suspicious legit: high amount       │ 101   │ $501       │
 └─────────────────────────────────────┴───────┴────────────┘
 ```
+
+Here's the generated output from Cortex Code on Snowsight:
+
+1. Cortex Code generates and executes SQL in a stepwise manner; first creating the database and schema, then building the synthetic data:
+
+![Cortex Code in Snowsight generating SQL code step by step, creating the database and schema and then generating the synthetic data](assets/snowsight-2.png)
+
+2. Once complete, Cortex Code displays a summary of the generated data table along with suggested next prompts:
+
+![Completed synthetic data generation in Snowsight showing a summary of the data table and suggested next prompts](assets/snowsight-3.png)
+
+> Note: Due to the inherent randomness in how LLMs generate text, your results may vary slightly from what is shown in this tutorial.
 
 <!-- ------------------------ -->
 ## Explore the Data
@@ -477,7 +490,7 @@ With our REST API deployed, let's test it with realistic traffic and analyze the
 
 ```
 Create 1000 sample requests with a mix of potential fraud and legit 
-transactions and run the predictions using the REST API for online 
+transactions and run the predictions using the internal REST API for online 
 Inference running on SPCS and show the latency profile.
 ```
 
