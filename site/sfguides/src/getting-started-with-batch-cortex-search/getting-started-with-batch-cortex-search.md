@@ -774,3 +774,4 @@ DROP DATABASE IF EXISTS AI_TRAINING_DATASET_FROM_WIKIPEDIA;
 
 - [Cortex Search Reference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Batch Cortex Search Reference](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-search/batch-cortex-search)
+- [Blog Post: Introducing Batch Cortex Search: Hybrid Search Engine for High-Throughput Workloads][https://medium.com/@piotrpaczewski/8ef961d64f5c]
