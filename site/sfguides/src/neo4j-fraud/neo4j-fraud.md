@@ -82,30 +82,30 @@ GRANT APPLICATION ROLE Neo4j_Graph_Analytics.app_user TO ROLE MY_CONSUMER_ROLE;
 SET MY_USER = (SELECT CURRENT_USER());
 GRANT ROLE MY_CONSUMER_ROLE TO USER IDENTIFIER($MY_USER);
 
-USE SCHEMA NEO4J_PATIENT_DB.PUBLIC;
+USE SCHEMA P2P_DEMO.PUBLIC;
 CREATE TABLE NODES (nodeId Number);
 INSERT INTO NODES VALUES (1), (2), (3), (4), (5), (6);
 CREATE TABLE RELATIONSHIPS (sourceNodeId Number, targetNodeId Number);
 INSERT INTO RELATIONSHIPS VALUES (1, 2), (2, 3), (4, 5), (5, 6);
 
 -- Grants needed for the app to read consumer data stored in tables and views, using a database role
-USE DATABASE NEO4J_PATIENT_DB;
+USE DATABASE P2P_DEMO;
 CREATE DATABASE ROLE IF NOT EXISTS MY_DB_ROLE;
-GRANT USAGE ON DATABASE NEO4J_PATIENT_DB TO DATABASE ROLE MY_DB_ROLE;
-GRANT USAGE ON SCHEMA NEO4J_PATIENT_DB.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
-GRANT SELECT ON ALL TABLES IN SCHEMA NEO4J_PATIENT_DB.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
-GRANT SELECT ON ALL VIEWS IN SCHEMA NEO4J_PATIENT_DB.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
+GRANT USAGE ON DATABASE P2P_DEMO TO DATABASE ROLE MY_DB_ROLE;
+GRANT USAGE ON SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
+GRANT SELECT ON ALL VIEWS IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
 -- Future tables also include tables that are created by the application itself.
 -- This is useful as many use-cases require running algorithms in a sequence and using the output of a prior algorithm as input.
-GRANT SELECT ON FUTURE TABLES IN SCHEMA NEO4J_PATIENT_DB.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
-GRANT SELECT ON FUTURE VIEWS IN SCHEMA NEO4J_PATIENT_DB.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
-GRANT CREATE TABLE ON SCHEMA NEO4J_PATIENT_DB.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
+GRANT SELECT ON FUTURE VIEWS IN SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
+GRANT CREATE TABLE ON SCHEMA P2P_DEMO.PUBLIC TO DATABASE ROLE MY_DB_ROLE;
 GRANT DATABASE ROLE MY_DB_ROLE TO APPLICATION Neo4j_Graph_Analytics;
 
 -- Ensure the consumer role has access to tables created by the application
-GRANT USAGE ON DATABASE NEO4J_PATIENT_DB TO ROLE MY_CONSUMER_ROLE;
-GRANT USAGE ON SCHEMA NEO4J_PATIENT_DB.PUBLIC TO ROLE MY_CONSUMER_ROLE;
-GRANT SELECT ON FUTURE TABLES IN SCHEMA NEO4J_PATIENT_DB.PUBLIC TO ROLE MY_CONSUMER_ROLE;
+GRANT USAGE ON DATABASE P2P_DEMO TO ROLE MY_CONSUMER_ROLE;
+GRANT USAGE ON SCHEMA P2P_DEMO.PUBLIC TO ROLE MY_CONSUMER_ROLE;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA P2P_DEMO.PUBLIC TO ROLE MY_CONSUMER_ROLE;
 
 -- Use the consumer role to run the algorithm and inspect the output
 USE ROLE MY_CONSUMER_ROLE;
@@ -128,132 +128,29 @@ We need to have columns called `sourceNodeId` and `targetNodeId`. These will tel
 - Who received it (targetNodeId)
 - We also include a total_amount column that acts as the weights in the relationship
 
-We are then going to clean this up into two tables that just have the nodeids for both patient and procedure:
+We are going to use aggregated transactions for our relationships. Let's create that table now:
 
 ```sql
-CREATE OR REPLACE TABLE NEO4J_PATIENT_DB.PUBLIC.PATIENT_NODE_MAPPING (nodeId) AS
-SELECT DISTINCT p.ID from NEO4J_PATIENT_DB.PUBLIC.PATIENTS p;
-
-CREATE OR REPLACE TABLE NEO4J_PATIENT_DB.PUBLIC.PROCEDURE_NODE_MAPPING (nodeId) AS
-SELECT DISTINCT p.code from NEO4J_PATIENT_DB.PUBLIC.PROCEDURES p;
+CREATE OR REPLACE TABLE p2p_demo.public.P2P_AGG_TRANSACTIONS (
+	SOURCENODEID NUMBER(38,0),
+	TARGETNODEID NUMBER(38,0),
+	TOTAL_AMOUNT FLOAT
+) AS
+SELECT sourceNodeId, targetNodeId, SUM(transaction_amount) AS total_amount
+FROM p2p_demo.public.P2P_TRANSACTIONS
+GROUP BY sourceNodeId, targetNodeId;
+SELECT * FROM p2p_demo.public.P2P_AGG_TRANSACTIONS;
 ```
 
-In order to keep this managable, we are just going to look at patients (and what procedures they underwent) in the context of kidney disease. So first we will filter down patients to only include those with kidney disease:
+
+We are also going to create a view that just has the unique `nodeId`s from the `p2p_demo` table and use that as the nodes when we project the graph in the next step:
 
 ```sql
-// create a subset of patients that have had any of the 4 kidney disease codes
-CREATE OR REPLACE VIEW KidneyPatients_vw (nodeId) AS
-    SELECT DISTINCT PATIENT_NODE_MAPPING.NODEID as nodeId
-    FROM PROCEDURES
-            JOIN PATIENT_NODE_MAPPING ON PATIENT_NODE_MAPPING.NODEID = PROCEDURES.PATIENT
-    WHERE PROCEDURES.REASONCODE IN (431857002,46177005,161665007,698306007)
-;
+CREATE OR REPLACE VIEW p2p_users_vw (nodeId) AS
+    SELECT DISTINCT p2p_demo.public.p2p_users.NODEID as nodeid
+    FROM p2p_users;
 ```
 <!-- ------------------------ -->
-Then we will only look at the procedures that those kidney patients have undergone:
-```sql
-
-// There are ~400K procedures - it is doubtful that the kidney patients even have used a small
-// fraction of those.  To reduce GDS memory and speed algorithm execution, we want to load
-// only those procedures that kidney patients have had.
-CREATE OR REPLACE VIEW KidneyPatientProcedures_vw (nodeId) AS
-    SELECT DISTINCT PROCEDURE_NODE_MAPPING.NODEID as nodeId
-    FROM PROCEDURES
-        JOIN PROCEDURE_NODE_MAPPING ON PROCEDURE_NODE_MAPPING.nodeId = PROCEDURES.CODE
-        JOIN KIDNEYPATIENTS_VW ON PATIENT = PROCEDURES.PATIENT;
-
-// create the relationship view of kidney patients to the procedures they have had
-CREATE OR REPLACE VIEW KidneyPatientProcedure_relationship_vw (sourceNodeId, targetNodeId) AS
-    SELECT DISTINCT PATIENT_NODE_MAPPING.NODEID as sourceNodeId, PROCEDURE_NODE_MAPPING.NODEID as targetNodeId
-    FROM PATIENT_NODE_MAPPING
-         JOIN PROCEDURES ON PROCEDURES.PATIENT = PATIENT_NODE_MAPPING.NODEID
-         JOIN PROCEDURE_NODE_MAPPING ON PROCEDURE_NODE_MAPPING.NODEID = PROCEDURES.CODE;
-
-```
-## Visualize Your Graph
-
-
-At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Specifically, you may be interested in better understanding your results. Why exactly are any given two patients considered similar?
-
-Let’s start by filtering down our data to two patients who are considered very similar. They have the following patient ids:
-
-- `a5814a17-303e-1d23-64d3-dd4b54170d16`
-- `87069a85-19bf-7d81-0cfe-609b3427d096`
-
-```sql
-CREATE OR REPLACE VIEW KidneyPatient_viz_vw (nodeId, title, label) AS
-SELECT
-    k.nodeId,
-    p.first AS title,
-    'blue' as label
-FROM KidneyPatients_vw k
-LEFT JOIN patients p
-  ON k.nodeId = p.id
-WHERE k.nodeId IN (
-  'a5814a17-303e-1d23-64d3-dd4b54170d16',
-  '87069a85-19bf-7d81-0cfe-609b3427d096'
-);
-
--- this represents the procedures those patients underwent (and will be our relationship table
--- for the below visualization)
-CREATE OR REPLACE VIEW NEO4J_PATIENT_DB.PUBLIC.procedures_patients_vw AS
-SELECT DISTINCT
-    p.patient as sourcenodeid,
-    p.reasoncode as targetnodeid
-FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES p
-JOIN KidneyPatient_viz_vw k
-  ON CAST(p.PATIENT AS STRING) = CAST(k.nodeId AS STRING);
-
--- now we look at the procedures in our example
-CREATE OR REPLACE VIEW procedures_viz_vw (nodeId, title, label) AS
-SELECT DISTINCT
-    pp.targetnodeid AS nodeId,
-    p.reasondescription AS caption,
-    'red' as label
-FROM procedures_patients_vw pp
-LEFT JOIN procedures p
-    ON pp.targetnodeid = p.reasoncode
-WHERE pp.targetnodeid IS NOT NULL
-  AND TRIM(pp.targetnodeid) <> '';
-
-```
-Now we can use the neo4j_viz python package to create the actual visualization. You can learn more about how it works [here](https://neo4j.com/docs/snowflake-graph-analytics/current/visualization/), but for this example, we are just going to customize two things. First, we will use the “label” property of our nodes (which we defined in the SQL query above) to set the colors. Like so:
-
-```python
-
-from neo4j_viz.snowflake import from_snowflake
-from snowflake.snowpark.context import get_active_session
-
-session = get_active_session()
-
-viz_graph = from_snowflake(
-    session,
-    {
-    'nodeTables': ['NEO4J_PATIENT_DB.public.KidneyPatient_viz_vw',
-                   'NEO4J_PATIENT_DB.public.procedures_viz_vw'
-    ],
-    'relationshipTables': {
-      'NEO4J_PATIENT_DB.public.procedures_patients_vw': {
-        'sourceTable': 'NEO4J_PATIENT_DB.public.KidneyPatient_viz_vw',
-        'targetTable': 'NEO4J_PATIENT_DB.public.procedures_viz_vw'
-      }
-    }
-    }
-)
-
-viz_graph.color_nodes(property='LABEL', override=True)
-
-for node in viz_graph.nodes:
-    node.caption = str(node.properties["TITLE"])
-
-html_object = viz_graph.render()
-
-import streamlit.components.v1 as components
-
-components.html(html_object.data, height=600)
-```
-
-![image](assets/graph.png)
 
 ## Running Your Algorithms
 
@@ -283,72 +180,64 @@ CALL neo4j_graph_analytics.graph.louvain('COMPUTE_POOL', {
 });
 ```
 
-```sql
-CALL neo4j_graph_analytics.graph.node_similarity('CPU_X64_L', {
-  'project': {
-    'defaultTablePrefix': 'neo4j_patient_db.public',
-    'nodeTables': ['KidneyPatients_vw','KidneyPatientProcedures_vw'],
-    'relationshipTables': {
-      'KidneyPatientProcedure_relationship_vw': {
-        'sourceTable': 'KidneyPatients_vw',
-        'targetTable': 'KidneyPatientProcedures_vw'
-      }
-    }
-  },
-  'compute': { 'topK': 10,
-                'similarityCutoff': 0.3,
-                'similarityMetric': 'JACCARD'
-            },
-  'write': [
-    {
-    'sourceLabel': 'KidneyPatients_vw',
-    'targetLabel': 'KidneyPatients_vw',
-    'relationshipProperty': 'similarity',
-    'outputTable':  'neo4j_patient_db.public.PATIENT_PROCEDURE_SIMILARITY'
-    }
-  ]
-});
-```
-Let’s take a look at the results!
+But broadly, you will need a few things:
+| Name                                      | Description                                                 | Our Value                                      |
+|-------------------------------------------|-------------------------------------------------------------|------------------------------------------------|
+| `EXAMPLE_DB.DATA_SCHEMA.NODES`           | A table for nodes                             | `p2p_demo.public.p2p_users_vw`                 |
+| `EXAMPLE_DB.DATA_SCHEMA.RELATIONSHIPS`   | A table for relationships                   | `p2p_demo.public.P2P_AGG_TRANSACTIONS`         |
+| `COMPUTE_POOL`                            | The size of the compute pool you would like to use| `CPU_X64_XS`                              |
+| `EXAMPLE_DB.DATA_SCHEMA.NODES_COMPONENTS`| A table to output results                    | `p2p_demo.public.p2p_users_vw_lou`             |
+| `NODES`                                   | A node label for our nodes                   | `p2p_users_vw`                                 |
+
 
 ```sql
-SELECT SOURCENODEID, TARGETNODEID, SIMILARITY
-FROM NEO4J_PATIENT_DB.PUBLIC.PATIENT_PROCEDURE_SIMILARITY
-LIMIT 10;
-```
-
-You can see the similarity score between one patient and a set of another patients. The higher the similarity score the more similar the patients. From this, we could develop personalize plans based on other patients experiences.
-
-For example, if a patient had undergone 4 out of 5 of another patients procedures, we might predict that they will likely undergo the fifth procedure as well!
-
-### Sort Into Groups
-Using the similarity scores we just calculated, we can then sort our patients into groups based on our related patients pairs and their similarity score using louvain:
-
-```sql
-CALL Neo4j_Graph_Analytics.graph.louvain('CPU_X64_XS', {
-    'defaultTablePrefix': 'neo4j_patient_db.public',
+CALL neo4j_graph_analytics.graph.louvain('CPU_X64_XS', {
     'project': {
-        'nodeTables': [ 'KidneyPatients_vw' ],
+        'nodeTables': ['p2p_demo.public.p2p_users_vw'],
         'relationshipTables': {
-            'PATIENT_PROCEDURE_SIMILARITY': {
-                'sourceTable': 'KidneyPatients_vw',
-                'targetTable': 'KidneyPatients_vw',
-                'orientation': 'UNDIRECTED'
+            'p2p_demo.public.P2P_AGG_TRANSACTIONS': {
+                'sourceTable': 'p2p_demo.public.p2p_users_vw',
+                'targetTable': 'p2p_demo.public.p2p_users_vw',
+                'orientation': 'NATURAL'
             }
         }
     },
-    'compute': {
-        'mutateProperty': 'community_id',
-        'relationshipWeightProperty': 'SIMILARITY'
-
-    },
+    'compute': { 'consecutiveIds': true, 'relationshipWeightProperty':'TOTAL_AMOUNT'},
     'write': [{
-        'nodeLabel': 'KidneyPatients_vw',
-        'outputTable': 'patient_community',
-        'nodeProperty': 'community_id'
+        'nodeLabel': 'p2p_users_vw',
+        'outputTable': 'p2p_demo.public.p2p_users_vw_lou'
     }]
 });
 ```
+Our resulting table assigns a community id to each node based on their connections to other nodes in the graph.
+
+```sql
+SELECT community, COUNT(*) AS community_size, 
+FROM p2p_demo.public.p2p_users_vw_lou
+GROUP BY community
+ORDER BY community_size DESC;
+```
+
+We can then use then add in the `fraud_transfer_flag` (which was provided by the vendor) to our communities to see if users in that community are at greater risk for fraud:
+
+```sql
+SELECT
+  l.community,
+  COUNT(*) AS community_size,
+  SUM(n.fraud_transfer_flag) AS fraud_count
+FROM
+  p2p_users_vw_lou l
+JOIN
+  p2p_users n
+ON
+  l.nodeId = n.nodeId
+GROUP BY
+  l.community
+ORDER BY
+  community_size DESC, fraud_count DESC;
+```
+You can use plotly as a visualization package and explore more. Nodes that cluster closely represent communities of highly interconnected users. You can immediately spot the tight clusters (possible fraud rings) versus the loosely connected periphery. Find more on exploratory analysis and demos [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics).
+![image](assets/communities_visualization.png)
 
 ##  Conclusions And Resources
 
