@@ -5,12 +5,12 @@ summary: Build Holly, an AI-powered financial research assistant using Snowflake
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+tags: Snowflake Intelligence, Cortex Agent, Cortex Analyst, Cortex Search, Semantic Views, Financial Services, SEC Filings, Earnings Transcripts, S&P 500, Marketplace, RAG, Text-to-SQL
 authors: Colm Moynihan
 
 # Holly - Financial Research Assistant with Snowflake Intelligence
 
 ## Overview
-Duration: 5
 
 ![Holly](assets/holly.png)
 
@@ -39,20 +39,10 @@ A Snowflake Intelligence agent called **Holly** with:
 
 ### Architecture
 
-```
-          ┌──────────────────────┐
-          │   Agent: Holly       │
-          │  (Snowflake Intelligence)  │
-          └──────────┬───────────┘
-                     │
-     ┌───────────────┼───────────────┐
-     ▼               ▼               ▼
-┌──────────┐  ┌──────────────┐  ┌──────────────┐
-│  Cortex  │  │    Cortex    │  │    Cortex    │
-│  Search  │  │   Analyst    │  │   Analyst    │
-│ SEC/TX   │  │ Stock Prices │  │  SP500 Cos   │
-└──────────┘  └──────────────┘  └──────────────┘
-```
+Holly is a Cortex Agent running in Snowflake Intelligence that routes queries to:
+
+- **Cortex Search** — SEC EDGAR filings and earnings transcripts (unstructured text retrieval)
+- **Cortex Analyst** — Stock price timeseries and S&P 500 company data (natural language to SQL)
 
 ### Prerequisites
 
@@ -61,7 +51,6 @@ A Snowflake Intelligence agent called **Holly** with:
 
 <!-- ------------------------ -->
 ## Subscribe to Marketplace Data
-Duration: 3
 
 Before running the installation, you need to subscribe to the data source that powers Holly.
 
@@ -71,21 +60,21 @@ Before running the installation, you need to subscribe to the data source that p
 
 ![Snowflake Public Data Paid](assets/snowflake-paid.png)
 
-This provides the `SNOWFLAKE_PUBLIC_DATA_PAID.PUBLIC_DATA` database which contains:
+This provides the **SNOWFLAKE_PUBLIC_DATA_PAID.PUBLIC_DATA** database which contains:
 - **Stock price timeseries** — daily OHLC data for all S&P 500 companies
 - **SEC EDGAR filings** — 10-K, 10-Q, 8-K filings with full text content
 - **Public company transcripts** — earnings calls, investor conferences
 
-> aside positive
-> This listing has a free trial available, making it compatible with Snowflake trial accounts.
+This listing has a free trial available, making it compatible with Snowflake trial accounts.
 
 <!-- ------------------------ -->
 ## Create Database and Load Data
-Duration: 10
 
-Open a new SQL Worksheet in Snowsight and run the following steps.
+All of the SQL in this quickstart is contained in the [INSTALL.sql](assets/INSTALL.sql) script. You can either run the full script end-to-end, or follow along step-by-step below. Open a new SQL Worksheet in Snowsight and paste the contents of INSTALL.sql.
 
 ### Set Up Context
+
+The install script begins by setting the role, enabling cross-region Cortex AI, and creating the warehouses Holly needs. **SMALL_WH** is used for data loading and indexing, while **SMALL_IW** is a smaller warehouse with query acceleration for interactive Cortex Analyst queries.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -98,6 +87,8 @@ USE WAREHOUSE SMALL_WH;
 
 ### Create Database and Schemas
 
+The script creates the **HOLLY_DB** database with three schemas that organize data by type: **STRUCTURED** for tabular financial data, **SEMI_STRUCTURED** for SEC filings, and **UNSTRUCTURED** for earnings transcripts.
+
 ```sql
 CREATE DATABASE IF NOT EXISTS HOLLY_DB;
 CREATE SCHEMA IF NOT EXISTS HOLLY_DB.STRUCTURED;
@@ -107,7 +98,7 @@ CREATE SCHEMA IF NOT EXISTS HOLLY_DB.UNSTRUCTURED;
 
 ### Create S&P 500 Companies Table
 
-This inserts all 503 S&P 500 constituents (as of March 2026). You can copy the full INSERT statement from the [INSTALL.sql](assets/INSTALL.sql) file, or run the complete script directly.
+The script creates a reference table of all 503 S&P 500 constituents (as of March 2026) and populates it with a large INSERT statement. This table drives the filtering for all downstream data — only companies in this list will have their stock prices, filings, and transcripts loaded.
 
 ```sql
 CREATE OR REPLACE TABLE HOLLY_DB.STRUCTURED.SP500_COMPANIES (
@@ -126,6 +117,8 @@ CREATE OR REPLACE TABLE HOLLY_DB.STRUCTURED.SP500_COMPANIES (
 ```
 
 ### Create Stock Price Data
+
+This step pulls historical daily OHLC (Open, High, Low, Close) stock price data from the Marketplace listing, filtered to only S&P 500 companies. Change tracking is enabled so Cortex Search and Semantic Views can detect updates. Clustering by ticker and date optimizes query performance for time-series analysis.
 
 ```sql
 CREATE OR REPLACE TABLE HOLLY_DB.STRUCTURED.STOCK_PRICE_TIMESERIES
@@ -148,6 +141,8 @@ ALTER TABLE HOLLY_DB.STRUCTURED.STOCK_PRICE_TIMESERIES CLUSTER BY (TICKER, DATE)
 ```
 
 ### Create SEC EDGAR Filings Data
+
+The script joins SEC filing attributes with the report index from the Marketplace data, filtering to S&P 500 companies and filings from 2025 onward. This captures 10-K annual reports, 10-Q quarterly reports, and 8-K current event disclosures with their full plaintext content. The CIK (Central Index Key) join uses zero-padding to handle formatting differences between data sources.
 
 ```sql
 CREATE OR REPLACE TABLE HOLLY_DB.SEMI_STRUCTURED.EDGAR_FILINGS
@@ -176,6 +171,8 @@ ALTER TABLE HOLLY_DB.SEMI_STRUCTURED.EDGAR_FILINGS CLUSTER BY (COMPANY_NAME, FIL
 
 ### Create Public Transcripts Data
 
+This loads earnings call and investor conference transcripts for S&P 500 companies. Each transcript is assigned a unique ID and includes the full transcript JSON content, which will be parsed when creating the Cortex Search service in the next step.
+
 ```sql
 CREATE OR REPLACE TABLE HOLLY_DB.UNSTRUCTURED.PUBLIC_TRANSCRIPTS AS
 SELECT 
@@ -200,20 +197,20 @@ ALTER TABLE HOLLY_DB.UNSTRUCTURED.PUBLIC_TRANSCRIPTS SET CHANGE_TRACKING = TRUE;
 
 <!-- ------------------------ -->
 ## Create Cortex Search Services
-Duration: 8
 
 Cortex Search indexes your unstructured text data so the agent can retrieve relevant content using natural language. We create two search services: one for SEC filings and one for earnings transcripts.
 
 ### Scale Up Warehouse
 
+The install script temporarily scales the warehouse to 4X-LARGE for the indexing step. Building Cortex Search indexes requires embedding all text content into vector space, which is compute-intensive. The larger warehouse significantly reduces indexing time.
+
 ```sql
 ALTER WAREHOUSE SMALL_WH SET WAREHOUSE_SIZE = '4X-LARGE';
 ```
 
-> aside negative
-> The search service indexing is the most time-consuming step. Scaling the warehouse to 4X-LARGE significantly reduces indexing time.
-
 ### SEC Filings Search
+
+This creates a Cortex Search service over the SEC filings text. The **ON ANNOUNCEMENT_TEXT** clause specifies the column to search, while **ATTRIBUTES** defines the metadata columns returned with each search result. The service automatically builds a hybrid search index (vector + keyword) and refreshes daily.
 
 ```sql
 CREATE OR REPLACE CORTEX SEARCH SERVICE HOLLY_DB.SEMI_STRUCTURED.EDGAR_FILINGS_SEARCH
@@ -228,6 +225,8 @@ AS (
 ```
 
 ### Public Transcripts Search
+
+The second search service indexes earnings call transcripts. It parses the JSON transcript field **TRANSCRIPT:text** into plain text and uses the **snowflake-arctic-embed-l-v2.0** multilingual embedding model for higher quality semantic search across financial language.
 
 ```sql
 CREATE OR REPLACE CORTEX SEARCH SERVICE HOLLY_DB.UNSTRUCTURED.PUBLIC_TRANSCRIPTS_SEARCH
@@ -246,17 +245,20 @@ AS (
 
 ### Scale Down Warehouse
 
+After indexing completes, the script scales the warehouse back down to SMALL to minimize credit consumption for the remainder of the setup.
+
 ```sql
 ALTER WAREHOUSE SMALL_WH SET WAREHOUSE_SIZE = 'SMALL' AUTO_SUSPEND = 60;
 ```
 
 <!-- ------------------------ -->
 ## Create Semantic Views
-Duration: 5
 
 Semantic Views provide the business-level data model that Cortex Analyst uses to convert natural language questions into SQL queries. We create three semantic views for stock prices, company data, and filing analytics.
 
 ### Stock Price Timeseries Semantic View
+
+This semantic view exposes the stock price table to Cortex Analyst. It defines **VALUE** as a fact (numeric measure) and the remaining columns as dimensions, allowing the agent to generate SQL for questions like "plot NVDA closing price over the last 6 months."
 
 ```sql
 CREATE OR REPLACE SEMANTIC VIEW HOLLY_DB.STRUCTURED.STOCK_PRICE_TIMESERIES_SV
@@ -275,6 +277,8 @@ CREATE OR REPLACE SEMANTIC VIEW HOLLY_DB.STRUCTURED.STOCK_PRICE_TIMESERIES_SV
 
 ### S&P 500 Companies Semantic View
 
+This semantic view gives the agent access to S&P 500 company metadata — sector, industry, headquarters, and founding date. All columns are dimensions since this is a reference table with no numeric measures.
+
 ```sql
 CREATE OR REPLACE SEMANTIC VIEW HOLLY_DB.STRUCTURED.SP500
     TABLES (HOLLY_DB.STRUCTURED.SP500_COMPANIES)
@@ -292,7 +296,7 @@ CREATE OR REPLACE SEMANTIC VIEW HOLLY_DB.STRUCTURED.SP500
 
 ### SEC EDGAR Filings Semantic View
 
-This semantic view uses the YAML-based creation method for richer metadata and verified queries:
+This semantic view uses the YAML-based creation method, which allows richer metadata including column descriptions, sample values, and verified queries. Verified queries are pre-validated SQL examples that improve Cortex Analyst accuracy for common question patterns like "how many filings by type" or "which companies file the most."
 
 ```sql
 CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML(
@@ -399,11 +403,12 @@ verified_queries:
 
 <!-- ------------------------ -->
 ## Create the Holly Agent
-Duration: 5
 
-Now we bring it all together by creating the Holly Cortex Agent that orchestrates across all the tools.
+The final step of the install script creates the Holly Cortex Agent, which ties together all the Cortex Search services and Semantic Views into a single conversational interface.
 
 ### Create Agent Database
+
+The script creates a dedicated database and schema for the agent. This follows the Snowflake Intelligence convention of placing agents in a **SNOWFLAKE_INTELLIGENCE.AGENTS** schema.
 
 ```sql
 CREATE DATABASE IF NOT EXISTS SNOWFLAKE_INTELLIGENCE;
@@ -411,6 +416,8 @@ CREATE SCHEMA IF NOT EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS;
 ```
 
 ### Create the Agent
+
+This is the core of the install script — the **CREATE AGENT** statement defines Holly's orchestration model, routing instructions, tool definitions, and tool resources. The agent uses **claude-4-sonnet** for orchestration and is configured with five tools: two Cortex Search services for unstructured retrieval and three Cortex Analyst semantic views for structured SQL generation. The script also grants PUBLIC access and sets the agent avatar.
 
 ```sql
 CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.HOLLY
@@ -517,9 +524,8 @@ ALTER AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.HOLLY SET PROFILE = '{"avatar": "robot
 
 <!-- ------------------------ -->
 ## Verify Installation
-Duration: 2
 
-Run the following queries to verify everything was created successfully:
+Once the install script completes, run the following queries to verify everything was created successfully:
 
 ```sql
 SELECT 'SP500_COMPANIES' AS table_name, COUNT(*) AS row_count FROM HOLLY_DB.STRUCTURED.SP500_COMPANIES
@@ -543,7 +549,6 @@ You should see:
 
 <!-- ------------------------ -->
 ## Try Holly in Snowflake Intelligence
-Duration: 10
 
 Navigate to **AI & ML > Snowflake Intelligence** in Snowsight and select **Holly**.
 
@@ -585,9 +590,8 @@ Holly uses **multiple tools** — pulling current price data, recent filings, an
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
-To remove all Holly components, run the uninstall script:
+To remove all Holly components, run the following cleanup statements. These are also included at the end of the install script as comments:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -610,7 +614,6 @@ DROP DATABASE IF EXISTS HOLLY_DB;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 Congratulations! You have successfully built **Holly**, an AI-powered financial research assistant using Snowflake Intelligence.
 
