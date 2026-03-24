@@ -21,9 +21,9 @@ The system includes:
 - **MCP Integration**: Wikipedia retrieval and A/B testing framework
 - **Extended Thinking**: Claude reasoning traces with RAG
 
-![Cross-Model Comparison Dashboard](assets/persona_comparison.png)
+![Cross-Model Comparison Dashboard](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/persona_comparison.png)
 
-![Model Compare - Cortex REST & SQL](assets/ModelCompare.png)
+![Model Compare - Cortex REST & SQL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/ModelCompare.png)
 
 ### Prerequisites
 - Snowflake account with ACCOUNTADMIN role
@@ -565,7 +565,7 @@ if st.button("Run Comparison", type="primary"):
         st.metric(MODEL_CONFIGS[model_key].name, f"{compliance_rate:.1f}%")
 ```
 
-![LangChain with Cortex REST API](assets/langchain_cortex_rest_api.png)
+![LangChain with Cortex REST API](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/langchain_cortex_rest_api.png)
 
 <!-- ------------------------ -->
 ## Wikipedia Q&A with Vine Copula
@@ -657,7 +657,7 @@ def generate_wiki_qa(articles: list, n_questions: int = 10) -> list:
 
 Test how well models adapt responses to different audience personas:
 
-![Persona Comparison](assets/persona_comparison.png)
+![Persona Comparison](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/persona_comparison.png)
 
 ### Persona Definitions
 
@@ -712,14 +712,14 @@ def evaluate_persona_compliance(response: str, persona: str) -> float:
     return 0.5
 ```
 
-![Persona Compliance Results](assets/persona_compliance.png)
+![Persona Compliance Results](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/persona_compliance.png)
 
 <!-- ------------------------ -->
 ## TruLens Evaluation Pipeline
 
 Implement LLM-as-Judge evaluation with multiple judge models and SAE (Sparse Autoencoder) analysis for model interpretability.
 
-![TruLens Evaluations](assets/trulens_evals.png)
+![TruLens Evaluations](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/trulens_evals.png)
 
 ### Judge Configuration
 
@@ -782,7 +782,7 @@ def run_multi_judge_evaluation(response: str, verbosity: str) -> dict:
 
 ### SAE Feature Analysis
 
-![SAE Analysis with LangTrace](assets/sae_analysis_langtrace.png)
+![SAE Analysis with LangTrace](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/sae_analysis_langtrace.png)
 
 Sparse Autoencoder (SAE) analysis decomposes LLM activations into interpretable features:
 
@@ -819,7 +819,7 @@ class SAEAnalyzer:
 
 Capture Claude's reasoning process with extended thinking using the **Chat Completions API** and combine with retrieval-augmented generation.
 
-![MCP RAG with Extended Thinking](assets/mcp_rag_extended_thinking.png)
+![MCP RAG with Extended Thinking](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/mcp_rag_extended_thinking.png)
 
 ### Extended Thinking with Chat Completions
 
@@ -972,11 +972,11 @@ def display_chat_completions_usage(result: dict):
 
 Build data pipelines for ML feature engineering with dbt models running on Snowflake.
 
-![dbt Pipelines for Embeddings](assets/dbt_pipelines_embeddings.png)
+![dbt Pipelines for Embeddings](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/dbt_pipelines_embeddings.png)
 
 ### Pipeline Lineage
 
-![dbt Lineage](assets/dbt_lineage.png)
+![dbt Lineage](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/dbt_lineage.png)
 
 ### ML Features Model
 
@@ -1057,7 +1057,7 @@ FROM {{ ref('stg_persona_responses') }}
 
 Implement experiment frameworks using LangGraph and MCP for A/B testing model configurations.
 
-![LangGraph A/B Experiment](assets/langgraph_ab_experiment.png)
+![LangGraph A/B Experiment](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/langgraph_ab_experiment.png)
 
 ### A/B MCP Server
 
@@ -1161,7 +1161,7 @@ app = workflow.compile()
 
 Use the **Cortex Chat Completions API** for image understanding with Claude and GPT-4o vision models. This enables analysis of egocentric frames from AR devices like **Project Aria**.
 
-![Multimodal Egocentric Analysis](assets/MultimodalEgocentric1.png)
+![Multimodal Egocentric Analysis](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/MultimodalEgocentric1.png)
 
 ### Vision API Call
 
@@ -1235,7 +1235,7 @@ from PIL import Image
 Image.fromarray(image_array).save("aria_frame.jpg")
 ```
 
-![Multimodal Vision Comparison](assets/MultimodalEgocentric2.png)
+![Multimodal Vision Comparison](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/MultimodalEgocentric2.png)
 
 ### Supported Vision Models
 
@@ -1245,6 +1245,77 @@ Image.fromarray(image_array).save("aria_frame.jpg")
 | claude-sonnet-4-6 | Cortex | Latest Claude vision capabilities |
 | gpt-4o | Cortex | Fast, accurate image understanding |
 | gpt-4o-mini | Cortex | Cost-effective vision tasks |
+
+<!-- ------------------------ -->
+## Dashboard Walkthrough
+
+Launch the full cross-model verbosity dashboard:
+
+```bash
+streamlit run compare_models_dashboard.py --server.port 8501
+```
+
+### Verbosity Comparison
+
+The main tab lets you compare Claude, Mistral, and Llama across all 8 verbosity levels with compliance scoring and token usage metrics.
+
+![Verbosity Compare](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/VerbosityCompare.png)
+
+### Live Testing
+
+Run live model comparisons with custom prompts and see real-time results from the Cortex REST API.
+
+![Live Test](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/LiveTest.png)
+
+### Results Analysis
+
+Analyze compliance rates, token efficiency, and response quality across models and verbosity levels.
+
+![Results Analysis](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/ResultsAnalysis.png)
+
+### Persona Comparison
+
+Test persona compliance across all tabs — 5th Grade, Scholar, Compute, and Business personas evaluated against each model.
+
+![Persona Compare All Tabs](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/PersonaCompareAllTabs.png)
+
+![Persona Compare — Detail Views](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/PersonaCompare1.png)
+
+![Persona Compare — Compliance Scores](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/PersonaCompare3.png)
+
+### RAG with Extended Thinking
+
+Mini RAG pipeline with Wikipedia retrieval and Claude extended thinking traces.
+
+![Mini RAG](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/MiniRAG.png)
+
+![RAG with Extended Thinking](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/RAG2.png)
+
+### SAE & LangChain Integration
+
+Sparse Autoencoder feature analysis with LangChain orchestration and LangTrace event-driven hooks for observability.
+
+![SAE LangChain LangTrace Event-Driven Hooks](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/SAELangChainLangTraceEventDrivenHooks.png)
+
+![SAE Feature Analysis](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/saeFeatureAnalysis.png)
+
+### LangGraph Experiments
+
+A/B testing framework using LangGraph workflows for experiment-driven model evaluation.
+
+![LangGraph](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/LangGraph.png)
+
+![LangGraph Experiments](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/LangGraphexperiments.png)
+
+### Evaluation & Batch Testing
+
+TruLens evaluation demo with LLM-as-Judge scoring and batch test execution across all model-verbosity combinations.
+
+![Eval Demo](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/EvalDemo1.png)
+
+![TruLens Eval](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/TrulensEval.png)
+
+![Batch Test](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/agent-verbosity-cortex-evaluation/assets/BatchTest1.png)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
