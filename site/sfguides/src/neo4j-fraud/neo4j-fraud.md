@@ -61,13 +61,6 @@ Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load
 - Don't forget to install streamlit and python package before you run.
 
 ### Permissions
-Before we run our algorithms, we need to set the proper permissions. But before we get started granting different roles, we need to ensure that you are using `accountadmin` to grant and create roles. Lets do that now:
-
-```sql
--- you must be accountadmin to create role and grant permissions
-use role accountadmin;
-```
-
 Next let's set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the `p2p_demo.public schema`. It creates a consumer role (gds_user_role) for users and administrators, grants the Neo4j Graph Analytics application access to read from and write to tables and views, and ensures that future tables are accessible. 
 
 It also provides the application with access to the required compute pool and warehouse resources needed to run graph algorithms at scale.
