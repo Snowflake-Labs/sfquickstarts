@@ -374,7 +374,7 @@ If the plan result looks correct and all planned changes match your expectations
 2. Optionally, add a **Deployment alias** — think of it as a commit message that appears in the deployment history of your project.
 3. DCM will create all objects and attach grants and expectations using the owner role of the project object.
 
-![Deploy confirmation dialog](assets/deploy_dialog.png)
+![Deploy confirmation dialog](assets/dialog_js.png)
 
 Once the deployment completes successfully, refresh the Database Explorer on the left side of Snowsight. You should see the `DCM_DEMO_1_DEV` database and all of the created objects inside it.
 
