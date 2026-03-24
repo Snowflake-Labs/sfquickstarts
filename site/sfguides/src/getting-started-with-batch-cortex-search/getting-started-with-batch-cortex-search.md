@@ -4,7 +4,7 @@ language: en
 summary: Learn to use Batch Cortex Search over a Cortex Search Service for processing large batches of queries
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis , snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
-status: Archived
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Batch Cortex Search
@@ -56,6 +56,73 @@ Jobs submitted to a Cortex Search Service with the CORTEX_SEARCH_BATCH function 
 > **_NOTE:_** The throughput of the batch search function may vary depending on the amount of data indexed in the queried Cortex Search Service and the complexity of the search queries. 
 
 > The throughput of the batch search function (the number of search queries processed per second) is not influenced by the size of the warehouse used to query it and there is no limit to the number of concurrent batch queries that can be run at a given time on a given service.  
+
+<!-- ------------------------ -->
+## Use Cases
+
+Batch Cortex Search excels at workloads where you need to match, resolve, or compare large sets of records against a searchable index. Here are the most common use cases:
+
+![Use Cases Overview](assets/use_cases_diagram2.png)
+
+### 1. Entity Resolution
+
+**The Problem:**  
+Your company has customer data spread across multiple systems — CRM, billing, support tickets, marketing automation. The same customer appears as "Acme Corporation", "Acme Corp", "ACME Inc.", and "Acme (US)". You need to link these records together, but fuzzy string matching alone isn't enough.
+
+**How Batch Search Fixes It:**  
+Load all your customer names into a query table. Batch search finds semantically similar matches across your master customer index — even when spellings differ. Process 50,000 records in minutes instead of hours, with relevance scores to set your match threshold.
+
+---
+
+### 2. Catalog Mapping
+
+**The Problem:**  
+Your suppliers send product feeds using their own naming conventions: "Samsung 65in QLED TV 4K" vs your internal "Samsung QN65Q80C 65-Inch Smart TV". Manual mapping is tedious and doesn't scale when you onboard new suppliers.
+
+**How Batch Search Fixes It:**  
+Index your internal product catalog, then batch search all supplier product descriptions against it. The semantic understanding matches products even when descriptions vary wildly. Map thousands of SKUs in a single query.
+
+---
+
+### 3. Deduplication
+
+**The Problem:**  
+Your CRM has grown organically and now contains duplicate leads and contacts. "John Smith at Snowflake" exists as three separate records with slight variations. Sales reps waste time on duplicates, and reporting is unreliable.
+
+**How Batch Search Fixes It:**  
+Search each record against your entire database to find potential duplicates. Batch search returns similarity scores so you can set thresholds — high confidence matches get auto-merged, medium confidence gets flagged for review.
+
+---
+
+### 4. Audience Matching
+
+**The Problem:**  
+You're partnering with another company and need to find customer overlap without sharing raw PII. Or you have two customer lists and need to identify which customers appear in both for a targeted campaign.
+
+**How Batch Search Fixes It:**  
+Use hashed or tokenized identifiers and search one list against the other. Batch search processes the entire comparison in one operation, returning match scores that indicate overlap confidence.
+
+---
+
+### 5. Content Tagging & Classification
+
+**The Problem:**  
+You have thousands of support tickets, documents, or articles that need categorization. Manual tagging is slow and inconsistent. Keyword rules miss context and create false matches.
+
+**How Batch Search Fixes It:**  
+Build a search index over your taxonomy or knowledge base articles. Batch search each piece of content against it to find the most relevant categories. Auto-assign tags based on the top matches.
+
+---
+
+### 6. Similar Item Discovery
+
+**The Problem:**  
+Users want "more like this" recommendations — similar products, related articles, comparable listings. Building a recommendation engine from scratch requires ML expertise and infrastructure.
+
+**How Batch Search Fixes It:**  
+Index your item descriptions and batch search each item against the index (excluding itself). The top results become your "similar items" list. Refresh recommendations by re-running the batch query whenever your catalog updates.
+
+---
 
 <!-- ------------------------ -->
 ## Getting Data
