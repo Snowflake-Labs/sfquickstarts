@@ -1247,6 +1247,77 @@ Image.fromarray(image_array).save("aria_frame.jpg")
 | gpt-4o-mini | Cortex | Cost-effective vision tasks |
 
 <!-- ------------------------ -->
+## Dashboard Walkthrough
+
+Launch the full cross-model verbosity dashboard:
+
+```bash
+streamlit run compare_models_dashboard.py --server.port 8501
+```
+
+### Verbosity Comparison
+
+The main tab lets you compare Claude, Mistral, and Llama across all 8 verbosity levels with compliance scoring and token usage metrics.
+
+![Verbosity Compare](assets/VerbosityCompare.png)
+
+### Live Testing
+
+Run live model comparisons with custom prompts and see real-time results from the Cortex REST API.
+
+![Live Test](assets/LiveTest.png)
+
+### Results Analysis
+
+Analyze compliance rates, token efficiency, and response quality across models and verbosity levels.
+
+![Results Analysis](assets/ResultsAnalysis.png)
+
+### Persona Comparison
+
+Test persona compliance across all tabs — 5th Grade, Scholar, Compute, and Business personas evaluated against each model.
+
+![Persona Compare All Tabs](assets/PersonaCompareAllTabs.png)
+
+![Persona Compare — Detail Views](assets/PersonaCompare1.png)
+
+![Persona Compare — Compliance Scores](assets/PersonaCompare3.png)
+
+### RAG with Extended Thinking
+
+Mini RAG pipeline with Wikipedia retrieval and Claude extended thinking traces.
+
+![Mini RAG](assets/MiniRAG.png)
+
+![RAG with Extended Thinking](assets/RAG2.png)
+
+### SAE & LangChain Integration
+
+Sparse Autoencoder feature analysis with LangChain orchestration and LangTrace event-driven hooks for observability.
+
+![SAE LangChain LangTrace Event-Driven Hooks](assets/SAELangChainLangTraceEventDrivenHooks.png)
+
+![SAE Feature Analysis](assets/saeFeatureAnalysis.png)
+
+### LangGraph Experiments
+
+A/B testing framework using LangGraph workflows for experiment-driven model evaluation.
+
+![LangGraph](assets/LangGraph.png)
+
+![LangGraph Experiments](assets/LangGraphexperiments.png)
+
+### Evaluation & Batch Testing
+
+TruLens evaluation demo with LLM-as-Judge scoring and batch test execution across all model-verbosity combinations.
+
+![Eval Demo](assets/EvalDemo1.png)
+
+![TruLens Eval](assets/TrulensEval.png)
+
+![Batch Test](assets/BatchTest1.png)
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 
 Congratulations! You've built a comprehensive cross-model verbosity evaluation system using **Snowflake Cortex REST API** that:

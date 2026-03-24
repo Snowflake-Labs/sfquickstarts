@@ -28,8 +28,8 @@ This guide walks through how to build a modern data architecture on Snowflake an
 
 
 ## Solution Architecture
-
-![Solution Architecture](assets/Modern%20Data%20Architecture%20for%20AI-Powered%20Insurance%20Claims%20Insights.jpeg)
+site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/Modern Data Architecture for AI-Powered Insurance Claims Insights.jpeg
+![Solution Architecture](assets/Modern_Data_Architecture_for_AI-Powered_Insurance_Claims_Insights.jpeg)
 
 ## Architecture Overview
 
@@ -94,7 +94,7 @@ The **Snowflake Horizon Catalog** acts as the central governance layer throughou
    - `initial_estimates/` — Initial claim estimates
   
 The folder structure should look as below once the S3 Bucket and Prefixes are created
-![S3 Bucket with Prefixes](assets/screenshots/s3-bucket-prefixes.png)
+![S3 Bucket with Prefixes](assets/s3-bucket-prefixes.png)
 
 #### AWS Glue Data Catalog
 
@@ -105,7 +105,7 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
    - Database name: `insurance_claims_iceberg_glue_db`
    - Location: `s3://<account-id>-us-west-2-insurance-claims-iceberg-data/`
    - Click **Create database**
-![Glue Database](assets/screenshots/create-glue-database.png) 
+![Glue Database](assets/create-glue-database.png) 
 
 #### IAM Role with Glue/Lake Formation Permissions
 
@@ -207,7 +207,7 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
    - Permission mode: Select **Lake Formation**
    - Click **Register location**
 
-   ![Register Data Lake Location](assets/screenshots/register_data_lake_location.png)
+   ![Register Data Lake Location](assets/register_data_lake_location.png)
 
 3. **Grant Data Permissions to the IAM Role**
    - Navigate to **Lake Formation → Data permissions → Grant**
@@ -218,9 +218,9 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
    - Table permissions: **Select**, **Describe**
    - Click **Grant**
 
-   ![Grant Permissions on Glue Database 1](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_1.png)
-   ![Grant Permissions on Glue Database 2](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
-   ![Grant Permissions on Glue Database 3](assets/screenshots/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
+   ![Grant Permissions on Glue Database 1](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_1.png)
+   ![Grant Permissions on Glue Database 2](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_2.png)
+   ![Grant Permissions on Glue Database 3](assets/Grant_Permissions_on_Glue_Database_to_Snowflake_Role_Part_3.png)
 
 2. **Register the S3 Data Location**
    - Navigate to **Lake Formation → Data locations → Grant**
@@ -230,7 +230,7 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
    - Checkmark **Grantable**
    - Click **Grant**
 
-   ![Register Data Location](assets/screenshots/register_data_location.png)
+   ![Register Data Location](assets/register_data_location.png)
 
 6. **Verify Lake Formation Permissions**
    - Navigate to **Lake Formation → Data permissions**
@@ -323,11 +323,13 @@ The folder structure should look as below once the S3 Bucket and Prefixes are cr
 
 ### Step 3: Provision Iceberg Tables & Snowflake Objects (Database, Schema, Stages, Tables)
 
-> All SQL commands for this step are in [`assets/setup.sql`](assets/setup.sql). Before running, update `<account-id>` with your AWS account ID. Clone the repository in your local machine, go to the assets folder and run the following prompt using Cortex Code CLI (replace the AWS ACCOUNT ID with yours.
+Clone the [`git repository`](https://github.com/Snowflake-Labs/sfquickstarts) into your local machine and navigate to the folder **site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/**
+
+> All SQL commands for this step are in [`assets/setup.sql`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/setup.sql).Run the following prompt using Cortex Code CLI (replace the AWS ACCOUNT ID with yours.
 
 `Run the setup.sql script by replacing the <account-id> with <01234554634> and access the data to upload into the stage from the data folder in this path`
 
- ![Run Setup Script with CoCo CLI](assets/screenshots/setup_script_with_coco_cli.gif)
+ ![Run Setup Script with CoCo CLI](assets/setup_script_with_coco_cli.gif)
 
 The setup script performs the following sub-steps in order:
 
@@ -346,23 +348,23 @@ The setup script performs the following sub-steps in order:
 
 1. **Create a Notebook in Snowsight**
    - Navigate to **Snowsight → Notebooks → Create Notebook**
-   - Upload the notebook from the cloned repository located in **spark-jobs** folder
-    ![Upload Notebook](assets/screenshots/upload_notebook_into_snowsight.png)
+   - Upload the notebook from the cloned repository located in **assets** folder
+    ![Upload Notebook](assets/upload_notebook_into_snowsight.png)
    - Also, Upload the `fraud_model.py` script to the notebook environment
 
 2. **Install the Snowpark Connect package**
    - In the notebook, install the `snowpark-connect` package from the Packages panel
-     ![Install Package in Notebook](assets/screenshots/install_packages_into_notebook.png)
+     ![Install Package in Notebook](assets/install_packages_into_notebook.png)
 
 3. **Run the Feature Engineering notebook**
-   - Open and execute the [`assets/spark_jobs/Insurance-Claims-Feature-Engineering.ipynb`](assets/spark_jobs/Insurance-Claims-Feature-Engineering.ipynb) notebook
+   - Run through [`Insurance-Claims-Feature-Engineering.ipynb`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/Insurance-Claims-Feature-Engineering.ipynb) notebook from SnowSight UI
    - This notebook reads from both Iceberg tables (via Catalog Linked Database) and Native tables, performs feature engineering and fraud scoring, and writes the enriched output to the `CLAIMS_PROCESSED_FEATURES` table
 
 ### Step 5: Enable Cortex Analyst, Cortex Agent, and Snowflake Intelligence
 
-Run through the [`assets/cortex_analyst_snowflake_intelligence_setup.sql`](assets/cortex_analyst_snowflake_intelligence_setup.sql) script using CoCo CLI with the following prompt:
+Run through the [`cortex_analyst_snowflake_intelligence_setup.sql`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/cortex_analyst_snowflake_intelligence_setup.sql) script using CoCo CLI with the following prompt:
 
-`Run the cortex_analyst_snowflake_intelligence_setup.sql script to create the semantic view by uploading the claims_semantic_view.yaml from the semantic_models folder, setup Cortex Analyst,
+`Run the cortex_analyst_snowflake_intelligence_setup.sql script to create the semantic view by uploading the claims_semantic_view.yaml from assets folder, setup Cortex Analyst,
 Cortex Agent and enable Snowflake Intelligence` 
 
 This runs through the following steps:
@@ -382,5 +384,5 @@ This runs through the following steps:
    - "How many claims are under SIU investigation?"
 
 
- ![Run Snowflake  Intelligence](assets/screenshots/snowflake_intelligence_claims_data_questions.gif)
+ ![Run Snowflake  Intelligence](assets/snowflake_intelligence_claims_data_questions.gif)
  
