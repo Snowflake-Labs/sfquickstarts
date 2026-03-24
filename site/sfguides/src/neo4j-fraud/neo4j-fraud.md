@@ -219,7 +219,7 @@ WHERE pp.targetnodeid IS NOT NULL
 ```
 Now we can use the neo4j_viz python package to create the actual visualization. You can learn more about how it works [here](https://neo4j.com/docs/snowflake-graph-analytics/current/visualization/), but for this example, we are just going to customize two things. First, we will use the “label” property of our nodes (which we defined in the SQL query above) to set the colors. Like so:
 
-```py
+```python
 
 from neo4j_viz.snowflake import from_snowflake
 from snowflake.snowpark.context import get_active_session
