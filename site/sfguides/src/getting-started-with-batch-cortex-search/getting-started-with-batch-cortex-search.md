@@ -731,7 +731,7 @@ The pattern is clear: **the more queries you have, the more batch search pays of
 
 Interactive search has consistent per-query latency (~350ms), making it ideal for user-facing applications. Batch search has a small startup cost but achieves dramatically higher throughput by processing queries in parallel. For any workload over 100 queries, batch is the clear winner — and at 10,000+ queries for the tested dataset, it is **47x faster**.
 
-> **_NOTE:_** Since there is no limit to the number of concurrent batch queries that can be run at a given time on a given service, you could, for example, run 10 Batch Cortex Search jobs in parallel, achieving up to **1000x higher** throughput than Cortex Search.
+> **_NOTE:_** You can run multiple batch queries on a given service in parallel, achieving higher throughput than with a single Batch Cortex Search call.
 
 <!-- ------------------------ -->
 ## Cleanup
