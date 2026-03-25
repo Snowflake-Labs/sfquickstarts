@@ -12,7 +12,7 @@ Agents are redefining workflows everywhere. And getting started for ML has never
 
 Traditionally, building ML models has been slow and manual, involving tedious troubleshooting cycles. Snowflake is now an agentic-first ML platform. With [**Cortex Code**](https://docs.snowflake.com/en/user-guide/cortex-code/overview), Snowflake's native AI coding agent, data science teams can develop production-ready ML pipelines using simple natural language prompts, from the CLI or Snowsight.
 
-By automating everything from feature engineering to model training to deployment, you can experiment and iterate faster and focus on higher-impact initiatives for your business.
+By automating everything from feature engineering to model training to deployment in [Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview), you can experiment and iterate faster and focus on higher-impact initiatives for your business. All of the ML workflows in this guide are powered by the `$machine-learning` skill in Cortex Code.
 
 [![Agentic ML Overview](https://img.youtube.com/vi/zARMUTv_H5Y/0.jpg)](https://www.youtube.com/watch?v=zARMUTv_H5Y)
 
@@ -23,7 +23,7 @@ Step 1: Ensure [Cortex Code is enabled](https://docs.snowflake.com/en/user-guide
 
 ### In Snowsight
 
-Cortex Code is built directly into [Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight), Snowflake's web UI. No installation required - open a Workspace in Snowsight and start a Cortex Code conversation to generate fully functional ML pipelines that run directly inside a Snowflake Notebook.
+Cortex Code is built directly into [Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight), Snowflake's web UI. No installation required - open Workspaces in Snowsight and start a Cortex Code session to generate fully functional ML pipelines that run directly inside a Snowflake Notebook. [Try Cortex Code today in Snowsight with a 30-day free trial.](https://signup.snowflake.com/)
 
 ### In CLI
 
@@ -33,22 +33,23 @@ To use Cortex Code from your terminal, VS Code, or Cursor, install the CLI:
 curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 ```
 
-For more details see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
-
-> **If you don't have Cortex Code** [start your 30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code).
+For more details see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli). You can also try the CLI with a [30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code).
 
 ## Terminology
 
-- **[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/overview)** is Snowflake's AI-powered coding agent for building, debugging, and deploying ML pipelines through natural language conversations, available in the CLI and in Snowsight.
-- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: reusable instruction packs (playbooks) that guide Cortex Code through specific ML workflows (for example, feature engineering, model training, and deployment).
-- **[Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)**: Jupyter-based, container runtime environments purpose-built for large-scale AI/ML production workflows. In Snowsight, Cortex Code delivers verified ML solutions as fully functional pipelines that run directly inside a Notebook.
-- **[Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)**: a centralized repository for creating, storing, and serving ML features, enabling reuse across models and consistent training/serving definitions.
-- **[Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)**: a governed catalog for logging, versioning, and managing trained models along with their metadata, metrics, and lineage.
-- **[Model Monitor](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-monitor)**: a Snowflake-native service for tracking model performance in production, including data drift, prediction drift, and accuracy degradation over time.
+- **[Agentic ML](https://www.snowflake.com/en/blog/agentic-ml-snowflake-predictive-insights/)**: the ability to automate development of production-ready ML pipelines from simple natural language prompts.
+- **[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/overview)**: Snowflake's AI coding agent that can be used to build, debug, and deploy ML pipelines through natural language conversations, available in the CLI and in Snowsight.
+- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: reusable instruction packs (playbooks) that guide Cortex Code through specific workflows, such as feature engineering, model training, registry, and deployment.
+- **[Snowflake Notebooks](https://www.snowflake.com/en/product/features/notebooks/)**: fully-managed Jupyter-powered notebook built for end-to-end DS and ML development on Snowflake data. Runs in a pre-built [container environment](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) optimized for scalable AI/ML development. 
+- **[Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)**: Create, store and serve ML features, enabling reuse across models and consistent training/serving definitions.
+- **[Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)**: Securely manage models and their metadata in Snowflake and run scalable batch and real-time model inference
+- **[Model Monitoring](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-monitor)**: Monitor models in production to ensure more reliable predictions over time
 
 ## Best practices
 
 > **Always ensure you're on the latest CLI version.** Run `cortex --version` and update with `cortex update` if needed.
+
+> **Use the `$machine-learning` skill for ML workflows.** The `$machine-learning` skill contains curated workflows for the full ML lifecycle - feature engineering, model training, registry, and deployment. Cortex Code can trigger it automatically based on intent, but this is non-deterministic. To be certain the right skill is active, invoke it explicitly by typing `$machine-learning` at the start of your session or before any ML task.
 
 1. **Use plain language** - describe what you want, not how to do it. Cortex Code understands intent; you don't need to write code or SQL to get started.
 
@@ -73,7 +74,7 @@ For more details see the [Cortex Code CLI documentation](https://docs.snowflake.
 
 10. **Validate on a small sample before scaling up** - before running your full pipeline, add a small-scale validation step (e.g. *`TABLESAMPLE`* or *`LIMIT 100`*) and confirm the workflow runs end-to-end on Snowflake first. Subtle issues like missing packages, column-type mismatches between training and scoring pipelines, or serialization problems only surface at execution time, and failures are more expensive the later they occur in an ML workflow. Use *`TABLESAMPLE`* over *`LIMIT`* when data diversity matters, as it gives a more representative slice across categories, nulls, and edge cases.
 
-The following sections walk through key stages of the ML lifecycle with example prompts you can use as starting points in your own Cortex Code sessions.
+The following sections walk through key stages of the ML lifecycle with example prompts you can use as starting points in your own Cortex Code sessions. Each prompt uses the `$machine-learning` skill - you can invoke it explicitly at any time by typing `$machine-learning` to see available ML workflows.
 
 ## Engineer and Register Features
 
@@ -98,7 +99,7 @@ Add a feature that captures the ratio of spend in the last 7 days versus the
 
 ## Train and Evaluate Models
 
-Choosing the right model architecture for fraud detection means comparing multiple candidates against the same validation split - a tedious loop that [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling) and Cortex Code automate, logging every run as a named experiment so results are reproducible and comparable.
+Choosing the right model architecture for fraud detection means comparing multiple candidates against the same validation split - a tedious loop that [Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview) and Cortex Code automate, logging every run as a named experiment so results are reproducible and comparable.
 
 ```
 Explore multiple model architectures to train a fraud detection model and evaluate
@@ -164,9 +165,10 @@ summarize whether any thresholds have been breached.
 
 The key to success with agentic ML in Snowflake is to start with a focused goal, iterate one step at a time, and let Cortex Code handle the boilerplate while you apply your domain expertise. Use the prompting best practices above to get faster, higher-quality results and take advantage of Snowflake's integrated Feature Store, Model Registry, and Model Monitor to build pipelines that are reproducible, governed, and production-ready.
 
+- [Learn more about Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 - [Cortex Code documentation](https://docs.snowflake.com/en/user-guide/cortex-code/overview)
-- Start your [30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code)
 - [Cortex Code in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
+- [Start your 30-day Cortex Code trial in Snowsight](https://signup.snowflake.com/)
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/)
