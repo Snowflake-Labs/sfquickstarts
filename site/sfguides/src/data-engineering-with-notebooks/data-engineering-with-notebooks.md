@@ -6,6 +6,8 @@ summary: Build data engineering pipelines using Snowflake Notebooks with Python 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks
+
 
 # Getting Started with Data Engineering using Snowflake Notebooks
 <!-- ------------------------ -->
@@ -23,14 +25,15 @@ This Quickstart will focus on how to build Python data engineering pipelines usi
 * How to use Snowflake Notebooks and the Snowpark DataFrame API to build data engineering pipelines
 * How to add logging to your Python data engineering code and monitor from within Snowsight
 * How to use the Snowflake Python Management API to programmatically work with Snowflake objects
-* How to use the Python Task DAG API to programatically manage Snowflake Tasks
+* How to use the Python Task DAG API to programmatically manage Snowflake Tasks
+* How to use Cortex Code to accelerate data engineering development directly in Snowsight
 * How to build CI/CD pipelines using Snowflake's Git Integration, the Snowflake CLI, and GitHub Actions
 * How to deploy Snowflake Notebooks from dev to production
 
 ### What You'll Build
 * A data share from the Snowflake Marketplace to access weather data
 * A data engineering pipeline with a Notebook to ingest Excel files into Snowflake
-* A data engineering pipeline with a Notebook to transform and aggreggate data
+* A data engineering pipeline with a Notebook to transform and aggregate data
 * A DAG (or Directed Acyclic Graph) of Tasks to orchestrate/schedule the pipelines
 * A CI/CD pipeline to deploy the Notebooks to production
 
@@ -108,7 +111,7 @@ Snowflake will now clone the repository and create your workspace. This may take
 
 ### Create Demo Objects in Snowflake
 
-Next we will create the Snowflake objects used during this Guide. Do do that we will run a SQL script from our new Workspace:
+Next we will create the Snowflake objects used during this Guide. To do that we will run a SQL script from our new Workspace:
 
 1. In your Workspace, in the left "Files" pane, open the file `scripts/setup.sql`
 1. Run all of the SQL statements in this script by clicking on the blue down arrow and "Run all", next to play button at the top of the script, or using the shortcut CMD/CTRL+Shift+Enter
@@ -161,7 +164,7 @@ The notebook service will start up, which may take a minute or two for the first
 <!-- ------------------------ -->
 ## Load Weather
 
-During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
 
 ![assets/quickstart_overview.png](assets/quickstart_overview.png)
 
@@ -248,7 +251,7 @@ Open the `02_load_daily_city_metrics` Notebook click on the "Run all" button nea
 
 In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like in PySpark, this can be accomplished with the `Session.builder.configs().create()` methods. But within a Snowflake Notebook this is simplified and can be accomplished with just `session = get_active_session()`.
 
-One you have a Snowpark session you can begin working with data. In this Notebook we're using DataFrames to join the data from different tables into an `order_detail` DataFrame using the `join()` API.
+Once you have a Snowpark session you can begin working with data. In this Notebook we're using DataFrames to join the data from different tables into an `order_detail` DataFrame using the `join()` API.
 
 ```python
 order_detail = order_detail.join(location, order_detail['LOCATION_ID'] == location['LOCATION_ID'])
@@ -271,7 +274,7 @@ final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F
                         )
 ```
 
-And finally if the target table exists we're using the `merge()` DataFrame API to perform and Upsert operation on the target table. This is what enables us to perform incremental processing.
+And finally if the target table exists we're using the `merge()` DataFrame API to perform an Upsert operation on the target table. This is what enables us to perform incremental processing.
 
 ```python
     dcm.merge(final_agg, (dcm['DATE'] == final_agg['DATE']) & (dcm['CITY_NAME'] == final_agg['CITY_NAME']) & (dcm['COUNTRY_DESC'] == final_agg['COUNTRY_DESC']), \
@@ -282,7 +285,7 @@ For more details about the Snowpark Python DataFrame API, please check out our [
 
 ### Python Management API
 
-The new Python Management API allows us to programmatically interact with Snowflake with native Python objects. This API can be used to both inspect and manage Snowflake objects. In the previous Quickstart we checked for the existing of an object by using SQL like this:
+The new Python Management API allows us to programmatically interact with Snowflake with native Python objects. This API can be used to both inspect and manage Snowflake objects. In the previous Quickstart we checked for the existence of an object by using SQL like this:
 
 ```sql
 def table_exists(session, database_name='', schema_name='', table_name=''):
@@ -342,6 +345,33 @@ WHERE RECORD_TYPE = 'LOG'
 ORDER BY TIMESTAMP DESC
 LIMIT 100;
 ```
+
+
+<!-- ------------------------ -->
+## Using Cortex Code
+
+Now that we've built our data engineering pipelines, let's look at a tool that can help accelerate your development workflow significantly. [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) is an AI-powered coding assistant built directly into Snowsight that understands your Snowflake environment, including SQL worksheets, dbt Projects, and Notebooks. It can generate and modify code, explain existing logic, and even run notebooks — all from a conversational interface without ever leaving Snowsight.
+
+For data engineers, this is a game changer. Instead of manually writing your Python DataFrame (or SQL) queries, you can describe what you want in plain English and Cortex Code will generate context-aware code that follows Snowflake best practices. Whether you're building a new transformation, adding a debugging query, or exploring unfamiliar data, Cortex Code helps you move faster while staying in your flow.
+
+> **Note** - Cortex Code requires the `SNOWFLAKE.COPILOT_USER` database role and either the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role. It also requires [Cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) to be enabled. See the [Cortex Code documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) for full details.
+
+### Cortex Code in Action
+
+Let's see Cortex Code in action with the Notebook we just ran. Open the `02_load_daily_city_metrics` Notebook in your Workspace and then follow these steps:
+
+1. Click the Cortex Code icon in the lower-right corner of the Workspace to open the assistant panel
+2. In the message box, enter the following prompt and press Enter:
+
+```
+Add a Python cell under the debugging section that uses Snowpark DataFrame to query the DAILY_CITY_METRICS table and show the top 10 cities by total sales, including total days and average temperature.
+```
+
+Cortex Code will analyze the context of your Notebook and generate a new Python cell with the appropriate Snowpark DataFrame code. You'll be able to review the suggested change before applying it. Once you're happy with it, apply the change and run the new cell to see the results.
+
+![assets/cortex_code_snowsight.png](assets/cortex_code_snowsight.png)
+
+While this was just a simple debugging cell, we can leverage Cortex Code to write any part (or all) of our pipelines for us! As you continue building out your data engineering pipelines, Cortex Code can help you iterate faster — from prototyping new transformations to troubleshooting issues in production.
 
 
 <!-- ------------------------ -->
@@ -671,7 +701,8 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 * How to use Snowflake Notebooks and the Snowpark DataFrame API to build data engineering pipelines
 * How to add logging to your Python data engineering code and monitor from within Snowsight
 * How to use the Snowflake Python Management API to programmatically work with Snowflake objects
-* How to use the Python Task DAG API to programatically manage Snowflake Tasks
+* How to use the Python Task DAG API to programmatically manage Snowflake Tasks
+* How to use Cortex Code to accelerate data engineering development directly in Snowsight
 * How to build CI/CD pipelines using Snowflake's Git Integration, the Snowflake CLI, and GitHub Actions
 * How to deploy Snowflake Notebooks from dev to production
 
