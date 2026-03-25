@@ -14,7 +14,7 @@ Traditionally, building ML models has been slow and manual, involving tedious tr
 
 By automating everything from feature engineering to model training to deployment in [Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview), you can experiment and iterate faster and focus on higher-impact initiatives for your business. All of the ML workflows in this guide are powered by the `$machine-learning` skill in Cortex Code.
 
-[![Agentic ML Overview](https://img.youtube.com/vi/zARMUTv_H5Y/0.jpg)](https://www.youtube.com/watch?v=zARMUTv_H5Y)
+[![Feature Engineering with Agentic ML](assets/agentic-ml-thumbnail.png)](https://www.youtube.com/watch?v=zARMUTv_H5Y)
 
 ## Get started with Cortex Code
 
