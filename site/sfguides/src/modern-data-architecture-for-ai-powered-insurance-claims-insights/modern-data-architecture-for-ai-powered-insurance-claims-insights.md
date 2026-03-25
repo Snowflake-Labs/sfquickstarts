@@ -28,7 +28,7 @@ This guide walks through how to build a modern data architecture on Snowflake an
 
 
 ## Solution Architecture
-site/sfguides/src/modern-data-architecture-for-ai-powered-insurance-claims-insights/assets/Modern Data Architecture for AI-Powered Insurance Claims Insights.jpeg
+
 ![Solution Architecture](assets/Modern_Data_Architecture_for_AI-Powered_Insurance_Claims_Insights.jpeg)
 
 ## Architecture Overview
