@@ -16,6 +16,8 @@ By automating everything from feature engineering to model training to deploymen
 
 [![Feature Engineering with Agentic ML](assets/agentic-ml-thumbnail.png)](https://www.youtube.com/watch?v=zARMUTv_H5Y)
 
+[Watch: Feature Engineering with Agentic ML](https://www.youtube.com/watch?v=zARMUTv_H5Y)
+
 ## Get started with Cortex Code
 
 Step 1: Ensure [Cortex Code is enabled](https://docs.snowflake.com/en/user-guide/cortex-code/overview#enabling-cortex-code) with appropriate permissions on your account
@@ -23,7 +25,9 @@ Step 1: Ensure [Cortex Code is enabled](https://docs.snowflake.com/en/user-guide
 
 ### In Snowsight
 
-Cortex Code is built directly into [Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight), Snowflake's web UI. No installation required - open Workspaces in Snowsight and start a Cortex Code session to generate fully functional ML pipelines that run directly inside a Snowflake Notebook. [Try Cortex Code today in Snowsight with a 30-day free trial.](https://signup.snowflake.com/)
+Cortex Code is built directly into [Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight), Snowflake's web UI. No installation required - open Workspaces in Snowsight and start a Cortex Code session to generate fully functional ML pipelines that run directly inside a Snowflake Notebook.
+
+> **[Try Cortex Code today in Snowsight with a 30-day free trial.](https://signup.snowflake.com/)**
 
 ### In CLI
 
@@ -49,7 +53,7 @@ For more details see the [Cortex Code CLI documentation](https://docs.snowflake.
 
 > **Always ensure you're on the latest CLI version.** Run `cortex --version` and update with `cortex update` if needed.
 
-> **Use the `$machine-learning` skill for ML workflows.** The `$machine-learning` skill contains curated workflows for the full ML lifecycle - feature engineering, model training, registry, and deployment. Cortex Code can trigger it automatically based on intent, but this is non-deterministic. To be certain the right skill is active, invoke it explicitly by typing `$machine-learning` at the start of your session or before any ML task.
+> **Use the `$machine-learning` skill for ML workflows.** This skill contains curated workflows for the full ML lifecycle - feature engineering, model training, registry, and deployment. Cortex Code can trigger it automatically based on intent, but this is non-deterministic. To be certain the right skill is active, invoke it explicitly at the start of your session or before any ML task.
 
 1. **Use plain language** - describe what you want, not how to do it. Cortex Code understands intent; you don't need to write code or SQL to get started.
 
@@ -74,7 +78,7 @@ For more details see the [Cortex Code CLI documentation](https://docs.snowflake.
 
 10. **Validate on a small sample before scaling up** - before running your full pipeline, add a small-scale validation step (e.g. *`TABLESAMPLE`* or *`LIMIT 100`*) and confirm the workflow runs end-to-end on Snowflake first. Subtle issues like missing packages, column-type mismatches between training and scoring pipelines, or serialization problems only surface at execution time, and failures are more expensive the later they occur in an ML workflow. Use *`TABLESAMPLE`* over *`LIMIT`* when data diversity matters, as it gives a more representative slice across categories, nulls, and edge cases.
 
-The following sections walk through key stages of the ML lifecycle with example prompts you can use as starting points in your own Cortex Code sessions. Each prompt uses the `$machine-learning` skill - you can invoke it explicitly at any time by typing `$machine-learning` to see available ML workflows.
+The following sections walk through key stages of the ML lifecycle with example prompts you can use as starting points in your own Cortex Code sessions. Each prompt uses the `$machine-learning` skill, which you can invoke explicitly at any time to see available ML workflows.
 
 ## Engineer and Register Features
 
