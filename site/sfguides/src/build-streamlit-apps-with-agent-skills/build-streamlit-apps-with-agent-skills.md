@@ -52,10 +52,10 @@ Here's a schematic summary of the Streamlit app creation process using the agent
 Two working Streamlit apps — a dashboard with KPI metrics and charts, and a chatbot with streaming responses — built with the help of agent skills.
 
 ### Prerequisites
-- An AI coding assistant (any of: [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code), [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com))
+- An AI coding assistant (any of: [Cortex Code](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com))
 - Python 3 installed on your machine
 - Streamlit installed (`pip install streamlit`)
-- Basic familiarity with Python (you don't need to be an expert — the AI writes most of the code)
+- Basic familiarity with Python (you don't need to be an expert, know enough to make edits when necessary)
 
 <!-- ------------------------ -->
 ## What Are Agent Skills?
