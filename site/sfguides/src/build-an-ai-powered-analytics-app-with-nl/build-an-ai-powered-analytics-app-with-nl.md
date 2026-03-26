@@ -18,6 +18,9 @@ Without a semantic view, an analyst would need to know that `SS_QUANTITY` means 
 
 In this guide, you will use **natural language prompts** in **Cortex Code** (Snowflake's AI coding assistant) to build the entire solution. Instead of writing SQL and Python by hand, you paste a prompt, and Cortex Code generates and runs the code for you.
 
+<!-- https://excalidraw.com/#json=O3elexOP5-tpVfE7ckwCH,7jqIJl1q-Ub_WFaqLcBRGw  -->
+![](assets/ai-analytics-app-diagram.png)
+
 ### What You'll Learn
 
 - How to use Cortex Code to build a complete analytics solution using natural language prompts
