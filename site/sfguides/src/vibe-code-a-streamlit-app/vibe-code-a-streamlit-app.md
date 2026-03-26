@@ -340,7 +340,7 @@ Congratulations! You've successfully built a complete Streamlit app without writ
 ### Next Steps
 1. **Try it with your data**: Replace the CSV upload with a Snowflake connection: *"Connect to Snowflake and load data from my ORDERS table"*
 2. **Deploy it**: [Deploy this app to Streamlit Community Cloud](https://www.youtube.com/watch?v=HKoOBiAaHGg) or [Deploy/Connect to Snowflake](https://www.youtube.com/watch?v=SgWxkAdjK78)
-3. **Explore the agent skills**: Towards agentic engineering by reading this guide: [Build Streamlit Apps with Agent Skills](/guide/build-streamlit-apps-with-agent-skills)
+3. **Explore the agent skills**: Towards agentic engineering by reading this guide: [Build Streamlit Apps with Agent Skills](https://www.snowflake.com/en/developers/guides/build-streamlit-apps-with-agent-skills/)
 
 ### Related Resources
 - [streamlit/agent-skills on GitHub](https://github.com/streamlit/agent-skills): Agent skills for better AI-generated Streamlit code
