@@ -41,10 +41,10 @@ For more details see the [Cortex Code CLI documentation](https://docs.snowflake.
 
 ## Terminology
 
-- **[Agentic ML](https://www.snowflake.com/en/blog/agentic-ml-snowflake-predictive-insights/)**: the ability to automate development of production-ready ML pipelines from simple natural language prompts.
+- **[Agentic ML](https://www.snowflake.com/en/blog/agentic-ml-snowflake-predictive-insights/)**: The ability to automate development of production-ready ML pipelines from simple natural language prompts.
 - **[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/overview)**: Snowflake's AI coding agent that can be used to build, debug, and deploy ML pipelines through natural language conversations, available in the CLI and in Snowsight.
-- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: reusable instruction packs (playbooks) that guide Cortex Code through specific workflows, such as feature engineering, model training, registry, and deployment.
-- **[Snowflake Notebooks](https://www.snowflake.com/en/product/features/notebooks/)**: fully-managed Jupyter-powered notebook built for end-to-end DS and ML development on Snowflake data. Runs in a pre-built [container environment](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) optimized for scalable AI/ML development. 
+- **[Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)**: Reusable instruction packs (playbooks) that guide Cortex Code through specific workflows, such as feature engineering, model training, registry, and deployment.
+- **[Snowflake Notebooks](https://www.snowflake.com/en/product/features/notebooks/)**: Fully-managed Jupyter-powered notebook built for end-to-end DS and ML development on Snowflake data. Runs in a pre-built [container environment](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) optimized for scalable AI/ML development. 
 - **[Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)**: Create, store and serve ML features, enabling reuse across models and consistent training/serving definitions.
 - **[Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)**: Securely manage models and their metadata in Snowflake and run scalable batch and real-time model inference
 - **[Model Monitoring](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-monitor)**: Monitor models in production to ensure more reliable predictions over time
