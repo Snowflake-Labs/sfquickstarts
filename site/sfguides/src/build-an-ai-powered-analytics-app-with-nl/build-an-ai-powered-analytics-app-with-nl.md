@@ -42,7 +42,9 @@ This guide is organized as a series of **5 natural language prompts** (plus an o
 
 Prompts 1 through 4 and the optional Cleanup prompt run in a **Workspace Notebook**. The Streamlit Chatbot prompt (Prompt 5) runs in **Streamlit in Snowflake (SiS)**.
 
-> **Note:** Because Cortex Code uses LLMs to generate code from natural language, the exact code it produces may differ from the examples shown in this guide. The logic and results should be equivalent, but variable names, formatting, and SQL style may vary between runs.
+ > **Note:** Because Cortex Code uses LLMs to generate code from natural language, the exact code it produces may differ from the examples shown in this guide. The logic and results should be equivalent, but variable names, formatting, and SQL style may vary between runs.
+
+> **Prefer code?** If you'd like to see the exact SQL and Python instead of natural language prompts, check out the [companion notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/build-an-ai-powered-analytics-app/build-an-ai-powered-analytics-app.ipynb).
 
 ### Prerequisites
 
