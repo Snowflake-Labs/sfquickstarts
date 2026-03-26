@@ -1,4 +1,4 @@
-author: Doris Lee, Vinay Sridhar, Jeffrey Geevarghese, Krista Rockson
+author: Doris Lee, Vinay Sridhar, Jeffrey Geevarghese, Lucy Zhu, Krista Rockson
 id: agentic-machine-learning-best-practices-cortex-code
 language: en
 summary: Learn best practices for building end-to-end ML pipelines with Cortex Code, Snowflake's AI coding agent, using natural language prompts - from feature engineering to model deployment and monitoring.
