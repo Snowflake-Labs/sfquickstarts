@@ -49,6 +49,7 @@ Navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source
 > All scripts use the `ACCOUNTADMIN` role. The data is loaded via INSERT statements---no external staging required for the Snowflake side.
 
 ### Step 1: Create Database and Warehouse
+Run 'asset/01_database_and_warehouse.sql'
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -74,7 +75,7 @@ SHOW WAREHOUSES LIKE 'SUPPLY_CHAIN_WH';
 
 ### Step 2: Create Tables
 
-Run `setup/02_create_tables.sql` to create 8 tables and 1 internal stage:
+Run `asset/02_create_tables.sql` to create 8 tables and 1 internal stage:
 
 | Category | Tables | Description |
 |---|---|---|
@@ -85,7 +86,7 @@ Run `setup/02_create_tables.sql` to create 8 tables and 1 internal stage:
 
 ### Step 3: Load Structured Data
 
-Run `setup/03_load_structured_data.sql` to load ~640 rows across the 5 structured tables:
+Run `asset/03_load_structured_data.sql` to load ~640 rows across the 5 structured tables:
 
 | Table | Rows | Key Details |
 |---|---|---|
@@ -97,15 +98,11 @@ Run `setup/03_load_structured_data.sql` to load ~640 rows across the 5 structure
 
 ### Step 4: Load Semi-Structured Data
 
-Run `setup/04_load_semi_structured_data.sql` to load 180 JSON sensor readings into `IOT_SENSOR_LOGS` using `PARSE_JSON()`. Covers 3 warehouses with temperature, humidity, air quality, door, and motion sensor types.
-
-> NOTE:
->
-> IoT sensor data is loaded for completeness but is **not exposed** through the Cortex Agent tools. The agent will mention its existence if asked.
+Run `asset/04_load_semi_structured_data.sql` to load 180 JSON sensor readings into `IOT_SENSOR_LOGS` using `PARSE_JSON()`. Covers 3 warehouses with temperature, humidity, air quality, door, and motion sensor types.
 
 ### Step 5: Load Unstructured Data
 
-Run `setup/05_load_unstructured_data.sql` to load free-text data:
+Run `asset/05_load_unstructured_data.sql` to load free-text data:
 
 | Table | Rows | Content |
 |---|---|---|
@@ -115,7 +112,7 @@ Run `setup/05_load_unstructured_data.sql` to load free-text data:
 <!-- ------------------------ -->
 ## Create Cortex Search Services
 
-Run `setup/06_cortex_search_services.sql` to create 2 Cortex Search services for semantic search over unstructured text:
+Run `asset/06_cortex_search_services.sql` to create 2 Cortex Search services for semantic search over unstructured text:
 
 ```sql
 USE DATABASE SUPPLY_CHAIN_DEMO;
@@ -159,7 +156,7 @@ SHOW CORTEX SEARCH SERVICES IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Create Semantic View
 
-Run `setup/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic view using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML()`. This powers Cortex Analyst text-to-SQL queries.
+Run `asset/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic view using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML()`. This powers Cortex Analyst text-to-SQL queries.
 
 | Component | Count | Details |
 |---|---|---|
@@ -174,7 +171,7 @@ Run `setup/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic
 <!-- ------------------------ -->
 ## Create Cortex Agent
 
-Run `setup/08_cortex_agent.sql` to create `SUPPLY_CHAIN_AGENT` with 3 tools:
+Run `asset/08_cortex_agent.sql` to create `SUPPLY_CHAIN_AGENT` with 3 tools:
 
 ```sql
 CREATE OR REPLACE AGENT SUPPLY_CHAIN_AGENT
@@ -244,7 +241,7 @@ SHOW AGENTS IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Create MCP Server and OAuth Integration
 
-Run `setup/09_mcp_server.sql` to expose the Cortex Agent over MCP with OAuth 2.0 authentication for Amazon Quick Suite.
+Run `asset/09_mcp_server.sql` to expose the Cortex Agent over MCP with OAuth 2.0 authentication for Amazon Quick Suite.
 
 ### MCP Server
 
@@ -296,9 +293,9 @@ DESCRIBE SECURITY INTEGRATION AMAZON_BEDROCK_MCP_OAUTH;
 SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('AMAZON_BEDROCK_MCP_OAUTH');
 ```
 
-**SSE Endpoint:**
+**Cortex MCP Endpoint:**
 ```
-https://<YOUR_ACCOUNT>.snowflakecomputing.com/api/v2/databases/SUPPLY_CHAIN_DEMO/schemas/PUBLIC/mcp-servers/SUPPLY_CHAIN_MCP_SERVER/sse
+https://<YOUR_ACCOUNT>.snowflakecomputing.com/api/v2/databases/SUPPLY_CHAIN_DEMO/schemas/PUBLIC/mcp-servers/SUPPLY_CHAIN_MCP_SERVER/
 ```
 
 Replace `<YOUR_ACCOUNT>` with your Snowflake account identifier.
@@ -321,16 +318,9 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 ### Upload to S3
 
 1. Go to **Amazon S3** > **Buckets** > **Create bucket**
-2. Name the bucket (e.g., `supply-chain-demo-data`) and select your preferred region
+2. Name the bucket (e.g., `"Unique-name"`) and select your preferred region
 3. Keep default settings and click **Create bucket**
 4. Open the bucket, click **Upload**, add both CSV files from `S3_csvs/`, and click **Upload**
-
-Or via AWS CLI:
-```bash
-aws s3 mb s3://supply-chain-demo-data --region us-west-2
-aws s3 cp S3_csvs/freight_costs.csv s3://supply-chain-demo-data/
-aws s3 cp S3_csvs/customer_returns.csv s3://supply-chain-demo-data/
-```
 
 ### Create Quick Suite Knowledge Base
 
@@ -340,13 +330,13 @@ aws s3 cp S3_csvs/customer_returns.csv s3://supply-chain-demo-data/
    - **Name:** `supply_chain_space_s3`
    - **Description:** "Freight costs and customer returns data for supply chain analysis"
    - **Data source:** Amazon S3
-   - **S3 bucket:** `supply-chain-demo-data`
+   - **S3 bucket:** `"Unique-name"`
    - **Files:** Select both CSV files
 4. Click **Create** and wait for indexing to complete
 
 > NOTE:
 >
-> The knowledge base name `supply_chain_space_s3` must match what is referenced in the agent instructions (`setup/10_quicksuite_instructions.md`). If you use a different name, update the instructions accordingly.
+> The knowledge base name `supply_chain_space_s3` must match what is referenced in the agent instructions (`asset/10_quicksuite_instructions.md`). If you use a different name, update the instructions accordingly.
 
 <!-- ------------------------ -->
 ## Configure Amazon Quick Suite Chat Agent
@@ -357,7 +347,7 @@ aws s3 cp S3_csvs/customer_returns.csv s3://supply-chain-demo-data/
 2. Select **Model Context Protocol** as the integration type
 3. Configure:
    - **Name:** `snowflake-mcp-supply-chain`
-   - **MCP Server URL:** The SSE endpoint from the previous step
+   - **MCP Server URL:** The endpoint from the previous step
 4. Configure OAuth authentication with the credentials from `DESCRIBE SECURITY INTEGRATION`:
 
 | Setting | Value |
@@ -388,7 +378,7 @@ aws s3 cp S3_csvs/customer_returns.csv s3://supply-chain-demo-data/
 | `supply-chain-agent` | MCP Actions Integration | Snowflake MCP Server |
 | `supply_chain_space_s3` | Knowledge Base | S3 Knowledge Base |
 
-5. In the **Instructions** field, paste the full content from `setup/10_quicksuite_instructions.md`---this contains routing rules, schema details, and the three-phase protocol for cross-platform queries
+5. In the **Instructions** field, paste the full content from `asset/10_quicksuite_instructions.md`---this contains routing rules, schema details, and the three-phase protocol for cross-platform queries
 6. Click **Create**
 
 <!-- ------------------------ -->
