@@ -11,7 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-multi-agent-supply-cha
 
 # Multi-Agent Agentic Orchestrator with Snowflake Cortex MCP and Amazon Quick Suite
 
-<!-- ------------------------ -->
+<!-- -------------------------->
 ## Overview
 
 Through this guide, you will build a multi-agent architecture that routes natural language queries across Snowflake and Amazon S3 knowledgebase through a unified Amazon Quick Suite chat agent. Powered by Snowflake Cortex Agent, Cortex Analyst, Cortex Search, and the Model Context Protocol (MCP), the orchestrator answers supply chain questions by automatically selecting the right data source---structured tables via text-to-SQL, unstructured text via semantic search, or CSV knowledge bases in S3---and combining results when a question spans both platforms.
