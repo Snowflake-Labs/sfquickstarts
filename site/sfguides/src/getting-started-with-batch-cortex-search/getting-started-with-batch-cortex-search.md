@@ -14,8 +14,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 **Understand how and when to use Batch Cortex Search to tackle offline, high-throughput workloads over large sets of queries**
 
 > **Download the code:**  
-> - [SQL Worksheet (setup_wikipedia_search.sql)](assets/setup_wikipedia_search.sql)  
-> - [Python Notebook (cortex_search_comparison.ipynb)](assets/cortex_search_comparison.ipynb)
+> - [SQL code](assets/setup_wikipedia_search.sql)  
+> - [Python Notebook](assets/cortex_search_comparison.ipynb)
 
 This guide walks you step-by-step through creating a **Cortex Search Service** and running queries against it. We show that for large numbers of queries, consecutive searches significantly increase the time taken. Finally, we use **Batch Cortex Search** to tackle the entire search in a matter of seconds. We also show how this solution can scale up to thousands of searches without significant impact on the time to process. 
 
