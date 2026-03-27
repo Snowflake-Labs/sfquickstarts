@@ -27,23 +27,17 @@ Through this guide, you will build a multi-agent architecture that routes natura
 - Creating a Snowflake Cortex Agent with Cortex Analyst and Cortex Search tools
 - Building a Semantic View to power natural-language-to-SQL queries
 - Exposing a Cortex Agent over the Model Context Protocol (MCP) with OAuth 2.0
-- Configuring an Amazon Quick Suite chat agent that orchestrates across Snowflake and S3
-
-### What You'll Need
-
-- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
-- An AWS account with S3 and Quick Suite access
-- The repository files including SQL setup scripts, CSV data files, and agent instructions
+- Configuring an Amazon Quick Suite chat agent that orchestrates across Snowflake and S3 Knowledgebase
 
 ### What You'll Build
 
 **A multi-agent supply chain intelligence system** with two data source tools orchestrated by an Amazon Quick Suite chat agent:
 
-- **Snowflake MCP Server** exposing a Cortex Agent with 3 sub-tools: Cortex Analyst (text-to-SQL across 5 structured tables), SupplierEmailSearch (semantic search over 200 supplier emails), and InspectionSearch (semantic search over 170 warehouse inspection notes)
+- **Snowflake MCP Server** exposing a Cortex Agent with 3 sub-tools: Cortex Analyst (text-to-SQL across 5 structured tables), Supplier (RAG search over 200 supplier emails), and Inspection Search (RAG search over 170 warehouse inspection notes)
 - **Amazon S3 Knowledge Base** containing freight cost records (60 rows) and customer return complaints (40 rows)
-- **Cross-platform query routing** that automatically splits questions across both platforms and joins results on `product_id`
+- **Cross-platform query routing** that automatically splits questions across both platforms and joins results.
 
-**End result:** A unified chat interface where users ask natural language questions about suppliers, inventory, purchase orders, shipping costs, and customer returns---and the orchestrator routes each question to the right data source automatically.
+**End result: A unified chat interface where users ask natural language questions about suppliers, inventory, purchase orders, shipping costs, and customer returns---and the orchestrator routes each question to the right data source automatically.**
 
 <!-- ------------------------ -->
 ## Setup Snowflake Infrastructure
