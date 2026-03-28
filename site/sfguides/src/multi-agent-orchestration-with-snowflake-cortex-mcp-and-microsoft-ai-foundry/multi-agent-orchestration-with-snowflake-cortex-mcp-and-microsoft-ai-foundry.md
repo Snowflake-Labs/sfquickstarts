@@ -323,7 +323,7 @@ SHOW MCP SERVERS IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Setup Microsoft Fabric Lakehouse
 
-Create a Fabric workspace with a Lakehouse containing supplementary freight cost and customer return datasets. Two CSV files are included in the `fabric_csv/` directory of the repository.
+Create a Fabric workspace with a Lakehouse containing supplementary freight cost and customer return datasets. Two CSV files are included in the `assets/` directory of the repository.
 
 | File | Rows | Key Columns |
 |---|---|---|
