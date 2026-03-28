@@ -308,7 +308,7 @@ SHOW MCP SERVERS IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Setup Amazon S3 Knowledge Base
 
-Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. These files are in the `S3_csvs/` directory of the repository.
+Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. These files are in the `assets/` directory of the repository.
 
 | File | Rows | Key Columns |
 |---|---|---|
