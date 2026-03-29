@@ -426,7 +426,7 @@ Guidelines:
 - For freight/shipping questions, query the freight_costs table
 - For return/complaint questions, query the customer_returns table
 - Use product_id to link records to Snowflake's product catalog (numeric IDs 1001-1050)
-- Use store_id to link returns to specific stores (STR-XXX format)
+- Use store_id to link returns to specific stores (STR-xyz format)
 - Use carrier_name to analyze carrier performance (FastFreight Logistics, TransGlobal
   Shipping, ExpressRoute Carriers, PrimeHaul Transport, SwiftMove Inc, Pacific Carriers
   Ltd, MidWest Express)
