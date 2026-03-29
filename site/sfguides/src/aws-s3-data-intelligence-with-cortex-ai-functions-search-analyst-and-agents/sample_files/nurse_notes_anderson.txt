@@ -1,0 +1,88 @@
+YALE NEW HAVEN HOSPITAL -- NURSING ASSESSMENT
+POST-OPERATIVE PROGRESS NOTES
+
+Patient: Thomas Anderson
+DOB: 07/11/1952
+MRN: MRN-20241101-TA
+Room: CVICU Bed 4
+Date: November 2, 2024 (POD #1)
+Surgery: Coronary Artery Bypass Graft (CABG) x3 -- November 1, 2024
+Surgeon: Dr. James Okafor, MD -- Cardiology / Cardiac Surgery
+
+VITAL SIGNS (0600):
+- Temperature: 37.2°C (99.0°F)
+- Heart Rate: 88 bpm, sinus rhythm
+- Blood Pressure: 128/76 mmHg (arterial line)
+- Respiratory Rate: 16 breaths/min
+- SpO2: 96% on 2L nasal cannula
+- CVP: 8 mmHg
+- Urine output: 45 mL/hr (adequate)
+- Pain: 6/10 at sternal incision site
+
+NEUROLOGICAL:
+- Alert and oriented x4 (person, place, time, situation)
+- Pupils equal, round, reactive to light
+- Moving all extremities equally
+- No focal deficits
+- Mild drowsiness attributed to opioid analgesics
+
+CARDIOVASCULAR:
+- Heart sounds: S1, S2 regular, no murmur appreciated
+- Sternal incision: Clean, dry, intact, no erythema or drainage
+- Chest tubes (2): Left pleural -- draining 30 mL/hr serosanguineous
+  Mediastinal -- draining 15 mL/hr serosanguineous
+- Left saphenous vein harvest site: ACE wrap intact, mild edema, no hematoma
+- Peripheral pulses: 2+ bilateral dorsalis pedis and posterior tibial
+- No signs of DVT
+- Telemetry: Normal sinus rhythm, occasional PVCs (2-3 per minute)
+
+RESPIRATORY:
+- Extubated at 2200 on 11/01, tolerating nasal cannula well
+- Lung sounds: Diminished bilateral bases, clear upper lobes
+- Incentive spirometry: Achieving 1000 mL (target 1500 mL)
+- Coughing with splinting -- productive of small amount clear sputum
+- Chest X-ray ordered for 0800
+
+GASTROINTESTINAL:
+- Abdomen soft, non-distended, bowel sounds present in all quadrants
+- NPO overnight, clear liquid diet started at 0600
+- Tolerating sips of water and apple juice
+- No nausea or vomiting
+
+RENAL / FLUIDS:
+- Foley catheter in place, urine clear yellow
+- I&O (past 12 hours): Intake 1200 mL, Output 980 mL (positive balance 220 mL)
+- Creatinine: 1.3 mg/dL (baseline 1.1)
+- Electrolytes: K+ 4.2, Mg 2.0 -- within normal limits
+
+PAIN MANAGEMENT:
+- Morphine PCA: 1 mg demand dose, 8 min lockout, 30 mg 4-hr limit
+- PCA usage overnight: 12 demands, 8 delivered
+- Alternating with acetaminophen 1000 mg IV q6h
+- Current pain: 6/10 sternal, 3/10 left leg harvest site
+- Plan to transition to oral oxycodone when tolerating diet
+
+MEDICATIONS ADMINISTERED (past 12 hours):
+- Aspirin 325 mg PO (given at 0600 with sips)
+- Metoprolol 12.5 mg PO BID (given at 0600)
+- Atorvastatin 80 mg PO (given at 0600)
+- Heparin 5000 units SubQ q8h (DVT prophylaxis)
+- Pantoprazole 40 mg IV daily
+- Cefazolin 1g IV q8h (surgical prophylaxis -- last dose #6 of 6)
+- Insulin sliding scale (blood glucose 0600: 168 mg/dL -- 4 units regular insulin given)
+
+PLAN / GOALS FOR TODAY:
+1. Ambulate to chair x2 today with cardiac rehab team
+2. Advance diet to regular cardiac diet if tolerating clears
+3. Incentive spirometry q1h while awake -- target 1500 mL
+4. Remove arterial line if hemodynamically stable by 1200
+5. Wean supplemental O2 -- target SpO2 >94% on room air
+6. Continue chest tube monitoring -- consider removal if output <100 mL/8hr
+7. Physical therapy evaluation for ambulation progression
+8. Pain management reassessment -- transition to oral analgesics
+9. Social work consult for discharge planning (anticipated discharge POD #4-5)
+10. Family meeting at 1400 with Dr. Okafor for surgical update
+
+Documented by: Sarah Mitchell, RN, BSN, CCRN
+Time: 0630
+Cosigned by: Dr. James Okafor, MD
