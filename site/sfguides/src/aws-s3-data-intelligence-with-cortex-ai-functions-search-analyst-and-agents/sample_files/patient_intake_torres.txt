@@ -1,0 +1,76 @@
+BRIDGEPORT HOSPITAL -- PULMONOLOGY DEPARTMENT
+PATIENT INTAKE QUESTIONNAIRE
+
+Date: September 10, 2024
+Patient Name: Michael Torres
+Date of Birth: 02/14/1988
+Age: 36
+Gender: Male
+Provider: Dr. Ahmed Hassan, MD -- Pulmonology
+
+REASON FOR VISIT:
+Evaluation of persistent asthma with recent worsening of symptoms
+
+CURRENT SYMPTOMS:
+- Wheezing: Yes, 3-4 times per week, worse at night and early morning
+- Shortness of breath: Yes, with moderate exertion (climbing stairs, brisk walking)
+- Chest tightness: Occasional, mainly in cold weather
+- Cough: Chronic, dry, worse at night, 5-6 episodes per week
+- Sputum production: Minimal, clear
+- Nocturnal symptoms: Awakens 2-3 times per week due to coughing or wheezing
+- Exercise limitation: Cannot jog more than 10 minutes without significant dyspnea
+- Rescue inhaler use: 4-5 times per week (albuterol)
+
+SYMPTOM TRIGGERS:
+[X] Cold air
+[X] Exercise
+[X] Dust / allergens
+[X] Strong odors / perfumes
+[ ] Tobacco smoke (not exposed)
+[X] Stress
+[ ] Medications (aspirin/NSAIDs)
+[X] Seasonal changes (worse in fall/spring)
+
+MEDICAL HISTORY:
+- Asthma diagnosed age 12, previously well-controlled
+- Allergic rhinitis
+- No hospitalizations for asthma
+- One ER visit in 2022 for acute exacerbation (treated with nebulizer, steroids)
+- No intubation history
+- No prior lung function testing in past 3 years
+
+CURRENT MEDICATIONS:
+1. Albuterol (ProAir HFA) 90 mcg -- 2 puffs as needed (using 4-5x/week)
+2. Fluticasone propionate (Flovent HFA) 110 mcg -- 2 puffs twice daily
+3. Cetirizine 10 mg daily
+4. Montelukast 10 mg at bedtime
+
+ALLERGIES:
+- Penicillin (rash)
+- Environmental: dust mites, cat dander, ragweed, mold
+
+FAMILY HISTORY:
+- Mother: Asthma, allergic rhinitis
+- Father: Hypertension
+- Sister: Eczema
+
+SOCIAL HISTORY:
+- Occupation: Construction site supervisor (outdoor exposure)
+- Tobacco: Never smoker
+- Alcohol: Social, 2-3 drinks per week
+- Recreational drugs: None
+- Exercise: Tries to exercise but limited by symptoms
+- Pets: One dog (no symptoms with dog)
+- Home: Apartment, carpet in bedroom, no visible mold
+
+PATIENT CONCERNS:
+"My asthma has been getting worse over the past 6 months despite taking my inhalers. I'm worried because I can't keep up with my job which requires physical activity. I want to know if there are better treatment options."
+
+SPIROMETRY RESULTS (performed today):
+- FEV1: 72% predicted (pre-bronchodilator)
+- FEV1: 84% predicted (post-bronchodilator) -- 16% improvement
+- FVC: 88% predicted
+- FEV1/FVC ratio: 0.72
+
+ASSESSMENT: Mild persistent asthma with suboptimal control on current Step 3 therapy.
+Recommend step-up to Step 4: Consider adding LABA (formoterol or salmeterol) to current ICS, or switch to combination ICS/LABA inhaler. Allergy evaluation and possible immunotherapy referral.
