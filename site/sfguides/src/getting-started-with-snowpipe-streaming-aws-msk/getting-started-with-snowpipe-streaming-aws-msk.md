@@ -299,35 +299,42 @@ See below example screenshot:
 <!---------------------------->
 ## Prepare the Snowflake account for streaming
 
-#### 1. Creating role, database, and schema
+#### 1. Creating user, role, database, and schema
 Login to your Snowflake account as a power user with ACCOUNTADMIN role. 
-Then run the following SQL commands in a worksheet to create the role, database, schema, and warehouse that we will use in the lab. We will use your current Snowflake user (no separate user or password needed — key-pair authentication is used instead).
+Then run the following SQL commands in a worksheet to create the dedicated streaming user, role, database, schema, and warehouse that we will use in the lab. The streaming user uses key-pair authentication only (no password).
 
 ```
 -- Set default value for multiple variables
 -- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
 -- You should change them after the workshop
+SET USER = 'STREAMING_USER';
 SET DB = 'MSK_STREAMING_DB';
 SET SCHEMA = 'MSK_STREAMING_SCHEMA';
 SET WH = 'MSK_STREAMING_WH';
 SET ROLE = 'MSK_STREAMING_RL';
-SET MY_USER = CURRENT_USER();
 
 USE ROLE ACCOUNTADMIN;
 
 -- CREATE ROLE
 CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
 
+-- CREATE USER (key-pair auth only, no password)
+CREATE USER IF NOT EXISTS IDENTIFIER($USER)
+  DEFAULT_ROLE = $ROLE
+  DEFAULT_WAREHOUSE = $WH
+  COMMENT = 'Streaming connector user - key-pair auth only';
+
 -- CREATE DATABASE, SCHEMA AND WAREHOUSE
 CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
-CREATE OR REPLACE SCHEMA IDENTIFIER($DB) .IDENTIFIER($SCHEMA);
+CREATE OR REPLACE SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA);
 CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = 'SMALL';
 
 -- GRANTS
-GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($MY_USER);
+GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
 GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE) COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE) COPY CURRENT GRANTS;
 GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
+GRANT CREATE TABLE ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE);
 GRANT CREATE PIPE ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE);
 
 -- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
@@ -344,12 +351,12 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 Please write down the Account Identifier, we will need it later.
 ![](assets/account-identifier.png)
 
-Next we need to configure the public key for your user to access Snowflake programmatically.
+Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
 In the Snowflake worksheet, replace `< pubKey >` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
 ```commandline
 USE ROLE ACCOUNTADMIN;
-ALTER USER IDENTIFIER($MY_USER) SET RSA_PUBLIC_KEY='< pubKey >';
+ALTER USER STREAMING_USER SET RSA_PUBLIC_KEY='< pubKey >';
 ```
 See below example screenshot:
 
@@ -374,11 +381,10 @@ done
 echo export clstr_url=\$a.snowflakecomputing.com > $outf
 export clstr_url=\$a.snowflakecomputing.com
 
-read -p "Snowflake user name (your current Snowflake user): ==> " user
+read -p "Snowflake user name, default: streaming_user ==> " user
 if [[ \$user == "" ]]
 then
-   echo "User name cannot be empty, please re-run the script"
-   exit 1
+   user="streaming_user"
 fi
 
 echo export user=\$user >> $outf
@@ -842,6 +848,7 @@ DROP PIPE IF EXISTS MSK_STREAMING_DB.MSK_STREAMING_SCHEMA."MSK_STREAMING_TBL-STR
 DROP DATABASE MSK_STREAMING_DB;
 DROP WAREHOUSE MSK_STREAMING_WH;
 DROP ROLE MSK_STREAMING_RL;
+DROP USER IF EXISTS STREAMING_USER;
 ```
 
 <!---------------------------->
