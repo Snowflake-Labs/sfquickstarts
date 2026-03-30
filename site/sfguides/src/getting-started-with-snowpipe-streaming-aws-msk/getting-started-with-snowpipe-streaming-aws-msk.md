@@ -476,14 +476,18 @@ If everything goes well, you should see something similar to screen capture belo
 
 Start a new Linux session in `step 3` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane.
 ```commandline
-curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | \
+jq -c '.[]' | \
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
 You should see response similar to screen capture below if everything works well.
 
 ![](assets/producer.png)
 
 Note that in the script above, the producer queries a [Rest API](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky ) that provides real-time flight data over the San Francisco 
-Bay Area in JSON format. The data includes information such as timestamps, [icao](https://icao.usmission.gov/mission/icao/#:~:text=Home%20%7C%20About%20the%20Mission%20%7C%20U.S.,civil%20aviation%20around%20the%20world.) numbers, flight IDs, destination airport, longitude, 
+Bay Area in JSON format. The API returns a JSON array, so we use `jq -c '.[]'` to break it into individual JSON objects — one per Kafka message. This is required because the HP connector with schematization enabled expects each message to be a flat JSON object whose keys map to table columns.
+
+The data includes information such as timestamps, [icao](https://icao.usmission.gov/mission/icao/#:~:text=Home%20%7C%20About%20the%20Mission%20%7C%20U.S.,civil%20aviation%20around%20the%20world.) numbers, flight IDs, destination airport, longitude, 
 latitude, and altitude of the aircraft, etc. The data is ingested into the `streaming` topic on the MSK cluster and 
 then picked up by the Snowpipe streaming Kafka connector, which delivers it directly into a Snowflake 
 table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
@@ -523,43 +527,41 @@ Now run the following query on the table.
 ```
 select * from msk_streaming_tbl;
 ```
-You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
+With schematization enabled, the HP connector automatically creates columns from the JSON keys. You should see columns like `RECORD_METADATA`, `ID`, `ICAO`, `LAT`, `LON`, `ALT`, `ORIG`, `DEST`, and `UTC` — no manual flattening needed.
 
 ![](assets/raw_data.png)
-The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
 
-#### 2. Flatten the raw JSON data
-Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
+#### 2. Create a view with derived columns
+Now execute the following SQL commands to create a convenience view with timestamps and geohashes for visualization.
 
 ```sh
 create or replace view flights_vw
   as select
-    f.value:utc::timestamp_ntz ts_utc,
-    CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
-    f.value:alt::integer alt,
-    f.value:dest::string dest,
-    f.value:orig::string orig,
-    f.value:id::string id,
-    f.value:icao::string icao,
-    f.value:lat::float lat,
-    f.value:lon::float lon,
+    to_timestamp_ntz(utc) as ts_utc,
+    CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc) as ts_pt,
+    alt,
+    dest,
+    orig,
+    id,
+    icao,
+    lat,
+    lon,
     st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
     year(ts_pt) yr,
     month(ts_pt) mo,
     day(ts_pt) dd,
     hour(ts_pt) hr
-FROM   msk_streaming_tbl,
-       Table(Flatten(msk_streaming_tbl.record_content)) f;
+FROM   msk_streaming_tbl;
 ```
 
-The SQL commands create a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools like Grafana
+The SQL commands create a view that converts the epoch timestamp to a proper timestamp, applies time zone conversion, and uses Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools like Grafana.
 
 Let's query the view `flights_vw` now.
 ```sh
 select * from flights_vw;
 ```
 
-As a result, you will see a nicely structured output with columns derived from the JSONs
+As a result, you will see a nicely structured output with derived timestamp and geohash columns.
 ![](assets/materialized_view.png)
 
 #### 3. Stream real-time flight data continuously to Snowflake
@@ -571,7 +573,9 @@ Go back to the Linux session and run the following script.
 ```sh
 while true
 do
-  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | \
+  jq -c '.[]' | \
+  $HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
   sleep 10
 done
 
