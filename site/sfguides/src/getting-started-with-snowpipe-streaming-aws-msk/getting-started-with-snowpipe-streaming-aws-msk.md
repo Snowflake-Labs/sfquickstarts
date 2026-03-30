@@ -1,7 +1,7 @@
 id: getting-started-with-snowpipe-streaming-aws-msk
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK). 
+summary: This guide will walk you through how to ingest real-time data into Snowflake using the High Performance (HP) Kafka Connector (v4.x) with Snowpipe Streaming and Amazon Managed Streaming for Apache Kafka (MSK).
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -29,7 +29,9 @@ Note that you can either stream the data into a regular Snowflake table or a [Sn
 
 The architecture diagram below shows the deployment. An MSK cluster and a Linux 
 EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
-The Linux jumphost will host the Kafka producer and Snowpipe streaming via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html).
+The Linux jumphost will host the Kafka producer and the Snowflake [High Performance (HP) Kafka Connector](https://docs.snowflake.com/en/connectors/kafkahp/setup-kafka) (v4.x) via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html). The HP connector uses a server-side architecture with a PIPE object in Snowflake that manages data processing and buffering, delivering up to 10 GB/s throughput per table with 5-10 second latency.
+
+> **Note:** This quickstart uses the Snowflake High Performance (HP) Kafka Connector (v4.x), which is currently in **Public Preview**.
 
 The Kafka producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kafka cluster before being picked up by the Kafka connector and delivered to a Snowflake table.
 The data in Snowflake table can be visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
@@ -65,7 +67,6 @@ Note that you must have network administrator permissions to deploy these resour
 - Using [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/)
 - Connecting to EC2 instances with [Amazon System Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), this is an alternative
 to SSH if your instance is in a private subnet
-- Using [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html), the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 - Using Snowflake to query tables populated with time-series data
 
 ### What You'll Build
@@ -180,19 +181,21 @@ mkdir -p $directory
 cd $directory
 pwd=`pwd`
 sudo yum clean all
-sudo yum -y install openssl vim-common java-1.8.0-openjdk-devel.x86_64 gzip tar jq python3-pip
-wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
-tar xvfz kafka_2.12-2.8.1.tgz -C $pwd
-wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.1-all.jar
-rm -rf $pwd/kafka_2.12-2.8.1.tgz
-cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
+sudo yum -y install openssl vim-common gzip tar jq python3-pip
+sudo amazon-linux-extras install java-openjdk11 -y
+wget https://archive.apache.org/dist/kafka/3.7.2/kafka_2.13-3.7.2.tgz
+tar xvfz kafka_2.13-3.7.2.tgz -C $pwd
+wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.13-3.7.2/libs/aws-msk-iam-auth-1.1.1-all.jar
+rm -rf $pwd/kafka_2.13-3.7.2.tgz
+cd /tmp && cp $(find /usr/lib/jvm -name cacerts 2>/dev/null | head -1) kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
-#Snowflake kafka connector, must be v3.0.0 or later for Iceberg support, here we use v3.1.0
-wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/3.1.0/snowflake-kafka-connector-3.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-3.1.0.jar
+#Snowflake High Performance (HP) Kafka connector v4.x (Public Preview) — uses server-side Snowpipe Streaming architecture
+#v4.x is an uber-jar that bundles snowflake-ingest-sdk and snowflake-jdbc internally
+wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/4.0.0-rc8/snowflake-kafka-connector-4.0.0-rc8.jar -O $pwd/kafka_2.13-3.7.2/libs/snowflake-kafka-connector-4.0.0-rc8.jar
 
-wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/2.1.0/bc-fips-2.1.0.jar -O $pwd/kafka_2.13-3.7.2/libs/bc-fips-2.1.0.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/2.1.8/bcpkix-fips-2.1.8.jar -O $pwd/kafka_2.13-3.7.2/libs/bcpkix-fips-2.1.8.jar
 
 ```
 Note that the version numbers for Kafka, the Snowflake Kafka connector, and the Snowpipe Streaming SDK are dynamic, as new versions are continually published. We are using the version numbers that have been validated to work.
@@ -236,9 +239,9 @@ bootstrap.servers=$BS
 
 #************SNOWFLAKE VALUE CONVERSION****************
 key.converter=org.apache.kafka.connect.storage.StringConverter
-value.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
-key.converter.schemas.enable=true
-value.converter.schemas.enable=true
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=false
+value.converter.schemas.enable=false
 #************SNOWFLAKE ****************
 
 offset.storage.file.filename=/tmp/connect.offsets
@@ -281,13 +284,13 @@ A configuration file `client.properties` is created in directory `/home/ssm-user
 Now we can run the following commands to create a Kafka topic on the MSK cluster to stream our data.
  
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming --partitions 2 --replication-factor 2
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming --partitions 2 --replication-factor 2
 ```
 You should see the response `Created topic streaming` if it is successful.
 
 To describe the topic, run the following commands:
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --describe --topic streaming
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --describe --topic streaming
 ```
 You should see there are two partitions with a replication factor of 2 in the `streaming` topic.
 See below example screenshot:
@@ -296,43 +299,50 @@ See below example screenshot:
 <!---------------------------->
 ## Prepare the Snowflake account for streaming
 
-#### 1. Creating user, role, and database
-First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
-Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
+#### 1. Creating user, role, database, and schema
+Login to your Snowflake account as a power user with ACCOUNTADMIN role. 
+Then run the following SQL commands in a worksheet to create the dedicated streaming user, role, database, schema, and warehouse that we will use in the lab. The streaming user uses key-pair authentication only (no password).
 
 ```
 -- Set default value for multiple variables
 -- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
 -- You should change them after the workshop
-SET PWD = 'Test1234567';
 SET USER = 'STREAMING_USER';
 SET DB = 'MSK_STREAMING_DB';
+SET SCHEMA = 'MSK_STREAMING_SCHEMA';
 SET WH = 'MSK_STREAMING_WH';
 SET ROLE = 'MSK_STREAMING_RL';
 
 USE ROLE ACCOUNTADMIN;
 
--- CREATE USERS
-CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT='STREAMING USER';
-
--- CREATE ROLES
+-- CREATE ROLE
 CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
 
--- CREATE DATABASE AND WAREHOUSE
+-- CREATE USER (key-pair auth only, no password)
+-- Uses IF NOT EXISTS so it won't fail if the user already exists.
+-- The ALTER USER below ensures correct settings even for a pre-existing user.
+CREATE USER IF NOT EXISTS IDENTIFIER($USER)
+  DEFAULT_ROLE = $ROLE
+  DEFAULT_WAREHOUSE = $WH
+  COMMENT = 'Streaming connector user - key-pair auth only';
+
+ALTER USER IF EXISTS IDENTIFIER($USER) SET
+  DEFAULT_ROLE = $ROLE
+  DEFAULT_WAREHOUSE = $WH
+  DISABLED = FALSE;
+
+-- CREATE DATABASE, SCHEMA AND WAREHOUSE
 CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
-USE IDENTIFIER($DB);
+CREATE OR REPLACE SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA);
 CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = 'SMALL';
 
 -- GRANTS
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
 GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
-GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
+GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE) COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE) COPY CURRENT GRANTS;
 GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
-
--- SET DEFAULTS
-ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
-ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
-
+GRANT CREATE TABLE ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE);
+GRANT CREATE PIPE ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE);
 
 -- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
 -- IT WILL BE SOMETHING LIKE <organization_name>-<account_name>
@@ -350,63 +360,14 @@ Please write down the Account Identifier, we will need it later.
 
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
+In the Snowflake worksheet, replace `< pubKey >` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
 ```commandline
-use role accountadmin;
-alter user streaming_user set rsa_public_key='< pubKey >';
+USE ROLE ACCOUNTADMIN;
+ALTER USER STREAMING_USER SET RSA_PUBLIC_KEY='< pubKey >';
 ```
 See below example screenshot:
 
 ![](assets/key-pair-snowflake.png)
-
-Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
-Run the following SQL commands in a worksheet to create a schema (e.g. `MSK_STREAMING_SCHEMA`) in the default database (e.g. `MSK_STREAMING_DB`):
-
-```commandline
-SET DB = 'MSK_STREAMING_DB';
-SET SCHEMA = 'MSK_STREAMING_SCHEMA';
-
-USE IDENTIFIER($DB);
-CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
-```
-
-#### 2. Install SnowSQL (optional but highly recommended)
-
-This step is optional for this workshop but is highly recommended if you prefer to use the CLI to interact with Snowflake later instead of the web console.
-
-[SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
-
-To install SnowSQL. Execute the following commands on the Linux Session Manager console:
-```commandline
-curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
-echo -e "~/bin \n y" > /tmp/ans
-bash /tmp/snowsql-1.2.24-linux_x86_64.bash < /tmp/ans
-
-```
-See below example screenshot:
-
-![](assets/install-snowsql.png)
-
-Next set the environment variable for Snowflake Private Key Phrase:
-```commandline
-export SNOWSQL_PRIVATE_KEY_PASSPHRASE=<key phrase you set up when running openssl previously>
-```
-Note that you should add the command above in the ~/.bashrc file to preserve this environment variable across sessions.
-```commandline
-echo "export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE" >> ~/.bashrc
-```
-
-Now you can execute this command to interact with Snowflake:
-```commandline
-$HOME/bin/snowsql -a <Snowflake Account Identifier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
-```
-See below example screenshot:
-
-![](assets/key-pair-snowsql.png)
-
-Type `Ctrl-D` to get out of SnowSQL session.
-
-You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/snowsql-config.html#snowsql-config-file) file to set default parameters and eliminate the need to specify them every time you run snowsql.
 
 At this point, the Snowflake setup is complete.
 
@@ -427,7 +388,7 @@ done
 echo export clstr_url=\$a.snowflakecomputing.com > $outf
 export clstr_url=\$a.snowflakecomputing.com
 
-read -p "Snowflake cluster user name: default: streaming_user ==> " user
+read -p "Snowflake user name, default: streaming_user ==> " user
 if [[ \$user == "" ]]
 then
    user="streaming_user"
@@ -464,30 +425,35 @@ See below example screen capture.
 ![](assets/get_params.png)
 
 #### 2. Run the following commands to create a Snowflake Kafka connect property configuration file:
+
+Note that the High Performance (HP) connector (v4.x) will auto-create a default PIPE object named `MSK_STREAMING_TBL-STREAMING` in the target schema when the connector starts. This is why the `GRANT CREATE PIPE` was added earlier.
+
 ```commandline
 dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorMSK.properties
-name=snowpipeStreaming
-connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
+name=snowpipeStreamingHP
+connector.class=com.snowflake.kafka.connector.SnowflakeStreamingSinkConnector
 tasks.max=4
 topics=streaming
 snowflake.private.key.passphrase=$key_pass
 snowflake.database.name=MSK_STREAMING_DB
 snowflake.schema.name=MSK_STREAMING_SCHEMA
 snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
-buffer.count.records=10000
-buffer.flush.time=5
-buffer.size.bytes=20000000
 snowflake.url.name=$clstr_url
 snowflake.user.name=$user
 snowflake.private.key=$priv_key
 snowflake.role.name=MSK_STREAMING_RL
-snowflake.ingestion.method=snowpipe_streaming
+snowflake.ingestion.method=SNOWPIPE_STREAMING
+snowflake.streaming.v2.enabled=true
+snowflake.enable.schematization=TRUE
+buffer.count.records=10000
+buffer.flush.time=10
+buffer.size.bytes=20000000
 value.converter.schemas.enable=false
-jmx=true
 key.converter=org.apache.kafka.connect.storage.StringConverter
 value.converter=org.apache.kafka.connect.json.JsonConverter
 errors.tolerance=all
+errors.log.enable=true
 EOF
 ```
 
@@ -498,9 +464,11 @@ Finally, we are ready to start ingesting data into the Snowflake table.
 
 #### 1. Start the Kafka Connector for Snowpipe streaming
 
+> **Important:** If your Snowflake account has a [network policy](https://docs.snowflake.com/en/user-guide/network-policies) enabled, make sure the EC2 instance's public IP (or NAT gateway IP for private subnets) is included in the allowed IP list. Otherwise, the connector will fail to connect to Snowflake with an IP access denied error.
+
 Go back to the Linux console and execute the following commands to start the Kafka connector.
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
 ```
 
 If everything goes well, you should see something similar to screen capture below:
@@ -510,14 +478,18 @@ If everything goes well, you should see something similar to screen capture belo
 
 Start a new Linux session in `step 3` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane.
 ```commandline
-curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | \
+jq -c '.[]' | \
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
 You should see response similar to screen capture below if everything works well.
 
 ![](assets/producer.png)
 
 Note that in the script above, the producer queries a [Rest API](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky ) that provides real-time flight data over the San Francisco 
-Bay Area in JSON format. The data includes information such as timestamps, [icao](https://icao.usmission.gov/mission/icao/#:~:text=Home%20%7C%20About%20the%20Mission%20%7C%20U.S.,civil%20aviation%20around%20the%20world.) numbers, flight IDs, destination airport, longitude, 
+Bay Area in JSON format. The API returns a JSON array, so we use `jq -c '.[]'` to break it into individual JSON objects — one per Kafka message. This is required because the HP connector with schematization enabled expects each message to be a flat JSON object whose keys map to table columns.
+
+The data includes information such as timestamps, [icao](https://icao.usmission.gov/mission/icao/#:~:text=Home%20%7C%20About%20the%20Mission%20%7C%20U.S.,civil%20aviation%20around%20the%20world.) numbers, flight IDs, destination airport, longitude, 
 latitude, and altitude of the aircraft, etc. The data is ingested into the `streaming` topic on the MSK cluster and 
 then picked up by the Snowpipe streaming Kafka connector, which delivers it directly into a Snowflake 
 table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
@@ -527,7 +499,7 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 <!---------------------------->
 ## Query ingested data in Snowflake
 
-Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
+Now, switch back to the Snowflake console and switch to the role `MSK_STREAMING_RL`. 
 The data should have been streamed into a table, ready for further processing.
 
 #### 1. Query the raw data
@@ -536,54 +508,56 @@ To verify that data has been streamed into Snowflake, execute the following SQL 
 ```sh
 use msk_streaming_db;
 use schema msk_streaming_schema;
-show channels in table msk_streaming_tbl;
-```
-You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
-![](assets/channels.png)
 
-Note that, unlike the screen capture above, at this point, you should only see one row in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.
+-- Check the default pipe status (auto-created by HP connector)
+SELECT SYSTEM$PIPE_STATUS('MSK_STREAMING_DB.MSK_STREAMING_SCHEMA."MSK_STREAMING_TBL-STREAMING"');
+
+-- Show all pipes in the schema
+SHOW PIPES IN SCHEMA MSK_STREAMING_DB.MSK_STREAMING_SCHEMA;
+```
+You should see the auto-created pipe `MSK_STREAMING_TBL-STREAMING` with `executionState=RUNNING`.
+
+Note that, at this point, you should only see one batch of rows in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.
 
 Now run the following query on the table.
 ```
 select * from msk_streaming_tbl;
 ```
-You should see there are two columns in the table: `RECORD_METADATA` and `RECORD_CONTENT` as shown in the screen capture below.
+With schematization enabled, the HP connector automatically creates columns from the JSON keys. You should see columns like `RECORD_METADATA`, `ID`, `ICAO`, `LAT`, `LON`, `ALT`, `ORIG`, `DEST`, and `UTC` — no manual flattening needed.
 
 ![](assets/raw_data.png)
-The `RECORD_CONTENT` column is an JSON array that needs to be flattened.
 
-#### 2. Flatten the raw JSON data
-Now execute the following SQL commands to flatten the raw JSONs and create a materialized view with multiple columns based on the key names.
+#### 2. Create a view with derived columns
+Now execute the following SQL commands to create a convenience view with timestamps and geohashes for visualization.
 
 ```sh
 create or replace view flights_vw
   as select
-    f.value:utc::timestamp_ntz ts_utc,
-    CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc::timestamp_ntz) as ts_pt,
-    f.value:alt::integer alt,
-    f.value:dest::string dest,
-    f.value:orig::string orig,
-    f.value:id::string id,
-    f.value:icao::string icao,
-    f.value:lat::float lat,
-    f.value:lon::float lon,
+    to_timestamp_ntz(utc) as ts_utc,
+    CONVERT_TIMEZONE('UTC','America/Los_Angeles',ts_utc) as ts_pt,
+    alt,
+    dest,
+    orig,
+    id,
+    icao,
+    lat,
+    lon,
     st_geohash(to_geography(ST_MAKEPOINT(lon, lat)),12) geohash,
     year(ts_pt) yr,
     month(ts_pt) mo,
     day(ts_pt) dd,
     hour(ts_pt) hr
-FROM   msk_streaming_tbl,
-       Table(Flatten(msk_streaming_tbl.record_content)) f;
+FROM   msk_streaming_tbl;
 ```
 
-The SQL commands create a view, convert timestamps to different time zones, and use Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html)  to generate geohashes that can be used in time-series visualization tools like Grafana
+The SQL commands create a view that converts the epoch timestamp to a proper timestamp, applies time zone conversion, and uses Snowflake's [Geohash function](https://docs.snowflake.com/en/sql-reference/functions/st_geohash.html) to generate geohashes that can be used in time-series visualization tools like Grafana.
 
 Let's query the view `flights_vw` now.
 ```sh
 select * from flights_vw;
 ```
 
-As a result, you will see a nicely structured output with columns derived from the JSONs
+As a result, you will see a nicely structured output with derived timestamp and geohash columns.
 ![](assets/materialized_view.png)
 
 #### 3. Stream real-time flight data continuously to Snowflake
@@ -595,7 +569,9 @@ Go back to the Linux session and run the following script.
 ```sh
 while true
 do
-  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | \
+  jq -c '.[]' | \
+  $HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
   sleep 10
 done
 
@@ -603,10 +579,10 @@ done
 You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
 
 <!---------------------------->
-## Configuring Kafka Connector with Apache Iceberg tables - New
+## Configuring Kafka Connector with Apache Iceberg tables - Optional
 
 Iceberg table ingestion requires version 3.0.0 or later of the Kafka connector and is only supported with Snowpipe Streaming.
-To configure the Kafka connector for Iceberg table ingestion, follow the regular setup steps for a Snowpipe Streaming-based connector mentioned in the Section 4 in the left pane of this quickstart with a few differences noted in the following sections.
+The HP connector (v4.x) natively supports Iceberg tables with the same configuration used for native tables. The only additional steps are creating an external volume, pre-creating the Iceberg table, and updating the topic-to-table mapping.
 
 #### 1. Create an External Volume in Snowflake
 Before you create an Iceberg table, you must have an external volume. An external volume is a Snowflake object that stores information about your cloud storage locations and identity and access management (IAM) entities (for example, IAM roles). Snowflake uses an external volume to establish a connection with your cloud storage in order to access Iceberg metadata and Parquet data.
@@ -675,23 +651,15 @@ Modify the two lines in `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.
 ```commandline
 topics=streaming-iceberg
 snowflake.topic2table.map=streaming-iceberg:MSK_STREAMING_ICEBERG_TBL
-
-# Add the property which specifies connector to ingest data into an Iceberg table.
-snowflake.streaming.iceberg.enabled = true
-
-#Also verify schematiaztion is enabled
-snowflake.enable.schematization=true
 ```
-Save the properties file
-
-Note, Iceberg table ingestion is not supported when snowflake.streaming.enable.single.buffer is set to false.
+Save the properties file. Note that `snowflake.enable.schematization=TRUE` is already enabled in the HP connector properties, and the HP connector (v4.x) natively supports Iceberg tables without any additional properties.
 
 
 #### 4. Create a new topic in MSK
 
 We now need to create a new topic `streaming-iceberg` in MSK cluster by running the following command:
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-iceberg --partitions 2 --replication-factor 2
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-iceberg --partitions 2 --replication-factor 2
 
 ```
 
@@ -701,7 +669,7 @@ Restart the consumer by issuing the following shell command in a new Session Man
 
 ```commandline
 kill -9 `ps -ef | grep java | grep -v grep | awk '{print $2}'`
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
 ```
 
 #### 6. Ingest data 
@@ -713,14 +681,14 @@ jq -c '.[]' | \
 while read i ; \
 do \
 echo $i | \
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-iceberg ; \
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-iceberg ; \
 echo $i ; \
 done
 ```
 
 #### 7. Query ingested data in Snowflake
 
-Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
+Now, switch back to the Snowflake console and switch to the role `MSK_STREAMING_RL`. 
 The data should have been streamed into a table, ready for further processing.
 
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
@@ -749,7 +717,7 @@ Follow this [AWS documentation](https://docs.aws.amazon.com/AmazonS3/latest/user
 On your EC2 session, run the following commands to compress the libraries into a zipped file.
 
 ```commandline
-cd $HOME/snowpipe-streaming/kafka_2.12-2.8.1/libs
+cd $HOME/snowpipe-streaming/kafka_2.13-3.7.2/libs
 zip -9 /tmp/snowpipeStreaming-mskc-plugins.zip *
 aws s3 cp /tmp/snowpipeStreaming-mskc-plugins.zip s3://<your s3 bucket name>/snowpipeStreaming-mskc-plugins.zip
 ```
@@ -795,79 +763,6 @@ At this point, the Kafka connector for Snowpipestreaming has been configured, it
 run the source connector to ingest live data continuously as shown in Step 3 of Section 6. 
 
 <!---------------------------->
-## Schema detection - Optional
-
-Previously we ingested raw jsons into the table `MSK_STREAMING_TBL` and did a DDL to create a nicely formulated view with 
-the column names mapped to the keys in the jsons. You can now skip the DDL step with [schema detection](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-kafka-schema-detection) enabled to detect the schema of the streaming data and load data into tables that automatically match any user-defined schema. 
-
-#### 1. Modify the Snowpipe streaming properties file
-
-Modify the two lines in `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` 
-
-from
-```commandline
-topics=streaming
-snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
-```
-to
-```commandline
-topics=streaming,streaming-schematization
-snowflake.topic2table.map=streaming:MSK_STREAMING_TBL,streaming-schematization:MSK_STREAMING_SCHEMATIZATION_TBL
-
-#Also enable schematiaztion by adding
-snowflake.enable.schematization=true
-```
-Save the properties file
-
-#### 2. Create a new topic in MSK
-
-We now need to create a new topic `streaming-schematization` in MSK cluster by running the following command:
-```
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-schematization --partitions 2 --replication-factor 2
-```
-
-#### 3. Restart the consumer 
-
-Restart the consumer by issuing the following shell command in a new Session Manager console.
-```commandline
-kill -9 `ps -ef | grep java | grep -v grep | awk '{print $2}'`
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
-```
-
-#### 4. Ingest data 
-
-Now ingest some data into the newly created topic by running the following command in a new Session Manager console.
-```commandline
-curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | \
-jq -c '.[]' | \
-while read i ; \
-do \
-echo $i | \
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-schematization ; \
-done
-
-```
-
-You should see the producer using [jq](https://jqlang.github.io/jq/) to break up the json array and stream in the records one by one.
-
-#### 5. Verify schema detection is working
-
-Now head over to the Snowflake UI, and issue the following SQL command:
-```commandline
-select * from msk_streaming_schematization_tbl;
-```
-
-You should see the table already contains the keys in json records as column names with values populated. There is no need to do DDL as before.
-
-![](assets/schema_detection.png)
-
-Note that using the shell script `connect-standalone.sh` that comes with the Kafka distribution is not the most efficient way of ingesting data into Snowflake as it
-opens and closes the topic every single time it calls the Snowpipe streaming SDK as you can see in the script in Step 4 above. We are doing this for the purpose of a quick
-demonstration.
-
-Other programing languages like Python or Java are highly recommended as they keep the topic open throughout the ingesting process.
-
-<!---------------------------->
 ## Cleanup
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
@@ -884,11 +779,12 @@ For Snowflake cleanup, execute the following SQL commands.
 ```commandline
 USE ROLE ACCOUNTADMIN;
 
+-- Drop the auto-created default pipe (HP connector)
+DROP PIPE IF EXISTS MSK_STREAMING_DB.MSK_STREAMING_SCHEMA."MSK_STREAMING_TBL-STREAMING";
+
 DROP DATABASE MSK_STREAMING_DB;
 DROP WAREHOUSE MSK_STREAMING_WH;
 DROP ROLE MSK_STREAMING_RL;
-
--- Drop the streaming user
 DROP USER IF EXISTS STREAMING_USER;
 ```
 
@@ -900,16 +796,13 @@ connector on an EC2 instance. However, for a production environment, we recommen
 scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
 [Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
 
-For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
-[quickstart](https://quickstarts.snowflake.com/guide/404.html/) to continue.
-
 Related Resources
 
-- [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
-- [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/404.html/)
+- [Snowflake High Performance (HP) Kafka Connector](https://docs.snowflake.com/en/connectors/kafkahp/setup-kafka)
+- [Snowflake Kafka Connector Overview](https://docs.snowflake.com/en/user-guide/kafka-connector-overview)
+- [Snowpipe Streaming Overview](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
 - [Getting started with Snowflake](/en/developers/guides/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
-- [Snowflake for Data Sharing](/Workloads/data-sharing/)
 - [Snowflake Marketplace](/en/data-cloud/marketplace/)
 - [Amazon Managed Streaming for Apache Kafka (MSK)](https://aws.amazon.com/msk/)
 
