@@ -29,7 +29,9 @@ Note that you can either stream the data into a regular Snowflake table or a [Sn
 
 The architecture diagram below shows the deployment. An MSK cluster and a Linux 
 EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
-The Linux jumphost will host the Kafka producer and Snowpipe streaming via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html).
+The Linux jumphost will host the Kafka producer and the Snowflake [High Performance (HP) Kafka Connector](https://docs.snowflake.com/en/connectors/kafkahp/setup-kafka) (v4.x) via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html). The HP connector uses a server-side architecture with a PIPE object in Snowflake that manages data processing and buffering, delivering up to 10 GB/s throughput per table with 5-10 second latency.
+
+> **Note:** This quickstart uses the Snowflake HP Kafka Connector (v4.x), which is currently in **Public Preview**. For production workloads, consider using the [classic v3.x connector](https://docs.snowflake.com/en/user-guide/kafka-connector-install).
 
 The Kafka producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kafka cluster before being picked up by the Kafka connector and delivered to a Snowflake table.
 The data in Snowflake table can be visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
@@ -180,19 +182,20 @@ mkdir -p $directory
 cd $directory
 pwd=`pwd`
 sudo yum clean all
-sudo yum -y install openssl vim-common java-1.8.0-openjdk-devel.x86_64 gzip tar jq python3-pip
-wget https://archive.apache.org/dist/kafka/2.8.1/kafka_2.12-2.8.1.tgz
-tar xvfz kafka_2.12-2.8.1.tgz -C $pwd
-wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.12-2.8.1/libs/aws-msk-iam-auth-1.1.1-all.jar
-rm -rf $pwd/kafka_2.12-2.8.1.tgz
+sudo yum -y install openssl vim-common java-11-openjdk-devel.x86_64 gzip tar jq python3-pip
+wget https://archive.apache.org/dist/kafka/3.7.2/kafka_2.13-3.7.2.tgz
+tar xvfz kafka_2.13-3.7.2.tgz -C $pwd
+wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.13-3.7.2/libs/aws-msk-iam-auth-1.1.1-all.jar
+rm -rf $pwd/kafka_2.13-3.7.2.tgz
 cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
-#Snowflake kafka connector, must be v3.0.0 or later for Iceberg support, here we use v3.1.0
-wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/3.1.0/snowflake-kafka-connector-3.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-3.1.0.jar
+#Snowflake HP Kafka connector v4.x (Public Preview) — uses server-side Snowpipe Streaming architecture
+#v4.x is an uber-jar that bundles snowflake-ingest-sdk and snowflake-jdbc internally
+wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/4.0.0-rc8/snowflake-kafka-connector-4.0.0-rc8.jar -O $pwd/kafka_2.13-3.7.2/libs/snowflake-kafka-connector-4.0.0-rc8.jar
 
-wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
-wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/2.1.0/bc-fips-2.1.0.jar -O $pwd/kafka_2.13-3.7.2/libs/bc-fips-2.1.0.jar
+wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/2.1.8/bcpkix-fips-2.1.8.jar -O $pwd/kafka_2.13-3.7.2/libs/bcpkix-fips-2.1.8.jar
 
 ```
 Note that the version numbers for Kafka, the Snowflake Kafka connector, and the Snowpipe Streaming SDK are dynamic, as new versions are continually published. We are using the version numbers that have been validated to work.
@@ -236,7 +239,7 @@ bootstrap.servers=$BS
 
 #************SNOWFLAKE VALUE CONVERSION****************
 key.converter=org.apache.kafka.connect.storage.StringConverter
-value.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
 key.converter.schemas.enable=true
 value.converter.schemas.enable=true
 #************SNOWFLAKE ****************
@@ -281,13 +284,13 @@ A configuration file `client.properties` is created in directory `/home/ssm-user
 Now we can run the following commands to create a Kafka topic on the MSK cluster to stream our data.
  
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming --partitions 2 --replication-factor 2
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming --partitions 2 --replication-factor 2
 ```
 You should see the response `Created topic streaming` if it is successful.
 
 To describe the topic, run the following commands:
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --describe --topic streaming
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --describe --topic streaming
 ```
 You should see there are two partitions with a replication factor of 2 in the `streaming` topic.
 See below example screenshot:
@@ -368,6 +371,13 @@ SET SCHEMA = 'MSK_STREAMING_SCHEMA';
 
 USE IDENTIFIER($DB);
 CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
+```
+
+Next, switch back to the ACCOUNTADMIN role (in a separate worksheet or re-login) and grant PIPE privileges needed by the HP connector:
+
+```
+USE ROLE ACCOUNTADMIN;
+GRANT CREATE PIPE ON SCHEMA MSK_STREAMING_DB.MSK_STREAMING_SCHEMA TO ROLE MSK_STREAMING_RL;
 ```
 
 #### 2. Install SnowSQL (optional but highly recommended)
@@ -467,27 +477,29 @@ See below example screen capture.
 ```commandline
 dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorMSK.properties
-name=snowpipeStreaming
-connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
+name=snowpipeStreamingHP
+connector.class=com.snowflake.kafka.connector.SnowflakeStreamingSinkConnector
 tasks.max=4
 topics=streaming
 snowflake.private.key.passphrase=$key_pass
 snowflake.database.name=MSK_STREAMING_DB
 snowflake.schema.name=MSK_STREAMING_SCHEMA
 snowflake.topic2table.map=streaming:MSK_STREAMING_TBL
-buffer.count.records=10000
-buffer.flush.time=5
-buffer.size.bytes=20000000
 snowflake.url.name=$clstr_url
 snowflake.user.name=$user
 snowflake.private.key=$priv_key
 snowflake.role.name=MSK_STREAMING_RL
-snowflake.ingestion.method=snowpipe_streaming
+snowflake.ingestion.method=SNOWPIPE_STREAMING
+snowflake.streaming.v2.enabled=true
+snowflake.enable.schematization=TRUE
+buffer.count.records=10000
+buffer.flush.time=10
+buffer.size.bytes=20000000
 value.converter.schemas.enable=false
-jmx=true
 key.converter=org.apache.kafka.connect.storage.StringConverter
 value.converter=org.apache.kafka.connect.json.JsonConverter
 errors.tolerance=all
+errors.log.enable=true
 EOF
 ```
 
@@ -500,7 +512,7 @@ Finally, we are ready to start ingesting data into the Snowflake table.
 
 Go back to the Linux console and execute the following commands to start the Kafka connector.
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
 ```
 
 If everything goes well, you should see something similar to screen capture below:
@@ -510,7 +522,7 @@ If everything goes well, you should see something similar to screen capture belo
 
 Start a new Linux session in `step 3` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane.
 ```commandline
-curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
 ```
 You should see response similar to screen capture below if everything works well.
 
@@ -540,6 +552,16 @@ show channels in table msk_streaming_tbl;
 ```
 You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
 ![](assets/channels.png)
+
+You can also check the status of the default pipe that was auto-created by the HP connector:
+
+```sh
+-- Check the default pipe status (auto-created by HP connector)
+SELECT SYSTEM$PIPE_STATUS('MSK_STREAMING_DB.MSK_STREAMING_SCHEMA."MSK_STREAMING_TBL-STREAMING"');
+
+-- Show all pipes in the schema
+SHOW PIPES IN SCHEMA MSK_STREAMING_DB.MSK_STREAMING_SCHEMA;
+```
 
 Note that, unlike the screen capture above, at this point, you should only see one row in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.
 
@@ -595,7 +617,7 @@ Go back to the Linux session and run the following script.
 ```sh
 while true
 do
-  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
+  curl --connect-timeout 5 -k http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
   sleep 10
 done
 
@@ -691,7 +713,7 @@ Note, Iceberg table ingestion is not supported when snowflake.streaming.enable.s
 
 We now need to create a new topic `streaming-iceberg` in MSK cluster by running the following command:
 ```commandline
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-iceberg --partitions 2 --replication-factor 2
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-iceberg --partitions 2 --replication-factor 2
 
 ```
 
@@ -701,7 +723,7 @@ Restart the consumer by issuing the following shell command in a new Session Man
 
 ```commandline
 kill -9 `ps -ef | grep java | grep -v grep | awk '{print $2}'`
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
 ```
 
 #### 6. Ingest data 
@@ -713,7 +735,7 @@ jq -c '.[]' | \
 while read i ; \
 do \
 echo $i | \
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-iceberg ; \
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-iceberg ; \
 echo $i ; \
 done
 ```
@@ -749,7 +771,7 @@ Follow this [AWS documentation](https://docs.aws.amazon.com/AmazonS3/latest/user
 On your EC2 session, run the following commands to compress the libraries into a zipped file.
 
 ```commandline
-cd $HOME/snowpipe-streaming/kafka_2.12-2.8.1/libs
+cd $HOME/snowpipe-streaming/kafka_2.13-3.7.2/libs
 zip -9 /tmp/snowpipeStreaming-mskc-plugins.zip *
 aws s3 cp /tmp/snowpipeStreaming-mskc-plugins.zip s3://<your s3 bucket name>/snowpipeStreaming-mskc-plugins.zip
 ```
@@ -823,7 +845,7 @@ Save the properties file
 
 We now need to create a new topic `streaming-schematization` in MSK cluster by running the following command:
 ```
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-schematization --partitions 2 --replication-factor 2
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-schematization --partitions 2 --replication-factor 2
 ```
 
 #### 3. Restart the consumer 
@@ -831,7 +853,7 @@ $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server
 Restart the consumer by issuing the following shell command in a new Session Manager console.
 ```commandline
 kill -9 `ps -ef | grep java | grep -v grep | awk '{print $2}'`
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
 ```
 
 #### 4. Ingest data 
@@ -843,7 +865,7 @@ jq -c '.[]' | \
 while read i ; \
 do \
 echo $i | \
-$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-schematization ; \
+$HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-schematization ; \
 done
 
 ```
@@ -883,6 +905,9 @@ For Snowflake cleanup, execute the following SQL commands.
 
 ```commandline
 USE ROLE ACCOUNTADMIN;
+
+-- Drop the auto-created default pipe (HP connector)
+DROP PIPE IF EXISTS MSK_STREAMING_DB.MSK_STREAMING_SCHEMA."MSK_STREAMING_TBL-STREAMING";
 
 DROP DATABASE MSK_STREAMING_DB;
 DROP WAREHOUSE MSK_STREAMING_WH;
