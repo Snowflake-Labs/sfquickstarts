@@ -506,22 +506,16 @@ To verify that data has been streamed into Snowflake, execute the following SQL 
 ```sh
 use msk_streaming_db;
 use schema msk_streaming_schema;
-show channels in table msk_streaming_tbl;
-```
-You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
-![](assets/channels.png)
 
-You can also check the status of the default pipe that was auto-created by the HP connector:
-
-```sh
 -- Check the default pipe status (auto-created by HP connector)
 SELECT SYSTEM$PIPE_STATUS('MSK_STREAMING_DB.MSK_STREAMING_SCHEMA."MSK_STREAMING_TBL-STREAMING"');
 
 -- Show all pipes in the schema
 SHOW PIPES IN SCHEMA MSK_STREAMING_DB.MSK_STREAMING_SCHEMA;
 ```
+You should see the auto-created pipe `MSK_STREAMING_TBL-STREAMING` with `executionState=RUNNING`.
 
-Note that, unlike the screen capture above, at this point, you should only see one row in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.
+Note that, at this point, you should only see one batch of rows in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.
 
 Now run the following query on the table.
 ```
