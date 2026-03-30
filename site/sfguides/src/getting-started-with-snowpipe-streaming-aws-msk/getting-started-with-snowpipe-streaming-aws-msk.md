@@ -181,12 +181,13 @@ mkdir -p $directory
 cd $directory
 pwd=`pwd`
 sudo yum clean all
-sudo yum -y install openssl vim-common java-11-openjdk-devel.x86_64 gzip tar jq python3-pip
+sudo yum -y install openssl vim-common gzip tar jq python3-pip
+sudo amazon-linux-extras install java-openjdk11 -y
 wget https://archive.apache.org/dist/kafka/3.7.2/kafka_2.13-3.7.2.tgz
 tar xvfz kafka_2.13-3.7.2.tgz -C $pwd
 wget https://github.com/aws/aws-msk-iam-auth/releases/download/v1.1.1/aws-msk-iam-auth-1.1.1-all.jar -O $pwd/kafka_2.13-3.7.2/libs/aws-msk-iam-auth-1.1.1-all.jar
 rm -rf $pwd/kafka_2.13-3.7.2.tgz
-cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
+cd /tmp && cp $(find /usr/lib/jvm -name cacerts 2>/dev/null | head -1) kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
 #Snowflake HP Kafka connector v4.x (Public Preview) — uses server-side Snowpipe Streaming architecture
