@@ -796,16 +796,13 @@ connector on an EC2 instance. However, for a production environment, we recommen
 scalability and resilience through the AWS infrastructure. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or
 [Amazon ECS](https://aws.amazon.com/ecs/), you can use them to host your containerized Kafka connectors as well.
 
-For those of you who are interested in learning more about how to build sleek dashboards for monitoring the live flight data, please navigate to this
-[quickstart](https://quickstarts.snowflake.com/guide/404.html/) to continue.
-
 Related Resources
 
-- [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
-- [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/404.html/)
+- [Snowflake High Performance (HP) Kafka Connector](https://docs.snowflake.com/en/connectors/kafkahp/setup-kafka)
+- [Snowflake Kafka Connector Overview](https://docs.snowflake.com/en/user-guide/kafka-connector-overview)
+- [Snowpipe Streaming Overview](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
 - [Getting started with Snowflake](/en/developers/guides/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
-- [Snowflake for Data Sharing](/Workloads/data-sharing/)
 - [Snowflake Marketplace](/en/data-cloud/marketplace/)
 - [Amazon Managed Streaming for Apache Kafka (MSK)](https://aws.amazon.com/msk/)
 
