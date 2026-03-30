@@ -299,43 +299,36 @@ See below example screenshot:
 <!---------------------------->
 ## Prepare the Snowflake account for streaming
 
-#### 1. Creating user, role, and database
-First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
-Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
+#### 1. Creating role, database, and schema
+Login to your Snowflake account as a power user with ACCOUNTADMIN role. 
+Then run the following SQL commands in a worksheet to create the role, database, schema, and warehouse that we will use in the lab. We will use your current Snowflake user (no separate user or password needed — key-pair authentication is used instead).
 
 ```
 -- Set default value for multiple variables
 -- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
 -- You should change them after the workshop
-SET PWD = 'Test1234567';
-SET USER = 'STREAMING_USER';
 SET DB = 'MSK_STREAMING_DB';
+SET SCHEMA = 'MSK_STREAMING_SCHEMA';
 SET WH = 'MSK_STREAMING_WH';
 SET ROLE = 'MSK_STREAMING_RL';
+SET MY_USER = CURRENT_USER();
 
 USE ROLE ACCOUNTADMIN;
 
--- CREATE USERS
-CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT='STREAMING USER';
-
--- CREATE ROLES
+-- CREATE ROLE
 CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
 
--- CREATE DATABASE AND WAREHOUSE
+-- CREATE DATABASE, SCHEMA AND WAREHOUSE
 CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
-USE IDENTIFIER($DB);
+CREATE OR REPLACE SCHEMA IDENTIFIER($DB) .IDENTIFIER($SCHEMA);
 CREATE OR REPLACE WAREHOUSE IDENTIFIER($WH) WITH WAREHOUSE_SIZE = 'SMALL';
 
 -- GRANTS
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE IDENTIFIER($ROLE);
-GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($USER);
-GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE);
+GRANT ROLE IDENTIFIER($ROLE) TO USER IDENTIFIER($MY_USER);
+GRANT OWNERSHIP ON DATABASE IDENTIFIER($DB) TO ROLE IDENTIFIER($ROLE) COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE) COPY CURRENT GRANTS;
 GRANT USAGE ON WAREHOUSE IDENTIFIER($WH) TO ROLE IDENTIFIER($ROLE);
-
--- SET DEFAULTS
-ALTER USER IDENTIFIER($USER) SET DEFAULT_ROLE=$ROLE;
-ALTER USER IDENTIFIER($USER) SET DEFAULT_WAREHOUSE=$WH;
-
+GRANT CREATE PIPE ON SCHEMA IDENTIFIER($DB).IDENTIFIER($SCHEMA) TO ROLE IDENTIFIER($ROLE);
 
 -- RUN FOLLOWING COMMANDS TO FIND YOUR ACCOUNT IDENTIFIER, COPY IT DOWN FOR USE LATER
 -- IT WILL BE SOMETHING LIKE <organization_name>-<account_name>
@@ -351,34 +344,16 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 Please write down the Account Identifier, we will need it later.
 ![](assets/account-identifier.png)
 
-Next we need to configure the public key for the streaming user to access Snowflake programmatically.
+Next we need to configure the public key for your user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
+In the Snowflake worksheet, replace `< pubKey >` with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
 ```commandline
-use role accountadmin;
-alter user streaming_user set rsa_public_key='< pubKey >';
+USE ROLE ACCOUNTADMIN;
+ALTER USER IDENTIFIER($MY_USER) SET RSA_PUBLIC_KEY='< pubKey >';
 ```
 See below example screenshot:
 
 ![](assets/key-pair-snowflake.png)
-
-Now logout of Snowflake, sign back in as the default user `streaming_user` we just created with the associated password (default: Test1234567).
-Run the following SQL commands in a worksheet to create a schema (e.g. `MSK_STREAMING_SCHEMA`) in the default database (e.g. `MSK_STREAMING_DB`):
-
-```commandline
-SET DB = 'MSK_STREAMING_DB';
-SET SCHEMA = 'MSK_STREAMING_SCHEMA';
-
-USE IDENTIFIER($DB);
-CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
-```
-
-Next, switch back to the ACCOUNTADMIN role (in a separate worksheet or re-login) and grant PIPE privileges needed by the HP connector:
-
-```
-USE ROLE ACCOUNTADMIN;
-GRANT CREATE PIPE ON SCHEMA MSK_STREAMING_DB.MSK_STREAMING_SCHEMA TO ROLE MSK_STREAMING_RL;
-```
 
 At this point, the Snowflake setup is complete.
 
@@ -399,10 +374,11 @@ done
 echo export clstr_url=\$a.snowflakecomputing.com > $outf
 export clstr_url=\$a.snowflakecomputing.com
 
-read -p "Snowflake cluster user name: default: streaming_user ==> " user
+read -p "Snowflake user name (your current Snowflake user): ==> " user
 if [[ \$user == "" ]]
 then
-   user="streaming_user"
+   echo "User name cannot be empty, please re-run the script"
+   exit 1
 fi
 
 echo export user=\$user >> $outf
@@ -504,7 +480,7 @@ table `msk_streaming_db.msk_streaming_schema.msk_streaming_tbl`.
 <!---------------------------->
 ## Query ingested data in Snowflake
 
-Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
+Now, switch back to the Snowflake console and switch to the role `MSK_STREAMING_RL`. 
 The data should have been streamed into a table, ready for further processing.
 
 #### 1. Query the raw data
@@ -699,7 +675,7 @@ done
 
 #### 7. Query ingested data in Snowflake
 
-Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
+Now, switch back to the Snowflake console and switch to the role `MSK_STREAMING_RL`. 
 The data should have been streamed into a table, ready for further processing.
 
 To verify that data has been streamed into Snowflake, execute the following SQL commands.
@@ -866,9 +842,6 @@ DROP PIPE IF EXISTS MSK_STREAMING_DB.MSK_STREAMING_SCHEMA."MSK_STREAMING_TBL-STR
 DROP DATABASE MSK_STREAMING_DB;
 DROP WAREHOUSE MSK_STREAMING_WH;
 DROP ROLE MSK_STREAMING_RL;
-
--- Drop the streaming user
-DROP USER IF EXISTS STREAMING_USER;
 ```
 
 <!---------------------------->
