@@ -449,7 +449,7 @@ This is where the guide diverges from the basics. You have a running pipeline �
 
 The `IMMUTABLE WHERE` clause on a dynamic table declares a condition under which rows are considered frozen. Snowflake skips these rows during incremental refreshes, which means:
 
-- **Schema changes** that use backfill can preserve historical data as-is, while only recomputing the mutable window.
+- **Schema changes** only recompute the mutable window — Snowflake marks historical rows as immutable and avoids a full rewrite of the data.
 - **Dimension table updates** (e.g., a customer changes city) don't trigger reprocessing of old fact rows that joined against that dimension.
 - **`metadata$is_immutable`** — a virtual column on every dynamic table with an immutability constraint — lets you verify which rows are frozen and which were recomputed.
 
@@ -498,19 +498,19 @@ JOIN DCM_DEMO_1{{env_suffix}}.RAW.CUSTOMER c ON oh.CUSTOMER_ID = c.CUSTOMER_ID
 JOIN DCM_DEMO_1{{env_suffix}}.RAW.TRUCK t ON oh.TRUCK_ID = t.TRUCK_ID;
 ```
 
-> **Note:** The new `PROFIT_MARGIN_PCT` column must be added as the **last column** in the SELECT list. Immutability backfills rows by ordinal position — inserting a column in the middle would shift existing columns and cause a schema mismatch.
+> **Note:** The new `PROFIT_MARGIN_PCT` column must be added as the **last column** in the SELECT list.
 
 Here's what changed and why:
 
 | Change | Purpose |
 |:-------|:--------|
-| Added `PROFIT_MARGIN_PCT` as the **last column** | New calculated column: `((sale_price - cost) / sale_price) * 100`. Must be appended at the end — inserting mid-schema breaks immutability backfill. |
+| Added `PROFIT_MARGIN_PCT` as the **last column** | New calculated column: `((sale_price - cost) / sale_price) * 100`. Must be appended at the end — inserting mid-schema breaks immutability. |
 | Added `IMMUTABLE WHERE (ORDER_TS < CURRENT_TIMESTAMP() - INTERVAL '1 day')` | Orders older than 1 day are frozen — they won't be recomputed on refresh |
 
 The immutability clause is the key. Most of the sample data has order timestamps from October 2023 — well over a day ago — so those rows will be treated as immutable. But orders 1024 and 1025, inserted with `CURRENT_TIMESTAMP()` in the previous step, fall within the 1-day mutable window. When DCM redeploys this dynamic table, Snowflake will:
 
-1. **Backfill** the immutable rows from the old version (preserving them without recomputation — `PROFIT_MARGIN_PCT` will be `NULL`).
-2. **Compute** the mutable rows (orders 1024 and 1025) using the new definition — `PROFIT_MARGIN_PCT` will have a calculated value.
+1. **Preserve** the immutable rows as-is — Snowflake marks them as immutable and skips recomputation entirely, so `PROFIT_MARGIN_PCT` will be `NULL` for these rows.
+2. **Recompute** only the mutable rows (orders 1024 and 1025) using the new definition — `PROFIT_MARGIN_PCT` will have a calculated value.
 
 This means you'll see both behaviors side-by-side after a single refresh — no need to insert additional data.
 
@@ -573,7 +573,7 @@ The two most recent orders (1024 and 1025) have:
 - `IS_IMMUTABLE = FALSE` — they fell within the mutable window
 
 All historical orders (October 2023) have:
-- `PROFIT_MARGIN_PCT = NULL` — they were backfilled from the previous version, not recomputed
+- `PROFIT_MARGIN_PCT = NULL` — they were preserved from the previous version, not recomputed
 - `IS_IMMUTABLE = TRUE` — Snowflake skipped them entirely
 
 This is immutability in action: a schema change was deployed, and Snowflake only reprocessed the rows that needed it.
@@ -612,7 +612,7 @@ In this guide, you learned how to:
 - **Deploy and manage** your pipeline through the DCM plan-deploy cycle in Snowsight Workspaces
 - **Evolve a dynamic table's schema** by adding a new column to the definition file and redeploying through DCM
 - **Use immutability constraints** (`IMMUTABLE WHERE`) to prevent full recomputation of historical data when a dynamic table is recreated
-- **Verify partial recomputation** using `metadata$is_immutable` — confirming that historical rows were backfilled without reprocessing, while only new data was computed with the updated definition
+- **Verify partial recomputation** using `metadata$is_immutable` — confirming that Snowflake marked historical rows as immutable and skipped them, while only new data was computed with the updated definition
 
 The combination of DCM Projects and immutability constraints gives you a production-grade workflow: version-controlled pipeline definitions, environment-aware deployments, and efficient schema evolution that respects the cost of reprocessing large datasets.
 
