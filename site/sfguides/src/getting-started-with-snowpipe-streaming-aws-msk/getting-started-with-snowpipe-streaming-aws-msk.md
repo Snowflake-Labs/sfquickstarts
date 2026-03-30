@@ -31,7 +31,7 @@ The architecture diagram below shows the deployment. An MSK cluster and a Linux
 EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
 The Linux jumphost will host the Kafka producer and the Snowflake [High Performance (HP) Kafka Connector](https://docs.snowflake.com/en/connectors/kafkahp/setup-kafka) (v4.x) via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html). The HP connector uses a server-side architecture with a PIPE object in Snowflake that manages data processing and buffering, delivering up to 10 GB/s throughput per table with 5-10 second latency.
 
-> **Note:** This quickstart uses the Snowflake HP Kafka Connector (v4.x), which is currently in **Public Preview**. For production workloads, consider using the [classic v3.x connector](https://docs.snowflake.com/en/user-guide/kafka-connector-install).
+> **Note:** This quickstart uses the Snowflake HP Kafka Connector (v4.x), which is currently in **Public Preview**.
 
 The Kafka producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kafka cluster before being picked up by the Kafka connector and delivered to a Snowflake table.
 The data in Snowflake table can be visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
@@ -67,7 +67,6 @@ Note that you must have network administrator permissions to deploy these resour
 - Using [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/)
 - Connecting to EC2 instances with [Amazon System Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html), this is an alternative
 to SSH if your instance is in a private subnet
-- Using [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html), the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 - Using Snowflake to query tables populated with time-series data
 
 ### What You'll Build
@@ -240,8 +239,8 @@ bootstrap.servers=$BS
 #************SNOWFLAKE VALUE CONVERSION****************
 key.converter=org.apache.kafka.connect.storage.StringConverter
 value.converter=org.apache.kafka.connect.json.JsonConverter
-key.converter.schemas.enable=true
-value.converter.schemas.enable=true
+key.converter.schemas.enable=false
+value.converter.schemas.enable=false
 #************SNOWFLAKE ****************
 
 offset.storage.file.filename=/tmp/connect.offsets
@@ -380,44 +379,6 @@ USE ROLE ACCOUNTADMIN;
 GRANT CREATE PIPE ON SCHEMA MSK_STREAMING_DB.MSK_STREAMING_SCHEMA TO ROLE MSK_STREAMING_RL;
 ```
 
-#### 2. Install SnowSQL (optional but highly recommended)
-
-This step is optional for this workshop but is highly recommended if you prefer to use the CLI to interact with Snowflake later instead of the web console.
-
-[SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
-
-To install SnowSQL. Execute the following commands on the Linux Session Manager console:
-```commandline
-curl https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.24-linux_x86_64.bash -o /tmp/snowsql-1.2.24-linux_x86_64.bash
-echo -e "~/bin \n y" > /tmp/ans
-bash /tmp/snowsql-1.2.24-linux_x86_64.bash < /tmp/ans
-
-```
-See below example screenshot:
-
-![](assets/install-snowsql.png)
-
-Next set the environment variable for Snowflake Private Key Phrase:
-```commandline
-export SNOWSQL_PRIVATE_KEY_PASSPHRASE=<key phrase you set up when running openssl previously>
-```
-Note that you should add the command above in the ~/.bashrc file to preserve this environment variable across sessions.
-```commandline
-echo "export SNOWSQL_PRIVATE_KEY_PASSPHRASE=$SNOWSQL_PRIVATE_KEY_PASSPHRASE" >> ~/.bashrc
-```
-
-Now you can execute this command to interact with Snowflake:
-```commandline
-$HOME/bin/snowsql -a <Snowflake Account Identifier> -u streaming_user --private-key-path $HOME/rsa_key.p8 -d msk_streaming_db -s msk_streaming_schema
-```
-See below example screenshot:
-
-![](assets/key-pair-snowsql.png)
-
-Type `Ctrl-D` to get out of SnowSQL session.
-
-You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/snowsql-config.html#snowsql-config-file) file to set default parameters and eliminate the need to specify them every time you run snowsql.
-
 At this point, the Snowflake setup is complete.
 
 <!---------------------------->
@@ -474,6 +435,9 @@ See below example screen capture.
 ![](assets/get_params.png)
 
 #### 2. Run the following commands to create a Snowflake Kafka connect property configuration file:
+
+Note that the HP connector (v4.x) will auto-create a default PIPE object named `MSK_STREAMING_TBL-STREAMING` in the target schema when the connector starts. This is why the `GRANT CREATE PIPE` was added earlier.
+
 ```commandline
 dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorMSK.properties
@@ -697,16 +661,8 @@ Modify the two lines in `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.
 ```commandline
 topics=streaming-iceberg
 snowflake.topic2table.map=streaming-iceberg:MSK_STREAMING_ICEBERG_TBL
-
-# Add the property which specifies connector to ingest data into an Iceberg table.
-snowflake.streaming.iceberg.enabled = true
-
-#Also verify schematiaztion is enabled
-snowflake.enable.schematization=true
 ```
-Save the properties file
-
-Note, Iceberg table ingestion is not supported when snowflake.streaming.enable.single.buffer is set to false.
+Save the properties file. Note that `snowflake.enable.schematization=TRUE` is already enabled in the HP connector properties, and the HP connector (v4.x) natively supports Iceberg tables without any additional properties.
 
 
 #### 4. Create a new topic in MSK
@@ -835,11 +791,8 @@ to
 ```commandline
 topics=streaming,streaming-schematization
 snowflake.topic2table.map=streaming:MSK_STREAMING_TBL,streaming-schematization:MSK_STREAMING_SCHEMATIZATION_TBL
-
-#Also enable schematiaztion by adding
-snowflake.enable.schematization=true
 ```
-Save the properties file
+Save the properties file. Note that `snowflake.enable.schematization=TRUE` is already enabled in the HP connector properties, so no additional property changes are needed.
 
 #### 2. Create a new topic in MSK
 
