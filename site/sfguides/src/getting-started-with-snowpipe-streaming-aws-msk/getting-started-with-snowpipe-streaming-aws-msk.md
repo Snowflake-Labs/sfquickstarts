@@ -319,10 +319,17 @@ USE ROLE ACCOUNTADMIN;
 CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
 
 -- CREATE USER (key-pair auth only, no password)
+-- Uses IF NOT EXISTS so it won't fail if the user already exists.
+-- The ALTER USER below ensures correct settings even for a pre-existing user.
 CREATE USER IF NOT EXISTS IDENTIFIER($USER)
   DEFAULT_ROLE = $ROLE
   DEFAULT_WAREHOUSE = $WH
   COMMENT = 'Streaming connector user - key-pair auth only';
+
+ALTER USER IF EXISTS IDENTIFIER($USER) SET
+  DEFAULT_ROLE = $ROLE
+  DEFAULT_WAREHOUSE = $WH
+  DISABLED = FALSE;
 
 -- CREATE DATABASE, SCHEMA AND WAREHOUSE
 CREATE DATABASE IF NOT EXISTS IDENTIFIER($DB);
