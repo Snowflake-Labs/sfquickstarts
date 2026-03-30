@@ -31,7 +31,7 @@ The architecture diagram below shows the deployment. An MSK cluster and a Linux
 EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
 The Linux jumphost will host the Kafka producer and the Snowflake [High Performance (HP) Kafka Connector](https://docs.snowflake.com/en/connectors/kafkahp/setup-kafka) (v4.x) via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html). The HP connector uses a server-side architecture with a PIPE object in Snowflake that manages data processing and buffering, delivering up to 10 GB/s throughput per table with 5-10 second latency.
 
-> **Note:** This quickstart uses the Snowflake HP Kafka Connector (v4.x), which is currently in **Public Preview**.
+> **Note:** This quickstart uses the Snowflake High Performance (HP) Kafka Connector (v4.x), which is currently in **Public Preview**.
 
 The Kafka producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kafka cluster before being picked up by the Kafka connector and delivered to a Snowflake table.
 The data in Snowflake table can be visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)
@@ -190,7 +190,7 @@ rm -rf $pwd/kafka_2.13-3.7.2.tgz
 cd /tmp && cp $(find /usr/lib/jvm -name cacerts 2>/dev/null | head -1) kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
-#Snowflake HP Kafka connector v4.x (Public Preview) — uses server-side Snowpipe Streaming architecture
+#Snowflake High Performance (HP) Kafka connector v4.x (Public Preview) — uses server-side Snowpipe Streaming architecture
 #v4.x is an uber-jar that bundles snowflake-ingest-sdk and snowflake-jdbc internally
 wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/4.0.0-rc8/snowflake-kafka-connector-4.0.0-rc8.jar -O $pwd/kafka_2.13-3.7.2/libs/snowflake-kafka-connector-4.0.0-rc8.jar
 
@@ -426,7 +426,7 @@ See below example screen capture.
 
 #### 2. Run the following commands to create a Snowflake Kafka connect property configuration file:
 
-Note that the HP connector (v4.x) will auto-create a default PIPE object named `MSK_STREAMING_TBL-STREAMING` in the target schema when the connector starts. This is why the `GRANT CREATE PIPE` was added earlier.
+Note that the High Performance (HP) connector (v4.x) will auto-create a default PIPE object named `MSK_STREAMING_TBL-STREAMING` in the target schema when the connector starts. This is why the `GRANT CREATE PIPE` was added earlier.
 
 ```commandline
 dir=/home/ssm-user/snowpipe-streaming/scripts
