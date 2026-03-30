@@ -464,6 +464,8 @@ Finally, we are ready to start ingesting data into the Snowflake table.
 
 #### 1. Start the Kafka Connector for Snowpipe streaming
 
+> **Important:** If your Snowflake account has a [network policy](https://docs.snowflake.com/en/user-guide/network-policies) enabled, make sure the EC2 instance's public IP (or NAT gateway IP for private subnets) is included in the allowed IP list. Otherwise, the connector will fail to connect to Snowflake with an IP access denied error.
+
 Go back to the Linux console and execute the following commands to start the Kafka connector.
 ```commandline
 $HOME/snowpipe-streaming/kafka_2.13-3.7.2/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
