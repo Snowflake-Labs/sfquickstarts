@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 This guide walks through the full end-to-end setup for streaming logs from a Snowflake Postgres instance into Datadog using Snowflake's native event table and Datadog's Snowflake integration.
 
-**What you'll build:** A pipeline where every SQL query executed against your Snowflake Postgres instance is captured in Snowflake's event table and automatically ingested into Datadog's Log Explorer for monitoring, searching, and alerting.
+**What you'll build:** A pipeline where Snowflake Postgres logs are captured in Snowflake's event table and automatically ingested into Datadog's Log Explorer for monitoring, searching, and alerting.
 
 ---
 
@@ -347,6 +347,8 @@ With everything configured, generate some test traffic against your Postgres ins
 
 > **Timing:** Datadog polls the event table at the interval you configured. If you set it to 1 hour, it may take up to an hour for new logs to appear. For testing, consider temporarily reducing the interval.
 
+From here you can use Datadog's tools to search, filter, and create alerts around the Postgres logs. 
+
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
@@ -364,8 +366,8 @@ Congratulations! You've built an end-to-end pipeline that streams Postgres logs 
 ### Resources
 
 - [Snowflake Postgres Logging](https://docs.snowflake.com/en/user-guide/snowflake-postgres/postgres-logging)
-- [Postgres Logging for Performance Optimization](https://www.crunchydata.com/blog/postgres-logging-for-performance-optimization)
 - [PostgreSQL Log Configuration Documentation](https://www.postgresql.org/docs/current/runtime-config-logging.html)
 - [Datadog Snowflake Integration Documentation](https://docs.datadoghq.com/integrations/snowflake/)
 - [Snowflake Event Table Documentation](https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up)
 - [Snowflake Postgres Documentation](https://docs.snowflake.com/en/user-guide/tables-postgres)
+- [Blog: Postgres Logging for Performance Optimization](https://www.crunchydata.com/blog/postgres-logging-for-performance-optimization)
