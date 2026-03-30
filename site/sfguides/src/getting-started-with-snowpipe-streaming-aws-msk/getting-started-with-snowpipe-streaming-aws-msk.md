@@ -583,10 +583,10 @@ done
 You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
 
 <!---------------------------->
-## Configuring Kafka Connector with Apache Iceberg tables - New
+## Configuring Kafka Connector with Apache Iceberg tables - Optional
 
 Iceberg table ingestion requires version 3.0.0 or later of the Kafka connector and is only supported with Snowpipe Streaming.
-To configure the Kafka connector for Iceberg table ingestion, follow the regular setup steps for a Snowpipe Streaming-based connector mentioned in the Section 4 in the left pane of this quickstart with a few differences noted in the following sections.
+The HP connector (v4.x) natively supports Iceberg tables with the same configuration used for native tables. The only additional steps are creating an external volume, pre-creating the Iceberg table, and updating the topic-to-table mapping.
 
 #### 1. Create an External Volume in Snowflake
 Before you create an Iceberg table, you must have an external volume. An external volume is a Snowflake object that stores information about your cloud storage locations and identity and access management (IAM) entities (for example, IAM roles). Snowflake uses an external volume to establish a connection with your cloud storage in order to access Iceberg metadata and Parquet data.
