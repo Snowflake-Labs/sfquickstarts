@@ -49,7 +49,7 @@ Navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source
 > All scripts use the `ACCOUNTADMIN` role. The data is loaded via INSERT statements---no external staging required for the Snowflake side.
 
 ### Step 1: Create Database and Warehouse
-Run 'asset/01_database_and_warehouse.sql'
+Run 'assets/01_database_and_warehouse.sql'
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -75,7 +75,7 @@ SHOW WAREHOUSES LIKE 'SUPPLY_CHAIN_WH';
 
 ### Step 2: Create Tables
 
-Run `asset/02_create_tables.sql` to create 8 tables and 1 internal stage:
+Run `assets/02_create_tables.sql` to create 8 tables and 1 internal stage:
 
 | Category | Tables | Description |
 |---|---|---|
@@ -86,7 +86,7 @@ Run `asset/02_create_tables.sql` to create 8 tables and 1 internal stage:
 
 ### Step 3: Load Structured Data
 
-Run `asset/03_load_structured_data.sql` to load ~640 rows across the 5 structured tables:
+Run `assets/03_load_structured_data.sql` to load ~640 rows across the 5 structured tables:
 
 | Table | Rows | Key Details |
 |---|---|---|
@@ -98,11 +98,11 @@ Run `asset/03_load_structured_data.sql` to load ~640 rows across the 5 structure
 
 ### Step 4: Load Semi-Structured Data
 
-Run `asset/04_load_semi_structured_data.sql` to load 180 JSON sensor readings into `IOT_SENSOR_LOGS` using `PARSE_JSON()`. Covers 3 warehouses with temperature, humidity, air quality, door, and motion sensor types.
+Run `assets/04_load_semi_structured_data.sql` to load 180 JSON sensor readings into `IOT_SENSOR_LOGS` using `PARSE_JSON()`. Covers 3 warehouses with temperature, humidity, air quality, door, and motion sensor types.
 
 ### Step 5: Load Unstructured Data
 
-Run `asset/05_load_unstructured_data.sql` to load free-text data:
+Run `assets/05_load_unstructured_data.sql` to load free-text data:
 
 | Table | Rows | Content |
 |---|---|---|
@@ -112,7 +112,7 @@ Run `asset/05_load_unstructured_data.sql` to load free-text data:
 <!-- ------------------------ -->
 ## Create Cortex Search Services
 
-Run `asset/06_cortex_search_services.sql` to create 2 Cortex Search services for semantic search over unstructured text:
+Run `assets/06_cortex_search_services.sql` to create 2 Cortex Search services for semantic search over unstructured text:
 
 ```sql
 USE DATABASE SUPPLY_CHAIN_DEMO;
@@ -156,7 +156,7 @@ SHOW CORTEX SEARCH SERVICES IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Create Semantic View
 
-Run `asset/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic view using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML()`. This powers Cortex Analyst text-to-SQL queries.
+Run `assets/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic view using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML()`. This powers Cortex Analyst text-to-SQL queries.
 
 | Component | Count | Details |
 |---|---|---|
@@ -171,7 +171,7 @@ Run `asset/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic
 <!-- ------------------------ -->
 ## Create Cortex Agent
 
-Run `asset/08_cortex_agent.sql` to create `SUPPLY_CHAIN_AGENT` with 3 tools:
+Run `assets/08_cortex_agent.sql` to create `SUPPLY_CHAIN_AGENT` with 3 tools:
 
 ```sql
 CREATE OR REPLACE AGENT SUPPLY_CHAIN_AGENT
@@ -241,7 +241,7 @@ SHOW AGENTS IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Create MCP Server and OAuth Integration
 
-Run `asset/09_mcp_server.sql` to expose the Cortex Agent over MCP with OAuth 2.0 authentication for Amazon Quick Suite.
+Run `assets/09_mcp_server.sql` to expose the Cortex Agent over MCP with OAuth 2.0 authentication for Amazon Quick Suite.
 
 ### MCP Server
 
@@ -308,7 +308,7 @@ SHOW MCP SERVERS IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Setup Amazon S3 Knowledge Base
 
-Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. These files are in the `S3_csvs/` directory of the repository.
+Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. These files are in the `assets/` directory of the repository.
 
 | File | Rows | Key Columns |
 |---|---|---|
@@ -320,7 +320,7 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 1. Go to **Amazon S3** > **Buckets** > **Create bucket**
 2. Name the bucket (e.g., `"Unique-name"`) and select your preferred region
 3. Keep default settings and click **Create bucket**
-4. Open the bucket, click **Upload**, add both CSV files from `S3_csvs/`, and click **Upload**
+4. Open the bucket, click **Upload**, add both CSV files from `assets/`, and click **Upload**
 
 ### Create Quick Suite Knowledge Base
 
@@ -336,7 +336,7 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 
 > NOTE:
 >
-> The knowledge base name `supply_chain_space_s3` must match what is referenced in the agent instructions (`asset/10_quicksuite_instructions.md`). If you use a different name, update the instructions accordingly.
+> The knowledge base name `supply_chain_space_s3` must match what is referenced in the agent instructions (`assets/10_quicksuite_instructions.md`). If you use a different name, update the instructions accordingly.
 
 <!-- ------------------------ -->
 ## Configure Amazon Quick Suite Chat Agent
@@ -378,7 +378,7 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 | `supply-chain-agent` | MCP Actions Integration | Snowflake MCP Server |
 | `supply_chain_space_s3` | Knowledge Base | S3 Knowledge Base |
 
-5. In the **Instructions** field, paste the full content from `asset/10_quicksuite_instructions.md`---this contains routing rules, schema details, and the three-phase protocol for cross-platform queries
+5. In the **Instructions** field, paste the full content from `assets/10_quicksuite_instructions.md`---this contains routing rules, schema details, and the three-phase protocol for cross-platform queries
 6. Click **Create**
 
 <!-- ------------------------ -->
