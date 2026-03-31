@@ -320,7 +320,7 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 1. Go to **Amazon S3** > **Buckets** > **Create bucket**
 2. Name the bucket (e.g., `"Unique-name"`) and select your preferred region
 3. Keep default settings and click **Create bucket**
-4. Open the bucket, click **Upload**, add both CSV files from `S3_csvs/`, and click **Upload**
+4. Open the bucket, click **Upload**, add both CSV files from `assets/`, and click **Upload**
 
 ### Create Quick Suite Knowledge Base
 
