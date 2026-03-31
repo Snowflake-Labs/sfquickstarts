@@ -1,0 +1,61 @@
+shipment_id,product_id,carrier_name,origin_warehouse,destination_store,ship_date,shipping_cost_usd,weight_kg,distance_miles,on_time
+FC-001,1001,FastFreight Logistics,Los Angeles CA,Portland OR,2025-03-15,245.80,250.0,963,Yes
+FC-002,1003,TransGlobal Shipping,Chicago IL,Detroit MI,2025-03-18,189.50,85.0,282,No
+FC-003,1007,ExpressRoute Carriers,Newark NJ,Boston MA,2025-03-22,312.00,25.0,215,Yes
+FC-004,1012,PrimeHaul Transport,Atlanta GA,Nashville TN,2025-04-01,78.40,110.0,248,No
+FC-005,1018,SwiftMove Inc,Dallas TX,Houston TX,2025-04-05,156.30,15.0,239,Yes
+FC-006,1002,Pacific Carriers Ltd,Seattle WA,San Francisco CA,2025-04-10,420.60,120.0,808,Yes
+FC-007,1025,MidWest Express,Chicago IL,Minneapolis MN,2025-04-14,98.20,20.0,410,No
+FC-008,1033,FastFreight Logistics,Los Angeles CA,Phoenix AZ,2025-04-19,175.00,4.0,373,Yes
+FC-009,1041,TransGlobal Shipping,Newark NJ,Philadelphia PA,2025-04-25,64.30,4.0,97,Yes
+FC-010,1005,ExpressRoute Carriers,Atlanta GA,Charlotte NC,2025-05-02,285.40,30.0,244,No
+FC-011,1014,PrimeHaul Transport,Dallas TX,San Antonio TX,2025-05-08,52.10,10.0,274,Yes
+FC-012,1022,SwiftMove Inc,Los Angeles CA,Las Vegas NV,2025-05-12,340.00,50.0,270,No
+FC-013,1009,Pacific Carriers Ltd,Seattle WA,Portland OR,2025-05-18,115.60,3.0,174,Yes
+FC-014,1030,MidWest Express,Chicago IL,St. Louis MO,2025-05-22,520.80,450.0,297,No
+FC-015,1046,FastFreight Logistics,Newark NJ,Washington DC,2025-05-28,198.40,220.0,225,Yes
+FC-016,1016,TransGlobal Shipping,Atlanta GA,Jacksonville FL,2025-06-03,142.70,20.0,346,Yes
+FC-017,1004,ExpressRoute Carriers,Dallas TX,Oklahoma City OK,2025-06-09,265.30,150.0,206,No
+FC-018,1038,PrimeHaul Transport,Los Angeles CA,San Diego CA,2025-06-15,88.50,110.0,120,Yes
+FC-019,1011,SwiftMove Inc,Seattle WA,Boise ID,2025-06-20,178.20,250.0,504,No
+FC-020,1029,Pacific Carriers Ltd,Chicago IL,Indianapolis IN,2025-06-25,395.00,8.0,183,Yes
+FC-021,1050,MidWest Express,Newark NJ,Baltimore MD,2025-07-01,445.60,100.0,187,No
+FC-022,1008,FastFreight Logistics,Atlanta GA,Tampa FL,2025-07-07,210.30,40.0,458,Yes
+FC-023,1017,TransGlobal Shipping,Dallas TX,Denver CO,2025-07-12,335.80,5.0,781,No
+FC-024,1042,ExpressRoute Carriers,Los Angeles CA,Sacramento CA,2025-07-18,62.40,12.0,383,Yes
+FC-025,1006,PrimeHaul Transport,Seattle WA,Salt Lake City UT,2025-07-24,480.20,180.0,831,No
+FC-026,1023,SwiftMove Inc,Chicago IL,Columbus OH,2025-07-30,125.90,40.0,316,Yes
+FC-027,1035,Pacific Carriers Ltd,Newark NJ,Hartford CT,2025-08-05,55.60,2.0,118,Yes
+FC-028,1010,MidWest Express,Atlanta GA,Raleigh NC,2025-08-10,302.40,35.0,427,No
+FC-029,1019,FastFreight Logistics,Dallas TX,New Orleans LA,2025-08-16,168.70,30.0,504,Yes
+FC-030,1044,TransGlobal Shipping,Los Angeles CA,Tucson AZ,2025-08-22,225.00,3.0,487,No
+FC-031,1013,ExpressRoute Carriers,Seattle WA,Spokane WA,2025-08-28,385.10,50.0,280,Yes
+FC-032,1027,PrimeHaul Transport,Chicago IL,Milwaukee WI,2025-09-03,560.40,350.0,92,Yes
+FC-033,1036,SwiftMove Inc,Newark NJ,Pittsburgh PA,2025-09-09,135.80,200.0,370,No
+FC-034,1048,Pacific Carriers Ltd,Atlanta GA,Birmingham AL,2025-09-15,82.30,20.0,148,Yes
+FC-035,1020,MidWest Express,Dallas TX,Austin TX,2025-09-20,38.50,5.0,195,Yes
+FC-036,1001,FastFreight Logistics,Los Angeles CA,Fresno CA,2025-09-26,290.60,250.0,220,No
+FC-037,1043,TransGlobal Shipping,Seattle WA,Eugene OR,2025-10-02,95.40,6.0,283,Yes
+FC-038,1015,ExpressRoute Carriers,Chicago IL,Kansas City MO,2025-10-08,178.90,46.0,510,No
+FC-039,1031,PrimeHaul Transport,Newark NJ,Albany NY,2025-10-14,45.20,5.0,157,Yes
+FC-040,1007,SwiftMove Inc,Atlanta GA,Savannah GA,2025-10-20,248.30,25.0,248,No
+FC-041,1026,Pacific Carriers Ltd,Dallas TX,El Paso TX,2025-10-26,410.50,400.0,571,Yes
+FC-042,1039,MidWest Express,Los Angeles CA,Bakersfield CA,2025-11-01,72.10,50.0,112,Yes
+FC-043,1049,FastFreight Logistics,Seattle WA,Tacoma WA,2025-11-07,680.20,550.0,34,No
+FC-044,1002,TransGlobal Shipping,Chicago IL,Grand Rapids MI,2025-11-13,215.40,120.0,180,Yes
+FC-045,1024,ExpressRoute Carriers,Newark NJ,Richmond VA,2025-11-19,108.60,12.0,330,No
+FC-046,1037,PrimeHaul Transport,Atlanta GA,Memphis TN,2025-11-25,162.30,40.0,382,Yes
+FC-047,1016,SwiftMove Inc,Dallas TX,Little Rock AR,2025-12-01,195.80,20.0,318,No
+FC-048,1045,Pacific Carriers Ltd,Los Angeles CA,Riverside CA,2025-12-07,42.90,30.0,57,Yes
+FC-049,1008,MidWest Express,Seattle WA,Reno NV,2025-12-13,355.40,40.0,564,Yes
+FC-050,1028,FastFreight Logistics,Chicago IL,Omaha NE,2025-12-19,145.70,30.0,472,No
+FC-051,1003,TransGlobal Shipping,Newark NJ,Syracuse NY,2025-12-25,275.30,85.0,254,Yes
+FC-052,1047,ExpressRoute Carriers,Atlanta GA,Charleston SC,2025-12-30,198.80,25.0,312,No
+FC-053,1021,PrimeHaul Transport,Dallas TX,Tulsa OK,2026-01-05,58.40,8.0,257,Yes
+FC-054,1034,SwiftMove Inc,Los Angeles CA,San Jose CA,2026-01-11,132.50,18.0,340,No
+FC-055,1018,Pacific Carriers Ltd,Seattle WA,Bellingham WA,2026-01-17,228.60,15.0,90,Yes
+FC-056,1040,MidWest Express,Chicago IL,Louisville KY,2026-01-23,88.30,15.0,264,Yes
+FC-057,1006,FastFreight Logistics,Newark NJ,Trenton NJ,2026-01-29,495.20,180.0,58,No
+FC-058,1012,TransGlobal Shipping,Atlanta GA,Knoxville TN,2026-02-04,72.80,11.0,181,Yes
+FC-059,1032,ExpressRoute Carriers,Dallas TX,Amarillo TX,2026-02-10,48.90,2.0,360,No
+FC-060,1050,PrimeHaul Transport,Los Angeles CA,Long Beach CA,2026-02-16,625.40,100.0,26,Yes
