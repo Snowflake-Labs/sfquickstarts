@@ -51,7 +51,7 @@ Prompts 1 through 4 and the optional Cleanup prompt run in a **Workspace Noteboo
 
 ### Prerequisites
 
-- Access to a [Snowflake account](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=datacamp&utm_campaign=aiforanalysts)
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - ACCOUNTADMIN role access (required for creating semantic views)
 - Access to the `SNOWFLAKE_SAMPLE_DATA` shared database (available by default on all Snowflake accounts)
 - A running warehouse (e.g., `COMPUTE_WH`)
