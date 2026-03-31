@@ -1,5 +1,5 @@
 author: Bharath Suresh
-id: s3-data-intelligence-with-cortex-ai-functions-search-analyst-and-agents
+id: aws-s3-data-intelligence-with-cortex-ai-functions-search-analyst-and-agents
 language: en
 summary: Integrate S3 files (PDF, TXT, Audio) into Snowflake via Snowpipe auto-ingest, extract structured intelligence using 11 Cortex AI functions, and build a conversational interface with Cortex Search, Cortex Analyst, Cortex Agent, and Snowflake Intelligence.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/solution-center/certification/certified-solution
