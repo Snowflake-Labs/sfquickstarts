@@ -256,5 +256,3 @@ You have used Cortex Code in Snowsight to go from raw Marketplace data to cross-
 - [Cortex Code CLI Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
 - [Snowflake Public Data Documentation](https://data-docs.snowflake.com/)
 - [Snowflake Public Data (Free) Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/)
-- [Cortex AI Functions Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-
