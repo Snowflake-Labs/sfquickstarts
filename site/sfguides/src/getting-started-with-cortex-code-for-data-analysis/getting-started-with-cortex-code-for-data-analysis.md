@@ -23,7 +23,6 @@ You will start by getting free public data from the Snowflake Marketplace with z
 - How to explore unfamiliar datasets using Cortex Code's `#table` syntax
 - How to perform exploratory data analysis with natural language prompts
 - How to join and correlate data across different domains (weather + finance)
-- How to use Cortex AI functions to summarize analytical findings
 
 ### What You Will Build
 
@@ -31,12 +30,11 @@ An end-to-end data analysis workflow including:
 - Weather pattern analysis across US states (temperature, precipitation, extreme events)
 - Financial market analysis (stock price trends, volatility, economic indicators)
 - Cross-domain correlation analysis (weather vs. energy stocks, weather vs. retail sales)
-- AI-generated summary of key findings using Cortex AI
 
 ### Prerequisites
 
 - Basic familiarity with SQL concepts (no advanced knowledge required)
-- A [Snowflake accoun](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with a role that has the ability to create database, schema, tables and stages. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with a role that has the ability to create databases, schemas, tables, and stages. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
 <!-- ------------------------ -->
 ## 1. Setup
 
@@ -50,7 +48,7 @@ For detailed instructions, refer to the [Cortex Code in Snowsight documentation]
 
 ### Get Snowflake Public Data (Free) from the Marketplace
 
-This quickstart uses the **Snowflake Public Data (Free)** listing, which provides 90+ sources of public domain data in a single, zero-copy data share. No ETL, no pipelines — the data is live in your account the moment you click "Get."
+This quickstart uses the **Snowflake Public Data (Free)** listing, which provides 90+ sources of public domain data in a single, zero-copy data share. No ETL, no pipelines — the data is live in your account the moment you click **Get**.
 
 1. Go to the [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/) listing in the Marketplace.
 2. Click **Get** and follow the prompts.
@@ -92,6 +90,8 @@ You can point Cortex Code at a table in two ways:
 ```
 #PUBLIC_DATA.PUBLIC_DATA.NOAA_WEATHER_STATION_INDEX — How many weather stations are in this table? Show me a breakdown by country for the top 10 countries.
 ```
+
+![Cortex Code results for NOAA weather station count by country](assets/cortex-code-noaa-station-index-top-countries.jpg)
 
 Cortex Code will query the table and show you the distribution of weather stations globally.
 
@@ -233,7 +233,7 @@ Create a summary table that shows for each month in 2024: the average US tempera
 ![Cortex Code results table for monthly weather + market summary view (2024)](assets/cortex-code-monthly-weather-market-summary-view-2024.jpg)
 
 <!-- ------------------------ -->
-## 7. Conclusion And Resources
+## 7. Conclusion and Resources
 
 You have used Cortex Code in Snowsight to go from raw Marketplace data to cross-domain correlation analysis — all through natural language conversations with built-in visualizations.
 
@@ -243,15 +243,12 @@ You have used Cortex Code in Snowsight to go from raw Marketplace data to cross-
 - How to explore unfamiliar datasets using Cortex Code's `#table` syntax
 - How to perform weather and financial analysis using natural language prompts
 - How to join and correlate data across different domains
-- How to use Cortex AI functions (`SNOWFLAKE.CORTEX.COMPLETE`) to summarize findings
-- How to identify anomalies and test hypotheses about weather-market relationships
 
 ### Key Takeaways
 
 - **Zero-copy data sharing** means you can start analyzing Marketplace data in seconds — no ETL, no pipelines
 - **Cortex Code in Snowsight** lets data analysts work iteratively with built-in charts: explore → hypothesize → test → summarize
 - **Cross-domain analysis** is where the most interesting insights live — and Snowflake makes it easy to join data from different providers
-- **Cortex AI functions** add a natural language layer on top of analytical results
 
 ### Related Resources
 
@@ -260,3 +257,4 @@ You have used Cortex Code in Snowsight to go from raw Marketplace data to cross-
 - [Snowflake Public Data Documentation](https://data-docs.snowflake.com/)
 - [Snowflake Public Data (Free) Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/)
 - [Cortex AI Functions Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
+
