@@ -41,6 +41,7 @@ By splitting platform infrastructure and data pipelines into separate projects, 
 
 ### What You'll Build
 - A fully deployed data platform and transformation pipeline consisting of:
+
   - A shared raw database with 16 staging tables
   - An ingestion stage and scheduled Task for loading CSV data
   - Per-team warehouses, databases, roles, and grants
