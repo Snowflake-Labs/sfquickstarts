@@ -1,7 +1,7 @@
 /*=============================================================
   06 — Create Cortex Search Services
   2 services for semantic search over unstructured text
-  NOTE: INCIDENT_REPORTS_SEARCH removed — data moved to Fabric
+  NOTE: INCIDENT_REPORTS_SEARCH removed — data moved to Amazon S3
 =============================================================*/
 
 USE DATABASE SUPPLY_CHAIN_DEMO;

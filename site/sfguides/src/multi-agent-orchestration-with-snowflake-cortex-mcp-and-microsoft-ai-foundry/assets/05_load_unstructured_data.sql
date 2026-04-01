@@ -1,7 +1,7 @@
 /*=============================================================
   05 — Load Unstructured (Free-Text) Data
   370+ rows: SUPPLIER_EMAILS + WAREHOUSE_INSPECTION_NOTES
-  NOTE: LOGISTICS_INCIDENT_REPORTS moved to Microsoft Fabric
+  NOTE: LOGISTICS_INCIDENT_REPORTS excluded — data lives in Amazon S3
 =============================================================*/
 
 USE DATABASE SUPPLY_CHAIN_DEMO;

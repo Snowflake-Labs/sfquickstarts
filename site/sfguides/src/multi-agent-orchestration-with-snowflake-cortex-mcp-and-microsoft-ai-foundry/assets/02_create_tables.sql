@@ -2,10 +2,10 @@
   02 — Create Tables
   8 tables (5 structured, 1 semi-structured, 2 unstructured)
   + 1 internal stage
-  NOTE: Fabric Logistics & Sales domain tables (SHIPMENTS,
+  NOTE: Logistics & Sales domain tables (SHIPMENTS,
         STORE_SALES, SHIPMENT_UPDATES, DELIVERY_TRACKING_EVENTS)
-        and LOGISTICS_INCIDENT_REPORTS are excluded — they live
-        in Microsoft Fabric.
+        and LOGISTICS_INCIDENT_REPORTS are excluded — supplementary
+        data (freight costs, customer returns) lives in Amazon S3.
 =============================================================*/
 
 USE DATABASE SUPPLY_CHAIN_DEMO;
@@ -97,7 +97,7 @@ CREATE OR REPLACE TABLE IOT_SENSOR_LOGS (
 
 -- ============================================================
 -- UNSTRUCTURED TEXT TABLES (2)
--- NOTE: LOGISTICS_INCIDENT_REPORTS moved to Microsoft Fabric
+-- NOTE: LOGISTICS_INCIDENT_REPORTS excluded — data lives in Amazon S3
 -- ============================================================
 
 -- 7. SUPPLIER_EMAILS — supplier communications
