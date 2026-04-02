@@ -668,8 +668,10 @@ This searches the free-text customer_complaint column in the returns data.
 ### Cross-Platform Queries (Both Tools)
 
 ```
-Which products with critical stockout risk have the most customer complaints?
+Need information on products which has high freight cost
 ```
+
+Which carriers cause maximum delys and what products do they handle?
 
 ```
 Which suppliers produce products with the highest return rates?
