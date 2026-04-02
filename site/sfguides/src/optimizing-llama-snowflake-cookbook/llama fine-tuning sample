@@ -1,0 +1,30 @@
+import snowflake.connector
+
+conn = snowflake.connector.connect(
+    user='YOUR_USER',
+    password='YOUR_PASSWORD',
+    account='YOUR_ACCOUNT',
+    warehouse='YOUR_WAREHOUSE',
+    database='YOUR_DB',
+    schema='YOUR_SCHEMA'
+)
+
+cs = conn.cursor()
+
+cs.execute("""
+    SELECT cortex_finetune.create_finetune_job(
+        model_name => 'llama3.1-8b',
+        training_table => 'your_schema.your_training_data',
+        prompt_col => 'prompt',
+        completion_col => 'completion',
+        output_model_name => 'custom_llama_model_v1',
+        max_epochs => 3,
+        batch_size => 8,
+        learning_rate => 0.0001,
+        peft_method => 'lora'
+    );
+""")
+
+print(cs.fetchone())
+cs.close()
+conn.close()
