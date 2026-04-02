@@ -4,7 +4,7 @@
     - Analyst (text-to-SQL via semantic view)
     - SupplierEmailSearch (Cortex Search)
     - InspectionSearch (Cortex Search)
-  NOTE: IncidentSearch removed -- data moved to Microsoft Fabric
+  NOTE: IncidentSearch removed -- data moved to Amazon S3
 =============================================================*/
 
 USE DATABASE SUPPLY_CHAIN_DEMO;
@@ -27,7 +27,8 @@ CREATE OR REPLACE AGENT SUPPLY_CHAIN_AGENT
       operations. You combine structured data analysis with unstructured
       text search across supplier emails and warehouse inspection notes.
       Shipments, delivery tracking, store sales, carrier data, and logistics
-      incident reports are managed in Microsoft Fabric and are not available here.
+      incident reports are not available here — freight costs and customer
+      returns are in the Amazon S3 knowledge base.
     orchestration: >
       Use Analyst for questions about suppliers, products, inventory levels,
       purchase orders, costs, delays, and delivery rates.
@@ -36,12 +37,12 @@ CREATE OR REPLACE AGENT SUPPLY_CHAIN_AGENT
       Use InspectionSearch for questions about warehouse inspections,
       facility conditions, compliance, or inspection findings.
       For logistics incidents, safety events, or disruptions, mention that
-      this data is available in the Microsoft Fabric domain.
+      this data is available in the Amazon S3 knowledge base.
     response: >
       Provide concise, data-driven answers. When presenting numbers,
       include context and comparisons where possible. If data from
-      Microsoft Fabric (shipments, sales, incidents) is needed, mention
-      that it is available in the Fabric domain.
+      Amazon S3 (freight costs, customer returns) is needed, mention
+      that it is available in the S3 knowledge base.
     sample_questions:
       - question: "Which suppliers have the worst on-time delivery rates?"
         answer: "I'll query the purchase orders data to calculate on-time delivery rates by supplier."

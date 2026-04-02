@@ -668,13 +668,13 @@ This searches the free-text customer_complaint column in the returns data.
 ### Cross-Platform Queries (Both Tools)
 
 ```
-Which products with critical stockout risk have the most customer complaints?
+Need information on products which has high freight cost
 ```
 
-The agent should call Snowflake for inventory/stockout data and Fabric for customer returns, then match on product_id (1001-1050).
+Which carriers cause maximum delys and what products do they handle?
 
 ```
-Are customers returning products from unreliable suppliers?
+Which suppliers produce products with the highest return rates?
 ```
 
 The agent should call Fabric for return counts by product_id and Snowflake for the supplier-product-reliability mapping, combining results into a single answer.

@@ -7,7 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Build a Streaming Data Pipeine in Python
+# Build a Streaming Data Pipeline in Python
 
 <!-- ------------------------ -->
 ## Overview
