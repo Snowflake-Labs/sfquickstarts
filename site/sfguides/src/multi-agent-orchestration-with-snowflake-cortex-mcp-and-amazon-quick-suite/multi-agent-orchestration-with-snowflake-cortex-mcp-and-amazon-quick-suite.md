@@ -1,7 +1,7 @@
 author: Bharath Suresh, Avinash Venkatagiri(AWS)
 id: multi-agent-orchestration-with-snowflake-cortex-mcp-and-amazon-quick-suite
 language: en
-summary: Build a multi-agent orchestrator that routes natural language queries across Snowflake Cortex MCP and Amazon S3 Knowledgebase through a unified Amazon Quick Suite chat agent, powered by Cortex Agents, MCP, and OAuth 2.0.
+summary: Build a multi-agent orchestrator that routes natural language queries across Snowflake and Amazon S3 through a unified Amazon Quick Suite chat agent, powered by Cortex Agent, MCP, and OAuth 2.0.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
@@ -9,12 +9,12 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-multi-agent-supply-chain-orchestrator
 
 
-# Multi-Agent Agentic Orchestrator with Snowflake Cortex MCP and Amazon Quick Suite
+# Multi-Agent Supply Chain Orchestrator with Snowflake Cortex MCP and Amazon Quick Suite
 
-<!-- -------------------------->
+<!-- ------------------------ -->
 ## Overview
 
-Through this guide, you will build a multi-agent architecture that routes natural language queries across Snowflake and Amazon S3 knowledgebase through a unified Amazon Quick Suite chat agent. Powered by Snowflake Cortex Agent, Cortex Analyst, Cortex Search, and the Model Context Protocol (MCP), the orchestrator answers supply chain questions by automatically selecting the right data source---structured tables via text-to-SQL, unstructured text via semantic search, or CSV knowledge bases in S3---and combining results when a question spans both platforms.
+Through this guide, you will build a multi-agent architecture that routes natural language queries across Snowflake and Amazon S3 through a unified Amazon Quick Suite chat agent. Powered by Snowflake Cortex Agent, Cortex Analyst, Cortex Search, and the Model Context Protocol (MCP), the orchestrator answers supply chain questions by automatically selecting the right data source---structured tables via text-to-SQL, unstructured text via semantic search, or CSV knowledge bases in S3---and combining results when a question spans both platforms.
 
 ### Prerequisites
 
@@ -27,17 +27,23 @@ Through this guide, you will build a multi-agent architecture that routes natura
 - Creating a Snowflake Cortex Agent with Cortex Analyst and Cortex Search tools
 - Building a Semantic View to power natural-language-to-SQL queries
 - Exposing a Cortex Agent over the Model Context Protocol (MCP) with OAuth 2.0
-- Configuring an Amazon Quick Suite chat agent that orchestrates across Snowflake and S3 Knowledgebase
+- Configuring an Amazon Quick Suite chat agent that orchestrates across Snowflake and S3
+
+### What You'll Need
+
+- A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
+- An AWS account with S3 and Quick Suite access
+- The repository files including SQL setup scripts, CSV data files, and agent instructions
 
 ### What You'll Build
 
 **A multi-agent supply chain intelligence system** with two data source tools orchestrated by an Amazon Quick Suite chat agent:
 
-- **Snowflake MCP Server** exposing a Cortex Agent with 3 sub-tools: Cortex Analyst (text-to-SQL across 5 structured tables), Supplier (RAG search over 200 supplier emails), and Inspection Search (RAG search over 170 warehouse inspection notes)
+- **Snowflake MCP Server** exposing a Cortex Agent with 3 sub-tools: Cortex Analyst (text-to-SQL across 5 structured tables), SupplierEmailSearch (semantic search over 200 supplier emails), and InspectionSearch (semantic search over 170 warehouse inspection notes)
 - **Amazon S3 Knowledge Base** containing freight cost records (60 rows) and customer return complaints (40 rows)
-- **Cross-platform query routing** that automatically splits questions across both platforms and joins results.
+- **Cross-platform query routing** that automatically splits questions across both platforms and joins results on `product_id`
 
-**End result: A unified chat interface where users ask natural language questions about suppliers, inventory, purchase orders, shipping costs, and customer returns---and the orchestrator routes each question to the right data source automatically.**
+**End result:** A unified chat interface where users ask natural language questions about suppliers, inventory, purchase orders, shipping costs, and customer returns---and the orchestrator routes each question to the right data source automatically.
 
 <!-- ------------------------ -->
 ## Setup Snowflake Infrastructure
@@ -49,7 +55,6 @@ Navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source
 > All scripts use the `ACCOUNTADMIN` role. The data is loaded via INSERT statements---no external staging required for the Snowflake side.
 
 ### Step 1: Create Database and Warehouse
-Run 'asset/01_database_and_warehouse.sql'
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -75,7 +80,7 @@ SHOW WAREHOUSES LIKE 'SUPPLY_CHAIN_WH';
 
 ### Step 2: Create Tables
 
-Run `asset/02_create_tables.sql` to create 8 tables and 1 internal stage:
+Run `setup/02_create_tables.sql` to create 8 tables and 1 internal stage:
 
 | Category | Tables | Description |
 |---|---|---|
@@ -86,7 +91,7 @@ Run `asset/02_create_tables.sql` to create 8 tables and 1 internal stage:
 
 ### Step 3: Load Structured Data
 
-Run `asset/03_load_structured_data.sql` to load ~640 rows across the 5 structured tables:
+Run `setup/03_load_structured_data.sql` to load ~640 rows across the 5 structured tables:
 
 | Table | Rows | Key Details |
 |---|---|---|
@@ -98,11 +103,19 @@ Run `asset/03_load_structured_data.sql` to load ~640 rows across the 5 structure
 
 ### Step 4: Load Semi-Structured Data
 
-Run `asset/04_load_semi_structured_data.sql` to load 180 JSON sensor readings into `IOT_SENSOR_LOGS` using `PARSE_JSON()`. Covers 3 warehouses with temperature, humidity, air quality, door, and motion sensor types.
+Run `setup/04_load_semi_structured_data.sql` to load 180 JSON sensor readings into `IOT_SENSOR_LOGS`. Covers 3 warehouses with temperature, humidity, air quality, door, and motion sensor types.
+
+> NOTE:
+>
+> Snowflake does not allow scalar functions like `PARSE_JSON()` directly inside a `VALUES` clause. The script uses the pattern `SELECT $1, $2, PARSE_JSON($3) FROM VALUES (...)` to apply the function after the literal values are bound.
+
+> NOTE:
+>
+> IoT sensor data is loaded for completeness but is **not exposed** through the Cortex Agent tools. The agent will mention its existence if asked.
 
 ### Step 5: Load Unstructured Data
 
-Run `asset/05_load_unstructured_data.sql` to load free-text data:
+Run `setup/05_load_unstructured_data.sql` to load free-text data:
 
 | Table | Rows | Content |
 |---|---|---|
@@ -112,7 +125,7 @@ Run `asset/05_load_unstructured_data.sql` to load free-text data:
 <!-- ------------------------ -->
 ## Create Cortex Search Services
 
-Run `asset/06_cortex_search_services.sql` to create 2 Cortex Search services for semantic search over unstructured text:
+Run `setup/06_cortex_search_services.sql` to create 2 Cortex Search services for semantic search over unstructured text:
 
 ```sql
 USE DATABASE SUPPLY_CHAIN_DEMO;
@@ -156,22 +169,22 @@ SHOW CORTEX SEARCH SERVICES IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Create Semantic View
 
-Run `asset/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic view using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML()`. This powers Cortex Analyst text-to-SQL queries.
+Run `setup/07_semantic_view.sql` to create the `SUPPLY_CHAIN_ANALYTICS` semantic view using `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML()`. This powers Cortex Analyst text-to-SQL queries.
 
 | Component | Count | Details |
 |---|---|---|
 | **Tables** | 5 | SUPPLIERS, PRODUCTS, WAREHOUSES, INVENTORY, PURCHASE_ORDERS |
-| **Relationships** | 6 | Foreign key joins (Products→Suppliers, Inventory→Products, Inventory→Warehouses, PO→Suppliers, PO→Products, PO→Warehouses) |
+| **Relationships** | 5 | Foreign key joins (Products→Suppliers, Inventory→Products, Inventory→Warehouses, PO→Suppliers, PO→Products) |
 | **Facts** | 20 | Numeric columns: quantities, costs, scores, lead times, delays, weights |
 | **Dimensions** | 38 | Categorical columns: names, IDs, statuses, categories, regions |
-| **Metrics** | 9 | AVG_RELIABILITY_SCORE, AVG_LEAD_TIME, TOTAL_STOCK_ON_HAND, AVG_DAYS_OF_SUPPLY, LOW_STOCK_ITEMS, TOTAL_PO_VALUE, AVG_DELAY_DAYS, TOTAL_ORDERS, ON_TIME_DELIVERY_RATE |
+| **Metrics** | 9 | AVG_RELIABILITY_SCORE, AVG_LEAD_TIME, TOTAL_STOCK_ON_HAND, AVG_DAYS_OF_SUPPLY, CRITICAL_STOCK_ITEMS, TOTAL_PO_VALUE, AVG_DELAY_DAYS, TOTAL_ORDERS, ON_TIME_DELIVERY_RATE |
 | **Filters** | 5 | LOW_RELIABILITY_SUPPLIERS, PERISHABLE_PRODUCTS, CRITICAL_STOCK, DELIVERED_ORDERS, DELAYED_ORDERS |
 | **Verified Queries** | 3 | Suppliers with delivery delays, products at risk of stockout, on-time delivery rate by supplier |
 
 <!-- ------------------------ -->
 ## Create Cortex Agent
 
-Run `asset/08_cortex_agent.sql` to create `SUPPLY_CHAIN_AGENT` with 3 tools:
+Run `setup/08_cortex_agent.sql` to create `SUPPLY_CHAIN_AGENT` with 3 tools:
 
 ```sql
 CREATE OR REPLACE AGENT SUPPLY_CHAIN_AGENT
@@ -241,7 +254,7 @@ SHOW AGENTS IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Create MCP Server and OAuth Integration
 
-Run `asset/09_mcp_server.sql` to expose the Cortex Agent over MCP with OAuth 2.0 authentication for Amazon Quick Suite.
+Run `setup/09_mcp_server.sql` to expose the Cortex Agent over MCP with OAuth 2.0 authentication for Amazon Quick Suite.
 
 ### MCP Server
 
@@ -293,9 +306,9 @@ DESCRIBE SECURITY INTEGRATION AMAZON_BEDROCK_MCP_OAUTH;
 SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('AMAZON_BEDROCK_MCP_OAUTH');
 ```
 
-**Cortex MCP Endpoint:**
+**SSE Endpoint:**
 ```
-https://<YOUR_ACCOUNT>.snowflakecomputing.com/api/v2/databases/SUPPLY_CHAIN_DEMO/schemas/PUBLIC/mcp-servers/SUPPLY_CHAIN_MCP_SERVER/
+https://<YOUR_ACCOUNT>.snowflakecomputing.com/api/v2/databases/SUPPLY_CHAIN_DEMO/schemas/PUBLIC/mcp-servers/SUPPLY_CHAIN_MCP_SERVER/sse
 ```
 
 Replace `<YOUR_ACCOUNT>` with your Snowflake account identifier.
@@ -308,7 +321,7 @@ SHOW MCP SERVERS IN SUPPLY_CHAIN_DEMO.PUBLIC;
 <!-- ------------------------ -->
 ## Setup Amazon S3 Knowledge Base
 
-Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. These files are in the `S3_csvs/` directory of the repository.
+Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. These files are in the `assets/` directory of the repository.
 
 | File | Rows | Key Columns |
 |---|---|---|
@@ -318,9 +331,16 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 ### Upload to S3
 
 1. Go to **Amazon S3** > **Buckets** > **Create bucket**
-2. Name the bucket (e.g., `"Unique-name"`) and select your preferred region
+2. Name the bucket (e.g., `supply-chain-demo-data`) and select your preferred region
 3. Keep default settings and click **Create bucket**
-4. Open the bucket, click **Upload**, add both CSV files from `S3_csvs/`, and click **Upload**
+4. Open the bucket, click **Upload**, add both CSV files from `assets/`, and click **Upload**
+
+Or via AWS CLI:
+```bash
+aws s3 mb s3://supply-chain-demo-data --region us-west-2
+aws s3 cp assets/freight_costs.csv s3://supply-chain-demo-data/
+aws s3 cp assets/customer_returns.csv s3://supply-chain-demo-data/
+```
 
 ### Create Quick Suite Knowledge Base
 
@@ -330,13 +350,13 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
    - **Name:** `supply_chain_space_s3`
    - **Description:** "Freight costs and customer returns data for supply chain analysis"
    - **Data source:** Amazon S3
-   - **S3 bucket:** `"Unique-name"`
+   - **S3 bucket:** `supply-chain-demo-data`
    - **Files:** Select both CSV files
 4. Click **Create** and wait for indexing to complete
 
 > NOTE:
 >
-> The knowledge base name `supply_chain_space_s3` must match what is referenced in the agent instructions (`asset/10_quicksuite_instructions.md`). If you use a different name, update the instructions accordingly.
+> The knowledge base name `supply_chain_space_s3` must match what is referenced in the agent instructions (`setup/10_quicksuite_instructions.md`). If you use a different name, update the instructions accordingly.
 
 <!-- ------------------------ -->
 ## Configure Amazon Quick Suite Chat Agent
@@ -347,7 +367,7 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 2. Select **Model Context Protocol** as the integration type
 3. Configure:
    - **Name:** `snowflake-mcp-supply-chain`
-   - **MCP Server URL:** The endpoint from the previous step
+   - **MCP Server URL:** The SSE endpoint from the previous step
 4. Configure OAuth authentication with the credentials from `DESCRIBE SECURITY INTEGRATION`:
 
 | Setting | Value |
@@ -378,7 +398,7 @@ Upload the supplementary CSV files to S3 for the Quick Suite Knowledge Base. The
 | `supply-chain-agent` | MCP Actions Integration | Snowflake MCP Server |
 | `supply_chain_space_s3` | Knowledge Base | S3 Knowledge Base |
 
-5. In the **Instructions** field, paste the full content from `asset/10_quicksuite_instructions.md`---this contains routing rules, schema details, and the three-phase protocol for cross-platform queries
+5. In the **Instructions** field, paste the full content from `setup/10_quicksuite_instructions.md`---this contains routing rules, schema details, and the three-phase protocol for cross-platform queries
 6. Click **Create**
 
 <!-- ------------------------ -->
@@ -437,10 +457,10 @@ This searches the free-text customer_complaint column in the returns data.
 ### Cross-Platform Queries (Both Tools)
 
 ```
-Which products with critical stockout risk have the most customer complaints?
+Need information on products which has high freight cost
 ```
 
-The agent should call Snowflake for inventory/stockout data and S3 for customer returns, then match on product_id (1001-1050).
+Which carriers cause maximum delys and what products do they handle?
 
 ```
 Which suppliers produce products with the highest return rates?
