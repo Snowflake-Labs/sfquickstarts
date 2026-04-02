@@ -1,7 +1,7 @@
 /*=============================================================
   07 — Create Semantic View
   SUPPLY_CHAIN_ANALYTICS — powers Cortex Analyst text-to-SQL
-  5 tables, 6 relationships, facts, dimensions,
+  5 tables, 5 relationships, facts, dimensions,
   9 metrics, 5 filters, 3 verified queries
   Uses YAML approach via SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML
   NOTE: SHIPMENTS and STORE_SALES excluded — supplementary data in Amazon S3
@@ -51,10 +51,6 @@ tables:
       - name: CONTACT_NAME
         description: Primary contact person at the supplier
         expr: CONTACT_NAME
-        data_type: VARCHAR
-      - name: CONTACT_EMAIL
-        description: Email address of the supplier contact
-        expr: CONTACT_EMAIL
         data_type: VARCHAR
       - name: COUNTRY
         description: Country where the supplier is located
@@ -112,9 +108,13 @@ tables:
         description: Product weight in kilograms
         expr: WEIGHT_KG
         data_type: NUMBER
-      - name: SHELF_LIFE_DAYS
-        description: Shelf life in days for perishable products
-        expr: SHELF_LIFE_DAYS
+      - name: REORDER_POINT
+        description: Minimum stock level that triggers a reorder
+        expr: REORDER_POINT
+        data_type: NUMBER
+      - name: REORDER_QTY
+        description: Quantity to order when stock hits reorder point
+        expr: REORDER_QTY
         data_type: NUMBER
     dimensions:
       - name: PRODUCT_ID
@@ -148,7 +148,7 @@ tables:
 
   # ── 3. WAREHOUSES ──
   - name: WAREHOUSES
-    description: Warehouse locations with capacity and management info
+    description: Warehouse locations with capacity info
     base_table:
       database: SUPPLY_CHAIN_DEMO
       schema: PUBLIC
@@ -173,19 +173,18 @@ tables:
         description: City where the warehouse is located
         expr: CITY
         data_type: VARCHAR
-      - name: STATE
-        description: State where the warehouse is located
-        expr: STATE
+      - name: STATE_PROVINCE
+        description: State or province where the warehouse is located
+        expr: STATE_PROVINCE
         data_type: VARCHAR
-      - name: MANAGER_NAME
-        description: Name of the warehouse manager
-        expr: MANAGER_NAME
+      - name: COUNTRY
+        description: Country where the warehouse is located
+        expr: COUNTRY
         data_type: VARCHAR
-    time_dimensions:
-      - name: OPERATIONAL_SINCE
-        description: Date since the warehouse has been operational
-        expr: OPERATIONAL_SINCE
-        data_type: DATE
+      - name: WAREHOUSE_TYPE
+        description: Type of warehouse
+        expr: WAREHOUSE_TYPE
+        data_type: VARCHAR
 
   # ── 4. INVENTORY ──
   - name: INVENTORY
@@ -202,13 +201,13 @@ tables:
         description: Current stock quantity available
         expr: QUANTITY_ON_HAND
         data_type: NUMBER
-      - name: REORDER_POINT
-        description: Minimum stock level that triggers a reorder
-        expr: REORDER_POINT
+      - name: QUANTITY_RESERVED
+        description: Quantity reserved for pending orders
+        expr: QUANTITY_RESERVED
         data_type: NUMBER
-      - name: REORDER_QUANTITY
-        description: Quantity to order when stock hits reorder point
-        expr: REORDER_QUANTITY
+      - name: QUANTITY_AVAILABLE
+        description: Quantity available for new orders
+        expr: QUANTITY_AVAILABLE
         data_type: NUMBER
       - name: DAYS_OF_SUPPLY
         description: "Estimated number of days the current stock will last. Below 5 is critical."
@@ -236,9 +235,9 @@ tables:
       - name: AVG_DAYS_OF_SUPPLY
         description: Average days of supply across all inventory records
         expr: AVG(DAYS_OF_SUPPLY)
-      - name: LOW_STOCK_ITEMS
-        description: Count of inventory records where quantity is at or below reorder point
-        expr: SUM(CASE WHEN QUANTITY_ON_HAND <= REORDER_POINT THEN 1 ELSE 0 END)
+      - name: CRITICAL_STOCK_ITEMS
+        description: Count of inventory records with 5 or fewer days of supply remaining
+        expr: SUM(CASE WHEN DAYS_OF_SUPPLY <= 5 THEN 1 ELSE 0 END)
     filters:
       - name: CRITICAL_STOCK
         description: Inventory items with 5 or fewer days of supply remaining
@@ -255,16 +254,16 @@ tables:
       columns:
         - PO_ID
     facts:
-      - name: ORDER_QTY
+      - name: QUANTITY_ORDERED
         description: Number of units ordered
-        expr: ORDER_QTY
+        expr: QUANTITY_ORDERED
         data_type: NUMBER
       - name: PO_UNIT_COST
         description: Cost per unit on this purchase order
         expr: UNIT_COST
         data_type: NUMBER
       - name: TOTAL_COST
-        description: Total purchase order cost (order_qty * unit_cost)
+        description: Total purchase order cost (quantity_ordered * unit_cost)
         expr: TOTAL_COST
         data_type: NUMBER
       - name: DELAY_DAYS
@@ -281,9 +280,6 @@ tables:
       - name: PRODUCT_ID
         expr: PRODUCT_ID
         data_type: NUMBER
-      - name: WAREHOUSE_ID
-        expr: WAREHOUSE_ID
-        data_type: NUMBER
       - name: PO_STATUS
         synonyms:
           - order status
@@ -296,13 +292,13 @@ tables:
         description: Date the purchase order was placed
         expr: ORDER_DATE
         data_type: DATE
-      - name: EXPECTED_DELIVERY
+      - name: EXPECTED_DELIVERY_DATE
         description: Expected delivery date
-        expr: EXPECTED_DELIVERY
+        expr: EXPECTED_DELIVERY_DATE
         data_type: DATE
-      - name: ACTUAL_DELIVERY
+      - name: ACTUAL_DELIVERY_DATE
         description: Actual delivery date
-        expr: ACTUAL_DELIVERY
+        expr: ACTUAL_DELIVERY_DATE
         data_type: DATE
     metrics:
       - name: TOTAL_PO_VALUE
@@ -362,13 +358,6 @@ relationships:
       - left_column: PRODUCT_ID
         right_column: PRODUCT_ID
     relationship_type: many_to_one
-  - name: PO_TO_WAREHOUSES
-    left_table: PURCHASE_ORDERS
-    right_table: WAREHOUSES
-    relationship_columns:
-      - left_column: WAREHOUSE_ID
-        right_column: WAREHOUSE_ID
-    relationship_type: many_to_one
 
 # ── VERIFIED QUERIES ──
 verified_queries:
@@ -393,14 +382,14 @@ verified_queries:
     question: "What products are at risk of stockouts?"
     sql: |
       SELECT p.PRODUCT_NAME, p.CATEGORY, w.WAREHOUSE_NAME, w.CITY,
-             i.QUANTITY_ON_HAND, i.REORDER_POINT, i.DAYS_OF_SUPPLY,
+             i.QUANTITY_ON_HAND, p.REORDER_POINT, i.DAYS_OF_SUPPLY,
              CASE WHEN i.DAYS_OF_SUPPLY <= 3 THEN 'Critical'
                   WHEN i.DAYS_OF_SUPPLY <= 5 THEN 'Low'
                   ELSE 'Adequate' END AS stock_status
       FROM SUPPLY_CHAIN_DEMO.PUBLIC.INVENTORY i
       JOIN SUPPLY_CHAIN_DEMO.PUBLIC.PRODUCTS p ON i.PRODUCT_ID = p.PRODUCT_ID
       JOIN SUPPLY_CHAIN_DEMO.PUBLIC.WAREHOUSES w ON i.WAREHOUSE_ID = w.WAREHOUSE_ID
-      WHERE i.QUANTITY_ON_HAND <= i.REORDER_POINT
+      WHERE i.QUANTITY_ON_HAND <= p.REORDER_POINT
       ORDER BY i.DAYS_OF_SUPPLY ASC
     verified_at: 1741500000
     verified_by: bsuresh
