@@ -63,46 +63,55 @@ By the end of this guide, you'll have a working near real-time CDC pipeline that
 
 Duration: 5
 
-Once you've completed the [Oracle-side configuration](#setup-oracle-config), you can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's AI coding assistant built into the CLI — to automate the entire Openflow setup and connector deployment. The built-in `openflow` skill handles every Snowflake-side step, from role creation through starting the pipeline.
+Once your Oracle database is configured for XStream and your Openflow deployment and runtime are provisioned, you can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's AI coding assistant built into the CLI — to automate the connector deployment workflow. The built-in `openflow` skill handles EAI setup, network validation, connector deployment, parameter configuration, controller setup, and pipeline start.
 
 **No installation required.** The `openflow` skill ships with Cortex Code out of the box.
 
+> **Before starting Cortex Code, ensure the following are complete:**
+> - Oracle database prerequisites finished ([Setup Oracle Config](#setup-oracle-config))
+> - ORGADMIN has accepted Oracle Connector Terms ([Accept Oracle Connector Terms](#accept-oracle-connector-terms-orgadmin))
+> - Openflow deployment and runtime already provisioned in Snowflake
+> - Destination database and connector role created in Snowflake (see [Snowflake Account Prerequisites](#snowflake-account-prerequisites) in the Configure Oracle Connector section)
+
 ### What Cortex Code Automates
 
-The skill covers all steps in the **Set Up Openflow in Snowflake** and **Configure the Oracle Connector** sections of this guide:
+Starting from a working Openflow runtime, the skill handles all steps in the **Configure the Oracle Connector** section:
 
-| Manual Step | What Cortex Code Does |
+| Step | What Cortex Code Does |
 |---|---|
-| Create the Openflow Admin Role | Creates role and grants required privileges in a single call |
-| Create an Openflow Deployment | Provisions the deployment with your specified name and settings |
-| Create a Snowflake Role for the Connector | Creates a scoped connector role with minimum required grants |
-| Configure Network Access | Creates the network rule for Oracle host connectivity |
-| Create External Access Integration | Creates EAI and grants it to the Openflow runtime |
-| Deploy the Connector | Deploys the Oracle connector from the Openflow catalog |
-| Configure the Connection | Sets host, port, service name, XStream server, and credentials |
-| Configure the Replication Scope | Sets source schema, table filters, and SCN starting point |
-| Configure the Snowflake Target | Sets target database, schema, journal table prefix, and merge schedule |
+| Configure Network Access (EAI) | Creates External Access Integration for Oracle host connectivity |
+| Validate Network Connectivity | Tests TCP connectivity to Oracle host and port before deploying |
+| Deploy the Connector Flow | Deploys `oracle-embedded-license` or `oracle-independent-license` from the catalog |
+| Configure Source Parameters | Sets connection URL, XStream URL, server name, connect user credentials, and tables |
+| Configure Snowflake Destination | Sets destination database, role, warehouse, and authentication |
+| Configure Ingestion Parameters | Sets table inclusion rules and identifier resolution |
+| Verify Controllers | Runs `verify_config` before enabling controller services |
+| Enable Controllers | Enables all controller services and checks for errors |
+| Verify Processors | Runs `verify_config` after controllers are enabled |
 | Start the Connector | Starts the pipeline and confirms LCRs are flowing |
+| Validate Data Flow | Checks flow status and confirms rows are appearing in Snowflake |
 
-> **Note:** Oracle-side setup — ARCHIVELOG mode, XStream tablespaces, administrator and connect users, supplemental logging, and the outbound server — must be completed first. Cortex Code handles the Snowflake side only.
+> **Note:** Creating the Openflow deployment and runtime, Oracle database prerequisites (ARCHIVELOG, XStream, supplemental logging, users, outbound server), and Snowflake account prerequisites (destination database, connector role) must all be completed before invoking Cortex Code.
 
-### Example Prompts
+### Get Started
 
-Start a Cortex Code session in your terminal and try any of these:
+Open a Cortex Code session in your terminal and run:
 
 ```
 set up openflow for oracle cdc
 ```
 
-```
-configure openflow connector for oracle
-```
+The skill will confirm your intent, ask for your Oracle connection details and Snowflake target, then walk through each step.
+
+### More Example Prompts
 
 ```
 deploy oracle cdc connector in openflow
 ```
 
-The skill will ask for your Oracle connection details and target database/schema, then confirms before creating any Snowflake objects.
+```
+configure openflow connector for oracle
+```
 
 <!-- ------------------------ -->
 ## Architecture
