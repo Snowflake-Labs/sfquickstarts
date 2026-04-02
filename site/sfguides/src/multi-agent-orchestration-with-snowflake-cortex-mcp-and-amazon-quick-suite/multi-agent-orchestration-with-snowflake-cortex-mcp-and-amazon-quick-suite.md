@@ -1,5 +1,5 @@
 author: Bharath Suresh, Avinash Venkatagiri(AWS)
-id: multi-agent-supply-chain-orchestrator-with-snowflake-cortex-mcp-and-amazon-quick-suite
+id: multi-agent-orchestration-with-snowflake-cortex-mcp-and-amazon-quick-suite
 language: en
 summary: Build a multi-agent orchestrator that routes natural language queries across Snowflake and Amazon S3 through a unified Amazon Quick Suite chat agent, powered by Cortex Agent, MCP, and OAuth 2.0.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/solution-center/certification/certified-solution
@@ -457,10 +457,10 @@ This searches the free-text customer_complaint column in the returns data.
 ### Cross-Platform Queries (Both Tools)
 
 ```
-Which products with critical stockout risk have the most customer complaints?
+Need information on products which has high freight cost
 ```
 
-The agent should call Snowflake for inventory/stockout data and S3 for customer returns, then match on product_id (1001-1050).
+Which carriers cause maximum delys and what products do they handle?
 
 ```
 Which suppliers produce products with the highest return rates?
