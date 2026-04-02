@@ -73,43 +73,55 @@ A Snowflake account with Snowflake Openflow and Snowpark Container Services acce
 
 Duration: 5
 
-Once you've completed the [SQL Server setup](#sql-server-setup), you can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's AI coding assistant built into the CLI — to automate the Openflow deployment and SQL Server connector configuration. The built-in `openflow` skill handles every Snowflake-side step, from runtime role creation through launching the pipeline.
+Once your SQL Server database has Change Tracking enabled and your Openflow deployment and runtime are provisioned, you can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's AI coding assistant built into the CLI — to automate the connector deployment workflow. The built-in `openflow` skill handles EAI setup, network validation, connector deployment, JDBC driver upload, parameter configuration, controller setup, and pipeline start.
 
 **No installation required.** The `openflow` skill ships with Cortex Code out of the box.
 
+> **Before starting Cortex Code, ensure the following are complete:**
+> - SQL Server setup done with Change Tracking enabled ([SQL Server Setup](#sql-server-setup))
+> - Openflow deployment and runtime already provisioned in Snowflake
+> - Destination database and connector role created in Snowflake
+
 ### What Cortex Code Automates
 
-The skill covers all steps in the **Configure Openflow** and **SQL Server Connector** sections of this guide:
+Starting from a working Openflow runtime, the skill handles all steps in the **Configure Openflow** and **SQL Server Connector** sections:
 
-| Manual Step | What Cortex Code Does |
+| Step | What Cortex Code Does |
 |---|---|
-| Create Runtime Role | Creates the runtime role with required SPCS privileges |
-| Create External Access Integration | Creates EAI for outbound connectivity to SQL Server |
-| Create Runtime | Provisions the Openflow runtime on SPCS |
-| Deploy Deployment | Creates the Openflow deployment for the connector |
-| Configure and Launch SQL Server Connector | Deploys connector from catalog with your settings |
-| Configure the Connector | Sets SQL Server host, port, database, credentials, and tracked tables |
-| Run the Flow | Starts the pipeline and verifies changes are streaming |
+| Configure Network Access (EAI) | Creates External Access Integration for SQL Server host connectivity |
+| Validate Network Connectivity | Tests TCP connectivity to SQL Server host:1433 before deploying |
+| Deploy the Connector Flow | Deploys the `sqlserver` connector flow from the catalog |
+| Upload JDBC Driver | Downloads and uploads the Microsoft SQL Server JDBC driver |
+| Configure Source Parameters | Sets JDBC connection URL, credentials, and tables to replicate |
+| Configure Snowflake Destination | Sets destination database, role, warehouse, and authentication |
+| Configure Ingestion Parameters | Sets table inclusion rules and identifier resolution |
+| Verify Controllers | Runs `verify_config` before enabling controller services |
+| Enable Controllers | Enables all controller services and checks for errors |
+| Verify Processors | Runs `verify_config` after controllers are enabled |
+| Start the Connector | Starts the pipeline and confirms changes are streaming |
+| Validate Data Flow | Checks flow status and confirms rows are appearing in Snowflake |
 
-> **Note:** SQL Server setup — creating and connecting to the AWS RDS instance, loading the Northwind database, and enabling Change Tracking — must be completed first. Cortex Code handles the Snowflake side only.
+> **Note:** Creating the Openflow deployment and runtime, SQL Server prerequisites (AWS RDS setup, SSMS, Northwind database, Change Tracking enablement), and Snowflake account prerequisites (destination database, connector role) must all be completed before invoking Cortex Code.
 
-### Example Prompts
+### Get Started
 
-Start a Cortex Code session in your terminal and try any of these:
+Open a Cortex Code session in your terminal and run:
 
 ```
 set up openflow for sql server cdc
 ```
 
-```
-configure openflow connector for sql server
-```
+The skill will confirm your intent, ask for your SQL Server connection details and Snowflake target, then walk through each step.
+
+### More Example Prompts
 
 ```
 deploy sql server cdc connector in openflow
 ```
 
-The skill will ask for your SQL Server connection details and target database/schema, then confirms before creating any Snowflake objects.
+```
+configure openflow connector for sql server
+```
 
 <!------------------>
 
