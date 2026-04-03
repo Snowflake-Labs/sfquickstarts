@@ -1,0 +1,7 @@
+name: creator_match_demo
+channels:
+  - snowflake
+dependencies:
+  - streamlit
+  - snowflake-snowpark-python
+  - pandas
