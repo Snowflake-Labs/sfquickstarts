@@ -1,0 +1,64 @@
+name: Publish branch to S3
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # Daily at 07:59 UTC (commenter: no DST adjustments needed)
+    - cron: "59 07 * * *"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish-to-s3:
+    name: Publish branch to S3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # generator reads git history; pushing needs tags/branches
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate manifest
+        run: |
+          python3 "scripts/generate_manifest/manifest_generator.py"
+
+      - name: Upload manifest as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quickstart-manifest-${{ github.sha }}
+          path: site/sfguides/src/_shared_assets/quickstart-manifest.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Configure AWS credentials (OIDC)
+        if: github.event_name != 'pull_request'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+
+      - name: Upload to S3 (latest and versioned)
+        if: github.event_name != 'pull_request'
+        env:
+          BUCKET: ${{ vars.MANIFEST_S3_BUCKET }}
+          PREFIX: ${{ vars.MANIFEST_S3_PREFIX }}
+        run: |
+          set -euo pipefail
+          PREFIX="${PREFIX:-}"
+          if [ -n "$PREFIX" ] && [ "${PREFIX%/}" = "$PREFIX" ]; then PREFIX="${PREFIX}/"; fi
+          FILE="site/sfguides/src/_shared_assets/quickstart-manifest.json"
+          LATEST="s3://${BUCKET}/${PREFIX}quickstart-manifest.json"
+          VERSIONED="s3://${BUCKET}/${PREFIX}quickstart-manifest-${GITHUB_SHA}.json"
+          echo "Uploading $FILE to $LATEST and $VERSIONED"
+          aws s3 cp "$FILE" "$LATEST" --content-type "application/json; charset=utf-8"
+          aws s3 cp "$FILE" "$VERSIONED" --content-type "application/json; charset=utf-8"
+

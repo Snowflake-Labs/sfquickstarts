@@ -4,7 +4,6 @@ import json
 import subprocess
 from typing import Dict, List, Optional
 
-
 def find_repo_root() -> str:
     """
     Find the repository root by searching for .git directory.

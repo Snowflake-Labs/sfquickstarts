@@ -12,7 +12,7 @@ This README explains how to generate the quickstart manifest consumed by other t
 cd "$(git rev-parse --show-toplevel)"
 
 # Run the generator
-python3 "scripts/manifest generator.py"
+python3 "scripts/generate_manifest/manifest_generator.py"
 ```
 
 This writes:

@@ -56,7 +56,7 @@ jobs:
 
       - name: Generate manifest
         if: steps.gate.outputs.run == 'true'
-        run: python3 "scripts/manifest generator.py"
+        run: python3 "scripts/generate_manifest/manifest_generator.py"
 
       - name: Commit and push manifest
         if: steps.gate.outputs.run == 'true'
