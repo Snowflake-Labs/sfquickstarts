@@ -33,7 +33,6 @@ By splitting platform infrastructure and data pipelines into separate projects, 
 - How to build a medallion architecture (silver/gold layers) using Dynamic Tables defined as code
 - How to use Jinja macros and loops to create per-team infrastructure (warehouses, roles, grants)
 - How to attach data quality expectations across projects
-- How to use `post_hook` to run setup commands after deployment
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access
@@ -64,30 +63,30 @@ If you already have the workspace from [Get Started with Snowflake DCM Projects]
 
 Once the workspace is created, navigate to **Quickstarts/DCM_Project_Quickstart_2** and open the `setup.ipynb` notebook. Connect it to a compute pool so you can run the setup commands step by step.
 
-### Create a DCM Admin Role
+### Create a DCM Developer Role
 
 Run the following SQL in a Snowsight worksheet or in the setup notebook:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE ROLE IF NOT EXISTS dcm_admin;
+CREATE ROLE IF NOT EXISTS dcm_developer;
 SET user_name = (SELECT CURRENT_USER());
-GRANT ROLE dcm_admin TO USER IDENTIFIER($user_name);
+GRANT ROLE dcm_developer TO USER IDENTIFIER($user_name);
 ```
 
 ### Grant Infrastructure Privileges
 
-The DCM_ADMIN role needs privileges to create infrastructure objects through DCM deployments:
+The DCM_DEVELOPER role needs privileges to create infrastructure objects through DCM deployments:
 
 ```sql
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_admin;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE dcm_admin;
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE dcm_admin;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_admin;
-GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_admin;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE ROLE ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
 
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_admin;
+GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 ```
 
 ### Grant Data Quality Privileges
@@ -95,10 +94,10 @@ GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_admin;
 To define and test data quality expectations, grant the following:
 
 ```sql
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_admin;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE dcm_admin;
-GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_admin;
-GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_admin WITH GRANT OPTION;
+GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
+GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE dcm_developer;
+GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
+GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer WITH GRANT OPTION;
 ```
 
 ### Create a Warehouse (Optional)
@@ -106,6 +105,8 @@ GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_admin WITH GRANT OPTIO
 If you don't have a warehouse available, create one. DCM commands are mostly metadata changes, so an X-Small warehouse is sufficient:
 
 ```sql
+USE ROLE dcm_developer;
+
 CREATE WAREHOUSE IF NOT EXISTS dcm_wh
 WITH
     WAREHOUSE_SIZE = 'XSMALL'
@@ -131,48 +132,61 @@ default_target: DCM_DEV
 targets:
   DCM_DEV:
     account_identifier: MYORG-MY_DEV_ACCOUNT
-    project_name: DCM_DEMO.PROJECTS.DCM_PLATFORM_PROJECT_DEV
+    project_name: DCM_DEMO.PROJECTS.DCM_PLATFORM_DEV
     project_owner: DCM_DEVELOPER
     templating_config: DEV
 
   DCM_PROD:
     account_identifier: MYORG-MY_PROD_ACCOUNT
-    project_name: DCM_DEMO.PROJECTS.DCM_PLATFORM_PROJECT
+    project_name: DCM_DEMO.PROJECTS.DCM_PLATFORM
     project_owner: DCM_PROD_DEPLOYER
     templating_config: PROD
 
 templating:
   defaults:
-    user: "GITHUB_ACTIONS_SERVICE_USER"
+    users:
+      - "GITHUB_ACTIONS_SERVICE_USER"
     wh_size: "X-SMALL"
 
   configurations:
     DEV:
       env_suffix: "_DEV"
-      user: "INSERT_YOUR_USER"
-      ingest_perc: "5"
+      users:
+        - "GITHUB_ACTIONS_SERVICE_USER"
+        - "INSERT_YOUR_USER"
+      project_owner_role: "DCM_DEVELOPER"
       teams:
         - name: "Finance"
+          raw_access: "READ"
+        - name: "Marketing"
+          raw_access: "READ"
 
     PROD:
       env_suffix: ""
-      ingest_perc: "100"
+      project_owner_role: "DCM_PROD_DEPLOYER"
       wh_size: "MEDIUM"
       teams:
         - name: "Marketing"
+          raw_access: "READ"
         - name: "Finance"
+          raw_access: "READ"
         - name: "HR"
+          raw_access: "NONE"
         - name: "IT"
+          raw_access: "WRITE"
         - name: "Sales"
+          raw_access: "NONE"
         - name: "Research"
+          raw_access: "NONE"
         - name: "Design"
+          raw_access: "NONE"
 ```
 
 A few things to notice:
 
-- **`teams`** — DEV has a single team (Finance), while PROD has seven. The Jinja loops in the definition files will create per-team infrastructure for each.
-- **`ingest_perc`** — Controls what percentage of sample data to load. DEV uses 5%, PROD uses 100%.
-- **`wh_size`** — DEV uses X-Small warehouses, PROD uses Medium.
+- **`teams`** — DEV has two teams (Finance and Marketing), while PROD has seven. Each team has a `raw_access` property that controls whether it gets `READ`, `WRITE`, or no access to the shared raw tables. The Jinja loops in the definition files will create per-team infrastructure for each.
+- **`users`** — Defined as a list. The DEV configuration includes `INSERT_YOUR_USER` as a placeholder for your own Snowflake username.
+- **`wh_size`** — DEV uses X-Small warehouses (the default), PROD uses Medium.
 
 ### Definition Files
 
@@ -180,19 +194,19 @@ The `sources/definitions/` directory contains three SQL files:
 
 | File | What It Defines |
 |:-----|:----------------|
-| `raw.sql` | Shared database (`DCM_DEMO_2`), RAW schema, and 16 staging tables with change tracking |
+| `raw.sql` | Shared database (`DCM_DEMO_2_DEV`), RAW schema, and 16 staging tables with change tracking |
 | `wh_roles_and_grants.sql` | Per-team warehouses, databases, schemas, roles, and grants using Jinja loops |
-| `ingest.sql` | INGEST schema, a stage for CSV files, a scheduled Task for loading data, and a `post_hook` for file format creation |
+| `ingest.sql` | INGEST schema, a file format, a stage for CSV files, and a scheduled Task for loading data |
 
 #### Raw Tables
 
 Open `raw.sql`. This file defines a shared database and 16 staging tables for a financial trading dataset. Each table has `CHANGE_TRACKING = TRUE` and `DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'` enabled:
 
 ```sql
-DEFINE DATABASE dcm_demo_2;
-DEFINE SCHEMA dcm_demo_2.raw;
+DEFINE DATABASE dcm_demo_2{{env_suffix}};
+DEFINE SCHEMA dcm_demo_2{{env_suffix}}.raw;
 
-DEFINE TABLE dcm_demo_2.raw.account_stg (
+DEFINE TABLE dcm_demo_2{{env_suffix}}.raw.account_stg (
     cdc_flag VARCHAR(1) COMMENT 'I OR U DENOTES INSERT OR UPDATE',
     cdc_dsn TIMESTAMP_NTZ(9) COMMENT 'DATABASE SEQUENCE NUMBER',
     ca_id NUMBER(38,0) COMMENT 'CUSTOMER ACCOUNT IDENTIFIER',
@@ -214,27 +228,36 @@ Open `wh_roles_and_grants.sql`. This is where the Jinja `{% for %}` loop creates
 
 ```sql
 {% for team in teams %}
-    {% set team = team | upper %}
-    DEFINE WAREHOUSE dcm_demo_2_{{team}}_wh{{env_suffix}}
+    {% set team_name = team.name | upper %}
+    DEFINE WAREHOUSE dcm_demo_2_{{team_name}}_wh{{env_suffix}}
         WITH WAREHOUSE_SIZE='{{wh_size}}'
         COMMENT = 'For DCM Demo Quickstart 2';
-    DEFINE DATABASE dcm_demo_2_{{team}}{{env_suffix}};
-    DEFINE SCHEMA dcm_demo_2_{{team}}{{env_suffix}}.projects;
+    DEFINE DATABASE dcm_demo_2_{{team_name}}{{env_suffix}};
+    DEFINE SCHEMA dcm_demo_2_{{team_name}}{{env_suffix}}.projects;
+    DEFINE SCHEMA dcm_demo_2_{{team_name}}{{env_suffix}}.analytics;
 
-    {{ create_team_roles(team) }}
+    {{ create_team_roles(team_name) }}
 
-    {% if team == 'FINANCE' %}
-        GRANT USAGE ON DATABASE dcm_demo_2 TO ROLE dcm_demo_2_{{team}}_admin;
-        GRANT USAGE ON SCHEMA dcm_demo_2.raw TO ROLE dcm_demo_2_{{team}}_admin;
-        GRANT SELECT ON ALL TABLES IN SCHEMA dcm_demo_2.raw TO ROLE dcm_demo_2_{{team}}_admin;
+    {% if team.raw_access == 'READ' %}
+        GRANT USAGE ON DATABASE dcm_demo_2{{env_suffix}} TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+        GRANT USAGE ON SCHEMA dcm_demo_2{{env_suffix}}.raw TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+        GRANT SELECT ON ALL TABLES IN SCHEMA dcm_demo_2{{env_suffix}}.raw TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+
+    {% elif team.raw_access == 'WRITE' %}
+        GRANT USAGE ON DATABASE dcm_demo_2{{env_suffix}} TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+        GRANT USAGE ON SCHEMA dcm_demo_2{{env_suffix}}.raw TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+        GRANT SELECT ON ALL TABLES IN SCHEMA dcm_demo_2{{env_suffix}}.raw TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+        GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA dcm_demo_2{{env_suffix}}.raw TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
     {% endif %}
 
-    GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_demo_2_{{team}}_admin;
-    GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_demo_2_{{team}}_admin;
+    {% if team_name == 'FINANCE' %}
+        GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+        GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_demo_2_{{team_name}}{{env_suffix}}_admin;
+    {% endif %}
 {% endfor %}
 ```
 
-For each team, this creates a dedicated warehouse, database, and `PROJECTS` schema. The `{% if team == 'FINANCE' %}` conditional grants the Finance team read access to the shared raw tables — this is what allows the Pipeline project to read from the Platform project's data.
+For each team, this creates a dedicated warehouse, database, and schemas (`PROJECTS` and `ANALYTICS`). The `raw_access` property from the manifest controls how much access each team gets to the shared raw tables — `READ` grants `SELECT`, `WRITE` additionally grants `INSERT`, `UPDATE`, and `DELETE`, and `NONE` skips the grants entirely. The `{% if team_name == 'FINANCE' %}` conditional grants data quality privileges to the Finance team, which needs them for the Pipeline project's expectations.
 
 #### Grants Macro
 
@@ -243,75 +266,68 @@ Open `sources/macros/grants_macro.sql`. This reusable macro creates a standard r
 ```sql
 {% macro create_team_roles(team) %}
 
-    DEFINE ROLE dcm_demo_2_{{team}}_admin;
-    DEFINE ROLE dcm_demo_2_{{team}}_usage;
+    DEFINE ROLE dcm_demo_2_{{team}}{{env_suffix}}_admin;
+    DEFINE ROLE dcm_demo_2_{{team}}{{env_suffix}}_usage;
 
     GRANT CREATE SCHEMA ON DATABASE dcm_demo_2_{{team}}{{env_suffix}}
-        TO ROLE dcm_demo_2_{{team}}_admin;
+        TO ROLE dcm_demo_2_{{team}}{{env_suffix}}_admin;
     GRANT USAGE ON WAREHOUSE dcm_demo_2_{{team}}_wh{{env_suffix}}
-        TO ROLE dcm_demo_2_{{team}}_usage;
+        TO ROLE dcm_demo_2_{{team}}{{env_suffix}}_usage;
     GRANT USAGE ON DATABASE dcm_demo_2_{{team}}{{env_suffix}}
-        TO ROLE dcm_demo_2_{{team}}_usage;
+        TO ROLE dcm_demo_2_{{team}}{{env_suffix}}_usage;
     GRANT USAGE ON SCHEMA dcm_demo_2_{{team}}{{env_suffix}}.projects
-        TO ROLE dcm_demo_2_{{team}}_usage;
+        TO ROLE dcm_demo_2_{{team}}{{env_suffix}}_usage;
     GRANT CREATE DCM PROJECT ON SCHEMA dcm_demo_2_{{team}}{{env_suffix}}.projects
-        TO ROLE dcm_demo_2_{{team}}_admin;
+        TO ROLE dcm_demo_2_{{team}}{{env_suffix}}_admin;
 
-    GRANT ROLE dcm_demo_2_{{team}}_usage TO ROLE dcm_demo_2_{{team}}_admin;
-    GRANT ROLE dcm_demo_2_{{team}}_admin TO ROLE {{project_owner_role}};
+    GRANT ROLE dcm_demo_2_{{team}}{{env_suffix}}_usage TO ROLE dcm_demo_2_{{team}}{{env_suffix}}_admin;
+    GRANT ROLE dcm_demo_2_{{team}}{{env_suffix}}_admin TO ROLE {{project_owner_role}};
 
     {% for user_name in users %}
-        GRANT ROLE dcm_demo_2_{{team}}_usage TO USER {{user_name}};
+        GRANT ROLE dcm_demo_2_{{team}}{{env_suffix}}_usage TO USER {{user_name}};
     {% endfor %}
 {% endmacro %}
 ```
 
-Each team gets an `_admin` role (with CREATE permissions) and a `_usage` role (with read access), following a standard role hierarchy pattern where usage rolls up into admin, and admin rolls up into the project owner.
+Each team gets an `_admin` role (with CREATE permissions) and a `_usage` role (with read access), following a standard role hierarchy pattern where usage rolls up into admin, and admin rolls up into the project owner. The `{{env_suffix}}` in the role names ensures DEV and PROD roles are distinct.
 
 #### Ingestion
 
 Open `ingest.sql`. This file defines the data ingestion infrastructure:
 
 ```sql
-DEFINE SCHEMA dcm_demo_2.ingest;
+DEFINE SCHEMA dcm_demo_2{{env_suffix}}.ingest;
 
-DEFINE STAGE dcm_demo_2.ingest.dcm_sample_data
+DEFINE STAGE dcm_demo_2{{env_suffix}}.ingest.dcm_sample_data
     DIRECTORY = ( ENABLE = TRUE )
     COMMENT = 'for csv files with sample data to demo DCM Pipeline project';
 
-DEFINE TASK dcm_demo_2.ingest.load_new_data
+DEFINE FILE FORMAT dcm_demo_2{{env_suffix}}.ingest.csv_format
+    TYPE = CSV
+    COMPRESSION = NONE
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    SKIP_HEADER = 1
+    FIELD_DELIMITER = ','
+    NULL_IF = ('NULL', 'null', '')
+    EMPTY_FIELD_AS_NULL = TRUE;
+
+DEFINE TASK dcm_demo_2{{env_suffix}}.ingest.load_new_data
 SCHEDULE='USING CRON 15 8-18 * * MON-FRI CET'
 COMMENT = 'loading sample data to demo DCM Pipeline project'
 AS
 BEGIN
-    COPY INTO dcm_demo_2.raw.date_stg
-    FROM '@dcm_demo_2.ingest.dcm_sample_data/DATE_STG.csv'
-    FILE_FORMAT = dcm_demo_2.ingest.csv_format
+    COPY INTO dcm_demo_2{{env_suffix}}.raw.date_stg
+    FROM '@dcm_demo_2{{env_suffix}}.ingest.dcm_sample_data/DATE_STG.csv'
+    FILE_FORMAT = dcm_demo_2{{env_suffix}}.ingest.csv_format
     ON_ERROR = CONTINUE;
 
     -- ... similar COPY INTO statements for all 16 staging tables ...
 
-    CALL SYSTEM$SET_RETURN_VALUE('random {{ingest_perc}}% of raw dataset written into all dimension tables');
+    CALL SYSTEM$SET_RETURN_VALUE('raw dataset loaded into all staging tables');
 END;
-
-ATTACH POST_HOOK
-AS
-[
-    CREATE FILE FORMAT IF NOT EXISTS dcm_demo_2.ingest.csv_format
-        TYPE = CSV
-        COMPRESSION = NONE
-        FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-        SKIP_HEADER = 1
-        FIELD_DELIMITER = ','
-        NULL_IF = ('NULL', 'null', '')
-        EMPTY_FIELD_AS_NULL = TRUE;
-];
 ```
 
-There are two new concepts here that weren't covered in [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/):
-
-- **`SCHEDULE` with CRON** — The Task is configured to run on a schedule (every hour from 8 AM to 6 PM, Monday through Friday). In production, this would automatically ingest new data on a recurring basis.
-- **`ATTACH POST_HOOK`** — This is a block of SQL that runs *after* the deployment completes. Here, it creates a file format that the Task's COPY INTO statements depend on. This is useful for setup steps that can't be expressed as `DEFINE` statements.
+One concept here that wasn't covered in [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/) is **`SCHEDULE` with CRON** — the Task is configured to run on a schedule (every hour from 8 AM to 6 PM, Monday through Friday). In production, this would automatically ingest new data on a recurring basis. The file format and stage are defined as regular DCM objects that the Task references.
 
 <!-- ------------------------ -->
 ## Deploy the Platform Project
@@ -323,23 +339,23 @@ Now that you've explored the Platform project files, create the DCM Project obje
 Run the following in the setup notebook or in a Snowsight worksheet:
 
 ```sql
-USE ROLE dcm_admin;
+USE ROLE dcm_developer;
 
 CREATE DATABASE IF NOT EXISTS dcm_demo;
 CREATE SCHEMA IF NOT EXISTS dcm_demo.projects;
 
-CREATE OR REPLACE DCM PROJECT dcm_demo.projects.dcm_platform_project_dev
+CREATE DCM PROJECT IF NOT EXISTS dcm_demo.projects.dcm_platform_dev
     COMMENT = 'for DCM Platform Demo - Quickstart 2';
 ```
 
-Both the Platform and Pipeline project objects will live in `dcm_demo.projects`. This is a common pattern — use a single schema to house all of your DCM project objects, even when the projects deploy infrastructure to different databases.
+The Platform project object lives in `dcm_demo.projects`. Later, you'll create the Pipeline project object in the Finance team's database instead — demonstrating how teams can own their own projects independently.
 
 ### Plan the Deployment
 
 1. In the DCM control panel above the workspace tabs, select the project **DCM_Platform_Demo**.
 2. The `DCM_DEV` target should already be selected (it's the default in the manifest).
-3. Click on the target profile to verify it uses `DCM_PLATFORM_PROJECT_DEV` and the `DEV` templating configuration.
-4. Override the templating value for `user` with your own Snowflake username.
+3. Click on the target profile to verify it uses `DCM_PLATFORM_DEV` and the `DEV` templating configuration.
+4. Override the templating value for `users` with your own Snowflake username. Users are defined as a list, so format it as `['MY_USERNAME']`.
 
 ![Selecting the Platform project in the DCM control panel](assets/select_platform_project.png)
 
@@ -349,10 +365,10 @@ Click the play button to the right of **Plan** and wait for the definitions to r
 
 Since none of the defined objects exist yet, the plan will show only **CREATE** statements. You should see planned operations for:
 
-- 1 shared database (`DCM_DEMO_2`) with a RAW schema and 16 staging tables
-- 1 team-specific database (`DCM_DEMO_2_FINANCE_DEV`) with a PROJECTS schema
-- 1 warehouse (`DCM_DEMO_2_FINANCE_WH_DEV`)
-- Roles and grants for the Finance team
+- 1 shared database (`DCM_DEMO_2_DEV`) with a RAW schema and 16 staging tables
+- 2 team-specific databases (`DCM_DEMO_2_FINANCE_DEV` and `DCM_DEMO_2_MARKETING_DEV`) with PROJECTS and ANALYTICS schemas
+- 2 warehouses (`DCM_DEMO_2_FINANCE_WH_DEV` and `DCM_DEMO_2_MARKETING_WH_DEV`)
+- Roles and grants for the Finance and Marketing teams
 - An INGEST schema with a stage and a scheduled Task
 
 ### Deploy
@@ -363,7 +379,7 @@ Since none of the defined objects exist yet, the plan will show only **CREATE** 
 
 ![Platform deploy dialog](assets/platform_deploy_dialog.png)
 
-Once the deployment completes, refresh the Database Explorer. You should see both `DCM_DEMO_2` (the shared raw database) and `DCM_DEMO_2_FINANCE_DEV` (the Finance team's database).
+Once the deployment completes, refresh the Database Explorer. You should see `DCM_DEMO_2_DEV` (the shared raw database), `DCM_DEMO_2_FINANCE_DEV` (the Finance team's database), and `DCM_DEMO_2_MARKETING_DEV` (the Marketing team's database).
 
 ![Database Explorer showing platform objects](assets/platform_deployed_objects.png)
 
@@ -372,88 +388,26 @@ Once the deployment completes, refresh the Database Explorer. You should see bot
 
 The Platform deployment created the table structures, the ingestion stage, and the load Task — but the tables are empty. In this step, you'll upload sample CSV files to the stage and trigger the Task to load data into the raw tables.
 
-### Upload CSV Files to the Stage
+### Copy CSV Files to the Stage
 
-The `sample_data/` folder in the workspace contains 17 CSV files. Upload them to the ingestion stage using PUT commands in the setup notebook:
+The `sample_data/` folder in the workspace contains 17 CSV files. Copy them to the ingestion stage using the `COPY FILES` command in the setup notebook:
 
 ```sql
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/ACCOUNT_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/CASHTRANSACTION_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/CUSTOMER_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/DAILYMARKET_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/DATE_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/FINWIRE_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/HOLDINGHISTORY_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/HR_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/INDUSTRY_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/PROSPECT_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/STATUSTYPE_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/TAXRATE_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/TIME_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/TRADE_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/TRADETYPE_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/TRADEHISTORY_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
-
-PUT file:///home/airflow/workspace_api/Quickstarts/DCM_Project_Quickstart_2/sample_data/WATCH_HISTORY_STG.csv
-    @dcm_demo_2.ingest.dcm_sample_data/
-    AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
+COPY FILES INTO
+    @dcm_demo_2_dev.ingest.dcm_sample_data
+FROM
+    'snow://workspace/USER$.PUBLIC."snowflake_dcm_projects"/versions/live/Quickstarts/DCM_Project_Quickstart_2/sample_data'
+DETAILED_OUTPUT = TRUE;
 ```
+
+This command copies all files from the workspace's `sample_data` directory directly into the stage in a single operation.
 
 ### Trigger the Load Task
 
-Verify the files are staged, then manually execute the load Task:
+Manually execute the load Task to load the staged data into the raw tables:
 
 ```sql
-LIST @dcm_demo_2.ingest.dcm_sample_data;
-
-EXECUTE TASK dcm_demo_2.ingest.load_new_data;
+EXECUTE TASK dcm_demo_2_dev.ingest.load_new_data;
 ```
 
 ### Verify the Data
@@ -461,9 +415,9 @@ EXECUTE TASK dcm_demo_2.ingest.load_new_data;
 Check that data has been loaded into the raw tables:
 
 ```sql
-SELECT COUNT(*) FROM dcm_demo_2.raw.customer_stg;
-SELECT COUNT(*) FROM dcm_demo_2.raw.trade_stg;
-SELECT COUNT(*) FROM dcm_demo_2.raw.dailymarket_stg;
+SELECT COUNT(*) FROM dcm_demo_2_dev.raw.customer_stg;
+SELECT COUNT(*) FROM dcm_demo_2_dev.raw.trade_stg;
+SELECT COUNT(*) FROM dcm_demo_2_dev.raw.dailymarket_stg;
 ```
 
 You should see rows in each table. The exact counts depend on the sample data files.
@@ -475,7 +429,7 @@ With the Platform infrastructure deployed and data loaded, you can now explore t
 
 ### Manifest
 
-Open `manifest.yml`. The Pipeline manifest is simpler than the Platform's — it only needs `env_suffix` and `user`:
+Open `manifest.yml`. The Pipeline manifest is simpler than the Platform's — it only needs `env_suffix` and `users`:
 
 ```yaml
 manifest_version: 2
@@ -486,30 +440,33 @@ default_target: DCM_DEV
 targets:
   DCM_DEV:
     account_identifier: MYORG-MY_DEV_ACCOUNT
-    project_name: DCM_DEMO.PROJECTS.DCM_PIPELINE_PROJECT_DEV
-    project_owner: DCM_DEVELOPER
+    project_name: DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
+    project_owner: DCM_DEMO_2_FINANCE_DEV_ADMIN
     templating_config: DEV
 
   DCM_PROD:
     account_identifier: MYORG-MY_PROD_ACCOUNT
-    project_name: DCM_DEMO.PROJECTS.DCM_PIPELINE_PROJECT
-    project_owner: DCM_PROD_DEPLOYER
+    project_name: DCM_DEMO_2_FINANCE.PROJECTS.FINANCE_PIPELINE
+    project_owner: DCM_DEMO_2_FINANCE_ADMIN
     templating_config: PROD
 
 templating:
   defaults:
-    user: "GITHUB_ACTIONS_SERVICE_USER"
+    users:
+      - "GITHUB_ACTIONS_SERVICE_USER"
 
   configurations:
     DEV:
       env_suffix: "_DEV"
-      user: "INSERT_YOUR_USER"
+      users:
+        - "GITHUB_ACTIONS_SERVICE_USER"
+        - "INSERT_YOUR_USER"
 
     PROD:
       env_suffix: ""
 ```
 
-Notice that the Pipeline project points to a different DCM Project object (`DCM_PIPELINE_PROJECT_DEV`) but still lives in the same `DCM_DEMO.PROJECTS` schema. This separation means you can plan and deploy each project independently.
+Notice that the Pipeline project lives in the **Finance team's database** (`DCM_DEMO_2_FINANCE_DEV.PROJECTS`) rather than the shared `DCM_DEMO.PROJECTS` where the Platform project lives. It's also owned by `DCM_DEMO_2_FINANCE_DEV_ADMIN` — the team-specific admin role created by the Platform deployment. This means the Finance team can independently manage their own pipeline project without needing account-level privileges.
 
 ### Definition Files
 
@@ -550,11 +507,11 @@ SELECT
     country,
     ceo_name,
     description
-FROM dcm_demo_2.raw.finwire_stg
+FROM dcm_demo_2{{env_suffix}}.raw.finwire_stg
 WHERE rec_type = 'CMP';
 ```
 
-This is a key cross-project pattern: the Dynamic Table in the **Pipeline** project reads from `dcm_demo_2.raw.finwire_stg`, a table created by the **Platform** project. The Finance team's admin role was granted `SELECT` access to the raw schema during the Platform deployment, making this cross-project dependency work.
+This is a key cross-project pattern: the Dynamic Table in the **Pipeline** project reads from `dcm_demo_2{{env_suffix}}.raw.finwire_stg`, a table created by the **Platform** project. The Finance team's admin role was granted `SELECT` access to the raw schema during the Platform deployment, making this cross-project dependency work.
 
 The silver layer includes several types of transformations:
 
@@ -573,7 +530,7 @@ Open `gold_layer.sql`. This file defines the gold schema with aggregate fact tab
 DEFINE SCHEMA dcm_demo_2_finance{{env_suffix}}.gold;
 
 DEFINE DYNAMIC TABLE dcm_demo_2_finance{{env_suffix}}.gold.fact_market_history
-TARGET_LAG='1 hour'
+TARGET_LAG='2 hours'
 WAREHOUSE='dcm_demo_2_finance_wh{{env_suffix}}'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
 AS
@@ -600,7 +557,7 @@ INNER JOIN dcm_demo_2_finance{{env_suffix}}.silver.fact_market_history_calc_high
     AND fmht.sk_date_id = fmhchl.sk_date_id;
 ```
 
-Notice that `fact_market_history` uses `TARGET_LAG='1 hour'` — unlike the silver-layer tables that use `DOWNSTREAM`, this gold-layer table refreshes on a fixed schedule. This is common for aggregate tables that serve dashboards.
+Notice that `fact_market_history` uses `TARGET_LAG='2 hours'` — unlike the silver-layer tables that use `DOWNSTREAM`, this gold-layer table refreshes on a fixed schedule. This is common for aggregate tables that serve dashboards.
 
 The gold layer also includes:
 - **`fact_holdings`** — A view (not a Dynamic Table) that joins raw holding history with the silver-layer trade dimension
@@ -642,18 +599,20 @@ With the Platform deployed and data loaded, you can now deploy the Pipeline proj
 
 ### Create the DCM Project Object
 
-```sql
-USE ROLE dcm_admin;
+The Pipeline project lives in the Finance team's database, which was created by the Platform deployment. Use the Finance team's admin role to create it:
 
-CREATE OR REPLACE DCM PROJECT dcm_demo.projects.dcm_pipeline_project_dev
+```sql
+USE ROLE dcm_demo_2_finance_dev_admin;
+
+CREATE DCM PROJECT IF NOT EXISTS dcm_demo_2_finance_dev.projects.finance_pipeline
     COMMENT = 'for DCM Pipeline Demo - Quickstart 2';
 ```
 
 ### Plan the Deployment
 
 1. In the DCM control panel, select the project **DCM_Pipeline_Demo**.
-2. Verify the `DCM_DEV` target is selected and it points to `DCM_PIPELINE_PROJECT_DEV`.
-3. Override the templating value for `user` with your own Snowflake username.
+2. Verify the `DCM_DEV` target is selected and it points to `FINANCE_PIPELINE`.
+3. Override the templating value for `users` with your own Snowflake username. Users are defined as a list, so format it as `['MY_USERNAME']`.
 
 ![Selecting the Pipeline project](assets/select_pipeline_project.png)
 
@@ -722,28 +681,32 @@ This shows all attached expectations and their current status. The `no_missing_i
 To clean up all objects created in this guide, run the following:
 
 ```sql
-USE ROLE dcm_admin;
+USE ROLE dcm_developer;
 
--- Drop deployed infrastructure from the Pipeline project
-DROP DATABASE IF EXISTS dcm_demo_2_finance_dev;
+-- Drop deployed infrastructure from the Pipeline project (inside Finance DB)
+DROP DCM PROJECT IF EXISTS dcm_demo_2_finance_dev.projects.finance_pipeline;
 
 -- Drop deployed infrastructure from the Platform project
-DROP DATABASE IF EXISTS dcm_demo_2;
+DROP DATABASE IF EXISTS dcm_demo_2_finance_dev;
+DROP DATABASE IF EXISTS dcm_demo_2_marketing_dev;
+DROP DATABASE IF EXISTS dcm_demo_2_dev;
 DROP WAREHOUSE IF EXISTS dcm_demo_2_finance_wh_dev;
+DROP WAREHOUSE IF EXISTS dcm_demo_2_marketing_wh_dev;
 
 -- Drop roles created by the deployments
-DROP ROLE IF EXISTS dcm_demo_2_finance_admin;
-DROP ROLE IF EXISTS dcm_demo_2_finance_usage;
+DROP ROLE IF EXISTS dcm_demo_2_finance_dev_admin;
+DROP ROLE IF EXISTS dcm_demo_2_finance_dev_usage;
+DROP ROLE IF EXISTS dcm_demo_2_marketing_dev_admin;
+DROP ROLE IF EXISTS dcm_demo_2_marketing_dev_usage;
 
--- Drop DCM Project objects
+-- Drop DCM Platform Project object
 USE ROLE ACCOUNTADMIN;
-DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_pipeline_project_dev;
-DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_platform_project_dev;
+DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_platform_dev;
 DROP SCHEMA IF EXISTS dcm_demo.projects;
 DROP DATABASE IF EXISTS dcm_demo;
 
--- Drop the DCM Admin role and warehouse (optional)
-DROP ROLE IF EXISTS dcm_admin;
+-- Drop the DCM Developer role and warehouse (optional)
+DROP ROLE IF EXISTS dcm_developer;
 DROP WAREHOUSE IF EXISTS dcm_wh;
 ```
 
@@ -753,7 +716,7 @@ DROP WAREHOUSE IF EXISTS dcm_wh;
 In this guide, you learned how to:
 
 - **Split infrastructure across multiple DCM Projects** — separating platform infrastructure from data transformation pipelines for cleaner ownership and independent deployment
-- **Define stage-based data ingestion** using a stage, a CRON-scheduled Task, and a `post_hook` for setup commands
+- **Define stage-based data ingestion** using a stage, a file format, and a CRON-scheduled Task
 - **Build a medallion architecture as code** with silver-layer Dynamic Tables for cleaning and transformation, and gold-layer fact tables for aggregation
 - **Use Jinja macros and loops** to create per-team infrastructure (warehouses, databases, roles, grants) from a single set of definition files
 - **Attach data quality expectations** to gold-layer tables using Data Metric Functions
