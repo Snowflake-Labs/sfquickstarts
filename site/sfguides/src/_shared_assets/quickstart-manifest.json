@@ -1346,6 +1346,17 @@
       "lastUpdatedAt": "2026-01-16"
     },
     {
+      "title": "AGENTS.md 101 for Snowflake Cortex Code",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/ai"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/agents-md-101-for-snowflake-cortex-code/",
+      "summary": "Get started with AGENTS.md in Snowflake Cortex Code — create your first project instruction file in under 5 minutes.",
+      "lastUpdatedAt": "2026-04-10"
+    },
+    {
       "title": "Credit Card Fraud Detection using Snowflake ML Functions",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
