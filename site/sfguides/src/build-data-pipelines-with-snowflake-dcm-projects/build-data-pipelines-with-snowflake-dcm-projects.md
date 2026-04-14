@@ -30,9 +30,8 @@ By splitting platform infrastructure and data pipelines into separate projects, 
 ### What You'll Learn
 - How to split infrastructure into multiple DCM Projects with different responsibilities
 - How to define stage-based data ingestion with Tasks and CRON schedules
-- How to build a medallion architecture (silver/gold layers) using Dynamic Tables defined as code
+- How to build a medallion architecture (bronze/silver/gold layers) using Dynamic Tables defined as code
 - How to use Jinja macros and loops to create per-team infrastructure (warehouses, roles, grants)
-- How to attach data quality expectations across projects
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access
@@ -355,7 +354,7 @@ The Platform project object lives in `dcm_demo.projects`. Later, you'll create t
 1. In the DCM control panel above the workspace tabs, select the project **DCM_Platform_Demo**.
 2. The `DCM_DEV` target should already be selected (it's the default in the manifest).
 3. Click on the target profile to verify it uses `DCM_PLATFORM_DEV` and the `DEV` templating configuration.
-4. Override the templating value for `users` with your own Snowflake username. Users are defined as a list, so format it as `['MY_USERNAME']`.
+4. In the manifest file, update the default value for `users` to include your own Snowflake username (e.g., `['MY_USERNAME']`).
 
 ![Selecting the Platform project in the DCM control panel](assets/select_platform_project.png)
 
@@ -618,7 +617,7 @@ CREATE DCM PROJECT IF NOT EXISTS dcm_demo_2_finance_dev.projects.finance_pipelin
 
 1. In the DCM control panel, select the project **DCM_Pipeline_Demo**.
 2. Verify the `DCM_DEV` target is selected and it points to `FINANCE_PIPELINE`.
-3. Override the templating value for `users` with your own Snowflake username. Users are defined as a list, so format it as `['MY_USERNAME']`.
+3. In the manifest file, update the default value for `users` to include your own Snowflake username (e.g., `['MY_USERNAME']`).
 
 ![Selecting the Pipeline project](assets/select_pipeline_project.png)
 
@@ -649,6 +648,8 @@ EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline DEPLOY
 ```
 
 Once the deployment completes, refresh the Database Explorer. You should see the `SILVER` and `GOLD` schemas inside `DCM_DEMO_2_FINANCE_DEV`, each populated with Dynamic Tables and views.
+
+> **Note:** By default, Dynamic Tables refresh immediately on creation. If the raw tables already contain data (from the load Task in the previous step), the deployment will take longer because each Dynamic Table performs its initial refresh during the deploy. With the sample datasets in this guide, the extra time is minimal — but in production scenarios with large datasets, be intentional about this behavior to avoid long-running deployments.
 
 <!-- ------------------------ -->
 ## Query the Results
