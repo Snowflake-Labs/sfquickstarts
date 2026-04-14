@@ -27,7 +27,7 @@ Sharing information between departments or business units ("domains") of a compa
 - Processes and guidelines that define data product operations and fresponsibilities
 
 
-![Snowflake Horizon Diagram](assets/2026_DataProductComponents.png)
+![Snowflake Horizon Diagram](assets/2026-data-product-components.png)
 
 
 ### What You'll Learn
@@ -133,7 +133,7 @@ You will work as `data_owner` with the `data_owner_role`. The publishing flow in
 4. Proceed with "AI generation on" or, optionally, turn it off. "AI generation on" will automatically populate some of the data product metadata for you.
 5. Click **+Select** to select the data objects to share
 
-![IM](assets/2026_CreateDataProd-Start.png)
+![IM](assets/2026-create-dataprod-start.png)
 
 
 ### Step 2 of 5: Select Data Objects to Share
@@ -159,7 +159,7 @@ Now select the data objects for this data product.
     - Data preview is off by default for privacy reasons.
     - Let's enable data preview as shown below.
 
-![](assets/2026_EnableDataPreview.png)
+![](assets/2026-enable-data-preview.png)
 
 6. Sensitive **column masking** in the data preview.
     - Click the **Edit** button at the top right of the data dictionary.
@@ -169,7 +169,7 @@ Now select the data objects for this data product.
     - It may take up to 2 hours before data consumers see the properly generated data preview.
     - The selection of sensitive columns only affects the data preview in the internal marketplace. When data consumers are granted _access_ to the data product, row- and column-levelk access policies must be in place to govern their access.
 
-![](assets/2026_HideColumns.png)
+![](assets/2026-hide-columns.png)
 
 
 7. Set custom attributes
@@ -187,7 +187,7 @@ add a screenshot here !!!
 
 Click the "**>**" button next to "Discovery" to configure who can discover and access this listing.
 
-![](assets/2026_AccessControlApproval.png)
+![](assets/2026-access-control-approval.png)
 
 - **Discovery** determines who can see the listing and its metadata in the Internal Marketplace.
 - **Access** determines who can discover the listing *and* query the shared data objects.
@@ -208,7 +208,7 @@ Click **Set up request approval flow** to proceed.
 - Change the Approver email from **Use profile contact** to **Use custom email** and enter your own email, e.g. the one you used to sign up for this lab.
 - Click **Done** and **Save**
 
-![](assets/2026_RAW_b.png)
+![](assets/2026-raw-b.png)
 
 
 ### Step 5 of 5: Publish
