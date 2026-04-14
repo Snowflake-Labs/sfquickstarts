@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: HANDS-ON LAB 2026 - SNOWFLAKE INTERNAL MARKETPLACE
 environments: web
-status: Published
+status: draft
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 
 
