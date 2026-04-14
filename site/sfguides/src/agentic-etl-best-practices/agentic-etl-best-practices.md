@@ -12,8 +12,6 @@ status: Published
 
 Snowflake is now an agentic-first data engineering platform. With Cortex Code, Snowflake's native AI coding agent, data engineering teams can build, debug, and optimize production-ready ETL pipelines using plain language prompts, all from the CLI or Snowsight. Instead of hand-coding every stage of your pipeline, you describe what you want and Cortex Code generates the DDL, transformation logic, orchestration, and monitoring infrastructure.
 
-By automating the repetitive parts of pipeline development like ingestion boilerplate, transformation scaffolding, task scheduling, and data quality checks, you can focus on what matters: data modeling decisions, business logic, and pipeline reliability. All of the ETL workflows in this guide are powered by the `$data-engineering` skill in Cortex Code.
-
 ## Get Started with Cortex Code
 
 ### Step 1: Ensure Cortex Code is enabled with appropriate permissions on your account
@@ -57,8 +55,6 @@ For more details see the [Cortex Code CLI documentation](https://docs.snowflake.
 ### General Cortex Code Best Practices
 
 Always ensure you're on the latest CLI version. Run `cortex --version` and update with `cortex update` if needed.
-
-Use the `$data-engineering` skill for ETL workflows. This skill contains curated workflows for the full data engineering lifecycle, from ingestion, transformation, orchestration, and monitoring. Cortex Code can trigger it automatically based on intent, but this is non-deterministic. To be certain the right skill is active, invoke it explicitly at the start of your session or before any ETL task.
 
 Use plain language. Describe what you want, not how to do it. Cortex Code understands intent; you don't need to write SQL to get started.
 

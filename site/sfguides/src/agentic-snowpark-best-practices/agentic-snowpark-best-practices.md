@@ -60,8 +60,6 @@ For more details see the [Cortex Code CLI documentation](https://docs.snowflake.
 
 Always ensure you're on the latest CLI version. Run `cortex --version` and update with `cortex update` if needed.
 
-Use the `$data-engineering` skill for Snowpark workflows. Invoke it explicitly at the start of your session to ensure Cortex Code uses the right playbook for data engineering tasks.
-
 Use plain language. Describe what you want, not how to do it. You don't need to know the exact DataFrame API methods; Cortex Code will find the right ones.
 
 Front-load context, focus each turn on a single goal. Give Cortex Code your table schemas, data types, and expected volumes upfront, then focus each prompt on one transformation or function.
