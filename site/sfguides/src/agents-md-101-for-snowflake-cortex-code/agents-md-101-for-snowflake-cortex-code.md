@@ -16,7 +16,7 @@ Cortex Code is Snowflake's native AI coding agent. It understands your data, com
 
 **AGENTS.md is how you tell it.** Drop a plain-text file at your project root and Cortex Code reads it automatically when you start a session. Define your warehouses, conventions, and guardrails once — they apply every session, for every teammate using the same directory.
 
-> **What AGENTS.md is not:** It's not a config file. It doesn't set environment variables or establish connections. It's a set of plain-language instructions that shape how the agent behaves — which warehouses to use, what naming conventions to follow, what operations require approval.
+**What AGENTS.md is not:** It's not a config file. It doesn't set environment variables or establish connections. It's a set of plain-language instructions that shape how the agent behaves — which warehouses to use, what naming conventions to follow, what operations require approval.
 
 This guide walks you through creating a working AGENTS.md in three steps.
 
@@ -33,19 +33,21 @@ This guide walks you through creating a working AGENTS.md in three steps.
 
 ### Prerequisites
 
-- A [Snowflake account](https://signup.snowflake.com/) (a free trial works)
-- Cortex Code CLI installed (see below)
-- A text editor
+- Snowflake account — if you don't have one yet, you can [sign up for a free trial](https://signup.snowflake.com/)
+- Cortex Code CLI (install below)
+- A text editor (you can also use any IDE: VS Code, Cursor, JetBrains, etc.)
 - Familiarity with Snowflake concepts (warehouses, databases, schemas)
 
 ### Install Cortex Code CLI
 
 **macOS / Linux / WSL:**
+
 ```bash
 curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 irm https://ai.snowflake.com/static/cc-scripts/install.ps1 | iex
 ```
@@ -57,7 +59,7 @@ Run `cortex` after install — a setup wizard walks you through connecting to Sn
 
 You can write AGENTS.md by hand or let Cortex Code generate one for you. Both work — pick whichever fits.
 
-### Option A: Have Cortex Code do it
+### Option A (Recommended): Have Cortex Code do it
 
 Start a session in your project directory and prompt:
 
@@ -90,8 +92,7 @@ Paste this starter template, replacing the placeholder values with your actual S
 - Never DROP or TRUNCATE a table without asking first
 ```
 
-
-> **Where does it go?** Cortex Code reads AGENTS.md from the directory where you start your session. For most projects, that's the repo root. If you work in a monorepo, place it at whichever directory you `cd` into before running `cortex`.
+**Where does it go?** Cortex Code reads AGENTS.md from the directory where you start your session. For most projects, that's the repo root. If you work in a monorepo, place it at whichever directory you `cd` into before running `cortex`.
 
 ### Try it
 
@@ -106,7 +107,7 @@ The agent should pick your DDL warehouse without being told. If it does, your AG
 <!-- ------------------------ -->
 ## Step 2: Improve As You Work
 
-The best AGENTS.md files aren't written upfront — they improve from real usage. Work with Cortex Code normally. When you make a decision worth keeping — warehouse routing, a naming convention, a validation step — tell it:
+The most impactful AGENTS.md files improve from real usage, rather than being written all at once. Work with Cortex Code normally. When you make a decision worth keeping — warehouse routing, a naming convention, a validation step — tell it:
 
 ```
 > Add that to AGENTS.md
@@ -116,20 +117,27 @@ Cortex Code appends the rule to your file. Next session, it already knows.
 
 ### Prompts that build your AGENTS.md
 
-The most natural way to refine AGENTS.md is through your normal workflow. Here are prompts you can copy-paste at the right moment:
+The most natural way to refine AGENTS.md is through your normal workflow.
+
+This is the core loop: work, learn, capture. Every error Cortex Code resolves and every convention you confirm becomes a permanent instruction — so the next session (or the next teammate) starts smarter.
+
+Here are prompts you can copy-paste at the right moment:
 
 **After Cortex Code resolves an error:**
+
 ```
 > With what you now know about how to resolve that error, summarize it
   into the AGENTS.md file so you don't repeat the mistake.
 ```
 
 **After you establish a pattern:**
+
 ```
 > Add that rule to AGENTS.md so you remember it next time.
 ```
 
 **When starting a new project:**
+
 ```
 > Look at the project structure, the existing SQL files, and the dbt
   models, then create an AGENTS.md with build commands, naming conventions,
@@ -137,24 +145,23 @@ The most natural way to refine AGENTS.md is through your normal workflow. Here a
 ```
 
 **When onboarding a teammate:**
+
 ```
 > Read AGENTS.md and summarize what you know about this project's
   conventions, then run through the setup steps to verify they still work.
 ```
 
-This is the core loop: work, learn, capture. Every error Cortex Code resolves and every convention you confirm becomes a permanent instruction — so the next session (or the next teammate) starts smarter.
-
 ### What to Capture
 
 | Type | What it captures |
-|------|-----------------|
+| :--- | :--- |
 | **Commands** | How to run things: build steps, deploy scripts, SQL validation |
 | **Guardrails** | What never to do: forbidden tables, operations, credentials |
 | **Conventions** | How to name things: prefixes, suffixes, casing |
 | **Validation** | What to verify after changes: row counts, null checks |
 | **Lessons learned** | Past mistakes and how to avoid them |
 
-**1. Commands** — what the agent should run and how:
+**1. Example Commands** — what the agent should run and how:
 
 ```markdown
 ## Commands
@@ -164,7 +171,7 @@ This is the core loop: work, learn, capture. Every error Cortex Code resolves an
 - Always run `USE WAREHOUSE LOAD_WH;` before any DDL or DML
 ```
 
-**2. Guardrails** — what the agent must never do:
+**2. Example Guardrails** — what the agent must never do:
 
 ```markdown
 ## NEVER
@@ -173,7 +180,7 @@ This is the core loop: work, learn, capture. Every error Cortex Code resolves an
 - Store credentials or keys in any committed file
 ```
 
-**3. Conventions** — how your team names things:
+**3. Example Conventions** — how your team names things:
 
 ```markdown
 ## Naming
@@ -182,7 +189,7 @@ This is the core loop: work, learn, capture. Every error Cortex Code resolves an
 - Temp tables: _TMP suffix, cleaned up at end of session
 ```
 
-**4. Validation** — what to check after changes:
+**4. Example Validation** — what to check after changes:
 
 ```markdown
 ## Validation
@@ -190,7 +197,7 @@ This is the core loop: work, learn, capture. Every error Cortex Code resolves an
 - After any data load: verify row count matches source
 ```
 
-**5. Lessons learned** — mistakes the agent should never repeat:
+**5. Example Lessons learned** — mistakes the agent should never repeat:
 
 This is the most valuable section over time. Every time Cortex Code hits an error and resolves it, capture the fix here so it sticks across sessions:
 
@@ -232,7 +239,7 @@ Open AGENTS.md and verify the rule was captured.
 AGENTS.md loads once at session start. Cortex Code also has runtime shortcuts that speed up your workflow.
 
 | Shortcut | What it does |
-|----------|-------------|
+| :--- | :--- |
 | `#TABLE` | Injects table schema and sample rows as context |
 | `@file` | Reads file contents as context |
 | `/plan` | Enter plan mode — agent describes and waits for approval |
@@ -335,8 +342,10 @@ Copy this, fill in your values, and let it grow from there:
 ### Related Resources
 
 Cortex Code:
+
 - [Cortex Code CLI extensibility](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility) — skills, subagents, hooks, and MCP reference
 - [Cortex Code overview](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — built-in skills for dbt, Streamlit, Data Governance, ML
 
 Security:
+
 - [Security best practices](https://docs.snowflake.com/en/user-guide/cortex-code/security) — permissions, sandboxing, managed settings
