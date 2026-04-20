@@ -69,15 +69,15 @@ Congratulations\! You’ve successfully created your Coalesce trial account.
 
 2. Enter your Login details provided in the course and press **Sign In**:
 
-![][image1] 
+	![Coalesce Login](assets/image32.png)
 
 3. Once signed in – find *your User’s workspace* in the Default Project Workspaces and press the **Launch \-\>** button:
 
-   ![][image2]
+   ![Coalesce Workspace](assets/image33.png)
 
 4. This will open your primary development and review interface.  Feel free to orient yourself in the Build interface – primarily the \+ button, the (DAG) Browser, the Node List:
 
-   ![][image3]
+   ![Coalesce Browser](assets/image34.png)
 
 ## Step 4 Adding Data Sources
 
@@ -85,53 +85,45 @@ We are going to connect to Snowflake, identify source data and load its definiti
 
 1.  Press the **\+** button above the Node List, and select **Add Sources**:
 
-   ![][image4]
+   ![Data Sources](assets/image41.png)
 
 2. Select the Storage Location **LAND** to select all tables in that Schema in Snowflake and Press the **Add 6 Sources** button at the bottom.
-
      
-   ![][image5]
+   ![Source Schemas](assets/image42.png)
 
    
-
 3. Now you should see the Source nodes in your Graph:
 
-   ![][image6]
+   ![Landed](assets/image43.png)
 
 
 ## Step 5 – Build a Transformation Layer using AI Copilot
 
-1. Open the Copilot AI assistant by pressing the ![][image7]button at the top right of the Browser:
+1. Open the Copilot AI assistant by pressing the ![copilotbutton](assets/copilotbutton.png) button at the top right of the Browser:
 
-![][image8]
+   ![Copilot](assets/image51.png)
 
 2. Note the Copilot Context is showing **Browser** and **Allow Edits** is switched on.  
 
-3. In the Chat with Copilot box type in the text:  ```Add a staging layer over Source nodes``` and press the ![][image9] (send) button.  
-   
+3. In the Chat with Copilot box type in the text:  ```Add a staging layer over Source nodes``` and press the ![sendbutton](assets/sendbutton.png) (send) button.  
 
 4. Check the end result looks like this:
 
-   ![][image10]
-
-   
+   ![Stage Tables](assets/image54.png)
 
 5. Now edit the Node called STG\_YELLOW\_CAB\_TRIPS by right clicking on the Node and choosing **Edit**:
 
-   ![][image11]
+   ![Edit Stage](assets/image55.png)
 
 6. You should see the tables’s columns and the CoPilot context should change to STG\_CAB\_TRIPS:
 
-7. Add a prompt to CoPilot:  **“add columns to calculate trip duration and average speed”**
+7. Add a prompt to CoPilot:  ```add columns to calculate trip duration and average speed```
 
-   ![][image12]
-
-     
-   
+   ![Copilot Tables](assets/image57.png)
 
 8. To review the generated SQL find the 2 new columns that Copilot added by scrolling to the bottom of the Column list in the Center pane – and double click on the SQL in the Transform column:
 
-   ![][image13]
+   ![Copilot SQL](assets/image58.png)
 
    Note: you can write or rewrite this SQL yourself if you wanted to.  
 
@@ -139,19 +131,19 @@ We are going to connect to Snowflake, identify source data and load its definiti
 
 10. You can review the generated code in the **Code** pane down below:
 
-![][image14]
+   ![Code pane](assets/image510.png)
 
-Expand the top line in the Code Pane and press the pop out button ![][image15]to the right of the **Insert …** line to see the code:
+Expand the top line in the Code Pane and press the pop out button ![Expand button](assets/expandbutton.png)to the right of the **Insert …** line to see the code:
 
-![][image16]
+   ![Code pane review](assets/image5102.png)
 
 This will open the Code Viewer:
 
-![][image17]
+   ![Code review](assets/image5103.png)
 
 11. Now you can create and populate *all* the tables we have defined.  On the Browser choose the **Create All** option and once finished just press the **Run All** button at the top right:
 
-![][image18]
+   ![Create All](assets/image511.png)
 
 ## Step 5.5 – Build more Transformations
 
