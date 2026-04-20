@@ -433,15 +433,15 @@ This single prompt triggers a complete deployment pipeline. First, the model is 
 ```
 MODEL REGISTRATION
 ============================================================
-Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V2...
+Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V1...
 
-✓  SNOWFLAKE_SQL_EXECUTE  Verify model V2 registration
+✓  SNOWFLAKE_SQL_EXECUTE  Verify model V1 registration
   SQL Result (2 rows × 10 cols)
   ┌─────┬───────────────┬──────────────┬───────────────────┐
   │   # │ name          │ version_name │ min_num_arguments │
   ├─────┼───────────────┼──────────────┼───────────────────┤
-  │   1 │ PREDICT       │ V2           │ 7                 │
-  │   2 │ PREDICT_PROBA │ V2           │ 7                 │
+  │   1 │ PREDICT       │ V1           │ 7                 │
+  │   2 │ PREDICT_PROBA │ V1           │ 7                 │
   └─────┴───────────────┴──────────────┴───────────────────┘
 ```
 
@@ -453,7 +453,7 @@ Then deployed to SPCS (this can take a few minutes as it builds the container):
   ┌─────┬─────────────────────────┬─────────┬───────────────┬─────────────┐
   │   # │ name                    │ status  │ database_name │ schema_name │
   ├─────┼─────────────────────────┼─────────┼───────────────┼─────────────┤
-  │   1 │ FRAUD_INFERENCE_SERVICE │ RUNNING │ ML            │ PROJECTS    │
+  │   1 │ FRAUD_INFERENCE_SERVICE_V1 │ RUNNING │ ML            │ PROJECTS    │
   │   2 │ MODEL_BUILD_4A237CD4    │ DONE    │ ML            │ PROJECTS    │
   └─────┴─────────────────────────┴─────────┴───────────────┴─────────────┘
 
@@ -569,16 +569,16 @@ It also breaks down the predictions by risk tier so you can verify the model beh
 
 In production, you rarely swap a model overnight. Instead, you route a fraction of live traffic to the new version and compare results before committing. [SPCS Gateways](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/gateway) make this simple: a single stable hostname splits ingress requests across multiple service endpoints by percentage, so you can A/B test model versions without changing any client URLs.
 
-In this step we will deploy an improved V3 model as a second SPCS service, create a gateway that sends 80% of traffic to the proven V2 service and 20% to V3, then verify the split. Once the new version proves itself, we shift the gateway to 100% V3 with a single `ALTER GATEWAY` statement.
+In this step we will deploy an improved V2 model as a second SPCS service, create a gateway that sends 80% of traffic to the proven V1 service and 20% to V2, then verify the split. Once the new version proves itself, we shift the gateway to 100% V2 with a single `ALTER GATEWAY` statement.
 
 ### Prompt
 
 ```
-Train an improved V3 fraud model (try a lower learning rate and more 
+Train an improved V2 fraud model (try a lower learning rate and more 
 estimators), log it to the Model Registry, deploy it as a second SPCS service 
-called FRAUD_INFERENCE_SERVICE_V3, then create a Gateway called 
+called FRAUD_INFERENCE_SERVICE_V2, then create a Gateway called 
 FRAUD_AB_GATEWAY that sends 80% of traffic to the original 
-FRAUD_INFERENCE_SERVICE and 20% to the new V3 service. Test the gateway 
+FRAUD_INFERENCE_SERVICE_V1 and 20% to the new V2 service. Test the gateway 
 endpoint.
 ```
 
@@ -589,21 +589,21 @@ Cortex Code trains the updated model, registers it, and deploys a second service
 ```
 MODEL REGISTRATION
 ============================================================
-Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V3...
+Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V2...
   learning_rate: 0.05 (was 0.1)
   n_estimators: 500 (was 200)
 
-✓  SNOWFLAKE_SQL_EXECUTE  Verify model V3 registration
+✓  SNOWFLAKE_SQL_EXECUTE  Verify model V2 registration
   SQL Result (2 rows × 10 cols)
   ┌─────┬───────────────┬──────────────┬───────────────────┐
   │   # │ name          │ version_name │ min_num_arguments │
   ├─────┼───────────────┼──────────────┼───────────────────┤
-  │   1 │ PREDICT       │ V3           │ 7                 │
-  │   2 │ PREDICT_PROBA │ V3           │ 7                 │
+  │   1 │ PREDICT       │ V2           │ 7                 │
+  │   2 │ PREDICT_PROBA │ V2           │ 7                 │
   └─────┴───────────────┴──────────────┴───────────────────┘
 ```
 
-Once the V3 service is running alongside the original:
+Once the V2 service is running alongside the original:
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Check running services
@@ -611,8 +611,8 @@ Once the V3 service is running alongside the original:
   ┌─────┬────────────────────────────────┬─────────┬─────────────┐
   │   # │ name                           │ status  │ schema_name │
   ├─────┼────────────────────────────────┼─────────┼─────────────┤
-  │   1 │ FRAUD_INFERENCE_SERVICE        │ RUNNING │ PROJECTS    │
-  │   2 │ FRAUD_INFERENCE_SERVICE_V3     │ RUNNING │ PROJECTS    │
+  │   1 │ FRAUD_INFERENCE_SERVICE_V1        │ RUNNING │ PROJECTS    │
+  │   2 │ FRAUD_INFERENCE_SERVICE_V2     │ RUNNING │ PROJECTS    │
   └─────┴────────────────────────────────┴─────────┴─────────────┘
 ```
 
@@ -627,10 +627,10 @@ Next, the gateway is created with an 80/20 traffic split:
     split_type: custom
     targets:
       - type: endpoint
-        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE!inference
+        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V1!inference
         weight: 80
       - type: endpoint
-        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V3!inference
+        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2!inference
         weight: 20
   $$;
 
@@ -669,22 +669,22 @@ Traffic Split Observed
 ┌──────────────────────────────────┬──────────┬──────────┐
 │ Service                          │ Expected │ Observed │
 ├──────────────────────────────────┼──────────┼──────────┤
-│ FRAUD_INFERENCE_SERVICE (V2)     │ 80%      │ 78%      │
+│ FRAUD_INFERENCE_SERVICE_V1       │ 80%      │ 78%      │
 ├──────────────────────────────────┼──────────┼──────────┤
-│ FRAUD_INFERENCE_SERVICE_V3 (V3)  │ 20%      │ 22%      │
+│ FRAUD_INFERENCE_SERVICE_V2       │ 20%      │ 22%      │
 └──────────────────────────────────┴──────────┴──────────┘
 
 Prediction Agreement: 96% (both versions agree on fraud/legit label)
-V3-only catches: 2 additional fraud cases flagged by V3 but missed by V2
+V2-only catches: 2 additional fraud cases flagged by V2 but missed by V1
 ```
 
 ### Shifting Traffic
 
-Once you are confident in V3, shift all traffic to the new version:
+Once you are confident in V2, shift all traffic to the new version:
 
 ```
 Shift the FRAUD_AB_GATEWAY to send 100% of traffic to 
-FRAUD_INFERENCE_SERVICE_V3. Confirm the change took effect.
+FRAUD_INFERENCE_SERVICE_V2. Confirm the change took effect.
 ```
 
 The gateway hostname stays the same, so no client changes are needed. You can also use this pattern for high availability by splitting traffic across services running on different compute pools.
