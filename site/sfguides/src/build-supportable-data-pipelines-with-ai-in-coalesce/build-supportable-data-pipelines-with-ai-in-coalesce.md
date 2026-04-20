@@ -151,47 +151,46 @@ In the VENDOR\_DETAILS table we can see there is JSON data stored in a variant c
 
 1. Right click and **Edit** the STG\_VENDOR\_DETAILS table in the Browser:
 
-![][image19]
+   ![Stage edit](assets/image551.png)
 
-2. You can see the data in in the Preview pane below (if not click on ![][image20] ):
+2. You can see the data in in the Preview pane below (if not click on ![Preview button](assets/previewbutton.png) ):
 
-![][image21]
+   ![Preview data](assets/image552.png)
 
 Note:  you can see a JSON document in the HQ\_ADDRESS\_DETAILS field containing Vendors’ address details.  We want to turn this into columns (and rows) to make the address data more easily readable.
 
 3. Select the HQ\_ADDRESS\_DETAILS column and choose **Derive Mappings / From JSON**:
 
-![][image22]
+   ![Derive json](assets/image553.png)
 
 This will sample the JSON structure and identify the elements / nesting in the JSON and create columns and mappings to extract the data.  In this case we will pull the Address components stored in the JSON into their own ADDRESS / CITY / STATE etc columns.  
 
 4. Press the **Create** and **Run** buttons and review the data in the new columns.  
    
-
 5. Now we have split apart the Vendors address we can use another staging node to combine the STG\_VENDOR details and the STG\_VENDOR\_DETAILS tables.  To do this we will use a SQL Work node type (note: we could use the standard Stage node type if we wanted).    
    Multi-select (control-click) the STG\_VENDOR and STG\_VENDOR\_DETAILS tables and choose the **Join Nodes** and choose the **SQL Work** node: 
 
-![][image23]
+   ![Work Node](assets/image555.png)
 
 6. This will open a SQL editor – where we can write (or generate SQL) to transform the data.  This SQL is annotated with table details (*leave the top 2 lines alone*):
 
-![][image24]
+   ![SQL Editor](assets/image556.png)
 
 We could just type SQL in this editor – in this case only really the join clause needs fixing.  **Note:** This SQL is parsed into the Column list on the right hand side when the SQL is valid. 
 
 7. Add a line after the VENDOR\_NAME (LINE 5 ABOVE) \- and type the following SQL:  
-   	**`VENDOR_NAME||’ ‘||STATE AS VENDOR_STATE,`**    
+   	```sql
+   VENDOR_NAME||’ ‘||STATE AS VENDOR_STATE,
+   ```
    And check that this column is automatically added in the Column list on the right.  
 
-   ![][image25]
+   ![Column list](assets/image557.png)
 
-   
-
-8. Rather than type SQL lets get the Copilot to generate SQL using the prompt: **“build sql that joins stage tables STG\_VENDOR and STG\_VENDOR\_DETAILS using ctes”**
+8. Rather than type SQL lets get the Copilot to generate SQL using the prompt: ```build sql that joins stage tables STG\_VENDOR and STG\_VENDOR\_DETAILS using ctes```
 
    If the SQL looks good copy using the **Copy Code** option and paste it (*leaving the top 2 annotation lines alone*):
 
-![][image26]
+   ![Copilot SQL](assets/image558.png)
 
 9. Press the **Create** and **Run** buttons and review the data in the Preview Pane.
 
@@ -199,27 +198,27 @@ We could just type SQL in this editor – in this case only really the join clau
 
 Lets build some dimensions and facts.
 
-1. Open the Browser and check Copilot context is Browser and use prompt: **What dimensions and facts would you create over these stage and work tables** 
+1. Open the Browser and check Copilot context is Browser and use prompt: ```What dimensions and facts would you create over these stage and work tables``` 
 
-![][image27]
+   ![Copilot datamart](assets/image61.png)
 
 2. If that plan looks sensible (it should) then tell the co-pilot to go ahead and create them
 
-![][image28]
+   ![Copilot datamart confirm](assets/image62.png)
 
 3. Select to **Create All** and **Run All** in the Browser to create the tables on Snowflake and populate them.
 
-![][image29]
+   ![Datamart](assets/image63.png)
 
 4. Now we will commit all your hard work to GIT to keep it safe by clicking on the **Git** button at the bottom Left of the screen:
 
-![][image30]
+   ![Git dialog](assets/image64.png)
 
 This will open a GIT dialog that shows changes to your User GIT Branch and will show changes since the last commit:
 
-![][image31]
+   ![Git dialog 2](assets/image642.png)
 
-Press the AI Sparkle icon ![][image32]in the lower Commit message text box to generate a commit message and press the **Commit and Push** button.
+Press the AI Sparkle icon ![Sparkle button](assets/sparklebutton.png)in the lower Commit message text box to generate a commit message and press the **Commit and Push** button.
 
 **Note:** this Dialog also has the ability to show other branches, checkout, create branches and merge branches.
 
@@ -231,39 +230,39 @@ We can see what we have built \- and make changes in the UI.  We are going to ad
 
 2. Right click on COUNTRY column and choose **View Column Lineage** to see graphical lineage. 
 
-![][image33]
+   ![Column lineage](assets/image72.png)
 
 At the top right select Related \-\> **All** to see all tables related by lineage.
 
-And hover over the ![][image34] symbol to see Transformation Details:
+And hover over the ![Transform hover](assets/transformbutton.png) symbol to see Transformation Details:
 
-![][image35]
+   ![Column lineage2](assets/image722.png)
 
 3. Now lets refine the model by propagating and degenerating the COUNTRY column into the downstream FACT. Click on the Ellipsis next to the COUNTRY column and choose **Propagate Addition**:
 
-![][image36]
+   ![Column lineage propagate](assets/image73.png)
 
 4. Check the checkbox at the top of the FACT\_CAB\_TRIPS table to choose to propagate the column into the FACT table, press the **Preview** and **Apply** buttons:
 
-![][image37]
+   ![Propagate review](assets/image74.png)
 
 5. Then press **Propagate**.  This will alter the structure and mapping for the FACT table
 
-![][image38]
+   ![Propagate confirm](assets/image75.png)
 
 6. Finally we should add (AI generated) documentation over the columns in the FACT table.  Edit the FACT table, and find the Description column in the table headings:
 
-![][image39]
+   ![Column descriptions](assets/image76.png)
 
 This will use metadata context to generate column descriptions that can be surfaced in Documentation and any tools that point at the database
 
 7. Select the header checkbox to select all the descriptions and press **Apply**:
 
-![][image40]
+   ![Column descriptions apply](assets/image77.png)
 
 8. Press the **Create** button and review the generated DDL – you will see the descriptions are pushed down to Snowflake so that any other data tools can use this documentation.
 
-![][image41]
+   ![Column descriptions ddl](assets/image78.png)
 
 9. Lets commit your changes to GIT like we did at the end of Chapter 6\.
 
@@ -273,25 +272,27 @@ We can use the Coalesce Node Marketplace to install more node types into your en
 
 1. Open the Build Settings at the bottom left of your screen:
 
-![][image42] 
+   ![Build settings](assets/image81.png)
 
 2. Select Packages and press the Browse button (in the middle or top right)
 
-![][image43]
+   ![Package Browse](assets/image82.png)
 
-3. Feel free to scroll through the list of available Node type packages available \- these are provided at no charge.  In the Search enter **Semantic View** and click to view the details.  
-   **![][image44]**
+3. Feel free to scroll through the list of available Node type packages available \- these are provided at no charge.  In the Search enter **Semantic View** and click to view the details.
+   
+   ![Marketplace](assets/image83.png)
 
-4. Copy the **Package ID:**  
-   **![][image45]**
+4. Copy the **Package ID:**
+   
+   ![Package ID](assets/image84.png)
 
 5. Back in Coalesce / Build Settings, press the **Install** button and paste in the Package ID.  The version should default to the latest.  And use Semantic for the Alias, then press **Install**.:
 
-![][image46]
+   ![Package Install](assets/image85.png)
 
 6. In the Browser \- you can now create a node of type Semantic View.  Select the FACT\_CAB\_TRIPS right-click and choose **Add Node / Semantic / Semantic View**:
 
-![][image47]
+   ![SV](assets/image86.png)
 
 7. Choose the simplest options to start with:  
    * Dont Create Schema Table  
@@ -304,9 +305,9 @@ We can use the Coalesce Node Marketplace to install more node types into your en
 
 	Feel free to read the documentation to understand the other options.  But for now press **Create**
 
-![][image48]
+   ![SV1](assets/image87.png)
 
-![][image49]
+   ![SV2](assets/image872.png)
 
 ## Conclusion And Resources
 
