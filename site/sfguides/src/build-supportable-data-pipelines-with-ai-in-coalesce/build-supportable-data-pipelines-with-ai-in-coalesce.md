@@ -37,7 +37,9 @@ What You’ll Build
 
 * A Directed Acyclic Graph (DAG) representing a data pipeline leveraging AI and advanced Snowflake features.
 
-***For this Hand on Lab we will start at section 3\.*** 
+```diff
+- For this Hand on Lab we will start at section 3
+```
 
 ## Step 1 (Optional): Create a Snowflake Trial Account
 
@@ -172,7 +174,10 @@ This will sample the JSON structure and identify the elements / nesting in the J
 
    ![Work Node](assets/image555.png)
 
-6. This will open a SQL editor – where we can write (or generate SQL) to transform the data.  This SQL is annotated with table details (*leave the top 2 lines alone*):
+6. This will open a SQL editor – where we can write (or generate SQL) to transform the data.  This SQL is annotated with table details
+   ```diff
+   - Note: leave the top 2 lines alone as they contain node level annotations (id and node type)
+   ```
 
    ![SQL Editor](assets/image556.png)
 
