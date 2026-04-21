@@ -38,7 +38,7 @@ What You’ll Build
 * A Directed Acyclic Graph (DAG) representing a data pipeline leveraging AI and advanced Snowflake features.
 
 ```diff
-- For this Hand on Lab we will start at section 3
+- For this Hands on Lab we will start at section 3
 ```
 
 ## Step 1 (Optional): Create a Snowflake Trial Account
