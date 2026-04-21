@@ -105,7 +105,7 @@ We are going to connect to Snowflake, identify source data and load its definiti
 
    ![Coalesce AI](assets/image51.png)
 
-2. Note the Coalesce AI Context is showing **Browser** and **Allow Edits** is switched on.  
+   Note: the Coalesce AI Context is showing **Browser** and **Allow Edits** is switched on.  
 
 3. In the Chat with Coalesce AI box type in the text:  ```Add a staging layer over Source nodes``` and press the ![sendbutton](assets/sendbutton.png) (send) button.  
 
