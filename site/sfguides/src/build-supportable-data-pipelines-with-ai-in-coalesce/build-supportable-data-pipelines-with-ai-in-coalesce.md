@@ -1,4 +1,4 @@
-id: build-supportable-data-pipelines-rapidly-with-AI-in-coalesce   
+id: build-supportable-data-pipelines-with-ai-in-coalesce   
 language: en   
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration   
 status: Published   
@@ -99,15 +99,15 @@ We are going to connect to Snowflake, identify source data and load its definiti
    ![Landed](assets/image43.png)
 
 
-## Step 5 – Build a Transformation Layer using AI Copilot
+## Step 5 – Build a Transformation Layer using Coalesce AI
 
-1. Open the Copilot AI assistant by pressing the ![copilotbutton](assets/copilotbutton.png) button at the top right of the Browser:
+1. Open the Coalesce AI assistant by pressing the ![Coalesce AI button](assets/copilotbutton.png) button at the top right of the Browser:
 
-   ![Copilot](assets/image51.png)
+   ![Coalesce AI](assets/image51.png)
 
-2. Note the Copilot Context is showing **Browser** and **Allow Edits** is switched on.  
+2. Note the Coalesce AI Context is showing **Browser** and **Allow Edits** is switched on.  
 
-3. In the Chat with Copilot box type in the text:  ```Add a staging layer over Source nodes``` and press the ![sendbutton](assets/sendbutton.png) (send) button.  
+3. In the Chat with Coalesce AI box type in the text:  ```Add a staging layer over Source nodes``` and press the ![sendbutton](assets/sendbutton.png) (send) button.  
 
 4. Check the end result looks like this:
 
@@ -117,15 +117,15 @@ We are going to connect to Snowflake, identify source data and load its definiti
 
    ![Edit Stage](assets/image55.png)
 
-6. You should see the tables’s columns and the CoPilot context should change to STG\_CAB\_TRIPS:
+6. You should see the tables’s columns and the Coalesce AI context should change to STG\_CAB\_TRIPS:
 
-7. Add a prompt to CoPilot:  ```add columns to calculate trip duration and average speed```
+7. Add a prompt to Coalesce AI:  ```add columns to calculate trip duration and average speed```
 
-   ![Copilot Tables](assets/image57.png)
+   ![Coalesce AI Tables](assets/image57.png)
 
-8. To review the generated SQL find the 2 new columns that Copilot added by scrolling to the bottom of the Column list in the Center pane – and double click on the SQL in the Transform column:
+8. To review the generated SQL find the 2 new columns that Coalesce AI added by scrolling to the bottom of the Column list in the Center pane – and double click on the SQL in the Transform column:
 
-   ![Copilot SQL](assets/image58.png)
+   ![Coalesce AI SQL](assets/image58.png)
 
    Note: you can write or rewrite this SQL yourself if you wanted to.  
 
@@ -191,11 +191,11 @@ We could just type SQL in this editor – in this case only really the join clau
 
    ![Column list](assets/image557.png)
 
-8. Rather than type SQL lets get the Copilot to generate SQL using the prompt: ```build sql that joins stage tables STG\_VENDOR and STG\_VENDOR\_DETAILS using ctes```
+8. Rather than type SQL lets get the Coalesce AI to generate SQL using the prompt: ```build sql that joins stage tables STG\_VENDOR and STG\_VENDOR\_DETAILS using ctes```
 
    If the SQL looks good copy using the **Copy Code** option and paste it (*leaving the top 2 annotation lines alone*):
 
-   ![Copilot SQL](assets/image558.png)
+   ![Coalesce AI SQL](assets/image558.png)
 
 9. Press the **Create** and **Run** buttons and review the data in the Preview Pane.
 
@@ -203,13 +203,13 @@ We could just type SQL in this editor – in this case only really the join clau
 
 Lets build some dimensions and facts.
 
-1. Open the Browser and check Copilot context is Browser and use prompt: ```What dimensions and facts would you create over these stage and work tables``` 
+1. Open the Browser and check Coalesce AI context is Browser and use prompt: ```What dimensions and facts would you create over these stage and work tables``` 
 
-   ![Copilot datamart](assets/image61.png)
+   ![Coalesce AI datamart](assets/image61.png)
 
-2. If that plan looks sensible (it should) then tell the co-pilot to go ahead and create them
+2. If that plan looks sensible (it should) then tell Coalesce AI to go ahead and create them
 
-   ![Copilot datamart confirm](assets/image62.png)
+   ![Coalesce AI datamart confirm](assets/image62.png)
 
 3. Select to **Create All** and **Run All** in the Browser to create the tables on Snowflake and populate them.
 
