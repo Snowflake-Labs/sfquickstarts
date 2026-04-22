@@ -34,12 +34,10 @@ This guide also shows you how to build the entire app using **Cortex Code (CoCo)
 - How to pass Postgres credentials to container runtime using `.streamlit/secrets.toml` as a deployment artifact
 
 ### Prerequisites
-- A [Snowflake account](https://signup.snowflake.com/) with **Snowflake Postgres** enabled — check [region availability](https://docs.snowflake.com/en/LIMITEDACCESS/postgres-overview)
 - A role with the required privileges (see table below). **ACCOUNTADMIN** has all of these by default, but each can be granted individually to other roles.
 - **Cortex AI** access — your role needs the `SNOWFLAKE.CORTEX_USER` database role
 - A **warehouse** for the Streamlit app's query execution
-- **Snow CLI** installed locally (for deployment) — [install guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation)
-- **Cortex Code** (optional, for AI-assisted development) — [getting started](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
+- **Cortex Code CLI** (recommended, for AI-assisted development) — [getting started](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
 
 **Required privileges:**
 
@@ -56,7 +54,7 @@ This guide also shows you how to build the entire app using **Cortex Code (CoCo)
 
 In this step, you will create a managed PostgreSQL instance inside Snowflake and configure network access so your Streamlit app can connect to it.
 
-### Step 2.1: Configure network access
+### Step 1.1: Configure network access
 
 Run the following in a **Snowsight SQL worksheet** with a role that has the required privileges (ACCOUNTADMIN works, or a custom role with the grants from the Prerequisites table):
 
@@ -80,7 +78,7 @@ CREATE NETWORK POLICY IF NOT EXISTS iot_lab_policy
 > Name them iot_lab_ingress and iot_lab_policy.
 > ```
 
-### Step 2.2: Create the Postgres instance
+### Step 1.2: Create the Postgres instance
 
 ```sql
 CREATE POSTGRES INSTANCE iot_sensors
@@ -93,14 +91,14 @@ CREATE POSTGRES INSTANCE iot_sensors
 
 > **Tip:** This creates two users: `snowflake_admin` and `application` with auto-generated passwords. **Copy the passwords immediately** — they are only shown once.
 
-### Step 2.3: Verify the instance is ready
+### Step 1.3: Verify the instance is ready
 
 ```sql
 -- Wait until state = READY (typically 3-5 minutes)
 DESCRIBE POSTGRES INSTANCE iot_sensors;
 ```
 
-### Step 2.4: Connect and verify
+### Step 1.4: Connect and verify
 
 Using psql (replace `<hostname>` and `<password>` with your values):
 
@@ -129,7 +127,7 @@ You should see PostgreSQL 18 (or your selected version).
 
 Now you will create the schema and generate realistic smart-building sensor data entirely with SQL — no external files or downloads needed.
 
-### Step 3.1: Create the schema
+### Step 2.1: Create the schema
 
 Connect to your Postgres instance and run:
 
@@ -165,7 +163,7 @@ CREATE INDEX idx_readings_sensor_time ON readings(sensor_id, reading_time);
 CREATE INDEX idx_readings_time ON readings(reading_time);
 ```
 
-### Step 3.2: Seed buildings and sensors
+### Step 2.2: Seed buildings and sensors
 
 ```sql
 INSERT INTO buildings (name, location, floors) VALUES
@@ -194,7 +192,7 @@ INSERT INTO sensors (building_id, sensor_type, unit, install_location) VALUES
     (3, 'energy',      'kW',  'Main Panel');
 ```
 
-### Step 3.3: Generate realistic sensor readings
+### Step 2.3: Generate realistic sensor readings
 
 This query generates 30 days of readings at 15-minute intervals for every sensor. The values follow realistic patterns — daily temperature cycles, stable data center temps, and energy usage that peaks during business hours:
 
@@ -255,7 +253,7 @@ CROSS JOIN generate_series(
 ) AS ts;
 ```
 
-### Step 3.4: Verify the data
+### Step 2.4: Verify the data
 
 ```sql
 SELECT count(*) AS total_readings FROM readings;
@@ -285,7 +283,7 @@ You should see approximately 43,000 total readings across temperature, humidity,
 
 The container runtime needs an **External Access Integration (EAI)** to make outbound connections to PyPI (for package installs) and to your Postgres instance. Cortex AI calls go through the Snowpark session internally, so no outbound egress rule is needed for Cortex.
 
-### Step 4.1: Create the EAI
+### Step 3.1: Create the EAI
 
 Run this in a Snowsight SQL worksheet. Replace `<your-postgres-hostname>` with your actual Postgres host from Step 2.3:
 
@@ -313,7 +311,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION iot_app_eai
 > iot_app_eai. My Postgres host is <paste-your-host-here>.
 > ```
 
-### Step 4.2: Create the database and schema
+### Step 3.2: Create the database and schema
 
 If you don't already have a database and schema for the app:
 
@@ -322,7 +320,7 @@ CREATE DATABASE IF NOT EXISTS iot_lab;
 CREATE SCHEMA IF NOT EXISTS iot_lab.sensors;
 ```
 
-### Step 4.3: Project structure
+### Step 3.3: Project structure
 
 Create a project directory with this structure:
 
@@ -341,24 +339,25 @@ iot-streamlit-dashboard/
     agent.py                # AI Agent Search page
 ```
 
-### Step 4.4: Add dependencies — `pyproject.toml`
+### Step 3.4: Add dependencies — `pyproject.toml`
 
 ```toml
 [project]
 name = "iot-streamlit-dashboard"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = [
-    "streamlit>=1.54.0",
-    "snowflake-connector-python>=3.3.0",
-    "psycopg2-binary>=2.9.0",
-    "altair>=5.0.0",
-    "pandas>=2.0.0",
-    "numpy>=1.24.0",
-]
+    dependencies = [
+        "streamlit>=1.54.0",
+        "psycopg2-binary>=2.9.10",
+        "snowflake-connector-python>=3.3.0",
+        "snowflake-ml-python>=1.7.0",
+        "altair>=5.5.0",
+        "pandas>=2.2.0",
+        "numpy>=1.26.0",
+    ]
 ```
 
-### Step 4.5: Add connection secrets — `.streamlit/secrets.toml`
+### Step 3.5: Add connection secrets — `.streamlit/secrets.toml`
 
 ```toml
 [postgres]
@@ -374,9 +373,9 @@ connection_name = "<your-snowflake-connection>"
 
 Replace the placeholder values with your actual Postgres connection details (from Step 2.3) and your Snowflake connection name from `~/.snowflake/connections.toml`.
 
-> **Important:** The `[postgres]` section is needed in both local development and SiS. The `[snowflake_cortex]` section is only needed for local development — in SiS, Cortex AI calls go through `st.connection("snowflake")` automatically. When deploying to SiS, you **must include `.streamlit/secrets.toml` in your deployment artifacts** (see Step 10). Without it, psycopg2 will fail with `fe_sendauth: no password supplied`.
+> **Important:** The `[postgres]` section is needed in both local development and SiS. The `[snowflake_cortex]` section is only needed for local development — in SiS, Cortex AI calls go through `st.connection("snowflake")` automatically. When deploying to SiS, you **must include `.streamlit/secrets.toml` in your deployment artifacts** (see Step 9). Without it, psycopg2 will fail with `fe_sendauth: no password supplied`.
 
-### Step 4.6: Deployment manifest — `snowflake.yml`
+### Step 3.6: Deployment manifest — `snowflake.yml`
 
 ```yaml
 definition_version: 2
@@ -409,7 +408,7 @@ entities:
 > **CoCo prompt:**
 >
 > ```
-> I am building a Streamlit app called IOT Streamlit Dashboard for Streamlit in Snowflake that connects
+> I am building a Streamlit app in Snowflake (SiS) called IOT Streamlit Dashboard for Streamlit in Snowflake that connects
 > to my iot_sensors Postgres instance. Create the project skeleton:
 > pyproject.toml (with streamlit, psycopg2-binary, snowflake-connector-python,
 > altair, pandas, numpy), .streamlit/secrets.toml with [postgres] section,
@@ -741,12 +740,13 @@ How the dual-mode works:
 > **CoCo prompt:**
 >
 > ```
-> Create a cortex_ai.py module with dual-mode Cortex AI support.
-> In SiS (detect via /opt/streamlit-runtime), use st.connection("snowflake").
-> Locally, use snowflake-connector-python with connection_name from
-> st.secrets["snowflake_cortex"]["connection_name"]. Include a
-> cortex_complete() function and a cortex_complete_stream() function
-> that yields word chunks for streaming UX. Use llama3.1-70b model.
+    > Create a cortex_ai.py module with dual-mode Cortex AI support.
+    > In SiS (detect via /opt/streamlit-runtime), use st.connection("snowflake").
+    > Locally, use snowflake-connector-python with connection_name from
+    > st.secrets["snowflake_cortex"]["connection_name"]. Include a
+    > cortex_complete() function and a cortex_complete_stream() function
+    > that yields word chunks for streaming UX. Use llama3.1-70b model.
+    > Add snowflake-ml-python to pyproject.toml (provides snowflake.cortex).
 > ```
 
 <!-- ------------------------ -->
@@ -760,12 +760,6 @@ Now build the three app pages. The main entry point uses `st.navigation` for top
 """IOT Streamlit Dashboard - Main Entry Point"""
 
 import streamlit as st
-
-st.set_page_config(
-    page_title="IOT Streamlit Dashboard",
-    page_icon=":material/sensors:",
-    layout="wide",
-)
 
 page = st.navigation(
     [
@@ -1464,7 +1458,7 @@ This approach gives users immediate answers without needing to understand SQL, w
 
 Now deploy your app to SiS using the Snow CLI.
 
-### Step 10.1: Deploy
+### Step 9.1: Deploy
 
 From your project directory, run:
 
@@ -1476,7 +1470,7 @@ The first deployment creates the Streamlit app. Subsequent `--replace` deploymen
 
 > **Tip:** The `--connection` flag specifies which Snowflake connection from `~/.snowflake/connections.toml` to use for the deployment. This is the same connection name you use for local development.
 
-### Step 10.2: Verify
+### Step 9.2: Verify
 
 After deployment, Snow CLI prints the app URL. Open it in your browser. The app should load with the Dashboard page showing KPIs and charts.
 
@@ -1498,94 +1492,6 @@ ALTER COMPUTE POOL <your-compute-pool> SET MAX_NODES = 3;
 > Deploy my IOT Streamlit Dashboard to SiS using snow streamlit deploy.
 > Use the snowflake.yml manifest I already have. If the compute pool
 > is full, increase max_nodes.
-> ```
-
-<!-- ------------------------ -->
-## Troubleshooting
-
-Here are common issues encountered when building this app, and how to fix them.
-
-### `fe_sendauth: no password supplied`
-
-**Cause:** The container runtime can't find the Postgres password. This happens when `.streamlit/secrets.toml` is not included in the deployment artifacts.
-
-**Fix:** Add `.streamlit/secrets.toml` to the `artifacts` list in `snowflake.yml`:
-
-```yaml
-    artifacts:
-      - streamlit_app.py
-      - pyproject.toml
-      - data.py
-      - cortex_ai.py
-      - app_pages/home.py
-      - app_pages/charts.py
-      - app_pages/agent.py
-      - .streamlit/secrets.toml    # <-- This is required!
-```
-
-Then redeploy with `snow streamlit deploy --replace`.
-
-> **Note:** This is the most common deployment issue. The `st.secrets` mechanism reads from `.streamlit/secrets.toml` in both local dev and SiS, but only if the file is present in the container. Include it as a deployment artifact to make it available.
-
-### `ModuleNotFoundError: No module named '_snowflake'`
-
-**Cause:** The `_snowflake` module is only available in classic SiS runtime, not container runtime. Container runtime uses a different mechanism for accessing Snowflake services.
-
-**Fix:** Use `st.connection("snowflake")` instead of `_snowflake`. The `cortex_ai.py` module in this guide already handles this:
-
-```python
-# In SiS container runtime:
-conn = st.connection("snowflake")
-df = conn.query(sql, ttl=0)
-```
-
-### Compute pool full
-
-**Cause:** The compute pool has reached its `max_nodes` limit and can't start additional services.
-
-**Fix:**
-
-```sql
-ALTER COMPUTE POOL <your-compute-pool> SET MAX_NODES = 3;
-```
-
-### Stale Postgres password
-
-**Cause:** The Postgres password in `secrets.toml` has expired or been rotated.
-
-**Fix:** Reset the password and update `secrets.toml`:
-
-```sql
-ALTER POSTGRES INSTANCE iot_sensors RESET PASSWORD FOR snowflake_admin;
-```
-
-Copy the new password from the output and update `.streamlit/secrets.toml`. Then redeploy.
-
-### Cortex AI returns SQL instead of answers
-
-**Cause:** The system prompt doesn't include live data context, so the LLM defaults to generating SQL.
-
-**Fix:** Use the "answers first" pattern from this guide — pre-fetch data from Postgres and inject it into the system prompt:
-
-```python
-SYSTEM_PROMPT = """...
-IMPORTANT RULES:
-- Answer directly with real numbers from the data. Do NOT write SQL queries.
-- Never suggest the user run a query. You have the data -- use it.
-...
-LIVE DATA FROM THE DATABASE:
-{data_context}
-"""
-```
-
-> **CoCo prompt:**
->
-> ```
-> My SiS app is failing with "fe_sendauth: no password supplied".
-> The Postgres password isn't reaching the container runtime. Fix this
-> by adding .streamlit/secrets.toml to the deployment artifacts in
-> snowflake.yml and simplify data.py to just use st.secrets["postgres"]
-> for both local and SiS environments.
 > ```
 
 <!-- ------------------------ -->
@@ -1612,38 +1518,6 @@ In this quickstart, you built a complete IoT sensor monitoring application:
 - How to build an AI chatbot that gives direct answers with real data by injecting live data context into the prompt
 - How to deploy using `snow streamlit deploy` with `snowflake.yml`
 - How to troubleshoot common container runtime issues (`_snowflake` module, secrets, compute pool capacity)
-
-### Full CoCo Workflow
-
-Here is the complete sequence of CoCo prompts to build this entire app from scratch:
-
-```
-1. Create a network rule and network policy for a Postgres instance.
-   Allow all IPv4 ingress (0.0.0.0/0) for lab purposes.
-
-2. Create a Snowflake Postgres instance called iot_sensors with STANDARD_M
-   compute, 10GB storage, and the iot_lab_policy network policy.
-
-3. Connect to my iot_sensors Postgres instance and create a schema for IoT
-   sensor data with buildings, sensors, and readings tables. Generate 30 days
-   of realistic sensor data at 15-minute intervals using generate_series().
-
-4. I am building a Streamlit app called IOT Streamlit Dashboard that
-   connects to my Postgres instance IOT_SENSORS. Make me a fresh Streamlit
-   app with a landing page of charts, charts on demand, and a Cortex AI
-   agent search where I can ask custom questions.
-
-5. Add a natural language chart generator to the Charts on Demand page.
-   Users describe the chart in plain English and AI builds it.
-
-6. For the AI Agent Search, I want it to give me direct answers with real
-   numbers, not SQL queries. Pre-fetch live data and inject it into the
-   system prompt.
-
-7. Deploy this app to SiS using snow streamlit deploy with snowflake.yml.
-   Include .streamlit/secrets.toml in the deployment artifacts so the
-   Postgres password is available in the container runtime.
-```
 
 ### Full CoCo Prompt (All-in-One)
 
