@@ -11,7 +11,6 @@ tags: Streamlit, Postgres, Cortex AI, IoT, Dashboard, Chatbot, Cortex Code
 # Charts, Graphs, and AI for Postgres Data Using Streamlit and Cortex
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this quickstart, you will build a real-time IoT sensor dashboard powered by **Snowflake Postgres**, **Streamlit in Snowflake (SiS)**, and **Snowflake Cortex AI**. You will create a managed PostgreSQL instance, populate it with realistic smart-building sensor data, build interactive charts and filters, add a natural language chart generator, and wire up an AI chatbot that answers questions about your data in plain English using real numbers — all without leaving Snowflake.
 
@@ -54,7 +53,6 @@ This guide also shows you how to build the entire app using **Cortex Code (CoCo)
 
 <!-- ------------------------ -->
 ## Create a Postgres Instance
-Duration: 10
 
 In this step, you will create a managed PostgreSQL instance inside Snowflake and configure network access so your Streamlit app can connect to it.
 
@@ -72,8 +70,7 @@ CREATE NETWORK POLICY IF NOT EXISTS iot_lab_policy
   ALLOWED_NETWORK_RULE_LIST = ('iot_lab_ingress');
 ```
 
-> aside negative
-> The `0.0.0.0/0` rule allows connections from any IP address. This is fine for a lab environment. For production, restrict this to specific IP ranges or set up additional networking.
+> **Note:** The `0.0.0.0/0` rule allows connections from any IP address. This is fine for a lab environment. For production, restrict this to specific IP ranges or set up additional networking.
 
 > **CoCo prompt:**
 >
@@ -94,8 +91,7 @@ CREATE POSTGRES INSTANCE iot_sensors
   COMMENT = 'IoT sensor dashboard lab';
 ```
 
-> aside positive
-> This creates two users: `snowflake_admin` and `application` with auto-generated passwords. **Copy the passwords immediately** — they are only shown once.
+> **Tip:** This creates two users: `snowflake_admin` and `application` with auto-generated passwords. **Copy the passwords immediately** — they are only shown once.
 
 ### Step 2.3: Verify the instance is ready
 
@@ -130,7 +126,6 @@ You should see PostgreSQL 18 (or your selected version).
 
 <!-- ------------------------ -->
 ## Generate IoT Sensor Data
-Duration: 10
 
 Now you will create the schema and generate realistic smart-building sensor data entirely with SQL — no external files or downloads needed.
 
@@ -287,7 +282,6 @@ You should see approximately 43,000 total readings across temperature, humidity,
 
 <!-- ------------------------ -->
 ## Set Up Networking and Dependencies
-Duration: 5
 
 The container runtime needs an **External Access Integration (EAI)** to make outbound connections to PyPI (for package installs) and to your Postgres instance. Cortex AI calls go through the Snowpark session internally, so no outbound egress rule is needed for Cortex.
 
@@ -380,7 +374,6 @@ connection_name = "<your-snowflake-connection>"
 
 Replace the placeholder values with your actual Postgres connection details (from Step 2.3) and your Snowflake connection name from `~/.snowflake/connections.toml`.
 
-> aside negative
 > **Important:** The `[postgres]` section is needed in both local development and SiS. The `[snowflake_cortex]` section is only needed for local development — in SiS, Cortex AI calls go through `st.connection("snowflake")` automatically. When deploying to SiS, you **must include `.streamlit/secrets.toml` in your deployment artifacts** (see Step 10). Without it, psycopg2 will fail with `fe_sendauth: no password supplied`.
 
 ### Step 4.6: Deployment manifest — `snowflake.yml`
@@ -411,8 +404,7 @@ entities:
       - .streamlit/secrets.toml
 ```
 
-> aside positive
-> Notice that `.streamlit/secrets.toml` is listed in `artifacts`. This is the key to making Postgres credentials available in the container runtime. Without this, `st.secrets["postgres"]` will not find the password and the app will fail to connect.
+> **Tip:** Notice that `.streamlit/secrets.toml` is listed in `artifacts`. This is the key to making Postgres credentials available in the container runtime. Without this, `st.secrets["postgres"]` will not find the password and the app will fail to connect.
 
 > **CoCo prompt:**
 >
@@ -427,7 +419,6 @@ entities:
 
 <!-- ------------------------ -->
 ## Build the Data Layer
-Duration: 5
 
 The data layer provides a shared Postgres connection and cached query functions used by all three pages.
 
@@ -670,7 +661,6 @@ Key design decisions:
 
 <!-- ------------------------ -->
 ## Build the Cortex AI Layer
-Duration: 5
 
 The Cortex AI helper provides a dual-mode interface — it detects whether the app is running in SiS or locally and calls Cortex accordingly.
 
@@ -744,10 +734,8 @@ How the dual-mode works:
 - **In SiS (container runtime):** Detects SiS via `/opt/streamlit-runtime` and calls Cortex through `st.connection("snowflake")`, which uses the built-in Snowpark session. No extra credentials needed.
 - **In local dev:** Uses `snowflake-connector-python` with `connection_name` from `~/.snowflake/connections.toml` (supports OAuth, SSO, and other auth methods). The connection name is read from `.streamlit/secrets.toml`.
 
-> aside negative
 > **Why not `get_active_session()`?** The `snowflake.snowpark.context.get_active_session()` approach works in SiS but requires `snowflake-snowpark-python` as a dependency and doesn't work for local development. The dual-mode approach here works in both environments without Snowpark.
 
-> aside negative
 > **Why not `_snowflake`?** The `_snowflake` module is only available in classic SiS runtime, not container runtime. If you see `ModuleNotFoundError: No module named '_snowflake'`, you're on container runtime and should use `st.connection("snowflake")` instead.
 
 > **CoCo prompt:**
@@ -763,7 +751,6 @@ How the dual-mode works:
 
 <!-- ------------------------ -->
 ## Build the Dashboard Pages
-Duration: 15
 
 Now build the three app pages. The main entry point uses `st.navigation` for top-bar navigation.
 
@@ -937,7 +924,6 @@ with col2:
 
 <!-- ------------------------ -->
 ## Build the Charts on Demand Page
-Duration: 10
 
 This page provides interactive filtering and a **natural language chart generator** where users describe the chart they want in plain English and Cortex AI builds it.
 
@@ -1260,7 +1246,6 @@ if st.session_state.nl_chart_history:
 
 <!-- ------------------------ -->
 ## Build the AI Agent Search Page
-Duration: 10
 
 The AI Agent Search page is the key differentiator of this app. Unlike traditional text-to-SQL chatbots that return SQL queries for the user to run, this chatbot **pre-fetches live data from Postgres and injects it into the prompt** so the LLM can answer directly with real numbers.
 
@@ -1476,7 +1461,6 @@ This approach gives users immediate answers without needing to understand SQL, w
 
 <!-- ------------------------ -->
 ## Deploy to Streamlit in Snowflake
-Duration: 10
 
 Now deploy your app to SiS using the Snow CLI.
 
@@ -1490,8 +1474,7 @@ snow streamlit deploy --replace --connection <your-connection-name>
 
 The first deployment creates the Streamlit app. Subsequent `--replace` deployments update it in-place.
 
-> aside positive
-> The `--connection` flag specifies which Snowflake connection from `~/.snowflake/connections.toml` to use for the deployment. This is the same connection name you use for local development.
+> **Tip:** The `--connection` flag specifies which Snowflake connection from `~/.snowflake/connections.toml` to use for the deployment. This is the same connection name you use for local development.
 
 ### Step 10.2: Verify
 
@@ -1519,7 +1502,6 @@ ALTER COMPUTE POOL <your-compute-pool> SET MAX_NODES = 3;
 
 <!-- ------------------------ -->
 ## Troubleshooting
-Duration: 5
 
 Here are common issues encountered when building this app, and how to fix them.
 
@@ -1543,8 +1525,7 @@ Here are common issues encountered when building this app, and how to fix them.
 
 Then redeploy with `snow streamlit deploy --replace`.
 
-> aside negative
-> This is the most common deployment issue. The `st.secrets` mechanism reads from `.streamlit/secrets.toml` in both local dev and SiS, but only if the file is present in the container. Include it as a deployment artifact to make it available.
+> **Note:** This is the most common deployment issue. The `st.secrets` mechanism reads from `.streamlit/secrets.toml` in both local dev and SiS, but only if the file is present in the container. Include it as a deployment artifact to make it available.
 
 ### `ModuleNotFoundError: No module named '_snowflake'`
 
@@ -1609,7 +1590,6 @@ LIVE DATA FROM THE DATABASE:
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 ### What You Built
 
