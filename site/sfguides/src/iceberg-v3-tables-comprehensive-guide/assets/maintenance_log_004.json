@@ -1,0 +1,50 @@
+[
+  {
+    "log_id": "LOG-2026-004-001",
+    "vehicle_id": "VH-0033",
+    "log_timestamp": "2026-01-18T09:30:00",
+    "event_type": "SCHEDULED_MAINTENANCE",
+    "severity": "LOW",
+    "description": "30,000 mile service. Oil change, tire rotation, brake inspection, fluid top-off.",
+    "technician": "Amanda Wright",
+    "service_center": "Chicago Fleet Center",
+    "parts_replaced": ["oil filter", "engine oil 5W-30", "air filter", "cabin filter"],
+    "diagnostic_codes": [],
+    "labor_hours": 3.0,
+    "total_cost": 350.00,
+    "odometer_reading": 30125,
+    "next_service_date": "2026-04-18"
+  },
+  {
+    "log_id": "LOG-2026-004-002",
+    "vehicle_id": "VH-0098",
+    "log_timestamp": "2026-01-18T13:00:00",
+    "event_type": "SUSPENSION_REPAIR",
+    "severity": "HIGH",
+    "description": "Front strut replacement due to leaking. Alignment performed after installation.",
+    "technician": "Kevin Brown",
+    "service_center": "Chicago Fleet Center",
+    "parts_replaced": ["front struts - pair", "strut mounts"],
+    "diagnostic_codes": [],
+    "labor_hours": 5.5,
+    "total_cost": 780.00,
+    "odometer_reading": 145670,
+    "next_service_date": "2026-03-18"
+  },
+  {
+    "log_id": "LOG-2026-004-003",
+    "vehicle_id": "VH-0054",
+    "log_timestamp": "2026-01-18T16:15:00",
+    "event_type": "AC_SERVICE",
+    "severity": "MEDIUM",
+    "description": "AC not cooling properly. Recharged system and replaced expansion valve.",
+    "technician": "Michelle Lee",
+    "service_center": "Detroit Service Hub",
+    "parts_replaced": ["expansion valve", "refrigerant R134a"],
+    "diagnostic_codes": [],
+    "labor_hours": 3.5,
+    "total_cost": 425.00,
+    "odometer_reading": 67890,
+    "next_service_date": "2026-07-18"
+  }
+]

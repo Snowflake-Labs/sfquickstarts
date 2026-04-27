@@ -1,0 +1,16 @@
+date,product,price,orders,customers,region
+2024-01-01,Widget A,1250.50,45,32,North
+2024-01-02,Widget B,980.25,38,28,South
+2024-01-03,Widget A,1450.75,52,41,East
+2024-01-04,Widget C,2100.00,67,55,West
+2024-01-05,Widget B,875.30,33,25,North
+2024-01-06,Widget A,1680.90,58,44,South
+2024-01-07,Widget C,2340.15,71,59,East
+2024-01-08,Widget B,1120.40,42,35,West
+2024-01-09,Widget A,1590.60,54,42,North
+2024-01-10,Widget C,2050.80,65,52,South
+2024-01-11,Widget B,960.00,36,27,East
+2024-01-12,Widget A,1380.25,49,38,West
+2024-01-13,Widget C,2280.50,69,57,North
+2024-01-14,Widget B,1050.75,40,31,South
+2024-01-15,Widget A,1720.00,60,46,East

@@ -1,0 +1,84 @@
+Weekly manifest generation on first Friday merge (GitHub Actions)
+
+Overview
+- Trigger the manifest generator only when a pull request is merged into the default branch, only on Fridays, and only once per Friday (first merge).
+- Uses a sentinel git tag per date to ensure subsequent Friday merges do not run again.
+
+Instructions
+1) Create a workflow file at .github/workflows/manifest-weekly.yml in this repository.
+2) Paste the following workflow contents and adjust the target branch name (master vs main) if needed.
+3) Commit the workflow to the default branch.
+
+Example workflow (manifest-weekly.yml)
+```yaml
+name: Weekly manifest on first Friday merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]   # change to main if needed
+
+permissions:
+  contents: write
+
+jobs:
+  build-manifest:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Optional: set timezone if you don't want UTC
+      - name: Check Friday and sentinel
+        id: gate
+        run: |
+          DOW=$(date -u +%u)  # 5 == Friday (UTC)
+          if [ "$DOW" != "5" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch --tags --force
+          TAG="manifest-$(date -u +%Y-%m-%d)"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate manifest
+        if: steps.gate.outputs.run == 'true'
+        run: python3 "scripts/manifest generator.py"
+
+      - name: Commit and push manifest
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/sfguides/src/_shared_assets/quickstart-manifest.json
+          git commit -m "chore(manifest): weekly refresh (first Friday merge)"
+          git push
+
+      - name: Create sentinel tag
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          git tag "${{ steps.gate.outputs.tag }}"
+          git push origin "${{ steps.gate.outputs.tag }}"
+```
+
+Notes
+- Change branches: [master] to [main] if your default branch is main.
+- Timezone: The check uses UTC (date -u). To use a different timezone, export TZ before computing DOW or use a setup step to set the timezone.
+- Idempotency: The manifest-YYYY-MM-DD tag prevents multiple runs on the same Friday.
+- Requirements: The job needs permissions: contents: write to push the updated manifest and create the tag.
+- Git history: actions/checkout@v4 with fetch-depth: 0 is required for tags and for the generator to read git history for lastUpdatedAt.
+
+

@@ -1,0 +1,50 @@
+[
+  {
+    "log_id": "LOG-2026-007-001",
+    "vehicle_id": "VH-0008",
+    "log_timestamp": "2026-01-21T09:15:00",
+    "event_type": "TIRE_SERVICE",
+    "severity": "LOW",
+    "description": "Full set of tires replaced. Alignment and balancing completed.",
+    "technician": "Eric Johnson",
+    "service_center": "Los Angeles Fleet Center",
+    "parts_replaced": ["tires - set of 4", "valve stems"],
+    "diagnostic_codes": [],
+    "labor_hours": 2.0,
+    "total_cost": 850.00,
+    "odometer_reading": 78900,
+    "next_service_date": "2026-07-21"
+  },
+  {
+    "log_id": "LOG-2026-007-002",
+    "vehicle_id": "VH-0091",
+    "log_timestamp": "2026-01-21T13:45:00",
+    "event_type": "FUEL_SYSTEM",
+    "severity": "CRITICAL",
+    "description": "Fuel pump failure - vehicle stranded. Fuel pump and filter replaced. Fuel system cleaned.",
+    "technician": "Sandra White",
+    "service_center": "San Diego Fleet Hub",
+    "parts_replaced": ["fuel pump assembly", "fuel filter", "fuel strainer"],
+    "diagnostic_codes": ["P0230", "P0231"],
+    "labor_hours": 5.0,
+    "total_cost": 780.00,
+    "odometer_reading": 145670,
+    "next_service_date": "2026-02-07"
+  },
+  {
+    "log_id": "LOG-2026-007-003",
+    "vehicle_id": "VH-0037",
+    "log_timestamp": "2026-01-21T17:00:00",
+    "event_type": "HVAC_SERVICE",
+    "severity": "MEDIUM",
+    "description": "Heater core replacement. Coolant system flushed and refilled.",
+    "technician": "Daniel Clark",
+    "service_center": "Los Angeles Fleet Center",
+    "parts_replaced": ["heater core", "heater hoses", "coolant"],
+    "diagnostic_codes": [],
+    "labor_hours": 8.0,
+    "total_cost": 950.00,
+    "odometer_reading": 112340,
+    "next_service_date": "2026-04-21"
+  }
+]

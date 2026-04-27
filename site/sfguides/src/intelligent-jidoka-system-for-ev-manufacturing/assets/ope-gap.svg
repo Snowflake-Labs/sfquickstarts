@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400">
+  <!-- Background -->
+  <rect width="900" height="400" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" text-anchor="middle">The Hidden Factory: OEE vs OPE Gap Analysis</text>
+  <text x="450" y="58" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle">Traditional OEE metrics hide 25% of efficiency losses occurring between production steps</text>
+  
+  <!-- Chart Area -->
+  <rect x="60" y="85" width="780" height="240" rx="8" fill="#1e293b"/>
+  
+  <!-- Y-axis labels -->
+  <text x="50" y="105" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="end">100%</text>
+  <text x="50" y="145" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="end">90%</text>
+  <text x="50" y="185" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="end">80%</text>
+  <text x="50" y="225" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="end">70%</text>
+  <text x="50" y="265" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="end">60%</text>
+  <text x="50" y="305" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="end">50%</text>
+  
+  <!-- Grid lines -->
+  <line x1="60" y1="100" x2="840" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="60" y1="140" x2="840" y2="140" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="60" y1="180" x2="840" y2="180" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="60" y1="220" x2="840" y2="220" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="60" y1="260" x2="840" y2="260" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+  <line x1="60" y1="300" x2="840" y2="300" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
+  
+  <!-- Bar Groups - 5 Production Lines -->
+  <!-- Line 1 -->
+  <rect x="100" y="125" width="45" height="175" rx="4" fill="#10b981" opacity="0.8"/>
+  <rect x="150" y="195" width="45" height="105" rx="4" fill="#f59e0b" opacity="0.8"/>
+  <text x="147" y="335" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">LINE_1</text>
+  
+  <!-- Line 2 -->
+  <rect x="230" y="120" width="45" height="180" rx="4" fill="#10b981" opacity="0.8"/>
+  <rect x="280" y="180" width="45" height="120" rx="4" fill="#f59e0b" opacity="0.8"/>
+  <text x="277" y="335" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">LINE_2</text>
+  
+  <!-- Line 3 -->
+  <rect x="360" y="130" width="45" height="170" rx="4" fill="#10b981" opacity="0.8"/>
+  <rect x="410" y="190" width="45" height="110" rx="4" fill="#f59e0b" opacity="0.8"/>
+  <text x="407" y="335" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">LINE_3</text>
+  
+  <!-- Line 4 (Crisis Line) -->
+  <rect x="490" y="140" width="45" height="160" rx="4" fill="#10b981" opacity="0.8"/>
+  <rect x="540" y="230" width="45" height="70" rx="4" fill="#ef4444" opacity="0.9"/>
+  <text x="537" y="335" fill="#ef4444" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">LINE_4</text>
+  <!-- Gap indicator for Line 4 -->
+  <line x1="583" y1="140" x2="583" y2="230" stroke="#ef4444" stroke-width="2" stroke-dasharray="4"/>
+  <text x="595" y="185" fill="#ef4444" font-family="system-ui, sans-serif" font-size="10" font-weight="600">25% GAP</text>
+  
+  <!-- Line 5 -->
+  <rect x="620" y="125" width="45" height="175" rx="4" fill="#10b981" opacity="0.8"/>
+  <rect x="670" y="185" width="45" height="115" rx="4" fill="#f59e0b" opacity="0.8"/>
+  <text x="667" y="335" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">LINE_5</text>
+  
+  <!-- Legend -->
+  <rect x="750" y="100" width="12" height="12" rx="2" fill="#10b981"/>
+  <text x="768" y="111" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="11">OEE</text>
+  <rect x="750" y="120" width="12" height="12" rx="2" fill="#f59e0b"/>
+  <text x="768" y="131" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="11">OPE</text>
+  <rect x="750" y="140" width="12" height="12" rx="2" fill="#ef4444"/>
+  <text x="768" y="151" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="11">Crisis</text>
+  
+  <!-- Bottom Callout -->
+  <rect x="60" y="355" width="780" height="35" rx="6" fill="#ef444420" stroke="#ef4444" stroke-width="1"/>
+  <text x="450" y="378" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <tspan fill="#ef4444" font-weight="700">Line 4:</tspan> OEE shows 88% but actual OPE is only 63% — material starvation from AGV failures
+  </text>
+</svg>
+

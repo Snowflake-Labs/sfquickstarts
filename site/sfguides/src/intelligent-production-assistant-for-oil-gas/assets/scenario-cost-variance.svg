@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320">
+  <rect width="800" height="320" fill="#0F172A"/>
+  
+  <text x="400" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Scenario 3: Cost Variance (LOE)</text>
+  
+  <rect x="30" y="50" width="180" height="50" rx="6" fill="#1E40AF"/>
+  <text x="120" y="70" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">USER QUERY</text>
+  <text x="120" y="88" font-family="Arial, sans-serif" font-size="9" fill="#93C5FD" text-anchor="middle">"Why did LOE spike on Well-A10?"</text>
+  
+  <line x1="210" y1="75" x2="250" y2="75" stroke="#64748B" stroke-width="2"/>
+  <polygon points="260,75 250,70 250,80" fill="#64748B"/>
+  
+  <rect x="270" y="50" width="180" height="50" rx="6" fill="#7C3AED"/>
+  <text x="360" y="70" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">CORTEX ANALYST</text>
+  <text x="360" y="88" font-family="Arial, sans-serif" font-size="9" fill="#C4B5FD" text-anchor="middle">SELECT FROM FINANCIAL_ACTUALS</text>
+  
+  <line x1="450" y1="75" x2="490" y2="75" stroke="#64748B" stroke-width="2"/>
+  <polygon points="500,75 490,70 490,80" fill="#64748B"/>
+  
+  <rect x="510" y="50" width="180" height="50" rx="6" fill="#92400E"/>
+  <text x="600" y="70" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">VARIANCE FOUND</text>
+  <text x="600" y="88" font-family="Arial, sans-serif" font-size="9" fill="#FCD34D" text-anchor="middle">$50K "Chemicals" charge</text>
+  
+  <line x1="600" y1="100" x2="600" y2="130" stroke="#64748B" stroke-width="2"/>
+  <polygon points="600,140 595,130 605,130" fill="#64748B"/>
+  
+  <rect x="510" y="150" width="180" height="50" rx="6" fill="#14532D"/>
+  <text x="600" y="170" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">CORTEX SEARCH</text>
+  <text x="600" y="188" font-family="Arial, sans-serif" font-size="9" fill="#86EFAC" text-anchor="middle">"Well-A10 $50,000 chemicals"</text>
+  
+  <line x1="510" y1="175" x2="470" y2="175" stroke="#64748B" stroke-width="2"/>
+  <polygon points="460,175 470,170 470,180" fill="#64748B"/>
+  
+  <rect x="270" y="150" width="180" height="50" rx="6" fill="#065F46"/>
+  <text x="360" y="170" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">DOCUMENT RETRIEVED</text>
+  <text x="360" y="188" font-family="Arial, sans-serif" font-size="9" fill="#6EE7B7" text-anchor="middle">Apex Chemicals Invoice</text>
+  
+  <line x1="270" y1="175" x2="230" y2="175" stroke="#64748B" stroke-width="2"/>
+  <line x1="230" y1="175" x2="230" y2="250" stroke="#64748B" stroke-width="2"/>
+  <line x1="230" y1="250" x2="270" y2="250" stroke="#64748B" stroke-width="2"/>
+  <polygon points="280,250 270,245 270,255" fill="#64748B"/>
+  
+  <rect x="290" y="225" width="420" height="70" rx="8" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+  <text x="500" y="250" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#F59E0B" text-anchor="middle">AGENT RESPONSE</text>
+  <text x="500" y="270" font-family="Arial, sans-serif" font-size="10" fill="#FCD34D" text-anchor="middle">"LOE spiked due to emergency acid stimulation ($50K) to remove</text>
+  <text x="500" y="285" font-family="Arial, sans-serif" font-size="10" fill="#FCD34D" text-anchor="middle">scale buildup. Approved by Superintendent to restore flow."</text>
+</svg>

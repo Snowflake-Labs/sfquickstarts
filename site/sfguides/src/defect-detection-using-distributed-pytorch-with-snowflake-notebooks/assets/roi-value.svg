@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 350">
+  <defs>
+    <linearGradient id="cardGradROI" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#16a34a"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="350" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700">Business Value Realized</text>
+  <text x="450" y="58" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="13">For a manufacturer producing 1M boards annually at $50 avg. board cost</text>
+  
+  <!-- Metric Card 1: Scrap Reduction -->
+  <rect x="30" y="80" width="200" height="160" rx="12" fill="url(#cardGradROI)" stroke="#22c55e" stroke-width="2"/>
+  <rect x="30" y="80" width="200" height="8" rx="4" fill="url(#greenGrad)"/>
+  <text x="130" y="120" text-anchor="middle" fill="#4ade80" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1">SCRAP REDUCTION</text>
+  <text x="130" y="165" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="700">$750K</text>
+  <text x="130" y="195" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="12">Annual Savings</text>
+  <text x="130" y="220" text-anchor="middle" fill="#22c55e" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">↓ 15% Scrap</text>
+  
+  <!-- Metric Card 2: Labor Savings -->
+  <rect x="250" y="80" width="200" height="160" rx="12" fill="url(#cardGradROI)" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="250" y="80" width="200" height="8" rx="4" fill="url(#blueGrad)"/>
+  <text x="350" y="120" text-anchor="middle" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1">LABOR EFFICIENCY</text>
+  <text x="350" y="165" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="700">$200K</text>
+  <text x="350" y="195" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="12">Annual Savings</text>
+  <text x="350" y="220" text-anchor="middle" fill="#3b82f6" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">↓ 25% False Positives</text>
+  
+  <!-- Metric Card 3: Speed -->
+  <rect x="470" y="80" width="200" height="160" rx="12" fill="url(#cardGradROI)" stroke="#a855f7" stroke-width="2"/>
+  <rect x="470" y="80" width="200" height="8" rx="4" fill="#a855f7"/>
+  <text x="570" y="120" text-anchor="middle" fill="#c084fc" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1">TIME TO INSIGHT</text>
+  <text x="570" y="165" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="700">$150K</text>
+  <text x="570" y="195" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="12">Opportunity Cost</text>
+  <text x="570" y="220" text-anchor="middle" fill="#a855f7" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">Weeks → Real-Time</text>
+  
+  <!-- Metric Card 4: Total -->
+  <rect x="690" y="80" width="180" height="160" rx="12" fill="url(#cardGradROI)" stroke="#f59e0b" stroke-width="3"/>
+  <rect x="690" y="80" width="180" height="8" rx="4" fill="#f59e0b"/>
+  <text x="780" y="120" text-anchor="middle" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1">TOTAL VALUE</text>
+  <text x="780" y="165" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="700">$1.1M</text>
+  <text x="780" y="195" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="12">Annual Impact</text>
+  <text x="780" y="220" text-anchor="middle" fill="#f59e0b" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600">Year 1 ROI</text>
+  
+  <!-- Bottom summary -->
+  <rect x="30" y="260" width="840" height="70" rx="10" fill="url(#cardGradROI)" stroke="#334155" stroke-width="1"/>
+  
+  <text x="120" y="290" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">DEFECT RATE</text>
+  <text x="120" y="315" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">3% → 2.55%</text>
+  
+  <line x1="220" y1="275" x2="220" y2="320" stroke="#334155" stroke-width="1"/>
+  
+  <text x="340" y="290" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">FALSE POSITIVE RATE</text>
+  <text x="340" y="315" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">20% → 15%</text>
+  
+  <line x1="450" y1="275" x2="450" y2="320" stroke="#334155" stroke-width="1"/>
+  
+  <text x="560" y="290" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">REPORTING CYCLE</text>
+  <text x="560" y="315" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">Weekly → Live</text>
+  
+  <line x1="680" y1="275" x2="680" y2="320" stroke="#334155" stroke-width="1"/>
+  
+  <text x="780" y="290" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">MODEL ACCURACY</text>
+  <text x="780" y="315" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">mAP 0.85+</text>
+</svg>
+

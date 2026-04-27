@@ -1,0 +1,529 @@
+name: Publish Quickstart to AEM
+
+on:
+  workflow_call:
+    inputs:
+      quickstart_name:
+        description: 'Name of the quickstart folder'
+        required: true
+        type: string
+      language:
+        description: 'Language code (en, es, it, fr, de, ja, ko, pt_br)'
+        required: true
+        type: string
+      commit_sha:
+        description: 'Commit SHA for reference'
+        required: true
+        type: string
+      base_image_url:
+        description: 'Base URL for image references (e.g., CDN URL for prod, publish URL for dev/staging)'
+        required: true
+        type: string
+    secrets:
+      AEM_USERNAME:
+        description: 'AEM username for basic auth'
+        required: true
+      AEM_PASSWORD:
+        description: 'AEM password for basic auth'
+        required: true
+      AEM_AUTHOR_URL:
+        description: 'AEM author instance URL'
+        required: true
+      AEM_PUBLISH_URL:
+        description: 'AEM publish instance URL'
+        required: true
+
+env:
+  BASE_CF_PATH: /content/dam/snowflake-site/en/content-fragments/base-fragments/base-quickstart-cf
+  CF_DEST_PATH: /content/dam/snowflake-site
+  PAGE_BASE_PATH: /content/snowflake-site/global/en/developers/guides/quickstart-base
+  DAM_GUIDES_PATH: /content/dam/snowflake-site/developers/guides
+
+jobs:
+  publish_quickstart:
+    runs-on: ubuntu-latest
+    env:
+      AEM_USERNAME: ${{ secrets.AEM_USERNAME }}
+      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD }}
+      AEM_URL: ${{ secrets.AEM_AUTHOR_URL }}
+      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL }}
+      MAX_RETRIES: 3
+      RETRY_DELAY: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha }}
+          sparse-checkout: |
+            site/sfguides/src/${{ inputs.quickstart_name }}
+            scripts/aem-staging
+          sparse-checkout-cone-mode: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Create retry helper script
+        run: |
+          cat > /tmp/aem_retry.sh << 'RETRY_SCRIPT'
+          #!/bin/bash
+          # AEM API call with retry logic
+          # Usage: aem_retry.sh <method> <url> <data_file_or_string> [content_type]
+          
+          METHOD="$1"
+          URL="$2"
+          DATA="$3"
+          CONTENT_TYPE="${4:-application/x-www-form-urlencoded}"
+          MAX_RETRIES="${MAX_RETRIES:-3}"
+          RETRY_DELAY="${RETRY_DELAY:-5}"
+          
+          for attempt in $(seq 1 $MAX_RETRIES); do
+            echo "🔄 Attempt $attempt of $MAX_RETRIES: $METHOD $URL"
+            
+            if [ -f "$DATA" ]; then
+              response=$(curl -s -w "\n%{http_code}" -X "$METHOD" \
+                "$URL" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: $CONTENT_TYPE" \
+                --data-binary @"$DATA" 2>&1)
+            else
+              response=$(curl -s -w "\n%{http_code}" -X "$METHOD" \
+                "$URL" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: $CONTENT_TYPE" \
+                -d "$DATA" 2>&1)
+            fi
+            
+            http_code=$(echo "$response" | tail -n1)
+            body=$(echo "$response" | sed '$d')
+            
+            # Success
+            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+              echo "✅ Success (HTTP $http_code)"
+              echo "$body"
+              exit 0
+            fi
+            
+            # Rate limited (429) - wait longer
+            if [ "$http_code" -eq 429 ]; then
+              wait_time=$((RETRY_DELAY * 60))
+              echo "⏳ Rate limited (429). Waiting ${wait_time}s before retry..."
+              sleep $wait_time
+              continue
+            fi
+            
+            # Server error (5xx) - exponential backoff
+            if [ "$http_code" -ge 500 ]; then
+              wait_time=$((RETRY_DELAY * attempt * 2))
+              echo "⚠️ Server error (HTTP $http_code). Waiting ${wait_time}s before retry..."
+              sleep $wait_time
+              continue
+            fi
+            
+            # Client error (4xx except 429) - don't retry
+            if [ "$http_code" -ge 400 ] && [ "$http_code" -lt 500 ]; then
+              echo "❌ Client error (HTTP $http_code) - not retrying"
+              echo "$body"
+              exit 1
+            fi
+            
+            # Unknown error - retry with backoff
+            wait_time=$((RETRY_DELAY * attempt))
+            echo "⚠️ Unknown response (HTTP $http_code). Waiting ${wait_time}s before retry..."
+            sleep $wait_time
+          done
+          
+          echo "❌ Failed after $MAX_RETRIES attempts"
+          echo "$body"
+          exit 1
+          RETRY_SCRIPT
+          chmod +x /tmp/aem_retry.sh
+
+      - name: Find markdown file
+        id: find_md
+        run: |
+          md_file=$(find "site/sfguides/src/${{ inputs.quickstart_name }}" -maxdepth 1 -name "*.md" -type f | head -n1)
+          if [ -z "$md_file" ]; then
+            echo "❌ No markdown file found in ${{ inputs.quickstart_name }}"
+            exit 1
+          fi
+          echo "md_file=$md_file" >> $GITHUB_OUTPUT
+          echo "📄 Found markdown: $md_file"
+
+      - name: Parse markdown
+        id: parse_md
+        env:
+          COMMIT_SHA: ${{ inputs.commit_sha }}
+          QUICKSTART_NAME: ${{ inputs.quickstart_name }}
+          BASE_IMAGE_URL: "${{ inputs.base_image_url }}"
+        run: |
+          python3 scripts/aem-staging/parse_markdown.py \
+            "${{ steps.find_md.outputs.md_file }}" \
+            --commit-sha "$COMMIT_SHA" \
+            --quickstart-name "$QUICKSTART_NAME" \
+            --base-image-url "$BASE_IMAGE_URL" \
+            --strip-assets-prefix \
+            --output-json parsed_content.json
+          
+          echo "📄 Parsed markdown content:"
+          cat parsed_content.json
+
+      - name: Prepare AEM payload
+        id: prepare_payload
+        env:
+          LANGUAGE: ${{ inputs.language }}
+        run: |
+          cf_name="${{ inputs.quickstart_name }}"
+          cf_path="${CF_DEST_PATH}/${LANGUAGE}/content-fragments/quickstarts/${cf_name}"
+          
+          python3 scripts/aem-staging/prepare_aem_payload.py \
+            parsed_content.json \
+            --content-fragment-path "$cf_path" \
+            --language "$LANGUAGE" \
+            --output-json aem_payload.json
+          
+          echo "📦 AEM payload prepared:"
+          cat aem_payload.json
+
+      - name: Check if content fragment exists
+        id: check_cf
+        run: |
+          cf_path="${CF_DEST_PATH}/${{ inputs.language }}/content-fragments/quickstarts/${{ inputs.quickstart_name }}"
+          
+          echo "🔍 Checking if CF exists: $cf_path"
+          
+          check_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${AEM_URL}${cf_path}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+          
+          if [ "$check_code" -eq 200 ]; then
+            echo "✅ Content fragment exists"
+            echo "cf_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "📋 Content fragment does not exist (HTTP $check_code)"
+            echo "cf_exists=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "cf_path=$cf_path" >> $GITHUB_OUTPUT
+
+      - name: Copy base content fragment (if new)
+        if: steps.check_cf.outputs.cf_exists == 'false'
+        run: |
+          cf_name="${{ inputs.quickstart_name }}"
+          dest_path="${CF_DEST_PATH}/${{ inputs.language }}/content-fragments/quickstarts"
+          
+          echo "📋 Copying base CF to: $dest_path/$cf_name"
+          
+          /tmp/aem_retry.sh POST "${AEM_URL}${BASE_CF_PATH}" \
+            ":operation=copy&:dest=${dest_path}/${cf_name}&:replace=true&depth=infinity"
+          
+          echo "✅ Content fragment copied"
+          sleep 3
+
+      - name: Update content fragment with parsed content
+        run: |
+          cf_path="${{ steps.check_cf.outputs.cf_path }}"
+          
+          jq -r '.content_fragment_payload' aem_payload.json > cf_payload.txt
+          
+          echo "📝 Updating content fragment: $cf_path"
+          echo "   Title: $(jq -r '.title' parsed_content.json)"
+          
+          /tmp/aem_retry.sh POST "${AEM_URL}${cf_path}/jcr:content" cf_payload.txt
+          
+          echo "✅ Content fragment updated"
+
+      - name: Check if image folder exists
+        id: check_img_folder
+        run: |
+          dam_folder="${DAM_GUIDES_PATH}/${{ inputs.quickstart_name }}"
+          
+          check_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${AEM_URL}${dam_folder}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+          
+          if [ "$check_code" -eq 200 ]; then
+            echo "✅ Image folder exists"
+            echo "folder_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "📁 Image folder does not exist"
+            echo "folder_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload images to AEM DAM
+        run: |
+          assets_dir="site/sfguides/src/${{ inputs.quickstart_name }}/assets"
+          dam_folder="${DAM_GUIDES_PATH}/${{ inputs.quickstart_name }}"
+          folder_exists="${{ steps.check_img_folder.outputs.folder_exists }}"
+          
+          if [ ! -d "$assets_dir" ]; then
+            echo "📁 No assets folder found, skipping image upload"
+            exit 0
+          fi
+          
+          if [ "$folder_exists" = "false" ]; then
+            echo "📁 Creating DAM folder via Assets API: $dam_folder"
+            folder_response=$(curl -s -w "\n%{http_code}" -X POST \
+              "${AEM_URL}/api/assets/snowflake-site/developers/guides/*" \
+              -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+              -H "Content-Type: application/json" \
+              -d '{"class":"assetFolder","properties":{"name":"${{ inputs.quickstart_name }}","title":"${{ inputs.quickstart_name }}"}}')
+            folder_code=$(echo "$folder_response" | tail -n1)
+            echo "   Folder creation HTTP: $folder_code"
+            if [ "$folder_code" -lt 200 ] || [ "$folder_code" -ge 300 ]; then
+              echo "⚠️ Assets API folder creation returned $folder_code, trying Sling POST fallback..."
+              curl -s -X POST \
+                "${AEM_URL}${DAM_GUIDES_PATH}" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "./jcr:primaryType=sling:OrderedFolder" \
+                -d ":name=${{ inputs.quickstart_name }}" || true
+            fi
+            sleep 3
+          fi
+          
+          url_encode() {
+            python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+          }
+          
+          upload_image_with_retry() {
+            local img="$1"
+            local filename="$2"
+            local content_type="$3"
+            local dam_folder="$4"
+            local encoded_filename
+            encoded_filename=$(url_encode "$filename")
+            local attempt=1
+            local use_post=false
+            
+            while [ $attempt -le $MAX_RETRIES ]; do
+              if [ "$use_post" = "true" ]; then
+                echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (POST - new asset via Assets API)"
+                response=$(curl -s -w "\n%{http_code}" -X POST \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${encoded_filename}" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                  -H "Content-Type: ${content_type}" \
+                  --data-binary "@${img}" 2>&1)
+              else
+                echo "🔄 Upload attempt $attempt of $MAX_RETRIES: $filename (PUT - update)"
+                response=$(curl -s -w "\n%{http_code}" -X PUT \
+                  "${AEM_URL}/api/assets/snowflake-site/developers/guides/${{ inputs.quickstart_name }}/${encoded_filename}" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                  -H "Content-Type: ${content_type}" \
+                  --data-binary "@${img}" 2>&1)
+              fi
+              
+              http_code=$(echo "$response" | tail -n1)
+              
+              if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+                echo "✅ Upload successful (HTTP $http_code)"
+                return 0
+              elif [ "$http_code" -eq 404 ] && [ "$use_post" = "false" ]; then
+                echo "📋 Asset doesn't exist, switching to POST for creation"
+                use_post=true
+                continue
+              elif [ "$http_code" -eq 429 ]; then
+                wait_time=$((RETRY_DELAY * 60))
+                echo "⏳ Rate limited. Waiting ${wait_time}s..."
+                sleep $wait_time
+              elif [ "$http_code" -ge 500 ]; then
+                wait_time=$((RETRY_DELAY * attempt * 2))
+                echo "⚠️ Server error (HTTP $http_code). Waiting ${wait_time}s..."
+                sleep $wait_time
+              else
+                echo "⚠️ Upload failed (HTTP $http_code)"
+                echo "$response" | sed '$d'
+                return 1
+              fi
+              
+              attempt=$((attempt + 1))
+            done
+            
+            echo "❌ Upload failed after $MAX_RETRIES attempts"
+            return 1
+          }
+          
+          for img in "$assets_dir"/*; do
+            [ -f "$img" ] || continue
+            
+            filename=$(basename "$img")
+            extension="${filename##*.}"
+            extension_lower=$(echo "$extension" | tr '[:upper:]' '[:lower:]')
+            
+            case "$extension_lower" in
+              jpg|jpeg|png|gif|svg|webp|bmp|ico|tiff)
+                echo "📤 Uploading: $filename"
+                
+                content_type="image/$extension_lower"
+                [ "$extension_lower" = "jpg" ] && content_type="image/jpeg"
+                [ "$extension_lower" = "svg" ] && content_type="image/svg+xml"
+                
+                # Check if asset exists first
+                encoded_filename=$(url_encode "$filename")
+                check_code=$(curl -s -o /dev/null -w "%{http_code}" \
+                  "${AEM_URL}${dam_folder}/${encoded_filename}" \
+                  -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+                
+                is_new_asset="false"
+                if [ "$check_code" -ne 200 ]; then
+                  is_new_asset="true"
+                  echo "   📋 New asset - will use POST"
+                else
+                  echo "   📋 Existing asset - will use PUT"
+                fi
+                
+                upload_image_with_retry "$img" "$filename" "$content_type" "$dam_folder"
+                
+                echo "🔄 Reprocessing: $filename"
+                /tmp/aem_retry.sh POST "${AEM_URL}/bin/asynccommand" \
+                  "operation=PROCESS&asset=${dam_folder}/${encoded_filename}&profile-select=full-process" || true
+                
+                # New assets need more time to be fully indexed before publish
+                if [ "$is_new_asset" = "true" ]; then
+                  echo "⏳ Waiting 30s for new asset to be processed..."
+                  sleep 30
+                else
+                  sleep 2
+                fi
+                
+                echo "📢 Publishing image: $filename"
+                # Replicate with retry - 400 means asset not ready yet
+                for pub_attempt in 1 2 3; do
+                  pub_response=$(curl -s -w "\n%{http_code}" -X POST \
+                    "${AEM_URL}/bin/replicate.json" \
+                    -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                    -H "Content-Type: application/x-www-form-urlencoded" \
+                    -d "cmd=Activate" \
+                    -d "path=${dam_folder}/${encoded_filename}")
+                  
+                  pub_code=$(echo "$pub_response" | tail -n1)
+                  
+                  if [ "$pub_code" -ge 200 ] && [ "$pub_code" -lt 300 ]; then
+                    echo "✅ Image published (HTTP $pub_code)"
+                    break
+                  elif [ "$pub_code" -eq 400 ] && [ "$pub_attempt" -lt 3 ]; then
+                    echo "⏳ Publish not ready (400), waiting 15s... (attempt $pub_attempt/3)"
+                    sleep 15
+                  else
+                    echo "⚠️ Publish failed (HTTP $pub_code) - continuing"
+                    echo "$pub_response" | sed '$d'
+                    break
+                  fi
+                done
+                ;;
+              *)
+                echo "⏭️ Skipping non-image file: $filename"
+                ;;
+            esac
+          done
+          
+          echo "✅ Image upload complete"
+
+      - name: Wait for image processing
+        run: sleep 15
+
+      - name: Publish content fragment
+        run: |
+          cf_path="${{ steps.check_cf.outputs.cf_path }}"
+          
+          echo "📢 Publishing content fragment: $cf_path"
+          
+          /tmp/aem_retry.sh POST "${AEM_URL}/bin/replicate.json" \
+            "cmd=Activate&path=${cf_path}"
+          
+          echo "✅ Content fragment published"
+
+      - name: Check if page exists
+        id: check_page
+        run: |
+          page_path="/content/snowflake-site/global/${{ inputs.language }}/developers/guides/${{ inputs.quickstart_name }}"
+          
+          echo "🔍 Checking if page exists: $page_path"
+          
+          check_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${AEM_URL}${page_path}.json" \
+            -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+          
+          if [ "$check_code" -eq 200 ]; then
+            echo "✅ Page exists"
+            echo "page_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "📄 Page does not exist (HTTP $check_code)"
+            echo "page_exists=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "page_path=$page_path" >> $GITHUB_OUTPUT
+
+      - name: Create page from base (if new)
+        if: steps.check_page.outputs.page_exists == 'false'
+        run: |
+          page_path="${{ steps.check_page.outputs.page_path }}"
+          
+          echo "📄 Creating page: $page_path"
+          echo "   Source: ${PAGE_BASE_PATH}"
+          
+          /tmp/aem_retry.sh POST "${AEM_URL}${PAGE_BASE_PATH}" \
+            ":operation=copy&:dest=${page_path}&:replace=true"
+          
+          echo "✅ Page created"
+          sleep 8
+
+      - name: Update page content
+        run: |
+          page_path="${{ steps.check_page.outputs.page_path }}"
+          
+          jq -r '.page_payload' aem_payload.json > page_payload.txt
+          
+          echo "🔗 Updating page: $page_path"
+          
+          /tmp/aem_retry.sh POST "${AEM_URL}${page_path}" page_payload.txt
+          
+          echo "✅ Page updated"
+
+      - name: Wait for page processing
+        run: sleep 30
+
+      - name: Publish page (if status is Published)
+        run: |
+          page_path="${{ steps.check_page.outputs.page_path }}"
+          status=$(jq -r '.status // "Draft"' parsed_content.json)
+          
+          echo "📋 Quickstart status: $status"
+          
+          if [ "$status" = "Published" ]; then
+            echo "📢 Publishing page: $page_path"
+            
+            /tmp/aem_retry.sh POST "${AEM_URL}/bin/replicate.json" \
+              "cmd=Activate&path=${page_path}"
+            
+            echo "✅ Page published"
+          else
+            echo "⏭️ Skipping page publish (status is not Published)"
+          fi
+
+      - name: Summary
+        run: |
+          cf_path="${{ steps.check_cf.outputs.cf_path }}"
+          page_path="${{ steps.check_page.outputs.page_path }}"
+          cf_existed="${{ steps.check_cf.outputs.cf_exists }}"
+          page_existed="${{ steps.check_page.outputs.page_exists }}"
+          status=$(jq -r '.status // "Draft"' parsed_content.json)
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Publish Summary"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Quickstart: ${{ inputs.quickstart_name }}"
+          echo "Language: ${{ inputs.language }}"
+          echo "Status: $status"
+          echo ""
+          echo "Content Fragment: $cf_path"
+          echo "  - Was new: $([[ $cf_existed == 'false' ]] && echo 'Yes' || echo 'No')"
+          echo ""
+          echo "Page: $page_path"
+          echo "  - Was new: $([[ $page_existed == 'false' ]] && echo 'Yes' || echo 'No')"
+          echo "  - Published: $([[ $status == 'Published' ]] && echo 'Yes' || echo 'No')"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

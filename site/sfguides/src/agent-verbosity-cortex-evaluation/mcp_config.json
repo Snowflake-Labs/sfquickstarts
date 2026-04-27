@@ -1,0 +1,52 @@
+{
+  "dashboard": {
+    "port": 8534,
+    "description": "Agent Verbosity Comparison Dashboard",
+    "title": "Cross-Model Verbosity Comparison"
+  },
+  "mcp_servers": {
+    "WikiMCP": {
+      "port": 8531,
+      "description": "Wikipedia document retrieval for RAG",
+      "endpoints": ["/search", "/content"]
+    },
+    "ABTestMCP": {
+      "port": 8532,
+      "description": "A/B testing experiment framework",
+      "endpoints": ["/experiment/create", "/experiment/assign/{name}/{user_id}", "/experiment/{name}/record"]
+    },
+    "VerbosityMCP": {
+      "port": 8533,
+      "description": "Verbosity evaluation and compliance checking",
+      "endpoints": ["/evaluate", "/compliance"]
+    }
+  },
+  "models": {
+    "claude": {
+      "model_id": "claude-sonnet-4-5",
+      "supports_thinking": true
+    },
+    "mistral": {
+      "model_id": "mistral-large2",
+      "supports_thinking": false
+    },
+    "llama": {
+      "model_id": "llama3.1-70b",
+      "supports_thinking": false
+    }
+  },
+  "judge_models": {
+    "mixtral": "mixtral-8x7b",
+    "arctic": "snowflake-arctic"
+  },
+  "verbosity_levels": {
+    "minimal": {"max_lines": 1, "prompt": "1 line maximum. Single word/number when possible."},
+    "brief": {"max_lines": 3, "prompt": "Maximum 3 lines. No preamble or postamble."},
+    "standard": {"max_lines": 6, "prompt": "3-6 lines typical. Include context when helpful."},
+    "detailed": {"max_lines": 15, "prompt": "Full context with structure: Issue, Location, Risk, Fix."},
+    "verbose": {"max_lines": 50, "prompt": "Comprehensive with background, options, edge cases."},
+    "code_only": {"max_lines": 20, "prompt": "Return ONLY code blocks. No explanatory text."},
+    "explain": {"max_lines": 20, "prompt": "Explain the why and how behind everything."},
+    "step_by_step": {"max_lines": 25, "prompt": "Numbered, sequential walkthroughs."}
+  }
+}

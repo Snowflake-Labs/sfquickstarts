@@ -1,0 +1,50 @@
+[
+  {
+    "log_id": "LOG-2026-009-001",
+    "vehicle_id": "VH-0072",
+    "log_timestamp": "2026-01-23T10:00:00",
+    "event_type": "BRAKE_SERVICE",
+    "severity": "HIGH",
+    "description": "ABS warning light on. ABS module and wheel speed sensor replaced.",
+    "technician": "Gregory Nelson",
+    "service_center": "Chicago Fleet Center",
+    "parts_replaced": ["ABS module", "wheel speed sensor - front right", "brake fluid"],
+    "diagnostic_codes": ["C0035", "C0040"],
+    "labor_hours": 4.0,
+    "total_cost": 890.00,
+    "odometer_reading": 134500,
+    "next_service_date": "2026-03-23"
+  },
+  {
+    "log_id": "LOG-2026-009-002",
+    "vehicle_id": "VH-0016",
+    "log_timestamp": "2026-01-23T14:30:00",
+    "event_type": "COOLING_SYSTEM",
+    "severity": "MEDIUM",
+    "description": "Coolant leak at radiator. Radiator replaced along with upper and lower hoses.",
+    "technician": "Stephanie Davis",
+    "service_center": "Detroit Service Hub",
+    "parts_replaced": ["radiator", "radiator hoses - upper/lower", "coolant", "radiator cap"],
+    "diagnostic_codes": [],
+    "labor_hours": 4.5,
+    "total_cost": 675.00,
+    "odometer_reading": 98760,
+    "next_service_date": "2026-04-23"
+  },
+  {
+    "log_id": "LOG-2026-009-003",
+    "vehicle_id": "VH-0084",
+    "log_timestamp": "2026-01-23T17:15:00",
+    "event_type": "ENGINE_DIAGNOSTIC",
+    "severity": "MEDIUM",
+    "description": "Rough idle diagnosis. PCV valve and vacuum hoses replaced. EGR valve cleaned.",
+    "technician": "Andrew Hill",
+    "service_center": "Chicago Fleet Center",
+    "parts_replaced": ["PCV valve", "vacuum hoses", "EGR gasket"],
+    "diagnostic_codes": ["P0401", "P0505"],
+    "labor_hours": 3.0,
+    "total_cost": 285.00,
+    "odometer_reading": 156780,
+    "next_service_date": "2026-04-23"
+  }
+]

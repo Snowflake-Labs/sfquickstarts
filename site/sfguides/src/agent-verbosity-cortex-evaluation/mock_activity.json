@@ -1,0 +1,1096 @@
+[
+  {
+    "user_id": 1,
+    "action": "user_created",
+    "details": "Mock user at stage 2",
+    "timestamp": "2026-01-28T18:22:30.487231"
+  },
+  {
+    "user_id": 1,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-28T18:22:30.487231"
+  },
+  {
+    "user_id": 1,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-28T18:22:30.487231"
+  },
+  {
+    "user_id": 2,
+    "action": "user_created",
+    "details": "Mock user at stage 2",
+    "timestamp": "2026-01-20T18:22:30.487256"
+  },
+  {
+    "user_id": 2,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-20T18:22:30.487256"
+  },
+  {
+    "user_id": 2,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-20T18:22:30.487256"
+  },
+  {
+    "user_id": 3,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-01-26T18:22:30.487265"
+  },
+  {
+    "user_id": 3,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-26T18:22:30.487265"
+  },
+  {
+    "user_id": 3,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-26T18:22:30.487265"
+  },
+  {
+    "user_id": 3,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-26T18:22:30.487265"
+  },
+  {
+    "user_id": 4,
+    "action": "user_created",
+    "details": "Mock user at stage 5",
+    "timestamp": "2026-02-01T18:22:30.487273"
+  },
+  {
+    "user_id": 4,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487273"
+  },
+  {
+    "user_id": 4,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487273"
+  },
+  {
+    "user_id": 4,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487273"
+  },
+  {
+    "user_id": 4,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487273"
+  },
+  {
+    "user_id": 4,
+    "action": "step_test_successful_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487273"
+  },
+  {
+    "user_id": 5,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-05T18:22:30.487283"
+  },
+  {
+    "user_id": 5,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-05T18:22:30.487283"
+  },
+  {
+    "user_id": 5,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-05T18:22:30.487283"
+  },
+  {
+    "user_id": 5,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-05T18:22:30.487283"
+  },
+  {
+    "user_id": 6,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-01-30T18:22:30.487291"
+  },
+  {
+    "user_id": 6,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487291"
+  },
+  {
+    "user_id": 7,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-01-24T18:22:30.487295"
+  },
+  {
+    "user_id": 7,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-24T18:22:30.487295"
+  },
+  {
+    "user_id": 7,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-24T18:22:30.487295"
+  },
+  {
+    "user_id": 7,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-24T18:22:30.487295"
+  },
+  {
+    "user_id": 7,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-24T18:22:30.487295"
+  },
+  {
+    "user_id": 8,
+    "action": "user_created",
+    "details": "Mock user at stage 2",
+    "timestamp": "2026-02-09T18:22:30.487303"
+  },
+  {
+    "user_id": 8,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-09T18:22:30.487303"
+  },
+  {
+    "user_id": 8,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-09T18:22:30.487303"
+  },
+  {
+    "user_id": 9,
+    "action": "user_created",
+    "details": "Mock user at stage 0",
+    "timestamp": "2026-02-12T18:22:30.487308"
+  },
+  {
+    "user_id": 10,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-13T18:22:30.487312"
+  },
+  {
+    "user_id": 10,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-13T18:22:30.487312"
+  },
+  {
+    "user_id": 10,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-13T18:22:30.487312"
+  },
+  {
+    "user_id": 10,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-13T18:22:30.487312"
+  },
+  {
+    "user_id": 11,
+    "action": "user_created",
+    "details": "Mock user at stage 5",
+    "timestamp": "2026-01-30T18:22:30.487318"
+  },
+  {
+    "user_id": 11,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487318"
+  },
+  {
+    "user_id": 11,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487318"
+  },
+  {
+    "user_id": 11,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487318"
+  },
+  {
+    "user_id": 11,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487318"
+  },
+  {
+    "user_id": 11,
+    "action": "step_test_successful_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487318"
+  },
+  {
+    "user_id": 12,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-02T18:22:30.487327"
+  },
+  {
+    "user_id": 12,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487327"
+  },
+  {
+    "user_id": 12,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487327"
+  },
+  {
+    "user_id": 12,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487327"
+  },
+  {
+    "user_id": 13,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-02-18T18:22:30.487334"
+  },
+  {
+    "user_id": 13,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-18T18:22:30.487334"
+  },
+  {
+    "user_id": 13,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-18T18:22:30.487334"
+  },
+  {
+    "user_id": 13,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-18T18:22:30.487334"
+  },
+  {
+    "user_id": 13,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-18T18:22:30.487334"
+  },
+  {
+    "user_id": 14,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-03T18:22:30.487342"
+  },
+  {
+    "user_id": 14,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487342"
+  },
+  {
+    "user_id": 14,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487342"
+  },
+  {
+    "user_id": 14,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487342"
+  },
+  {
+    "user_id": 15,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-02T18:22:30.487349"
+  },
+  {
+    "user_id": 15,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487349"
+  },
+  {
+    "user_id": 15,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487349"
+  },
+  {
+    "user_id": 15,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487349"
+  },
+  {
+    "user_id": 16,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-02-16T18:22:30.487357"
+  },
+  {
+    "user_id": 16,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487357"
+  },
+  {
+    "user_id": 16,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487357"
+  },
+  {
+    "user_id": 16,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487357"
+  },
+  {
+    "user_id": 16,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487357"
+  },
+  {
+    "user_id": 17,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-02-07T18:22:30.487365"
+  },
+  {
+    "user_id": 17,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-07T18:22:30.487365"
+  },
+  {
+    "user_id": 18,
+    "action": "user_created",
+    "details": "Mock user at stage 5",
+    "timestamp": "2026-02-03T18:22:30.487369"
+  },
+  {
+    "user_id": 18,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487369"
+  },
+  {
+    "user_id": 18,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487369"
+  },
+  {
+    "user_id": 18,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487369"
+  },
+  {
+    "user_id": 18,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487369"
+  },
+  {
+    "user_id": 18,
+    "action": "step_test_successful_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-03T18:22:30.487369"
+  },
+  {
+    "user_id": 19,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-01-30T18:22:30.487378"
+  },
+  {
+    "user_id": 19,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487378"
+  },
+  {
+    "user_id": 19,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487378"
+  },
+  {
+    "user_id": 19,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487378"
+  },
+  {
+    "user_id": 19,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487378"
+  },
+  {
+    "user_id": 20,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-11T18:22:30.487385"
+  },
+  {
+    "user_id": 20,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-11T18:22:30.487385"
+  },
+  {
+    "user_id": 20,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-11T18:22:30.487385"
+  },
+  {
+    "user_id": 20,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-11T18:22:30.487385"
+  },
+  {
+    "user_id": 21,
+    "action": "user_created",
+    "details": "Mock user at stage 2",
+    "timestamp": "2026-01-30T18:22:30.487392"
+  },
+  {
+    "user_id": 21,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487392"
+  },
+  {
+    "user_id": 21,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-30T18:22:30.487392"
+  },
+  {
+    "user_id": 22,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-06T18:22:30.487397"
+  },
+  {
+    "user_id": 22,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-06T18:22:30.487397"
+  },
+  {
+    "user_id": 22,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-06T18:22:30.487397"
+  },
+  {
+    "user_id": 22,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-06T18:22:30.487397"
+  },
+  {
+    "user_id": 23,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-01-27T18:22:30.487404"
+  },
+  {
+    "user_id": 23,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-27T18:22:30.487404"
+  },
+  {
+    "user_id": 24,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-01-20T18:22:30.487408"
+  },
+  {
+    "user_id": 24,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-20T18:22:30.487408"
+  },
+  {
+    "user_id": 25,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-01-29T18:22:30.487412"
+  },
+  {
+    "user_id": 25,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-29T18:22:30.487412"
+  },
+  {
+    "user_id": 25,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-29T18:22:30.487412"
+  },
+  {
+    "user_id": 25,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-29T18:22:30.487412"
+  },
+  {
+    "user_id": 26,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-02-07T18:22:30.487419"
+  },
+  {
+    "user_id": 26,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-07T18:22:30.487419"
+  },
+  {
+    "user_id": 27,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-01-31T18:22:30.487425"
+  },
+  {
+    "user_id": 27,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-31T18:22:30.487425"
+  },
+  {
+    "user_id": 28,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-16T18:22:30.487429"
+  },
+  {
+    "user_id": 28,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487429"
+  },
+  {
+    "user_id": 28,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487429"
+  },
+  {
+    "user_id": 28,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487429"
+  },
+  {
+    "user_id": 29,
+    "action": "user_created",
+    "details": "Mock user at stage 5",
+    "timestamp": "2026-02-14T18:22:30.487435"
+  },
+  {
+    "user_id": 29,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-14T18:22:30.487435"
+  },
+  {
+    "user_id": 29,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-14T18:22:30.487435"
+  },
+  {
+    "user_id": 29,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-14T18:22:30.487435"
+  },
+  {
+    "user_id": 29,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-14T18:22:30.487435"
+  },
+  {
+    "user_id": 29,
+    "action": "step_test_successful_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-14T18:22:30.487435"
+  },
+  {
+    "user_id": 30,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-02-02T18:22:30.487443"
+  },
+  {
+    "user_id": 30,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487443"
+  },
+  {
+    "user_id": 30,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487443"
+  },
+  {
+    "user_id": 30,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487443"
+  },
+  {
+    "user_id": 30,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487443"
+  },
+  {
+    "user_id": 31,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-02-14T18:22:30.487452"
+  },
+  {
+    "user_id": 31,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-14T18:22:30.487452"
+  },
+  {
+    "user_id": 32,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-10T18:22:30.487456"
+  },
+  {
+    "user_id": 32,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-10T18:22:30.487456"
+  },
+  {
+    "user_id": 32,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-10T18:22:30.487456"
+  },
+  {
+    "user_id": 32,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-10T18:22:30.487456"
+  },
+  {
+    "user_id": 33,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-01T18:22:30.487462"
+  },
+  {
+    "user_id": 33,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487462"
+  },
+  {
+    "user_id": 33,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487462"
+  },
+  {
+    "user_id": 33,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-01T18:22:30.487462"
+  },
+  {
+    "user_id": 34,
+    "action": "user_created",
+    "details": "Mock user at stage 0",
+    "timestamp": "2026-02-13T18:22:30.487468"
+  },
+  {
+    "user_id": 35,
+    "action": "user_created",
+    "details": "Mock user at stage 5",
+    "timestamp": "2026-01-23T18:22:30.487471"
+  },
+  {
+    "user_id": 35,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487471"
+  },
+  {
+    "user_id": 35,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487471"
+  },
+  {
+    "user_id": 35,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487471"
+  },
+  {
+    "user_id": 35,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487471"
+  },
+  {
+    "user_id": 35,
+    "action": "step_test_successful_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487471"
+  },
+  {
+    "user_id": 36,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-02-16T18:22:30.487481"
+  },
+  {
+    "user_id": 36,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487481"
+  },
+  {
+    "user_id": 36,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487481"
+  },
+  {
+    "user_id": 36,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487481"
+  },
+  {
+    "user_id": 36,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487481"
+  },
+  {
+    "user_id": 37,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-02T18:22:30.487488"
+  },
+  {
+    "user_id": 37,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487488"
+  },
+  {
+    "user_id": 37,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487488"
+  },
+  {
+    "user_id": 37,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-02T18:22:30.487488"
+  },
+  {
+    "user_id": 38,
+    "action": "user_created",
+    "details": "Mock user at stage 0",
+    "timestamp": "2026-01-28T18:22:30.487494"
+  },
+  {
+    "user_id": 39,
+    "action": "user_created",
+    "details": "Mock user at stage 1",
+    "timestamp": "2026-02-17T18:22:30.487497"
+  },
+  {
+    "user_id": 39,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-17T18:22:30.487497"
+  },
+  {
+    "user_id": 40,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-01-22T18:22:30.487501"
+  },
+  {
+    "user_id": 40,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-22T18:22:30.487501"
+  },
+  {
+    "user_id": 40,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-22T18:22:30.487501"
+  },
+  {
+    "user_id": 40,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-22T18:22:30.487501"
+  },
+  {
+    "user_id": 40,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-22T18:22:30.487501"
+  },
+  {
+    "user_id": 41,
+    "action": "user_created",
+    "details": "Mock user at stage 0",
+    "timestamp": "2026-01-19T18:22:30.487508"
+  },
+  {
+    "user_id": 42,
+    "action": "user_created",
+    "details": "Mock user at stage 2",
+    "timestamp": "2026-01-25T18:22:30.487511"
+  },
+  {
+    "user_id": 42,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-25T18:22:30.487511"
+  },
+  {
+    "user_id": 42,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-25T18:22:30.487511"
+  },
+  {
+    "user_id": 43,
+    "action": "user_created",
+    "details": "Mock user at stage 2",
+    "timestamp": "2026-02-04T18:22:30.487516"
+  },
+  {
+    "user_id": 43,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-04T18:22:30.487516"
+  },
+  {
+    "user_id": 43,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-04T18:22:30.487516"
+  },
+  {
+    "user_id": 44,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-01-24T18:22:30.487521"
+  },
+  {
+    "user_id": 44,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-24T18:22:30.487521"
+  },
+  {
+    "user_id": 44,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-24T18:22:30.487521"
+  },
+  {
+    "user_id": 44,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-24T18:22:30.487521"
+  },
+  {
+    "user_id": 45,
+    "action": "user_created",
+    "details": "Mock user at stage 2",
+    "timestamp": "2026-01-22T18:22:30.487527"
+  },
+  {
+    "user_id": 45,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-22T18:22:30.487527"
+  },
+  {
+    "user_id": 45,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-22T18:22:30.487527"
+  },
+  {
+    "user_id": 46,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-01-25T18:22:30.487533"
+  },
+  {
+    "user_id": 46,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-25T18:22:30.487533"
+  },
+  {
+    "user_id": 46,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-25T18:22:30.487533"
+  },
+  {
+    "user_id": 46,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-25T18:22:30.487533"
+  },
+  {
+    "user_id": 47,
+    "action": "user_created",
+    "details": "Mock user at stage 4",
+    "timestamp": "2026-01-31T18:22:30.487539"
+  },
+  {
+    "user_id": 47,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-31T18:22:30.487539"
+  },
+  {
+    "user_id": 47,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-31T18:22:30.487539"
+  },
+  {
+    "user_id": 47,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-31T18:22:30.487539"
+  },
+  {
+    "user_id": 47,
+    "action": "step_settings_configured_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-31T18:22:30.487539"
+  },
+  {
+    "user_id": 48,
+    "action": "user_created",
+    "details": "Mock user at stage 0",
+    "timestamp": "2026-02-15T18:22:30.487546"
+  },
+  {
+    "user_id": 49,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-02-16T18:22:30.487549"
+  },
+  {
+    "user_id": 49,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487549"
+  },
+  {
+    "user_id": 49,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487549"
+  },
+  {
+    "user_id": 49,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-02-16T18:22:30.487549"
+  },
+  {
+    "user_id": 50,
+    "action": "user_created",
+    "details": "Mock user at stage 3",
+    "timestamp": "2026-01-23T18:22:30.487555"
+  },
+  {
+    "user_id": 50,
+    "action": "step_cli_installed_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487555"
+  },
+  {
+    "user_id": 50,
+    "action": "step_network_policy_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487555"
+  },
+  {
+    "user_id": 50,
+    "action": "step_pat_created_completed",
+    "details": "Mock completion",
+    "timestamp": "2026-01-23T18:22:30.487555"
+  },
+  {
+    "user_id": 1,
+    "step_name": "cli_installed",
+    "action": "uncompleted",
+    "timestamp": "2026-02-19T18:09:12.471425",
+    "details": null
+  },
+  {
+    "user_id": 1,
+    "step_name": "cli_installed",
+    "action": "completed",
+    "timestamp": "2026-02-19T19:22:17.124782",
+    "details": "Version: 2.1.47"
+  }
+]

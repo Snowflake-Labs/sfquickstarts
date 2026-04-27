@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "email": "ivy.jones0@globex.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "admin",
+    "created_at": "2026-01-28T18:22:30.487231"
+  },
+  {
+    "id": 2,
+    "email": "olivia.davis1@umbrella.corp",
+    "snowflake_account": "INITECH_QA",
+    "snowflake_url": "https://initech-qa.snowflakecomputing.com",
+    "role": "admin",
+    "created_at": "2026-01-20T18:22:30.487256"
+  },
+  {
+    "id": 3,
+    "email": "jack.jones2@umbrella.corp",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "admin",
+    "created_at": "2026-01-26T18:22:30.487265"
+  },
+  {
+    "id": 4,
+    "email": "diana.taylor3@acme.com",
+    "snowflake_account": "UMBRELLA_STAGE",
+    "snowflake_url": "https://umbrella-stage.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-01T18:22:30.487273"
+  },
+  {
+    "id": 5,
+    "email": "rose.johnson4@globex.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-05T18:22:30.487283"
+  },
+  {
+    "id": 6,
+    "email": "mia.garcia5@acme.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-30T18:22:30.487291"
+  },
+  {
+    "id": 7,
+    "email": "eve.brown6@wayne.enterprises",
+    "snowflake_account": "STARK_DEV",
+    "snowflake_url": "https://stark-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-24T18:22:30.487295"
+  },
+  {
+    "id": 8,
+    "email": "diana.smith7@wayne.enterprises",
+    "snowflake_account": "STARK_DEV",
+    "snowflake_url": "https://stark-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-09T18:22:30.487303"
+  },
+  {
+    "id": 9,
+    "email": "alice.williams8@umbrella.corp",
+    "snowflake_account": "WAYNE_PROD",
+    "snowflake_url": "https://wayne-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-12T18:22:30.487308"
+  },
+  {
+    "id": 10,
+    "email": "ivy.garcia9@wayne.enterprises",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-13T18:22:30.487312"
+  },
+  {
+    "id": 11,
+    "email": "rose.taylor10@stark.industries",
+    "snowflake_account": "WAYNE_PROD",
+    "snowflake_url": "https://wayne-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-30T18:22:30.487318"
+  },
+  {
+    "id": 12,
+    "email": "bob.johnson11@initech.com",
+    "snowflake_account": "STARK_DEV",
+    "snowflake_url": "https://stark-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-02T18:22:30.487327"
+  },
+  {
+    "id": 13,
+    "email": "noah.wilson12@globex.com",
+    "snowflake_account": "UMBRELLA_STAGE",
+    "snowflake_url": "https://umbrella-stage.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-18T18:22:30.487334"
+  },
+  {
+    "id": 14,
+    "email": "kate.taylor13@initech.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-03T18:22:30.487342"
+  },
+  {
+    "id": 15,
+    "email": "paul.miller14@umbrella.corp",
+    "snowflake_account": "WAYNE_PROD",
+    "snowflake_url": "https://wayne-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-02T18:22:30.487349"
+  },
+  {
+    "id": 16,
+    "email": "bob.wilson15@umbrella.corp",
+    "snowflake_account": "UMBRELLA_STAGE",
+    "snowflake_url": "https://umbrella-stage.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-16T18:22:30.487357"
+  },
+  {
+    "id": 17,
+    "email": "eve.taylor16@acme.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-07T18:22:30.487365"
+  },
+  {
+    "id": 18,
+    "email": "sam.jones17@globex.com",
+    "snowflake_account": "WAYNE_PROD",
+    "snowflake_url": "https://wayne-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-03T18:22:30.487369"
+  },
+  {
+    "id": 19,
+    "email": "ivy.jones18@acme.com",
+    "snowflake_account": "UMBRELLA_STAGE",
+    "snowflake_url": "https://umbrella-stage.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-30T18:22:30.487378"
+  },
+  {
+    "id": 20,
+    "email": "quinn.williams19@acme.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-11T18:22:30.487385"
+  },
+  {
+    "id": 21,
+    "email": "eve.taylor20@globex.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-30T18:22:30.487392"
+  },
+  {
+    "id": 22,
+    "email": "frank.davis21@initech.com",
+    "snowflake_account": "WAYNE_PROD",
+    "snowflake_url": "https://wayne-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-06T18:22:30.487397"
+  },
+  {
+    "id": 23,
+    "email": "leo.johnson22@initech.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-27T18:22:30.487404"
+  },
+  {
+    "id": 24,
+    "email": "tara.jones23@acme.com",
+    "snowflake_account": "WAYNE_PROD",
+    "snowflake_url": "https://wayne-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-20T18:22:30.487408"
+  },
+  {
+    "id": 25,
+    "email": "tara.miller24@umbrella.corp",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-29T18:22:30.487412"
+  },
+  {
+    "id": 26,
+    "email": "grace.miller25@acme.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-07T18:22:30.487419"
+  },
+  {
+    "id": 27,
+    "email": "rose.brown26@wayne.enterprises",
+    "snowflake_account": "WAYNE_PROD",
+    "snowflake_url": "https://wayne-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-31T18:22:30.487425"
+  },
+  {
+    "id": 28,
+    "email": "eve.miller27@globex.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-16T18:22:30.487429"
+  },
+  {
+    "id": 29,
+    "email": "ivy.davis28@umbrella.corp",
+    "snowflake_account": "INITECH_QA",
+    "snowflake_url": "https://initech-qa.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-14T18:22:30.487435"
+  },
+  {
+    "id": 30,
+    "email": "noah.taylor29@initech.com",
+    "snowflake_account": "INITECH_QA",
+    "snowflake_url": "https://initech-qa.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-02T18:22:30.487443"
+  },
+  {
+    "id": 31,
+    "email": "charlie.jones30@wayne.enterprises",
+    "snowflake_account": "INITECH_QA",
+    "snowflake_url": "https://initech-qa.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-14T18:22:30.487452"
+  },
+  {
+    "id": 32,
+    "email": "leo.smith31@globex.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-10T18:22:30.487456"
+  },
+  {
+    "id": 33,
+    "email": "mia.wilson32@umbrella.corp",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-01T18:22:30.487462"
+  },
+  {
+    "id": 34,
+    "email": "kate.jones33@stark.industries",
+    "snowflake_account": "STARK_DEV",
+    "snowflake_url": "https://stark-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-13T18:22:30.487468"
+  },
+  {
+    "id": 35,
+    "email": "henry.miller34@umbrella.corp",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-23T18:22:30.487471"
+  },
+  {
+    "id": 36,
+    "email": "leo.johnson35@initech.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-16T18:22:30.487481"
+  },
+  {
+    "id": 37,
+    "email": "olivia.miller36@wayne.enterprises",
+    "snowflake_account": "STARK_DEV",
+    "snowflake_url": "https://stark-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-02T18:22:30.487488"
+  },
+  {
+    "id": 38,
+    "email": "diana.johnson37@acme.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-28T18:22:30.487494"
+  },
+  {
+    "id": 39,
+    "email": "diana.miller38@initech.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-17T18:22:30.487497"
+  },
+  {
+    "id": 40,
+    "email": "leo.taylor39@umbrella.corp",
+    "snowflake_account": "UMBRELLA_STAGE",
+    "snowflake_url": "https://umbrella-stage.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-22T18:22:30.487501"
+  },
+  {
+    "id": 41,
+    "email": "jack.williams40@wayne.enterprises",
+    "snowflake_account": "INITECH_QA",
+    "snowflake_url": "https://initech-qa.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-19T18:22:30.487508"
+  },
+  {
+    "id": 42,
+    "email": "eve.jones41@globex.com",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-25T18:22:30.487511"
+  },
+  {
+    "id": 43,
+    "email": "noah.williams42@stark.industries",
+    "snowflake_account": "UMBRELLA_STAGE",
+    "snowflake_url": "https://umbrella-stage.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-04T18:22:30.487516"
+  },
+  {
+    "id": 44,
+    "email": "sam.davis43@umbrella.corp",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-24T18:22:30.487521"
+  },
+  {
+    "id": 45,
+    "email": "rose.wilson44@umbrella.corp",
+    "snowflake_account": "INITECH_QA",
+    "snowflake_url": "https://initech-qa.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-22T18:22:30.487527"
+  },
+  {
+    "id": 46,
+    "email": "jack.taylor45@globex.com",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-25T18:22:30.487533"
+  },
+  {
+    "id": 47,
+    "email": "frank.davis46@stark.industries",
+    "snowflake_account": "GLOBEX_DEV",
+    "snowflake_url": "https://globex-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-31T18:22:30.487539"
+  },
+  {
+    "id": 48,
+    "email": "grace.davis47@stark.industries",
+    "snowflake_account": "ACME_PROD",
+    "snowflake_url": "https://acme-prod.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-15T18:22:30.487546"
+  },
+  {
+    "id": 49,
+    "email": "grace.garcia48@initech.com",
+    "snowflake_account": "INITECH_QA",
+    "snowflake_url": "https://initech-qa.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-02-16T18:22:30.487549"
+  },
+  {
+    "id": 50,
+    "email": "rose.smith49@initech.com",
+    "snowflake_account": "STARK_DEV",
+    "snowflake_url": "https://stark-dev.snowflakecomputing.com",
+    "role": "user",
+    "created_at": "2026-01-23T18:22:30.487555"
+  }
+]

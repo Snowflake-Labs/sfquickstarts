@@ -1,0 +1,353 @@
+/*=============================================================================
+  15 - VALIDATION QUERIES
+  Healthcare AI Intelligence Pipeline
+
+  End-to-end test and validation queries for every component:
+    A. File ingestion verification
+    B. Manual proc invocation
+    C. PDF_INTELLIGENCE validation (9 AI functions)
+    D. TXT_INTELLIGENCE validation (8 AI functions)
+    E. AUDIO_INTELLIGENCE validation (8 AI functions)
+    F. Cortex Search tests
+    G. Cortex Analyst / structured data tests
+    H. AI function showcase (AI_SIMILARITY, AI_SUMMARIZE_AGG)
+
+  Depends on: all prior scripts (01-13)
+=============================================================================*/
+
+USE ROLE ACCOUNTADMIN;
+USE DATABASE HEALTHCARE_AI_DEMO;
+USE WAREHOUSE HEALTHCARE_AI_WH;
+
+/*=========================================================================
+  SECTION A: FILE INGESTION VERIFICATION
+=========================================================================*/
+
+-- Files in landing zone by type and processing status
+SELECT
+  FILE_TYPE,
+  COUNT(*)                                            AS TOTAL_FILES,
+  SUM(CASE WHEN IS_PROCESSED THEN 1 ELSE 0 END)      AS PROCESSED,
+  SUM(CASE WHEN NOT IS_PROCESSED THEN 1 ELSE 0 END)   AS PENDING
+FROM RAW.FILES_LOG
+GROUP BY FILE_TYPE
+ORDER BY FILE_TYPE;
+
+-- Stream status
+SELECT SYSTEM$STREAM_HAS_DATA('RAW.FILES_LOG_STREAM') AS HAS_UNPROCESSED_FILES;
+
+-- List files on stages
+LIST @RAW.S3_MEDICAL_DOCS;
+LIST @RAW.S3_MEDICAL_TXT;
+LIST @RAW.S3_MEDICAL_AUDIO;
+
+-- File counts per stage
+SELECT 'PDFs'  AS FILE_TYPE, COUNT(*) AS FILE_COUNT FROM DIRECTORY(@RAW.S3_MEDICAL_DOCS)
+UNION ALL
+SELECT 'TXT',  COUNT(*) FROM DIRECTORY(@RAW.S3_MEDICAL_TXT)
+UNION ALL
+SELECT 'Audio', COUNT(*) FROM DIRECTORY(@RAW.S3_MEDICAL_AUDIO);
+
+-- Pipe copy history (last 24 hours)
+SELECT PIPE_NAME, FILE_NAME, STATUS, ROW_COUNT, ERROR_MESSAGE, LAST_LOAD_TIME
+FROM TABLE(INFORMATION_SCHEMA.COPY_HISTORY(
+  TABLE_NAME   => 'RAW.FILES_LOG',
+  START_TIME   => DATEADD(HOUR, -24, CURRENT_TIMESTAMP())
+))
+ORDER BY LAST_LOAD_TIME DESC
+LIMIT 20;
+
+/*=========================================================================
+  SECTION B: MANUAL PROCESSING
+=========================================================================*/
+
+-- Call individual procs directly:
+-- CALL PROCESSED.PROCESS_PDF_FILES();
+-- CALL PROCESSED.PROCESS_TXT_FILES();
+-- CALL PROCESSED.PROCESS_AUDIO_FILES();
+
+-- Or call the orchestrator:
+-- CALL PROCESSED.PROCESS_NEW_FILES();
+
+/*=========================================================================
+  SECTION C: PDF_INTELLIGENCE VALIDATION
+=========================================================================*/
+
+-- Overview
+SELECT DOC_ID, FILE_NAME, DOC_CATEGORY, DETECTED_LANGUAGE, PROCESSED_AT
+FROM PROCESSED.PDF_INTELLIGENCE
+ORDER BY PROCESSED_AT DESC;
+
+-- AI_PARSE_DOCUMENT — text extracted?
+SELECT DOC_ID, FILE_NAME,
+       LENGTH(PARSED_TEXT) AS TEXT_LENGTH,
+       PARSED_LAYOUT IS NOT NULL AS HAS_LAYOUT
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+-- AI_EXTRACT — structured fields?
+SELECT DOC_ID, FILE_NAME,
+       EXTRACTED_FIELDS:patient_name::VARCHAR   AS PATIENT,
+       EXTRACTED_FIELDS:provider_name::VARCHAR   AS PROVIDER,
+       EXTRACTED_FIELDS:diagnosis::VARCHAR        AS DIAGNOSIS,
+       EXTRACTED_FIELDS:medications              AS MEDICATIONS,
+       EXTRACTED_FIELDS:total_amount::FLOAT      AS AMOUNT
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+-- AI_CLASSIFY — document categorization?
+SELECT DOC_ID, FILE_NAME, DOC_CATEGORY, DOC_CATEGORY_CONFIDENCE
+FROM PROCESSED.PDF_INTELLIGENCE
+ORDER BY DOC_CATEGORY_CONFIDENCE DESC;
+
+-- AI_SENTIMENT — sentiment scores?
+SELECT DOC_ID, FILE_NAME,
+       SENTIMENT_SCORE,
+       SENTIMENT_DIMENSIONS:urgency::FLOAT              AS URGENCY,
+       SENTIMENT_DIMENSIONS:clinical_concern::FLOAT     AS CONCERN,
+       SENTIMENT_DIMENSIONS:patient_satisfaction::FLOAT  AS SATISFACTION
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+-- AI_SUMMARIZE — summaries?
+SELECT DOC_ID, FILE_NAME, SUMMARY
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+-- AI_TRANSLATE — language detection?
+SELECT DOC_ID, FILE_NAME, DETECTED_LANGUAGE,
+       CASE WHEN TRANSLATED_TEXT IS NOT NULL THEN 'Yes' ELSE 'No' END AS WAS_TRANSLATED
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+-- AI_REDACT — PII removed?
+SELECT DOC_ID, FILE_NAME,
+       LEFT(PARSED_TEXT, 200)   AS ORIGINAL_SNIPPET,
+       LEFT(REDACTED_TEXT, 200) AS REDACTED_SNIPPET
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+-- AI_COMPLETE — insights generated?
+SELECT DOC_ID, FILE_NAME, KEY_INSIGHTS
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+-- AI_EMBED — embeddings?
+SELECT DOC_ID, FILE_NAME, EMBEDDING IS NOT NULL AS HAS_EMBEDDING
+FROM PROCESSED.PDF_INTELLIGENCE;
+
+/*=========================================================================
+  SECTION D: TXT_INTELLIGENCE VALIDATION
+=========================================================================*/
+
+-- Overview
+SELECT TXT_ID, FILE_NAME, DOC_CATEGORY, DETECTED_LANGUAGE, PROCESSED_AT
+FROM PROCESSED.TXT_INTELLIGENCE
+ORDER BY PROCESSED_AT DESC;
+
+-- Raw text content
+SELECT TXT_ID, FILE_NAME, LENGTH(RAW_TEXT) AS TEXT_LENGTH
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+-- AI_EXTRACT
+SELECT TXT_ID, FILE_NAME,
+       EXTRACTED_FIELDS:patient_name::VARCHAR   AS PATIENT,
+       EXTRACTED_FIELDS:provider_name::VARCHAR   AS PROVIDER,
+       EXTRACTED_FIELDS:diagnosis::VARCHAR        AS DIAGNOSIS,
+       EXTRACTED_FIELDS:medications              AS MEDICATIONS
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+-- AI_CLASSIFY
+SELECT TXT_ID, FILE_NAME, DOC_CATEGORY, DOC_CATEGORY_CONFIDENCE
+FROM PROCESSED.TXT_INTELLIGENCE
+ORDER BY DOC_CATEGORY_CONFIDENCE DESC;
+
+-- AI_SENTIMENT
+SELECT TXT_ID, FILE_NAME,
+       SENTIMENT_SCORE,
+       SENTIMENT_DIMENSIONS:urgency::FLOAT              AS URGENCY,
+       SENTIMENT_DIMENSIONS:clinical_concern::FLOAT     AS CONCERN,
+       SENTIMENT_DIMENSIONS:patient_satisfaction::FLOAT  AS SATISFACTION
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+-- AI_SUMMARIZE
+SELECT TXT_ID, FILE_NAME, SUMMARY
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+-- AI_TRANSLATE
+SELECT TXT_ID, FILE_NAME, DETECTED_LANGUAGE,
+       CASE WHEN TRANSLATED_TEXT IS NOT NULL THEN 'Yes' ELSE 'No' END AS WAS_TRANSLATED
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+-- AI_REDACT
+SELECT TXT_ID, FILE_NAME,
+       LEFT(RAW_TEXT, 200)      AS ORIGINAL_SNIPPET,
+       LEFT(REDACTED_TEXT, 200) AS REDACTED_SNIPPET
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+-- AI_COMPLETE
+SELECT TXT_ID, FILE_NAME, KEY_INSIGHTS
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+-- AI_EMBED
+SELECT TXT_ID, FILE_NAME, EMBEDDING IS NOT NULL AS HAS_EMBEDDING
+FROM PROCESSED.TXT_INTELLIGENCE;
+
+/*=========================================================================
+  SECTION E: AUDIO_INTELLIGENCE VALIDATION
+=========================================================================*/
+
+-- Overview
+SELECT AUDIO_ID, FILE_NAME, CALL_CATEGORY, AUDIO_DURATION_SECS,
+       SPEAKER_COUNT, DETECTED_LANGUAGE, PROCESSED_AT
+FROM PROCESSED.AUDIO_INTELLIGENCE
+ORDER BY PROCESSED_AT DESC;
+
+-- AI_TRANSCRIBE
+SELECT AUDIO_ID, FILE_NAME,
+       LENGTH(TRANSCRIPT_TEXT) AS TRANSCRIPT_LENGTH,
+       AUDIO_DURATION_SECS,
+       SPEAKER_COUNT
+FROM PROCESSED.AUDIO_INTELLIGENCE;
+
+-- AI_EXTRACT
+SELECT AUDIO_ID, FILE_NAME,
+       EXTRACTED_FIELDS:patient_name::VARCHAR         AS PATIENT,
+       EXTRACTED_FIELDS:provider_name::VARCHAR         AS PROVIDER,
+       EXTRACTED_FIELDS:chief_complaint::VARCHAR       AS CHIEF_COMPLAINT,
+       EXTRACTED_FIELDS:medications_discussed          AS MEDICATIONS,
+       EXTRACTED_FIELDS:follow_up_actions              AS FOLLOW_UPS
+FROM PROCESSED.AUDIO_INTELLIGENCE;
+
+-- AI_CLASSIFY
+SELECT AUDIO_ID, FILE_NAME, CALL_CATEGORY, CALL_CATEGORY_CONFIDENCE
+FROM PROCESSED.AUDIO_INTELLIGENCE;
+
+-- AI_SENTIMENT
+SELECT AUDIO_ID, FILE_NAME,
+       SENTIMENT_SCORE,
+       SENTIMENT_DIMENSIONS:empathy::FLOAT           AS EMPATHY,
+       SENTIMENT_DIMENSIONS:clinical_clarity::FLOAT  AS CLARITY,
+       SENTIMENT_DIMENSIONS:patient_anxiety::FLOAT   AS ANXIETY,
+       SENTIMENT_DIMENSIONS:resolution::FLOAT        AS RESOLUTION
+FROM PROCESSED.AUDIO_INTELLIGENCE;
+
+-- AI_SUMMARIZE
+SELECT AUDIO_ID, FILE_NAME, SUMMARY
+FROM PROCESSED.AUDIO_INTELLIGENCE;
+
+-- AI_COMPLETE — SOAP notes
+SELECT AUDIO_ID, FILE_NAME, CONSULTATION_NOTES
+FROM PROCESSED.AUDIO_INTELLIGENCE;
+
+-- AI_EMBED
+SELECT AUDIO_ID, FILE_NAME, EMBEDDING IS NOT NULL AS HAS_EMBEDDING
+FROM PROCESSED.AUDIO_INTELLIGENCE;
+
+/*=========================================================================
+  SECTION F: CORTEX SEARCH TESTS
+=========================================================================*/
+
+-- Search PDF documents
+-- SELECT *
+-- FROM TABLE(
+--   HEALTHCARE_AI_DEMO.PROCESSED.PDF_SEARCH.SEARCH(
+--     QUERY => 'diabetes diagnosis and treatment plan',
+--     COLUMNS => ARRAY_CONSTRUCT('FILE_NAME', 'DOC_CATEGORY', 'PATIENT_NAME', 'DIAGNOSIS', 'SENTIMENT_SCORE'),
+--     LIMIT => 5
+--   )
+-- );
+
+-- Search TXT documents
+-- SELECT *
+-- FROM TABLE(
+--   HEALTHCARE_AI_DEMO.PROCESSED.TXT_SEARCH.SEARCH(
+--     QUERY => 'clinical notes about medication changes',
+--     COLUMNS => ARRAY_CONSTRUCT('FILE_NAME', 'DOC_CATEGORY', 'PATIENT_NAME', 'DIAGNOSIS', 'SENTIMENT_SCORE'),
+--     LIMIT => 5
+--   )
+-- );
+
+-- Search audio transcripts
+-- SELECT *
+-- FROM TABLE(
+--   HEALTHCARE_AI_DEMO.PROCESSED.AUDIO_SEARCH.SEARCH(
+--     QUERY => 'medication changes and side effects discussed',
+--     COLUMNS => ARRAY_CONSTRUCT('FILE_NAME', 'CALL_CATEGORY', 'PATIENT_NAME', 'CHIEF_COMPLAINT', 'DURATION_SECS'),
+--     LIMIT => 5
+--   )
+-- );
+
+/*=========================================================================
+  SECTION G: STRUCTURED DATA / CORTEX ANALYST TESTS
+=========================================================================*/
+
+-- Total billed by specialty
+SELECT pr.SPECIALTY,
+       COUNT(*) AS CLAIM_COUNT,
+       SUM(c.BILLED_AMOUNT) AS TOTAL_BILLED,
+       AVG(c.PAID_AMOUNT) AS AVG_PAID
+FROM ANALYTICS.CLAIMS c
+JOIN ANALYTICS.PROVIDERS pr ON c.PROVIDER_ID = pr.PROVIDER_ID
+GROUP BY pr.SPECIALTY
+ORDER BY TOTAL_BILLED DESC;
+
+-- Claims by status
+SELECT CLAIM_STATUS, COUNT(*) AS CNT, SUM(BILLED_AMOUNT) AS TOTAL
+FROM ANALYTICS.CLAIMS
+GROUP BY CLAIM_STATUS;
+
+-- Patients with most appointments
+SELECT p.FIRST_NAME || ' ' || p.LAST_NAME AS PATIENT,
+       COUNT(*) AS APPOINTMENTS,
+       SUM(a.DURATION_MINUTES) AS TOTAL_MINUTES
+FROM ANALYTICS.APPOINTMENTS a
+JOIN ANALYTICS.PATIENTS p ON a.PATIENT_ID = p.PATIENT_ID
+WHERE a.STATUS = 'Completed'
+GROUP BY p.FIRST_NAME, p.LAST_NAME
+ORDER BY APPOINTMENTS DESC;
+
+-- Insurance plan distribution
+SELECT INSURANCE_PLAN, COUNT(*) AS PATIENT_COUNT
+FROM ANALYTICS.PATIENTS
+GROUP BY INSURANCE_PLAN
+ORDER BY PATIENT_COUNT DESC;
+
+-- Telehealth vs In-Person
+SELECT APPOINTMENT_TYPE, COUNT(*) AS CNT,
+       AVG(DURATION_MINUTES) AS AVG_DURATION
+FROM ANALYTICS.APPOINTMENTS
+WHERE STATUS = 'Completed'
+GROUP BY APPOINTMENT_TYPE;
+
+/*=========================================================================
+  SECTION H: AI FUNCTION SHOWCASE
+=========================================================================*/
+
+-- AI_SIMILARITY — compare PDF document embeddings
+/*
+SELECT
+  a.FILE_NAME AS DOC_A,
+  b.FILE_NAME AS DOC_B,
+  AI_SIMILARITY(a.EMBEDDING, b.EMBEDDING) AS SIMILARITY_SCORE
+FROM PROCESSED.PDF_INTELLIGENCE a
+CROSS JOIN PROCESSED.PDF_INTELLIGENCE b
+WHERE a.DOC_ID < b.DOC_ID
+ORDER BY SIMILARITY_SCORE DESC;
+*/
+
+-- Count of AI functions used in this pipeline:
+SELECT 'Total AI Functions' AS METRIC, 11 AS COUNT
+UNION ALL SELECT 'PDF Functions', 9
+UNION ALL SELECT 'TXT Functions', 8
+UNION ALL SELECT 'Audio Functions', 8
+UNION ALL SELECT 'Shared Functions', 6;
+
+/*
+  COMPLETE LIST OF 11 CORTEX AI FUNCTIONS USED:
+  =============================================
+  1.  AI_PARSE_DOCUMENT  — OCR + layout extraction from PDFs
+  2.  AI_TRANSCRIBE      — speech-to-text from WAV/MP3 audio
+  3.  AI_EXTRACT         — structured field extraction from text
+  4.  AI_CLASSIFY        — document/call type categorization
+  5.  AI_SENTIMENT       — sentiment analysis (overall + multi-dimensional)
+  6.  AI_SUMMARIZE       — text summarization
+  7.  AI_TRANSLATE       — language detection + translation
+  8.  AI_REDACT          — PII removal from medical documents
+  9.  AI_COMPLETE        — LLM-powered insights / SOAP notes generation
+  10. AI_EMBED           — vector embeddings for search
+  11. AI_SIMILARITY      — embedding similarity comparison
+*/

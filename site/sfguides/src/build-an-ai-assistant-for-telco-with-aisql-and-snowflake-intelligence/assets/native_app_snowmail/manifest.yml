@@ -1,0 +1,13 @@
+manifest_version: 1
+
+version:
+  name: V1_0
+  label: "SnowMail v1.0"
+  comment: "Gmail-style email viewer for Snowflake Intelligence Portfolio Analytics"
+
+artifacts:
+  setup_script: setup.sql
+  default_streamlit: app_schema.email_viewer
+
+configuration:
+  log_level: INFO

@@ -1,0 +1,397 @@
+name: telco-agent-builder
+description: |
+  Build and deploy the NovaConnect Telco Operations AI Agent end-to-end using Cortex Code CLI.
+  This skill guides you through deploying a complete AI-powered telecommunications operations 
+  assistant with Cortex Search, Cortex Analyst, Snowflake Intelligence, and SnowMail.
+  
+  Use this skill when:
+  - Setting up the Telco Operations AI quickstart from scratch
+  - Deploying the NovaConnect Intelligence Agent
+  - Creating Cortex Search services for call transcripts and support tickets
+  - Uploading semantic models for Cortex Analyst
+  - Deploying Snowflake Notebooks for data processing
+  - Installing the SnowMail Native App
+
+version: 1.0.0
+author: Snowflake
+tags:
+  - quickstart
+  - telco
+  - cortex-search
+  - cortex-analyst
+  - snowflake-intelligence
+  - agent
+  - native-app
+
+instructions: |
+  # NovaConnect Telco Operations AI Agent Builder
+  
+  You are helping the user deploy the **NovaConnect Telco Operations AI Agent** - a comprehensive 
+  AI-powered assistant for telecommunications operations. This quickstart demonstrates Snowflake's 
+  AI capabilities including Cortex Search, Cortex Analyst, and Snowflake Intelligence.
+  
+  ## Architecture Overview
+  
+  The solution includes:
+  - **Database**: TELCO_OPERATIONS_AI with schemas for data, models, notebooks, and Streamlit apps
+  - **Cortex Search Services**: Semantic search over call transcripts and support tickets
+  - **Cortex Analyst**: Natural language to SQL with 3 semantic models (network performance, 
+    customer feedback, infrastructure capacity)
+  - **Snowflake Intelligence Agent**: Unified AI assistant combining all tools
+  - **Notebooks**: Data processing, audio analysis, and intelligence lab
+  - **SnowMail Native App**: Gmail-style email viewer for agent notifications
+  
+  ## Quickstart Assets Location
+  
+  All assets are located in the quickstart directory. The user should have cloned or downloaded:
+  ```
+  site/sfguides/src/build-an-ai-assistant-for-telco-with-aisql-and-snowflake-intelligence/assets/
+  ```
+  
+  Key subdirectories:
+  - `sql/` - SQL deployment scripts (01-06)
+  - `data/` - CSV data files and PDFs
+  - `audio/` - MP3 call recordings (25 files)
+  - `semantic_models/` - YAML files for Cortex Analyst
+  - `Notebooks/` - Jupyter notebooks for Snowflake
+  - `native_app_snowmail/` - SnowMail Native App source
+  
+  ## Deployment Steps
+  
+  ### Step 1: Verify Prerequisites
+  
+  Before starting, confirm:
+  1. User has an active Snowflake connection configured (`snow connection list`)
+  2. User has ACCOUNTADMIN role or equivalent privileges
+  3. The quickstart assets directory exists locally
+  
+  Ask the user which Snowflake connection to use if not already set.
+  
+  ### Step 2: Configure Account (01_configure_account.sql)
+  
+  Execute SQL to create:
+  - Role: TELCO_ANALYST_ROLE
+  - Warehouse: TELCO_WH (MEDIUM size)
+  - Database: TELCO_OPERATIONS_AI
+  - Schemas: DEFAULT_SCHEMA, CORTEX_ANALYST, NOTEBOOKS, STREAMLIT, MODELS
+  - Stages: CSV_STAGE, PDF_STAGE, AUDIO_STAGE
+  
+  Key SQL:
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  
+  CREATE ROLE IF NOT EXISTS TELCO_ANALYST_ROLE;
+  GRANT ROLE TELCO_ANALYST_ROLE TO ROLE ACCOUNTADMIN;
+  
+  -- Grant CORTEX_USER database role (required for Cortex AI functions)
+  GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE TELCO_ANALYST_ROLE;
+  
+  -- Grant Snowflake Intelligence privileges (required for custom agent appearances)
+  GRANT DATABASE ROLE SNOWFLAKE.INTELLIGENCE_MODIFY TO ROLE TELCO_ANALYST_ROLE;
+  GRANT DATABASE ROLE SNOWFLAKE.INTELLIGENCE_USER TO ROLE TELCO_ANALYST_ROLE;
+  
+  CREATE WAREHOUSE IF NOT EXISTS TELCO_WH
+    WAREHOUSE_SIZE = 'MEDIUM'
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE;
+  
+  CREATE DATABASE IF NOT EXISTS TELCO_OPERATIONS_AI;
+  
+  CREATE SCHEMA IF NOT EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA;
+  CREATE SCHEMA IF NOT EXISTS TELCO_OPERATIONS_AI.CORTEX_ANALYST;
+  CREATE SCHEMA IF NOT EXISTS TELCO_OPERATIONS_AI.NOTEBOOKS;
+  CREATE SCHEMA IF NOT EXISTS TELCO_OPERATIONS_AI.STREAMLIT;
+  CREATE SCHEMA IF NOT EXISTS TELCO_OPERATIONS_AI.MODELS;
+  
+  CREATE STAGE IF NOT EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CSV_STAGE
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+  
+  CREATE STAGE IF NOT EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.PDF_STAGE
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+  
+  CREATE STAGE IF NOT EXISTS TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.AUDIO_STAGE
+    DIRECTORY = (ENABLE = TRUE)
+    ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+  ```
+  
+  ### Step 3: Create Data Foundation (02_data_foundation.sql)
+  
+  Create tables and upload data files using `snow stage copy`:
+  
+  **Tables to create:**
+  - NETWORK_PERFORMANCE
+  - INFRASTRUCTURE_CAPACITY
+  - CUSTOMER_PROFILES
+  - CUSTOMER_FEEDBACK_SUMMARY
+  - CALL_TRANSCRIPTS
+  - CALL_SENTIMENT_SUMMARY
+  - SUPPORT_TICKETS
+  - AGENT_PERFORMANCE
+  - NETWORK_INCIDENTS
+  - EMAIL_PREVIEWS
+  
+  **Upload data files:**
+  ```bash
+  # From the assets/data directory
+  snow stage copy "*.csv" @TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CSV_STAGE
+  
+  # From the assets/data/pdfs directory
+  snow stage copy "*.pdf" @TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.PDF_STAGE
+  
+  # From the assets/audio directory
+  snow stage copy "*.mp3" @TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.AUDIO_STAGE/call_recordings/
+  ```
+  
+  **Load data into tables:**
+  ```sql
+  COPY INTO TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.NETWORK_PERFORMANCE 
+  FROM @TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CSV_STAGE/network_performance.csv
+  FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+  ```
+  
+  ### Step 4: Deploy Cortex Search Services (03_deploy_cortex_search.sql)
+  
+  Create two Cortex Search services:
+  
+  1. **CALL_TRANSCRIPT_SEARCH** - For searching call transcripts
+  ```sql
+  CREATE OR REPLACE CORTEX SEARCH SERVICE TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CALL_TRANSCRIPT_SEARCH
+    ON SEGMENT_TEXT
+    ATTRIBUTES CALL_ID, SPEAKER_ROLE, SENTIMENT_SCORE, SENTIMENT_TIMESTAMP, CALL_TIMESTAMP
+    WAREHOUSE = TELCO_WH
+    TARGET_LAG = '1 hour'
+    AS (
+      SELECT CALL_ID, SPEAKER_ROLE, SEGMENT_TEXT, SENTIMENT_SCORE, 
+             SENTIMENT_TIMESTAMP, CALL_TIMESTAMP
+      FROM TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CALL_TRANSCRIPTS
+    );
+  ```
+  
+  2. **SUPPORT_TICKET_SEARCH** - For searching support tickets
+  ```sql
+  CREATE OR REPLACE CORTEX SEARCH SERVICE TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKET_SEARCH
+    ON DESCRIPTION
+    ATTRIBUTES TICKET_ID, CUSTOMER_ID, CATEGORY, STATUS, PRIORITY, SUBJECT
+    WAREHOUSE = TELCO_WH
+    TARGET_LAG = '1 hour'
+    AS (
+      SELECT TICKET_ID, CUSTOMER_ID, DESCRIPTION, CATEGORY, STATUS, PRIORITY, SUBJECT
+      FROM TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKETS
+    );
+  ```
+  
+  ### Step 5: Deploy Cortex Analyst (04_deploy_cortex_analyst.sql)
+  
+  Upload semantic model YAML files and create analytical views:
+  
+  **Upload semantic models:**
+  ```bash
+  # From assets/semantic_models directory
+  snow stage copy "*.yaml" @TELCO_OPERATIONS_AI.CORTEX_ANALYST.cortex_analyst
+  ```
+  
+  **Create analytical views:**
+  - CALL_CENTER_ANALYTICS
+  - CUSTOMER_HEALTH_ANALYTICS
+  - AGENT_PERFORMANCE_ANALYTICS
+  - SEMANTIC_MODELS_INFO
+  
+  **Grant Snowflake Intelligence privileges (IMPORTANT for custom agent appearances):**
+  ```sql
+  USE ROLE ACCOUNTADMIN;
+  
+  -- Grant Intelligence privileges - required for custom agent appearances
+  GRANT DATABASE ROLE SNOWFLAKE.INTELLIGENCE_MODIFY TO ROLE TELCO_ANALYST_ROLE;
+  GRANT DATABASE ROLE SNOWFLAKE.INTELLIGENCE_USER TO ROLE TELCO_ANALYST_ROLE;
+  
+  -- Create Intelligence database and grant access
+  CREATE DATABASE IF NOT EXISTS SNOWFLAKE_INTELLIGENCE;
+  CREATE SCHEMA IF NOT EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS;
+  
+  GRANT USAGE ON DATABASE SNOWFLAKE_INTELLIGENCE TO ROLE TELCO_ANALYST_ROLE;
+  GRANT USAGE ON SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS TO ROLE TELCO_ANALYST_ROLE;
+  GRANT CREATE AGENT ON SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS TO ROLE TELCO_ANALYST_ROLE;
+  ```
+  
+  **Create Snowflake Intelligence Agent:**
+  ```sql
+  -- IMPORTANT: Use TELCO_ANALYST_ROLE so the agent is OWNED by this role
+  USE ROLE TELCO_ANALYST_ROLE;
+  USE WAREHOUSE TELCO_WH;
+  USE DATABASE SNOWFLAKE_INTELLIGENCE;
+  USE SCHEMA AGENTS;
+  
+  CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS."Telco Operations AI Agent"
+  WITH PROFILE = '{
+      "display_name": "NovaConnect Intelligence Agent",
+      "avatar": "PowerAgentIcon",
+      "color": "var(--chartDim_6-x12aliq8)"
+  }'
+  COMMENT = 'Intelligent assistant for telco operations'
+  FROM SPECIFICATION $
+  {
+    "models": { "orchestration": "auto" },
+    "tools": [
+      { "tool_spec": { "type": "cortex_analyst_text_to_sql", "name": "network_performance", ... }},
+      { "tool_spec": { "type": "cortex_analyst_text_to_sql", "name": "Customer_Feedback", ... }},
+      { "tool_spec": { "type": "cortex_analyst_text_to_sql", "name": "Infrastructure_Capacity", ... }},
+      { "tool_spec": { "type": "cortex_search", "name": "CALL_TRANSCRIPTS", ... }},
+      { "tool_spec": { "type": "cortex_search", "name": "SUPPORT_TICKETS", ... }}
+    ],
+    "tool_resources": {
+      "network_performance": { "semantic_model_file": "@TELCO_OPERATIONS_AI.CORTEX_ANALYST.CORTEX_ANALYST/network_performance.yaml" },
+      "Customer_Feedback": { "semantic_model_file": "@TELCO_OPERATIONS_AI.CORTEX_ANALYST.CORTEX_ANALYST/customer_feedback.yaml" },
+      "Infrastructure_Capacity": { "semantic_model_file": "@TELCO_OPERATIONS_AI.CORTEX_ANALYST.CORTEX_ANALYST/infrastructure_capacity.yaml" },
+      "CALL_TRANSCRIPTS": { "search_service": "TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CALL_TRANSCRIPT_SEARCH" },
+      "SUPPORT_TICKETS": { "search_service": "TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKET_SEARCH" }
+    }
+  }
+  $;
+  ```
+  
+  ### Step 6: Deploy Notebooks (05_deploy_notebooks.sql)
+  
+  Create notebook stages (one per notebook for clean UI navigation) and upload notebooks:
+  
+  ```bash
+  # Create stages for each notebook (1 stage per notebook)
+  CREATE STAGE TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING 
+      DIRECTORY = (ENABLE = TRUE)
+      COMMENT = 'Stage for 1_DATA_PROCESSING notebook';
+  CREATE STAGE TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO 
+      DIRECTORY = (ENABLE = TRUE)
+      COMMENT = 'Stage for 2_ANALYZE_CALL_AUDIO notebook';
+  CREATE STAGE TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB 
+      DIRECTORY = (ENABLE = TRUE)
+      COMMENT = 'Stage for 3_INTELLIGENCE_LAB notebook';
+  
+  # Upload notebook files (from assets/Notebooks directory)
+  snow stage copy "1_DATA_PROCESSING.ipynb" @TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING
+  snow stage copy "environment.yml" @TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING
+  
+  snow stage copy "2_ANALYZE_CALL_AUDIO.ipynb" @TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO
+  snow stage copy "environment.yml" @TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO
+  
+  snow stage copy "3_INTELLIGENCE_LAB.ipynb" @TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB
+  snow stage copy "environment.yml" @TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB
+  ```
+  
+  **Create notebooks:**
+  ```sql
+  CREATE OR REPLACE NOTEBOOK TELCO_OPERATIONS_AI.NOTEBOOKS."1_DATA_PROCESSING"
+      FROM '@TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_1_DATA_PROCESSING'
+      MAIN_FILE = '1_DATA_PROCESSING.ipynb'
+      QUERY_WAREHOUSE = 'TELCO_WH';
+  
+  ALTER NOTEBOOK TELCO_OPERATIONS_AI.NOTEBOOKS."1_DATA_PROCESSING" ADD LIVE VERSION FROM LAST;
+  
+  CREATE OR REPLACE NOTEBOOK TELCO_OPERATIONS_AI.NOTEBOOKS."2_ANALYZE_CALL_AUDIO"
+      FROM '@TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_2_ANALYZE_CALL_AUDIO'
+      MAIN_FILE = '2_ANALYZE_CALL_AUDIO.ipynb'
+      QUERY_WAREHOUSE = 'TELCO_WH';
+  
+  ALTER NOTEBOOK TELCO_OPERATIONS_AI.NOTEBOOKS."2_ANALYZE_CALL_AUDIO" ADD LIVE VERSION FROM LAST;
+  
+  CREATE OR REPLACE NOTEBOOK TELCO_OPERATIONS_AI.NOTEBOOKS."3_INTELLIGENCE_LAB"
+      FROM '@TELCO_OPERATIONS_AI.NOTEBOOKS.STAGE_3_INTELLIGENCE_LAB'
+      MAIN_FILE = '3_INTELLIGENCE_LAB.ipynb'
+      QUERY_WAREHOUSE = 'TELCO_WH';
+  
+  ALTER NOTEBOOK TELCO_OPERATIONS_AI.NOTEBOOKS."3_INTELLIGENCE_LAB" ADD LIVE VERSION FROM LAST;
+  ```
+  
+  ### Step 7: Deploy SnowMail Native App (06_deploy_snowmail.sql)
+  
+  Create the SnowMail Native Application:
+  
+  ```sql
+  -- Create package infrastructure
+  CREATE DATABASE IF NOT EXISTS TELCO_OPERATIONS_AI_SNOWMAIL_PKG;
+  CREATE SCHEMA IF NOT EXISTS TELCO_OPERATIONS_AI_SNOWMAIL_PKG.APP_CODE;
+  CREATE STAGE IF NOT EXISTS TELCO_OPERATIONS_AI_SNOWMAIL_PKG.APP_CODE.SNOWMAIL_STAGE
+      DIRECTORY = (ENABLE = TRUE);
+  
+  -- Upload app files (from assets/native_app_snowmail directory)
+  snow stage copy "manifest.yml" @TELCO_OPERATIONS_AI_SNOWMAIL_PKG.APP_CODE.SNOWMAIL_STAGE
+  snow stage copy "setup.sql" @TELCO_OPERATIONS_AI_SNOWMAIL_PKG.APP_CODE.SNOWMAIL_STAGE
+  snow stage copy "streamlit/email_viewer.py" @TELCO_OPERATIONS_AI_SNOWMAIL_PKG.APP_CODE.SNOWMAIL_STAGE/streamlit/
+  
+  -- Create application package
+  CREATE APPLICATION PACKAGE SNOWMAIL_PKG
+      COMMENT = 'SnowMail - Gmail-style email viewer for Telco Operations AI';
+  
+  ALTER APPLICATION PACKAGE SNOWMAIL_PKG 
+      ADD VERSION V1_0
+      USING '@TELCO_OPERATIONS_AI_SNOWMAIL_PKG.APP_CODE.SNOWMAIL_STAGE';
+  
+  -- Create application instance
+  CREATE APPLICATION SNOWMAIL FROM APPLICATION PACKAGE SNOWMAIL_PKG;
+  
+  -- Grant permissions
+  GRANT USAGE ON DATABASE TELCO_OPERATIONS_AI TO APPLICATION SNOWMAIL;
+  GRANT USAGE ON SCHEMA TELCO_OPERATIONS_AI.DEFAULT_SCHEMA TO APPLICATION SNOWMAIL;
+  GRANT SELECT, DELETE ON TABLE TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.EMAIL_PREVIEWS TO APPLICATION SNOWMAIL;
+  ```
+  
+  ### Step 8: Verify Deployment
+  
+  Run verification queries:
+  ```sql
+  -- Check tables have data
+  SELECT 'NETWORK_PERFORMANCE' as table_name, COUNT(*) as rows FROM TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.NETWORK_PERFORMANCE
+  UNION ALL
+  SELECT 'CUSTOMER_PROFILES', COUNT(*) FROM TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.CUSTOMER_PROFILES
+  UNION ALL
+  SELECT 'SUPPORT_TICKETS', COUNT(*) FROM TELCO_OPERATIONS_AI.DEFAULT_SCHEMA.SUPPORT_TICKETS;
+  
+  -- Check Cortex Search services
+  SHOW CORTEX SEARCH SERVICES IN SCHEMA TELCO_OPERATIONS_AI.DEFAULT_SCHEMA;
+  
+  -- Check Agent
+  SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;
+  
+  -- Check Notebooks
+  SHOW NOTEBOOKS IN SCHEMA TELCO_OPERATIONS_AI.NOTEBOOKS;
+  
+  -- Check Applications
+  SHOW APPLICATIONS LIKE 'SNOWMAIL';
+  ```
+  
+  ## Important Notes
+  
+  1. **Use ACCOUNTADMIN role** for all deployment steps to avoid permission issues
+  2. **Local file upload**: Since the GitHub repo may not exist, use `snow stage copy` for file uploads
+  3. **Cortex Search requires data**: Ensure tables have data before creating search services
+  4. **Agent tools reference**: Semantic model paths must match exactly:
+     - `@TELCO_OPERATIONS_AI.CORTEX_ANALYST.CORTEX_ANALYST/network_performance.yaml`
+     - `@TELCO_OPERATIONS_AI.CORTEX_ANALYST.CORTEX_ANALYST/customer_feedback.yaml`
+     - `@TELCO_OPERATIONS_AI.CORTEX_ANALYST.CORTEX_ANALYST/infrastructure_capacity.yaml`
+  
+  ## Sample Questions for the Agent
+  
+  After deployment, test the agent with these questions:
+  - "Which regions have the highest network latency issues?"
+  - "Show me 5G towers operating above 80% capacity"
+  - "Find calls mentioning network connectivity problems"
+  - "What are the top 3 customer complaints?"
+  - "Find support tickets about billing issues"
+  - "Which customer segments have the highest churn risk?"
+  
+  ## Troubleshooting
+  
+  **Permission errors**: Switch to ACCOUNTADMIN role
+  **Cortex Search errors**: Ensure source tables have data
+  **File upload errors**: Verify stage exists and check file paths
+  **Agent creation errors**: Verify all referenced objects exist (search services, semantic model files)
+
+triggers:
+  - telco
+  - novaconnect
+  - telco agent
+  - telco quickstart
+  - build telco agent
+  - deploy telco
+  - telecommunications agent
+  - cortex telco

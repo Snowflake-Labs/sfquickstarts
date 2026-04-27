@@ -1,0 +1,37 @@
+name: Build and upload quickstart manifest (test-only)
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - manifest_weekly
+
+permissions:
+  contents: read
+
+jobs:
+  generate-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate manifest
+        run: |
+          python3 "scripts/generate_manifest/manifest generator.py"
+
+      - name: Upload manifest artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quickstart-manifest-${{ github.sha }}
+          path: site/sfguides/src/_shared_assets/quickstart-manifest.json
+          if-no-files-found: error
+          retention-days: 7
+

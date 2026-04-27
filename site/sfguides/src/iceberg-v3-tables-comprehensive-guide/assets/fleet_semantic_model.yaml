@@ -1,0 +1,339 @@
+name: fleet_analytics_semantic_model
+description: Semantic model for fleet analytics data on Iceberg V3 tables
+
+tables:
+  - name: VEHICLE_TELEMETRY_STREAM
+    description: Real-time streaming telemetry from vehicles with VARIANT data containing speed, engine metrics, diagnostics, and driver behavior
+    base_table:
+      database: FLEET_ANALYTICS_DB
+      schema: RAW
+      table: VEHICLE_TELEMETRY_STREAM
+    dimensions:
+      - name: vehicle_id
+        description: Unique identifier for the vehicle
+        expr: VEHICLE_ID
+        data_type: VARCHAR
+      - name: event_timestamp
+        description: Timestamp of the telemetry event
+        expr: EVENT_TIMESTAMP
+        data_type: TIMESTAMP_NTZ
+      - name: check_engine
+        description: Check engine light status from diagnostics
+        expr: "TELEMETRY_DATA:diagnostics:check_engine::BOOLEAN"
+        data_type: BOOLEAN
+    measures:
+      - name: speed_mph
+        description: Vehicle speed in miles per hour
+        expr: "TELEMETRY_DATA:speed_mph::FLOAT"
+        data_type: FLOAT
+        default_aggregation: avg
+      - name: engine_rpm
+        description: Engine RPM
+        expr: "TELEMETRY_DATA:engine:rpm::INT"
+        data_type: NUMBER
+        default_aggregation: avg
+      - name: engine_temperature_f
+        description: Engine temperature in Fahrenheit
+        expr: "TELEMETRY_DATA:engine:temperature_f::INT"
+        data_type: NUMBER
+        default_aggregation: avg
+      - name: fuel_level_pct
+        description: Fuel level percentage
+        expr: "TELEMETRY_DATA:engine:fuel_level_pct::FLOAT"
+        data_type: FLOAT
+        default_aggregation: avg
+      - name: hard_brake_count
+        description: Number of hard braking events
+        expr: "TELEMETRY_DATA:driver_behavior:hard_brake_count::INT"
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: hard_acceleration_count
+        description: Number of hard acceleration events
+        expr: "TELEMETRY_DATA:driver_behavior:hard_acceleration_count::INT"
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: sharp_turn_count
+        description: Number of sharp turn events
+        expr: "TELEMETRY_DATA:driver_behavior:sharp_turn_count::INT"
+        data_type: NUMBER
+        default_aggregation: sum
+    time_dimensions:
+      - name: event_date
+        description: Date of the telemetry event
+        expr: DATE(EVENT_TIMESTAMP)
+        data_type: DATE
+
+  - name: SENSOR_READINGS
+    description: Time-series sensor data from vehicle IoT devices
+    base_table:
+      database: FLEET_ANALYTICS_DB
+      schema: RAW
+      table: SENSOR_READINGS
+    dimensions:
+      - name: vehicle_id
+        description: Unique identifier for the vehicle
+        expr: VEHICLE_ID
+        data_type: VARCHAR
+      - name: reading_timestamp
+        description: Timestamp of the sensor reading
+        expr: READING_TIMESTAMP
+        data_type: TIMESTAMP_NTZ
+    measures:
+      - name: fuel_consumption_gph
+        description: Fuel consumption in gallons per hour
+        expr: FUEL_CONSUMPTION_GPH
+        data_type: FLOAT
+        default_aggregation: avg
+      - name: engine_temp_f
+        description: Engine temperature in Fahrenheit
+        expr: ENGINE_TEMP_F
+        data_type: FLOAT
+        default_aggregation: avg
+      - name: oil_pressure_psi
+        description: Oil pressure in PSI
+        expr: OIL_PRESSURE_PSI
+        data_type: FLOAT
+        default_aggregation: avg
+    time_dimensions:
+      - name: reading_date
+        description: Date of the reading
+        expr: DATE(READING_TIMESTAMP)
+        data_type: DATE
+
+  - name: VEHICLE_REGISTRY
+    description: Master data for vehicles and drivers
+    base_table:
+      database: FLEET_ANALYTICS_DB
+      schema: RAW
+      table: VEHICLE_REGISTRY
+    dimensions:
+      - name: vehicle_id
+        description: Unique identifier for the vehicle
+        expr: VEHICLE_ID
+        data_type: VARCHAR
+      - name: make
+        description: Vehicle manufacturer
+        expr: MAKE
+        data_type: VARCHAR
+      - name: model
+        description: Vehicle model
+        expr: MODEL
+        data_type: VARCHAR
+      - name: fleet_region
+        description: Geographic region of the fleet
+        expr: FLEET_REGION
+        data_type: VARCHAR
+      - name: driver_name
+        description: Name of the assigned driver
+        expr: DRIVER_NAME
+        data_type: VARCHAR
+
+  - name: MAINTENANCE_LOGS
+    description: Vehicle maintenance events and service records
+    base_table:
+      database: FLEET_ANALYTICS_DB
+      schema: RAW
+      table: MAINTENANCE_LOGS
+    dimensions:
+      - name: log_id
+        description: Unique identifier for the log entry
+        expr: LOG_ID
+        data_type: VARCHAR
+      - name: vehicle_id
+        description: Vehicle that received maintenance
+        expr: VEHICLE_ID
+        data_type: VARCHAR
+      - name: event_type
+        description: Type of maintenance event
+        expr: "LOG_DATA:event_type::STRING"
+        data_type: VARCHAR
+      - name: severity
+        description: Severity level (LOW, MEDIUM, HIGH, CRITICAL)
+        expr: "LOG_DATA:severity::STRING"
+        data_type: VARCHAR
+    measures:
+      - name: total_cost
+        description: Total cost of the maintenance
+        expr: "LOG_DATA:total_cost::FLOAT"
+        data_type: FLOAT
+        default_aggregation: sum
+    time_dimensions:
+      - name: log_date
+        description: Date of the maintenance log
+        expr: DATE(LOG_TIMESTAMP)
+        data_type: DATE
+
+  - name: VEHICLE_LOCATIONS
+    description: GPS location data for fleet vehicles with GEOGRAPHY LOCATION_POINT for geospatial analysis using H3 functions
+    base_table:
+      database: FLEET_ANALYTICS_DB
+      schema: RAW
+      table: VEHICLE_LOCATIONS
+    dimensions:
+      - name: vehicle_id
+        description: Vehicle identifier
+        expr: VEHICLE_ID
+        data_type: VARCHAR
+      - name: fleet_region
+        description: Fleet region (California, Pacific Northwest, Mountain West, Midwest, Northeast, Texas, Southeast)
+        expr: FLEET_REGION
+        data_type: VARCHAR
+      - name: h3_cell_resolution_6
+        description: H3 geospatial cell at resolution 6 for spatial aggregation. Use H3_POINT_TO_CELL_STRING(LOCATION_POINT, 6) to compute.
+        expr: "H3_POINT_TO_CELL_STRING(LOCATION_POINT, 6)"
+        data_type: VARCHAR
+      - name: h3_cell_resolution_7
+        description: H3 geospatial cell at resolution 7 for finer spatial aggregation
+        expr: "H3_POINT_TO_CELL_STRING(LOCATION_POINT, 7)"
+        data_type: VARCHAR
+    measures:
+      - name: speed_mph
+        description: Vehicle speed in miles per hour
+        expr: SPEED_MPH
+        data_type: FLOAT
+        default_aggregation: avg
+      - name: latitude
+        description: GPS latitude
+        expr: LATITUDE
+        data_type: FLOAT
+      - name: longitude
+        description: GPS longitude
+        expr: LONGITUDE
+        data_type: FLOAT
+      - name: vehicle_count
+        description: Count of distinct vehicles
+        expr: VEHICLE_ID
+        data_type: VARCHAR
+        default_aggregation: count_distinct
+    time_dimensions:
+      - name: location_date
+        description: Date of the location reading
+        expr: DATE(LOCATION_TIMESTAMP)
+        data_type: DATE
+
+  - name: DAILY_FLEET_SUMMARY
+    description: Aggregated daily metrics by vehicle and region
+    base_table:
+      database: FLEET_ANALYTICS_DB
+      schema: ANALYTICS
+      table: DAILY_FLEET_SUMMARY
+    dimensions:
+      - name: vehicle_id
+        description: Vehicle identifier
+        expr: VEHICLE_ID
+        data_type: VARCHAR
+      - name: fleet_region
+        description: Fleet region
+        expr: FLEET_REGION
+        data_type: VARCHAR
+    measures:
+      - name: avg_speed_mph
+        description: Average speed for the day
+        expr: AVG_SPEED_MPH
+        data_type: FLOAT
+        default_aggregation: avg
+      - name: total_events
+        description: Total telemetry events for the day
+        expr: TOTAL_EVENTS
+        data_type: NUMBER
+        default_aggregation: sum
+    time_dimensions:
+      - name: summary_date
+        description: Date of the summary
+        expr: SUMMARY_DATE
+        data_type: DATE
+
+verified_queries:
+  - name: highest_fuel_consumption_last_week
+    question: Which vehicles had the highest fuel consumption last week?
+    sql: |
+      SELECT 
+          VEHICLE_ID,
+          ROUND(AVG(FUEL_CONSUMPTION_GPH), 2) AS avg_fuel_consumption_gph,
+          COUNT(*) AS reading_count
+      FROM FLEET_ANALYTICS_DB.RAW.SENSOR_READINGS
+      WHERE READING_TIMESTAMP >= DATEADD('week', -1, CURRENT_TIMESTAMP())
+      GROUP BY VEHICLE_ID
+      ORDER BY avg_fuel_consumption_gph DESC
+      LIMIT 10
+
+  - name: critical_maintenance_events
+    question: Show me all critical maintenance events
+    sql: |
+      SELECT 
+          LOG_ID,
+          VEHICLE_ID,
+          LOG_TIMESTAMP,
+          LOG_DATA:event_type::STRING AS event_type,
+          LOG_DATA:description::STRING AS description,
+          LOG_DATA:total_cost::FLOAT AS total_cost
+      FROM FLEET_ANALYTICS_DB.RAW.MAINTENANCE_LOGS
+      WHERE LOG_DATA:severity::STRING = 'CRITICAL'
+      ORDER BY LOG_TIMESTAMP DESC
+      LIMIT 20
+
+  - name: avg_speed_by_region
+    question: What is the average speed by fleet region?
+    sql: |
+      SELECT 
+          FLEET_REGION,
+          ROUND(AVG(SPEED_MPH), 1) AS avg_speed_mph,
+          COUNT(DISTINCT VEHICLE_ID) AS vehicle_count
+      FROM FLEET_ANALYTICS_DB.RAW.VEHICLE_LOCATIONS
+      WHERE LOCATION_TIMESTAMP >= DATEADD('day', -1, CURRENT_TIMESTAMP())
+      GROUP BY FLEET_REGION
+      ORDER BY avg_speed_mph DESC
+
+  - name: drivers_most_hard_braking
+    question: Which drivers have the most hard braking events?
+    sql: |
+      SELECT 
+          r.DRIVER_NAME,
+          t.VEHICLE_ID,
+          SUM(t.TELEMETRY_DATA:driver_behavior:hard_brake_count::INT) AS total_hard_brakes,
+          SUM(t.TELEMETRY_DATA:driver_behavior:hard_acceleration_count::INT) AS total_hard_accelerations,
+          COUNT(*) AS event_count
+      FROM FLEET_ANALYTICS_DB.RAW.VEHICLE_TELEMETRY_STREAM t
+      JOIN FLEET_ANALYTICS_DB.RAW.VEHICLE_REGISTRY r ON t.VEHICLE_ID = r.VEHICLE_ID
+      GROUP BY r.DRIVER_NAME, t.VEHICLE_ID
+      ORDER BY total_hard_brakes DESC
+      LIMIT 10
+
+  - name: vehicles_check_engine_warnings
+    question: Find vehicles with check engine warnings
+    sql: |
+      SELECT 
+          VEHICLE_ID,
+          COUNT(*) AS warning_count,
+          MAX(EVENT_TIMESTAMP) AS last_warning
+      FROM FLEET_ANALYTICS_DB.RAW.VEHICLE_TELEMETRY_STREAM
+      WHERE TELEMETRY_DATA:diagnostics:check_engine::BOOLEAN = TRUE
+      GROUP BY VEHICLE_ID
+      ORDER BY warning_count DESC
+      LIMIT 10
+
+  - name: vehicles_per_h3_cell_california
+    question: How many vehicles are in each H3 cell in California?
+    sql: |
+      SELECT 
+          H3_POINT_TO_CELL_STRING(LOCATION_POINT, 6) AS h3_cell,
+          COUNT(DISTINCT VEHICLE_ID) AS vehicle_count,
+          ROUND(AVG(SPEED_MPH), 1) AS avg_speed_mph
+      FROM FLEET_ANALYTICS_DB.RAW.VEHICLE_LOCATIONS
+      WHERE FLEET_REGION = 'California'
+      GROUP BY h3_cell
+      ORDER BY vehicle_count DESC
+      LIMIT 20
+
+  - name: vehicle_distribution_by_region
+    question: How are vehicles distributed across fleet regions?
+    sql: |
+      SELECT 
+          FLEET_REGION,
+          COUNT(DISTINCT VEHICLE_ID) AS vehicle_count,
+          COUNT(*) AS location_records,
+          ROUND(AVG(SPEED_MPH), 1) AS avg_speed_mph
+      FROM FLEET_ANALYTICS_DB.RAW.VEHICLE_LOCATIONS
+      WHERE LOCATION_TIMESTAMP >= DATEADD('day', -1, CURRENT_TIMESTAMP())
+      GROUP BY FLEET_REGION
+      ORDER BY vehicle_count DESC
