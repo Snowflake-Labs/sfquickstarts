@@ -1,4 +1,4 @@
-author: Jan Sommerfeld, Gilberto Hernandez
+author: Jan Sommerfeld, Gilberto Hernandez, Yoav Ostrinsky
 id: build-data-pipelines-with-snowflake-dcm-projects
 summary: Learn how to split platform infrastructure and data pipelines into separate DCM Projects, deploy them sequentially, and build a medallion-architecture transformation layer.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
@@ -6,7 +6,7 @@ environments: web
 status: Published
 language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/snowflake_dcm_projects
+fork repo link: https://github.com/Snowflake-Labs/snowflake-dcm-projects
 
 # Build Data Pipelines with Snowflake DCM Projects
 <!-- ------------------------ -->
@@ -35,7 +35,7 @@ By splitting platform infrastructure and data pipelines into separate projects, 
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access
-- A Snowsight Workspace linked to the [sample DCM Projects repository](https://github.com/Snowflake-Labs/snowflake_dcm_projects) (created in [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/))
+- (Optional) [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) v3.16.0+ if you prefer CLI over the Snowsight UI
 
 ### What You'll Build
 - A fully deployed data platform and transformation pipeline consisting of:
@@ -48,23 +48,41 @@ By splitting platform infrastructure and data pipelines into separate projects, 
   - Data quality expectations attached to gold-layer tables
 
 <!-- ------------------------ -->
+## Create a Workspace from Git
+
+In this step, you'll create a Snowsight Workspace linked to the sample DCM Project repository on GitHub.
+
+1. Navigate to **Projects > Workspaces** in Snowsight.
+2. Click **Create** (+) and select **Git repository**.
+3. Enter the repository URL: `https://github.com/snowflake-labs/snowflake-dcm-projects`
+4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
+5. Select **Public repository**.
+
+Once the workspace is created, you'll see the repository files in the file explorer. Navigate to **Quickstarts/build-data-pipelines-with-snowflake-dcm-projects** to find the following directories:
+
+- **`DCM_Platform_Demo/`** — The Platform DCM Project (manifest, definitions, macros). Defines shared infrastructure.
+- **`DCM_Pipeline_Demo/`** — The Pipeline DCM Project (manifest, definitions). Defines the transformation layer.
+- **`sample_data/`** — CSV files to load into the raw tables after deployment.
+- **`scripts/`** — Numbered SQL files that you'll run in Snowsight worksheets at different stages of this guide. These live outside the DCM project directories so they don't interfere with Plan & Deploy.
+
+| File | When to Run |
+|:-----|:-----------|
+| `scripts/01_pre_deploy.sql` | Before the first DCM Plan & Deploy |
+| `scripts/02_platform_post_deploy.sql` | After the Platform deployment |
+| `scripts/03_pipeline_pre_deploy.sql` | Before deploying the Pipeline project |
+| `scripts/04_query_results.sql` | After the Pipeline deployment to verify results |
+| `scripts/05_cleanup.sql` | When you're done and want to tear everything down |
+
+Open `scripts/01_pre_deploy.sql` in a Snowsight worksheet — you'll use it in the next step.
+
+<!-- ------------------------ -->
 ## Set Up Roles and Permissions
 
 In this step, you'll create a dedicated admin role for managing DCM Projects and grant it the necessary privileges.
 
-If you already have the workspace from [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/), navigate to **Quickstarts/DCM_Project_Quickstart_2** and open the `setup.ipynb` notebook. Otherwise, create a new workspace from the Git repository:
+Open `scripts/01_pre_deploy.sql` in a Snowsight worksheet and run each section in order. This script lives outside the DCM project directories, so it won't be picked up by Plan or Deploy. The script does the following:
 
-1. In Snowsight, navigate to **Workspaces**.
-2. Click **Create** and select **From Git repository**.
-3. Enter the repository URL: `https://github.com/snowflake-labs/snowflake_dcm_projects`
-4. Select an API Integration for GitHub (create one if needed).
-5. Select **Public repository** and click **Create**.
-
-Once the workspace is created, navigate to **Quickstarts/DCM_Project_Quickstart_2** and open the `setup.ipynb` notebook. Connect it to a compute pool so you can run the setup commands step by step.
-
-### Create a DCM Developer Role
-
-Run the following SQL in a Snowsight worksheet or in the setup notebook:
+### 1. Create a DCM Developer Role
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -74,7 +92,7 @@ SET user_name = (SELECT CURRENT_USER());
 GRANT ROLE dcm_developer TO USER IDENTIFIER($user_name);
 ```
 
-### Grant Infrastructure Privileges
+### 2. Grant Infrastructure Privileges
 
 The DCM_DEVELOPER role needs privileges to create infrastructure objects through DCM deployments:
 
@@ -84,11 +102,10 @@ GRANT CREATE ROLE ON ACCOUNT TO ROLE dcm_developer;
 GRANT CREATE DATABASE ON ACCOUNT TO ROLE dcm_developer;
 GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_developer;
 GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
-
 GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 ```
 
-### Grant Data Quality Privileges
+### 3. Grant Data Quality Privileges
 
 To define and test data quality expectations, grant the following:
 
@@ -99,7 +116,7 @@ GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer WITH GRANT OPTION;
 ```
 
-### Create a Warehouse (Optional)
+### 4. Create a Warehouse (Optional)
 
 If you don't have a warehouse available, create one. DCM commands are mostly metadata changes, so an X-Small warehouse is sufficient:
 
@@ -116,11 +133,11 @@ WITH
 <!-- ------------------------ -->
 ## Explore the Platform Project
 
-Before deploying anything, take a moment to explore the Platform project structure. Navigate to **DCM_Platform_Demo** in the file explorer.
+Before deploying anything, take a moment to explore the Platform project structure. Navigate into the **DCM_Platform_Demo/** directory — this is the actual DCM Project that the Plan & Deploy operations read.
 
 ### Manifest
 
-Open `manifest.yml`. The Platform manifest defines two targets (DEV and PROD) and includes several templating variables:
+Open `DCM_Platform_Demo/manifest.yml`. The Platform manifest defines two targets (DEV and PROD) and includes several templating variables:
 
 ```yaml
 manifest_version: 2
@@ -130,13 +147,13 @@ default_target: DCM_DEV
 
 targets:
   DCM_DEV:
-    account_identifier: MYORG-MY_DEV_ACCOUNT
+    account_identifier: MYORG-MY_DEV_ACCOUNT # <-- Replace with your account identifier
     project_name: DCM_DEMO.PROJECTS.DCM_PLATFORM_DEV
     project_owner: DCM_DEVELOPER
     templating_config: DEV
 
   DCM_PROD:
-    account_identifier: MYORG-MY_PROD_ACCOUNT
+    account_identifier: MYORG-MY_PROD_ACCOUNT # <-- Replace with your account identifier
     project_name: DCM_DEMO.PROJECTS.DCM_PLATFORM
     project_owner: DCM_PROD_DEPLOYER
     templating_config: PROD
@@ -151,8 +168,7 @@ templating:
     DEV:
       env_suffix: "_DEV"
       users:
-        - "GITHUB_ACTIONS_SERVICE_USER"
-        - "INSERT_YOUR_USER"
+        - "INSERT_YOUR_USER" # <-- Replace with your Snowflake username
       project_owner_role: "DCM_DEVELOPER"
       teams:
         - name: "Finance"
@@ -230,7 +246,7 @@ Open `wh_roles_and_grants.sql`. This is where the Jinja `{% for %}` loop creates
     {% set team_name = team.name | upper %}
     DEFINE WAREHOUSE dcm_demo_2_{{team_name}}_wh{{env_suffix}}
         WITH WAREHOUSE_SIZE='{{wh_size}}'
-        COMMENT = 'For DCM Demo Quickstart 2';
+        COMMENT = 'For DCM Build Data Pipelines Quickstart';
     DEFINE DATABASE dcm_demo_2_{{team_name}}{{env_suffix}};
     DEFINE SCHEMA dcm_demo_2_{{team_name}}{{env_suffix}}.projects;
     DEFINE SCHEMA dcm_demo_2_{{team_name}}{{env_suffix}}.analytics;
@@ -335,7 +351,7 @@ Now that you've explored the Platform project files, create the DCM Project obje
 
 ### Create the DCM Project Object
 
-Run the following in the setup notebook or in a Snowsight worksheet:
+The last section of `scripts/01_pre_deploy.sql` creates the Platform DCM Project object:
 
 ```sql
 USE ROLE dcm_developer;
@@ -344,17 +360,25 @@ CREATE DATABASE IF NOT EXISTS dcm_demo;
 CREATE SCHEMA IF NOT EXISTS dcm_demo.projects;
 
 CREATE DCM PROJECT IF NOT EXISTS dcm_demo.projects.dcm_platform_dev
-    COMMENT = 'for DCM Platform Demo - Quickstart 2';
+    COMMENT = 'for DCM Platform Demo - Build Data Pipelines Quickstart';
 ```
 
 The Platform project object lives in `dcm_demo.projects`. Later, you'll create the Pipeline project object in the Finance team's database instead — demonstrating how teams can own their own projects independently.
 
+> **Note:** After running this script, refresh your browser so Snowsight picks up the newly created DCM Project object. It won't appear in the Workspaces project selector until you do.
+
+> **CLI Alternative:** You can also create the DCM Project object from the command line using [Snowflake CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/data-pipelines/dcm-projects):
+> ```
+> snow dcm create --target DCM_DEV
+> ```
+
 ### Plan the Deployment
 
-1. In the DCM control panel above the workspace tabs, select the project **DCM_Platform_Demo**.
+1. You should see the DCM control panel in the first tab in the bottom panel. Select the project **DCM_Platform_Demo**.
 2. The `DCM_DEV` target should already be selected (it's the default in the manifest).
 3. Click on the target profile to verify it uses `DCM_PLATFORM_DEV` and the `DEV` templating configuration.
-4. In the manifest file, update the default value for `users` to include your own Snowflake username (e.g., `['MY_USERNAME']`).
+
+> **Important:** Before running a Plan, update `account_identifier` and `users` under the `DCM_DEV` target in `build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo/manifest.yml` to match your Snowflake account. The last query in `scripts/01_pre_deploy.sql` (step 6) returns both values — copy them from that output.
 
 ![Selecting the Platform project in the DCM control panel](assets/select_platform_project.png)
 
@@ -383,7 +407,7 @@ USE ROLE dcm_developer;
 
 EXECUTE DCM PROJECT dcm_demo.projects.dcm_platform_dev DEPLOY
     USING CONFIGURATION DEV (users => ['YOUR_USERNAME'])
-    FROM 'snow://workspace/USER$.PUBLIC."snowflake_dcm_projects"/versions/live/Quickstarts/DCM_Project_Quickstart_2/DCM_Platform_Demo';
+    FROM 'snow://workspace/USER$.PUBLIC."snowflake-dcm-projects"/versions/live/Quickstarts/build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo';
 ```
 
 Once the deployment completes, refresh the Database Explorer. You should see `DCM_DEMO_2_DEV` (the shared raw database), `DCM_DEMO_2_FINANCE_DEV` (the Finance team's database), and `DCM_DEMO_2_MARKETING_DEV` (the Marketing team's database).
@@ -395,13 +419,17 @@ The Platform deployment created the table structures, the ingestion stage, and t
 
 ### Copy CSV Files to the Stage
 
-The `sample_data/` folder in the workspace contains 17 CSV files. Copy them to the ingestion stage using the `COPY FILES` command in the setup notebook:
+Open `scripts/02_platform_post_deploy.sql` in a Snowsight worksheet and run each section in order.
+
+### Copy CSV Files to the Stage
+
+The `sample_data/` folder in the workspace contains 17 CSV files. The script copies them to the ingestion stage:
 
 ```sql
 COPY FILES INTO
     @dcm_demo_2_dev.ingest.dcm_sample_data
 FROM
-    'snow://workspace/USER$.PUBLIC."snowflake_dcm_projects"/versions/live/Quickstarts/DCM_Project_Quickstart_2/sample_data'
+    'snow://workspace/USER$.PUBLIC."snowflake-dcm-projects"/versions/live/Quickstarts/build-data-pipelines-with-snowflake-dcm-projects/sample_data'
 DETAILED_OUTPUT = TRUE;
 ```
 
@@ -430,11 +458,11 @@ You should see rows in each table. The exact counts depend on the sample data fi
 <!-- ------------------------ -->
 ## Explore the Pipeline Project
 
-With the Platform infrastructure deployed and data loaded, you can now explore the Pipeline project. Navigate to **DCM_Pipeline_Demo** in the file explorer.
+With the Platform infrastructure deployed and data loaded, you can now explore the Pipeline project. Navigate into the **DCM_Pipeline_Demo/** directory.
 
 ### Manifest
 
-Open `manifest.yml`. The Pipeline manifest is simpler than the Platform's — it only needs `env_suffix` and `users`:
+Open `DCM_Pipeline_Demo/manifest.yml`. The Pipeline manifest is simpler than the Platform's — it only needs `env_suffix` and `users`:
 
 ```yaml
 manifest_version: 2
@@ -444,13 +472,13 @@ default_target: DCM_DEV
 
 targets:
   DCM_DEV:
-    account_identifier: MYORG-MY_DEV_ACCOUNT
+    account_identifier: MYORG-MY_DEV_ACCOUNT # <-- Replace with your account identifier
     project_name: DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
     project_owner: DCM_DEMO_2_FINANCE_DEV_ADMIN
     templating_config: DEV
 
   DCM_PROD:
-    account_identifier: MYORG-MY_PROD_ACCOUNT
+    account_identifier: MYORG-MY_PROD_ACCOUNT # <-- Replace with your account identifier
     project_name: DCM_DEMO_2_FINANCE.PROJECTS.FINANCE_PIPELINE
     project_owner: DCM_DEMO_2_FINANCE_ADMIN
     templating_config: PROD
@@ -464,8 +492,7 @@ templating:
     DEV:
       env_suffix: "_DEV"
       users:
-        - "GITHUB_ACTIONS_SERVICE_USER"
-        - "INSERT_YOUR_USER"
+        - "INSERT_YOUR_USER" # <-- Replace with your Snowflake username
 
     PROD:
       env_suffix: ""
@@ -494,6 +521,7 @@ DEFINE DYNAMIC TABLE dcm_demo_2_finance{{env_suffix}}.silver.finwire_cmp_stg
 TARGET_LAG='DOWNSTREAM'
 WAREHOUSE='dcm_demo_2_finance_wh{{env_suffix}}'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
+INITIALIZE = ON_SCHEDULE
 AS
 SELECT
     TO_TIMESTAMP_NTZ(pts,'YYYYMMDD-HH24MISS') AS pts,
@@ -525,7 +553,7 @@ The silver layer includes several types of transformations:
 - **Sparse value fill-forward** — `customer_ods` and `account_ods` use `LAG() IGNORE NULLS` to carry forward non-null values from prior CDC records
 - **Dimension and fact tables** — `dim_trade`, `dim_account`, `dim_date`, and others join and reshape data for the gold layer
 
-All Dynamic Tables use `TARGET_LAG='DOWNSTREAM'`, meaning they refresh only when a downstream table needs them — keeping compute costs low.
+All Dynamic Tables use `TARGET_LAG='DOWNSTREAM'`, meaning they refresh only when a downstream table needs them — keeping compute costs low. They also use `INITIALIZE = ON_SCHEDULE`, which prevents them from refreshing immediately on creation. This keeps deployments fast and predictable.
 
 #### Gold Layer
 
@@ -538,6 +566,7 @@ DEFINE DYNAMIC TABLE dcm_demo_2_finance{{env_suffix}}.gold.fact_market_history
 TARGET_LAG='2 hours'
 WAREHOUSE='dcm_demo_2_finance_wh{{env_suffix}}'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
+INITIALIZE = ON_SCHEDULE
 AS
 SELECT
     fmht.sk_security_id,
@@ -604,20 +633,23 @@ With the Platform deployed and data loaded, you can now deploy the Pipeline proj
 
 ### Create the DCM Project Object
 
-The Pipeline project lives in the Finance team's database, which was created by the Platform deployment. Use the Finance team's admin role to create it:
+The Pipeline project lives in the Finance team's database, which was created by the Platform deployment. Open `scripts/03_pipeline_pre_deploy.sql` in a Snowsight worksheet and run it:
 
 ```sql
 USE ROLE dcm_demo_2_finance_dev_admin;
 
 CREATE DCM PROJECT IF NOT EXISTS dcm_demo_2_finance_dev.projects.finance_pipeline
-    COMMENT = 'for DCM Pipeline Demo - Quickstart 2';
+    COMMENT = 'for DCM Pipeline Demo - Build Data Pipelines Quickstart';
 ```
+
+> **Note:** After running this script, refresh your browser so Snowsight picks up the newly created Pipeline project object.
 
 ### Plan the Deployment
 
-1. In the DCM control panel, select the project **DCM_Pipeline_Demo**.
+1. You should see the DCM control panel in the first tab in the bottom panel. Select the project **DCM_Pipeline_Demo**.
 2. Verify the `DCM_DEV` target is selected and it points to `FINANCE_PIPELINE`.
-3. In the manifest file, update the default value for `users` to include your own Snowflake username (e.g., `['MY_USERNAME']`).
+
+> **Important:** Before running a Plan, update `account_identifier` and `users` under the `DCM_DEV` target in `build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo/manifest.yml` to match your Snowflake account — the same values you used for the Platform manifest.
 
 ![Selecting the Pipeline project](assets/select_pipeline_project.png)
 
@@ -628,8 +660,8 @@ Click **Plan** and wait for the definitions to render, compile, and dry-run.
 The plan should show CREATE statements for:
 
 - 2 schemas (`SILVER` and `GOLD`) in `DCM_DEMO_2_FINANCE_DEV`
-- 11 Dynamic Tables in the silver layer
-- 4 Dynamic Tables and 1 view in the gold layer
+- 37 Dynamic Tables in the silver layer
+- 3 Dynamic Tables and 1 view in the gold layer
 - 3 data quality expectations attached to `FACT_PROSPECT`
 
 ### Deploy
@@ -644,23 +676,30 @@ USE ROLE dcm_demo_2_finance_dev_admin;
 
 EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline DEPLOY
     USING CONFIGURATION DEV (users => ['YOUR_USERNAME'])
-    FROM 'snow://workspace/USER$.PUBLIC."snowflake_dcm_projects"/versions/live/Quickstarts/DCM_Project_Quickstart_2/DCM_Pipeline_Demo';
+    FROM 'snow://workspace/USER$.PUBLIC."snowflake-dcm-projects"/versions/live/Quickstarts/build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo';
 ```
 
 Once the deployment completes, refresh the Database Explorer. You should see the `SILVER` and `GOLD` schemas inside `DCM_DEMO_2_FINANCE_DEV`, each populated with Dynamic Tables and views.
 
-> **Note:** By default, Dynamic Tables refresh immediately on creation. If the raw tables already contain data (from the load Task in the previous step), the deployment will take longer because each Dynamic Table performs its initial refresh during the deploy. With the sample datasets in this guide, the extra time is minimal — but in production scenarios with large datasets, be intentional about this behavior to avoid long-running deployments.
+All Dynamic Tables in this project use `INITIALIZE = ON_SCHEDULE`, which prevents them from refreshing immediately on creation. This keeps the deployment fast and predictable — especially important in production scenarios with large datasets. You'll trigger the initial refresh manually in the next step using `REFRESH ALL`.
 
 <!-- ------------------------ -->
 ## Query the Results
 
-With both projects deployed and data loaded, the Dynamic Tables will begin refreshing. You can query the gold-layer tables to verify the end-to-end pipeline is working.
+With both projects deployed and data loaded, the Dynamic Tables are ready but haven't refreshed yet (they were created with `INITIALIZE = ON_SCHEDULE`). Open `scripts/04_query_results.sql` in a Snowsight worksheet and run the queries to trigger a refresh and verify the end-to-end pipeline.
 
-### Query Fact Tables
+### Refresh All Dynamic Tables
+
+Since the Dynamic Tables were deployed with `INITIALIZE = ON_SCHEDULE`, they won't refresh until their scheduled lag interval triggers. Use `REFRESH ALL` to kick off the initial refresh immediately:
 
 ```sql
-SELECT * FROM dcm_demo_2_finance_dev.gold.fact_market_history LIMIT 10;
+USE ROLE dcm_demo_2_finance_dev_admin;
+EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline REFRESH ALL;
 ```
+
+This triggers a refresh of every Dynamic Table managed by the Pipeline project. The refresh follows the dependency graph — silver-layer tables refresh first, then gold-layer tables that depend on them. Allow a minute or so for the refresh to complete before querying.
+
+### Query Fact Tables
 
 ```sql
 SELECT * FROM dcm_demo_2_finance_dev.gold.fact_prospect LIMIT 10;
@@ -686,12 +725,31 @@ FROM TABLE(dcm_demo_2_finance_dev.INFORMATION_SCHEMA.DATA_METRIC_FUNCTION_REFERE
 ));
 ```
 
-This shows all attached expectations and their current status. The `no_missing_id`, `no_dead_prospects`, and `no_kids` expectations should all be passing if the sample data is clean.
+This shows all attached expectations and their current status.
+
+### Run All Expectations
+
+While `DATA_METRIC_FUNCTION_REFERENCES` shows *which* monitors are attached, `TEST ALL` actually *runs* them and evaluates the results against the expectation expressions:
+
+```sql
+USE ROLE dcm_demo_2_finance_dev_admin;
+EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline TEST ALL;
+```
+
+The result is a JSON object with the status and per-expectation details — the actual metric value, the expression, and whether it was violated. You should see:
+
+| Expectation | Value | Expression | Violated |
+|:---|:---|:---|:---|
+| `no_dead_prospects` | 100 | `value < 120` | false |
+| `no_kids` | 0 | `value > 18` | **true** |
+| `no_missing_id` | 0 | `value = 0` | false |
+
+The overall status is **FAILED** because `no_kids` is violated — some prospects in the sample data have `age = 0` (missing values stored as zero). This is intentional: it shows how expectations surface data quality issues that you'd otherwise miss.
 
 <!-- ------------------------ -->
 ## Cleanup
 
-To clean up all objects created in this guide, run the following:
+When you're done, open `scripts/05_cleanup.sql` in a Snowsight worksheet and run it to tear down all objects:
 
 ```sql
 USE ROLE dcm_developer;
@@ -737,5 +795,6 @@ In this guide, you learned how to:
 
 ### Related Resources
 - [DCM Projects Documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
-- [Sample DCM Projects Repository](https://github.com/Snowflake-Labs/snowflake_dcm_projects)
+- [Sample DCM Projects Repository](https://github.com/Snowflake-Labs/snowflake-dcm-projects)
 - [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/)
+- [DCM Projects for Dynamic Tables](https://www.snowflake.com/en/developers/guides/dcm-projects-for-dynamic-tables/)
