@@ -1,7 +1,8 @@
 author: Dharmendra Shavkani and Elizabeth Christensen
 id: migrate_to_snowflake_postgres_using_cortex_code
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Learn how to lift and shift existing PostgreSQL workloads into Snowflake Postgres using Cortex Code CLI (one-time dump/restore and logical replication)
-categories: featured, getting-started, migration
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
