@@ -8,7 +8,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Cortex Code, LTV, Regression
 
-# Getting Started with Cortex Code for Data Science ML
+# Build Your First ML Model in Snowflake with Agentic ML
 <!-- ------------------------ -->
 ## 1. Overview
 
@@ -36,7 +36,7 @@ A complete customer LTV prediction pipeline featuring:
 - Sign up for the 30-day [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) of Snowflake. Have `ACCOUNTADMIN` role or a role with permissions to create databases, schemas, tables, and models
 - [Cortex Code in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) (no local installation required)
 - A dedicated Snowflake warehouse
-- (Optional for SPCS) A compute pool configured for Snowpark Container Services
+- (Optional for SPCS) A compute pool configured for Snowpark Container Services — see the [official setup guide](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/common-setup)
 - Familiarity with basic ML concepts (training, evaluation, inference)
 
 > **Using Cortex Code CLI?** The same prompts work in both interfaces. See [Cortex Code CLI Walkthrough](#cortex-code-cli-walkthrough) for CLI-specific setup and terminal output examples.
@@ -54,9 +54,6 @@ A complete customer LTV prediction pipeline featuring:
 
 > Note: Cortex Code is environment aware so using it in a Workspace Notebook will give the best results as it will have access to all the tools provided by the notebook. When relevant, generated code will be inserted into the notebook and run on your behalf.
 
-### Optional - Select the Schema in Cortex Code
-
-In your Workspace, open the **Cortex Code** panel on the right. Click **+** and select **COCO_SCHEMA** (in `COCO_DB`).
 
 You are now ready to start prompting Cortex Code to build your ML pipeline.
 
@@ -90,6 +87,16 @@ Cortex Code generates the SQL or Python code to create the database objects and 
 ![Basic statistics by Cortex Code in Snowsight](assets/show-basic-statistics-by-cortex-code.jpg)
 
 > Note: Due to the inherent randomness in how LLMs generate text, your results may vary slightly from what is shown in this tutorial.
+
+To verify the data was generated correctly, run the following SQL in a Snowsight worksheet:
+
+> Note: `COCO_DB.COCO_SCHEMA` is an example database and schema. If Cortex Code saved the data to a different database or schema in your environment, update these values before running the query.
+
+```sql
+SELECT * FROM COCO_DB.COCO_SCHEMA.ML_LTV_TRANSACTIONS LIMIT 10;
+```
+
+You should see 10 rows with columns like `CUSTOMER_ID`, `TRANSACTION_TIME`, `AMOUNT`, `PRODUCT_CATEGORY`, and `CHANNEL`. 
 
 > **Alternative:** If you prefer to load a pre-built dataset instead of generating data, see [Appendix A — Load Pre-Built Dataset from S3](#appendix-a-load-pre-built-dataset-from-s3) at the end of this guide.
 
@@ -175,7 +182,7 @@ Cortex Code generates the customer feature profiles, runs inference via your Sno
 
 ![Batch inference results for LTV predictions](assets/snowsight-cortex-code-batch-inference-100-requests.jpg)
 
-> **Optional:** To deploy the model as a real-time REST endpoint on SPCS instead, see [Appendix B — Real-Time Inference on SPCS](#appendix-b-real-time-inference-on-spcs) at the end of this guide.
+> **Optional:** To deploy the model as a real-time REST endpoint on SPCS instead, see Appendix B — Real-Time Inference on SPCS at the end of this guide.
 
 <!-- ------------------------ -->
 ## 7. Debug and Recover from Errors
@@ -203,10 +210,15 @@ If a feature column is missing or a SQL view fails, Cortex Code investigates the
 3. Review Cortex Code's explanations when it makes corrections
 4. Use the Snowsight Notebook environment for the best interactive experience with visualizations
 
+
 <!-- ------------------------ -->
 ## 8. Conclusion And Resources
 
 Congratulations! You've successfully built a complete customer LTV prediction model using only a handful of natural language prompts in [Snowflake ML](http://www.snowflake.com/ml).
+
+### What You Built
+
+![LTV Prediction Pipeline Architecture](assets/architecture-diagram.svg)
 
 ### What You Learned
 - Generate realistic synthetic e-commerce data with natural language prompts
@@ -224,11 +236,48 @@ Web pages:
 
 Technical Documentation:
 - [Snowflake ML Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview) - Official Snowflake ML developer guide
+- [Snowflake ML Quickstart](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart) - Hands-on guides to get started with Snowflake ML
 - [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) - Getting started with Cortex Code
 - [Cortex Code in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) - Browser-based experience
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) - Command-line experience
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview) - Register, version, and deploy ML models
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) - Deploy and manage containerized workloads
+
+<!-- ------------------------ -->
+## Optional - Cleanup
+
+To avoid ongoing Snowflake credit consumption, you can clean up the resources created in this guide. Use the prompt below in Cortex Code, or run the SQL manually in a Snowsight worksheet.
+
+### Prompt
+
+> Note: `COCO_DB` is an example database and `COCO_WH` is an example warehouse name. If Cortex Code saved the data to a different database or created a different warehouse in your environment, update these values before running the query.
+
+```
+Drop the database COCO_DB, the model ML_LTV_PREDICTOR from the Snowflake Model Registry, and the warehouse COCO_WH that were created in this tutorial.
+```
+
+Cortex Code will generate and execute the appropriate DROP statements for each resource.
+
+### Manual SQL
+
+If you prefer to run the cleanup manually:
+
+> Note: `COCO_DB.COCO_SCHEMA` is an example database and schema, and `COCO_WH` is an example warehouse name. If Cortex Code saved the data to a different database or created a different warehouse in your environment, update these values before running the query.
+
+
+```sql
+-- Drop the database and all objects within it (table, schema, stage, etc.)
+DROP DATABASE IF EXISTS COCO_DB;
+
+-- Drop the model from the Model Registry
+DROP MODEL IF EXISTS COCO_DB.COCO_SCHEMA.ML_LTV_PREDICTOR;
+
+-- Drop the warehouse
+DROP WAREHOUSE IF EXISTS COCO_WH;
+```
+
+> Note: `DROP DATABASE` removes all schemas, tables, and stages inside it. Make sure you no longer need any of the data before running this command.
+
 
 <!-- ------------------------ -->
 ## Optional - Cortex Code CLI Walkthrough
@@ -243,7 +292,7 @@ Install the CLI:
 curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 ```
 
-After installing, run `cortex` and follow the setup wizard t`o connect to your Snowflake account. For detailed instructions, refer to the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
+After installing, run `cortex` and follow the setup wizard to connect to your Snowflake account. For detailed instructions, refer to the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
 
 Verify your connection:
 
@@ -323,8 +372,7 @@ Cortex Code CLI reads its built-in ML skill, detects the local Python environmen
 ✓  BASH  uv venv /Users/shtanaka/project/sfquickstarts/.venv --python 3.10 2>&1
   └─ Creating virtual environment at: .venv
 
-✓  BASH  uv pip install snowflake-ml-python xgboost lightgbm ...
-  └─ + snowflake-ml-python==1.8.4
+✓  BASH  uv pip install snowflake-ml-python xgboost 
 
 ✓  BASH  python session_helper.py  (connectivity check)
   └─ ✅ Connected successfully!
