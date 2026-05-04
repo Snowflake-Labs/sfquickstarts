@@ -694,22 +694,13 @@ SELECT SYSTEM$CLUSTERING_INFORMATION('ARCADE_DB.PUBLIC.ARCADE_SCORES', '(GAME_EN
 
 [`SYSTEM$CLUSTERING_INFORMATION`](https://docs.snowflake.com/en/sql-reference/functions/system_clustering_information) returns a **JSON string**. The object includes **`cluster_by_keys`**, **`average_depth`** and **`average_overlaps`** (**higher** values indicate the table is **not** well clustered for the given columns). These fields help relate micro-partition overlap to the pruning behavior behind the sub-second query times in earlier exercises.
 
-### Bonus D — Find the Ghost Player
+### Bonus D — Find the Ghost Sessions
 
-Someone has been logging perfect scores on every game. Can you find them in the data?
+The streamer occasionally inserts **perfect-game** rows from a single synthetic player; those rows carry an intentionally rare achievement (`Summit 2026`). Aggregating by player therefore collapses to **one** row—the discovery is more interesting if you look at **which badges are rarest**, then list **each ghost session** (many rows, same player across titles).
 
-```sql
-SELECT PLAYER_NAME, PLAYER_CITY, PLAYER_COUNTRY,
-       COUNT(*) AS PERFECT_GAMES,
-       MIN(SCORE) AS MIN_SCORE,
-       MAX(SCORE) AS MAX_SCORE,
-       COUNT(DISTINCT GAME_NAME) AS GAMES_PLAYED
-FROM ARCADE_SCORES
-WHERE ACHIEVEMENT = 'Summit 2026'
-GROUP BY PLAYER_NAME, PLAYER_CITY, PLAYER_COUNTRY
-ORDER BY PERFECT_GAMES DESC
-LIMIT 5;
-```
+Keep a **`GAME_ENDED_AT`** window on these queries so the Interactive Warehouse stays within its timeout; widen the window if needed. Ghost rows are injected roughly **once per 100,000** generated sessions—leave the Python streamer running if badge counts are still zero.
+
+Run **`sql/03_lab_queries.sql`** — Bonus D (queries **D1** and **D2**): rare achievements, then session-level ghost rows (the player is visible on every line in D2).
 
 <!-- ------------------------ -->
 ## Optional: Streamlit Dashboard
