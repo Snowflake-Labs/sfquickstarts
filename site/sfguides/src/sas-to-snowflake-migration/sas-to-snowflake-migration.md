@@ -127,31 +127,41 @@ This tutorial uses three sample SAS artifacts that represent a typical insurance
 <!-- ------------------------ -->
 ## 5. Set Up the Lab
 
-Create a working directory and download the sample SAS artifacts and configuration directly from this guide's published assets.
+Pull just this guide's lab folder using a shallow, sparse clone. The same commands work on macOS, Linux, Git Bash on Windows, and Windows PowerShell — git is identical across platforms.
 
 ```bash
-mkdir -p sas-to-snowflake-lab && cd sas-to-snowflake-lab
+git clone --depth 1 --filter=blob:none --sparse \
+    --branch sas-to-snowflake-migration \
+    https://github.com/ibaranov91/sfquickstarts.git
+cd sfquickstarts
+git sparse-checkout set site/sfguides/src/sas-to-snowflake-migration/assets
+cd site/sfguides/src/sas-to-snowflake-migration/assets
+```
 
-# Folder layout the convert commands expect
-mkdir -p sas_artifacts/{enterprise_guide,data_integration,base_code} \
-         data \
-         output/{base_code,enterprise_guide,data_integration}
+You are now in the lab directory. It contains everything you need:
 
-# Download lab files (alc_config.yml, SAS sources, sample CSVs)
-BASE=https://raw.githubusercontent.com/ibaranov91/sfquickstarts/sas-to-snowflake-migration/site/sfguides/src/sas-to-snowflake-migration/assets
-curl -sSL -o alc_config.yml                                         $BASE/alc_config.yml
-curl -sSL -o sas_artifacts/enterprise_guide/insurance.egp           $BASE/eg_insurance.egp
-curl -sSL -o sas_artifacts/data_integration/di.spk                  $BASE/di_insurance.spk
-curl -sSL -o sas_artifacts/base_code/quarterly_portfolio_review.sas $BASE/quarterly_portfolio_review.sas
-curl -sSL -o data/insurance_customers.csv                           $BASE/insurance_customers.csv
-curl -sSL -o data/insurance_claims.csv                              $BASE/insurance_claims.csv
-curl -sSL -o data/insurance_adjusters.csv                           $BASE/insurance_adjusters.csv
+```
+.
+├── alc_config.yml
+├── sas_artifacts/
+│   ├── enterprise_guide/insurance.egp
+│   ├── data_integration/di.spk
+│   └── base_code/quarterly_portfolio_review.sas
+├── data/
+│   ├── insurance_customers.csv
+│   ├── insurance_claims.csv
+│   └── insurance_adjusters.csv
+├── snowflake/00_setup.sql
+└── output/
+    ├── base_code/
+    ├── enterprise_guide/
+    └── data_integration/
 ```
 
 Two pieces of scaffolding worth understanding:
 
 - **`alc_config.yml`** — picked up automatically by `alchemist` when run from this directory. It tells the converter to emit Jupyter notebooks (`output_format: ipynb`) instead of plain `.py` files, and maps the SAS librefs used in the samples (`LDEMO`, `LDEMODI`, `LMART`) all to `LDEMO.PUBLIC` in Snowflake.
-- **`output/`** — three empty subfolders the convert commands write into. `alchemist convert -o` does not create the output directory itself, so they need to exist before you run it.
+- **`output/`** — three empty subfolders the convert commands write into. `alchemist convert -o` does not create the output directory itself, so they ship pre-created in the repo.
 
 > **Note:** Alchemist performs static code analysis and does not require or process the CSV data — it only needs the SAS source files. The CSVs are loaded into Snowflake separately in step 7.1.
 
