@@ -700,7 +700,41 @@ The streamer occasionally inserts **perfect-game** rows from a single synthetic 
 
 Keep a **`GAME_ENDED_AT`** window on these queries so the Interactive Warehouse stays within its timeout; widen the window if needed. Ghost rows are injected roughly **once per 100,000** generated sessions—leave the Python streamer running if badge counts are still zero.
 
-Run **`sql/03_lab_queries.sql`** — Bonus D (queries **D1** and **D2**): rare achievements, then session-level ghost rows (the player is visible on every line in D2).
+```sql
+USE WAREHOUSE SUMMIT_INT_WH;
+USE DATABASE  ARCADE_DB;
+USE SCHEMA    PUBLIC;
+
+-- D1 — Rarest achievements in the window (explore the tail before naming the badge)
+SELECT
+    ACHIEVEMENT,
+    COUNT(*) AS SESSIONS_WITH_BADGE
+FROM ARCADE_SCORES
+WHERE ACHIEVEMENT IS NOT NULL
+  AND GAME_ENDED_AT >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+GROUP BY ACHIEVEMENT
+ORDER BY SESSIONS_WITH_BADGE ASC, ACHIEVEMENT
+LIMIT 25;
+
+-- D2 — Every ghost session in the window (same player, different games / times)
+SELECT
+    GAME_ENDED_AT,
+    PLAYER_NAME,
+    PLAYER_ID,
+    PLAYER_CITY,
+    GAME_NAME,
+    SCORE,
+    LEVEL_REACHED,
+    ACCURACY_PCT,
+    GAME_MODE,
+    ACHIEVEMENT
+FROM ARCADE_SCORES
+WHERE ACHIEVEMENT = 'Summit 2026'
+  AND GAME_ENDED_AT >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+ORDER BY GAME_ENDED_AT DESC;
+```
+
+The same statements are in **`sql/03_lab_queries.sql`** under Bonus D.
 
 <!-- ------------------------ -->
 ## Optional: Streamlit Dashboard
