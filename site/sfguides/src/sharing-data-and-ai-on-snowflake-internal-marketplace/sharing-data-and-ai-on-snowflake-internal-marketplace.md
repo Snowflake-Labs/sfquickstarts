@@ -37,7 +37,7 @@ Sharing information between departments or business units ("domains") of a compa
 - How to customize your data products with [custom attributes](https://docs.snowflake.com/en/LIMITEDACCESS/collaboration/custom-attributes-internal-marketplace)
 - How to manage access to data products, including request & approval workflows 
 - How to share and consume [semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/sharing-semantic-views) and [AI agents](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agent-sharing)
-- How [generate semantic views and agents](https://docs.snowflake.com/en/LIMITEDACCESS/collaboration/auto-generated-data-agents-for-listings) for existing data products
+- How to [generate semantic views and agents](https://docs.snowflake.com/en/LIMITEDACCESS/collaboration/auto-generated-data-agents-for-listings) for existing data products
 - How to manage and consume data products with [Cortex Code ("Coco")](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 
 
@@ -172,16 +172,16 @@ Now select the data objects for this data product.
 ![](assets/2026-hide-columns.png)
 
 
-7. Set custom attributes
+7. Set custom attributes to any values you like:
     - Click in the field "**Attributes** (optional)" and select data product attributes.
-    - Note that the attributes **Confidentiality** and **Source Systems** are examples of custom attributes that the internal marketplace admin can define for your company. Up to 40 custom attributes can be configured.
+    - Note that the attributes **Confidentiality** and **Source Systems** are examples of _custom attributes_ that the internal marketplace admin can define for your company. Up to 40 custom attributes can be configured.
     - The attribute **Source Systems** is multi-valued, i.e. you can assign mutiple values from the drop-down list.
     - Custom attributes can also appear in the markeplace UI as filters.
+    - **Update frequency** is a standard attribute that you can set to indicate the intended service level objectve in terms of data product freshness. 
 
-<mark>
-***********
-add a screenshot here !!!
-***********</mark>
+
+![](assets/2026-set-custom-attributes.png)
+
 
 ### Step 4 of 5: Configure Access Control and Approval
 
@@ -192,13 +192,12 @@ Click the "**>**" button next to "Discovery" to configure who can discover and a
 - **Discovery** determines who can see the listing and its metadata in the Internal Marketplace.
 - **Access** determines who can discover the listing *and* query the shared data objects.
 
-For this listing, change discovery to the `data_consumer_role` in your current account.
+For this listing, change discovery from "Entire Organization" to your current account:
 - Click on "Entire Organization"
 - Choose "Selected accounts and roles"
-- Search for and select your current account
-- Click on "All roles" then "Selected roles"
-- Select `data_consumer_role` from the list. Done.
+- Search for and select your current account. Done.
 
+Leave the **Access** as "No accounts or roles are pre-approved".
 
 Click **Set up request approval flow** to proceed.
 
@@ -217,37 +216,40 @@ Click the blue **Publish** button in the top right corner.
 
 Your **Order Insights** data product is now live on the Internal Marketplace!
 
-To verify, navigate to the **Internal Marketplace** (**Catalog** > **Internal Marketplace**). You should now see the **Order Insights** listing. Use the **Provider** filter to show listings from the **Sales** domain.
+To verify, navigate to the **Catalog** > **Internal Marketplace**. 
+- You should now see the **Order Insights** listing. 
+- Use the **Profil** filter to show listings for profile (domain) that you selected for your data product.
+- You can also use the custom attribute filters to narrow down the data product.
 
-![](assets/publish10_done_newui.png)
 
-<mark>***********
-update the screenshot above when attribute filters are available in the UI !!!
-***********</mark>
+![](assets/2026-publish10_done_newui.png)
+
 
 ---
 
 ## Request and Grant Access
 
 
-In this section the **Consumer** user will request access to the **Order Insights** listing that you just published, and the **Data Owner**  will review and approve the request. Since both users are in the same account, you will switch between users (or use separate browser sessions) to play both roles.
+In this section:
+- The **Consumer** user will request access to your **Order Insights** listing that you just published
+- The **Data Owner**  will review and approve the request. 
+- Since both users are in the same account, you will switch between users (or use separate browser tabs or windows) to play both roles.
 
 ### Request Access as the Consumer User
 
-1. Log in to your account as the `data_consumer` user (or open a new browser tab / incognito window and log in as `data_consumer`).
-2. Navigate to the **Internal Marketplace**: Click on **Catalog** > **Internal Marketplace**.
+1. Log in to your account as the `data_consumer` user (e.g. open a new browser tab / incognito window and log in as `data_consumer`).
+2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. You should see the **Order Insights** listing. Click on it.
-4. Review the listing from the data consumer's perspective
-5. Click the blue **Request Access** button.
+4. Click the blue **Request Access** button.
    - If prompted to verify your email address, follow the dialog to complete verification.
-6. In the **Request access** dialog, enter a business justification such as:
+5. In the **Request access** dialog, enter a business justification such as:
    > "We need this data for our ncurrent project xyz."
-7. Submit the request.
-8. After submitting, click the gray **View request** button to review your pending request. You can also withdraw and resubmit the request from here if needed.
+6. Submit the request.
+7. After submitting, click the gray **View request** button to review your pending request. You can also withdraw and resubmit the request from here if needed.
 
 ### Review and Grant Access as the Data Product Owner
 
-1. Log in to your account as the `data_owner` user (switch browser tabs or log in again).
+1. Log in to your account as the `data_owner` user (switch browser tabs/windows or log in again).
 2. Navigate to the **Data Sharing** -> **Internal Sharing** .
 3. Open the **Requests** tab at the top of the Internal Sharing page.
 4. You should see the access request from `data_consumer`. Click on it to review the details:
@@ -264,18 +266,19 @@ Switch back to the `data_consumer` user and navigate to the **Order Insights** l
 ---
 
 
-<mark>***********
-Matthias to continue here !!!
-***********</mark>
 
 ## Consume Org Listing
 
 
 Now that access has been granted, let's consume the **Order Insights** data product as the `data_consumer` user with the `data_consumer_role`.
 
+<mark>***********
+Matthias to continue here   Problem: ULL collisions across participants???
+***********</mark>
+
 ### Query via the Internal Marketplace
 
-1. Log in to your account as the `data_consumer` user (or switch to your existing `data_consumer` browser tab).
+1. Log in to your account as the `data_consumer` user (or switch browser tab).
 2. Navigate to the **Internal Marketplace**: Click on **Catalog** > **Internal Marketplace**.
 3. Open the **Order Insights** listing.
    - The blue button should now say **Query in Worksheet** (reload the tab if it still shows "Request Access").
