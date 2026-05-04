@@ -21,9 +21,10 @@ CREATE DATABASE IF NOT EXISTS FLEET_ANALYTICS_DB
 -- See: https://docs.snowflake.com/en/LIMITEDACCESS/iceberg/tables-iceberg-v3-specification-support
 ALTER DATABASE FLEET_ANALYTICS_DB SET ICEBERG_VERSION_DEFAULT = 3;
 
--- Set default external volume for all Iceberg tables in this database
--- This is set after the external volume is created in 01_external_volume.sql
--- ALTER DATABASE FLEET_ANALYTICS_DB SET EXTERNAL_VOLUME = 'FLEET_ICEBERG_VOL';
+-- Set default external volume for all Iceberg tables in this database.
+-- setup.sh appends ALTER DATABASE ... EXTERNAL_VOLUME after scripts are generated:
+--   SNOWFLAKE_MANAGED (default) or FLEET_ICEBERG_VOL / your volume for customer storage.
+-- See: https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage
 
 -- Create schema for raw/source tables
 CREATE SCHEMA IF NOT EXISTS FLEET_ANALYTICS_DB.RAW

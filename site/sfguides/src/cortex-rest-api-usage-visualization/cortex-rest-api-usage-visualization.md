@@ -36,7 +36,7 @@ A five-chart dashboard showing:
 - **Trellis Dot Plot** — faceted strip plot of per-request tokens
 - **Interactive Multi-Line** — cumulative token usage over time with cross-model hover tooltip
 
-![Dashboard Overview](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/cortex-rest-api-usage-visualization/assets/ScatterStackedDensity.png?raw=true)
+![Dashboard Overview](assets/ScatterStackedDensity.png)
 
 <!-- ------------------------ -->
 ## Query Your Usage Data
@@ -105,7 +105,7 @@ Duration: 3
 
 The scatter plot renders each Cortex REST API call as a circle. The y-axis uses a **square root scale** so both small (< 500) and large (∼ 20K) token values are visible without the small values collapsing to the axis.
 
-![Scatter and Histogram](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/cortex-rest-api-usage-visualization/assets/ScatterStackedDensity.png?raw=true)
+![Scatter and Histogram](assets/ScatterStackedDensity.png)
 
 ### How the √ Scale Works
 
@@ -151,7 +151,7 @@ Duration: 2
 
 Inspired by the Vega-Lite "Natural Disasters" example, this chart places one circle per **date × model** cell. Circle **area** encodes total tokens for that combination.
 
-![Circle Plot and Trellis](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/cortex-rest-api-usage-visualization/assets/CirclesTrellis.png?raw=true)
+![Circle Plot and Trellis](assets/CirclesTrellis.png)
 
 ### Sizing Formula
 
@@ -184,7 +184,7 @@ Duration: 3
 
 The full-width bottom chart shows cumulative tokens over time for each model. **Hovering** reveals a cross-model tooltip showing all models' totals at the nearest date.
 
-![Multi-Line Cumulative](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/cortex-rest-api-usage-visualization/assets/Interactive.png?raw=true)
+![Multi-Line Cumulative](assets/Interactive.png)
 
 ### Cumulative Calculation
 

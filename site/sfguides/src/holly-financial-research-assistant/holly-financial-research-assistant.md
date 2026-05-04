@@ -70,7 +70,7 @@ This listing has a free trial available, making it compatible with Snowflake tri
 <!-- ------------------------ -->
 ## Create Database and Load Data
 
-All of the SQL in this quickstart is contained in the [INSTALL.sql](assets/INSTALL.sql) script. You can either run the full script end-to-end, or follow along step-by-step below. Open a new SQL Worksheet in Snowsight and paste the contents of INSTALL.sql.
+All of the SQL in this quickstart is contained in the [INSTALL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/9bd233e29db4de3b18ae3af4073dd38c3554c7f1/site/sfguides/src/holly-financial-research-assistant/assets/INSTALL.sql) script. You can either run the full script end-to-end, or follow along step-by-step below. Open a new SQL Worksheet in Snowsight and paste the contents of INSTALL.sql.
 
 ### Set Up Context
 

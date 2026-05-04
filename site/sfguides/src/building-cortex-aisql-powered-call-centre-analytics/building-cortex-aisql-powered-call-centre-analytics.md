@@ -1,5 +1,5 @@
 id: building-cortex-aisql-powered-call-centre-analytics
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/industry/public-sector
 language: en
 summary: Analyze call center data with Snowflake Cortex AI and Streamlit for natural language insights, agent performance metrics, and conversation trends.
 environments: web

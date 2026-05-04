@@ -31,7 +31,7 @@ The architecture diagram below shows the deployment. An MSK cluster and a Linux
 EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
 The Linux jumphost will host the Kafka producer and the Snowflake [High Performance (HP) Kafka Connector](https://docs.snowflake.com/en/connectors/kafkahp/setup-kafka) (v4.x) via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html). The HP connector uses a server-side architecture with a PIPE object in Snowflake that manages data processing and buffering, delivering up to 10 GB/s throughput per table with 5-10 second latency.
 
-> **Note:** This quickstart uses the Snowflake High Performance (HP) Kafka Connector (v4.x), which is currently in **Public Preview**.
+> **Note:** This quickstart uses the Snowflake High Performance (HP) Kafka Connector (v4), which is currently **[GA](https://www.snowflake.com/en/blog/snowflake-kafka-connector-v4-ga/?utm_campaign=Product&utm_content=1777396741&utm_medium=Snowflake&utm_source=linkedin)**.
 
 The Kafka producer calls the data sources' REST API and receives time-series data in JSON format. This data is then ingested into the Kafka cluster before being picked up by the Kafka connector and delivered to a Snowflake table.
 The data in Snowflake table can be visualized in real-time with [AMG (Amazon Managed Grafana)](https://aws.amazon.com/grafana/) and [Streamlit](https://streamlit.io)

@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+httpx
+streamlit
+pydantic-settings
+pyjwt
+cryptography
+python-dotenv
+snowflake-connector-python

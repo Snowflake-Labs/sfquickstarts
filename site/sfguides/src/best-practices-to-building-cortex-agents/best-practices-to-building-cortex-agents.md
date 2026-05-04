@@ -2,7 +2,7 @@
 id: best-practices-to-building-cortex-agents
 language: en
 summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in Snowflake Intelligence, following best practices for orchestration, tooling, and evaluation.
-author: ShenWang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
+author: Shen Wang, Tyler Richards, Krista Rockson, Josh Reini, James Cha-Earley
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 open in snowflake link: https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=best-practices-to-building-cortex-agents&utm_cta=developer-guides-deeplink
@@ -25,6 +25,7 @@ This guide is your map to building agents for use with Snowflake Intelligence, f
 - How to define agent purpose and scope.
 - How to configure orchestration and response instructions.
 - How to design effective tools for Cortex Agents.
+- How to use agent versioning to manage your deployment lifecycle.
 - How to evaluate and monitor agent performance.
 
 **Important:** Before building Cortex Agents, [configure your permissions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#set-up-sf-intelligence) and make sure that you have [access to the right models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#supported-models-and-regions).
@@ -41,6 +42,9 @@ Cortex Agents combine reasoning from large language models with Snowflake’s go
 4.  **Tool execution:**
     -   [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst): Write and run SQL on your semantic views for structured data.
     -   [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview): Retrieve relevant document text for unstructured data.
+    -   [Code Execution](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agents-code-interpreter): Generate and run Python code in a sandboxed environment.
+    -   [Web Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#web-search): Query the web for real-time information.
+    -   [MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors): Connect to external SaaS tools via the Model Context Protocol.
     -   Custom Tools: Execute user-defined functions or stored procedures for actions.
 5.  **Reflection & response:** The orchestrator reviews results, refines if needed, and generates the final answer (including summaries, tables, or charts) shown in the Snowflake Intelligence UI.
 
@@ -54,10 +58,12 @@ The following image describes this structure of Snowflake Intelligence.
 
 [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) are configurable reasoning systems that combine Snowflake’s built-in intelligence with your domain context.
 
-You can build and run agents in two ways:
+You can build and run agents in several ways:
 
 1.  **Agent UI in Snowsight:** An interactive interface that handles identity, access control, and monitoring out of the box.
 2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): A REST API for integrating agents into your own applications (like Streamlit apps or custom apps).
+
+>  **Pro tip:** Build agents using natural language with Snowflake's AI coding agent [**Cortex Code**](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/#production-ready-cortex-agents). 
 
 Consider the following when building an agent.
 
@@ -398,13 +404,11 @@ Description: Gets consumption data.
 | **Unclear optionality**<br>"region (optional)" | **Provide default guidance**<br>"region (optional, defaults to 'ALL', returns data for all regions)" |
 | **Using inconsistent terminology**<br>Pick one term and use it consistently everywhere.<br>Instructions say "customers" but tool descriptions say "accounts" | **Use consistent terminology**<br>If your domain has multiple terms for the same concept, define them explicitly:<br>"Account (also called 'customer' in billing context): A business entity that..." |
 
-## Using Cortex Tools
+## Using Tools
 
-The Snowflake Cortex suite includes [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) and Cortex Search, which together help turn natural-language questions into accurate, efficient SQL-based answers.
+Cortex Agents support a rich set of built-in tools: [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) for text-to-SQL, [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) for document retrieval, [code execution](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agents-code-interpreter) for sandboxed Python, [web search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#web-search) for real-time information, and [MCP connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors) for integrating with external SaaS tools.
 
-👉 [*Get awesome custom tools*](https://github.com/Snowflake-Labs/snowflake-intelligence-awesome-tools)
-
-#### Cortex Analyst (Text-to-SQL)
+### Cortex Analyst (Text-to-SQL)
 
 Cortex Analyst accepts natural language queries and converts them to SQL. Your description must guide the agent on how to phrase queries effectively.
 
@@ -414,7 +418,7 @@ Cortex Analyst accepts natural language queries and converts them to SQL. Your d
 
 Then, enhance the auto-generated description by following the previously described principles.
 
-#### Cortex Search
+### Cortex Search
 
 [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) services retrieve relevant documents and records using semantic search. The two primary use cases for Cortex Search are retrieval augmented generation (RAG) and enterprise search.
 
@@ -536,6 +540,63 @@ Constraints: Must be after start_date, cannot be in the future
 
 ```
 
+### Code Execution
+
+The [code execution tool](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agents-code-interpreter) enables your agent to generate and run Python code in a sandboxed environment during a conversation. This is useful for complex calculations, data transformations, and generating visualizations that go beyond what SQL can express.
+
+To enable code execution, add the tool spec and resource to your agent specification:
+
+```yaml
+tools:
+  - tool_spec:
+      type: code_execution
+      name: code_execution
+
+tool_resources:
+  code_execution: {}
+```
+
+**Best practices for code execution:**
+-   **Scope access carefully.** The code execution tool inherits the agent owner's role privileges. Make sure the owner role is appropriately scoped.
+-   **Grant PyPI access only when needed.** You can allow PyPI package installation via `artifact_repositories`, but this gives the tool access to any public package. Only enable it when your use case requires external libraries.
+-   **Use external access integrations sparingly.** If the code execution tool needs to reach external endpoints, create narrowly scoped network rules that allow only the specific domains required.
+-   **Design for single-session scope.** The sandbox persists within a session but not across sessions. If you need to persist results, write them to a Snowflake table that the tool has access to.
+-   **Add orchestration instructions for when to use code execution vs. other tools.** For example: *"Use the code execution tool for statistical analysis, visualizations, or multi-step calculations. Use Cortex Analyst for direct data retrieval."*
+
+### Web Search
+
+The [web search tool](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#web-search) lets your agent query the web via the Brave Search API to retrieve real-time information during a conversation. This is useful for questions about current events, public benchmarks, or any context that your internal data doesn't cover.
+
+**Prerequisites:** An ACCOUNTADMIN must enable web search at the account level in Snowsight under **AI & ML → Agents → Settings** before it can be used in any agent.
+
+**Best practices for web search:**
+-   **Use web search for real-time information your internal data doesn't cover.** If users ask about industry trends, competitor news, or current events, web search fills the gap.
+-   **Add explicit orchestration instructions for when to use web search vs. internal tools.** For example: *"Use web search only for questions about external market data or current events. For all customer and sales data, use CustomerAnalytics."* Without this guidance, the agent may default to web search for questions your internal tools can answer better.
+-   **Know the privacy model.** Snowflake has enabled zero data retention (ZDR) with Brave — no search queries or results are stored by Brave. However, queries and results do traverse the public internet.
+-   **Combine with Cortex Search for hybrid scenarios.** Web search provides breadth (the open web), while Cortex Search provides depth (your proprietary documents). Use orchestration instructions to tell the agent when each is appropriate.
+
+### MCP Connectors
+
+> **Preview Feature — Private:** MCP Connectors are available to select accounts.
+
+[MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors) connect your agents to external SaaS tools via the Model Context Protocol (MCP). Supported connectors include Atlassian (Jira & Confluence), GitHub, Glean, Google Workspace, Linear, Salesforce, and Slack, and you can build custom connectors for any MCP-compatible endpoint.
+
+The setup flow for MCP connectors is:
+1.  **Provider setup:** Create an OAuth app on the provider's dashboard and obtain credentials.
+2.  **API integration:** Create an API integration in Snowflake that stores the OAuth configuration.
+3.  **External MCP server:** Create an external MCP server object that references the API integration.
+4.  **Agent configuration:** Add the external MCP server to your agent.
+5.  **User authentication:** End users connect via OAuth in Snowflake Intelligence.
+
+**Best practices for MCP connectors:**
+-   **Follow least-privilege access.** Grant only the minimum required privileges for each role. Access to an MCP server doesn't automatically grant access to its tools.
+-   **Use descriptive names for MCP servers.** The agent selects tools based on name and description context. A name like `JiraProjectTracker` is better than `MCPServer1`.
+-   **Add orchestration instructions for external vs. internal tools.** For example: *"Use the Jira connector for questions about open tickets and sprint progress. Use CustomerAnalytics for revenue and usage data."*
+-   **Disable rather than drop integrations during maintenance.** Disabling preserves configuration and secrets while immediately blocking tool invocations. Dropping is permanent.
+-   **Use hyphens, not underscores, in hostnames.** Hostnames containing underscores cause connection issues.
+
+👉 [*Getting Started with MCP Connectors*](https://www.snowflake.com/en/developers/guides/getting-started-with-mcp-connectors/)
+
 ### Help users find and use your agent effectively
 
 In addition to a specific, descriptive agent name, add **example questions** where you know your agent already performs well.
@@ -555,55 +616,62 @@ The process of deploying agents is similar to developer cycles, with three key s
 2. Using systematic tests to drive iteration and improvement.
 3. Graduating to a production agent.
 
+👉 *For a deep dive into evaluation, versioning, CI/CD, and monitoring best practices, see [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-for-evaluating-cortex-agents/).*
+
+### Use agent versioning to structure your deployment lifecycle
+
+> **Preview Feature — Private:** Agent versioning is available to select accounts.
+
+Cortex Agent versioning gives you a clean separation between development and production through three concepts:
+
+-   **Live version** — a mutable draft where you iterate on prompts, tools, and configs.
+-   **Named versions** — immutable snapshots created from the live version that you can safely test and deploy.
+-   **Aliases** (e.g., `production`, `staging`, `canary`) — pointers that route traffic to a specific version, decoupling your client code from version numbers.
+
+The core workflow:
+1.  **Prototype** on the live version.
+2.  **Commit** a named version and evaluate it against your test set.
+3.  **Promote** by assigning the `production` alias to the version that passes your quality bar.
+
+```sql
+ALTER AGENT my_agent COMMIT COMMENT = 'Improved tool selection logic';
+
+ALTER AGENT my_agent MODIFY VERSION VERSION$4 SET ALIAS = production;
+```
+
+If a regression is detected, roll back instantly by pointing the alias to a previous version:
+
+```sql
+ALTER AGENT my_agent MODIFY VERSION VERSION$3 SET ALIAS = production;
+```
+
+You can also create agent versions from a stage or git repository, list versions, and access version files via the `snow://agent/` URI scheme.
+
 ### Stage 1: Prototype and use case development
 
-At this stage, you are building the first version of your agent and smoothing out any obvious rough edges. You are also spending a significant amount of time defining the use case. At the end of this stage, it should be clear which use cases your agent targets, and which use cases it does not target.
+Build the first version of your agent and smooth out obvious rough edges. At the end of this stage, it should be clear which use cases your agent targets and which it does not.
 
-To make this even more concrete, it’s useful here to create a representative “golden” test set of questions, expected tool use, expected answers, and tasks your agent is expected to perform. This test set is often best created by working directly with trusted stakeholders or end-users of your agent, and will become the baseline to measure agent quality.
+Create a representative “golden” test set of questions, expected tool use, and expected answers. Work directly with trusted stakeholders or end-users to build this set — it becomes your baseline for measuring agent quality.
 
-After the agent use case has been clearly defined and the first version of your agent is built, you can move on to the iteration and improvement phase.
+### Stage 2: Iteration and evaluation
 
-### Stage 2: Iteration and agent evaluation
+Use the Snowflake Monitoring UI and [Cortex Agent Evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#evaluation) (generally available) to identify which queries the agent handles incorrectly or too slowly. Agent traces show planning, tool use, and generation steps so you can pinpoint exactly where things went wrong.
 
-Now that you have a representative “golden” set, you can use the Snowflake Monitoring UI to identify which queries the agent is responding to incorrectly (low correctness score) or more slowly than expected (high agent duration). By examining the traces, you can see planning, tool use, and generation steps of the agent. These traces help you pinpoint exactly where the agent went wrong.
+After your agent performs well against your golden set, it’s ready for production.
 
-#### Setup agent evals
+### Stage 3: Production
 
-Before you begin evaluating and monitoring your agent, *ensure you have [AI Observability permissions] (https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#required-privileges) set up properly.*
-
-In addition to manually examining the traces, you can also use agent evaluations with both ground truth and reference-free (in private preview and open sourced via TruLens) to identify agent issues. By identifying precise failure modes of your agent, you can drive improvement and iteration.
-
-👉 Learn more about the [Agent GPA (Goal-Plan-Action) framework for evaluating agent reliability](https://www.snowflake.com/en/engineering-blog/ai-agent-evaluation-gpa-framework/)
-
-These agent evaluations can pinpoint very precise issues with your agent:
--   Are the correct tools used in the correct sequence?
--   Is tool execution taking expected inputs and producing the correct output?
--   Are the agent’s steps coherent and grounded in prior context?
-
-After your agent performs well against your golden set, it's ready for production. To be confident that your agent is production-ready, make sure your test set is representative of production use and provide more data.
-
-### Stage 3: Production-ready agent
-
-It is in this stage that you want to steadily get feedback from your users, and rely on regularly scheduled performance testing using your golden sets of questions and answers.
-
-#### Setup agent monitoring
-
-As more people begin to use your agents, you should monitor (using the Agent Monitoring UI) and evaluate the speed and performance of actual usage.
-
-Start with focusing on queries where users provide negative feedback, and identify the root cause of failure. Use subject matter experts to annotate the correct answer and correct tools to be used, and use these “hard” queries to build a new evaluation set. This new evaluation set can be used to improve your agent further as described in stage 2.
-
-Teams deploying agents in production often run their agent against evaluation sets on a regular cadence to identify regressions. When your agent is first rolled out, you should monitor usage closely. As you become more confident about your agents, you can dial back how much monitoring you do.
+Monitor production usage and collect user feedback. Run your evaluation set on a regular cadence to catch regressions from model updates, data changes, or tool configuration drift. Focus first on queries with negative feedback to build a “hard” evaluation set that drives the next round of improvement.
 
 ## How to improve agent performance
 
--   **Improve orchestration instructions and tool descriptions:** Heavily use the GPA evaluation results to inform improvement. For issues with tools, focus on improving tool descriptions. For issues with the orchestration and planning, consider updates to the orchestration instructions. Prompting an LLM with the explanation of what went wrong and the existing prompt can help automate creation of your new prompt.
+-   **Improve orchestration instructions and tool descriptions:** Use evaluation results to inform improvement. For issues with tools, focus on tool descriptions. For orchestration and planning issues, update orchestration instructions.
 
--   **Use agent traces to identify latency bottlenecks:** To diagnose a slow agent, use the agent traces in the monitoring tab. These traces show the logical path the agent took and how long each step lasted, allowing you to pinpoint the exact bottleneck.
+-   **Use agent traces to identify latency bottlenecks:** Traces in the monitoring tab show the logical path the agent took and how long each step lasted, allowing you to pinpoint the exact bottleneck.
 
--   **Pre-define verified queries:** For common or complex analytics, you can pre-define and verify the queries directly in your semantic views. This ensures the agent uses an optimized, predictable query path for those questions.
+-   **Pre-define verified queries:** For common or complex analytics, pre-define and verify queries directly in your semantic views. This ensures the agent uses an optimized, predictable query path.
 
 -   **Make queries performant:** An ounce of data engineering is worth a pound of prompt engineering. Optimizing your underlying data models, pre-aggregating common metrics, and using clear, consistent column names can have a greater impact on performance than tweaking instructions.
-
 
 ## Example: Complete agent configuration
 
@@ -796,6 +864,10 @@ By following these best practices, you can confidently build **Cortex Agents** t
 
 ## Additional resources
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
+- Guide: [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-evaluating-cortex-agents/)
 - Guide: [Getting started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 - Guide: [Getting started with Snowflake Intelligence and Cortex Knowledge Extensions (CKEs)](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/)
+- Guide: [Getting Started with MCP Connectors](https://www.snowflake.com/en/developers/guides/getting-started-with-mcp-connectors/)
+- [Code execution tool documentation](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agents-code-interpreter)
+- [MCP Connectors documentation](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors)
 - [More Snowflake Guides](https://www.snowflake.com/en/developers/guides/)

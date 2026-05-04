@@ -370,9 +370,9 @@ def create_connection():
     """Create a Snowflake connection (reused for all operations)."""
     print("Connecting to Snowflake...")
     
-    # Check for authenticator and password in config
+    # PAT for programmatic access (ACCOUNTADMIN); browser/SSO if unset
     authenticator = os.getenv('SNOWFLAKE_AUTHENTICATOR', 'externalbrowser')
-    password = os.getenv('SNOWFLAKE_ACCOUNTADMIN_TOKEN')
+    pat = os.getenv('SNOWFLAKE_ACCOUNTADMIN_TOKEN')
     
     conn_params = {
         'account': SNOWFLAKE_ACCOUNT,
@@ -383,12 +383,12 @@ def create_connection():
         'role': SNOWFLAKE_ROLE,
     }
     
-    # If password/PAT is provided, use password auth
-    if password:
-        conn_params['password'] = password
+    # If PAT is set, use token as password (programmatic auth)
+    if pat:
+        conn_params['password'] = pat
         if authenticator and authenticator != 'externalbrowser':
             conn_params['authenticator'] = authenticator
-        print("Using password/token authentication")
+        print("Using PAT authentication (SNOWFLAKE_ACCOUNTADMIN_TOKEN)")
     else:
         conn_params['authenticator'] = authenticator
         print(f"Using authenticator: {authenticator}")

@@ -90,18 +90,22 @@ assets/
 
 ## ⚙️ Configuration Options
 
-### External Volume Options
+### Iceberg storage (default: Snowflake-managed)
 
-Iceberg tables require an external volume pointing to your cloud storage.
+By default, `USE_SNOWFLAKE_STORAGE=true` stores Iceberg table files in [Snowflake-managed storage](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage) (`SNOWFLAKE_MANAGED`). No external volume or cloud bucket setup is required (AWS- and Azure-hosted accounts only).
 
-**Option A: Use an existing external volume**
+**Customer-managed object storage** — set `USE_SNOWFLAKE_STORAGE=false`, then either:
+
+**Use an existing external volume**
 ```env
+USE_SNOWFLAKE_STORAGE=false
 USE_EXISTING_VOLUME=true
 EXISTING_VOLUME_NAME="your_volume_name"
 ```
 
-**Option B: Create a new external volume**
+**Create a new external volume (`FLEET_ICEBERG_VOL`)**
 ```env
+USE_SNOWFLAKE_STORAGE=false
 USE_EXISTING_VOLUME=false
 STORAGE_PROVIDER="S3"  # S3, GCS, AZURE
 ```
@@ -148,13 +152,14 @@ The guide uses a realistic fleet management scenario:
 - Conda package manager
 - Apache Spark 4.0+ (for VARIANT support)
 
-### For External Storage
-- AWS S3, GCS, Azure Blob, ADLS Gen2, or OneLake bucket/container
-- Appropriate IAM roles/service principals
+### For customer-managed Iceberg storage (optional)
+- Set `USE_SNOWFLAKE_STORAGE=false` in `config.env`
+- AWS S3, GCS, Azure Blob, ADLS Gen2, or OneLake bucket/container and IAM roles or service principals
 
 ## 📚 Related Documentation
 
 - [Iceberg Tables in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg)
+- [Snowflake storage for Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage)
 - [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview)
 - [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
 - [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
@@ -165,6 +170,7 @@ To remove all objects created by this guide:
 
 ```sql
 DROP DATABASE IF EXISTS FLEET_ANALYTICS_DB CASCADE;
+-- Only if you used customer-managed storage (USE_SNOWFLAKE_STORAGE=false)
 DROP EXTERNAL VOLUME IF EXISTS FLEET_ICEBERG_VOL;
 DROP WAREHOUSE IF EXISTS FLEET_ANALYTICS_WH;
 DROP ROLE IF EXISTS FLEET_ANALYST;
