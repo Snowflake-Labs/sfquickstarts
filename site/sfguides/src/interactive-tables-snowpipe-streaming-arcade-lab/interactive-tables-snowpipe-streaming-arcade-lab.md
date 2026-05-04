@@ -688,11 +688,11 @@ USE ROLE ACCOUNTADMIN;
 
 SHOW INTERACTIVE TABLES IN SCHEMA ARCADE_DB.PUBLIC;
 
--- Clustering depth (lower is better-clustered for time-range queries)
+-- JSON clustering stats for GAME_ENDED_AT (overlap depth, overlaps, partition counts, histogram)
 SELECT SYSTEM$CLUSTERING_INFORMATION('ARCADE_DB.PUBLIC.ARCADE_SCORES', '(GAME_ENDED_AT)');
 ```
 
-`CLUSTERING_RATIO` close to `1.0` means the Interactive Warehouse can skip nearly all micro-partitions on `GAME_ENDED_AT` predicates — this is what drives the sub-second query times in earlier exercises.
+[`SYSTEM$CLUSTERING_INFORMATION`](https://docs.snowflake.com/en/sql-reference/functions/system_clustering_information) returns a **JSON string**. The object includes **`cluster_by_keys`**, **`average_depth`** and **`average_overlaps`** (**higher** values indicate the table is **not** well clustered for the given columns). These fields help relate micro-partition overlap to the pruning behavior behind the sub-second query times in earlier exercises.
 
 ### Bonus D — Find the Ghost Player
 
