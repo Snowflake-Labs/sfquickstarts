@@ -151,7 +151,8 @@ Now select the data objects for this data product.
 ### Step 3 of 5: Edit and Complete the Listing Metadata
 
 1. Review the AI-generated listing metadata
-2. Change the listing title to "Order Insights"
+2. Change the listing title to "Order Insights (_<account locator\>_)"
+    - For disambiguation in this lab only, add your 7-character Snowflake account locator to the listing title.  The locator is part of the URL in your browser address bar.
 3. Under title use the **Select profile** box to select the profile (domain) under which to publish this data product
 4. If desired, make changes to the listing description or other metadata fields. 
    - For example, in the **Documentation** field you could add any URL to supplementary documentation, e.g. `http://www.snowflake.com`.
@@ -272,22 +273,17 @@ Switch back to the `data_consumer` user and navigate to the **Order Insights** l
 
 Now that access has been granted, let's consume the **Order Insights** data product as the `data_consumer` user with the `data_consumer_role`.
 
-<mark>***********
-Matthias to continue here   Problem: ULL collisions across participants???
-***********</mark>
 
 ### Query via the Internal Marketplace
 
 1. Log in to your account as the `data_consumer` user (or switch browser tab).
-2. Navigate to the **Internal Marketplace**: Click on **Catalog** > **Internal Marketplace**.
+2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. Open the **Order Insights** listing.
    - The blue button should now say **Query in Worksheet** (reload the tab if it still shows "Request Access").
 4. Click **Query in Worksheet**. Snowflake opens a new worksheet pre-populated with the sample queries from the listing.
 5. Review and run the sample queries.
-   - Note the [Uniform Listing Locator (ULL)](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-query) used to reference objects: `ORGDATACLOUD$SALES$ORDER_INSIGHTS.SF1.<object>`
-   - The ULL contains the domain profile name (`SALES`), the listing name (`ORDER_INSIGHTS`), the schema (`SF1`), and the object name.
-6. In the left-hand panel of the worksheet, note the list of all available internal data products.
 
+<!--
 ### Query via SQL in a Worksheet
 
 You can also query data products directly from any worksheet using the ULL. Open a new worksheet as `data_consumer` and run the following queries:
@@ -298,17 +294,17 @@ USE WAREHOUSE compute_wh;
 
 -- Explore the Order Summary View
 SELECT * 
-FROM ORGDATACLOUD$SALES$ORDER_INSIGHTS.SF1.ORDER_SUMMARY 
+FROM SF1.ORDER_SUMMARY 
 LIMIT 100;
 
 -- Use the UDF to obtain order details for one customer
 SELECT customer_name, country, orderkey, orderdate, AMOUNT
-FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.SF1.ORDERS_PER_CUSTOMER(60001));
+FROM TABLE(SF1.ORDERS_PER_CUSTOMER(60001));
 ```
+-->
+### Live Data Sharing (Optional Excercise)
 
-### Live Data Sharing
-
-A key benefit of organizational listings is that data is shared live -- there is no copy. When the data owner updates the underlying data, consumers see the changes instantly. Let's demonstrate this.
+A key benefit of organizational listings is that data is shared live. When the data owner updates the underlying data, consumers see the changes instantly. Let's demonstrate this.
 
 1. Switch to the `data_owner` user and run the following in a worksheet:
 
@@ -331,13 +327,13 @@ A key benefit of organizational listings is that data is shared live -- there is
    UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
    ```
 
-3. Switch back to `data_consumer` and re-run the same query via the ULL:
+3. Switch back to `data_consumer` and re-run the same query:
 
    ```sql
    USE ROLE data_consumer_role;
 
    SELECT customer_name, country, orderkey, orderdate, AMOUNT
-   FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.SF1.ORDERS_PER_CUSTOMER(60001));
+   FROM TABLE(SF1.ORDERS_PER_CUSTOMER(60001));
    ```
 
    The updated country (Mozambique) is **instantly** visible to the consumer -- no refresh, no sync, no delay.
@@ -346,24 +342,71 @@ A key benefit of organizational listings is that data is shared live -- there is
 
 ---
 
+## Share Data Products across the Org (using Coco)
+Now let's make your data product visible to the entire organization! In this lab, the organization consists of the Snowflake accounts of all the other lab participants around you.
+
+You could do this manually by going back to the "Step 4 of 5: Configure Access Control and Approval" that you performed above. But, let's use Coco to do it for you.
+
+1. Log in to your account as the `data_owner` user (switch browser tabs/windows or log in again).
+2. Navigate to **Data Sharing** -> **Internal Sharing** .
+3. Open the **Listing** tab at the top of the Internal Sharing page.
+4. Select your listing 
+5. Invoke Coco by clicking on the blue AI icon at the bottom right:
+
+   ![](assets/2026-invoke-coco.png)
+
+
+6. Prompt Coco to make thge desired change for you: "_Please change the discoverability of this listing to the entire organization_". Then click **Allow** to confirm:
+
+   ![](assets/2026-allow-coco-to-alter.png)
+
+7. Hide Coco by clicking the **->|** icon in the top right corner.
+8. Reload the browver tab to validate the effect of Coco's ALTER statement in the UI: 
+
+     ![](assets/2026-validate-coco-ui.png)
+
+9. Navigate to  **Catalog** > **Internal Marketplace**. More and more data products published by other lab participants will appear in the internal marketplace!
+10. Open at least 2 or 3 data products other than your own and **Request Access** as you did before for your own data product. 
+11. Navigate to the **Data Sharing** -> **Internal Sharing** -> **Requests** to check if you have received any access requests from other lab participants. If so, approve them.
+
+
+
 ## Share Semantic Views and Agents
+Let's make your data product AI-ready by generating and adding a semantic model (semantic view) and an AI agent to it.
+
+1. Log in to your account as the `data_owner` user (or switch browser tabs/windows ).
+2. Navigate to **Data Sharing** -> **Internal Sharing** .
+3. Open the **Listing** tab at the top of the Internal Sharing page.
+4. Select your listing.
+5. Click on **Secure share** at the top:
+
+     ![](assets/2026-view-the-share.png)
+
+6. You will the list of objects currently shared by your listing. Snowflake offers to generate and add semantic view and and an agent. Click **Get started**. Then click  **Create**.
 
 
-<!-- TODO: Detailed instructions for sharing semantic views and Cortex agents via the internal marketplace -->
+     ![](assets/2026-add-semview-and-agent.png)
 
+7. Click to **Try** to test drive the semantic view with some natural language prompts. A new browser tab will open. Then return to the browser tab with your listing and click **Add to secure share** and. **Done**. 
+
+     ![](assets/2026-try-and-add.png)
+
+ 8. Your data product is now marked as **Cortex AI Ready**.
 ---
 
-## Use Listing with Natural Language
+## Talk to your Data Product
+
+<mark>
+***********
+Matthias to continue here
+************</mark>
 
 
 <!-- TODO: Detailed instructions for querying data products using natural language -->
 
 ---
 
-## Share Data Products across the Org
 
-
-<!-- TODO: Detailed instructions for sharing data products across the organization -->
 
 ---
 
