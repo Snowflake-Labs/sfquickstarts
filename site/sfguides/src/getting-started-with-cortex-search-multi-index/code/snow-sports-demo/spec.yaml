@@ -1,0 +1,27 @@
+# =============================================================================
+# SPCS Service Specification — Snow Sports Catalog Search
+# Deploys the React + FastAPI catalog search app as a Snowpark Container Service
+# =============================================================================
+spec:
+  containers:
+  - name: snow-sports-store
+    image: /catalog_search_db/app/app_images/snow-sports-store:v1
+    env:
+      SNOWFLAKE_DATABASE: CATALOG_SEARCH_DB
+      SNOWFLAKE_SCHEMA: APP
+      SNOWFLAKE_WAREHOUSE: CATALOG_SEARCH_WH
+      # SPCS automatically provides /snowflake/session/token for OAuth auth
+    ports:
+    - name: http
+      port: 8000
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 1Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+  endpoints:
+  - name: store-ui
+    port: http
+    public: true
