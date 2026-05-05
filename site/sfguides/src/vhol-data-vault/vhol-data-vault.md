@@ -1,6 +1,6 @@
 author: Paul Hooper
 id: vhol-data-vault
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
 summary: Building a Real-time Data Vault in Snowflake 
 environments: web

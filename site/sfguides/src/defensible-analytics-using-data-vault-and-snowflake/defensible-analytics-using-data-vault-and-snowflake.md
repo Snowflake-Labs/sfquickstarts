@@ -2,7 +2,7 @@ author: Paul Hooper
 id: defensible-analytics-using-data-vault-and-snowflake
 language: en
 summary: Defensible Analytics using Data Vault and Snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
