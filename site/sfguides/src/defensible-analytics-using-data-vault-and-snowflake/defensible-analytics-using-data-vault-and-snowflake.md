@@ -142,6 +142,7 @@ Let's create a schema in the platform database for governance, containing common
 ```sql
 -- Platform Database: Governance -----------------------------------------------
 USE ROLE PLT_ADMIN;
+USE WAREHOUSE ADMIN_WH;
 
 CREATE SCHEMA IF NOT EXISTS PLT.GOVERNANCE
   WITH MANAGED ACCESS
@@ -201,6 +202,9 @@ Let's create a schema in the platform database for administration tools, contain
 
 ```sql
 -- Platform Database: Admin Tools ----------------------------------------------
+USE ROLE PLT_ADMIN;
+USE WAREHOUSE ADMIN_WH;
+
 CREATE SCHEMA IF NOT EXISTS PLT.ADMIN_TOOLS
   WITH MANAGED ACCESS
   COMMENT = 'Common platform administration tools and utilities';
@@ -582,6 +586,9 @@ Now that we know our domains, let's create domain-oriented schemas in the DV and
 
 ```sql
 -- Enterprise Memory and Information Delivery Schemas --------------------------
+USE ROLE PLT_ADMIN;
+USE WAREHOUSE ADMIN_WH;
+
 CALL PLT.ADMIN_TOOLS.CREATE_DV_SCHEMA_AND_ROLES('DEV_DV', 'SALESMKT', 'Sales & Marketing');
 CALL PLT.ADMIN_TOOLS.CREATE_DW_SCHEMA_AND_ROLES('DEV_DW', 'SALESMKT', 'Sales & Marketing');
 CALL PLT.ADMIN_TOOLS.CREATE_DV_SCHEMA_AND_ROLES('DEV_DV', 'CUSTSERV', 'Customer Service');
