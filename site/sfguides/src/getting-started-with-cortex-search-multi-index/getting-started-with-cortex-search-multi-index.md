@@ -1,19 +1,24 @@
 author: Lucas Galan
-id: getting-started-with-cortex-search-multi-index
+id: build-hybrid-search-with-cortex-search-multi-index
 language: en
-summary: Learn how to use Cortex Search multi-index to solve retail catalog retrieval — combining exact brand recall and semantic intent search in a single service. No fan-out, no manual reranking.
+summary: Build hybrid search combining BM25 keyword and vector semantic retrieval in a single Cortex Search service — then wrap it in a full-stack application.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Getting Started with Cortex Search Multi-Index for Retail Catalog Retrieval
+# Build Hybrid Search with Cortex Search Multi-Index
 <!-- ------------------------ -->
 ## Overview
 
-**Solve the two hardest search problems in retail — exact brand recall and semantic intent — in a single Cortex Search service with four indexes.**
+**Solve the two hardest search problems in retail — exact brand recall and semantic intent — in a single Cortex Search service with four indexes. Then build a full-stack application on top of it.**
 
-This guide walks you step-by-step through building a production-ready product catalog search using **Cortex Search multi-index**: a single service that simultaneously maintains BM25 keyword indexes over structured columns (brand, item name, subcategory) and a vector semantic index over free-text descriptions. We use **SNOWFIELD PRO**, a synthetic winter sports ecommerce catalog of 1,040 products, as the hero example.
+This guide has two parts:
+
+-   **Part 1 — Introduction to Cortex Search Multi-Index:** Learn how multi-index works, set up a product catalog, create a search service, query it from SQL, and tune it for production.
+-   **Part 2 — Building a Search Application:** Use the Python SDK to query the service programmatically, then build a React + FastAPI demo app and deploy it to Snowpark Container Services.
+
+We use **SNOWFIELD PRO**, a synthetic winter sports ecommerce catalog of 1,040 products, as the hero example.
 
 > aside positive
 > **Download the assets for this quickstart:**
@@ -41,18 +46,18 @@ At a high level:
 -   How to construct the `SEARCH_TEXT` column for maximum retrieval coverage
 -   How to query all indexes simultaneously from SQL using `SNOWFLAKE.CORTEX.SEARCH_PREVIEW()`
 -   How to derive category breakdowns from result attributes (not from separate services)
--   _(Optional)_ How to use `AI_COMPLETE()` to enrich product descriptions with AI before indexing
--   _(Optional)_ How to query with the Python SDK using `multi_index_query`
--   _(Optional)_ How to build a full-stack demo app around Cortex Search
+-   How to use `AI_COMPLETE()` to enrich product descriptions with AI before indexing
+-   How to query with the Python SDK using `multi_index_query`
+-   How to build a full-stack demo app around Cortex Search
 
 ### What You'll Build
 
 -   A product catalog table with a pre-computed `SEARCH_TEXT` column
 -   A single **Cortex Search service** with three TEXT indexes and one VECTOR index
 -   Working SQL queries using `SEARCH_PREVIEW` that demonstrate brand recall, intent search, attribute filtering, and category breakdowns
--   _(Optional)_ AI-enriched product descriptions using `AI_COMPLETE()` for deeper semantic recall
--   _(Optional)_ A Python query function using `multi_index_query` that hits all four indexes at once
--   _(Optional)_ A live SNOWFIELD PRO demo app with debounced auto-search
+-   AI-enriched product descriptions using `AI_COMPLETE()` for deeper semantic recall
+-   A Python query function using `multi_index_query` that hits all four indexes at once
+-   A live SNOWFIELD PRO demo app with debounced auto-search
 
 <!-- ------------------------ -->
 ## The Retail Catalog Retrieval Problem
@@ -540,7 +545,66 @@ One service. One query. Category breakdown from result attributes, not from four
 > - The function has **higher latency** than the REST and Python APIs. For production workloads requiring low-latency responses, use the Python SDK or REST API instead.
 
 <!-- ------------------------ -->
-## (Optional) Querying with the Python SDK
+## Tuning and Optimization
+
+**Multi-index retrieval is production-ready out of the box, but these practices improve recall further.**
+
+### 1. Enrich SEARCH_TEXT for Better Vector Coverage
+
+The more descriptive the `SEARCH_TEXT`, the better the semantic index performs. Include everything a customer might say:
+
+```sql
+-- Enrich with brand taglines and synonyms if available
+UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
+SET SEARCH_TEXT = TRIM(
+    COALESCE(BRAND, '') || ' ' ||
+    COALESCE(ITEM_NAME, '') || ' ' ||
+    COALESCE(SUBCATEGORY, '') || ' ' ||
+    COALESCE(DISCIPLINE, '') || ' ' ||
+    COALESCE(SKILL_LEVEL, '') || ' ' ||
+    COALESCE(GENDER, '') || ' ' ||
+    COALESCE(DESCRIPTION, '') || ' ' ||
+    -- Add brand tagline / voice if you have it
+    COALESCE(BRAND_TAGLINE, '') || ' ' ||
+    COALESCE(MATERIAL_TAGS, '')
+);
+```
+
+### 2. Granular TEXT INDEXES for Niche Catalogs
+
+For catalogs with strong SKU or model number search patterns, add those columns to TEXT INDEXES:
+
+```sql
+-- Example: add SKU and MODEL_NUMBER as TEXT indexes
+-- (requires recreating the service)
+CREATE OR REPLACE CORTEX SEARCH SERVICE ...
+    TEXT INDEXES BRAND, ITEM_NAME, SUBCATEGORY, SKU, MODEL_NUMBER
+    VECTOR INDEXES SEARCH_TEXT(model='snowflake-arctic-embed-l-v2.0')
+    ...
+```
+
+### 3. Use ATTRIBUTES for Post-Search Filtering
+
+ATTRIBUTES are returned with results but are not part of the ranking. Use them to add client-side filters (price range, skill level, gender) after retrieval:
+
+```python
+# Filter results client-side after retrieval
+filtered = [
+    r for r in results
+    if r.get("SKILL_LEVEL") in ["Beginner", "Intermediate"]
+    and float(r.get("PRICE", 0)) <= 300
+]
+```
+
+> **NOTE:** Snowflake Cortex Search also supports server-side `filter` expressions in the `svc.search()` call. For high-cardinality filter combinations (e.g. 50+ attribute values), server-side filtering is more efficient than fetching all results and filtering in Python.
+
+<!-- ------------------------ -->
+## Building a Search Application
+
+**You now have a working Cortex Search multi-index service. The remaining sections show how to build a full-stack search application on top of it — from a Python SDK query function to a React frontend deployed on Snowpark Container Services.**
+
+<!-- ------------------------ -->
+## Querying with the Python SDK
 
 **A single Python function replaces the fan-out pattern, the merge logic, and the manual reranker.**
 
@@ -651,7 +715,7 @@ Total results: 9
 > **NOTE:** The `multi_index_query` parameter sends the same query text to all four indexes. The reranker fuses the BM25 scores (from BRAND, ITEM_NAME, SUBCATEGORY) and the vector similarity score (from SEARCH_TEXT) into a single ranked list. You do not need to implement your own score fusion logic.
 
 <!-- ------------------------ -->
-## (Optional) Want to Wrap This in a Website?
+## The Demo App: SNOWFIELD PRO
 
 **You've seen the power of Cortex Search multi-index from SQL. Now let's put it behind a FastAPI backend and a React frontend — with debounced auto-search and a multi-index insights panel.**
 
@@ -997,60 +1061,6 @@ SELECT SYSTEM$GET_SERVICE_LOGS('CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE', 0, 'sn
 | Connection refused | Port mismatch | Align `endpoints.port`, container `ports.port`, and uvicorn `--port` (all 8000) |
 
 <!-- ------------------------ -->
-## Tuning and Optimization
-
-**Multi-index retrieval is production-ready out of the box, but these practices improve recall further.**
-
-### 1. Enrich SEARCH_TEXT for Better Vector Coverage
-
-The more descriptive the `SEARCH_TEXT`, the better the semantic index performs. Include everything a customer might say:
-
-```sql
--- Enrich with brand taglines and synonyms if available
-UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
-SET SEARCH_TEXT = TRIM(
-    COALESCE(BRAND, '') || ' ' ||
-    COALESCE(ITEM_NAME, '') || ' ' ||
-    COALESCE(SUBCATEGORY, '') || ' ' ||
-    COALESCE(DISCIPLINE, '') || ' ' ||
-    COALESCE(SKILL_LEVEL, '') || ' ' ||
-    COALESCE(GENDER, '') || ' ' ||
-    COALESCE(DESCRIPTION, '') || ' ' ||
-    -- Add brand tagline / voice if you have it
-    COALESCE(BRAND_TAGLINE, '') || ' ' ||
-    COALESCE(MATERIAL_TAGS, '')
-);
-```
-
-### 2. Granular TEXT INDEXES for Niche Catalogs
-
-For catalogs with strong SKU or model number search patterns, add those columns to TEXT INDEXES:
-
-```sql
--- Example: add SKU and MODEL_NUMBER as TEXT indexes
--- (requires recreating the service)
-CREATE OR REPLACE CORTEX SEARCH SERVICE ...
-    TEXT INDEXES BRAND, ITEM_NAME, SUBCATEGORY, SKU, MODEL_NUMBER
-    VECTOR INDEXES SEARCH_TEXT(model='snowflake-arctic-embed-l-v2.0')
-    ...
-```
-
-### 3. Use ATTRIBUTES for Post-Search Filtering
-
-ATTRIBUTES are returned with results but are not part of the ranking. Use them to add client-side filters (price range, skill level, gender) after retrieval:
-
-```python
-# Filter results client-side after retrieval
-filtered = [
-    r for r in results
-    if r.get("SKILL_LEVEL") in ["Beginner", "Intermediate"]
-    and float(r.get("PRICE", 0)) <= 300
-]
-```
-
-> **NOTE:** Snowflake Cortex Search also supports server-side `filter` expressions in the `svc.search()` call. For high-cardinality filter combinations (e.g. 50+ attribute values), server-side filtering is more efficient than fetching all results and filtering in Python.
-
-<!-- ------------------------ -->
 ## Cleanup
 
 **Run this SQL to remove all objects created in this quickstart.**
@@ -1075,16 +1085,22 @@ DROP WAREHOUSE IF EXISTS CATALOG_SEARCH_WH;
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-**You have built a production-ready retail catalog search using Cortex Search multi-index — one service, four indexes, zero manual reranking.**
+**You have built a production-ready retail catalog search using Cortex Search multi-index — one service, four indexes, zero manual reranking — and wrapped it in a full-stack application.**
 
 ### What You Built
+
+**Part 1 — Cortex Search Multi-Index:**
 
 -   A product catalog table with a pre-computed `SEARCH_TEXT` column combining brand, name, subcategory, and description
 -   A single **Cortex Search service** with three TEXT indexes (BRAND, ITEM_NAME, SUBCATEGORY) and one VECTOR index (SEARCH_TEXT)
 -   Working SQL queries using `SNOWFLAKE.CORTEX.SEARCH_PREVIEW()` demonstrating brand recall, intent search, attribute filtering, and category breakdowns
--   _(Optional)_ AI-enriched product descriptions generated with `AI_COMPLETE()` for deeper semantic recall
--   _(Optional)_ A Python `multi_search()` function using `multi_index_query` to hit all four indexes in one SDK call
--   _(Optional)_ A full SNOWFIELD PRO demo app with debounced auto-search and a multi-index insights sidebar
+-   AI-enriched product descriptions generated with `AI_COMPLETE()` for deeper semantic recall
+
+**Part 2 — Search Application:**
+
+-   A Python `multi_search()` function using `multi_index_query` to hit all four indexes in one SDK call
+-   A full SNOWFIELD PRO demo app with debounced auto-search and a multi-index insights sidebar
+-   A production deployment path via Snowpark Container Services
 
 ### Key Takeaways
 
