@@ -1,6 +1,7 @@
 import { BRAND_COLORS } from '../constants';
 import type { FiltersResponse } from '../api';
 
+
 const SKILL_LEVELS = ['Beginner', 'Intermediate', 'Advanced', 'Professional'];
 const GENDERS = ['Mens', 'Womens', 'Unisex', 'Kids'];
 
@@ -51,7 +52,7 @@ export default function FilterSidebar({ filters, activeFilters, onChange }: Filt
   const hasFilters =
     selectedBrands.size > 0 || selectedSkills.size > 0 || selectedGender !== '';
 
-  const brands = filters?.brands ?? Object.keys(BRAND_COLORS);
+  const brands = filters?.brands ?? [];
 
   return (
     <div className="w-60 shrink-0 hidden md:flex flex-col border-r border-slate-200 bg-white overflow-y-auto">

@@ -17,7 +17,7 @@ This guide walks you step-by-step through building a production-ready product ca
 
 > aside positive
 > **Download the assets for this quickstart:**
-> - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/getting-started-with-cortex-search-multi-index/assets/setup_snowfield_pro_search.sql) — Full SQL worksheet (setup + optional AI enrichment + all queries)
+> - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/getting-started-with-cortex-search-multi-index/code/setup_snowfield_pro_search.sql) — Full SQL worksheet (setup + optional AI enrichment + all queries)
 >
 > Open the worksheet alongside this guide in a Snowflake worksheet tab and run sections in order.
 
@@ -158,6 +158,9 @@ One service, one call, one result list. The reranker is built in.
 ### Step 1 — Create the Database and Warehouse
 
 ```sql
+-- Use a role with sufficient privileges
+USE ROLE SYSADMIN;
+
 -- Create the database and schemas
 CREATE DATABASE IF NOT EXISTS CATALOG_SEARCH_DB;
 CREATE SCHEMA IF NOT EXISTS CATALOG_SEARCH_DB.DATA;
@@ -249,7 +252,7 @@ FROM CATALOG_SEARCH_DB.DATA.PRODUCTS
 LIMIT 5;
 ```
 
-Expected output: catalog rows with a `SEARCH_TEXT` preview that reads naturally (e.g. _"Ridgeline Freeride Jacket Outerwear Freeride Advanced Male 449.00 3-layer Gore-Tex shell with powder skirt..."_).
+Expected output: catalog rows with a `SEARCH_TEXT` preview that reads naturally (e.g. _"Ridgeline Freeride Shell Jacket Outerwear Freeride Advanced Male 3-layer Gore-Tex shell with powder skirt..."_).
 
 <!-- ------------------------ -->
 ## (Optional) Enrich Product Descriptions with Cortex AI
@@ -529,6 +532,7 @@ pip install snowflake-ml-python
 ```python
 from snowflake.ml.utils.connection_params import SnowflakeLoginOptions
 from snowflake.core import Root
+import snowflake.connector
 
 # Connect using your connection config
 connection_params = SnowflakeLoginOptions("your_connection_name")
@@ -725,15 +729,246 @@ export const INDEX_COLORS: Record<string, string> = {
 
 ### Running the Demo Locally
 
-```bash
-# Backend (requires Python 3.9+ with fastapi, uvicorn, snowflake-ml-python)
-SNOWFLAKE_CONNECTION=your_connection_name uvicorn main:app --reload --port 8000
+#### Prerequisites
 
-# Frontend (requires Node 18+)
-cd frontend && npm install && npm run dev
+-   Python 3.9+ with pip
+-   Node.js 18+ with npm
+-   A Snowflake connection configured in `~/.snowflake/connections.toml` (the backend reads this automatically)
+
+#### Step 1 — Install Backend Dependencies
+
+From the `code/snow-sports-demo/backend` directory:
+
+```bash
+pip install -r requirements.txt
 ```
 
-Navigate to `http://localhost:5173`, search for `"ridgeline"` and observe all Ridgeline brand products surface at rank 1. Then search `"warm waterproof jacket for freeride"` and observe semantic results with no keyword overlap.
+This installs FastAPI, uvicorn, snowflake-connector-python, snowflake-snowpark-python, snowflake-core, pydantic, and cryptography.
+
+#### Step 2 — Install Frontend Dependencies
+
+From the `code/snow-sports-demo/frontend` directory:
+
+```bash
+npm install
+```
+
+#### Step 3 — Start the Backend
+
+The backend reads your Snowflake connection from `~/.snowflake/connections.toml`. Set the `SNOWFLAKE_CONNECTION` environment variable to the name of your connection entry:
+
+```bash
+cd code/snow-sports-demo/backend
+SNOWFLAKE_CONNECTION=your_connection_name uvicorn main:app --reload --port 8000
+```
+
+The backend starts on `http://localhost:8000`. Verify with:
+
+```bash
+curl http://localhost:8000/api/health
+# Expected: {"status":"ok","database":"CATALOG_SEARCH_DB"}
+```
+
+> **NOTE:** The first search request takes 30–60 seconds while the Snowpark session is established. Subsequent requests are fast.
+
+#### Step 4 — Start the Frontend
+
+In a separate terminal:
+
+```bash
+cd code/snow-sports-demo/frontend
+npm run dev
+```
+
+The Vite dev server starts on `http://localhost:5173` (or the next available port). It automatically proxies `/api` requests to the backend on port 8000.
+
+#### Step 5 — Test the App
+
+Open `http://localhost:5173` in your browser:
+
+1.  Search `"ridgeline"` — observe all Ridgeline brand products surface at rank 1 (TEXT INDEX on BRAND)
+2.  Search `"warm waterproof jacket for freeride"` — observe semantic results with no keyword overlap (VECTOR INDEX on SEARCH_TEXT)
+3.  The right sidebar shows the category breakdown derived from result attributes
+
+#### Architecture
+
+```
+Browser (localhost:5173)
+  │
+  ├── React frontend (Vite dev server)
+  │     └── POST /api/search/multi ──proxy──▶ localhost:8000
+  │
+  └── FastAPI backend (uvicorn)
+        └── svc.search(multi_index_query={...})
+              └── Cortex Search Service: CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH
+                    ├── TEXT INDEXES: BRAND, ITEM_NAME, SUBCATEGORY
+                    └── VECTOR INDEXES: SEARCH_TEXT
+```
+
+### Deploying to Snowpark Container Services (SPCS)
+
+The same app can be deployed to SPCS for production use — no code changes required. The backend automatically detects the SPCS environment and uses OAuth token authentication from the mounted `/snowflake/session/token` file.
+
+#### Prerequisites
+
+-   Docker installed locally (for building the image)
+-   ACCOUNTADMIN or a role with `CREATE COMPUTE POOL` and `CREATE SERVICE` privileges
+-   The Cortex Search service (`CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH`) already created from the earlier sections
+
+#### Step 1 — Create an Image Repository
+
+```sql
+CREATE IMAGE REPOSITORY IF NOT EXISTS CATALOG_SEARCH_DB.APP.APP_IMAGES;
+
+-- Get the repository URL (you'll need this for docker push)
+SHOW IMAGE REPOSITORIES IN SCHEMA CATALOG_SEARCH_DB.APP;
+-- Note the repository_url column, e.g.: <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images
+```
+
+#### Step 2 — Build the Docker Image
+
+From the `code/snow-sports-demo` directory (where the Dockerfile is):
+
+```bash
+docker build --platform linux/amd64 -t snow-sports-store:v1 .
+```
+
+> **NOTE:** The `--platform linux/amd64` flag is required even on Apple Silicon — SPCS runs on x86_64 nodes.
+
+#### Step 3 — Login to the Snowflake Registry
+
+```bash
+# Using the Snowflake CLI
+snow spcs image-registry login --connection your_connection_name
+
+# Or manually with Docker
+docker login <account>.registry.snowflakecomputing.com -u <username>
+```
+
+#### Step 4 — Tag and Push the Image
+
+Replace `<account>` with your Snowflake account registry hostname (from Step 1):
+
+```bash
+docker tag snow-sports-store:v1 \
+  <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
+
+docker push \
+  <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
+```
+
+#### Step 5 — Create a Compute Pool
+
+```sql
+CREATE COMPUTE POOL IF NOT EXISTS CATALOG_SEARCH_POOL
+  MIN_NODES = 1
+  MAX_NODES = 1
+  INSTANCE_FAMILY = CPU_X64_XS
+  AUTO_SUSPEND_SECS = 300
+  AUTO_RESUME = TRUE;
+```
+
+#### Step 6 — Create the SPCS Service
+
+The `spec.yaml` in the repository defines the service specification. Deploy it:
+
+```sql
+CREATE SERVICE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE
+  IN COMPUTE POOL CATALOG_SEARCH_POOL
+  FROM SPECIFICATION $$
+spec:
+  containers:
+  - name: snow-sports-store
+    image: /catalog_search_db/app/app_images/snow-sports-store:v1
+    env:
+      SNOWFLAKE_DATABASE: CATALOG_SEARCH_DB
+      SNOWFLAKE_SCHEMA: APP
+      SNOWFLAKE_WAREHOUSE: CATALOG_SEARCH_WH
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 1Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+  endpoints:
+  - name: store-ui
+    port: 8000
+    public: true
+$$
+  MIN_INSTANCES = 1
+  MAX_INSTANCES = 1;
+```
+
+#### Step 7 — Verify Deployment
+
+```sql
+-- Check service status (wait for status = READY)
+SELECT SYSTEM$GET_SERVICE_STATUS('CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE');
+
+-- Get the public endpoint URL
+SHOW ENDPOINTS IN SERVICE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE;
+```
+
+Open the `ingress_url` from the SHOW ENDPOINTS output in your browser. The app is live.
+
+#### Step 8 — Grant Access to Other Roles (Optional)
+
+```sql
+GRANT USAGE ON DATABASE CATALOG_SEARCH_DB TO ROLE <consumer_role>;
+GRANT USAGE ON SCHEMA CATALOG_SEARCH_DB.APP TO ROLE <consumer_role>;
+GRANT SERVICE ROLE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE!ALL_ENDPOINTS_USAGE
+  TO ROLE <consumer_role>;
+```
+
+#### Updating the Deployed App
+
+After making code changes, rebuild and push the image, then update the service in-place:
+
+```bash
+docker build --platform linux/amd64 -t snow-sports-store:v1 .
+docker tag snow-sports-store:v1 <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
+docker push <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
+```
+
+```sql
+-- Update the service (preserves the URL — do NOT drop and recreate)
+ALTER SERVICE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE FROM SPECIFICATION $$
+spec:
+  containers:
+  - name: snow-sports-store
+    image: /catalog_search_db/app/app_images/snow-sports-store:v1
+    env:
+      SNOWFLAKE_DATABASE: CATALOG_SEARCH_DB
+      SNOWFLAKE_SCHEMA: APP
+      SNOWFLAKE_WAREHOUSE: CATALOG_SEARCH_WH
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 1Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+  endpoints:
+  - name: store-ui
+    port: 8000
+    public: true
+$$;
+```
+
+#### Troubleshooting
+
+```sql
+-- View container logs
+SELECT SYSTEM$GET_SERVICE_LOGS('CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE', 0, 'snow-sports-store');
+```
+
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| Image not found | Path mismatch in spec | Ensure image path starts with `/` and matches the repository exactly |
+| Service stuck in PENDING | Compute pool not ready | Check `SHOW COMPUTE POOLS` — wait for ACTIVE state |
+| Auth errors in logs | Missing SPCS token | Verify the container can read `/snowflake/session/token` (automatic in SPCS) |
+| Connection refused | Port mismatch | Align `endpoints.port`, container `ports.port`, and uvicorn `--port` (all 8000) |
 
 <!-- ------------------------ -->
 ## Tuning and Optimization

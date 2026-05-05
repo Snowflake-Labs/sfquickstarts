@@ -1,4 +1,4 @@
-import { BRAND_COLORS, BRAND_TAGLINES, BRAND_IDENTITY, PRODUCT_TYPE_EMOJI, SKILL_BADGE } from '../constants';
+import { BRAND_COLORS, BRAND_TAGLINES, BRAND_IDENTITY, PRODUCT_TYPE_EMOJI, PRODUCT_TYPE_IMAGE, SKILL_BADGE, INDEX_COLORS } from '../constants';
 import type { Product, SearchResult } from '../api';
 
 function isSearchResult(p: Product | SearchResult): p is SearchResult {
@@ -15,7 +15,8 @@ export default function ProductCard({ product, isSearch = false, index = 0 }: Pr
   const brandColor = BRAND_COLORS[product.brand] ?? '#64748B';
   const emoji = PRODUCT_TYPE_EMOJI[product.product_type] ?? '📦';
   const skillClass = SKILL_BADGE[product.skill_level] ?? 'bg-slate-100 text-slate-700';
-  const imageSrc = `/product-images/${product.product_type}.png`;
+  const imageName = PRODUCT_TYPE_IMAGE[product.product_type] ?? product.product_type.toLowerCase().replace(/\s+/g, '_');
+  const imageSrc = `/product-images/${imageName}.png`;
   const formattedPrice = `$${product.price.toFixed(2)}`;
 
   return (
@@ -47,15 +48,13 @@ export default function ProductCard({ product, isSearch = false, index = 0 }: Pr
           style={{ backgroundColor: brandColor, mixBlendMode: 'multiply', opacity: 0.35 }}
         />
 
-        {/* Index badge — search mode only */}
-        {isSearch && isSearchResult(product) && (
-          <span
-            className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-semibold text-white shadow"
-            style={{ backgroundColor: product.source_color }}
-          >
-            {product.source_label}
-          </span>
-        )}
+        {/* Category badge */}
+        <span
+          className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-semibold text-white shadow"
+          style={{ backgroundColor: isSearch && isSearchResult(product) ? product.source_color : (INDEX_COLORS[product.category] ?? '#64748B') }}
+        >
+          {isSearch && isSearchResult(product) ? product.source_label : product.category}
+        </span>
       </div>
 
       {/* Body */}

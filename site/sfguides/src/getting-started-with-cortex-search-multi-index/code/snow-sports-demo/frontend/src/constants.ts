@@ -7,6 +7,27 @@ export const BRAND_COLORS: Record<string, string> = {
   'GLACIERTECH': '#4F46E5',
   'CARVE NATION': '#334155',
   'WILD DESCENT': '#7C3AED',
+  // SNOWFIELD PRO catalog brands (title-case)
+  'Ridgeline': '#65A30D',
+  'Black Crows': '#1E40AF',
+  'Salomon': '#DC2626',
+  'Marker': '#EA580C',
+  'Volkl': '#4F46E5',
+  'Völkl': '#4F46E5',
+  'Tecnica': '#0F766E',
+  'Dynastar': '#334155',
+  'Giro': '#7C3AED',
+  'Ortovox': '#0891B2',
+  'Hestra': '#B45309',
+  'Buff': '#6D28D9',
+  'K2': '#0E7490',
+  'Dakine': '#9333EA',
+  'Dynafit': '#059669',
+  'Icebreaker': '#0284C7',
+  'Lange': '#D97706',
+  'Leki': '#E11D48',
+  'Mammut': '#B91C1C',
+  'Patagonia': '#7C3AED',
 };
 
 export const BRAND_TAGLINES: Record<string, string> = {
@@ -18,6 +39,18 @@ export const BRAND_TAGLINES: Record<string, string> = {
   'GLACIERTECH':   'Engineered for absolute zero',
   'CARVE NATION':  'Every millisecond counts',
   'WILD DESCENT':  'Built for the worst day',
+  // SNOWFIELD PRO catalog brands
+  'Ridgeline':   'Every gram counts',
+  'Black Crows': 'Free your line',
+  'Salomon':     'Tomorrow is yours',
+  'Marker':      'Precision binding technology',
+  'Volkl':       'True to skiing',
+  'Tecnica':     'The perfect fit',
+  'Dynastar':    'Legendary performance',
+  'Giro':        'Protection meets style',
+  'Ortovox':     'Protects what matters',
+  'Hestra':      'Handcrafted since 1936',
+  'Buff':        'Do more with less',
 };
 
 export const BRAND_IDENTITY: Record<string, string> = {
@@ -29,6 +62,18 @@ export const BRAND_IDENTITY: Record<string, string> = {
   'GLACIERTECH':   'Extreme cold specialists',
   'CARVE NATION':  'Alpine racing purists',
   'WILD DESCENT':  'Storm chasers',
+  // SNOWFIELD PRO catalog brands
+  'Ridgeline':   'Freeride & touring specialists',
+  'Black Crows': 'Big mountain freeride',
+  'Salomon':     'All-mountain performance',
+  'Marker':      'Binding innovation',
+  'Volkl':       'German engineering',
+  'Tecnica':     'Boot fitting experts',
+  'Dynastar':    'French ski heritage',
+  'Giro':        'Helmet & goggle pioneers',
+  'Ortovox':     'Mountain safety experts',
+  'Hestra':      'Swedish glove craftsmanship',
+  'Buff':        'Outdoor accessories',
 };
 
 // Keywords that find each brand via Cortex Search
@@ -95,6 +140,44 @@ export const PRODUCT_TYPE_EMOJI: Record<string, string> = {
   avalanche_shovel: '🪣',
   ski_wax: '🕯️',
   edge_sharpener: '⚙️',
+  // Title-case keys from the SNOWFIELD PRO catalog
+  Jacket: '🧥',
+  Skis: '🎿',
+  Boots: '👢',
+  Bindings: '🔩',
+  Helmet: '⛑️',
+  Goggles: '🥽',
+  Pants: '👖',
+  Gloves: '🧤',
+  Gaiter: '🧣',
+  'Back Protector': '🛡️',
+  Backpack: '🎒',
+  'Base Layer': '👕',
+};
+
+// Map product_type values to image filenames in /product-images/
+export const PRODUCT_TYPE_IMAGE: Record<string, string> = {
+  Jacket: 'shell_jacket',
+  Skis: 'freeride_ski',
+  Ski: 'freeride_ski',
+  Boots: 'ski_boot',
+  Boot: 'ski_boot',
+  Bindings: 'ski_binding',
+  Binding: 'ski_binding',
+  Helmet: 'ski_helmet',
+  Goggles: 'ski_goggles',
+  Goggle: 'ski_goggles',
+  Pants: 'ski_pants',
+  Gloves: 'ski_gloves',
+  Gaiter: 'neck_gaiter',
+  'Back Protector': 'back_protector',
+  Protector: 'back_protector',
+  Backpack: 'back_protector',
+  'Base Layer': 'base_layer_top',
+  Fleece: 'mid_layer_fleece',
+  Guards: 'knee_pad',
+  Pole: 'alpine_ski',
+  Airbag: 'avalanche_transceiver',
 };
 
 export const SKILL_BADGE: Record<string, string> = {
