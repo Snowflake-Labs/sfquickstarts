@@ -11,9 +11,6 @@ spec:
       SNOWFLAKE_SCHEMA: APP
       SNOWFLAKE_WAREHOUSE: CATALOG_SEARCH_WH
       # SPCS automatically provides /snowflake/session/token for OAuth auth
-    ports:
-    - name: http
-      port: 8000
     resources:
       requests:
         cpu: 0.5
@@ -23,5 +20,5 @@ spec:
         memory: 4Gi
   endpoints:
   - name: store-ui
-    port: http
+    port: 8000
     public: true

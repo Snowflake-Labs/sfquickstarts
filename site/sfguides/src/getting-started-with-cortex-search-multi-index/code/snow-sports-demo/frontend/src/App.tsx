@@ -31,7 +31,7 @@ export default function App() {
     if (activeCategory !== 'All') combinedFilters.category = activeCategory;
 
     setIsBrowsing(true);
-    getProducts(combinedFilters, 20, 0)
+    getProducts(combinedFilters, 100, 0)
       .then(result => {
         setProducts(result.products);
         setTotal(result.total);
@@ -50,7 +50,7 @@ export default function App() {
     if (activeCategory !== 'All') combinedFilters.category = activeCategory;
 
     setIsBrowsing(true);
-    getProducts(combinedFilters, 20, 0)
+    getProducts(combinedFilters, 100, 0)
       .then(result => {
         setProducts(result.products);
         setTotal(result.total);

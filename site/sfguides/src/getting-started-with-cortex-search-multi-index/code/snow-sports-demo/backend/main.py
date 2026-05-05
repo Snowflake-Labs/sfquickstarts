@@ -2,7 +2,7 @@
 Snow Sports Catalog Search — FastAPI Backend
 =============================================
 Entry point for the backend API. Demonstrates:
-  - Cortex Search multi-index fan-out (4 services queried in parallel)
+  - Cortex Search multi-index (single service with TEXT + VECTOR indexes)
   - Parameterized product catalog browsing with filters
   - Static file serving of the React frontend (production / SPCS)
 
@@ -39,7 +39,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Snow Sports Catalog Search",
-    description="Demo backend showcasing Snowflake Cortex Search multi-index fan-out",
+    description="Demo backend showcasing Snowflake Cortex Search multi-index",
     version="1.0.0",
     lifespan=lifespan,
 )

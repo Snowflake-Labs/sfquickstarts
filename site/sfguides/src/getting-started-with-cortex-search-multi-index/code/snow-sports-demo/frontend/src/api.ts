@@ -47,7 +47,7 @@ export interface FiltersResponse {
 
 export async function multiSearch(
   query: string,
-  limit = 20,
+  limit = 50,
 ): Promise<MultiSearchResponse> {
   const res = await fetch(`${API_BASE}/search/multi`, {
     method: 'POST',
@@ -60,7 +60,7 @@ export async function multiSearch(
 
 export async function getProducts(
   filters: Record<string, string> = {},
-  limit = 20,
+  limit = 50,
   offset = 0,
 ): Promise<ProductsResponse> {
   const params = new URLSearchParams({

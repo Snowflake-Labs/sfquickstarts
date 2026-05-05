@@ -107,7 +107,7 @@ VALUES
 -- =============================================================================
 -- SECTION 4 (OPTIONAL) — AI-Enriched Product Descriptions with Cortex
 --
--- Use SNOWFLAKE.CORTEX.COMPLETE() to generate richer, more descriptive product
+-- Use AI_COMPLETE() to generate richer, more descriptive product
 -- descriptions before building SEARCH_TEXT.
 --
 -- Why? Short hand-written descriptions miss synonyms and natural language
@@ -125,7 +125,7 @@ SELECT
     ITEM_NAME,
     BRAND,
     LEFT(DESCRIPTION, 100) AS original_description,
-    SNOWFLAKE.CORTEX.COMPLETE(
+    AI_COMPLETE(
         'mistral-large2',
         CONCAT(
             'Write a rich, engaging product description for an online ski shop catalog. ',
@@ -149,7 +149,7 @@ LIMIT 3;
 
 -- Step 3: Mass-update DESCRIPTION for all rows with AI-generated versions
 UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
-SET DESCRIPTION = SNOWFLAKE.CORTEX.COMPLETE(
+SET DESCRIPTION = AI_COMPLETE(
     'mistral-large2',
     CONCAT(
         'Write a rich, engaging product description for an online ski shop catalog. ',

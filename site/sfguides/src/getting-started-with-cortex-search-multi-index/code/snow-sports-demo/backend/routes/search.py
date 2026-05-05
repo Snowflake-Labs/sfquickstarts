@@ -8,6 +8,7 @@ on each result.
 """
 
 import logging
+from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from snowflake.core import Root
@@ -54,7 +55,7 @@ _FETCH_LIMIT = 100
 # Service handle cache
 # ---------------------------------------------------------------------------
 
-_root: Root | None = None
+_root: Optional[Root] = None
 _service = None
 
 
@@ -160,8 +161,8 @@ async def multi_search(body: SearchRequest):
         logger.error("Search error: %s", exc, exc_info=True)
         raise HTTPException(status_code=500, detail=str(exc))
 
+    # Results are already ranked by the Cortex Search reranker — preserve order
     results = [_row_to_result(r) for r in rows]
-    results.sort(key=lambda r: r.get("_score", 0), reverse=True)
     results = results[: body.limit]
 
     # Build category breakdown from the returned results

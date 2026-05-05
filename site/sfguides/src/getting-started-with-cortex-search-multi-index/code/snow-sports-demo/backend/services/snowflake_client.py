@@ -12,6 +12,7 @@ import os
 import logging
 from pathlib import Path
 from contextlib import contextmanager
+from typing import Optional, Union
 
 import snowflake.connector
 
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 _SPCS_TOKEN_PATH = Path("/snowflake/session/token")
 
 # Module-level connection cache
-_connection: snowflake.connector.SnowflakeConnection | None = None
+_connection: Optional[snowflake.connector.SnowflakeConnection] = None
 
 # Module-level Snowpark session cache (used by Cortex Search SDK via snowflake.core.Root)
 _snowpark_session = None
@@ -49,7 +50,7 @@ def _load_private_key(key_path: str) -> bytes:
     )
 
 
-def _load_from_toml() -> dict | None:
+def _load_from_toml() -> Optional[dict]:
     """
     Try to load connection config from ~/.snowflake/connections.toml.
     Uses SNOWFLAKE_CONNECTION env var or the default_connection_name from the file.
@@ -221,7 +222,7 @@ def get_snowpark_session():
     return _snowpark_session
 
 
-def execute_query(sql: str, params: tuple | list | dict | None = None) -> list[dict]:
+def execute_query(sql: str, params: Union[tuple, list, dict, None] = None) -> list:
     """
     Execute a SQL query and return results as a list of dicts.
     Uses parameterized queries (pyformat binding) to prevent SQL injection.

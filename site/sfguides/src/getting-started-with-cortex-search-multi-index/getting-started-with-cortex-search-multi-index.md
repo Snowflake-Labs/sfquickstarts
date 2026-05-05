@@ -41,7 +41,7 @@ At a high level:
 -   How to construct the `SEARCH_TEXT` column for maximum retrieval coverage
 -   How to query all indexes simultaneously from SQL using `SNOWFLAKE.CORTEX.SEARCH_PREVIEW()`
 -   How to derive category breakdowns from result attributes (not from separate services)
--   _(Optional)_ How to use `SNOWFLAKE.CORTEX.COMPLETE()` to enrich product descriptions with AI before indexing
+-   _(Optional)_ How to use `AI_COMPLETE()` to enrich product descriptions with AI before indexing
 -   _(Optional)_ How to query with the Python SDK using `multi_index_query`
 -   _(Optional)_ How to build a full-stack demo app around Cortex Search
 
@@ -50,7 +50,7 @@ At a high level:
 -   A product catalog table with a pre-computed `SEARCH_TEXT` column
 -   A single **Cortex Search service** with three TEXT indexes and one VECTOR index
 -   Working SQL queries using `SEARCH_PREVIEW` that demonstrate brand recall, intent search, attribute filtering, and category breakdowns
--   _(Optional)_ AI-enriched product descriptions using `SNOWFLAKE.CORTEX.COMPLETE()` for deeper semantic recall
+-   _(Optional)_ AI-enriched product descriptions using `AI_COMPLETE()` for deeper semantic recall
 -   _(Optional)_ A Python query function using `multi_index_query` that hits all four indexes at once
 -   _(Optional)_ A live SNOWFIELD PRO demo app with debounced auto-search
 
@@ -257,7 +257,7 @@ Expected output: catalog rows with a `SEARCH_TEXT` preview that reads naturally 
 <!-- ------------------------ -->
 ## (Optional) Enrich Product Descriptions with Cortex AI
 
-**Short hand-written descriptions limit semantic recall. `SNOWFLAKE.CORTEX.COMPLETE()` rewrites every product description in the natural language your customers actually use.**
+**Short hand-written descriptions limit semantic recall. `AI_COMPLETE()` rewrites every product description in the natural language your customers actually use.**
 
 ### Why Enrich Before Indexing?
 
@@ -279,7 +279,7 @@ SELECT
     ITEM_NAME,
     BRAND,
     LEFT(DESCRIPTION, 100)                     AS original_description,
-    SNOWFLAKE.CORTEX.COMPLETE(
+    AI_COMPLETE(
         'mistral-large2',
         CONCAT(
             'Write a rich, engaging product description for an online ski shop catalog. ',
@@ -317,7 +317,7 @@ UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
 -- Cost: ~1-2 credits per 1,000 rows with mistral-large2
 -- Runtime: ~30-60 sec for 30 rows | ~3-5 min for 1,040 rows
 UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
-SET DESCRIPTION = SNOWFLAKE.CORTEX.COMPLETE(
+SET DESCRIPTION = AI_COMPLETE(
     'mistral-large2',
     CONCAT(
         'Write a rich, engaging product description for an online ski shop catalog. ',
@@ -1056,7 +1056,7 @@ DROP WAREHOUSE IF EXISTS CATALOG_SEARCH_WH;
 -   A product catalog table with a pre-computed `SEARCH_TEXT` column combining brand, name, subcategory, and description
 -   A single **Cortex Search service** with three TEXT indexes (BRAND, ITEM_NAME, SUBCATEGORY) and one VECTOR index (SEARCH_TEXT)
 -   Working SQL queries using `SNOWFLAKE.CORTEX.SEARCH_PREVIEW()` demonstrating brand recall, intent search, attribute filtering, and category breakdowns
--   _(Optional)_ AI-enriched product descriptions generated with `SNOWFLAKE.CORTEX.COMPLETE()` for deeper semantic recall
+-   _(Optional)_ AI-enriched product descriptions generated with `AI_COMPLETE()` for deeper semantic recall
 -   _(Optional)_ A Python `multi_search()` function using `multi_index_query` to hit all four indexes in one SDK call
 -   _(Optional)_ A full SNOWFIELD PRO demo app with debounced auto-search and a multi-index insights sidebar
 
@@ -1067,7 +1067,7 @@ DROP WAREHOUSE IF EXISTS CATALOG_SEARCH_WH;
 -   **Intent recall requires a VECTOR INDEX** — keyword search cannot match _"warm boot for icy terrain"_ against products that use different words. Embeddings solve this.
 -   **The reranker is built in** — you do not write score fusion logic. The service fuses BM25 and vector signals automatically.
 -   **CATEGORY comes from result attributes** — in a single-service architecture, the category breakdown is a grouping of the `CATEGORY` attribute on each result, not a reflection of which service matched.
--   **AI enrichment amplifies semantic recall** — running `CORTEX.COMPLETE()` on descriptions before indexing closes the vocabulary gap between terse product copy and natural customer queries.
+-   **AI enrichment amplifies semantic recall** — running `AI_COMPLETE()` on descriptions before indexing closes the vocabulary gap between terse product copy and natural customer queries.
 
 ### Resources
 
