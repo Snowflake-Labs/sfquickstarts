@@ -88,7 +88,7 @@ Make a mental note of the content on the Home tab. Click the + Add new button, t
 
 ![An Empty SQL File](assets/workspaceshome.png)
 
-This is an intuitive SQL workbench. It has a section for the code we'll copy from the guide and paste into the SQL file. It also has a 'run' button to execute the code, the result panel at the bottom, and Cortex Code to the right to provide natural language assistance.
+This is an intuitive SQL workbench. It has a section for the code we'll copy from the guide and paste into the SQL file. It also has a 'run' button to execute the code, the result panel at the bottom, and [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code#cortex-code-in-sf-web-interface) to the right to provide natural language assistance.
 
 ![An Empty SQL File](assets/emptysqlfile.png)
 
@@ -96,6 +96,8 @@ At the end of this guide, you will explore what you've created through the eyes 
 
 ```sql
 -- Defaulting Secondary Roles to None ------------------------------------------
+USE ROLE ACCOUNTADMIN;
+
 ALTER USER SET DEFAULT_SECONDARY_ROLES = ();
 ```
 
@@ -130,7 +132,7 @@ GRANT ALL PRIVILEGES ON WAREHOUSE ADMIN_WH TO ROLE PLT_ADMIN WITH GRANT OPTION;
 CREATE DATABASE IF NOT EXISTS PLT
   COMMENT = 'Common centralized platform database for shared objects and utilities';
 
-DROP SCHEMA IF EXISTS PLT.PUBLIC;
+DROP SCHEMA IF EXISTS PLT.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE PLT TO ROLE PLT_ADMIN WITH GRANT OPTION;
 ```
@@ -159,6 +161,7 @@ GRANT DATABASE ROLE PLT.GOVERNANCE_R TO DATABASE ROLE PLT.GOVERNANCE_A;
 GRANT DATABASE ROLE PLT.GOVERNANCE_A TO DATABASE ROLE PLT.GOVERNANCE_W;
 
 GRANT DATABASE ROLE PLT.GOVERNANCE_R TO ROLE PUBLIC;
+GRANT DATABASE ROLE PLT.GOVERNANCE_W TO ROLE PLT_ADMIN;
 
 -- GOVERNANCE_R: read access to governance schema and tag values
 GRANT USAGE ON DATABASE PLT TO DATABASE ROLE PLT.GOVERNANCE_R;
@@ -468,7 +471,7 @@ GRANT USAGE, OPERATE ON WAREHOUSE DEV_INGEST_WH TO ROLE DEV_LZ_INGEST;
 CREATE DATABASE IF NOT EXISTS DEV_LZ
   COMMENT = 'Development landing zone for raw data ingestion';
 
-DROP SCHEMA IF EXISTS DEV_LZ.PUBLIC;
+DROP SCHEMA IF EXISTS DEV_LZ.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE DEV_LZ TO ROLE PLT_ADMIN WITH GRANT OPTION;
 ```
@@ -517,7 +520,7 @@ GRANT USAGE, OPERATE ON WAREHOUSE ENGINEERING_WH TO ROLE QA_ANALYST;
 CREATE DATABASE IF NOT EXISTS DEV_DV
   COMMENT = 'Enterprise memory of domain-oriented data vault models';
 
-DROP SCHEMA IF EXISTS DEV_DV.PUBLIC;
+DROP SCHEMA IF EXISTS DEV_DV.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE DEV_DV TO ROLE PLT_ADMIN WITH GRANT OPTION;
 
@@ -525,7 +528,7 @@ GRANT ALL PRIVILEGES ON DATABASE DEV_DV TO ROLE PLT_ADMIN WITH GRANT OPTION;
 CREATE DATABASE IF NOT EXISTS DEV_DW
   COMMENT = 'Information delivery of domain-oriented models';
 
-DROP SCHEMA IF EXISTS DEV_DW.PUBLIC;
+DROP SCHEMA IF EXISTS DEV_DW.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE DEV_DW TO ROLE PLT_ADMIN WITH GRANT OPTION;
 ```
@@ -573,7 +576,7 @@ USE WAREHOUSE ADMIN_WH;
 
 CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_REF', 'Static Reference Data');
 CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_CUSTOMER_SYS', 'Customer System');
-CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_ORDERS_SYS', 'Order System');
+CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_ORDERS_SYS', 'Orders System');
 
 GRANT DATABASE ROLE DEV_LZ.DB_W TO ROLE DEV_LZ_INGEST;
 ```
@@ -685,7 +688,7 @@ SHOW SCHEMAS IN DATABASE DEV_DV; -- This will error, as the role doesn't have ac
 
 We covered some of the basics to get started. As an architect, you may be considering creating test and main production environments; or additional roles, both platform oriented and domain oriented; or additional tags, access policies and restricted information roles; or data metric functions, with a data quality / error mart; or additional common functions and stored procedures; or even Presentation Zone databases for custom customer-facing data shares, Streamlit apps and dashboards, or Agents for use with Snowflake Intelligence. We hope we've whet your appetite for more.
 
-You are now ready to advance to the [next guide, Building a Real-Time Data Vault in Snowflake](https://www.snowflake.com/en/developers/guides/vhol-data-vault/)! Data Vault 2.1 consists of 3 pillars -- methodology, architecture, and model -- and while this guide focuses on architecture, the next guide focuses on modeling. We've updated that guide to leverage the structure defined here, as well as adding some new content.
+You are now ready to advance to the next guide, [Building a Real-Time Data Vault in Snowflake](https://www.snowflake.com/en/developers/guides/vhol-data-vault/)! Data Vault 2.1 consists of 3 pillars -- methodology, architecture, and model -- and while this guide focuses on architecture, the next guide focuses on modeling. We've updated that guide to leverage the structure defined here.
 
 If you want to learn more about Data Vault 2.1, check out the latest content from Data Vault Alliance: the [blog, training and certification resources](https://datavaultalliance.com/), the [DVA United](https://www.dvaunited.com/) community, and free content on [YouTube](https://www.youtube.com/@DataVaultAlliance/videos).
 
