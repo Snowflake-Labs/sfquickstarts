@@ -25,7 +25,6 @@ There have been numerous [blog posts](/blog/tips-for-optimizing-the-data-vault-a
 Luckily, streaming data is one of the [use-cases](/cloud-data-platform/) that Snowflake was built to support, so we have many features to help us achieve this goal. **This guide is an extended version of the [article](https://datavaultalliance.com/news/building-a-real-time-data-vault-in-snowflake/) posted on the Data Vault Alliance website, with practical steps to build an example of a real-time Data Vault on Snowflake. Join us for simple-to-follow steps to see it in action.**
 
 ### Prerequisites
-- A Snowflake account, with objects created through the [Defensible Analytics using Data Vault and Snowflake](https://www.snowflake.com/en/developers/guides/defensible-analytics-using-data-vault-and-snowflake/) guide. If you don't use this guide to set up your account, you'll need to alter the references to roles, databases, schemas, warehouses, and other Snowflake objects to work with your account design.
 - Familiarity with [Snowflake key concepts and architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts)
 - Familiarity with [Data Vault methodology and architecture](https://datavaultalliance.com/#resources)
 
@@ -37,6 +36,8 @@ Luckily, streaming data is one of the [use-cases](/cloud-data-platform/) that Sn
 
 ### What You’ll Need 
 - A Snowflake account -- we recommend starting with a [trial](https://trial.snowflake.com/) account
+- Architectural objects created through the [Defensible Analytics using Data Vault and Snowflake](https://www.snowflake.com/en/developers/guides/defensible-analytics-using-data-vault-and-snowflake/) guide. If you haven't used this guide to set up foundational architecture in your account, you'll need to alter the references to roles, databases, schemas, warehouses, and other Snowflake objects in order to work with your specific account design.
+
 
 ### What You’ll Build 
 - Data Vault models on Snowflake, based on sample dataset 
