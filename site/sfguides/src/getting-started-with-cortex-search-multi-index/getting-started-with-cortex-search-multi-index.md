@@ -17,9 +17,9 @@ This guide walks you step-by-step through building a production-ready product ca
 
 > aside positive
 > **Download the assets for this quickstart:**
-> - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/getting-started-with-cortex-search-multi-index/code/setup_snowfield_pro_search.sql) — Full SQL worksheet (setup + optional AI enrichment + all queries)
+ > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/getting-started-with-cortex-search-multi-index/code/setup_snowfield_pro_search.sql) — Full SQL workspace (setup + optional AI enrichment + all queries)
 >
-> Open the worksheet alongside this guide in a Snowflake worksheet tab and run sections in order.
+> Open the workspace alongside this guide in a Snowflake workspace tab and run sections in order.
 
 At a high level:
 
@@ -29,7 +29,7 @@ At a high level:
 
 ### What You'll Need
 
--   A Snowflake account with the SYSADMIN (or equivalent) role
+-   A Snowflake account with the ACCOUNTADMIN (or equivalent) role
 -   A Snowflake warehouse (SMALL or larger)
 -   Basic familiarity with SQL
 -   _(Optional)_ Python 3.9+ with the `snowflake-ml-python` SDK — only required for the optional Python SDK section
@@ -113,12 +113,29 @@ BM25 keyword indexes over one or more string columns. Each column gets its own i
 
 ### VECTOR INDEXES
 
-Dense embedding indexes over a single text column, using a Snowflake Arctic embedding model. Useful for:
+Dense embedding indexes over a text column. Snowflake supports multiple embedding models for managed vector generation — not just Arctic. Available models include `snowflake-arctic-embed-l-v2.0`, `snowflake-arctic-embed-m-v1.5` (default), and others depending on your region (see [Cortex Search Regional Availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) for the full list). Useful for:
 
 -   Semantic / intent queries
 -   Brand voice and description matching
 -   Synonym and paraphrase handling
 -   Cross-lingual retrieval
+
+**Bring Your Own Vectors (BYOV):** You can also provide pre-computed vector embeddings directly instead of using Snowflake-managed models. This is useful when:
+
+-   You have domain-specific embeddings trained on your own data (e.g., fashion, medical, legal corpora)
+-   You use a third-party embedding provider (OpenAI, Cohere, Voyage AI, etc.) and want consistent embeddings across your stack
+-   You need multilingual embeddings from a specialized model not yet available in Snowflake
+-   You have already embedded your corpus and want to avoid re-computation costs
+
+To use BYOV, specify the vector column directly in `VECTOR INDEXES` without a model parameter, or pair it with a `query_model` for automatic query embedding:
+
+```sql
+-- User-provided vectors (query must also be a vector)
+VECTOR INDEXES MY_EMBEDDINGS
+
+-- User-provided vectors with managed query embedding
+VECTOR INDEXES MY_EMBEDDINGS(query_model='snowflake-arctic-embed-l-v2.0')
+```
 
 ### The `multi_index_query` Parameter
 
@@ -153,13 +170,13 @@ One service, one call, one result list. The reranker is built in.
 <!-- ------------------------ -->
 ## Setting Up Your Snowflake Environment
 
-**All SQL in this guide runs in a single worksheet. Expected setup time: under 5 minutes.**
+**All SQL in this guide runs in a single workspace. Expected setup time: under 5 minutes.**
 
 ### Step 1 — Create the Database and Warehouse
 
 ```sql
 -- Use a role with sufficient privileges
-USE ROLE SYSADMIN;
+USE ROLE ACCOUNTADMIN;
 
 -- Create the database and schemas
 CREATE DATABASE IF NOT EXISTS CATALOG_SEARCH_DB;
@@ -181,14 +198,14 @@ USE WAREHOUSE CATALOG_SEARCH_WH;
 ### Step 2 — Verify Your Role
 
 ```sql
--- Confirm you are using SYSADMIN or a role with CREATE CORTEX SEARCH SERVICE privilege
+-- Confirm you are using ACCOUNTADMIN or a role with CREATE CORTEX SEARCH SERVICE privilege
 SELECT CURRENT_ROLE();
 
 -- If needed, switch role:
--- USE ROLE SYSADMIN;
+-- USE ROLE ACCOUNTADMIN;
 ```
 
-> **NOTE:** Creating a Cortex Search Service requires the `CREATE CORTEX SEARCH SERVICE` privilege on the target schema. SYSADMIN has this by default in most accounts. If you are using a custom role, run `GRANT CREATE CORTEX SEARCH SERVICE ON SCHEMA APP TO ROLE <your_role>`.
+> **NOTE:** Creating a Cortex Search Service requires the `CREATE CORTEX SEARCH SERVICE` privilege on the target schema. ACCOUNTADMIN has this by default. If you are using a custom role, run `GRANT CREATE CORTEX SEARCH SERVICE ON SCHEMA APP TO ROLE <your_role>`.
 
 <!-- ------------------------ -->
 ## Preparing the Product Catalog
@@ -217,7 +234,7 @@ CREATE OR REPLACE TABLE CATALOG_SEARCH_DB.DATA.PRODUCTS (
 
 ### Step 2 — Load the Sample Catalog
 
-The downloadable SQL worksheet (Section 3) contains 30 representative product rows across Equipment, Apparel, Protection, and Accessories. Run that INSERT block now, or substitute your own catalog data.
+The downloadable SQL workspace (Section 3) contains 30 representative product rows across Equipment, Apparel, Protection, and Accessories. Run that INSERT block now, or substitute your own catalog data.
 
 > **NOTE:** In production, this is your existing catalog table. You do not need to load sample data — just point the search service at your real PRODUCTS table.
 
@@ -419,7 +436,7 @@ Wait for `indexing_state` to show `READY` before running queries. For 1,040 rows
 <!-- ------------------------ -->
 ## Querying with SEARCH_PREVIEW (SQL)
 
-**`SNOWFLAKE.CORTEX.SEARCH_PREVIEW()` is the SQL interface for Cortex Search — query all four indexes from a worksheet, a Streamlit app, or any SQL-capable tool.**
+**`SNOWFLAKE.CORTEX.SEARCH_PREVIEW()` is the SQL interface for Cortex Search — query all four indexes from a workspace, a Streamlit app, or any SQL-capable tool.**
 
 The function takes the fully-qualified service name and a JSON payload with `query`, `columns`, an optional `filter`, and `limit`. Results come back as a JSON object with a `results` array.
 
@@ -515,6 +532,12 @@ Accessories    1
 One service. One query. Category breakdown from result attributes, not from four separate services.
 
 > **NOTE:** `SEARCH_PREVIEW` is the fastest path to testing Cortex Search from SQL. For production applications, the Python SDK's `svc.search()` method with `multi_index_query` returns structured Python objects and gives you full multi-index control. See the optional SDK section below.
+
+> aside negative
+> **SEARCH_PREVIEW Limitations:**
+> - The `SEARCH_PREVIEW` function is provided for **testing and validation only**. It is not intended for serving search queries in an end-user application.
+> - The function operates only on **string literals** — it does not accept batch text data.
+> - The function has **higher latency** than the REST and Python APIs. For production workloads requiring low-latency responses, use the Python SDK or REST API instead.
 
 <!-- ------------------------ -->
 ## (Optional) Querying with the Python SDK
@@ -808,6 +831,9 @@ Browser (localhost:5173)
 ### Deploying to Snowpark Container Services (SPCS)
 
 The same app can be deployed to SPCS for production use — no code changes required. The backend automatically detects the SPCS environment and uses OAuth token authentication from the mounted `/snowflake/session/token` file.
+
+> aside negative
+> **Trial Account Limitation:** Snowpark Container Services (SPCS) is not available on Snowflake trial accounts. If you are using a trial account, you can skip this section and use the local deployment described above instead. The local deployment provides the same functionality for development and testing purposes.
 
 #### Prerequisites
 
