@@ -1,4 +1,4 @@
-author: Pavan Pothukuchi, Caleb Baechtold, Lucy Zhu, Sho Tanaka
+author: Sho Tanaka, Pavan Pothukuchi, Caleb Baechtold, Lucy Zhu
 id: getting-started-with-cortex-code-in-snowsight-for-data-science-ml
 summary: Learn how to build an end-to-end customer LTV prediction model — from EDA to batch or real-time inference — using Cortex Code and natural language prompts in Snowflake ML
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
