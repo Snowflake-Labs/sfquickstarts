@@ -28,7 +28,7 @@ This guide has two parts:
 
 ### What You'll Need
 
--   A Snowflake account with the ACCOUNTADMIN role
+-   Snowflake account with the ACCOUNTADMIN role or custom role with required privileges
 -   Basic familiarity with SQL
 -   _(Optional)_ Python 3.9+ with the `snowflake-ml-python` SDK — only required for the optional Python SDK section
 
@@ -233,6 +233,7 @@ VALUES
     -- Accessories
     ('Ski Touring Backpack 30L','Ridgeline',  'Accessories', 'Backpacks',      'Touring',   'Advanced',     'Unisex', 199.00, 'Backpack',NULL,   'Ski touring pack with diagonal and A-frame ski carry, ice axe loops, and hip fins for skiing downhill. Hydration-compatible. 30L for day tours.'),
     ('Goggle Photochromic',     'Ridgeline',  'Accessories', 'Goggles',        'All-Mountain','Intermediate','Unisex', 189.00, 'Goggle',  NULL,   'Photochromic OTG goggle with automatic VLT adjustment from S1 (flat light) to S4 (full sun). Magnetic lens swap system. Fits Ridgeline and most OEM helmets.');
+```
 
 > **NOTE:** In production, this is your existing catalog table. You do not need to load sample data — just point the search service at your real PRODUCTS table.
 
@@ -451,6 +452,8 @@ SELECT PARSE_JSON(
 ) AS search_results;
 ```
 
+![Test SQL Cortex](assets/test_sql_cortex.png)
+
 Expected: all Ridgeline brand products surface at the top of the ranked list, regardless of whether "ridgeline" appears in their description. This is the TEXT INDEX on BRAND at work.
 
 ### Test 2 — Intent / Semantic Query (exercises VECTOR INDEX on SEARCH_TEXT)
@@ -515,17 +518,8 @@ GROUP BY 1
 ORDER BY 2 DESC;
 ```
 
-Expected output:
-
-```
-CATEGORY       RESULT_COUNT
-Equipment      7
-Apparel        4
-Protection     2
-Accessories    1
-```
-
-One service. One query. Category breakdown from result attributes, not from four separate services.
+Expected output on screenshoot below
+![Test SQL Cortex2](assets/test_sql_cortex2.png)
 
 > **NOTE:** `SEARCH_PREVIEW` is the easiest path to testing Multi-Index Cortex Search from SQL. The `SEARCH_PREVIEW` function is provided for **testing and validation only**. It is not intended for serving search queries in an end-user application.  The function has **higher latency** than the REST and Python APIs. For production applications use REST or the Python SDK's `svc.search()` method with `multi_index_query` returns structured Python objects and gives you full multi-index control. See the optional SDK section below.
 
@@ -669,7 +663,11 @@ The full SNOWFIELD PRO demo connects a FastAPI backend to a React frontend. The 
 
 ![Example app](assets/example_app.png)
 
-### Running the Demo Locally
+We will cover to options for running the app:
+- Option 1: Running the App **Locally**
+- Option 2: Running the App **in Snowpark Container Services**
+
+### Option 1 - Running the App Locally
 
 #### Prerequisites
 
@@ -705,7 +703,13 @@ cd ../backend
 SNOWFLAKE_CONNECTION=your_connection_name uvicorn main:app --reload --port 8000
 ```
 
-The backend starts on `http://localhost:8000`. Verify with:
+The backend starts on `http://localhost:8000`. 
+
+#### Step 4 — Start the Frontend
+
+**In a separate terminal**:
+
+Verify backend works properly with:
 
 ```bash
 curl http://localhost:8000/api/health
@@ -714,12 +718,10 @@ curl http://localhost:8000/api/health
 
 > **NOTE:** The first search request takes 30–60 seconds while the Snowpark session is established. Subsequent requests are fast.
 
-#### Step 4 — Start the Frontend
-
-In a separate terminal:
+Start the frontend:
 
 ```bash
-cd code/snow-sports-demo/frontend
+cd ../frontend
 npm run dev
 ```
 
@@ -748,7 +750,7 @@ Browser (localhost:5173)
                     └── VECTOR INDEXES: SEARCH_TEXT
 ```
 
-### Deploying to Snowpark Container Services (SPCS)
+### Option 2 - Running the App on Snowpark Container Services (SPCS)
 
 The same app can be deployed to SPCS for production use — no code changes required. The backend automatically detects the SPCS environment and uses OAuth token authentication from the mounted `/snowflake/session/token` file.
 
@@ -758,7 +760,7 @@ The same app can be deployed to SPCS for production use — no code changes requ
 #### Prerequisites
 
 -   Docker installed locally (for building the image)
--   ACCOUNTADMIN or a role with `CREATE COMPUTE POOL` and `CREATE SERVICE` privileges
+-   ACCOUNTADMIN or a custom role with required privileges
 -   The Cortex Search service (`CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH`) already created from the earlier sections
 
 #### Step 1 — Create an Image Repository
@@ -778,7 +780,6 @@ From the `code/snow-sports-demo` directory (where the Dockerfile is):
 ```bash
 docker build --platform linux/amd64 -t snow-sports-store:v1 .
 ```
-
 > **NOTE:** The `--platform linux/amd64` flag is required even on Apple Silicon — SPCS runs on x86_64 nodes.
 
 #### Step 3 — Login to the Snowflake Registry
@@ -796,11 +797,9 @@ docker login <account>.registry.snowflakecomputing.com -u <username>
 Replace `<account>` with your Snowflake account registry hostname (from Step 1):
 
 ```bash
-docker tag snow-sports-store:v1 \
-  <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
+docker tag snow-sports-store:v1 <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
 
-docker push \
-  <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
+docker push <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
 ```
 
 #### Step 5 — Create a Compute Pool
@@ -815,9 +814,6 @@ CREATE COMPUTE POOL IF NOT EXISTS CATALOG_SEARCH_POOL
 ```
 
 #### Step 6 — Create the SPCS Service
-
-The `spec.yaml` in the repository defines the service specification. Deploy it:
-
 ```sql
 CREATE SERVICE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE
   IN COMPUTE POOL CATALOG_SEARCH_POOL
@@ -857,13 +853,6 @@ SHOW ENDPOINTS IN SERVICE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE;
 ```
 
 Open the `ingress_url` from the SHOW ENDPOINTS output in your browser. The app is live.
-
-#### Troubleshooting
-
-```sql
--- View container logs
-SELECT SYSTEM$GET_SERVICE_LOGS('CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE', 0, 'snow-sports-store');
-```
 
 <!-- ------------------------ -->
 ## Cleanup
