@@ -490,7 +490,7 @@ Congratulations! You've successfully connected Snowflake Intelligence to Cortex 
 
 ### Related Resources
 
-- [MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors) -- External MCP connector docs
+- [MCP Connectors](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors) -- External MCP connector docs
 - [CREATE MCP SERVER](https://docs.snowflake.com/en/sql-reference/sql/create-mcp-server) -- SQL reference
 - [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) -- Agent orchestration
 - [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) -- Semantic models for Cortex Analyst
