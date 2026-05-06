@@ -1,41 +1,30 @@
-author: Lucas Galan
+author: Lucas Galan, Piotr Paczewski
 id: multi-index-cortex-search-build-a-retail-catalog-search-app
 language: en
 summary: Build hybrid search combining BM25 keyword and vector semantic retrieval in a single Cortex Search service — then wrap it in a full-stack application.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Multi-Index Cortex Search: Build a Retail Catalog Search App
 <!-- ------------------------ -->
 ## Overview
 
-**Solve the two hardest search problems in retail — exact brand recall and semantic intent — in a single Cortex Search service with four indexes. Then build a full-stack application on top of it.**
+**Solve the two hardest search problems in retail: exact brand recall and semantic intent in a single Cortex Search service with four indexes. Then build a full-stack application on top of it.**
 
 This guide has two parts:
 
--   **Part 1 — Introduction to Multi-Index Cortex Search:** Learn how multi-index works, set up a product catalog, create a search service, query it from SQL, and tune it for production.
--   **Part 2 — Building a Search Application:** Use the Python SDK to query the service programmatically, then build a React + FastAPI demo app and deploy it to Snowpark Container Services.
+-   **Part 1 — Introduction to Multi-Index Cortex Search:** Learn how multi-index works, set up a product catalog, create a search service and query it from SQL
+-   **Part 2 — Building a Search Application:** Use the Python SDK to query the service programmatically, then build a React + FastAPI demo app and deploy it to Snowpark Container Services. We will use a synthetic winter sports ecommerce shop as an example.
 
-We use **SNOWFIELD PRO**, a synthetic winter sports ecommerce catalog of 1,040 products, as the hero example.
-
-> aside positive
-> **Download the assets for this quickstart:**
- > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/setup_snowfield_pro_search.sql) — Full SQL workspace (setup + optional AI enrichment + all queries)
+> **Download the code assets for this quickstart:**
+ > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/setup_snowfield_pro_search.sql) — Full environment and SQL setup
 > - [snow-sports-demo/](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/snow-sports-demo) — Full-stack application source (backend, frontend, Dockerfile, product images, and SPCS spec)
->
-> Open the workspace alongside this guide in a Snowflake workspace tab and run sections in order.
-
-At a high level:
-
--   **Keyword-only search** finds exact brand names but fails on intent queries like _"warm boot for icy terrain"_
--   **Vector-only search** handles intent queries beautifully but loses exact brand name recall (e.g. _"ridgeline"_ returns ski pants instead of Ridgeline brand gear)
--   **Multi-index search** solves both problems in a single service — one DDL, one call, one reranker-fused result list
 
 ### What You'll Need
 
--   A Snowflake account with the ACCOUNTADMIN (or equivalent) role
+-   A Snowflake account with the ACCOUNTADMIN role
 -   Basic familiarity with SQL
 -   _(Optional)_ Python 3.9+ with the `snowflake-ml-python` SDK — only required for the optional Python SDK section
 
