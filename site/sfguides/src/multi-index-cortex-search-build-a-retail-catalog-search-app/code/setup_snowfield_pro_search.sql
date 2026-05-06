@@ -96,9 +96,39 @@ VALUES
     ('Ski Touring Backpack 30L','Ridgeline',  'Accessories', 'Backpacks',      'Touring',   'Advanced',     'Unisex', 199.00, 'Backpack',NULL,   'Ski touring pack with diagonal and A-frame ski carry, ice axe loops, and hip fins for skiing downhill. Hydration-compatible. 30L for day tours.'),
     ('Goggle Photochromic',     'Ridgeline',  'Accessories', 'Goggles',        'All-Mountain','Intermediate','Unisex', 189.00, 'Goggle',  NULL,   'Photochromic OTG goggle with automatic VLT adjustment from S1 (flat light) to S4 (full sun). Magnetic lens swap system. Fits Ridgeline and most OEM helmets.');
 
+-- =============================================================================
+-- Step 4 — Build the SEARCH_TEXT Column
+--
+-- The `SEARCH_TEXT` column concatenates every attribute a user might describe — brand, product name, subcategory, discipline, skill level, gender, and the full description. This ---- gives the vector index maximum coverage.
+-- =============================================================================
+
+
+UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
+SET SEARCH_TEXT = TRIM(
+    COALESCE(BRAND,        '') || ' ' ||
+    COALESCE(ITEM_NAME,    '') || ' ' ||
+    COALESCE(SUBCATEGORY,  '') || ' ' ||
+    COALESCE(DISCIPLINE,   '') || ' ' ||
+    COALESCE(SKILL_LEVEL,  '') || ' ' ||
+    COALESCE(GENDER,       '') || ' ' ||
+    COALESCE(DESCRIPTION,  '')
+);
 
 -- =============================================================================
--- SECTION 4 (OPTIONAL) — AI-Enriched Product Descriptions with Cortex
+-- Step 5 — Verify the data
+--
+-- Check row count and sample SEARCH_TEXT content
+-- =============================================================================
+
+SELECT COUNT(*) AS total_products FROM CATALOG_SEARCH_DB.DATA.PRODUCTS;
+
+SELECT PRODUCT_ID, BRAND, ITEM_NAME, CATEGORY,
+       LEFT(SEARCH_TEXT, 200) AS search_text_preview
+FROM CATALOG_SEARCH_DB.DATA.PRODUCTS
+LIMIT 5;
+
+-- =============================================================================
+-- (OPTIONAL) — AI-Enriched Product Descriptions with Cortex
 --
 -- Use AI_COMPLETE() to generate richer, more descriptive product
 -- descriptions before building SEARCH_TEXT.
@@ -166,39 +196,6 @@ SELECT
     LEFT(DESCRIPTION, 200) AS enriched_description_preview
 FROM CATALOG_SEARCH_DB.DATA.PRODUCTS
 LIMIT 5;
-
-
--- =============================================================================
--- SECTION 5 — Build the SEARCH_TEXT Column
---
--- SEARCH_TEXT concatenates every field a user might describe in a query.
--- This is the column that receives the VECTOR INDEX.
--- If you ran Section 4 (AI enrichment), SEARCH_TEXT now includes richer
--- AI-generated DESCRIPTION — giving the vector index maximum semantic coverage.
--- =============================================================================
-
-UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
-SET SEARCH_TEXT = TRIM(
-    COALESCE(BRAND,        '') || ' ' ||
-    COALESCE(ITEM_NAME,    '') || ' ' ||
-    COALESCE(SUBCATEGORY,  '') || ' ' ||
-    COALESCE(DISCIPLINE,   '') || ' ' ||
-    COALESCE(SKILL_LEVEL,  '') || ' ' ||
-    COALESCE(GENDER,       '') || ' ' ||
-    COALESCE(DESCRIPTION,  '')
-);
-
--- Verify: preview SEARCH_TEXT for a few rows
-SELECT PRODUCT_ID, BRAND, ITEM_NAME, CATEGORY,
-       LEFT(SEARCH_TEXT, 150) AS search_text_preview
-FROM CATALOG_SEARCH_DB.DATA.PRODUCTS
-LIMIT 10;
-
--- Sanity check: no NULL SEARCH_TEXT values
-SELECT COUNT(*) AS null_search_text
-FROM CATALOG_SEARCH_DB.DATA.PRODUCTS
-WHERE SEARCH_TEXT IS NULL OR LENGTH(SEARCH_TEXT) = 0;
-
 
 -- =============================================================================
 -- SECTION 6 — Create the Multi-Index Cortex Search Service
@@ -313,27 +310,6 @@ SELECT category, COUNT(*) AS result_count
 FROM flattened
 GROUP BY 1
 ORDER BY 2 DESC;
-
-
--- =============================================================================
--- SECTION 9 — Optional: Category-Scoped Views
---
--- These views are NOT needed for the search service (the service covers all
--- categories). They are useful for analytics queries (e.g. Cortex Analyst).
--- =============================================================================
-
-CREATE OR REPLACE VIEW CATALOG_SEARCH_DB.DATA.V_EQUIPMENT  AS SELECT * FROM CATALOG_SEARCH_DB.DATA.PRODUCTS WHERE CATEGORY = 'Equipment';
-CREATE OR REPLACE VIEW CATALOG_SEARCH_DB.DATA.V_APPAREL     AS SELECT * FROM CATALOG_SEARCH_DB.DATA.PRODUCTS WHERE CATEGORY = 'Apparel';
-CREATE OR REPLACE VIEW CATALOG_SEARCH_DB.DATA.V_PROTECTION  AS SELECT * FROM CATALOG_SEARCH_DB.DATA.PRODUCTS WHERE CATEGORY = 'Protection';
-CREATE OR REPLACE VIEW CATALOG_SEARCH_DB.DATA.V_ACCESSORIES AS SELECT * FROM CATALOG_SEARCH_DB.DATA.PRODUCTS WHERE CATEGORY = 'Accessories';
-
--- Verify view row counts
-SELECT 'Equipment'  AS category, COUNT(*) AS rows_count FROM CATALOG_SEARCH_DB.DATA.V_EQUIPMENT  UNION ALL
-SELECT 'Apparel',                                 COUNT(*) FROM CATALOG_SEARCH_DB.DATA.V_APPAREL    UNION ALL
-SELECT 'Protection',                              COUNT(*) FROM CATALOG_SEARCH_DB.DATA.V_PROTECTION  UNION ALL
-SELECT 'Accessories',                             COUNT(*) FROM CATALOG_SEARCH_DB.DATA.V_ACCESSORIES
-ORDER BY rows_count DESC;
-;
 
 -- =============================================================================
 -- SECTION 10 — Cleanup
