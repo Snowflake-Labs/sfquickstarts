@@ -682,6 +682,7 @@ The full SNOWFIELD PRO demo connects a FastAPI backend to a React frontend. The 
 From the `code/snow-sports-demo/backend` directory:
 
 ```bash
+cd code/snow-sports-demo/backend
 pip install -r requirements.txt
 ```
 
@@ -692,7 +693,7 @@ This installs FastAPI, uvicorn, snowflake-connector-python, snowflake-snowpark-p
 From the `code/snow-sports-demo/frontend` directory:
 
 ```bash
-npm install
+cd ../frontend && npm install
 ```
 
 #### Step 3 — Start the Backend
@@ -700,7 +701,7 @@ npm install
 The backend reads your Snowflake connection from `~/.snowflake/connections.toml`. Set the `SNOWFLAKE_CONNECTION` environment variable to the name of your connection entry:
 
 ```bash
-cd code/snow-sports-demo/backend
+cd ../backend
 SNOWFLAKE_CONNECTION=your_connection_name uvicorn main:app --reload --port 8000
 ```
 
