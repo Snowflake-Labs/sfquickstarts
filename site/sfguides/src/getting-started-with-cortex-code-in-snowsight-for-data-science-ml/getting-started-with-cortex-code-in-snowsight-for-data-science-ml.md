@@ -4,7 +4,7 @@ summary: Learn how to build an end-to-end customer LTV prediction model — from
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 environments: web
-status: Draft
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Cortex Code, LTV, Regression
 
@@ -65,7 +65,7 @@ First, let's create the database objects and generate synthetic e-commerce trans
 ### Prompt
 
 ```
-Generate realistic looking synthetic data in database ML and schema PROJECTS 
+Generate realistic looking synthetic data in database COCO_DB and schema COCO_SCHEMA 
 (create if it doesn't exist). Create a table ML_LTV_TRANSACTIONS
 with ~100000 transactions from ~500 customers over an 18-month period. Include
 CUSTOMER_ID, TRANSACTION_TIME, AMOUNT, PRODUCT_CATEGORY, and CHANNEL. Make the
@@ -244,21 +244,26 @@ Technical Documentation:
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) - Deploy and manage containerized workloads
 
 <!-- ------------------------ -->
-## Optional - Cleanup
+## Optional A - Cleanup
 
-To avoid ongoing Snowflake credit consumption, you can clean up the resources created in this guide. Use the prompt below in Cortex Code, or run the SQL manually in a Snowsight worksheet.
+To avoid ongoing Snowflake credit consumption, you can clean up the resources created in this guide. There are two approaches: a **Cortex Code prompt** and **Manual SQL**.
 
-### Prompt
+If you completed this quickstart in a single session and your environment does not contain other data, use "A-1 Cortex Code" prompt for a quick cleanup.
 
-> Note: `COCO_DB` is an example database and `COCO_WH` is an example warehouse name. If Cortex Code saved the data to a different database or created a different warehouse in your environment, update these values before running the query.
+If you worked through this quickstart over multiple days or your environment contains resources unrelated to this guide, use "A-2 Manual SQL" approach to ensure you only drop the intended objects.
+
+### A-1. Cortex Code
+
+> Note: This prompt works best within the same Cortex Code session where the database and other objects like model were created. If you are cleaning up resources from a previous session (e.g., a different day) or your environment contains objects unrelated to this quickstart, use the Manual SQL approach below for more precise control below.
+
 
 ```
-Drop the database COCO_DB, the model ML_LTV_PREDICTOR from the Snowflake Model Registry, and the warehouse COCO_WH that were created in this tutorial.
+Drop Database and model that we created earlier in this session
 ```
 
 Cortex Code will generate and execute the appropriate DROP statements for each resource.
 
-### Manual SQL
+### A-2. Manual SQL
 
 If you prefer to run the cleanup manually:
 
@@ -280,7 +285,7 @@ DROP WAREHOUSE IF EXISTS COCO_WH;
 
 
 <!-- ------------------------ -->
-## Optional - Cortex Code CLI Walkthrough
+## Optional B - Cortex Code CLI Walkthrough
 
 The same prompts used throughout this guide work identically in Cortex Code CLI. This section shows CLI-specific setup and sample terminal output so you can compare what to expect in a terminal session.
 
