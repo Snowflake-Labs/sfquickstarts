@@ -1,5 +1,5 @@
 author: Lucas Galan
-id: build-hybrid-search-with-cortex-search-multi-index
+id: multi-index-cortex-search-build-a-retail-catalog-search-app
 language: en
 summary: Build hybrid search combining BM25 keyword and vector semantic retrieval in a single Cortex Search service — then wrap it in a full-stack application.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-search
@@ -7,7 +7,7 @@ environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Build Hybrid Search with Cortex Search Multi-Index
+# Multi-Index Cortex Search: Build a Retail Catalog Search App
 <!-- ------------------------ -->
 ## Overview
 
@@ -15,14 +15,15 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 This guide has two parts:
 
--   **Part 1 — Introduction to Cortex Search Multi-Index:** Learn how multi-index works, set up a product catalog, create a search service, query it from SQL, and tune it for production.
+-   **Part 1 — Introduction to Multi-Index Cortex Search:** Learn how multi-index works, set up a product catalog, create a search service, query it from SQL, and tune it for production.
 -   **Part 2 — Building a Search Application:** Use the Python SDK to query the service programmatically, then build a React + FastAPI demo app and deploy it to Snowpark Container Services.
 
 We use **SNOWFIELD PRO**, a synthetic winter sports ecommerce catalog of 1,040 products, as the hero example.
 
 > aside positive
 > **Download the assets for this quickstart:**
- > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/getting-started-with-cortex-search-multi-index/code/setup_snowfield_pro_search.sql) — Full SQL workspace (setup + optional AI enrichment + all queries)
+ > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/setup_snowfield_pro_search.sql) — Full SQL workspace (setup + optional AI enrichment + all queries)
+> - [snow-sports-demo/](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/snow-sports-demo) — Full-stack application source (backend, frontend, Dockerfile, product images, and SPCS spec)
 >
 > Open the workspace alongside this guide in a Snowflake workspace tab and run sections in order.
 
@@ -35,7 +36,6 @@ At a high level:
 ### What You'll Need
 
 -   A Snowflake account with the ACCOUNTADMIN (or equivalent) role
--   A Snowflake warehouse (SMALL or larger)
 -   Basic familiarity with SQL
 -   _(Optional)_ Python 3.9+ with the `snowflake-ml-python` SDK — only required for the optional Python SDK section
 
@@ -98,12 +98,10 @@ These are **semantic queries**. A vector index over descriptive text handles thi
 | Vector-only | ✗ Low | ✓ High | Brand names sparse in embedding space |
 | Multi-index | ✓✓ High | ✓✓ High | BM25 + vector signals fused by reranker |
 
-The solution is not to build two services and fan out — that introduces synchronization complexity, duplicate infrastructure, and manual reranking. The solution is **Cortex Search multi-index**: a single service with multiple indexed columns, queried in one call, results fused by the built-in reranker.
+The solution is not to build two services and fan out — that introduces synchronization complexity, duplicate infrastructure, and manual reranking. The solution is **Multi-Index Cortex Search**: a single service with multiple indexed columns, queried in one call, results fused by the built-in reranker.
 
 <!-- ------------------------ -->
-## Understanding Cortex Search Multi-Index
-
-**Multi-index is not fan-out. It is multiple indexed columns within a single service.**
+## Understanding Multi-Index Cortex Search
 
 Snowflake Cortex Search supports two index types that can coexist in a single service:
 
@@ -118,7 +116,7 @@ BM25 keyword indexes over one or more string columns. Each column gets its own i
 
 ### VECTOR INDEXES
 
-Dense embedding indexes over a text column. Snowflake supports multiple embedding models for managed vector generation — not just Arctic. Available models include `snowflake-arctic-embed-l-v2.0`, `snowflake-arctic-embed-m-v1.5` (default), and others depending on your region (see [Cortex Search Regional Availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) for the full list). Useful for:
+Dense embedding indexes over a text column. Snowflake supports multiple embedding models for managed vector generation. Useful for:
 
 -   Semantic / intent queries
 -   Brand voice and description matching
@@ -132,34 +130,7 @@ Dense embedding indexes over a text column. Snowflake supports multiple embeddin
 -   You need multilingual embeddings from a specialized model not yet available in Snowflake
 -   You have already embedded your corpus and want to avoid re-computation costs
 
-To use BYOV, specify the vector column directly in `VECTOR INDEXES` without a model parameter, or pair it with a `query_model` for automatic query embedding:
-
-```sql
--- User-provided vectors (query must also be a vector)
-VECTOR INDEXES MY_EMBEDDINGS
-
--- User-provided vectors with managed query embedding
-VECTOR INDEXES MY_EMBEDDINGS(query_model='snowflake-arctic-embed-l-v2.0')
-```
-
-### The `multi_index_query` Parameter
-
-When you call `svc.search()` with a `multi_index_query` dict, the SDK routes your query to all specified indexed columns simultaneously. The built-in reranker fuses the signals and returns a single ranked list:
-
-```python
-response = svc.search(
-    multi_index_query={
-        "BRAND":       [{"text": query}],
-        "ITEM_NAME":   [{"text": query}],
-        "SUBCATEGORY": [{"text": query}],
-        "SEARCH_TEXT": [{"text": query}],
-    },
-    columns=["PRODUCT_ID", "ITEM_NAME", "BRAND", "CATEGORY", ...],
-    limit=20,
-)
-```
-
-> **NOTE:** Each key in `multi_index_query` must correspond to a column declared in `TEXT INDEXES` or `VECTOR INDEXES` in the service DDL. If a column is not indexed, the SDK will raise an error.
+This guide will focus on using embeddings models within Snowflake for vector generation.
 
 ### What Multi-Index Is NOT
 
@@ -210,12 +181,10 @@ SELECT CURRENT_ROLE();
 -- USE ROLE ACCOUNTADMIN;
 ```
 
-> **NOTE:** Creating a Cortex Search Service requires the `CREATE CORTEX SEARCH SERVICE` privilege on the target schema. ACCOUNTADMIN has this by default. If you are using a custom role, run `GRANT CREATE CORTEX SEARCH SERVICE ON SCHEMA APP TO ROLE <your_role>`.
-
 <!-- ------------------------ -->
 ## Preparing the Product Catalog
 
-**The key to effective multi-index retrieval is a well-constructed `SEARCH_TEXT` column that encodes everything a customer might ask about a product.**
+**The key to effective Multi-Index Cortex Search retrieval is a well-constructed `SEARCH_TEXT` column that encodes everything a customer might ask about a product.**
 
 ### Step 1 — Create the PRODUCTS Table
 
@@ -239,7 +208,7 @@ CREATE OR REPLACE TABLE CATALOG_SEARCH_DB.DATA.PRODUCTS (
 
 ### Step 2 — Load the Sample Catalog
 
-The downloadable SQL workspace (Section 3) contains 30 representative product rows across Equipment, Apparel, Protection, and Accessories. Run that INSERT block now, or substitute your own catalog data.
+The downloadable SQL (Section 3) contains 30 representative product rows across Equipment, Apparel, Protection, and Accessories. Run that INSERT block now, or substitute your own catalog data.
 
 > **NOTE:** In production, this is your existing catalog table. You do not need to load sample data — just point the search service at your real PRODUCTS table.
 
@@ -436,7 +405,7 @@ DESCRIBE CORTEX SEARCH SERVICE CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH;
 
 Wait for `indexing_state` to show `READY` before running queries. For 1,040 rows this typically takes 2–5 minutes.
 
-> **NOTE:** The `TARGET_LAG` setting controls how frequently the service checks for new or updated rows. For a demo/dev catalog that rarely changes, `'1 hour'` is appropriate. For a live production catalog, use `'1 minute'` or `'30 seconds'`.
+> **NOTE:** The `TARGET_LAG` setting controls how frequently the service checks for new or updated rows. For a demo/dev catalog that rarely changes, `'1 hour'` is appropriate. For a live production catalog, use `'1 minute'` or different frequency.
 
 <!-- ------------------------ -->
 ## Querying with SEARCH_PREVIEW (SQL)
@@ -536,7 +505,7 @@ Accessories    1
 
 One service. One query. Category breakdown from result attributes, not from four separate services.
 
-> **NOTE:** `SEARCH_PREVIEW` is the fastest path to testing Cortex Search from SQL. For production applications, the Python SDK's `svc.search()` method with `multi_index_query` returns structured Python objects and gives you full multi-index control. See the optional SDK section below.
+> **NOTE:** `SEARCH_PREVIEW` is the easiest path to testing Multi-Index Cortex Search from SQL. For production applications, the Python SDK's `svc.search()` method with `multi_index_query` returns structured Python objects and gives you full multi-index control. See the optional SDK section below.
 
 > aside negative
 > **SEARCH_PREVIEW Limitations:**
@@ -601,7 +570,7 @@ filtered = [
 <!-- ------------------------ -->
 ## Building a Search Application
 
-**You now have a working Cortex Search multi-index service. The remaining sections show how to build a full-stack search application on top of it — from a Python SDK query function to a React frontend deployed on Snowpark Container Services.**
+**You now have a working Multi-Index Cortex Search service. The remaining sections show how to build a full-stack search application on top of it — from a Python SDK query function to a React frontend deployed on Snowpark Container Services.**
 
 <!-- ------------------------ -->
 ## Querying with the Python SDK
@@ -717,7 +686,7 @@ Total results: 9
 <!-- ------------------------ -->
 ## The Demo App: SNOWFIELD PRO
 
-**You've seen the power of Cortex Search multi-index from SQL. Now let's put it behind a FastAPI backend and a React frontend — with debounced auto-search and a multi-index insights panel.**
+**You've seen the power of Multi-Index Cortex Search from SQL. Now let's put it behind a FastAPI backend and a React frontend — with debounced auto-search and a multi-index insights panel.**
 
 The full SNOWFIELD PRO demo connects a FastAPI backend to a React frontend. The Python SDK's `multi_index_query` drives the search; every result carries a `CATEGORY` attribute that powers the live category breakdown sidebar.
 
@@ -1002,50 +971,6 @@ SHOW ENDPOINTS IN SERVICE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE;
 
 Open the `ingress_url` from the SHOW ENDPOINTS output in your browser. The app is live.
 
-#### Step 8 — Grant Access to Other Roles (Optional)
-
-```sql
-GRANT USAGE ON DATABASE CATALOG_SEARCH_DB TO ROLE <consumer_role>;
-GRANT USAGE ON SCHEMA CATALOG_SEARCH_DB.APP TO ROLE <consumer_role>;
-GRANT SERVICE ROLE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE!ALL_ENDPOINTS_USAGE
-  TO ROLE <consumer_role>;
-```
-
-#### Updating the Deployed App
-
-After making code changes, rebuild and push the image, then update the service in-place:
-
-```bash
-docker build --platform linux/amd64 -t snow-sports-store:v1 .
-docker tag snow-sports-store:v1 <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
-docker push <account>.registry.snowflakecomputing.com/catalog_search_db/app/app_images/snow-sports-store:v1
-```
-
-```sql
--- Update the service (preserves the URL — do NOT drop and recreate)
-ALTER SERVICE CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE FROM SPECIFICATION $$
-spec:
-  containers:
-  - name: snow-sports-store
-    image: /catalog_search_db/app/app_images/snow-sports-store:v1
-    env:
-      SNOWFLAKE_DATABASE: CATALOG_SEARCH_DB
-      SNOWFLAKE_SCHEMA: APP
-      SNOWFLAKE_WAREHOUSE: CATALOG_SEARCH_WH
-    resources:
-      requests:
-        cpu: 0.5
-        memory: 1Gi
-      limits:
-        cpu: 2
-        memory: 4Gi
-  endpoints:
-  - name: store-ui
-    port: 8000
-    public: true
-$$;
-```
-
 #### Troubleshooting
 
 ```sql
@@ -1053,26 +978,12 @@ $$;
 SELECT SYSTEM$GET_SERVICE_LOGS('CATALOG_SEARCH_DB.APP.SNOW_SPORTS_STORE', 0, 'snow-sports-store');
 ```
 
-| Problem | Cause | Fix |
-|---------|-------|-----|
-| Image not found | Path mismatch in spec | Ensure image path starts with `/` and matches the repository exactly |
-| Service stuck in PENDING | Compute pool not ready | Check `SHOW COMPUTE POOLS` — wait for ACTIVE state |
-| Auth errors in logs | Missing SPCS token | Verify the container can read `/snowflake/session/token` (automatic in SPCS) |
-| Connection refused | Port mismatch | Align `endpoints.port`, container `ports.port`, and uvicorn `--port` (all 8000) |
-
 <!-- ------------------------ -->
 ## Cleanup
 
 **Run this SQL to remove all objects created in this quickstart.**
 
 ```sql
--- Drop the Cortex Search service
-DROP CORTEX SEARCH SERVICE IF EXISTS CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH;
-
--- Drop the schemas
-DROP SCHEMA IF EXISTS CATALOG_SEARCH_DB.APP;
-DROP SCHEMA IF EXISTS CATALOG_SEARCH_DB.DATA;
-
 -- Drop the database
 DROP DATABASE IF EXISTS CATALOG_SEARCH_DB;
 
@@ -1080,16 +991,14 @@ DROP DATABASE IF EXISTS CATALOG_SEARCH_DB;
 DROP WAREHOUSE IF EXISTS CATALOG_SEARCH_WH;
 ```
 
-> **NOTE:** Dropping a Cortex Search service does not incur additional charges. Storage costs for the indexed data are also removed when the service is dropped. If you drop only the service but keep the source table, you can recreate the service at any time.
-
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-**You have built a production-ready retail catalog search using Cortex Search multi-index — one service, four indexes, zero manual reranking — and wrapped it in a full-stack application.**
+**You have built a production-ready retail catalog search using Multi-Index Cortex Search — one service, four indexes, zero manual reranking — and wrapped it in a full-stack application.**
 
 ### What You Built
 
-**Part 1 — Cortex Search Multi-Index:**
+**Part 1 — Multi-Index Cortex Search:**
 
 -   A product catalog table with a pre-computed `SEARCH_TEXT` column combining brand, name, subcategory, and description
 -   A single **Cortex Search service** with three TEXT indexes (BRAND, ITEM_NAME, SUBCATEGORY) and one VECTOR index (SEARCH_TEXT)
