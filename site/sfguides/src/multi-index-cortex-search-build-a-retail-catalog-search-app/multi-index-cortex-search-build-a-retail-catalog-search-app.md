@@ -518,7 +518,7 @@ GROUP BY 1
 ORDER BY 2 DESC;
 ```
 
-Expected output on screenshoot below
+Expected output on screenshoot below.
 ![Test SQL Cortex2](assets/test_sql_cortex2.png)
 
 > **NOTE:** `SEARCH_PREVIEW` is the easiest path to testing Multi-Index Cortex Search from SQL. The `SEARCH_PREVIEW` function is provided for **testing and validation only**. It is not intended for serving search queries in an end-user application.  The function has **higher latency** than the REST and Python APIs. For production applications use REST or the Python SDK's `svc.search()` method with `multi_index_query` returns structured Python objects and gives you full multi-index control. See the optional SDK section below.
@@ -572,7 +572,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE ...
 
 **A single Python function replaces the fan-out pattern, the merge logic, and the manual reranker.**
 
-Open the notebook in Snowflake Workspaces
+Open the notebook in Snowflake Workspaces.
 ![Open notebook](assets/open_notebook.png)
 
 ### Connect and Retrieve the Service
