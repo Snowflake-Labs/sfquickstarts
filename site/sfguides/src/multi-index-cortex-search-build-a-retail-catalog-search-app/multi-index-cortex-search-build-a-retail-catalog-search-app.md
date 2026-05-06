@@ -9,6 +9,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Multi-Index Cortex Search: Build a Retail Catalog Search App
 <!-- ------------------------ -->
+
+![App main page](assets/app_mainpage.png)
+
 ## Overview
 
 **Solve the two hardest search problems in retail: exact brand recall and semantic intent in a single Cortex Search service with four indexes. Then build a full-stack application on top of it.**
@@ -20,6 +23,7 @@ This guide has two parts:
 
 > **Download the code assets for this quickstart:**
  > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/setup_snowfield_pro_search.sql) — Full environment and SQL setup
+> - [querying_with_python_sdk.ipynb](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/querying_with_python_sdk.ipynb) - Querying Multi-index Cortex Search with Python SDK
 > - [snow-sports-demo/](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/snow-sports-demo) — Full-stack application source (backend, frontend, Dockerfile, product images, and SPCS spec)
 
 ### What You'll Need
@@ -135,7 +139,8 @@ One service, one call, one result list. The reranker is built in.
 <!-- ------------------------ -->
 ## Setting Up Your Snowflake Environment
 
-**All SQL in this guide runs in a single workspace. Expected setup time: under 5 minutes.**
+Let's begin by opening a SQL file in Snowflake Workspace. Before we do anything else, let's set up our environment.
+![Workspace setup](assets/workspace_setup.png)
 
 ### Step 1 — Create the Database and Warehouse
 
@@ -160,22 +165,7 @@ USE SCHEMA DATA;
 USE WAREHOUSE CATALOG_SEARCH_WH;
 ```
 
-### Step 2 — Verify Your Role
-
-```sql
--- Confirm you are using ACCOUNTADMIN or a role with CREATE CORTEX SEARCH SERVICE privilege
-SELECT CURRENT_ROLE();
-
--- If needed, switch role:
--- USE ROLE ACCOUNTADMIN;
-```
-
-<!-- ------------------------ -->
-## Preparing the Product Catalog
-
-**The key to effective Multi-Index Cortex Search retrieval is a well-constructed `SEARCH_TEXT` column that encodes everything a customer might ask about a product.**
-
-### Step 1 — Create the PRODUCTS Table
+### Step 2 — Create the PRODUCTS Table
 
 ```sql
 CREATE OR REPLACE TABLE CATALOG_SEARCH_DB.DATA.PRODUCTS (
@@ -195,13 +185,13 @@ CREATE OR REPLACE TABLE CATALOG_SEARCH_DB.DATA.PRODUCTS (
 );
 ```
 
-### Step 2 — Load the Sample Catalog
+### Step 3 — Load the Sample Catalog
 
 The downloadable SQL (Section 3) contains 30 representative product rows across Equipment, Apparel, Protection, and Accessories. Run that INSERT block now, or substitute your own catalog data.
 
 > **NOTE:** In production, this is your existing catalog table. You do not need to load sample data — just point the search service at your real PRODUCTS table.
 
-### Step 3 — Build the SEARCH_TEXT Column
+### Step 4 — Build the SEARCH_TEXT Column
 
 The `SEARCH_TEXT` column concatenates every attribute a user might describe — brand, product name, subcategory, discipline, skill level, gender, and the full description. This gives the vector index maximum coverage.
 
@@ -220,7 +210,7 @@ SET SEARCH_TEXT = TRIM(
 
 > **NOTE:** `SEARCH_TEXT` is the column that gets the vector index. It should be as descriptive as possible. If you run the optional AI enrichment section next, it will rewrite DESCRIPTION before you build this column — giving the vector index richer, more searchable content.
 
-### Step 4 — Verify the Data
+### Step 5 — Verify the Data
 
 ```sql
 -- Check row count and sample SEARCH_TEXT content
@@ -401,8 +391,6 @@ Wait for `indexing_state` to show `READY` before running queries. For 1,040 rows
 
 **`SNOWFLAKE.CORTEX.SEARCH_PREVIEW()` is the SQL interface for Cortex Search — query all four indexes from a workspace, a Streamlit app, or any SQL-capable tool.**
 
-The function takes the fully-qualified service name and a JSON payload with `query`, `columns`, an optional `filter`, and `limit`. Results come back as a JSON object with a `results` array.
-
 ### Test 1 — Brand Name Lookup (exercises TEXT INDEX on BRAND)
 
 ```sql
@@ -494,13 +482,7 @@ Accessories    1
 
 One service. One query. Category breakdown from result attributes, not from four separate services.
 
-> **NOTE:** `SEARCH_PREVIEW` is the easiest path to testing Multi-Index Cortex Search from SQL. For production applications, the Python SDK's `svc.search()` method with `multi_index_query` returns structured Python objects and gives you full multi-index control. See the optional SDK section below.
-
-> aside negative
-> **SEARCH_PREVIEW Limitations:**
-> - The `SEARCH_PREVIEW` function is provided for **testing and validation only**. It is not intended for serving search queries in an end-user application.
-> - The function operates only on **string literals** — it does not accept batch text data.
-> - The function has **higher latency** than the REST and Python APIs. For production workloads requiring low-latency responses, use the Python SDK or REST API instead.
+> **NOTE:** `SEARCH_PREVIEW` is the easiest path to testing Multi-Index Cortex Search from SQL. The `SEARCH_PREVIEW` function is provided for **testing and validation only**. It is not intended for serving search queries in an end-user application.  The function has **higher latency** than the REST and Python APIs. For production applications use REST or the Python SDK's `svc.search()` method with `multi_index_query` returns structured Python objects and gives you full multi-index control. See the optional SDK section below.
 
 <!-- ------------------------ -->
 ## Tuning and Optimization
@@ -541,47 +523,26 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE ...
     ...
 ```
 
-### 3. Use ATTRIBUTES for Post-Search Filtering
-
-ATTRIBUTES are returned with results but are not part of the ranking. Use them to add client-side filters (price range, skill level, gender) after retrieval:
-
-```python
-# Filter results client-side after retrieval
-filtered = [
-    r for r in results
-    if r.get("SKILL_LEVEL") in ["Beginner", "Intermediate"]
-    and float(r.get("PRICE", 0)) <= 300
-]
-```
-
-> **NOTE:** Snowflake Cortex Search also supports server-side `filter` expressions in the `svc.search()` call. For high-cardinality filter combinations (e.g. 50+ attribute values), server-side filtering is more efficient than fetching all results and filtering in Python.
-
 <!-- ------------------------ -->
 ## Building a Search Application
 
-**You now have a working Multi-Index Cortex Search service. The remaining sections show how to build a full-stack search application on top of it — from a Python SDK query function to a React frontend deployed on Snowpark Container Services.**
+**You now have a working Multi-Index Cortex Search service. The remaining sections show how to build a full-stack search application on top of it — from a Python SDK query function to a React frontend deployed on local machine or on Snowpark Container Services.**
 
 <!-- ------------------------ -->
 ## Querying with the Python SDK
 
 **A single Python function replaces the fan-out pattern, the merge logic, and the manual reranker.**
 
-### Install the Snowflake Python SDK
-
-```bash
-pip install snowflake-ml-python
-```
+Open the notebook in Snowflake Workspaces
+![Open notebook](assets/open_notebook.png)
 
 ### Connect and Retrieve the Service
 
 ```python
-from snowflake.ml.utils.connection_params import SnowflakeLoginOptions
+from snowflake.snowpark.context import get_active_session
 from snowflake.core import Root
-import snowflake.connector
-
-# Connect using your connection config
-connection_params = SnowflakeLoginOptions("your_connection_name")
-root = Root(snowflake.connector.connect(**connection_params))
+session = get_active_session()
+root = Root(session)
 
 svc = (
     root
@@ -594,6 +555,7 @@ svc = (
 ### The Query Function
 
 ```python
+### The Query Function
 SEARCH_COLUMNS = [
     "PRODUCT_ID", "ITEM_NAME", "BRAND", "CATEGORY",
     "SUBCATEGORY", "SKILL_LEVEL", "DISCIPLINE",
@@ -649,26 +611,7 @@ for r in result['results'][:5]:
     print(f"  {r['BRAND']} — {r['ITEM_NAME']} ({r['SUBCATEGORY']})")
 ```
 
-Expected output for `"ridgeline"`:
-
-```
-Total results: 12
-Category breakdown: {'Equipment': 5, 'Apparel': 4, 'Protection': 2, 'Accessories': 1}
-  Ridgeline — Freeride Jacket (Apparel)
-  Ridgeline — Powder Skis Pro (Equipment)
-  Ridgeline — All-Mountain Helmet (Protection)
-  ...
-```
-
-Expected output for `"warm waterproof jacket for off-piste skiing"`:
-
-```
-Total results: 9
-  Black Crows — Corpus Freebird Jacket (Apparel)
-  Ridgeline — Freeride Jacket (Apparel)
-  Salomon — QST Charge Jacket (Apparel)
-  ...
-```
+![Python notebook results](assets/python_notebook_results.png)
 
 > **NOTE:** The `multi_index_query` parameter sends the same query text to all four indexes. The reranker fuses the BM25 scores (from BRAND, ITEM_NAME, SUBCATEGORY) and the vector similarity score (from SEARCH_TEXT) into a single ranked list. You do not need to implement your own score fusion logic.
 

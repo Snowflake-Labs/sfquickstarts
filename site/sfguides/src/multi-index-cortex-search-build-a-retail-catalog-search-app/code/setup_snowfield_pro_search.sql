@@ -1,18 +1,11 @@
--- =============================================================================
--- SNOWFIELD PRO — Cortex Search Multi-Index Setup
--- Quickstart: Getting Started with Cortex Search Multi-Index for Retail Catalog Retrieval
--- Author: Lucas Galan
---
 -- Run this worksheet top-to-bottom in a single Snowflake session.
 -- Expected runtime: ~5 min setup + 2-5 min for the service to finish indexing.
--- =============================================================================
-
 
 -- =============================================================================
 -- SECTION 1 — Environment Setup
 -- =============================================================================
 
-USE ROLE SYSADMIN;
+USE ROLE ACCOUNTADMIN;
 
 -- Create database and schemas
 CREATE DATABASE IF NOT EXISTS CATALOG_SEARCH_DB;
@@ -74,7 +67,7 @@ VALUES
     ('Freeride Boot 130',       'Ridgeline',  'Equipment',   'Boots',          'Freeride',  'Expert',       'Male',   549.00, 'Boot',    '130',  'Stiff freeride boot for aggressive charging. Boa dial entry system. Walkable sole for short approaches. Warm liner rated to -20°C.'),
     ('Tourlite Boot 110',       'Ridgeline',  'Equipment',   'Boots',          'Touring',   'Advanced',     'Unisex', 499.00, 'Boot',    '110',  'Lightweight touring boot with 60° range of motion in walk mode. Comfortable enough for long uphill approaches. Grippy rubber sole.'),
     ('Nexo LYT 100W',           'Lange',      'Equipment',   'Boots',          'Alpine',    'Intermediate', 'Female', 449.00, 'Boot',    '100',  'Women-specific boot with a wider last and lower cuff. Easy entry, warm liner, reliable buckle closure. Forgiving flex for all-day comfort.'),
-    ('TLT X 130',               'Dynafit',    'Equipment',   'Boots',          'Touring',   'Expert',       'Male',   699.00, 'Boot',    '130',  'Race-proven touring boot. World's lightest 130-flex performance boot. Dynafit Speed Nose for fast transitions. Carbon cuff.'),
+    ('TLT X 130',               'Dynafit',    'Equipment',   'Boots',          'Touring',   'Expert',       'Male',   699.00, 'Boot',    '130',  'Race-proven touring boot. Lightest 130-flex performance boot. Dynafit Speed Nose for fast transitions. Carbon cuff.'),
 
     -- Equipment — Bindings & Poles
     ('Kingpin 13 110-130',      'Marker',     'Equipment',   'Bindings',       'Touring',   'Advanced',     'Unisex', 399.00, 'Binding', NULL,   'Pin binding with alpine release. Compatible with AT and GripWalk soles. Reliable heel release for confident downhill riding. 10-year field-proven track record.'),
@@ -335,12 +328,12 @@ CREATE OR REPLACE VIEW CATALOG_SEARCH_DB.DATA.V_PROTECTION  AS SELECT * FROM CAT
 CREATE OR REPLACE VIEW CATALOG_SEARCH_DB.DATA.V_ACCESSORIES AS SELECT * FROM CATALOG_SEARCH_DB.DATA.PRODUCTS WHERE CATEGORY = 'Accessories';
 
 -- Verify view row counts
-SELECT 'Equipment'  AS category, COUNT(*) AS rows FROM CATALOG_SEARCH_DB.DATA.V_EQUIPMENT  UNION ALL
+SELECT 'Equipment'  AS category, COUNT(*) AS rows_count FROM CATALOG_SEARCH_DB.DATA.V_EQUIPMENT  UNION ALL
 SELECT 'Apparel',                                 COUNT(*) FROM CATALOG_SEARCH_DB.DATA.V_APPAREL    UNION ALL
 SELECT 'Protection',                              COUNT(*) FROM CATALOG_SEARCH_DB.DATA.V_PROTECTION  UNION ALL
 SELECT 'Accessories',                             COUNT(*) FROM CATALOG_SEARCH_DB.DATA.V_ACCESSORIES
-ORDER BY rows DESC;
-
+ORDER BY rows_count DESC;
+;
 
 -- =============================================================================
 -- SECTION 10 — Cleanup
