@@ -245,7 +245,7 @@ dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guide
 
 1. Because we have quite a few folders to create, we’re going to fast track this by using a shortcut to build multiple folders at the same time. 
 
-* In your file tree take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `Create Folder`. We’re going to add two new folders to the file path, `staging` and `tpch` (in that order) by typing `staging/tpch` into the file path. Make sure you’re not including additional folder names and click `Create`. <br>
+* In your file tree take your cursor and hover over the `models` subdirectory, right click, then click `Create Folder`. We’re going to add two new folders to the file path, `staging` and `tpch` (in that order) by typing `staging/tpch` into the file path. Make sure you’re not including additional folder names and click `Create`. <br>
 
     ![New Folder](assets/dbt_Cloud_new_folder.png)<br>
 
@@ -253,7 +253,7 @@ dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guide
 
 * If you click into your `models` directory now, you should see the new `staging` folder nested within `models` and the `tpch` folder nested within `staging`.
 
-2. We are going to create our final two folders the same way. Take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `Create Folder`. This time in the popup window you’re going to enter in the following file path: `marts/core`. Here we’re creating a `marts` folder within `models` and then a `core` folder within `marts`. Your folder tree should look like this when it’s all said and done:<br>
+2. We are going to create our final two folders the same way. Take your cursor and hover over the `models` subdirectory, right click, then click `Create Folder`. This time in the popup window you’re going to enter in the following file path: `marts/core`. Here we’re creating a `marts` folder within `models` and then a `core` folder within `marts`. Your folder tree should look like this when it’s all said and done:<br>
 
     ![File Tree](assets/dbt_Cloud_models_marts_core_folder_file_tree.png)
 
@@ -281,7 +281,7 @@ We won’t be writing our own macros in this workshop but we do recommend checki
 ```yaml
 packages:
   - package: dbt-labs/dbt_utils
-    version: 0.8.4
+    version: 1.3.0
 ```
 
 2. The last step to install the package is to run `dbt deps` at the command line, which tells dbt to install the packages defined in your `packages.yml` file. Type in `dbt deps` to the command line, click `Enter`, and you should see a success message there when it completes. 
@@ -319,7 +319,7 @@ sources:
         columns:
           - name: o_orderkey
             description: SF*1,500,000 are sparsely populated
-            tests: 
+            data_tests: 
               - unique
               - not_null
 
@@ -328,10 +328,11 @@ sources:
         columns:
           - name: l_orderkey
             description: Foreign Key to O_ORDERKEY
-            tests:
+            data_tests:
               - relationships:
-                  to: source('tpch', 'orders')
-                  field: o_orderkey
+                  arguments: 
+                    to: source('tpch', 'orders')
+                    field: o_orderkey
 ```
 <br>
 
@@ -389,7 +390,7 @@ renamed as (
 
     select
     
-        {{ dbt_utils.surrogate_key(
+        {{ dbt_utils.generate_surrogate_key(
             ['l_orderkey', 
             'l_linenumber']) }}
                 as order_item_key,
@@ -829,13 +830,14 @@ models:
     columns:
       - name: order_key
         description: primary key of the model
-        tests:
+        data_tests:
           - unique
           - not_null
           - relationships:
-              to: ref('stg_tpch_orders')
-              field: order_key
-              severity: warn
+              arguments: 
+                to: ref('stg_tpch_orders')
+                field: order_key
+                severity: warn
       - name: customer_key
         description: foreign key for customers
       - name: order_date
@@ -844,7 +846,8 @@ models:
         description: status of the order
         tests:
           - accepted_values:
-              values: ['P','O','F']
+              arguments: 
+                values: ['P','O','F']
       - name: priority_code
         description: code associated with the order
       - name: clerk_name
@@ -861,6 +864,7 @@ models:
         description: item level tax total
       - name: net_item_sales_amount
         description: the net total which factors in discount and tax
+
 ```
 
 Let’s take a moment to describe what’s happening in this file and how we’re defining everything. This file is in the `models/marts/core` directory and contains tests and descriptions specifically for the models in this directory, in this case for `fct_orders`. This is an organizational step and at the end of the day it is up to you and your team how you’d like to organize your YAML files and the models they test and define. As a best practice, we do recommend having at least one YAML file for testing and documentation per directory.
@@ -920,9 +924,11 @@ Similar to our model runs, the compiled code that is passed to Snowflake for eac
 
 ### Documentation
 
-Let’s switch gears to take a look at the documentation that we created. The command to tell dbt to create our docs is `dbt docs generate`. Run that command and when it completes click on the book icon in the upper left hand corner of the IDE above the version control pane to launch your documentation. 
+Let’s switch gears to take a look at the documentation that we created. The command to tell dbt to create our docs is `dbt compile --write-catalog`. Run that command and when it completes click on the book icon in the upper left hand corner of the IDE above the version control pane to launch your documentation. 
 
 ![Docs Ready](assets/dbt_platform_dbt_docs_ready.png)
+
+![Docs Open](assets/dbt_docs_open.png)
 
 The documentation site will launch in a new tab. After that loads enter `fct_orders` into the top search bar and click on the top result to take you the documentation for that model. 
 
@@ -964,21 +970,39 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
 3. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
 
-4. Click on the Orchestration tab in the side bar and then click `Environments`. 
+4. Click on the Orchestration tab in the side bar and then click `Environments`.
 
     You should see two environments listed and you’ll want to click on the `Deployment` environment to open it up and then `Settings` in the upper right hand corner to modify it.<br><br>
 
     Before making any changes, let’s touch on what is defined within this environment.
 
-    The Snowflake connection shows the credentials that dbt platform is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so.
+    Deployment environments in dbt platform connect to your data warehouse through a **profile**. A profile bundles together the Snowflake connection, the deployment credentials (such as username, authentication, and target schema), and any extended attributes — and can be reused across deployment environments within a project. Partner Connect created a default connection for us, but we need to create a Profile. Let’s create a  profile so our production environment builds into a dedicated `production` schema.
 
-    The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we’ve been using as the schema for our development environment. Let’s update the schema to create a new schema specifically for our production environment. 
+    Click `Settings` in the upper right hand corner to edit the Environment. Scroll down to the `Connection profiles` section, click the "Assign Profile" button and choose `Create new profile`.
 
-    Click `Edit` in the upper right hand corner to allow you to modify the existing field values. Select the snowflake default connection. Set Auth method as `Username and password`. Provide the username and password of your snowflake account. Scroll down to the `schema` field in the `Deployment Credentials` section and update the schema name to `production`. Be sure to click `Save` in the upper right hand corner after you’ve made the change.
+    ![Assign Profile](assets/dbt_assign_profile.png)
 
-    ![Deployment Schema Update](assets/dbt_platform_deployment_schema_update.png)
+    Give the profile a name like `production`, then click `Create profile`.
 
-    By updating the schema for our production environment to `production`, it ensures that our deployment job for this environment will build our dbt models in the `production` schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
+    ![Create New Profile](assets/dbt_create_profile.png)
+
+    For the connection, select the existing Snowflake connection that Partner Connect set up for you.
+
+    ![Select Snowflake Connection](assets/dbt_select_snowflake.png)
+
+    In the `Deployment credentials` section, set Auth method to `Username and password` and provide the username and password for your Snowflake account. Set the `Schema` field to `production`, then save the credentials.
+
+    ![Assign Credentials](assets/dbt_assign_creds.png)
+
+    Select the profile we created and click `Assign profile` to attach it to this environment.
+
+    ![Assign Profile](assets/assign_profile.png)
+
+    Finally, mark this environment as your production environment by setting the deployment type to `Production`, then click `Save` in the upper right hand corner.
+
+    ![Set to Prod](assets/set_to_prod.png)
+
+    By assigning a profile that targets the `production` schema, our deployment job for this environment will build our dbt models in the `production` schema within the `PC_DBT_DB` database as defined in the Snowflake connection.
 
 5. Now let’s switch over to our production job. Click on the Orchestration tab again and then select `Jobs`. You should see an existing and pre-configured `Partner Connect Trial Job`. Similar to the environment, click on the job, then select `Settings` to modify it. Let’s take a look at the job to understand it before making changes. <br><br>
 
@@ -1005,6 +1029,14 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
     One of the tests from our example models failed! That was a bit unexpected, but in looking at all of the logs again we can see that the models we created were built successfully in Snowflake and the tests for those models passed. At this point, we can move forward and fix the failing example test another day. 
 
     While this process is great for your scheduling and running your dbt jobs, we recognize that transformation jobs don’t live in a silo for many data teams. It’s not uncommon for a data team to have a data process occurring outside of dbt that has to happen prior to a dbt job running, or for there to be a data process that needs to be triggered after a dbt job finishes. In these sorts of cases, we recommend using our [API](https://docs.getdbt.com/dbt-cloud/api-v2) with a third party orchestration tool to orchestrate and manage these situations. There are also a number of blog posts and articles, including this [one](https://docs.getdbt.com/blog/dbt-airflow-spiritual-alignment), to help you think about the best way to manage this alongside dbt platform.
+
+    Finally, let's check dbt Catalog! Select Catalog from the menu:
+
+    ![Select catalog](assets/select_catalog.png)
+
+    Browse to a model, explore the lineage, code and other aspects of Catalog.
+
+    ![Select catalog](assets/browse_catalog.png)
 
 7. Let’s go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the `production` schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed there. <br><br>
 
