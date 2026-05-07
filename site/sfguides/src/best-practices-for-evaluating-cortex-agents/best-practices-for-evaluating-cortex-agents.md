@@ -105,8 +105,6 @@ Once your evaluation metrics are well aligned with your human annotations, you c
 
 ### Use versioning to structure iteration
 
-> **Preview Feature — Private:** Agent versioning is available to select accounts.
-
 Every improvement cycle should map cleanly to the agent version lifecycle:
 
 - **Live version** → where you make changes
