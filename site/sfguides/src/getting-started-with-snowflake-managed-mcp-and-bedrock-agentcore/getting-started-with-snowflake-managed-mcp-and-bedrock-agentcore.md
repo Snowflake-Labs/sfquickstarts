@@ -112,6 +112,24 @@ USE WAREHOUSE pokemon_wh;
 -- Create stage for storing Pokemon CSV files
 CREATE OR REPLACE STAGE pokemon_stg
 FILE_FORMAT = (TYPE = 'csv');
+
+-- ==============================================
+-- (OPTIONAL) NETWORK POLICY FOR EXTERNAL ACCESS
+-- ==============================================
+-- ⚠️ WARNING: This creates a permissive network policy allowing ingress
+-- from any IP address. Use ONLY for lab/demo purposes when Amazon Bedrock
+-- AgentCore needs to reach your Snowflake account and you don't know
+-- the specific IP ranges. Remove or restrict this after the lab.
+--
+-- CREATE OR REPLACE NETWORK POLICY pokemon_open_ingress
+--     ALLOWED_IP_LIST = ('0.0.0.0/0')
+--     COMMENT = 'Temporary open access for AgentCore MCP connectivity - REMOVE AFTER LAB';
+--
+-- ALTER ACCOUNT SET NETWORK_POLICY = pokemon_open_ingress;
+--
+-- To remove after the lab:
+-- ALTER ACCOUNT UNSET NETWORK_POLICY;
+-- DROP NETWORK POLICY IF EXISTS pokemon_open_ingress;
 ```
 
 Let's load the data to stage.
