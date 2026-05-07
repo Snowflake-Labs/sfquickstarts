@@ -569,7 +569,7 @@ The frontend proxies `/api` requests to `localhost:8000` via Vite config.
 
 The Streamlit dashboard ([`monitoring_dashboard/streamlit_app.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/monitoring_dashboard/streamlit_app.py)) provides production monitoring by querying `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` directly.
 
-<img src="assets/monitoring.png" width="100%">
+![Monitoring Dashboard](assets/monitoring.png)
 
 ### Dashboard Features
 
@@ -581,7 +581,7 @@ Branded as **Agent Monitoring**, the dashboard is a single timeseries view over 
 
 **Find Problematic Traces** — Drag a rectangle on the chart to select a time window. The dashboard surfaces every trace in that window in a sortable table with `TIMESTAMP`, `LATENCY_MS`, `WORST_SCORE`, per-metric scores, `INPUT_QUESTION`, and `TRACE_ID` — purpose-built for latency/quality root-cause analysis. Select any row to drill into the full trace (question, answer, Analyst interpretation + SQL + results, and retrieved Search chunks).
 
-<img src="assets/find-problematic-traces.png" width="100%">
+![Find Problematic Traces](assets/find-problematic-traces.png)
 
 ### Key Queries
 
@@ -643,7 +643,7 @@ Navigate to **Monitoring > AI Observability > Evaluations** to see:
 - Score distributions and comparisons across runs
 - Detailed evaluation reasons (the `reason` field from custom metrics)
 
-<img src="assets/evaluations.png" width="100%">
+![Evaluations](assets/evaluations.png)
 
 ### Comparing Runs
 
