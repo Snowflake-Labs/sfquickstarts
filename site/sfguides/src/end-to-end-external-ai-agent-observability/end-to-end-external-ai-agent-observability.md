@@ -581,58 +581,128 @@ The frontend proxies `/api` requests to `localhost:8000` via Vite config.
 ## Build the Monitoring Dashboard
 
 
-The Streamlit dashboard ([`monitoring_dashboard/streamlit_app.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/monitoring_dashboard/streamlit_app.py)) provides production monitoring by querying `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` directly.
+Once your agent is in production, every traced invocation lands in `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS`. This event table is the foundation for monitoring trends and doing root-cause analysis on real user traffic — you can query it directly with SQL to build any view you need (Streamlit, Snowsight dashboards, scheduled alerts, etc.).
+
+The reference [`monitoring_dashboard/streamlit_app.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/monitoring_dashboard/streamlit_app.py) is one example of what you can build on top of these queries.
 
 ![Monitoring Dashboard](assets/monitoring.png)
 
-### Dashboard Features
+### The Event Table Schema
 
-Branded as **Agent Monitoring**, the dashboard is a single timeseries view over trace data, tool calls, eval scores, and latency from Snowflake AI Observability.
+Every span (RECORD_ROOT, GENERATION, TOOL, RETRIEVAL) and every evaluation result is stored as a row with these key columns:
 
-**KPI Header** — Top-line counters for the selected window: Total Queries, Avg Latency, Tool / Retrieval Calls, LLM Generations, and Avg Eval Score.
+- `TIMESTAMP`, `START_TIMESTAMP` — span end and start times
+- `RECORD_TYPE` — `'SPAN'` for trace spans, `'EVALUATION'` for metric scores
+- `TRACE:"trace_id"::STRING` — groups spans belonging to a single user query
+- `RECORD_ATTRIBUTES:"ai.observability.span_type"` — `RECORD_ROOT | GENERATION | TOOL | RETRIEVAL`
+- `RECORD_ATTRIBUTES:"ai.observability.run.name"` — the run name (batch run or production deployment)
+- `RECORD_ATTRIBUTES:"ai.observability.input.value"` / `output.value` — span I/O
+- For evaluations: `RECORD_ATTRIBUTES:"ai.observability.metric.name"` and `metric.score`
 
-**Combined Latency + Eval Timeseries** — One chart overlays latency (left axis: blue p50 line, shaded p50–p95 band, dashed p95, red dots for top outliers) with eval metrics (right axis: one line per metric — `answer_relevance`, `coherence`, `context_relevance`, `groundedness`). Use the metric pills above the chart to add/remove overlays.
+### Example 1 — Latency Trends (p50 / p95)
 
-**Find Problematic Traces** — Drag a rectangle on the chart to select a time window. The dashboard surfaces every trace in that window in a sortable table with `TIMESTAMP`, `LATENCY_MS`, `WORST_SCORE`, per-metric scores, `INPUT_QUESTION`, and `TRACE_ID` — purpose-built for latency/quality root-cause analysis. Select any row to drill into the full trace (question, answer, Analyst interpretation + SQL + results, and retrieved Search chunks).
+Track agent latency over time to spot regressions or traffic-driven slowdowns:
+
+```sql
+SELECT
+    DATE_TRUNC('hour', TIMESTAMP) AS hour,
+    COUNT(*) AS num_traces,
+    PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY latency_ms) AS p50_latency_ms,
+    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY latency_ms) AS p95_latency_ms
+FROM (
+    SELECT
+        TIMESTAMP,
+        TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP) AS latency_ms
+    FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+    WHERE RECORD_TYPE = 'SPAN'
+      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'RECORD_ROOT'
+      AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
+)
+GROUP BY 1
+ORDER BY 1;
+```
+
+### Example 2 — Eval Score Trends by Metric
+
+Watch quality metrics drift over time and compare across metrics:
+
+```sql
+SELECT
+    DATE_TRUNC('hour', TIMESTAMP) AS hour,
+    RECORD_ATTRIBUTES:"ai.observability.metric.name"::STRING AS metric_name,
+    AVG(RECORD_ATTRIBUTES:"ai.observability.metric.score"::FLOAT) AS avg_score,
+    COUNT(*) AS num_evaluations
+FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+WHERE RECORD_TYPE = 'EVALUATION'
+  AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
+GROUP BY 1, 2
+ORDER BY 1, 2;
+```
+
+### Example 3 — Tool Mix and Failure Rate
+
+Understand which tools the agent is calling and how often they error:
+
+```sql
+SELECT
+    RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING AS span_type,
+    RECORD_ATTRIBUTES:"name"::STRING AS tool_name,
+    COUNT(*) AS calls,
+    SUM(CASE WHEN RECORD_ATTRIBUTES:"ai.observability.error" IS NOT NULL THEN 1 ELSE 0 END) AS errors
+FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+WHERE RECORD_TYPE = 'SPAN'
+  AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING IN ('TOOL', 'RETRIEVAL')
+  AND TIMESTAMP > DATEADD('day', -1, CURRENT_TIMESTAMP())
+GROUP BY 1, 2
+ORDER BY calls DESC;
+```
+
+### Root-Cause Analysis: Find Problematic Traces
+
+When latency spikes or eval scores drop, you need to drill from "the chart" to "the bad trace." Join spans to evaluations on `trace_id`, surface the worst offenders, and inspect the full span waterfall:
+
+```sql
+WITH root_spans AS (
+    SELECT
+        TRACE:"trace_id"::STRING AS trace_id,
+        TIMESTAMP,
+        TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP) AS latency_ms,
+        RECORD_ATTRIBUTES:"ai.observability.input.value"::STRING AS input_question
+    FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+    WHERE RECORD_TYPE = 'SPAN'
+      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'RECORD_ROOT'
+      AND TIMESTAMP BETWEEN :window_start AND :window_end
+),
+worst_scores AS (
+    SELECT
+        TRACE:"trace_id"::STRING AS trace_id,
+        MIN(RECORD_ATTRIBUTES:"ai.observability.metric.score"::FLOAT) AS worst_score
+    FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+    WHERE RECORD_TYPE = 'EVALUATION'
+      AND TIMESTAMP BETWEEN :window_start AND :window_end
+    GROUP BY 1
+)
+SELECT r.trace_id, r.timestamp, r.latency_ms, r.input_question, w.worst_score
+FROM root_spans r
+LEFT JOIN worst_scores w USING (trace_id)
+ORDER BY r.latency_ms DESC, w.worst_score ASC
+LIMIT 50;
+```
+
+From there, fetch every span for a given `trace_id` to see the full execution: the user question, the agent's answer, the Cortex Analyst SQL, and the Cortex Search chunks that were retrieved.
 
 ![Find Problematic Traces](assets/find-problematic-traces.png)
 
-### Key Queries
-
-The dashboard uses parameterized queries against the event table. For example, loading spans:
-
-```python
-@st.cache_data(ttl=timedelta(minutes=2))
-def load_spans(run_names: tuple):
-    run_list = ",".join(f"'{r}'" for r in run_names)
-    return conn.query(f"""
-        SELECT
-            TIMESTAMP,
-            RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING AS span_type,
-            RECORD_ATTRIBUTES:"ai.observability.run.name"::STRING AS run_name,
-            TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP) AS latency_ms,
-            TRACE:"trace_id"::STRING AS trace_id
-        FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
-        WHERE RECORD_TYPE = 'SPAN'
-          AND TIMESTAMP > DATEADD('day', -1, CURRENT_TIMESTAMP())
-          AND RECORD_ATTRIBUTES:"ai.observability.run.name"::STRING IN ({run_list})
-        ORDER BY TIMESTAMP ASC
-    """)
-```
-
 ### Deploying to Snowflake
 
-Deploy the dashboard as a Streamlit-in-Snowflake app:
+The reference dashboard can be deployed as a Streamlit-in-Snowflake app:
 
 ```bash
 cd monitoring_dashboard
 snow streamlit deploy --open
 ```
 
-This uses the [`snowflake.yml`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/monitoring_dashboard/snowflake.yml) configuration to deploy with:
-- Runtime: `SYSTEM$ST_CONTAINER_RUNTIME_PY3_11`
-- Compute pool: `SYSTEM_COMPUTE_POOL_CPU`
-- External access: `PYPI_ACCESS_INTEGRATION` (for altair and other packages)
+This uses the [`snowflake.yml`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/monitoring_dashboard/snowflake.yml) configuration. The same patterns work just as well in Snowsight dashboards, scheduled alerts, or any BI tool that can query Snowflake.
 
 <!-- ------------------------ -->
 
