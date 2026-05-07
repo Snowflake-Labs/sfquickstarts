@@ -299,7 +299,7 @@ Ctrl+P
 Then run the following prompt: 
 
 ```
-Use database COCO_WORKSHOP and my current schema for outputs.
+Use database COCO_WORKSHOP and schema PIPELINE_LAB for outputs.
 Create a Dynamic Table called SILVER_AP_INVOICES in my current schema by combining
 COCO_WORKSHOP.SOURCE_DATA.BRONZE_SAP_AP_INVOICES and
 COCO_WORKSHOP.SOURCE_DATA.BRONZE_ORACLE_AP_INVOICES.
@@ -366,7 +366,7 @@ A month later, the business sends a PRD that expands the AP invoices pipeline. N
 
 ### About the Sample PRD
 
-Three CSV files prepared by the Finance Transformation PMO are included in the `assets/` folder of this repo:
+Create a folder on your local device. Download the three CSV files prepared by the Finance Transformation PMO in the `assets/` folder of this repo. Create a folder on your local device and add the files:
 
 - `sample_business_requirements_source_onboarding.csv` — new source systems (Baan, Workday), owners, priorities, and go-live targets
 - `sample_business_requirements_column_mapping.csv` — field-level mappings for both new sources into the Silver schema
