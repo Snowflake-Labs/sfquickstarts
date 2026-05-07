@@ -16,7 +16,6 @@ tags: AI Observability, TruLens, Agents, Cortex Analyst, Cortex Search, Evaluati
 
 ## Overview
 
-Duration: 5
 
 Modern AI agents orchestrate multiple tools — from text-to-SQL engines to knowledge base retrieval — making them powerful but difficult to debug and evaluate. When an agent chains Cortex Analyst for structured data queries and Cortex Search for unstructured knowledge retrieval, you need deep visibility into each step: what tool was called, what it returned, and whether the final answer was any good.
 
@@ -64,7 +63,6 @@ The system architecture flows as follows:
 
 ## Setup Snowflake Environment
 
-Duration: 10
 
 ### Clone the Repository
 
@@ -183,7 +181,6 @@ export SNOWFLAKE_CONNECTION_NAME=default
 
 ## Build the AI Agent
 
-Duration: 15
 
 The Support Intelligence Agent uses the [OpenAI Agent SDK](https://github.com/openai/openai-agents-python) to orchestrate two Snowflake Cortex tools. The agent runs against Snowflake-hosted LLMs via the Cortex REST API.
 
@@ -306,7 +303,6 @@ class _SnowflakeChatCompletions:
 
 ## Instrument with TruLens
 
-Duration: 10
 
 ### Understanding Span Types
 
@@ -362,7 +358,6 @@ Key components:
 
 ## Define Ground Truth and Custom Metrics
 
-Duration: 15
 
 ### Ground Truth Tables
 
@@ -442,7 +437,6 @@ The `Selector` extracts `RETRIEVED_CONTEXTS` from `RETRIEVAL` spans in the trace
 
 ## Run Batch Evaluation
 
-Duration: 10
 
 The batch evaluation script ([`run_eval.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/run_eval.py)) executes all test queries against the agent and computes both client-side and server-side metrics.
 
@@ -503,7 +497,6 @@ All results are written to the AI Observability event table and visible in Snows
 
 ## Production Chat with Live Tracing
 
-Duration: 10
 
 The FastAPI server ([`server.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/server.py)) provides a production-ready chat backend with real-time tracing via `@trace_with_run`.
 
@@ -573,7 +566,6 @@ The frontend proxies `/api` requests to `localhost:8000` via Vite config.
 
 ## Build the Monitoring Dashboard
 
-Duration: 15
 
 The Streamlit dashboard ([`monitoring_dashboard/streamlit_app.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/monitoring_dashboard/streamlit_app.py)) provides production monitoring by querying `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` directly.
 
@@ -632,7 +624,6 @@ This uses the [`snowflake.yml`](https://github.com/Snowflake-Labs/sfguide-end-to
 
 ## Explore in Snowsight
 
-Duration: 5
 
 After running batch evaluation or production chat, navigate to the **AI Observability** section in Snowsight to explore your results.
 
@@ -652,6 +643,8 @@ Navigate to **Monitoring > AI Observability > Evaluations** to see:
 - Score distributions and comparisons across runs
 - Detailed evaluation reasons (the `reason` field from custom metrics)
 
+<img src="assets/evaluations.png" width="100%">
+
 ### Comparing Runs
 
 Run the batch evaluation multiple times (e.g., with different prompts or models) to create multiple runs. The Evaluations UI lets you compare metric scores across runs side by side, making it easy to identify improvements or regressions.
@@ -660,7 +653,6 @@ Run the batch evaluation multiple times (e.g., with different prompts or models)
 
 ## Conclusion and Resources
 
-Duration: 2
 
 Congratulations! You've built a complete AI agent observability pipeline covering:
 
