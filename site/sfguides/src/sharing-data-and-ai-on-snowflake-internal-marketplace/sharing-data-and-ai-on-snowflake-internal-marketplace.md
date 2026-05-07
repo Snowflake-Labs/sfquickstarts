@@ -278,8 +278,7 @@ Now that access has been granted, let's consume the **Order Insights** data prod
 
 1. Log in to your account as the `data_consumer` user (or switch browser tab).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
-3. Open the **Order Insights** listing.
-   - The blue button should now say **Query in Worksheet** (reload the tab if it still shows "Request Access").
+3. Open the **Order Insights** listing. Reload the browser tab if you still see the "Request Access" button.
 4. Click **Query in Worksheet**. Snowflake opens a new worksheet pre-populated with the sample queries from the listing.
 5. Review and run the sample queries.
 
@@ -327,7 +326,7 @@ A key benefit of organizational listings is that data is shared live. When the d
    UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
    ```
 
-3. Switch back to `data_consumer` and re-run the same query:
+3. Switch back to `data_consumer` (e.g. switch browser tabs) and re-run the same query:
 
    ```sql
    USE ROLE data_consumer_role;
@@ -345,11 +344,11 @@ A key benefit of organizational listings is that data is shared live. When the d
 ## Share Data Products across the Org (using Coco)
 Now let's make your data product visible to the entire organization! In this lab, the organization consists of the Snowflake accounts of all the other lab participants around you.
 
-You could do this manually by going back to the "Step 4 of 5: Configure Access Control and Approval" that you performed above. But, let's use Coco to do it for you.
+You can do this manually by going back to the "Step 4 of 5: Configure Access Control and Approval" that you performed above. But, let's use Coco to do it for you.
 
 1. Log in to your account as the `data_owner` user (switch browser tabs/windows or log in again).
 2. Navigate to **Data Sharing** -> **Internal Sharing** .
-3. Open the **Listing** tab at the top of the Internal Sharing page.
+3. Open the **Listings** tab at the top of the Internal Sharing page.
 4. Select your listing 
 5. Invoke Coco by clicking on the blue AI icon at the bottom right:
 
@@ -368,77 +367,115 @@ You could do this manually by going back to the "Step 4 of 5: Configure Access C
 9. Navigate to  **Catalog** > **Internal Marketplace**. More and more data products published by other lab participants will appear in the internal marketplace!
 10. Open at least 2 or 3 data products other than your own and **Request Access** as you did before for your own data product. 
 11. Navigate to the **Data Sharing** -> **Internal Sharing** -> **Requests** to check if you have received any access requests from other lab participants. If so, approve them.
+---
+
 
 
 
 ## Share Semantic Views and Agents
-Let's make your data product AI-ready by generating and adding a semantic model (semantic view) and an AI agent to it.
+Let's make your data product AI-ready by generating and adding a semantic model (semantic view) and an AI agent.
 
 1. Log in to your account as the `data_owner` user (or switch browser tabs/windows ).
 2. Navigate to **Data Sharing** -> **Internal Sharing** .
-3. Open the **Listing** tab at the top of the Internal Sharing page.
+3. Open the **Listings** tab at the top of the Internal Sharing page.
 4. Select your listing.
 5. Click on **Secure share** at the top:
 
      ![](assets/2026-view-the-share.png)
 
-6. You will the list of objects currently shared by your listing. Snowflake offers to generate and add semantic view and and an agent. Click **Get started**. Then click  **Create**.
+6. You see the list of objects currently shared by your listing. Snowflake offers to generate and add a semantic view and and an agent. Click **Get started**. Then click  **Create**.
 
 
      ![](assets/2026-add-semview-and-agent.png)
 
-7. Click to **Try** to test drive the semantic view with some natural language prompts. A new browser tab will open. Then return to the browser tab with your listing and click **Add to secure share** and. **Done**. 
+7. Click **Try** to test drive the semantic view with some natural language prompts. A new browser tab will open. Then return to the browser tab with your listing and click **Add to secure share** and **Done**. 
 
      ![](assets/2026-try-and-add.png)
 
  8. Your data product is now marked as **Cortex AI Ready**.
 ---
 
-## Talk to your Data Product
+## Talk to your Data Product in Snowflake Intelligence
 
-<mark>
-***********
-Matthias to continue here
-************</mark>
+1. Log in to your account as the `data_consumer` user (or switch browser tab).
+2. Navigate to  **Catalog** > **Internal Marketplace**.
+3. Open your **Order Insights** listing.
+   - Note that the blue "**Open**" button now provides multiple options
+   - You can access the shared data directly or open the semantice view or the agent instead
+     ![](assets/2026-consumer-semview-agent.png)
 
+4. From the "**Open**" button open the agent. 
+5. Click on "**Preview in Snowflake Intelligence**". A new tab opens and you may need to login in again as the data consumer.
+6. Issue one or more prompts to talk to your data, such as:
 
-<!-- TODO: Detailed instructions for querying data products using natural language -->
+   - What is the total number and value of sales per country?
+   - Are there any outliers or anomalies in this data that I should be aware of?
 
----
+7. Examine the results, charts, and analysis provided by Snowflake Intelligence.
 
-
-
----
-
-## Use Cortex Code to Alter a Listing
-
-
-<!-- TODO: Detailed instructions for using Cortex Code in Snowsight to alter a listing -->
-
----
-
-## Use Cortex Code to Consume Listings
+    ![](assets/2026-SI.png)
 
 
-<!-- TODO: Detailed instructions for using Cortex Code in Snowsight to discover and consume listings -->
 
 ---
 
-## Conclusion And Resources
+
+## Use Cortex Code to Create and Govern a Listing
+Let's use Coco to create and manage listings through prompts.
+
+- Navigate to  **Catalog** > **Database Explorer** and review the tables in the TPCH database.
+- In the lower right of the UI, click the blue AI icon to open Coco.
+- Then perform the following steps:
+   1. Enter the / (slash) character in the prompt field. This opens a list of skills.
+   2. Select **interal-marketplace-org-listing** from the list of skills, hit ENTER.
+   3. Note how Coco invokes the skills to offer specialized help
+
+    ![](assets/2026-tpch-coco.png)
 
 
-Congratulations, you completed this **Snowflake Internal Marketplace** hands-on lab! You have seen how data products can be authored, published, requested, consumed, and governed -- including sharing semantic views and AI agents, querying listings with natural language, and managing listings with Cortex Code.
+Next:
+
+- Issue the following prompt to create and publihs a new data product: 
+
+   "_Please publish the supplier, part, and partsupp tables as a data product. Please generate suitable metadata to describe the data product. Also generate and include a semantic view. The new data product should be visible to the entire organoization, but noone has access unless requested. Please append my account locator to the title of the listing._"
+- Respond to any questions that Coco will ask you to perform this request
+- Click **Allow** to permit Coco to create a semantic view and a share.
+- When asked to allow a GRANT, select "**Allow GRANT in this chat**" to allow all reqiuired grants for this data product  
+- Finally, **Allow** Coco to create the organization listing:
+
+    ![](assets/2026-coco-create-listing.png)
+
+- Navigate to the internal amrketplace to find and review the new listing, or click the direct link to the listing that Coco provides.
+
+
+
+### AI-assisted Governance
+
+Next, let's ask Coco to implement a new governance requirement. 
+
+Issue the following prompt:
+
+   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the data_owner_role role within my account but not visible to consumer role and not to any other accounts in this organization._"
+
+Once Coco has created the policy, switch to the data_consumer user to see the effect of the masking.
+
+---
+
+## Conclusion and Resources
+
+
+Congratulations, you completed this **Snowflake Internal Marketplace** hands-on lab! You have learned how data products are authored, published, requested, and consumed. You have made data products AI-ready by adding semantic views and AI agents, and you analyzed the shared data using natural language in Snowflake Intelligence. You also managed listings with Cortex Code.
 
 ### What you Learned
 
 - How to create data products that consist of multiple data objects
 - How to document a data product with metadata such as description, data dictionary, ownership, sample queries, and service-level objectives
+- How to generate such metadata using AI
 - How to request and approve or deny access to data products
-- How to consume data products using the Uniform Listing Locator (ULL)
 - How to share semantic views and Cortex agents as part of a data product
 - How to query data products using natural language
 - How to share data products across your organization
-- How to use Cortex Code in Snowsight to alter and consume listings programmatically
+- How to use Cortex Code in Snowsight to manage listings using prompts
 
 
 ### Related Resources
@@ -454,5 +491,10 @@ Congratulations, you completed this **Snowflake Internal Marketplace** hands-on 
   - [Manage organizational listings](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-manage)
   - [Query organizational listings](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-query)
 
+- [Share Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-sharing)
+
+- [Automatic Data Agents for listings and shares](https://docs.snowflake.com/en/collaboration/auto-generated-data-agents)
+
 - [Managing Listings via API](https://other-docs.snowflake.com/progaccess/listing-progaccess-about)
+
 
