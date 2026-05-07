@@ -2,7 +2,7 @@ author: Andries Engelbrecht, James Sun
 id: data-lake-using-apache-iceberg-with-snowflake-and-aws-glue
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
-summary: Build open table format data lakes with Apache Iceberg using Snowflake Catalog-Linked Datbases, Vended Credentials, AWS S3, Lake Formation and Glue Data Catalog.
+summary: Build open table format data lakes with Apache Iceberg using Snowflake Catalog-Linked Databases, Vended Credentials, AWS S3, Lake Formation and Glue Data Catalog.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -21,65 +21,103 @@ This guide will take you through the steps of converting existing parquet data t
 For this guide we will use a Financial Services use case where Insurance data is analyzed. The Quotes data is collected from systems and stored as parquet on S3, while Customer and Policy data is already available as internal Snowflake tables. We will try to identify customers who are likely to churn or potential fraud with a high number of recent quote requests. 
 
 ### Prerequisites
-- Familiarity with Snowflake, basic SQL, Snowsight UI and Snowflake Objects
-- Familiarity with AWS Services (S3, Glue, CloudFormation, IAM) and the Management Console
+- Familiarity with Snowflake, basic SQL, and the Snowsight UI
+- Familiarity with AWS services — S3, Glue, Lake Formation, IAM, and CloudFormation
 
+### What You'll Learn
+- How to convert Parquet files on S3 to Apache Iceberg format using an [AWS Glue ETL job](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-iceberg.html) — no data rewrite, in-place conversion
+- How to configure [AWS Lake Formation](https://aws.amazon.com/lake-formation/) for fine-grained access control on Iceberg tables using credential vending
+- How to create a Snowflake [Catalog Integration](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-rest-glue) that connects to AWS Glue via the Iceberg REST Catalog (IRC) API using SIGV4 authentication and Lake Formation vended credentials
+- How to create a [Catalog-Linked Database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) in Snowflake to auto-discover and sync all Iceberg tables from the Glue Data Catalog
+- How to read from, write to, and create Iceberg tables in Snowflake via the Catalog-Linked Database
 
-### What You’ll Learn 
-- How to create an Iceberg table in the [Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) and convert parquet data on S3 in place (no rewrite) to Iceberg format
-- How to configure Lake Formation for fine-grained access control on Iceberg tables
-- How to configure a [Snowflake Catalog-linked database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) with the Glue Data Catalog via [Iceberg Rest Catalog APIs](https://docs.aws.amazon.com/lake-formation/latest/dg/aws-lake-formation-api-credential-vending.html)
-- How to read iceberg tables, create iceberg tables and write to iceberg tables using Snowflake Catalog-Linked Database with the Glue Catalog
+### What You'll Need
+- A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=build_datalake_with_glue_and_iceberg) with `ACCOUNTADMIN` access, deployed in **AWS US West 2 (Oregon)**
+- An [AWS Account](https://aws.amazon.com/free/) with Administrator access
 
-### What You’ll Need 
-- A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=build_datalake_with_glue_and_iceberg) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
-- An [AWS Account](https://aws.amazon.com/free/) with `Administrator Access`
+### What You'll Build
+- An AWS Glue Data Catalog database with Apache Iceberg tables backed by S3
+- AWS Lake Formation permissions with credential vending for fine-grained Iceberg access control
+- A Snowflake External Volume, Catalog Integration, and Catalog-Linked Database connected to the Glue catalog
+- An end-to-end read/write workflow: query, create, and write Iceberg tables from Snowflake using the Catalog-Linked Database
 
-### What You’ll Build 
-- A Glue Catalog Database with Iceberg tables on S3
-- Configure Lake Formation to provide Vended Credentials
-- Integrations between Snowflake and AWS Glue Catalog using IRC and Vended Credentials for storage access
-- Snowflake Catalog-linked Database with the Glue Catalog to read and write Iceberg tables
+<!-- ------------------------ -->
+## Set Up with Cortex Code (Fast Path)
+
+[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) is Snowflake's AI coding agent, built into the Snowflake CLI. You can use it to automate the entire setup in this guide — from deploying the AWS infrastructure to creating the Snowflake catalog integration and Catalog-Linked Database.
+
+**Prerequisites for this path:**
+- AWS CLI installed and configured with Administrator access (`aws configure`)
+- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) installed and connected to your Snowflake account
+- Snowflake Enterprise account with `ACCOUNTADMIN` access in **AWS us-west-2**
+
+Use the prompts below in sequence. Each one picks up where the previous left off.
+
+For the Snowflake-side steps, Cortex Code automatically loads the right skill based on your prompt — you don't need to invoke anything manually.
+
+---
+
+**1. Deploy the AWS infrastructure (CloudFormation):**
+```
+Deploy this CloudFormation template in us-west-2 and show me the stack outputs when complete — stack name: Glue-IRC-Int, template: https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.5.yaml
+```
+*CoCo runs this via AWS CLI — no specific skill, uses your `aws configure` credentials directly.*
+
+**2. Create the Glue Data Catalog database and Iceberg table:**
+```
+Create a Glue Data Catalog database named 'iceberg' in us-west-2, then create a Glue ETL job that reads Parquet files from s3://aws-data-analytics-workshops/aws_glue/glue-snowflake/raw-data/quotes/ and writes them as Apache Iceberg to s3://<your-bucket>/iceberg/quotes/ — use the IAM role from the CloudFormation outputs and register the table in the 'iceberg' database
+```
+*CoCo uses AWS CLI and boto3 to create the Glue database, table definition, and ETL job script.*
+
+**3. Configure Lake Formation for credential vending:**
+```
+Configure Lake Formation in us-west-2 to enable credential vending for the Iceberg tables in the 'iceberg' Glue database: enable external engine access, register the S3 bucket, and grant the CloudFormation IAM role SUPER permissions on the iceberg database
+```
+*CoCo runs `aws lakeformation` CLI commands — no specific skill.*
+
+**4. Create the Snowflake catalog integration:**
+```
+Help me create a catalog integration for AWS Glue Iceberg REST with vended credentials
+```
+*CoCo auto-invokes the **`glueirc-catalog-integration-setup`** skill — collects your AWS account ID, region, IAM role ARN, and access delegation preference, generates and executes the SQL, then guides you through the trust policy update.*
+
+**5. Create the Catalog-Linked Database:**
+```
+Create a catalog-linked database from my Glue catalog integration
+```
+*CoCo auto-invokes the **`catalog-linked-database`** skill — creates the CLD, verifies the connection, and lists the auto-discovered Iceberg tables from the Glue catalog.*
+
+Once Cortex Code completes step 5, your Snowflake environment is connected to the Glue catalog and ready to query. Skip directly to the [Query Iceberg Tables](#query-iceberg-tables) section.
+
+---
+
+> **Have your own S3 data instead of the sample dataset?** Use `Help me set up my S3 data as Glue Iceberg tables` — CoCo auto-invokes the **`aws-setup`** workflow to walk you through S3 discovery, Glue crawler setup, schema validation, and Parquet-to-Iceberg conversion. Pick up at step 4 above once your Glue tables are registered.
+
+> **Prefer to follow the steps manually?** Continue to the next section for the full console walkthrough.
 
 <!-- ------------------------ -->
 ## Configure the AWS Account
 
-In this step we will use CloudFormation to configure objects in the AWS account needed for the quickstart, we will also cover basics of the AWS console and how to leverage browser tabs to multi task with various AWS services.
+> **Used the Cortex Code fast path?** Skip this section and the next two — go directly to [Setup Snowflake account and configure the AWS integrations](#setup-snowflake-account-and-configure-the-aws-integrations).
 
-- Start by logging into your AWS Console.
+In this step you'll use a CloudFormation template to provision the AWS resources needed for this quickstart: an S3 bucket and an IAM role with the policies that Glue needs to access it.
 
-- Once logged in to the AWS Console look for the AWS Region in the top right hand corner and select the **US West (Oregon) us-west-2** region. 
-
-![AWSRegion](assets/AWSRegion.png)
-
-We will now run a CloudFormation Template to configure a S3 bucket and Role with specific Policies in the AWS account.
-
-- In the top left menu bar enter **Cloudformation** in the Search bar, then select the CloudFormation service from the dropdown list.
-
-![AWSCloudformation](assets/AWSCloudforsearch.png)
-
-- Once in the CloudFormation screen **verify** the AWS Region that it is the **US West (Oregon) us-west-2** region.
+1. Log in to your [AWS Console](https://console.aws.amazon.com/) and confirm the region in the top-right corner is **US West (Oregon) us-west-2**.
 
 ![AWSRegion](assets/AWSRegion.png)
 
-- It is recommended to duplicate the browser tab 3 times to make it simple to use multiple AWS services in the same browser session.
-
-- You can now deploy a CloudFormation Stack by clicking [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=Glue-IRC-Int&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.5.yaml). This creates a S3 bucket and a role with necessary policies attached that Glue can assume to perform tasks.
-
+2. Deploy the CloudFormation stack by clicking [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=Glue-IRC-Int&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.5.yaml). This creates the S3 bucket and IAM role used throughout the guide.
 
 ![CreateStack](assets/CreateStack.png)
 
-- Click **Next**
+3. Click **Next** on the **Create stack** screen.
+4. On **Specify stack details**, leave the default stack name `Glue-IRC-Int` and click **Next**.
+5. On **Configure stack options**, scroll to the bottom, check `I acknowledge that AWS CloudFormation might create IAM resources`, and click **Next**.
+6. On **Review and create**, click **Submit**.
 
-- On the next screen **Specify stack details** enter a name for the stack in **Stack name**, leave the default stack name `Glue-IRC-Int` then click **Next**
+Stack creation takes about a minute. Use the **Events** tab and the refresh button to monitor progress.
 
-- The following screen **Configure stack options** scroll down to the bottom and **select the check box** next to `I acknowledge that AWS CloudFormation might create IAM resources.` and then click **Next**
-
-- On the last screen **Review and create** simply click **Submit** to create the stack.
-
-It will take a few seconds to create the resources in your AWS account. In the Events screen you can click the refresh button to see updates.
-
-- Once complete click on the **Outputs** Tab in the center top. This will display the Role name and S3 bucket name that was created. These will be used later to configure the integrations with Snowflake.
+7. Once the stack status shows **CREATE_COMPLETE**, click the **Outputs** tab. Copy the **Role ARN** and **S3 bucket name** — you'll need both in later steps.
 
 ![CFoutput](assets/CFoutput.png)
 
@@ -87,242 +125,189 @@ It will take a few seconds to create the resources in your AWS account. In the E
 <!-- ------------------------ -->
 ## Use AWS Glue to create the Iceberg table
 
-In this step we will use AWS Glue to create an iceberg table and convert parquet data to iceberg format. Glue Studio will be used.
+In this step you'll create a Glue Data Catalog database and table, then run a Glue ETL job to convert raw Parquet data on S3 to Apache Iceberg format.
 
-- In one of the browser tabs with the AWS console type **S3** in the search bar and select **S3**. This will allow you to quickly see what data and folders are created in S3. **Verify** the AWS Region in the S3 screen.
+### Create a Glue Database
 
-### Create Glue Database
-
-- In the next browser tab type **Glue** and then select **AWS Glue**.
-
-- Once in the AWS Glue screen **verify** the AWS Region that it is the **US West (Oregon) us-west-2** region.
+1. In the AWS Console, navigate to **AWS Glue** and confirm the region is **US West (Oregon) us-west-2**.
 
 ![AWSRegion](assets/AWSRegion.png)
 
-- In the left navigation pane, under **Data Catalog**, click **Databases** .
-- Click **Add database** in the window on the right hand side pane.
+2. In the left navigation pane under **Data Catalog**, click **Databases**, then click **Add database**.
 
 ![AddDatabase](assets/AddDatabase.png)
 
-- On Create a database tab, provide a name for the new database as `iceberg`, add Description(optional) as `Database to store
-iceberg table` and click **Create database**.
+3. Name the database `iceberg` and click **Create database**.
 
 ![CreateDatabase](assets/CreateDatabase.png)
 
-### Create Glue Table
+### Create a Glue Table
 
-- On the left hand menu in the Glue console click on **Data Catalog > Databases > Tables**
-- Then click on **Add table**
+1. In the left menu, click **Data Catalog > Databases > Tables**, then click **Add table**.
 
 ![AddTable](assets/AddTable.png)
 
-- Set table properties as follows and click **Next**
-- - Name: **quotes**
-- - Database: **iceberg**
-- - Table format: **Apache Iceberg table**
-- - Select IAM role: This is the role from the Output in the Cloudformation Template **Glue-IRC-Int-GlueSnowflakeLabRole-xxxx**
-- - Acknowledge the Caution by clicking the checkbox
-- - Data location : **s3://glue-snowflake-lab-xxxx/iceberg/quotes/** .The bucket has been pre-provisioned for you. Replace the
-**glue-snowflake-lab-xxxx** with the one corresponding to your account and append **/iceberg/quotes/**
+2. Set the following table properties and click **Next**:
+   - **Name:** `quotes`
+   - **Database:** `iceberg`
+   - **Table format:** Apache Iceberg table
+   - **IAM role:** Select the role from the CloudFormation Outputs (e.g. `Glue-IRC-Int-GlueSnowflakeLabRole-xxxx`)
+   - Check the acknowledgment checkbox
+   - **Data location:** `s3://glue-snowflake-lab-xxxx/iceberg/quotes/` — replace `glue-snowflake-lab-xxxx` with your S3 bucket name from the CloudFormation Outputs
 
 ![TableProp](assets/TableProp2.png)
 
-- Click **Next**
-
-- Choose or define schema by selecting **Edit schema as JSON**
+3. On the schema screen, click **Edit schema as JSON**.
 
 ![Schema](assets/Schema.png)
 
-- **Download** 
-[quotes_schema.json](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/quotes_schema.json) . 
-**Remove** the '[ ]' on the screen, **paste** the contents of the **quotes_schema.json** file there,
-and **Click Save**.
+4. Download [quotes_schema.json](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/quotes_schema.json). Clear the `[ ]` placeholder, paste in the file contents, and click **Save**.
 
 ![delete](assets/delete.png)
 
 ![SaveSchema](assets/SaveSchema.png)
 
-- After adding the schema, it will look like the screenshot below. Click **Next**.
+5. Verify the schema looks correct and click **Next**.
 
 ![SchemaNext](assets/SchemaNext.png)
 
-- Review and Create the table by clicking on **Create** on Step 3.
+6. Click **Create** to finish creating the table.
 
-### Create Glue ETL Job
+### Create and Run the Glue ETL Job
 
-In this section, we will show you how to create an ETL job in Glue Studio visual interface.
+This job reads raw Parquet quotes data from a public S3 bucket and writes it to your S3 bucket as an Iceberg table — no data copy or rewrite. The Glue Data Catalog table you just created is updated in place.
 
-- To begin, click on **Visual ETL** link on the left menu pane under ETL jobs and click on the Visual ETL button.
+1. In the left menu under **ETL jobs**, click **Visual ETL**, then click the **Visual ETL** button.
 
 ![ETLJob](assets/ETLJob.png)
 
-- Rename the job from Untitled job to **Quotes - Raw to Iceberg**
-- Navigate to the **Job details** tab, select the **IAM Role** that the cloudformation template created for you.
-- Optional: You can reduce the **Requested number of workers** to 2
+2. Rename the job to `Quotes - Raw to Iceberg`.
+3. Under the **Job details** tab, select the IAM role from the CloudFormation Outputs.
+4. Optionally reduce **Requested number of workers** to 2.
 
 ![ETLJobConfig](assets/ETLJobConfig.png)
 
-- Save your progress using the **Save** button on the top right corner. A green banner will confirm that the job progress has been
-saved.
-
-- Click on the **Visual** tab and then expand the **+** button, and add a source node S3.
-
-![ETLSource](assets/ETLSource.png)
-
-- - This should add S3 source node to the canvas.
-- - Click on the S3 node to configure it as the screenshot below
-- - - Name : **Quotes - Raw**
-- - - S3 URL: Set S3 Source URL to `s3://aws-data-analytics-workshops/aws_glue/glue-snowflake/raw-data/quotes/` . This is a
-public bucket where our raw quotes file resides.
-- - - Data format: **Parquet**
+5. Click **Save**. A green banner confirms the job is saved.
+6. On the **Visual** tab, click the **+** button and add an **S3** source node. Configure it:
+   - **Name:** `Quotes - Raw`
+   - **S3 URL:** `s3://aws-data-analytics-workshops/aws_glue/glue-snowflake/raw-data/quotes/`
+   - **Data format:** Parquet
 
 ![QuotesRaw](assets/QuotesRaw.png)
 
-- Keeping the **Quotes-Raw** node selected, expand the **+** button, and add a simple **Transform - Change Schema**
+7. With the **Quotes - Raw** node selected, click **+** and add a **Transform - Change Schema** node.
 
 ![Transform](assets/Transform.png)
 
-- - This should add Change Schema Transform to the canvas with its Node parent as Quotes-Parquet S3 node.
-
 ![ChangeSchema](assets/ChangeSchema.png)
 
-- In **Change Schema** change the **Data type** for `uuid` to **varchar**
+8. In **Change Schema**, change the data type of `uuid` to **varchar**.
 
 ![UpdateSchema](assets/UpdateSchema.png)
 
-- Let us now store the Quotes-parquet to Amazon S3 in Iceberg format. For that, with **Change Schema** selected, search and locate **Amazon S3** in the **Targets** tab. Add it to the canvas.
-
-![Target](assets/Target.png)
-
-- With **Amazon S3 target node** selected
-- - Rename **Amazon S3** to **Quotes - Iceberg**
-- - Set **Format** to **Apache Iceberg**
-- - Set **Compression Type** to **Snappy**
-- - Set **S3 Target Location** to **s3://glue-snowflake-lab-xxxx/iceberg/quotes/** . The bucket has been pre-provisioned for you. You can use the Browse S3 button to locate the S3 bucket and folders. Replace the **glue-snowflake-lab-xxxx** with the one corresponding to your account.
-- - Under **Data Catalog update options** select **Create a table in the Data Catalog and on subsequent runs, keep existing schema and add new partitions**
-- - Select **iceberg** as the database
-- - Set table name to **quotes**
+9. With **Change Schema** selected, click **+** and add an **Amazon S3** target node from the **Targets** tab. Configure it:
+   - **Name:** `Quotes - Iceberg`
+   - **Format:** Apache Iceberg
+   - **Compression Type:** Snappy
+   - **S3 Target Location:** `s3://glue-snowflake-lab-xxxx/iceberg/quotes/` — replace `glue-snowflake-lab-xxxx` with your bucket name
+   - **Data Catalog update options:** Create a table in the Data Catalog and on subsequent runs, keep existing schema and add new partitions
+   - **Database:** `iceberg`
+   - **Table name:** `quotes`
 
 ![TargetOptions](assets/TargetOptions.png)
 
-- Save the job using the **Save** button on the top right corner. A green banner confirms that the job has been saved.
-
-![SavedJob](assets/SavedJob.png)
-
-We can now run the Glue job to convert raw parquet files and save it as an Iceberg table.
-
-- Click the **Run** button on the top right and navigate to the **Runs** tab
+10. Click **Save**, then click **Run**. Navigate to the **Runs** tab to monitor progress.
 
 ![RunETL](assets/RunETL.png)
 
-- You can monitor the job run status on this page. Once the job completes, the status turns to **Succeeded**
+Once the job status shows **Succeeded**, the Iceberg table is live in your Glue Data Catalog.
 
 ![RETLComplete](assets/ETLComplete.png)
 
-You have successfully created an Iceberg table in your AWS account from parquet files using Glue Studio.
-
-As a bonus step you can open the browser tab with the S3 console and see the new folders and files where the data and metadata/manifest files are stored.
+As a bonus step, open the S3 console and browse your bucket — you'll see the Iceberg data and metadata/manifest files Glue created under `iceberg/quotes/`.
 
 <!-- ------------------------ -->
 ## Configure AWS Lake Formation
 
-In this step we will configure the AWS Lake Formation control access to the Iceberg tables. In Lake Formation, this means fine-grained access control to Data Catalog resources and Amazon S3 locations.
+In this step you'll configure AWS Lake Formation to grant fine-grained access to the Iceberg table and enable credential vending. Credential vending allows Snowflake to request temporary S3 credentials from Lake Formation at query time — no external volume configuration needed on the Snowflake side.
 
-### Configure Lake Formation access controls
-To configure your Lake Formation access controls, first set up the application integration:
+### Step 1: Enable external engine access
 
-- Sign in to the [Lake Formation console](https://console.aws.amazon.com/lakeformation/) as a data lake administrator.
-- Choose `Administration` in the navigation pane.
-Select `Application integration settings`.
-- Enable `Allow external engines to access data in Amazon S3 locations with full table access`.
-- Choose `Save`.
+1. Sign in to the [Lake Formation console](https://console.aws.amazon.com/lakeformation/) as a data lake administrator.
+2. In the left navigation pane, choose **Administration > Application integration settings**.
+3. Enable **Allow external engines to access data in Amazon S3 locations with full table access**.
+4. Click **Save**.
 
-Next you can grant data locations to the role that was created.
-- Select `Data locations` under `Permissions` in the left pane.
-- Click on `Grant` located at the top-right corner.
-- For `IAM users and roles`, select the role that was created.
-- For `Storage locations`, click on `Browse` and select the S3 bucket.
-- Check `Grantable` box.
-- Leave the other fields as default and click on `Grant`.
+### Step 2: Grant data location permissions
 
+1. Under **Permissions**, select **Data locations** and click **Grant**.
+2. For **IAM users and roles**, select the role created by CloudFormation.
+3. For **Storage locations**, click **Browse** and select your S3 bucket.
+4. Check **Grantable** and click **Grant**.
 
-Now you can register the data lake location:
-- Select `Data lake locations` under `Administration` in the left pane.
-- Click on `Register location` located at the top-right corner.
-- For `Amazon S3 path`, enter the S3 bucket path created earlier.
-- For `IAM role`, select the role that was created.  
-- For `Permission mode`, select `Lake Formation`.
-- Leave the other fields as default and click on `Register location`.
+### Step 3: Register the data lake location
 
-Now you can grant permissions to the IAM role that was created earlier:
+1. Under **Administration**, select **Data lake locations** and click **Register location**.
+2. For **Amazon S3 path**, enter the S3 bucket path from the CloudFormation Outputs.
+3. For **IAM role**, select the role created by CloudFormation.
+4. For **Permission mode**, select **Lake Formation**.
+5. Click **Register location**.
 
-- Choose `Data permissions` in the navigation pane.
-- Choose `Grant`.
-- Configure the following settings:
-  - For `Principals`, select `IAM users and roles` and choose the role that was created.
-  - For `Resources`, select `Named Data Catalog resources`.
-  - For `Catalog`, choose your AWS account ID.
-  - For `Database`, choose `iceberg`.
-  - For `Database permissions`, select `SUPER`.
-  - For `Grantable permissions`, select `SUPER`, leave everything else as default.
-  - Choose `Grant`.
-  - Click the refresh button to show the new permissions.
+### Step 4: Grant table permissions to the IAM role
 
-SUPER access is required for mounting the Iceberg table in Amazon S3 as a Snowflake table.
+1. Under **Permissions**, choose **Data permissions** and click **Grant**.
+2. Configure the following:
+   - **Principals:** IAM users and roles → select the role created by CloudFormation
+   - **Resources:** Named Data Catalog resources
+   - **Catalog:** your AWS account ID
+   - **Database:** `iceberg`
+   - **Database permissions:** SUPER
+   - **Grantable permissions:** SUPER
+3. Click **Grant** and confirm the permission appears in the list.
 
-Now you are ready to setup Snowflake account and configure the AWS integrations.
+> **Note:** SUPER permission is required for Snowflake to mount the Iceberg table via the Catalog-Linked Database using credential vending.
+
+Your AWS setup is complete. Continue to the next step to configure Snowflake.
 
 <!-- ------------------------ -->
 ## Setup Snowflake account and configure the AWS integrations
 
-In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create Snowflake objects such as a databaase, warehouse and role that are used in the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the Glue Catalog.
+> **Used the Cortex Code fast path?** Skip this section — go directly to [Working with Iceberg tables in Snowflake](#working-with-iceberg-tables-in-snowflake).
+
+In this step you'll create the Snowflake role, database, warehouse, and internal tables used in the lab, then create the Catalog Integration and Catalog-Linked Database that connect Snowflake to the Glue Data Catalog.
 
 ### Configure your Snowflake account
 
-- First we will download 2 SQL files to your local system, which will be used to run the lab.
-
-- First is the **Setup SQL script**
+Download the two SQL files for this lab:
 
 <button>
 
   [Setup SQL](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/hol_ice_setup_v1.2.sql)
 </button>
 
-- Next is the **Workflow SQL**
-
 <button>
 
   [Workflow SQL](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/hol_ice_workflow_v1.6.sql)
 </button>
 
-- Open a browser tab and log into your Snowflake account as a user with `ACCOUNTADMIN` privileges.
-
-- On the left hand menu select **Projects** and then **Workspaces** in that section.
-
-![Workspaces](assets/Workspaces.png)
-
-- Click on the **+ Add new button** under My Workspace and select **Upload Files**
+1. Log into your Snowflake account as a user with `ACCOUNTADMIN` privileges.
+2. In the left menu, go to **Projects > Workspaces**, click **+ Add new**, and select **Upload Files**.
 
 ![AddNewFiles](assets/AddNewFiles.png)
 
-- Select the 2 SQL files you downloaded earlier, which will typically be on your local system's Downloads folder. The files are called hol_ice_setup_vxxx.sql & hol_ice_workflow_vxxx.sql.
-
-- The files will appear under **My Workspace**
-
-- Now click the **hol_ice_setup_vxx.sql** file and it will appear on a tab on the right hand side of the Snowsight window.
-
-- This script is used to create a Snowflake Role, Database, Warehouse and the tables used for the Quickstart. We will execute the script in sections, by highlighting a section and then pressing the blue **Run button** in the top corner.
+3. Upload both SQL files. They'll appear under **My Workspace**.
+4. Open `hol_ice_setup_vxx.sql`. Run the following sections in order by selecting each block and clicking **Run**.
 
 ![run2](assets/run2.png)
 
-- Select the following SQL statements with the mouse cursor and then click the run/play button
+Create the role and grant account-level privileges:
+
 ```sql
 USE ROLE SECURITYADMIN;
 
 CREATE OR REPLACE ROLE HOL_ICE_RL COMMENT='Iceberg Role';
 GRANT ROLE HOL_ICE_RL TO ROLE SYSADMIN;
 ```
-- Once completed repeat for the following SQL statements
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -333,7 +318,7 @@ GRANT CREATE DATABASE ON ACCOUNT TO ROLE HOL_ICE_RL;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE HOL_ICE_RL;
 ```
 
-- Then for the next section
+Create the database and warehouse:
 
 ```sql
 USE ROLE HOL_ICE_RL;
@@ -345,16 +330,13 @@ CREATE OR REPLACE WAREHOUSE HOL_ICE_WH
   INITIALLY_SUSPENDED = TRUE;
 ```
 
-- **You can now select the rest of the SQL statements and execute them to create the tables and load data.**
-This is line 44 to 110 on the worksheet.
+5. Select lines 44–110 and run them to create the internal `CUSTOMER` and `POLICIES` tables and load data.
 
-### Configure the Snowflake Catalog integration with Glue and a Catalog-Linked Database
+### Configure the Snowflake Catalog Integration with Glue
 
-- We can now go through the main workflow in Snowflake. Click on the **hol_ice_workflow_vxxx.sql** file under **My Workspace**. This will open a new tab on the right side of Snowsight. 
+Open `hol_ice_workflow_vxx.sql` from **My Workspace**. Set the worksheet context (lines 16–20):
 
 ![WorkflowUI](assets/WorkflowUI.png)
-
-- Run lines 16 - 20 to set the context for the worksheet.
 
 ```sql
 USE ROLE HOL_ICE_RL;
@@ -364,143 +346,102 @@ USE HOL_ICE_DB.PUBLIC;
 USE WAREHOUSE HOL_ICE_WH;
 ```
 
-- Get your AWS Account ID from the AWS console top right corner 
+You'll need two values from your AWS environment:
+- **AWS Account ID** — from the top-right corner of the AWS Console
 
 ![accountID2](assets/AWSAccountID2.png)
 
-- Lastly copy the AWS role that was created from the CloudFormation Output window into the `your AWS Role that was created`
-- Your AWS region will be **us-west-2** or look at the region drop down in the top left of your AWS console
+- **IAM Role ARN** — from the CloudFormation Outputs tab
 
-Now we will create the integration with the `Glue Data Catalog`.
+> **Note:** This guide uses `CATALOG_SOURCE = ICEBERG_REST` with `CATALOG_API_TYPE = AWS_GLUE` — the current recommended approach for connecting to the Glue Data Catalog via the Iceberg REST API. If you have an older integration using `CATALOG_SOURCE = GLUE`, migrate to this approach to get access to Catalog-Linked Databases, vended credentials, and full IRC feature support.
 
-- Go back to the Snowflake worksheet and look at lines 37 to 53. You will again have to replace some values with those of your AWS account.
+Replace the placeholders and run the `CREATE CATALOG INTEGRATION` statement (lines 37–53):
 
-- In the **CATALOG_NAME** replace `<enter your AWS account ID>` with your AWS account ID (you can simply copy and paste the values from the earlier external volume command). Also replace the `<your AWS Role that was created>` with the AWS role that was created
-- In the **SIGV4_IAM_ROLE** replace the `<enter your AWS account ID>` with your AWS account ID and `<your AWS Role that was created>` with the role ARN that was created.
-- Also, in the **SIGV4_SIGNING_REGION** and **CATALOG_URI** replace `<enter your AWS region>` with your AWS region name.
-
-It will look something like this
 ```sql
 CREATE OR REPLACE CATALOG INTEGRATION glue_catalog_irc_int
-CATALOG_SOURCE = ICEBERG_REST
-TABLE_FORMAT = ICEBERG
-CATALOG_NAMESPACE = 'iceberg'
-REST_CONFIG = (
+  CATALOG_SOURCE = ICEBERG_REST
+  TABLE_FORMAT = ICEBERG
+  CATALOG_NAMESPACE = 'iceberg'
+  REST_CONFIG = (
     CATALOG_URI = 'https://glue.us-west-2.amazonaws.com/iceberg'
     CATALOG_API_TYPE = AWS_GLUE
-    CATALOG_NAME = '6546xxxxxxxxx'
+    CATALOG_NAME = '<your-aws-account-id>'
     ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
-)
-REST_AUTHENTICATION = (
+  )
+  REST_AUTHENTICATION = (
     TYPE = SIGV4
-    SIGV4_IAM_ROLE = 'arn:aws:iam::6546xxxxxxxx:role/glue-snowflake-GluesnowflakedevdayLabRole-xxxxxxxxxxxx'
+    SIGV4_IAM_ROLE = 'arn:aws:iam::<your-aws-account-id>:role/<your-cloudformation-role-name>'
     SIGV4_SIGNING_REGION = 'us-west-2'
     SIGV4_EXTERNAL_ID = 'snow-glue-ext-id'
-)
-ENABLED = TRUE;
+  )
+  ENABLED = TRUE;
 ```
 
-- Run the above SQL statement to create the Catalog integration once you filled in your account values
+> **`SIGV4_EXTERNAL_ID`**: This is a custom value you set — it ties to the trust policy in the next step. `snow-glue-ext-id` is the value used in this lab. You can use any string, or omit it to have Snowflake auto-generate one (retrieve the generated value via `DESC CATALOG INTEGRATION` afterward).
 
-- Now run the describe catalog integration
+Run `DESC CATALOG INTEGRATION` to retrieve the value needed for the IAM trust policy:
 
 ```sql
 DESC CATALOG INTEGRATION glue_catalog_irc_int;
 ```
 
-- Go back to the CloudFormation browser tab and create a duplicate browser tab for the AWS Console. In the new tab Search for **IAM** and click on that option. This will open the IAM service.
+Note the **`GLUE_AWS_IAM_USER_ARN`** value from the output — you'll paste it into the trust policy next.
 
-- On the left hand menu click on **Roles** and then find the Role that was created. Click on that Role.
-- In the middle of the screen you will see a number of tabs, click on the **Trust Relationships** tab. 
-- Click on **Edit trust policy**. This will then display a JSON editor screen.
+### Update the IAM trust policy
+
+1. In the AWS Console, navigate to **IAM > Roles** and open the CloudFormation role.
+2. Click the **Trust relationships** tab, then **Edit trust policy**.
 
 ![TrustPolicy2](assets/TrustPolicy2.png)
 
-Select everything in the JSON policy and replace with the JSON below.
+3. Replace the entire policy with the JSON below, substituting `GLUE_AWS_IAM_USER_ARN` from the Snowflake output:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-				"Service": [
-					"lakeformation.amazonaws.com",
-					"glue.amazonaws.com"
-				]
-            },
-            "Action": "sts:AssumeRole"
-        },
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "<API_AWS_IAM_USER_ARN>"
-            },
-            "Action": "sts:AssumeRole",
-            "Condition": {
-                "StringEquals": {
-                    "sts:ExternalId": [
-                        "snow-glue-ext-id"
-                    ]
-                }
-            }
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": [
+          "lakeformation.amazonaws.com",
+          "glue.amazonaws.com"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "<GLUE_AWS_IAM_USER_ARN>"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "sts:ExternalId": ["snow-glue-ext-id"]
         }
-    ]
-}
-```
-Take your time and be careful when pasting the values into the JSON policy in the next few steps.
-
-- From the Snowflake output copy the value from **API_AWS_IAM_USER_ARN** and paste it into the IAM policy by replacing `<API_AWS_IAM_USER_ARN>` with that value.
-
-
-
-Your IAM Trust policy will look something like this
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "glue.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        },
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "arn:aws:iam::90541xxxxxx:user/vvyk0000-s"
-            },
-            "Action": "sts:AssumeRole",
-            "Condition": {
-                "StringEquals": {
-                    "sts:ExternalId": [
-                        "snow-glue-ext-id"
-                    ]
-                }
-            }
-        }
-    ]
+      }
+    }
+  ]
 }
 ```
 
-- Click the **Update policy** button and your trust relationship will be configured.
+4. Click **Update policy**.
 
-**This now completes the integration to the Glue Catalog**
+Verify the catalog integration is working:
 
-Now go back to the worksheet and run this command to validate that the integration is working.
 ```sql
 SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('glue_catalog_irc_int');
 ```
-The result should say success with no error codes or messages.
+
+The result should return success with no error codes or messages.
 
 <!-- ------------------------ -->
 ## Working with Iceberg tables in Snowflake
 
-In this step we will create a [catalog-linked database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) in Snowflake using the integrations with Lake Formation and Glue catalog IRC API to create an Iceberg table object referring the Quotes Iceberg table. That will be used for analysis with the internal Customer and Policy tables. We will then create an aggregate table written in Iceberg format on S3 and use Snowflake to query it.
+In this step you'll create a [Catalog-Linked Database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) (CLD) that auto-discovers the Iceberg tables in your Glue catalog, query the data from Snowflake, create a new Iceberg table, and write aggregate results back to S3.
 
-Execute line 68 in the worksheet:
+### Create the Catalog-Linked Database
 
 ```sql
 CREATE OR REPLACE DATABASE iceberg_linked_db
@@ -509,7 +450,7 @@ CREATE OR REPLACE DATABASE iceberg_linked_db
     NAMESPACE_MODE = FLATTEN_NESTED_NAMESPACE,
     NAMESPACE_FLATTEN_DELIMITER = '-',
     ALLOWED_NAMESPACES = ('iceberg')
-  ) ;
+  );
 ```
 
 Check sync status:
@@ -517,81 +458,78 @@ Check sync status:
 SELECT SYSTEM$CATALOG_LINK_STATUS('iceberg_linked_db');
 ```
 
-The result should be something similar to this:
-```code
-{"failureDetails":[],"executionState":"RUNNING","lastLinkAttemptStartTime":"2025-10-06T16:32:42.426Z"}
-```
+The result shows `"executionState":"RUNNING"` while tables are being discovered. Once sync completes, the Glue `iceberg` database and its tables appear in Snowflake.
 
-Now that the database is linked to glue catalog, we should be able to query
-the existing iceberg table in glue:
+### Query Iceberg tables
 
-Let's read the Quotes data in Iceberg format from S3. Note that you need to use the
-double quotes for the glue objects such as databases, schemas, and tables.
+> **Note:** Glue object names (databases, schemas, tables) require double quotes in Snowflake SQL — Glue names are case-sensitive and may contain characters that conflict with Snowflake identifiers.
 
 ```sql
-use database iceberg_linked_db;
-use schema "iceberg";
+USE DATABASE iceberg_linked_db;
+USE SCHEMA "iceberg";
 SELECT * FROM "quotes" LIMIT 20;
 ```
 
-We can now create an iceberg table and register it with Glue catalog by replacing `<Enter your S3 bucket name that was created>` with your S3 bucket and run the SQL command shown below.
+### Create a new Iceberg table and write data
+
+> **Why no external volume?** This lab uses `ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS` — Lake Formation issues temporary S3 credentials at query time. Snowflake uses those credentials to write Iceberg data directly, so no separate external volume configuration is needed.
+
+Replace `<your-s3-bucket>` with your bucket name from the CloudFormation Outputs:
 
 ```sql
 CREATE OR REPLACE ICEBERG TABLE iceberg_linked_db."iceberg"."quote_analysis_ice" (
-    "fullname" STRING,
-    "postcode" STRING,
-    "custid" STRING,
-    "ipid" NUMBER(18,0),
-    "productname" STRING,
-    "quotecount" NUMBER(18,0),
-    "policyno" STRING,
-    "quotedate" DATE,
-    "quote_product" STRING,
-    "originalpremium" NUMBER(28,2),
-    "totalpremiumpayable" NUMBER(28,2),
-    "createddate" DATE,
-    "brand" STRING,
-    "branchcode" STRING,
-    "policy_status_desc" STRING,
-    "typeofcover_desc" STRING,
-    "insurer_name" STRING,
-    "inceptiondate" DATE,
-    "renewaldate" DATE
+  "fullname"            STRING,
+  "postcode"            STRING,
+  "custid"              STRING,
+  "ipid"                NUMBER(18,0),
+  "productname"         STRING,
+  "quotecount"          NUMBER(18,0),
+  "policyno"            STRING,
+  "quotedate"           DATE,
+  "quote_product"       STRING,
+  "originalpremium"     NUMBER(28,2),
+  "totalpremiumpayable" NUMBER(28,2),
+  "createddate"         DATE,
+  "brand"               STRING,
+  "branchcode"          STRING,
+  "policy_status_desc"  STRING,
+  "typeofcover_desc"    STRING,
+  "insurer_name"        STRING,
+  "inceptiondate"       DATE,
+  "renewaldate"         DATE
 )
-BASE_LOCATION = 's3://<Enter your S3 bucket name that was created>/iceberg/quote-analysis-iceberg';
+BASE_LOCATION = 's3://<your-s3-bucket>/iceberg/quote-analysis-iceberg';
 ```
 
-We can now combine internal Snowflake tables `CUSTOMER` and `POLICIES` with the existing `quotes` iceberg table
- and insert into the new Iceberg table `quote_analysis_ice`.
+Combine the internal `CUSTOMER` and `POLICIES` tables with the Glue-backed `quotes` Iceberg table and write results to the new table:
 
 ```sql
-insert into iceberg_linked_db."iceberg"."quote_analysis_ice"
-select
-    c.fullname, c.postcode, c.custid, c.ipid, c.productname, c.quotecount,
-    q."policyno", q."quotedate", q."quote_product", q."originalpremium", q."totalpremiumpayable",
-    p.createddate, p.brand, p.branchcode, p.policy_status_desc,
-    p.typeofcover_desc, p.insurer_name, p.inceptiondate, p.renewaldate
-from
-    hol_ice_db.public.customer c,
-    "quotes" q,
-    hol_ice_db.public.policies p
-where
-    c.fullname = q."fullname"
-    and c.postcode = q."postcode"
-    and c.quotecount > 5
-    and c.custid = p.custid;
+INSERT INTO iceberg_linked_db."iceberg"."quote_analysis_ice"
+SELECT
+  c.fullname, c.postcode, c.custid, c.ipid, c.productname, c.quotecount,
+  q."policyno", q."quotedate", q."quote_product", q."originalpremium", q."totalpremiumpayable",
+  p.createddate, p.brand, p.branchcode, p.policy_status_desc,
+  p.typeofcover_desc, p.insurer_name, p.inceptiondate, p.renewaldate
+FROM
+  hol_ice_db.public.customer c,
+  "quotes" q,
+  hol_ice_db.public.policies p
+WHERE
+  c.fullname   = q."fullname"
+  AND c.postcode   = q."postcode"
+  AND c.quotecount > 5
+  AND c.custid     = p.custid;
 ```
 
-This aggregate data can also be written in Iceberg format back to S3 for consumption by other services and engines.
+Query the aggregate Iceberg table:
 
-Now we can query the newly created Iceberg table in glue catalog.
 ```sql
-select * from iceberg_linked_db."iceberg"."quote_analysis_ice" limit 10;
+SELECT * FROM iceberg_linked_db."iceberg"."quote_analysis_ice" LIMIT 10;
 ```
 
-This completes the creation of iceberg tables in Snowflake using the Glue Data Catalog IRC API and Lake Formation credential vending. You also used the iceberg table with internal tables to perform analysis on insurance customers, quotes and policies. This demonstrates the powerful integration which provides read and write capabilities to glue from Snowflake.
+This data is written as Iceberg to S3 and immediately visible in the Glue Data Catalog — other AWS query engines (Athena, EMR, etc.) can read it directly.
 
-Optional: Refresh the Database Explorer in SnowSight to see the Catalog-Linked Database and the Iceberg tables in it. Also explore the S3 bucket to see the new folder for the table created by Snowflake and also open a new tab browser tab with the AWS console to use Athen aor other AWS service to explore the table created by Snowflake in the Glue Catalog.
+> **Optional:** Refresh the Database Explorer in Snowsight to see `iceberg_linked_db` and its tables. Open the S3 console to see the Iceberg data and metadata files Snowflake created under `iceberg/quote-analysis-iceberg/`. Open the Glue console to confirm the new table is registered.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -626,19 +564,20 @@ AWS:
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-You've successfully converted parquet data to Iceberg format using AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog Iceberg Rest, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analyze the Iceberg data.
+You've converted Parquet data to Iceberg format using AWS Glue, connected Snowflake to the Glue Data Catalog via the Iceberg REST API with Lake Formation vended credentials, and used a Catalog-Linked Database to query, create, and write Iceberg tables — all from Snowflake.
 
 ### What You Learned
-- how Snowflake integrates with S3 and the Glue Data Catalog to modernize Data Lakes with Iceberg
-- converting parquet files to Iceberg tables using AWS Glue
-- configuring the Snowflake integrations with Glue Data Catalog leveraging IRC and vended credentails for storage access
-- creating a Snowflake a Catalog-Linked Database to an External Catalog such as the Glue Data Catalog and using it to read and write Iceberg tables
+- How to convert Parquet files to Iceberg format in-place using an AWS Glue ETL job
+- How to configure Lake Formation credential vending for fine-grained Iceberg access control
+- How to create a Snowflake Catalog Integration for AWS Glue using SIGV4 authentication and vended credentials
+- How to create a Catalog-Linked Database to auto-discover and sync Iceberg tables from the Glue catalog
+- How to read from, write to, and create Iceberg tables in Snowflake via the Catalog-Linked Database
 
-### Related Resources 
+### Related Resources
 - [Snowflake Iceberg documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg)
-- [AWS Glue Iceberg Documentation](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-iceberg.html)
-- [Snowflake Catalog-Linked Database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
 - [Configure a catalog integration for AWS Glue Iceberg REST](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-rest-glue)
+- [Snowflake Catalog-Linked Database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
+- [AWS Glue Iceberg Documentation](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-iceberg.html)
 - [AWS Lake Formation Credential Vending](https://docs.aws.amazon.com/lake-formation/latest/dg/aws-lake-formation-api-credential-vending.html)
 
 

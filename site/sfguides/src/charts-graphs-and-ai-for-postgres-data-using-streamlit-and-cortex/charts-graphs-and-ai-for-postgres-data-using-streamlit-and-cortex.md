@@ -6,7 +6,7 @@ environments: web
 status: Published
 language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Streamlit, Postgres, Cortex AI, IoT, Dashboard, Chatbot, Cortex Code
+tags: Streamlit, Postgres, AI, Cortex Analyst, IoT, Dashboard, Chatbot, Cortex Code
 
 # Charts, Graphs, and AI for Postgres Data Using Streamlit and Cortex
 <!-- ------------------------ -->
@@ -1493,6 +1493,87 @@ ALTER COMPUTE POOL <your-compute-pool> SET MAX_NODES = 3;
 > Use the snowflake.yml manifest I already have. If the compute pool
 > is full, increase max_nodes.
 > ```
+
+<!-- ------------------------ -->
+## Networking
+
+To limit network traffic to the Postgres instance, you might consider using a `HOST_PORT` (public) egress rule on the EAI side and scope the `POSTGRES_INGRESS` rule to Snowflake's egress CIDRs from `SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES()`. However, egress IPs for SPCS are shared across all accounts in the region and are not account-isolated. This approach is **not recommended for production Postgres instances** — use PrivateLink instead.
+
+### PrivateLink
+
+Streamlit in Snowflake (SiS) can connect to a Snowflake Postgres instance using an External Access Integration (EAI) with PrivateLink, keeping all traffic off the public internet. This approach uses `PRIVATE_HOST_PORT` network rules instead of `HOST_PORT`, routing egress traffic from SiS through an AWS PrivateLink tunnel directly to the Postgres instance's VPC endpoint service.
+
+```sql
+-- Step 1: Enable PrivateLink on the Postgres instance (takes ~3-10 min)
+ALTER POSTGRES INSTANCE "my_instance" ENABLE PRIVATELINK;
+
+-- Monitor until privatelink_service_identifier is non-NULL
+DESCRIBE POSTGRES INSTANCE "my_instance";
+
+-- Step 2: Provision outbound PrivateLink endpoint from Snowflake compute
+SELECT SYSTEM$PROVISION_PRIVATELINK_ENDPOINT(
+  '<privatelink_service_identifier>',   -- e.g. 'com.amazonaws.vpce.us-west-2.vpce-svc-...'
+  '<postgres_host>'                      -- e.g. 'abc123.account.us-west-2.aws.postgres.snowflake.app'
+);
+
+-- Step 3: Find and authorize the pending connection
+SHOW PRIVATELINK CONNECTIONS IN POSTGRES INSTANCE "my_instance";
+
+ALTER POSTGRES INSTANCE "my_instance"
+  AUTHORIZE PRIVATELINK CONNECTIONS = ('<connection_id>');
+
+-- Step 4: Create PRIVATE_HOST_PORT network rule
+CREATE OR REPLACE NETWORK RULE my_db.my_schema.pg_privatelink_rule
+  MODE = EGRESS
+  TYPE = PRIVATE_HOST_PORT
+  VALUE_LIST = ('<postgres_host>:5432');
+
+-- Step 5: Create secret with Postgres credentials
+CREATE OR REPLACE SECRET my_db.my_schema.pg_secret
+  TYPE = GENERIC_STRING
+  SECRET_STRING = '<password>';
+
+-- Step 6: Create External Access Integration
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION pg_privatelink_eai
+  ALLOWED_NETWORK_RULES = (my_db.my_schema.pg_privatelink_rule)
+  ALLOWED_AUTHENTICATION_SECRETS = (my_db.my_schema.pg_secret)
+  ENABLED = TRUE;
+
+-- Step 7: Create Streamlit app with the EAI
+CREATE OR REPLACE STREAMLIT my_db.my_schema.my_app
+  ROOT_LOCATION = '@my_db.my_schema.my_stage'
+  MAIN_FILE = 'app.py'
+  QUERY_WAREHOUSE = 'my_wh'
+  EXTERNAL_ACCESS_INTEGRATIONS = (pg_privatelink_eai)
+  SECRETS = ('pg_pass' = my_db.my_schema.pg_secret);
+
+-- Optional: Remove public network policy for PrivateLink-only access
+ALTER POSTGRES INSTANCE "my_instance" UNSET NETWORK_POLICY;
+```
+
+> **CoCo prompt:**
+>
+> ```
+> Set up a PrivateLink connection between my Snowflake Postgres instance
+> "<instance_name>" and a Streamlit in Snowflake app. Use the snowflake-postgres
+> skill. The steps are:
+>
+> 1. Enable PrivateLink on the instance with ALTER POSTGRES INSTANCE ENABLE PRIVATELINK
+> 2. Wait for privatelink_service_identifier to populate via DESCRIBE
+> 3. Use SYSTEM$PROVISION_PRIVATELINK_ENDPOINT with the service identifier and
+>    the PG host to create an outbound endpoint
+> 4. Authorize the pending connection with ALTER POSTGRES INSTANCE AUTHORIZE
+>    PRIVATELINK CONNECTIONS
+> 5. Create a secret for the Postgres connection
+> 6. Create a PRIVATE_HOST_PORT (not HOST_PORT) egress network rule for the PG
+>    host on port 5432
+> 7. Create an External Access Integration with the rule and secret
+> 8. Create or update the Streamlit app with the EAI attached
+> 9. (Optional) Remove any existing POSTGRES_INGRESS network policies so only PrivateLink
+>    can connect
+> ```
+
+
 
 <!-- ------------------------ -->
 ## Conclusion and Resources

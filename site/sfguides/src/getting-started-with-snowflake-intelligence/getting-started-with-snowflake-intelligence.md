@@ -1,4 +1,4 @@
-id: getting-started-with-snowflake-intelligence
+id:  getting-started-with-snowflake-intelligence
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: This guide outlines the process for getting started with Snowflake Intelligence. 
