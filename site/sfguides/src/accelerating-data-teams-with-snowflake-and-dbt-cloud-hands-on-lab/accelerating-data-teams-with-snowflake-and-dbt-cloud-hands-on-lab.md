@@ -36,7 +36,7 @@ Let's get started.
 
 * How to scale Snowflake compute capabilities with the dbt workflow
 
-* How to build lightweight charts and visualizations in Snowflake
+* How to visualize query results using Workspaces charts and Streamlit in Snowflake
 
 ### What You'll Build
 
@@ -45,7 +45,7 @@ Let's get started.
 <!-- ------------------------ -->
 ## Architecture and Use Case Overview
 
-In this lab we’ll be transforming raw retail data into a consumable orders model that’s ready for visualization. We’ll be utilizing the TPC-H dataset that comes out of the box with your Snowflake account and transform it using some of dbt’s most powerful features. By the time we’re done you’ll have a fully functional dbt project with testing and documentation, dedicated development and production environments, and experience with the dbt git workflow.
+In this lab we'll be transforming raw retail data into a consumable orders model that's ready for visualization. We'll be utilizing the TPC-H dataset that comes out of the box with your Snowflake account and transform it using some of dbt's most powerful features. By the time we're done you'll have a fully functional dbt project with testing and documentation, dedicated development and production environments, and experience with the dbt git workflow.
 
 ![Architecture Overview](assets/architecture_diagram.png)
 
@@ -56,43 +56,43 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 <!-- ------------------------ -->
 ## Let's Get Started With Snowflake
 
-To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
-Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
+To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and fill out the form before clicking `Continue`. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
+Once your account is created you'll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
 
 
-For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
+For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). We'll be using Snowsight (the Snowflake web interface) throughout this lab. Snowflake now uses [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces) as the default SQL editing experience, which supports file-and-folder organization, sharing, and Git integration.
 
-The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `New Project` botton click the `SQL File` button to create a query. 
+The dataset we'll be using for the workshop comes standard as part of your Snowflake trial. Navigate to **Workspaces** in the left sidebar. This will open the Workspaces editor where you can create and manage SQL files. Click the **+ Add new** button to create a new SQL file.
 
 ![Snowflake Create SQL file](assets/Snowflake_create_SQL_file.png)
 
-Once there, at the bottom left corner you will see `Database Explore` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
+Once there, in the left panel you will see the Database Explorer and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
 
 
 ![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
 
-    If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
+If you don't see the database, you may have removed it from your account. To reinstate it, run the following command in your SQL file:
 
-    ```sql
-    create or replace database snowflake_sample_data from share sfc_samples.sample_data;
-    ```
+```sql
+create or replace database snowflake_sample_data from share sfc_samples.sample_data;
+```
 
-    You should now see the database as one of your database objects, with associated schemas within it.
+You should now see the database as one of your database objects, with associated schemas within it.
 
-Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html).
+Clicking the database name will reveal a schema dropdown, including the schema that we'll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html).
 
 ![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
 
-Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
+Let's query one of the tables in the dataset to make sure that you're able to access the data. Copy and paste the following code into your SQL file and run the query.
 
-```
+```sql
 select *
     from snowflake_sample_data.tpch_sf1.orders
     limit 100; 
 ```
 
-You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
-Great! Now it’s time to set up dbt platform.
+You should be able to see results, in which case we're good to go. If you're receiving an error, check to make sure that your query syntax is correct.
+Great! Now it's time to set up dbt platform.
 
 <!-- ------------------------ -->
 ## Launching dbt platform via Partner Connect
@@ -100,17 +100,17 @@ Great! Now it’s time to set up dbt platform.
 
 1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt platform account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
-2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which located within the `Admin` section. <br>
+2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect`. <br>
 
     ![Open Partner Connect](assets/Snowflake_open_partner_connect.png)<br>
 
-    Check to make sure your role is set as the ACCOUNTADMIN role. If you're using the classic console, the Partner Connect button will be in the top bar just right of center.
+    Check to make sure your role is set as the ACCOUNTADMIN role.
 
 3. Find the dbt tile by typing `dbt` into the `Search Partner Connect` search bar. Click on the dbt tile.
 
     ![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
 
-4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.
+4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that's entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.
 
     ![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
 
@@ -245,7 +245,7 @@ dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guide
 
 1. Because we have quite a few folders to create, we’re going to fast track this by using a shortcut to build multiple folders at the same time. 
 
-* In your file tree take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `Create Folder`. We’re going to add two new folders to the file path, `staging` and `tpch` (in that order) by typing `staging/tpch` into the file path. Make sure you’re not including additional folder names and click `Create`. <br>
+* In your file tree take your cursor and hover over the `models` subdirectory, right click, then click `Create Folder`. We’re going to add two new folders to the file path, `staging` and `tpch` (in that order) by typing `staging/tpch` into the file path. Make sure you’re not including additional folder names and click `Create`. <br>
 
     ![New Folder](assets/dbt_Cloud_new_folder.png)<br>
 
@@ -253,7 +253,7 @@ dbt Labs has developed a [project structure guide](https://docs.getdbt.com/guide
 
 * If you click into your `models` directory now, you should see the new `staging` folder nested within `models` and the `tpch` folder nested within `staging`.
 
-2. We are going to create our final two folders the same way. Take your cursor and hover over the `models` subdirectory, click the three dots that appear to the right of the folder name, then click `Create Folder`. This time in the popup window you’re going to enter in the following file path: `marts/core`. Here we’re creating a `marts` folder within `models` and then a `core` folder within `marts`. Your folder tree should look like this when it’s all said and done:<br>
+2. We are going to create our final two folders the same way. Take your cursor and hover over the `models` subdirectory, right click, then click `Create Folder`. This time in the popup window you’re going to enter in the following file path: `marts/core`. Here we’re creating a `marts` folder within `models` and then a `core` folder within `marts`. Your folder tree should look like this when it’s all said and done:<br>
 
     ![File Tree](assets/dbt_Cloud_models_marts_core_folder_file_tree.png)
 
@@ -281,7 +281,7 @@ We won’t be writing our own macros in this workshop but we do recommend checki
 ```yaml
 packages:
   - package: dbt-labs/dbt_utils
-    version: 0.8.4
+    version: 1.3.0
 ```
 
 2. The last step to install the package is to run `dbt deps` at the command line, which tells dbt to install the packages defined in your `packages.yml` file. Type in `dbt deps` to the command line, click `Enter`, and you should see a success message there when it completes. 
@@ -319,7 +319,7 @@ sources:
         columns:
           - name: o_orderkey
             description: SF*1,500,000 are sparsely populated
-            tests: 
+            data_tests: 
               - unique
               - not_null
 
@@ -328,10 +328,11 @@ sources:
         columns:
           - name: l_orderkey
             description: Foreign Key to O_ORDERKEY
-            tests:
+            data_tests:
               - relationships:
-                  to: source('tpch', 'orders')
-                  field: o_orderkey
+                  arguments: 
+                    to: source('tpch', 'orders')
+                    field: o_orderkey
 ```
 <br>
 
@@ -389,7 +390,7 @@ renamed as (
 
     select
     
-        {{ dbt_utils.surrogate_key(
+        {{ dbt_utils.generate_surrogate_key(
             ['l_orderkey', 
             'l_linenumber']) }}
                 as order_item_key,
@@ -829,13 +830,14 @@ models:
     columns:
       - name: order_key
         description: primary key of the model
-        tests:
+        data_tests:
           - unique
           - not_null
           - relationships:
-              to: ref('stg_tpch_orders')
-              field: order_key
-              severity: warn
+              arguments: 
+                to: ref('stg_tpch_orders')
+                field: order_key
+                severity: warn
       - name: customer_key
         description: foreign key for customers
       - name: order_date
@@ -844,7 +846,8 @@ models:
         description: status of the order
         tests:
           - accepted_values:
-              values: ['P','O','F']
+              arguments: 
+                values: ['P','O','F']
       - name: priority_code
         description: code associated with the order
       - name: clerk_name
@@ -861,6 +864,7 @@ models:
         description: item level tax total
       - name: net_item_sales_amount
         description: the net total which factors in discount and tax
+
 ```
 
 Let’s take a moment to describe what’s happening in this file and how we’re defining everything. This file is in the `models/marts/core` directory and contains tests and descriptions specifically for the models in this directory, in this case for `fct_orders`. This is an organizational step and at the end of the day it is up to you and your team how you’d like to organize your YAML files and the models they test and define. As a best practice, we do recommend having at least one YAML file for testing and documentation per directory.
@@ -920,9 +924,11 @@ Similar to our model runs, the compiled code that is passed to Snowflake for eac
 
 ### Documentation
 
-Let’s switch gears to take a look at the documentation that we created. The command to tell dbt to create our docs is `dbt docs generate`. Run that command and when it completes click on the book icon in the upper left hand corner of the IDE above the version control pane to launch your documentation. 
+Let’s switch gears to take a look at the documentation that we created. The command to tell dbt to create our docs is `dbt compile --write-catalog`. Run that command and when it completes click on the book icon in the upper left hand corner of the IDE above the version control pane to launch your documentation. 
 
 ![Docs Ready](assets/dbt_platform_dbt_docs_ready.png)
+
+![Docs Open](assets/dbt_docs_open.png)
 
 The documentation site will launch in a new tab. After that loads enter `fct_orders` into the top search bar and click on the top result to take you the documentation for that model. 
 
@@ -964,21 +970,39 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
 3. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
 
-4. Click on the Orchestration tab in the side bar and then click `Environments`. 
+4. Click on the Orchestration tab in the side bar and then click `Environments`.
 
     You should see two environments listed and you’ll want to click on the `Deployment` environment to open it up and then `Settings` in the upper right hand corner to modify it.<br><br>
 
     Before making any changes, let’s touch on what is defined within this environment.
 
-    The Snowflake connection shows the credentials that dbt platform is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so.
+    Deployment environments in dbt platform connect to your data warehouse through a **profile**. A profile bundles together the Snowflake connection, the deployment credentials (such as username, authentication, and target schema), and any extended attributes — and can be reused across deployment environments within a project. Partner Connect created a default connection for us, but we need to create a Profile. Let’s create a  profile so our production environment builds into a dedicated `production` schema.
 
-    The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we’ve been using as the schema for our development environment. Let’s update the schema to create a new schema specifically for our production environment. 
+    Click `Settings` in the upper right hand corner to edit the Environment. Scroll down to the `Connection profiles` section, click the "Assign Profile" button and choose `Create new profile`.
 
-    Click `Edit` in the upper right hand corner to allow you to modify the existing field values. Select the snowflake default connection. Set Auth method as `Username and password`. Provide the username and password of your snowflake account. Scroll down to the `schema` field in the `Deployment Credentials` section and update the schema name to `production`. Be sure to click `Save` in the upper right hand corner after you’ve made the change.
+    ![Assign Profile](assets/dbt_assign_profile.png)
 
-    ![Deployment Schema Update](assets/dbt_platform_deployment_schema_update.png)
+    Give the profile a name like `production`, then click `Create profile`.
 
-    By updating the schema for our production environment to `production`, it ensures that our deployment job for this environment will build our dbt models in the `production` schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
+    ![Create New Profile](assets/dbt_create_profile.png)
+
+    For the connection, select the existing Snowflake connection that Partner Connect set up for you.
+
+    ![Select Snowflake Connection](assets/dbt_select_snowflake.png)
+
+    In the `Deployment credentials` section, set Auth method to `Username and password` and provide the username and password for your Snowflake account. Set the `Schema` field to `production`, then save the credentials.
+
+    ![Assign Credentials](assets/dbt_assign_creds.png)
+
+    Select the profile we created and click `Assign profile` to attach it to this environment.
+
+    ![Assign Profile](assets/assign_profile.png)
+
+    Finally, mark this environment as your production environment by setting the deployment type to `Production`, then click `Save` in the upper right hand corner.
+
+    ![Set to Prod](assets/set_to_prod.png)
+
+    By assigning a profile that targets the `production` schema, our deployment job for this environment will build our dbt models in the `production` schema within the `PC_DBT_DB` database as defined in the Snowflake connection.
 
 5. Now let’s switch over to our production job. Click on the Orchestration tab again and then select `Jobs`. You should see an existing and pre-configured `Partner Connect Trial Job`. Similar to the environment, click on the job, then select `Settings` to modify it. Let’s take a look at the job to understand it before making changes. <br><br>
 
@@ -1006,65 +1030,101 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
     While this process is great for your scheduling and running your dbt jobs, we recognize that transformation jobs don’t live in a silo for many data teams. It’s not uncommon for a data team to have a data process occurring outside of dbt that has to happen prior to a dbt job running, or for there to be a data process that needs to be triggered after a dbt job finishes. In these sorts of cases, we recommend using our [API](https://docs.getdbt.com/dbt-cloud/api-v2) with a third party orchestration tool to orchestrate and manage these situations. There are also a number of blog posts and articles, including this [one](https://docs.getdbt.com/blog/dbt-airflow-spiritual-alignment), to help you think about the best way to manage this alongside dbt platform.
 
+    Finally, let's check dbt Catalog! Select Catalog from the menu:
+
+    ![Select catalog](assets/select_catalog.png)
+
+    Browse to a model, explore the lineage, code and other aspects of Catalog.
+
+    ![Select catalog](assets/browse_catalog.png)
+
 7. Let’s go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the `production` schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed there. <br><br>
 
     ![Production Schema](assets/Snowflake_production_schema.png)
 
 <!-- ------------------------ -->
 
-## Visualizing Your Data with [Snowsight Dashboards](https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards.html)
+## Visualizing Your Data in Snowflake
 
-With all of our data now live in our production environment courtesy of our production job, we’re ready to visualize our data! Our sales team has asked us to build a dashboard showing all time sales by quarter. We’re going to take our `fct_orders` model and create a bar chart in order to do this. Before we jump in, take a second to make sure that you’re in the new Snowflake UI so that you’ll be able to access the dashboard feature.
+With all of our data now live in our production environment courtesy of our production job, we're ready to visualize our data! Our sales team has asked us to build a visualization showing all time sales by quarter. We're going to take our `fct_orders` model and create a bar chart. We'll show two approaches: a quick **Workspaces chart** and a more robust **Streamlit app**.
 
-1. On the left hand side of the screen click `Dashboards` and then click the blue `+ Dashboard` button in the upper right hand corner to create a new dashboard. Create a name for your dashboard in the popup window and then click `Create Dashboard`.<br><br>
+### Option A: Workspaces Chart (Quick Visualization)
 
-    ![Create Dashboard](assets/Snowflake_dashboard_create.png)
+Snowsight allows you to [visualize query results as charts](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations) directly within Workspaces. This is the fastest way to create a quick visualization from your data.
 
-2. In the new window, go to the upper right hand corner of the screen and click on the box with the role and warehouse options. Be sure to select the `PC_DBT_ROLE` and the `PC_DBT_WH` warehouse. <br><br>
+1. In Snowflake, navigate to **Workspaces** in the left sidebar and create a new SQL file. Make sure your role is set to `PC_DBT_ROLE` and your warehouse is set to `PC_DBT_WH`.<br><br>
 
-    ![Dashboard Role and Warehouse](assets/Snowflake_dashboard_role_warehouse.png)<br><br>
+2. Copy and paste the following query into the SQL file and run it:<br><br>
 
-    Next, click `New Tile` in the center of the screen. Within the new tile screen, click the timestamp at the top-center of the screen and update the tile name to `Quarterly Sales`. <br><br> 
-
-    ![Rename Tile](assets/Snowflake_tile_rename.png)<br><br>
-
-    At the top of the editor, be sure that the database and schema is set to `PC_DBT_DB` and `PRODUCTION`.<br><br>
-
-    ![Database Schema](assets/Snowflake_database_schema.png)<br><br>
-
-    Then copy and paste the following code into the editor: <br><br>
-
-    ```
-    select order_date
-         , sum(net_item_sales_amount) as sum_net_sales
-      from pc_dbt_db.production.fct_orders
-     where order_date = :daterange
-     group by :datebucket(order_date), order_date
+    ```sql
+    select
+        date_trunc('quarter', order_date) as quarter,
+        sum(net_item_sales_amount) as sum_net_sales
+    from pc_dbt_db.production.fct_orders
+    group by quarter
+    order by quarter;
     ```
 
-    Next, in the top left hand corner of the screen update the time period from `Last Day` to `All Time`. Finally, use the corresponding run query shortcut on your keyboard to run the code. The final output should look like this:<br><br>
+    You should see results showing quarterly aggregated sales data.<br><br>
 
-    ![Completed Query](assets/Snowflake_completed_query.png)
+3. Now let's transform our results into a chart. Above the results table, click the **Chart** button to bring up the chart view and options panel.<br><br>
 
-3. Now let’s transform our results into a chart. Click the `chart` button in the middle of the screen to bring up the initial chart and options sidebar. <br><br>
+    Snowsight will automatically generate a chart based on your results. Let's customize it:
 
-    ![Initial Chart](assets/Snowflake_initial_chart.png)<br><br>
+    - Click on the chart type selector and change it to **Bar**.
+    - In the Data section, ensure `QUARTER` is set as the X-axis and `SUM_NET_SALES` is set as the Y-axis.
+    - In the Appearance section, you can optionally adjust label orientation or add a title.<br><br>
 
-    Our query is aggregating the `net_item_sales_amount` and grouping by `order_date`, but at the moment we’re seeing every date in what has become a very busy line chart. Let’s transform this into a bar chart where the date is grouped by quarter.
+    You should now see a bar chart showing quarterly net sales over time. It looks like total sales remained very steady with the exception of the last quarter in 1998. We'll need to check in with the sales team about that!<br><br>
 
-    Start by clicking on the chart type and updating it to `Bar`. Then click `order_date` and select `quarter` as the bucketing. Finally, change the order direction from `descending` to `ascending`. <br><br>
+    ![Workspaces Chart](assets/Snowflake_workspaces_chart.png)
 
-    ![Change to Bar Chart](assets/Snowflake_change_to_bar_chart.png)<br><br>
+### Option B: Streamlit App (Production-Ready Visualization)
 
-    ![Change Bucketing](assets/Snowflake_change_bucketing.png)<br><br>
+For a more robust, shareable, and interactive visualization, Snowflake offers [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit). Streamlit apps run natively inside Snowflake and are the recommended replacement for the legacy Snowsight Dashboards feature.
 
-    ![Change Order Direction](assets/Snowflake_change_order_direction.png)<br><br>
+1. In the Snowflake UI, navigate to **Projects > Streamlit** in the left sidebar. Click the **+ Streamlit App** button in the upper right hand corner.<br><br>
 
-4. With the tile completed, all you have to do now is click the `Return` button in the upper left hand corner of the tile and you’ll be taken to the dashboard with our tile at the top. <br><br>
+2. Give your app a name like `Quarterly Sales Dashboard`. Select the `PC_DBT_DB` database, the `PRODUCTION` schema, and the `PC_DBT_WH` warehouse. Click **Create**.<br><br>
 
-    ![Final Dashboard](assets/Snowflake_final_dashboard.png)<br><br>
+3. Replace the default code in the editor with the following:
 
-    Congrats! You've built the visualization the sales team was looking for and it looks like total sales remained very steady with the exception of the last quarter in 1998. We'll need to check in with them about that!
+    ```python
+    import streamlit as st
+    from snowflake.snowpark.context import get_active_session
+
+    session = get_active_session()
+
+    st.title("Quarterly Sales Dashboard")
+    st.write("All-time net sales aggregated by quarter from the fct_orders model.")
+
+    df = session.sql("""
+        select
+            date_trunc('quarter', order_date) as quarter,
+            sum(net_item_sales_amount) as sum_net_sales
+        from pc_dbt_db.production.fct_orders
+        group by quarter
+        order by quarter
+    """).to_pandas()
+
+    st.bar_chart(df, x="QUARTER", y="SUM_NET_SALES")
+
+    st.metric(
+        label="Total Net Sales (All Time)",
+        value=f"${df['SUM_NET_SALES'].sum():,.2f}"
+    )
+    ```
+
+4. Click **Run** in the upper right corner to see your Streamlit app render. You should see an interactive bar chart showing quarterly sales alongside a metric card with total sales.<br><br>
+![Streamlit Chart](assets/Snowflake_streamlit_chart.png)
+
+    The Streamlit app provides several advantages over a simple Workspaces chart:
+    - It can be shared with stakeholders via a URL
+    - It supports interactive filters, multiple charts, and custom layouts
+    - It runs natively in Snowflake with no external infrastructure required
+    - It can be version controlled and managed alongside your dbt project<br><br>
+
+    Congrats! You've built the visualization the sales team was looking for using both a quick Workspaces chart and a production-ready Streamlit app.
 
 <!-- ------------------------ -->
 
@@ -1082,7 +1142,7 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 
 * How to scale Snowflake compute capabilities with the dbt workflow
 
-* How to build lightweight charts and visualizations in Snowflake
+* How to visualize query results using Workspaces charts and Streamlit apps in Snowflake
 
 ### Additional Resources 
 
@@ -1094,8 +1154,10 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 
 * Contact the [dbt platform Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt platform for your team or organization.
 
+* Learn more about [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) for building interactive data apps.
+
+* Explore [Visualizing data in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations) for quick chart creation.
+
 *  [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/03/Data-Transformations-with-DBT-cloud-and-Snowflake.pdf)
 *  [Read the Blog](https://medium.com/snowflake/unlocking-reliable-data-and-team-efficiency-with-dbt-cloud-a-hands-on-experience-3d26da7f1bac)
 *  [Watch Demo](https://youtu.be/84RA7TuhCpg?list=TLGGGzOh827JGPQxOTA5MjAyNQ)
-
-  
