@@ -589,69 +589,142 @@ The reference [`monitoring_dashboard/streamlit_app.py`](https://github.com/Snowf
 
 ### The Event Table Schema
 
-Every span (RECORD_ROOT, GENERATION, TOOL, RETRIEVAL) and every evaluation result is stored as a row with these key columns:
+Every span and every evaluation is one row. The key attributes you'll filter and project on:
 
-- `TIMESTAMP`, `START_TIMESTAMP` — span end and start times
-- `RECORD_TYPE` — `'SPAN'` for trace spans, `'EVALUATION'` for metric scores
-- `TRACE:"trace_id"::STRING` — groups spans belonging to a single user query
-- `RECORD_ATTRIBUTES:"ai.observability.span_type"` — `RECORD_ROOT | GENERATION | TOOL | RETRIEVAL`
-- `RECORD_ATTRIBUTES:"ai.observability.run.name"` — the run name (batch run or production deployment)
-- `RECORD_ATTRIBUTES:"ai.observability.input.value"` / `output.value` — span I/O
-- For evaluations: `RECORD_ATTRIBUTES:"ai.observability.metric.name"` and `metric.score`
+- `TIMESTAMP`, `START_TIMESTAMP` — span end and start times (use `TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP)` for latency)
+- `RECORD_TYPE = 'SPAN'` — every observability event is a span; eval results are also spans with `span_type` `'eval'` or `'eval_root'`
+- `TRACE:"trace_id"::STRING` — groups all spans from a single user query
+- `RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING` — `record_root | tool | retrieval | generation | eval | eval_root`
+- `RECORD_ATTRIBUTES:"ai.observability.run.name"::STRING` — run name (batch run or production deployment)
+- `RECORD_ATTRIBUTES:"snow.ai.observability.object.name"::STRING` — agent name
+- `RECORD_ATTRIBUTES:"ai.observability.record_id"::STRING` — joins root spans to their evaluations
+- `RECORD_ATTRIBUTES:"ai.observability.record_root.input"` / `record_root.output` — user question and final answer
+- `RECORD_ATTRIBUTES:"ai.observability.eval_root.metric_name"` / `eval_root.score` — client-side metric results
+- `RECORD_ATTRIBUTES:"ai.observability.eval.metric_name"` / `eval.score` / `eval.target_record_id` — server-side metric results
 
-### Example 1 — Latency Trends (p50 / p95)
+### Example 1 — KPI Rollup
 
-Track agent latency over time to spot regressions or traffic-driven slowdowns:
+Top-line counters for any time window — total queries, average latency, tool/retrieval calls, LLM generations, and average eval score:
 
 ```sql
-SELECT
-    DATE_TRUNC('hour', TIMESTAMP) AS hour,
-    COUNT(*) AS num_traces,
-    PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY latency_ms) AS p50_latency_ms,
-    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY latency_ms) AS p95_latency_ms
-FROM (
+WITH spans AS (
     SELECT
-        TIMESTAMP,
+        RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING AS span_type,
         TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP) AS latency_ms
     FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
     WHERE RECORD_TYPE = 'SPAN'
-      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'RECORD_ROOT'
-      AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
+      AND TIMESTAMP > DATEADD('day', -1, CURRENT_TIMESTAMP())
+),
+evals AS (
+    SELECT
+        COALESCE(
+            RECORD_ATTRIBUTES:"ai.observability.eval_root.score"::FLOAT,
+            RECORD_ATTRIBUTES:"ai.observability.eval.score"::FLOAT
+        ) AS score
+    FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+    WHERE RECORD_TYPE = 'SPAN'
+      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING IN ('eval', 'eval_root')
+      AND TIMESTAMP > DATEADD('day', -1, CURRENT_TIMESTAMP())
 )
+SELECT
+    (SELECT COUNT(*) FROM spans WHERE span_type = 'record_root') AS total_queries,
+    (SELECT AVG(latency_ms) FROM spans WHERE span_type = 'record_root') AS avg_latency_ms,
+    (SELECT COUNT(*) FROM spans WHERE span_type IN ('tool', 'retrieval')) AS total_tool_calls,
+    (SELECT COUNT(*) FROM spans WHERE span_type = 'generation') AS total_gen_calls,
+    (SELECT AVG(score) FROM evals WHERE score IS NOT NULL) AS avg_eval_score;
+```
+
+### Example 2 — Latency Trend (p50 / p95 / max)
+
+Bucket root spans by hour or day and compute percentiles to spot regressions or traffic-driven slowdowns:
+
+```sql
+SELECT
+    DATE_TRUNC('hour', TIMESTAMP) AS bucket_ts,
+    APPROX_PERCENTILE(TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP), 0.50) AS p50_ms,
+    APPROX_PERCENTILE(TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP), 0.95) AS p95_ms,
+    MAX(TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP)) AS max_ms,
+    COUNT(*) AS query_count
+FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+WHERE RECORD_TYPE = 'SPAN'
+  AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'record_root'
+  AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
 GROUP BY 1
 ORDER BY 1;
 ```
 
-### Example 2 — Eval Score Trends by Metric
+### Example 3 — Eval Score Trends by Metric
 
-Watch quality metrics drift over time and compare across metrics:
+Union client-side (`eval_root`) and server-side (`eval`) results into one timeseries per metric to watch quality drift:
 
 ```sql
+WITH unioned AS (
+    SELECT
+        TIMESTAMP,
+        RECORD_ATTRIBUTES:"ai.observability.eval_root.metric_name"::STRING AS metric_name,
+        'client-side' AS source,
+        RECORD_ATTRIBUTES:"ai.observability.eval_root.score"::FLOAT AS score
+    FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+    WHERE RECORD_TYPE = 'SPAN'
+      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'eval_root'
+      AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
+    UNION ALL
+    SELECT
+        TIMESTAMP,
+        RECORD_ATTRIBUTES:"ai.observability.eval.metric_name"::STRING AS metric_name,
+        'server-side' AS source,
+        RECORD_ATTRIBUTES:"ai.observability.eval.score"::FLOAT AS score
+    FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+    WHERE RECORD_TYPE = 'SPAN'
+      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'eval'
+      AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
+)
 SELECT
-    DATE_TRUNC('hour', TIMESTAMP) AS hour,
-    RECORD_ATTRIBUTES:"ai.observability.metric.name"::STRING AS metric_name,
-    AVG(RECORD_ATTRIBUTES:"ai.observability.metric.score"::FLOAT) AS avg_score,
-    COUNT(*) AS num_evaluations
-FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
-WHERE RECORD_TYPE = 'EVALUATION'
-  AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
-GROUP BY 1, 2
+    DATE_TRUNC('hour', TIMESTAMP) AS bucket_ts,
+    metric_name,
+    source,
+    AVG(score) AS avg_score,
+    MIN(score) AS min_score,
+    MAX(score) AS max_score,
+    COUNT(*) AS n
+FROM unioned
+WHERE score IS NOT NULL AND metric_name IS NOT NULL
+GROUP BY 1, 2, 3
 ORDER BY 1, 2;
 ```
 
-### Example 3 — Tool Mix and Failure Rate
+### Example 4 — Top Latency Outliers
+
+Surface the slowest individual queries — the dots that sit on top of your p95 line — with the question and `trace_id` so you can drill in:
+
+```sql
+SELECT
+    TIMESTAMP,
+    RECORD_ATTRIBUTES:"ai.observability.run.name"::STRING AS run_name,
+    RECORD_ATTRIBUTES:"ai.observability.record_root.input"::STRING AS input_question,
+    TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP) AS latency_ms,
+    TRACE:"trace_id"::STRING AS trace_id
+FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+WHERE RECORD_TYPE = 'SPAN'
+  AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'record_root'
+  AND TIMESTAMP > DATEADD('day', -1, CURRENT_TIMESTAMP())
+ORDER BY latency_ms DESC
+LIMIT 50;
+```
+
+### Example 5 — Tool Mix and Failure Rate
 
 Understand which tools the agent is calling and how often they error:
 
 ```sql
 SELECT
     RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING AS span_type,
-    RECORD_ATTRIBUTES:"name"::STRING AS tool_name,
+    RECORD_ATTRIBUTES:"ai.observability.call.function"::STRING AS tool_function,
     COUNT(*) AS calls,
     SUM(CASE WHEN RECORD_ATTRIBUTES:"ai.observability.error" IS NOT NULL THEN 1 ELSE 0 END) AS errors
 FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
 WHERE RECORD_TYPE = 'SPAN'
-  AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING IN ('TOOL', 'RETRIEVAL')
+  AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING IN ('tool', 'retrieval')
   AND TIMESTAMP > DATEADD('day', -1, CURRENT_TIMESTAMP())
 GROUP BY 1, 2
 ORDER BY calls DESC;
@@ -659,39 +732,99 @@ ORDER BY calls DESC;
 
 ### Root-Cause Analysis: Find Problematic Traces
 
-When latency spikes or eval scores drop, you need to drill from "the chart" to "the bad trace." Join spans to evaluations on `trace_id`, surface the worst offenders, and inspect the full span waterfall:
+When latency spikes or eval scores drop, you need to drill from "the chart" to "the bad trace." Join root spans to their evaluations on `record_id`, pivot scores by metric, and surface the worst offenders in a window:
 
 ```sql
-WITH root_spans AS (
+WITH roots AS (
     SELECT
-        TRACE:"trace_id"::STRING AS trace_id,
         TIMESTAMP,
         TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP) AS latency_ms,
-        RECORD_ATTRIBUTES:"ai.observability.input.value"::STRING AS input_question
+        RECORD_ATTRIBUTES:"ai.observability.record_id"::STRING AS record_id,
+        RECORD_ATTRIBUTES:"ai.observability.record_root.input"::STRING AS input_question,
+        TRACE:"trace_id"::STRING AS trace_id
     FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
     WHERE RECORD_TYPE = 'SPAN'
-      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'RECORD_ROOT'
       AND TIMESTAMP BETWEEN :window_start AND :window_end
+      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING = 'record_root'
 ),
-worst_scores AS (
+evals AS (
     SELECT
-        TRACE:"trace_id"::STRING AS trace_id,
-        MIN(RECORD_ATTRIBUTES:"ai.observability.metric.score"::FLOAT) AS worst_score
+        RECORD_ATTRIBUTES:"ai.observability.eval.target_record_id"::STRING AS record_id,
+        COALESCE(
+            RECORD_ATTRIBUTES:"ai.observability.eval_root.metric_name"::STRING,
+            RECORD_ATTRIBUTES:"ai.observability.eval.metric_name"::STRING
+        ) AS metric_name,
+        COALESCE(
+            RECORD_ATTRIBUTES:"ai.observability.eval_root.score"::FLOAT,
+            RECORD_ATTRIBUTES:"ai.observability.eval.score"::FLOAT
+        ) AS score
     FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
-    WHERE RECORD_TYPE = 'EVALUATION'
-      AND TIMESTAMP BETWEEN :window_start AND :window_end
-    GROUP BY 1
+    WHERE RECORD_TYPE = 'SPAN'
+      AND TIMESTAMP BETWEEN :window_start AND DATEADD('day', 2, :window_end)
+      AND RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING IN ('eval', 'eval_root')
+),
+agg AS (
+    SELECT
+        record_id,
+        MIN(score) AS worst_score,
+        MIN(CASE WHEN metric_name = 'groundedness' THEN score END) AS groundedness,
+        MIN(CASE WHEN metric_name = 'answer_relevance' THEN score END) AS answer_relevance,
+        MIN(CASE WHEN metric_name = 'context_relevance' THEN score END) AS context_relevance
+    FROM evals
+    GROUP BY record_id
 )
-SELECT r.trace_id, r.timestamp, r.latency_ms, r.input_question, w.worst_score
-FROM root_spans r
-LEFT JOIN worst_scores w USING (trace_id)
-ORDER BY r.latency_ms DESC, w.worst_score ASC
-LIMIT 50;
+SELECT
+    r.timestamp, r.latency_ms, r.input_question,
+    a.worst_score, a.groundedness, a.answer_relevance, a.context_relevance,
+    r.trace_id
+FROM roots r
+LEFT JOIN agg a ON r.record_id = a.record_id
+ORDER BY r.latency_ms DESC, a.worst_score ASC
+LIMIT 300;
 ```
 
-From there, fetch every span for a given `trace_id` to see the full execution: the user question, the agent's answer, the Cortex Analyst SQL, and the Cortex Search chunks that were retrieved.
-
 ![Find Problematic Traces](assets/find-problematic-traces.png)
+
+### Drill Into a Single Trace
+
+Once you have a `trace_id`, fetch every span — the user question, the agent's answer, each tool/retrieval/generation step, token counts, Cortex Analyst SQL, retrieved Search chunks, and any evaluations:
+
+```sql
+WITH base AS (
+    SELECT
+        TIMESTAMP AS end_ts,
+        START_TIMESTAMP AS start_ts,
+        TRACE:"trace_id"::STRING AS trace_id,
+        TRACE:"span_id"::STRING AS span_id,
+        RECORD:"name"::STRING AS span_name,
+        RECORD_ATTRIBUTES:"ai.observability.span_type"::STRING AS span_type,
+        RECORD_ATTRIBUTES:"ai.observability.record_id"::STRING AS record_id,
+        RECORD_ATTRIBUTES:"ai.observability.call.function"::STRING AS tool_function,
+        RECORD_ATTRIBUTES:"ai.observability.analyst.generated_sql"::STRING AS analyst_generated_sql,
+        RECORD_ATTRIBUTES:"ai.observability.analyst.query_results"::STRING AS analyst_query_results,
+        RECORD_ATTRIBUTES:"ai.observability.retrieval.retrieved_contexts"::STRING AS retrieved_contexts,
+        RECORD_ATTRIBUTES:"ai.observability.record_root.input"::STRING AS input_question,
+        RECORD_ATTRIBUTES:"ai.observability.record_root.output"::STRING AS output_answer,
+        RECORD_ATTRIBUTES:"ai.observability.cost.model"::STRING AS model_name,
+        RECORD_ATTRIBUTES:"ai.observability.cost.num_tokens"::INT AS total_tokens,
+        RECORD_ATTRIBUTES:"ai.observability.eval.target_record_id"::STRING AS eval_target_record_id,
+        TIMESTAMPDIFF('MILLISECOND', START_TIMESTAMP, TIMESTAMP) AS latency_ms
+    FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS
+    WHERE RECORD_TYPE = 'SPAN'
+      AND TIMESTAMP > DATEADD('day', -7, CURRENT_TIMESTAMP())
+),
+target_record_id AS (
+    SELECT record_id FROM base
+    WHERE trace_id = :trace_id AND span_type = 'record_root' LIMIT 1
+)
+SELECT *
+FROM base
+WHERE trace_id = :trace_id
+   OR eval_target_record_id IN (SELECT record_id FROM target_record_id)
+ORDER BY start_ts ASC;
+```
+
+This gives you the full span waterfall (record_root → tool/retrieval → generation) plus all evaluations attached to that trace's `record_id` — everything you need for a complete root-cause story.
 
 ### Deploying to Snowflake
 
