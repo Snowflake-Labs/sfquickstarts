@@ -493,6 +493,20 @@ This triggers:
 
 All results are written to the AI Observability event table and visible in Snowsight.
 
+### Evaluations View
+
+Navigate to **Monitoring > AI Observability > Evaluations** to see:
+- Run-level metric summaries with pass/fail rates
+- Per-query evaluation scores for all metrics
+- Score distributions and comparisons across runs
+- Detailed evaluation reasons (the `reason` field from custom metrics)
+
+![Evaluations](assets/evaluations.png)
+
+### Comparing Runs
+
+Run the batch evaluation multiple times (e.g., with different prompts or models) to create multiple runs. The Evaluations UI lets you compare metric scores across runs side by side, making it easy to identify improvements or regressions.
+
 <!-- ------------------------ -->
 
 ## Production Chat with Live Tracing
@@ -619,35 +633,6 @@ This uses the [`snowflake.yml`](https://github.com/Snowflake-Labs/sfguide-end-to
 - Runtime: `SYSTEM$ST_CONTAINER_RUNTIME_PY3_11`
 - Compute pool: `SYSTEM_COMPUTE_POOL_CPU`
 - External access: `PYPI_ACCESS_INTEGRATION` (for altair and other packages)
-
-<!-- ------------------------ -->
-
-## Explore in Snowsight
-
-
-After running batch evaluation or production chat, navigate to the **AI Observability** section in Snowsight to explore your results.
-
-### Traces View
-
-Navigate to **Monitoring > AI Observability > Traces** to see:
-- All traced invocations grouped by run
-- Span waterfall showing the execution timeline of RECORD_ROOT → GENERATION → TOOL/RETRIEVAL → GENERATION
-- Span details with all semantic attributes (input/output, SQL, retrieved contexts, token counts)
-- Latency breakdown per span
-
-### Evaluations View
-
-Navigate to **Monitoring > AI Observability > Evaluations** to see:
-- Run-level metric summaries with pass/fail rates
-- Per-query evaluation scores for all metrics
-- Score distributions and comparisons across runs
-- Detailed evaluation reasons (the `reason` field from custom metrics)
-
-![Evaluations](assets/evaluations.png)
-
-### Comparing Runs
-
-Run the batch evaluation multiple times (e.g., with different prompts or models) to create multiple runs. The Evaluations UI lets you compare metric scores across runs side by side, making it easy to identify improvements or regressions.
 
 <!-- ------------------------ -->
 
