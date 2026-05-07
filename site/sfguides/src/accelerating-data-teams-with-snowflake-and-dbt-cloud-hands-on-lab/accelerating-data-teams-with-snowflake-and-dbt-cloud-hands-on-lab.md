@@ -36,7 +36,7 @@ Let's get started.
 
 * How to scale Snowflake compute capabilities with the dbt workflow
 
-* How to build lightweight charts and visualizations in Snowflake
+* How to visualize query results using Workspaces charts and Streamlit in Snowflake
 
 ### What You'll Build
 
@@ -45,7 +45,7 @@ Let's get started.
 <!-- ------------------------ -->
 ## Architecture and Use Case Overview
 
-In this lab we’ll be transforming raw retail data into a consumable orders model that’s ready for visualization. We’ll be utilizing the TPC-H dataset that comes out of the box with your Snowflake account and transform it using some of dbt’s most powerful features. By the time we’re done you’ll have a fully functional dbt project with testing and documentation, dedicated development and production environments, and experience with the dbt git workflow.
+In this lab we'll be transforming raw retail data into a consumable orders model that's ready for visualization. We'll be utilizing the TPC-H dataset that comes out of the box with your Snowflake account and transform it using some of dbt's most powerful features. By the time we're done you'll have a fully functional dbt project with testing and documentation, dedicated development and production environments, and experience with the dbt git workflow.
 
 ![Architecture Overview](assets/architecture_diagram.png)
 
@@ -56,43 +56,43 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 <!-- ------------------------ -->
 ## Let's Get Started With Snowflake
 
-To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
-Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
+To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and fill out the form before clicking `Continue`. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
+Once your account is created you'll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
 
 
-For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). From here on out we’ll be using the new Snowflake UI (Snowsight) and any Snowflake specific directions you see will be for Snowsight. Feel free to use the Snowflake Classic UI as it won’t affect your dbt experience, but it may change the location of certain features within Snowflake.
+For a detailed Snowflake UI walkthrough, please refer [here](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs.html#getting-started-with-snowsight). We'll be using Snowsight (the Snowflake web interface) throughout this lab. Snowflake now uses [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces) as the default SQL editing experience, which supports file-and-folder organization, sharing, and Git integration.
 
-The dataset we’ll be using for the workshop comes standard as part of your Snowflake trial. From the `New Project` botton click the `SQL File` button to create a query. 
+The dataset we'll be using for the workshop comes standard as part of your Snowflake trial. Navigate to **Workspaces** in the left sidebar. This will open the Workspaces editor where you can create and manage SQL files. Click the **+ Add new** button to create a new SQL file.
 
 ![Snowflake Create SQL file](assets/Snowflake_create_SQL_file.png)
 
-Once there, at the bottom left corner you will see `Database Explore` and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
+Once there, in the left panel you will see the Database Explorer and you should see a database called `Snowflake_Sample_Data` in the list of objects.<br>
 
 
 ![Snowflake Sample Data Database](assets/Snowflake_sample_data_database.png)<br>
 
-    If you don’t see the database, you may have removed it from your account. To reinstate it, run the following command in your worksheet:
+If you don't see the database, you may have removed it from your account. To reinstate it, run the following command in your SQL file:
 
-    ```sql
-    create or replace database snowflake_sample_data from share sfc_samples.sample_data;
-    ```
+```sql
+create or replace database snowflake_sample_data from share sfc_samples.sample_data;
+```
 
-    You should now see the database as one of your database objects, with associated schemas within it.
+You should now see the database as one of your database objects, with associated schemas within it.
 
-Clicking the database name will reveal a schema dropdown, including the schema that we’ll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html).
+Clicking the database name will reveal a schema dropdown, including the schema that we'll be using for our source data, [TPCH_SF1](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html).
 
 ![Snowflake TPCH SF1](assets/Snowflake_tpch_sf1.png)
 
-Let’s query one of the tables in the dataset to make sure that you’re able to access the data. Copy and paste the following code into your worksheet and run the query.
+Let's query one of the tables in the dataset to make sure that you're able to access the data. Copy and paste the following code into your SQL file and run the query.
 
-```
+```sql
 select *
     from snowflake_sample_data.tpch_sf1.orders
     limit 100; 
 ```
 
-You should be able to see results, in which case we’re good to go. If you’re receiving an error, check to make sure that your query syntax is correct.
-Great! Now it’s time to set up dbt platform.
+You should be able to see results, in which case we're good to go. If you're receiving an error, check to make sure that your query syntax is correct.
+Great! Now it's time to set up dbt platform.
 
 <!-- ------------------------ -->
 ## Launching dbt platform via Partner Connect
@@ -100,17 +100,17 @@ Great! Now it’s time to set up dbt platform.
 
 1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt platform account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
-2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which located within the `Admin` section. <br>
+2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect`. <br>
 
     ![Open Partner Connect](assets/Snowflake_open_partner_connect.png)<br>
 
-    Check to make sure your role is set as the ACCOUNTADMIN role. If you're using the classic console, the Partner Connect button will be in the top bar just right of center.
+    Check to make sure your role is set as the ACCOUNTADMIN role.
 
 3. Find the dbt tile by typing `dbt` into the `Search Partner Connect` search bar. Click on the dbt tile.
 
     ![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
 
-4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.
+4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that's entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.
 
     ![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
 
@@ -1012,59 +1012,87 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 
 <!-- ------------------------ -->
 
-## Visualizing Your Data with [Snowsight Dashboards](https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards.html)
+## Visualizing Your Data in Snowflake
 
-With all of our data now live in our production environment courtesy of our production job, we’re ready to visualize our data! Our sales team has asked us to build a dashboard showing all time sales by quarter. We’re going to take our `fct_orders` model and create a bar chart in order to do this. Before we jump in, take a second to make sure that you’re in the new Snowflake UI so that you’ll be able to access the dashboard feature.
+With all of our data now live in our production environment courtesy of our production job, we're ready to visualize our data! Our sales team has asked us to build a visualization showing all time sales by quarter. We're going to take our `fct_orders` model and create a bar chart. We'll show two approaches: a quick **Workspaces chart** and a more robust **Streamlit app**.
 
-1. On the left hand side of the screen click `Dashboards` and then click the blue `+ Dashboard` button in the upper right hand corner to create a new dashboard. Create a name for your dashboard in the popup window and then click `Create Dashboard`.<br><br>
+### Option A: Workspaces Chart (Quick Visualization)
 
-    ![Create Dashboard](assets/Snowflake_dashboard_create.png)
+Snowsight allows you to [visualize query results as charts](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations) directly within Workspaces. This is the fastest way to create a quick visualization from your data.
 
-2. In the new window, go to the upper right hand corner of the screen and click on the box with the role and warehouse options. Be sure to select the `PC_DBT_ROLE` and the `PC_DBT_WH` warehouse. <br><br>
+1. In Snowflake, navigate to **Workspaces** in the left sidebar and create a new SQL file. Make sure your role is set to `PC_DBT_ROLE` and your warehouse is set to `PC_DBT_WH`.<br><br>
 
-    ![Dashboard Role and Warehouse](assets/Snowflake_dashboard_role_warehouse.png)<br><br>
+2. Copy and paste the following query into the SQL file and run it:<br><br>
 
-    Next, click `New Tile` in the center of the screen. Within the new tile screen, click the timestamp at the top-center of the screen and update the tile name to `Quarterly Sales`. <br><br> 
-
-    ![Rename Tile](assets/Snowflake_tile_rename.png)<br><br>
-
-    At the top of the editor, be sure that the database and schema is set to `PC_DBT_DB` and `PRODUCTION`.<br><br>
-
-    ![Database Schema](assets/Snowflake_database_schema.png)<br><br>
-
-    Then copy and paste the following code into the editor: <br><br>
-
-    ```
-    select order_date
-         , sum(net_item_sales_amount) as sum_net_sales
-      from pc_dbt_db.production.fct_orders
-     where order_date = :daterange
-     group by :datebucket(order_date), order_date
+    ```sql
+    select
+        date_trunc('quarter', order_date) as quarter,
+        sum(net_item_sales_amount) as sum_net_sales
+    from pc_dbt_db.production.fct_orders
+    group by quarter
+    order by quarter;
     ```
 
-    Next, in the top left hand corner of the screen update the time period from `Last Day` to `All Time`. Finally, use the corresponding run query shortcut on your keyboard to run the code. The final output should look like this:<br><br>
+    You should see results showing quarterly aggregated sales data.<br><br>
 
-    ![Completed Query](assets/Snowflake_completed_query.png)
+3. Now let's transform our results into a chart. Above the results table, click the **Chart** button to bring up the chart view and options panel.<br><br>
 
-3. Now let’s transform our results into a chart. Click the `chart` button in the middle of the screen to bring up the initial chart and options sidebar. <br><br>
+    Snowsight will automatically generate a chart based on your results. Let's customize it:
 
-    ![Initial Chart](assets/Snowflake_initial_chart.png)<br><br>
+    - Click on the chart type selector and change it to **Bar**.
+    - In the Data section, ensure `QUARTER` is set as the X-axis and `SUM_NET_SALES` is set as the Y-axis.
+    - In the Appearance section, you can optionally adjust label orientation or add a title.<br><br>
 
-    Our query is aggregating the `net_item_sales_amount` and grouping by `order_date`, but at the moment we’re seeing every date in what has become a very busy line chart. Let’s transform this into a bar chart where the date is grouped by quarter.
+    You should now see a bar chart showing quarterly net sales over time. It looks like total sales remained very steady with the exception of the last quarter in 1998. We'll need to check in with the sales team about that!<br><br>
 
-    Start by clicking on the chart type and updating it to `Bar`. Then click `order_date` and select `quarter` as the bucketing. Finally, change the order direction from `descending` to `ascending`. <br><br>
+    ![Workspaces Chart](assets/Snowflake_workspaces_chart.png)
 
-    ![Change to Bar Chart](assets/Snowflake_change_to_bar_chart.png)<br><br>
+### Option B: Streamlit App (Production-Ready Visualization)
 
-    ![Change Bucketing](assets/Snowflake_change_bucketing.png)<br><br>
+For a more robust, shareable, and interactive visualization, Snowflake offers [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit). Streamlit apps run natively inside Snowflake and are the recommended replacement for the legacy Snowsight Dashboards feature.
 
-    ![Change Order Direction](assets/Snowflake_change_order_direction.png)<br><br>
+1. In the Snowflake UI, navigate to **Projects > Streamlit** in the left sidebar. Click the **+ Streamlit App** button in the upper right hand corner.<br><br>
 
-4. With the tile completed, all you have to do now is click the `Return` button in the upper left hand corner of the tile and you’ll be taken to the dashboard with our tile at the top. <br><br>
+2. Give your app a name like `Quarterly Sales Dashboard`. Select the `PC_DBT_DB` database, the `PRODUCTION` schema, and the `PC_DBT_WH` warehouse. Click **Create**.<br><br>
 
-    ![Final Dashboard](assets/Snowflake_final_dashboard.png)<br><br>
+3. Replace the default code in the editor with the following:
 
-    Congrats! You've built the visualization the sales team was looking for and it looks like total sales remained very steady with the exception of the last quarter in 1998. We'll need to check in with them about that!
+    ```python
+    import streamlit as st
+    from snowflake.snowpark.context import get_active_session
+
+    session = get_active_session()
+
+    st.title("Quarterly Sales Dashboard")
+    st.write("All-time net sales aggregated by quarter from the fct_orders model.")
+
+    df = session.sql("""
+        select
+            date_trunc('quarter', order_date) as quarter,
+            sum(net_item_sales_amount) as sum_net_sales
+        from pc_dbt_db.production.fct_orders
+        group by quarter
+        order by quarter
+    """).to_pandas()
+
+    st.bar_chart(df, x="QUARTER", y="SUM_NET_SALES")
+
+    st.metric(
+        label="Total Net Sales (All Time)",
+        value=f"${df['SUM_NET_SALES'].sum():,.2f}"
+    )
+    ```
+
+4. Click **Run** in the upper right corner to see your Streamlit app render. You should see an interactive bar chart showing quarterly sales alongside a metric card with total sales.<br><br>
+![Streamlit Chart](assets/Snowflake_streamlit_chart.png)
+
+    The Streamlit app provides several advantages over a simple Workspaces chart:
+    - It can be shared with stakeholders via a URL
+    - It supports interactive filters, multiple charts, and custom layouts
+    - It runs natively in Snowflake with no external infrastructure required
+    - It can be version controlled and managed alongside your dbt project<br><br>
+
+    Congrats! You've built the visualization the sales team was looking for using both a quick Workspaces chart and a production-ready Streamlit app.
 
 <!-- ------------------------ -->
 
@@ -1082,7 +1110,7 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 
 * How to scale Snowflake compute capabilities with the dbt workflow
 
-* How to build lightweight charts and visualizations in Snowflake
+* How to visualize query results using Workspaces charts and Streamlit apps in Snowflake
 
 ### Additional Resources 
 
@@ -1094,8 +1122,10 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 
 * Contact the [dbt platform Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt platform for your team or organization.
 
+* Learn more about [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) for building interactive data apps.
+
+* Explore [Visualizing data in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations) for quick chart creation.
+
 *  [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/03/Data-Transformations-with-DBT-cloud-and-Snowflake.pdf)
 *  [Read the Blog](https://medium.com/snowflake/unlocking-reliable-data-and-team-efficiency-with-dbt-cloud-a-hands-on-experience-3d26da7f1bac)
 *  [Watch Demo](https://youtu.be/84RA7TuhCpg?list=TLGGGzOh827JGPQxOTA5MjAyNQ)
-
-  

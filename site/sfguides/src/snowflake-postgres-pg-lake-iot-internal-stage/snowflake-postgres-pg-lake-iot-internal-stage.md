@@ -174,7 +174,9 @@ Test the connection:
 
 ```bash
 psql -c "SELECT version();"
-``<!-- ------------------------ -->
+```
+<!-- -------------------------->
+
 ## Storage Integration Configuration
 
 When using pg_lake to move data between Postgres and Snowflake via an internal stage, no external cloud storage is required. The internal stage is automatically provisioned when the Postgres instance is created. On the Snowflake side, you need to configure a storage integration that points to it. Both platforms share this stage location to exchange data. The key advantage of using the internal stage is that data never leaves the security perimeter of Snowflake.
@@ -192,9 +194,7 @@ CREATE OR REPLACE STORAGE INTEGRATION SF_LAB_INTS3_INTEGRATION
     ENABLED = TRUE;
 ```
 
-`
-
-<!-- ------------------------ -->
+<!---------------------------->
 ## Snowflake Setup
 
 Create the Snowflake database objects that will receive data from Postgres and store anomaly detection results.
@@ -248,6 +248,7 @@ CREATE OR REPLACE TABLE SENSOR_ANOMALIES (
     AI_EXPLANATION   VARCHAR(1000),
     DETECTED_AT      TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
 );
+```
 
 
 ### Step 3: Create Storage Integration
@@ -262,12 +263,11 @@ CREATE OR REPLACE STAGE IOT_INT_STAGE
     STORAGE_INTEGRATION = SF_LAB_INTS3_INTEGRATION
     RELATIVE_URL = '/';
 ```
-```
 
-### St4p 3: Create File Format
+### Step 4: Create File Format
 
 ```sql
--- Snowflake Setup: Ste4 3 - Create File Format
+-- Snowflake Setup: Step 4 - Create File Format
 -- Execute in: Snowsight (Snowflake)
 USE ROLE SYSADMIN;
 USE SCHEMA IOT_LAB.SENSORS;
@@ -279,10 +279,10 @@ CREATE OR REPLACE FILE FORMAT CSV_FORMAT_IOT
     NULL_IF = ('NULL', 'null', '');
 ```
 
-### Step 4: Verify Stage Access
+### Step 5: Verify Stage Access
 
 ```sql
--- Snowflake Setup: Step 4 - Verify Stage Access
+-- Snowflake Setup: Step 5 - Verify Stage Access
 -- Execute in: Snowsight (Snowflake)
 USE ROLE SYSADMIN;
 USE SCHEMA IOT_LAB.SENSORS;
@@ -292,7 +292,8 @@ LIST @IOT_INT_STAGE/;
 
 This should return an empty result (no files yet) without errors, confirming access is working.
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Postgres Setup
 
 Create the IoT sens
@@ -405,9 +406,7 @@ CREATE TABLE sensor_anomalies (
     anomaly_id       BIGSERIAL PRIMARY KEY,
     sensor_name      TEXT NOT NULL,
     sensor_type      TEXT NOT NULL,
-    re.
-
-Note:  Notice the `@STAGE` shortcut is used to point to the shared internal stage location.ding_ts       TIMESTAMP NOT NULL,
+    reading_ts       TIMESTAMP NOT NULL,
     predicted_value  NUMERIC(10,2),
     actual_value     NUMERIC(10,2),
     anomaly_score    NUMERIC(5,4),
@@ -444,7 +443,8 @@ OPTIONS (
 );
 ```
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Export Data from Postgres
 
 Use pg_lake to export sensor data from Postgres to the internal stage. This demonstrates the first half of bidirectional data movement.
@@ -493,8 +493,9 @@ SELECT * FROM lake_file.list('@STAGE/iot/export/*');
 
 You should see the exported CSV file with its size and modification timestamp.
 
-<!-- ------------------------ -->
-## (object storage) Query CSV with Foreign Tables
+<!---------------------------->
+
+## Query CSV with Foreign Tables
 
 pg_lake enables querying files directly in object storage without importing data into Postgres tables. This is useful for ad-hoc analysis of exported data or for building data pipelines.
 
@@ -548,7 +549,8 @@ FROM     readings_csv
 GROUP BY sensor_type;
 ```
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Load Data into Snowflake
 
 Loaiot/d the exported sensor data from the internal stage into Snowflake for analytics processing.
@@ -558,41 +560,26 @@ Loaiot/d the exported sensor data from the internal stage into Snowflake for ana
 In Snowflake:
 
 ```sql
--- Load Data into Snowflake: Step 1 - Verify Files in Stage
--- Execute in: Snowsight (Snowflake)
-USE ROLE SYSADMIN;
-USE SCHEMASELECT   $1, $2, $3, $4, $5, $6
-FROM     @IOT_INT_STAGE/iot/export/sensor_readings.csv.gz
-LIMIT    10;review Data
-
-Verify the data format before loading:
-
-```sql
--- Load Data into Snowflake: Step 2 - Preview Data
+-- Preview Data into Snowflake
 -- Execute in: Snowsight (Snowflake)
 USE ROLE SYSADMIN;
 USE SCHEMA IOT_LAB.SENSORS;
 
 SELECT   $1, $2, $3, $4, $5, $6
-FROM     @IOT_INT_STAGE/export/sensor_readings.csv.gz
-     iot/    (FILFILE_FORMAT = (
-    TYPE = 'CSV'
-    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-    SKIP_HEADER = 1
-    NULL_IF = ('NULL', 'null', '')
-)IMIT    10;
+FROM     @IOT_INT_STAGE/iot/export/sensor_readings.csv.gz
+LIMIT    10;
 ```
 
-### Step 3: Load CSV Data
+### Step 2: Load CSV Data
 
 ```sql
--- Load Data into Snowflake: Step 3 - Load CSV Data
+-- Load Data into Snowflake: Step 2 - Load CSV Data
 -- Execute in: Snowsight (Snowflake)
 USE ROLE SYSADMIN;
 USE SCHEMA IOT_LAB.SENSORS;
 
 COPY INTO SENSOR_READINGS (READING_ID, SENSOR_NAME, SENSOR_TYPE, READING_TS, VALUE, UNIT)
-FROM @IOT_INT_STAGE/export/
+FROM @IOT_INT_STAGE/iot/export/
 FILE_FORMAT = 'CSV_FORMAT_IOT'
 PATTERN = '.*readings.*\\.csv.gz'
 ON_ERROR = 'CONTINUE';
@@ -605,10 +592,10 @@ ON_ERROR = 'CONTINUE';
 >
 > See the [Snowpipe Documentation](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro) for auto-ingest configuration.
 
-### Step 4: Verify Load
+### Step 3: Verify Load
 
 ```sql
--- Load Data into Snowflake: Step 4 - Verify Load
+-- Load Data into Snowflake: Step 3 - Verify Load
 -- Execute in: Snowsight (Snowflake)
 USE ROLE SYSADMIN;
 USE SCHEMA IOT_LAB.SENSORS;
@@ -623,7 +610,8 @@ GROUP BY SENSOR_TYPE
 ORDER BY SENSOR_TYPE;
 ```
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Anomaly Detection with Cortex AI
 
 Use Snowflake Cortex to detect anomalies and generate AI-powered explanations. This demonstrates enriching operational data with AI capabilities.
@@ -681,7 +669,8 @@ LIMIT    10;
 
 Each anomaly now has a human-readable explanation generated by the LLM, making it easier for operators to understand and act on alerts.
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Sync Anomalies to Postgres
 
 Export the AI-enriched anomalies back to internal stage for Postgres to consume, completing the bidirectional data flow.
@@ -716,7 +705,7 @@ OVERWRITE = FALSE;
 > WHEN
 >     SYSTEM$STREAM_HAS_DATA('ANOMALIES_STREAM')
 > AS
->   iot/  COPY INTO @IOT_INT_STAGE/sync/ FROM (...);
+>     COPY INTO @IOT_INT_STAGE/iot/sync/ FROM (...);
 > ```
 > This creates an event-driven pipeline that exports anomalies as soon as they're detected.
 
@@ -728,12 +717,13 @@ OVERWRITE = FALSE;
 USE ROLE SYSADMIN;
 USE SCHEMA IOT_LAB.SENSORS;
 
-LIST @IOT_INT_STAGE/sync/;
+LIST @IOT_INT_STAGE/iot/sync/;
 ```
 
 You should see one or more CSV files containing the anomaly data.
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Receive Anomalies in Postgres
 
 Import the AI-enriched anomaly data back into Postgres, completing the round trip.
@@ -788,7 +778,8 @@ LIMIT    10;
 
 The anomalies detected in Snowflake with AI explanations are now available in Postgres for operational use.
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Cleanup
 
 ### Postgres Cleanup
@@ -843,7 +834,8 @@ DROP STAGE IF EXISTS IOT_INT_STAGE;
 DROP STORAGE INTEGRATION IF EXISTS SF_LAB_INTS3_INTEGRATION;
 ```
 
-<!-- ------------------------ -->
+<!---------------------------->
+
 ## Conclusion and Resources
 
 ### What You Learned
