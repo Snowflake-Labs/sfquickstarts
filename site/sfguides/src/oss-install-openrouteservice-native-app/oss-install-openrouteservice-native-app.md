@@ -49,6 +49,8 @@ This solution deploys [OpenRouteService](https://openrouteservice.org/) directly
 
 ### Prerequisites
 
+> **Platform note:** Today, this solution is primarily developed and tested on macOS. Windows users may encounter friction during installation and build steps around container image builds but Cortex Code should be able to resolve it.
+
 **This is what you will need**:
 
 -   **ACCOUNTADMIN** access to your Snowflake account (or a custom role with CREATE DATABASE, CREATE WAREHOUSE, CREATE COMPUTE POOL, and IMPORT SHARE privileges)
@@ -690,10 +692,10 @@ These settings support complex route optimizations with many vehicles and delive
 ## Customize Your Deployment
 
 All the customization (location, routing profiles) can be managed via the application itself in the region builder section.
-[region_builder](assets/region_builder.png)
+![region_builder](assets/region_builder.png)
 
 Just use the UI to configure different locations and vehicle. Below example for New York. 
-[region_builder_example](assets/region_builder_example.png)
+![region_builder_example](assets/region_builder_example.png)
 
 <!-- ------------------------ -->
 ## Uninstall the Route Optimizer
@@ -735,8 +737,6 @@ This solution demonstrates the power of combining:
 - **Snowpark Container Services** - Running OpenRouteService as a self-managed routing engine
 - **SQL-Callable Functions** - Routing functions for directions, optimization, isochrones, and time-distance matrix
 
-The key advantage of this approach is **flexibility without complexity**. Want to switch from San Francisco to Paris? Just run the location customization skill. Need to add walking or cycling routes? Enable additional routing profiles. The skill-based approach means you only run the steps you need.
-
 ### What You Learned
 
 - **Deploy with Cortex Code** - Use natural language skills to automate complex Snowflake deployments including container services, stages, and compute pools
@@ -752,12 +752,6 @@ The key advantage of this approach is **flexibility without complexity**. Want t
     - **Time-Distance Matrix** - Calculate travel time and distance matrices between multiple locations
 
 - **Native GEOGRAPHY Output** — `DIRECTIONS`, `ISOCHRONES`, and `OPTIMIZATION` return route and polygon geometry as a native `GEOGRAPHY` column directly — no JSON parsing or wrapper functions needed
-
-### Next Steps
-
-Deploy the demo to see the routing functions in action with real-world POI data:
-
-👉 **[Deploy Route Optimization Demo](../oss-deploy-route-optimization-demo/)**
 
 ### Related Resources
 

@@ -26,7 +26,7 @@ Learn more about [Snowpark](/snowpark/).
 
 ### What is Snowpark ML?
 
-Snowpark ML is a new library for faster and more intuitive end-to-end ML development in Snowflake. Snowpark ML has 2 APIs: Snowpark ML Modeling (in Public Preview) for model development and Snowpark ML Operations (in Private Preview) for model deployment.
+> Note: Snowpark ML is now outdated. To learn more about how to build scalable ML models with fully managed CPUs and GPUs in a pre-configured environment for large-scale ML training, check out the [Container Runtime docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) and try one of our [newer ML quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart).
 
 This quickstart will focus on the Snowpark ML Modeling API, which scales out feature engineering and simplifies ML training execution in Snowflake.
 
@@ -203,6 +203,7 @@ Through this Quickstart we were able to experience how Snowpark for Python enabl
 - Hyperparameter Tuning with Snowpark ML
 
 For more information on Snowpark Python, and Machine Learning in Snowflake, check out the following resources:
-- [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-- [Snowpark Python API Docs](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
-- [Snowpark ML Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+- [Snowflake ML Resources](http://www.snowflake.com/ml)
+- [Best Practices for Production ML](https://www.snowflake.com/en/engineering-blog/best-practices-for-production-ml/)
+- [Agentic Machine Learning Best Practices with Cortex Code](https://www.snowflake.com/en/engineering-blog/agentic-ml-best-practices-cortex-code/)
+- [More ML Quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)

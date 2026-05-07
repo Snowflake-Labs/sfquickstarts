@@ -155,13 +155,22 @@ while IFS= read -r rename; do
   
   if [ "$reverse_exists" -gt 0 ]; then
     echo "ℹ️  Round-trip rename detected (allowed): $from ↔ $to"
-    # This is a round-trip, skip it
     continue
   fi
   
   # Check if original folder started with underscore (allowed)
   if [[ "$from" =~ ^_ ]]; then
     echo "ℹ️  Underscore folder rename (allowed): $from → $to"
+    continue
+  fi
+  
+  # Check if the source folder still has active files (added or modified) in this PR.
+  # If so, the folder is not being renamed — files were just reused/copied into a new guide.
+  active_files_in_source=$(echo "$files_json" | jq -r --arg folder "site/sfguides/src/$from/" \
+    '[.[] | select(.status == "added" or .status == "modified") | select(.filename | startswith($folder))] | length')
+  
+  if [ "$active_files_in_source" -gt 0 ]; then
+    echo "ℹ️  Source folder '$from' still has active files in this PR — not a rename, skipping"
     continue
   fi
   
