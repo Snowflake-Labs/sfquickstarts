@@ -1,11 +1,12 @@
 author: Paul Hooper
 id: vhol-data-vault
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
 summary: Building a Real-time Data Vault in Snowflake 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 
 # Building a Real-Time Data Vault in Snowflake
 <!-- ------------------------ -->
@@ -13,29 +14,30 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Today, with the ever-increasing availability and volume of data from many types of sources such as IoT, mobile devices, and weblogs, there is a growing need, and yes, demand, to go from batch load processes to streaming continuous real-time (RT) data. Businesses change at a rapid rate, becoming more competitive all the time. Those that can harness the value of their data faster to drive better decision making and better business outcomes will prevail.
 
-One of the benefits of using the Data Vault system is that it was designed from inception not only to accept data loaded using traditional batch mode (which was the prevailing mode in the early 2000s when [Dan Linstedt](https://datavaultalliance.com/#about) introduced Data Vault) but also to easily accept data loading continuously in real or near-realtime (NRT). In the early 2000s, that was a nice-to-have aspect of the approach and meant the methodology was effectively future-proofed from that perspective. Still, few database systems had the capacity to support that kind of requirement. Today, RT or at least NRT loading is almost becoming a mandatory requirement for modern data platforms. Granted, not all loads or use cases need to be NRT, but most forward-thinking organizations need to onboard data for analytics in an NRT manner.
+One of the benefits of using the Data Vault system is that it was designed from inception not only to accept data loaded using traditional batch mode (which was the prevailing mode in the early 2000s when [Dan Linstedt](https://datavaultalliance.com/#about) introduced Data Vault) but also to easily accept data loading continuously in real or near-realtime (NRT). In the early 2000s, that was a nice-to-have aspect of the approach and meant the methodology was effectively future-proofed from that perspective. Still, few relational database management systems had the ability to support that kind of requirement. Today, RT or at least NRT loading is almost becoming a mandatory requirement for modern data platforms. Granted, not all loads or use cases need to be NRT, but most forward-thinking organizations need to onboard data for analytics in an NRT manner.
 
 Those who have been using the Data Vault approach don’t need to change much other than figure out how to engineer their data pipeline to serve up data to the Data Vault in NRT. The data models don’t need to change; the reporting views don’t need to change; even the loading patterns don’t need to change. For those that aren’t using Data Vault already, if they have real-time loading requirements, this architecture and method might be worth considering.
 
 ### Data Vault on Snowflake
 
-There have been numerous [blog posts](/blog/tips-for-optimizing-the-data-vault-architecture-on-snowflake/), user groups, and webinars over the years, discussing the best practices and customer success stories around implementing Data Vaults on Snowflake.  So the question now is how do you build a Data Vault on Snowflake that has real-time or near real-time continuous data streaming into it.
+There have been numerous [blog posts](/blog/tips-for-optimizing-the-data-vault-architecture-on-snowflake/), user groups, and webinars over the years, discussing the best practices and customer success stories of implementing Data Vaults on Snowflake.  But, how do we build a Data Vault on Snowflake that has real-time or near real-time continuous data streaming into it?
 
-Luckily, streaming data is one of the [use-cases](/cloud-data-platform/) that Snowflake was built to support, so we have many features to help us achieve this goal. **This guide is an extended version of the [article](https://datavaultalliance.com/news/building-a-real-time-data-vault-in-snowflake/) posted on Data Vault Alliance website, now including practical steps to build an example of real-time Data Vault feed on Snowflake. Join us on simple-to-follow steps to see it in action.**
+Luckily, streaming data is one of the [use-cases](/cloud-data-platform/) that Snowflake was built to support, so we have many features to help us achieve this goal. **This guide is an extended version of the [article](https://datavaultalliance.com/news/building-a-real-time-data-vault-in-snowflake/) posted on the Data Vault Alliance website, with practical steps to build an example of a real-time Data Vault on Snowflake. Join us for simple-to-follow steps to see it in action.**
 
 ### Prerequisites
-- A Snowflake account, set up using the [Defensible Analytics using Data Vault and Snowflake](https://www.snowflake.com/en/developers/guides/defensible-analytics-using-data-vault-and-snowflake/) guide. If you don't use this guide to set up your account, you'll need to alter the references to roles, databases, schemas, warehouses, and other Snowflake objects to work with your account.
 - Familiarity with [Snowflake key concepts and architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts)
 - Familiarity with [Data Vault methodology and architecture](https://datavaultalliance.com/#resources)
 
 ### What You’ll Learn
 - How to use Data Vault modeling on Snowflake
 - How to build basic objects and write ELT code for them
-- How to leverage [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html) and [Continuous Data Pipelines](https://docs.snowflake.com/en/user-guide/data-pipelines.html) to automate data processing
+- How to leverage [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro) and [Continuous Data Pipelines](https://docs.snowflake.com/en/user-guide/data-pipelines) to automate data processing
 - How to apply data virtualization to accelerate data access
 
 ### What You’ll Need 
 - A Snowflake account -- we recommend starting with a [trial](https://trial.snowflake.com/) account
+- Architectural objects created through the [Defensible Analytics using Data Vault and Snowflake](https://www.snowflake.com/en/developers/guides/defensible-analytics-using-data-vault-and-snowflake/) guide. If you haven't used this guide to set up foundational architecture in your account, you'll need to alter the references to roles, databases, schemas, warehouses, and other Snowflake objects in order to work with your specific account design.
+
 
 ### What You’ll Build 
 - Data Vault models on Snowflake, based on sample dataset 
@@ -57,29 +59,23 @@ In the [Defensible Analytics using Data Vault and Snowflake](https://www.snowfla
 
 ![Continuous Data Pipeline Architecture](assets/continuousdatapipelinearchitecture.png)  
 
-Snowflake supports multiple options for engineering data pipelines. In this post we are going to show one of the most efficient ways to implement incremental NRT integration leveraging Snowflake [Continuous Data Pipelines](https://docs.snowflake.com/en/user-guide/data-pipelines.html).  Let's take a look at the architecture diagram above to understand how it works. 
+Snowflake supports multiple options for engineering data pipelines. In this guide, we'll demonstrate one of the most efficient ways to implement incremental continuous data integration with Snowflake [Continuous Data Pipelines](https://docs.snowflake.com/en/user-guide/data-pipelines). Let's take a look at the architecture diagram above to understand how it works. 
 
-Snowflake has a special [stream](https://docs.snowflake.com/en/user-guide/streams.html) object that tracks all data changes on a table (inserts, updates, and deletes). This process is 100% automatic and unlike traditional databases will never impact the speed of data loading. The change log from a stream is automatically ‘consumed’ once there is a successfully completed DML operation using the stream object as a source. 
+We'll use [stream](https://docs.snowflake.com/en/user-guide/streams) objects to track data inserts into our Landing Zone tables. This process is automatic, and unlike a traditional RDBMS, this change-tracking will never impact the speed of data loading. The change data captured in a stream is automatically consumed once there is a successfully completed DML operation using the stream object as a source. After loading new data into a table, the changes are immediately reflected in the stream showing the [delta](https://docs.snowflake.com/en/user-guide/streams#data-flow) that requires processing.
 
-So, loading new data into a staging table, would immediately be reflected in a stream showing the [‘delta’](https://docs.snowflake.com/en/user-guide/streams.html#data-flow) that requires processing.
+We'll then use [tasks](https://docs.snowflake.com/en/user-guide/tasks-intro). Tasks are a powerful way to automate data processing, waking up on a defined schedule (here, every 1 minute), checking for new data in the associated stream, and if so, they execute SQL, pushing into the Raw Vault objects. Tasks can be arranged in a [tree-like dependency graph](https://docs.snowflake.com/en/user-guide/tasks-intro#simple-tree-of-tasks), executing child tasks the moment the predecessor finished its part. 
 
-The second component we are going to use is [tasks](https://docs.snowflake.com/en/user-guide/tasks-intro.html). It is a Snowflake managed data processing unit that will wake up on a defined interval (e.g., every 1-2 min), check if there is any data in the associated stream and if so, will run SQL to push it to the Raw Data Vault objects. Tasks could be arranged in a [tree-like dependency graph](https://docs.snowflake.com/en/user-guide/tasks-intro.html#simple-tree-of-tasks), executing child tasks the moment the predecessor finished its part. 
+Following Data Vault best practices for continuous data integration -- loading data in parallel -- we'll use Snowflake’s [multi-table insert (MTI)](https://docs.snowflake.com/en/sql-reference/sql/insert-multi-table) capability in our tasks to populate multiple Raw Vault objects in our Enterprise Memory Zone using a single DML transaction. These tasks utilize scalable virtual warehouses, which means we always have enough [compute power](https://docs.snowflake.com/en/user-guide/warehouses-overview#warehouse-size) (from XS to 6XL) to handle any workload, whilst the [multi-cluster virtual warehouse](https://docs.snowflake.com/en/user-guide/warehouses-multicluster#multi-cluster-warehouses) option will automatically scale-out and load balance all the tasks as more hubs, links and satellites are introduced.
 
-Last but not least, following Data Vault 2.1 best practices for NRT data integration (to load data in parallel) we are going to use Snowflake’s [multi-table insert (MTI)](https://docs.snowflake.com/en/sql-reference/sql/insert-multi-table.html) inside tasks to populate multiple Raw Data Vault objects by a single DML command. (Alternatively you can create multiple streams & tasks from the same table in stage in order to populate each data vault object by its own asynchronous flow.) 
+Finally, as our Raw Vault is updated, streams will be used to propagate changes to Business Vault objects (such as derived Satellites, or PITs and Bridges, if needed for performance) in the Information Delivery Zone. This setup can be repeated, continuously transforming data through in small increments, quickly and efficiently. Virtualized facts and dimensions are delivered to data consumers, with a truly agile data pipeline backing them up.
 
-Next step, you assign tasks to one or many virtual warehouses. This means you always have enough [compute power](https://docs.snowflake.com/en/user-guide/warehouses-overview.html#warehouse-size) (XS to 6XL) to deal with any size workload, whilst the [multi-cluster virtual warehouse](https://docs.snowflake.com/en/user-guide/warehouses-multicluster.html#multi-cluster-warehouses) option will automatically scale-out and load balance all the tasks as you introduce more hubs, links and satellites to your vault. 
+Following this approach will result in a fully automated, reliable and defensible production data pipeline that powers decisions based on the latest data available.
 
-Talking about tasks, Snowflake just introduced another fantastic capability - serverless tasks. This enables you to rely on compute resources managed by Snowflake instead of user-managed virtual warehouses. These compute resources are automatically resized and scaled up and down by Snowflake as required by each workload. This feature will be out of scope for this guide, but serverless compute model could reduce compute costs, in some cases significantly, allowing you to process more data, faster with even less management. 
-
-As your raw vault is updated, streams can then be used to propagate those changes to Business Vault objects (such as derived Sats, PITS, or Bridges, if needed) in the next layer. This setup can be repeated to move data through all the layers in small increments very quickly and efficiently. All the way until it is ready to be accessed by data consumers (if materialization of the data is required for performance). 
-
-Following this approach will result in a hands-off production data pipeline that feeds your Data Vault architecture.
 
 <!-- ------------------------ -->
 ## Build: Landing Zone, Sample Data and Staging for the Raw Vault
 
-Every Snowflake account provides access to [sample data sets](https://docs.snowflake.com/en/user-guide/sample-data.html). You can find corresponding schemas in SNOWFLAKE_SAMPLE_DATA database in your object explorer.
-For this guide we are going to use a subset of objects from [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html) set, representing **customers** and their **orders**. We also going to take some reference data about **nations** and **regions**. 
+Every new Snowflake trial account includes access to [sample data sets](https://docs.snowflake.com/en/user-guide/sample-data), and we can find these in the SNOWFLAKE_SAMPLE_DATA database. For this guide, we'll use a subset of objects from [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-tpch) set, representing **customers** and their **orders**. We'll also store reference data about **nations** and **regions**. 
 
 | Dataset | System | Specific Source | Load Scenario | Mechanism |
 |---------|-------------|--------|---------------|-----------|
@@ -118,13 +114,14 @@ SELECT src.*
      , 'Static Reference'     rsrc 
   FROM snowflake_sample_data.tpch_sf10.region src
 ;
+-- Note that we're using OR REPLACE here in the guide for ease of correcting mistakes. In a production landing zone, data should be immutable.
 ```
 
 ### Step 2: LZ - Raw Customer and Order Data
 
-Next, let's create staging tables for our future data pipeline. This syntax should be very familiar with anyone working with databases before. It is ANSI SQL compliant DDL, with probably one key exception - for stg_customer we are going to load the full payload of JSON into raw_json column. For this, Snowflake has a special data type [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured.html). 
+Next, let's create staging tables for our future data pipeline. This syntax should be familiar to most. It is ANSI SQL compliant DDL, but with a key exception - for stg_customer we'll load the full payload of JSON into the raw_json column using the data type [VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured.html). We'll also enable change tracking, enabling our future use of streams.
 
-As we load data we'll also add some technical metadata, like the row number in a file. 
+As we load data, we'll also add some technical metadata, like the row number in a file. 
 
 ```sql
 -- LZ: Customer System ---------------------------------------------------------
@@ -133,10 +130,10 @@ USE SCHEMA TPCH_CUSTOMER_SYS;
 CREATE OR REPLACE TABLE stg_customer
 (
   raw_json                VARIANT
-, filename                STRING   NOT NULL
-, file_row_seq            NUMBER   NOT NULL
-, ldts                    STRING   NOT NULL
-, rsrc                    STRING   NOT NULL
+, filename                STRING    NOT NULL
+, file_row_seq            NUMBER    NOT NULL
+, ldts                    TIMESTAMP NOT NULL
+, rsrc                    STRING    NOT NULL
 )
 CHANGE_TRACKING = TRUE;
 
@@ -146,25 +143,25 @@ USE SCHEMA TPCH_ORDERS_SYS;
 CREATE OR REPLACE TABLE stg_orders
 (
   o_orderkey              NUMBER
-, o_custkey               NUMBER  
+, o_custkey               NUMBER
 , o_orderstatus           STRING
-, o_totalprice            NUMBER  
+, o_totalprice            NUMBER
 , o_orderdate             DATE
 , o_orderpriority         STRING
 , o_clerk                 STRING
 , o_shippriority          NUMBER
 , o_comment               STRING
-, filename                STRING   NOT NULL
-, file_row_seq            NUMBER   NOT NULL
-, ldts                    STRING   NOT NULL
-, rsrc                    STRING   NOT NULL
+, filename                STRING    NOT NULL
+, file_row_seq            NUMBER    NOT NULL
+, ldts                    TIMESTAMP NOT NULL
+, rsrc                    STRING    NOT NULL
 )
 CHANGE_TRACKING = TRUE;
 ```
 
 ### Step 3: DV - Tracking New Data to be loaded into the Raw Vault
 
-The tables we just created are going to be used by Snowpipe to drip-feed the data as it is lands in the stage. In order to easily detect and incrementally process the new portion of data we'll create [streams](https://docs.snowflake.com/en/user-guide/streams.html) on these staging tables. These streams are part of the mechanism used to load data into the Enterprise Memory Zone's Raw Vault, not into the Landing Zone, so we place them accordingly.
+The tables we created will be used by Snowpipe to drip-feed the data as it lands in the stage. In order to easily detect and incrementally process the new portion of data we'll create [streams](https://docs.snowflake.com/en/user-guide/streams.html) on these staging tables. These streams are part of the mechanism used to load data into the Enterprise Memory Zone's Raw Vault, not into the Landing Zone, so we place them accordingly.
 
 ```sql
 --- DV: Tracking Customer Changes ----------------------------------------------
@@ -182,7 +179,7 @@ USE SCHEMA CUSTSERV;
 CREATE OR REPLACE STREAM stg_orders_strm ON TABLE DEV_LZ.TPCH_ORDERS_SYS.stg_orders;
 ```
 
-> Note the use of two different roles here. You are effectively acting as a data engineer for two domains. Domains are not teams. A single person can have multiple functional roles, which are like "wearing different hats." In a real-world scenario, we're likely working with subject matter experts and getting approval from leaders specific to either the Sales & Marketing domain (perhaps the CRO, or VP of Sales), or the Customer Service domain (perhaps the CCO, or VP of Customer Success). The process is similar, but the specific people are often different.
+> Note the use of two different roles here. We are effectively acting as a data engineer for two domains. Domains are not teams. A single person can have multiple functional roles, akin to "wearing different hats." In a real-world scenario, we're likely working with subject matter experts and getting approval from leaders specific to either the Sales & Marketing domain (perhaps the CRO, or VP of Sales), or the Customer Service domain (perhaps the CCO, or VP of Customer Success). The process is similar, but the specific people are often different.
 
 ### Step 4: LZ - Simulating New Data into the Landing Zone
 
@@ -207,7 +204,7 @@ CREATE OR REPLACE STAGE orders_data   FILE_FORMAT = (TYPE = CSV );
 
 Next we'll generate and unload sample data. There are couple of things going on.
 
-First, we are using [object_construct](https://docs.snowflake.com/en/sql-reference/functions/object_construct.html) as a quick way to create a object/document from all columns and subset of rows for **customer** data and offload it into customer_data stage. **Orders** data would be extracted into compressed CSV files. There are many additonal options in the [COPY INTO stage](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html) construct that would fit most requirements, but in this case we are using INCLUDE_QUERY_ID to make it easier to generate new incremental files, as we are going to run these commands over and over again, without a need to deal with file overriding. 
+First, we are using [object_construct](https://docs.snowflake.com/en/sql-reference/functions/object_construct.html) as a quick way to create a object/document from all columns and subset of rows for **customer** data and offload it into customer_data stage. **Orders** data would be extracted into compressed CSV files. There are many additonal options in the [COPY INTO stage](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html) construct that would fit most requirements, but in this case we are using INCLUDE_QUERY_ID to make it easier to generate new incremental files, as we'll run these commands over and over again, without a need to deal with file overriding. 
 
 ```sql
 -- LZ: Simulating Customer System Data -----------------------------------------
@@ -231,7 +228,7 @@ FROM
 INCLUDE_QUERY_ID=TRUE;
 ```
 
-You can now run the following to validate that the JSON object data is now stored in files:
+We can now run the following to validate that the JSON object data is now stored in files:
 
 ```sql
 -- LZ: Inspecting Customer System Data -----------------------------------------
@@ -243,9 +240,9 @@ SELECT METADATA$FILENAME,$1 FROM @customer_data;
 ```
 ![Semistructured JSON Customer Data](assets/semistructuredcustomerdata.png)
 
-Next, we are going to setup Snowpipe to load data from files in a stage into staging tables. 
+Next, we will setup Snowpipe to load data from files in a stage into staging tables. 
 
-In this guide, for better transparency we are going to trigger Snowpipe explicitly to scan for new files, but in real projects you will likely going to enable AUTO_INGEST, connecting it with your cloud storage events (like AWS SNS) and process new files automatically. 
+For better transparency, we will trigger Snowpipe explicitly to scan for new files. However, in real projects, we would likely enable AUTO_INGEST, connecting it to cloud storage events (like AWS SNS) to process new files automatically. 
 
 ```sql
 -- LZ: Simulating Orders System Data -------------------------------------------
@@ -280,15 +277,14 @@ SELECT $1
      , metadata$filename
      , metadata$file_row_number
      , CURRENT_TIMESTAMP()
-     , 'Customers System'
+     , 'Customer System'
   FROM @customer_data
 );
 
 ALTER PIPE DEV_LZ.TPCH_CUSTOMER_SYS.stg_customer_pp REFRESH;
 ```
 
-Once this done, you should see data is appearing in the target tables and the stream on these tables.
-As you would notice, number of rows in a stream is exactly the same as in the base table. This is because we didn't process/consumed the delta of that stream yet. Stay tuned! 
+Once this done, we should see data is appearing in the target tables and the stream on these tables. As we'd expect, the number of rows in the streams are the same as in the tables. That's because we haven't yet consumed the content of the streams, and the tables had zero rows when we created the streams. Stay tuned! 
 
 ```sql
 -- DV: Inspecting Streams ------------------------------------------------------
@@ -311,9 +307,9 @@ SELECT 'DEV_DV.CUSTSERV.stg_orders_strm', count(1) FROM DEV_DV.CUSTSERV.stg_orde
 
 ### Step 5: DV - Preparing to Load the Raw Vault
 
-Finally, now that we established the basics and new data is knocking at our door (stream), let's see how we can derive some of the business keys for the Data Vault entities we are going to model. In this example, we'll model it as a view on top of the stream that should allow us to perform data parsing (raw_json -> columns) and business_key, hash_diff derivation on the fly.
+Finally, now that we established the basics and new data is logged in the stream, let's see how we can derive some of the business keys for the Data Vault entities we'll model. In this example, we'll model it as a view on top of the stream that should allow us to perform data parsing (raw_json -> columns) and business_key, hash_diff derivation on the fly.
 
-Another thing to notice here is the use of SHA1_BINARY as hashing function. There are many articles on choosing between MD5/SHA1(2)/other hash functions, so we won't focus on this. For this lab, we are going to use fairly common SHA1 and its BINARY version from Snowflake arsenal of functions that use less bytes to encode value than STRING. Note that our chosen delimiter is '^', '-1' represents our required null keys or missing descriptive data, '_hk' indicates a hash key, and '_hd' indicates a hash diff. While Data Vault 2.1 does not standardized specific hashing algorithms or naming conventions, is does state they must be applied consistently across the implementation.
+Another thing to notice here is the use of the SHA1_BINARY function in the hashing algorithm. There are many articles on choosing between MD5/SHA1(2)/other hash functions, so we won't focus on this. For this guide, we'll use fairly common SHA1 and its BINARY version from Snowflake arsenal of functions, using fewer bytes than a STRING. Note that our chosen delimiter is '^', '-1' represents our required null keys or missing descriptive data, '_hk' indicates a hash key, and '_hd' indicates a hash diff. While Data Vault 2.1 does not standardize a specific hashing algorithm or naming convention, the DV2.1 standards do state these must be defined and applied consistently across the implementation.
 
 After creating the views, be sure to take a good look at the sample output.
 
@@ -382,20 +378,18 @@ SELECT * FROM stg_order_strm_outbound LIMIT 5;
 
 ![Staged Customer Stream Outbound View](assets/customerstreamoutbound.png)
 
-Does the output look good? Well done! We've built our staging/inbound pipeline, ready to accommodate streaming data with defined business keys, hash keys, and hash diffs that we are going to use in our Raw Data Vault. Let's move on to the next step!
+Does the output look good? Well done! We've built our staging/inbound pipeline, ready to accommodate streaming data with defined business keys, hash keys, and hash diffs that we'll use in our Raw Vault. Let's move on to the next step!
 
 
 <!-- ------------------------ -->
 ## Build: Data Vault - Raw Vault
 
-In this section, we will start building structures and pipelines for the **Raw Vault**.
-
-Here is the ERD of the objects we are going to deploy using the script below:
+In this section, we will start building structures and pipelines for the **Raw Vault**. This is the ERD of the objects we'll deploy:
 ![Raw Vault ERD](assets/img16.png)
 
 ### Step 1: Raw Vault Tables
 
-We'll start with DDL for the Hubs, Links and Satellites. As you can expect, this guide won't go into detail on the data vault modelling process. For certified training in DV2.1, We highly recommend working with experts & partners from Data Vault Alliance. Note that while we'll identify primary and foreign keys, remember that Snowflake does not enforce constraints.
+We'll start with DDL for the Hubs, Links and Satellites. This guide won't detail the Data Vault 2.1 model standards. For certified training in DV2.1, we highly recommend working with experts & partners from Data Vault Alliance. While primary and foreign keys are identified by constraints in the code below, it's important to remember that Snowflake does not enforce them.
 
 ```sql
 -- DV: Raw Vault - Sales & Marketing -------------------------------------------
@@ -406,8 +400,8 @@ USE SCHEMA DEV_DV.SALESMKT;
 -- Sales & Marketing: Region Reference
 CREATE OR REPLACE TABLE ref_region 
 ( 
-  regioncode            NUMBER 
-, ldts                  TIMESTAMP
+  regioncode            NUMBER    NOT NULL
+, ldts                  TIMESTAMP NOT NULL
 , rsrc                  STRING    NOT NULL
 , r_name                STRING
 , r_comment             STRING
@@ -424,9 +418,9 @@ SELECT r_regionkey
 -- Sales & Marketing: Nation Reference
 CREATE OR REPLACE TABLE ref_nation 
 ( 
-  nationcode            NUMBER 
-, regioncode            NUMBER 
-, ldts                  TIMESTAMP
+  nationcode            NUMBER    NOT NULL
+, regioncode            NUMBER    NOT NULL
+, ldts                  TIMESTAMP NOT NULL
 , rsrc                  STRING    NOT NULL
 , n_name                STRING
 , n_comment             STRING
@@ -455,8 +449,10 @@ CREATE OR REPLACE TABLE rv_hub_customer
 -- Sales & Marketing: Raw Vault Customer Satellite
 CREATE OR REPLACE TABLE rv_sat_customer 
 ( 
-  customer_hk            BINARY    NOT NULL   
+  customer_hk            BINARY    NOT NULL
 , ldts                   TIMESTAMP NOT NULL
+, rsrc                   STRING    NOT NULL  
+, customer_hd            BINARY    NOT NULL
 , c_name                 STRING
 , c_address              STRING
 , c_phone                STRING 
@@ -464,8 +460,6 @@ CREATE OR REPLACE TABLE rv_sat_customer
 , c_mktsegment           STRING    
 , c_comment              STRING
 , nationcode             NUMBER
-, customer_hd            BINARY    NOT NULL
-, rsrc                   STRING    NOT NULL  
 , CONSTRAINT pk_rv_sat_customer    PRIMARY KEY(customer_hk, ldts)
 , CONSTRAINT fk_rv_sat_customer    FOREIGN KEY(customer_hk) REFERENCES rv_hub_customer
 );
@@ -484,11 +478,13 @@ CREATE OR REPLACE TABLE rv_hub_order
 , CONSTRAINT pk_rv_hub_order        PRIMARY KEY(order_hk)
 );
 
--- Customer Service: Raw Vault Order Hub
+-- Customer Service: Raw Vault Order Satellite
 CREATE OR REPLACE TABLE rv_sat_order 
 ( 
   order_hk               BINARY    NOT NULL   
 , ldts                   TIMESTAMP NOT NULL
+, rsrc                   STRING    NOT NULL   
+, order_hd               BINARY    NOT NULL
 , o_orderstatus          STRING   
 , o_totalprice           NUMBER
 , o_orderdate            DATE
@@ -496,13 +492,11 @@ CREATE OR REPLACE TABLE rv_sat_order
 , o_clerk                STRING    
 , o_shippriority         NUMBER
 , o_comment              STRING
-, order_hd               BINARY    NOT NULL
-, rsrc                   STRING    NOT NULL   
 , CONSTRAINT pk_rv_sat_order       PRIMARY KEY(order_hk, ldts)
 , CONSTRAINT fk_rv_sat_order       FOREIGN KEY(order_hk) REFERENCES rv_hub_order
 );
 
--- Customer Service: Raw Vault Order Hub
+-- Customer Service: Raw Vault Customer-Order Link
 CREATE OR REPLACE TABLE rv_lnk_customer_order
 (
   customer_order_hk       BINARY       NOT NULL   
@@ -520,7 +514,7 @@ CREATE OR REPLACE TABLE rv_lnk_customer_order
 
 Now, we have source data waiting in our staging streams & views, and we have target Raw Vault tables ready.
 
-Let's connect the dots. We'll create tasks, one task per stream, so when new records are available, that new data will be incrementally loaded to all dependent Raw Vault models in one operation. To achieve that, we'll use **multi-table insert** capability of Snowflake mentioned earlier. As you can see, tasks can be set up to run on a pre-defined frequency (every 1 minute in our example) and use a dedicated virtual warehouse as a compute power. To minimize compute costs, before waking up a compute resource, tasks will check for new data in the stream. You only pay for the compute you use.
+Let's connect the dots. We'll create tasks, one task per stream, so when new records are available, that new data will be incrementally loaded to all dependent Raw Vault models in one operation. To achieve that, we'll use **multi-table insert** capability of Snowflake mentioned earlier. Tasks can be set up to run on a pre-defined frequency (every 1 minute in this guide) and use a dedicated virtual warehouse for compute. To minimize compute costs, before waking the warehouse, tasks will check for new data in the stream. We only pay for the compute we use.
 
 ```sql
 -- Sales & Marketing: Raw Vault Customer System Data MTI -----------------------
@@ -707,17 +701,18 @@ ALTER TASK stg_customer_strm_tsk RESUME;
 
 SELECT * FROM table(information_schema.task_history()) ORDER BY scheduled_time DESC;
 ```
-If you see SUCCEEDED, the task ran successfully!
+
+If we see SUCCEEDED, the task ran successfully!
 
 ![Task Details](assets/taskhistory.png)
 
-All tasks can be monitored in one location by clicking on Transformation -> Tasks. Opening Task Details from there, or directly through the Horizon Catalog, shows key details like the state of the task, its schedule, the condition in which it runs, and how many failures are attempted before auto-suspending. The Task Graph and Run History are just a tab-click away.
+All tasks can be monitored in one location by clicking on Transformation -> Tasks. Opening Task Details from there, or directly through the Horizon Catalog, shows us key details like the state of the task, its schedule, the condition in which it runs, and how many failures are attempted before auto-suspending. The Task Graph and Run History are just a tab-click away.
 
 ![Task Details](assets/taskdetails.png)
 
 ### Step 4: Verifying the Successful Loads
 
-Use the SQL below to check the row counts in our Raw Vault tables, and our two outbound streams.
+We can use the SQL below to check the row counts in our Raw Vault tables, and our two outbound streams.
 
 ```sql
 -- Verifying the Loads ---------------------------------------------------------
@@ -737,35 +732,35 @@ SELECT 'stg_order_strm_outbound', count(1) FROM DEV_DV.CUSTSERV.stg_order_strm_o
 ;
 ```
 
-The views on streams in our staging area no longer return any rows, and as a result, the tasks simply wait to be triggered on the stream having data again. We never deleted rows or truncated a table. The prior querying of the views did not consume the contents of the stream. It was the task that consumed the rows of the stream. The multi-table insert allowed us to load **five** target tables with just **two** stream / task combinations. Do you need to spend any more time implementing incremental detection/processing logic on the application side? No.
+The views on streams in our staging area no longer return any rows, and as a result, the tasks simply wait to be triggered on the stream having data again. We never deleted rows or truncated a table. The prior querying of the views did not consume the contents of the stream. The task paired with the stream automatically consumed the rows of the stream. The multi-table insert allowed us to load **five** target tables with just **two** stream / task combinations. Do we need to spend any more time implementing incremental detection and processing logic on the application side? No.
 
-You might have noticed that you didn't use two different roles when selecting rows from the two domains. While only the specific domain-oriented role is able to perform create and write actions, cross-domain reading and referencing can be performed. We set up this architecture in the [Defensible Analytics using Data Vault and Snowflake](https://www.snowflake.com/en/developers/guides/defensible-analytics-using-data-vault-and-snowflake/) guide. Those with dominion over Sales & Marketing govern the data, while those operating in other domains are able to use that data, eliminating duplication of effort and establishing data lineage.
+Notice that we didn't use two different roles when selecting rows from the two domains. While only the specific domain-oriented role is able to perform **create and write** actions, **cross-domain reading and referencing** can be performed. We intentionally designed this in the [Defensible Analytics using Data Vault and Snowflake](https://www.snowflake.com/en/developers/guides/defensible-analytics-using-data-vault-and-snowflake/) guide. Those with dominion over Sales & Marketing govern the data, while those operating in other domains are able to use that data, eliminating duplication of effort and establishing clear data lineage and accountability.
 
-We now have data in our **Raw Vault**. Let's move on and talk about the concept of virtualization in your continuous Data Vault solution.
+We now have data in our **Raw Vault**. Let's move on and consider virtualization in our continuous Data Vault solution.
 
 <!-- ------------------------ -->
 ## Views for Agile Reporting
 
-One of the great benefits of having the compute power of Snowflake is that it is now possible to default your business vault and information marts in a Data Vault architecture to be built exclusively from views. There are numerous customers using this approach in production today. There is no longer a need to argue that there are “too many joins” or that the response "won’t be fast enough." The elasticity of the Snowflake virtual warehouses combined with our dynamic optimization engine have solved that problem. For more detail, see this [post](/blog/tips-for-optimizing-the-data-vault-architecture-on-snowflake-part-3/).
+One of the great benefits of Snowflake is that it is now possible to default our Business Vault and Information Mart objects as views. Numerous customers use this approach in production today. No longer is there a need to argue that there are “too many joins” or that the response "won’t be fast enough." The elasticity of the Snowflake virtual warehouses combined with our dynamic optimization engine have solved that problem. For more detail, see this [post](/blog/tips-for-optimizing-the-data-vault-architecture-on-snowflake-part-3/).
 
-If you really want to deliver data to the business users and data scientists in near real time, using views is the best option. Once you have the streaming loads built to feed your Data Vault, the fastest way to make that data visible downstream will be views. Using views allows you to deliver the data faster by eliminating any latency that would be incurred by having additional ELT processes between the Data Vault and the data consumers downstream.
+When we want to deliver data to the business users and data scientists in near real time, using views is the best option. Once we have the streaming loads built to feed our Data Vault, the fastest way to make that data visible downstream will be views. Views allow us to deliver the data faster by eliminating any latency that would be incurred by ELT processes between the Data Vault and the data consumers downstream.
 
-All the business logic, alignment, and formatting of the data can be coded into the view. That means fewer moving parts to debug, no sequential downstream latency, and it minimizes storage costs.
+All the business logic, alignment, and formatting of the data can be coded into the view. That means fewer moving parts to debug, no sequential downstream latency, and minimized storage costs.
 
 ![Data Vault Virtualization Architecture](assets/datavaultvirtualization.png)  
 
-Looking at the diagram above you will see an example of how virtualization could fit in the architecture. Here, solid lines are representing physical tables and dotted lines - views. You incrementally ingest data into **Raw Vault** and all downstream transformations are applied as views. From a data consumer perspective when working with a virtualized information mart, the query always shows everything known by your data vault, right up to the point the query was submitted. 
+Looking at the diagram above, we see an example of how virtualization fits in the architecture. Here, solid lines represent physical tables and dotted lines represent views. We incrementally ingest data into the **Raw Vault**, and downstream transformations are applied in views. From a data consumer's perspective when working with a virtualized information mart, the query has access to the full, up-to-date enterprise memory, at the point in time the query is submitted. 
 
-With Snowflake you have the ability to provide as much compute as required, on-demand,  without a risk of causing performance impact on any surrounding processes and pay only for what you use. This makes materialization of transformations in layers like **Business Vault** and **Information Delivery** an option, rather than a must-have. Instead of “optimizing upfront” you can now make this decision based on usage pattern characteristics, such as frequency of use, type of queries, latency requirements, readiness of the requirements etc. As always, a Data Vault is sparsely built, maximizing the amount of work not done, giving us time to do what needs to be done to deliver on business outcomes.
+With Snowflake, we have the ability to provide as much compute as required, on-demand, without a risk of performance impact on any surrounding processes, paying only for what we use. This makes materialization of transformations in the **Business Vault** or other **Information Delivery** objects optional, rather than required. Instead of “optimizing upfront,” we can now make this decision based on observed usage pattern characteristics, such as frequency of use, type of queries, latency requirements, readiness of the requirements, etc. As always, the Business Vault is sparsely built, maximizing the amount of work not done, allowing us to focus on decision effectiveness and delivering business outcomes.
 
-Many modern data engineering automation frameworks are already actively supporting virtualization of logic. Several tools offer a low-code or configuration-like ability to switch between materializing an object as a view or a physical table, automatically generating all required DDL & DML. This could be applied on specific objects, layers or/and be environment specific. So even if you start with a view, you can easily refactor to use a table if user requirements evolve.
+Many modern data engineering automation tools already support virtualization of logic. Several tools offer a low-code or configuration-like ability to switch between materializing an object as a view or a physical table, automatically generating all required DDL & DML. This could be applied to specific objects, zones, or be environment specific. So even if we start with a view, we can easily refactor to using a table, as requirements evolve.
 
-As said before, virtualization is not only a way to improve time-to-value and provide near real time access to the data, given the scalability and workload isolation of Snowflake, virtualization also is a design technique that could make your Data Vault excel: minimizing cost-of-change, accelerating the time-to-delivery and becoming an extremely agile, future proof solution for ever growing business needs. 
+Virtualization is not only a way to improve time-to-value and provide near real time access to the data. Given the scalability and workload isolation of Snowflake, virtualization is a design technique that could make your Data Vault excel: minimizing cost-of-change, accelerating the time-to-delivery and becoming an extremely agile, future proof solution for ever changing business needs. 
 
 <!-- ------------------------ -->
 ## Build: Data Vault - Business Vault
 
-As a quick example of using views for transformations we just discussed, here is how enrichment of customer descriptive data could happen in Business Data Vault, connecting data received from source with some reference data.
+Next, we'll demonstrate enrichment of descriptive data in the Business Vault.
 
 ### Step 1: Expanding Customer Detail
 
@@ -811,7 +806,7 @@ Snowflake provides [multiple options](https://docs.snowflake.com/en/user-guide/o
 
 For this example, let's consider a soft business rule where orders with an Urgent or High priority, and having a total price of 200000 or more, are considered Tier-1. Urgent, High, or Medium and between 150000 and 200000 are Tier-2, and the rest Tier-3. We first try building this into a view, but find that performance is poor, due to regular querying with a filter set to just Tier-1 orders. We decide for performance reasons to materialize this, and we want it updated immediately, with no delay.
 
-In this particular case, a Materialized View might be used, because the view would query a single table, and if we're using Enterprise Edition (but you might not be). Given the underlying table is insert-only, auto-refesh will be incremental and cheap. And because there is only a simple CASE derivation, with no joins, aggregates, or window functions, a Materialized View could be an ideal choice. A Dynamic Table would be much less limited, but would introduce at least some target lag between the raw vault and business vault structures (and hey, this is a near-real-time data vault we're building). So, we'll stick with the Streams & Tasks method. Feel free to experiment with the other options, if desired.
+In this particular case, a Materialized View could be used, because the view would query a single table, and assuming we're using Enterprise Edition. Given the underlying table is insert-only, auto-refresh will be incremental (and thus cheap). And because there is only a simple CASE derivation, with no joins, aggregates, or window functions, a Materialized View could be an ideal choice. A Dynamic Table would be much less limited, but would introduce at least some target lag between the raw vault and business vault structures (and hey, this is a near-real-time data vault we're building). So, we'll stick with the Streams & Tasks method. Feel free to experiment with the other options, if desired.
 
 Let's first build a new business vault satellite, using our existing data. We'll first suspend our raw vault order loading, so we don't miss any data.
 
@@ -950,7 +945,7 @@ UNION ALL
 SELECT 'DEV_DV.CUSTSERV.bv_sat_order', count(1) FROM DEV_DV.CUSTSERV.bv_sat_order;
 ```
 
-Assuming the tasks completed, you should now see 0 rows in the streams, and 2000 rows in the tables.
+Assuming the tasks completed, we should now see 0 rows in the streams, and 2000 rows in the tables.
 
 Now that we have **Business Vault** objects complete, let's move into the **Information Delivery** zone. 
 
@@ -969,13 +964,13 @@ USE ROLE SALESMKT_ENGINEER;
 USE WAREHOUSE ENGINEERING_WH;
 USE SCHEMA DEV_DV.SALESMKT;
 
-CREATE VIEW rv_sat_customer_current
+CREATE OR REPLACE VIEW rv_sat_customer_current
 AS
 SELECT  *
 FROM    rv_sat_customer
 QUALIFY LEAD(ldts) OVER (PARTITION BY customer_hk ORDER BY ldts) IS NULL;
 
-CREATE VIEW bv_sat_customer_current
+CREATE OR REPLACE VIEW bv_sat_customer_current
 AS
 SELECT  *
 FROM    bv_sat_customer
@@ -991,16 +986,18 @@ SELECT  *
 FROM    rv_sat_order
 QUALIFY LEAD(ldts) OVER (PARTITION BY order_hk ORDER BY ldts) IS NULL;
 
-CREATE VIEW bv_sat_order_current
+CREATE OR REPLACE VIEW bv_sat_order_current
 AS
 SELECT  *
 FROM    bv_sat_order
 QUALIFY LEAD(ldts) OVER (PARTITION BY order_hk ORDER BY ldts) IS NULL;
+
+-- Note that the patterns in the views above, while correct, can be expensive for very large satellites. Point-in-Time (PIT) tables could be a performance-enhancing option.
 ```
 
 ### Step 2: Type 1 Dimensions and a Fact Table
 
-Let's create a simple dimensional structure. Again, we will keep it virtual(as views) to start with, but you already know that depending on access characteristics required any of these could be selectively materialized. 
+Let's create a simple dimensional structure. Again, we will keep it virtual (as views) to start with, but we already know that any of these could be materialized. 
 
 ```sql
 -- Sales & Marketing Type 1 Dimension: Customer --------------------------------
@@ -1067,14 +1064,14 @@ USE ROLE QA_ANALYST;
 USE WAREHOUSE ENGINEERING_WH;
 USE DATABASE DEV_DW;
 
-SELECT 'Order Fact Count', COUNT(1) FROM DEV_DW.CUSTSERV.fct_customer_order;
+SELECT 'Order Fact Count', COUNT(1) FROM DEV_DW.CUSTSERV.fct_customer_order; -- How many orders?
 ```
 
-We loaded 2000 rows of orders... right? Did you get all 2000? Or closer to none?
+We loaded 2000 rows of orders... right? Does the SELECT statement above give us all 2000 orders? Or closer to none?
 
-If you remember, when we were unloading sample data, we took a subset of orders and a subset of customers. This might have no overlap at all, therefore the inner join with dim1_order results in all rows being eliminated. 
+If we recall, when we were unloading sample data, we took a subset of orders and a subset of customers. These samples might have no overlap at all! Therefore, the inner joins could result in all rows being eliminated. 
 
-Thankfully, this is a Data Vault, so all we need to do is load the full customer dataset. Just think about it, there is no need to reprocess any links or fact tables simply because the customer feed was incomplete. Those of you who have used different architectures for data engineering and warehousing likely have painful experiences of such situations in the past. So, let's fix it!
+Thankfully, this is a Data Vault. All we need to do is land the full customer dataset back in the Landing Zone. Just think about it, there is no need to reprocess any links or fact tables simply because the customer feed was originally incomplete. Those who have used other architectures for data warehouses likely have painful experiences of such situations in the past. So, let's see how easy it is to fix it!
 
 ```sql
 -- All the Customers -----------------------------------------------------------
@@ -1093,7 +1090,7 @@ INCLUDE_QUERY_ID=TRUE;
 ALTER PIPE stg_customer_pp   REFRESH;
 ```
 
-All you need to do now is wait a minute as our continuous data pipeline will automatically propagate new customer data into the Data Vault.
+All we need to do is wait, and in a minute, our continuous data pipeline will automatically propagate new customer data into the Data Vault. Late arriving data? No problem.
 
 ```sql
 -- QA Check Again --------------------------------------------------------------
@@ -1101,13 +1098,17 @@ USE ROLE QA_ANALYST;
 USE WAREHOUSE ENGINEERING_WH;
 USE DATABASE DEV_DW;
 
-SELECT 'Customer Dimension Count', COUNT(1) FROM DEV_DW.SALESMKT.dim1_customer;
-SELECT 'Order Fact Count', COUNT(1) FROM DEV_DW.CUSTSERV.fct_customer_order;
+SELECT 'Customer Dimension Count', COUNT(1) FROM DEV_DW.SALESMKT.dim1_customer; -- How many customers now?
+SELECT 'Order Fact Count', COUNT(1) FROM DEV_DW.CUSTSERV.fct_customer_order; -- How many orders now?
 ```
 
-Finally lets wear user's hat and run a query to break down orders by nation, region, and order_priority_bucket (all attributes we derived in the **Business Vault**).
+Finally let's put on the analyst's hat and run a query to break down orders by nation, region, and order_priority_bucket (all attributes we derived in the **Business Vault**).
 
 ```sql
+USE ROLE QA_ANALYST;
+USE WAREHOUSE ENGINEERING_WH;
+USE DATABASE DEV_DW;
+
 SELECT dc.nation_name
      , dc.region_name
      , do.order_priority_bucket
@@ -1123,9 +1124,20 @@ GROUP BY 1,2,3
 ORDER BY 3, 4 DESC;
 ```
 
-As we are using Snowsight, we can quickly create a chart from this result set to better understand the data. For this simply click on the 'Chart' section on the bottom pane.
+As we are using Snowsight, we can quickly create a chart from this result set to better understand the data. For this, simply click on the 'Chart' section on the bottom pane.
 
-Voila! This concludes our journey for this guide. Hope you enjoyed it and lets summarize key points in the next section.
+Finally, to avoid consuming any additional credits after completion, be sure to suspend the tasks.
+
+```sql
+USE ROLE CUSTSERV_ENGINEER;
+ALTER TASK DEV_DV.CUSTSERV.rv_sat_order_strm_tsk SUSPEND;
+ALTER TASK DEV_DV.CUSTSERV.stg_order_strm_tsk SUSPEND;
+
+USE ROLE SALESMKT_ENGINEER;
+ALTER TASK DEV_DV.SALESMKT.stg_customer_strm_tsk SUSPEND;
+```
+
+Voila! This concludes our journey for this guide. We hope you enjoyed it. Let's summarize key points in the next section.
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -1137,13 +1149,13 @@ Delivering more usable data faster is no longer an option for today’s business
 ### What we've covered
 - Unloading and loading back data using COPY and Snowpipe
 - Engineering data pipelines using virtualization, streams and tasks
-- Building multi-layer Data Vault environment on Snowflake: 
+- Populating data in a multi-zone Data Vault on Snowflake: 
 
-![Multi-Layer Data Vault Environment](assets/img19.png)  
+![Multi-Zone Data Vault Environment](assets/img19.png)  
 
 ### Call to action
-- Seeing is believing. Try it! 
 - We made examples limited in size, but feel free to scale the data volumes and virtual warehouse size to see scalability in action.
-- Could we make the data vault perform faster by joining on business keys and not hash keys? Check out this [post](/blog/tips-for-optimizing-the-data-vault-architecture-on-snowflake-part-3/).
-- Tap into numerous communities of practice for Data Engineering on Snowflake and Data Vault in particular.
-- Talk to us about modernizing your data landscape! Whether it is Data Vault or not you have on your mind, we have the top expertise and product to meet your demand.
+- Could we make the data vault perform faster by joining on business keys and not hash keys? Check out [this great blog post](/blog/tips-for-optimizing-the-data-vault-architecture-on-snowflake-part-3/).
+- Could we use triggered, serverless tasks, eliminating the need to poll the source? Check out [serverless triggered tasks](https://docs.snowflake.com/en/user-guide/tasks-triggered).
+- Tap into the numerous communities highlighting Snowflake and Data Vault.
+- Talk to us about modernizing your data landscape! We have the expertise and product to meet your needs.
