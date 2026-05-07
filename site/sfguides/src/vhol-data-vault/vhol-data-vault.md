@@ -865,6 +865,11 @@ FROM rv_sat_order;
 From a processing and orchestration perspective, we will extend our order processing pipeline so that when the task populates **rv_sat_order**, this will generate a new stream of changes, and those changes will be propagated by a dependent task to **bv_sat_order**. Tasks in Snowflake can be not only schedule-based but also start automatically once a parent task completes.
 
 ```sql
+-- Business Vault: Loading Order with Order Priority Bucket (soft business rule)
+USE ROLE CUSTSERV_ENGINEER;
+USE WAREHOUSE ENGINEERING_WH;
+USE SCHEMA DEV_DV.CUSTSERV;
+
 -- Create a new stream
 CREATE OR REPLACE STREAM rv_sat_order_strm ON TABLE rv_sat_order;
 
@@ -1130,8 +1135,8 @@ Finally, to avoid consuming any additional credits after completion, be sure to 
 
 ```sql
 USE ROLE CUSTSERV_ENGINEER;
-ALTER TASK DEV_DV.CUSTSERV.rv_sat_order_strm_tsk SUSPEND;
 ALTER TASK DEV_DV.CUSTSERV.stg_order_strm_tsk SUSPEND;
+ALTER TASK DEV_DV.CUSTSERV.rv_sat_order_strm_tsk SUSPEND;
 
 USE ROLE SALESMKT_ENGINEER;
 ALTER TASK DEV_DV.SALESMKT.stg_customer_strm_tsk SUSPEND;
