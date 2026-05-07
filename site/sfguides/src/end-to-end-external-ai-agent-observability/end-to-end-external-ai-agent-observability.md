@@ -245,7 +245,7 @@ def search_knowledge_base(query: str) -> str:
     """Search the support knowledge base for articles and documentation."""
 ```
 
-> **Key Pattern**: `@instrument` must be the **outermost** decorator (above `@function_tool`). This ensures TruLens wraps the tool execution properly.
+> **Key Pattern**: `@function_tool` must be the **outermost** decorator (above `@instrument`), so the OpenAI Agent SDK registers the tool while `@instrument` wraps the underlying function and emits the TOOL/RETRIEVAL spans.
 
 ### Agent Definition ([`src/agent/app.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/src/agent/app.py))
 
@@ -577,20 +577,19 @@ Duration: 15
 
 The Streamlit dashboard ([`monitoring_dashboard/streamlit_app.py`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/blob/main/monitoring_dashboard/streamlit_app.py)) provides production monitoring by querying `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` directly.
 
+<img src="assets/monitoring.png" width="100%">
+
 ### Dashboard Features
 
-The dashboard includes four tabs:
+Branded as **Agent Monitoring**, the dashboard is a single timeseries view over trace data, tool calls, eval scores, and latency from Snowflake AI Observability.
 
-**Latency Over Time** — Interactive scatter plot with LOESS trend line and IQR-based outlier detection. Click any dot to drill into the full trace:
-- Question and answer display
-- Analyst tool details (interpretation, generated SQL, query results)
-- Search retrieval details (query, retrieved chunks)
+**KPI Header** — Top-line counters for the selected window: Total Queries, Avg Latency, Tool / Retrieval Calls, LLM Generations, and Avg Eval Score.
 
-**Tool Calls** — Tool call latency over time by function, call distribution donut chart, and average latency table.
+**Combined Latency + Eval Timeseries** — One chart overlays latency (left axis: blue p50 line, shaded p50–p95 band, dashed p95, red dots for top outliers) with eval metrics (right axis: one line per metric — `answer_relevance`, `coherence`, `context_relevance`, `groundedness`). Use the metric pills above the chart to add/remove overlays.
 
-**Eval Scores** — Combined client-side and server-side evaluation scores over time with metric filtering, source differentiation (client vs server), and box plot distributions.
+**Find Problematic Traces** — Drag a rectangle on the chart to select a time window. The dashboard surfaces every trace in that window in a sortable table with `TIMESTAMP`, `LATENCY_MS`, `WORST_SCORE`, per-metric scores, `INPUT_QUESTION`, and `TRACE_ID` — purpose-built for latency/quality root-cause analysis. Select any row to drill into the full trace (question, answer, Analyst interpretation + SQL + results, and retrieved Search chunks).
 
-**Trace Explorer** — Expandable details for every Analyst call (question, interpretation, SQL, results) and Retrieval call (query, retrieved chunks).
+<img src="assets/find-problematic-traces.png" width="100%">
 
 ### Key Queries
 
