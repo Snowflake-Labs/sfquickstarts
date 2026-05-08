@@ -75,7 +75,7 @@ Cortex Code uses the same connection files as SnowCLI, located at:
 
 (or `connections.toml` if you already use that)
 
-### Create the Config File 
+### Create/open the Config File 
 
 Run the following in your terminal to create and open the config file:
 
@@ -98,11 +98,12 @@ password  = "<YOUR_DEMO_PAT>"
 role      = "<YOUR_DEMO_ROLE>"
 ```
 
-Once updated, make sure to save the file. 
-
 ![Log In and Find Settings](assets/snowsight_login_settings.png)
 
 ![Account Details Connection](assets/account_details_connection.png)
+
+Once updated, make sure to save the file. 
+
 
 <!-- ------------------------ -->
 ## Install the CoCo CLI on Windows
@@ -135,7 +136,7 @@ On Windows, the config file is located at:
 %USERPROFILE%\.snowflake\config.toml
 ```
 
-### Create the Config File
+### Create/open the Config File
 
 Run the following in PowerShell:
 
@@ -157,14 +158,11 @@ password  = "<YOUR_DEMO_PAT>"
 role      = "<YOUR_DEMO_ROLE>"     # e.g. Need a role for connection
 ```
 
-Once updated, make sure to save the file. 
-
-
 ![Log In and Find Settings](assets/snowsight_login_settings.png)
 
 ![Account Details Connection](assets/account_details_connection.png)
 
-
+Once updated, make sure to save the file. 
 
 <!-- ------------------------ -->
 ## Find Your Connection Details
@@ -239,17 +237,6 @@ If you need to start fresh, run `01_demo_reset.sql` to drop all demo-created obj
 ## Workshop Overview
 
 This workshop follows a single AP invoices storyline across three demos — from data discovery through operationalization and optional agent design.
-
-### Lab Environment
-
-Set your context before starting:
-
-```sql
-USE ROLE COCO_WORKSHOP_ROLE;
-USE WAREHOUSE COCO_WORKSHOP_WH;
-USE DATABASE COCO_WORKSHOP;
-USE SCHEMA <YOUR_SCHEMA>;
-```
 
 <!-- ------------------------ -->
 ## Demo 1: Pipeline Builder
@@ -366,7 +353,7 @@ A month later, the business sends a PRD that expands the AP invoices pipeline. N
 
 ### About the Sample PRD
 
-Create a folder on your local device. Download the three CSV files prepared by the Finance Transformation PMO in the `assets/` folder of this repo. Create a folder on your local device and add the files:
+Download the three CSV files prepared by the Finance Transformation PMO in the `assets/` folder of this repo. Create a folder on your local device and add the files:
 
 - `sample_business_requirements_source_onboarding.csv` — new source systems (Baan, Workday), owners, priorities, and go-live targets
 - `sample_business_requirements_column_mapping.csv` — field-level mappings for both new sources into the Silver schema
