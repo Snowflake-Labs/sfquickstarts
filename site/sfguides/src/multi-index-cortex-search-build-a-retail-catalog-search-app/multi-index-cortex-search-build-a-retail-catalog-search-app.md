@@ -83,20 +83,11 @@ The user knows what they need but not which brand:
 
 These are **semantic queries**. A vector index over descriptive text handles this naturally — the embedding captures the intent and matches products even when no keyword overlaps. Keyword search would return zero results for most of these queries.
 
-### Why Single-Strategy Search Fails
-
-| Search Strategy | Brand Recall | Intent Recall | Root Cause |
-|----------------|-------------|--------------|------------|
-| Keyword-only | ✓ High | ✗ Low | Requires exact keyword match |
-| Vector-only | ✗ Low | ✓ High | Brand names sparse in embedding space |
-| Multi-index | ✓✓ High | ✓✓ High | Text + vector signals fused by reranker |
-
-The solution is not to build two services and fan out — that introduces synchronization complexity, duplicate infrastructure, and manual reranking. The solution is **Multi-Index Cortex Search**: a single service with multiple indexed columns, queried in one call, results fused by the built-in reranker.
-
 <!-- ------------------------ -->
 ## Understanding Multi-Index Cortex Search
 
-Snowflake Cortex Search supports two index types that can coexist in a single service:
+Snowflake Cortex Search enables hybrid search in Snowflake, combining keyword search and vector search. 
+What’s different about *Multi-Index* Cortex Search is that it supports multiple searchable columns. Each column can be indexed independently as a text index, a vector index, or both, and each can be queried independently.
 
 ### TEXT INDEXES
 
@@ -124,17 +115,6 @@ Dense embedding indexes over a text column. Snowflake supports multiple embeddin
 -   You have already embedded your corpus and want to avoid re-computation costs
 
 This guide will focus on using embeddings models within Snowflake for vector generation.
-
-### What Multi-Index Is NOT
-
-Multi-index is **not** a fan-out pattern across four separate services. You do not need:
-
--   A separate EQUIPMENT_SEARCH service
--   A separate APPAREL_SEARCH service
--   A `ThreadPoolExecutor` to parallelize requests
--   Manual result merging or reranking code
-
-One service, one call, one result list. The reranker is built in.
 
 <!-- ------------------------ -->
 ## Setting Up Your Snowflake Environment
