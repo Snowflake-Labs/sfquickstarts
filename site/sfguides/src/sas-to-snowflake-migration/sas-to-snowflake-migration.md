@@ -183,13 +183,19 @@ A few pieces of scaffolding worth understanding:
 
 ### Activate the demo license
 
-The lab folder ships with a source-locked demo license (`source_lock.json`) that authorizes Alchemist to convert the bundled samples. From the lab directory you cd'd into above, activate it:
+The lab uses a source-locked demo license: the `source_lock.json` file in the lab folder is paired with a license key listed on the [Alchemist Portal Get Started page](https://app.getalchemist.io/main). Scroll to the bottom of that page, find the **SAS to Snowflake Migration — Self-Service Quickstart Demo** section, and copy the **Demo-locked license required** key.
+
+![Alchemist Portal Get Started page showing the demo license key for this quickstart](assets/alchemist_portal_demo_license.png)
+
+From the lab directory you cd'd into above, run:
 
 ```bash
 alchemist license -l source_lock.json
 ```
 
-> **Note:** If you previously activated an Alchemist license on this machine (for example, from a paid or trial key), reset it first so the demo license takes effect:
+When prompted, paste the license key you copied from the portal.
+
+> **Note:** If you previously activated a different Alchemist license on this machine, reset it first so the demo license takes effect:
 >
 > ```bash
 > alchemist license reset
