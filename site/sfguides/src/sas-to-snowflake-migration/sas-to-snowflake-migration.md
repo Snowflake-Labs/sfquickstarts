@@ -209,27 +209,19 @@ Before converting, run Alchemist Analyzer to get a breakdown of your SAS estate:
 
 [In this video, you can see the capabilities of the Analyzer](https://www.youtube.com/watch?v=ZW_C88qXhFE)
 
-### Analyze SAS BASE Code
+A single analyzer run covers all three sample asset types at once:
 
 ```bash
-alchemist analyze src ./sas_artifacts/base_code
+alchemist analyze src ./sas_artifacts
 ```
 
-The dashboard opens automatically at `http://127.0.0.1:10888`. The **Main** tab shows a project overview — token count, source file count, flagged tokens, and charts breaking down executable type and workload type.
+The dashboard opens automatically at `http://127.0.0.1:10888`. The **Main** tab shows a project overview across every source file — token count, executable-type breakdown (SAS Programs, EG Flows, DI Jobs), and workload-type mix:
 
-![Alchemist Analyzer dashboard for SAS BASE code](assets/analyzer_base_code_dashboard.png)
+![Alchemist Analyzer dashboard showing all three SAS asset types in one run](assets/analyzer_dashboard.png)
 
-### Analyze an EG Project
+The **EG**, **DI**, and **Code** tabs alongside **Main** drill into each asset type — flow-level task breakdowns for EG projects, job-level transforms for DI, and per-file statistics for BASE programs.
 
-```bash
-alchemist analyze src ./sas_artifacts/enterprise_guide
-```
-
-When the source contains an EG project, the dashboard gains an **EG** tab alongside **Main**, showing the flow-level breakdown of tasks within each project.
-
-![Alchemist Analyzer dashboard for EG project](assets/analyzer_eg_dashboard.png)
-
-> **Note:** SPK files (SAS DI jobs) cannot be analyzed together with other file types in a single run. Analyze them separately: `alchemist analyze src ./sas_artifacts/data_integration`.
+> **Note:** Alchemist Analyzer can include at most one `.spk` file per run, but that single `.spk` can be analyzed alongside any number of `.egp` projects and `.sas` files. If your estate has multiple DI jobs, run the analyzer once per `.spk` and combine the others freely with each run.
 
 <!-- ------------------------ -->
 ## 7. SAS BASE Code
