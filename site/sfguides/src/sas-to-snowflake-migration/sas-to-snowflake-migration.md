@@ -275,20 +275,26 @@ alchemist convert \
 
 ### 7.3 Deploy
 
-1. In Snowsight go to **Projects → Workspaces → + Add new → Notebook → Upload .ipynb file**. Select `output/base_code/.../quarterly_portfolio_review.ipynb`, name it, and click **Create**.
+1. In Snowsight go to **Projects → Workspaces**.
 
-2. Click **Connect → + Create new service**, set **Idle timeout** to 30 minutes, and click **Create and connect**.
+![Snowsight Workspaces landing page](assets/snowflake_notebook_workspaces.png)
 
-![Create new compute service dialog with Idle timeout set to 30 minutes](assets/snowflake_notebook_connect.png)
+2. Click **+ Add new → Notebook → Upload .ipynb file**. Select `output/base_code/.../quarterly_portfolio_review.ipynb`, name it, and click **Create**.
 
-3. Add a **SQL cell** at the very top of the notebook:
+3. Click **Connect → + Create new service**, set **Idle timeout** to 30 minutes, and click **Create and connect**.
+
+![Create new compute service dialog with Idle timeout set to 30 minutes](assets/snowflake_notebook_create_service.png)
+
+![Connect notebook to the newly created compute service](assets/snowflake_notebook_connect.png)
+
+4. Add a **SQL cell** at the very top of the notebook:
 
 ```sql
 USE DATABASE LDEMO;
 USE SCHEMA PUBLIC;
 ```
 
-4. In cell **"1. Imports"**, swap `SparkSession` for `snowpark_connect`:
+5. In cell **"1. Imports"**, swap `SparkSession` for `snowpark_connect`:
 
 ```python
 # Before
@@ -300,7 +306,7 @@ from snowflake import snowpark_connect
 from pyspark.sql.functions import desc, expr, when
 ```
 
-5. In cell **"2. Setup Spark session"**, replace the builder:
+6. In cell **"2. Setup Spark session"**, replace the builder:
 
 ```python
 # Before
@@ -310,7 +316,7 @@ spark = SparkSession.builder.config("spark.sql.ansi.enabled", True).getOrCreate(
 spark = snowpark_connect.server.init_spark_session()
 ```
 
-6. Click **Run all**.
+7. Click **Run all**.
 
 <!-- ------------------------ -->
 ## 8. EG Project
