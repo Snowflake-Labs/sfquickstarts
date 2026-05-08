@@ -173,8 +173,8 @@ Now select the data objects for this data product.
 ![](assets/2026-hide-columns.png)
 
 
-7. Set custom attributes to any values you like:
-    - Click in the field "**Attributes** (optional)" and select data product attributes.
+7. Set _custom attributes_ to any values you like:
+    - Click in the field "**Attributes** (optional)".
     - Note that the attributes **Confidentiality** and **Source Systems** are examples of _custom attributes_ that the internal marketplace admin can define for your company. Up to 40 custom attributes can be configured.
     - The attribute **Source Systems** is multi-valued, i.e. you can assign mutiple values from the drop-down list.
     - Custom attributes can also appear in the markeplace UI as filters.
@@ -365,8 +365,9 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
      ![](assets/2026-validate-coco-ui.png)
 
 9. Navigate to  **Catalog** > **Internal Marketplace**. More and more data products published by other lab participants will appear in the internal marketplace!
-10. Open at least 2 or 3 data products other than your own and **Request Access** as you did before for your own data product. 
-11. Navigate to the **Data Sharing** -> **Internal Sharing** -> **Requests** to check if you have received any access requests from other lab participants. If so, approve them.
+10. Use the filters for **Profile** as well as for the custom attributes **Confidentiality** and **Source Systems** to display different subsets of data products.
+11. Open at least 2 or 3 data products other than your own and **Request Access** as you did before for your own data product. 
+12. Navigate to the **Data Sharing** -> **Internal Sharing** -> **Requests** to check if you have received any access requests from other lab participants. If so, approve them.
 ---
 
 
@@ -392,7 +393,7 @@ Let's make your data product AI-ready by generating and adding a semantic model 
 
      ![](assets/2026-try-and-add.png)
 
- 8. Your data product is now marked as **Cortex AI Ready**.
+8. Your data product is now marked as **Cortex AI Ready**.
 ---
 
 ## Talk to your Data Product in Snowflake Intelligence
@@ -455,7 +456,7 @@ Next, let's ask Coco to implement a new governance requirement.
 
 Issue the following prompt:
 
-   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the data_owner_role role within my account but not visible to consumer role and not to any other accounts in this organization._"
+   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the data_owner_role role within my account but not visible to the consumer role and not to any other accounts in this organization._"
 
 Once Coco has created the policy, switch to the data_consumer user to see the effect of the masking.
 
@@ -485,6 +486,8 @@ Congratulations, you completed this **Snowflake Internal Marketplace** hands-on 
 - [Organization Accounts](https://docs.snowflake.com/en/user-guide/organization-accounts) 
   
 - [Organization Profiles](https://docs.snowflake.com/en/user-guide/collaboration/organization-profiles/org-profile-manage)
+
+- [Custom attributes](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/custom-attributes-internal-marketplace)
 
 - Organizational Listings
   - [Create an organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-create)
