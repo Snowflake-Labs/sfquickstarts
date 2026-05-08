@@ -397,6 +397,10 @@ spark = snowpark_connect.server.init_spark_session()
 
 ### 9.1 Convert
 
+The sample DI job (`LOAD_CUSTOMER_RISK_MART`) reads three operational tables and produces the `CLAIMS_ENRICHED` mart through six numbered transforms — Extract, Data Validation, two Joins, Sort, and a Table Loader:
+
+![SAS Data Integration Studio job LOAD_CUSTOMER_RISK_MART showing the six-transform flow from claims/customers/adjusters into CLAIMS_ENRICHED](assets/di_job_flow.png)
+
 1. Run the converter:
 
 ```bash
