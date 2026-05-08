@@ -197,6 +197,26 @@ SELECT
 FROM CATALOG_SEARCH_DB.DATA.PRODUCTS
 LIMIT 5;
 
+-- Step 5: Rebuild SEARCH_TEXT with enriched descriptions
+-- Now that DESCRIPTION is richer, rebuild SEARCH_TEXT so the vector index
+-- captures the full enriched content.
+UPDATE CATALOG_SEARCH_DB.DATA.PRODUCTS
+SET SEARCH_TEXT = TRIM(
+    COALESCE(BRAND,        '') || ' ' ||
+    COALESCE(ITEM_NAME,    '') || ' ' ||
+    COALESCE(SUBCATEGORY,  '') || ' ' ||
+    COALESCE(DISCIPLINE,   '') || ' ' ||
+    COALESCE(SKILL_LEVEL,  '') || ' ' ||
+    COALESCE(GENDER,       '') || ' ' ||
+    COALESCE(DESCRIPTION,  '')
+);
+
+-- Verify the enriched SEARCH_TEXT preview
+SELECT PRODUCT_ID, BRAND, ITEM_NAME,
+       LEFT(SEARCH_TEXT, 250) AS search_text_preview
+FROM CATALOG_SEARCH_DB.DATA.PRODUCTS
+LIMIT 5;
+
 -- =============================================================================
 -- SECTION 6 — Create the Multi-Index Cortex Search Service
 --

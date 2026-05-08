@@ -1,7 +1,7 @@
 author: Lucas Galan, Piotr Paczewski
 id: multi-index-cortex-search-build-a-retail-catalog-search-app
 language: en
-summary: Build hybrid search combining BM25 keyword and vector semantic retrieval in a single Cortex Search service — then wrap it in a full-stack application.
+summary: Build search combining multiple columnbs for keyword and vector semantic retrieval in a single Cortex Search service — then wrap it in a full-stack application.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
 status: Published
@@ -69,7 +69,7 @@ The user knows exactly what they want:
 "marker kingpin"
 ```
 
-These are **exact match queries**. BM25 keyword search excels here — a brand name is a literal string, and BM25 will surface it at rank 1. But a pure embedding model struggles: brand names are proper nouns with little semantic neighbourhood in the training corpus. A vector-only search for _"ridgeline"_ may return Dynastar Vertical ski pants (the word "ridgeline" appears in the description) ranked above actual Ridgeline brand products.
+These are **exact match queries**. Keyword search excels here — a brand name is a literal string and surfaces it at rank 1. But a pure embedding model struggles: brand names are proper nouns with little semantic neighbourhood in the training corpus. A vector-only search for _"ridgeline"_ may return Dynastar Vertical ski pants (the word "ridgeline" appears in the description) ranked above actual Ridgeline brand products.
 
 ### Query Type 2 — Intent / Brand Voice
 
@@ -81,15 +81,15 @@ The user knows what they need but not which brand:
 "lightweight boot for touring in variable snow"
 ```
 
-These are **semantic queries**. A vector index over descriptive text handles this naturally — the embedding captures the intent and matches products even when no keyword overlaps. BM25 would return zero results for most of these queries.
+These are **semantic queries**. A vector index over descriptive text handles this naturally — the embedding captures the intent and matches products even when no keyword overlaps. Keyword search would return zero results for most of these queries.
 
 ### Why Single-Strategy Search Fails
 
 | Search Strategy | Brand Recall | Intent Recall | Root Cause |
 |----------------|-------------|--------------|------------|
-| BM25 keyword-only | ✓ High | ✗ Low | Requires exact keyword match |
+| Keyword-only | ✓ High | ✗ Low | Requires exact keyword match |
 | Vector-only | ✗ Low | ✓ High | Brand names sparse in embedding space |
-| Multi-index | ✓✓ High | ✓✓ High | BM25 + vector signals fused by reranker |
+| Multi-index | ✓✓ High | ✓✓ High | Text + vector signals fused by reranker |
 
 The solution is not to build two services and fan out — that introduces synchronization complexity, duplicate infrastructure, and manual reranking. The solution is **Multi-Index Cortex Search**: a single service with multiple indexed columns, queried in one call, results fused by the built-in reranker.
 
@@ -100,7 +100,7 @@ Snowflake Cortex Search supports two index types that can coexist in a single se
 
 ### TEXT INDEXES
 
-BM25 keyword indexes over one or more string columns. Each column gets its own inverted index. Useful for:
+Text indexes over one or more string columns. Each column gets its own inverted index. Useful for:
 
 -   Exact brand name recall
 -   Product name keyword match
@@ -412,7 +412,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH
 
 | Clause | Purpose |
 |--------|---------|
-| `TEXT INDEXES BRAND, ITEM_NAME, SUBCATEGORY` | Creates BM25 indexes on three structured columns for exact keyword match |
+| `TEXT INDEXES BRAND, ITEM_NAME, SUBCATEGORY` | Creates text indexes on three structured columns for exact keyword match |
 | `VECTOR INDEXES SEARCH_TEXT(model=...)` | Creates a dense embedding index on the concatenated description column |
 | `ATTRIBUTES ...` | Columns returned with each result (not indexed — used for display/filtering) |
 | `WAREHOUSE` | Compute used for initial indexing and incremental refresh |
@@ -890,9 +890,9 @@ DROP WAREHOUSE IF EXISTS CATALOG_SEARCH_WH;
 ### Key Takeaways
 
 -   **Multi-index is native, not a pattern** — `TEXT INDEXES` and `VECTOR INDEXES` are first-class DDL clauses in Cortex Search. One service, one call.
--   **Brand recall requires a TEXT INDEX on BRAND** — vector embeddings alone cannot reliably surface brand names at rank 1. BM25 on the BRAND column solves this.
+-   **Brand recall requires a TEXT INDEX on BRAND** — vector embeddings alone cannot reliably surface brand names at rank 1. Keyword search on the BRAND column solves this.
 -   **Intent recall requires a VECTOR INDEX** — keyword search cannot match _"warm boot for icy terrain"_ against products that use different words. Embeddings solve this.
--   **The reranker is built in** — you do not write score fusion logic. The service fuses BM25 and vector signals automatically.
+-   **The reranker is built in** — you do not write score fusion logic. The service fuses text and vector signals automatically.
 -   **CATEGORY comes from result attributes** — in a single-service architecture, the category breakdown is a grouping of the `CATEGORY` attribute on each result, not a reflection of which service matched.
 -   **AI enrichment amplifies semantic recall** — running `AI_COMPLETE()` on descriptions before indexing closes the vocabulary gap between terse product copy and natural customer queries.
 
