@@ -92,11 +92,15 @@ All three SAS libraries referenced in this lab (`LDEMO`, `LDEMODI`, `LMART`) map
 
 ### Sign Up for Alchemist Trial
 
-Go to [app.getalchemist.io](https://app.getalchemist.io/), fill in your details, and submit the form. You will receive a license key by email within a few minutes — keep it to hand for the first run.
+Register at [app.getalchemist.io](https://app.getalchemist.io/) to get access to the portal. The trial signup is free and gives you the credentials needed to download the installer.
 
 ### Install Alchemist
 
-Download the installer for your operating system from [getalchemist.io](https://getalchemist.io) and run it.
+This guide requires **Alchemist version 2025.2 or later**. Sign in to the portal, open the **Downloads** page, and pick the installer for your operating system (macOS Apple Silicon or Windows).
+
+![Alchemist Portal Downloads page showing the 2025.2 macOS and Windows installers](assets/alchemist_portal_downloads.png)
+
+Run the installer.
 
 On **macOS**, add Alchemist to your PATH after installing:
 
@@ -106,7 +110,7 @@ export PATH="/Applications/Alchemist:$PATH"
 
 To make this permanent, add the line above to your `~/.zshrc` or `~/.bash_profile`.
 
-On **Windows**, the installer adds Alchemist to your PATH automatically. Open a new Command Prompt or PowerShell window after installation to pick up the change.
+On **Windows**, the installer should register the Alchemist install directory on your `Path` automatically — open a fresh Command Prompt or PowerShell window after installation to pick up the change.
 
 Verify the installation:
 
@@ -114,7 +118,15 @@ Verify the installation:
 alchemist --version
 ```
 
-On the first `alchemist` command that requires a license you will be prompted to enter the key from your registration email.
+If `alchemist --version` returns "command not found" in a fresh shell, add the install directory to your user `Path` manually:
+
+```powershell
+$env:Path = "C:\Program Files (x86)\Alchemist\Alchemist;$env:Path"
+```
+
+The line above is for the current session only. To make it permanent, add `C:\Program Files (x86)\Alchemist\Alchemist` to your user `Path` via **System Properties → Environment Variables**, then restart the shell.
+
+The license file you'll need is bundled with the lab assets you'll clone in the next sections — license activation is covered at the end of step 5.
 
 ## 4. Explore SAS Artifacts
 
@@ -130,19 +142,21 @@ This tutorial uses three sample SAS artifacts that represent a typical insurance
 Pull just this guide's lab folder using a shallow, sparse clone. The same commands work on macOS, Linux, Git Bash on Windows, and Windows PowerShell — git is identical across platforms.
 
 ```bash
-git clone --depth 1 --filter=blob:none --sparse \
-    --branch sas-to-snowflake-migration \
-    https://github.com/ibaranov91/sfquickstarts.git
+git clone --depth 1 --filter=blob:none --sparse --branch sas-to-snowflake-migration https://github.com/ibaranov91/sfquickstarts.git
 cd sfquickstarts
 git sparse-checkout set site/sfguides/src/sas-to-snowflake-migration/assets
 cd site/sfguides/src/sas-to-snowflake-migration/assets
 ```
+
+> **Note:** the `git clone` line is long but intentionally on a single line — it works without modification in macOS Terminal, Linux, Git Bash, and Windows PowerShell. Bash backslash continuations (`\`) would break in PowerShell.
 
 You are now in the lab directory. It contains everything you need:
 
 ```
 .
 ├── alc_config.yml
+├── source_lock.json
+├── .gitattributes
 ├── sas_artifacts/
 │   ├── enterprise_guide/insurance.egp
 │   ├── data_integration/di.spk
@@ -158,12 +172,29 @@ You are now in the lab directory. It contains everything you need:
     └── data_integration/
 ```
 
-Two pieces of scaffolding worth understanding:
+A few pieces of scaffolding worth understanding:
 
 - **`alc_config.yml`** — picked up automatically by `alchemist` when run from this directory. It tells the converter to emit Jupyter notebooks (`output_format: ipynb`) instead of plain `.py` files, and maps the SAS librefs used in the samples (`LDEMO`, `LDEMODI`, `LMART`) all to `LDEMO.PUBLIC` in Snowflake.
+- **`source_lock.json`** — the demo license file. You'll activate it at the end of this step.
+- **`.gitattributes`** — pins SAS source line endings to LF so the source-locked license validates identically on macOS, Linux, and Windows. Don't remove this file.
 - **`output/`** — three empty subfolders the convert commands write into. `alchemist convert -o` does not create the output directory itself, so they ship pre-created in the repo.
 
 > **Note:** Alchemist performs static code analysis and does not require or process the CSV data — it only needs the SAS source files. The CSVs are loaded into Snowflake separately in step 7.1.
+
+### Activate the demo license
+
+The lab folder ships with a source-locked demo license (`source_lock.json`) that authorizes Alchemist to convert the bundled samples. From the lab directory you cd'd into above, activate it:
+
+```bash
+alchemist license -l source_lock.json
+```
+
+> **Note:** If you previously activated an Alchemist license on this machine (for example, from a paid or trial key), reset it first so the demo license takes effect:
+>
+> ```bash
+> alchemist license reset
+> alchemist license -l source_lock.json
+> ```
 
 <!-- ------------------------ -->
 ## 6. Analyze SAS Artifacts
