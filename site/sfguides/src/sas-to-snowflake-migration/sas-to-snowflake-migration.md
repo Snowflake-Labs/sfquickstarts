@@ -279,6 +279,8 @@ alchemist convert \
 
 2. Click **Connect → + Create new service**, set **Idle timeout** to 30 minutes, and click **Create and connect**.
 
+![Create new compute service dialog with Idle timeout set to 30 minutes](assets/snowflake_notebook_connect.png)
+
 3. Add a **SQL cell** at the very top of the notebook:
 
 ```sql
@@ -454,6 +456,8 @@ spark = snowpark_connect.server.init_spark_session()
 
 6. Click **Run all**. Once complete, open **Database Explorer → LDEMO → PUBLIC → CLAIMS_ENRICHED** to verify the output.
 
+![CLAIMS_ENRICHED table in Snowflake Database Explorer showing 2.5K enriched claim rows](assets/di_claims_enriched_result.png)
+
 <!-- ------------------------ -->
 ## 10. Conclusion
 
@@ -472,12 +476,10 @@ Manual SAS migration is slow, error-prone, and expensive. Alchemist shortens the
 
 - **Repeatability**: the same pipeline produces consistent output across hundreds or thousands of assets.
 - **Auditability**: every conversion decision is traceable, so compliance and QA teams can verify the migration rather than trust it.
-- **AI with guardrails**: LLMs are used as one layer inside a structured pipeline, not as a free-form translator. This prevents the\ logic errors that plague purely generative approaches on regulated workloads.
+- **AI with guardrails**: LLMs are used as one layer inside a structured pipeline, not as a free-form translator. This prevents the logic errors that plague purely generative approaches on regulated workloads.
 
 ### Next steps
 
 - Explore the [T1A Alchemist documentation](https://docs.getalchemist.io) for advanced converter templates and batch-conversion workflows.
 - Run Alchemist Analyzer against your own SAS estate to get a complexity and effort estimate before committing to a full migration project.
 - Reach out to [T1A](https://www.getalchemist.io) if you need help scoping or accelerating a production migration.
-
-![CLAIMS_ENRICHED table in Snowflake Database Explorer showing 2.5K enriched claim rows](assets/di_claims_enriched_result.png)
