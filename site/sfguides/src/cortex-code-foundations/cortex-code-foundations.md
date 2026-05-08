@@ -208,7 +208,7 @@ What databases do I have access to?
 <!-- ------------------------ -->
 ## Lab Setup
 
-Before starting the demos, run the setup scripts to create the workshop environment and load sample data. These files are in the `assets/` folder of this repo.
+Before starting the demos, run the setup scripts to create the workshop environment and load sample data. These files are in the `assets/` folder of [this repo](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-foundations/assets).
 
 ### Step 1: Create the Workshop Environment
 
@@ -353,7 +353,7 @@ A month later, the business sends a PRD that expands the AP invoices pipeline. N
 
 ### About the Sample PRD
 
-Download the three CSV files prepared by the Finance Transformation PMO in the `assets/` folder of this repo. Create a folder on your local device and add the files:
+Download the three CSV files prepared by the Finance Transformation PMO in the `assets/` folder of [this repo](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-foundations/assets). Create a folder on your local device and add the files:
 
 - `sample_business_requirements_source_onboarding.csv` — new source systems (Baan, Workday), owners, priorities, and go-live targets
 - `sample_business_requirements_column_mapping.csv` — field-level mappings for both new sources into the Silver schema
