@@ -219,7 +219,7 @@ The dashboard opens automatically at `http://127.0.0.1:10888`. The **Main** tab 
 
 ![Alchemist Analyzer dashboard showing all three SAS asset types in one run](assets/analyzer_dashboard.png)
 
-The **EG**, **DI**, and **Code** tabs alongside **Main** drill into each asset type — flow-level task breakdowns for EG projects, job-level transforms for DI, and per-file statistics for BASE programs.
+The **EG**, **DI**, and **Code** tabs alongside **Main** provide more details about each specific asset type.
 
 > **Note:** Alchemist Analyzer can include at most one `.spk` file per run, but that single `.spk` can be analyzed alongside any number of `.egp` projects and `.sas` files. If your estate has multiple DI jobs, run the analyzer once per `.spk` and combine the others freely with each run.
 
