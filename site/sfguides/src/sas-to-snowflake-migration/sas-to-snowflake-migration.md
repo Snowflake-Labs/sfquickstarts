@@ -1,7 +1,7 @@
 author: Ivan Baranov
 id: sas-to-snowflake-migration
 summary: Migrate SAS Enterprise Guide projects, Data Integration Studio jobs, and BASE code to Snowflake using T1A Alchemist.
-categories: getting-started, data-engineering, migrations, partner-integrations
+categories: snowflake-site:taxonomy/solution-center/partners/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/migrations, snowflake-site:taxonomy/snowflake-feature/snowflake-notebooks
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
