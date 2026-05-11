@@ -1,3 +1,10 @@
+-- Set the PRefix for the HOL Accounts (used to run SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT)
+-- Us this one for the test trial account
+--set acct_prefix='HOL_ACCOUNT';
+-- Use this one for the actual HOL ACcounts for Summit 2026
+set acct_prefix='SUMMIT_26_DM214';
+
+
 USE ROLE GLOBALORGADMIN;
 
 CREATE WAREHOUSE IF NOT EXISTS COMPUTE_WH INITIALLY_SUSPENDED=TRUE AUTO_SUSPEND=60 WAREHOUSE_SIZE = XSMALL;
@@ -404,3 +411,24 @@ CREATE INTERNAL MARKETPLACE CONFIG attr_source_system AS $$
               display_name: "Legal Vault"
               status: active
     $$;
+
+
+-- Run Enable Global Data Sharing on all HOL Accounts
+USE ROLE GLOBALORGADMIN;
+show accounts;
+set qid=last_query_id();
+
+EXECUTE IMMEDIATE $$
+DECLARE
+    -- Loop through all listings and unpublish them
+    listing_cursor CURSOR FOR select 
+                                'SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('''||"account_name"||''');' as stmt  
+                              from table(result_scan($qid))  
+                              where "account_name" like $acct_prefix||'%';
+BEGIN
+    FOR record IN listing_cursor DO
+        execute immediate record.stmt;
+    END FOR;
+END;
+$$
+;
