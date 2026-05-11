@@ -3,7 +3,7 @@ name: Validate markdown and stage (Without Workato)
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
-    branches: [master]
+    branches: [test-journey-sidebar]
 
 jobs:
   validate_and_stage_no_workato:
