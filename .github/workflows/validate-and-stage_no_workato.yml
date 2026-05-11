@@ -676,17 +676,31 @@ jobs:
       - name: Create DAM folder if needed
         run: |
           folder_check=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${AEM_URL}/api/assets/snowflake-site/developers/technical/guides-navigation" \
+            "${AEM_URL}/content/dam/snowflake-site/developers/technical/guides-navigation.json" \
             -u "${AEM_USERNAME}:${AEM_PASSWORD}")
           
           if [ "$folder_check" -ne 200 ]; then
-            echo "📁 Creating DAM folder: guides-navigation"
+            echo "📁 Creating DAM folder hierarchy"
             curl -s -X POST \
-              "${AEM_URL}/api/assets/snowflake-site/developers/technical/guides-navigation" \
+              "${AEM_URL}/api/assets/snowflake-site/developers/technical/*" \
               -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
               -H "Content-Type: application/json" \
-              -d '{"class":"assetFolder","properties":{"title":"Guides Navigation"}}'
+              -d '{"class":"assetFolder","properties":{"name":"guides-navigation","title":"Guides Navigation"}}' || true
             sleep 3
+            
+            verify=$(curl -s -o /dev/null -w "%{http_code}" \
+              "${AEM_URL}/content/dam/snowflake-site/developers/technical/guides-navigation.json" \
+              -u "${AEM_USERNAME}:${AEM_PASSWORD}")
+            if [ "$verify" -ne 200 ]; then
+              echo "⚠️ Folder still not found, trying Sling POST fallback"
+              curl -s -X POST \
+                "${AEM_URL}/content/dam/snowflake-site/developers/technical" \
+                -u "${AEM_USERNAME}:${AEM_PASSWORD}" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "./jcr:primaryType=sling:OrderedFolder" \
+                -d ":name=guides-navigation" || true
+              sleep 3
+            fi
           fi
 
       - name: Upload sidebar JSON files
