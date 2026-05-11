@@ -1,10 +1,10 @@
 author: Priya Joseph
 id: cortex-cursor-integration-custom
-categories: cortex, ai, getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: getting started, cortex, cursor, litellm, ai gateway
+tags: getting started, cortex, cortex rest api, cursor, litellm, ai gateway
 summary: Route the Cursor coding agent's chat completions to Snowflake Cortex (claude-4-sonnet) via a local LiteLLM proxy.
 language: en
 
