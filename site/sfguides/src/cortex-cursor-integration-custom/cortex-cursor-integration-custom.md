@@ -1,8 +1,21 @@
+author: Priya Joseph
+id: cortex-cursor-integration-custom
+categories: cortex, ai, getting-started
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: getting started, cortex, cursor, litellm, ai gateway
+summary: Route the Cursor coding agent's chat completions to Snowflake Cortex (claude-4-sonnet) via a local LiteLLM proxy.
+language: en
+
+
 # Integrating Cortex API with Cursor Agent
 
 A quickstart for routing the Cursor Agent's chat completions to **Snowflake Cortex** (`claude-4-sonnet`) via a local LiteLLM proxy.
 
-> Inspired by Databricks' [AI Gateway → Cursor](https://docs.databricks.com/aws/en/ai-gateway/coding-agent-integration-beta) flow, but using Snowflake Cortex's REST API as the backend.
+> A local proxy pattern that exposes Snowflake Cortex's REST API as an OpenAI-compatible endpoint so any OpenAI-compatible coding agent can use it as a backend.
+
+![Cursor configured with a custom Cortex model](assets/CursorCustomModel.png)
 
 ---
 
