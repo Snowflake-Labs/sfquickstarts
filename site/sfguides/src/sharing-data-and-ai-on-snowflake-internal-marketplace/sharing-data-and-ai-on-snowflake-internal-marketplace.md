@@ -168,7 +168,7 @@ Now select the data objects for this data product.
     - Select the c_address, c_name, and c_phone columns for masking.
   - Note:
     - It may take up to 2 hours before data consumers see the properly generated data preview.
-    - The selection of sensitive columns only affects the data preview in the internal marketplace. When data consumers are granted _access_ to the data product, row- and column-levelk access policies must be in place to govern their access.
+    - The selection of sensitive columns only affects the data preview in the internal marketplace. When data consumers are granted _access_ to the data product, row- and column-level access policies must be in place to govern their access.
 
 ![](assets/2026-hide-columns.png)
 
@@ -219,7 +219,7 @@ Your **Order Insights** data product is now live on the Internal Marketplace!
 
 To verify, navigate to the **Catalog** > **Internal Marketplace**. 
 - You should now see the **Order Insights** listing. 
-- Use the **Profil** filter to show listings for profile (domain) that you selected for your data product.
+- Use the **Profile** filter to show listings for the profile (domain) that you selected for your data product.
 - You can also use the custom attribute filters to narrow down the data product.
 
 
@@ -244,7 +244,7 @@ In this section:
 4. Click the blue **Request Access** button.
    - If prompted to verify your email address, follow the dialog to complete verification.
 5. In the **Request access** dialog, enter a business justification such as:
-   > "We need this data for our ncurrent project xyz."
+   > "We need this data for our current project xyz."
 6. Submit the request.
 7. After submitting, click the gray **View request** button to review your pending request. You can also withdraw and resubmit the request from here if needed.
 
@@ -355,7 +355,7 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
    ![](assets/2026-invoke-coco.png)
 
 
-6. Prompt Coco to make thge desired change for you: "_Please change the discoverability of this listing to the entire organization_". Then click **Allow** to confirm:
+6. Prompt Coco to make the desired change for you: "_Please change the discoverability of this listing to the entire organization_". Then click **Allow** to confirm:
 
    ![](assets/2026-allow-coco-to-alter.png)
 
@@ -436,17 +436,17 @@ Let's use Coco to create and manage listings through prompts.
 
 Next:
 
-- Issue the following prompt to create and publihs a new data product: 
+- Issue the following prompt to create and publish a new data product: 
 
-   "_Please publish the supplier, part, and partsupp tables as a data product. Please generate suitable metadata to describe the data product. Also generate and include a semantic view. The new data product should be visible to the entire organoization, but noone has access unless requested. Please append my account locator to the title of the listing._"
+   "_Please publish the supplier, part, and partsupp tables as a data product. Please generate suitable metadata to describe the data product. Also generate and include a semantic view. The new data product should be visible to the entire organization, but noone has access unless requested. Please append my account locator to the title of the listing._"
 - Respond to any questions that Coco will ask you to perform this request
 - Click **Allow** to permit Coco to create a semantic view and a share.
-- When asked to allow a GRANT, select "**Allow GRANT in this chat**" to allow all reqiuired grants for this data product  
+- When asked to allow a GRANT, select "**Allow GRANT in this chat**" to allow all required grants for this data product  
 - Finally, **Allow** Coco to create the organization listing:
 
     ![](assets/2026-coco-create-listing.png)
 
-- Navigate to the internal amrketplace to find and review the new listing, or click the direct link to the listing that Coco provides.
+- Navigate to the internal marketplace to find and review the new listing, or click the direct link to the listing that Coco provides.
 
 
 
