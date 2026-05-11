@@ -216,6 +216,11 @@ def parse_markdown(
     if isinstance(legacy_urls, str):
         legacy_urls = [u.strip() for u in legacy_urls.split(',') if u.strip()]
     
+    sidebar = frontmatter.get('sidebar', False)
+    if isinstance(sidebar, str):
+        sidebar = sidebar.lower() in ('true', 'yes', '1')
+    sidebar_json = frontmatter.get('sidebar_json', '')
+
     return {
         'id': qid,
         'title': title,
@@ -237,7 +242,9 @@ def parse_markdown(
         'markdown': transformed_content,
         'images_replaced_count': images_count,
         'commit_sha': commit_sha,
-        'quickstart_name': quickstart_name
+        'quickstart_name': quickstart_name,
+        'sidebar': sidebar,
+        'sidebar_json': sidebar_json
     }
 
 
