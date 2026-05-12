@@ -97,7 +97,7 @@ async def list_products(
     data_sql  = (
         f"SELECT {_LIST_COLUMNS} "
         f"FROM {_PRODUCTS_TABLE} {where_sql} "
-        f"ORDER BY PRODUCT_ID "
+        f"ORDER BY RANDOM() "
         f"LIMIT %s OFFSET %s"
     )
 

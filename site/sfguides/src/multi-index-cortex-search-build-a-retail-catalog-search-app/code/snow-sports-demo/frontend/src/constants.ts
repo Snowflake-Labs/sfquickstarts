@@ -175,9 +175,22 @@ export const PRODUCT_TYPE_IMAGE: Record<string, string> = {
   Backpack: 'back_protector',
   'Base Layer': 'base_layer_top',
   Fleece: 'mid_layer_fleece',
+  Midlayer: 'mid_layer_fleece',
   Guards: 'knee_pad',
+  'Knee Guard': 'knee_pad',
   Pole: 'alpine_ski',
   Airbag: 'avalanche_transceiver',
+  Snowboard: 'freeride_snowboard',
+  'Snowboard Binding': 'snowboard_binding',
+  'Snowboard Boot': 'snowboard_boot',
+  'Wrist Guard': 'wrist_guard',
+  'Tuning Tool': 'edge_sharpener',
+  Headwear: 'beanie',
+  Neckwear: 'neck_gaiter',
+  'Safety Gear': 'avalanche_transceiver',
+  'Impact Short': 'knee_pad',
+  Bag: 'back_protector',
+  Hydration: 'back_protector',
 };
 
 export const SKILL_BADGE: Record<string, string> = {

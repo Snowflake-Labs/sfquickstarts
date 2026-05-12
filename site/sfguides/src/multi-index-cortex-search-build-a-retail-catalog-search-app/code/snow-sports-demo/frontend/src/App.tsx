@@ -65,7 +65,7 @@ export default function App() {
     setSearchQuery(query);
     setIsSearching(true);
     try {
-      const results = await multiSearch(query);
+      const results = await multiSearch(query, 20);
       setSearchResults(results);
     } catch (err) {
       console.error('Search error:', err);
