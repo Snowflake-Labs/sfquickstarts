@@ -4,7 +4,6 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: getting started, cortex, cortex rest api, cursor, litellm, ai gateway
 summary: Route the Cursor coding agent's chat completions to Snowflake Cortex (claude-4-sonnet) via a local LiteLLM proxy.
 language: en
 
