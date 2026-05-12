@@ -437,7 +437,7 @@ SELECT PARSE_JSON(
 
 ![Test SQL Cortex](assets/test_sql_cortex.png)
 
-Expected: freeride and outerwear products surface at the top — even for products whose descriptions use different words than the query. 
+Expected result: Waterproof jacket on top for search results: even when the query uses entirely different words than the product descriptions. 
 
 ### Test 2 — Query using [multi-index query syntax](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#multi-index-query-syntax), search multiple columns indepedently. It searches the TEXT INDEX on the BRAND column for the search term "ridgeline" and SEARCH_TEXT column for "warm waterproof jacket off-piste".
 
