@@ -63,15 +63,15 @@ Your Snowflake account has been pre-configured with a database,  users roles, an
 The lab environment consists of:
 
 - **One Snowflake account** with two users and their roles:
-  - `data_owner` with the `data_owner_role`
-  - `data_consumer` with the `data_consumer_role`
+  - `PROVIDER` with the `PROVIDER_ROLE`
+  - `CONSUMER` with the `CONSUMER_ROLE`
 - **A TPC-H database** (`TPCH`) with sample data in the `SF1` schema, including tables (customer, orders, lineitem, nation, region, part, partsupp, supplier), an `ORDER_SUMMARY` view, and an `ORDERS_PER_CUSTOMER` function
-- **Two organizational profiles**: **Sales** and **Marketing**, representing different business units when publishing a data product 
+- **Twenty Different organizational profiles**: representing different business units when publishing a data product - use these profiles freely, there is no specific limitation in these profiles, but server as a way to publish data listings under different profiles
 - **Several custom attributes** that we have pre-defined for all lab participants for richer data product metdata 
 
 ### Review via the Snowsight UI
 
-Log in to your account as the `data_owner` user.
+Log in to your account as the `PROVIDER` user.
 
 1. **Review the database**: In the left navigation, click on **Catalog** > **Database Explorer**. Open the `TPCH` database and navigate to the `SF1` schema. You should see the TPC-H tables, the `ORDER_SUMMARY` view, and the `ORDERS_PER_CUSTOMER` function.
 
@@ -84,8 +84,8 @@ Log in to your account as the `data_owner` user.
 Open a new file in a workspace (or a worksheet) and run the following commands to confirm the lab setup:
 
 ```sql
--- Review as data_owner with the data_owner_role
-USE ROLE data_owner_role;
+-- Review as PROVIDER with the PROVIDER_ROLE
+USE ROLE PROVIDER_ROLE;
 USE WAREHOUSE compute_wh;
 
 -- Review the database and schema
@@ -109,8 +109,8 @@ SHOW ROLES;
 - `SHOW TABLES` should return tables such as `CUSTOMER`, `ORDERS`, `LINEITEM`, `NATION`, `REGION`, `PART`, `PARTSUPP`, and `SUPPLIER`.
 - `SHOW VIEWS` should return the `ORDER_SUMMARY` view.
 - `SHOW USER FUNCTIONS` should return the `ORDERS_PER_CUSTOMER` function.
-- `SHOW USERS` should return `data_owner` and `data_consumer`.
-- `SHOW ROLES` should return `data_owner_role` and `data_consumer_role`.
+- `SHOW USERS` should return `PROVIDER` and `CONSUMER`.
+- `SHOW ROLES` should return `PROVIDER_ROLE` and `CONSUMER_ROLE`.
 -->
 
 ###
@@ -123,11 +123,11 @@ SHOW ROLES;
 
 In this section you will create and publish your first organizational listing called **Order Insights**. This data product shares order and customer data from the TPC-H database with other business domains in your organization.
 
-You will work as `data_owner` with the `data_owner_role`. The publishing flow in the Provider Studio consists of 5 steps.
+You will work as `PROVIDER` with the `PROVIDER_ROLE`. The publishing flow in the Provider Studio consists of 5 steps.
 
 ### Step 1 of 5: Decide on AI Generation and Select Data Objects
 
-1. Log in to your account as the `data_owner` user.
+1. Log in to your account as the `PROVIDER` user.
 2. Navigate to **Catalog** > **Internal Marketplace**.
 3. Click the blue **+ Create Listing** button in the top right.
 4. Proceed with "AI generation on" or, optionally, turn it off. "AI generation on" will automatically populate some of the data product metadata for you.
@@ -238,7 +238,7 @@ In this section:
 
 ### Request Access as the Consumer User
 
-1. Log in to your account as the `data_consumer` user (e.g. open a new browser tab / incognito window and log in as `data_consumer`).
+1. Log in to your account as the `CONSUMER` user (e.g. open a new browser tab / incognito window and log in as `CONSUMER`).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. You should see the **Order Insights** listing. Click on it.
 4. Click the blue **Request Access** button.
@@ -250,10 +250,10 @@ In this section:
 
 ### Review and Grant Access as the Data Product Owner
 
-1. Log in to your account as the `data_owner` user (switch browser tabs/windows or log in again).
+1. Log in to your account as the `PROVIDER` user (switch browser tabs/windows or log in again).
 2. Navigate to the **Data Sharing** -> **Internal Sharing** .
 3. Open the **Requests** tab at the top of the Internal Sharing page.
-4. You should see the access request from `data_consumer`. Click on it to review the details:
+4. You should see the access request from `CONSUMER`. Click on it to review the details:
    - The requesting user and role
    - The business justification
    - The listing being requested
@@ -262,7 +262,7 @@ In this section:
 
 ### Verify Access
 
-Switch back to the `data_consumer` user and navigate to the **Order Insights** listing in the Internal Marketplace. The blue **Request Access** button should now have changed to **Query in Worksheet** (reload the browser tab if needed). This confirms that access has been granted successfully.
+Switch back to the `CONSUMER` user and navigate to the **Order Insights** listing in the Internal Marketplace. The blue **Request Access** button should now have changed to **Query in Worksheet** (reload the browser tab if needed). This confirms that access has been granted successfully.
 
 ---
 
@@ -271,12 +271,12 @@ Switch back to the `data_consumer` user and navigate to the **Order Insights** l
 ## Consume Org Listing
 
 
-Now that access has been granted, let's consume the **Order Insights** data product as the `data_consumer` user with the `data_consumer_role`.
+Now that access has been granted, let's consume the **Order Insights** data product as the `CONSUMER` user with the `CONSUMER_ROLE`.
 
 
 ### Query via the Internal Marketplace
 
-1. Log in to your account as the `data_consumer` user (or switch browser tab).
+1. Log in to your account as the `CONSUMER` user (or switch browser tab).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. Open the **Order Insights** listing. Reload the browser tab if you still see the "Request Access" button.
 4. Click **Query in Worksheet**. Snowflake opens a new worksheet pre-populated with the sample queries from the listing.
@@ -285,10 +285,10 @@ Now that access has been granted, let's consume the **Order Insights** data prod
 <!--
 ### Query via SQL in a Worksheet
 
-You can also query data products directly from any worksheet using the ULL. Open a new worksheet as `data_consumer` and run the following queries:
+You can also query data products directly from any worksheet using the ULL. Open a new worksheet as `CONSUMER` and run the following queries:
 
 ```sql
-USE ROLE data_consumer_role;
+USE ROLE CONSUMER_ROLE;
 USE WAREHOUSE compute_wh;
 
 -- Explore the Order Summary View
@@ -305,10 +305,10 @@ FROM TABLE(SF1.ORDERS_PER_CUSTOMER(60001));
 
 A key benefit of organizational listings is that data is shared live. When the data owner updates the underlying data, consumers see the changes instantly. Let's demonstrate this.
 
-1. Switch to the `data_owner` user and run the following in a worksheet:
+1. Switch to the `PROVIDER` user and run the following in a worksheet:
 
    ```sql
-   USE ROLE data_owner_role;
+   USE ROLE PROVIDER_ROLE;
    USE WAREHOUSE compute_wh;
    USE SCHEMA tpch.sf1;
 
@@ -326,10 +326,10 @@ A key benefit of organizational listings is that data is shared live. When the d
    UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
    ```
 
-3. Switch back to `data_consumer` (e.g. switch browser tabs) and re-run the same query:
+3. Switch back to `CONSUMER` (e.g. switch browser tabs) and re-run the same query:
 
    ```sql
-   USE ROLE data_consumer_role;
+   USE ROLE CONSUMER_ROLE;
 
    SELECT customer_name, country, orderkey, orderdate, AMOUNT
    FROM TABLE(SF1.ORDERS_PER_CUSTOMER(60001));
@@ -346,7 +346,7 @@ Now let's make your data product visible to the entire organization! In this lab
 
 You can do this manually by going back to the "Step 4 of 5: Configure Access Control and Approval" that you performed above. But, let's use Coco to do it for you.
 
-1. Log in to your account as the `data_owner` user (switch browser tabs/windows or log in again).
+1. Log in to your account as the `PROVIDER` user (switch browser tabs/windows or log in again).
 2. Navigate to **Data Sharing** -> **Internal Sharing** .
 3. Open the **Listings** tab at the top of the Internal Sharing page.
 4. Select your listing 
@@ -376,7 +376,7 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
 ## Share Semantic Views and Agents
 Let's make your data product AI-ready by generating and adding a semantic model (semantic view) and an AI agent.
 
-1. Log in to your account as the `data_owner` user (or switch browser tabs/windows ).
+1. Log in to your account as the `PROVIDER` user (or switch browser tabs/windows ).
 2. Navigate to **Data Sharing** -> **Internal Sharing** .
 3. Open the **Listings** tab at the top of the Internal Sharing page.
 4. Select your listing.
@@ -398,7 +398,7 @@ Let's make your data product AI-ready by generating and adding a semantic model 
 
 ## Talk to your Data Product in Snowflake Intelligence
 
-1. Log in to your account as the `data_consumer` user (or switch browser tab).
+1. Log in to your account as the `CONSUMER` user (or switch browser tab).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. Open your **Order Insights** listing.
    - Note that the blue "**Open**" button now provides multiple options
@@ -456,9 +456,9 @@ Next, let's ask Coco to implement a new governance requirement.
 
 Issue the following prompt:
 
-   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the data_owner_role role within my account but not visible to the consumer role and not to any other accounts in this organization._"
+   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the PROVIDER_ROLE role within my account but not visible to the consumer role and not to any other accounts in this organization._"
 
-Once Coco has created the policy, switch to the data_consumer user to see the effect of the masking.
+Once Coco has created the policy, switch to the CONSUMER user to see the effect of the masking.
 
 ---
 
