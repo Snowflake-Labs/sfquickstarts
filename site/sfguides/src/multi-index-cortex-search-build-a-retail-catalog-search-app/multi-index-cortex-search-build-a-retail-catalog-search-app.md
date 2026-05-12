@@ -88,7 +88,7 @@ These are **semantic queries**. A vector index over descriptive text handles thi
 ## Understanding Multi-Index Cortex Search
 
 Snowflake Cortex Search enables hybrid search in Snowflake, combining keyword search and vector search. 
-What’s different about *Multi-Index* Cortex Search is that it supports multiple searchable columns. Each column can be indexed independently as a text index, a vector index, or both, and each can be queried independently.
+What’s different about *Multi-Index* Cortex Search is that it supports multiple searchable columns. Each column can be indexed independently as a text index, a vector index, or both, and each can be queried independently. You can also control per-field relevance using text_boosts and vector_boosts.
 
 ### TEXT INDEXES
 
