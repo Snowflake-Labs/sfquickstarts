@@ -475,6 +475,51 @@ SELECT PARSE_JSON(
 
 > **NOTE:** The `filter` clause is applied server-side before ranking — only products matching the filter are scored and returned. This is more efficient than fetching all results and filtering in your application.
 
+### Test 4 — Control Relevance with text_boosts and vector_boosts per column
+
+Use `scoring_config` to fine-tune how much each index contributes to the final ranking. 
+
+```sql
+SELECT PARSE_JSON(
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH',
+        '{
+            "multi_index_query": {
+                "BRAND": [{"text": "ridgeline"}],
+                "SEARCH_TEXT": [{"text": "warm waterproof jacket for off-piste skiing"}]
+            },
+            "columns": ["PRODUCT_ID", "ITEM_NAME", "BRAND", "CATEGORY", "PRICE"],
+            "limit": 10,
+            "scoring_config": {
+                "weights": {
+                    "texts": 0.3,
+                    "vectors": 0.6,
+                    "reranker": 0.1
+                },
+                "functions": {
+                    "text_boosts": [
+                        {"weight": 1.0, "column": "BRAND"}
+                    ],
+                    "vector_boosts": [
+                        {"weight": 2.0, "column": "SEARCH_TEXT"}
+                    ]
+                }
+            }
+        }'
+    )
+) AS search_results;
+```
+
+| Parameter | What it does |
+|-----------|--------------|
+| `weights.texts` | Global weight for all text index scores (keyword matches) |
+| `weights.vectors` | Global weight for all vector index scores (semantic similarity) |
+| `weights.reranker` | Global weight for the cross-encoder reranker score |
+| `text_boosts` | Per-column multiplier applied on top of the global text weight — use to prioritize specific text indexes |
+| `vector_boosts` | Per-column multiplier applied on top of the global vector weight — use to prioritize specific vector indexes |
+
+> **TIP:** Start with the defaults and adjust incrementally. A higher `text_boosts` weight on BRAND makes brand-name queries more precise; a higher `vector_boosts` weight on SEARCH_TEXT improves recall for natural-language queries.
+
 <!-- ------------------------ -->
 ## Tuning and Optimization
 
