@@ -1,7 +1,7 @@
 author: Jan Sommerfeld, Gilberto Hernandez, Yoav Ostrinsky
 id: build-data-pipelines-with-snowflake-dcm-projects
 summary: Learn how to split platform infrastructure and data pipelines into separate DCM Projects, deploy them sequentially, and build a medallion-architecture transformation layer.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 environments: web
 status: Published
 language: en
@@ -114,20 +114,6 @@ GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_deve
 GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE dcm_developer;
 GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer WITH GRANT OPTION;
-```
-
-### 4. Create a Warehouse (Optional)
-
-If you don't have a warehouse available, create one. DCM commands are mostly metadata changes, so an X-Small warehouse is sufficient:
-
-```sql
-USE ROLE dcm_developer;
-
-CREATE WAREHOUSE IF NOT EXISTS dcm_wh
-WITH
-    WAREHOUSE_SIZE = 'XSMALL'
-    AUTO_SUSPEND = 300
-    COMMENT = 'For Quickstart Demo of DCM Projects';
 ```
 
 <!-- ------------------------ -->
@@ -749,36 +735,25 @@ The overall status is **FAILED** because `no_kids` is violated — some prospect
 <!-- ------------------------ -->
 ## Cleanup
 
-When you're done, open `scripts/05_cleanup.sql` in a Snowsight worksheet and run it to tear down all objects:
+When you're done, open `scripts/05_cleanup.sql` in a Snowsight worksheet and run it to tear down all objects. `EXECUTE DCM PROJECT ... PURGE` drops every object each project created. Run Pipeline's PURGE first to clean out its silver/gold DTs while its host database still exists; Platform's PURGE then drops the databases, warehouses, and roles (including the database that held the Pipeline project object itself).
 
 ```sql
+-- Pipeline first: purge DTs, views, and DMF attachments inside dcm_demo_2_finance_dev
+USE ROLE dcm_demo_2_finance_dev_admin;
+EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline PURGE;
+
+-- Platform: drops dcm_demo_2_finance_dev, dcm_demo_2_marketing_dev, dcm_demo_2_dev,
+-- warehouses, and all team roles. The Pipeline project object goes with the Finance DB.
 USE ROLE dcm_developer;
+EXECUTE DCM PROJECT dcm_demo.projects.dcm_platform_dev PURGE;
 
--- Drop deployed infrastructure from the Pipeline project (inside Finance DB)
-DROP DCM PROJECT IF EXISTS dcm_demo_2_finance_dev.projects.finance_pipeline;
-
--- Drop deployed infrastructure from the Platform project
-DROP DATABASE IF EXISTS dcm_demo_2_finance_dev;
-DROP DATABASE IF EXISTS dcm_demo_2_marketing_dev;
-DROP DATABASE IF EXISTS dcm_demo_2_dev;
-DROP WAREHOUSE IF EXISTS dcm_demo_2_finance_wh_dev;
-DROP WAREHOUSE IF EXISTS dcm_demo_2_marketing_wh_dev;
-
--- Drop roles created by the deployments
-DROP ROLE IF EXISTS dcm_demo_2_finance_dev_admin;
-DROP ROLE IF EXISTS dcm_demo_2_finance_dev_usage;
-DROP ROLE IF EXISTS dcm_demo_2_marketing_dev_admin;
-DROP ROLE IF EXISTS dcm_demo_2_marketing_dev_usage;
-
--- Drop DCM Platform Project object
-USE ROLE ACCOUNTADMIN;
+-- Platform project object itself (in the shared dcm_demo DB), plus the scaffolding
 DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_platform_dev;
 DROP SCHEMA IF EXISTS dcm_demo.projects;
 DROP DATABASE IF EXISTS dcm_demo;
 
--- Drop the DCM Developer role and warehouse (optional)
+USE ROLE ACCOUNTADMIN;
 DROP ROLE IF EXISTS dcm_developer;
-DROP WAREHOUSE IF EXISTS dcm_wh;
 ```
 
 <!-- ------------------------ -->
@@ -792,6 +767,12 @@ In this guide, you learned how to:
 - **Use Jinja macros and loops** to create per-team infrastructure (warehouses, databases, roles, grants) from a single set of definition files
 - **Attach data quality expectations** to gold-layer tables using Data Metric Functions
 - **Deploy projects sequentially** where one project's output becomes another project's input
+
+### What's Next
+
+Continue the series:
+
+- **Part 3 — [DCM Projects for Dynamic Tables](https://www.snowflake.com/en/developers/guides/dcm-projects-for-dynamic-tables/)** — deep-dive into DT lifecycle, schema evolution, and refresh optimization under DCM.
 
 ### Related Resources
 - [DCM Projects Documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)

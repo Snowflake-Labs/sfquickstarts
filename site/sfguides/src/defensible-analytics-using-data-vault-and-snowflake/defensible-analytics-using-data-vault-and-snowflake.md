@@ -2,30 +2,29 @@ author: Paul Hooper
 id: defensible-analytics-using-data-vault-and-snowflake
 language: en
 summary: Defensible Analytics using Data Vault and Snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-phooper/sfquickstarts
 
 
 # Defensible Analytics using Data Vault and Snowflake
 <!-- ------------------------ -->
 ## Defensible Analytics
 
-Today, AI tools interact with data on a daily basis, and enterprises are increasingly recognizing the need for a mature [system of information management](https://datavaultalliance.com/strategy-operating/system-information-management/) that provides **defensible analytics** -- analytics based upon auditable, trustworthy enterprise memory, with unambiguous business context.
+Today, AI tools interact with data on a daily basis, and enterprises are increasingly recognizing the need for a mature **system of information management** that provides **defensible analytics** -- analytics based upon auditable, trustworthy enterprise memory, with unambiguous business context.
 
-Instead, enterprises require a reliable **system of information management**, a system that not only transforms data, but continuous trustworthy information that is aligned to business needs, accompanied by business context, using business vocabulary, with auditable lineage to the originating source. The system must generate the evidence needed to make confident decisions, defend those decisions, and enable consistent answers to questions given to AI agents. The system must be responsive to change, which comes at the speed of business, compatible with an agile approach to implementation, maximizing reuse and avoiding duplication of effort, yet never destroying the auditability and reliability of what has already been delivered.
+Instead of an adhoc approach, making it up as we go along, enterprises require proven patterns for a [system of information management](https://datavaultalliance.com/strategy-operating/system-information-management/). We need to rely upon a system that not only transforms data, but provides continuous trustworthy **information**, aligned to business needs, accompanied by business context, using business vocabulary, with auditable lineage to the originating source. The system must generate the evidence needed to make confident decisions, defend those decisions, and enable consistent answers to questions given to AI agents. The system must be responsive to change, which comes at the speed of business, compatible with an agile approach to implementation, maximizing reuse and avoiding duplication of effort, yet never destroying the auditability and reliability of what has already been delivered.
 
-Data are assets, relevant to our decision-making processes, reducing the effort of, and increasing the quality, speed, and execution of our decisions. Better decision-making improves the performance of our enterprise for all stakeholders. Knowing that, how do we manage information appropriately?
+Data are assets, relevant to our decision-making processes, and can reduce the effort of decision-making, while also increasing the quality, speed, and execution of our decisions. Improving decision effectiveness improves the performance of our enterprise for all stakeholders. Knowing that, how do we manage information appropriately?
 
-### What is Data Vault
+### What is Data Vault?
 
-In 2018, at the World-Wide Data Vault Consortium (WWDVC), [Bill Inmon](https://en.wikipedia.org/wiki/Bill_Inmon) slightly updated his classic definition of the Data Warehouse.
+In 2018, at the World-Wide Data Vault Consortium (WWDVC), [Bill Inmon](https://en.wikipedia.org/wiki/Bill_Inmon) updated his classic definition of the Data Warehouse.
 
 ![A data warehouse is a subject-oriented, integrated (by business key), time-variant and non-volatile collection of data in support of management’s decision-making process, and/or in support of auditability as a system-of-record - William Inmon 2018](assets/inmondw2018.png)
 
- He followed that statement with his recommendation of the Data Vault system to build it. His definition does not contain the words schema-on-write or structured. His phrase "collection of data" includes [unstructured](https://docs.snowflake.com/en/user-guide/unstructured-intro) and [semi-structured](https://docs.snowflake.com/en/user-guide/semistructured-intro) data. Whether we call it a data warehouse, data lake, or data lakehouse, nothing beats the Snowflake AI Data Cloud when it comes to handling those diverse types of data.
+ This was only a minor variation, and this definition remains highly relevant today. He followed this update with his recommendation of the Data Vault system to build it. His definition does not contain the words schema-on-write or structured. His phrase "collection of data" includes [unstructured](https://docs.snowflake.com/en/user-guide/unstructured-intro) and [semi-structured](https://docs.snowflake.com/en/user-guide/semistructured-intro) data types. Whether we call that a data warehouse, data lake, or data lakehouse, nothing beats the Snowflake AI Data Cloud when it comes to handling those diverse types of data.
 
 Data Vault, as invented by [Dan Linstedt](https://datavaultalliance.com/#about), is not just a collection of data modeling standards, but a complete system of information management. That system has key pillars of methodology, architecture, and model, always supporting informed decision-making and delivering business outcomes. This guide cannot possibly detail the entire Data Vault system. To gain a full understanding of Data Vault, we recommend working with experts & partners from [Data Vault Alliance](https://datavaultalliance.com/).
 
@@ -59,7 +58,7 @@ On the very right we have our ultimate **data consumers**: business users, AI ag
 
 Architecturally, we will consider the following Data Vault 2.1 zones:
 - **Transient Zone**: used to transport ephemeral data from source systems and make it accessible for ingestion into Snowflake. We won't dive deep into this zone in this guide, but be sure to check out [Snowflake Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about) and the [Snowflake Ecosystem](https://docs.snowflake.com/en/user-guide/ecosystem) as key enablers for this zone.
-- **Landing Zone**: a managed persistent staging area (PSA) where data is ingested and kept as close as possible to its original state, as established by the source systems it came from. For this Snowflake has [multiple options](https://docs.snowflake.com/en/guides-overview-loading-data), including [bulk loading of files](https://docs.snowflake.com/en/user-guide/data-load-local-file-system), continuous loading of micro-batches of files through [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro), or continuous rows of data through [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview). Snowflake allows you to load and store structured, unstructured, and semi-structured in the original format whilst automatically optimizing the physical structure for efficient query access. But this zone isn't just a data dump. Per Data Vault 2.1, in this zone the data is immutable, stored as it was received from source, with no changes to the content. Here, data are [governed as assets](https://docs.snowflake.com/en/guides-overview-govern). Metadata may be documented, data may be tagged, profiled, and encrypted. Snowflake's [storage lifecycle policies](https://docs.snowflake.com/en/user-guide/storage-management/storage-lifecycle-policies) may be used to automatically move older data to more cost-effective cool and cold archival tiers, keeping expenses down.
+- **Landing Zone**: a managed persistent staging area (PSA) where data is ingested and kept as close as possible to its original state, as established by the source systems it came from. For this Snowflake has [multiple options](https://docs.snowflake.com/en/guides-overview-loading-data), including [bulk loading of files](https://docs.snowflake.com/en/user-guide/data-load-local-file-system), continuous loading of micro-batches of files through [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro), or continuous rows of data through [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview). Snowflake allows you to load and store structured, unstructured, and semi-structured data in the original format whilst automatically optimizing the physical structure for efficient query access. But this zone isn't just a data dump. Per Data Vault 2.1, in this zone the data is immutable, stored as it was received from source, with no changes to the content. Here, data are [governed as assets](https://docs.snowflake.com/en/guides-overview-govern). Metadata may be documented, data may be tagged, profiled, and encrypted. Snowflake's [storage lifecycle policies](https://docs.snowflake.com/en/user-guide/storage-management/storage-lifecycle-policies) may be used to automatically move older data to more cost-effective cool and cold archival tiers, keeping expenses down.
 - **Enterprise Memory Zone**: where data become subject-oriented, integrated by business key, time-variant and non-volatile. This is where the data vault modeling patterns -- such as hubs, links, and satellites -- begin to be applied. Data enters the raw vault, sparsely built, where only hard business rules are applied, loading all records received from source.
 - **Information Delivery Zone**: a collection of consumer-oriented models, designed to inform decision-making processes. This can be implemented as a set (or multiple sets) of views. It is common to see the use of dimensional models (facts and dimensions, star or snowflake) or denormalized flat tables (for data science or sharing) but it could be any other modeling style that fits best for your data consumer. The Business Vault contains data vault objects with soft business rules applied, augmenting the intelligence of the system, and potentially enhancing the performance of the consumer-facing views. Soft business rules may include the calculation of metrics, commonly used aggregations, master data records, PIT and Bridge tables helping to simplify access to information with highly performant views of facts and dimensions. Snowflake’s scalability will support the required speed of access at any point of this data lifecycle. You should consider materialization of Business Vault and other Information Delivery objects as optional.
 
@@ -89,7 +88,7 @@ Make a mental note of the content on the Home tab. Click the + Add new button, t
 
 ![An Empty SQL File](assets/workspaceshome.png)
 
-This is an intuitive SQL workbench. It has a section for the code we'll copy from the guide and paste into the SQL file. It also has a 'run' button to execute the code, the result panel at the bottom, and Cortex Code to the right to provide natural language assistance.
+This is an intuitive SQL workbench. It has a section for the code we'll copy from the guide and paste into the SQL file. It also has a 'run' button to execute the code, the result panel at the bottom, and [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code#cortex-code-in-sf-web-interface) to the right to provide natural language assistance.
 
 ![An Empty SQL File](assets/emptysqlfile.png)
 
@@ -97,6 +96,8 @@ At the end of this guide, you will explore what you've created through the eyes 
 
 ```sql
 -- Defaulting Secondary Roles to None ------------------------------------------
+USE ROLE ACCOUNTADMIN;
+
 ALTER USER SET DEFAULT_SECONDARY_ROLES = ();
 ```
 
@@ -131,7 +132,7 @@ GRANT ALL PRIVILEGES ON WAREHOUSE ADMIN_WH TO ROLE PLT_ADMIN WITH GRANT OPTION;
 CREATE DATABASE IF NOT EXISTS PLT
   COMMENT = 'Common centralized platform database for shared objects and utilities';
 
-DROP SCHEMA IF EXISTS PLT.PUBLIC;
+DROP SCHEMA IF EXISTS PLT.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE PLT TO ROLE PLT_ADMIN WITH GRANT OPTION;
 ```
@@ -143,6 +144,7 @@ Let's create a schema in the platform database for governance, containing common
 ```sql
 -- Platform Database: Governance -----------------------------------------------
 USE ROLE PLT_ADMIN;
+USE WAREHOUSE ADMIN_WH;
 
 CREATE SCHEMA IF NOT EXISTS PLT.GOVERNANCE
   WITH MANAGED ACCESS
@@ -159,6 +161,7 @@ GRANT DATABASE ROLE PLT.GOVERNANCE_R TO DATABASE ROLE PLT.GOVERNANCE_A;
 GRANT DATABASE ROLE PLT.GOVERNANCE_A TO DATABASE ROLE PLT.GOVERNANCE_W;
 
 GRANT DATABASE ROLE PLT.GOVERNANCE_R TO ROLE PUBLIC;
+GRANT DATABASE ROLE PLT.GOVERNANCE_W TO ROLE PLT_ADMIN;
 
 -- GOVERNANCE_R: read access to governance schema and tag values
 GRANT USAGE ON DATABASE PLT TO DATABASE ROLE PLT.GOVERNANCE_R;
@@ -202,6 +205,9 @@ Let's create a schema in the platform database for administration tools, contain
 
 ```sql
 -- Platform Database: Admin Tools ----------------------------------------------
+USE ROLE PLT_ADMIN;
+USE WAREHOUSE ADMIN_WH;
+
 CREATE SCHEMA IF NOT EXISTS PLT.ADMIN_TOOLS
   WITH MANAGED ACCESS
   COMMENT = 'Common platform administration tools and utilities';
@@ -465,7 +471,7 @@ GRANT USAGE, OPERATE ON WAREHOUSE DEV_INGEST_WH TO ROLE DEV_LZ_INGEST;
 CREATE DATABASE IF NOT EXISTS DEV_LZ
   COMMENT = 'Development landing zone for raw data ingestion';
 
-DROP SCHEMA IF EXISTS DEV_LZ.PUBLIC;
+DROP SCHEMA IF EXISTS DEV_LZ.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE DEV_LZ TO ROLE PLT_ADMIN WITH GRANT OPTION;
 ```
@@ -514,7 +520,7 @@ GRANT USAGE, OPERATE ON WAREHOUSE ENGINEERING_WH TO ROLE QA_ANALYST;
 CREATE DATABASE IF NOT EXISTS DEV_DV
   COMMENT = 'Enterprise memory of domain-oriented data vault models';
 
-DROP SCHEMA IF EXISTS DEV_DV.PUBLIC;
+DROP SCHEMA IF EXISTS DEV_DV.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE DEV_DV TO ROLE PLT_ADMIN WITH GRANT OPTION;
 
@@ -522,7 +528,7 @@ GRANT ALL PRIVILEGES ON DATABASE DEV_DV TO ROLE PLT_ADMIN WITH GRANT OPTION;
 CREATE DATABASE IF NOT EXISTS DEV_DW
   COMMENT = 'Information delivery of domain-oriented models';
 
-DROP SCHEMA IF EXISTS DEV_DW.PUBLIC;
+DROP SCHEMA IF EXISTS DEV_DW.PUBLIC; -- Removing automatically generated schema
 
 GRANT ALL PRIVILEGES ON DATABASE DEV_DW TO ROLE PLT_ADMIN WITH GRANT OPTION;
 ```
@@ -547,7 +553,7 @@ Also, a domain's business activities can rarely function without using data orig
 
 ### Domain Taxonomy and Ontologies
 
-The business processes, as performed in an organization, along with business keys (how the people performing those activities identify things), units of work that connect business keys, descriptive information produced by activities, what technology systems are used, and input/output connections to other domains, can all be formally described in **ontologies**. These ontologies can be captured in simple text documents or aided by knowledge graph. And because each domain has a web of connections to other domains, not just hierarchical relationships, that domain hierarchy becomes a **domain taxonomy**. When getting started, don't attempt to "boil the ocean," but rather limit scope to a prioritized set of specific business objectives. However, that which is formally documented should be captured accurately, utilizing the domain expertise of those performing these business processes, reviewing with and gaining the formal approval of those who have dominion over the given domain(s). You don't want a documented ontology of the Finance domain that the CFO would not recognize or approve of. Every domain, when formally documented, should have an obvious authority figure, already having dominion over the activities, processes, and business vocabulary used within that domain.
+The business processes, as performed in an organization, along with business keys (how the people performing those activities identify things), units of work that connect business keys, descriptive information produced by activities, what technology systems are used, and input/output connections to other domains, can all be formally described in **ontologies**. These ontologies can be captured in simple text documents or aided by knowledge graph. And because each domain has a web of connections to other domains, not just hierarchical relationships, the domain hierarchy becomes a **domain taxonomy**. When getting started, don't attempt to "boil the ocean," but rather limit scope to a prioritized set of specific business objectives. However, that which is formally documented should be captured accurately, utilizing the domain expertise of those performing these business processes, reviewing with and gaining the formal approval of those who have dominion over the given domain(s). You don't want a documented ontology of the Finance domain that the CFO would not recognize or approve of. Every domain, when formally documented, should have an obvious authority figure, already having dominion over the activities, processes, and business vocabulary used within that domain.
 
 As an example, we'll consider the following simple domain hierarchy, starting with just two domains, Sales & Marketing and Customer Service.
 
@@ -570,7 +576,7 @@ USE WAREHOUSE ADMIN_WH;
 
 CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_REF', 'Static Reference Data');
 CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_CUSTOMER_SYS', 'Customer System');
-CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_ORDERS_SYS', 'Order System');
+CALL PLT.ADMIN_TOOLS.CREATE_LZ_SCHEMA_AND_ROLES('DEV_LZ', 'TPCH_ORDERS_SYS', 'Orders System');
 
 GRANT DATABASE ROLE DEV_LZ.DB_W TO ROLE DEV_LZ_INGEST;
 ```
@@ -583,6 +589,9 @@ Now that we know our domains, let's create domain-oriented schemas in the DV and
 
 ```sql
 -- Enterprise Memory and Information Delivery Schemas --------------------------
+USE ROLE PLT_ADMIN;
+USE WAREHOUSE ADMIN_WH;
+
 CALL PLT.ADMIN_TOOLS.CREATE_DV_SCHEMA_AND_ROLES('DEV_DV', 'SALESMKT', 'Sales & Marketing');
 CALL PLT.ADMIN_TOOLS.CREATE_DW_SCHEMA_AND_ROLES('DEV_DW', 'SALESMKT', 'Sales & Marketing');
 CALL PLT.ADMIN_TOOLS.CREATE_DV_SCHEMA_AND_ROLES('DEV_DV', 'CUSTSERV', 'Customer Service');
@@ -679,7 +688,7 @@ SHOW SCHEMAS IN DATABASE DEV_DV; -- This will error, as the role doesn't have ac
 
 We covered some of the basics to get started. As an architect, you may be considering creating test and main production environments; or additional roles, both platform oriented and domain oriented; or additional tags, access policies and restricted information roles; or data metric functions, with a data quality / error mart; or additional common functions and stored procedures; or even Presentation Zone databases for custom customer-facing data shares, Streamlit apps and dashboards, or Agents for use with Snowflake Intelligence. We hope we've whet your appetite for more.
 
-You are now ready to advance to the [next guide, Building a Real-Time Data Vault in Snowflake](https://www.snowflake.com/en/developers/guides/vhol-data-vault/)! Data Vault 2.1 consists of 3 pillars -- methodology, architecture, and model -- and while this guide focuses on architecture, the next guide focuses on modeling. We've updated that guide to leverage the structure defined here, as well as adding some new content.
+You are now ready to advance to the next guide, [Building a Real-Time Data Vault in Snowflake](https://www.snowflake.com/en/developers/guides/vhol-data-vault/)! Data Vault 2.1 consists of 3 pillars -- methodology, architecture, and model -- and while this guide focuses on architecture, the next guide focuses on modeling. We've updated that guide to leverage the structure defined here.
 
 If you want to learn more about Data Vault 2.1, check out the latest content from Data Vault Alliance: the [blog, training and certification resources](https://datavaultalliance.com/), the [DVA United](https://www.dvaunited.com/) community, and free content on [YouTube](https://www.youtube.com/@DataVaultAlliance/videos).
 
