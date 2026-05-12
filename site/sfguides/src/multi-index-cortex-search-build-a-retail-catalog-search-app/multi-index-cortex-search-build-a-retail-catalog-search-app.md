@@ -545,6 +545,8 @@ svc = (
 
 ### The Query Function
 
+The query function will use all four indexes for the search. This can be easily adjusted by removing one of the indexes from the multi_search function definition.
+
 ```python
 ### The Query Function
 SEARCH_COLUMNS = [

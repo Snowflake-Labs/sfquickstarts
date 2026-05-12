@@ -258,11 +258,10 @@ DESCRIBE CORTEX SEARCH SERVICE CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH;
 -- =============================================================================
 -- SECTION 8 — Test Queries via SEARCH_PREVIEW
 --
--- SEARCH_PREVIEW is the SQL interface for Cortex Search.
--- For multi_index_query, use the Python SDK (see quickstart).
+-- SEARCH_PREVIEW is the SQL interface for Cortex Search. It supports multi_index_query syntax
 -- =============================================================================
 
--- Test 1: Brand name lookup (exercises TEXT INDEX on BRAND)
+-- Test 1: Query all indexes for search term: warm waterproof jacket for off-piste skiing"
 SELECT PARSE_JSON(
     SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
         'CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH',
@@ -274,13 +273,16 @@ SELECT PARSE_JSON(
     )
 ) AS search_results;
 
--- Test 2: Intent / semantic query (exercises VECTOR INDEX on SEARCH_TEXT)
+-- Test 2: Query using [multi-index query syntax](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#multi-index-query-syntax), search multiple columns indepedently. It searches the TEXT INDEX on the BRAND column for the search term "ridgeline" and SEARCH_TEXT column for "warm waterproof jacket off-piste".
 SELECT PARSE_JSON(
     SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
         'CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH',
         '{
-            "query": "warm waterproof jacket for off-piste skiing",
             "columns": ["PRODUCT_ID", "ITEM_NAME", "BRAND", "CATEGORY", "PRICE"],
+            "multi_index_query": {
+                "BRAND": [{"text": "ridgeline"}],
+                "SEARCH_TEXT": [{"text": "warm waterproof jacket for off-piste skiing"}]
+            },
             "limit": 10
         }'
     )
@@ -298,29 +300,6 @@ SELECT PARSE_JSON(
         }'
     )
 ) AS search_results;
-
--- Test 4: Category breakdown — count results per category for a query
--- (demonstrates how CATEGORY attribute enables breakdown without separate services)
-WITH raw AS (
-    SELECT PARSE_JSON(
-        SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-            'CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH',
-            '{
-                "query": "ridgeline",
-                "columns": ["CATEGORY"],
-                "limit": 100
-            }'
-        )
-    ) AS results
-),
-flattened AS (
-    SELECT f.value:CATEGORY::STRING AS category
-    FROM raw, LATERAL FLATTEN(input => results:results) f
-)
-SELECT category, COUNT(*) AS result_count
-FROM flattened
-GROUP BY 1
-ORDER BY 2 DESC;
 
 -- =============================================================================
 -- SECTION 10 — Cleanup
