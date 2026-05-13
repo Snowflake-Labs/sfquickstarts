@@ -105,8 +105,6 @@ Once your evaluation metrics are well aligned with your human annotations, you c
 
 ### Use versioning to structure iteration
 
-> **Preview Feature — Private:** Agent versioning is available to select accounts.
-
 Every improvement cycle should map cleanly to the agent version lifecycle:
 
 - **Live version** → where you make changes
@@ -267,6 +265,11 @@ EXECUTE TASK AI_OBSERVABILITY_RUN_TASK_1;
 ```
 
 > To help avoid unexpected regressions due to LLM changes, pin a specific model for orchestration rather than choosing `auto`. This ensures the LLM used is the one you have determined best for your use case.
+>
+
+### Goal Setting
+
+When setting goals for your evaluation metrics, it can be beneficial to focus on consistency over perfection. Evaluations should be run at a regular cadence, and metric score results should be monitored for variance. This can be achieved via the the compare tab in the Agent Evaluations UI or by directly querying the results from the event table. In many cases - a stable score can be more meaningful than a high one. An aggregate score of 100% on a given metric typically signals that your dataset is too easy and risks overfitting to cases your agent already handles well - the dataset should include challenging questions that stress the boundaries of your agent's capabilities. Additionally - metric scores jumping from 80% -> 65% -> 90% with minimal changes to the evaluation set or agent instructions suggest that your agent may be failing to answer queries in a consistent manner - which can often be addressed by adding more explicit instructions, better tool descriptions, verified queries etc. 
 
 <!-- ------------------------ -->
 ## Production Observability

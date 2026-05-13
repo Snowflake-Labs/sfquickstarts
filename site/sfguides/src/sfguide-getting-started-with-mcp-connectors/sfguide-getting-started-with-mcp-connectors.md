@@ -12,8 +12,6 @@ fork repo link:
 <!-- ------------------------ -->
 ## Overview
 
-> **Preview Feature — Private:** Available to select accounts.
-
 Connect Cortex Agents to **Snowflake-managed MCP servers** (Cortex Search, Cortex Analyst) and **external MCP connectors** (Atlassian, GitHub, Glean, Linear, Salesforce). Data, tools, MCP servers, and agents are all governed in Snowflake via RBAC.
 
 This guide uses sample data across HR, Finance, and IT schemas to create Cortex Agents backed by Snowflake-managed MCP servers, with optional external MCP connectors for SaaS tools. You'll interact with all of them through **Snowflake Intelligence**.
@@ -492,7 +490,7 @@ Congratulations! You've successfully connected Snowflake Intelligence to Cortex 
 
 ### Related Resources
 
-- [MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors) -- External MCP connector docs
+- [MCP Connectors](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors) -- External MCP connector docs
 - [CREATE MCP SERVER](https://docs.snowflake.com/en/sql-reference/sql/create-mcp-server) -- SQL reference
 - [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) -- Agent orchestration
 - [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) -- Semantic models for Cortex Analyst

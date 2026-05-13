@@ -577,9 +577,7 @@ The [web search tool](https://docs.snowflake.com/en/user-guide/snowflake-cortex/
 
 ### MCP Connectors
 
-> **Preview Feature — Private:** MCP Connectors are available to select accounts.
-
-[MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors) connect your agents to external SaaS tools via the Model Context Protocol (MCP). Supported connectors include Atlassian (Jira & Confluence), GitHub, Glean, Google Workspace, Linear, Salesforce, and Slack, and you can build custom connectors for any MCP-compatible endpoint.
+[MCP Connectors](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors) connect your agents to external SaaS tools via the Model Context Protocol (MCP). Supported connectors include Atlassian (Jira & Confluence), GitHub, Glean, Google Workspace, Linear, Salesforce, and Slack, and you can build custom connectors for any MCP-compatible endpoint.
 
 The setup flow for MCP connectors is:
 1.  **Provider setup:** Create an OAuth app on the provider's dashboard and obtain credentials.
@@ -868,6 +866,6 @@ By following these best practices, you can confidently build **Cortex Agents** t
 - Guide: [Getting started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 - Guide: [Getting started with Snowflake Intelligence and Cortex Knowledge Extensions (CKEs)](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/)
 - Guide: [Getting Started with MCP Connectors](https://www.snowflake.com/en/developers/guides/getting-started-with-mcp-connectors/)
-- [Code execution tool documentation](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agents-code-interpreter)
-- [MCP Connectors documentation](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors)
+- [Code execution tool documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-code-execution-tool)
+- [MCP Connectors documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors)
 - [More Snowflake Guides](https://www.snowflake.com/en/developers/guides/)
