@@ -1,0 +1,205 @@
+# Fleet Analytics Semantic Model
+# Used by Cortex Analyst / Snowflake Intelligence
+# Database: FLEET_DB
+
+name: Fleet Analytics
+tables:
+  - name: TELEMETRY_ENRICHED
+    base_table:
+      database: FLEET_DB
+      schema: ANALYTICS
+      table: TELEMETRY_ENRICHED
+    description: >
+      Enriched vehicle telemetry events. Each row is one telemetry reading joined
+      with vehicle registry data. Includes speed, engine temperature, fuel level,
+      engine health classification, make, model, driver, and fleet region.
+    dimensions:
+      - name: vehicle_id
+        expr: VEHICLE_ID
+        description: Unique identifier for the vehicle (e.g. VH-0012)
+        data_type: STRING
+      - name: make
+        expr: MAKE
+        description: Vehicle manufacturer (Ford, Chevrolet, Toyota, Ram, Freightliner)
+        data_type: STRING
+      - name: model
+        expr: MODEL
+        description: Vehicle model (Transit, Express, Tacoma, ProMaster, Cascadia)
+        data_type: STRING
+      - name: driver_name
+        expr: DRIVER_NAME
+        description: Name of the assigned driver
+        data_type: STRING
+      - name: fleet_region
+        expr: FLEET_REGION
+        description: Geographic region (Pacific Northwest, California, Mountain West, Midwest, Northeast)
+        data_type: STRING
+      - name: engine_health_status
+        expr: ENGINE_HEALTH_STATUS
+        description: Engine health classification — NORMAL, WARNING (> 210°F), or CRITICAL (> 230°F)
+        data_type: STRING
+    time_dimensions:
+      - name: event_timestamp
+        expr: EVENT_TIMESTAMP
+        description: UTC timestamp of the telemetry event
+        data_type: TIMESTAMP_NTZ
+    measures:
+      - name: speed_mph
+        expr: SPEED_MPH
+        description: Vehicle speed in miles per hour
+        data_type: FLOAT
+      - name: engine_temp_f
+        expr: ENGINE_TEMP_F
+        description: Engine temperature in Fahrenheit
+        data_type: INT
+      - name: fuel_level_pct
+        expr: FUEL_LEVEL_PCT
+        description: Fuel tank level as a percentage (0–100)
+        data_type: FLOAT
+      - name: event_count
+        expr: COUNT(*)
+        description: Total number of telemetry events
+        data_type: NUMBER
+      - name: avg_speed
+        expr: ROUND(AVG(SPEED_MPH), 1)
+        description: Average speed in mph
+        data_type: FLOAT
+      - name: critical_event_count
+        expr: SUM(CASE WHEN ENGINE_HEALTH_STATUS = 'CRITICAL' THEN 1 ELSE 0 END)
+        description: Number of events with CRITICAL engine health
+        data_type: NUMBER
+
+  - name: DAILY_FLEET_SUMMARY
+    base_table:
+      database: FLEET_DB
+      schema: ANALYTICS
+      table: DAILY_FLEET_SUMMARY
+    description: >
+      Daily aggregated fleet metrics per region. Includes average speed,
+      engine temperature, fuel level, and counts of critical / check-engine events.
+    dimensions:
+      - name: fleet_region
+        expr: FLEET_REGION
+        description: Geographic fleet region
+        data_type: STRING
+    time_dimensions:
+      - name: summary_date
+        expr: SUMMARY_DATE
+        description: Calendar date of the summary
+        data_type: DATE
+    measures:
+      - name: total_events
+        expr: TOTAL_EVENTS
+        description: Total telemetry events on this date/region
+        data_type: NUMBER
+      - name: active_vehicles
+        expr: ACTIVE_VEHICLES
+        description: Count of distinct vehicles with events
+        data_type: NUMBER
+      - name: avg_speed_mph
+        expr: AVG_SPEED_MPH
+        description: Average speed across all events
+        data_type: FLOAT
+      - name: avg_engine_temp_f
+        expr: AVG_ENGINE_TEMP_F
+        description: Average engine temperature
+        data_type: FLOAT
+      - name: avg_fuel_level_pct
+        expr: AVG_FUEL_LEVEL_PCT
+        description: Average fuel level percentage
+        data_type: FLOAT
+      - name: critical_events
+        expr: CRITICAL_EVENTS
+        description: Number of critical engine health events
+        data_type: NUMBER
+      - name: check_engine_events
+        expr: CHECK_ENGINE_EVENTS
+        description: Number of check-engine-light events
+        data_type: NUMBER
+
+  - name: VEHICLE_REGISTRY
+    base_table:
+      database: FLEET_DB
+      schema: RAW
+      table: VEHICLE_REGISTRY
+    description: >
+      Master data for vehicles and drivers. Contains vehicle details (make, model, year),
+      driver information, and fleet assignment.
+    dimensions:
+      - name: vehicle_id
+        expr: VEHICLE_ID
+        description: Unique vehicle identifier
+        data_type: STRING
+      - name: make
+        expr: MAKE
+        description: Vehicle manufacturer
+        data_type: STRING
+      - name: model
+        expr: MODEL
+        description: Vehicle model
+        data_type: STRING
+      - name: year
+        expr: YEAR
+        description: Model year
+        data_type: INT
+      - name: driver_name
+        expr: DRIVER_NAME
+        description: Assigned driver name
+        data_type: STRING
+      - name: fleet_region
+        expr: FLEET_REGION
+        description: Fleet region assignment
+        data_type: STRING
+      - name: vehicle_status
+        expr: VEHICLE_STATUS
+        description: Current status — ACTIVE or MAINTENANCE
+        data_type: STRING
+    time_dimensions:
+      - name: registration_date
+        expr: REGISTRATION_DATE
+        description: Date the vehicle was registered in the fleet
+        data_type: DATE
+      - name: last_service_date
+        expr: LAST_SERVICE_DATE
+        description: Date of most recent service
+        data_type: DATE
+
+  - name: SENSOR_READINGS
+    base_table:
+      database: FLEET_DB
+      schema: RAW
+      table: SENSOR_READINGS
+    description: >
+      High-frequency time-series sensor data from vehicle onboard diagnostics.
+      Includes engine temperature, oil pressure, battery voltage, and fuel consumption.
+    dimensions:
+      - name: vehicle_id
+        expr: VEHICLE_ID
+        description: Vehicle that produced the reading
+        data_type: STRING
+    time_dimensions:
+      - name: reading_timestamp
+        expr: READING_TIMESTAMP
+        description: UTC timestamp of the sensor reading
+        data_type: TIMESTAMP_NTZ
+    measures:
+      - name: engine_temp_f
+        expr: ENGINE_TEMP_F
+        description: Engine temperature in Fahrenheit
+        data_type: FLOAT
+      - name: oil_pressure_psi
+        expr: OIL_PRESSURE_PSI
+        description: Oil pressure in PSI
+        data_type: FLOAT
+      - name: battery_voltage
+        expr: BATTERY_VOLTAGE
+        description: Battery voltage
+        data_type: FLOAT
+      - name: fuel_consumption_gph
+        expr: FUEL_CONSUMPTION_GPH
+        description: Fuel consumption in gallons per hour
+        data_type: FLOAT
+      - name: odometer_miles
+        expr: ODOMETER_MILES
+        description: Odometer reading in miles
+        data_type: FLOAT

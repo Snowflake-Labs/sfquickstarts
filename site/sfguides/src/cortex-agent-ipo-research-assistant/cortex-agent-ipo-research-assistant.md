@@ -51,7 +51,7 @@ USE WAREHOUSE IPO_RESEARCH_WH;
 Upload and run a Snowflake Python Notebook that will download S-1 filings, add some dimensional data, create an extraction procedure, and create a Semantic View.
 
 ### Step 1.1: Import Edgar DB Python Notebook 
-Next, let's import the Python Notebook that will download S-1 files from the EDGAR database as well as create the tables and AI_EXTRACT function.  First, download the notebook from [this](https://github.com/sfc-gh-jtao/sfquickstarts/blob/bd3c5bcfef1a586e5625fc478c0ded1d1c33a397/site/sfguides/src/cortex-agent-ipo-research-assistant/assets/Edgar%20DB%20Extract.ipynb) link.
+Next, let's import the Python Notebook that will download S-1 files from the EDGAR database as well as create the tables and AI_EXTRACT function.  First, download the notebook from [this](https://github.com/Snowflake-Labs/sfquickstarts/blob/e26f782575f756c55e8058576f2562c8579690ba/site/sfguides/src/cortex-agent-ipo-research-assistant/assets/Edgar%20DB%20Extract.ipynb) link.
 
 You can import the notebook file by clicking the plus button >> Notebook >> Import .ipynb file.  
 
@@ -100,7 +100,7 @@ Go to the Finnhub website and register.  Once you register, you'll get an API ke
 
 Next, let's import the Python Notebook that will create a new set of Network Rules and EAIs, plus the procedures that will hit the API.  Use the same approach for importing the notebook.  
 
-Use [this](https://github.com/sfc-gh-jtao/sfquickstarts/blob/bd3c5bcfef1a586e5625fc478c0ded1d1c33a397/site/sfguides/src/cortex-agent-ipo-research-assistant/assets/Finnhub%20Integration%20Setup.ipynb) link to download the notebook.
+Use [this](https://github.com/Snowflake-Labs/sfquickstarts/blob/e26f782575f756c55e8058576f2562c8579690ba/site/sfguides/src/cortex-agent-ipo-research-assistant/assets/Finnhub%20Integration%20Setup.ipynb) link to download the notebook.
 
 Since we do not need any custom libraries, we'll use a warehouse-powered notebook.  Your settings should look like this:
 
@@ -138,7 +138,7 @@ Next, let's upload the market report PDFs to our new stage via the UI.  To do th
 
 ![alt_text](assets/goto_market_reports_stage.png)
 
-In the new tab, click "+ Files" in the top right and upload the market report PDF files.  They can be found in a zip [here](https://github.com/sfc-gh-jtao/sfquickstarts/blob/bd3c5bcfef1a586e5625fc478c0ded1d1c33a397/site/sfguides/src/cortex-agent-ipo-research-assistant/assets/market_insights_pdfs.zip) - make sure to unzip and upload the PDFs as individual files.  
+In the new tab, click "+ Files" in the top right and upload the market report PDF files.  They can be found in a zip [here](https://github.com/Snowflake-Labs/sfquickstarts/blob/e26f782575f756c55e8058576f2562c8579690ba/site/sfguides/src/cortex-agent-ipo-research-assistant/assets/market_insights_pdfs.zip) - make sure to unzip and upload the PDFs as individual files.  
 
 ### Step 3.3: Create Target Table and Perform Document Processing
 

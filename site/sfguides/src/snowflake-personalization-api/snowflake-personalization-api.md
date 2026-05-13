@@ -66,7 +66,10 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/sfc-gh-lambrosetti/snow_personalization_api).
 
+Alternatively, the correct files are in the assets folder of the quickstart guides. You can create your own repo from those assets.
+
 To create a new codespace, browse to the GitHub [repository](https://github.com/sfc-gh-lambrosetti/snow_personalization_api) in a browser. You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
+
 
 You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project.
 
@@ -127,7 +130,7 @@ You'll notice that an in-memory cache is used to cache responses for 180 seconds
 
 Later on, we'll have the opportunity to test the endpoint with and without the in-memory cache.
 
-While this is only a single endpoint, you can easily add other endpoints as well. Check out how to create other endpoints in a similar version to this guide [here](https://github.com/sfc-gh-bculberson/lab_data_api_python).
+While this is only a single endpoint, you can easily add other endpoints as well. Check out how to create other endpoints in a similar version to this guide [here](https://github.com/snowflake-labs/lab_data_api_python).
 
 <!-- ------------------------ -->
 ## Building the Application Container
@@ -454,4 +457,4 @@ To get more comfortable with this solution, implement new endpoints with new dat
 
 ### Resources
 
-If you want to build a Data API using Snowflake standard tables for analytical queries, be sure to check out the previous version of this [here](https://github.com/sfc-gh-bculberson/lab_data_api_python). 
+If you want to build a Data API using Snowflake standard tables for analytical queries, be sure to check out the previous version of this [here](https://github.com/Snowflake-Labs/lab_data_api_python). 

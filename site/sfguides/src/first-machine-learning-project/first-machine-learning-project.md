@@ -11,7 +11,7 @@ status: Published
 
 ## Overview
 
-This project demonstrates how to build a complete machine learning project for classifying bear species using physical characteristics and image analysis. The project is structured as a 5-part learning journey that covers the entire ML lifecycle from data ingestion to model deployment.
+This project demonstrates how to build a complete machine learning project for classifying bear species using physical characteristics and image analysis. The project is structured as a 5-part learning journey that covers the entire [ML lifecycle](http://www.snowflake.com/ml) from data ingestion to model deployment.
 
 This guide provides a high-level overview of the 5-part series, which is available as a set of Snowflake Notebooks and Python files.
 
@@ -163,7 +163,7 @@ The final step is to create a user-facing application that uses the model you ju
 
 ## Conclusion And Resources
 
-Congratulations! You've successfully built a complete end-to-end machine learning pipeline in Snowflake. You've ingested and wrangled data using Modin, performed image analysis with Cortex AI, explored data with Streamlit, trained multiple models using `scikit-learn`, and tracked your experiments using Snowflake ML.
+Congratulations! You've successfully built a complete end-to-end machine learning pipeline in Snowflake. You've ingested and wrangled data using Modin, performed image analysis with Cortex AI, explored data with Streamlit, trained multiple models using `scikit-learn`, and tracked your experiments using [Snowflake ML](http://www.snowflake.com/ml).
 
 ### What You Learned
 - How to ingest and process data using the Snowpark pandas API (Modin).
@@ -174,9 +174,11 @@ Congratulations! You've successfully built a complete end-to-end machine learnin
 - How to register the best-performing model into the Snowflake Model Registry.
 
 ### Related Resources
--   **Snowpark Documentation**: [https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 -   **Snowflake ML Documentation**: [https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview](https://docs.snowflake.com/en/user-guide/snowflake-ml/overview)
 -   **scikit-learn User Guide**: [https://scikit-learn.org/stable/user_guide.html](https://scikit-learn.org/stable/user_guide.html)
 -   **Altair Documentation**: [https://altair-viz.github.io/user_guide/api.html](https://altair-viz.github.io/user_guide/api.html)
 -   **Streamlit Documentation**: [https://docs.streamlit.io/](https://docs.streamlit.io/)
--   **YouTube Playlist on Snowflake Notebooks**: [https://www.youtube.com/watch?v=YB1B6vcMaGE&list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI](https://www.youtube.com/watch?v=YB1B6vcMaGE&list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI)
+-   [Snowflake ML Resources](http://www.snowflake.com/ml)
+-   [Best Practices for Production ML](https://www.snowflake.com/en/engineering-blog/best-practices-for-production-ml/)
+-   [Agentic Machine Learning Best Practices with Cortex Code](https://www.snowflake.com/en/engineering-blog/agentic-ml-best-practices-cortex-code/)
+-   [More ML Quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)

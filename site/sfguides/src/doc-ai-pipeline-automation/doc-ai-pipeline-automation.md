@@ -11,6 +11,10 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Document AI Pipeline Automation
 <!-- ------------------------ -->
+
+>**Note:
+>The Document AI feature referenced in this guide has been deprecated. Please see [this guide](https://www.snowflake.com/en/developers/guides/create-a-document-processing-pipeline-with-ai-extract/) to learn more about the successor feature AI_EXTRACT.**<br>
+
 ## Overview 
 
 This QuickStart help you understand and build the Snowflake Document AI Data Extraction & Validation Pipeline, designed for seamless and reusable document processing. The pipeline enables users to load their files into a Snowflake stage and leverages streams, tasks, and Python-based procedures for efficient data extraction, validation, and downstream integration. It can be easily adapted to work with multiple Document AI models by creating an appropriate end table to capture the final data points.
