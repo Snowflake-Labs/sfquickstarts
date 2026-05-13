@@ -54,7 +54,7 @@ If `claude-4-sonnet` is unavailable in your region, swap to another supported Cl
 ## 2. Smoke-test the REST endpoint
 
 ```bash
-ACCOUNT_HOST="<youraccount>.snowflakecomputing.com"   # e.g. lqb04922.us-west-2.snowflakecomputing.com
+ACCOUNT_HOST="<youraccount>.snowflakecomputing.com"   
 PAT="<your_pat>"
 
 curl -sS https://$ACCOUNT_HOST/api/v2/cortex/inference:complete \
@@ -185,7 +185,7 @@ If Cursor shows:
 
 - Ask the admin to enable **"Allow custom OpenAI API keys"** in the Cursor team console.
 - Or use the proxy from a **personal/non-team Cursor account** that doesn't inherit the policy.
-- Or, instead of Cursor, point any OpenAI-compatible client (Continue.dev, Aider, Open WebUI, custom scripts) at the same `http://127.0.0.1:4000/v1` proxy — they have no such restriction.
+- Or, instead of Cursor, point any OpenAI-compatible client (Continue.dev, Aider, Open WebUI, custom scripts) at the same `http://127.0.0.1:<port>/v1` proxy — they have no such restriction.
 
 ---
 
@@ -197,7 +197,7 @@ If Cursor shows:
 | `Missing Snowflake JWT key` from LiteLLM | `SNOWFLAKE_PAT` not in env | `set -a; source .env; set +a` before launching |
 | Proxy returns `KEYPAIR_JWT` auth error | Forgot `pat/` prefix | `SNOWFLAKE_PAT=pat/<token>` in `.env` |
 | `Model "claude-x-y" is unavailable` | Model not in your region | `SHOW FUNCTIONS LIKE 'COMPLETE%'` and try a supported Claude variant |
-| Cursor "Verify" button fails | Proxy not running on `127.0.0.1:4000` | `lsof -i:4000`; restart `run-proxy.sh` |
+| Cursor "Verify" button fails | Proxy not running on `127.0.0.1:<port>` | `lsof -i:<port>`; restart `run-proxy.sh` |
 
 ---
 

@@ -2,7 +2,7 @@ model_list:
   - model_name: cortex-claude-4-sonnet
     litellm_params:
       model: snowflake/claude-4-sonnet
-      api_base: https://lqb04922.us-west-2.snowflakecomputing.com/api/v2
+      api_base: https://<account url>/api/v2
       api_key: os.environ/SNOWFLAKE_PAT
       stream: true
 
