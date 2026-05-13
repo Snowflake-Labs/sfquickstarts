@@ -8,5 +8,5 @@ source "$DIR/.env"
 set +a
 exec /Users/priyajoseph/cursor-cortex/.venv/bin/litellm \
   --config "$DIR/litellm_config.yaml" \
-  --port 4000 \
+  --port <port number> \
   --host 127.0.0.1
