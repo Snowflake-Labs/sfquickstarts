@@ -1,365 +1,619 @@
 author: James Cha-Earley
 id: gain-insights-from-unstructured-data
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
-summary: Analyze documents, images, and audio with Snowflake Cortex AI Functions for unstructured data insights and extraction.
+summary: Build a batch data extraction pipeline across text, images, video, and audio using Cortex AI Functions, then create, evaluate, and optimize a custom AI function with AI Function Studio.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Gain Insights From Unstructured Data using Snowflake Cortex
+# Batch Data Extraction at Scale with Cortex AI Functions
 <!-- ------------------------ -->
 ## Overview 
 
-The fictitious food truck company, Tasty Bytes, gathers thousands of customer reviews across multiple sources and languages to assess their food truck operations. To improve customer satisfaction and loyalty, the company needs to quickly identify exactly where their customer experience is falling short, at the individual truck and business levels. The challenge is transforming this vast amount of diverse, unstructured data into actionable business insights at scale.
+The fictitious food truck company, Tasty Bytes, receives thousands of customer reviews, food photos, social media video clips, and voicemail complaints across multiple channels. To improve operations, the company needs to extract structured, queryable data from all of this unstructured content at scale — turning free-text reviews into categorized issues, food truck photos into menu item inventories, video clips into brand mentions, and voicemails into actionable tickets.
 
-This guide will show you how to use this comprehensive feedback entirely within Snowflake to help them identify areas for improvement. Use [Cortex AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql) in Snowflake to run unstructured analytics on text and images with industry-leading LLMs from OpenAI, Anthropic, Meta, Mistral AI, and DeepSeek. They can automatically process reviews through real-time translation, generate actionable insights through intelligent summarization, and analyze customer sentiment at scale – transforming diverse, unstructured feedback into strategic business decisions that drive their food truck operations forward.
+This guide shows you how to build a batch data extraction pipeline entirely within Snowflake using [Cortex AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql). You will use AI_EXTRACT for structured field extraction from text and images, AI_COMPLETE with video support (public preview) for multimodal analysis, and AI_TRANSCRIBE for audio processing. Finally, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio) to create a reusable custom AI function, evaluate its accuracy, and optimize it for production use.
 
 ### Prerequisites
-* Familiarity with Python
-* Familiarity with the DataFrame API
+* Familiarity with SQL
 * Familiarity with Snowflake
-* Familiarity with Snowpark
-* Familiarity with the SQL
+* Familiarity with Snowflake Notebooks
 
-### What You’ll Need
+### What You'll Need
 
-* A Snowflake account in a cloud region where Cortex LLM Functions and models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=yYZEVo4S&_fsi=yYZEVo4S).
-  * Cortex AI Functions: Translate, AI_SUMMARIZE_AGG, AI_CLASSIFY, AI_COMPLETE, AI_SENTIMENT, AI_COMPLETE, AI_TRANSCRIBE
-  * Models: openai-gpt-4.1, claude-3-5-sonnet
-* Snowflake Notebook enabled in your Snowflake account.
+* A Snowflake account in a cloud region where Cortex AI Functions are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=yYZEVo4S&_fsi=yYZEVo4S).
+  * Cortex AI Functions: AI_EXTRACT, AI_COMPLETE, AI_TRANSCRIBE
+  * Models: gemini-3.1-pro (video/audio), claude-sonnet-4-6 (text/images), arctic-extract (AI_EXTRACT)
+* Snowflake Notebooks enabled in your Snowflake account.
 
-### What You’ll Learn 
+### What You'll Learn 
 
-* How to translate multilingual reviews
-* How to summarize large amounts of reviews to get specific learnings
-* How to categorize unstructured review text data at scale
-* How to answer specific questions you have based on the reviews 
-* How to derive customer sentiment from reviews 
+* How to extract structured fields from free-text reviews using AI_EXTRACT
+* How to extract information from images using AI_EXTRACT with file input
+* How to analyze video content and extract metadata using AI_COMPLETE with structured output
+* How to transcribe audio and extract structured data from transcriptions
+* How to build a unified batch extraction pipeline across all modalities
+* How to create, evaluate, and optimize a custom AI function using AI Function Studio
 
-### What You’ll Build 
-* You will analyze Tasty Bytes' customer reviews using **Snowflake Cortex AI** within **Snowflake Notebook** to understand:
-  * What our international customers are saying with Cortex **Translate**
-  * Get a summary of what customers are saying with Cortex **AI_SUMMARIZE_AGG**
-  * Classify reviews to determine if they would recommend a food truck with Cortex **AI_CLASSIFY**
-  * Gain specific insights with Cortex **AI_COMPLETE**
-  * Understand how customers are feeling with Cortex **AI_SENTIMENT**
-  * Insights on Images with Cortex **AI_COMPLETE**
-  * Transcribe Audio with Cortex **AI_TRANSCRIBE**
+### What You'll Build 
+* A batch data extraction pipeline that processes Tasty Bytes' multimodal customer feedback using **Snowflake Cortex AI Functions** within a **Snowflake Notebook**:
+  * Extract structured fields from text reviews with **AI_EXTRACT**
+  * Extract menu items and branding from food truck photos with **AI_EXTRACT**
+  * Extract metadata from social media video clips with **AI_COMPLETE** (gemini-3.1-pro)
+  * Transcribe voicemails and extract issue details with **AI_TRANSCRIBE** + **AI_COMPLETE**
+  * A custom AI function created, evaluated, and optimized with **AI Function Studio**
 
 <!-- ------------------------ -->
 ## Setup Data
 
 This phase focuses on initializing your Snowflake environment. You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
 * Create Snowflake objects (warehouse, database, schema, raw tables)
-* Ingest data from S3 to raw tables
-* Create review view 
-* Upload Images and Audio
+* Ingest review data from S3
+* Create stages for images, audio, and video files
+* Upload media files
 
-### Creating Objects, Loading Data, and Joining Data
+### Creating Objects and Loading Data
 
 We will use the setup.sql file to automate the creation of the required infrastructure and load the sample text data.
 
-1. Download the [setup.sql](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/setup.sql) file from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/tree/main)
-2. Open up a <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=gain-insights-from-unstructured-data&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a> in Snowflake
+1. Download the [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/gain-insights-from-unstructured-data/setup.sql) file from the [GitHub repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/gain-insights-from-unstructured-data)
+2. Open up a <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=batch-data-extraction&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a> in Snowflake
 3. Copy and paste the contents of setup.sql or upload and run the file
 4. The script will:
    - Create Snowflake objects (warehouse, database, schema, raw tables)
-   - Ingest shift data from S3
+   - Ingest shift and review data from S3
    - Create the review view
-   - Create a new database and schema for your project
-   - Create the image and audio storage stages
+   - Create stages for images, audio, and video files
+   - Create tables for evaluation data (used in the AI Function Studio section)
 
-### Upload Images and Audio File to Stage
+### Upload Media Files to Stages
 
-Now you will upload the media files into the dedicated stages created by the setup.sql file:
+Now upload the media files into the dedicated stages created by setup.sql:
 
-1. Download [data.zip](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/data.zip) and extract its contents
-2. Navigate to Catalog » Database Explorer
-3. Upload
- * Select your database: **TB_VOC** » **MEDIA** » **Stages** » **AUDIO**
- * Click **+ Files** on the top right hand corner
- * Click **Browse** and upload the files in the Audio Folder within the data.zip file
-4. Upload Image Files
- * Select your database: **TB_VOC** » **MEDIA** » **Stages** » **IMAGE**
- * Click **+ Files** on the top right hand corner
- * Click **Browse** and upload the files in the Image Folder within the data.zip file
+1. Download [data.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/gain-insights-from-unstructured-data/data.zip) and extract its contents
+2. Navigate to **Catalog** >> **Database Explorer**
+3. Upload Image Files:
+   * Select your database: **TB_VOC** >> **MEDIA** >> **Stages** >> **IMAGES**
+   * Click **+ Files** on the top right hand corner
+   * Click **Browse** and upload the files in the `images/` folder
+4. Upload Audio Files:
+   * Select your database: **TB_VOC** >> **MEDIA** >> **Stages** >> **AUDIO**
+   * Click **+ Files** on the top right hand corner
+   * Click **Browse** and upload the files in the `audio/` folder
+5. Upload Video Files:
+   * Select your database: **TB_VOC** >> **MEDIA** >> **Stages** >> **VIDEO**
+   * Click **+ Files** on the top right hand corner
+   * Click **Browse** and upload the files in the `video/` folder
 
-Your Snowflake environment now contains the complete set of data.
+Your Snowflake environment now contains the complete set of data across all modalities.
 
 <!-- ------------------------ -->
 ## Setup Notebook
 
-This phase prepares your execution environment by importing the primary code into a Snowflake Notebook. You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) again to create Snowflake Notebook by importing a notebook.
+This phase prepares your execution environment by importing the primary code into a Snowflake Notebook.
 
-* Download the notebook **[gaining_insights_from_unstructured_data.ipynb](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/gaining_insights_from_unstructured_data.ipynb)** from the GitHub repository
-* Select Projects » Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#)
-* Click the + Notebook drop-down and select Import .ipynb file
-* Select the gaining_insights_from_unstructured_data.ipynb file
-* Provide a name for the notebook and select appropriate **database** `tb_voc` and **schema** `analytics` for Notebook location
+* Download the notebook **[batch_data_extraction.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/gain-insights-from-unstructured-data/batch_data_extraction.ipynb)** from the GitHub repository
+* Select **Projects** >> **Notebooks** in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#)
+* Click the **+ Notebook** drop-down and select **Import .ipynb file**
+* Select the batch_data_extraction.ipynb file
+* Provide a name for the notebook and select appropriate **database** `TB_VOC` and **schema** `ANALYTICS` for Notebook location
 * For **Runtime** select `Run on container`
 * Now you are ready to run the notebook by clicking the "Run all" button on the top right or running each cell individually
 
 <!-- ------------------------ -->
-## Translate reviews
+## Text Extraction with AI_EXTRACT
 
-This phase uses the Snowflake Cortex [Translate](https://docs.snowflake.com/en/sql-reference/functions/translate-snowflake-cortex) function to convert all multilingual customer reviews into English for easier analysis. This standardization is critical, as it ensures all subsequent analysis is applied consistently across the entire dataset.
+In this phase, you will use [AI_EXTRACT](https://docs.snowflake.com/en/sql-reference/functions/ai_extract) to pull structured fields from free-text customer reviews. AI_EXTRACT is purpose-built for structured data extraction — you define the fields you want, and it returns a clean JSON object.
 
-Tasty Bytes gathers reviews from international customers. Before you can analyze the overall customer experience, you need to understand what these international customers are saying. The Translate function allows you to quickly hear the voice of your international customers without requiring external translation services.
+Tasty Bytes receives thousands of reviews in unstructured text. Rather than reading each one manually, AI_EXTRACT lets you define a schema and extract specific fields at scale across the entire review dataset.
 
-### Hear what your international customers are saying
+### Entity Extraction from Reviews
 
-* The code snippet below (executed in the Snowflake Notebook) applies the Translate function only to reviews where the detected language is not English. This is done within the notebook in cell `CORTEX_TRANSLATE`.
+The following query extracts the truck name, dish mentioned, issue type, and recommendation intent from each review:
 
-#### Python
-  ```python
-  # Conditionally translate reviews that are not english using Cortex Translate
-  reviews_df = reviews_df.withColumn('TRANSLATED_REVIEW',when(F.col('LANGUAGE') != F.lit("en"), \
-                                                              cortex.translate(F.col('REVIEW'), \
-                                                                              F.col('LANGUAGE'), \
-                                                                              "en")) \
-                                    .otherwise(F.col('REVIEW')))
+```sql
+SELECT 
+    REVIEW,
+    AI_EXTRACT(
+        text => REVIEW,
+        responseFormat => {
+            'truck_name': 'What food truck or brand is mentioned?',
+            'dish': 'What specific dish or menu item is mentioned?',
+            'issue_type': 'What type of issue did the customer experience (food quality, service, wait time, cleanliness, none)?',
+            'would_recommend': 'Would the customer recommend this food truck (yes, no, unclear)?'
+        }
+    ) AS extracted_fields
+FROM TRUCK_REVIEWS_V
+LIMIT 10;
+```
 
-  reviews_df.filter(F.col('LANGUAGE') != F.lit("en")).select(["REVIEW","LANGUAGE","TRANSLATED_REVIEW"]).show(3)
-  ```
-#### SQL
- ```sql
-  -- Add the TRANSLATED_REVIEW column with conditional translation
-  WITH TRANSLATED_REVIEWS AS (
-      SELECT 
-          REVIEW,
-          LANGUAGE,
-          CASE 
-              WHEN LANGUAGE != 'en' THEN SNOWFLAKE.CORTEX.TRANSLATE(REVIEW, LANGUAGE, 'en') 
-              ELSE REVIEW
-          END AS TRANSLATED_REVIEW
-      FROM TRUCK_REVIEWS_V
-  )
+### Extraction with Scores
 
-  -- Filter rows where the LANGUAGE is not English and select the desired columns
-  SELECT 
-      REVIEW, 
-      LANGUAGE, 
-      TRANSLATED_REVIEW
-  FROM TRANSLATED_REVIEWS
-  WHERE LANGUAGE != 'en'
-  LIMIT 3;
-  ```
+AI_EXTRACT supports confidence scores (preview) that indicate the model's certainty about each extracted value. Use scores to flag low-confidence extractions for human review:
 
-Upon executing this code, there will be a new column containing all customer feedback in a uniform language. 
+```sql
+SELECT 
+    REVIEW,
+    AI_EXTRACT(
+        text => REVIEW,
+        responseFormat => {
+            'truck_name': 'What food truck or brand is mentioned?',
+            'dish': 'What specific dish or menu item is mentioned?',
+            'issue_type': 'What type of issue did the customer experience?'
+        },
+        scores => TRUE
+    ) AS extraction_with_scores
+FROM TRUCK_REVIEWS_V
+LIMIT 5;
+```
+
+The result includes both the extracted values and a `scoring` object with confidence scores between 0 and 1 for each field. You can use these scores to build deterministic processing logic — for example, routing low-score extractions to a human review queue.
+
+### Batch Extraction at Scale
+
+To run extraction across the entire dataset and flatten results into queryable columns:
+
+```sql
+CREATE OR REPLACE TABLE TB_VOC.ANALYTICS.EXTRACTED_REVIEWS AS
+SELECT
+    TRUCK_BRAND_NAME,
+    REVIEW,
+    AI_EXTRACT(
+        text => REVIEW,
+        responseFormat => {
+            'truck_name': 'What food truck or brand is mentioned?',
+            'dish': 'What specific dish or menu item is mentioned?',
+            'issue_type': 'What type of issue did the customer experience (food quality, service, wait time, cleanliness, none)?',
+            'would_recommend': 'Would the customer recommend this food truck (yes, no, unclear)?'
+        }
+    ):response AS extracted
+FROM TRUCK_REVIEWS_V;
+
+-- Query the flattened results
+SELECT 
+    TRUCK_BRAND_NAME,
+    extracted:truck_name::VARCHAR AS truck_name,
+    extracted:dish::VARCHAR AS dish,
+    extracted:issue_type::VARCHAR AS issue_type,
+    extracted:would_recommend::VARCHAR AS would_recommend
+FROM TB_VOC.ANALYTICS.EXTRACTED_REVIEWS
+WHERE extracted:issue_type::VARCHAR != 'none'
+LIMIT 20;
+```
+
 <!-- ------------------------ -->
+## Image Extraction with AI_EXTRACT
 
-## Summarize reviews
+In this phase, you will use [AI_EXTRACT](https://docs.snowflake.com/en/sql-reference/functions/ai_extract) with file input to extract structured data from food truck photos. AI_EXTRACT supports images directly via the FILE data type, allowing you to extract menu items, prices, and branding from photos stored in a stage.
 
-In this phase, you’ll move from individual reviews to aggregated insights. We will use the Snowflake Cortex [AI_SUMMARIZE_AGG](https://docs.snowflake.com/en/sql-reference/functions/ai_summarize_agg) function to quickly distill the key themes from multiple customer reviews into a readable summary.
+Tasty Bytes collects photos from their food truck locations — menu boards, signage, and truck exteriors. Extracting structured data from these images enables inventory tracking and brand compliance monitoring.
 
-Summarization allows Tasty Bytes to extract key learnings from large amounts of unstructured text efficiently. Instead of reading every review, users can instantly grasp what customers are saying, all in a readable form. The AI_SUMMARIZE_AGG function automatically handles the complexity of passing large amounts of text data.
+### Extract Menu Information from Images
 
-### Get insight into what customers are saying
+```sql
+SELECT
+    IMAGE_PATH,
+    AI_EXTRACT(
+        file => TO_FILE('@TB_VOC.MEDIA.IMAGES', IMAGE_PATH),
+        responseFormat => {
+            'brand_name': 'What is the food truck or restaurant brand name visible?',
+            'menu_items': 'What menu items or dishes are visible?',
+            'prices': 'What prices are shown?',
+            'location_clues': 'What location indicators are visible (street signs, landmarks)?'
+        }
+    ) AS extracted_data
+FROM TB_VOC.MEDIA.IMAGE_TABLE
+LIMIT 5;
+```
 
-* The code snippet below (executed in the Snowflake Notebook) groups all customer reviews by the TRUCK_BAND_NAME and applies the AI_SUMMARIZE_AGG function on the entire set of reviews for that group. 
+### Batch Image Extraction Using Directory Table
 
-#### Python
-  ```python
-  summarized_reviews_df = session.table("TRUCK_REVIEWS_V") \
-      .group_by("TRUCK_BRAND_NAME") \
-      .agg(ai_summarize_agg(F.col("REVIEW")).alias("SUMMARY"))
+Process all images in a stage using the directory table pattern:
 
-  summarized_reviews_df.select(["TRUCK_BRAND_NAME", "SUMMARY"]).show(3)
-  ```
-#### SQL
-  ```sql
-  WITH SUMMARIZED_REVIEWS AS (
-      SELECT 
-          TRUCK_BRAND_NAME,
-          AI_SUMMARIZE_AGG(REVIEW) AS SUMMARY
-      FROM TRUCK_REVIEWS_V
-      GROUP BY TRUCK_BRAND_NAME
-  )
-  SELECT * FROM SUMMARIZED_REVIEWS;
-  ```
+```sql
+SELECT
+    RELATIVE_PATH,
+    AI_EXTRACT(
+        file => TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
+        responseFormat => {
+            'brand_name': 'What is the food truck or restaurant brand name visible?',
+            'menu_items': 'What menu items or dishes are visible?',
+            'prices': 'What prices are shown?'
+        }
+    ) AS extracted_data
+FROM DIRECTORY(@TB_VOC.MEDIA.IMAGES);
+```
 
-Upon execution, the resulting output will show a concise summary of the customer experience for each truck brand. 
 <!-- ------------------------ -->
+## Video Analysis with AI_COMPLETE
 
-## Categorize reviews  
+In this phase, you will use [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete) with video file input to extract structured metadata from social media clips. Video processing with AI_COMPLETE is in public preview and uses the `gemini-3.1-pro` model, which supports up to 10 video files per prompt with a combined payload of up to 100 MB.
 
-This phase uses the Snowflake Cortex [AI_CLASSIFY](https://docs.snowflake.com/en/sql-reference/functions/ai_classify) function to categorize each individual review based on a specific business question.
+Tasty Bytes monitors social media for clips mentioning their food trucks. By analyzing video content, they can track brand mentions, assess sentiment, and identify which products are being featured organically.
 
-This allows Tasty Bytes to quantify how likely their customers are to recommend the food truck to someone they know. By running a classifier through the AI_CLASSIFY function, you transform open-ended text into quantifiable data. This is essential for quickly assessing customer loyalty. 
+### Extract Metadata from Video Clips
 
-### Get intention to recommend based on reviews
+```sql
+SELECT
+    VIDEO_PATH,
+    AI_COMPLETE(
+        'gemini-3.1-pro',
+        'Analyze this food truck social media video. Extract structured metadata.',
+        TO_FILE('@TB_VOC.MEDIA.VIDEO', VIDEO_PATH),
+        {},
+        {
+            'type': 'json',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'sentiment': {'type': 'string'},
+                    'summary': {'type': 'string'},
+                    'brands_mentioned': {'type': 'array', 'items': {'type': 'string'}},
+                    'dishes_shown': {'type': 'array', 'items': {'type': 'string'}},
+                    'setting': {'type': 'string'},
+                    'audience_type': {'type': 'string'}
+                },
+                'required': ['sentiment', 'summary', 'brands_mentioned', 'dishes_shown', 'setting', 'audience_type']
+            }
+        }
+    ) AS video_metadata
+FROM TB_VOC.MEDIA.VIDEO_TABLE
+LIMIT 3;
+```
 
-* The code snippet below (executed in the Snowflake Notebook) uses the AI_CLASSIFY function to classify each review into one of three predefined categories (Likely, Unlikely, or Unsure), based on the review text.  
+### Structured Video Extraction at Scale
 
-#### Python
-  ```python
-  # To understand whether a customer would recommend food truck based on their review 
-  reviews_df = reviews_df.withColumn('RECOMMEND', ai_classify(prompt("Tell me based on the following food truck customer review {0}, will they recommend the food truck to their friends and family?", F.col('REVIEW')),["Likely","Unlikely","Unsure"])["labels"][0])
+Create a materialized table of video insights for downstream analytics:
 
-  reviews_df.select(["REVIEW","CLEAN_RECOMMEND"]).show(3)
-  ```
-#### SQL
-  ```sql
-  WITH CLASSIFIED_REVIEWS AS (
-      SELECT 
-          REVIEW,
-          AI_CLASSIFY(
-              REVIEW, 
-              ['Likely', 'Unlikely', 'Unsure'], 
-              OBJECT_CONSTRUCT('task_description', 
-                  'Tell me based on the following food truck customer review, will they recommend the food truck to their friends and family?'
-              )
-          ):labels[0]::TEXT AS RECOMMEND
-      FROM TRUCK_REVIEWS_V
-  )
-  SELECT * FROM CLASSIFIED_REVIEWS LIMIT 3;
-  ```
+```sql
+CREATE OR REPLACE TABLE TB_VOC.ANALYTICS.VIDEO_INSIGHTS AS
+SELECT
+    VIDEO_PATH,
+    AI_COMPLETE(
+        'gemini-3.1-pro',
+        'Analyze this food truck social media video clip. Identify the brand, products shown, overall sentiment, and a brief summary of what is happening.',
+        TO_FILE('@TB_VOC.MEDIA.VIDEO', VIDEO_PATH),
+        {},
+        {
+            'type': 'json',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'sentiment': {'type': 'string'},
+                    'summary': {'type': 'string'},
+                    'brands_mentioned': {'type': 'array', 'items': {'type': 'string'}},
+                    'dishes_shown': {'type': 'array', 'items': {'type': 'string'}},
+                    'setting': {'type': 'string'},
+                    'audience_type': {'type': 'string'}
+                },
+                'required': ['sentiment', 'summary', 'brands_mentioned', 'dishes_shown', 'setting', 'audience_type']
+            }
+        }
+    ) AS video_metadata
+FROM TB_VOC.MEDIA.VIDEO_TABLE;
+```
 
-By executing this, you will have a new column indicating the recommendation intent for every customer review.
 <!-- ------------------------ -->
+## Audio Extraction
 
-## Leverage an LLM
+In this phase, you will use [AI_TRANSCRIBE](https://docs.snowflake.com/en/sql-reference/functions/ai_transcribe) to convert voicemail recordings to text, and then use [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete) to extract structured fields from the transcriptions.
 
-In this phase, we will use the Snowflake Cortex [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete) function to get answers to your specific questions that live within your unstructured data.
+Tasty Bytes receives voicemail complaints from customers. By transcribing and extracting structured data from these recordings, they can automatically route issues to the right team and prioritize by urgency.
 
-Tasty Bytes can use the AI_COMPLETE function to use all the customer reviews as a single knowledge base. You provide the LLM with the text as context and to dive into a specific question that requires synthesis and reasoning. This function is essential for quickly extracting factual answers from unstructured data without manual reading.
+### Transcribe Audio Files
 
-### Answer specific questions you have    
+```sql
+SELECT
+    AUDIO_PATH,
+    AI_TRANSCRIBE(
+        TO_FILE('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)
+    ) AS transcription_result
+FROM TB_VOC.MEDIA.AUDIO_TABLE
+LIMIT 3;
+```
 
-* The code snippet below (executed in the Snowflake Notebook) uses the AI_COMPLETE function to return the name of the dish.  
+### Extract Structured Fields from Transcriptions
 
-#### Python
-  ```python
-    question = "What is the number one dish positively mentioned in the feedback?"
+```sql
+SELECT
+    AUDIO_PATH,
+    AI_COMPLETE(
+        'claude-sonnet-4-6',
+        CONCAT(
+            'Extract structured information from this customer voicemail transcription. ',
+            'Return a JSON object with: caller_issue, truck_name, urgency (low/medium/high), and action_required. ',
+            'Transcription: ',
+            AI_TRANSCRIBE(TO_FILE('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)):text::VARCHAR
+        ),
+        {},
+        {
+            'type': 'json',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'caller_issue': {'type': 'string'},
+                    'truck_name': {'type': 'string'},
+                    'urgency': {'type': 'string'},
+                    'action_required': {'type': 'string'}
+                },
+                'required': ['caller_issue', 'truck_name', 'urgency', 'action_required']
+            }
+        }
+    ) AS extracted_issue
+FROM TB_VOC.MEDIA.AUDIO_TABLE
+LIMIT 3;
+```
 
-    summarized_reviews_df = session.table("CONCATENATED_REVIEWS").select(
-        F.col("TRUCK_BRAND_NAME"),
-        ai_complete(
-            "openai-gpt-4.1",
-            F.concat(
-                F.lit("Context: "),
-                F.col("ALL_REVIEWS_TEXT"),
-                F.lit(f" Question: {question} Answer briefly and concisely and only name the dish:")
+<!-- ------------------------ -->
+## Unified Batch Pipeline
+
+In this phase, you will combine all modalities into a single extraction pipeline. The FILE data type in Snowflake allows you to consolidate text, images, video, and audio into one table and process them uniformly.
+
+### Create a Unified Extraction Table
+
+```sql
+CREATE OR REPLACE TABLE TB_VOC.ANALYTICS.UNIFIED_EXTRACTIONS AS
+
+-- Text reviews
+SELECT
+    'text' AS modality,
+    REVIEW AS source_content,
+    NULL AS file_path,
+    AI_EXTRACT(
+        text => REVIEW,
+        responseFormat => {
+            'truck_name': 'What food truck is mentioned?',
+            'issue_type': 'What issue did the customer experience?',
+            'dish': 'What dish is mentioned?'
+        }
+    ):response AS extracted_data
+FROM TRUCK_REVIEWS_V
+LIMIT 100
+
+UNION ALL
+
+-- Images
+SELECT
+    'image' AS modality,
+    NULL AS source_content,
+    RELATIVE_PATH AS file_path,
+    AI_EXTRACT(
+        file => TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
+        responseFormat => {
+            'brand_name': 'What is the food truck brand name?',
+            'menu_items': 'What menu items are visible?',
+            'prices': 'What prices are shown?'
+        }
+    ):response AS extracted_data
+FROM DIRECTORY(@TB_VOC.MEDIA.IMAGES)
+
+UNION ALL
+
+-- Video
+SELECT
+    'video' AS modality,
+    NULL AS source_content,
+    VIDEO_PATH AS file_path,
+    PARSE_JSON(
+        AI_COMPLETE(
+            'gemini-3.1-pro',
+            'Extract brand names and dishes shown from this food truck video. Return JSON with keys: brand_name, dishes_shown, sentiment.',
+            TO_FILE('@TB_VOC.MEDIA.VIDEO', VIDEO_PATH)
+        )
+    ) AS extracted_data
+FROM TB_VOC.MEDIA.VIDEO_TABLE
+
+UNION ALL
+
+-- Audio
+SELECT
+    'audio' AS modality,
+    NULL AS source_content,
+    AUDIO_PATH AS file_path,
+    PARSE_JSON(
+        AI_COMPLETE(
+            'claude-sonnet-4-6',
+            CONCAT(
+                'Extract: caller_issue, truck_name, urgency from this voicemail: ',
+                AI_TRANSCRIBE(TO_FILE('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)):text::VARCHAR
             )
-        ).alias("NUMBER_ONE_DISH")
-    )
+        )
+    ) AS extracted_data
+FROM TB_VOC.MEDIA.AUDIO_TABLE;
+```
 
-    summarized_reviews_df.show(3)
-  ```
-#### SQL
-  ```sql
-    -- Gain Learnings from a specific question
-    WITH GAIN_LEARNINGS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            AI_COMPLETE(
-              'openai-gpt-4.1', 
-              'Context:' || ALL_REVIEWS_TEXT || ' Question: What is the number one dish positively mentioned in the feedback? Answer briefly and concisely and only name the dish:'
-          ) AS NUMBER_ONE_DISH
-        FROM CONCATENATED_REVIEWS
-    )
-    SELECT TRUCK_BRAND_NAME, NUMBER_ONE_DISH FROM GAIN_LEARNINGS LIMIT 3;
-  ```
+### Query Unified Results
 
-By running this, Tasty Bytes gains immediate, actionable intelligence on their most successful menu items.
+```sql
+-- Find all high-urgency issues across modalities
+SELECT
+    modality,
+    file_path,
+    extracted_data:truck_name::VARCHAR AS truck_name,
+    extracted_data:issue_type::VARCHAR AS issue_type,
+    extracted_data:urgency::VARCHAR AS urgency
+FROM TB_VOC.ANALYTICS.UNIFIED_EXTRACTIONS
+WHERE extracted_data:urgency::VARCHAR = 'high'
+   OR extracted_data:issue_type::VARCHAR NOT IN ('none', 'null');
+```
+
 <!-- ------------------------ -->
+## AI Function Studio: Create
 
-## Analyze images
+In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio) to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
 
-In this phase, we will use the Snowflake Cortex [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete) function again to extract descriptive text from image data.
+AI Function Studio provides a managed workflow to create, evaluate, and optimize custom AI functions. The function you create here uses AI_COMPLETE under the hood but is deployed as a standard SQL UDF that can be called from any query.
 
-This is essential for Tasty Bytes to gain insights from photos customers might attach to their reviews. Customers don’t just write feedback, they also share pictures. By using AI_COMPLETE with image input, you can generate a text description of what’s in the photo, making it searchable and analyzable alongside text reviews.
+### Create the Extraction Function
 
-### Describe images    
-
-* The code snippet below (executed in the Snowflake Notebook) uses the AI_COMPLETE function to describe what is seen in a referenced image.  
-
-```sql
-  SELECT
-    AI_COMPLETE (
-      'claude-3-5-sonnet',
-      'Please describe what you see in this image.',
-      TO_FILE ('@TB_VOC.MEDIA.IMAGES', IMAGE_PATH)
-    ) AS IMAGE_DESCRIPTION
-  FROM
-    TB_VOC.MEDIA.IMAGE_TABLE
-  LIMIT
-    1;
-```
-
-This description can then be used in further analysis steps to ensure images are fully integrated into your customer experience assessment.
-
-## Transcription
-
-In this phase, we will use the Snowflake Cortex [AI_TRANSCRIBE](https://docs.snowflake.com/en/sql-reference/functions/ai_transcribe) function to transform raw audio files into searchable, readable text. 
-
-For Tasty Bytes, audio feedback provides another aspect of customer experience data. By transcribing these files, you convert complex audio into a simple text format that can then be subjected to the same analysis techniques you performed on written reviews.
-
-### Transcribe audio    
-
-* The code snippet below (executed in the Snowflake Notebook) uses the AI_TRANSCRIBE function on a secure reference to your stored audio file.  
+Use the `CREATE_AI_FUNCTION` stored procedure to deploy a custom function that extracts structured fields from customer reviews:
 
 ```sql
-  SELECT
-    AI_TRANSCRIBE (
-      TO_FILE ('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)
-    ) AS TRANSCRIPTION_RESULT
-  FROM
-    TB_VOC.MEDIA.AUDIO_TABLE
-  LIMIT
-    1;
+USE TB_VOC.ANALYTICS;
+
+CALL SNOWFLAKE.CORTEX.CREATE_AI_FUNCTION(
+    'TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS',        -- 1. FUNCTION_NAME
+    'Extract structured fields from food truck customer reviews including the truck name, dish mentioned, issue type, and recommendation intent.',  -- 2. TASK_DESCRIPTION
+    'claude-sonnet-4-6',                              -- 3. MODEL
+    'You are a data extraction specialist for a food truck company. Extract structured information from customer reviews accurately and concisely. If a field cannot be determined from the review, return null for that field.',  -- 4. SYSTEM_PROMPT
+    'Extract the following fields from this customer review:\n\nReview: {REVIEW_TEXT}\n\nExtract: truck_name, dish_mentioned, issue_type (food quality/service/wait time/cleanliness/none), would_recommend (yes/no/unclear)',  -- 5. USER_PROMPT_TEMPLATE
+    ARRAY_CONSTRUCT(                                  -- 6. INPUTS
+        OBJECT_CONSTRUCT('name', 'REVIEW_TEXT', 'sql_type', 'VARCHAR', 'description', 'The customer review text')
+    ),
+    ARRAY_CONSTRUCT(                                  -- 7. OUTPUTS
+        OBJECT_CONSTRUCT('name', 'truck_name', 'json_type', 'string', 'description', 'Food truck brand name'),
+        OBJECT_CONSTRUCT('name', 'dish_mentioned', 'json_type', 'string', 'description', 'Specific dish or menu item'),
+        OBJECT_CONSTRUCT('name', 'issue_type', 'json_type', 'string', 'description', 'Type of issue: food quality, service, wait time, cleanliness, or none'),
+        OBJECT_CONSTRUCT('name', 'would_recommend', 'json_type', 'string', 'description', 'Would recommend: yes, no, or unclear')
+    ),
+    NULL,                                             -- 8. STAGE_NAME (NULL for text-only)
+    NULL                                              -- 9. OPTIONS
+);
 ```
 
-This transcription process ensures all forms of customer feedback are unified into a single, analyzable dataset for Tasty Bytes.
+### Test the Function
 
-## Understand sentiment 
+```sql
+SELECT EXTRACT_REVIEW_FIELDS(REVIEW) AS result
+FROM TRUCK_REVIEWS_V
+LIMIT 5;
+```
 
-This phase uses the Snowflake Cortex [AI_SENTIMENT](https://docs.snowflake.com/en/sql-reference/functions/ai_sentiment) function to quantify the emotional tone of each customer review.
+The function returns a VARIANT object with the extracted fields. You can access individual fields using standard JSON notation:
 
-This transforms subjective text into a numerical metric that Tasty Bytes can track over time. Sentiment analysis is crucial for understanding how customers feel.
+```sql
+SELECT
+    REVIEW,
+    EXTRACT_REVIEW_FIELDS(REVIEW):truck_name::VARCHAR AS truck_name,
+    EXTRACT_REVIEW_FIELDS(REVIEW):dish_mentioned::VARCHAR AS dish,
+    EXTRACT_REVIEW_FIELDS(REVIEW):issue_type::VARCHAR AS issue_type,
+    EXTRACT_REVIEW_FIELDS(REVIEW):would_recommend::VARCHAR AS recommendation
+FROM TRUCK_REVIEWS_V
+LIMIT 10;
+```
 
-### Understand views or attitudes
+<!-- ------------------------ -->
+## AI Function Studio: Evaluate
 
-* The code snippet below (executed in the Snowflake Notebook) uses the AI_SENTIMENT function to return a string of the sentiment, which will be a value between -1 (the most negative value) and 1 (the most positive value) in this case. This is done within the notebook using the following code snippet in cell `CORTEX_SENTIMENT`.
+Now that you have a working extraction function, evaluate its accuracy against a labeled dataset. The evaluation measures how well your function's outputs match expected ground-truth values.
 
-#### Python
-  ```python
-  # Understand the sentiment of customer review using Cortex Sentiment
-  reviews_df = reviews_df.withColumn('SENTIMENT', cortex.sentiment(F.col('REVIEW')))
+### Prepare Labeled Test Data
 
-  reviews_df.select(["REVIEW","SENTIMENT"]).show(3)
-  ```
-#### SQL
-  ```sql
-  SELECT 
-      REVIEW, 
-      AI_SENTIMENT(REVIEW) AS SENTIMENT
-  FROM TRUCK_REVIEWS_V
-  LIMIT 3;
-  ```
+The setup.sql script created a labeled evaluation table `TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA` with manually verified extractions. This table has columns: `REVIEW_TEXT` (input) and `EXPECTED_OUTPUT` (VARIANT with the correct extraction).
 
-By executing this, every piece of customer feedback will have been processed and quantified, providing Tasty Bytes with a complete view of their customer experience.
+Preview the evaluation data:
+
+```sql
+SELECT * FROM TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA LIMIT 5;
+```
+
+### Run the Evaluation
+
+Use the `EVALUATE_AI_FUNCTION` stored procedure to measure your function's accuracy:
+
+```sql
+USE TB_VOC.ANALYTICS;
+
+CALL SNOWFLAKE.CORTEX.EVALUATE_AI_FUNCTION(
+    'TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS',    -- 1. FUNCTION_NAME
+    'TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA',     -- 2. TEST_TABLE
+    ARRAY_CONSTRUCT('REVIEW_TEXT'),               -- 3. INPUT_COLUMNS
+    'EXPECTED_OUTPUT',                            -- 4. LABEL_COLUMN
+    'llm_judge',                                 -- 5. METRIC_NAME
+    'claude-sonnet-4-6',                         -- 6. MODEL_NAME
+    NULL,                                        -- 7. SAMPLE_SIZE
+    NULL,                                        -- 8. EXPERIMENT_NAME
+    PARSE_JSON('{"task_description": "Evaluate whether the extracted fields (truck_name, dish_mentioned, issue_type, would_recommend) match the expected values. Focus on semantic equivalence rather than exact string matching."}'),  -- 9. METRIC_OPTIONS
+    500,                                         -- 10. MAX_LENGTH
+    NULL,                                        -- 11. CUSTOM_METRIC_UDF
+    NULL                                         -- 12. RUN_ID
+);
+```
+
+The evaluation returns an overall score between 0.0 and 1.0. A score above 0.8 indicates good extraction quality. If the score is lower, the optimize step can help improve it.
+
+<!-- ------------------------ -->
+## AI Function Studio: Optimize
+
+In this final phase, you will optimize your extraction function to improve accuracy. The optimizer iteratively modifies the function body — including prompts, model references, and SQL pre/post-processing — to find the best-performing variant.
+
+### Run Optimization
+
+```sql
+USE TB_VOC.ANALYTICS;
+
+CALL SNOWFLAKE.CORTEX.OPTIMIZE_AI_FUNCTION(
+    'TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS',    -- 1. FUNCTION_NAME
+    'TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA',     -- 2. TRAINING_TABLE
+    'EXPECTED_OUTPUT',                           -- 3. LABEL_COLUMN
+    ARRAY_CONSTRUCT('REVIEW_TEXT'),              -- 4. INPUT_COLUMNS
+    'llm_judge',                                -- 5. METRIC_NAME
+    ARRAY_CONSTRUCT('claude-sonnet-4-6'),        -- 6. MODELS
+    'claude-sonnet-4-6',                        -- 7. REFLECTION_MODEL
+    NULL,                                       -- 8. TEST_TABLE
+    'demo',                                     -- 9. AUTO_BUDGET
+    0.5,                                        -- 10. VALIDATION_FRACTION
+    0.0,                                        -- 11. TEMPERATURE
+    8192,                                       -- 12. MAX_TOKENS
+    PARSE_JSON('{"task_description": "Evaluate whether the extracted fields (truck_name, dish_mentioned, issue_type, would_recommend) match the expected values. Focus on semantic equivalence."}'),  -- 13. METRIC_OPTIONS
+    NULL,                                       -- 14. CUSTOM_METRIC_UDF
+    NULL,                                       -- 15. RUN_ID
+    NULL,                                       -- 16. AGGREGATION_METRIC
+    'body',                                     -- 17. OPTIMIZE_MODE
+    'EXTRACT_REVIEW_FIELDS_OPT'                 -- 18. EXPERIMENT_NAME
+);
+```
+
+The optimizer will:
+1. Score the current function body against training examples
+2. Generate variations of the function body (modified prompts, SQL logic)
+3. Keep Pareto-optimal performers (best quality/cost tradeoffs)
+4. Return the best-performing function body
+
+### View Optimization Results
+
+After optimization completes, check the experiment for results:
+
+```sql
+SHOW RUN METRICS IN EXPERIMENT TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS_OPT;
+```
+
+### Test the Optimized Function
+
+The optimization automatically updates your function with the best-performing body. Test it again to see improved results:
+
+```sql
+SELECT
+    REVIEW,
+    EXTRACT_REVIEW_FIELDS(REVIEW):truck_name::VARCHAR AS truck_name,
+    EXTRACT_REVIEW_FIELDS(REVIEW):dish_mentioned::VARCHAR AS dish,
+    EXTRACT_REVIEW_FIELDS(REVIEW):issue_type::VARCHAR AS issue_type,
+    EXTRACT_REVIEW_FIELDS(REVIEW):would_recommend::VARCHAR AS recommendation
+FROM TRUCK_REVIEWS_V
+LIMIT 10;
+```
+
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-Congratulations! You've mastered powerful customer analytics using Snowflake Cortex AI Functions, processing multilingual reviews and extracting valuable insights – all while maintaining data security within Snowflake's ecosystem. By leveraging these built-in AI capabilities, you've eliminated the complexity of managing external infrastructure while keeping sensitive customer feedback protected within Snowflake's secure environment.
+Congratulations! You've built a complete batch data extraction pipeline using Snowflake Cortex AI Functions, processing text reviews, images, video clips, and audio recordings — all within Snowflake's secure environment. You then used AI Function Studio to create a production-ready custom AI function, evaluated its accuracy, and optimized it for better performance.
 
 ### What You Learned
 With the completion of this quickstart, you have now: 
-  * Implemented advanced AI capabilities through Snowflake Cortex in minutes
-  * Leveraged enterprise-grade language models directly within Snowflake's secure environment
-  * Executed sophisticated natural language processing tasks with pre-optimized models that eliminate the need for prompt engineering. 
-
-You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through AI_SENTIMENT, extracting precise insights with AI_COMPLETE, and automatically categorizing feedback using AI_CLASSIFY. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
+  * Used AI_EXTRACT to pull structured fields from text and image data at scale
+  * Used AI_COMPLETE with gemini-3.1-pro to analyze video content and return structured JSON
+  * Used AI_TRANSCRIBE combined with AI_COMPLETE to extract actionable data from audio
+  * Built a unified batch pipeline across all four modalities using the FILE data type
+  * Created, evaluated, and optimized a custom AI function using AI Function Studio
 
 ### Resources
 
 Want to learn more about the tools and technologies used in this quickstart? Check out the following resources:
 
-* [Cortex LLM](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-* [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-* [Intelligent document field extraction and analytics with Document AI](/en/developers/guides/automating-document-processing-workflows-with-document-ai/)
-* [Build a RAG-based knowledge assistant with Cortex Search and Streamlit](/en/developers/guides/ask-questions-to-your-own-documents-with-snowflake-cortex-search/)
-* [Build conversational analytics app (text-to-SQL) with Cortex Analyst](/en/developers/guides/getting-started-with-cortex-analyst/)
+* [Cortex AI Functions Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
+* [AI_EXTRACT Reference](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
+* [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-audio)
+* [AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio)
+* [GitHub Repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/gain-insights-from-unstructured-data)
