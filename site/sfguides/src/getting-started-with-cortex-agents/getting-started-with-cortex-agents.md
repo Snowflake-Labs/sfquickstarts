@@ -2,7 +2,7 @@ author: James Cha-Earley, Mubashir Masood, Daniel Silva
 id: getting-started-with-cortex-agents
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
-summary: Build an intelligent sales assistant using Snowflake Cortex Agents that combines Cortex Search and Analyst for both structured and unstructured data.
+summary: Build an intelligent sales assistant using Snowflake Cortex Agents with Cortex Code CLI, combining Cortex Search and Analyst for both structured and unstructured data.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -19,10 +19,10 @@ Modern organizations face the challenge of managing two types of data:
 
 The ability to analyze and derive insights from both types of data is crucial for understanding customer needs, improving processes, and driving business growth. 
 
-In this quickstart, you'll learn how to build an Intelligent Sales Assistant that leverages Snowflake's capabilities for analyzing both sales conversations and metrics. Using Cortex Agents and Streamlit, we'll create an interactive and intuitive assistant that eliminates this data gap.
+In this quickstart, you'll learn how to build an Intelligent Sales Assistant that leverages Snowflake's capabilities for analyzing both sales conversations and metrics. Using **Cortex Code CLI** — Snowflake's AI-powered command-line assistant — we'll create, configure, and test the agent entirely from the terminal.
 
 ### What is Snowflake Cortex AI?
-Snowflake Cortex AI allows you to turn your conversations, documents and images into intelligent insights with AI next to your data. You can access industry-leading LLMs at scale directly in SQL or via APIs, analyze multimodal data and build agents — all within Snowflake’s secure perimeter. The platform leverages powerful capabilities:
+Snowflake Cortex AI allows you to turn your conversations, documents and images into intelligent insights with AI next to your data. You can access industry-leading LLMs at scale directly in SQL or via APIs, analyze multimodal data and build agents — all within Snowflake's secure perimeter. The platform leverages powerful capabilities:
 
 #### Cortex Analyst
 Use AI to accurately convert natural language to SQL; Simple to use, cost-efficient to scale.
@@ -56,8 +56,8 @@ Orchestrate across both structured and unstructured data to retrieve and synthes
   - Streamed responses for real-time interactions
   - Reduced latency through efficient orchestration
 
-#### Snowflake Intelligence
-All your knowledge, one trusted enterprise intelligence agent, delivering trusted answers, deep analysis, and confident action at scale. Snowflake Intelligence uses agents, which are AI models that are connected to one or more semantic views, semantic models, Cortex search services, and tools. Agents can answer questions, provide insights, and show visualizations. Snowflake Intelligence is powered by Cortex AISQL, Cortex Analyst, and Cortex Search.
+#### Cortex Code CLI
+Cortex Code is Snowflake's AI-powered command-line interface for building, testing, and managing Snowflake resources conversationally. It includes built-in **skills** — structured workflows that guide you through complex tasks like agent creation, evaluation, and optimization — all from your terminal.
 
 These capabilities work together to:
 1. Search through sales conversations for relevant context
@@ -66,12 +66,11 @@ These capabilities work together to:
 4. Provide natural language interactions with your data
 
 ### What You'll Learn
-- How to set up a sales intelligence database in Snowflake
-- How to create and configure Cortex Search services
-- How to build a Streamlit interface for sales analytics
-- How to implement semantic search for sales conversations
-- How to create a question-answering system using LLMs
-- How to use the Snowflake Intelligence capability with the agent created
+- How to use Cortex Code CLI to set up a sales intelligence database
+- How to create and configure Cortex Search services via SQL
+- How to create a Cortex Agent using the Cortex Code `cortex-agent` skill
+- How to test your agent directly from Cortex Code
+- How to build a Streamlit interface for external access via the REST API
 
 ### What You'll Build
 A full-stack application that enables users to:
@@ -80,153 +79,246 @@ A full-stack application that enables users to:
 - Ask questions about sales data and get AI-powered responses
 
 ### Prerequisites
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-  
-    >
-    >Download the [Git repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents)
-- A [Snowflake account login](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with a role with sufficient privileges to create databases, schemas, tables, and upload files. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
-- **Cortex Agents Access**: You will need access to Snowflake Cortex AI, including [**Cortex Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents), [**Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents), and [**Cortex Analyst**](https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents) features.
+- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) installed
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with a role with sufficient privileges to create databases, schemas, tables, and agents
+- **Cortex Agents Access**: You will need access to Snowflake Cortex AI, including [**Cortex Agents**](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents), [**Cortex Search**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview), and [**Cortex Analyst**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) features.
+
+## Install Cortex Code CLI
+
+If you don't already have Cortex Code CLI installed, run the following in your terminal:
+
+**macOS and Linux (including WSL):**
+```bash
+curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://ai.snowflake.com/static/cc-scripts/install.ps1 | iex
+```
+
+After installation, verify it works and connect to your Snowflake account:
+```bash
+cortex
+```
+
+On first launch, Cortex Code will guide you through connecting to your Snowflake account. Ensure your connection uses a role with privileges to create databases, schemas, tables, stages, Cortex Search services, and agents.
 
 ## Setup Data
 
-**Step 1.** In Snowsight, create a SQL Worksheet. Open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/setup.sql) and execute all statements in order from top to bottom.
+We'll use Cortex Code to execute the SQL that creates our sales intelligence database. Clone the companion repository first:
 
-This script will:
-- Create the database, schema, and warehouse
-- Create tables for sales conversations and metrics
-- Load sample sales data
-- Enable change tracking for real-time updates
-- Configure Cortex Search service
-- Create a stage for semantic models
-- Grant the necessary permissions needed
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents.git
+cd sfguide-getting-started-with-cortex-agents
+```
 
-**Step 2.** The Agent needs rules to interpret your structured data. This is found in the Semantic Model, which defines key business terms to ensure the Agent generates highly accurate SQL. Upload the semantic model:
+Now launch Cortex Code from the repo directory:
+```bash
+cortex
+```
 
-- Download [sales_metrics_model.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml) from the Git repository (NOTE: Do NOT right-click to download.)
-- Navigate to Data (Or Catalog » Database Explorer) » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
-- Click "+ Files" in the top right
-- Browse and select sales_metrics_model.yaml file
-- Click "Upload"
+**Step 1.** Ask Cortex Code to run the setup SQL. You can paste this prompt:
+
+```
+Run the SQL in setup.sql to create the sales intelligence database, tables, 
+sample data, and Cortex Search service.
+```
+
+Cortex Code will execute each statement from [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/setup.sql), which:
+- Creates the `SALES_INTELLIGENCE` database, `DATA` schema, and `SALES_INTELLIGENCE_WH` warehouse
+- Creates tables for sales conversations and metrics
+- Loads sample sales data
+- Enables change tracking for real-time updates
+- Configures the `SALES_CONVERSATION_SEARCH` Cortex Search service
+- Creates a `MODELS` stage for semantic models
+- Grants the necessary permissions
+
+**Step 2.** Upload the semantic model. The Agent needs rules to interpret your structured data. This semantic model defines key business terms to ensure the Agent generates highly accurate SQL. Ask Cortex Code:
+
+```
+Upload sales_metrics_model.yaml to the @SALES_INTELLIGENCE.DATA.MODELS stage.
+```
+
+Cortex Code will run:
+```sql
+PUT file://sales_metrics_model.yaml @SALES_INTELLIGENCE.DATA.MODELS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
+```
 
 ## Create Agent
 
-**Step 1.** In Snowsight, Click on AI & ML » Agents or [click here](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-cortex-agents)
-**Step 2.** Click on Create Agents.
-* Select `Create this agent for Snowflake Intelligence`
-* Set the Agent Object Name to `SALES_INTELLIGENCE_AGENT`
-* Set the Display Name to `SALES_INTELLIGENCE_AGENT`
-* Click Create agent
-![Agent Setup step 2](assets/create-agent.png)
-**Step 3.** Click on `SALES_CONVERSATION_AGENT` - this is where we will update the agent and how it should orchestrate. 
-* Click `Edit` on the top right corner. In the **Description** field, clearly define the Agent's primary function. We will add the following:
+Now we'll use Cortex Code's built-in **cortex-agent** skill to create the Sales Intelligence Agent. This skill provides a guided, interactive workflow for agent creation.
 
-```This agent orchestrates between Sales data for analyzing sales conversations using cortex search service (SALES_CONVERSATION_SEARCH) and metrics (sales_metrics_model.yaml)```  
-![Agent Setup step 3](assets/about-agent.png)
+**Step 1.** In Cortex Code, ask it to create the agent:
 
-You can also add a **Example Question**: 
-* How many deals did Sarah Johnson win compared to deals she lost?
+```
+Create an agent called SALES_INTELLIGENCE_AGENT in SALES_INTELLIGENCE.DATA
+```
 
-**Step 4.** Click on the left pane for Orchestration. We will set the Agent’s response instructions, which will set its persona, output format, and rules of engagement. Enter the following response instructions:
-```You are a specialized analytics assistant focused on providing concise responses about sales metrics and sales conversations. Your primary objectives are For structured data queries (metrics, KPIs, sales figures) Use the Cortex Analyst api which is YAML-based functionality. Provide direct, numerical answers with minimal explanation. Format responses clearly with relevant units and time periods. Only include essential context needed to understand the metric. For unstructured content from PDF reports. Utilize the cortex search service "SALES_INTELLIGENCE.DATA.SALES_CONVERSATION_SEARCH. Extract relevant information from conversations. Summarize findings in brief, focused responses. Maintain context from the original sales conversations. Operating guidelines - Always identify whether you're using cortex analyst or cortexsearch for each response. Keep responses under 3-4 sentences when possible. Present numerical data in a structured formatDon't speculate beyond available data```
+Cortex Code will load the `cortex-agent` skill and walk you through the creation workflow interactively.
 
-![Agent Setup step 4](assets/instructions.png)
+**Step 2.** When prompted for **administrative setup**, provide:
+- **Database**: `SALES_INTELLIGENCE`
+- **Schema**: `DATA`
+- **Agent Name**: `SALES_INTELLIGENCE_AGENT`
+- **Role**: `SALES_INTELLIGENCE_ROLE`
 
-**Step 5.** Click on the left pane for **Tools** to add. This is where you can add the Cortex Analyst semantic yaml file that was uploaded to the stage or the semantic view. 
-* We will add the semantic yaml file to Cortex Analyst by clicking on the `+Add` 
-* Give it a name `Sales_metrics_model`, click on the `Semantic model file` radio button, click on the Database dropdown and choose `SALES_INTELLIGENCE.DATA` and `MODELS` for Stage 
-* Click on the sales_metrics_model.yaml to highlight it blue. Click on the Custom radio button and select `SALES_INTELLIGENCE_WH` as the warehouse. Choose Query Timeout (seconds) as `60` and write in a description or generate it. Once the Add button is highlighted blue - click add as shown below:
+**Step 3.** When prompted for the agent's **purpose and requirements**, explain:
 
-![Agent Setup step 5](assets/add_cortex_analyst.png)
+```
+This agent orchestrates between sales data for analyzing sales conversations 
+using Cortex Search and metrics using Cortex Analyst. It should answer questions 
+about both structured sales metrics (revenue, deals, KPIs) and unstructured 
+sales conversations (call transcripts, meeting notes).
+```
 
-**Step 6.** Click on Cortex Search Services - this is the unstructured data retrieval of the sales conversations.
-* Click on the `+Add`. Give it a name `Sales_conversation_search`
-* Give it a description `Cortex Search Sales Service` 
-* Click on the Database dropdown and choose `SALES_INTELLIGENCE.DATA` and choose the search service from the drop down `SALES_CONVERSATION_SEARCH` 
-* For the ID Column we will pick the `Conversation_id` which will be used to generate the hyperlink to the source. If we had pdfs or powerpoints we would use the location of the unstructured data in the stage. For the Title Column we will pick `TRANSCRIPT_TEXT` which will be the search field on what we need to search for
-* Once the Add button is highlighted blue - click add
+**Step 4.** When prompted for **tools**, select the existing tools in the `SALES_INTELLIGENCE.DATA` schema:
+- **Cortex Search Service**: `SALES_CONVERSATION_SEARCH` — for searching through sales conversation transcripts
+- **Cortex Analyst (Semantic Model)**: `sales_metrics_model.yaml` on the `MODELS` stage — for querying structured sales metrics
 
-![Agent Setup step 6](assets/add_cortex_search.png) 
+**Step 5.** When prompted for **response instructions**, provide:
 
-**Step 7.** Click Save on top right to save any changes. Now click on Orchestration in the left pane and leave the Orchestration model to auto. This is where we can use other models to choose the orchestration from but for this we will leave it as auto. 
-* In the Orchestration instructions, we will add the following text: 
-```If a query spans both structured and unstructured data, clearly separate the sources. For any query, first determine whether it requires (a) Structured data analysis → Use YAML/Cortex Analyst (b) Report content/context → Use cortexsearch (c) Both Combine both services with clear source attribution. Please confirm which approach you'll use before providing each response.```
+```
+You are a specialized analytics assistant focused on providing concise responses 
+about sales metrics and sales conversations. Your primary objectives are:
 
-![Agent Setup step 7](assets/add-orchestration.png)
+For structured data queries (metrics, KPIs, sales figures):
+- Use the Cortex Analyst which is YAML-based functionality
+- Provide direct, numerical answers with minimal explanation
+- Format responses clearly with relevant units and time periods
+- Only include essential context needed to understand the metric
 
-**Step 8.** Click on the Access tab to control which role can run this agent. Ensure `SALES_INTELLIGENCE_ROLE` has access. Click on Save.
+For unstructured content from sales conversations:
+- Utilize the Cortex Search service SALES_INTELLIGENCE.DATA.SALES_CONVERSATION_SEARCH
+- Extract relevant information from conversations
+- Summarize findings in brief, focused responses
+- Maintain context from the original sales conversations
 
-![Agent Setup step 8](assets/add-access.png)
+Operating guidelines:
+- Always identify whether you're using Cortex Analyst or Cortex Search for each response
+- Keep responses under 3-4 sentences when possible
+- Present numerical data in a structured format
+- Don't speculate beyond available data
+```
 
-## Snowflake Intelligence
+**Step 6.** When prompted for **orchestration instructions**, provide:
 
-Now that your Agent is fully configured, we can now chat directly with it via Snowflake Intelligence. In Snowsight, click on AI & ML » Snowflake Intelligence. 
+```
+If a query spans both structured and unstructured data, clearly separate the sources. 
+For any query, first determine whether it requires:
+(a) Structured data analysis → Use YAML/Cortex Analyst
+(b) Report content/context → Use Cortex Search
+(c) Both → Combine both services with clear source attribution
 
-Let's ask these questions to test its knowledge on both structured and unstructured data:
-* How many deals did Sarah Johnson win compared to deals she lost?
+Please confirm which approach you'll use before providing each response.
+```
 
+**Step 7.** Cortex Code will create the agent via the REST API and verify its configuration. You can confirm the agent was created by asking:
+
+```
+List agents in SALES_INTELLIGENCE.DATA
+```
+
+**Step 8.** Grant access to the role. Ask Cortex Code:
+
+```
+Grant usage on agent SALES_INTELLIGENCE.DATA.SALES_INTELLIGENCE_AGENT to role SALES_INTELLIGENCE_ROLE
+```
+
+## Test the Agent
+
+Now that your Agent is fully configured, let's test it directly from Cortex Code. Ask Cortex Code to chat with the agent:
+
+```
+Chat with agent SALES_INTELLIGENCE.DATA.SALES_INTELLIGENCE_AGENT
+```
+
+Cortex Code will load the chat-with-agent capability. Try these questions to test both structured and unstructured data:
+
+**Test 1 — Structured data (Cortex Analyst):**
+```
+How many deals did Sarah Johnson win compared to deals she lost?
+```
 This question requires the Agent to run a SQL query against the sales metrics table using Cortex Analyst.
-![SI Deals](assets/si-question.png)
 
-* Tell me about the call with Securebank?
-
+**Test 2 — Unstructured data (Cortex Search):**
+```
+Tell me about the call with Securebank?
+```
 This question requires the Agent to look up contextual information within the long text transcripts in the sales conversations table using Cortex Search.
-![Securebank Conversation](assets/si-securebank.png)
+
+**Test 3 — Combined:**
+```
+What were Sarah Johnson's total deal values, and what feedback came up in her conversations?
+```
+This tests the agent's ability to orchestrate across both tools.
 
 ## Agent REST API
 
-In addition to using Snowflake Intelligence, you can also integrate your Agent into custom applications. You can interact with the Agent by calling the Snowflake REST API at `/api/v2/databases/{DATABASE}/schemas/{SCHEMA}/agents/{AGENT}:run`.
-We've created a simple Streamlit application that interacts with the REST API [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/data_agent_demo.py).
-You can use it as a building block to build your own applications. 
+In addition to testing in Cortex Code, you can integrate your Agent into custom applications. You can interact with the Agent by calling the Snowflake REST API at `/api/v2/databases/{DATABASE}/schemas/{SCHEMA}/agents/{AGENT}:run`.
+
+We've created a simple Streamlit application that interacts with the REST API [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/data_agent_demo.py). You can use it as a building block to build your own applications. 
 
 Since this API call is made outside of Snowsight, we need a secure key to authenticate your identity and grant the application permission to run the Agent. This key is a Programmatic Access Token (PAT).
 
-Let's run the Streamlit and call the API locally:
+Let's run the Streamlit app and call the API locally:
 
-**Step 1.** To authenticate to the API, let's create a [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens). 
-* In Snowsight, click on your profile (bottom left corner) » Settings » Authentication
-* Under `Programmatic access tokens`, click `Generate new token`
-* Select `Single Role` and select `sales_intelligence_role`
-* Copy and save the token for later (you will not be able to see it again)
+**Step 1.** Create a [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens). You can do this via Cortex Code:
 
-**Step 2.** Set up the local environment in your terminal. Reminder to clone the Git repository in your terminal: `git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-cortex-agents.git`.
+```
+Create a programmatic access token for the SALES_INTELLIGENCE_ROLE role
+```
 
-**Step 3.** Find your account URL in Snowsight: Click on your profile (bottom left corner) » Account » View account details.
+Or manually in Snowsight: Click on your profile (bottom left corner) → Settings → Authentication → Under `Programmatic access tokens`, click `Generate new token` → Select `Single Role` and select `sales_intelligence_role`. Copy and save the token.
 
-**Step 4.** In the cloned repository, run the following commands to set up the Python environment (replace the Programmatic Access Token (PAT) and ACCOUNT_URL placeholders with your unique values). These commands will launch a local web application that uses the variables to authenticate and call your deployed Agent via the REST API:
-```python
+**Step 2.** Find your account URL. Ask Cortex Code:
+
+```
+What is my account URL?
+```
+
+Or in Snowsight: Click on your profile (bottom left corner) → Account → View account details.
+
+**Step 3.** Set up and run the Streamlit app. In the cloned repository directory, run:
+
+```bash
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
 
 CORTEX_AGENT_DEMO_PAT=<PAT> \
 CORTEX_AGENT_DEMO_HOST=<ACCOUNT_URL> \
-CORTEX_AGENT_DEMO_DATABASE="SNOWFLAKE_INTELLIGENCE" \
-CORTEX_AGENT_DEMO_SCHEMA="AGENTS" \
+CORTEX_AGENT_DEMO_DATABASE="SALES_INTELLIGENCE" \
+CORTEX_AGENT_DEMO_SCHEMA="DATA" \
 CORTEX_AGENT_DEMO_AGENT="SALES_INTELLIGENCE_AGENT" \
 streamlit run data_agent_demo.py
 ```
-When you’re done using the application, press the Ctrl key and the C key simultaneously in the active terminal window. This sends an interrupt signal to the running Streamlit server process to shut it down.
+
+Replace `<PAT>` with the token from Step 1 and `<ACCOUNT_URL>` with your account URL from Step 2.
+
+When you're done using the application, press `Ctrl+C` in the terminal to shut down the Streamlit server.
 
 ## Conclusion And Resources
 
-Congratulations! You've successfully built an Intelligent Sales Assistant using Snowflake Cortex capabilities. This application demonstrates the power of combining structured and unstructured data analysis through:
+Congratulations! You've successfully built an Intelligent Sales Assistant using Snowflake Cortex Agents — entirely from the command line with Cortex Code CLI. This application demonstrates the power of combining structured and unstructured data analysis through:
 - Natural language interactions with your sales data
 - Semantic search across sales conversations
 - Automated SQL generation for analytics
-- Real-time streaming responses
-- Interactive chat interface with Streamlit or Snowflake Intelligence! 
+- Interactive agent testing directly in the terminal
+- External application access via the REST API with Streamlit
 
 ### What You Learned
-- **Cortex Agents**: How to integrate and use the stateless REST API for combining search and analysis capabilities
+- **Cortex Code CLI**: How to use Snowflake's AI-powered CLI to create and manage agents conversationally
+- **Cortex Agents**: How to create and configure agents using the `cortex-agent` skill for combining search and analysis capabilities
 - **Cortex Search**: How to leverage hybrid search combining semantic and keyword approaches for more accurate results
 - **Cortex Analyst**: How to convert natural language to SQL using semantic models for high-accuracy analytics
-- **Integration**: How to combine these capabilities into a cohesive application using Streamlit
-- **Snowflake Intelligence**: Integrate the agent with Snowflake Intelligence and have the orchestration and UI built by Snowflake for you. 
+- **Testing**: How to chat with your agent directly from Cortex Code to validate behavior
+- **Integration**: How to connect external applications via the REST API using Streamlit
 
 ### Related Resources
-- [Snowflake Intelligence Documentation](hhttps://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
+- [Cortex Code CLI Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
 - [Cortex Agents Guide](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents)
 - [Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Cortex Analyst Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-- [Cortex Search Tutorial](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/tutorials/cortex-search-tutorial-1-search)
+- [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
