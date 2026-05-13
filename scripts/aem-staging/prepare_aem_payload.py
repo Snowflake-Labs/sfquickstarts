@@ -145,7 +145,7 @@ def prepare_aem_payload(
         fork_repo_link = f"https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/{parsed_markdown['id']}"
     
     sidebar = parsed_markdown.get("sidebar", False)
-    sidebar_json = parsed_markdown.get("sidebar_json", "")
+    sidebar_json = parsed_markdown.get("sidebar_json", "").strip()
     has_journey_sidebar = bool(sidebar)
     journey_sidebar_path = ""
     if has_journey_sidebar and sidebar_json:

@@ -219,7 +219,7 @@ def parse_markdown(
     sidebar = frontmatter.get('sidebar', False)
     if isinstance(sidebar, str):
         sidebar = sidebar.lower() in ('true', 'yes', '1')
-    sidebar_json = frontmatter.get('sidebar_json', '')
+    sidebar_json = frontmatter.get('sidebar_json', '').strip()
 
     return {
         'id': qid,
