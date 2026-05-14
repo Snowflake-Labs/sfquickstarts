@@ -2,7 +2,7 @@ author: Rida Safdar
 id: accelerate-app-dev-cortex-code
 language: en
 summary: Build end-to-end AI applications on your Snowflake data using Cortex Complete, Cortex Search, and Cortex Code — no data movement required.
-categories: data-science-&-ai, app-development
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration,snowflake-site:taxonomy/snowflake-feature/cortex-code
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
