@@ -48,7 +48,6 @@ This lab includes a pre-built Snowflake Notebook (`building-ai-apps-snowflake-co
 <!-- ------------------------ -->
 ## Set Up Your Environment
 
-Duration: 10
 
 All setup runs in a **SQL Worksheet** in Snowsight. Navigate to **Left Pane > Create (+) Button ** and click **SQL File** to create a new worksheet.
 
@@ -101,8 +100,6 @@ USE WAREHOUSE WORKSHOP_WH;
 <!-- ------------------------ -->
 ## Upload the Workshop Notebook
 
-Duration: 5
-
 All Python steps in this lab run from a single pre-built Snowflake Notebook. Upload it once and run cells sequentially — no manual cell creation required.
 
 ### Step 1: Upload the Notebook
@@ -133,8 +130,6 @@ If you see an error, confirm the SQL Worksheet setup steps completed successfull
 
 <!-- ------------------------ -->
 ## Cortex Code: Your AI Pair Programmer
-
-Duration: 15
 
 Before we write a single line of lab code, take 10 minutes to meet the tool that will accelerate every step that follows.
 
@@ -184,7 +179,6 @@ Cortex Code will return a working example of SQL functions with explanation. Kee
 <!-- ------------------------ -->
 ## Module 1 – Your AI Foundation
 
-Duration: 30
 
 ### The Two Types of AI Questions
 
@@ -262,7 +256,6 @@ This table is your document library — the raw material for the RAG app in Modu
 <!-- ------------------------ -->
 ## Module 2 – Production RAG with Cortex Search
 
-Duration: 45
 
 ### Architecture Overview
 
@@ -327,8 +320,6 @@ A well-tuned RAG app should score **> 0.8 on all metrics**. If Groundedness is l
 <!-- ------------------------ -->
 ## Module 3 – Text-to-SQL with Sample Data
 
-Duration: 15
-
 This module uses `SNOWFLAKE_SAMPLE_DATA` — the TPC-H order dataset pre-loaded in every trial account — as structured data for a Text-to-SQL interface. All steps run from Python cells in the notebook; no worksheet switching is needed.
 
 ### Step 1: Explore the Schema
@@ -355,8 +346,6 @@ Finally, run the **additional questions cell** to test three more questions — 
 <!-- ------------------------ -->
 ## Conclusion & Resources
 
-
-Duration: 5
 
 ### What You Built
 
