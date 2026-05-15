@@ -1,10 +1,10 @@
 author: Sho Tanaka, Caleb Baechtold, Lucy Zhu
-id: getting-started-with-cortex-code-in-snowsight-for-data-science-ml
+id: build-your-first-ml-model-in-snowflake-with-agentic-ml
 summary: Learn how to build an end-to-end customer LTV prediction model — from EDA to batch or real-time inference — using Cortex Code and natural language prompts in Snowflake ML
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 environments: web
-status: Draft
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Cortex Code, LTV, Regression
 
@@ -503,11 +503,11 @@ CREATE OR REPLACE STAGE ml_ltv_data_stage
   URL = 's3://sfquickstarts/sfguide_getting_started_with_cortex_code_for_ds_ml/ltv_transactions/';
 
 CREATE OR REPLACE TABLE ML_LTV_TRANSACTIONS (
-	CUSTOMER_ID VARCHAR(16777216),
-	TRANSACTION_TIME TIMESTAMP_NTZ(9),
-	AMOUNT NUMBER(12,2),
-	PRODUCT_CATEGORY VARCHAR(15),
-	CHANNEL VARCHAR(8)
+    CUSTOMER_ID VARCHAR(16777216),
+    TRANSACTION_TIME TIMESTAMP_NTZ(9),
+    AMOUNT NUMBER(12,2),
+    PRODUCT_CATEGORY VARCHAR(15),
+    CHANNEL VARCHAR(8)
 );
 
 COPY INTO ML_LTV_TRANSACTIONS
