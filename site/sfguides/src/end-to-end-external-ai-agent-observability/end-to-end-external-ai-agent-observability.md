@@ -7,7 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability
-tags: AI Observability, TruLens, Agents, Cortex Analyst, Cortex Search, Evaluation, Monitoring
+tags: AI Observability, TruLens, Agents, Analyst, Cortex Search, Evaluation, Monitoring
 
 
 
@@ -17,12 +17,23 @@ tags: AI Observability, TruLens, Agents, Cortex Analyst, Cortex Search, Evaluati
 ## Overview
 
 
-Modern AI agents orchestrate multiple tools — from text-to-SQL engines to knowledge base retrieval — making them powerful but difficult to debug and evaluate. When an agent chains Cortex Analyst for structured data queries and Cortex Search for unstructured knowledge retrieval, you need deep visibility into each step: what tool was called, what it returned, and whether the final answer was any good.
+Modern AI agents orchestrate multiple tools — from text-to-SQL engines to knowledge base retrieval — making them powerful but difficult to debug and evaluate. You need deep visibility into each step: what tool was called, what it returned, and whether the final answer was any good.
+
+**Snowflake is your AI observability backend** — for evals, traces, and insights — regardless of where your agents run or which framework you use. Mix and match whatever agent SDK, orchestrator, model provider, and tools fit your stack. Whatever you build, you can stream OpenTelemetry traces and evaluation results into Snowflake and analyze them alongside the rest of your data.
 
 This guide walks you through building a **Support Intelligence Agent** with full observability coverage — from batch evaluation with ground truth to production monitoring with a live dashboard. You'll use the [OpenAI Agent SDK](https://github.com/openai/openai-agents-python) for agent orchestration, [TruLens](https://www.trulens.org/) for instrumentation and evaluation, and [Snowflake AI Observability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability) as the unified telemetry backend.
 
+### Why Snowflake AI Observability
+
+If you're already considering Cortex Agents, Snowflake AI Observability is the natural complement — and just as importantly, it works for any agent stack you choose:
+
+- **Where your trusted data already lives.** Snowflake is the platform for insights across all of your data and systems. Co-locating your AI traces and evaluations with the analytical data they reference (and the rest of your business data) means root-cause analysis is one SQL join away — no extra ETL, no extra vendor.
+- **Optimized query performance for OTEL event tables.** Trace data is stored in purpose-built event tables with optimized scan and filter performance, so timeseries dashboards, p95 rollups, and trace drill-downs stay fast as your trace volume grows.
+- **Low cost at AI-trace scale.** AI tracing generates a lot of data — every span, every retrieved chunk, every LLM input/output. Snowflake's storage economics make it cheap to keep months of full-fidelity traces, not just sampled summaries.
+- **One governance and security model.** Roles, masking, row access policies, and audit trails apply uniformly to your traces, evaluations, and source data.
+
 ### What You Will Learn
-- How to build an AI agent with Cortex Analyst and Cortex Search tools
+- How to build an AI agent with Analyst and Cortex Search tools
 - How to instrument agent code with TruLens `@instrument` decorators for OTEL-based tracing
 - How to define custom client-side metrics (SQL Agreement, Precision@k, Recall@k) using `Metric` and `Selector`
 - How to run batch evaluations with `RunConfig` and `compute_metrics()`
@@ -40,7 +51,7 @@ This guide walks you through building a **Support Intelligence Agent** with full
 - A Streamlit-in-Snowflake monitoring dashboard
 
 ### Prerequisites
-- A Snowflake account with [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions), [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview), and [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) enabled.
+- A Snowflake account with [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions), [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview), and [Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) enabled.
 - A Snowflake account login with a role that can create databases, warehouses, stages, Cortex Search services, and Streamlit apps.
 - A [Programmatic Access Token (PAT)](https://docs.snowflake.com/en/user-guide/admin-programmatic-access-token) for REST API authentication.
 - Python 3.10–3.12 with [uv](https://docs.astral.sh/uv/) (recommended) or pip.
@@ -53,7 +64,7 @@ The system architecture flows as follows:
 
 1. **React Chat UI** sends questions via SSE to the **FastAPI Backend**
 2. **FastAPI** uses `@trace_with_run` to create traced invocations
-3. **OpenAI Agent SDK** routes to **Cortex Analyst** (structured queries) or **Cortex Search** (knowledge base)
+3. **OpenAI Agent SDK** routes to **Analyst** (structured queries) or **Cortex Search** (knowledge base)
 4. **TruLens** instruments each layer with semantic span types and writes traces to **Snowflake AI Observability Events**
 5. **Batch Evaluation** runs ground-truth metrics (SQL Agreement, Precision@k, Recall@k) plus server-side LLM-judge metrics (answer_relevance, groundedness, context_relevance, coherence)
 6. **Streamlit Dashboard** queries the event table for real-time production monitoring
@@ -78,14 +89,14 @@ The repository is organized as follows:
 ```
 sfguide-end-to-end-external-ai-agent-observability/
 ├── setup_snowflake.sql          # DDL: database, tables, Cortex Search service, ground truth
-├── semantic_model.yaml          # Cortex Analyst semantic model
+├── semantic_model.yaml          # Analyst semantic model
 ├── pyproject.toml               # Python dependencies
 ├── run_eval.py                  # Batch evaluation entry point
 ├── server.py                    # FastAPI production chat server
 ├── src/
 │   ├── agent/
 │   │   ├── app.py               # Agent definition + AgentApp wrapper
-│   │   └── tools.py             # Cortex Analyst & Cortex Search tools
+│   │   └── tools.py             # Analyst & Cortex Search tools
 │   ├── services/
 │   │   └── config.py            # Snowflake connection config
 │   ├── eval/
@@ -144,7 +155,7 @@ PUT file://semantic_model.yaml @SUPPORT_INTELLIGENCE.DATA.MODELS
     AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
 ```
 
-The semantic model defines dimensions (TICKET_ID, CUSTOMER_NAME, PRIORITY, CATEGORY, STATUS, ASSIGNED_AGENT), time dimensions (CREATED_DATE, RESOLVED_DATE), facts (FIRST_RESPONSE_HOURS, RESOLUTION_HOURS, CSAT_SCORE), aggregate metrics, and verified queries for Cortex Analyst.
+The semantic model defines dimensions (TICKET_ID, CUSTOMER_NAME, PRIORITY, CATEGORY, STATUS, ASSIGNED_AGENT), time dimensions (CREATED_DATE, RESOLVED_DATE), facts (FIRST_RESPONSE_HOURS, RESOLUTION_HOURS, CSAT_SCORE), aggregate metrics, and verified queries for Analyst.
 
 ### Set Up the Python Environment
 
@@ -201,7 +212,7 @@ CORTEX_SEARCH_SERVICE = "SUPPORT_INTELLIGENCE.DATA.KB_SEARCH"
 
 Two tools are defined using `@function_tool` from the OpenAI Agent SDK:
 
-**`query_ticket_metrics`** — Calls the Cortex Analyst REST API with the semantic model to convert natural language questions into SQL, execute it, and return results:
+**`query_ticket_metrics`** — Calls the Analyst REST API with the semantic model to convert natural language questions into SQL, execute it, and return results:
 
 ```python
 @function_tool
@@ -563,7 +574,7 @@ uvicorn server:app --host 0.0.0.0 --port 8000
 
 The [`frontend/`](https://github.com/Snowflake-Labs/sfguide-end-to-end-external-ai-agent-observability/tree/main/frontend) directory contains a React chat UI with:
 - SSE streaming with thinking indicators
-- Tool call status display (showing "Calling Cortex Analyst..." / "Cortex Search returned results")
+- Tool call status display (showing "Calling Analyst..." / "Cortex Search returned results")
 - Dark theme with suggestion chips
 
 To run:
@@ -787,7 +798,7 @@ LIMIT 300;
 
 ### Drill Into a Single Trace
 
-Once you have a `trace_id`, fetch every span — the user question, the agent's answer, each tool/retrieval/generation step, token counts, Cortex Analyst SQL, retrieved Search chunks, and any evaluations:
+Once you have a `trace_id`, fetch every span — the user question, the agent's answer, each tool/retrieval/generation step, token counts, Analyst SQL, retrieved Search chunks, and any evaluations:
 
 ```sql
 WITH base AS (
@@ -844,7 +855,7 @@ This uses the [`snowflake.yml`](https://github.com/Snowflake-Labs/sfguide-end-to
 
 Congratulations! You've built a complete AI agent observability pipeline covering:
 
-- **Agent Construction**: Multi-tool agent with Cortex Analyst and Cortex Search via OpenAI Agent SDK
+- **Agent Construction**: Multi-tool agent with Analyst and Cortex Search via OpenAI Agent SDK
 - **Instrumentation**: Semantic span types (RECORD_ROOT, TOOL, RETRIEVAL, GENERATION) with TruLens `@instrument`
 - **Ground Truth**: Golden SQL and expected retrieval chunks stored in Snowflake tables
 - **Custom Metrics**: SQL Agreement, Precision@k, Recall@k using `Metric` + `Selector` API
@@ -859,6 +870,6 @@ Congratulations! You've built a complete AI agent observability pipeline coverin
 - [Snowflake AI Observability Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability)
 - [TruLens Documentation](https://www.trulens.org/getting_started/)
 - [OpenAI Agent SDK](https://github.com/openai/openai-agents-python)
-- [Cortex Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
+- [Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Getting Started with AI Observability Quickstart](https://quickstarts.snowflake.com/guide/getting-started-with-ai-observability/)
