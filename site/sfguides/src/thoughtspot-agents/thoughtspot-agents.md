@@ -1,13 +1,12 @@
-author: author first and last name
-id: markdown-template
+author: Bill Back
+id: thoughtspot-agents
 language: en
-summary: This is a sample Snowflake Template
+summary: An introduction to using ThoughtSpot agents to go from Snowflake data to an embedded agentic application.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
-status: Published
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: <optional but modify to link to your repo>
-open in snowflake: <optional but modify to link into the product>
+fork repo link: [ThoughtSpot Agents](https://github.com/billdback-ts/sfquickstarts)
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
