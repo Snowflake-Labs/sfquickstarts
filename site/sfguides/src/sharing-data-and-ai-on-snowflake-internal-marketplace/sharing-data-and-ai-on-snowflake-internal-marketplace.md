@@ -77,7 +77,7 @@ Log in to your account as the `provider` user.
 
 2. **Review the Internal Marketplace**: In the menu on the left, click on **Catalog** > **Internal Marketplace**. You will see 1 or more listings (data products) that we have pre-created. Open any one of them to examine their structure content.
 
-3. **Review the organizational profiles**: While viewing the Internal Marketplace, use the **Profile** filter to see and filter by the available domain profiles.
+3. **Review the organizational profiles**: While viewing the Internal Marketplace, use the **Profile** filter to see the available domain profiles. (At the start of the lab, filtering for a specific profile will likely return 0 data products.)
 
 ### Review via SQL (Optional)
 
@@ -144,7 +144,7 @@ Now select the data objects for this data product.
    - All tables **except** *Region* and *Part*
    - The `ORDER_SUMMARY` view
    - The `ORDERS_PER_CUSTOMER` function
-2. Click **Done** to proceed, then **Generate Listing** if you choose "AI generation on"
+2. Click **Done** to proceed, then **Generate Listing** if you chose "AI generation on"
 
 ![](assets/publish03_objectselection.png)
 
@@ -240,11 +240,13 @@ In this section:
 
 1. Log in to your account as the `consumer` user (e.g. open a new browser tab / incognito window and log in as `consumer`).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
-3. You should see the **Order Insights** listing. Click on it.
+3. You should see your **Order Insights** listing. Click on it.
+   - If needed, set the **Sort By** to **Most Recent** or search for your account locator.
 4. Click the blue **Request Access** button.
-   - If prompted to verify your email address, follow the dialog to complete verification.
+   - If prompted to verify your email address, click on the **user profile** link in the dialog to complete verification.
+   - Verify the email sent to you. Then reload the browser tab.
 5. In the **Request access** dialog, enter a business justification such as:
-   > "We need this data for our current project xyz."
+   - "_We need this data for our current project xyz._"
 6. Submit the request.
 7. After submitting, click the gray **View request** button to review your pending request. You can also withdraw and resubmit the request from here if needed.
 
@@ -258,7 +260,7 @@ In this section:
    - The business justification
    - The listing being requested
 5. Click the green **Grant** button to approve the request.
-6. Switch from **Needs Review** to **Resolved Requests** to confirm the request is now listed as approved.
+6. Switch from **Needs Review** to **Resolved** to confirm the request is now listed as approved.
 
 ### Verify Access
 
@@ -349,7 +351,7 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
 1. Log in to your account as the `provider` user (switch browser tabs/windows or log in again).
 2. Navigate to **Data Sharing** -> **Internal Sharing** .
 3. Open the **Listings** tab at the top of the Internal Sharing page.
-4. Select your listing 
+4. Select your live listing 
 5. Invoke Coco by clicking on the blue AI icon at the bottom right:
 
    ![](assets/2026-invoke-coco.png)
@@ -364,10 +366,13 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
 
      ![](assets/2026-validate-coco-ui.png)
 
-9. Navigate to  **Catalog** > **Internal Marketplace**. More and more data products published by other lab participants will appear in the internal marketplace!
-10. Use the filters for **Profile** as well as for the custom attributes **Confidentiality** and **Source Systems** to display different subsets of data products.
-11. Open at least 2 or 3 data products other than your own and **Request Access** as you did before for your own data product. 
-12. Navigate to the **Data Sharing** -> **Internal Sharing** -> **Requests** to check if you have received any access requests from other lab participants. If so, approve them.
+Now let's look at the data products that others have published: 
+
+9. Switch to your `consumer` user.
+10. Navigate to  **Catalog** > **Internal Marketplace**. More and more data products published by other lab participants will appear in the internal marketplace!  (Reload your browser tab if needed.)
+11. Use the filters for **Profile** as well as for the custom attributes **Confidentiality** and **Source Systems** to display different subsets of data products.
+12. Open at least 2 or 3 data products other than your own and **Request Access** as you did before for your own data product. 
+13. Navigate to the **Data Sharing** -> **Internal Sharing** -> **Requests** periodically to check if you have received any access requests from other lab participants. If so, approve them.
 ---
 
 
@@ -428,12 +433,13 @@ Let's make your data product AI-ready by generating and adding a semantic model 
 Let's use Coco to create and manage listings through prompts.
 
 - Log in to your account as the `provider` user (switch browser tabs/windows or log in again).
-- Navigate to  **Catalog** > **Database Explorer** and review the tables in the TPCH database.
+- Navigate to  **Catalog** > **Database Explorer** and review the tables in the schema **SF1** in the **TPCH** database.
 - In the lower right of the UI, click the blue AI icon to open Coco.
 - Then perform the following steps:
-   1. Enter the / (slash) character in the prompt field. This opens a list of skills.
-   2. Select **internal-marketplace-org-listing** from the list of skills, hit ENTER.
-   3. Note how Coco invokes the skills to offer specialized help
+   1. Start a new chat by clicking on the pen at the top of the Coco panel.
+   2. Enter the / (slash) character in the prompt field. This opens a list of skills.
+   3. Select **internal-marketplace-org-listing** from the list of skills, hit ENTER.
+   4. Note how Coco invokes the skills to offer specialized help
 
     ![](assets/2026-tpch-coco.png)
 
@@ -446,6 +452,7 @@ Next:
 - Respond to any questions that Coco will ask you to perform this request
 - Click **Allow** to permit Coco to create a semantic view and a share.
 - When asked to allow a GRANT, select "**Allow GRANT in this chat**" to allow all required grants for this data product  
+- Coco may present a plan and ask "_Shall I proceed?_".  Respond with "_Yes_".
 - Finally, **Allow** Coco to create the organization listing:
 
     ![](assets/2026-coco-create-listing.png)
