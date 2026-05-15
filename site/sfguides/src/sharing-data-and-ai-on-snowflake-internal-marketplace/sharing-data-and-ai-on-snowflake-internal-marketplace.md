@@ -427,11 +427,12 @@ Let's make your data product AI-ready by generating and adding a semantic model 
 ## Use Cortex Code to Create and Govern a Listing
 Let's use Coco to create and manage listings through prompts.
 
+- Log in to your account as the `provider` user (switch browser tabs/windows or log in again).
 - Navigate to  **Catalog** > **Database Explorer** and review the tables in the TPCH database.
 - In the lower right of the UI, click the blue AI icon to open Coco.
 - Then perform the following steps:
    1. Enter the / (slash) character in the prompt field. This opens a list of skills.
-   2. Select **interal-marketplace-org-listing** from the list of skills, hit ENTER.
+   2. Select **internal-marketplace-org-listing** from the list of skills, hit ENTER.
    3. Note how Coco invokes the skills to offer specialized help
 
     ![](assets/2026-tpch-coco.png)
