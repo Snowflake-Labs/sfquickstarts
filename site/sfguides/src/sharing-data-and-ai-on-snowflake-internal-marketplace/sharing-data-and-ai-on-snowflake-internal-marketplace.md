@@ -13,9 +13,9 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 ## Overview
 
 
-Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data and AI assets is more successful if they are shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionary, and more. In a Data Mesh, data products are typically also subject to various data management and organizational principles.  
+Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data and AI assets is more successful if they are shared as a product.
 
-**Snowflake Internal Marketplace** enables companies to publish documented and governed data products, to make them discoverable and understandable for data consumers. [A previous hands-ob lab is available](https://www.snowflake.com/en/developers/guides/internal-marketplace-intra-org-sharing/) to exercise the internal marketplace and learn how governance policies can control access to data products. In this lab we briefly recap the basics and then focus on sharing AI assets such as agents, semantic vies, and other new features.
+**Snowflake Internal Marketplace** enables companies to publish documented and governed data products, so they are discoverable and understandable for data consumers. [A previous hands-ob lab is a prerequisite.](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-collaboration-ai/index.html)
 
 
 
@@ -23,8 +23,8 @@ Sharing information between departments or business units ("domains") of a compa
 - A payload of objects to share
 - Metadata to describe the product and its characteristics
 - Access control specification and policies
-- One or more output ports through which the product can be consumed
-- Processes and guidelines that define data product operations and responsibilities
+- One or more output ports through the product can be consumed
+- Processes and guidelines that define data product operations and fresponsibilities
 
 
 ![Snowflake Horizon Diagram](assets/2026-data-product-components.png)
@@ -36,7 +36,7 @@ Sharing information between departments or business units ("domains") of a compa
 - How to leverage AI to help you create data products
 - How to customize your data products with [custom attributes](https://docs.snowflake.com/en/LIMITEDACCESS/collaboration/custom-attributes-internal-marketplace)
 - How to manage access to data products, including request & approval workflows 
-- How to share and consume [semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/sharing-semantic-views) and [AI agents](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agent-sharing)
+- How to share and consume [semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/sharing-semantic-views) and [AI agents](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agents/cortex-agents-sharing)
 - How to [generate semantic views and agents](https://docs.snowflake.com/en/LIMITEDACCESS/collaboration/auto-generated-data-agents-for-listings) for existing data products
 - How to manage and consume data products with [Cortex Code ("Coco")](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 
@@ -58,24 +58,24 @@ Sharing information between departments or business units ("domains") of a compa
 ## Review Your Lab Environment
 
 
-Your Snowflake account has been pre-configured with a database,  users roles, and organizational profiles you need for this lab. In this section you will review the environment before creating your first data product in the next section.
+Your Snowflake account has been pre-configured with a database,  users roles, and organizational profiles you need for this lab. In this section you will review the environment before creating your first data product.
 
 The lab environment consists of:
 
 - **One Snowflake account** with two users and their roles:
-  - `data_owner` with the `data_owner_role`
-  - `data_consumer` with the `data_consumer_role`
+  - `PROVIDER` with the `PROVIDER_ROLE`
+  - `CONSUMER` with the `CONSUMER_ROLE`
 - **A TPC-H database** (`TPCH`) with sample data in the `SF1` schema, including tables (customer, orders, lineitem, nation, region, part, partsupp, supplier), an `ORDER_SUMMARY` view, and an `ORDERS_PER_CUSTOMER` function
-- **Two organizational profiles**: **Sales** and **Marketing**, representing different business units when publishing a data product 
+- **Twenty Different organizational profiles**: representing different business units when publishing a data product - use these profiles freely, there is no specific limitation in these profiles, they exist for you to organize your data products by domain/department
 - **Several custom attributes** that we have pre-defined for all lab participants for richer data product metdata 
 
 ### Review via the Snowsight UI
 
-Log in to your account as the `data_owner` user.
+Log in to your account as the `PROVIDER` user.
 
 1. **Review the database**: In the left navigation, click on **Catalog** > **Database Explorer**. Open the `TPCH` database and navigate to the `SF1` schema. You should see the TPC-H tables, the `ORDER_SUMMARY` view, and the `ORDERS_PER_CUSTOMER` function.
 
-2. **Review the Internal Marketplace**: In the left navigation, click on **Catalog** > **Internal Marketplace**. You will see 1 or more listings (data products) that we have pre-created. Open any one of them to examine their structure content.
+2. **Review the Internal Marketplace**: In the left navigation, click on **Catalog** > **Internal Marketplace**. You will see 1 or more listings (data products) that we have pre-created. Open any of them to explore.
 
 3. **Review the organizational profiles**: While viewing the Internal Marketplace, use the **Profile** filter right under search bar to see and filter by the available domain profiles.
 
@@ -84,8 +84,8 @@ Log in to your account as the `data_owner` user.
 Open a new file in a workspace (or a worksheet) and run the following commands to confirm the lab setup:
 
 ```sql
--- Review as data_owner with the data_owner_role
-USE ROLE data_owner_role;
+-- Review as PROVIDER with the PROVIDER_ROLE
+USE ROLE PROVIDER_ROLE;
 USE WAREHOUSE compute_wh;
 
 -- Review the database and schema
@@ -109,8 +109,8 @@ SHOW ROLES;
 - `SHOW TABLES` should return tables such as `CUSTOMER`, `ORDERS`, `LINEITEM`, `NATION`, `REGION`, `PART`, `PARTSUPP`, and `SUPPLIER`.
 - `SHOW VIEWS` should return the `ORDER_SUMMARY` view.
 - `SHOW USER FUNCTIONS` should return the `ORDERS_PER_CUSTOMER` function.
-- `SHOW USERS` should return `data_owner` and `data_consumer`.
-- `SHOW ROLES` should return `data_owner_role` and `data_consumer_role`.
+- `SHOW USERS` should return `PROVIDER` and `CONSUMER`.
+- `SHOW ROLES` should return `PROVIDER_ROLE` and `CONSUMER_ROLE`.
 -->
 
 ###
@@ -121,13 +121,13 @@ SHOW ROLES;
 ## Create / Publish Data Product
 
 
-In this section you will create and publish your first organizational listing called **Order Insights**. This data product shares order and customer data from the TPC-H database with other business domains in your organization.
+In this section you will create and publish your first organizational listing called **Order Insights**. This data product shares order and customer data from the TPC-H database with other business units in your organization.
 
-You will work as `data_owner` with the `data_owner_role`. The publishing flow in the Provider Studio consists of 5 steps.
+You will work as `PROVIDER` with the `PROVIDER_ROLE`. The publishing flow in the Provider Studio consists of 5 steps.
 
 ### Step 1 of 5: Decide on AI Generation and Select Data Objects
 
-1. Log in to your account as the `data_owner` user.
+1. Log in to your account as the `PROVIDER` user.
 2. Navigate to **Catalog** > **Internal Marketplace**.
 3. Click the blue **+ Create Listing** button in the top right.
 4. Proceed with "AI generation on" or, optionally, turn it off. "AI generation on" will automatically populate some of the data product metadata for you.
@@ -168,14 +168,14 @@ Now select the data objects for this data product.
     - Select the c_address, c_name, and c_phone columns for masking.
   - Note:
     - It may take up to 2 hours before data consumers see the properly generated data preview.
-    - The selection of sensitive columns only affects the data preview in the internal marketplace. When data consumers are granted _access_ to the data product, row- and column-level access policies must be in place to govern their access.
+    - The selection of sensitive columns only affects the data preview in the internal marketplace. When data consumers are granted _access_ to the data product, row- and column-level access policies you defined will take effect.
 
 ![](assets/2026-hide-columns.png)
 
 
 7. Set _custom attributes_ to any values you like:
     - Click in the field "**Attributes** (optional)".
-    - Note that the attributes **Confidentiality** and **Source Systems** are examples of _custom attributes_ that the internal marketplace admin can define for your company. Up to 40 custom attributes can be configured.
+    - Note that the attributes **Confidentiality** and **Source Systems** are examples of _custom attributes_ that the internal marketplace admin can define for your company. Up to 40 custom attributes can be defined per company.
     - The attribute **Source Systems** is multi-valued, i.e. you can assign mutiple values from the drop-down list.
     - Custom attributes can also appear in the markeplace UI as filters.
     - **Update frequency** is a standard attribute that you can set to indicate the intended service level objectve in terms of data product freshness. 
@@ -238,7 +238,7 @@ In this section:
 
 ### Request Access as the Consumer User
 
-1. Log in to your account as the `data_consumer` user (e.g. open a new browser tab / incognito window and log in as `data_consumer`).
+1. Log in to your account as the `CONSUMER` user (e.g. open a new browser tab / incognito window and log in as `CONSUMER`).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. You should see the **Order Insights** listing. Click on it.
 4. Click the blue **Request Access** button.
@@ -250,10 +250,10 @@ In this section:
 
 ### Review and Grant Access as the Data Product Owner
 
-1. Log in to your account as the `data_owner` user (switch browser tabs/windows or log in again).
+1. Log in to your account as the `PROVIDER` user (switch browser tabs/windows or log in again).
 2. Navigate to the **Data Sharing** -> **Internal Sharing** .
 3. Open the **Requests** tab at the top of the Internal Sharing page.
-4. You should see the access request from `data_consumer`. Click on it to review the details:
+4. You should see the access request from `CONSUMER`. Click on it to review the details:
    - The requesting user and role
    - The business justification
    - The listing being requested
@@ -262,7 +262,7 @@ In this section:
 
 ### Verify Access
 
-Switch back to the `data_consumer` user and navigate to the **Order Insights** listing in the Internal Marketplace. The blue **Request Access** button should now have changed to **Query in Worksheet** (reload the browser tab if needed). This confirms that access has been granted successfully.
+Switch back to the `CONSUMER` user and navigate to the **Order Insights** listing in the Internal Marketplace. The blue **Request Access** button should now have changed to **Query in Worksheet**.
 
 ---
 
@@ -271,12 +271,12 @@ Switch back to the `data_consumer` user and navigate to the **Order Insights** l
 ## Consume Org Listing
 
 
-Now that access has been granted, let's consume the **Order Insights** data product as the `data_consumer` user with the `data_consumer_role`.
+Now that access has been granted, let's consume the **Order Insights** data product as the `CONSUMER` user with the `CONSUMER_ROLE`.
 
 
 ### Query via the Internal Marketplace
 
-1. Log in to your account as the `data_consumer` user (or switch browser tab).
+1. Log in to your account as the `CONSUMER` user (or switch browser tab).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. Open the **Order Insights** listing. Reload the browser tab if you still see the "Request Access" button.
 4. Click **Query in Worksheet**. Snowflake opens a new worksheet pre-populated with the sample queries from the listing.
@@ -285,10 +285,10 @@ Now that access has been granted, let's consume the **Order Insights** data prod
 <!--
 ### Query via SQL in a Worksheet
 
-You can also query data products directly from any worksheet using the ULL. Open a new worksheet as `data_consumer` and run the following queries:
+You can also query data products directly from any worksheet using the ULL. Open a new worksheet as `CONSUMER` and run the following queries:
 
 ```sql
-USE ROLE data_consumer_role;
+USE ROLE CONSUMER_ROLE;
 USE WAREHOUSE compute_wh;
 
 -- Explore the Order Summary View
@@ -305,10 +305,10 @@ FROM TABLE(SF1.ORDERS_PER_CUSTOMER(60001));
 
 A key benefit of organizational listings is that data is shared live. When the data owner updates the underlying data, consumers see the changes instantly. Let's demonstrate this.
 
-1. Switch to the `data_owner` user and run the following in a worksheet:
+1. Switch to the `PROVIDER` user and run the following in a worksheet:
 
    ```sql
-   USE ROLE data_owner_role;
+   USE ROLE PROVIDER_ROLE;
    USE WAREHOUSE compute_wh;
    USE SCHEMA tpch.sf1;
 
@@ -326,10 +326,10 @@ A key benefit of organizational listings is that data is shared live. When the d
    UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
    ```
 
-3. Switch back to `data_consumer` (e.g. switch browser tabs) and re-run the same query:
+3. Switch back to `CONSUMER` (e.g. switch browser tabs) and re-run the same query:
 
    ```sql
-   USE ROLE data_consumer_role;
+   USE ROLE CONSUMER_ROLE;
 
    SELECT customer_name, country, orderkey, orderdate, AMOUNT
    FROM TABLE(SF1.ORDERS_PER_CUSTOMER(60001));
@@ -337,7 +337,7 @@ A key benefit of organizational listings is that data is shared live. When the d
 
    The updated country (Mozambique) is **instantly** visible to the consumer -- no refresh, no sync, no delay.
 
-> **Best practice:** Inform your data consumers ahead of time about structural changes to a data product (e.g. adding/removing columns). For breaking changes, consider creating a new listing version and giving consumers time to migrate.
+> **Best practice:** Inform your data consumers ahead of time about structural changes to a data product (e.g. adding/removing columns). For breaking changes, consider creating a new listing version.
 
 ---
 
@@ -346,7 +346,7 @@ Now let's make your data product visible to the entire organization! In this lab
 
 You can do this manually by going back to the "Step 4 of 5: Configure Access Control and Approval" that you performed above. But, let's use Coco to do it for you.
 
-1. Log in to your account as the `data_owner` user (switch browser tabs/windows or log in again).
+1. Log in to your account as the `PROVIDER` user (switch browser tabs/windows or log in again).
 2. Navigate to **Data Sharing** -> **Internal Sharing** .
 3. Open the **Listings** tab at the top of the Internal Sharing page.
 4. Select your listing 
@@ -376,7 +376,7 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
 ## Share Semantic Views and Agents
 Let's make your data product AI-ready by generating and adding a semantic model (semantic view) and an AI agent.
 
-1. Log in to your account as the `data_owner` user (or switch browser tabs/windows ).
+1. Log in to your account as the `PROVIDER` user (or switch browser tabs/windows ).
 2. Navigate to **Data Sharing** -> **Internal Sharing** .
 3. Open the **Listings** tab at the top of the Internal Sharing page.
 4. Select your listing.
@@ -389,7 +389,7 @@ Let's make your data product AI-ready by generating and adding a semantic model 
 
      ![](assets/2026-add-semview-and-agent.png)
 
-7. Click **Try** to test drive the semantic view with some natural language prompts. A new browser tab will open. Then return to the browser tab with your listing and click **Add to secure share** and **Done**. 
+7. Click **Try** to test drive the semantic view with some natural language prompts. A new browser tab will open. Then return to the browser tab with your listing and click **Add to secure share**.
 
      ![](assets/2026-try-and-add.png)
 
@@ -398,7 +398,7 @@ Let's make your data product AI-ready by generating and adding a semantic model 
 
 ## Talk to your Data Product in Snowflake Intelligence
 
-1. Log in to your account as the `data_consumer` user (or switch browser tab).
+1. Log in to your account as the `CONSUMER` user (or switch browser tab).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. Open your **Order Insights** listing.
    - Note that the blue "**Open**" button now provides multiple options
@@ -438,7 +438,7 @@ Next:
 
 - Issue the following prompt to create and publish a new data product: 
 
-   "_Please publish the supplier, part, and partsupp tables as a data product. Please generate suitable metadata to describe the data product. Also generate and include a semantic view. The new data product should be visible to the entire organization, but noone has access unless requested. Please append my account locator to the title of the listing._"
+   "_Please publish the supplier, part, and partsupp tables as a data product. Please generate suitable metadata to describe the data product. Also generate and include a semantic view. The new data product should be published in a profile of my choice_".
 - Respond to any questions that Coco will ask you to perform this request
 - Click **Allow** to permit Coco to create a semantic view and a share.
 - When asked to allow a GRANT, select "**Allow GRANT in this chat**" to allow all required grants for this data product  
@@ -456,16 +456,16 @@ Next, let's ask Coco to implement a new governance requirement.
 
 Issue the following prompt:
 
-   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the data_owner_role role within my account but not visible to the consumer role and not to any other accounts in this organization._"
+   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the PROVIDER_ROLE role within my account but not visible to the consumer role and not to any external organizations_".
 
-Once Coco has created the policy, switch to the data_consumer user to see the effect of the masking.
+Once Coco has created the policy, switch to the CONSUMER user to see the effect of the masking.
 
 ---
 
 ## Conclusion and Resources
 
 
-Congratulations, you completed this **Snowflake Internal Marketplace** hands-on lab! You have learned how data products are authored, published, requested, and consumed. You have made data products AI-ready by adding semantic views and AI agents, and you analyzed the shared data using natural language in Snowflake Intelligence. You also managed listings with Cortex Code.
+Congratulations, you completed this **Snowflake Internal Marketplace** hands-on lab! You have learned how data products are authored, published, requested, and consumed. You have made data products discoverable and accessible across your organization.
 
 ### What you Learned
 
@@ -499,5 +499,4 @@ Congratulations, you completed this **Snowflake Internal Marketplace** hands-on 
 - [Automatic Data Agents for listings and shares](https://docs.snowflake.com/en/collaboration/auto-generated-data-agents)
 
 - [Managing Listings via API](https://other-docs.snowflake.com/progaccess/listing-progaccess-about)
-
 
