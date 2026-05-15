@@ -1,4 +1,4 @@
-author: Ketki Kothe, James Sun
+author: Ketki Kothe, James Sun, Matt Marzillo
 id: build-conversational-analytics-with-amazon-quick-and-snowflake-mcp
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
