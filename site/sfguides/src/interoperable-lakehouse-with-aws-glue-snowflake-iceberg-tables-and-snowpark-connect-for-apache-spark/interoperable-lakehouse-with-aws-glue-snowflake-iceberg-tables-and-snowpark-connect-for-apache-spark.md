@@ -585,7 +585,9 @@ In Cell 4 of the Snowflake notebook, update these parameters:
 | `<AWS REGION>` | Your AWS region (e.g., `us-west-2`) |
 | `<AWS ACCOUNT NUMBER>` | Your AWS account ID |
 | `<AWS ROLE ARN>` | From CloudFormation outputs |
-| `<External ID>` | From Step 4 (STORAGE_AWS_EXTERNAL_ID) |
+| `<External ID>` | Optional — see note below |
+
+> **Note on `SIGV4_EXTERNAL_ID`:** This is the external ID used to secure the AWS IAM trust relationship for the catalog integration — it is **not** the same as `STORAGE_AWS_EXTERNAL_ID` from your external volume. You can either provide your own string value here (which you then add to your IAM role's trust policy), or omit `SIGV4_EXTERNAL_ID` entirely and let Snowflake auto-generate one. After creating the integration, run `DESC CATALOG INTEGRATION glue_rest_cat_int_demo` and copy the `GLUE_AWS_EXTERNAL_ID` value — that is what you add to the IAM trust policy condition.
 
 ```sql
 CREATE OR REPLACE CATALOG INTEGRATION glue_rest_cat_int_demo
@@ -963,6 +965,40 @@ aws glue get-database --name $GLUE_DB_NAME
 # Check S3 bucket
 aws s3 ls s3://$DATA_BUCKET
 # Should be empty or not exist
+```
+
+<!-- ------------------------ -->
+## Continue Building with Cortex Code
+
+[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) is Snowflake's AI coding agent — built into the Snowflake CLI. It can guide you through setting up, verifying, and troubleshooting your Glue catalog integration interactively, without switching between AWS console tabs and documentation.
+
+### Set up or troubleshoot your Glue catalog integration
+
+Use these prompts to get started. Cortex Code will ask for your AWS account ID, region, IAM role, and access delegation preference — then generate and execute the SQL, retrieve the Snowflake IAM user ARN, and walk you through the trust policy update.
+
+**Create a new catalog integration:**
+```
+Help me create a catalog integration for AWS Glue Iceberg REST
+```
+
+**Verify an existing integration is working:**
+```
+Verify my Glue catalog integration and list the namespaces and tables it can see
+```
+
+**Troubleshoot a broken integration:**
+```
+My Glue catalog integration is failing — help me diagnose and fix it
+```
+
+**Set up a Catalog-Linked Database after the integration is ready:**
+```
+Create a catalog-linked database from my Glue catalog integration
+```
+
+**Run Spark code against your Glue-managed Iceberg tables using Snowpark Connect:**
+```
+Help me set up Snowpark Connect for Apache Spark to read and write Iceberg tables managed by AWS Glue
 ```
 
 <!-- ------------------------ -->

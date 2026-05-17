@@ -5,7 +5,7 @@ summary: This guide describes how to configure a master agent that routes user q
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://app.snowflake.com/_deeplink/#/agents
+fork repo link: https://github.com/sfc-gh-tjia/multiagent_orchestration
 open in snowflake link: https://app.snowflake.com/_deeplink/#/agents
 
 

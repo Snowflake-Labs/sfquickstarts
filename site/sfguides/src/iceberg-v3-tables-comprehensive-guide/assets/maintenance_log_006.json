@@ -1,0 +1,50 @@
+[
+  {
+    "log_id": "LOG-2026-006-001",
+    "vehicle_id": "VH-0042",
+    "log_timestamp": "2026-01-20T08:00:00",
+    "event_type": "SCHEDULED_MAINTENANCE",
+    "severity": "LOW",
+    "description": "60,000 mile major service. Timing belt, water pump, all fluids, filters replaced.",
+    "technician": "Nancy Taylor",
+    "service_center": "Seattle Fleet Center",
+    "parts_replaced": ["timing belt", "water pump", "serpentine belt", "tensioner", "all filters", "all fluids"],
+    "diagnostic_codes": [],
+    "labor_hours": 8.0,
+    "total_cost": 1250.00,
+    "odometer_reading": 60045,
+    "next_service_date": "2026-07-20"
+  },
+  {
+    "log_id": "LOG-2026-006-002",
+    "vehicle_id": "VH-0019",
+    "log_timestamp": "2026-01-20T12:30:00",
+    "event_type": "STEERING_REPAIR",
+    "severity": "HIGH",
+    "description": "Power steering pump failure. Pump and hoses replaced. System flushed.",
+    "technician": "Chris Morgan",
+    "service_center": "Portland Service Hub",
+    "parts_replaced": ["power steering pump", "power steering hose", "power steering fluid"],
+    "diagnostic_codes": [],
+    "labor_hours": 4.0,
+    "total_cost": 580.00,
+    "odometer_reading": 123450,
+    "next_service_date": "2026-03-20"
+  },
+  {
+    "log_id": "LOG-2026-006-003",
+    "vehicle_id": "VH-0065",
+    "log_timestamp": "2026-01-20T16:00:00",
+    "event_type": "ELECTRICAL_REPAIR",
+    "severity": "MEDIUM",
+    "description": "Starter motor replacement. Battery terminals cleaned. Alternator tested - OK.",
+    "technician": "Ryan Miller",
+    "service_center": "Seattle Fleet Center",
+    "parts_replaced": ["starter motor"],
+    "diagnostic_codes": ["P0615"],
+    "labor_hours": 2.5,
+    "total_cost": 425.00,
+    "odometer_reading": 134560,
+    "next_service_date": "2026-04-20"
+  }
+]

@@ -24,7 +24,7 @@ Team Native App. You'll learn how to launch the Posit Team Native App, access Po
 
 We'll focus on a healthcare example by analyzing heart failure data. We'll guide you through accessing the data and performing data cleaning, transformation, and visualization. Finally, you'll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—completing an end-to-end analysis in Python _entirely within Snowflake_.
 
-![](assets/overview/architecture.png)
+![](assets/overview-architecture.png)
 
 ### What You Will Learn
 
@@ -109,7 +109,7 @@ Next, we need to create a table to hold the heart failure dataset.
 
 You should now be able to see the heart failure data in Snowsight. Navigate to **Horizon Catalog** > **Catalog** > **Database Explorer** > `HEART_FAILURE` > `PUBLIC` > `Tables`. You should now see the `HEART_FAILURE` table.
 
-![](assets/snowflake/confirm-data.png)
+![](assets/snowflake-confirm-data.png)
 
 ### Launch Posit Workbench from the Posit Team Native App
 
@@ -121,7 +121,7 @@ and use it to connect to your database.
 
 In Snowsight, click on **Marketplace**. If the Posit Team Native App is not already installed, search for "Posit Team" and then click **Get**. 
 
-![](assets/snowflake/get-posit-team.png)
+![](assets/snowflake-get-posit-team.png)
 
 You might be asked to validate your email address. Next, choose a name for the App.
 
@@ -135,13 +135,13 @@ After clicking on the app, you will see the Posit Team Native App page.
 
 Click **Launch app**. 
 
-![](assets/snowflake/launch-app.png)
+![](assets/snowflake-launch-app.png)
 
 #### Step 3: Open Posit Workbench from the Posit Team Native App
 
 From the Posit Team Native App, click **Posit Workbench**.
 
-![](assets/snowflake/launch-workbench.png)
+![](assets/snowflake-launch-workbench.png)
 
 You might be prompted to first log in to Snowflake using your regular credentials or authentication method.
 
@@ -153,20 +153,20 @@ Posit Workbench provides several IDEs, including Positron Pro, VS Code, RStudio 
 
 Within Posit Workbench, click **+ New Session** to launch a new session.
 
-![](assets/posit_workbench/start_new_session.png)
+![](assets/posit_workbench-start_new_session.png)
 
 #### Step 2: Select an IDE
 
 When prompted, select Positron Pro. You can optionally give your session a unique name.
 
-![](assets/posit_workbench/create_new_session.png)
+![](assets/posit_workbench-create_new_session.png)
 
 #### Step 3: Log into your Snowflake account
 
 Next, connect to your Snowflake account from within Posit Workbench.
 Under **Session Credentials**, click the button with the Snowflake icon to sign in to Snowflake. Follow any sign in prompts.
 
-![](assets/posit_workbench/snowflake_login_success.png)
+![](assets/posit_workbench-snowflake_login_success.png)
 
 #### Step 4: Launch Positron Pro
 
@@ -174,7 +174,7 @@ Under **Environment**, enter at least 2.5 GB of RAM in the **Memory (GB)** field
 
 Then, click **Launch** to launch Positron Pro. If desired, you can check the **Auto-join sesssion** option to automatically open the IDE when the session is ready.
 
-![](assets/positron/launch_positron.png)
+![](assets/positron-launch_positron.png)
 You will now be able to work with your Snowflake data
 in Positron Pro. Since the IDE is provided by Posit Workbench within the Posit Team Native App,
 your entire analysis will occur securely within Snowflake.
@@ -189,7 +189,7 @@ Install these extensions:
 1. Open the Positron Extensions view: on the right-hand side of Positron Pro, click the Extensions icon in the activity bar to open the Extensions Marketplace.
 2. Search for "Quarto" to find the Quarto extension.
 
-![](assets/positron/extensions_quarto.png)
+![](assets/positron-extensions_quarto.png)
 
 3. Install the Quarto extension: click on the Quarto extension, then click **Install**. For more information, see the [Quarto extension documentation](https://quarto.org/docs/tools/vscode.html).
 4. Install the Shiny extension: Follow the same steps as above, but search for and install the Shiny extension. For more information, see the [Shiny extension documentation](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/).
@@ -261,16 +261,16 @@ but with the ability to run code chunks.
 You can run any of the code chunks by clicking the `Run Cell` button above the chunk
 in Positron Pro.
 
-![](assets/quarto/run-chunk.png)
+![](assets/quarto-run-chunk.png)
 
 When you run a cell, cell output is displayed in the **PLOTS** pane.
 
-![](assets/quarto/plots-pane.png)
+![](assets/quarto-plots-pane.png)
 
 To render and preview the entire document, click the `Preview` button
 or run `quarto preview quarto.qmd` from the terminal.
 
-![](assets/quarto/preview.png)
+![](assets/quarto-preview.png)
 
 This will run all the code in the document from top to bottom and
 generate an HTML file, by default, for you to view and share.
@@ -484,7 +484,7 @@ heart_failure_plot = (
 )
 ```
 
-![](assets/analysis/plot-sodium.png)
+![](assets/analysis-plot-sodium.png)
 
 ## Create Tables for Analysis
 
@@ -551,7 +551,7 @@ from great_tables import GT
 )
 ```
 
-![](assets/gt/gt-table.png)
+![](assets/gt-gt-table.png)
 
 ## Create Shiny Application
 
@@ -563,12 +563,12 @@ Our GitHub repository contains an [example Shiny app](https://github.com/posit-d
 This app allows the user
 to explore different clinical metrics in one place.
 
-![](assets/shiny/shiny.png)
+![](assets/shiny-shiny.png)
 
 To run the app, open `app/app.py` in the `snowflake-posit-quickstart-python` directory, and then click the `Run Shiny App` button at the
 top of the script in Positron Pro.
 
-![](assets/shiny/run.png)
+![](assets/shiny-run.png)
 
 After launching the app, use the sidebar to change the metric displayed.
 

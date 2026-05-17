@@ -68,7 +68,7 @@ Cortex AI 関数の強力なオペレーターを使用して、自然言語で 
 
 **ステップ 1.** Snowsight で[SQLワークシートを作成](https://docs.snowflake.com/ja/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg%2C+THrZMtDg&_fsi=THrZMtDg%2C+THrZMtDg#create-worksheets-from-a-sql-file)し、[setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/blob/main/setup.sql)を開いて、すべてのステートメントを上から順に実行します。
 
-**ステップ 2.** サンプルの[画像ファイル](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/tree/main/data/images)をダウンロードし、**Snowsight >> Data >> Add Data >> Load files into a Stage**を使用して、ステップ1で作成した`DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.QS_IMAGE_FILES`ステージにアップロードします。
+**ステップ 2.** サンプルの[画像ファイル](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/tree/main/data/images)をダウンロードし、**Snowsight >> Data >> Add Data >> Load files into a Stage**を使用して、ステップ1で作成した`DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.QS_IMAGE_FILES`ステージにアップロードします。
 
 **ステップ 3.** サンプルの[音声ファイル](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-functions-ja/tree/main/data/audio)をダウンロードし、**Snowsight >> Data >> Add Data >> Load files into a Stage**を使用して、ステップ1で作成した`DB_QS_CORTEX_AI_FUNCTIONS.SCHEMA_QS_CORTEX_AI_FUNCTIONS.QS_AUDIO_FILES`ステージにアップロードします。
 

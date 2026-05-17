@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450">
+  <defs>
+    <linearGradient id="cardGradERD" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b"/>
+      <stop offset="100%" style="stop-color:#0f172a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="450" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700">Data Model</text>
+  <text x="450" y="55" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="13">CV_DEFECT_DETECTION_YOLO Schema</text>
+  
+  <!-- PCB_METADATA Table (Dimension - Green) -->
+  <rect x="30" y="80" width="260" height="200" rx="8" fill="url(#cardGradERD)" stroke="#22c55e" stroke-width="2"/>
+  <rect x="30" y="80" width="260" height="35" rx="8" fill="#166534"/>
+  <rect x="30" y="107" width="260" height="8" fill="#166534"/>
+  <text x="160" y="105" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700">PCB_METADATA</text>
+  <rect x="220" y="88" width="60" height="20" rx="4" fill="#22c55e"/>
+  <text x="250" y="103" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">DIM</text>
+  
+  <!-- PCB_METADATA columns -->
+  <rect x="45" y="130" width="230" height="22" rx="3" fill="#fbbf24" fill-opacity="0.2"/>
+  <text x="55" y="145" fill="#fbbf24" font-family="monospace" font-size="12" font-weight="600">board_id</text>
+  <text x="170" y="145" fill="#64748b" font-family="monospace" font-size="11">VARCHAR(50)</text>
+  <text x="260" y="145" fill="#fbbf24" font-family="system-ui" font-size="10">PK</text>
+  
+  <text x="55" y="170" fill="#e2e8f0" font-family="monospace" font-size="12">manufacturing_date</text>
+  <text x="200" y="170" fill="#64748b" font-family="monospace" font-size="11">TIMESTAMP</text>
+  
+  <text x="55" y="195" fill="#e2e8f0" font-family="monospace" font-size="12">factory_line_id</text>
+  <text x="200" y="195" fill="#64748b" font-family="monospace" font-size="11">VARCHAR(20)</text>
+  
+  <text x="55" y="220" fill="#e2e8f0" font-family="monospace" font-size="12">product_type</text>
+  <text x="200" y="220" fill="#64748b" font-family="monospace" font-size="11">VARCHAR(50)</text>
+  
+  <text x="55" y="245" fill="#e2e8f0" font-family="monospace" font-size="12">batch_number</text>
+  <text x="200" y="245" fill="#64748b" font-family="monospace" font-size="11">VARCHAR(30)</text>
+  
+  <text x="55" y="268" fill="#94a3b8" font-family="system-ui" font-size="11">~1M records</text>
+  
+  <!-- DEFECT_LOGS Table (Fact - Orange) -->
+  <rect x="320" y="80" width="260" height="250" rx="8" fill="url(#cardGradERD)" stroke="#f97316" stroke-width="2"/>
+  <rect x="320" y="80" width="260" height="35" rx="8" fill="#9a3412"/>
+  <rect x="320" y="107" width="260" height="8" fill="#9a3412"/>
+  <text x="450" y="105" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700">DEFECT_LOGS</text>
+  <rect x="505" y="88" width="60" height="20" rx="4" fill="#f97316"/>
+  <text x="535" y="103" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">FACT</text>
+  
+  <!-- DEFECT_LOGS columns -->
+  <rect x="335" y="130" width="230" height="22" rx="3" fill="#fbbf24" fill-opacity="0.2"/>
+  <text x="345" y="145" fill="#fbbf24" font-family="monospace" font-size="12" font-weight="600">inference_id</text>
+  <text x="470" y="145" fill="#64748b" font-family="monospace" font-size="11">VARCHAR(50)</text>
+  <text x="555" y="145" fill="#fbbf24" font-family="system-ui" font-size="10">PK</text>
+  
+  <rect x="335" y="155" width="230" height="22" rx="3" fill="#3b82f6" fill-opacity="0.2"/>
+  <text x="345" y="170" fill="#60a5fa" font-family="monospace" font-size="12" font-weight="600">board_id</text>
+  <text x="470" y="170" fill="#64748b" font-family="monospace" font-size="11">VARCHAR(50)</text>
+  <text x="555" y="170" fill="#60a5fa" font-family="system-ui" font-size="10">FK</text>
+  
+  <text x="345" y="195" fill="#e2e8f0" font-family="monospace" font-size="12">timestamp</text>
+  <text x="470" y="195" fill="#64748b" font-family="monospace" font-size="11">TIMESTAMP</text>
+  
+  <text x="345" y="220" fill="#e2e8f0" font-family="monospace" font-size="12">detected_class</text>
+  <text x="470" y="220" fill="#64748b" font-family="monospace" font-size="11">VARCHAR(20)</text>
+  
+  <text x="345" y="245" fill="#e2e8f0" font-family="monospace" font-size="12">confidence_score</text>
+  <text x="470" y="245" fill="#64748b" font-family="monospace" font-size="11">FLOAT</text>
+  
+  <text x="345" y="270" fill="#e2e8f0" font-family="monospace" font-size="12">bbox_x, bbox_y</text>
+  <text x="470" y="270" fill="#64748b" font-family="monospace" font-size="11">FLOAT</text>
+  
+  <text x="345" y="295" fill="#e2e8f0" font-family="monospace" font-size="12">bbox_w, bbox_h</text>
+  <text x="470" y="295" fill="#64748b" font-family="monospace" font-size="11">FLOAT</text>
+  
+  <text x="345" y="318" fill="#94a3b8" font-family="system-ui" font-size="11">~30K records</text>
+  
+  <!-- MODEL_STAGE (Stage - Purple) -->
+  <rect x="610" y="80" width="260" height="200" rx="8" fill="url(#cardGradERD)" stroke="#a855f7" stroke-width="2"/>
+  <rect x="610" y="80" width="260" height="35" rx="8" fill="#6b21a8"/>
+  <rect x="610" y="107" width="260" height="8" fill="#6b21a8"/>
+  <text x="740" y="105" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700">MODEL_STAGE</text>
+  <rect x="795" y="88" width="60" height="20" rx="4" fill="#a855f7"/>
+  <text x="825" y="103" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">STAGE</text>
+  
+  <!-- MODEL_STAGE contents -->
+  <text x="625" y="145" fill="#e2e8f0" font-family="monospace" font-size="12">/raw/deeppcb/</text>
+  <text x="780" y="145" fill="#64748b" font-family="system-ui" font-size="11">Training images</text>
+  
+  <text x="625" y="170" fill="#e2e8f0" font-family="monospace" font-size="12">/models/yolov12_pcb/</text>
+  <text x="810" y="170" fill="#64748b" font-family="system-ui" font-size="11">Weights</text>
+  
+  <text x="625" y="195" fill="#e2e8f0" font-family="monospace" font-size="12">/config/data.yaml</text>
+  <text x="800" y="195" fill="#64748b" font-family="system-ui" font-size="11">YOLO config</text>
+  
+  <text x="625" y="220" fill="#e2e8f0" font-family="monospace" font-size="12">/runs/</text>
+  <text x="780" y="220" fill="#64748b" font-family="system-ui" font-size="11">Training artifacts</text>
+  
+  <text x="625" y="268" fill="#94a3b8" font-family="system-ui" font-size="11">~500MB total</text>
+  
+  <!-- Relationship arrow: PCB_METADATA -> DEFECT_LOGS -->
+  <path d="M290 175 L320 175" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowERD)"/>
+  <defs>
+    <marker id="arrowERD" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+  </defs>
+  <text x="305" y="165" fill="#60a5fa" font-family="system-ui" font-size="10">1:N</text>
+  
+  <!-- Defect Classes Reference -->
+  <rect x="30" y="300" width="260" height="130" rx="8" fill="url(#cardGradERD)" stroke="#06b6d4" stroke-width="2"/>
+  <rect x="30" y="300" width="260" height="35" rx="8" fill="#0e7490"/>
+  <rect x="30" y="327" width="260" height="8" fill="#0e7490"/>
+  <text x="160" y="325" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700">DEFECT_CLASSES</text>
+  <rect x="215" y="308" width="60" height="20" rx="4" fill="#06b6d4"/>
+  <text x="245" y="323" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">REF</text>
+  
+  <text x="55" y="355" fill="#22d3ee" font-family="monospace" font-size="11">0: open      3: spur</text>
+  <text x="55" y="375" fill="#22d3ee" font-family="monospace" font-size="11">1: short     4: copper</text>
+  <text x="55" y="395" fill="#22d3ee" font-family="monospace" font-size="11">2: mousebite 5: pin-hole</text>
+  <text x="55" y="420" fill="#94a3b8" font-family="system-ui" font-size="11">6 classes from Deep PCB dataset</text>
+</svg>
+

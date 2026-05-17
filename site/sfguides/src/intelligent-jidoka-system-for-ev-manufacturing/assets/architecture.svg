@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+  
+  <rect width="900" height="600" fill="#1e293b"/>
+  
+  <!-- Title -->
+  <text x="450" y="32" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" text-anchor="middle">VOLTSTREAM_EV_OPE Database - Medallion Architecture</text>
+  
+  <!-- ========== RAW SCHEMA (BRONZE) ========== -->
+  <rect x="25" y="50" width="850" height="130" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="25" y="50" width="850" height="130" rx="8" fill="#f59e0b" fill-opacity="0.08"/>
+  
+  <!-- Bronze Header -->
+  <text x="45" y="75" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="14" font-weight="700">RAW Schema (Bronze) - Source System Mirrors</text>
+  
+  <!-- ERP Group -->
+  <rect x="40" y="90" width="250" height="75" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="55" y="108" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">ERP System</text>
+  <text x="55" y="128" fill="#e2e8f0" font-family="monospace" font-size="10">MATERIAL_DOCUMENT_CDC</text>
+  <text x="55" y="145" fill="#e2e8f0" font-family="monospace" font-size="10">PROD_ORDER_HEADER_CDC</text>
+  
+  <!-- MES Group -->
+  <rect x="310" y="90" width="280" height="75" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="325" y="108" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">MES System</text>
+  <text x="325" y="128" fill="#e2e8f0" font-family="monospace" font-size="10">EQUIPMENT_STATE_LOG_CDC</text>
+  <text x="325" y="145" fill="#e2e8f0" font-family="monospace" font-size="10">AGV_TELEMATICS_LOG_CDC</text>
+  
+  <!-- IoT Group -->
+  <rect x="610" y="90" width="250" height="75" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="625" y="108" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">IoT Historian</text>
+  <text x="625" y="128" fill="#e2e8f0" font-family="monospace" font-size="10">ENV_SENSOR_STREAM_STAGE</text>
+  <text x="625" y="145" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">Humidity, PM2.5, Temperature</text>
+  
+  <!-- Arrow: RAW -> ATOMIC -->
+  <line x1="450" y1="180" x2="450" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="460" y="200" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">SQL ETL</text>
+  
+  <!-- ========== ATOMIC SCHEMA (SILVER) ========== -->
+  <rect x="25" y="215" width="850" height="145" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="25" y="215" width="850" height="145" rx="8" fill="#3b82f6" fill-opacity="0.08"/>
+  
+  <!-- Silver Header -->
+  <text x="45" y="240" fill="#3b82f6" font-family="system-ui, sans-serif" font-size="14" font-weight="700">ATOMIC Schema (Silver) - Enterprise Data Model</text>
+  
+  <!-- Reference Tables -->
+  <rect x="40" y="255" width="180" height="90" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="55" y="273" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">Reference Tables</text>
+  <text x="55" y="293" fill="#e2e8f0" font-family="monospace" font-size="10">SITE</text>
+  <text x="55" y="310" fill="#e2e8f0" font-family="monospace" font-size="10">WORK_CENTER</text>
+  <text x="55" y="327" fill="#e2e8f0" font-family="monospace" font-size="10">SHIFT</text>
+  
+  <!-- Master Data Tables -->
+  <rect x="240" y="255" width="180" height="90" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="255" y="273" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">Master Data</text>
+  <text x="255" y="293" fill="#e2e8f0" font-family="monospace" font-size="10">ASSET</text>
+  <text x="255" y="310" fill="#e2e8f0" font-family="monospace" font-size="10">PRODUCT</text>
+  
+  <!-- Transactional Tables -->
+  <rect x="440" y="255" width="210" height="90" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="455" y="273" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">Transactional Tables</text>
+  <text x="455" y="293" fill="#e2e8f0" font-family="monospace" font-size="10">WORK_ORDER</text>
+  <text x="455" y="310" fill="#e2e8f0" font-family="monospace" font-size="10">EQUIPMENT_DOWNTIME</text>
+  <text x="455" y="327" fill="#e2e8f0" font-family="monospace" font-size="10">EQUIPMENT_FAILURE</text>
+  
+  <!-- IoT Tables -->
+  <rect x="670" y="255" width="190" height="90" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="685" y="273" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">IoT Data</text>
+  <text x="685" y="293" fill="#e2e8f0" font-family="monospace" font-size="10">ENVIRONMENTAL_READING</text>
+  <text x="685" y="310" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">Type 2 SCD enabled</text>
+  
+  <!-- Arrow: ATOMIC -> EV_OPE -->
+  <line x1="450" y1="360" x2="450" y2="390" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="460" y="380" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">Views + Tables</text>
+  
+  <!-- ========== EV_OPE SCHEMA (GOLD) ========== -->
+  <rect x="25" y="395" width="850" height="180" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  <rect x="25" y="395" width="850" height="180" rx="8" fill="#10b981" fill-opacity="0.08"/>
+  
+  <!-- Gold Header -->
+  <text x="45" y="420" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="700">EV_OPE Schema (Gold) - Analytics Data Mart</text>
+  
+  <!-- Dimension Views -->
+  <rect x="40" y="435" width="200" height="125" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="55" y="453" fill="#10b981" font-family="system-ui, sans-serif" font-size="10" font-weight="600">Dimension Views</text>
+  <text x="55" y="473" fill="#e2e8f0" font-family="monospace" font-size="10">DIM_ASSET</text>
+  <text x="155" y="473" fill="#64748b" font-family="system-ui, sans-serif" font-size="8">view</text>
+  <text x="55" y="490" fill="#e2e8f0" font-family="monospace" font-size="10">DIM_PRODUCT</text>
+  <text x="155" y="490" fill="#64748b" font-family="system-ui, sans-serif" font-size="8">view</text>
+  <text x="55" y="507" fill="#e2e8f0" font-family="monospace" font-size="10">DIM_SHIFT</text>
+  <text x="155" y="507" fill="#64748b" font-family="system-ui, sans-serif" font-size="8">view</text>
+  <text x="55" y="537" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">Projects from ATOMIC</text>
+  
+  <!-- Fact Views -->
+  <rect x="260" y="435" width="230" height="125" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="275" y="453" fill="#10b981" font-family="system-ui, sans-serif" font-size="10" font-weight="600">Fact Views (Computed)</text>
+  <text x="275" y="473" fill="#e2e8f0" font-family="monospace" font-size="10">OPE_DAILY_FACT</text>
+  <text x="395" y="473" fill="#64748b" font-family="system-ui, sans-serif" font-size="8">view</text>
+  <text x="275" y="490" fill="#e2e8f0" font-family="monospace" font-size="10">AGV_FAILURE_ANALYSIS</text>
+  <text x="435" y="490" fill="#64748b" font-family="system-ui, sans-serif" font-size="8">view</text>
+  <text x="275" y="520" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">Aggregates metrics from</text>
+  <text x="275" y="535" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">WORK_ORDER, DOWNTIME, FAILURE</text>
+  
+  <!-- ML/AI Output Tables -->
+  <rect x="510" y="435" width="230" height="125" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="525" y="453" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="10" font-weight="600">ML/AI Output Tables</text>
+  <text x="525" y="473" fill="#e2e8f0" font-family="monospace" font-size="9">PREDICTIVE_MAINTENANCE_ALERTS</text>
+  <text x="525" y="490" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">XGBoost predictions</text>
+  <text x="525" y="515" fill="#e2e8f0" font-family="monospace" font-size="10">DOCUMENT_CHUNKS</text>
+  <text x="525" y="530" fill="#64748b" font-family="system-ui, sans-serif" font-size="9">Cortex Search index</text>
+  
+  <!-- Consumers -->
+  <rect x="760" y="435" width="100" height="125" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+  <text x="775" y="453" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="10" font-weight="600">Consumers</text>
+  <text x="775" y="478" fill="#29b5e8" font-family="system-ui, sans-serif" font-size="9">Cortex Analyst</text>
+  <text x="775" y="498" fill="#29b5e8" font-family="system-ui, sans-serif" font-size="9">Cortex Search</text>
+  <text x="775" y="518" fill="#ff4b4b" font-family="system-ui, sans-serif" font-size="9">Streamlit App</text>
+  <text x="775" y="538" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="9">ML Notebook</text>
+</svg>
