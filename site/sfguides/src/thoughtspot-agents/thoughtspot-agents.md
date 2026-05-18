@@ -321,10 +321,6 @@ You can experiment with the styles or use the Theme Builder shown in the Develop
 
 <!-- ------------------------ -->
 
-## Conclusion And Resources
-
-_TODO: add_
-
 ### What You Learned
 
 At this point you should have successfully learned the following:
@@ -336,5 +332,6 @@ At this point you should have successfully learned the following:
 
 ### Related Resources
 
-- <link to github code repo>
-- <link to related documentation>
+- Find out more about the ThoughtSpot Platform: https://docs.thoughtspot.com/cloud/latest
+- Learn how to use ThoughtSpot Embedded's developer tools, APIs, and SDKs: https://developers.thoughtspot.com/docs/
+- Sign up for free ThoughtSpot Embedded training: https://training.thoughtspot.com/path/thoughtspot-embedded
