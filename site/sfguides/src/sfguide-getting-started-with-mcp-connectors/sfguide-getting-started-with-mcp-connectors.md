@@ -144,6 +144,8 @@ The setup script creates **10 specialized MCP servers** across the three schemas
 
 This step is **optional**. External MCP connectors let your agents reach into SaaS tools like Jira, GitHub, or Salesforce. You can add **any combination** of the connectors below -- or skip this step entirely and come back to it later.
 
+> **Tip:** You can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to set up external MCP servers and add them to your Cortex Agents interactively. Just ask: _"Connect my Cortex Agent to Jira via an external MCP server"_ and Cortex Code will walk you through the OAuth integration, server creation, and agent wiring.
+
 Each connector follows the same pattern:
 
 1. Set up OAuth with the provider
@@ -488,7 +490,7 @@ Congratulations! You've successfully connected Snowflake Intelligence to Cortex 
 
 ### Related Resources
 
-- [MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors) -- External MCP connector docs
+- [MCP Connectors](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors) -- External MCP connector docs
 - [CREATE MCP SERVER](https://docs.snowflake.com/en/sql-reference/sql/create-mcp-server) -- SQL reference
 - [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) -- Agent orchestration
 - [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) -- Semantic models for Cortex Analyst

@@ -17,19 +17,33 @@ This is your guide to Snowflake's [**Cortex Code CLI**](http://docs.snowflake.co
 ## Installation instructions
 
 ### What you'll need
-- Snowflake account with appropriate permissions
+- Snowflake account with [appropriate permissions and prerequisites](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli#prerequisites)
+- Available to all Commercial (non-Gov, VPS, Sovereign) accounts with cross-region inference enabled. (`ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';`)
 - A supported environment: macOS on Apple Silicon, Intel Linux on Intel, or Windows Subsystem for Linux (WSL)
 - Terminal access
+
+> **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code). 
+
+### macOS and Linux (including WSL)
 
 ``` 
 curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh 
 ```
 
-> **If you're not yet a Snowflake customer** [start your 30-day Cortex Code CLI trial](https://signup.snowflake.com/cortex-code). 
+### Windows
+
+Open PowerShell and run:
+
+```
+irm https://ai.snowflake.com/static/cc-scripts/install.ps1 | iex 
+```
+
+The executable installs to `%LOCALAPPDATA%\cortex` and is added to your PATH automatically.
 
 After installing, run `cortex` and follow the setup wizard to connect to your Snowflake account.
 
 For more details on setup, connections, supported models, or CLI reference, see the [Cortex Code CLI documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
+
 
 ### What you'll learn
 
@@ -83,10 +97,11 @@ For more details on setup, connections, supported models, or CLI reference, see 
 
 Everyone can start with [data exploration](#data-exploration) to find data you can work with and validate access.
 
-Then, discover use cases that best match your goal:
+Then, discover use cases that could best match your goal:
 
 - **Data engineering (pipelines and operations)**: explore how to [create and manage dbt projects](#create-and-manage-dbt-projects), or operationalize runs with [Apache Airflow® orchestration](#apache-airflow-orchestration). Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you're ready to standardize metrics and definitions for downstream users.
 - **Analytics and app builders (interactive experiences)**: learn how to [build interactive dashboards](#build-interactive-dashboards) using Streamlit, or configure production-ready [Cortex Agents](#production-ready-cortex-agents) so end users can self-serve answers and insights in Snowflake Intelligence, grounded in governed data and the right tools.
+- **AI/Machine Learning Engineers**: try out the [agentic machine learning best practices guide](https://www.snowflake.com/en/developers/guides/agentic-machine-learning-best-practices-cortex-code/) and use the `$machine-learning` skill to automate building ML models, training, feature engineering, and deployment.
 
 ## Data exploration
 

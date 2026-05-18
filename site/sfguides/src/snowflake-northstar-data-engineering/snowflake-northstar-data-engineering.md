@@ -115,13 +115,13 @@ We're using Snowflake's unique data sharing capability in Snowflake Marketplace.
 
 1. Log into your Snowflake account.
 
-2. Click on "Data Products".
+2. Click on "Marketplace".
 
-3. Click on "Marketplace".
+3. Click on "Snowflake Marketplace". 
 
-4. In the search bar, search for "weathersource frostbyte".
+4. In the search bar, search for "pelmorex frostbyte".
 
-5. The first result should be "Weather Source LLC: frostbyte" by the "Weather Source, LLC" provider. Click on the listing.
+5. The first result should be "Pelmorex Weather Source: Frostbyte" by the "Pelmorex Weather Source" provider. Click on the listing.
 
 6. On the right, click "Get".
 
@@ -249,8 +249,8 @@ SELECT
     TO_VARCHAR(hd.date_valid_std, 'YYYY-MM') AS yyyy_mm,
     pc.city_name AS city,
     c.country AS country_desc
-FROM Weather_Source_LLC_frostbyte.onpoint_id.history_day hd
-JOIN Weather_Source_LLC_frostbyte.onpoint_id.postal_codes pc
+FROM Pelmorex_Weather_Source_frostbyte.onpoint_id.history_day hd
+JOIN Pelmorex_Weather_Source_frostbyte.onpoint_id.postal_codes pc
     ON pc.postal_code = hd.postal_code
     AND pc.country = hd.country
 JOIN TASTY_BYTES.raw_pos.country c
