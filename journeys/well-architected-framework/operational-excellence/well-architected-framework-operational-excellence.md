@@ -1,3 +1,5 @@
+sidebar: true
+sidebar_json: well-architected-framework
 author: Well Architected Framework Team
 id: well-architected-framework-operational-excellence
 categories: snowflake-site:taxonomy/solution-center/certification/well-architected-framework
