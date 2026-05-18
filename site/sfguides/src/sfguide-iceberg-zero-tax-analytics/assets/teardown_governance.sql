@@ -6,7 +6,7 @@
 -- 03_horizon_governance.sql. Tables and data are NOT touched.
 --
 -- Use this when you need to re-run Module 3 (03_horizon_governance.sql) without
--- rebuilding the 40M+ row Iceberg tables.
+-- rebuilding the Iceberg tables.
 --
 -- After running this script, re-run Module 3 (03_horizon_governance.sql) to reapply
 -- policies and grants.

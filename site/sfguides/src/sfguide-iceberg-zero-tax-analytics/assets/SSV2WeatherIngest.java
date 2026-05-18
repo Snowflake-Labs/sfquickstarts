@@ -53,9 +53,9 @@ public class SSV2WeatherIngest {
 
     // --- Configuration flags ---
     // LIVE_MODE: when true, streams Q1 2025 data (9 rows) after the archive batch
-    private static final boolean LIVE_MODE    = true;
+    private static final boolean LIVE_MODE    = false;
     // SKIP_ARCHIVE: when true, skips the 2024 archive batch (use when archive is pre-loaded)
-    private static final boolean SKIP_ARCHIVE = true;
+    private static final boolean SKIP_ARCHIVE = false;
 
     // Snowflake connection config
     private static final String PROFILE_PATH = "profile.json";

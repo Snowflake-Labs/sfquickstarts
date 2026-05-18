@@ -37,6 +37,12 @@ DROP ROW ACCESS POLICY IF EXISTS ICEBERG_DEMO.PUBLIC.borough_rls;
 DROP TAG IF EXISTS ICEBERG_DEMO.PUBLIC.data_sensitivity;
 
 -- ---------------------------------------------------------------------------
+-- Semantic view + Cortex Agent (Module 5)
+-- ---------------------------------------------------------------------------
+DROP CORTEX AGENT IF EXISTS nyc_taxi_agent;
+DROP SEMANTIC VIEW IF EXISTS nyc_taxi_analytics;
+
+-- ---------------------------------------------------------------------------
 -- Pipe (must drop before the table it targets)
 -- ---------------------------------------------------------------------------
 DROP PIPE IF EXISTS nyc_weather_ssv2_pipe;

@@ -1,21 +1,31 @@
 author: Sahil Walia
-id: sfguide-snowflake-iceberg-interoperability
+id: sfguide-iceberg-zero-tax-analytics
 language: en
-summary: Build Snowflake-managed Iceberg tables, stream live weather data via Snowpipe Streaming V2, enforce governance with Horizon, and read from Databricks on open Apache Iceberg.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/interoperable-storage, snowflake-site:taxonomy/snowflake-feature/apache-iceberg, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming, snowflake-site:taxonomy/snowflake-feature/horizon
+summary: Eliminate storage, interoperability, and AI access taxes — build Snowflake-managed Iceberg tables, stream live data via SSV2, enforce cross-engine governance with Horizon, read from Databricks, and serve natural-language analytics through a Semantic View and Cortex Agent.
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/interoperable-storage, snowflake-site:taxonomy/snowflake-feature/apache-iceberg, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming, snowflake-site:taxonomy/snowflake-feature/horizon, snowflake-site:taxonomy/snowflake-feature/cortex
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfguide-snowflake-iceberg-interoperability
+fork repo link: https://github.com/Snowflake-Labs/sfguide-iceberg-zero-tax-analytics
 
-# Snowflake + Iceberg Interoperability with Horizon Governance
+# Open Lakehouse Done Right: Iceberg, Governance & Cortex in One Lab
 
 <!-- ------------------------ -->
 ## Overview
 
-Build Snowflake-managed Iceberg tables, stream live weather data via Snowpipe Streaming V2 (SSV2), apply column masking and row-level security, and read the same tables from Databricks through Snowflake's Horizon Iceberg REST Catalog — with governance enforced across engine boundaries.
+Duration: 5
+
+This quickstart eliminates the three taxes that plague multi-engine data architectures:
+
+| Tax | Traditional Pain | What You'll Eliminate |
+|---|---|---|
+| **Storage Tax** | Separate copies for each engine | Single Iceberg copy, Snowflake-managed, readable by any engine |
+| **Interoperability Tax** | Custom ETL to expose data; governance bypassed outside Snowflake | Horizon IRC serves Iceberg metadata; FGAC enforced even on Spark |
+| **AI Access Tax** | Bespoke APIs/views for every BI/AI consumer | Semantic View defines meaning once; Cortex Agent serves any user |
 
 ![Architecture](assets/architecture.png)
+
+You will build a complete pipeline from raw data ingestion through natural-language analytics — all on open Apache Iceberg.
 
 ### Prerequisites
 
@@ -30,9 +40,10 @@ Build Snowflake-managed Iceberg tables, stream live weather data via Snowpipe St
 
 - How to create Snowflake-managed Iceberg tables with zero bucket configuration
 - How to stream real-time data into Iceberg V3 VARIANT columns via Snowpipe Streaming V2
-- How column masking and row-level security policies enforce governance across external engines
+- How column masking and row-level security enforce governance across external engines
 - How Horizon's Iceberg REST Catalog enables multi-engine reads with vended credentials (Path A) or compute-routed governance (Path B)
-- How Iceberg V3 VARIANT data is queryable from both Snowflake and Spark 4.0
+- How to build a Semantic View and Cortex Agent for natural-language analytics over Iceberg tables
+- How Snowflake Intelligence turns business questions into SQL — grounded by verified queries
 
 ### What You'll Need
 
@@ -42,10 +53,12 @@ Build Snowflake-managed Iceberg tables, stream live weather data via Snowpipe St
 
 ### What You'll Build
 
-- **Snowflake-managed Iceberg tables** — 40M+ NYC taxi trips stored as open Apache Iceberg (Parquet + metadata)
+- **Snowflake-managed Iceberg tables** — NYC taxi trips and weather data stored as open Apache Iceberg (Parquet + metadata)
 - **Real-time streaming ingest** — A Java application streaming weather data into an Iceberg V3 VARIANT table via Snowpipe Streaming V2
 - **Governance policies** — Column masking and row-level security enforced across Snowflake and Databricks
 - **Multi-engine reads** — Databricks reading Iceberg tables through Horizon IRC with Path A (direct storage) and Path B (compute-routed) execution
+- **Semantic View** — Business-friendly dimensions, metrics, and verified queries over the physical Iceberg tables
+- **Cortex Agent** — Natural-language interface to the data via Snowflake Intelligence
 
 <!-- ------------------------ -->
 ## Environment Setup
@@ -106,7 +119,7 @@ SELECT CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME();
 
 ### Run the Setup Script
 
-Open `scripts/00_setup.sql` in Snowsight or your preferred SQL client. Before executing, replace `<YOUR_SNOWFLAKE_USERNAME>` on line 1 with your actual username.
+Open `assets/00_setup.sql` in Snowsight or your preferred SQL client. Before executing, replace `<YOUR_SNOWFLAKE_USERNAME>` with your actual username.
 
 This script creates:
 - Warehouses (DEMO_WH, DEMO_WH_2)
@@ -137,15 +150,12 @@ LIST @TLC_STAGE/yellow/;
 -- Expected: 26 Parquet files
 ```
 
-<!-- SCREENSHOT: Add screenshot of LIST output showing 26 Parquet files -->
-<!-- ![Stage Listing](assets/stage-listing.png) -->
-
 <!-- ------------------------ -->
 ## Create Iceberg Tables
 
 Duration: 10
 
-In this step you will create Snowflake-managed Iceberg tables from 40M+ NYC taxi trip records using a single CTAS statement — no bucket configuration, no IAM roles, no compaction scheduling.
+In this step you will create Snowflake-managed Iceberg tables from NYC taxi trip records using a single CTAS statement — no bucket configuration, no IAM roles, no compaction scheduling.
 
 ### Key Concept: Snowflake Storage for Iceberg
 
@@ -193,7 +203,7 @@ CREATE OR REPLACE ICEBERG TABLE yellow_trips
 ```
 
 > aside positive
-> This CTAS may take a few minutes to load 40M+ rows. While it runs, note that `TIMESTAMP_NTZ(6)` (microsecond precision) is an intentional choice — Iceberg Spark runtime 1.10.x cannot read nanosecond timestamps.
+> This CTAS may take a few minutes. While it runs, note that `TIMESTAMP_NTZ(6)` (microsecond precision) is an intentional choice — Iceberg Spark runtime 1.10.x cannot read nanosecond timestamps.
 
 ### Create green_trips (Path B — governance will be applied later)
 
@@ -277,10 +287,7 @@ UNION ALL
 SELECT 'zone_lookup', COUNT(*) FROM zone_lookup;
 ```
 
-Confirm `FORMAT_VERSION=3` in metadata and expected row counts (40M+ yellow, 40M+ green, 265 zones).
-
-<!-- SCREENSHOT: Add screenshot of SYSTEM$GET_ICEBERG_TABLE_INFORMATION output showing FORMAT_VERSION=3 -->
-<!-- ![Iceberg Metadata](assets/iceberg-metadata.png) -->
+Confirm `FORMAT_VERSION=3` in metadata and expected row counts.
 
 <!-- ------------------------ -->
 ## Stream Weather Data with Snowpipe Streaming V2
@@ -357,6 +364,23 @@ ORDER BY ingested_at DESC, location
 LIMIT 9;
 ```
 
+### Sub-Column Pruning Proof
+
+Iceberg V3 VARIANT supports sub-column pruning — only the accessed nested paths are scanned. Compare bytes scanned between a full `SELECT *` and a targeted sub-column read:
+
+```sql
+ALTER SESSION SET USE_CACHED_RESULT = FALSE;
+SELECT * FROM nyc_weather_ssv2;
+
+-- Now compare with sub-column access only:
+SELECT
+    location,
+    weather_data:hourly_units:precipitation::STRING AS precip_unit
+FROM nyc_weather_ssv2;
+```
+
+Check `BYTES_SCANNED` in Query History — the sub-column query reads dramatically less data.
+
 ### LATERAL FLATTEN — Hourly Precipitation
 
 Extract 700+ hourly data points from the nested VARIANT array into individual rows:
@@ -381,7 +405,7 @@ LIMIT 20;
 
 ### Weather + Taxi Trips Join
 
-Combine the streamed weather data with 40M taxi trips to analyze tipping behavior by weather condition:
+Combine the streamed weather data with taxi trips to analyze tipping behavior by weather condition:
 
 ```sql
 SELECT
@@ -506,9 +530,6 @@ SELECT
 
 Generate the token via Snowsight (**User Menu → My Profile → Programmatic Access Tokens → Generate**) or SQL:
 
-<!-- SCREENSHOT: Add screenshot of Snowsight PAT generation UI -->
-<!-- ![PAT Generation](assets/pat-generation.png) -->
-
 ```sql
 ALTER USER IDENTIFIER($MY_USER)
     ADD PROGRAMMATIC ACCESS TOKEN quickstart_dbx_pat
@@ -552,16 +573,16 @@ Restart the cluster after installing all libraries.
 
 ### Upload and Configure the Notebook
 
-1. Import `scripts/04_databricks_read.ipynb` into your Databricks workspace
+1. Import `assets/04_databricks_read.ipynb` into your Databricks workspace
 2. Attach it to the configured cluster
 3. Fill in cell 1:
 
 ```python
-ACCOUNT_IDENTIFIER = "<ORG-ACCT>"          # Hyphens, not underscores
-PAT_TOKEN          = "<YOUR_PAT_TOKEN>"     # From previous step
+ACCOUNT_IDENTIFIER = "<ORG-ACCT>"
+PAT_TOKEN          = "<YOUR_PAT_TOKEN>"
 SF_USER            = "<YOUR_SNOWFLAKE_USER>"
-RSA_PRIVATE_KEY    = "<BASE64_KEY>"          # No PEM headers
-REGION             = "us-east-1"             # Your account's region
+RSA_PRIVATE_KEY    = "<BASE64_KEY>"
+REGION             = "us-east-1"
 ```
 
 ### Path A — yellow_trips (Zero Snowflake Compute)
@@ -588,9 +609,6 @@ print(f"Row count (RLS-filtered, Manhattan only): {green_df.count():,}")
 Observe:
 - `fare_amount`, `tip_amount`, `total_amount` return **-1.0** (masking policy active)
 - Row count is reduced to Manhattan pickups only (RLS active)
-
-<!-- SCREENSHOT: Add screenshot of Databricks output showing -1.0 masked values -->
-<!-- ![Path B Masked Results](assets/path-b-masked-results.png) -->
 
 ### Iceberg V3 VARIANT — nyc_weather_ssv2
 
@@ -624,45 +642,449 @@ except Exception as e:
 This confirms why the main tables use `TIMESTAMP_NTZ(6)` — an intentional interoperability choice.
 
 <!-- ------------------------ -->
+## Semantic View & Cortex Agent
+
+Duration: 15
+
+In this step you will create a Semantic View over the Iceberg tables that defines business-friendly dimensions, metrics, and verified queries — then wrap it with a Cortex Agent for natural-language analytics via Snowflake Intelligence.
+
+### Why a Semantic View?
+
+A Semantic View is a schema-level object that acts as a "contract" between raw data and AI consumers. Cortex Analyst reads the semantic view to translate natural-language questions into accurate SQL. Verified queries (VQRs) provide gold-standard Q&A pairs that dramatically improve answer accuracy.
+
+### Create the Semantic View
+
+```sql
+USE ROLE DEMO_ADMIN;
+USE WAREHOUSE DEMO_WH;
+USE DATABASE ICEBERG_DEMO;
+USE SCHEMA PUBLIC;
+
+CREATE OR REPLACE SEMANTIC VIEW nyc_taxi_analytics
+
+  TABLES (
+    trips AS ICEBERG_DEMO.PUBLIC.YELLOW_TRIPS
+      WITH SYNONYMS ('yellow taxi', 'yellow cab', 'taxi trips', 'rides')
+      COMMENT = 'NYC Yellow Taxi trip records from Jan 2024 to Feb 2026',
+
+    zones AS ICEBERG_DEMO.PUBLIC.ZONE_LOOKUP
+      PRIMARY KEY (LOCATIONID)
+      WITH SYNONYMS ('taxi zones', 'locations', 'neighborhoods')
+      COMMENT = 'NYC taxi zone lookup — maps LocationID to Borough and Zone name'
+  )
+
+  RELATIONSHIPS (
+    pickup_zone AS
+      trips (PULOCATIONID) REFERENCES zones (LOCATIONID)
+  )
+
+  FACTS (
+    trips.fare AS fare_amount
+      COMMENT = 'Base fare amount in USD',
+    trips.tip AS tip_amount
+      COMMENT = 'Tip amount in USD',
+    trips.total AS total_amount
+      COMMENT = 'Total charge including fare, tips, tolls, surcharges',
+    trips.distance AS trip_distance
+      COMMENT = 'Trip distance in miles',
+    trips.passengers AS passenger_count
+      COMMENT = 'Number of passengers in the vehicle',
+    zones.borough_name AS Borough
+      COMMENT = 'NYC borough name from zone lookup'
+  )
+
+  DIMENSIONS (
+    trips.pickup_datetime AS tpep_pickup_datetime
+      WITH SYNONYMS = ('pickup time', 'start time', 'trip start')
+      COMMENT = 'Timestamp when the taxi meter was engaged',
+
+    trips.dropoff_datetime AS tpep_dropoff_datetime
+      WITH SYNONYMS = ('dropoff time', 'end time', 'trip end')
+      COMMENT = 'Timestamp when the taxi meter was disengaged',
+
+    trips.pickup_hour AS HOUR(tpep_pickup_datetime)
+      WITH SYNONYMS = ('hour of day', 'time of day')
+      COMMENT = 'Hour of pickup (0-23)',
+
+    trips.pickup_date AS DATE(tpep_pickup_datetime)
+      WITH SYNONYMS = ('trip date', 'date')
+      COMMENT = 'Date of pickup',
+
+    trips.pickup_month AS DATE_TRUNC('month', tpep_pickup_datetime)
+      WITH SYNONYMS = ('month', 'trip month')
+      COMMENT = 'Month of pickup',
+
+    trips.pickup_day_of_week AS DAYNAME(tpep_pickup_datetime)
+      WITH SYNONYMS = ('day of week', 'weekday')
+      COMMENT = 'Day of week (Mon, Tue, etc.)',
+
+    trips.payment_method AS
+      CASE payment_type
+        WHEN 1 THEN 'Credit Card'
+        WHEN 2 THEN 'Cash'
+        WHEN 3 THEN 'No Charge'
+        WHEN 4 THEN 'Dispute'
+        ELSE 'Unknown'
+      END
+      WITH SYNONYMS = ('payment type', 'how they paid')
+      COMMENT = 'Human-readable payment method',
+
+    zones.pickup_borough AS BOROUGH
+      WITH SYNONYMS = ('borough', 'pickup area', 'neighborhood')
+      COMMENT = 'NYC borough of pickup location',
+
+    zones.pickup_zone_name AS "ZONE"
+      WITH SYNONYMS = ('zone', 'pickup zone', 'pickup neighborhood')
+      COMMENT = 'NYC taxi zone name of pickup'
+  )
+
+  METRICS (
+    trips.total_trips AS COUNT(*)
+      WITH SYNONYMS = ('trip count', 'number of rides', 'ride count', 'how many trips')
+      COMMENT = 'Total number of taxi trips',
+
+    trips.total_revenue AS SUM(trips.total)
+      WITH SYNONYMS = ('revenue', 'total sales', 'earnings', 'income')
+      COMMENT = 'Total revenue in USD (fare + tips + tolls + surcharges)',
+
+    trips.avg_fare AS AVG(trips.fare)
+      WITH SYNONYMS = ('average fare', 'mean fare', 'typical fare')
+      COMMENT = 'Average base fare amount in USD',
+
+    trips.avg_tip_pct AS AVG(trips.tip / NULLIF(trips.fare, 0)) * 100
+      WITH SYNONYMS = ('tip percentage', 'tip rate', 'tipping rate', 'average tip percent')
+      COMMENT = 'Average tip as a percentage of fare',
+
+    trips.avg_distance AS AVG(trips.distance)
+      WITH SYNONYMS = ('average distance', 'mean distance', 'typical trip length')
+      COMMENT = 'Average trip distance in miles',
+
+    trips.avg_passengers AS AVG(trips.passengers)
+      WITH SYNONYMS = ('average passengers', 'riders per trip')
+      COMMENT = 'Average number of passengers per trip'
+  )
+
+  COMMENT = 'NYC Yellow Taxi analytics — trip volumes, revenue, tipping, and geography. Covers Jan 2024 through Feb 2026.'
+
+  AI_SQL_GENERATION 'Always round currency values to 2 decimal places. Always round percentages to 1 decimal place. When computing tip percentage, exclude rows where fare_amount is 0 or NULL. Default sort order is descending by the primary metric unless the user specifies otherwise.'
+
+  AI_QUESTION_CATEGORIZATION 'This semantic view covers NYC yellow taxi trip data only. It does NOT contain weather data, green taxi data, or airport information. If asked about weather, precipitation, temperature, or green taxis, respond that you do not have that information available.'
+
+  AI_VERIFIED_QUERIES (
+    revenue_by_borough AS (
+      QUESTION 'What is total revenue by borough?'
+      ONBOARDING_QUESTION TRUE
+      VERIFIED_BY '(STEWARD = demo_admin)'
+      SQL 'SELECT
+               __zones.pickup_borough,
+               ROUND(SUM(__trips.total), 2) AS total_revenue
+             FROM __trips
+             LEFT JOIN __zones ON __trips.pulocationid = __zones.locationid
+             GROUP BY __zones.pickup_borough
+             ORDER BY total_revenue DESC'
+    ),
+
+    avg_fare_by_payment AS (
+      QUESTION 'What is the average fare by payment method?'
+      ONBOARDING_QUESTION TRUE
+      VERIFIED_BY '(STEWARD = demo_admin)'
+      SQL 'SELECT
+               __trips.payment_method,
+               ROUND(AVG(__trips.fare), 2) AS avg_fare
+             FROM __trips
+             GROUP BY __trips.payment_method
+             ORDER BY avg_fare DESC'
+    ),
+
+    busiest_day_of_week AS (
+      QUESTION 'Which day of the week has the most trips?'
+      ONBOARDING_QUESTION TRUE
+      VERIFIED_BY '(STEWARD = demo_admin)'
+      SQL 'SELECT
+               __trips.pickup_day_of_week,
+               COUNT(*) AS total_trips
+             FROM __trips
+             GROUP BY __trips.pickup_day_of_week
+             ORDER BY total_trips DESC'
+    ),
+
+    tip_pct_by_borough AS (
+      QUESTION 'What is the average tip percentage by borough?'
+      VERIFIED_BY '(STEWARD = demo_admin)'
+      SQL 'SELECT
+               __zones.pickup_borough,
+               ROUND(AVG(__trips.tip / NULLIF(__trips.fare, 0)) * 100, 1) AS avg_tip_pct
+             FROM __trips
+             LEFT JOIN __zones ON __trips.pulocationid = __zones.locationid
+             WHERE __trips.fare > 0
+             GROUP BY __zones.pickup_borough
+             ORDER BY avg_tip_pct DESC'
+    ),
+
+    monthly_trip_volume AS (
+      QUESTION 'Show me monthly trip volume over time'
+      VERIFIED_BY '(STEWARD = demo_admin)'
+      SQL 'SELECT
+               __trips.pickup_month,
+               COUNT(*) AS total_trips
+             FROM __trips
+             GROUP BY __trips.pickup_month
+             ORDER BY __trips.pickup_month'
+    )
+  );
+```
+
+### Verify the Semantic View
+
+```sql
+DESCRIBE SEMANTIC VIEW nyc_taxi_analytics;
+SHOW SEMANTIC DIMENSIONS IN nyc_taxi_analytics;
+SHOW SEMANTIC METRICS IN nyc_taxi_analytics;
+```
+
+### Test with a Direct Semantic Query
+
+```sql
+SELECT * FROM SEMANTIC_VIEW(
+  nyc_taxi_analytics
+  METRICS trips.total_trips, trips.total_revenue
+  DIMENSIONS zones.pickup_borough
+) ORDER BY total_revenue DESC;
+```
+
+### Create the Cortex Agent
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE AGENT nyc_taxi_agent
+  COMMENT = 'NYC Yellow Taxi trip analyst — answers questions about trip volumes, revenue, tips, and geography'
+  FROM SPECIFICATION $$
+tools:
+  - tool_spec:
+      type: cortex_analyst_text_to_sql
+      name: taxi_analytics
+      description: "Answers questions about NYC yellow taxi trips including revenue, trip counts, tip percentages, payment methods, boroughs, and time-based trends. Covers January 2024 through February 2026."
+tool_resources:
+  taxi_analytics:
+    semantic_view: "ICEBERG_DEMO.PUBLIC.NYC_TAXI_ANALYTICS"
+    execution_environment:
+      type: warehouse
+      warehouse: "DEMO_WH"
+$$;
+
+GRANT USAGE ON AGENT ICEBERG_DEMO.PUBLIC.nyc_taxi_agent TO ROLE DEMO_ADMIN;
+GRANT USAGE ON AGENT ICEBERG_DEMO.PUBLIC.nyc_taxi_agent TO ROLE DEMO_ANALYST;
+```
+
+### Test the Agent
+
+```sql
+USE ROLE DEMO_ADMIN;
+USE WAREHOUSE DEMO_WH;
+
+SELECT TRY_PARSE_JSON(
+  SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
+    'ICEBERG_DEMO.PUBLIC.NYC_TAXI_AGENT',
+    $${ 
+      "messages": [
+        {
+          "role": "user",
+          "content": [{"type": "text", "text": "What is total revenue by borough?"}]
+        }
+      ]
+    }$$
+  )
+) AS resp;
+```
+
+### Try it in Snowflake Intelligence
+
+Open Snowflake Intelligence in Snowsight: **AI & ML → Snowflake Intelligence → select nyc_taxi_agent → start chatting.**
+
+Questions to try:
+1. "What is total revenue by borough?" (hits VQR — high confidence)
+2. "Which day of the week is busiest?" (hits VQR)
+3. "Show me monthly trip trends" (hits VQR)
+4. "What's the average tip percentage for credit card vs cash?" (cross-dimension)
+5. "How many trips happened in Manhattan in January 2025?" (filter + dimension)
+
+Guardrail tests:
+- "What was the weather like on rainy days?" → Agent declines (no weather data in SV)
+- "Show me green taxi trips" → Agent declines (no green_trips in SV)
+
+> aside positive
+> The agent's guardrails are not magic — they come from `AI_QUESTION_CATEGORIZATION` in the semantic view DDL. You define what the AI should and should not answer.
+
+<!-- ------------------------ -->
+## RBAC Enforcement Demo
+
+Duration: 5
+
+This step proves that Snowflake's privilege model applies to semantic views and agents. Even through an AI interface, RBAC is enforced — no bypass.
+
+### Create a Denied Role
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE ROLE IF NOT EXISTS DEMO_SV_DENIED
+  COMMENT = 'Role with no semantic view or table access — for RBAC demo';
+GRANT ROLE DEMO_SV_DENIED TO ROLE ACCOUNTADMIN;
+GRANT USAGE ON WAREHOUSE DEMO_WH TO ROLE DEMO_SV_DENIED;
+GRANT USAGE ON DATABASE ICEBERG_DEMO TO ROLE DEMO_SV_DENIED;
+GRANT USAGE ON SCHEMA ICEBERG_DEMO.PUBLIC TO ROLE DEMO_SV_DENIED;
+```
+
+### Verify Access is Denied
+
+```sql
+USE ROLE DEMO_SV_DENIED;
+USE SECONDARY ROLES NONE;
+USE WAREHOUSE DEMO_WH;
+
+SELECT * FROM SEMANTIC_VIEW(
+  nyc_taxi_analytics
+  METRICS trips.total_trips
+  DIMENSIONS zones.pickup_borough
+);
+-- Expected: Insufficient privileges error
+```
+
+### Restore Admin Context
+
+```sql
+USE ROLE DEMO_ADMIN;
+USE SECONDARY ROLES ALL;
+USE WAREHOUSE DEMO_WH;
+```
+
+> aside positive
+> Even through Snowflake Intelligence, a role without grants on the semantic view or underlying tables cannot access data. RBAC is always enforced.
+
+<!-- ------------------------ -->
+## Explore with Cortex Code (Optional)
+
+Duration: 10
+
+This optional step provides curated prompts you can paste into Cortex Code (CoCo) — Snowflake's AI coding assistant — to explore the entire quickstart interactively.
+
+### How to Use
+
+1. Open Cortex Code in Snowsight (lower-right panel) or use the CLI
+2. Copy any prompt below and paste it into CoCo
+3. CoCo will generate SQL, explain concepts, or build artifacts for you
+
+### Data Engineering Prompts
+
+```
+"What tables exist in ICEBERG_DEMO.PUBLIC? Describe each one including
+ row counts, column types, and whether they are Iceberg tables."
+
+"Explain the difference between CATALOG = SNOWFLAKE and using an external
+ volume with a customer-managed bucket. What are the tradeoffs?"
+
+"Create a new Iceberg table called trip_summary that aggregates yellow_trips
+ by pickup date and borough with total trips, revenue, and average fare."
+```
+
+### Streaming & VARIANT Prompts
+
+```
+"Explore the nyc_weather_ssv2 table. Show me how to extract hourly
+ temperature and precipitation from the weather_data VARIANT column for JFK."
+
+"Write a query that finds the rainiest days at each airport station using
+ the VARIANT data in nyc_weather_ssv2. Flatten the hourly array."
+
+"Write a query that joins nyc_weather_ssv2 weather data with yellow_trips
+ to see if rainy days have lower tip percentages."
+```
+
+### Governance Prompts
+
+```
+"Explain what masking and row-level security policies are applied in
+ ICEBERG_DEMO.PUBLIC. Which tables and columns are protected?"
+
+"Show me how to verify that the borough_rls policy is working. Write
+ queries that demonstrate filtered vs unfiltered results by role."
+
+"What is the difference between Path A and Path B when Databricks reads
+ through Horizon? Explain the governance enforcement mechanism."
+```
+
+### Semantic View & Agent Prompts
+
+```
+"Show me the semantic view nyc_taxi_analytics. What dimensions, metrics,
+ and verified queries does it define?"
+
+"Add a new metric to the nyc_taxi_analytics semantic view called
+ avg_trip_duration that calculates average minutes between pickup and dropoff."
+
+"Write a new verified query (VQR) for the semantic view that answers:
+ What is the average trip distance by hour of day?"
+```
+
+### Open-Ended Exploration
+
+```
+"Build a Streamlit dashboard that shows a bar chart of total trips by
+ borough and a line chart of daily revenue trends from yellow_trips."
+
+"Compare yellow_trips and green_trips — what are the differences in schema,
+ row counts, and trip patterns? Which boroughs does each serve?"
+
+"Write a data quality check that validates yellow_trips has no future
+ pickup dates, no negative fares, and no null location IDs."
+```
+
+<!-- ------------------------ -->
 ## Cleanup
 
 Duration: 5
 
 Two teardown scripts are provided:
 
-### Remove Governance Only (re-run Module 4)
+### Remove Governance Only (re-run Module 5)
 
 ```sql
--- Run scripts/teardown_governance.sql
+-- Run assets/teardown_governance.sql
 -- Removes policies, tags, and grants. Tables and data preserved.
 ```
 
-### Full Reset (rebuild from Module 2)
+### Full Reset (rebuild from Module 1)
 
 ```sql
--- Run scripts/teardown_full.sql
--- Drops all tables, pipes, policies, and tags.
+-- Run assets/teardown_full.sql
+-- Drops all tables, pipes, policies, semantic view, agent, and tags.
 -- Preserves database, warehouse, roles, and stage.
 ```
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-Congratulations! You have built a complete Iceberg interoperability pipeline with governance enforced across engine boundaries.
+Duration: 2
+
+Congratulations! You have built a complete zero-tax analytics pipeline — from raw Iceberg ingestion through natural-language AI queries — with governance enforced across engine boundaries.
 
 ### What You Learned
 
-- **Snowflake Storage for Iceberg** — Create Iceberg tables with `CATALOG = SNOWFLAKE` and `EXTERNAL_VOLUME = SNOWFLAKE_MANAGED` — zero bucket configuration
-- **Snowpipe Streaming V2** — Stream real-time data into Iceberg V3 VARIANT columns from a Java application
-- **Path A vs Path B** — Horizon's two execution paths: vended credentials (zero compute) vs compute-routed governance
-- **Column Masking + RLS** — Policies applied once in Snowflake are enforced when external engines read via Horizon
-- **Iceberg V3 VARIANT** — Semi-structured JSON stored natively and queryable from both Snowflake (dot notation) and Spark 4.0 (`variant_get`)
+- **Zero Storage Tax** — Create Iceberg tables with `CATALOG = SNOWFLAKE` — single copy, no bucket management, readable by any engine
+- **Zero Interoperability Tax** — Horizon IRC serves Iceberg metadata to Spark/Databricks with governance enforced server-side
+- **Zero AI Access Tax** — Semantic View + Cortex Agent turn business questions into SQL without bespoke pipelines
+- **Snowpipe Streaming V2** — Real-time ingest into Iceberg V3 VARIANT columns
+- **Path A vs Path B** — Vended credentials (zero compute) vs compute-routed governance — same endpoint, different outcome
+- **RBAC Everywhere** — Privilege enforcement across SQL, AI agents, and external engines
 
 ### Related Resources
 
 - [Snowflake Storage for Iceberg Documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 - [Horizon Iceberg REST Catalog](https://docs.snowflake.com/en/user-guide/tables-iceberg-rest-catalog)
 - [Snowpipe Streaming V2](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
+- [Semantic Views](https://docs.snowflake.com/en/user-guide/semantic-views)
+- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Column Masking Policies](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro)
 - [Row Access Policies](https://docs.snowflake.com/en/user-guide/security-row-intro)
-- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-snowflake-iceberg-interoperability)
+- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-iceberg-zero-tax-analytics)
