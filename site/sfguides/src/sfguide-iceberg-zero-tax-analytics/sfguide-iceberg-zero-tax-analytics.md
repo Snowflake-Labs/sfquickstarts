@@ -15,6 +15,8 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-iceberg-zero-tax-analy
 
 Duration: 5
 
+**Total estimated time: ~90 minutes**
+
 This quickstart eliminates the three taxes that plague multi-engine data architectures:
 
 | Tax | Traditional Pain | What You'll Eliminate |
@@ -26,6 +28,10 @@ This quickstart eliminates the three taxes that plague multi-engine data archite
 ![Architecture](assets/architecture.png)
 
 You will build a complete pipeline from raw data ingestion through natural-language analytics — all on open Apache Iceberg.
+
+### Get the Code
+
+Click the **Fork Repo** button at the top of this page to get the complete source code. The repository contains all SQL scripts (with detailed inline comments), the Java Snowpipe Streaming V2 ingest application (`SSV2WeatherIngest.java` + `pom.xml`), the Databricks notebook, and teardown scripts — all in the `assets/` directory. This guide walks you through the key concepts and code — **the repo is your runnable source of truth.**
 
 ### Prerequisites
 
@@ -44,12 +50,6 @@ You will build a complete pipeline from raw data ingestion through natural-langu
 - How Horizon's Iceberg REST Catalog enables multi-engine reads with vended credentials (Path A) or compute-routed governance (Path B)
 - How to build a Semantic View and Cortex Agent for natural-language analytics over Iceberg tables
 - How Snowflake Intelligence turns business questions into SQL — grounded by verified queries
-
-### What You'll Need
-
-- Snowflake account (Enterprise+) with ACCOUNTADMIN
-- Databricks workspace (DBR 17.3)
-- Local terminal with Java 11+, Maven 3.6+, and OpenSSL
 
 ### What You'll Build
 
@@ -94,12 +94,19 @@ grep -v "BEGIN\|END" rsa_key.p8 | tr -d '\n'
 ```
 
 You will use this value in two places later:
-- `ssv2-streaming/profile.json` (Java SSV2 ingest app)
+- `profile.json` in the `ssv2-streaming/` directory (Java SSV2 ingest app)
 - Databricks notebook cell 1 (Spark Connector config)
 
-### Configure profile.json
+### Configure the SSV2 Streaming App
 
-The Java SSV2 streaming application reads credentials from `ssv2-streaming/profile.json`:
+The `ssv2-streaming/` directory in your forked repo contains the complete Java Maven project. Copy it to your local machine and configure credentials:
+
+```bash
+cd ssv2-streaming
+cp profile.json.example profile.json
+```
+
+Edit `profile.json` with your values:
 
 ```json
 {
@@ -119,7 +126,7 @@ SELECT CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME();
 
 ### Run the Setup Script
 
-Open `assets/00_setup.sql` in Snowsight or your preferred SQL client. Before executing, replace `<YOUR_SNOWFLAKE_USERNAME>` with your actual username.
+Open `assets/00_setup.sql` from your forked repo in Snowsight or your preferred SQL client. Before executing, replace `<YOUR_SNOWFLAKE_USERNAME>` with your actual username.
 
 This script creates:
 - Warehouses (DEMO_WH, DEMO_WH_2)
@@ -156,6 +163,9 @@ LIST @TLC_STAGE/yellow/;
 Duration: 10
 
 In this step you will create Snowflake-managed Iceberg tables from NYC taxi trip records using a single CTAS statement — no bucket configuration, no IAM roles, no compaction scheduling.
+
+> aside positive
+> The complete script with inline comments is `assets/01_create_tables.sql` in your forked repo. The key statements are shown below.
 
 ### Key Concept: Snowflake Storage for Iceberg
 
@@ -295,6 +305,9 @@ Confirm `FORMAT_VERSION=3` in metadata and expected row counts.
 Duration: 15
 
 In this step you will create an Iceberg V3 table with a VARIANT column, set up a Snowpipe Streaming V2 pipe, and run a Java application that fetches weather data from the Open-Meteo API and streams it into Snowflake in real time.
+
+> aside positive
+> The Java application and Maven project are in your forked repo (`assets/SSV2WeatherIngest.java` and `assets/pom.xml`). The complete `ssv2-streaming/` directory with the correct Maven layout, source code, and a `profile.json.example` template is also included. Copy the `ssv2-streaming/` folder to your local machine, rename `profile.json.example` to `profile.json`, fill in your credentials, then run the build commands below.
 
 ### Create the Weather Table and Pipe
 
@@ -437,7 +450,7 @@ ORDER BY 1;
 
 Duration: 10
 
-In this step you will apply column masking and row-level security policies to one table while leaving another policy-free. This sets up the two execution paths that Databricks will experience through Horizon.
+In this step you will apply column masking and row-level security policies to one table while leaving another policy-free. This sets up the two execution paths that Databricks will experience through Horizon. The complete script is `assets/03_horizon_governance.sql` in your forked repo.
 
 | Path | Table | Policies | Databricks Behavior |
 |---|---|---|---|
@@ -573,7 +586,7 @@ Restart the cluster after installing all libraries.
 
 ### Upload and Configure the Notebook
 
-1. Import `assets/04_databricks_read.ipynb` into your Databricks workspace
+1. Import `assets/04_databricks_read.ipynb` from your forked repo into your Databricks workspace
 2. Attach it to the configured cluster
 3. Fill in cell 1:
 
@@ -647,6 +660,9 @@ This confirms why the main tables use `TIMESTAMP_NTZ(6)` — an intentional inte
 Duration: 15
 
 In this step you will create a Semantic View over the Iceberg tables that defines business-friendly dimensions, metrics, and verified queries — then wrap it with a Cortex Agent for natural-language analytics via Snowflake Intelligence.
+
+> aside positive
+> The complete script is `assets/05_semantic_view.sql` in your forked repo. You can run it directly in Snowsight. The inline code below is shown for learning — it explains each section of the DDL.
 
 ### Why a Semantic View?
 
@@ -921,7 +937,10 @@ Guardrail tests:
 
 Duration: 5
 
-This step proves that Snowflake's privilege model applies to semantic views and agents. Even through an AI interface, RBAC is enforced — no bypass.
+This step demonstrates two critical RBAC enforcement points:
+
+1. **Governance on Iceberg tables** — The masking and RLS policies you applied in Module 3 are enforced via role-based access. A role without SELECT on the governed tables sees nothing.
+2. **Governance on AI interfaces** — The Semantic View and Cortex Agent you built in the previous step respect the same privilege model. A role without grants on the semantic view or underlying tables cannot query through Snowflake Intelligence either. There is no bypass — not through SQL, not through AI.
 
 ### Create a Denied Role
 
@@ -959,8 +978,8 @@ USE SECONDARY ROLES ALL;
 USE WAREHOUSE DEMO_WH;
 ```
 
-> aside positive
-> Even through Snowflake Intelligence, a role without grants on the semantic view or underlying tables cannot access data. RBAC is always enforced.
+> aside negative
+> Try this in Snowflake Intelligence too: switch to the `DEMO_SV_DENIED` role and ask the agent a question. It will fail. RBAC applies to every access path — SQL, API, and AI.
 
 <!-- ------------------------ -->
 ## Explore with Cortex Code (Optional)
@@ -1041,33 +1060,20 @@ This optional step provides curated prompts you can paste into Cortex Code (CoCo
 ```
 
 <!-- ------------------------ -->
-## Cleanup
-
-Duration: 5
-
-Two teardown scripts are provided:
-
-### Remove Governance Only (re-run Module 5)
-
-```sql
--- Run assets/teardown_governance.sql
--- Removes policies, tags, and grants. Tables and data preserved.
-```
-
-### Full Reset (rebuild from Module 1)
-
-```sql
--- Run assets/teardown_full.sql
--- Drops all tables, pipes, policies, semantic view, agent, and tags.
--- Preserves database, warehouse, roles, and stage.
-```
-
-<!-- ------------------------ -->
 ## Conclusion and Resources
 
-Duration: 2
+Duration: 3
 
 Congratulations! You have built a complete zero-tax analytics pipeline — from raw Iceberg ingestion through natural-language AI queries — with governance enforced across engine boundaries.
+
+### Cleanup
+
+When you are done, use the teardown scripts in your forked repo:
+
+- **`assets/teardown_full.sql`** — Drops all tables, pipes, policies, semantic view, agent, and tags. Preserves database, warehouse, roles, and stage.
+- **`assets/teardown_governance.sql`** — Removes only governance objects (policies, tags, grants). Tables and data are preserved so you can re-apply policies without rebuilding Iceberg tables.
+
+Open the appropriate script in Snowsight and run all statements sequentially.
 
 ### What You Learned
 
