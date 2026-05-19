@@ -1,6 +1,6 @@
 author: Brian Pace
 id: snowflake-postgres-pg-lake-iot-internal-stage
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Build bidirectional data pipelines between Snowflake Postgres (pg_lake) and Snowflake - Internal Stage
 environments: web
