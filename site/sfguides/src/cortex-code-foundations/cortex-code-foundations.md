@@ -75,24 +75,7 @@ Cortex Code uses the same connection files as SnowCLI, located at:
 
 (or `connections.toml` if you already use that)
 
-Minimal example, adapt to your accounts and roles:
-
-```toml
-default_connection_name = "DEMO"
-
-[connections.DEMO]
-account   = "<YOUR_DEMO_ACCOUNT>"    # e.g. SFSENORTHAMERICA-XXXXX
-user      = "<YOUR_DEMO_USERNAME>"
-password  = "<YOUR_DEMO_PAT>"
-role      = "<YOUR_DEMO_ROLE>"
-warehouse = "<YOUR_DEMO_WAREHOUSE>"
-```
-
-![Log In and Find Settings](assets/snowsight_login_settings.png)
-
-![Account Details Connection](assets/account_details_connection.png)
-
-### Create the Config File 
+### Create/open the Config File 
 
 Run the following in your terminal to create and open the config file:
 
@@ -102,6 +85,25 @@ touch ~/.snowflake/config.toml
 chmod 600 ~/.snowflake/config.toml
 open -e ~/.snowflake/config.toml
 ```
+
+Copy and adapt the following to your accounts and roles:
+
+```toml
+default_connection_name = "DEMO"
+
+[connections.DEMO]
+account   = "<YOUR_DEMO_ACCOUNT>"    # e.g. SFSENORTHAMERICA-XXXXX
+user      = "<YOUR_DEMO_USERNAME>"
+password  = "<YOUR_DEMO_PAT>"
+role      = "<YOUR_DEMO_ROLE>"
+```
+
+![Log In and Find Settings](assets/snowsight_login_settings.png)
+
+![Account Details Connection](assets/account_details_connection.png)
+
+Once updated, make sure to save the file. 
+
 
 <!-- ------------------------ -->
 ## Install the CoCo CLI on Windows
@@ -134,24 +136,7 @@ On Windows, the config file is located at:
 %USERPROFILE%\.snowflake\config.toml
 ```
 
-Minimal example:
-
-```toml
-default_connection_name = "DEMO"    # Name for default Snowflake connection
-
-[connections.DEMO]                  # Name for Snowflake connection (same as above if default)
-account   = "<YOUR_DEMO_ACCOUNT>"  # e.g. Account identifier
-user      = "<YOUR_DEMO_USERNAME>" # e.g. Authentication variable
-password  = "<YOUR_DEMO_PAT>"
-role      = "<YOUR_DEMO_ROLE>"     # e.g. Need a role for connection
-warehouse = "<YOUR_DEMO_WAREHOUSE>"
-```
-
-![Log In and Find Settings](assets/snowsight_login_settings.png)
-
-![Account Details Connection](assets/account_details_connection.png)
-
-### Create the Config File
+### Create/open the Config File
 
 Run the following in PowerShell:
 
@@ -161,16 +146,32 @@ New-Item -ItemType File -Path $env:USERPROFILE\.snowflake\config.toml -Force
 notepad $env:USERPROFILE\.snowflake\config.toml
 ```
 
+Copy and adapt the following to your accounts and roles:
+
+```toml
+default_connection_name = "DEMO"    # Name for default Snowflake connection
+
+[connections.DEMO]                  # Name for Snowflake connection (same as above if default)
+account   = "<YOUR_DEMO_ACCOUNT>"  # e.g. Account identifier
+user      = "<YOUR_DEMO_USERNAME>" # e.g. Authentication variable
+password  = "<YOUR_DEMO_PAT>"
+role      = "<YOUR_DEMO_ROLE>"     # e.g. Need a role for connection
+```
+
+![Log In and Find Settings](assets/snowsight_login_settings.png)
+
+![Account Details Connection](assets/account_details_connection.png)
+
+Once updated, make sure to save the file. 
+
 <!-- ------------------------ -->
 ## Find Your Connection Details
 
 To fill out your config, you'll need your Snowflake account identifier, role, and warehouse.
 
 1. Log in to Snowsight
-2. Click your username in the bottom left → **Account**
-3. Note your **Account Identifier** (e.g. `SFSENORTHAMERICA-XXXXX`)
-4. Go to **Admin → Warehouses** to find your warehouse name
-5. Check **Admin → Users & Roles** for your role
+2. Click your username in the bottom left → **Account** → **View account details**
+3. Note your **Account Identifier** (e.g. `SFSENORTHAMERICA-XXXXX`) and **Role**
 
 ### Authentication Options
 
@@ -193,7 +194,7 @@ For a full list, see the [Manage Snowflake connections guide](https://docs.snowf
 Once your connection is configured, launch the CLI:
 
 ```bash
-cortex -c DEMO    # connect using connection name
+cortex -c DEMO
 ```
 
 After connecting, you'll see the Cortex Code CLI interface. Test your connection by asking a simple question — for example:
@@ -207,7 +208,7 @@ What databases do I have access to?
 <!-- ------------------------ -->
 ## Lab Setup
 
-Before starting the demos, run the setup scripts to create the workshop environment and load sample data. These files are in the `assets/` folder of this repo.
+Before starting the demos, run the setup scripts to create the workshop environment and load sample data. These files are in the `assets/` folder of [this repo](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-foundations/assets).
 
 ### Step 1: Create the Workshop Environment
 
@@ -236,17 +237,6 @@ If you need to start fresh, run `01_demo_reset.sql` to drop all demo-created obj
 ## Workshop Overview
 
 This workshop follows a single AP invoices storyline across three demos — from data discovery through operationalization and optional agent design.
-
-### Lab Environment
-
-Set your context before starting:
-
-```sql
-USE ROLE COCO_WORKSHOP_ROLE;
-USE WAREHOUSE COCO_WORKSHOP_WH;
-USE DATABASE COCO_WORKSHOP;
-USE SCHEMA <YOUR_SCHEMA>;
-```
 
 <!-- ------------------------ -->
 ## Demo 1: Pipeline Builder
@@ -296,7 +286,7 @@ Ctrl+P
 Then run the following prompt: 
 
 ```
-Use database COCO_WORKSHOP and my current schema for outputs.
+Use database COCO_WORKSHOP and schema PIPELINE_LAB for outputs.
 Create a Dynamic Table called SILVER_AP_INVOICES in my current schema by combining
 COCO_WORKSHOP.SOURCE_DATA.BRONZE_SAP_AP_INVOICES and
 COCO_WORKSHOP.SOURCE_DATA.BRONZE_ORACLE_AP_INVOICES.
@@ -363,7 +353,7 @@ A month later, the business sends a PRD that expands the AP invoices pipeline. N
 
 ### About the Sample PRD
 
-Three CSV files prepared by the Finance Transformation PMO are included in the `assets/` folder of this repo:
+Download the three CSV files prepared by the Finance Transformation PMO in the `assets/` folder of [this repo](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-foundations/assets). Create a folder on your local device and add the files:
 
 - `sample_business_requirements_source_onboarding.csv` — new source systems (Baan, Workday), owners, priorities, and go-live targets
 - `sample_business_requirements_column_mapping.csv` — field-level mappings for both new sources into the Silver schema

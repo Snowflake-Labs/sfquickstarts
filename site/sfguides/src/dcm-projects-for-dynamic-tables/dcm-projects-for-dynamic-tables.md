@@ -194,7 +194,7 @@ templating:
       user: "INSERT_YOUR_USER"                          # update to your username
       project_owner_role: "DCM_DEVELOPER"
       teams:
-        - name: "DEV_TEAM_1"
+        - name: "DT_TEAM_1"
           data_retention_days: 1
           needs_sandbox_schema: true
 

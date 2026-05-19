@@ -1,0 +1,18 @@
+model_list:
+  - model_name: cortex-claude-4-sonnet
+    litellm_params:
+      model: snowflake/claude-4-sonnet
+      api_base: https://<account url>/api/v2
+      api_key: os.environ/SNOWFLAKE_PAT
+      stream: true
+
+litellm_settings:
+  drop_params: true
+  set_verbose: false
+  num_retries: 2
+  request_timeout: 120
+  callbacks: pre_call_hook.proxy_handler_instance
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  disable_spend_logs: true
