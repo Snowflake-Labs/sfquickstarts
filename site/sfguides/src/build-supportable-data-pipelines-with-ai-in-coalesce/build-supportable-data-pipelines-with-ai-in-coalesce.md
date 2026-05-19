@@ -113,7 +113,7 @@ We are going to connect to Snowflake, identify source data and load its definiti
 
    ![Stage Tables](assets/image54.png)
 
-5. Now edit the Node called STG\_YELLOW\_CAB\_TRIPS by right clicking on the Node and choosing **Edit**:
+5. Now edit the Node called STG_CAB_TRIPS by right clicking on the Node and choosing **Edit**:
 
    ![Edit Stage](assets/image55.png)
 
@@ -183,39 +183,41 @@ This will sample the JSON structure and identify the elements / nesting in the J
 
 We could just type SQL in this editor – in this case only really the join clause needs fixing.  **Note:** This SQL is parsed into the Column list on the right hand side when the SQL is valid. 
 
-7. Add a line after the VENDOR\_NAME (LINE 5 ABOVE) \- and type the following SQL:  
-   	```sql
-   VENDOR_NAME||’ ‘||STATE AS VENDOR_STATE,
+7. Add a line after the VENDOR_NAME (LINE 5 ABOVE) \- and type the following SQL:  
+   	```code
+   VENDOR_NAME||' '||STATE AS VENDOR_STATE,
    ```
    And check that this column is automatically added in the Column list on the right.  
 
    ![Column list](assets/image557.png)
 
-8. Rather than type SQL lets get the Coalesce AI to generate SQL using the prompt: ```build sql that joins stage tables STG\_VENDOR and STG\_VENDOR\_DETAILS using ctes```
+8. Rather than type SQL lets get the Coalesce AI to generate SQL using the prompt:
+   ```build sql that joins stage tables STG_VENDOR and STG_VENDOR_DETAILS using ctes```
 
    If the SQL looks good copy using the **Copy Code** option and paste it (*leaving the top 2 annotation lines alone*):
 
    ![Coalesce AI SQL](assets/image558.png)
 
-9. Press the **Create** and **Run** buttons and review the data in the Preview Pane.
+10. Press the **Create** and **Run** buttons and review the data in the Preview Pane.
 
 ## Step 6 \- Build and populate Datamart
 
 Lets build some dimensions and facts.
 
-1. Open the Browser and check Coalesce AI context is Browser and use prompt: ```What dimensions and facts would you create over these stage and work tables``` 
+1. Open the Browser and check Coalesce AI context is Browser and use prompt:
+   ```What dimensions and facts would you create over these stage and work tables``` 
 
    ![Coalesce AI datamart](assets/image61.png)
 
-2. If that plan looks sensible (it should) then tell Coalesce AI to go ahead and create them
+3. If that plan looks sensible (it should) then tell Coalesce AI to go ahead and create them
 
    ![Coalesce AI datamart confirm](assets/image62.png)
 
-3. Select to **Create All** and **Run All** in the Browser to create the tables on Snowflake and populate them.
+4. Select to **Create All** and **Run All** in the Browser to create the tables on Snowflake and populate them.
 
    ![Datamart](assets/image63.png)
 
-4. Now we will commit all your hard work to GIT to keep it safe by clicking on the **Git** button at the bottom Left of the screen:
+5. Now we will commit all your hard work to GIT to keep it safe by clicking on the **Git** button at the bottom Left of the screen:
 
    ![Git dialog](assets/image64.png)
 
