@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: sync-data-from-postgres-to-snowflake-with-iceberg-and-pg-lake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Learn how to sync data from Postgres to Snowflake using a shared Apache Iceberg table and the pg_lake extension
 environments: web

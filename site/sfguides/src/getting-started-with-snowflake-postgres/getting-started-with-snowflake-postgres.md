@@ -1,6 +1,6 @@
 summary: Getting Started with Snowflake Postgres 
 id:getting-started-with-snowflake-postgres
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 environments: web
 status: Published 
