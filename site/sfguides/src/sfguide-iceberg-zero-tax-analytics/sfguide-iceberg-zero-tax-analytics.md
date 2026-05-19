@@ -443,7 +443,7 @@ ORDER BY 1;
 ```
 
 > aside positive
-> NYC riders tip consistently (~20%) regardless of rain — a testament to tipping culture. The real weather effect shows in trip volume and distance, not tip percentage.
+> **What you'll discover:** NYC riders tip consistently (~20%) regardless of weather — but rain *does* reduce trip volume and average distance. The real signal is demand elasticity, not generosity. This is why joining weather + trip data at query time (zero-copy) beats pre-aggregation.
 
 <!-- ------------------------ -->
 ## Governance — Path A vs Path B
