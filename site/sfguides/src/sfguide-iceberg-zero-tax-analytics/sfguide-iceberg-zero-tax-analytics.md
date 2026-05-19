@@ -165,7 +165,7 @@ Duration: 10
 In this step you will create Snowflake-managed Iceberg tables from NYC taxi trip records using a single CTAS statement — no bucket configuration, no IAM roles, no compaction scheduling.
 
 > aside positive
-> The complete script with inline comments is `assets/01_create_tables.sql` in your forked repo. The key statements are shown below.
+> **Repo shortcut:** The complete script with inline comments is `assets/01_create_tables.sql` in your forked repo. The key statements are shown below.
 
 ### Key Concept: Snowflake Storage for Iceberg
 
@@ -213,7 +213,7 @@ CREATE OR REPLACE ICEBERG TABLE yellow_trips
 ```
 
 > aside positive
-> This CTAS may take a few minutes. While it runs, note that `TIMESTAMP_NTZ(6)` (microsecond precision) is an intentional choice — Iceberg Spark runtime 1.10.x cannot read nanosecond timestamps.
+> **Why microseconds?** This CTAS may take a few minutes. While it runs, note that `TIMESTAMP_NTZ(6)` (microsecond precision) is an intentional choice — Iceberg Spark runtime 1.10.x cannot read nanosecond timestamps.
 
 ### Create green_trips (Path B — governance will be applied later)
 
@@ -267,7 +267,7 @@ CREATE OR REPLACE ICEBERG TABLE green_trips_nano
 ```
 
 > aside negative
-> `green_trips_nano` uses `TIMESTAMP_NTZ(9)` (nanosecond). Snowflake reads it perfectly but Spark 1.10.x rejects it. You will observe this incompatibility in the Databricks step.
+> **Intentional incompatibility:** `green_trips_nano` uses `TIMESTAMP_NTZ(9)` (nanosecond). Snowflake reads it perfectly but Spark 1.10.x rejects it. You will observe this failure in the Databricks step.
 
 ### Create zone_lookup (dimension table)
 
@@ -307,7 +307,7 @@ Duration: 15
 In this step you will create an Iceberg V3 table with a VARIANT column, set up a Snowpipe Streaming V2 pipe, and run a Java application that fetches weather data from the Open-Meteo API and streams it into Snowflake in real time.
 
 > aside positive
-> The Java application and Maven project are in your forked repo (`assets/SSV2WeatherIngest.java` and `assets/pom.xml`). The complete `ssv2-streaming/` directory with the correct Maven layout, source code, and a `profile.json.example` template is also included. Copy the `ssv2-streaming/` folder to your local machine, rename `profile.json.example` to `profile.json`, fill in your credentials, then run the build commands below.
+> **Get the code:** The Java application and Maven project are in your forked repo (`assets/SSV2WeatherIngest.java` and `assets/pom.xml`). The complete `ssv2-streaming/` directory with the correct Maven layout, source code, and a `profile.json.example` template is also included. Copy the `ssv2-streaming/` folder to your local machine, rename `profile.json.example` to `profile.json`, fill in your credentials, then run the build commands below.
 
 ### Create the Weather Table and Pipe
 
@@ -552,7 +552,7 @@ ALTER USER IDENTIFIER($MY_USER)
 ```
 
 > aside negative
-> Copy the PAT value immediately — it is shown only once. The token expires in 1 day.
+> **Important:** Copy the PAT value immediately — it is shown only once. The token expires in 1 day.
 
 <!-- ------------------------ -->
 ## Read from Databricks via Horizon IRC
@@ -580,7 +580,7 @@ Navigate to **Compute → Your Cluster → Libraries → Install New → Maven**
 | `net.snowflake:spark-snowflake_2.13:3.1.6` | Snowflake Connector (includes SnowflakeFallbackCatalog) |
 
 > aside negative
-> Use `_2.13` artifacts (not `_2.12`). DBR 17.3 ships Scala 2.13. Do NOT install `snowflake-jdbc` separately — it's included transitively.
+> **Version warning:** Use `_2.13` artifacts (not `_2.12`). DBR 17.3 ships Scala 2.13. Do NOT install `snowflake-jdbc` separately — it's included transitively.
 
 Restart the cluster after installing all libraries.
 
@@ -608,7 +608,7 @@ print(f"Row count: {yellow_df.count():,}")
 ```
 
 > aside positive
-> Check your Snowflake credit meter — it will not move. Path A uses zero warehouse compute because no policies are attached.
+> **Zero compute cost:** Check your Snowflake credit meter — it will not move. Path A uses zero warehouse compute because no policies are attached.
 
 ### Path B — green_trips (Governance Enforced)
 
@@ -662,7 +662,7 @@ Duration: 15
 In this step you will create a Semantic View over the Iceberg tables that defines business-friendly dimensions, metrics, and verified queries — then wrap it with a Cortex Agent for natural-language analytics via Snowflake Intelligence.
 
 > aside positive
-> The complete script is `assets/05_semantic_view.sql` in your forked repo. You can run it directly in Snowsight. The inline code below is shown for learning — it explains each section of the DDL.
+> **Repo shortcut:** The complete script is `assets/05_semantic_view.sql` in your forked repo. You can run it directly in Snowsight. The inline code below is shown for learning — it explains each section of the DDL.
 
 ### Why a Semantic View?
 
@@ -930,7 +930,7 @@ Guardrail tests:
 - "Show me green taxi trips" → Agent declines (no green_trips in SV)
 
 > aside positive
-> The agent's guardrails are not magic — they come from `AI_QUESTION_CATEGORIZATION` in the semantic view DDL. You define what the AI should and should not answer.
+> **How guardrails work:** The agent's guardrails are not magic — they come from `AI_QUESTION_CATEGORIZATION` in the semantic view DDL. You define what the AI should and should not answer.
 
 <!-- ------------------------ -->
 ## RBAC Enforcement Demo
@@ -979,7 +979,7 @@ USE WAREHOUSE DEMO_WH;
 ```
 
 > aside negative
-> Try this in Snowflake Intelligence too: switch to the `DEMO_SV_DENIED` role and ask the agent a question. It will fail. RBAC applies to every access path — SQL, API, and AI.
+> **Try it yourself:** Switch to the `DEMO_SV_DENIED` role in Snowflake Intelligence and ask the agent a question. It will fail. RBAC applies to every access path — SQL, API, and AI.
 
 <!-- ------------------------ -->
 ## Explore with Cortex Code (Optional)
