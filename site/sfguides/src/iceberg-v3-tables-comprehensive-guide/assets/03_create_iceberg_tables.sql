@@ -1,6 +1,7 @@
 -- Snowflake Iceberg V3 Comprehensive Guide
 -- Script 03: Create Iceberg V3 Tables
 -- ====================================
+-- BASE_LOCATION is omitted: explicit paths break Snowflake-managed Iceberg storage.
 
 USE ROLE ACCOUNTADMIN;
 USE DATABASE FLEET_ANALYTICS_DB;
@@ -19,7 +20,6 @@ CREATE OR REPLACE ICEBERG TABLE VEHICLE_TELEMETRY_STREAM (
     INGESTED_AT TIMESTAMP_LTZ(6))
     EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
     CATALOG = 'SNOWFLAKE'
-    BASE_LOCATION = 'FLEET_ANALYTICS_DB/RAW/VEHICLE_TELEMETRY_STREAM'
     COMMENT = 'Real-time vehicle telemetry events streamed via Snowpipe Streaming';
 
 -- ============================================
@@ -36,7 +36,6 @@ CREATE OR REPLACE ICEBERG TABLE MAINTENANCE_LOGS (
     INGESTED_AT TIMESTAMP_LTZ(6))
     EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
     CATALOG = 'SNOWFLAKE'
-    BASE_LOCATION = 'FLEET_ANALYTICS_DB/RAW/MAINTENANCE_LOGS'
     COMMENT = 'Maintenance and diagnostic logs loaded from JSON files';
 
 -- ============================================
@@ -60,7 +59,6 @@ CREATE OR REPLACE ICEBERG TABLE SENSOR_READINGS (
     INGESTED_AT TIMESTAMP_LTZ(6))
     EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
     CATALOG = 'SNOWFLAKE'
-    BASE_LOCATION = 'FLEET_ANALYTICS_DB/RAW/SENSOR_READINGS'
     COMMENT = 'High-precision time-series sensor readings';
 
 -- ============================================
@@ -82,7 +80,6 @@ CREATE OR REPLACE ICEBERG TABLE VEHICLE_LOCATIONS (
     INGESTED_AT TIMESTAMP_LTZ(6))
     EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
     CATALOG = 'SNOWFLAKE'
-    BASE_LOCATION = 'FLEET_ANALYTICS_DB/RAW/VEHICLE_LOCATIONS'
     COMMENT = 'Geospatial vehicle location data with GEOGRAPHY type';
 
 -- ============================================
@@ -109,7 +106,6 @@ CREATE OR REPLACE ICEBERG TABLE VEHICLE_REGISTRY (
     UPDATED_AT TIMESTAMP_LTZ(6))
     EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
     CATALOG = 'SNOWFLAKE'
-    BASE_LOCATION = 'FLEET_ANALYTICS_DB/RAW/VEHICLE_REGISTRY'
     COMMENT = 'Master data for vehicles and drivers (contains PII)';
 
 -- ============================================
@@ -125,7 +121,6 @@ CREATE OR REPLACE ICEBERG TABLE API_WEATHER_DATA (
     INGESTED_AT TIMESTAMP_LTZ(6))
     EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
     CATALOG = 'SNOWFLAKE'
-    BASE_LOCATION = 'FLEET_ANALYTICS_DB/RAW/API_WEATHER_DATA'
     COMMENT = 'Weather data fetched from Open-Meteo API';
 
 -- ============================================

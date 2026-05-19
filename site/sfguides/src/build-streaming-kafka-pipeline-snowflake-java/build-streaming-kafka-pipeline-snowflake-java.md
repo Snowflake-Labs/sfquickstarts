@@ -22,6 +22,7 @@ The use case: a telecom cell tower monitoring pipeline. A fake producer generate
 - How to map Kafka partitions to Snowflake channels with a `ConsumerRebalanceListener`
 - How to commit Kafka offsets only after Snowflake confirms persistence
 - How to handle retries, backpressure, and channel invalidation with production-grade error handling (exponential backoff, HTTP 409 channel reopening, fail-fast on auth errors)
+- Best practices for writing robust Snowpipe Streaming consumers: channel-per-partition mapping, durable offset commits, and graceful error recovery
 - How to train `SNOWFLAKE.ML.FORECAST` models in SQL
 - How to create a Semantic View and query it with Cortex Analyst
 - How to automate the entire pipeline with Cortex Code skills
@@ -64,7 +65,7 @@ cp -r snowpipe-streaming-sdk-examples/custom-kafka-consumer/.cortex/skills/custo
       ~/.snowflake/cortex/skills/
 ```
 
-The skill is automatically discovered by Cortex Code on the next session. Skills are loaded from `~/.snowflake/cortex/skills/` globally, so you can start Cortex Code from any directory — including the `custom-kafka-consumer` project root — and the skill will be available.
+The skill is automatically discovered by Cortex Code on the next session. Skills are loaded from `~/.snowflake/cortex/skills/` globally — the skill directory itself can live anywhere. However, **start Cortex Code from the `custom-kafka-consumer` project root** so the skill can work with the project files, run Maven builds, and locate the Kafka scripts it needs.
 
 ### Available Triggers
 
@@ -113,7 +114,7 @@ Here is how the skill maps to the steps you complete manually in this guide:
 | Train ML Forecast models | Creates aggregation views and trains `tower_drop_forecast` model |
 | Identify at-risk towers | Runs the maintenance recommendation query and surfaces CRITICAL towers |
 
-The following sections walk through each of these steps manually — so you understand exactly what the skill is doing under the hood.
+The following sections walk through each of these steps manually. The manual walkthrough is intentional — it explains how every part of the pipeline works so you can customize, debug, and extend it. The skill automates these exact steps, but reading through them once gives you the understanding you need to troubleshoot or adapt the pipeline for your own use case.
 
 <!-- ------------------------ -->
 ## Set Up Snowflake
@@ -719,7 +720,7 @@ Documentation:
 - [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)
 
 Source Code:
-- [snowpipe-streaming-sdk-examples on GitHub](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples)
+- [custom-kafka-consumer on GitHub](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/custom-kafka-consumer)
 
 Related Guides:
 - [Getting Started with Snowpipe Streaming high-performance architecture and Cortex Code](https://quickstarts.snowflake.com/guide/getting-started-with-snowpipe-streaming-v2)

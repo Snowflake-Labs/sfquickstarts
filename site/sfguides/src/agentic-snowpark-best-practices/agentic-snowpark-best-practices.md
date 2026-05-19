@@ -14,8 +14,6 @@ Snowpark Python gives data engineers the full power of Python's ecosystem runnin
 
 Cortex Code eliminates that scaffolding. As Snowflake's native AI coding agent, it generates idiomatic Snowpark Python from natural language descriptions, handles the API nuances for you, and produces code that pushes computation down to Snowflake rather than pulling data client-side. Whether you're building transformation logic with the DataFrame API, packaging reusable functions as UDFs, or orchestrating multi-step pipelines as stored procedures, Cortex Code gets you to working code faster.
 
-All of the Snowpark workflows in this guide are powered by the `$data-engineering` skill in Cortex Code.
-
 ## Get Started with Cortex Code
 
 ### Step 1: Ensure Cortex Code is enabled with appropriate permissions on your account

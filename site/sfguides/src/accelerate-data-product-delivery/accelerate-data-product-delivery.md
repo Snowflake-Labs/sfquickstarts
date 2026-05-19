@@ -12,21 +12,15 @@ fork repo link: https://github.com/srini86/data-products-lifecycle-fsi-example
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
+Duration: 5 minutes
 
 This guide shows how to deliver a governed data product in **a single sprint** using [Cortex Code (CoCo)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-code) and a machine-readable **data contract** as the single source of truth. One document captures the requirements; an agent reads it and generates, deploys, and monitors every artifact automatically.
 
 ![Data Product Lifecycle](assets/data-product-lifecycle.png)
 
-| Stage | What Happens | In This Guide |
-|-------|-------------|---------------|
-| Discover | Event storms identify candidate data products | Pre-assumed — requirements are in hand |
-| Design | Canvas → machine-readable data contract | Day 1 |
-| Deliver | Agent generates and deploys all artifacts | Day 1–2 |
-| Operate | Automated monitoring for SLAs, quality, usage | Day 2 |
-| Refine | Evolve with new features and contract versions | Post-sprint |
-
 The example uses a **Retail Customer Churn Risk** data product in a retail banking context, but the approach works for any data product in any industry.
+
+> **Note:** The Discover phase is pre-done. Open `01_discover/data_product_canvas.png` to see the agreed requirements — this canvas is the only input to all phases that follow. The sprint goal is to deliver `RETAIL_BANKING_DB.DATA_PRODUCTS.RETAIL_CUSTOMER_CHURN_RISK` — governed, tested, and monitored — by end of sprint.
 
 ### What You'll Learn
 
@@ -53,7 +47,7 @@ In one sprint you will produce a complete, production-ready data product. Source
 <!-- ------------------------ -->
 ## Environment Setup
 
-Duration: 10
+Duration: 10 minutes
 
 ### Step 1: Clone the Repository
 
@@ -85,42 +79,24 @@ Source tables loaded by Steps 3–4:
 Confirm Step 6 shows all five tables before continuing.
 
 <!-- ------------------------ -->
-## Sprint Context: What Was Discovered
+## Start Cortex Code
 
-Duration: 5
+Duration: 2
 
-> In a real sprint, **Discover** happens before the sprint starts. For this lab, it is already done — the outputs are in hand and the sprint begins at Design.
+From the repo root, run `cortex` to start a session, then invoke the lifecycle accelerator with `$dplc-accelerator` (or type `start lifecycle`). The skill detects your current phase, displays a progress tracker, and presents each prompt one step at a time.
 
-### The Data Product Canvas
-
-Open `01_discover/data_product_canvas.png`. This one-page canvas captures the agreed requirements:
-
-| Canvas Field | Value |
-|-------------|-------|
-| **Name** | Retail Customer Churn Risk |
-| **Owner** | Retail Customer Analytics team |
-| **Consumers** | Risk, CRM, Marketing, Compliance |
-| **Source systems** | Core banking, digital platform, complaints |
-| **Key metrics** | Balance trend, transaction frequency, complaint count, engagement score |
-| **SLA** | Refreshed daily by 07:00 UTC, >99% quality |
-| **Governance** | PII masked for non-privileged roles, GDPR/PSD2 applies |
-
-### The Sprint Goal
-
-Deliver `RETAIL_BANKING_DB.DATA_PRODUCTS.RETAIL_CUSTOMER_CHURN_RISK` — governed, tested, and monitored — by end of sprint. The canvas is the only input needed to produce every artifact in the phases that follow.
-
-> **Adapting to your industry:** Replace the canvas fields with your own requirements. The steps that follow are identical regardless of industry.
+**Keep this session open for all phases — Design through Refine.** You will return to it at the start of each phase.
 
 <!-- ------------------------ -->
 ## Design: Create the Data Contract
 
-Duration: 10
+Duration: 10 minutes
 
 A data contract (ODCS v2.2 YAML) is the sprint's single source of truth — every artifact in the Deliver phase is generated from it.
 
 ![Data Contract Architecture](assets/data-contract-informs.png)
 
-### Review the Example Contract
+### Prompt 1: Review the Example Contract
 
 Open `02_design/_example/churn_risk_data_contract.yaml`. The contract has three key sections:
 
@@ -130,7 +106,7 @@ Open `02_design/_example/churn_risk_data_contract.yaml`. The contract has three 
 
 **SLAs and governance** — daily refresh schedule, 99.5% availability target, data steward contact, retention period, and regulatory tags (GDPR, PSD2). These drive the monitoring alerts and access control setup.
 
-### Generate Your Own Contract (Optional)
+### Prompt 2: Generate Your Own Contract *(Optional)*
 
 Use Cortex Code to generate a contract from your own canvas:
 
@@ -139,22 +115,11 @@ Use Cortex Code to generate a contract from your own canvas:
 <!-- ------------------------ -->
 ## Deliver: Cortex Code Agent
 
-Duration: 25
+Duration: 25 minutes
 
 This phase uses the `dplc-accelerator` skill — an interactive orchestrator that detects your current phase, displays a progress tracker, and presents each prompt one step at a time.
 
 ![Cortex Code Skills Flow](assets/cortex-code-skills-flow.png)
-
-| Phase | Steps | What the agent does |
-|-------|-------|---------------------|
-| Design | 2 | Reviews/generates the ODCS v2.2 data contract |
-| Deliver | 5 | Generates dbt project, governance artifacts, monitoring SQL; deploys and validates |
-| Operate | 2 | Runs monitoring SQL; populates RACI |
-| Refine | 4 | Compares contract versions; regenerates only affected artifacts; re-validates |
-
-### Start Cortex Code
-
-From the repo root, run `cortex` to start a session, then invoke the lifecycle accelerator with `$dplc-accelerator` (or type `start lifecycle`). The skill detects your current phase and presents the steps one at a time. **Keep this session open throughout the Deliver phase.**
 
 ### Prompt 1: Generate the dbt Project
 
@@ -199,9 +164,13 @@ The agent runs `dbt test`, checks row and null counts, then queries the table as
 <!-- ------------------------ -->
 ## Operate: Automated Monitoring
 
-Duration: 5
+Duration: 5 minutes
 
-The monitoring SQL was generated in Prompt 3. Open `04_operate/_example/monitoring_observability.sql` in Snowsight to review or re-run any check independently.
+The monitoring SQL was generated in Deliver Prompt 3. Open `04_operate/_example/monitoring_observability.sql` in Snowsight to review or re-run any check independently.
+
+### Prompt 1: Run Monitoring Checks
+
+Open `04_operate/_example/monitoring_observability.sql` in Snowsight and run each section in order:
 
 | Check | What it does |
 |-------|-------------|
@@ -214,14 +183,24 @@ The monitoring SQL was generated in Prompt 3. Open `04_operate/_example/monitori
 <!-- ------------------------ -->
 ## Refine: Evolve the Data Product
 
-Duration: 3
+Duration: 3 minutes
 
-The repo includes a v2 contract (`05_refine/_example/churn_risk_data_contract_v2.yaml`) adding two new columns driven by consumer feedback, and evolution SQL in `05_refine/_example/evolution_example.sql`. Update the contract and re-run the agent to regenerate only the affected artifacts — no full rebuild required.
+### Prompt 1: Review the v2 Contract
+
+Open `05_refine/_example/churn_risk_data_contract_v2.yaml`. Two new columns have been added driven by consumer feedback. Compare with the v1 contract to see what changed — the agent will use this diff to regenerate only the affected artifacts.
+
+### Prompt 2: Regenerate Affected Artifacts
+
+"The contract has been updated to v2 with new columns. Regenerate only the affected dbt model SQL, schema.yml, and DMF setup — no full rebuild required."
+
+The agent compares the contract versions, identifies the changed sections, and regenerates only those artifacts. Review `05_refine/_example/evolution_example.sql` to see the incremental ALTER TABLE statements produced.
+
+> **Adapting to your industry:** Update any contract field — schema, quality rules, or SLAs — and re-run this prompt. Only the downstream artifacts that depend on the changed section are regenerated.
 
 <!-- ------------------------ -->
 ## Cleanup
 
-Duration: 2
+Duration: 2 minutes
 
 Run `06_cleanup/cleanup.sql` in Snowsight. It drops `RETAIL_BANKING_DB` and `DATA_PRODUCTS_WH`, removing all objects created by this guide.
 
@@ -230,7 +209,7 @@ Run `06_cleanup/cleanup.sql` in Snowsight. It drops `RETAIL_BANKING_DB` and `DAT
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-Duration: 2
+Duration: 2 minutes
 
 ### What You Learned
 

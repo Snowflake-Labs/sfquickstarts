@@ -1,9 +1,9 @@
 author: Yoav Ostrinsky
 id: dcm-projects-for-dynamic-tables
 summary: Learn how to use DCM Projects to manage dynamic table pipelines, evolve their schemas, and optimize refreshes with immutability constraints.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
-status: Public
+status: Published
 language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/snowflake-dcm-projects
@@ -36,7 +36,7 @@ You'll start by deploying a food truck analytics pipeline using DCM Projects, th
 - How to structure a DCM Project with a manifest and definition files
 - How to use Jinja templating to parameterize definitions across environments
 - How to plan (dry-run) and deploy changes using Snowsight Workspaces or Snowflake CLI
-- Why `INITIALIZE = ON_SCHEDULE` matters for CI/CD pipelines
+- Why `INITIALIZE = ON_SCHEDULE` matters for fast DCM deployments
 - How immutability constraints work on dynamic tables
 - How to evolve a dynamic table's schema without triggering a full recomputation
 - How to use `metadata$is_immutable` to verify which rows were reprocessed
@@ -55,14 +55,13 @@ You'll start by deploying a food truck analytics pipeline using DCM Projects, th
 In this step, you'll create a Snowsight Workspace linked to the sample DCM Project repository on GitHub.
 
 1. Navigate to **Projects > Workspaces** in Snowsight.
-2. Click **Create** and select **From Git repository**.
+2. Click **Create** (+) and select **Git repository**.
 3. Enter the repository URL: `https://github.com/snowflake-labs/snowflake-dcm-projects`
 4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
 5. Select **Public repository**.
 
-![Creating a Workspace from a Git repository](assets/create_workspace.png)
-
 Once the workspace is created, you'll see the repository files in the file explorer. Navigate to **Quickstarts/dcm-projects-for-dynamic-tables** to find two directories:
+
 
 - **`DCM_Projects_DT_Lifecycle/`** — The DCM Project itself (manifest, definitions, macros). This is what DCM reads during Plan & Deploy.
 - **`scripts/`** — Numbered SQL files that you'll run in Snowsight worksheets at different stages of this guide. These live outside the DCM project directory so they don't interfere with it.
@@ -71,7 +70,7 @@ Once the workspace is created, you'll see the repository files in the file explo
 |:-----|:------------|
 | `scripts/01_pre_deploy.sql` | Before the first DCM Plan & Deploy |
 | `scripts/02_post_deploy.sql` | After the first successful deployment |
-| `scripts/03_schema_change.sql` | After the second deployment (with immutability) |
+| `scripts/03_verify_evolution.sql` | After the second deployment (with immutability) |
 | `scripts/04_cleanup.sql` | When you're done and want to tear everything down |
 
 Open `scripts/01_pre_deploy.sql` in a Snowsight worksheet — you'll use it in the next step.
@@ -118,19 +117,7 @@ GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer;
 ```
 
-### 4. Create a Warehouse (Optional)
-
-If you don't have a warehouse available, create one:
-
-```sql
-CREATE WAREHOUSE IF NOT EXISTS dcm_wh
-WITH
-    WAREHOUSE_SIZE = 'XSMALL'
-    AUTO_SUSPEND = 300
-    COMMENT = 'For Quickstart Demo of DCM Projects';
-```
-
-### 5. Create the DCM Project Object
+### 4. Create the DCM Project Object
 
 ```sql
 USE ROLE dcm_developer;
@@ -138,11 +125,11 @@ USE ROLE dcm_developer;
 CREATE DATABASE IF NOT EXISTS dcm_demo;
 CREATE SCHEMA IF NOT EXISTS dcm_demo.projects;
 
-CREATE OR REPLACE DCM PROJECT dcm_demo.projects.dcm_project_dev
+CREATE OR REPLACE DCM PROJECT dcm_demo.projects.dcm_dt_project_dev
     COMMENT = 'for testing DCM Projects with Dynamic Tables';
 ```
 
-The DCM Project object `dcm_project_dev` is now created in `dcm_demo.projects`. This is the object referenced in the manifest's `DCM_DEV` target.
+The DCM Project object `dcm_dt_project_dev` is now created in `dcm_demo.projects`. This is the object referenced in the manifest's `DCM_DEV` target.
 
 > **Note:** After running this script, refresh your browser so Snowsight picks up the newly created DCM Project object. It won't appear in the Workspaces project selector until you do.
 
@@ -174,7 +161,7 @@ default_target: DCM_DEV
 targets:
   DCM_DEV:
     account_identifier: MYORG-MY_DEV_ACCOUNT        # update to your account identifier
-    project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
+    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV
     project_owner: DCM_DEVELOPER
     templating_config: DEV
 
@@ -207,7 +194,7 @@ templating:
       user: "INSERT_YOUR_USER"                          # update to your username
       project_owner_role: "DCM_DEVELOPER"
       teams:
-        - name: "DEV_TEAM_1"
+        - name: "DT_TEAM_1"
           data_retention_days: 1
           needs_sandbox_schema: true
 
@@ -244,9 +231,7 @@ templating:
           needs_sandbox_schema: true
 ```
 
-> **Important:** Before running a Plan, update `account_identifier` (line 11) and `user` (line 44) under the `DCM_DEV` target in `manifest.yml` to match your Snowflake account. The last query in `scripts/01_pre_deploy.sql` (step 6) returns both values — copy them from that output.
-
-Notice how the `DEV` configuration uses `env_suffix: "_DEV"` while `PROD` uses `env_suffix: ""`. This allows the same definition files to create `DCM_DEMO_1_DEV` in development and `DCM_DEMO_1` in production. The `teams` list is also different per environment — DEV has a single team, while PROD has six.
+Notice how the `DEV` configuration uses `env_suffix: "_DEV"` while `PROD` uses `env_suffix: ""`. This allows the same definition files to create `DCM_DEMO_3_DEV` in development and `DCM_DEMO_3` in production. The `teams` list is also different per environment — DEV has a single team, while PROD has six.
 
 ### Definition Files
 
@@ -265,12 +250,12 @@ The `sources/definitions/` directory contains SQL files that define your Snowfla
 For example, here's how `raw.sql` defines the database and a table:
 
 ```sql
-DEFINE DATABASE DCM_DEMO_1{{env_suffix}}
+DEFINE DATABASE DCM_DEMO_3{{env_suffix}}
     COMMENT = 'This is a Quickstart Demo for DCM Projects';
 
-DEFINE SCHEMA DCM_DEMO_1{{env_suffix}}.RAW;
+DEFINE SCHEMA DCM_DEMO_3{{env_suffix}}.RAW;
 
-DEFINE TABLE DCM_DEMO_1{{env_suffix}}.RAW.MENU (
+DEFINE TABLE DCM_DEMO_3{{env_suffix}}.RAW.MENU (
     MENU_ITEM_ID NUMBER,
     MENU_ITEM_NAME VARCHAR,
     ITEM_CATEGORY VARCHAR,
@@ -285,8 +270,8 @@ The `{{env_suffix}}` variable is replaced at deployment time based on the target
 And here's how `analytics.sql` defines a dynamic table that joins across several raw tables to create enriched order details:
 
 ```sql
-DEFINE DYNAMIC TABLE DCM_DEMO_1{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
-WAREHOUSE = DCM_DEMO_1_WH{{env_suffix}}
+DEFINE DYNAMIC TABLE DCM_DEMO_3{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
+WAREHOUSE = DCM_DEMO_3_WH{{env_suffix}}
 TARGET_LAG = 'DOWNSTREAM'
 INITIALIZE = 'ON_SCHEDULE'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
@@ -307,14 +292,14 @@ SELECT
     INITCAP(c.CITY) AS CUSTOMER_CITY,
     t.TRUCK_ID,
     t.TRUCK_BRAND_NAME
-FROM DCM_DEMO_1{{env_suffix}}.RAW.ORDER_HEADER oh
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.ORDER_DETAIL od ON oh.ORDER_ID = od.ORDER_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.MENU m ON od.MENU_ITEM_ID = m.MENU_ITEM_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.CUSTOMER c ON oh.CUSTOMER_ID = c.CUSTOMER_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.TRUCK t ON oh.TRUCK_ID = t.TRUCK_ID;
+FROM DCM_DEMO_3{{env_suffix}}.RAW.ORDER_HEADER oh
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.ORDER_DETAIL od ON oh.ORDER_ID = od.ORDER_ID
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.MENU m ON od.MENU_ITEM_ID = m.MENU_ITEM_ID
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.CUSTOMER c ON oh.CUSTOMER_ID = c.CUSTOMER_ID
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.TRUCK t ON oh.TRUCK_ID = t.TRUCK_ID;
 ```
 
-> **Why `INITIALIZE = ON_SCHEDULE`?** By default, dynamic tables use `INITIALIZE = ON_CREATE`, which triggers a synchronous refresh at creation time — if that refresh fails, the `CREATE` statement fails too. In a CI/CD pipeline (e.g., GitHub Actions running `snow dcm deploy`), this means a deployment can fail because upstream tables are empty or data dependencies aren't yet met. Setting `INITIALIZE = ON_SCHEDULE` defers the first refresh to the background scheduler, so the `CREATE` always succeeds and the dynamic table is populated once its source data is ready. This is the recommended pattern for automated, multi-environment deployments.
+> **Why `INITIALIZE = ON_SCHEDULE`?** By default, dynamic tables use `INITIALIZE = ON_CREATE`, which runs a full synchronous refresh during the `CREATE` statement. When a project creates many tables at once, those synchronous refreshes can make deployments slow. `INITIALIZE = ON_SCHEDULE` skips the refresh at creation time and lets DCM finish the deployment quickly — each dynamic table populates itself in the background on its normal schedule. This is the recommended pattern for DCM deployments where speed and predictability matter most.
 
 ### Macros
 
@@ -327,13 +312,13 @@ The `sources/macros/` directory contains reusable Jinja macros. Open `grants_mac
     DEFINE ROLE {{team}}_DEVELOPER{{env_suffix}};
     DEFINE ROLE {{team}}_USAGE{{env_suffix}};
 
-    GRANT USAGE ON DATABASE DCM_DEMO_1{{env_suffix}}
+    GRANT USAGE ON DATABASE DCM_DEMO_3{{env_suffix}}
         TO ROLE {{team}}_USAGE{{env_suffix}};
-    GRANT OWNERSHIP ON SCHEMA DCM_DEMO_1{{env_suffix}}.{{team}}
+    GRANT OWNERSHIP ON SCHEMA DCM_DEMO_3{{env_suffix}}.{{team}}
         TO ROLE {{team}}_OWNER{{env_suffix}};
 
     GRANT CREATE DYNAMIC TABLE, CREATE TABLE, CREATE VIEW
-        ON SCHEMA DCM_DEMO_1{{env_suffix}}.{{team}}
+        ON SCHEMA DCM_DEMO_3{{env_suffix}}.{{team}}
         TO ROLE {{team}}_DEVELOPER{{env_suffix}};
 
     GRANT ROLE {{team}}_USAGE{{env_suffix}} TO ROLE {{team}}_DEVELOPER{{env_suffix}};
@@ -352,10 +337,11 @@ Before deploying changes, always run a **Plan** first. A Plan is a dry-run that 
 
 ### Select the Project
 
-1. In the DCM control panel above the workspace tabs, select the project **dcm-projects-for-dynamic-tables/DCM_Projects_DT_Lifecycle**.
+1. You should see the DCM control panel in the first tab in the bottom panel. Select the project **DCM_Projects_DT_Lifecycle**.
 2. The `DCM_DEV` target should already be selected (it's the default in the manifest).
-3. Click on the target profile to verify it uses `DCM_PROJECT_DEV` and the `DEV` templating configuration.
-4. Override the templating value for `user` (line 44 in `manifest.yml`) with your own Snowflake username.
+3. Click on the target profile to verify it uses `DCM_DT_PROJECT_DEV` and the `DEV` templating configuration.
+
+> **Important:** Before running a Plan, update `account_identifier` and `user` under the `DCM_DEV` target in `manifest.yml` to match your Snowflake account. The last query in `scripts/01_pre_deploy.sql` (step 6) returns both values — copy them from that output.
 
 ![DCM control panel with project selected](assets/select_project.png)
 
@@ -370,7 +356,7 @@ Click the play button to the right of **Plan** and wait for the definitions to r
 
 Since none of the defined objects exist yet, the plan will show only **CREATE** statements. You should see planned operations for:
 
-- 1 database (`DCM_DEMO_1_DEV`)
+- 1 database (`DCM_DEMO_3_DEV`)
 - Multiple schemas (`RAW`, `ANALYTICS`, `SERVE`, plus team schemas from the Jinja demo)
 - Tables with change tracking enabled
 - Dynamic tables with various target lags
@@ -395,16 +381,12 @@ If the plan result looks correct and all planned changes match your expectations
 2. Optionally, add a **Deployment alias** (e.g., "Initial pipeline deployment") — think of it as a commit message that appears in the deployment history of your project.
 3. DCM will create all objects and attach grants and expectations using the owner role of the project object.
 
-![Deploy confirmation dialog](assets/dialog_js.png)
-
 > **CLI Alternative:** From the command line, deploy with:
 > ```
 > snow dcm deploy --target DCM_DEV --alias "Initial pipeline deployment"
 > ```
 
-Once the deployment completes successfully, refresh the Database Explorer on the left side of Snowsight. You should see the `DCM_DEMO_1_DEV` database and all of the created objects inside it.
-
-![Database Explorer showing deployed objects](assets/deployed_objects.png)
+Once the deployment completes successfully, refresh the Database Explorer on the left side of Snowsight. You should see the `DCM_DEMO_3_DEV` database and all of the created objects inside it.
 
 <!-- ------------------------ -->
 ## Insert Sample Data
@@ -421,26 +403,20 @@ The script inserts data into the raw tables: trucks, menu items, customers, inve
 
 ### 2. Refresh Dynamic Tables
 
-Because all dynamic tables use `INITIALIZE = ON_SCHEDULE`, they were created without data. The script triggers the first refresh manually:
+Because all dynamic tables use `INITIALIZE = ON_SCHEDULE`, they were created without data. Use `EXECUTE DCM PROJECT ... REFRESH ALL` to kick off the first refresh of every DT the project manages in one statement:
 
 ```sql
-ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS REFRESH;
-ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.MENU_ITEM_POPULARITY REFRESH;
-ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.CUSTOMER_SPENDING_SUMMARY REFRESH;
-ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.TRUCK_PERFORMANCE REFRESH;
+EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV REFRESH ALL;
 ```
 
-> **CLI Alternative:** You can refresh all dynamic tables in the project at once:
-> ```
-> snow dcm refresh --target DCM_DEV
-> ```
+DCM triggers refreshes in dependency order — upstream tables refresh before downstream ones.
 
 ### 3. Verify
 
 Run the final query in the script to see the enriched order details:
 
 ```sql
-SELECT * FROM dcm_demo_1_dev.analytics.enriched_order_details;
+SELECT * FROM dcm_demo_3_dev.analytics.enriched_order_details;
 ```
 
 You should see rows with columns like `order_id`, `order_ts`, `quantity`, `menu_item_name`, `line_item_revenue`, `line_item_profit`, `customer_city`, and `truck_brand_name`. Take note of this schema — in the next step, you'll evolve it.
@@ -470,8 +446,8 @@ Open `sources/definitions/analytics.sql` in your workspace and update the `enric
 Replace the existing `enriched_order_details` definition with:
 
 ```sql
-DEFINE DYNAMIC TABLE DCM_DEMO_1{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
-WAREHOUSE = DCM_DEMO_1_WH{{env_suffix}}
+DEFINE DYNAMIC TABLE DCM_DEMO_3{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
+WAREHOUSE = DCM_DEMO_3_WH{{env_suffix}}
 TARGET_LAG = 'DOWNSTREAM'
 INITIALIZE = 'ON_SCHEDULE'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
@@ -496,11 +472,11 @@ SELECT
     ROUND(
         ((m.SALE_PRICE_USD - m.COST_OF_GOODS_USD) / m.SALE_PRICE_USD) * 100, 2
     ) AS PROFIT_MARGIN_PCT
-FROM DCM_DEMO_1{{env_suffix}}.RAW.ORDER_HEADER oh
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.ORDER_DETAIL od ON oh.ORDER_ID = od.ORDER_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.MENU m ON od.MENU_ITEM_ID = m.MENU_ITEM_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.CUSTOMER c ON oh.CUSTOMER_ID = c.CUSTOMER_ID
-JOIN DCM_DEMO_1{{env_suffix}}.RAW.TRUCK t ON oh.TRUCK_ID = t.TRUCK_ID;
+FROM DCM_DEMO_3{{env_suffix}}.RAW.ORDER_HEADER oh
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.ORDER_DETAIL od ON oh.ORDER_ID = od.ORDER_ID
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.MENU m ON od.MENU_ITEM_ID = m.MENU_ITEM_ID
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.CUSTOMER c ON oh.CUSTOMER_ID = c.CUSTOMER_ID
+JOIN DCM_DEMO_3{{env_suffix}}.RAW.TRUCK t ON oh.TRUCK_ID = t.TRUCK_ID;
 ```
 
 > **Note:** The new `PROFIT_MARGIN_PCT` column must be added as the **last column** in the SELECT list.
@@ -526,7 +502,7 @@ Now push your definition change through the DCM plan-deploy cycle.
 
 ### Plan the Change
 
-1. In the DCM control panel, click the play button next to **Plan**.
+1. In the DCM control panel in the bottom panel, click the play button next to **Plan**.
 2. This time, the plan output will look different from the initial deployment. Instead of all CREATEs, you'll see an **ALTER** or **REPLACE** operation for `enriched_order_details` — DCM detected that the definition changed and will update only the affected object.
 
 ![Plan results showing the ALTER operation for the modified dynamic table](assets/plan_redeployment.png)
@@ -541,12 +517,12 @@ Review the rendered output in the `out` folder to confirm the `IMMUTABLE WHERE` 
 
 ### Refresh and Verify
 
-After deployment, open `scripts/03_schema_change.sql` in a Snowsight worksheet and run each section in order.
+After deployment, open `scripts/03_verify_evolution.sql` in a Snowsight worksheet and run each section in order.
 
 First, refresh the dynamic table:
 
 ```sql
-ALTER DYNAMIC TABLE DCM_DEMO_1_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS REFRESH;
+ALTER DYNAMIC TABLE DCM_DEMO_3_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS REFRESH;
 ```
 
 Then query the table and include the `metadata$is_immutable` virtual column:
@@ -559,7 +535,7 @@ SELECT
     LINE_ITEM_REVENUE,
     PROFIT_MARGIN_PCT,
     metadata$is_immutable AS IS_IMMUTABLE
-FROM DCM_DEMO_1_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS
+FROM DCM_DEMO_3_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS
 ORDER BY ORDER_TS DESC;
 ```
 
@@ -590,22 +566,14 @@ When you're done, open `scripts/04_cleanup.sql` in a Snowsight worksheet and run
 
 ```sql
 USE ROLE dcm_developer;
+EXECUTE DCM PROJECT dcm_demo.projects.dcm_dt_project_dev PURGE;
 
-DROP DATABASE IF EXISTS dcm_demo_1_dev;
-DROP WAREHOUSE IF EXISTS dcm_demo_1_wh_dev;
-
-DROP ROLE IF EXISTS dcm_demo_1_dev_read;
-DROP ROLE IF EXISTS dev_team_1_owner_dev;
-DROP ROLE IF EXISTS dev_team_1_developer_dev;
-DROP ROLE IF EXISTS dev_team_1_usage_dev;
-
-USE ROLE ACCOUNTADMIN;
-DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_project_dev;
+DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_dt_project_dev;
 DROP SCHEMA IF EXISTS dcm_demo.projects;
 DROP DATABASE IF EXISTS dcm_demo;
 
+USE ROLE ACCOUNTADMIN;
 DROP ROLE IF EXISTS dcm_developer;
-DROP WAREHOUSE IF EXISTS dcm_wh;
 ```
 
 <!-- ------------------------ -->
@@ -620,6 +588,12 @@ In this guide, you learned how to:
 - **Verify partial recomputation** using `metadata$is_immutable` — confirming that Snowflake marked historical rows as immutable and skipped them, while only new data was computed with the updated definition
 
 The combination of DCM Projects and immutability constraints gives you a production-grade workflow: version-controlled pipeline definitions, environment-aware deployments, and efficient schema evolution that respects the cost of reprocessing large datasets.
+
+### What's Next
+
+Continue the series:
+
+- **Part 4 — [DCM Projects for Tasks](https://www.snowflake.com/en/developers/guides/dcm-projects-for-tasks/)** — orchestrate your pipelines with task graphs, finalizers, and data-quality-driven routing, all defined as code.
 
 ### Related Resources
 - [DCM Projects Documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)

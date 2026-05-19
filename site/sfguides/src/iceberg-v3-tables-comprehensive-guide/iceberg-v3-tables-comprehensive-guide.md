@@ -213,7 +213,7 @@ If you set `USE_SNOWFLAKE_STORAGE=false`, Iceberg tables use a **customer-manage
 
 You can also create external volumes from Snowflake's web UI by navigating to **Catalog > External data > External volumes tab**.
 
-![Create External Volume](/assets/create_external_volume.png)
+![Create External Volume](assets/create_external_volume.png)
 
 **AWS S3 Setup:**
 
@@ -583,13 +583,13 @@ These tables automatically refresh based on their TARGET_LAG setting, processing
 
 The transformation pipeline looks like this:
 
-![Dynamic Iceberg Table Graph](/assets/dit_graph.png)
+![Dynamic Iceberg Table Graph](assets/dit_graph.png)
 
 #### Monitor Incremental Refreshes
 
 As streaming data flows in, watch the dynamic tables refresh:
 
-![Dynamic Iceberg Table Incremental Refresh](/assets/dit_incremental_refresh.png)
+![Dynamic Iceberg Table Incremental Refresh](assets/dit_incremental_refresh.png)
 
 The `REFRESH_MODE = INCREMENTAL` setting ensures only new or changed data is processed, making the pipeline highly efficient.
 
@@ -614,10 +614,6 @@ ORDER BY EVENT_TIMESTAMP DESC
 LIMIT 20;
 ```
 
-### Deletion Vectors Overview
-
-
-
 <!-- ------------------------ -->
 ## Security and Governance
 
@@ -636,7 +632,7 @@ Snowflake can automatically detect and classify sensitive data across your entir
 5. Toggle **Automatically tag data** ON
 6. Click **Classify and Tag Sensitive Data**
 
-![Classify and Tag Sensitive Data](/assets/classify_sensitive_data.png)
+![Classify and Tag Sensitive Data](assets/classify_sensitive_data.png)
 
 #### View Applied Tags
 
@@ -646,7 +642,7 @@ After classification completes:
 2. Click the **Columns** tab
 3. Notice tags applied to sensitive columns like `DRIVER_NAME`, `DRIVER_EMAIL`, `DRIVER_PHONE`
 
-![Tagged Sensitive Data](/assets/classification_tag.png)
+![Tagged Sensitive Data](assets/classification_tag.png)
 
 Common tags that may be applied:
 - `SEMANTIC_CATEGORY:NAME` - Personal names
@@ -694,7 +690,7 @@ RETURNS STRING ->
 5. Select `PII_NAME_MASK` and click **Done**
 6. Repeat for `DRIVER_EMAIL` and `DRIVER_PHONE` with `PII_EMAIL_MASK` and `PII_PHONE_MASK`
 
-![Mask Tagged Columns](/assets/tag_mask.png)
+![Mask Tagged Columns](assets/tag_mask.png)
 
 #### Test Masking Behavior
 
@@ -816,7 +812,7 @@ The lineage graph is valuable for:
 - **Data quality investigation**: Tracing issues back to their source
 - **Security auditing**: Understanding data flow for sensitive information
 
-![Data Lineage](/assets/lineage.png)
+![Data Lineage](assets/lineage.png)
 
 <!-- ------------------------ -->
 ## Analytics and AI
@@ -1549,7 +1545,7 @@ spark_analyst.sql("""
 """).show(truncate=True)
 ```
 
-![Interoperable Masking](/assets/spark_masked.png)
+![Interoperable Masking](assets/spark_masked.png)
 
 
 The masking policies defined in Snowflake are enforced even when accessing data through Spark!

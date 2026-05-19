@@ -2,7 +2,7 @@
 id: best-practices-to-building-cortex-agents
 language: en
 summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in Snowflake Intelligence, following best practices for orchestration, tooling, and evaluation.
-author: ShenWang, Tyler Richards, Krista Muir, Josh Reini, James Cha-Earley
+author: Shen Wang, Tyler Richards, Krista Rockson, Josh Reini, James Cha-Earley
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 open in snowflake link: https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=best-practices-to-building-cortex-agents&utm_cta=developer-guides-deeplink
@@ -58,10 +58,12 @@ The following image describes this structure of Snowflake Intelligence.
 
 [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) are configurable reasoning systems that combine Snowflake’s built-in intelligence with your domain context.
 
-You can build and run agents in two ways:
+You can build and run agents in several ways:
 
 1.  **Agent UI in Snowsight:** An interactive interface that handles identity, access control, and monitoring out of the box.
 2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): A REST API for integrating agents into your own applications (like Streamlit apps or custom apps).
+
+>  **Pro tip:** Build agents using natural language with Snowflake's AI coding agent [**Cortex Code**](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/#production-ready-cortex-agents). 
 
 Consider the following when building an agent.
 
@@ -575,9 +577,7 @@ The [web search tool](https://docs.snowflake.com/en/user-guide/snowflake-cortex/
 
 ### MCP Connectors
 
-> **Preview Feature — Private:** MCP Connectors are available to select accounts.
-
-[MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors) connect your agents to external SaaS tools via the Model Context Protocol (MCP). Supported connectors include Atlassian (Jira & Confluence), GitHub, Glean, Google Workspace, Linear, Salesforce, and Slack, and you can build custom connectors for any MCP-compatible endpoint.
+[MCP Connectors](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors) connect your agents to external SaaS tools via the Model Context Protocol (MCP). Supported connectors include Atlassian (Jira & Confluence), GitHub, Glean, Google Workspace, Linear, Salesforce, and Slack, and you can build custom connectors for any MCP-compatible endpoint.
 
 The setup flow for MCP connectors is:
 1.  **Provider setup:** Create an OAuth app on the provider's dashboard and obtain credentials.
@@ -614,7 +614,7 @@ The process of deploying agents is similar to developer cycles, with three key s
 2. Using systematic tests to drive iteration and improvement.
 3. Graduating to a production agent.
 
-👉 *For a deep dive into evaluation, versioning, CI/CD, and monitoring best practices, see [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-evaluating-cortex-agents/).*
+👉 *For a deep dive into evaluation, versioning, CI/CD, and monitoring best practices, see [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-for-evaluating-cortex-agents/).*
 
 ### Use agent versioning to structure your deployment lifecycle
 
@@ -653,7 +653,7 @@ Create a representative “golden” test set of questions, expected tool use, a
 
 ### Stage 2: Iteration and evaluation
 
-Use the Snowflake Monitoring UI and [Cortex Agent Evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#evaluation) (generally available) to identify which queries the agent handles incorrectly or too slowly. Agent traces show planning, tool use, and generation steps so you can pinpoint exactly where things went wrong. Before you begin, *ensure you have [AI Observability permissions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#required-privileges) set up properly.*
+Use the Snowflake Monitoring UI and [Cortex Agent Evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#evaluation) (generally available) to identify which queries the agent handles incorrectly or too slowly. Agent traces show planning, tool use, and generation steps so you can pinpoint exactly where things went wrong.
 
 After your agent performs well against your golden set, it’s ready for production.
 
@@ -866,6 +866,6 @@ By following these best practices, you can confidently build **Cortex Agents** t
 - Guide: [Getting started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 - Guide: [Getting started with Snowflake Intelligence and Cortex Knowledge Extensions (CKEs)](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/)
 - Guide: [Getting Started with MCP Connectors](https://www.snowflake.com/en/developers/guides/getting-started-with-mcp-connectors/)
-- [Code execution tool documentation](https://docs.snowflake.com/en/LIMITEDACCESS/cortex-agents-code-interpreter)
-- [MCP Connectors documentation](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors)
+- [Code execution tool documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-code-execution-tool)
+- [MCP Connectors documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors)
 - [More Snowflake Guides](https://www.snowflake.com/en/developers/guides/)
