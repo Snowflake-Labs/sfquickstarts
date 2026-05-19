@@ -192,7 +192,7 @@ We could just type SQL in this editor – in this case only really the join clau
    ![Column list](assets/image557.png)
 
 8. Rather than type SQL lets get the Coalesce AI to generate SQL using the prompt:
-   ```build sql that joins stage tables STG_VENDOR and STG_VENDOR_DETAILS using ctes```
+   ```build sql that joins stage tables STG_VENDOR and STG_VENDOR_DETAILS using ctes. remove duplicate columns```
 
    If the SQL looks good copy using the **Copy Code** option and paste it (*leaving the top 2 annotation lines alone*):
 
@@ -209,7 +209,7 @@ Lets build some dimensions and facts.
 
    ![Coalesce AI datamart](assets/image61.png)
 
-3. If that plan looks sensible (it should) then tell Coalesce AI to go ahead and create them
+3. If that plan looks sensible (it should) then tell Coalesce AI to go ahead and create them ```create them please```
 
    ![Coalesce AI datamart confirm](assets/image62.png)
 
